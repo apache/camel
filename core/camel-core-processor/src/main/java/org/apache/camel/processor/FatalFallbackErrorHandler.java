@@ -16,8 +16,9 @@
  */
 package org.apache.camel.processor;
 
-import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -60,12 +61,14 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
         final String id = routeIdExpression().evaluate(exchange, String.class);
 
         // prevent endless looping if we end up coming back to ourself
-        Deque<String> fatals = exchange.getProperty(ExchangePropertyKey.FATAL_FALLBACK_ERROR_HANDLER, Deque.class);
+        // (the fatals are shared by copies of the exchange, such as from parallel processing in the splitter, so the
+        // entries are for this exchange instance only, and a copy is not regarded as coming back to ourself)
+        Deque<FatalEntry> fatals = exchange.getProperty(ExchangePropertyKey.FATAL_FALLBACK_ERROR_HANDLER, Deque.class);
         if (fatals == null) {
-            fatals = new ArrayDeque<>();
+            fatals = new ConcurrentLinkedDeque<>();
             exchange.setProperty(ExchangePropertyKey.FATAL_FALLBACK_ERROR_HANDLER, fatals);
         }
-        if (fatals.contains(id)) {
+        if (isCircular(fatals, id, exchange)) {
             LOG.warn("Circular error-handler detected at route: {} - breaking out processing Exchange: {}", id, exchange);
             // mark this exchange as already been error handler handled (just by having this property)
             // the false value mean the caught exception will be kept on the exchange, causing the
@@ -77,7 +80,8 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
         }
 
         // okay we run under this fatal error handler now
-        fatals.push(id);
+        final FatalEntry entry = new FatalEntry(id, exchange);
+        fatals.push(entry);
 
         // support the asynchronous routing engine
         boolean sync = processor.process(exchange, new AsyncCallback() {
@@ -145,9 +149,13 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                     }
                 } finally {
                     // no longer running under this fatal fallback error handler
-                    Deque<String> fatals = exchange.getProperty(ExchangePropertyKey.FATAL_FALLBACK_ERROR_HANDLER, Deque.class);
+                    Deque<FatalEntry> fatals
+                            = exchange.getProperty(ExchangePropertyKey.FATAL_FALLBACK_ERROR_HANDLER, Deque.class);
                     if (fatals != null) {
-                        fatals.removeLastOccurrence(id);
+                        fatals.remove(entry);
+                        if (fatals.isEmpty()) {
+                            exchange.removeProperty(ExchangePropertyKey.FATAL_FALLBACK_ERROR_HANDLER);
+                        }
                     }
                     callback.done(doneSync);
                 }
@@ -155,6 +163,33 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
         });
 
         return sync;
+    }
+
+    private static boolean isCircular(Deque<FatalEntry> fatals, String id, Exchange exchange) {
+        for (FatalEntry entry : fatals) {
+            if (entry.exchange == exchange && Objects.equals(entry.routeId, id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * The route (and exchange instance) running under a fatal fallback error handler (compared by identity).
+     */
+    private static final class FatalEntry {
+        private final String routeId;
+        private final Exchange exchange;
+
+        private FatalEntry(String routeId, Exchange exchange) {
+            this.routeId = routeId;
+            this.exchange = exchange;
+        }
+
+        @Override
+        public String toString() {
+            return routeId;
+        }
     }
 
     private void log(String message) {

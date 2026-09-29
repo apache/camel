@@ -20,7 +20,7 @@
 # `opa build` packs the data.json sitting beside this file into the bundle, and a server that
 # loads the bundle answers against it. The WebAssembly module carries no data of its own, so
 # camel-opa has to apply the bundle's data to every evaluation for the two to agree - which is
-# what OpaWasmEvaluatorTest.appliesTheDataDocumentPackedInTheBundle asserts.
+# what OpaWasmIT.appliesTheDataDocumentPackedInTheBundle asserts.
 
 package roles
 

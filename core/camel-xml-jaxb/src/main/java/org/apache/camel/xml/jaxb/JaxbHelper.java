@@ -325,6 +325,11 @@ public final class JaxbHelper {
     }
 
     public static <T extends NamedNode> T modelToXml(CamelContext context, String xml, Class<T> type) throws Exception {
+        return modelToXml(context, xml, type, false);
+    }
+
+    public static <T extends NamedNode> T modelToXml(CamelContext context, String xml, Class<T> type, boolean sourceLocation)
+            throws Exception {
         JAXBContext jaxbContext = getJAXBContext(context);
 
         XmlConverter xmlConverter = newXmlConverter(context);
@@ -339,7 +344,7 @@ public final class JaxbHelper {
         }
 
         Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
-        if (context.isDebugging()) {
+        if (sourceLocation || context.isDebugging()) {
             extractSourceLocations(dom.getDocumentElement(), locations);
         }
         Map<String, String> namespaces = new LinkedHashMap<>();

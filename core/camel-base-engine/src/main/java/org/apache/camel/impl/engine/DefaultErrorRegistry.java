@@ -86,7 +86,12 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         if (event instanceof CamelEvent.ExchangeFailedEvent e) {
             capture(e.getExchange(), false);
         } else if (event instanceof CamelEvent.ExchangeFailureHandledEvent e) {
-            capture(e.getExchange(), true);
+            // the failure processor (such as onException) may not have handled the exception
+            // (a doCatch handles the exception without the error handler marking it)
+            Exchange exchange = e.getExchange();
+            boolean handled = !exchange.getExchangeExtension().isErrorHandlerHandledSet()
+                    || exchange.getExchangeExtension().isErrorHandlerHandled();
+            capture(exchange, handled);
         }
     }
 

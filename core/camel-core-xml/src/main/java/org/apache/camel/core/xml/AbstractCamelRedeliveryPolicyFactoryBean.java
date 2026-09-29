@@ -143,10 +143,10 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
             }
         }
         if (retriesExhaustedLogLevel != null) {
-            answer.setRetriesExhaustedLogLevel(LoggingLevel.valueOf(retriesExhaustedLogLevel));
+            answer.setRetriesExhaustedLogLevel(CamelContextHelper.parse(context, LoggingLevel.class, retriesExhaustedLogLevel));
         }
         if (retryAttemptedLogLevel != null) {
-            answer.setRetryAttemptedLogLevel(LoggingLevel.valueOf(retryAttemptedLogLevel));
+            answer.setRetryAttemptedLogLevel(CamelContextHelper.parse(context, LoggingLevel.class, retryAttemptedLogLevel));
         }
         if (retryAttemptedLogInterval != null) {
             answer.setRetryAttemptedLogInterval(CamelContextHelper.parseInteger(context, retryAttemptedLogInterval));

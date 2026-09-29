@@ -128,6 +128,11 @@ public class FileLockClusterView extends AbstractCamelClusterView {
         acquireLockIntervalMilliseconds = TimeUnit.MILLISECONDS.convert(
                 service.getAcquireLockInterval(),
                 service.getAcquireLockIntervalUnit());
+        if (acquireLockIntervalMilliseconds < 1) {
+            throw new IllegalArgumentException(
+                    "acquireLockInterval must be at least 1 millisecond, was: " + service.getAcquireLockInterval() + " "
+                                               + service.getAcquireLockIntervalUnit());
+        }
 
         heartbeatTimeoutMultiplier = service.getHeartbeatTimeoutMultiplier();
 
@@ -165,6 +170,12 @@ public class FileLockClusterView extends AbstractCamelClusterView {
             leaderDataFile = null;
         } finally {
             stateLock.unlock();
+        }
+
+        if (wasLeader) {
+            // tell the listeners (such as clustered routes) that this member is no longer the leader, before the lock
+            // is released and another member can take over the leadership
+            fireLeadershipChangedEvent((CamelClusterMember) null);
         }
 
         try {

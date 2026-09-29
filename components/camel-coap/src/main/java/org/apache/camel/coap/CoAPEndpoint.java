@@ -109,6 +109,8 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     private boolean observe;
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean observable;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean muteException = true;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean notify;
     @UriParam(label = "producer,advanced")
@@ -254,6 +256,18 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
      */
     public void setObservable(boolean observable) {
         this.observable = observable;
+    }
+
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side, the 5.00 (Internal Server Error) response sent
+     * to the client won't contain the exception's message.
+     */
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
     }
 
     public boolean isNotify() {

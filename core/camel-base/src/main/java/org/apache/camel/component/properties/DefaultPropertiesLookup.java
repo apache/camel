@@ -84,7 +84,7 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
             Object value = component.getOverrideProperties().get(name);
             if (value != null) {
                 answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
-                String loc = location(local, name, "OverrideProperties");
+                String loc = location(component.getOverrideProperties(), name, "OverrideProperties");
                 onLookup(name, answer, defaultValue, loc);
             }
         }
@@ -103,7 +103,8 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
                     } else if (ps instanceof LocationPropertiesSource propSource) {
                         source = propSource.getLocation().getPath();
                     } else if (ps instanceof LoadablePropertiesSource propSource) {
-                        Properties prop = propSource.loadProperties();
+                        // only load this property (loading all the properties can be expensive for some sources)
+                        Properties prop = propSource.loadProperties(name::equals);
                         if (prop instanceof OrderedLocationProperties olp) {
                             source = olp.getLocation(name);
                         }
@@ -119,7 +120,7 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
             Object value = component.getInitialProperties().get(name);
             if (value != null) {
                 answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
-                String loc = location(local, name, "InitialProperties");
+                String loc = location(component.getInitialProperties(), name, "InitialProperties");
                 onLookup(name, answer, defaultValue, loc);
             }
         }

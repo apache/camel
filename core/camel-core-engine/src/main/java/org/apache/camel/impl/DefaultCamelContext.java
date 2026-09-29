@@ -655,6 +655,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         RouteDefinitionHelper.forceAssignIds(getCamelContextReference(), routeDefinitions);
         List<RouteDefinition> routeDefinitionsToRemove = null;
         for (RouteDefinition routeDefinition : routeDefinitions) {
+            boolean localPropertiesAdded = false;
             try {
                 // assign ids to the routes and validate that the id's is all unique
                 String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions,
@@ -730,6 +731,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                         prop.putAll(routeDefinition.getLocation(), params);
                     }
                     pc.setLocalProperties(prop);
+                    localPropertiesAdded = true;
 
                     // we need to shadow the bean registry on the CamelContext with the local beans
                     // from the route template context
@@ -780,8 +782,10 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     routeDefinitionsToRemove.add(routeDefinition);
                 }
             } finally {
-                // clear local after the route is created via the reifier
-                pc.setLocalProperties(null);
+                // clear local after the route is created via the reifier (only if added for this route)
+                if (localPropertiesAdded) {
+                    pc.setLocalProperties(null);
+                }
                 if (localBeans != null) {
                     localBeans.setLocalBeanRepository(null);
                 }

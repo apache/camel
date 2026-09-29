@@ -408,9 +408,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         }
 
         PropertyConfigurer configurer = null;
-        if (bean instanceof Component) {
+        // an endpoint may be created without a component (such as a bean)
+        if (bean instanceof Component && getComponent() != null) {
             configurer = getComponent().getComponentPropertyConfigurer();
-        } else if (bean instanceof Endpoint) {
+        } else if (bean instanceof Endpoint && getComponent() != null) {
             configurer = getComponent().getEndpointPropertyConfigurer();
         } else if (bean instanceof PropertyConfigurerAware propertyConfigurerAware) {
             configurer = propertyConfigurerAware.getPropertyConfigurer(bean);
@@ -475,8 +476,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
                                                    + " having their consumer extend DefaultConsumer. The consumer is a "
                                                    + consumer.getClass().getName() + " class.");
             }
-        }
-        if (exceptionHandler != null) {
+        } else if (exceptionHandler != null) {
+            // not in use when bridgeErrorHandler is enabled
             if (consumer instanceof DefaultConsumer defaultConsumer) {
                 defaultConsumer.setExceptionHandler(exceptionHandler);
             }

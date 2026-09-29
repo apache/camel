@@ -137,6 +137,7 @@ public final class XmlLineNumberParser {
         return new DefaultHandler() {
             private Locator locator;
             private boolean found;
+            private boolean done;
             private final Map<String, String> localNs = new HashMap<>();
             private final Map<String, String> anonymousNs = new LinkedHashMap<>();
 
@@ -160,6 +161,10 @@ public final class XmlLineNumberParser {
                     final String uri, final String localName, final String qName, final Attributes attributes) {
                 addTextIfNeeded();
 
+                if (done) {
+                    // only the first root element is parsed (there can only be one document element)
+                    return;
+                }
                 if (rootNames != null && !found) {
                     if (isRootName(qName)) {
                         found = true;
@@ -232,6 +237,11 @@ public final class XmlLineNumberParser {
                     if (elementStack.isEmpty()) {
                         // Is this the root element?
                         doc.appendChild(closedEl);
+                        if (rootNames != null) {
+                            // the root element is done, so elements after it are not parsed
+                            found = false;
+                            done = true;
+                        }
                     } else {
                         final Element parentEl = elementStack.peek();
                         parentEl.appendChild(closedEl);
@@ -264,8 +274,9 @@ public final class XmlLineNumberParser {
                     if (el != null) {
                         final Node textNode = doc.createTextNode(textBuffer.toString());
                         el.appendChild(textNode);
-                        textBuffer.delete(0, textBuffer.length());
                     }
+                    // text outside the elements that are parsed is not added to the next element
+                    textBuffer.delete(0, textBuffer.length());
                 }
             }
         };
