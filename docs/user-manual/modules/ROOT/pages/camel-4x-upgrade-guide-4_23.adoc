@@ -356,6 +356,12 @@ The Event developer console now exposes the full structured JSON payload in the 
 each event entry, while keeping the existing flat `type`, `timestamp`, `exchangeId`, and
 `message` fields for backwards compatibility.
 
+=== Intercept Send To Endpoint - intercepted route
+
+When an `interceptSendToEndpoint` applies to several routes (such as one defined in a `RouteBuilder` with several
+routes), the `CamelInterceptedRouteId` and `CamelInterceptedParentEndpointUri` exchange properties are now those of the route
+that sends to the endpoint. Before, they were always those of the first route of the `RouteBuilder`.
+
 === Route templates
 
 - When both the route template (`configure`) and the `TemplatedRouteBuilder` (`configure`) have a configurer, then

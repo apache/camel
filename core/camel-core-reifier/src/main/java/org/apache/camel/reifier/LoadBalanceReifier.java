@@ -70,10 +70,14 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
                                                    + processorType);
             }
             Processor processor = createProcessor(processorType);
+            // the children are not created via createOutputsProcessor, so inject their ids here
+            injectIds(processor, processorType);
             Channel channel = wrapChannel(processor, processorType, childInherit);
             loadBalancer.addProcessor(channel);
         }
 
+        // the load balancer is returned wrapped in a channel, so its id must be injected here
+        injectIds(loadBalancer, definition);
         return wrapChannel(loadBalancer, definition, inherit);
     }
 
