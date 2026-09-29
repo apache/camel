@@ -223,6 +223,24 @@ class SemanticDeclarationDslTest {
         assertThat(states).isEmpty();
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void declarationSourceCanBeReplacedAndRemovedIndependentlyOfItsResource(boolean trackResource) {
+        Resource resource = trackResource ? ResourceHelper.fromString("questions.xml", "") : null;
+        SemanticDefinition definition = new SemanticDefinition();
+        definition.question("first").type("boolean").instructions("Valid?");
+        SemanticDefinition.configure(context, resource, "declared-source", definition);
+        SemanticDefinition replacement = new SemanticDefinition();
+        replacement.question("second").type("boolean").instructions("Updated?");
+        SemanticDefinition.configure(context, resource, "declared-source", replacement);
+        SemanticQuestions questions = SemanticQuestions.get(context);
+        assertThatThrownBy(() -> questions.get("first")).hasMessageContaining("Unknown");
+        assertThat(questions.get("second")).isNotNull();
+        questions.replace("model:declared-source", Map.of());
+        assertThatThrownBy(() -> questions.get("second")).hasMessageContaining("Unknown");
+        assertThat(states).isEmpty();
+    }
+
     @Test
     void embeddedBuilderInstancesOwnSeparateDeclarations() throws Exception {
         class Questions extends RouteBuilder {

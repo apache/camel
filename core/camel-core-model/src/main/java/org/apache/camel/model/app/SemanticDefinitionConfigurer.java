@@ -21,6 +21,9 @@ import org.apache.camel.spi.Resource;
 
 /** Installs semantic declarations using the optional semantic language module. */
 public interface SemanticDefinitionConfigurer {
-    /** Replace the questions belonging to this source, including removing obsolete declarations. */
+    /**
+     * Replace the questions belonging to this source, including removing obsolete declarations. The source identifies
+     * the owner independently of the optional resource used to track deletion.
+     */
     void configure(CamelContext context, Resource resource, String source, SemanticDefinition definition);
 }

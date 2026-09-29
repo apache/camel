@@ -1684,8 +1684,8 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteRoutesDefinition(String name, RoutesDefinition def) throws IOException {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
-        doWriteList(null, null, def.getRoutes(), this::doWriteRouteDefinitionRef);
         doWriteElement("semantic", def.getSemantic(), this::doWriteSemanticDefinition);
+        doWriteList(null, null, def.getRoutes(), this::doWriteRouteDefinitionRef);
         endElement(name);
     }
     protected void doWriteRoutingSlipDefinition(String name, RoutingSlipDefinition<?> def) throws IOException {

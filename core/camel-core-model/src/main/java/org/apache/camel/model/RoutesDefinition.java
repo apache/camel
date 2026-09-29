@@ -27,6 +27,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -50,6 +51,7 @@ import static org.apache.camel.model.RouteDefinitionHelper.routesByIdOrPattern;
  */
 @Metadata(label = "configuration", description = "Container for a collection of route definitions")
 @XmlRootElement(name = "routes")
+@XmlType(propOrder = { "semantic", "routes" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinition>
         implements RouteContainer, ResourceAware {

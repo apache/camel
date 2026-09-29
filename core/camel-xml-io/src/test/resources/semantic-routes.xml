@@ -18,10 +18,6 @@
 
 -->
 <routes xmlns="http://camel.apache.org/schema/xml-io">
-  <route id="semantic">
-    <from uri="direct:semantic"/>
-    <setBody><language language="semantic">ref:department</language></setBody>
-  </route>
   <semantic>
     <question name="urgent" type="boolean" state="${header.myState}" threshold="0.8" uncertainty="0.1" uncertaintyPolicy="non-match">
       <instructions>Is this urgent?</instructions>
@@ -40,4 +36,8 @@
       <level>Critical</level>
     </question>
   </semantic>
+  <route id="semantic">
+    <from uri="direct:semantic"/>
+    <setBody><language language="semantic">ref:department</language></setBody>
+  </route>
 </routes>

@@ -121,16 +121,23 @@ public void configure() {
 ----
 
 Declarations are installed after `configure()` completes and before the routes are initialized.
-They can appear before or after the routes that reference them. Use `.type("boolean")` with
+They can appear before or after the routes that reference them within the same builder.
+When adding builders to a running context, add the builder declaring shared questions before
+builders whose routes reference them. Use `.type("boolean")` with
 optional `.threshold(0.8)`, `.uncertainty(0.1)` and `.uncertaintyPolicy("non-match")` for boolean
 questions. Use `.type("score")` and successive `.level("description")` calls for ordered score
 levels. Java applications can also continue to register immutable `SemanticQuestion` definitions
 using `SemanticQuestions.get(context).replace(source, questions)`.
 
+Java/XML declarations reserve source keys beginning with `model:`. For a route resource, the
+key is `"model:" + resource.getLocation()`; passing this key and an empty map to `replace`
+removes that resource's questions. Reloading the resource installs them again. Embedded Java
+builders without a resource receive distinct generated source keys.
+
 === XML declarations
 
 With xref:others:java-xml-io-dsl.adoc[XML DSL], place a `semantic` element inside the `camel` or
-`routes` document, alongside the routes:
+`routes` document, before the routes to comply with the XML schema:
 
 [source,xml]
 ----
@@ -156,13 +163,20 @@ With xref:others:java-xml-io-dsl.adoc[XML DSL], place a `semantic` element insid
 For boolean questions, `threshold`, `uncertainty` and `uncertaintyPolicy` are optional question
 attributes. For score questions, replace the named `criterion` elements with ordered
 `level` elements, such as `<level>Routine</level><level>Urgent</level><level>Critical</level>`.
-XML declarations are loaded before route references are initialized, including declarations
-after a route or in another resource loaded together. Reload replaces the source's questions;
+XML declarations are loaded before route references are initialized, including those in another
+resource loaded together. Reload replaces the source's questions;
 removing its declarations or deleting the resource removes obsolete definitions.
 
 Both Java and XML declarations require `camel-semantic` and use the same context-wide registry,
 validation, defaults and adapters as YAML. They do not require `camel-yaml-dsl`. Their questions
 can also be selected together using `refs:name1,name2`, as described below.
+
+=== Exporting declarations
+
+Direct exports of a `RoutesDefinition` containing semantic declarations preserve them, as does
+XML-to-YAML conversion. Runtime route dumps such as `camel.main.dumpRoutes=yaml` contain only
+the routes and omit the question declarations. Supply the declarations separately before
+reloading those dumps.
 
 === Selected state
 

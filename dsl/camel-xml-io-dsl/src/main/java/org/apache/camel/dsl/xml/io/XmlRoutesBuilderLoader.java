@@ -340,7 +340,6 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                     CamelContextAware.trySetCamelContext(def, getCamelContext());
                     def.setResource(getResource());
                     def.setRoutes(app.getRoutes());
-                    def.setSemantic(app.getSemantic());
                     addRoutes(def);
                 }
             }
@@ -367,7 +366,9 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             }
 
             private void addRoutes(RoutesDefinition routes) {
-                getRouteCollection().setSemantic(routes.getSemantic());
+                if (routes.getSemantic() != null) {
+                    getRouteCollection().setSemantic(routes.getSemantic());
+                }
                 // xml routes must be prepared in the same way java-dsl (via RoutesDefinition)
                 // so create a copy and use the fluent builder to add the route
                 for (RouteDefinition route : routes.getRoutes()) {

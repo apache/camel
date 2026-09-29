@@ -12041,7 +12041,6 @@ Description of the template parameter for documentation purposes.
     <xs:complexContent>
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:route"/>
           <xs:element minOccurs="0" name="semantic" type="tns:semanticDefinition">
             <xs:annotation>
               <xs:documentation xml:lang="en">
@@ -12051,6 +12050,7 @@ Named semantic question declarations.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:route"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

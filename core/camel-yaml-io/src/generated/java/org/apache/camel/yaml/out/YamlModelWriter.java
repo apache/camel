@@ -1680,8 +1680,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteRoutesDefinition(RoutesDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
-        doWriteChildList(jo, "routes", "routes", def.getRoutes(), this::doWriteRouteDefinition);
         doWriteChildElement(jo, "semantic", def.getSemantic(), this::doWriteSemanticDefinition);
+        doWriteChildList(jo, "routes", "routes", def.getRoutes(), this::doWriteRouteDefinition);
         return jo;
     }
     protected JsonObject doWriteRoutingSlipDefinition(RoutingSlipDefinition<?> def) {

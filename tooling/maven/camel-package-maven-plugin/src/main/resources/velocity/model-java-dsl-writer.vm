@@ -89,6 +89,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     #if( $clazz.simpleName == "OptionalIdentifiedDefinition" )
         #set( $foo = $elementRefs.add($clazz) )
     #end
+## Semantic declaration writers are hand-written in JavaDslModelWriterSupport.
     #if( !$mojo.getXmlEnum($clazz) && !$clazz.isInterface()
         && $clazz.simpleName != "SemanticDefinition" && $clazz.simpleName != "SemanticQuestionDefinition" )
         #set( $hasDerived = false )
