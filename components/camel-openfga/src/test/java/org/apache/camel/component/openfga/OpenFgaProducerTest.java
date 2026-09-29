@@ -257,6 +257,28 @@ class OpenFgaProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void deniesAnInterruptedCallEvenWhenFailOpenIsEnabled() throws Exception {
+        // An interrupt is a shutdown, not an unavailable decision point, so nothing authorized this exchange. Proved
+        // rather than argued: the sibling camel-opa carried a dedicated InterruptedException catch whose comment
+        // claimed fail-closed, and it never fired because its SDK wrapped the interrupt (CAMEL-25139).
+        // A future that never completes, with the interrupt flag already set, makes future.get throw at once.
+        when(client.check(any(ClientCheckRequest.class), any())).thenReturn(new CompletableFuture<>());
+
+        Exchange out;
+        try {
+            Thread.currentThread().interrupt();
+            out = request(ENDPOINT + "&failOpen=true");
+        } finally {
+            // the component restores the flag on this path, so clear it rather than leak it into the next test
+            Thread.interrupted();
+        }
+
+        assertThat(out.getException()).isInstanceOf(OpenFgaEvaluationException.class);
+        assertThat(out.getException()).hasMessageContaining("Interrupted");
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
+    }
+
+    @Test
     void deniesAnExchangeWithNoIdentityEvenWhenFailOpenIsEnabled() throws Exception {
         givenVerdict(Boolean.TRUE);
 
