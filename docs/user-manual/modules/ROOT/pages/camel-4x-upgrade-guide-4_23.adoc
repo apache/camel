@@ -176,6 +176,10 @@ As a result, while calls that timed out are still running, further calls are rej
 the fallback, with `CamelCircuitBreakerResponseRejected` set to `true`), where before they were started. A call that
 never ends keeps its permit.
 
+In the synchronous mode the resilience4j `TimeLimiter` now also sees a call that the bulkhead rejects (as an error with
+a `BulkheadFullException`), so the events and metrics of resilience4j itself count such a call as a `TimeLimiter`
+error. The Camel circuit breaker counters are not affected.
+
 === Convert Body, Convert Header and Convert Variable EIPs
 
 When a charset is configured, such as `convertBodyTo(String.class, "UTF-8")`, then the conversion now uses that charset
