@@ -21,10 +21,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.LongStream;
 
 import io.apicurio.registry.rest.client.RegistryClient;
-import io.apicurio.registry.rest.client.models.SearchedVersion;
-import io.apicurio.registry.rest.client.models.VersionSearchResults;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -48,10 +48,11 @@ import static org.mockito.Mockito.when;
 class ApicurioRegistryConsumerTest {
 
     private static final String ENDPOINT_URI
-            = "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&delay=500";
+            = "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&delay=100";
 
     private final RegistryClient mockClient = mock(RegistryClient.class, RETURNS_DEEP_STUBS);
     private CamelContext context;
+    private FakeVersionPages pages;
 
     @BeforeEach
     void setUp() {
@@ -59,6 +60,8 @@ class ApicurioRegistryConsumerTest {
         ApicurioRegistryComponent component = new ApicurioRegistryComponent(context);
         component.getConfiguration().setRegistryUrl("http://localhost:8080/apis/registry/v3");
         context.addComponent("apicurio-registry", component);
+        pages = new FakeVersionPages(
+                mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact").versions());
     }
 
     @AfterEach
@@ -68,134 +71,91 @@ class ApicurioRegistryConsumerTest {
         }
     }
 
-    private void setupAndStartRoute(VersionSearchResults results) throws Exception {
-        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
-                .versions().get())
-                .thenReturn(results);
-
-        ApicurioRegistryEndpoint endpoint = (ApicurioRegistryEndpoint) context.getEndpoint(ENDPOINT_URI);
+    private ApicurioRegistryConsumer createConsumer(String uri, List<Exchange> received) throws Exception {
+        ApicurioRegistryEndpoint endpoint = context.getEndpoint(uri, ApicurioRegistryEndpoint.class);
         endpoint.setRegistryClient(mockClient);
+        return (ApicurioRegistryConsumer) endpoint.createConsumer(received::add);
+    }
 
+    private static List<Long> globalIds(List<Exchange> exchanges) {
+        return exchanges.stream()
+                .map(e -> e.getIn().getHeader(ApicurioRegistryConstants.HEADER_GLOBAL_ID, Long.class))
+                .toList();
+    }
+
+    @Test
+    void testPollNewVersionsInRoute() throws Exception {
+        pages.add(1, 2);
+        ApicurioRegistryEndpoint endpoint = context.getEndpoint(ENDPOINT_URI, ApicurioRegistryEndpoint.class);
+        endpoint.setRegistryClient(mockClient);
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 from(ENDPOINT_URI).to("mock:result");
             }
         });
-
         context.start();
-    }
-
-    @Test
-    void testPollNewVersions() throws Exception {
-        SearchedVersion v1 = new SearchedVersion();
-        v1.setGlobalId(1L);
-        v1.setVersion("1.0");
-        v1.setContentId(100L);
-        v1.setArtifactType("JSON");
-
-        SearchedVersion v2 = new SearchedVersion();
-        v2.setGlobalId(2L);
-        v2.setVersion("2.0");
-        v2.setContentId(101L);
-        v2.setArtifactType("JSON");
-
-        VersionSearchResults results = new VersionSearchResults();
-        results.setVersions(List.of(v1, v2));
-
-        setupAndStartRoute(results);
 
         MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
-        mock.expectedMinimumMessageCount(2);
+        mock.expectedHeaderValuesReceivedInAnyOrder(ApicurioRegistryConstants.HEADER_GLOBAL_ID, 1L, 2L);
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     @Test
     void testPollOutOfOrderGlobalIds() throws Exception {
-        SearchedVersion v1 = new SearchedVersion();
-        v1.setGlobalId(5L);
-        v1.setVersion("1.0");
-        v1.setContentId(100L);
-        v1.setArtifactType("JSON");
+        pages.add(5, 2, 8);
+        List<Exchange> received = new ArrayList<>();
+        ApicurioRegistryConsumer consumer = createConsumer(ENDPOINT_URI, received);
 
-        SearchedVersion v2 = new SearchedVersion();
-        v2.setGlobalId(2L);
-        v2.setVersion("0.1");
-        v2.setContentId(99L);
-        v2.setArtifactType("JSON");
-
-        SearchedVersion v3 = new SearchedVersion();
-        v3.setGlobalId(8L);
-        v3.setVersion("2.0");
-        v3.setContentId(102L);
-        v3.setArtifactType("JSON");
-
-        VersionSearchResults results = new VersionSearchResults();
-        results.setVersions(List.of(v1, v2, v3));
-
-        setupAndStartRoute(results);
-
-        MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
-        mock.expectedMinimumMessageCount(3);
-        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
-
-        List<Long> receivedIds = mock.getReceivedExchanges().stream()
-                .map(e -> e.getIn().getHeader(ApicurioRegistryConstants.HEADER_GLOBAL_ID, Long.class))
-                .toList();
-        assertThat(receivedIds).containsExactly(2L, 5L, 8L);
+        assertThat(consumer.poll()).isEqualTo(3);
+        assertThat(globalIds(received)).containsExactly(2L, 5L, 8L);
     }
 
     @Test
-    void testPollNoNewVersionsAfterInitial() throws Exception {
-        SearchedVersion v1 = new SearchedVersion();
-        v1.setGlobalId(1L);
-        v1.setVersion("1.0");
-        v1.setContentId(100L);
-        v1.setArtifactType("JSON");
-
-        VersionSearchResults results = new VersionSearchResults();
-        results.setVersions(List.of(v1));
-
-        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
-                .versions().get()).thenReturn(results);
-        ApicurioRegistryEndpoint endpoint = context.getEndpoint(ENDPOINT_URI, ApicurioRegistryEndpoint.class);
-        endpoint.setRegistryClient(mockClient);
-        List<Exchange> exchanges = new ArrayList<>();
-        ApicurioRegistryConsumer consumer = (ApicurioRegistryConsumer) endpoint.createConsumer(exchanges::add);
+    void testPollOnlyNewVersionsAfterInitial() throws Exception {
+        pages.add(1);
+        List<Exchange> received = new ArrayList<>();
+        ApicurioRegistryConsumer consumer = createConsumer(ENDPOINT_URI, received);
         assertThat(consumer.poll()).isEqualTo(1);
         assertThat(consumer.poll()).isZero();
 
-        SearchedVersion v2 = new SearchedVersion();
-        v2.setGlobalId(2L);
-        v2.setVersion("2.0");
-        results.setVersions(List.of(v2, v1));
+        pages.add(2);
         assertThat(consumer.poll()).isEqualTo(1);
         assertThat(consumer.poll()).isZero();
-        assertThat(exchanges).hasSize(2);
-        assertThat(exchanges.get(1).getIn().getBody()).isSameAs(v2);
+        assertThat(globalIds(received)).containsExactly(1L, 2L);
+    }
+
+    @Test
+    void testPollPagesThroughManyVersionsAndStopsAtWatermark() throws Exception {
+        pages.addRange(1, 250);
+        List<Exchange> received = new ArrayList<>();
+        ApicurioRegistryConsumer consumer = createConsumer(ENDPOINT_URI, received);
+
+        // more than the registry's default page of 20 versions, and more than one consumer page
+        assertThat(consumer.poll()).isEqualTo(250);
+        assertThat(globalIds(received)).containsExactlyElementsOf(LongStream.rangeClosed(1, 250).boxed().toList());
+        assertThat(pages.requestedOffsets).containsExactly(0, 100, 200);
+
+        pages.requestedOffsets.clear();
+        pages.add(251);
+        assertThat(consumer.poll()).isEqualTo(1);
+        assertThat(globalIds(received)).endsWith(251L);
+        // the first page reaches the watermark, so older pages are not fetched again
+        assertThat(pages.requestedOffsets).containsExactly(0);
     }
 
     @Test
     void testFetchContentClosesStream() throws Exception {
-        ApicurioRegistryEndpoint endpoint = context.getEndpoint(ENDPOINT_URI + "&fetchContent=true",
-                ApicurioRegistryEndpoint.class);
-        endpoint.setRegistryClient(mockClient);
-        SearchedVersion version = new SearchedVersion();
-        version.setGlobalId(1L);
-        version.setVersion("1");
-        VersionSearchResults results = new VersionSearchResults();
-        results.setVersions(List.of(version));
-        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
-                .versions().get()).thenReturn(results);
+        pages.add(1);
         byte[] content = "{\"type\":\"object\"}".getBytes(StandardCharsets.UTF_8);
         ByteArrayInputStream stream = spy(new ByteArrayInputStream(content));
         when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
                 .versions().byVersionExpression("1").content().get()).thenReturn(stream);
-        List<Exchange> exchanges = new ArrayList<>();
-        ApicurioRegistryConsumer consumer = (ApicurioRegistryConsumer) endpoint.createConsumer(exchanges::add);
+        List<Exchange> received = new ArrayList<>();
+        ApicurioRegistryConsumer consumer = createConsumer(ENDPOINT_URI + "&fetchContent=true", received);
 
         assertThat(consumer.poll()).isEqualTo(1);
-        assertThat(exchanges.get(0).getIn().getBody()).isEqualTo(content);
+        assertThat(received.get(0).getIn().getBody()).isEqualTo(content);
         verify(stream).close();
     }
 
@@ -211,6 +171,37 @@ class ApicurioRegistryConsumerTest {
                 .hasMessage("Both groupId and artifactId are required for the consumer");
     }
 
+    @Test
+    void testRouteFailureHandledByErrorHandlerIsRetried() throws Exception {
+        pages.add(1, 2);
+        AtomicInteger attemptsForFirstVersion = new AtomicInteger();
+        ApicurioRegistryEndpoint endpoint = context.getEndpoint(ENDPOINT_URI, ApicurioRegistryEndpoint.class);
+        endpoint.setRegistryClient(mockClient);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                // the default error handler stores the failure on the exchange instead of rethrowing it
+                from(ENDPOINT_URI)
+                        .process(exchange -> {
+                            long globalId = exchange.getIn().getHeader(ApicurioRegistryConstants.HEADER_GLOBAL_ID, Long.class);
+                            if (globalId == 1L && attemptsForFirstVersion.incrementAndGet() == 1) {
+                                throw new IllegalStateException("simulated failure");
+                            }
+                        })
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
+        mock.expectedHeaderValuesReceivedInAnyOrder(ApicurioRegistryConstants.HEADER_GLOBAL_ID, 1L, 2L);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+
+        // version 2 is only delivered after the failed version 1 was retried, in order
+        assertThat(globalIds(mock.getReceivedExchanges())).containsExactly(1L, 2L);
+        assertThat(attemptsForFirstVersion.get()).isEqualTo(2);
+    }
+
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
     void testPooledExchangeReleasedOnFailureAndRetry(boolean fetchContent) throws Exception {
@@ -221,17 +212,8 @@ class ApicurioRegistryConsumerTest {
         ApicurioRegistryEndpoint endpoint = context.getEndpoint(
                 ENDPOINT_URI + "&startScheduler=false&fetchContent=" + fetchContent, ApicurioRegistryEndpoint.class);
         endpoint.setRegistryClient(mockClient);
+        pages.add(2, 1);
 
-        SearchedVersion first = new SearchedVersion();
-        first.setGlobalId(1L);
-        first.setVersion("1");
-        SearchedVersion second = new SearchedVersion();
-        second.setGlobalId(2L);
-        second.setVersion("2");
-        VersionSearchResults results = new VersionSearchResults();
-        results.setVersions(List.of(second, first));
-        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
-                .versions().get()).thenReturn(results);
         IllegalStateException failure = new IllegalStateException("failed first version");
         if (fetchContent) {
             when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")

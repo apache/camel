@@ -59,8 +59,14 @@ public class ApicurioRegistryComponentConfigurer extends PropertyConfigurerSuppo
         case "tokenendpoint":
         case "tokenEndpoint": getOrCreateConfiguration(target).setTokenEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "vertx": target.setVertx(property(camelContext, io.vertx.core.Vertx.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"vertx"};
     }
 
     @Override
@@ -95,6 +101,7 @@ public class ApicurioRegistryComponentConfigurer extends PropertyConfigurerSuppo
         case "tokenendpoint":
         case "tokenEndpoint": return java.lang.String.class;
         case "username": return java.lang.String.class;
+        case "vertx": return io.vertx.core.Vertx.class;
         default: return null;
         }
     }
@@ -132,6 +139,7 @@ public class ApicurioRegistryComponentConfigurer extends PropertyConfigurerSuppo
         case "tokenendpoint":
         case "tokenEndpoint": return getOrCreateConfiguration(target).getTokenEndpoint();
         case "username": return getOrCreateConfiguration(target).getUsername();
+        case "vertx": return target.getVertx();
         default: return null;
         }
     }

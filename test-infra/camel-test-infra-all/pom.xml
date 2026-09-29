@@ -98,6 +98,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-apicurio-registry</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-arangodb</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -333,6 +338,12 @@
                         <phase>prepare-package</phase>
                         <configuration>
                             <fileSets>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-apicurio-registry</artifactId>
+                                    </dependency>
+                                </fileSet>
                                 <fileSet>
                                     <dependency>
                                         <groupId>org.apache.camel</groupId>

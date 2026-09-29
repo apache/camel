@@ -17,7 +17,9 @@
 package org.apache.camel.component.apicurioregistry;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import io.vertx.core.Vertx;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -29,6 +31,13 @@ public class ApicurioRegistryComponent extends DefaultComponent {
 
     @Metadata(label = "advanced", description = "The component configuration")
     private ApicurioRegistryConfiguration configuration = new ApicurioRegistryConfiguration();
+
+    @Metadata(label = "advanced", autowired = true,
+              description = "To use an existing Vert.x instance for the registry clients. If not set, the component creates"
+                            + " one shared Vert.x instance on first use and closes it when the component stops.")
+    private Vertx vertx;
+
+    private boolean managedVertx;
 
     public ApicurioRegistryComponent() {
     }
@@ -54,6 +63,38 @@ public class ApicurioRegistryComponent extends DefaultComponent {
         ApicurioRegistryEndpoint endpoint = new ApicurioRegistryEndpoint(uri, this, config, groupId, artifactId);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    synchronized Vertx getOrCreateVertx() {
+        if (vertx == null) {
+            vertx = Vertx.vertx();
+            managedVertx = true;
+        }
+        return vertx;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        Vertx toClose = null;
+        synchronized (this) {
+            if (managedVertx && vertx != null) {
+                toClose = vertx;
+                vertx = null;
+                managedVertx = false;
+            }
+        }
+        if (toClose != null) {
+            toClose.close().toCompletionStage().toCompletableFuture().get(30, TimeUnit.SECONDS);
+        }
+    }
+
+    public Vertx getVertx() {
+        return vertx;
+    }
+
+    public void setVertx(Vertx vertx) {
+        this.vertx = vertx;
     }
 
     public ApicurioRegistryConfiguration getConfiguration() {

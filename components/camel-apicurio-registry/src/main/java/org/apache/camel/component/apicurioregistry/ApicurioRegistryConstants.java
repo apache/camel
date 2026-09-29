@@ -57,7 +57,7 @@ public interface ApicurioRegistryConstants {
     @Metadata(label = "consumer", description = "The version state", javaType = "String")
     String HEADER_VERSION_STATE = "CamelApicurioRegistryVersionState";
 
-    @Metadata(description = "Whether validation passed", javaType = "Boolean")
+    @Metadata(description = "Whether the check passed. Set by validate and testCompatibility.", javaType = "Boolean")
     String HEADER_VALIDATION_RESULT = "CamelApicurioRegistryValidationResult";
 
     @Metadata(description = "Rule violation details from validate or testCompatibility. Cleared before each check.",

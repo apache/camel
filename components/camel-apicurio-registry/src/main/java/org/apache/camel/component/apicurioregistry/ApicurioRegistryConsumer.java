@@ -18,18 +18,23 @@ package org.apache.camel.component.apicurioregistry;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import io.apicurio.registry.rest.client.RegistryClient;
 import io.apicurio.registry.rest.client.models.SearchedVersion;
+import io.apicurio.registry.rest.client.models.SortOrder;
 import io.apicurio.registry.rest.client.models.VersionSearchResults;
+import io.apicurio.registry.rest.client.models.VersionSortBy;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledPollConsumer;
 
 public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
+
+    static final int PAGE_SIZE = 100;
 
     private final ApicurioRegistryEndpoint endpoint;
     private final ApicurioRegistryConfiguration configuration;
@@ -53,15 +58,7 @@ public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
         }
 
         RegistryClient client = endpoint.getRegistryClient();
-        VersionSearchResults results = client.groups().byGroupId(groupId)
-                .artifacts().byArtifactId(artifactId).versions().get();
-
-        if (results == null || results.getVersions() == null) {
-            return 0;
-        }
-
-        List<SearchedVersion> versions = new ArrayList<>(results.getVersions());
-        versions.sort(Comparator.comparingLong(SearchedVersion::getGlobalId));
+        List<SearchedVersion> versions = fetchNewVersions(client, groupId, artifactId);
 
         int count = 0;
         for (SearchedVersion version : versions) {
@@ -93,6 +90,13 @@ public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
                     }
 
                     getProcessor().process(exchange);
+                    if (exchange.getException() != null) {
+                        // do not advance the watermark so the version is retried on the next poll
+                        getExceptionHandler().handleException(
+                                "Error processing artifact version with globalId " + globalId, exchange,
+                                exchange.getException());
+                        break;
+                    }
                     lastSeenGlobalId = globalId;
                     count++;
                 } finally {
@@ -101,5 +105,43 @@ public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
             }
         }
         return count;
+    }
+
+    /**
+     * Fetches the versions newer than the watermark, in ascending globalId order. Pages are requested newest first so
+     * that polling stops as soon as an already seen version is reached.
+     */
+    private List<SearchedVersion> fetchNewVersions(RegistryClient client, String groupId, String artifactId) {
+        // keyed by globalId: a version created between page requests shifts the pages and may repeat one entry
+        Map<Long, SearchedVersion> answer = new TreeMap<>();
+        int offset = 0;
+        while (true) {
+            final int pageOffset = offset;
+            VersionSearchResults page = client.groups().byGroupId(groupId).artifacts().byArtifactId(artifactId)
+                    .versions().get(config -> {
+                        config.queryParameters.orderby = VersionSortBy.GlobalId;
+                        config.queryParameters.order = SortOrder.Desc;
+                        config.queryParameters.offset = pageOffset;
+                        config.queryParameters.limit = PAGE_SIZE;
+                    });
+            List<SearchedVersion> versions = page != null ? page.getVersions() : null;
+            if (versions == null || versions.isEmpty()) {
+                break;
+            }
+            boolean reachedWatermark = false;
+            for (SearchedVersion version : versions) {
+                if (lastSeenGlobalId != null && version.getGlobalId() <= lastSeenGlobalId) {
+                    reachedWatermark = true;
+                    break;
+                }
+                answer.put(version.getGlobalId(), version);
+            }
+            offset += versions.size();
+            if (reachedWatermark || versions.size() < PAGE_SIZE
+                    || page.getCount() != null && offset >= page.getCount()) {
+                break;
+            }
+        }
+        return new ArrayList<>(answer.values());
     }
 }

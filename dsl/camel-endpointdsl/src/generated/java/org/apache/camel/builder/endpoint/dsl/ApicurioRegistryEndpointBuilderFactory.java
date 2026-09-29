@@ -1551,7 +1551,7 @@ public interface ApicurioRegistryEndpointBuilderFactory {
             return "CamelApicurioRegistryVersionState";
         }
         /**
-         * Whether validation passed.
+         * Whether the check passed. Set by validate and testCompatibility.
          * 
          * The option is a: {@code Boolean} type.
          * 
