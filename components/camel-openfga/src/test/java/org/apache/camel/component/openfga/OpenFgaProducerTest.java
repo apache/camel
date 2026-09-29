@@ -257,6 +257,21 @@ class OpenFgaProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void deniesWhenATransportLookingWrapperHidesASerializationFailure() throws Exception {
+        // an outer layer that looks like a transport failure must not decide it: the walk keeps going and the
+        // disqualifying cause underneath wins, wherever in the chain it sits
+        when(client.check(any(ClientCheckRequest.class), any())).thenReturn(CompletableFuture.failedFuture(
+                new IOException(
+                        "connection reset",
+                        new SdkSerializationException("could not serialize the input", new IllegalStateException()))));
+
+        Exchange out = request(ENDPOINT + "&failOpen=true");
+
+        assertThat(out.getException()).isInstanceOf(OpenFgaEvaluationException.class);
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
+    }
+
+    @Test
     void deniesAnInterruptedCallEvenWhenFailOpenIsEnabled() throws Exception {
         // An interrupt is a shutdown, not an unavailable decision point, so nothing authorized this exchange. Proved
         // rather than argued: the sibling camel-opa carried a dedicated InterruptedException catch whose comment

@@ -203,30 +203,34 @@ public class OpenFgaAuthorizer {
      * which is precisely a decision point that could not answer.
      */
     private static boolean isDecisionPointUnavailable(Throwable failure) {
+        boolean looksUnavailable = false;
         for (Throwable cause = failure; cause != null; cause = cause.getCause()) {
             if (cause instanceof FgaError error) {
-                // 429 says "not right now" and a 5xx says the server broke; both are an absent decision point. Every
-                // other 4xx is OpenFGA telling us the question was malformed or may not be asked, which is not
+                // an HTTP status is the most specific evidence there is, so it decides outright. 429 says "not right
+                // now" and a 5xx says the server broke; both are an absent decision point. Every other 4xx is OpenFGA
+                // telling us the question was malformed or may not be asked, which is not
                 return error.isRateLimitError() || error.isServerError();
             }
-            if (cause instanceof SdkSerializationException) {
-                // our own input could not be turned into a request, so OpenFGA was never asked anything. Checked
-                // before IOException, which this extends and would otherwise be read as a transport failure
+            if (cause instanceof SdkSerializationException || cause instanceof InterruptedException) {
+                // our own request was never formed, or we are shutting down. Disqualifying wherever it sits in the
+                // chain: SdkSerializationException extends IOException, and either could be wrapped by an outer layer
+                // that looks like a transport failure
                 return false;
             }
             if (cause instanceof IOException || cause instanceof TimeoutException) {
-                // a connect failure, a dropped connection, or no answer within the bound: the server never replied
-                return true;
+                // a connect failure, a dropped connection, or no answer within the bound. Noted rather than returned,
+                // because something disqualifying may still sit underneath it
+                looksUnavailable = true;
             }
             if (cause.getCause() == cause) {
                 break;
             }
         }
-        // Nothing recognisable, so nothing that says OpenFGA was reached and could not answer: a request the SDK
-        // refused to build (FgaInvalidParameterException for an invalid store id, say), an interrupt during shutdown,
-        // or a plain bug. The list above is deliberately an allowlist - a failure this method does not recognise must
-        // not become an allow just because it is unfamiliar.
-        return false;
+        // Whatever the walk found, and false when it found nothing: a request the SDK refused to build
+        // (FgaInvalidParameterException for an invalid store id, say) or a plain bug says nothing about whether
+        // OpenFGA was reachable. The list above is deliberately an allowlist - a failure this method does not
+        // recognise must not become an allow just because it is unfamiliar.
+        return looksUnavailable;
     }
 
     /**
