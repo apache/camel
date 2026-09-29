@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
@@ -176,8 +177,6 @@ public class RestDslEdgeCasesTest extends ContextTestSupport {
         // X-Id is only required on the 200 response
         Exchange out = template.request("seda:get-c", e -> {
         });
-        System.out.println(
-                "DEBUG " + out.getMessage().getHeaders() + " body=" + out.getMessage().getBody() + " ex=" + out.getException());
         assertThat(out.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(404);
         assertThat(out.getMessage().getBody(String.class)).isEqualTo("Not found");
 
@@ -203,6 +202,43 @@ public class RestDslEdgeCasesTest extends ContextTestSupport {
         assertThat(out.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(400);
         assertThat(out.getMessage().getBody(String.class)).isEqualTo("The request body is missing.");
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testTypeWithOptionalBodyParamOfAnotherName() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                restConfiguration().host("localhost").clientRequestValidation(true);
+                rest("/o").post().type(String.class)
+                        .param().name("payload").type(RestParamType.body).required(false).endParam()
+                        .to("mock:o");
+            }
+        });
+        context.start();
+
+        // the body parameter (whatever its name) is not required, so a missing body is accepted
+        getMockEndpoint("mock:o").expectedMessageCount(1);
+        Exchange out = template.request("seda:post-o", e -> e.getMessage().setBody(null));
+        assertThat(out.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isNull();
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testVerbIdSameAsRouteId() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                restConfiguration().host("localhost").inlineRoutes(false);
+                rest("/v").get().id("hello").to("direct:hello");
+                from("direct:hello").routeId("hello").transform().constant("Hello");
+            }
+        });
+        context.start();
+
+        // the route keeps its id, and the verb gets a generated id
+        assertThat(context.getRoute("hello").getEndpoint().getEndpointUri()).isEqualTo("direct://hello");
+        assertThat(context.getRoutes()).hasSize(2);
     }
 
     @Test

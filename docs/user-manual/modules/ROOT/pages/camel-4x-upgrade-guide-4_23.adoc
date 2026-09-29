@@ -350,11 +350,13 @@ With `clientRequestValidation` enabled, such a verb now rejects a request with a
 - The headers of a `responseMessage` are only required on the responses with that code (or on the responses of the
   `default` response message when the code has none). Before, the headers of all the response messages were required
   on every response.
-- A verb with `type` gets a body parameter that is required (unless the parameter is declared with `required=false`).
+- A verb with `type` gets a body parameter that is required (unless the body parameter, whatever its name, is
+  declared with `required=false`).
   With `clientRequestValidation` enabled, a request without a body is now rejected (400), as the body was already
   marked as required in the OpenAPI specification.
 - Two verbs with the same `id` now fail with a duplicate route id error. Before, the second verb silently got a
-  generated route id.
+  generated route id. A verb with the same `id` as a route that is not a rest verb (such as the `direct` route it
+  calls) still gets a generated route id, as before.
 - A `direct` route that more than one rest service calls is no longer inlined (with `inlineRoutes` enabled, which is
   the default). It stays a route of its own, and the rest services call it. Before, its outputs were inlined into all
   the rest services, which then shared the same EIP definitions.

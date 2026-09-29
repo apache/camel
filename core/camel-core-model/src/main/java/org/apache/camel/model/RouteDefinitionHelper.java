@@ -139,6 +139,15 @@ public final class RouteDefinitionHelper {
         // generated ids
         Set<String> customIds = new HashSet<>();
 
+        // the custom ids of the routes that are not generated from a rest verb: a verb with the same id as such a route
+        // gets a generated id instead (a duplicate id between verbs is kept, so it is reported as a duplicate route id)
+        Set<String> routeIds = new HashSet<>();
+        for (final RouteDefinition route : routes) {
+            if (route.hasCustomIdAssigned()) {
+                routeIds.add(context.resolvePropertyPlaceholders(route.getId()));
+            }
+        }
+
         for (final RouteDefinition route : routes) {
             // if there was a custom id assigned, then make sure to support
             // property placeholders
@@ -157,9 +166,7 @@ public final class RouteDefinitionHelper {
                     VerbDefinition verb = findVerbDefinition(context, rest, route.getInput().getEndpointUri());
                     if (verb != null) {
                         String id = context.resolvePropertyPlaceholders(verb.getId());
-                        if (verb.hasCustomIdAssigned() && ObjectHelper.isNotEmpty(id)) {
-                            // a duplicate id is kept, so it is reported as a duplicate route id (and not silently
-                            // replaced by a generated id)
+                        if (verb.hasCustomIdAssigned() && ObjectHelper.isNotEmpty(id) && !routeIds.contains(id)) {
                             route.setId(id);
                             customIds.add(id);
                         }

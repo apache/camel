@@ -1202,7 +1202,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             // so a required body is enforced
             if (verb.getType() != null) {
                 String bodyType = parseText(camelContext, verb.getType());
-                ParamDefinition param = findParam(verb, RestParamType.body.name());
+                ParamDefinition param = findBodyParam(verb);
                 if (param == null) {
                     // must be body type and set the model class as data type
                     param(verb).name(RestParamType.body.name()).type(RestParamType.body).dataType(bodyType).endParam();
@@ -1417,6 +1417,19 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             answer = "";
         }
         return parseText(camelContext, answer);
+    }
+
+    /**
+     * The body parameter of the verb, which is the parameter of type body (whatever its name), or else the parameter
+     * named body
+     */
+    private ParamDefinition findBodyParam(VerbDefinition verb) {
+        for (ParamDefinition param : verb.getParams()) {
+            if (param.getType() == RestParamType.body) {
+                return param;
+            }
+        }
+        return findParam(verb, RestParamType.body.name());
     }
 
     private ParamDefinition findParam(VerbDefinition verb, String name) {
