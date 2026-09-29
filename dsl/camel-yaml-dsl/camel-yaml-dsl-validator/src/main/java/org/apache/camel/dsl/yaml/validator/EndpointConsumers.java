@@ -88,26 +88,47 @@ public final class EndpointConsumers {
         }
         Set<String> consumed = new HashSet<>(consumedElsewhere);
         consumed.addAll(own);
-        Set<String> messages = new LinkedHashSet<>();
+        List<String> messages = new ArrayList<>();
+        for (Unconsumed u : unconsumed(routes, consumed)) {
+            messages.add(message(u));
+        }
+        return messages;
+    }
+
+    /** A route that sends to a {@code direct:} or {@code seda:} endpoint that no route consumes. */
+    record Unconsumed(String routeId, String endpoint) {
+    }
+
+    /**
+     * The sends of the routes to a {@code direct:} or {@code seda:} endpoint that is not among the consumed ones, once
+     * for each route and endpoint, in the order of the routes.
+     */
+    static Set<Unconsumed> unconsumed(List<Route> routes, Set<String> consumed) {
+        Set<Unconsumed> answer = new LinkedHashSet<>();
         for (Route r : routes) {
             for (String uri : sendsTo(r.steps())) {
                 String endpoint = endpoint(uri);
-                if (endpoint == null || consumed.contains(endpoint)) {
-                    continue;
+                if (endpoint != null && !consumed.contains(endpoint)) {
+                    answer.add(new Unconsumed(r.id(), endpoint));
                 }
-                messages.add((r.id() != null ? "route " + r.id() + ": " : "")
-                             + "sends to " + endpoint + ", and no route consumes it - not in this file, nor in the"
-                             + " other route files of the directory: "
-                             + ("direct".equals(scheme(endpoint))
-                                     ? "the route fails to start with No consumers available on endpoint"
-                                     : "nothing fails, the messages are queued and never read")
-                             + "; add a route with from: " + endpoint + ", or correct the name");
             }
         }
-        return new ArrayList<>(messages);
+        return answer;
     }
 
-    private static Set<String> consumed(List<Route> routes) {
+    /** The report for an endpoint no route consumes. */
+    static String message(Unconsumed u) {
+        return (u.routeId() != null ? "route " + u.routeId() + ": " : "")
+               + "sends to " + u.endpoint() + ", and no route consumes it - not in this file, nor in the"
+               + " other route files of the directory: "
+               + ("direct".equals(scheme(u.endpoint()))
+                       ? "the route fails to start with No consumers available on endpoint"
+                       : "nothing fails, the messages are queued and never read")
+               + "; add a route with from: " + u.endpoint() + ", or correct the name";
+    }
+
+    /** The endpoints the routes consume; null when one is only known at runtime, which could be any of them. */
+    static Set<String> consumed(List<Route> routes) {
         Set<String> answer = new HashSet<>();
         for (Route r : routes) {
             if (isDynamic(r.fromUri())) {
@@ -147,7 +168,7 @@ public final class EndpointConsumers {
      * Whether the file has a route template, a route made from one, or is a Kamelet: the routes they create are not
      * read here, so what they consume is not known.
      */
-    private static boolean hasTemplates(JsonNode target) {
+    static boolean hasTemplates(JsonNode target) {
         if (target.isObject()) {
             return "Kamelet".equals(target.path("kind").asText());
         }

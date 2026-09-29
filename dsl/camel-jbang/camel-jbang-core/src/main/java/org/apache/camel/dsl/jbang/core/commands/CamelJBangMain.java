@@ -220,6 +220,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("processor", new CommandLine(new CamelProcessorTop(this)))
                         .addSubcommand("route", new CommandLine(new CamelRouteTop(this)))
                         .addSubcommand("source", new CommandLine(new CamelSourceTop(this))))
+                .addSubcommand("topology", new CommandLine(new Topology(this)))
                 .addSubcommand("trace", new CommandLine(new CamelTraceAction(this)))
                 .addSubcommand("transform", new CommandLine(new TransformCommand(this))
                         .addSubcommand("dataweave", new CommandLine(new TransformDataWeave(this)))

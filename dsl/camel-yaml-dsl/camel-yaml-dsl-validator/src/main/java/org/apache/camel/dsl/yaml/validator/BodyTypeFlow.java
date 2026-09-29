@@ -64,7 +64,7 @@ final class BodyTypeFlow {
     private static final Set<String> VERBS_WITHOUT_BODY = Set.of("get", "delete", "head");
 
     /** The consumers that produce no body of their own, so the message reaching the route has none. */
-    private static final Set<String> NO_BODY_CONSUMER = Set.of("timer", "quartz", "scheduler", "cron");
+    static final Set<String> NO_BODY_CONSUMER = Set.of("timer", "quartz", "scheduler", "cron");
 
     private BodyTypeFlow() {
     }
@@ -78,9 +78,54 @@ final class BodyTypeFlow {
      *              operation of an OpenAPI specification the route binds to (CAMEL-24844 phase B)
      */
     static void check(JsonNode target, NodePath path, List<Error> errors, Set<String> known) {
+        Analysis analysis = analyze(target, known);
+        for (Route r : analysis.routes()) {
+            String reader = analysis.readerWithoutABody(r);
+            if (reader == null) {
+                continue;
+            }
+            errors.add(Error.builder()
+                    .keyword("type")
+                    .instanceLocation(path)
+                    .messageKey("type")
+                    .format(new java.text.MessageFormat("{0}"))
+                    .arguments(message(r, reader, analysis.callers().containsKey(r)))
+                    .build());
+        }
+    }
+
+    /**
+     * The routes of a target, which routes call which, and the endpoints known to carry no body: what the checks here
+     * and {@link SourceTopology} ask their questions of.
+     *
+     * @param routes   the routes of the target, in both the canonical and the short form
+     * @param callers  for a route, the routes that send to the endpoint it starts from
+     * @param restless the endpoints that deliver no body: the REST verbs without one, and what the caller knows
+     */
+    record Analysis(List<Route> routes, Map<Route, List<Route>> callers, Set<String> restless) {
+
+        /** Whether it is certain that no message reaching the route can have a body. */
+        boolean certainlyWithoutABody(Route route) {
+            return BodyTypeFlow.certainlyWithoutABody(route, callers, restless, new HashSet<>());
+        }
+
+        /**
+         * The name of what reads the body in the route, when it does so before anything sets one and no message
+         * reaching the route can have one; null otherwise.
+         */
+        String readerWithoutABody(Route route) {
+            String reader = firstBodyReaderBeforeAnyProducer(route.steps());
+            return reader != null && certainlyWithoutABody(route) ? reader : null;
+        }
+    }
+
+    /**
+     * @param known the endpoints the caller knows deliver no body, as for {@link #check}
+     */
+    static Analysis analyze(JsonNode target, Set<String> known) {
         List<Route> routes = routes(target);
         if (routes.isEmpty()) {
-            return;
+            return new Analysis(routes, Map.of(), Set.of());
         }
         // the graph: which routes send to the endpoint a route starts from
         Map<String, List<Route>> byFrom = new HashMap<>();
@@ -101,27 +146,36 @@ final class BodyTypeFlow {
         for (String uri : known) {
             restless.add(normalize(uri));
         }
-        for (Route r : routes) {
-            String reader = firstBodyReaderBeforeAnyProducer(r.steps());
-            if (reader == null) {
-                continue;
-            }
-            if (!certainlyWithoutABody(r, callers, restless, new HashSet<>())) {
-                continue;
-            }
-            errors.add(Error.builder()
-                    .keyword("type")
-                    .instanceLocation(path)
-                    .messageKey("type")
-                    .format(new java.text.MessageFormat("{0}"))
-                    .arguments((r.id() != null ? "route " + r.id() + ": " : "") + reader
-                               + (READS_THE_BODY.contains(reader) ? " reads the message body" : " works on the message body")
-                               + ", and the message reaching this route has none"
-                               + (callers.containsKey(r) ? " - the routes that call it do not set one either" : "")
-                               + ": read the data first with setBody and constant: resource:file:... for a known"
-                               + " file, or poll: for one that is not")
-                    .build());
+        return new Analysis(routes, callers, restless);
+    }
+
+    /** The report for a route that reads the body when it has none. */
+    static String message(Route r, String reader, boolean hasCallers) {
+        return (r.id() != null ? "route " + r.id() + ": " : "") + reader
+               + (READS_THE_BODY.contains(reader) ? " reads the message body" : " works on the message body")
+               + ", and the message reaching this route has none"
+               + (hasCallers ? " - the routes that call it do not set one either" : "")
+               + ": read the data first with setBody and constant: resource:file:... for a known"
+               + " file, or poll: for one that is not";
+    }
+
+    /**
+     * The first step of the route that may put something in the body, by the name of the step; null when none does.
+     * Only the steps of the route itself are looked at, not the ones nested in them.
+     */
+    static String firstBodyProducer(JsonNode steps) {
+        if (steps == null || !steps.isArray()) {
+            return null;
         }
+        for (JsonNode step : steps) {
+            for (var it = step.fieldNames(); it.hasNext();) {
+                String name = it.next();
+                if (SETS_THE_BODY.contains(name)) {
+                    return name;
+                }
+            }
+        }
+        return null;
     }
 
     /**

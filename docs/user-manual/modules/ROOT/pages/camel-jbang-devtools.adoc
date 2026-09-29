@@ -398,6 +398,52 @@ Enable Hikari debug logging to see the pool configuration:
 logging.level.com.zaxxer.hikari = DEBUG
 ----
 
+== Route topology from the source
+
+`camel topology` shows how the routes of an application fit together, read from the source files without running
+them: where each route starts, which routes send to which (and through which endpoint), the endpoints that leave and
+enter the application, where the body of each route comes from, and what looks wrong.
+
+[source,bash]
+----
+$ camel topology orders.camel.yaml lookup.camel.yaml inbox.camel.yaml orphan.camel.yaml
+Route topology (4 routes, 1 connections, 2 findings) - YAML routes only
+
+  orders (timer:orders) type=trigger  [orders.camel.yaml]
+    body: none; may be set by to
+    --> lookup via direct:lookup [internal]
+  lookup (direct:lookup) type=route  [lookup.camel.yaml]
+    body: none; set by setBody
+  inbox (kafka:incoming-orders) type=route  [inbox.camel.yaml]
+    body: from the consumer of the route
+  orphan (direct:orphan) type=route  [orphan.camel.yaml]
+    body: unknown - no route in the files calls it
+
+External endpoints:
+  [out] http:api/stock (http) route=lookup
+  [in] kafka:incoming-orders (kafka) route=inbox
+
+Findings:
+  route orders: sends to direct:missing, and no route in the YAML files read consumes it - ...
+  route orphan: nothing in the YAML route files sends to direct:orphan, so it is called from elsewhere ...
+----
+
+Without arguments it reads the YAML files of the current directory and its subdirectories (build and tooling
+directories such as `target` are skipped); it also takes files and directories. `--json` gives the same nodes, edges
+and external endpoints as the `route-topology` developer console, that `camel cmd route-topology` shows for a
+running integration, with the file and the body of each route, the findings and the files not read added.
+
+The findings are informational, and never make the command fail: an endpoint a route sends to with `direct:` or
+`seda:` and no route consumes, a route that reads a body that neither it nor the routes that call it set, and a
+`direct:` or `seda:` route that no route calls. The command fails, with exit code 1, only for a path that does not
+exist, or for a file given by name that is not a YAML file or cannot be parsed. A YAML file of a directory that cannot
+be parsed is listed as not read.
+
+Only YAML routes are read. Routes written in Java or XML, route templates and Kamelets are not, so a route that is
+consumed or called from them is not seen to be: the findings say so, and the endpoints and routes they are about are
+not reported while a route template or a Kamelet is among the files. The body of a route that is called by a REST
+operation bound to an OpenAPI specification is not known either.
+
 == Validate Plugin
 
 *Available since Camel 4.18*

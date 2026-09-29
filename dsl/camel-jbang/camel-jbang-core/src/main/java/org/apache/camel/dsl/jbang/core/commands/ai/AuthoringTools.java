@@ -935,7 +935,7 @@ public final class AuthoringTools {
     }
 
     /** The regular files under the directory, sorted by path, build and tooling directories skipped. */
-    private static List<Path> projectFiles(Path dir) {
+    public static List<Path> projectFiles(Path dir) {
         List<Path> files = new ArrayList<>();
         try {
             Files.walkFileTree(dir, EnumSet.noneOf(FileVisitOption.class), MAX_DEPTH, new SimpleFileVisitor<>() {
