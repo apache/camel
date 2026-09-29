@@ -131,21 +131,27 @@ public final class DataSourceHelper {
 
         // Agroal (Quarkus default pool): AgroalDataSource.flush(FlushMode.GRACEFUL).
         // GRACEFUL closes idle connections immediately and active connections when returned to the pool.
-        // Detected via reflection to avoid a compile-time dependency on agroal-api.
+        // Resolved through the public AgroalDataSource interface (not ds.getClass()) so that proxy
+        // or wrapper classes work correctly.  No compile-time dependency on agroal-api.
         try {
-            // look up flush(FlushMode) — the parameter type is the nested FlushMode enum
-            for (Method m : ds.getClass().getMethods()) {
-                if ("flush".equals(m.getName()) && m.getParameterCount() == 1) {
-                    Class<?> flushModeClass = m.getParameterTypes()[0];
-                    if (flushModeClass.isEnum() && flushModeClass.getSimpleName().equals("FlushMode")) {
-                        @SuppressWarnings("unchecked")
-                        Enum<?> graceful = Enum.valueOf((Class<Enum>) flushModeClass, "GRACEFUL");
-                        m.invoke(ds, graceful);
-                        LOG.info("Secret rotation (source={}): Agroal flush(GRACEFUL) called on {}", source, ds);
-                        return;
+            Class<?> agroalDsClass = Class.forName("io.agroal.api.AgroalDataSource");
+            if (agroalDsClass.isInstance(ds)) {
+                // resolve flush(FlushMode) from the public interface
+                for (Method m : agroalDsClass.getMethods()) {
+                    if ("flush".equals(m.getName()) && m.getParameterCount() == 1) {
+                        Class<?> flushModeClass = m.getParameterTypes()[0];
+                        if (flushModeClass.isEnum() && flushModeClass.getSimpleName().equals("FlushMode")) {
+                            @SuppressWarnings("unchecked")
+                            Enum<?> graceful = Enum.valueOf((Class<Enum>) flushModeClass, "GRACEFUL");
+                            m.invoke(ds, graceful);
+                            LOG.info("Secret rotation (source={}): Agroal flush(GRACEFUL) called on {}", source, ds);
+                            return;
+                        }
                     }
                 }
             }
+        } catch (ClassNotFoundException e) {
+            // Agroal not on classpath — fall through to generic fallback
         } catch (InvocationTargetException e) {
             LOG.warn("Secret rotation (source={}): Agroal flush(GRACEFUL) failed on {}", source, ds,
                     e.getCause() != null ? e.getCause() : e);
