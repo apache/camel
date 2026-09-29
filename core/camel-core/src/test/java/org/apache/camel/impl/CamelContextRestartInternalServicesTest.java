@@ -17,12 +17,18 @@
 package org.apache.camel.impl;
 
 import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.debugger.DefaultDebugger;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CamelContextRestartInternalServicesTest extends ContextTestSupport {
 
     private File spoolDir;
+    private final MyService myService = new MyService();
 
     @Test
     public void testRestart() throws Exception {
@@ -61,6 +68,44 @@ public class CamelContextRestartInternalServicesTest extends ContextTestSupport 
         assertFalse(spoolDir.exists(), "spool directory should be removed again");
     }
 
+    @Test
+    public void testRestartOtherServices() throws Exception {
+        // context plugins that are services, the debugger, and a service added with addService
+        Map<String, Object> services = new LinkedHashMap<>();
+        services.put("period task scheduler", PluginHelper.getPeriodTaskScheduler(context));
+        services.put("async processor await manager", PluginHelper.getAsyncProcessorAwaitManager(context));
+        services.put("bean introspection", PluginHelper.getBeanIntrospection(context));
+        services.put("debugger", context.getDebugger());
+        services.put("my service", myService);
+        assertServices(services, ServiceStatus.Started);
+
+        context.stop();
+        services.forEach((name, service) -> assertEquals(ServiceStatus.Stopped, status(service), name));
+
+        context.start();
+        assertServices(services, ServiceStatus.Started);
+
+        context.stop();
+        services.forEach((name, service) -> assertEquals(ServiceStatus.Stopped, status(service), name));
+    }
+
+    @Test
+    public void testServiceRemovedWhileStoppedIsNotRestarted() throws Exception {
+        context.stop();
+        context.removeService(myService);
+
+        context.start();
+        assertEquals(ServiceStatus.Stopped, status(myService));
+        assertFalse(context.hasService(myService));
+    }
+
+    private void assertServices(Map<String, Object> services, ServiceStatus expected) {
+        services.forEach((name, service) -> {
+            assertEquals(expected, status(service), name);
+            assertTrue(context.hasService(service), name + " should be registered");
+        });
+    }
+
     private void assertStatus(ServiceStatus expected) {
         assertEquals(expected, status(context.getStreamCachingStrategy()), "stream caching strategy");
         assertEquals(expected, status(context.getInflightRepository()), "inflight repository");
@@ -72,6 +117,17 @@ public class CamelContextRestartInternalServicesTest extends ContextTestSupport 
 
     private static ServiceStatus status(Object service) {
         return ((StatefulService) service).getStatus();
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext answer = super.createCamelContext();
+        answer.setDebugger(new DefaultDebugger());
+        answer.addService(myService);
+        return answer;
+    }
+
+    private static class MyService extends ServiceSupport {
     }
 
     @Override
