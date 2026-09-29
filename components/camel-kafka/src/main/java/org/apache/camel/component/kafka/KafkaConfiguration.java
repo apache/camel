@@ -124,7 +124,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "consumer", javaType = "java.time.Duration")
     private Integer maxPollIntervalMs;
     // auto.offset.reset1
-    @UriParam(label = "consumer", defaultValue = "latest", enums = "latest,earliest,none")
+    @UriParam(label = "consumer", defaultValue = "latest")
     private String autoOffsetReset = "latest";
     // partition.assignment.strategy
     @UriParam(label = "consumer", defaultValue = KafkaConstants.PARTITIONER_RANGE_ASSIGNOR)
@@ -1019,9 +1019,10 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * What to do when there is no initial offset in ZooKeeper or if an offset is out of range: earliest : automatically
-     * reset the offset to the earliest offset latest: automatically reset the offset to the latest offset fail: throw
-     * exception to the consumer
+     * Where a consumer group starts reading when it has no committed offset, or the committed offset is out of range.
+     * Valid values are: earliest (seek to the earliest available offset), latest (seek to the latest offset, the
+     * default), none (throw an exception if no previous offset is found), by_duration: followed by an ISO-8601
+     * duration (e.g. by_duration:PT5M or by_duration:P1D; requires Kafka 4.0 or later).
      */
     public void setAutoOffsetReset(String autoOffsetReset) {
         this.autoOffsetReset = autoOffsetReset;

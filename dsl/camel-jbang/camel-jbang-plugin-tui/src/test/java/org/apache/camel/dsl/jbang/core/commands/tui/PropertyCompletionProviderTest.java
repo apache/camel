@@ -253,11 +253,11 @@ class PropertyCompletionProviderTest {
     @Test
     void componentEnumOptionReturnsValues() {
         List<AutocompletePopup.CompletionItem> items
-                = provideValueCompletions("camel.component.kafka.autoOffsetReset");
+                = provideValueCompletions("camel.component.kafka.compressionCodec");
 
         assertThat(items).isNotEmpty();
-        assertThat(items).anyMatch(i -> i.key().equals("latest"));
-        assertThat(items).anyMatch(i -> i.key().equals("earliest"));
+        assertThat(items).anyMatch(i -> i.key().equals("none"));
+        assertThat(items).anyMatch(i -> i.key().equals("gzip"));
         // each value carries the parent option's description
         assertThat(items).allMatch(i -> i.description() != null && !i.description().isEmpty());
     }
@@ -271,8 +271,10 @@ class PropertyCompletionProviderTest {
     @Test
     void stringOptionReturnsEmptyValueCompletions() {
         // camel.main.name is a string option with no enums
-        List<AutocompletePopup.CompletionItem> items = provideValueCompletions("camel.main.name");
-        assertThat(items).isEmpty();
+        assertThat(provideValueCompletions("camel.main.name")).isEmpty();
+        // autoOffsetReset is intentionally a free-form string (not an enum) because Kafka 4.0
+        // introduced by_duration:<ISO-8601> which cannot be expressed as a single fixed enum value
+        assertThat(provideValueCompletions("camel.component.kafka.autoOffsetReset")).isEmpty();
     }
 
     // --- Helper methods that mirror SourceTab's provider logic ---
