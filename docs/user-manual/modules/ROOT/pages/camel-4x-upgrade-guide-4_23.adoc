@@ -1028,6 +1028,19 @@ An onCompletion with `parallelProcessing` that synchronously stops its own route
 shutdown timeout occurs, and the route is then stopped forcibly. Stop the route asynchronously instead, for example
 from a separate thread or with the Control Bus `async=true` option.
 
+=== camel-seda, camel-disruptor - a message that is not queued completes its own exchange
+
+When the SEDA producer does not add an InOnly message to the queue, because it is discarded (`discardWhenFull=true`)
+or adding it fails (the queue is full, the `offerTimeout` elapses, or the producer is interrupted), the on
+completions of the exchange now run when the exchange is done. The same applies to the Disruptor producer when the
+ring buffer is full (with `blockWhenFull=false`) or the Disruptor is not started. Previously they had been handed over to the copy of the exchange
+that was dropped, and never ran: for example the file consumer neither committed nor rolled back the file, which
+then stayed in its in-progress repository and was not picked up again until the route was restarted.
+
+Now a discarded message is committed like any other message whose route completed (for example the file consumer
+moves or deletes the file), and a message that could not be added is rolled back, so the consumer can pick it up
+again.
+
 === Component deprecation
 
 ==== camel-minio

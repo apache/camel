@@ -148,7 +148,15 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                 // no wait, eg its a InOnly then just publish to the ringbuffer and return
                 // handover the completion so its the copy which performs that, as we do not wait
                 final Exchange copy = prepareCopy(exchange, true);
-                doPublish(copy);
+                try {
+                    doPublish(copy);
+                } catch (RuntimeException e) {
+                    // the copy is not published (such as when the ringbuffer is full), so the exchange takes back its on
+                    // completions (such as a consumer rolling back the message), which also releases the stream cache
+                    // of the copy
+                    copy.getExchangeExtension().handoverCompletions(exchange);
+                    throw e;
+                }
             }
         } catch (Exception e) {
             exchange.setException(e);
