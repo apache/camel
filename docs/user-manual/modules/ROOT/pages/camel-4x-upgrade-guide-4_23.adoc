@@ -534,6 +534,19 @@ When the flag is `false` (the default), any remaining `CamelExecCommand*`,
 and a WARN is logged once per exec endpoint. Those headers never overrode the
 URI without the flag; they were just silent before.
 
+=== camel-syslog - text outside US-ASCII
+
+The syslog data format and the `SyslogMessage` type converter decoded every byte of a message as one
+ISO-8859-1 character, so any text outside US-ASCII (for example the UTF-8 that RFC 5424 specifies for MSG
+and for structured data values) came out as two to four wrong characters. The text is now decoded with
+the charset of the exchange (the `CamelCharsetName` header or exchange property, which the `encoding`
+option of camel-netty and camel-mina sets), and UTF-8 when none is set. A MSG that starts with the UTF-8
+byte order mark is decoded as UTF-8 and the byte order mark is no longer part of the log message. The
+data format also writes the message with the charset of the exchange when it marshals.
+
+US-ASCII messages are parsed as before. A route that repaired the wrongly decoded text itself must stop
+doing so.
+
 === Components and Language removal
 
 ==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
