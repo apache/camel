@@ -225,13 +225,12 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport
             return;
         }
 
-        timeoutLogger.log("Timeout of correlation id: " + key);
-
         workerPool.submit(() -> {
             Exchange exchange = value.getExchange();
             AsyncCallback callback = value.getCallback();
             // the exchange may have been completed meanwhile (the write failed), then it must not be touched
             if (exchange != null && callback != null && value.markDone()) {
+                timeoutLogger.log("Timeout of correlation id: " + key);
                 Object timeoutBody = getTimeoutResponse(key, exchange.getMessage().getBody());
                 if (timeoutBody != null) {
                     exchange.getMessage().setBody(timeoutBody);
