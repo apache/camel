@@ -272,9 +272,12 @@ public class OpaConfiguration implements Cloneable {
     }
 
     /**
-     * Whether to allow the exchange to proceed when the policy cannot be evaluated at all, for example because the OPA
-     * server is unreachable. Disabled by default so that an unreachable policy decision point denies rather than grants
-     * access. Do not enable this in production.
+     * Whether to allow the exchange to proceed when the policy decision point is unavailable: in {@code rest} mode the
+     * OPA server cannot be reached, times out, or a gateway in front of it answers 502, 503, 504 or 429; in
+     * {@code wasm} mode no instance frees up within {@code borrowTimeout}. It never applies to an answer: an undefined
+     * decision, a rejected request (400, or any other 4xx such as a wrong or expired bearer token) and an error
+     * evaluating the policy (500) fail closed even when this is set. Disabled by default so that an unavailable policy
+     * decision point denies rather than grants access. Do not enable this in production.
      */
     public boolean isFailOpen() {
         return failOpen;
@@ -292,10 +295,10 @@ public class OpaConfiguration implements Cloneable {
      * Authorize a whole collection in one call. When enabled the producer expects a {@code List} body, evaluates one
      * input document per element - each element as the {@code body}, sharing the exchange's headers and properties -
      * and returns the per-element verdicts in the {@code CamelOpaBatchDecision} header, a {@code List<Boolean>}
-     * parallel to the input. An element whose evaluation could not be reached is denied, unless {@code failOpen} is
-     * set; the batch is never allowed or denied as a whole because one element failed. Only for
-     * {@code evaluationMode=rest}: it saves the per-element HTTP round-trip via OPA's batch API, which has no meaning
-     * for in-process {@code wasm}.
+     * parallel to the input. An element whose evaluation failed is denied, unless {@code failOpen} is set and its
+     * decision point was unavailable; the batch is never allowed or denied as a whole because one element failed. Only
+     * for {@code evaluationMode=rest}: it saves the per-element HTTP round-trip via OPA's batch API, which has no
+     * meaning for in-process {@code wasm}.
      */
     public void setBatch(boolean batch) {
         this.batch = batch;

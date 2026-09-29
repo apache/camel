@@ -28,6 +28,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.component.opa.OpaSdkFailures.evaluationError;
+import static org.apache.camel.component.opa.OpaSdkFailures.status;
+import static org.apache.camel.component.opa.OpaSdkFailures.undefinedDecision;
+import static org.apache.camel.component.opa.OpaSdkFailures.unreachable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -50,10 +54,11 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
     @BindToRegistry("opaClient")
     private final OPAClient client = mock(OPAClient.class);
 
-    private OPAResult failed() {
-        // a batch element whose evaluation could not be reached: the server returned a result carrying an error
+    private OPAResult failed(OPAException failure) {
+        // a batch element that did not reach a decision: the result carries the failure instead of a value
         OPAResult result = mock(OPAResult.class);
         when(result.success()).thenReturn(false);
+        when(result.getException()).thenReturn(failure);
         return result;
     }
 
@@ -84,7 +89,7 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
     void deniesAFailedElementButLetsItsNeighboursDecide() throws Exception {
         Map<String, OPAResult> results = new LinkedHashMap<>();
         results.put("0", new OPAResult(Boolean.TRUE));
-        results.put("1", failed());
+        results.put("1", failed(evaluationError(PATH)));
         results.put("2", new OPAResult(Boolean.TRUE));
         stubBatch(results);
 
@@ -98,10 +103,12 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
     }
 
     @Test
-    void allowsAFailedElementUnderFailOpen() throws Exception {
+    void allowsAnElementWhoseServerWasUnreachableUnderFailOpen() throws Exception {
+        // per-element unavailability happens when the SDK falls back to one call per element, because the server
+        // does not implement the batch endpoint, and the server goes away part-way through
         Map<String, OPAResult> results = new LinkedHashMap<>();
         results.put("0", new OPAResult(Boolean.TRUE));
-        results.put("1", failed());
+        results.put("1", failed(unreachable(PATH)));
         results.put("2", new OPAResult(Boolean.FALSE));
         stubBatch(results);
 
@@ -112,6 +119,24 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
         assertThat(out.getException()).isNull();
         assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION, List.class))
                 .containsExactly(true, true, false);
+    }
+
+    @Test
+    void deniesAnElementOpaAnsweredWithoutADecisionEvenUnderFailOpen() throws Exception {
+        // an element that evaluated with an error, or to an undefined decision, reached the server: failOpen
+        // does not cover it
+        Map<String, OPAResult> results = new LinkedHashMap<>();
+        results.put("0", new OPAResult(Boolean.TRUE));
+        results.put("1", failed(evaluationError(PATH)));
+        results.put("2", failed(undefinedDecision(PATH)));
+        stubBatch(results);
+
+        Exchange out = template.request("opa:" + PATH + "?opaClient=#opaClient&batch=true&failOpen=true",
+                e -> e.getMessage().setBody(List.of("a", "b", "c")));
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION, List.class))
+                .containsExactly(true, false, false);
     }
 
     @Test
@@ -149,7 +174,7 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
     void failsClosedWhenTheWholeBatchCannotBeEvaluated() throws Exception {
         // the batch call itself fails - the server could not be reached at all - so nothing was decided. With
         // failOpen off, every element is denied by failing the exchange, not by returning a verdict list.
-        when(client.evaluateBatch(eq(PATH), anyMap())).thenThrow(new OPAException("connection refused"));
+        when(client.evaluateBatch(eq(PATH), anyMap())).thenThrow(unreachable(PATH));
 
         Exchange out = template.request("opa:" + PATH + "?opaClient=#opaClient&batch=true",
                 e -> e.getMessage().setBody(List.of("a", "b")));
@@ -165,7 +190,7 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
     void allowsEveryElementUnderFailOpenWhenTheWholeBatchFails() throws Exception {
         // failOpen turns a whole-batch failure into an allow for every element, parallel to the single-evaluation
         // failOpen path
-        when(client.evaluateBatch(eq(PATH), anyMap())).thenThrow(new OPAException("connection refused"));
+        when(client.evaluateBatch(eq(PATH), anyMap())).thenThrow(unreachable(PATH));
 
         Exchange out = template.request("opa:" + PATH + "?opaClient=#opaClient&batch=true&failOpen=true",
                 e -> e.getMessage().setBody(List.of("a", "b", "c")));
@@ -173,5 +198,21 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
         assertThat(out.getException()).isNull();
         assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION, List.class))
                 .containsExactly(true, true, true);
+    }
+
+    @Test
+    void failsTheWholeBatchClosedWhenTheServerRejectsItEvenUnderFailOpen() throws Exception {
+        // a wrong or expired bearer token: the server answered, so failOpen does not allow the batch through.
+        // Built first: the failure mocks an HttpResponse, which Mockito refuses mid-stubbing
+        OPAException rejected = status(PATH, 401);
+        when(client.evaluateBatch(eq(PATH), anyMap())).thenThrow(rejected);
+
+        Exchange out = template.request("opa:" + PATH + "?opaClient=#opaClient&batch=true&failOpen=true",
+                e -> e.getMessage().setBody(List.of("a", "b")));
+
+        assertThat(out.getException())
+                .isInstanceOf(OpaPolicyEvaluationException.class)
+                .hasMessageContaining("in batch");
+        assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION)).isNull();
     }
 }
