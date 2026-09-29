@@ -375,8 +375,10 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
             sb.append(prefix).append("  <location>").append(StringHelper.xmlEncode(getLocation())).append("</location>\n");
         }
         // route id is optional and we then use an empty value for no route id
-        sb.append(prefix).append("  <routeId>").append(routeId != null ? routeId : "").append("</routeId>\n");
-        sb.append(prefix).append("  <fromRouteId>").append(fromRouteId != null ? fromRouteId : "").append("</fromRouteId>\n");
+        sb.append(prefix).append("  <routeId>").append(routeId != null ? StringHelper.xmlEncode(routeId) : "")
+                .append("</routeId>\n");
+        sb.append(prefix).append("  <fromRouteId>").append(fromRouteId != null ? StringHelper.xmlEncode(fromRouteId) : "")
+                .append("</fromRouteId>\n");
         if (endpointUri != null) {
             sb.append(prefix).append("  <endpointUri>").append(StringHelper.xmlEncode(endpointUri)).append("</endpointUri>\n");
             sb.append(prefix).append("  <remoteEndpoint>").append(remoteEndpoint).append("</remoteEndpoint>\n");
@@ -386,7 +388,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
             sb.append(prefix).append("  <toNode>").append(StringHelper.xmlEncode(toNode)).append("</toNode>\n");
         } else {
             // if first message the use routeId as toNode
-            sb.append(prefix).append("  <toNode>").append(routeId).append("</toNode>\n");
+            sb.append(prefix).append("  <toNode>").append(routeId != null ? StringHelper.xmlEncode(routeId) : "")
+                    .append("</toNode>\n");
         }
         sb.append(prefix).append("  <exchangeId>").append(exchangeId).append("</exchangeId>\n");
         if (endpointServiceUrl != null) {

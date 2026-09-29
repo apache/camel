@@ -722,7 +722,10 @@ public final class DefaultConfigurationConfigurer {
         debugger.setIncludeExchangeVariables(config.isIncludeExchangeVariables());
         debugger.setIncludeException(config.isIncludeException());
         debugger.setLoggingLevel(config.getLoggingLevel().name());
-        debugger.setSuspendMode(config.isWaitForAttach()); // this option is named wait-for-attach
+        if (config.isWaitForAttach()) {
+            // this option is named wait-for-attach (only turn it on, so suspend mode set from the environment is kept)
+            debugger.setSuspendMode(true);
+        }
         debugger.setFallbackTimeout(config.getFallbackTimeout());
 
         // enable jmx connector if port is set

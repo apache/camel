@@ -103,10 +103,12 @@ public class BacklogTracerEdgeCasesTest extends ManagementTestSupport {
     public void testDumpAsXmlIsWellFormed() throws Exception {
         tracer.setRemoveOnDump(false);
         template.sendBody("direct:start", "Hello");
+        template.sendBody("direct:amp", "Hello");
 
         String xml = tracer.dumpAllTracedMessagesAsXml();
         assertNotNull(xml);
-        // endpoint uris with & must be encoded
+        assertTrue(xml.contains("<routeId>a&amp;b</routeId>"), xml);
+        // endpoint uris and route ids with & must be encoded
         DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
     }
 
@@ -123,6 +125,9 @@ public class BacklogTracerEdgeCasesTest extends ManagementTestSupport {
                         .to("log:foo")
                         .to("mock:a/b")
                         .to("mock:result?a=1&b=2");
+
+                from("direct:amp").routeId("a&b")
+                        .to("mock:amp");
             }
         };
     }
