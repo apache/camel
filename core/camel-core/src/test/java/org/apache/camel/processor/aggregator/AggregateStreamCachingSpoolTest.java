@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AggregationStrategy;
@@ -46,6 +47,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.service.ServiceSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
@@ -70,6 +72,8 @@ public class AggregateStreamCachingSpoolTest extends ContextTestSupport {
     private final AggregateController controller = new DefaultAggregateController();
     private final FailOnceRepository failOnce = new FailOnceRepository();
     private final FailOnceRepository failOnceAndClose = new FailOnceRepository();
+    // whether the on completion that the aggregation strategy added to the first exchange of the group has run
+    private final AtomicBoolean strategyCompletionDone = new AtomicBoolean();
 
     @Test
     public void testGroupedBodies() throws Exception {
@@ -186,6 +190,42 @@ public class AggregateStreamCachingSpoolTest extends ContextTestSupport {
         sendAndAssertBody("direct:memoryCopies");
     }
 
+    @Test
+    public void testStrategyCompletionWithOptimisticLocking() throws Exception {
+        sendAndAssertStrategyCompletion("direct:strategyCompletionOptimistic");
+    }
+
+    @Test
+    public void testStrategyCompletionWithRepositoryStoringCopies() throws Exception {
+        sendAndAssertStrategyCompletion("direct:strategyCompletionCopies");
+    }
+
+    @Test
+    public void testStrategyCompletionWithMemoryRepository() throws Exception {
+        sendAndAssertStrategyCompletion("direct:strategyCompletionMemory");
+    }
+
+    private void sendAndAssertStrategyCompletion(String uri) throws Exception {
+        // the aggregator must only release its own references to the spooled stream caches, and leave the on
+        // completions that the aggregation strategy adds to the exchanges alone (such as the ZipAggregationStrategy
+        // that deletes its zip file when the aggregated exchange is done)
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
+
+        template.sendBody(uri, stream());
+        template.sendBody(uri, stream());
+        template.sendBodyAndHeader(uri, stream(), "last", true);
+        sendersDone.countDown();
+
+        assertMockEndpointsSatisfied();
+        assertArrayEquals(DATA, result.getReceivedExchanges().get(0).getMessage().getBody(byte[].class));
+        assertSpoolDirectoryEmpty();
+        if (uri.endsWith("Memory")) {
+            // the memory repository keeps the exchange, so the on completion runs when the aggregated exchange is done
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).untilTrue(strategyCompletionDone);
+        }
+    }
+
     private void sendAndAssertBody(String uri) throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -246,6 +286,25 @@ public class AggregateStreamCachingSpoolTest extends ContextTestSupport {
                     }
                 };
 
+                // adds an on completion to the first exchange of the group, which must not run before the group completes
+                AggregationStrategy addCompletion = (oldExchange, newExchange) -> {
+                    if (oldExchange == null) {
+                        strategyCompletionDone.set(false);
+                        newExchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                            @Override
+                            public void onDone(Exchange exchange) {
+                                strategyCompletionDone.set(true);
+                            }
+                        });
+                        return newExchange;
+                    }
+                    if (strategyCompletionDone.get()) {
+                        throw new IllegalStateException("The on completion of the aggregation strategy has already run");
+                    }
+                    oldExchange.getMessage().setBody(newExchange.getMessage().getBody());
+                    return oldExchange;
+                };
+
                 AggregationStrategy failOnHeader = (oldExchange, newExchange) -> {
                     if (newExchange.getMessage().getHeader("fail") != null) {
                         throw new IllegalArgumentException("Forced");
@@ -290,6 +349,23 @@ public class AggregateStreamCachingSpoolTest extends ContextTestSupport {
                         .aggregate(constant("group"), new UseLatestAggregationStrategy()).aggregateController(controller)
                         .completionSize(5)
                         .to("mock:result");
+
+                from("direct:strategyCompletionOptimistic")
+                        .aggregate(constant("group"), addCompletion)
+                        .aggregationRepository(new MemoryAggregationRepository(true)).optimisticLocking()
+                        .completionPredicate(header("last").isNotNull()).eagerCheckCompletion()
+                        .process(read).to("mock:result");
+
+                from("direct:strategyCompletionCopies")
+                        .aggregate(constant("group"), addCompletion)
+                        .aggregationRepository(new CopyingRepository())
+                        .completionPredicate(header("last").isNotNull()).eagerCheckCompletion()
+                        .process(read).to("mock:result");
+
+                from("direct:strategyCompletionMemory")
+                        .aggregate(constant("group"), addCompletion)
+                        .completionPredicate(header("last").isNotNull()).eagerCheckCompletion()
+                        .process(read).to("mock:result");
 
                 from("direct:memoryCopies")
                         .aggregate(constant("group"), new UseLatestAggregationStrategy())

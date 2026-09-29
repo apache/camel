@@ -201,6 +201,22 @@ not complete by timeout until another exchange that has a completion timeout arr
 `AggregationRepository` that does not keep exchange properties never completes a group by timeout. This only affects
 optimistic locking combined with `completionTimeoutExpression`.
 
+=== Aggregate EIP - stream caching with spooling to disk
+
+When stream caching spools message bodies to disk, the aggregator now keeps the spool files of the bodies it
+aggregates until the aggregated exchange is done. Prior to Camel 4.23 a spool file was deleted as soon as the incoming
+exchange was done, so the aggregated exchange could fail to read the bodies with a `NoSuchFileException`.
+
+With the default `MemoryAggregationRepository` (without optimistic locking) the spool files of all exchanges of a group
+are now kept until the group completes and the aggregated exchange is done, so more disk space can be used in the spool
+directory than before. For example `UseLatestAggregationStrategy` with a large `completionSize` now keeps a spool file
+for every exchange of the group, although only the last body is used. A group that never completes keeps its spool
+files until the aggregator is shut down, such as when the route is removed or `CamelContext` is stopped.
+
+With optimistic locking, or a persistent aggregation repository, the spool file of an exchange is released when the
+exchange has been added to the repository (a persistent repository has read the body at that time), and only the
+spool file of the exchange that completes a group is kept until the aggregated exchange is done.
+
 === Variable Receive
 
 When an EIP with `variableReceive` stores a message into a variable that already holds a message, the header variables
