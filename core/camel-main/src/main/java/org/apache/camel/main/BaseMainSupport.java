@@ -1891,13 +1891,16 @@ public abstract class BaseMainSupport extends BaseService {
         setPropertiesOnTarget(camelContext, health, healthCheckProperties, "camel.health.",
                 mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
 
+        // auto-detect camel-health on classpath
+        HealthCheckRegistry hcr = camelContext.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
         if (health.getEnabled() != null && !health.getEnabled()) {
             // health-check is disabled
+            if (hcr != null) {
+                hcr.setEnabled(false);
+            }
             return;
         }
 
-        // auto-detect camel-health on classpath
-        HealthCheckRegistry hcr = camelContext.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
         if (hcr == null) {
             if (health.getEnabled() != null && health.getEnabled()) {
                 LOG.warn("Cannot find HealthCheckRegistry from classpath. Add camel-health to classpath.");

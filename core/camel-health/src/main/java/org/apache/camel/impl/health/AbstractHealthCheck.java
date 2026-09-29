@@ -176,7 +176,15 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
         }
 
         LOG.debug("Invoke health-check ({}) {}/{}", kind, getGroup(), getId());
-        doCall(builder, options);
+        try {
+            doCall(builder, options);
+        } catch (Exception e) {
+            // a failing check is down (and must not fail the other checks)
+            LOG.debug("health-check ({}) {}/{} failed due to: {}", kind, getGroup(), getId(), e.getMessage(), e);
+            builder.down();
+            builder.error(e);
+            builder.message("Health check failed due to: " + e.getMessage());
+        }
 
         if (builder.state() == null) {
             builder.unknown();
