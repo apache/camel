@@ -84,6 +84,7 @@ public final class SecurityUtils {
         map.put("sendenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("serializablepackages", new SecurityOption(INSECURE_SERIALIZATION, ""));
         map.put("skiptlsverify", new SecurityOption(INSECURE_SSL, "true"));
+        map.put("ssl", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         map.put("sslendpointalgorithm", new SecurityOption(INSECURE_SSL, "none"));
         map.put("stricthostkeychecking", new SecurityOption(INSECURE_SSL, ""));
         map.put("tls", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
