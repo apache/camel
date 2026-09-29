@@ -81,9 +81,12 @@ public class HealthCheckEdgeCasesTest {
                 return Ordered.HIGHEST;
             }
         });
-        MyCheck check = new MyCheck("disabled", null);
-        check.setEnabled(false);
-        registry.register(check);
+        registry.register(new MyCheck("unknown", null) {
+            @Override
+            protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
+                builder.unknown();
+            }
+        });
 
         Collection<HealthCheck.Result> full = HealthCheckHelper.invokeReadiness(context, "full");
         Collection<HealthCheck.Result> def = HealthCheckHelper.invokeReadiness(context, "default");
@@ -91,6 +94,34 @@ public class HealthCheckEdgeCasesTest {
         assertFalse(HealthCheckHelper.isResultsUp(full, true));
         assertFalse(HealthCheckHelper.isResultsUp(def, true));
         assertFalse(HealthCheckHelper.isResultsUp(oneline, true));
+
+        context.stop();
+    }
+
+    @Test
+    public void testDisabledCheckDoesNotChangeReadiness() throws Exception {
+        DefaultHealthCheckRegistry registry = new DefaultHealthCheckRegistry();
+        CamelContext context = createContext(registry);
+        context.start();
+
+        // a disabled check that comes first
+        MyCheck check = new MyCheck("disabled", null) {
+            @Override
+            public int getOrder() {
+                return Ordered.HIGHEST;
+            }
+        };
+        check.setEnabled(false);
+        registry.register(check);
+        registry.register(new MyCheck("up", null));
+
+        for (String level : new String[] { "full", "default", "oneline" }) {
+            Collection<HealthCheck.Result> results = HealthCheckHelper.invokeReadiness(context, level);
+            assertTrue(HealthCheckHelper.isResultsUp(results, true), level);
+            if (!"full".equals(level)) {
+                assertTrue(results.stream().noneMatch(r -> r.getCheck().getId().equals("disabled")), level);
+            }
+        }
 
         context.stop();
     }

@@ -3594,9 +3594,13 @@ skipped instead of being sent to afterwards. As before, recipients that had alre
 === camel-health - readiness is the same for every exposure level
 
 The readiness of Camel is now the same regardless of the health check exposure level (`full`, `default` or `oneline`).
-Previously with the `default` and `oneline` exposure levels, health checks in the `UNKNOWN` state (such as a disabled
-health check) were not included in the result, and Camel could report ready, while the `full` exposure level reported
-not ready for the same state. These health checks are now included, so Camel is not ready in all exposure levels.
+Previously with the `default` and `oneline` exposure levels, health checks in the `UNKNOWN` state were not included in
+the result, and Camel could report ready, while the `full` exposure level reported not ready for the same state. These
+health checks are now included, so Camel is not ready in all exposure levels.
+
+A health check that is disabled (such as a consumer health check turned off with `healthCheckConsumerEnabled=false`)
+no longer influences the readiness, in any exposure level. Previously a disabled health check made Camel not ready
+with the `full` exposure level.
 
 A route health check now reports `DOWN` when the route is suspended (or is starting or stopping), the same as when the
 route is stopped. Previously it reported the initial state of the health check registry.
