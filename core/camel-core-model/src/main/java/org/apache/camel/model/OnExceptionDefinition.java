@@ -222,8 +222,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
         if (outputs == null || getOutputs().isEmpty()) {
             // no outputs so there should be some sort of configuration
             ObjectHelper.firstNotNull(handledPolicy, handled, continuedPolicy, continued, retryWhilePolicy, retryWhile,
-                    redeliveryPolicyType, useOriginalMessage, useOriginalBody, onRedeliveryRef,
-                    onRedelivery, onExceptionOccurred)
+                    redeliveryPolicyType, redeliveryPolicyRef, useOriginalMessage, useOriginalBody, onRedeliveryRef,
+                    onRedelivery, onExceptionOccurredRef, onExceptionOccurred)
                     .orElseThrow(() -> new IllegalArgumentException(this + " is not configured."));
         }
     }

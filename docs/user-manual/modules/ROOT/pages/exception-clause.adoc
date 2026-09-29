@@ -174,16 +174,27 @@ Camel uses *`DefaultExceptionPolicyStrategy`* to determine a strategy
 how an exception being thrown should be handled by which *`onException`*
 clause. The strategy is:
 
-* the order in which the *`onException`* is configured takes precedence.
-Camel will test from first...last defined.
-* Camel will start from the bottom (nested caused by) and recursive up
-in the exception hierarchy to find the first matching *`onException`*
-clause.
+* Camel tests the thrown exception, and each of its causes (the nested
+caused by exceptions), against the exceptions of all the *`onException`*
+clauses.
 * *`instanceof`* test is used for testing the given exception with the
-*`onException`* clause defined exception list. An exact *`instanceof`*
-match will always be used, otherwise the *`onException`* clause that has
-an exception that is the closets super of the thrown exception is
-selected (recurring up the exception hierarchy).
+*`onException`* clause defined exception list. An exact match is
+preferred, otherwise the *`onException`* clause that has an exception
+that is the closest super class of the thrown exception is selected
+(recurring up the exception hierarchy).
+* The *closest* match wins, across the thrown exception and all its causes.
+For example, an exact match on the thrown (wrapper) exception wins over a
+super class match on a nested cause. When two clauses are equally close,
+the match on the most nested cause (bottom) wins.
+* When an *`onException`* in a route and an *`onException`* in the
+`RouteBuilder` (context scoped) are equally close, then the one in the
+route wins.
+* An *`onException`* with an `onWhen` predicate only matches when the
+predicate is `true`.
+* If the same exception is configured in more than one *`onException`*
+(in the same scope, without `onWhen`), then the *last* one configured is
+used. The *`onException`* from route configurations are added after the
+ones in the `RouteBuilder`, and are therefore used instead.
 
 This is best illustrated with an exception:
 
@@ -197,9 +208,9 @@ onException(OrderFailedException.class)
     .maximumRedeliveries(2);
 ----
 
-In the sample above we have defined two exceptions in
-which *`IOException`* is first, so Camel will pickup this exception if
-there is a match. *`IOException`* that is more general is selected then.
+In the sample above we have defined two exceptions, and Camel selects the
+*`onException`* that is the closest match of the thrown exception (or one of
+its causes).
 
 So if an exception is thrown with this hierarchy:
 

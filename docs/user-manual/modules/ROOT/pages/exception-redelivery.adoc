@@ -18,6 +18,12 @@ information about redeliver and which redeliver options exists.
 By default, any xref:exception-clause.adoc[Exception Clause] will *not*
 redeliver! (as it sets the `maximumRedeliveries` option to 0).
 
+NOTE: When any redelivery option is configured on the *`onException`* (such as
+`redeliveryDelay`, `logStackTrace` or `retryAttemptedLogLevel`), then its
+redelivery policy is based on the redelivery policy of the error handler, and
+the `maximumRedeliveries` of the error handler is used (unless
+`maximumRedeliveries` is also configured on the *`onException`*).
+
 Sometimes you want to configure the redelivery policy on a per exception
 type basis. By default in the top examples, if an
 *`org.apache.camel.ValidationException`* occurs then the message will

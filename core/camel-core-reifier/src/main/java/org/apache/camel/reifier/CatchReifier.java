@@ -79,6 +79,9 @@ public class CatchReifier extends ProcessorReifier<CatchDefinition> {
         List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
         for (String name : list) {
             Class<Throwable> type = camelContext.getClassResolver().resolveMandatoryClass(name, Throwable.class);
+            if (!Throwable.class.isAssignableFrom(type)) {
+                throw new IllegalArgumentException("The class: " + name + " in doCatch is not an exception");
+            }
             answer.add(type);
         }
         return answer;
