@@ -17,6 +17,7 @@
 package org.apache.camel.support.jsse;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -28,9 +29,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,6 +50,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.support.jsse.FilterParameters.Patterns;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -58,17 +62,19 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseSSLContextParameters extends JsseParameters {
 
+    private volatile boolean signatureSchemesFilterWarned;
+
     protected static final List<String> DEFAULT_CIPHER_SUITES_FILTER_INCLUDE
             = List.of(".*");
 
     protected static final List<String> DEFAULT_CIPHER_SUITES_FILTER_EXCLUDE
-            = List.of(".*_NULL_.*", ".*_anon_.*", ".*_EXPORT_.*", ".*_DES_.*", ".*MD5", ".*RC4.*");
+            = List.of(".*_NULL_.*", ".*_anon_.*", ".*_EXPORT_.*", ".*_DES_.*", ".*_3DES_.*", ".*MD5", ".*RC4.*");
 
     protected static final List<String> DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_INCLUDE
             = List.of(".*");
 
     protected static final List<String> DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_EXCLUDE
-            = List.of("SSL.*");
+            = List.of("SSL.*", "TLSv1", "TLSv1\\.1");
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseSSLContextParameters.class);
 
@@ -98,6 +104,9 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
     private static final String SSL_SERVER_SOCKET_SIGNATURE_SCHEME_LOG_MSG
             = createSignatureSchemeLogMessage("SSLServerSocket");
+
+    private static volatile boolean namedGroupsNotSupportedWarned;
+    private static volatile boolean signatureSchemesNotSupportedWarned;
 
     // Reflection handles for JDK 19/20 SSLParameters methods (not available on JDK 17)
     private static final @Nullable Method GET_NAMED_GROUPS;
@@ -134,13 +143,40 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
     private static void setNamedGroupsOnParams(SSLParameters params, String[] namedGroups) {
         if (SET_NAMED_GROUPS == null) {
+            if (!namedGroupsNotSupportedWarned) {
+                namedGroupsNotSupportedWarned = true;
+                LOG.warn("The named groups cannot be configured as this JVM does not support it (requires JDK 20 or newer)");
+            }
             return;
         }
+        invokeSetter(SET_NAMED_GROUPS, params, namedGroups, "named groups");
+    }
+
+    private static void invokeSetter(Method method, SSLParameters params, String[] values, String name) {
         try {
-            SET_NAMED_GROUPS.invoke(params, (Object) namedGroups);
-        } catch (Exception e) {
-            // ignore
+            method.invoke(params, (Object) values);
+        } catch (InvocationTargetException e) {
+            // the configured values must not be silently ignored (the JVM defaults would be used instead)
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
+            throw new IllegalArgumentException(
+                    "Cannot configure the " + name + " " + Arrays.toString(values) + " due to: " + cause.getMessage(), cause);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
         }
+    }
+
+    /**
+     * Trims the values, and removes blank and duplicate values (keeping the order), as the JVM does not allow blank or
+     * duplicate named groups and signature schemes.
+     */
+    static List<String> normalizeValues(List<String> values) {
+        Set<String> answer = new LinkedHashSet<>();
+        for (String value : values) {
+            if (value != null && !value.isBlank()) {
+                answer.add(value.trim());
+            }
+        }
+        return new ArrayList<>(answer);
     }
 
     private static String @Nullable [] getSignatureSchemesFromParams(SSLParameters params) {
@@ -156,13 +192,14 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
     private static void setSignatureSchemesOnParams(SSLParameters params, String[] signatureSchemes) {
         if (SET_SIGNATURE_SCHEMES == null) {
+            if (!signatureSchemesNotSupportedWarned) {
+                signatureSchemesNotSupportedWarned = true;
+                LOG.warn(
+                        "The signature schemes cannot be configured as this JVM does not support it (requires JDK 19 or newer)");
+            }
             return;
         }
-        try {
-            SET_SIGNATURE_SCHEMES.invoke(params, (Object) signatureSchemes);
-        } catch (Exception e) {
-            // ignore
-        }
+        invokeSetter(SET_SIGNATURE_SCHEMES, params, signatureSchemes, "signature schemes");
     }
 
     /**
@@ -240,6 +277,19 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      */
     public void setCipherSuites(@Nullable CipherSuitesParameters cipherSuites) {
         this.cipherSuites = cipherSuites;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext context) {
+        super.setCamelContext(context);
+        // the filter patterns may use property placeholders
+        for (FilterParameters filter : new FilterParameters[] {
+                getCipherSuitesFilter(), getSecureSocketProtocolsFilter(), getNamedGroupsFilter(),
+                getSignatureSchemesFilter() }) {
+            if (filter != null) {
+                filter.setCamelContext(context);
+            }
+        }
     }
 
     /**
@@ -949,7 +999,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             public SSLServerSocket configure(SSLServerSocket socket) {
 
                 Collection<String> filteredCipherSuites = BaseSSLContextParameters.this
-                        .filter(enabledCipherSuites, Arrays.asList(socket.getSupportedCipherSuites()),
+                        .filter(enabledCipherSuites, Arrays.asList(socket.getSSLParameters().getCipherSuites()),
                                 Arrays.asList(socket.getEnabledCipherSuites()),
                                 enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
                                 !allowPassthrough);
@@ -959,7 +1009,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             socket,
                             enabledCipherSuites,
                             enabledCipherSuitePatterns,
-                            socket.getSupportedCipherSuites(),
+                            socket.getSSLParameters().getCipherSuites(),
                             socket.getEnabledCipherSuites(),
                             defaultEnabledCipherSuitePatterns,
                             filteredCipherSuites);
@@ -968,7 +1018,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                 socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[0]));
 
                 Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
-                        .filter(enabledSecureSocketProtocols, Arrays.asList(socket.getSupportedProtocols()),
+                        .filter(enabledSecureSocketProtocols, Arrays.asList(socket.getSSLParameters().getProtocols()),
                                 Arrays.asList(socket.getEnabledProtocols()),
                                 enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
                                 !allowPassthrough);
@@ -978,7 +1028,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             socket,
                             enabledSecureSocketProtocols,
                             enabledSecureSocketProtocolsPatterns,
-                            socket.getSupportedProtocols(),
+                            socket.getSSLParameters().getProtocols(),
                             socket.getEnabledProtocols(),
                             defaultEnabledSecureSocketProtocolsPatterns,
                             filteredSecureSocketProtocols);
@@ -1133,8 +1183,10 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         } else {
             returnValues = new LinkedList<>();
 
+            // a filter with only exclude patterns includes all the other values
+            boolean includeAll = includePatterns.isEmpty() && !excludePatterns.isEmpty();
             for (String value : availableValues) {
-                if (this.matchesOneOf(value, includePatterns)
+                if ((includeAll || this.matchesOneOf(value, includePatterns))
                         && !this.matchesOneOf(value, excludePatterns)) {
                     returnValues.add(value);
                 }
@@ -1190,7 +1242,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         Collection<String> filteredNamedGroups;
         if (enabledNamedGroups != null) {
-            filteredNamedGroups = new ArrayList<>(enabledNamedGroups);
+            filteredNamedGroups = normalizeValues(enabledNamedGroups);
         } else if (enabledNamedGroupsPatterns != null) {
             filteredNamedGroups = this.filter(
                     null, Arrays.asList(currentNamedGroups),
@@ -1221,13 +1273,23 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             return null;
         }
 
+        if (currentSignatureSchemes == null && enabledSignatureSchemes == null) {
+            // the JVM does not tell its default signature schemes (null), so there is nothing to filter, and
+            // configuring an empty list would fail every handshake
+            if (!signatureSchemesFilterWarned) {
+                signatureSchemesFilterWarned = true;
+                LOG.warn("The signature schemes filter cannot be applied as the JVM does not provide its default"
+                         + " signature schemes. Configure the signature schemes explicitly instead of using a filter.");
+            }
+            return null;
+        }
         if (currentSignatureSchemes == null) {
             currentSignatureSchemes = new String[0];
         }
 
         Collection<String> filteredSignatureSchemes;
         if (enabledSignatureSchemes != null) {
-            filteredSignatureSchemes = new ArrayList<>(enabledSignatureSchemes);
+            filteredSignatureSchemes = normalizeValues(enabledSignatureSchemes);
         } else if (enabledSignatureSchemesPatterns != null) {
             filteredSignatureSchemes = this.filter(
                     null, Arrays.asList(currentSignatureSchemes),
@@ -1310,8 +1372,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         protected SSLEngine engineCreateSSLEngine() {
             SSLEngine engine = this.context.createSSLEngine();
             LOG.debug("SSLEngine [{}] created from SSLContext [{}].", engine, context);
-            this.configureSSLEngine(engine);
-            return engine;
+            return this.configureSSLEngine(engine);
         }
 
         @Override

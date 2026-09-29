@@ -94,14 +94,19 @@ public class SplitterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testEmptyBody() {
+    public void testEmptyBody() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedMessageCount(0);
+
         Exchange result = template.request("direct:seqential", new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader("foo", "bar");
             }
         });
 
-        assertFalse(result.hasOut(), "Should not have out");
+        // no body has no parts to split
+        assertNull(result.getException(), "Should not fail");
+        assertMockEndpointsSatisfied();
     }
 
     @Test

@@ -2995,8 +2995,9 @@ public class EndpointHeaderBuilders {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion, Responses API, embeddings, audio
-     * transcription, audio translation, and text-to-speech.
+     * LLM endpoint for chat completion, Responses API, embeddings, audio
+     * transcription, audio translation, and text-to-speech using
+     * OpenAI-compatible APIs. The openai scheme is a supported alias.
      * 
      * Category: ai
      * Since: 4.17

@@ -44,8 +44,11 @@ public class SagaProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        // try internal state first (survives removeHeaders("*"))
         String sagaId = exchange.getExchangeExtension().getSagaLongRunningAction();
-        if (sagaId == null) {
+        if (sagaId == null && camelSagaService.isLongRunningActionHeaderSupported()) {
+            // fall back to header only for a saga service that takes part in a protocol carrying the id that way
+            // (e.g. LRA), same as the Saga EIP. The header is outside the Camel namespace that consumers filter.
             sagaId = exchange.getIn().getHeader(SagaConstants.SAGA_LONG_RUNNING_ACTION, String.class);
         }
         if (sagaId == null) {

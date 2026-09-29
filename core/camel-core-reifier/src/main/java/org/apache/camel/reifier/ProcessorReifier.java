@@ -472,7 +472,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
                                                + " is not an ScheduledExecutorService instance");
         } else if (definition.getExecutorServiceRef() != null) {
             ScheduledExecutorService answer = lookupScheduledExecutorServiceRef(name, definition,
-                    definition.getExecutorServiceRef());
+                    parseString(definition.getExecutorServiceRef()));
             if (answer == null) {
                 throw new IllegalArgumentException(
                         "ExecutorServiceRef " + definition.getExecutorServiceRef()
@@ -955,7 +955,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
                 // closure.
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(
                         aggStrategy,
-                        definition.getAggregationStrategyMethodName());
+                        parseString(definition.getAggregationStrategyMethodName()));
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
                     adapter.setAllowNullNewExchange(
                             parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
@@ -1009,4 +1009,16 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         return disabled;
     }
 
+    /**
+     * Sets the step id (of the step the definition is inside) on the processor
+     */
+    protected void injectStepId(Object processor) {
+        if (processor instanceof StepIdAware stepIdAware) {
+            StepDefinition step = ProcessorDefinitionHelper.findFirstParentOfType(StepDefinition.class, definition, true);
+            if (step != null) {
+                stepIdAware.setStepId(
+                        step.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)));
+            }
+        }
+    }
 }

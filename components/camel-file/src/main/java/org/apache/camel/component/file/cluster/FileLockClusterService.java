@@ -264,6 +264,9 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
             } else {
                 clusterDataTaskExecutor.shutdown();
             }
+
+            // a new one is created when the service is started again
+            clusterDataTaskExecutor = null;
         }
     }
 

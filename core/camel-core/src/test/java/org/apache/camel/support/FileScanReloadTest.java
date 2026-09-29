@@ -71,8 +71,9 @@ public class FileScanReloadTest extends ContextTestSupport {
         // nothing changed since
         assertThat(scanNames()).isEmpty();
 
-        // the save: a route and the property it uses, together
-        Files.writeString(dir.resolve("shop.yaml"), "two");
+        // the save: a route and the property it uses, together. The route changes length: written within the same
+        // millisecond as before, the modification time alone would not tell them apart (that case has its own test)
+        Files.writeString(dir.resolve("shop.yaml"), "one and two");
         Files.writeString(dir.resolve("application.properties"), "shop.name=Camel Shop\nshop.currency=EUR");
 
         // one scan, both files: the reload can apply the property before it builds the route
@@ -131,6 +132,21 @@ public class FileScanReloadTest extends ContextTestSupport {
         Files.writeString(f, "one");
         Files.setLastModifiedTime(f, java.nio.file.attribute.FileTime.fromMillis(System.currentTimeMillis() + 60_000));
         assertThat(scanNames()).containsExactly("shop.yaml");
+    }
+
+    @Test
+    public void testADotDirectoryIsNotScanned() throws Exception {
+        // .camel-jbang holds the properties of the run camel-jbang is doing and it rewrites them, which was reloading
+        // the routes; .git and .idea are not ours either (CAMEL-25042)
+        Path state = dir.resolve(".camel-jbang");
+        Files.createDirectories(state);
+        Files.writeString(dir.resolve("shop.yaml"), "one");
+        assertThat(scanNames()).containsExactly("shop.yaml");
+
+        Files.writeString(state.resolve("camel-jbang-run.properties"), "camel.jbang.dev=true");
+        assertThat(scanNames()).isEmpty();
+        Files.writeString(state.resolve("camel-jbang-run.properties"), "camel.jbang.dev=true\ncamel.jbang.x=1");
+        assertThat(scanNames()).isEmpty();
     }
 
     @Test

@@ -19,6 +19,7 @@ package org.apache.camel.support.cache;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,8 +27,10 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NonManagedService;
+import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
@@ -92,9 +95,14 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                 // the pool is growing too large, so we need to stop (stop will remove itself from pool)
                 p.stop();
             }
-        } else {
+        } else if (e.isSingletonProducer()) {
             // service no longer in a pool (such as being released twice, or can happen during shutdown of Camel etc)
             stopAndRemove(s);
+        } else {
+            // no pool for this endpoint (for example it was stopped, which stopped its idle services, or the
+            // endpoint of the service is not the instance used as the pool key): do not stop the service here, as it
+            // may be in use or idle in a live pool; a service in use is stopped when it is released without a pool
+            LOG.trace("Evicted service: {} is no longer in a pool", s);
         }
     }
 
@@ -186,6 +194,27 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     /**
+     * Whether the endpoint is (still) in use by the routes, and must therefore not be stopped when its producer is
+     * evicted: an endpoint that is static in the endpoint registry (resolved when the routes were setup), or that a
+     * route is consuming from.
+     */
+    private static boolean isEndpointInUse(Endpoint endpoint) {
+        CamelContext context = endpoint.getCamelContext();
+        if (context == null) {
+            return false;
+        }
+        if (context.getEndpointRegistry().isStatic(endpoint.getEndpointUri())) {
+            return true;
+        }
+        for (Route route : context.getRoutes()) {
+            if (route.getEndpoint() == endpoint) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Stops the service safely
      */
     private static <S extends Service> void stop(S s) {
@@ -271,7 +300,10 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                 for (Map.Entry<Endpoint, Pool<S>> entry : singlePoolEvicted.entrySet()) {
                     Endpoint e = entry.getKey();
                     Pool<S> p = entry.getValue();
-                    doStop(e);
+                    if (!isEndpointInUse(e)) {
+                        // stop the endpoint as well (such as a dynamic endpoint from toD) to free its resources
+                        doStop(e);
+                    }
                     p.stop();
                     singlePoolEvicted.remove(e);
                 }
@@ -298,11 +330,15 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         private final Endpoint endpoint;
         private final BlockingQueue<S> queue;
         private final Deque<S> evicts;
+        // the services created by this pool which have not been evicted, only these are kept in the queue
+        private final Set<S> active;
+        private volatile boolean stopped;
 
         MultiplePool(Endpoint endpoint) {
             this.endpoint = endpoint;
             this.queue = new ArrayBlockingQueue<>(capacity);
             this.evicts = new ConcurrentLinkedDeque<>();
+            this.active = ConcurrentHashMap.newKeySet();
         }
 
         private void cleanupEvicts() {
@@ -319,6 +355,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             if (s == null) {
                 s = creator.apply(endpoint);
                 s.start();
+                active.add(s);
             }
             return s;
         }
@@ -327,8 +364,13 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         public void release(S s) {
             cleanupEvicts();
 
-            if (!queue.offer(s)) {
-                // there is no room so let's just stop and discard this
+            if (stopped || !active.contains(s) || !queue.offer(s)) {
+                // the pool is stopped, it was evicted while in use, or there is no room so let's just stop and discard this
+                active.remove(s);
+                doStop(s);
+            } else if ((stopped || !active.contains(s)) && queue.remove(s)) {
+                // the pool was stopped, or the service evicted, after the check above, and did not take it from the queue
+                active.remove(s);
                 doStop(s);
             }
         }
@@ -340,16 +382,25 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
         @Override
         public void stop() {
+            stopped = true;
             ArrayList<S> list = new ArrayList<>();
             queue.drainTo(list);
             pool.remove(endpoint);
             list.forEach(this::doStop);
+            cleanupEvicts();
         }
 
         @Override
         public void evict(S s) {
-            // to be evicted
-            evicts.add(s);
+            // only an idle service can be stopped (by cleanupEvicts): take it out of the queue so it is not acquired
+            // again, and a service in use is stopped when it is released
+            if (active.remove(s) && queue.remove(s)) {
+                evicts.add(s);
+                if (stopped) {
+                    // the pool was stopped meanwhile, and may have stopped its evicts already
+                    cleanupEvicts();
+                }
+            }
         }
 
         @Override

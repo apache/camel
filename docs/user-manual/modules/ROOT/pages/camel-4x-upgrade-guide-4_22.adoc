@@ -13,6 +13,32 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.1 to 4.22.2
 
+=== camel-core - masking of sensitive values in endpoint URIs
+
+`URISupport.sanitizeUri()`, which masks secrets in endpoint URIs shown in logs, events, JMX names and error
+messages, now masks some values it used to miss, so the masked form of a URI can differ from earlier releases:
+
+* option names are matched ignoring dashes, so `access-key` is masked like `accessKey`
+* a `RAW(...)` or `RAW{...}` value is masked up to the bracket that ends it, also when the value contains that bracket
+* the userinfo password of every URI in a text is masked, not only the last one
+* the `Unknown parameters=[...]` message of an endpoint that cannot be created masks the values of sensitive parameters
+
+The keywords added with `camel.main.additionalSensitiveKeywords` (or `URISupport.addSanitizeKeywords()`) now apply to
+every matching parameter, not only the first one, and they are added to the keywords configured earlier instead of
+replacing them. The keywords apply to the whole JVM and cannot be removed.
+
+`SensitiveUtils.maskUserInfoCredentials()`, used when masking log messages, uses the same userinfo rule: the userinfo
+ends at the last `@` before the path, so a password may contain `@`, and an `@` in the query of a URI is no longer
+taken as the end of a password.
+
+=== camel-core - Rest DSL response Content-Type
+
+Under json or xml binding, a response without a Content-Type header again takes it from the `produces` of the rest
+verb, as before Camel 4.18.4 and 4.22.0. Those releases used `application/json` (or `application/xml`) whenever the
+binding mode allowed it and marshalled the body, so a verb producing `text/plain` answered with a json-quoted body and
+a binary body failed. When `produces` lists several media types, the first json (or xml) type is used, otherwise the
+first one. Wildcards such as `*/*` are skipped, falling back to `application/json` or `application/xml`.
+
 === camel-mustache, camel-chunk - potential breaking change
 
 The Exchange header constants in `MustacheConstants` and `ChunkConstants` have been renamed to
@@ -60,6 +86,41 @@ Previously the engine reported such failures only through its own logger, so the
 healthy while no longer receiving any change event. Deployments that use readiness or liveness probes will
 now see a Debezium route whose engine has died reported as `DOWN`, where it was previously reported as `UP`.
 The engine is still not restarted automatically.
+
+=== camel-saga
+
+The `saga:complete` and `saga:compensate` endpoints now follow the same rule as the Saga EIP: when the
+exchange is not bound to a saga, the `Long-Running-Action` message header is consulted only if the
+configured `CamelSagaService` returns `true` from `isLongRunningActionHeaderSupported()`, as
+`LRASagaService` does. With the default `InMemorySagaService` the header is ignored, and sending an
+exchange that is not bound to a saga to these endpoints fails with `IllegalStateException`.
+
+Exchanges created inside a saga, including copies made by EIPs such as Wire Tap, Multicast or SEDA,
+stay bound to it and are not affected. A route that completes or compensates an in-memory saga from an
+unrelated exchange must bind it explicitly from trusted code, for example with
+`exchange.getExchangeExtension().setSagaLongRunningAction(id)`.
+
+=== camel-coap
+
+The CoAP consumer now answers a failed exchange with `5.00 Internal Server Error`, and no longer returns
+the exception's message to the client.
+
+Previously the consumer did not check whether the exchange had failed: a route failure was answered with
+`2.05 Content` and whatever body the message held when the route failed. When the response could not be
+built once the route had completed, for example because the body could not be converted to `byte[]`, the
+exception's message was sent to the client as the payload of a `5.00 Internal Server Error` response.
+
+A new `muteException` consumer option controls the payload of the error response, and it defaults to
+`true`, the same default as the HTTP consumers and the `camel-knative`, `camel-mina`, `camel-cxf` and
+`camel-grpc` consumers: the payload is empty. A route that relies on the exception's message reaching the
+client must opt back in explicitly:
+
+[source,text]
+----
+coap://0.0.0.0:5683/my/resource?muteException=false
+----
+
+For the Rest DSL, set it with `restConfiguration().endpointProperty("muteException", "false")`.
 
 == Upgrading from 4.22.0 to 4.22.1
 

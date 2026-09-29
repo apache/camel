@@ -132,6 +132,9 @@ public class AggregateProcessor extends BaseProcessorSupport
     private final WaitableInteger inProgressCount = new WaitableInteger();
     private final Set<String> unconfirmedCompleteExchanges = ConcurrentHashMap.newKeySet();
     private final Set<String> inProgressCompleteExchangesForRecoveryTask = ConcurrentHashMap.newKeySet();
+    // aggregated exchanges being completed (exchange id -> count): moved to the completed store of a recoverable
+    // repository, but not yet registered in inProgressCompleteExchanges by onSubmitCompletion
+    private final Map<String, Integer> completingExchanges = new ConcurrentHashMap<>();
     private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<>();
 
     private final AggregateProcessorStatistics statistics = new Statistics();
@@ -547,6 +550,13 @@ public class AggregateProcessor extends BaseProcessorSupport
         // prepare the exchanges for aggregation
         ExchangeHelper.prepareAggregation(oldExchange, newExchange);
 
+        // the group records its completion timeout (see updateGroupTimeout), so only a timeout that this aggregator
+        // tracks for the exchange counts
+        boolean groupTimeout = isGroupTimeout();
+        if (groupTimeout) {
+            newExchange.removeProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT);
+        }
+
         // check if we are pre complete
         if (preCompletion) {
             try {
@@ -652,6 +662,9 @@ public class AggregateProcessor extends BaseProcessorSupport
         }
 
         if (!aggregateFailed && complete == null) {
+            if (groupTimeout) {
+                updateGroupTimeout(newExchange, originalExchange, answer);
+            }
             // only need to update aggregation repository if we are not complete
             doAggregationRepositoryAdd(newExchange.getContext(), key, originalExchange, answer);
         } else {
@@ -787,6 +800,35 @@ public class AggregateProcessor extends BaseProcessorSupport
         return null;
     }
 
+    /**
+     * Whether the group records if it has a completion timeout, and the timeout checker only completes a group that has
+     * one.
+     * <p/>
+     * With optimistic locking the timeout entry of a completed group is not removed (see
+     * {@link #onCompletion(String, Exchange, Exchange, boolean, boolean)}), so it can be left over when a new group for
+     * the same correlation key starts. A new group normally replaces the entry with its own timeout, but with a
+     * completion timeout expression a new group can have no timeout, and the left over entry must then not complete it.
+     */
+    private boolean isGroupTimeout() {
+        return optimisticLocking && completionTimeoutExpression != null;
+    }
+
+    /**
+     * Records the completion timeout of the group on the aggregated exchange, which is stored in the repository: the
+     * timeout tracked for the new exchange, otherwise the timeout of the group so far.
+     */
+    private static void updateGroupTimeout(Exchange newExchange, Exchange originalExchange, Exchange answer) {
+        Object timeout = newExchange.getProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT);
+        if (timeout == null && originalExchange != null) {
+            timeout = originalExchange.getProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT);
+        }
+        if (timeout != null) {
+            answer.setProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT, timeout);
+        } else {
+            answer.removeProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT);
+        }
+    }
+
     protected void trackTimeout(String key, Exchange exchange) {
         // timeout can be either evaluated based on an expression or from a fixed value
         // expression takes precedence
@@ -819,6 +861,28 @@ public class AggregateProcessor extends BaseProcessorSupport
     protected Exchange onCompletion(
             final String key, final Exchange original, final Exchange aggregated, boolean fromTimeout,
             boolean aggregateFailed) {
+        // a recoverable repository moves the exchange to its completed store when it is removed, so mark it as being
+        // completed until onSubmitCompletion has registered it as in progress, as otherwise the recover task could
+        // recover and send it as well
+        final boolean completing = original != null && isRecoverableRepository();
+        if (completing) {
+            markCompleting(aggregated.getExchangeId());
+        }
+        Exchange answer = null;
+        try {
+            answer = doOnCompletion(key, original, aggregated, fromTimeout, aggregateFailed);
+            return answer;
+        } finally {
+            if (completing && answer == null) {
+                // not removed, or not to be sent
+                unmarkCompleting(aggregated.getExchangeId());
+            }
+        }
+    }
+
+    private Exchange doOnCompletion(
+            final String key, final Exchange original, final Exchange aggregated, boolean fromTimeout,
+            boolean aggregateFailed) {
         // store the correlation key as property before we remove so the repository has that information
         if (original != null) {
             original.setProperty(ExchangePropertyKey.AGGREGATED_CORRELATION_KEY, key);
@@ -832,8 +896,11 @@ public class AggregateProcessor extends BaseProcessorSupport
             aggregationRepository.remove(aggregated.getContext(), key, original);
         }
 
-        if (!fromTimeout && timeoutMap != null) {
-            // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
+        // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
+        // but not with optimistic locking: the timeout map is keyed by correlation key, and without a lock the entry
+        // may already belong to a new group for the same key, which would then never time out. An entry left behind
+        // does no harm, as the timeout checker completes a group only if it can remove it from the repository.
+        if (!fromTimeout && timeoutMap != null && !optimisticLocking) {
             LOG.trace("Removing correlation key {} from timeout", key);
             timeoutMap.remove(key);
         }
@@ -865,6 +932,14 @@ public class AggregateProcessor extends BaseProcessorSupport
         return answer;
     }
 
+    private void markCompleting(String exchangeId) {
+        completingExchanges.merge(exchangeId, 1, Integer::sum);
+    }
+
+    private void unmarkCompleting(String exchangeId) {
+        completingExchanges.computeIfPresent(exchangeId, (id, count) -> count > 1 ? count - 1 : null);
+    }
+
     private void discard(String key, Exchange aggregated) {
         // this exchange is discarded
         discarded.incrementAndGet();
@@ -886,6 +961,8 @@ public class AggregateProcessor extends BaseProcessorSupport
         if (recoveryInProgress.get()) {
             inProgressCompleteExchangesForRecoveryTask.add(exchange.getExchangeId());
         }
+        // registered as in progress, so no longer needs to be marked as being completed
+        unmarkCompleting(exchange.getExchangeId());
         // invoke the on completion callback
         aggregationStrategy.onCompletion(exchange);
 
@@ -1202,6 +1279,10 @@ public class AggregateProcessor extends BaseProcessorSupport
         this.discardOnAggregationFailure = discardOnAggregationFailure;
     }
 
+    public boolean isForceCompletionOnStop() {
+        return forceCompletionOnStop;
+    }
+
     public void setForceCompletionOnStop(boolean forceCompletionOnStop) {
         this.forceCompletionOnStop = forceCompletionOnStop;
     }
@@ -1358,7 +1439,9 @@ public class AggregateProcessor extends BaseProcessorSupport
             }
             log.debug("Completion timeout triggered for correlation key: {}", key);
 
-            boolean inProgress = inProgressCompleteExchanges.contains(exchangeId);
+            // with optimistic locking the exchange id in the entry can belong to a group that has been completed
+            // while a newer group for the same key is in the repository, so the repository decides (see below)
+            boolean inProgress = !optimisticLocking && inProgressCompleteExchanges.contains(exchangeId);
             if (inProgress) {
                 log.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
                 return;
@@ -1369,6 +1452,11 @@ public class AggregateProcessor extends BaseProcessorSupport
             Exchange answer = aggregationRepository.get(camelContext, key);
             if (answer == null) {
                 evictionStolen = true;
+            } else if (isGroupTimeout() && answer.getProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT) == null) {
+                // the entry is left over from a completed group, and the current group has no completion timeout
+                log.debug("Completion timeout for correlation key: {} is left over from a completed group, as the group"
+                          + " has no completion timeout",
+                        key);
             } else {
                 // indicate it was completed by timeout
                 answer.setProperty(ExchangePropertyKey.AGGREGATED_COMPLETED_BY, COMPLETED_BY_TIMEOUT);
@@ -1489,8 +1577,10 @@ public class AggregateProcessor extends BaseProcessorSupport
                     lock.lock();
                     try {
                         // consider in progress if it was in progress before we did the scan, or currently after we did the scan
+                        // (or is being completed and not yet registered as in progress)
                         // its safer to consider it in progress than risk duplicates due both in progress + recovered
-                        final boolean inProgress = inProgressCompleteExchangesForRecoveryTask.contains(exchangeId);
+                        final boolean inProgress = inProgressCompleteExchangesForRecoveryTask.contains(exchangeId)
+                                || completingExchanges.containsKey(exchangeId);
                         if (inProgress) {
                             LOG.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
                             if (unconfirmedCompleteExchanges.contains(exchangeId)) {
@@ -1814,6 +1904,7 @@ public class AggregateProcessor extends BaseProcessorSupport
 
         // cleanup when shutting down
         inProgressCompleteExchanges.clear();
+        completingExchanges.clear();
         inProgressCount.reset();
 
         if (shutdownExecutorService) {
@@ -1995,7 +2086,13 @@ public class AggregateProcessor extends BaseProcessorSupport
                 // onCompletion only discards on aggregation failure when discardOnAggregationFailure is enabled,
                 // so discard here, as otherwise the group is removed without being confirmed (and a recoverable
                 // repository would recover and send it later)
-                discard(key, answer);
+                try {
+                    discard(key, answer);
+                } finally {
+                    // onCompletion returned the exchange, so it is still marked as being completed, but it is
+                    // discarded instead of passed to onSubmitCompletion, so clear the mark here
+                    unmarkCompleting(answer.getExchangeId());
+                }
             }
             return true;
         } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {

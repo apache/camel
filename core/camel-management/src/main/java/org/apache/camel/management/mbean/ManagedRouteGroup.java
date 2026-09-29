@@ -46,6 +46,12 @@ public class ManagedRouteGroup extends ManagedPerformanceCounter implements Mana
     }
 
     @Override
+    public void reset() {
+        super.reset();
+        load.reset();
+    }
+
+    @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
         boolean enabled

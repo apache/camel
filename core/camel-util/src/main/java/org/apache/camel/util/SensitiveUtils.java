@@ -49,6 +49,7 @@ public final class SensitiveUtils {
                     "api_secret",
                     "apikey",
                     "apipassword",
+                    "apisecret",
                     "apiuser",
                     "apiusername",
                     "authenticationtoken",
@@ -73,6 +74,7 @@ public final class SensitiveUtils {
                     "databasesslkeystorepassword",
                     "databasesslpassword",
                     "databasessltruststorepassword",
+                    "db_password",
                     "emailaddress",
                     "functionkey",
                     "hostkey",
@@ -156,6 +158,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qapi_secret\\E"
                                                     + "|\\Qapikey\\E"
                                                     + "|\\Qapipassword\\E"
+                                                    + "|\\Qapisecret\\E"
                                                     + "|\\Qapiuser\\E"
                                                     + "|\\Qapiusername\\E"
                                                     + "|\\Qauthenticationtoken\\E"
@@ -180,6 +183,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qdatabasesslkeystorepassword\\E"
                                                     + "|\\Qdatabasesslpassword\\E"
                                                     + "|\\Qdatabasessltruststorepassword\\E"
+                                                    + "|\\Qdb_password\\E"
                                                     + "|\\Qemailaddress\\E"
                                                     + "|\\Qfunctionkey\\E"
                                                     + "|\\Qhostkey\\E"

@@ -53,6 +53,7 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -95,6 +96,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ma
     @Override
     public void reset() {
         super.reset();
+        load.reset();
         remoteExchangesTotal.reset();
         remoteExchangesCompleted.reset();
         remoteExchangesFailed.reset();
@@ -561,7 +563,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ma
 
     @Override
     public String dumpRoutesAsXml(boolean resolvePlaceholders, boolean generatedIds) throws Exception {
-        return dumpRoutesAsXml(resolvePlaceholders, true, false);
+        return dumpRoutesAsXml(resolvePlaceholders, generatedIds, false);
     }
 
     @Override
@@ -601,7 +603,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ma
     @Override
     public String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds)
             throws Exception {
-        return dumpRoutesAsYaml(resolvePlaceholders, uriAsParameters, true, false);
+        return dumpRoutesAsYaml(resolvePlaceholders, uriAsParameters, generatedIds, false);
     }
 
     @Override
@@ -710,7 +712,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ma
                     sb.append(String.format(" group=\"%s\"", escapeXml(route.getRouteGroup())));
                 }
                 if (route.getSourceLocation() != null) {
-                    sb.append(String.format(" sourceLocation=\"%s\"", route.getSourceLocation()));
+                    sb.append(String.format(" sourceLocation=\"%s\"", escapeXml(route.getSourceLocation())));
                 }
 
                 // use substring as we only want the attributes
@@ -871,7 +873,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ma
                     sb.append(String.format(" group=\"%s\"", escapeXml(route.getRouteGroup())));
                 }
                 if (route.getSourceLocation() != null) {
-                    sb.append(String.format(" sourceLocation=\"%s\"", route.getSourceLocation()));
+                    sb.append(String.format(" sourceLocation=\"%s\"", escapeXml(route.getSourceLocation())));
                 }
 
                 // use substring as we only want the attributes
@@ -895,9 +897,9 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ma
                         sb.append(" exchangesInflight=\"").append(step.getExchangesInflight()).append("\"");
                         sb.append(" ").append(stat, 7, stat.length()).append("\n");
                     }
-                    sb.append("      </stepStats>\n");
                 }
-                sb.append("    </stepStat>\n");
+                sb.append("      </stepStats>\n");
+                sb.append("    </routeStat>\n");
             }
             sb.append("  </routeStats>\n");
         }
@@ -1016,10 +1018,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ma
     }
 
     private static String escapeXml(String text) {
-        return text
-                .replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;");
+        // also quotes as the values are used in attributes
+        return StringHelper.xmlEncode(text);
     }
 
 }

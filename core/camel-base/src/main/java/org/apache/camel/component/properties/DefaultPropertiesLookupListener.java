@@ -17,6 +17,7 @@
 package org.apache.camel.component.properties;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.spi.PropertiesResolvedValue;
@@ -29,7 +30,7 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 public class DefaultPropertiesLookupListener extends ServiceSupport implements PropertiesLookupListener {
 
-    private Map<String, PropertiesResolvedValue> properties;
+    private Map<String, PropertiesResolvedValue> properties = new ConcurrentHashMap<>();
 
     @Override
     public void onLookup(String name, String value, String defaultValue, String source) {

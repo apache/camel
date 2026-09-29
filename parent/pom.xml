@@ -203,18 +203,18 @@
         <google-api-services-sheets-version>v4-rev20251110-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20251201-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.39.0</google-oauth-client-version>
-        <google-cloud-bigquery-version>2.71.0</google-cloud-bigquery-version>
-        <google-cloud-core-version>2.75.0</google-cloud-core-version>
-        <google-cloud-firestore-version>3.47.0</google-cloud-firestore-version>
+        <google-cloud-bigquery-version>2.72.0</google-cloud-bigquery-version>
+        <google-cloud-core-version>2.76.0</google-cloud-core-version>
+        <google-cloud-firestore-version>3.48.0</google-cloud-firestore-version>
         <google-cloud-functions-version>2.85.0</google-cloud-functions-version>
         <google-cloud-http-client-version>2.2.0</google-cloud-http-client-version>
-        <google-cloud-pubsub-version>1.155.0</google-cloud-pubsub-version>
-        <google-cloud-secretmanager-version>2.97.0</google-cloud-secretmanager-version>
-        <google-cloud-storage-version>2.73.0</google-cloud-storage-version>
-        <google-cloud-aiplatform-version>3.98.0</google-cloud-aiplatform-version>
-        <google-cloud-vision-version>3.95.0</google-cloud-vision-version>
-        <google-cloud-speech-version>4.92.0</google-cloud-speech-version>
-        <google-cloud-texttospeech-version>2.98.0</google-cloud-texttospeech-version>
+        <google-cloud-pubsub-version>1.156.0</google-cloud-pubsub-version>
+        <google-cloud-secretmanager-version>2.98.0</google-cloud-secretmanager-version>
+        <google-cloud-storage-version>2.74.0</google-cloud-storage-version>
+        <google-cloud-aiplatform-version>3.99.0</google-cloud-aiplatform-version>
+        <google-cloud-vision-version>3.96.0</google-cloud-vision-version>
+        <google-cloud-speech-version>4.93.0</google-cloud-speech-version>
+        <google-cloud-texttospeech-version>2.99.0</google-cloud-texttospeech-version>
         <google-genai-version>1.72.0</google-genai-version>
         <graalvm-version>25.2.4</graalvm-version>
         <graphql-java-version>26.1</graphql-java-version>
@@ -353,9 +353,9 @@
         <keycloak-version>26.7.4</keycloak-version>
         <kubernetes-client-version>7.9.0</kubernetes-client-version>
         <kudu-version>1.18.1</kudu-version>
-        <langchain4j-version>1.20.0</langchain4j-version>
+        <langchain4j-version>1.20.1</langchain4j-version>
         <!-- remove this one when all langchain4j artifacts are made final -->
-        <langchain4j-beta-version>1.20.0-beta30</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
+        <langchain4j-beta-version>1.20.1-beta30</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
         <langchain4j-community-version>1.20.0-beta30</langchain4j-community-version> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community--> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community-->
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.12</leveldb-api-version>

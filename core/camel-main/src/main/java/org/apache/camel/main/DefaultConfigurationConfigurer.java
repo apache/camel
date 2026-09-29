@@ -217,7 +217,12 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getStreamCachingStrategy().setDenyClasses(config.getStreamCachingDenyClasses());
         camelContext.getStreamCachingStrategy().setSpoolEnabled(config.isStreamCachingSpoolEnabled());
         camelContext.getStreamCachingStrategy().setAnySpoolRules(config.isStreamCachingAnySpoolRules());
-        camelContext.getStreamCachingStrategy().setBufferSize(config.getStreamCachingBufferSize());
+        if (config.getStreamCachingBufferSize() > 0) {
+            camelContext.getStreamCachingStrategy().setBufferSize(config.getStreamCachingBufferSize());
+        }
+        if (config.isStreamCachingStatisticsEnabled()) {
+            camelContext.getStreamCachingStrategy().getStatistics().setStatisticsEnabled(true);
+        }
         camelContext.getStreamCachingStrategy()
                 .setRemoveSpoolDirectoryWhenStopping(config.isStreamCachingRemoveSpoolDirectoryWhenStopping());
         camelContext.getStreamCachingStrategy().setSpoolCipher(config.getStreamCachingSpoolCipher());
@@ -412,7 +417,6 @@ public final class DefaultConfigurationConfigurer {
      */
     public static void afterConfigure(final CamelContext camelContext) throws Exception {
         final Registry registry = camelContext.getRegistry();
-        final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
 
         StartupStepRecorder ssr = getSingleBeanOfType(registry, StartupStepRecorder.class);
         if (ssr != null) {
@@ -450,6 +454,8 @@ public final class DefaultConfigurationConfigurer {
         if (ms != null) {
             camelContext.setManagementStrategy(ms);
         }
+        // must be the management strategy after a custom strategy has been set
+        final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
         ManagementObjectNameStrategy mons = getSingleBeanOfType(registry, ManagementObjectNameStrategy.class);
         if (mons != null) {
             managementStrategy.setManagementObjectNameStrategy(mons);

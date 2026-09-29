@@ -83,7 +83,8 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
     // OpenAI api-key header, and "authorization" covers the standard Authorization header.
     private static final String[] EXTRA_KEYS
             = new String[] {
-                    "apipassword", "apiuser", "apiusername", "api_key", "api-key", "api_secret", "authorization",
+                    "apipassword", "apisecret", "apiuser", "apiusername", "api_key", "api-key", "api_secret", "authorization",
+                    "db_password",
                     SECRET, "keystorePassword" };
 
     // extra security options from camel-main properties that are not in component JSON files

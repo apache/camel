@@ -235,6 +235,11 @@ public final class Scanner implements Iterator<String>, Closeable {
         matcher.usePattern(delimPattern);
         matcher.region(position, buf.limit());
         if (matcher.lookingAt()) {
+            if (matcher.hitEnd() && !inputExhausted) {
+                // the delimiter may continue in the input that is not read yet
+                needInput = true;
+                return false;
+            }
             position = matcher.end();
         }
         return position != buf.limit();

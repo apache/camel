@@ -22,7 +22,6 @@ import java.util.TreeMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -41,6 +40,21 @@ public abstract class EndpointUriFactorySupport implements EndpointUriFactory {
         this.camelContext = camelContext;
     }
 
+    private static int indexOfPathParameter(String uri, String name) {
+        // skip the scheme
+        int idx = uri.indexOf(name, uri.indexOf(':') + 1);
+        while (idx != -1) {
+            int end = idx + name.length();
+            boolean start = idx == 0 || !Character.isLetterOrDigit(uri.charAt(idx - 1));
+            boolean stop = end == uri.length() || !Character.isLetterOrDigit(uri.charAt(end));
+            if (start && stop) {
+                return idx;
+            }
+            idx = uri.indexOf(name, idx + 1);
+        }
+        return -1;
+    }
+
     protected String buildPathParameter(
             String syntax, String uri, String name, Object defaultValue, boolean required,
             Map<String, Object> parameters) {
@@ -52,21 +66,19 @@ public abstract class EndpointUriFactorySupport implements EndpointUriFactory {
             throw new IllegalArgumentException(
                     "Option " + name + " is required when creating endpoint uri with syntax " + syntax);
         }
+        // the name of the path parameter in the syntax (and not such as the scheme or part of another name)
+        int pos = indexOfPathParameter(uri, name);
         if (ObjectHelper.isNotEmpty(obj)) {
             String str = camelContext.getTypeConverter().convertTo(String.class, obj);
-            int occurrence = StringHelper.countOccurrence(uri, name);
-            if (occurrence > 1) {
-                uri = StringHelper.replaceFromSecondOccurrence(uri, name, str);
-            } else {
-                uri = uri.replace(name, str);
+            if (pos != -1) {
+                uri = uri.substring(0, pos) + str + uri.substring(pos + name.length());
             }
         } else {
             // the option is optional, and we have no default or value for it, so we need to
             // remove it from the syntax
-            int pos = uri.indexOf(name);
             if (pos != -1) {
                 // remove from syntax
-                uri = uri.replaceFirst(name, "");
+                uri = uri.substring(0, pos) + uri.substring(pos + name.length());
                 pos = pos - 1;
                 // remove the separator char
                 char ch = uri.charAt(pos);

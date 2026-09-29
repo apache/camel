@@ -6,13 +6,13 @@ various AI-related technologies.
 
 == Getting started with LLMs
 
-New to Camel AI? Start with the xref:ai-llm-integration-guide.adoc[LLM Integration Guide] — it explains when to use xref:openai-component.adoc[OpenAI] vs xref:langchain4j-chat-component.adoc[LangChain4j Chat], structured JSON extraction, streaming to browsers, dynamic prompts, and prompt management patterns.
+New to Camel AI? Start with the xref:ai-llm-integration-guide.adoc[LLM Integration Guide] — it explains when to use xref:openai-component.adoc[LLM (OpenAI-compatible)] vs xref:langchain4j-chat-component.adoc[LangChain4j Chat], structured JSON extraction, streaming to browsers, dynamic prompts, and prompt management patterns.
 
 == Choosing the Right AI Component
 
 Camel offers two main paths for integrating Large Language Models (LLMs) into routes:
 
-* **xref:openai-component.adoc[OpenAI]** — talks directly to OpenAI and any OpenAI-compatible API (OpenRouter, Ollama, vLLM, LM Studio). Native support for streaming, structured output (`outputClass` / `jsonSchema`), MCP tool calling, conversation memory, and the Responses API. Best when you are committed to the OpenAI ecosystem or using an OpenAI-compatible gateway.
+* **xref:openai-component.adoc[LLM (OpenAI-compatible)]** — uses the `llm:` URI scheme (with `openai:` as a backward-compatible alias) to talk to OpenAI and any OpenAI-compatible API (OpenRouter, Ollama, vLLM, LM Studio). Native support for streaming, structured output (`outputClass` / `jsonSchema`), MCP tool calling, conversation memory, and the Responses API. Best when you are committed to the OpenAI ecosystem or using an OpenAI-compatible gateway.
 
 * **xref:langchain4j-chat-component.adoc[LangChain4j Chat]** — abstracts through https://github.com/langchain4j/langchain4j[LangChain4j] so you can switch LLM providers (OpenAI, Anthropic, Google Gemini, Mistral, Ollama, and others) by swapping a dependency. Also provides prompt templates with variables, RAG integration via the Content Enricher pattern, and multi-message conversation history.
 

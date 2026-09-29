@@ -16,11 +16,15 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.List;
+
+import org.apache.camel.Channel;
 import org.apache.camel.DisabledAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.Pipeline;
 
 public class PipelineReifier extends ProcessorReifier<PipelineDefinition> {
 
@@ -31,6 +35,11 @@ public class PipelineReifier extends ProcessorReifier<PipelineDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         Processor answer = this.createChildProcessor(true);
+        if (answer instanceof Channel) {
+            // a single output is its channel, which is not where disabled is checked at runtime,
+            // so use a pipeline of the single output
+            answer = new Pipeline(camelContext, List.of(answer));
+        }
         if (answer instanceof DisabledAware da) {
             da.setDisabled(isDisabled(camelContext, definition));
         }

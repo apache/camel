@@ -272,7 +272,17 @@ public final class RouteDefinitionHelper {
             if (route == target) {
                 continue;
             }
-            ProcessorDefinitionHelper.gatherAllNodeIds(route, routesIds, true, false);
+            List<String> ids = new ArrayList<>();
+            ProcessorDefinitionHelper.gatherAllNodeIds(route, ids, true, false);
+            String routePrefixId = route.getNodePrefixId();
+            for (String id : ids) {
+                // the node ids of a route with a prefix (such as a route from a template) are prefixed at runtime,
+                // so compare them with the prefix (but not the route id itself)
+                if (routePrefixId != null && !id.equals(route.getId())) {
+                    id = routePrefixId + id;
+                }
+                routesIds.add(id);
+            }
         }
 
         // gather all ids for the target route, but only include custom ids, and

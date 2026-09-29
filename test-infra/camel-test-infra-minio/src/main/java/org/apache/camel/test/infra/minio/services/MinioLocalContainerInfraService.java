@@ -32,6 +32,7 @@ import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
               description = "MinIO is a high-performance S3 compatible object storage",
               serviceAlias = { "minio" },
               uiSupported = true)
+@Deprecated(since = "4.23")
 public class MinioLocalContainerInfraService implements MinioInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "minio";
     private static final String ACCESS_KEY = System.getProperty(MinioProperties.ACCESS_KEY, "testAccessKey");

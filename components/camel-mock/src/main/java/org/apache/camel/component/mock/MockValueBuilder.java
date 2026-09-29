@@ -184,7 +184,7 @@ public class MockValueBuilder implements Expression, Predicate {
         List<Predicate> predicates = new ArrayList<>();
         for (Object value : values) {
             Expression right = asExpression(value);
-            right = ExpressionBuilder.convertToExpression(right, expression);
+            right = ExpressionBuilder.inValueExpression(right, expression);
             Predicate predicate = PredicateBuilder.isEqualTo(expression, right);
             predicates.add(predicate);
         }
@@ -504,7 +504,9 @@ public class MockValueBuilder implements Expression, Predicate {
             // wrap in skip first (if group then it has its own skip-first logic)
             newExp = ExpressionBuilder.skipFirstExpression(newExp);
         }
-        newExp = ExpressionBuilder.groupIteratorExpression(newExp, token, group, skipFirst);
+        if (group != null) {
+            newExp = ExpressionBuilder.groupIteratorExpression(newExp, token, group, skipFirst);
+        }
         return onNewValueBuilder(newExp);
     }
 

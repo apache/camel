@@ -16,7 +16,10 @@
  */
 package org.apache.camel.semantic;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -85,5 +88,19 @@ public final class SemanticQuestions {
             throw new IllegalArgumentException("Unknown semantic question: " + name);
         }
         return question;
+    }
+
+    /** Resolve all requested names from one immutable snapshot, preserving reference order. */
+    public Map<String, SemanticQuestion> get(List<String> names) {
+        Map<String, SemanticQuestion> snapshot = questions;
+        Map<String, SemanticQuestion> selected = new LinkedHashMap<>();
+        for (String name : names) {
+            SemanticQuestion question = snapshot.get(name);
+            if (question == null) {
+                throw new IllegalArgumentException("Unknown semantic question: " + name);
+            }
+            selected.put(name, question);
+        }
+        return Collections.unmodifiableMap(selected);
     }
 }

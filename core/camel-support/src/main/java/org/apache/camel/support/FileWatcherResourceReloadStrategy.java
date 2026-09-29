@@ -69,7 +69,7 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
     String folder;
     boolean isRecursive;
     boolean scheduler = true;
-    long pollTimeout = 1000;
+    long pollTimeout = 2000;
     /**
      * A file modified less than this ago is left for the next scan: a save still being written would otherwise be
      * reloaded half-finished. The file component leaves a file alone the same way.
@@ -107,7 +107,8 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
     }
 
     /**
-     * Sets how often the folder is scanned for changed files, in millis. The default value is 1000.
+     * Sets how often the folder is scanned for changed files, in millis. The default value is 2000. A longer interval
+     * also groups more of one save together: two files written a second apart are one change at 2000 and two at 1000.
      */
     public void setPollTimeout(long pollTimeout) {
         this.pollTimeout = pollTimeout;
@@ -219,6 +220,13 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                         // and would trigger a reload, which compiles again, which writes again (CAMEL-24862)
                         return FileVisitResult.SKIP_SUBTREE;
                     }
+                    if (!dir.equals(root) && dir.getFileName() != null
+                            && dir.getFileName().toString().startsWith(".")) {
+                        // a dot directory holds state, not sources: .camel-jbang is where camel-jbang keeps the
+                        // properties of the run it is doing, and rewriting those was reloading the routes; .git and
+                        // .idea are not ours either, and walking them every scan costs for nothing (CAMEL-25042)
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
                     if (!isRecursive && !dir.equals(root)) {
                         return FileVisitResult.SKIP_SUBTREE;
                     }
@@ -325,27 +333,35 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
         public void run() {
             LOG.debug("FileReloadStrategy is starting watching folder: {}", folder);
 
-            // allow running while starting Camel
-            while (isStarting() || isRunAllowed()) {
-                running = true;
+            try {
+                // allow running while starting Camel
+                while (isStarting() || isRunAllowed()) {
+                    running = true;
 
-                try {
-                    Thread.sleep(pollTimeout);
-                } catch (InterruptedException e) {
-                    LOG.info("Interrupted while waiting to scan for file changes");
-                    Thread.currentThread().interrupt();
-                    break;
-                }
+                    try {
+                        Thread.sleep(pollTimeout);
+                    } catch (InterruptedException e) {
+                        LOG.info("Interrupted while waiting to scan for file changes");
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
 
-                LOG.trace("FileReloadStrategy is scanning for file changes in directory: {}", folder);
-                List<File> changed = scan();
-                if (!changed.isEmpty()) {
-                    // the files of one scan are the files of one save: reloaded together
-                    onReloadBatch(changed);
+                    LOG.trace("FileReloadStrategy is scanning for file changes in directory: {}", folder);
+                    try {
+                        List<File> changed = scan();
+                        if (!changed.isEmpty()) {
+                            // the files of one scan are the files of one save: reloaded together
+                            onReloadBatch(changed);
+                        }
+                    } catch (Throwable e) {
+                        // an error (such as ExceptionInInitializerError when compiling a route) must not stop watching
+                        LOG.warn("Error reloading files in directory: {} due to: {}. This exception is ignored.", folder,
+                                e.getMessage(), e);
+                    }
                 }
+            } finally {
+                running = false;
             }
-
-            running = false;
 
             LOG.debug("FileReloadStrategy is stopping watching folder: {}", folder);
         }

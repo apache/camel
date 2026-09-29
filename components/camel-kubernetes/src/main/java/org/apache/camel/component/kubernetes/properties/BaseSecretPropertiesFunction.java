@@ -29,6 +29,12 @@ import org.apache.camel.spi.PropertiesFunction;
 abstract class BaseSecretPropertiesFunction extends BasePropertiesFunction {
 
     @Override
+    public boolean isSensitive() {
+        // the values are secrets
+        return true;
+    }
+
+    @Override
     Path getMountPath() {
         if (getMountPathSecrets() != null) {
             return Paths.get(getMountPathSecrets());

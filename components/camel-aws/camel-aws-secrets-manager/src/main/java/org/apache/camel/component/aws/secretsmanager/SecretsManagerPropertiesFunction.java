@@ -212,6 +212,12 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     }
 
     @Override
+    public boolean isSensitive() {
+        // the values are secrets
+        return true;
+    }
+
+    @Override
     public String apply(String remainder) {
         String key = remainder;
         String subkey = null;

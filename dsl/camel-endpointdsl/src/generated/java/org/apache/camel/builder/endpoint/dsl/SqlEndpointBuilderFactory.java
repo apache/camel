@@ -150,7 +150,10 @@ public interface SqlEndpointBuilderFactory {
          * in more than one rows, it throws an non-unique result exception.
          * StreamList streams the result of the query using an Iterator. This
          * can be used with the Splitter EIP in streaming mode to process the
-         * ResultSet in streaming fashion.
+         * ResultSet in streaming fashion. The body is then a ResultSetIterator
+         * and not a List: it has no size, and it can only be read once, so
+         * split it to work on the rows instead of calling size() or indexing
+         * it. Use SelectList when the whole result is wanted as a List of Map.
          * 
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
@@ -178,7 +181,10 @@ public interface SqlEndpointBuilderFactory {
          * in more than one rows, it throws an non-unique result exception.
          * StreamList streams the result of the query using an Iterator. This
          * can be used with the Splitter EIP in streaming mode to process the
-         * ResultSet in streaming fashion.
+         * ResultSet in streaming fashion. The body is then a ResultSetIterator
+         * and not a List: it has no size, and it can only be read once, so
+         * split it to work on the rows instead of calling size() or indexing
+         * it. Use SelectList when the whole result is wanted as a List of Map.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
@@ -1538,7 +1544,10 @@ public interface SqlEndpointBuilderFactory {
          * in more than one rows, it throws an non-unique result exception.
          * StreamList streams the result of the query using an Iterator. This
          * can be used with the Splitter EIP in streaming mode to process the
-         * ResultSet in streaming fashion.
+         * ResultSet in streaming fashion. The body is then a ResultSetIterator
+         * and not a List: it has no size, and it can only be read once, so
+         * split it to work on the rows instead of calling size() or indexing
+         * it. Use SelectList when the whole result is wanted as a List of Map.
          * 
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
@@ -1566,7 +1575,10 @@ public interface SqlEndpointBuilderFactory {
          * in more than one rows, it throws an non-unique result exception.
          * StreamList streams the result of the query using an Iterator. This
          * can be used with the Splitter EIP in streaming mode to process the
-         * ResultSet in streaming fashion.
+         * ResultSet in streaming fashion. The body is then a ResultSetIterator
+         * and not a List: it has no size, and it can only be read once, so
+         * split it to work on the rows instead of calling size() or indexing
+         * it. Use SelectList when the whole result is wanted as a List of Map.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
@@ -2229,7 +2241,10 @@ public interface SqlEndpointBuilderFactory {
          * in more than one rows, it throws an non-unique result exception.
          * StreamList streams the result of the query using an Iterator. This
          * can be used with the Splitter EIP in streaming mode to process the
-         * ResultSet in streaming fashion.
+         * ResultSet in streaming fashion. The body is then a ResultSetIterator
+         * and not a List: it has no size, and it can only be read once, so
+         * split it to work on the rows instead of calling size() or indexing
+         * it. Use SelectList when the whole result is wanted as a List of Map.
          * 
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
@@ -2257,7 +2272,10 @@ public interface SqlEndpointBuilderFactory {
          * in more than one rows, it throws an non-unique result exception.
          * StreamList streams the result of the query using an Iterator. This
          * can be used with the Splitter EIP in streaming mode to process the
-         * ResultSet in streaming fashion.
+         * ResultSet in streaming fashion. The body is then a ResultSetIterator
+         * and not a List: it has no size, and it can only be read once, so
+         * split it to work on the rows instead of calling size() or indexing
+         * it. Use SelectList when the whole result is wanted as a List of Map.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.

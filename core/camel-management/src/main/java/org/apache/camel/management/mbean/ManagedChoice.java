@@ -34,6 +34,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.reifier.ProcessorReifier;
 
 @ManagedResource(description = "Managed Choice")
 public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBean {
@@ -68,10 +69,13 @@ public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBea
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.choiceTabularType());
 
-            List<WhenDefinition> whens = getDefinition().getWhenClauses();
+            // there is a filter for each when that is not disabled
+            List<WhenDefinition> whens = getDefinition().getWhenClauses().stream()
+                    .filter(w -> !ProcessorReifier.isDisabled(getContext(), w))
+                    .toList();
             List<FilterProcessor> filters = getProcessor().getFilters();
 
-            for (int i = 0; i < filters.size(); i++) {
+            for (int i = 0; i < filters.size() && i < whens.size(); i++) {
                 WhenDefinition when = whens.get(i);
                 FilterProcessor filter = filters.get(i);
 
@@ -82,11 +86,12 @@ public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBea
 
                 CompositeData data = new CompositeDataSupport(
                         ct,
-                        new String[] { "predicate", "language", "matches" },
-                        new Object[] { predicate, language, matches });
+                        new String[] { "index", "predicate", "language", "matches" },
+                        new Object[] { answer.size(), predicate, language, matches });
                 answer.put(data);
             }
-            if (getDefinition().getOtherwise() != null) {
+            if (getDefinition().getOtherwise() != null
+                    && !ProcessorReifier.isDisabled(getContext(), getDefinition().getOtherwise())) {
                 CompositeType ct = CamelOpenMBeanTypes.choiceCompositeType();
                 String predicate = "otherwise";
                 String language = "";
@@ -94,8 +99,8 @@ public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBea
 
                 CompositeData data = new CompositeDataSupport(
                         ct,
-                        new String[] { "predicate", "language", "matches" },
-                        new Object[] { predicate, language, matches });
+                        new String[] { "index", "predicate", "language", "matches" },
+                        new Object[] { answer.size(), predicate, language, matches });
                 answer.put(data);
             }
 

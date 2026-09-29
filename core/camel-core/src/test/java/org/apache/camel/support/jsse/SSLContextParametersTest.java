@@ -1003,17 +1003,20 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         assertNull(getSignatureSchemes(socket.getSSLParameters()));
         assertNull(getSignatureSchemes(serverSocket.getSSLParameters()));
 
-        // empty filter - no includes means no schemes match (empty array)
+        // a filter cannot be applied as there are no default schemes to filter, so the defaults are kept (null)
+        // instead of an empty list (which would fail every handshake)
         FilterParameters filter = new FilterParameters();
+        filter.getInclude().add(".*");
         scp.setSignatureSchemesFilter(filter);
         context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertEquals(0, getSignatureSchemes(engine.getSSLParameters()).length);
-        assertEquals(0, getSignatureSchemes(socket.getSSLParameters()).length);
-        assertEquals(0, getSignatureSchemes(serverSocket.getSSLParameters()).length);
+        assertNull(getSignatureSchemes(engine.getSSLParameters()));
+        assertNull(getSignatureSchemes(socket.getSSLParameters()));
+        assertNull(getSignatureSchemes(serverSocket.getSSLParameters()));
+        filter.getInclude().clear();
 
         // explicit schemes override filter - filter ignored when schemes are set
         SignatureSchemesParameters ssp = new SignatureSchemesParameters();
@@ -1032,7 +1035,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         // explicit schemes take precedence over filter
         assertEquals(4, getSignatureSchemes(engine.getSSLParameters()).length);
 
-        // clear explicit schemes, keep filter - now filter applies to empty JDK defaults
+        // clear explicit schemes, keep filter
         scp.setSignatureSchemes(null);
         filter.getInclude().clear();
         filter.getInclude().add(".*");
@@ -1041,10 +1044,10 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        // JDK defaults are null → filtering null gives empty array
-        assertEquals(0, getSignatureSchemes(engine.getSSLParameters()).length);
-        assertEquals(0, getSignatureSchemes(socket.getSSLParameters()).length);
-        assertEquals(0, getSignatureSchemes(serverSocket.getSSLParameters()).length);
+        // JDK defaults are null → the filter cannot be applied and the defaults are kept (not an empty array)
+        assertNull(getSignatureSchemes(engine.getSSLParameters()));
+        assertNull(getSignatureSchemes(socket.getSSLParameters()));
+        assertNull(getSignatureSchemes(serverSocket.getSSLParameters()));
     }
 
     @Test
@@ -1066,17 +1069,20 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         int defaultSignatureSchemeNumber = getSignatureSchemes(engine.getSSLParameters()).length;
 
-        // empty filter - no includes means no schemes match (empty array)
+        // a filter cannot be applied as there are no default schemes to filter, so the defaults are kept (null)
+        // instead of an empty list (which would fail every handshake)
         FilterParameters filter = new FilterParameters();
+        filter.getInclude().add(".*");
         scp.setSignatureSchemesFilter(filter);
         context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertEquals(0, getSignatureSchemes(engine.getSSLParameters()).length);
-        assertEquals(0, getSignatureSchemes(socket.getSSLParameters()).length);
-        assertEquals(0, getSignatureSchemes(serverSocket.getSSLParameters()).length);
+        assertNull(getSignatureSchemes(engine.getSSLParameters()));
+        assertNull(getSignatureSchemes(socket.getSSLParameters()));
+        assertNull(getSignatureSchemes(serverSocket.getSSLParameters()));
+        filter.getInclude().clear();
 
         // explicit schemes override filter - filter ignored when schemes are set
         SignatureSchemesParameters ssp = new SignatureSchemesParameters();

@@ -29,13 +29,18 @@ public class OnExceptionHandledThrowsExceptionTest extends ContextTestSupport {
 
     @Test
     public void testHandled() throws Exception {
-        getMockEndpoint("mock:handled").expectedMessageCount(0);
+        // the handled predicate fails, which is regarded as not handled, so the onException is still processed
+        // and the exchange fails with the original exception (with the exception from the predicate as suppressed)
+        getMockEndpoint("mock:handled").expectedMessageCount(1);
 
         try {
             template.sendBody("direct:start", "Hello World");
             fail("Should have thrown exception");
         } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            IOException io = assertIsInstanceOf(IOException.class, e.getCause());
+            assertEquals("Forced", io.getMessage());
+            assertEquals(1, io.getSuppressed().length);
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, io.getSuppressed()[0]);
             assertEquals("Another Forced", iae.getMessage());
         }
 
