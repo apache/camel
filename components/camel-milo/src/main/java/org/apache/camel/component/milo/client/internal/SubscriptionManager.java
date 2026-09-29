@@ -762,10 +762,10 @@ public class SubscriptionManager {
                 });
 
         try {
-            
+
             // connect is called inside this try block to ensure that disconnect is called on exceptions
             client.connect();
-            
+
             // Create subscription synchronously - the create() method blocks until complete
             OpcUaSubscription subscription = new OpcUaSubscription(client);
             subscription.setSubscriptionListener(new SubscriptionListenerImpl());
