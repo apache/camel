@@ -129,7 +129,7 @@
         <commons-dbcp2-version>2.14.0</commons-dbcp2-version>
         <commons-exec-version>1.6.0</commons-exec-version>
         <commons-io-version>2.22.0</commons-io-version>
-        <commons-lang3-version>3.20.0</commons-lang3-version>
+        <commons-lang3-version>3.21.0</commons-lang3-version>
         <commons-logging-version>1.4.0</commons-logging-version>
         <commons-net-version>3.13.0</commons-net-version>
         <commons-pool2-version>2.13.1</commons-pool2-version>
