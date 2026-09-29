@@ -18,7 +18,10 @@ package org.apache.camel.component.rest.openapi.validator.client;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -104,7 +107,21 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
             boolean customHeader
                     = !startsWithIgnoreCase(key, "Camel") && !filter.applyFilterToCamelHeaders(key, value, exchange);
             if (customHeader) {
-                builder.withHeader(key, exchange.getMessage().getHeader(key, String.class));
+                if (value instanceof Collection<?> values) {
+                    // A header sent more than once arrives as a Collection (CollectionHelper.appendEntry).
+                    // Converting that to a single String would hand the validator the collection's
+                    // toString(), such as "[a, b]" - a value the client never sent - so the schema would
+                    // be checked against fabricated data, and a repeated scalar parameter would never be
+                    // reported. Pass the values on instead, as the query parameters below already do.
+                    List<String> headerValues = new ArrayList<>(values.size());
+                    for (Object headerValue : values) {
+                        headerValues.add(exchange.getContext().getTypeConverter()
+                                .convertTo(String.class, exchange, headerValue));
+                    }
+                    builder.withHeader(key, headerValues);
+                } else {
+                    builder.withHeader(key, exchange.getMessage().getHeader(key, String.class));
+                }
             }
         }
         // Use query parameters, if present
