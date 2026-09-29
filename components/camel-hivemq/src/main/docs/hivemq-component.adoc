@@ -13,8 +13,8 @@
 *{component-header}*
 
 The HiveMQ component provides connectivity to MQTT message brokers using the
-https://www.hivemq.com/[HiveMQ MQTT Client] library. This component uses
-**MQTT 5 only**. MQTT 3.1.1 is not supported.
+https://www.hivemq.com/[HiveMQ MQTT Client] library. It supports both **MQTT 5**
+(the default) and **MQTT 3.1.1**, selected with the `mqttVersion` option.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -223,6 +223,20 @@ from("hivemq:some/topic"
     .to("mock:test");
 ----
 
+=== MQTT protocol version
+
+By default, the HiveMQ component connects using MQTT 5. Set `mqttVersion=MQTT_3_1_1`
+to connect to a broker using MQTT 3.1.1 instead:
+
+[source,java]
+----
+from("hivemq:some/topic"
+    + "?host=mqtt.example.com"
+    + "&port=1883"
+    + "&mqttVersion=MQTT_3_1_1")
+    .to("mock:test");
+----
+
 === Client identifier
 
 A custom MQTT client identifier can be configured using the `clientId` option:
@@ -254,7 +268,6 @@ success or failure. Manual acknowledgement is not supported.
 The following MQTT 5 / client features are **not** implemented and may be
 added in follow-up work:
 
-* MQTT 3.1.1
 * Will messages
 * MQTT 5 publish properties (user properties, content type, correlation data, response topic, expiry, and similar)
 * Subscription options beyond topic filter and QoS
