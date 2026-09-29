@@ -41,7 +41,6 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
-import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
@@ -362,9 +361,9 @@ public class CamelTraceAction extends ActionBaseCommand {
                 long millis;
                 if (StringHelper.isDigit(since)) {
                     // is in seconds by default
-                    millis = TimePatternConverter.toMilliSeconds(since) * 1000;
+                    millis = TimeUtils.toMilliSeconds(since) * 1000;
                 } else {
-                    millis = TimePatternConverter.toMilliSeconds(since);
+                    millis = TimeUtils.toMilliSeconds(since);
                 }
                 limit = new Date(System.currentTimeMillis() - millis);
             }

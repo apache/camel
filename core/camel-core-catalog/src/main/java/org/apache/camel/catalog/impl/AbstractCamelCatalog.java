@@ -22,7 +22,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -64,6 +63,7 @@ import org.apache.camel.tooling.model.TransformerModel;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.util.StringHelper.isDashed;
@@ -1836,28 +1836,16 @@ public abstract class AbstractCamelCatalog {
     }
 
     private static boolean validateDuration(String value) {
-        boolean valid = false;
+        if (value == null || value.isBlank()) {
+            return false;
+        }
         try {
-            Long.parseLong(value);
-            valid = true;
+            // same parsing as the runtime: a number of millis, a time pattern such as 5s or 1h30m, or ISO-8601 (PT5S)
+            TimeUtils.toDuration(value);
+            return true;
         } catch (Exception e) {
-            // ignore
+            return false;
         }
-        if (!valid) {
-            try {
-                if (value.startsWith("P") || value.startsWith("-P") || value.startsWith("p") || value.startsWith("-p")) {
-                    // its a duration
-                    Duration.parse(value);
-                } else {
-                    // it may be a time pattern, such as 5s for 5 seconds = 5000
-                    TimePatternConverter.toMilliSeconds(value);
-                }
-                valid = true;
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        return valid;
     }
 
     private static String stripOptionalPrefixFromName(Map<String, BaseOptionModel> rows, String name) {

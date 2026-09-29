@@ -1090,7 +1090,14 @@ public class CamelCatalogTest {
         assertTrue(catalog.validateTimePattern("1h"));
         assertTrue(catalog.validateTimePattern("1hour"));
         assertTrue(catalog.validateTimePattern("2hours"));
+        // the same patterns as the runtime accepts
+        assertTrue(catalog.validateTimePattern("1d"));
+        assertTrue(catalog.validateTimePattern("500ms"));
+        assertTrue(catalog.validateTimePattern("1h 30m"));
+        assertTrue(catalog.validateTimePattern("PT5S"));
 
+        assertFalse(catalog.validateTimePattern(""));
+        assertFalse(catalog.validateTimePattern("5x"));
         assertFalse(catalog.validateTimePattern("bla"));
         assertFalse(catalog.validateTimePattern("2year"));
         assertFalse(catalog.validateTimePattern("60darn"));
