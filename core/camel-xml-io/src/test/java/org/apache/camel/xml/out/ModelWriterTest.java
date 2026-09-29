@@ -26,6 +26,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -38,6 +39,7 @@ import java.util.stream.Stream;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 
@@ -76,17 +78,21 @@ public class ModelWriterTest {
     @ParameterizedTest
     @ValueSource(strings = { "routes", "camel" })
     void semanticDeclarationsBeforeRoutesConformToTheSchema(String root) throws Exception {
+        URL schema = getClass().getResource("/camel-xml-io.xsd");
+        // Clean test builds use the Spring namespace; incremental builds can reuse the packaged xml-io schema.
+        String namespace = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(schema.toExternalForm())
+                .getDocumentElement().getAttribute("targetNamespace");
+        assertThat(namespace).isIn("http://camel.apache.org/schema/spring", NAMESPACE);
         String xml = """
-                <%s xmlns="http://camel.apache.org/schema/spring">
+                <%s xmlns="%s">
                   <semantic>
                     <question name="valid" type="boolean"><instructions>Valid?</instructions></question>
                   </semantic>
                   <route><from uri="direct:input"/><to uri="mock:output"/></route>
                 </%s>
-                """.formatted(root, root);
-        // The build changes the generated schema's namespace to xml-io after the test phase.
+                """.formatted(root, namespace, root);
         SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
-                .newSchema(getClass().getResource("/camel-xml-io.xsd"))
+                .newSchema(schema)
                 .newValidator().validate(new StreamSource(new StringReader(xml)));
     }
 
