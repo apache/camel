@@ -851,6 +851,74 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         this.messageHistoryFactory = camelContext.getInternalServiceManager().addService(camelContext, messageHistoryFactory);
     }
 
+    /**
+     * Registers the internal services that were created before the CamelContext was stopped again. The internal
+     * services are cleared when the CamelContext stops, but these services are kept (and not created again), so on a
+     * restart they must be registered again to be started, and stopped when the CamelContext stops again.
+     * <p/>
+     * The injector and type converters are not included as they are created again on restart, and the services that are
+     * not stopped with the CamelContext (such as the executor service manager) are still registered.
+     */
+    void reRegisterServices() {
+        if (nameStrategy != null) {
+            setNameStrategy(nameStrategy);
+        }
+        if (managementNameStrategy != null) {
+            setManagementNameStrategy(managementNameStrategy);
+        }
+        if (propertiesComponent != null) {
+            setPropertiesComponent(propertiesComponent);
+        }
+        if (headersMapFactory != null) {
+            setHeadersMapFactory(headersMapFactory);
+        }
+        if (exchangeFactoryManager != null) {
+            setExchangeFactoryManager(exchangeFactoryManager);
+        }
+        if (restRegistryFactory != null) {
+            setRestRegistryFactory(restRegistryFactory);
+        }
+        if (classResolver != null) {
+            setClassResolver(classResolver);
+        }
+        if (messageHistoryFactory != null) {
+            setMessageHistoryFactory(messageHistoryFactory);
+        }
+        if (streamCachingStrategy != null) {
+            setStreamCachingStrategy(streamCachingStrategy);
+        }
+        if (messageSizeStrategy != null) {
+            setMessageSizeStrategy(messageSizeStrategy);
+        }
+        if (inflightRepository != null) {
+            setInflightRepository(inflightRepository);
+        }
+        if (errorRegistry != null) {
+            setErrorRegistry(errorRegistry);
+        }
+        if (uuidGenerator != null) {
+            setUuidGenerator(uuidGenerator);
+        }
+        if (tracer != null) {
+            setTracer(tracer);
+        }
+        if (transformerRegistry != null) {
+            setTransformerRegistry(transformerRegistry);
+        }
+        if (endpointServiceRegistry != null) {
+            setEndpointServiceRegistry(endpointServiceRegistry);
+        }
+        if (validatorRegistry != null) {
+            setValidatorRegistry(validatorRegistry);
+        }
+        if (routeController != null) {
+            setRouteController(routeController);
+        }
+        if (shutdownStrategy != null) {
+            setShutdownStrategy(shutdownStrategy);
+        }
+    }
+
     StreamCachingStrategy getStreamCachingStrategy() {
         if (streamCachingStrategy == null) {
             lock.lock();
