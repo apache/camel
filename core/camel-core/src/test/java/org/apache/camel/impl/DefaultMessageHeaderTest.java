@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
@@ -48,6 +49,22 @@ public class DefaultMessageHeaderTest {
         msg.setHeader("foo", "cheese");
         assertTrue(msg.hasHeaders());
         assertEquals("cheese", msg.getHeader("foo"));
+    }
+
+    @Test
+    public void testKnownHeaderNameKeepsKeyCase() {
+        Message msg = new DefaultMessage(camelContext);
+        // content-type and camelfilename have the same name as Exchange.CONTENT_TYPE and Exchange.FILE_NAME ignoring case
+        msg.setHeader("content-type", "text/plain");
+        msg.setHeader("camelfilename", "a.txt");
+        msg.setHeader(Exchange.CONTENT_LENGTH, 12);
+
+        assertEquals(Set.of("content-type", "camelfilename", "Content-Length"), Set.copyOf(msg.getHeaders().keySet()));
+        assertEquals("text/plain", msg.getHeader(Exchange.CONTENT_TYPE));
+        assertEquals("a.txt", msg.getHeader(Exchange.FILE_NAME));
+
+        Message copy = msg.copy();
+        assertEquals(Set.of("content-type", "camelfilename", "Content-Length"), Set.copyOf(copy.getHeaders().keySet()));
     }
 
     @Test
