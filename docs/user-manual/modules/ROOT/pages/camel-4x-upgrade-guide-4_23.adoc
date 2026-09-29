@@ -1236,11 +1236,24 @@ The `ssl` option is now marked `insecure:ssl`, so setting it to `false` in the c
 by the xref:security-policy.adoc[security policy] check: a warning by default, and a startup failure with
 the `prod` profile or `camel.security.insecureSslPolicy = fail`.
 
-The check matches a configuration property by its option name, not by its component. It therefore also
-applies when `ssl=false` is set on the other components that have an `ssl` option: `camel-clickhouse`,
-`camel-netty`, `camel-netty-http` and `camel-oaipmh`, for example `camel.component.netty.ssl = false` in
-`application.properties`. The `tls` option of `camel-pinecone` already worked this way for `tls=false`. To
-keep such a setting under a `fail` policy, list it in `camel.security.allowedProperties`.
+This applies only to `camel-hivemq`: setting `ssl=false` on the other components that have an `ssl` option
+(such as `camel.component.netty.ssl = false`) is not reported, see the `camel-main` section about the security
+policy check below. To keep `camel.component.hivemq.ssl = false` under a `fail` policy, list it in
+`camel.security.allowedProperties`.
+
+=== camel-main - security policy check matches component options by component
+
+The xref:security-policy.adoc[security policy] check matched an insecure option by its name only, so an
+option of one component that is marked insecure was also reported for any other component, data format or
+language with an option of the same name. For example `tls=false` was reported for every component because of
+the `tls` option of `camel-pinecone`.
+
+A property that configures a component, data format or language (`camel.component.<name>.<option>`,
+`camel.dataformat.<name>.<option>` and `camel.language.<name>.<option>`) is now only checked against the options
+of that component, data format or language. This means fewer properties are reported: a setting that was
+reported only because another component has an insecure option of the same name no longer triggers a warning,
+or a startup failure with the `prod` profile. Other properties, such as `camel.ssl.trustAllCertificates`, are
+still checked by the option name.
 
 === camel-hazelcast
 
