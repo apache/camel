@@ -23,13 +23,76 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.StreamReadFeature;
 import tools.jackson.core.StreamWriteFeature;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.cfg.DateTimeFeature;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class JacksonFeaturesTest extends CamelTestSupport {
+
+    @Test
+    public void testEnableWrongSyntaxOfFeature() throws Exception {
+        JacksonDataFormat format = new JacksonDataFormat();
+        format.setEnableFeatures("Package.Enum.FEATURE");
+        format.setCamelContext(context());
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> format.doStart());
+        assertEquals("Enable feature: Package.Enum.FEATURE cannot contain more than one '.'", ex.getMessage());
+    }
+
+    @Test
+    public void testEnableWrongTypedFeatureWithClassName() throws Exception {
+        JacksonDataFormat format = new JacksonDataFormat();
+        format.setEnableFeatures("Enum.FEATURE");
+        format.setCamelContext(context());
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> format.doStart());
+        assertEquals(
+                "Enable feature: Enum.FEATURE cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature,DateTimeFeature,EnumFeature,JsonNodeFeature,StreamReadFeature,StreamWriteFeature]",
+                ex.getMessage());
+    }
+
+    @Test
+    public void testEnableWrongTypedFeatureWithoutClassName() throws Exception {
+        JacksonDataFormat format = new JacksonDataFormat();
+        format.setEnableFeatures("FEATURE");
+        format.setCamelContext(context());
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> format.doStart());
+        assertEquals(
+                "Enable feature: FEATURE cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature,DateTimeFeature,EnumFeature,JsonNodeFeature,StreamReadFeature,StreamWriteFeature]",
+                ex.getMessage());
+    }
+
+    @Test
+    public void testEnableStrictDuplicateDetectionFromDifferentFeatures() throws Exception {
+        // Initialization by implementation order (StreamReadFeature before StreamWriteFeature)
+        JacksonDataFormat format1 = new JacksonDataFormat();
+        format1.setEnableFeatures("STRICT_DUPLICATE_DETECTION");
+        format1.setCamelContext(context());
+        format1.doStart();
+        assertTrue(format1.getObjectMapper().isEnabled(StreamReadFeature.STRICT_DUPLICATE_DETECTION));
+        assertFalse(format1.getObjectMapper().isEnabled(StreamWriteFeature.STRICT_DUPLICATE_DETECTION));
+
+        // Explizit declaration of implementing feature set
+        JacksonDataFormat format2 = new JacksonDataFormat();
+        format2.setEnableFeatures("StreamReadFeature.STRICT_DUPLICATE_DETECTION");
+        format2.setCamelContext(context());
+        format2.doStart();
+        assertTrue(format2.getObjectMapper().isEnabled(StreamReadFeature.STRICT_DUPLICATE_DETECTION));
+        assertFalse(format2.getObjectMapper().isEnabled(StreamWriteFeature.STRICT_DUPLICATE_DETECTION));
+
+        JacksonDataFormat format3 = new JacksonDataFormat();
+        format3.setEnableFeatures("StreamWriteFeature.STRICT_DUPLICATE_DETECTION");
+        format3.setCamelContext(context());
+        format3.doStart();
+        assertFalse(format3.getObjectMapper().isEnabled(StreamReadFeature.STRICT_DUPLICATE_DETECTION));
+        assertTrue(format3.getObjectMapper().isEnabled(StreamWriteFeature.STRICT_DUPLICATE_DETECTION));
+    }
 
     @Test
     public void testEnableDeserializationFeature() throws Exception {
