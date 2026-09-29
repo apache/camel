@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.telemetry.SpanContextPropagationInjector;
+import org.apache.camel.telemetry.Tracer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +61,12 @@ public class CamelMessagingHeadersInjectAdapterTest {
         adapter.put("CAMELFOO", "value3");
         adapter.put("CaMeLfoo", "value4");
         adapter.put("traceparent", "value5");
-        assertEquals(1, map.size());
+        // the trace and span id headers are included on purpose
+        adapter.put(Tracer.TRACE_HEADER, "value6");
+        adapter.put(Tracer.SPAN_HEADER, "value7");
+        assertEquals(3, map.size());
         assertEquals("value5", map.get("traceparent"));
+        assertEquals("value6", map.get(Tracer.TRACE_HEADER));
+        assertEquals("value7", map.get(Tracer.SPAN_HEADER));
     }
 }

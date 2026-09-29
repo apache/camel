@@ -3470,6 +3470,17 @@ The `onWhen` predicate of an `onException` is now created when the route is crea
 A class in `onException` or `doCatch` that is not an exception (such as `<exception>java.lang.String</exception>` in XML
 or YAML) now fails at startup. Previously it was accepted, and never matched any exception.
 
+=== Header names are matched in any case
+
+Message headers are case-insensitive, and components now also match the header names they look for in any case:
+
+- camel-jms, camel-sjms: a standard JMS header set with another case, such as `jmscorrelationid` or `JMSTYPE`, now
+  sets the JMS header (such as the correlation id). Previously it was sent as a JMS property with that name.
+- camel-cxf: a `content-type` or `camelhttpresponsecode` header is used as the content type or response code of the
+  CXF message, as `Content-Type` and `CamelHttpResponseCode` are.
+- camel-tracing, camel-telemetry, camel-netty-http: a header whose name starts with `Camel` in any case (such as
+  `camelFoo`) is treated as a Camel header.
+
 === camel-debezium - a failed embedded engine is now reported
 
 The Debezium consumers now register a `CompletionCallback` on the embedded engine. When the engine stops

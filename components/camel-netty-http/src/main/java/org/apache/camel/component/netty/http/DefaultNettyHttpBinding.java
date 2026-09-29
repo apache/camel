@@ -340,7 +340,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     protected String shouldUrlDecodeHeader(
             NettyHttpConfiguration configuration, String headerName, Object value, Charset charset) {
         // do not decode Content-Type
-        if (NettyHttpConstants.CONTENT_TYPE.equals(headerName)) {
+        if (NettyHttpConstants.CONTENT_TYPE.equalsIgnoreCase(headerName)) {
             return value.toString();
         } else if (configuration.isUrlDecodeHeaders()) {
             return URLDecoder.decode(value.toString(), charset);

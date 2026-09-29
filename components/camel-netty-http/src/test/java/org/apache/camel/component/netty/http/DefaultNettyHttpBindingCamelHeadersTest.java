@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,5 +44,16 @@ public class DefaultNettyHttpBindingCamelHeadersTest {
         new DefaultNettyHttpBinding().copyCamelHeaders(headers, exchange);
 
         assertEquals(Map.of("CamelFoo", "1", "camelBar", "2", "CAMELBAZ", "3", "CaMeLqux", "4"), headers);
+    }
+
+    @Test
+    public void testContentTypeInAnyCaseIsNotUrlDecoded() {
+        NettyHttpConfiguration configuration = new NettyHttpConfiguration();
+        configuration.setUrlDecodeHeaders(true);
+        DefaultNettyHttpBinding binding = new DefaultNettyHttpBinding();
+
+        assertEquals("text/plain; a=b%20c",
+                binding.shouldUrlDecodeHeader(configuration, "content-type", "text/plain; a=b%20c", StandardCharsets.UTF_8));
+        assertEquals("b c", binding.shouldUrlDecodeHeader(configuration, "foo", "b%20c", StandardCharsets.UTF_8));
     }
 }

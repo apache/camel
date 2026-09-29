@@ -31,9 +31,11 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 
 import jakarta.jms.BytesMessage;
 import jakarta.jms.Destination;
@@ -80,6 +82,15 @@ import static org.apache.camel.component.jms.JmsMessageType.Text;
  */
 public class JmsBinding {
     private static final Logger LOG = LoggerFactory.getLogger(JmsBinding.class);
+
+    // the standard JMS headers (matched in any case, as Camel headers are case-insensitive)
+    private static final Set<String> STANDARD_JMS_HEADERS = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+
+    static {
+        STANDARD_JMS_HEADERS.addAll(List.of("JMSCorrelationID", "JMSDeliveryMode", "JMSDeliveryTime", "JMSDestination",
+                "JMSExpiration", "JMSMessageID", "JMSPriority", "JMSRedelivered", "JMSReplyTo", "JMSTimestamp", "JMSType"));
+    }
+
     private final JmsEndpoint endpoint;
     private final HeaderFilterStrategy headerFilterStrategy;
     private final JmsKeyFormatStrategy jmsKeyFormatStrategy;
@@ -418,10 +429,10 @@ public class JmsBinding {
             String headerName, Object headerValue)
             throws JMSException {
         if (isStandardJMSHeader(headerName)) {
-            if (headerName.equals(JmsConstants.JMS_HEADER_CORRELATION_ID)
+            if (headerName.equalsIgnoreCase(JmsConstants.JMS_HEADER_CORRELATION_ID)
                     && (endpoint == null || !endpoint.isUseMessageIDAsCorrelationID())) {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-            } else if (headerName.equals(JmsConstants.JMS_HEADER_REPLY_TO) && headerValue != null) {
+            } else if (headerName.equalsIgnoreCase(JmsConstants.JMS_HEADER_REPLY_TO) && headerValue != null) {
                 if (headerValue instanceof String string) {
                     // if the value is a String we must normalize it first, and must include the prefix
                     // as ActiveMQ requires that when converting the String to a jakarta.jms.Destination type
@@ -429,14 +440,14 @@ public class JmsBinding {
                 }
                 Destination replyTo = ExchangeHelper.convertToType(exchange, Destination.class, headerValue);
                 JmsMessageHelper.setJMSReplyTo(jmsMessage, replyTo);
-            } else if (headerName.equals(JmsConstants.JMS_HEADER_TYPE)) {
+            } else if (headerName.equalsIgnoreCase(JmsConstants.JMS_HEADER_TYPE)) {
                 jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-            } else if (headerName.equals(JmsConstants.JMS_HEADER_PRIORITY)) {
+            } else if (headerName.equalsIgnoreCase(JmsConstants.JMS_HEADER_PRIORITY)) {
                 jmsMessage.setJMSPriority(ExchangeHelper.convertToType(exchange, Integer.class, headerValue));
-            } else if (headerName.equals(JmsConstants.JMS_HEADER_DELIVERY_MODE)) {
+            } else if (headerName.equalsIgnoreCase(JmsConstants.JMS_HEADER_DELIVERY_MODE)) {
                 boolean qos = endpoint != null && endpoint.isPreserveMessageQos();
                 JmsMessageHelper.setJMSDeliveryMode(exchange, jmsMessage, headerValue, qos);
-            } else if (headerName.equals(JmsConstants.JMS_HEADER_EXPIRATION)) {
+            } else if (headerName.equalsIgnoreCase(JmsConstants.JMS_HEADER_EXPIRATION)) {
                 jmsMessage.setJMSExpiration(ExchangeHelper.convertToType(exchange, Long.class, headerValue));
             } else {
                 // The following properties are set by the MessageProducer:
@@ -501,6 +512,9 @@ public class JmsBinding {
      * @return            <tt>true</tt> if its a standard JMS header
      */
     protected boolean isStandardJMSHeader(String headerName) {
+        if (STANDARD_JMS_HEADERS.contains(headerName)) {
+            return true;
+        }
         if (!headerName.startsWith("JMS")) {
             return false;
         }

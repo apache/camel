@@ -181,4 +181,17 @@ public class CxfHeaderHelperTest {
         assertEquals(value, values.get(0), "The value must match");
     }
 
+    @Test
+    public void testPropagateCamelToCxfHeaderNameInAnyCase() {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("content-type", "text/xml");
+        exchange.getIn().setHeader("camelhttpresponsecode", "200");
+        Message cxfMessage = new MessageImpl();
+
+        CxfHeaderHelper.propagateCamelToCxf(new DefaultHeaderFilterStrategy(),
+                exchange.getIn().getHeaders(), cxfMessage, exchange);
+
+        assertEquals("text/xml", cxfMessage.get(Message.CONTENT_TYPE));
+        assertEquals("200", cxfMessage.get(Message.RESPONSE_CODE));
+    }
 }
