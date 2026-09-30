@@ -587,6 +587,8 @@ public final class ProjectRoutes {
                         }
                     } else if (DYNAMIC_KEYS.contains(key)) {
                         sent.add(dynamicEndpoint(key));
+                    } else if ("switch".equals(key) && value instanceof MappingNode sw) {
+                        switchEndpoints(sw, sent);
                     }
                     if (value instanceof MappingNode || value instanceof SequenceNode) {
                         walk(value, produces, consumes, steps, depth + 1,
@@ -596,6 +598,20 @@ public final class ProjectRoutes {
                 if (sent != produces) {
                     sent.forEach(e -> produces.add(e.asOnError()));
                 }
+            }
+        }
+
+        /** The fixed destinations of a switch: the uri of each case and of the fallback. */
+        private void switchEndpoints(MappingNode sw, List<Endpoint> sent) {
+            if (child(sw, "case") instanceof SequenceNode cases) {
+                for (org.yaml.snakeyaml.nodes.Node c : cases.getValue()) {
+                    if (c instanceof MappingNode cm && value(cm, "uri") instanceof String uri) {
+                        add(sent, endpoint(uri, null, false, catalog));
+                    }
+                }
+            }
+            if (child(sw, "otherwise") instanceof MappingNode o && value(o, "uri") instanceof String uri) {
+                add(sent, endpoint(uri, null, false, catalog));
             }
         }
 
@@ -758,6 +774,11 @@ public final class ProjectRoutes {
                     add(produces, endpoint("kamelet:" + attr(s, "name"), null, false, catalog));
                 } else if (DYNAMIC_KEYS.contains(name)) {
                     produces.add(dynamicEndpoint(name));
+                } else if (("case".equals(name) || "otherwise".equals(name)) && attr(s, "uri") != null
+                        && s.getParentNode() instanceof Element parent && "switch".equals(localName(parent))) {
+                    // the fixed destinations of a switch
+                    Endpoint ep = endpoint(attr(s, "uri"), null, false, catalog);
+                    add(produces, handlesFailure(s, e) ? onErrorOf(ep) : ep);
                 }
             }
             String kind = template != null ? "routeTemplate" : "route";

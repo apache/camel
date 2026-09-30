@@ -157,6 +157,66 @@ class ProjectOverviewTest {
     }
 
     @Test
+    void switchDestinationsInEveryDsl() {
+        // CAMEL-25193: the cases and the fallback of a switch are what the route sends to
+        Map<String, String> sources = Map.of(
+                "tickets.camel.yaml", """
+                        - route:
+                            id: yaml-tickets
+                            from:
+                              uri: direct:yaml
+                              steps:
+                                - switch:
+                                    selector:
+                                      header:
+                                        expression: department
+                                    case:
+                                      - value: billing
+                                        uri: direct:billing
+                                    otherwise:
+                                      uri: direct:review
+                        """,
+                "tickets.xml", """
+                        <routes xmlns="http://camel.apache.org/schema/xml-io">
+                          <route id="xml-tickets">
+                            <from uri="direct:xml"/>
+                            <switch>
+                              <selector><header>department</header></selector>
+                              <case value="billing" uri="direct:billing"/>
+                              <otherwise uri="direct:review"/>
+                            </switch>
+                          </route>
+                        </routes>
+                        """,
+                "Tickets.java", """
+                        public class Tickets extends RouteBuilder {
+                            public void configure() {
+                                from("direct:java").routeId("java-tickets")
+                                    .doSwitch(header("department"))
+                                        .doCase("billing", "direct:billing")
+                                        .otherwise("direct:review")
+                                    .end();
+                            }
+                        }
+                        """,
+                "handlers.camel.yaml", """
+                        - route:
+                            id: billing
+                            from:
+                              uri: direct:billing
+                              steps:
+                                - to:
+                                    uri: log:billing
+                        """);
+        Overview o = ProjectOverview.analyze(Path.of("tickets"), sources, CATALOG);
+        for (String id : List.of("yaml-tickets", "xml-tickets", "java-tickets")) {
+            assertThat(o.route(id).produces()).as(id).extracting(ProjectRoutes.Endpoint::uri)
+                    .containsExactly("direct:billing", "direct:review");
+            assertThat(o.links()).as(id).contains(new Link(id, "billing", "direct:billing", "call"));
+        }
+    }
+
+    @Test
     void linksRoutesOverSharedEndpoints() {
         List<Link> links = overview().links();
         assertThat(links).contains(

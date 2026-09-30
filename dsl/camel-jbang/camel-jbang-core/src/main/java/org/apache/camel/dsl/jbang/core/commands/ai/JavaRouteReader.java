@@ -46,6 +46,8 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
@@ -165,6 +167,14 @@ final class JavaRouteReader {
             add(consumes, ProjectRoutes.endpoint(poll.getUri(), null, true, catalog));
         } else if (p instanceof KameletDefinition k && k.getName() != null) {
             add(produces, mark(ProjectRoutes.endpoint("kamelet:" + k.getName(), null, false, catalog), error));
+        } else if (p instanceof SwitchDefinition sw) {
+            // the fixed destinations of a switch: its cases and fallback, which are not outputs
+            for (SwitchCaseDefinition c : sw.getCases()) {
+                add(produces, mark(ProjectRoutes.endpoint(c.getUri(), null, false, catalog), error));
+            }
+            if (sw.getOtherwiseDefinition() != null) {
+                add(produces, mark(ProjectRoutes.endpoint(sw.getOtherwiseDefinition().getUri(), null, false, catalog), error));
+            }
         } else if (p instanceof RecipientListDefinition || p instanceof RoutingSlipDefinition
                 || p instanceof DynamicRouterDefinition) {
             String eip = p.getShortName();
