@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.yaml;
+package org.apache.camel.dsl.yaml.validator;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import com.networknt.schema.Error;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
@@ -40,7 +41,8 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * The routes of the XML test corpus of camel-xml-io are dumped as YAML and loaded back with the YAML DSL: both models,
- * dumped as XML, must be the same, so what the YAML dumper writes is what the YAML DSL reads (CAMEL-25206).
+ * dumped as XML, must be the same, so what the YAML dumper writes is what the YAML DSL reads (CAMEL-25206). The YAML
+ * must also pass the checks of camel validate.
  */
 class YamlRoundTripTest {
 
@@ -51,10 +53,16 @@ class YamlRoundTripTest {
 
     /**
      * Routes that read back differently, and why. In YAML an EIP with no steps of its own takes the steps after it, as
-     * in the Java DSL; the XML routes of the corpus keep them apart.
+     * in the Java DSL; the XML routes of the corpus keep them apart. The YAML DSL has no route scoped onException,
+     * onCompletion or interceptors yet (CAMEL-25207): the YAML written for them does not validate.
      */
     private static final Map<String, String> KNOWN = Map.of(
-            "kamelet.xml", "the steps after kamelet are its own in YAML: they run at the kamelet's sink");
+            "kamelet.xml", "the steps after kamelet are its own in YAML: they run at the kamelet's sink",
+            "barOnExceptionRoute.xml", "route scoped onException (CAMEL-25207)",
+            "onCompletion.xml", "route scoped onCompletion (CAMEL-25207)",
+            "barInterceptorRoute.xml", "route scoped intercept (CAMEL-25207)",
+            "interceptFrom.xml", "route scoped interceptFrom (CAMEL-25207)",
+            "interceptFromAndSendTo.xml", "route scoped interceptSendToEndpoint (CAMEL-25207)");
 
     private static List<RouteDefinition> routes(Path file) {
         for (String ns : List.of("http://camel.apache.org/schema/xml-io", "http://camel.apache.org/schema/spring")) {
@@ -107,6 +115,11 @@ class YamlRoundTripTest {
             routes.setCamelContext(context);
             routes.prepareRoute(route);
             xml = new LwModelToXMLDumper().dumpModelAsXml(context, route);
+        }
+        // the YAML written must pass the checks of camel validate, not only load
+        List<Error> errors = new YamlValidator().validate(yaml);
+        if (!errors.isEmpty()) {
+            return yaml + "\n--- does not validate: " + errors;
         }
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("route.yaml", yaml));
