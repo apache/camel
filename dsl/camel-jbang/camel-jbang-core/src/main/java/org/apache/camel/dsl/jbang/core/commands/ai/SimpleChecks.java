@@ -108,35 +108,54 @@ final class SimpleChecks {
 
             // Determine predicate vs expression context
             boolean predicate = !isLogMessage && isPredicate(catalog, lines, i, lineIndent);
-
-            boolean syntaxError = false;
-            try {
-                LanguageValidationResult result = predicate
-                        ? catalog.validateLanguagePredicate(null, "simple", simpleText)
-                        : catalog.validateLanguageExpression(null, "simple", simpleText);
-                if (!result.isSuccess()) {
-                    String error = result.getShortError() != null ? result.getShortError() : result.getError();
-                    if (error != null && !isMissingDependency(error)) {
-                        syntaxError = true;
-                        errors.add("Line " + lineNum + ": Simple syntax error: " + error
-                                   + aggregatedSizeHint(error, lines, i, lineIndent));
-                    }
-                }
-            } catch (Exception e) {
-                // best effort
-            }
-
-            // the parser cannot report this one: the expression is valid, it just does not mean what it says.
-            // Only a reported syntax error suppresses it, to keep one message per expression; a catalog that could
-            // not be asked at all does not, because this check does not depend on it.
-            if (!syntaxError && !predicate && !isLogMessage) {
-                String ternary = topLevelTernary(simpleText);
-                if (ternary != null) {
-                    errors.add("Line " + lineNum + ": " + ternary);
-                }
-            }
+            checkText(errors, catalog, simpleText, lineNum, predicate, isLogMessage,
+                    hasAncestorEip(lines, i, lineIndent, "aggregate"));
         }
         return errors;
+    }
+
+    /**
+     * The checks of one simple text, whatever the DSL it is written in: its syntax, as a predicate or an expression,
+     * and a ternary operator written where it is literal text.
+     *
+     * @param lineNum     the line of the text, 1-based
+     * @param predicate   whether the EIP evaluates the text as a predicate
+     * @param logMessage  whether the text is the message of a log, where a ? followed by a : is most often a sentence
+     * @param inAggregate whether the text is inside an aggregate, for the hint on the size of the group
+     */
+    static void checkText(
+            List<String> errors, CamelCatalog catalog, String text, int lineNum, boolean predicate, boolean logMessage,
+            boolean inAggregate) {
+        if (text.startsWith("resource:")) {
+            // the expression is loaded from a file (resource:classpath:script.txt), which is not the text here
+            return;
+        }
+        boolean syntaxError = false;
+        try {
+            LanguageValidationResult result = predicate
+                    ? catalog.validateLanguagePredicate(null, "simple", text)
+                    : catalog.validateLanguageExpression(null, "simple", text);
+            if (!result.isSuccess()) {
+                String error = result.getShortError() != null ? result.getShortError() : result.getError();
+                if (error != null && !isMissingDependency(error) && !isOfTheApplication(error)) {
+                    syntaxError = true;
+                    errors.add("Line " + lineNum + ": Simple syntax error: " + error
+                               + (inAggregate ? aggregatedSizeHint(error) : ""));
+                }
+            }
+        } catch (Exception e) {
+            // best effort
+        }
+
+        // the parser cannot report this one: the expression is valid, it just does not mean what it says.
+        // Only a reported syntax error suppresses it, to keep one message per expression; a catalog that could
+        // not be asked at all does not, because this check does not depend on it.
+        if (!syntaxError && !predicate && !logMessage) {
+            String ternary = topLevelTernary(text);
+            if (ternary != null) {
+                errors.add("Line " + lineNum + ": " + ternary);
+            }
+        }
     }
 
     /**
@@ -194,6 +213,14 @@ final class SimpleChecks {
      * A function served by a language or a component that is not on the classpath of the check (${jsonpath(...)},
      * ${a2a:text}): the route works when the dependency is there, which the check cannot know, so it is not reported.
      */
+    /**
+     * Whether the error is about something only the application has: a class of its own (${type:com.acme.Codes.OK},
+     * which the classpath of the check does not have), or a custom function it registers (${function(name)}).
+     */
+    static boolean isOfTheApplication(String error) {
+        return error.contains("ClassNotFoundException") || error.startsWith("No custom simple function");
+    }
+
     static boolean isMissingDependency(String error) {
         return error.startsWith("No language could be found for:")
                 || error.startsWith("No " + SimpleLanguageFunctionFactory.FACTORY + "/")
@@ -233,7 +260,7 @@ final class SimpleChecks {
         return owner != null && isPredicateOption(owner, parent);
     }
 
-    private static boolean isPredicateOption(EipModel eip, String option) {
+    static boolean isPredicateOption(EipModel eip, String option) {
         return eip.getOptions().stream()
                 .anyMatch(o -> option.equals(o.getName()) && "expression".equals(o.getKind()) && o.isAsPredicate());
     }
@@ -242,11 +269,8 @@ final class SimpleChecks {
      * ${size} or ${count} written inside an aggregate: the parser's did-you-mean (${length}) is about the function,
      * what the author wants is the number of aggregated messages, an exchange property.
      */
-    static String aggregatedSizeHint(String error, String[] lines, int lineIdx, int lineIndent) {
+    static String aggregatedSizeHint(String error) {
         if (!error.contains("Unknown function: size") && !error.contains("Unknown function: count")) {
-            return "";
-        }
-        if (!hasAncestorEip(lines, lineIdx, lineIndent, "aggregate")) {
             return "";
         }
         return " (inside an aggregate the number of aggregated messages is"
