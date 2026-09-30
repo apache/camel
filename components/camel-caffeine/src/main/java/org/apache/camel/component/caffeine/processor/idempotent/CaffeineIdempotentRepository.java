@@ -58,12 +58,8 @@ public class CaffeineIdempotentRepository extends ServiceSupport implements Idem
     @Override
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(String key) {
-        if (cache.asMap().containsKey(key)) {
-            return false;
-        } else {
-            cache.put(key, true);
-            return true;
-        }
+        // atomic, so when two exchanges with the same key are added at the same time only one of them is added
+        return cache.asMap().putIfAbsent(key, Boolean.TRUE) == null;
     }
 
     @Override
