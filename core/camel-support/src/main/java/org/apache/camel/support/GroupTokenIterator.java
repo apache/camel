@@ -140,7 +140,7 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
 
             // include token in between
             if (data != null && count > 0 && token != null) {
-                bos.write(token.getBytes());
+                bos.write(token.getBytes(ExchangeHelper.getCharset(exchange)));
             }
             if (data instanceof InputStream is) {
                 IOHelper.copy(is, bos);

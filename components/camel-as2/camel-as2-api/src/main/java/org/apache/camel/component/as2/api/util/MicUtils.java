@@ -176,7 +176,8 @@ public final class MicUtils {
                         = HttpMessageUtils.getEntity(request, ApplicationPkcs7MimeCompressedDataEntity.class);
                 if (compressedEntity != null) {
                     MimeEntity inner = compressedEntity
-                            .getCompressedEntity(new ZlibExpanderProvider());
+                            .getCompressedEntity(
+                                    new ZlibExpanderProvider(HttpMessageUtils.MAX_COMPRESSED_ENTITY_EXPANSION));
                     if (inner instanceof MultipartSignedEntity signedEntity) {
                         return signedEntity.getSignedDataEntity();
                     }

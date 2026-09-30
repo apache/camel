@@ -19,6 +19,7 @@ package org.apache.camel.language.simple.ast;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +31,7 @@ import org.apache.camel.language.simple.types.BinaryOperatorType;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.language.simple.types.UnaryOperatorType;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.builder.PredicateBuilder;
@@ -58,8 +60,34 @@ public class BinaryExpression extends BaseSimpleNode {
     }
 
     public boolean acceptLeftNode(SimpleNode lef) {
+        if (lef instanceof UnaryExpression unary && unary.getOperator() == UnaryOperatorType.NOT) {
+            // ! negates a function, not a comparison: !${body} == 'x' would read as neither of the two things it
+            // could mean, so it is refused and the negated operator is offered instead (CAMEL-24984)
+            throw new SimpleParserException(
+                    "! cannot be compared: it negates a function, not a comparison"
+                                            + (negatedOperator() != null
+                                                    ? ": write ${...} " + negatedOperator() + " value"
+                                                    : ": compare the other way round"),
+                    getToken().getIndex());
+        }
         this.left = lef;
         return true;
+    }
+
+    /** The eleven operators that have one saying the opposite; the comparisons do not, and answer null. */
+    private static final Set<String> NEGATED = Set.of(
+            "==", "=~", "~~", "contains", "endsWith", "equals", "in", "is", "range", "regex", "startsWith");
+
+    /**
+     * The operator that says the opposite of this one, or null when it has none: {@code >} and the other comparisons
+     * are negated by using the opposite comparison, not by putting a ! in front of them.
+     */
+    private String negatedOperator() {
+        String text = operator.toString();
+        if (!NEGATED.contains(text)) {
+            return null;
+        }
+        return "==".equals(text) ? "!=" : "!" + text;
     }
 
     public boolean acceptRightNode(SimpleNode right) {
@@ -192,7 +220,10 @@ public class BinaryExpression extends BaseSimpleNode {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
                 // reg ex should use String pattern, so we evaluate the right hand side as a String
-                Predicate predicate = PredicateBuilder.regex(leftExp, rightExp.evaluate(exchange, String.class));
+                String pattern = rightExp.evaluate(exchange, String.class);
+                // no pattern (such as a missing header) matches nothing
+                Predicate predicate = pattern != null
+                        ? PredicateBuilder.regex(leftExp, pattern) : PredicateBuilder.constant(false);
                 if (operator == BinaryOperatorType.NOT_REGEX) {
                     predicate = PredicateBuilder.not(predicate);
                 }
@@ -245,8 +276,11 @@ public class BinaryExpression extends BaseSimpleNode {
                 Predicate predicate;
 
                 String range = rightExp.evaluate(exchange, String.class);
-                Matcher matcher = RANGE_PATTERN.matcher(range);
-                if (matcher.matches()) {
+                Matcher matcher = range != null ? RANGE_PATTERN.matcher(range) : null;
+                if (range == null) {
+                    // no range (such as a missing header) contains nothing
+                    predicate = PredicateBuilder.constant(false);
+                } else if (matcher.matches()) {
                     // wrap as constant expression for the from and to values
                     Expression from = ExpressionBuilder.constantExpression(matcher.group(1));
                     Expression to = ExpressionBuilder.constantExpression(matcher.group(3));

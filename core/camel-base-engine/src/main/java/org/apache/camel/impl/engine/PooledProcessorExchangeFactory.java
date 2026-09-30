@@ -22,6 +22,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.PooledExchange;
 import org.apache.camel.Processor;
+import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.support.DefaultPooledExchange;
 import org.apache.camel.support.ExchangeHelper;
@@ -31,7 +32,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Pooled {@link org.apache.camel.spi.ProcessorExchangeFactory} that reuses {@link Exchange} instance from a pool.
+ *
+ * @deprecated Exchange pooling is deprecated and will be removed in a future release.
  */
+@Deprecated(since = "4.23.0")
 public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(PooledProcessorExchangeFactory.class);
@@ -75,6 +79,7 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
         // reset the copy's clock for reuse
         ((ResetableClock) answer.getClock()).reset();
         ExchangeHelper.copyResults(answer, exchange);
+        safeCopyClaimCheckRepository(answer);
         return answer;
     }
 
@@ -100,6 +105,7 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
         ((ResetableClock) answer.getClock()).reset();
 
         ExchangeHelper.copyResults(answer, exchange);
+        safeCopyClaimCheckRepository(answer);
         // do not reuse message id on copy
         answer.getIn().setMessageId(null);
         if (handover) {
@@ -109,6 +115,15 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
         // set a correlation id so we can track back the original exchange
         answer.setProperty(ExchangePropertyKey.CORRELATION_ID, exchange.getExchangeId());
         return answer;
+    }
+
+    private static void safeCopyClaimCheckRepository(Exchange copy) {
+        // the claim check repository is scoped per exchange, so the copy must not share it
+        // (the same as Exchange.copy() does)
+        Object repo = copy.getProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY);
+        if (repo instanceof SafeCopyProperty scp) {
+            copy.setProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY, scp.safeCopy());
+        }
     }
 
     @Override

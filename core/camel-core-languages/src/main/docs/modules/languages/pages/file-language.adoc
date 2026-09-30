@@ -83,7 +83,7 @@ this expression strips only the last part, and keeps the others.
 
 |file:size |Long |yes |no |yes |no |refers to the file length returned as a Long type
 
-|file:modified |Date |yes |no |yes |no |Refers to the file last modified returned as a Date type
+|file:modified |Long |yes |no |yes |no |Refers to the file last modified returned as a Long (millis since epoch)
 
 |date:_command:pattern_ |String |yes |yes |yes |yes |for date formatting using the `java.text.SimpleDateFormat` patterns. Is
 an *extension* to the xref:simple-language.adoc[Simple] language. Additional

@@ -53,6 +53,8 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     private Map<String, String> responseCodes;
     @XmlTransient
     private Set<String> responseHeaders;
+    @XmlTransient
+    private Map<String, Set<String>> responseCodeHeaders;
 
     @XmlAttribute
     @Metadata(description = "The content type the REST service accepts (consumes) as input, such as application/xml or application/json.")
@@ -170,7 +172,7 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     /**
-     * Adds a response code
+     * Adds a response header that is required on every response
      */
     public void addResponseHeader(String headerName) {
         // content-type header should be skipped
@@ -185,6 +187,27 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
 
     public Set<String> getResponseHeaders() {
         return responseHeaders;
+    }
+
+    /**
+     * Adds a response header that is required on the responses of the given response code
+     */
+    public void addResponseHeader(String code, String headerName) {
+        // content-type header should be skipped
+        if ("content-type".equalsIgnoreCase(headerName)) {
+            return;
+        }
+        if (responseCodeHeaders == null) {
+            responseCodeHeaders = new HashMap<>();
+        }
+        responseCodeHeaders.computeIfAbsent(code, k -> new HashSet<>()).add(headerName);
+    }
+
+    /**
+     * The response headers that are required, per response code
+     */
+    public Map<String, Set<String>> getResponseCodeHeaders() {
+        return responseCodeHeaders;
     }
 
     /**

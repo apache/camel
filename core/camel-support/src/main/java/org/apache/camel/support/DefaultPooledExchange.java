@@ -26,7 +26,10 @@ import org.apache.camel.clock.Clock;
 
 /**
  * The default and only implementation of {@link PooledExchange}.
+ *
+ * @deprecated Exchange pooling is deprecated and will be removed in a future release.
  */
+@Deprecated(since = "4.23.0")
 public final class DefaultPooledExchange extends AbstractExchange implements PooledExchange {
     private final ResetableClock clock;
     private OnDoneTask onDone;

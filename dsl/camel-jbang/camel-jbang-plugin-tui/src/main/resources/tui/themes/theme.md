@@ -3,7 +3,7 @@
 This document describes the CSS token system used by the Camel TUI.
 Every `.tcss` theme file must define all 28 required tokens listed below.
 Missing required tokens cause a startup validation error. The 7 syntax
-tokens are optional.
+tokens and the `ai-assisted` token are optional.
 
 ## File Format
 
@@ -92,6 +92,17 @@ Turbo Pascal theme does, but keep code readable.
 | `syntax-type` | fg | Primitive and built-in types |
 | `syntax-constant` | fg | Numbers, booleans, null, XML entities |
 | `syntax-text` | fg | Plain code text such as `:` and `=` separators |
+
+### AI-assisted (1 token, optional)
+
+Text an AI wrote that is shown among facts from the sources and the runtime,
+such as a route description suggested by the AI project overview, is drawn
+in italic in this color with a `✦` mark, so it is never mistaken for what the
+route says. A theme that omits it uses its `notice` color.
+
+| Token | Type | Purpose |
+|-------|------|---------|
+| `ai-assisted` | fg | AI-assisted text among facts (drawn italic) |
 
 ## Design Guidelines
 

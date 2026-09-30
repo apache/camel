@@ -265,6 +265,9 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         sb.append(style("Name:")).append(entry.getBlockedThread().getName()).append("\n");
         sb.append(style("RouteId:")).append(safeNull(entry.getRouteId())).append("\n");
         sb.append(style("NodeId:")).append(safeNull(entry.getNodeId())).append("\n");
+        if (entry.getNodeSource() != null) {
+            sb.append(style("Source:")).append(entry.getNodeSource()).append("\n");
+        }
         sb.append(style("Duration:")).append(entry.getWaitDuration()).append(" msec.\n");
         return sb.toString();
     }
@@ -312,6 +315,11 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         @Override
         public String getNodeId() {
             return exchange.getExchangeExtension().getHistoryNodeId();
+        }
+
+        @Override
+        public String getNodeSource() {
+            return exchange.getExchangeExtension().getHistoryNodeSource();
         }
 
         public CountDownLatch getLatch() {

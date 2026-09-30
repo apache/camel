@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
@@ -48,6 +49,22 @@ public class DefaultMessageHeaderTest {
         msg.setHeader("foo", "cheese");
         assertTrue(msg.hasHeaders());
         assertEquals("cheese", msg.getHeader("foo"));
+    }
+
+    @Test
+    public void testKnownHeaderNameKeepsKeyCase() {
+        Message msg = new DefaultMessage(camelContext);
+        // content-type and camelfilename have the same name as Exchange.CONTENT_TYPE and Exchange.FILE_NAME ignoring case
+        msg.setHeader("content-type", "text/plain");
+        msg.setHeader("camelfilename", "a.txt");
+        msg.setHeader(Exchange.CONTENT_LENGTH, 12);
+
+        assertEquals(Set.of("content-type", "camelfilename", "Content-Length"), Set.copyOf(msg.getHeaders().keySet()));
+        assertEquals("text/plain", msg.getHeader(Exchange.CONTENT_TYPE));
+        assertEquals("a.txt", msg.getHeader(Exchange.FILE_NAME));
+
+        Message copy = msg.copy();
+        assertEquals(Set.of("content-type", "camelfilename", "Content-Length"), Set.copyOf(copy.getHeaders().keySet()));
     }
 
     @Test
@@ -772,6 +789,62 @@ public class DefaultMessageHeaderTest {
 
         // Copy affected
         assertEquals(1, copy.getHeaders().size());
+    }
+
+    @Test
+    public void testCopyOnWriteEntrySetValue() {
+        DefaultMessage original = new DefaultMessage(camelContext);
+        original.setHeader("foo", "bar");
+
+        DefaultMessage copy = new DefaultMessage(camelContext);
+        copy.copyFrom(original);
+
+        // changing a value through the entry set of the copy must not change the original
+        for (Map.Entry<String, Object> entry : copy.getHeaders().entrySet()) {
+            assertEquals("bar", entry.setValue("changed"));
+            assertEquals("changed", entry.getValue());
+        }
+
+        assertEquals("changed", copy.getHeader("foo"));
+        assertEquals("bar", original.getHeader("foo"));
+    }
+
+    @Test
+    public void testCopyOnWriteEntrySetToArraySetValue() {
+        DefaultMessage original = new DefaultMessage(camelContext);
+        original.setHeader("foo", "bar");
+
+        DefaultMessage copy = new DefaultMessage(camelContext);
+        copy.copyFrom(original);
+
+        // the same through the entries from toArray
+        for (Object o : copy.getHeaders().entrySet().toArray()) {
+            @SuppressWarnings("unchecked")
+            Map.Entry<String, Object> entry = (Map.Entry<String, Object>) o;
+            entry.setValue("changed");
+        }
+
+        assertEquals("changed", copy.getHeader("foo"));
+        assertEquals("bar", original.getHeader("foo"));
+    }
+
+    @Test
+    public void testCopyOnWriteEntrySetTypedToArraySetValue() {
+        DefaultMessage original = new DefaultMessage(camelContext);
+        original.setHeader("foo", "bar");
+
+        DefaultMessage copy = new DefaultMessage(camelContext);
+        copy.copyFrom(original);
+
+        // the same through the entries from toArray with a typed array
+        @SuppressWarnings("unchecked")
+        Map.Entry<String, Object>[] entries = copy.getHeaders().entrySet().toArray(new Map.Entry[0]);
+        for (Map.Entry<String, Object> entry : entries) {
+            entry.setValue("changed");
+        }
+
+        assertEquals("changed", copy.getHeader("foo"));
+        assertEquals("bar", original.getHeader("foo"));
     }
 
     // ========== Lazy populated headers tests ==========

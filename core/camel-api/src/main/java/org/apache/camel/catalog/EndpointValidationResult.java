@@ -242,6 +242,16 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
                 }
             }
         }
+        if (invalidDuration != null) {
+            for (Map.Entry<String, String> entry : invalidDuration.entrySet()) {
+                boolean empty = isEmpty(entry.getValue());
+                if (empty) {
+                    options.put(entry.getKey(), "Empty duration value");
+                } else {
+                    options.put(entry.getKey(), "Invalid duration value: " + entry.getValue());
+                }
+            }
+        }
 
         // build a table with the error summary nicely formatted
         // lets use 24 as min length

@@ -70,6 +70,11 @@
             <artifactId>camel-resourceresolver-github</artifactId>
         </dependency>
         <dependency>
+            <!-- the Java DSL parser for the project overview; also comes with camel-kamelet-main -->
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-java-io</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-io-util</artifactId>
         </dependency>
@@ -334,6 +339,7 @@
     </build>
 
     <profiles>
+
         <profile>
             <id>sync-example-catalog</id>
             <build>

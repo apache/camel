@@ -375,7 +375,7 @@ class FilesBrowser {
         // integration runs from an exported copy (camel run --runtime=main --dev) or from --source-dir
         for (ConfigurationTab.ConfigProperty cp : info.configProperties) {
             if ("camel.main.routesReloadDirectory".equals(cp.key) && cp.value != null && !cp.value.isBlank()) {
-                Path dir = Path.of(cp.value);
+                Path dir = resolve(info, cp.value);
                 if (Files.isDirectory(dir)) {
                     return dir;
                 }
@@ -392,12 +392,12 @@ class FilesBrowser {
                             filePath = filePath.substring(0, q);
                         }
                         if (filePath.endsWith("/**")) {
-                            Path dir = Path.of(filePath.substring(0, filePath.length() - 3));
+                            Path dir = resolve(info, filePath.substring(0, filePath.length() - 3));
                             if (Files.isDirectory(dir)) {
                                 return dir;
                             }
                         }
-                        Path parent = Path.of(filePath).getParent();
+                        Path parent = resolve(info, filePath).getParent();
                         if (parent != null && Files.isDirectory(parent)) {
                             return parent;
                         }
@@ -410,7 +410,7 @@ class FilesBrowser {
         for (ConfigurationTab.ConfigProperty cp : info.configProperties) {
             if (("MAVEN_PROJECTBASEDIR".equals(cp.key) || "maven.projectbasedir".equals(cp.key))
                     && cp.value != null && cp.value.contains(".camel-jbang-run")) {
-                Path dir = Path.of(cp.value);
+                Path dir = resolve(info, cp.value);
                 if (Files.isDirectory(dir)) {
                     return dir;
                 }
@@ -420,6 +420,18 @@ class FilesBrowser {
             return Path.of(info.directory);
         }
         return null;
+    }
+
+    /**
+     * A path from the integration's configuration: a relative one (camel run --dev in a folder sets the reload
+     * directory to ".") is relative to the integration's working directory, not the TUI's.
+     */
+    static Path resolve(IntegrationInfo info, String value) {
+        Path p = Path.of(value);
+        if (!p.isAbsolute() && info.directory != null && !info.directory.isEmpty()) {
+            p = Path.of(info.directory).resolve(p);
+        }
+        return p.toAbsolutePath().normalize();
     }
 
     /**

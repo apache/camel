@@ -88,6 +88,10 @@ public class ManagedEndpointServiceRegistry extends ManagedService implements Ma
                     m.forEach((k, v) -> sj.add(k + "=" + v));
                     metadata = sj.toString();
                 }
+                if (answer.containsKey(new Object[] { component, dir, serviceUrl, endpointUri, routeId })) {
+                    // endpoints of the same route that only differ in a secret are the same uri when sanitized
+                    continue;
+                }
 
                 CompositeData data = new CompositeDataSupport(
                         ct,

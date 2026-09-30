@@ -105,6 +105,30 @@ class OptimisticLockRetryPolicyTest {
         }
     }
 
+    @Test
+    void testDefaultMaximumRetryDelay() {
+        // the default maximum retry delay is 1 second, as documented
+        OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
+        assertEquals(1000L, policy.getMaximumRetryDelay());
+        assertDelay(100L, policy.getDelay(1));
+        assertDelay(1000L, policy.getDelay(10));
+        assertDelay(1000L, policy.getDelay(100));
+    }
+
+    @Test
+    void testExponentialBackOffDoesNotOverflow() {
+        OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
+        policy.setRetryDelay(50L);
+        policy.setMaximumRetryDelay(0L);
+
+        long previous = 0;
+        for (int i = 0; i < 200; i++) {
+            long delay = policy.getDelay(i);
+            assertTrue(delay >= previous, "delay should not decrease at retry " + i);
+            previous = delay;
+        }
+    }
+
     private long getDelay(OptimisticLockRetryPolicy policy, int i) {
         return policy.getDelay(i);
     }

@@ -257,6 +257,11 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
 
         @Override
+        public String getNodeSource() {
+            return exchange.getExchangeExtension().getHistoryNodeSource();
+        }
+
+        @Override
         public String getFromRouteId() {
             return exchange.getFromRouteId();
         }

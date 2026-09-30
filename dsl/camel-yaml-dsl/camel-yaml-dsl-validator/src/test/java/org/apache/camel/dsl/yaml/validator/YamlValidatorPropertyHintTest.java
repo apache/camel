@@ -164,7 +164,27 @@ public class YamlValidatorPropertyHintTest {
                         - log: "done"
                 """);
         assertThat(errors).extracting(Error::getMessage)
-                .anyMatch(m -> m.startsWith("line 8: the value opens a double quote and never closes it"));
+                .anyMatch(m -> m.startsWith("line 8: the value opens a double quote and never closes it")
+                        && m.contains("write the line as expression: \"$[?(@.sku == '${header.sku}')]\""));
+    }
+
+    /** CAMEL-24906: the value corrected twice ends with two quotes, and the line to write says so. */
+    @Test
+    public void testADoubledClosingQuoteIsNamed() throws Exception {
+        List<Error> errors = validator.validate("""
+                - route:
+                    from:
+                      uri: direct:a
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[?(@.sku == '${header.sku}')]""
+                                resultType: java.util.List
+                """);
+        assertThat(errors).extracting(Error::getMessage)
+                .anyMatch(m -> m.contains("ends with two double quotes; remove the extra one")
+                        && m.endsWith("write the line as expression: \"$[?(@.sku == '${header.sku}')]\""));
     }
 
     @Test

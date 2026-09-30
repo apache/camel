@@ -75,6 +75,24 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
     void setMaximumEntries(int maximumEntries);
 
     /**
+     * The maximum number of error entries of the same kind (same route, node and exception type) to keep
+     *
+     * @since 4.23
+     */
+    int getMaximumEntriesPerKind();
+
+    /**
+     * Sets the maximum number of error entries of the same kind (same route, node and exception type) to keep, so a
+     * storm of one failure does not evict all the other errors. The counter of that kind keeps rising even when its
+     * older entries are evicted.
+     * <p/>
+     * The default value is 3.
+     *
+     * @since 4.23
+     */
+    void setMaximumEntriesPerKind(int maximumEntriesPerKind);
+
+    /**
      * The time-to-live for error entries
      */
     Duration getTimeToLive();

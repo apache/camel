@@ -40,8 +40,8 @@ public class NumericExpression extends BaseSimpleNode {
         } else {
             // its either a long or integer value (lets just avoid bytes)
             long lon = Long.parseLong(text);
-            if (lon < Integer.MAX_VALUE) {
-                number = Integer.valueOf(text);
+            if (lon >= Integer.MIN_VALUE && lon <= Integer.MAX_VALUE) {
+                number = (int) lon;
             } else {
                 number = lon;
             }
@@ -68,9 +68,7 @@ public class NumericExpression extends BaseSimpleNode {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                if (type == Object.class || type == int.class || type == Integer.class
-                        || type == long.class || type == Long.class
-                        || type == double.class || type == Double.class) {
+                if (type == Object.class || type.isInstance(number)) {
                     return type.cast(number);
                 }
                 return exchange.getContext().getTypeConverter().tryConvertTo(type, exchange, number);

@@ -22,13 +22,31 @@ import java.time.Duration;
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 @DisabledOnOs(WINDOWS)
+@Tag("container-only")
 public class JolokiaITCase extends JBangTestSupport {
+
+    private String hawtioPid;
+
+    @AfterEach
+    public void stopJolokiaAndHawtio() {
+        try {
+            execute("jolokia FromDirectoryRoute --stop");
+        } catch (Exception | AssertionError e) {
+            logger.debug("failed to stop jolokia: {}", e.getMessage());
+        }
+        if (hawtioPid != null) {
+            execInContainer("kill " + hawtioPid + " 2>/dev/null || true");
+            hawtioPid = null;
+        }
+    }
 
     @Test
     public void testAttachJolokia() throws IOException {
@@ -49,7 +67,7 @@ public class JolokiaITCase extends JBangTestSupport {
         copyResourceInDataFolder(TestResources.DIR_ROUTE);
         executeBackground(String.format("run %s/FromDirectoryRoute.java", mountPoint()));
         checkLogContains("(FromDirectoryRoute) started");
-        execNohup("hawtio FromDirectoryRoute");
+        hawtioPid = execNohup("hawtio FromDirectoryRoute");
         Awaitility.await()
                 .atMost(Duration.ofSeconds(30))
                 .pollInterval(Duration.ofSeconds(1))

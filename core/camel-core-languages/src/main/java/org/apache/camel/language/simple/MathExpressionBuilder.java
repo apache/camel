@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * Expression builder for numeric and math functions used by the simple language.
@@ -180,7 +180,7 @@ public final class MathExpressionBuilder {
                 for (Expression exp : exps) {
                     Object o = exp.evaluate(exchange, Object.class);
                     // this may be an object that we can iterate
-                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    Iterable<?> it = ObjectHelper.createIterable(o);
                     for (Object i : it) {
                         Long val = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, i);
                         if (val != null) {
@@ -224,7 +224,7 @@ public final class MathExpressionBuilder {
                 for (Expression exp : exps) {
                     Object o = exp.evaluate(exchange, Object.class);
                     // this may be an object that we can iterate
-                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    Iterable<?> it = ObjectHelper.createIterable(o);
                     for (Object i : it) {
                         Long val = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, i);
                         if (val != null) {
@@ -268,7 +268,7 @@ public final class MathExpressionBuilder {
                 for (Expression exp : exps) {
                     Object o = exp.evaluate(exchange, Object.class);
                     // this may be an object that we can iterate
-                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    Iterable<?> it = ObjectHelper.createIterable(o);
                     for (Object i : it) {
                         Long val = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, i);
                         if (val != null) {
@@ -313,7 +313,7 @@ public final class MathExpressionBuilder {
                 for (Expression exp : exps) {
                     Object o = exp.evaluate(exchange, Object.class);
                     // this may be an object that we can iterate
-                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    Iterable<?> it = ObjectHelper.createIterable(o);
                     for (Object i : it) {
                         Long val = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, i);
                         if (val != null) {

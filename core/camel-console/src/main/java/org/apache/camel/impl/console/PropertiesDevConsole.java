@@ -157,11 +157,16 @@ public class PropertiesDevConsole extends AbstractDevConsole {
             source = m.get().source();
             v = m.get().value();
         }
-        boolean sensitive = SensitiveUtils.containsSensitive(k);
+        // a sensitive key, or a value from a function with sensitive values (such as a vault)
+        boolean sensitive = SensitiveUtils.containsSensitive(k) || isSensitiveFunction(pc, source);
         String value = sensitive ? "xxxxxx" : String.valueOf(v);
         String originalValueOut = originalValue != null ? (sensitive ? "xxxxxx" : originalValue) : null;
         Boolean internal = loc != null ? isInternal(loc) : null;
         return new PropertyEntry(k, value, originalValueOut, defaultValue, source, loc, internal);
+    }
+
+    private static boolean isSensitiveFunction(PropertiesComponent pc, String source) {
+        return source != null && pc.hasPropertiesFunction(source) && pc.getPropertiesFunction(source).isSensitive();
     }
 
     private static boolean isInternal(String loc) {

@@ -74,7 +74,7 @@ import org.slf4j.LoggerFactory;
  * <b>Using delay pattern</b>: <br/>
  * The delay pattern syntax is: <tt>limit:delay;limit 2:delay 2;limit 3:delay 3;...;limit N:delay N</tt>.
  * <p/>
- * How it works is best illustrate with an example with this pattern: <tt>delayPattern=5:1000;10:5000:20:20000</tt>
+ * How it works is best illustrate with an example with this pattern: <tt>delayPattern=5:1000;10:5000;20:20000</tt>
  * <br/>
  * The delays will be for attempt in range 0..4 = 0 millis, 5..9 = 1000 millis, 10..19 = 5000 millis, >= 20 = 20000
  * millis.

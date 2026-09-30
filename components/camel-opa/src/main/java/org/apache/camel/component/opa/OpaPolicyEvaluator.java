@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.opa;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -87,19 +88,27 @@ public abstract class OpaPolicyEvaluator {
             decision = evaluateDecision(buildInput(exchange));
         } catch (InterruptedException e) {
             // not a policy failure but a shutdown, so failOpen must not turn it into an allow: nothing decided
-            // that this exchange was permitted. Restore the flag the interruptible wait cleared, then fail closed
+            // that this exchange was permitted. Restore the flag the interruptible wait cleared, then fail closed.
+            // This catches the wasm pool's wait; the REST SDK wraps an interrupted call in its OPAException, which
+            // reaches the catch below and fails closed there, as isDecisionPointUnavailable does not count it
             Thread.currentThread().interrupt();
             throw new OpaPolicyEvaluationException(
                     "Interrupted while evaluating policy " + policyPath, exchange, e);
         } catch (Exception e) {
-            // any failure to reach a verdict is handled the same way, whether it comes from the OPA server
-            // (OPAException) or from building and serializing the input document; fail-closed must not depend
-            // on which layer gave up
-            if (failOpen) {
+            restoreInterruptIfWrapped(e);
+            // every failure to reach a verdict fails closed, whichever layer gave up. failOpen is narrower: it lets
+            // the exchange through only when the decision point was unavailable. A decision point that answered -
+            // with an undefined decision, a rejected request or an evaluation error - has not been unavailable, and
+            // reading that answer as "no verdict" would turn a policy's "no" into "yes"
+            if (failOpen && isDecisionPointUnavailable(e)) {
                 LOG.warn("Policy {} could not be evaluated, allowing the exchange to proceed because failOpen is"
                          + " enabled. Reason: {}",
                         policyPath, e.getMessage());
                 setDecisionHeaders(exchange, null, true);
+                // the verdict header alone cannot distinguish "a policy allowed this" from "no policy ran and we
+                // were told to proceed"; an auditor asking which exchanges went through unauthorized needs a
+                // signal it can filter on, not a log line
+                exchange.getMessage().setHeader(OpaConstants.DECISION_FAILED_OPEN, true);
                 return true;
             }
             throw new OpaPolicyEvaluationException(
@@ -120,10 +129,149 @@ public abstract class OpaPolicyEvaluator {
      *
      * @param  input     the input document
      * @return           the decision document, already unwrapped to plain JSON types
-     * @throws Exception when no decision could be reached; the caller turns this into a fail-closed error, or an allow
-     *                   when {@code failOpen} is set
+     * @throws Exception when no decision could be reached; the caller turns this into a fail-closed error, or into an
+     *                   allow when {@code failOpen} is set and {@link #isDecisionPointUnavailable(Exception)} says the
+     *                   decision point was unavailable
      */
     protected abstract Object evaluateDecision(Map<String, Object> input) throws Exception;
+
+    /**
+     * Whether a failure to reach a verdict means the policy decision point was unavailable, the only failure
+     * {@code failOpen} lets an exchange through on.
+     * <p/>
+     * A decision point that answered was not unavailable, whatever it answered: an undefined decision, a rejected
+     * request, or an error evaluating the policy against this input. Those fail closed even under {@code failOpen},
+     * because an input document is built from the message and so can be shaped by whoever sent it. Engines override
+     * this to recognise their own unavailability; the default treats nothing as unavailable, so an engine that does not
+     * fails closed.
+     *
+     * @param  failure the exception the evaluation failed with
+     * @return         true only when the decision point could not be reached or was overloaded
+     */
+    protected boolean isDecisionPointUnavailable(Exception failure) {
+        return false;
+    }
+
+    /**
+     * Re-sets the interrupt flag when the failure carries an {@link InterruptedException} somewhere in its cause chain.
+     * The OPA SDK catches the interrupt of its HTTP call and wraps it in an {@code OPAException} without re-setting the
+     * flag, so the exchange fails closed but the thread would otherwise lose the interrupt its owner asked for.
+     */
+    private static void restoreInterruptIfWrapped(Throwable failure) {
+        for (Throwable cause = failure; cause != null; cause = cause.getCause()) {
+            if (cause instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
+    }
+
+    /**
+     * Evaluates one input document per element in a single batch. The map is keyed so a result can be matched back to
+     * its element; each value carries either the decision or the failure that stopped it being reached. Only the REST
+     * evaluator implements this - wasm evaluates in-process, where batching saves nothing - so the default refuses.
+     */
+    protected Map<String, BatchElement> evaluateBatchDecisions(Map<String, Map<String, Object>> inputs) throws Exception {
+        throw new UnsupportedOperationException("batch evaluation is only supported with evaluationMode=rest");
+    }
+
+    /**
+     * Authorizes a list in one call and records the per-element verdicts in {@link OpaConstants#BATCH_DECISION}, a
+     * {@code List<Boolean>} parallel to the input.
+     * <p/>
+     * Fail-closed is per element: an element whose evaluation failed is denied while the others decide normally, and
+     * under {@code failOpen} it is allowed only when its decision point was unavailable. Only a batch call that fails
+     * as a whole denies every element - or, under {@code failOpen}, allows every element when the server could not be
+     * reached.
+     */
+    public List<Boolean> evaluateBatch(Exchange exchange, List<?> elements) throws OpaPolicyEvaluationException {
+        clearDecisionHeaders(exchange);
+        // an empty list has nothing to authorize. Short-circuit before the engine call: an empty batch is a case the
+        // OPA SDK does not define, and letting it reach the server could turn "nothing to decide" into a whole-batch
+        // failure - and so, fail-closed, into an error thrown for an empty list. Answer it deterministically instead.
+        if (elements.isEmpty()) {
+            List<Boolean> verdicts = List.of();
+            setBatchDecisionHeaders(exchange, verdicts);
+            return verdicts;
+        }
+        Map<String, Map<String, Object>> inputs = new LinkedHashMap<>();
+        for (int i = 0; i < elements.size(); i++) {
+            inputs.put(Integer.toString(i), buildInput(exchange, elements.get(i), true));
+        }
+
+        List<Boolean> verdicts = new ArrayList<>(elements.size());
+        try {
+            Map<String, BatchElement> results = evaluateBatchDecisions(inputs);
+            for (int i = 0; i < elements.size(); i++) {
+                verdicts.add(verdictFor(i, results != null ? results.get(Integer.toString(i)) : null));
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new OpaPolicyEvaluationException(
+                    "Interrupted while evaluating policy " + getPolicyPath() + " in batch", exchange, e);
+        } catch (Exception e) {
+            restoreInterruptIfWrapped(e);
+            // the batch call itself failed, so nothing was decided; fail closed for every element unless failOpen
+            // is set and the server could not be reached
+            if (!failOpen || !isDecisionPointUnavailable(e)) {
+                throw new OpaPolicyEvaluationException(
+                        "Failed to evaluate policy " + getPolicyPath() + " in batch", exchange, e);
+            }
+            LOG.warn("Batch policy {} could not be evaluated, allowing all {} elements because failOpen is enabled."
+                     + " Reason: {}",
+                    getPolicyPath(), elements.size(), e.getMessage());
+            for (int i = 0; i < elements.size(); i++) {
+                verdicts.add(Boolean.TRUE);
+            }
+        }
+
+        setBatchDecisionHeaders(exchange, verdicts);
+        return verdicts;
+    }
+
+    private boolean verdictFor(int index, BatchElement element) {
+        if (element != null && element.succeeded()) {
+            return isAllowed(element.decision());
+        }
+        if (element != null && element.failure() != null) {
+            restoreInterruptIfWrapped(element.failure());
+        }
+        // a single element failed: deny it without failing the whole batch, unless failOpen is set and its decision
+        // point was unavailable
+        if (failOpen && element != null && element.failure() != null && isDecisionPointUnavailable(element.failure())) {
+            String reason = element.failure().getMessage();
+            LOG.warn("Batch element {} of policy {} could not be evaluated, allowing it because failOpen is enabled."
+                     + " Reason: {}",
+                    index, getPolicyPath(), reason);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * One element's outcome in a batch: either a decision document, or the failure that stopped it being reached.
+     */
+    protected static final class BatchElement {
+        private final Object decision;
+        private final Exception failure;
+
+        BatchElement(Object decision, Exception failure) {
+            this.decision = decision;
+            this.failure = failure;
+        }
+
+        Object decision() {
+            return decision;
+        }
+
+        Exception failure() {
+            return failure;
+        }
+
+        boolean succeeded() {
+            return failure == null;
+        }
+    }
 
     protected String getPolicyPath() {
         return policyPath;
@@ -133,6 +281,14 @@ public abstract class OpaPolicyEvaluator {
      * Builds the {@code input} document handed to OPA.
      */
     protected Map<String, Object> buildInput(Exchange exchange) {
+        return buildInput(exchange, exchange.getMessage().getBody(), includeBody);
+    }
+
+    /**
+     * Builds the OPA input document with an explicit body. Batch evaluation calls this once per list element, passing
+     * the element as the body so every element is authorized against the same shared headers and properties.
+     */
+    protected Map<String, Object> buildInput(Exchange exchange, Object body, boolean withBody) {
         Map<String, Object> input = new LinkedHashMap<>();
         Map<String, Object> headers = new LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : exchange.getMessage().getHeaders().entrySet()) {
@@ -165,8 +321,8 @@ public abstract class OpaPolicyEvaluator {
                 input.put("properties", properties);
             }
         }
-        if (includeBody) {
-            input.put("body", toJsonSafe(exchange, exchange.getMessage().getBody()));
+        if (withBody) {
+            input.put("body", toJsonSafe(exchange, body));
         }
         input.put("exchangeId", exchange.getExchangeId());
         if (exchange.getFromRouteId() != null) {
@@ -233,12 +389,27 @@ public abstract class OpaPolicyEvaluator {
         message.removeHeader(OpaConstants.DECISION_ALLOW);
         message.removeHeader(OpaConstants.DECISION);
         message.removeHeader(OpaConstants.POLICY_PATH);
+        // as attacker-settable as the verdict itself: left in place, a sender could preload it false and make a
+        // fail-open read as a decision a policy actually made
+        message.removeHeader(OpaConstants.DECISION_FAILED_OPEN);
+        message.removeHeader(OpaConstants.BATCH_DECISION);
     }
 
     private void setDecisionHeaders(Exchange exchange, Object decision, boolean allowed) {
         // set unconditionally so that a verdict claimed by an inbound message is always replaced
         exchange.getMessage().setHeader(OpaConstants.DECISION_ALLOW, allowed);
         exchange.getMessage().setHeader(OpaConstants.DECISION, decision);
+        exchange.getMessage().setHeader(OpaConstants.POLICY_PATH, policyPath);
+    }
+
+    /**
+     * Records the batch outcome on the exchange: the per-element verdict list, and the policy path, so that tooling
+     * reading {@link OpaConstants#POLICY_PATH} sees the same value in batch mode as it does after a single evaluation.
+     * As in {@link #evaluate}, a fail-closed batch failure never reaches here, leaving the exchange carrying no
+     * verdict.
+     */
+    private void setBatchDecisionHeaders(Exchange exchange, List<Boolean> verdicts) {
+        exchange.getMessage().setHeader(OpaConstants.BATCH_DECISION, verdicts);
         exchange.getMessage().setHeader(OpaConstants.POLICY_PATH, policyPath);
     }
 
@@ -269,7 +440,9 @@ public abstract class OpaPolicyEvaluator {
     private static boolean isDecisionHeader(String name) {
         return OpaConstants.DECISION_ALLOW.equalsIgnoreCase(name)
                 || OpaConstants.DECISION.equalsIgnoreCase(name)
-                || OpaConstants.POLICY_PATH.equalsIgnoreCase(name);
+                || OpaConstants.POLICY_PATH.equalsIgnoreCase(name)
+                || OpaConstants.DECISION_FAILED_OPEN.equalsIgnoreCase(name)
+                || OpaConstants.BATCH_DECISION.equalsIgnoreCase(name);
     }
 
     /**

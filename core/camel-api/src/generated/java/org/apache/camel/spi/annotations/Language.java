@@ -31,6 +31,15 @@ public @interface Language {
     String value();
 
     /**
+     * The expression model used to generate language metadata. Defaults to the model matching the language name. Use
+     * {@code language} for a language exposed through the generic LanguageExpression instead of a dedicated model. In
+     * that case, supply the language title, description, label and firstVersion with class-level {@code @Metadata}.
+     *
+     * @since 4.23
+     */
+    String modelName() default "";
+
+    /**
      * The class that contains all the name of functions that are supported by the language. The name of the functions
      * are defined as {@code String} constants in the functions class.
      *

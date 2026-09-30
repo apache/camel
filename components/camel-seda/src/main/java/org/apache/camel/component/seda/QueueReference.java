@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -73,6 +74,18 @@ public final class QueueReference {
         lock.lock();
         try {
             return endpoints.contains(endpoint);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Gets a snapshot of the endpoints sharing this queue reference.
+     */
+    List<SedaEndpoint> getEndpoints() {
+        lock.lock();
+        try {
+            return new ArrayList<>(endpoints);
         } finally {
             lock.unlock();
         }

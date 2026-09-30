@@ -169,6 +169,9 @@
           "stop" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.StopDefinition"
           },
+          "switch" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.SwitchDefinition"
+          },
           "threads" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ThreadsDefinition"
           },
@@ -4935,6 +4938,108 @@
           }
         }
       },
+      "org.apache.camel.model.SwitchCaseDefinition" : {
+        "title" : "Case",
+        "description" : "A literal switch case with one fixed endpoint destination",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "The description for this node"
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "The note for this node"
+          },
+          "parameters" : {
+            "type" : "object"
+          },
+          "uri" : {
+            "type" : "string",
+            "title" : "Uri",
+            "description" : "The fixed destination URI. Supports property placeholders, but not Simple expressions."
+          },
+          "value" : {
+            "type" : "string",
+            "title" : "Value",
+            "description" : "The case-insensitive literal value for a scalar selector."
+          }
+        },
+        "required" : [ "uri", "value" ]
+      },
+      "org.apache.camel.model.SwitchDefinition" : {
+        "title" : "Switch",
+        "description" : "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar values",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "case" : {
+            "type" : "array",
+            "title" : "Case",
+            "description" : "Literal cases. Duplicate values are rejected at startup, ignoring case.",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.SwitchCaseDefinition"
+            }
+          },
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "The description for this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
+            "default" : false
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "The note for this node"
+          },
+          "otherwise" : {
+            "title" : "Otherwise",
+            "description" : "Fixed fallback URI for null or unmatched selector results. Without a fallback processing continues.",
+            "$ref" : "#/items/definitions/org.apache.camel.model.SwitchOtherwiseDefinition"
+          },
+          "selector" : {
+            "title" : "Selector",
+            "description" : "Expression evaluated once per entry. Returns a scalar value to match against the literal cases.",
+            "$ref" : "#/items/definitions/org.apache.camel.model.ExpressionSubElementDefinition"
+          }
+        },
+        "required" : [ "selector" ]
+      },
+      "org.apache.camel.model.SwitchOtherwiseDefinition" : {
+        "title" : "Switch Otherwise",
+        "description" : "The fixed endpoint used when no switch case matches",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "parameters" : {
+            "type" : "object"
+          },
+          "uri" : {
+            "type" : "string",
+            "title" : "Uri",
+            "description" : "The fixed destination URI. Supports property placeholders, but not Simple expressions."
+          }
+        },
+        "required" : [ "uri" ]
+      },
       "org.apache.camel.model.TemplatedRouteDefinition" : {
         "type" : "object",
         "additionalProperties" : false,
@@ -9013,7 +9118,8 @@
           "keyPassword" : {
             "type" : "string",
             "title" : "Key Password",
-            "description" : "The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric decryption."
+            "description" : "The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric decryption.",
+            "format" : "password"
           },
           "mgfAlgorithm" : {
             "type" : "string",
@@ -9030,7 +9136,8 @@
           "passPhrase" : {
             "type" : "string",
             "title" : "Pass Phrase",
-            "description" : "A String used as passPhrase to encrypt/decrypt content."
+            "description" : "A String used as passPhrase to encrypt/decrypt content.",
+            "format" : "password"
           },
           "passPhraseByte" : {
             "type" : "string",
@@ -13457,6 +13564,110 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.validator.PredicateValidatorDefinition"
           }
         }
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "question" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionSchema"
+            }
+          }
+        },
+        "required" : [ "question" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$BooleanSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "criteria" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "instructions" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "threshold" : {
+            "type" : "number"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "boolean" ]
+          },
+          "uncertainty" : {
+            "type" : "number"
+          },
+          "uncertaintyPolicy" : {
+            "type" : "string",
+            "enum" : [ "fail", "non-match" ]
+          }
+        },
+        "required" : [ "instructions", "type" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ChoiceSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "criteria" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "instructions" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "choice" ]
+          }
+        },
+        "required" : [ "criteria", "instructions", "type" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionSchema" : {
+        "type" : "object",
+        "anyOf" : [ {
+          "oneOf" : [ {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$BooleanSchema"
+          }, {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ChoiceSchema"
+          }, {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ScoreSchema"
+          } ]
+        } ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ScoreSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "criteria" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "instructions" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "score" ]
+          }
+        },
+        "required" : [ "criteria", "instructions", "type" ]
       }
     },
     "properties" : {
@@ -13510,6 +13721,9 @@
       },
       "validators" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.validator.ValidatorsDefinition"
+      },
+      "semantic" : {
+        "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer"
       }
     }
   }

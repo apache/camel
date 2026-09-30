@@ -1,0 +1,344 @@
+= OpenFGA Component
+:doctitle: OpenFGA
+:shortname: openfga
+:artifactid: camel-openfga
+:description: Authorize an Exchange against an OpenFGA relationship graph, and maintain the relationship tuples it is authorized against.
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The OpenFGA component turns a Camel route into a Policy Enforcement Point (PEP) in front of
+https://openfga.dev[OpenFGA], the CNCF authorization engine that implements Google's Zanzibar model. Where a
+policy engine asks *what do the rules say*, OpenFGA answers a different question: *what is this subject's
+relationship to this resource*.
+
+That distinction is the reason the component exists. Expressing "anne may read `document:budget` because she owns
+the folder it lives in" as policy-as-code means shipping the relationship graph into the policy input on every
+message, which does not scale past a handful of relationships. OpenFGA keeps the graph — a set of
+`(user, relation, object)` tuples — in the decision point, and the route asks it a question instead of handing it
+data.
+
+The component is a companion to `camel-opa` and
+`camel-spiffe`, and deliberately shares camel-opa's shape and its security posture, so
+that an operator who knows one knows the other:
+
+[cols="1,3"]
+|===
+| `camel-spiffe` | establishes *who the caller is* (workload identity, X.509-SVID / JWT-SVID)
+| `camel-opa` | evaluates *what the rules say* (policy-as-code, Rego)
+| camel-openfga | answers *what the caller's relationship to the resource is* (ReBAC, relationship tuples)
+|===
+
+Maven users will need to add the following dependency to their `pom.xml`.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-openfga</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI Format
+
+------------------------------------------------------------
+openfga:operation[?options]
+------------------------------------------------------------
+
+Where `operation` is one of `check`, `batchCheck`, `listObjects`, `listRelations`, `listUsers`, `writeTuples` or
+`deleteTuples`.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Resolving the subject and the object
+
+`user`, `object` and `relation` are evaluated as xref:languages:simple-language.adoc[Simple] expressions against
+each Exchange, so a literal is used as written and an expression resolves per message:
+
+[source,java]
+------------------------------------------------------------
+to("openfga:check"
+        + "?storeId=01HQMVAJ..."
+        + "&relation=reader"
+        + "&user=user:${exchangeProperty.CamelKeycloakTokenSubject}"
+        + "&object=document:${header.documentId}");
+------------------------------------------------------------
+
+The component evaluates these itself, per Exchange, so a plain `to()` is enough — there is no need for `toD()` and
+the endpoint cache it churns.
+
+[IMPORTANT]
+.Read the subject from an exchange property, not a header
+====
+An endpoint configured as `user=user:${header.userId}` lets the caller choose who to be — it is the
+authorization-bypass equivalent of trusting a client-supplied username.
+
+Put the subject where the caller cannot reach it. An exchange property set by the step in your route that
+*verified* the caller cannot be set from outside the route, and a header usually can. Name that property here, and
+let authentication decide who the caller is.
+
+There is a convention worth following rather than inventing one: `camel-keycloak`'s `KeycloakSecurityPolicy` reads
+the subject from the `CamelKeycloakTokenSubject` exchange property in preference to the header of the same name —
+its `preferPropertyOverHeader` option defaults to `true`, for exactly the reason above. Nothing in Camel sets that
+property for you, so the step in your route that validates the token is what has to record it; but recording it
+under that name means the same identity serves both components.
+
+Taking the **object** from a header is a different matter and is entirely normal: the caller is entitled to say
+*which* resource it wants, and the check is what decides whether it may have it.
+====
+
+== Usage
+
+=== As a producer, deciding with a filter
+
+The `check` operation records the verdict in the `CamelOpenFgaAllowed` header and leaves the message body
+untouched, so the route decides what to do with it:
+
+[source,java]
+------------------------------------------------------------
+from("platform-http:/documents")
+        .to("openfga:check?storeId={{fga.store}}&authorizationModelId={{fga.model}}"
+            + "&relation=reader&user=user:${exchangeProperty.CamelKeycloakTokenSubject}"
+            + "&object=document:${header.documentId}")
+        .choice()
+            .when(header("CamelOpenFgaAllowed").isEqualTo(true))
+                .to("direct:serveDocument")
+            .otherwise()
+                .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(403));
+------------------------------------------------------------
+
+=== As a security policy, stopping the route
+
+`OpenFgaSecurityPolicy` is an `AuthorizationPolicy`, so the check guards a section of the route and a denial throws
+`CamelAuthorizationException` for the usual `onException` machinery to handle:
+
+[source,java]
+------------------------------------------------------------
+OpenFgaSecurityPolicy policy = new OpenFgaSecurityPolicy();
+policy.setApiUrl("http://openfga:8080");
+policy.setStoreId("01HQMVAJ...");
+policy.setAuthorizationModelId("01HQMVAK...");
+policy.setRelation("writer");
+policy.setUser("user:${exchangeProperty.CamelKeycloakTokenSubject}");
+policy.setObject("document:${header.documentId}");
+
+from("platform-http:/documents")
+        .policy(policy)
+        .to("direct:updateDocument");
+------------------------------------------------------------
+
+=== Filtering a collection
+
+`batchCheck` takes the object identifiers from the body and replaces it with the ones the check allowed, in the
+order the body asked in:
+
+[source,java]
+------------------------------------------------------------
+from("direct:listDocuments")
+        .to("sql:SELECT id FROM documents")
+        // sql: answers with a List<Map>, one entry per row, so turn it into the object identifiers first - a Map
+        // would stringify to {ID=budget}, which is not an identifier and would simply be skipped
+        .process(exchange -> {
+            List<Map<String, Object>> rows = exchange.getMessage().getBody(List.class);
+            exchange.getMessage().setBody(rows.stream().map(row -> "document:" + row.get("id")).toList());
+        })
+        .to("openfga:batchCheck?storeId={{fga.store}}&relation=reader"
+            + "&user=user:${exchangeProperty.CamelKeycloakTokenSubject}")
+        .to("direct:render");
+------------------------------------------------------------
+
+The body comes back holding only the identifiers the check allowed, in the order it was given them.
+
+`listObjects` answers the same question from the other end — ask OpenFGA which objects the subject can reach,
+rather than filtering a list you already have:
+
+[source,java]
+------------------------------------------------------------
+to("openfga:listObjects?storeId={{fga.store}}&relation=reader"
+   + "&user=user:${exchangeProperty.CamelKeycloakTokenSubject}&type=document");
+// body becomes [document:budget, document:roadmap]
+------------------------------------------------------------
+
+`listRelations` and `listUsers` round this out: what a subject may do with one object, and who may do something
+with it. Both replace the body with a `List<String>`.
+
+=== Granting and revoking access
+
+A route that creates a resource usually has to grant access to it too. `writeTuples` takes its tuples from the
+body, and falls back to the endpoint's `user`/`relation`/`object` when the body carries none — which is the shape
+that reads best right after a resource was created:
+
+[source,java]
+------------------------------------------------------------
+from("direct:createDocument")
+        .to("sql:INSERT INTO documents ...")
+        .to("openfga:writeTuples?storeId={{fga.store}}"
+            + "&user=user:${exchangeProperty.CamelKeycloakTokenSubject}&relation=owner"
+            + "&object=document:${header.documentId}");
+------------------------------------------------------------
+
+For several tuples at once, leave `user`/`relation`/`object` unset and put them in the body instead — a collection of
+`Map`s with `user`, `relation` and `object` entries, or of `ClientTupleKey` objects. `deleteTuples` accepts the same
+shapes and revokes instead.
+
+[IMPORTANT]
+.The endpoint wins over the body
+====
+If the endpoint configures any of `user`, `relation` or `object`, that is the tuple written and the body is not
+consulted. The body is read only when the endpoint names none of them.
+
+The same rule that governs a check governs a write: the configuration decides and the message does not. Were the body
+preferred, a route that unmarshals an untrusted payload before writing would hand the caller the choice of which
+relationship to grant — and `{"user": "user:attacker", "relation": "owner", "object": "document:secret"}` is a
+perfectly well-formed tuple.
+
+A partly configured triple is treated as a mistake rather than an invitation to fill the rest in from the message: the
+producer fails and names the part that is missing.
+====
+
+A typed wildcard — `user:*`, OpenFGA's "everyone" — is accepted here, because writing that tuple is how a resource
+is shared publicly and is a deliberate act by the route. It is *refused* as the subject of a check; see below.
+
+== Security
+
+=== It fails closed
+
+An OpenFGA server that cannot be reached, or that answers with an error, denies. The `failOpen` option reverses
+that and is off by default; it is marked `insecure:dev` and should not be enabled in production.
+
+`failOpen` covers only a *failure to obtain an answer*, and only for `check` and for `OpenFgaSecurityPolicy` — the
+two places where "proceed" means something. It never turns a denial into an allow, and it never applies to an
+Exchange that carried no usable subject (see below).
+
+When `failOpen` does let an exchange through, it carries `CamelOpenFgaFailedOpen=true`. The verdict header alone
+cannot distinguish "OpenFGA allowed this" from "OpenFGA was never reached and we were told to proceed", and an audit
+asking which exchanges went through unauthorized needs something it can filter on. The marker is set only on that
+deliberate path, and it is cleared on entry like the other decision headers so a sender cannot preload it.
+
+It also does not apply when OpenFGA answers with an HTTP 4xx. A 400 means the question was malformed, a 401 or 403
+that this client may not ask it, a 404 that what was asked about does not exist — none of which is a decision point
+that has gone away. This matters concretely: an object identifier can get past the component's own guards and still
+be rejected by the server (`document:a:b` and `document:x#y` are both HTTP 400 on OpenFGA 1.21.0), and if `failOpen`
+covered that, any caller able to influence the identifier could turn a check into an allow. Those fail closed, and
+the component logs why it did not fail open. A 429 is the one 4xx that does count as unavailable — it means "not
+right now" — as do transport errors, timeouts and 5xx.
+
+The rule is an allowlist rather than a list of exclusions: `failOpen` applies to a rate limit, a 5xx, a transport
+error and a timeout, and to nothing else. A failure the component does not recognise — a request the SDK refused to
+build, input it could not serialise, an interrupt during shutdown — is not evidence that OpenFGA was unreachable, so
+it denies. Anything unfamiliar therefore fails closed rather than being waved through for being unfamiliar.
+
+The query operations ignore `failOpen` entirely: a `batchCheck` or `listObjects` that failed has no safe way to
+proceed, since handing back the objects it never managed to filter would be exactly the leak the filtering was there
+to prevent.
+
+=== What is asked is not up to the message
+
+`storeId`, `authorizationModelId`, `relation` and the `operation` all come from the endpoint. An inbound message
+cannot point the check at a different store, pin an older model revision, downgrade the relation demanded from
+`owner` to `reader`, or turn a check into a tuple write.
+
+The `CamelOpenFga*` headers are outputs only. They are cleared on entry — before the expressions are evaluated —
+written on every evaluation, and never read back as inputs, so a verdict a message arrived with never survives into
+the route, including down the paths that throw.
+
+=== A missing identity is a denial, not a failure
+
+If the `user` or `object` expression resolves to blank — or to a bare `user:` prefix, which is what a configured
+prefix plus an unresolved expression leaves behind — the Exchange is denied with `CamelOpenFgaDenyReason` set to
+`missing-user` or `missing-object`, and OpenFGA is never asked.
+
+This split matters. OpenFGA would reject a blank subject with an HTTP 400, which is a *failure* to obtain a
+verdict — and with `failOpen` set a failure becomes an allow. An Exchange that carried no identity has not been
+authorized by anything, so it is denied, and `failOpen` does not reach it.
+
+=== A wildcard subject is refused
+
+`user:*` is a legitimate thing to write a tuple for. It is not a legitimate thing to *check*: asking "may everyone
+read this" is not asking whether the caller may, and OpenFGA answers `true` for it wherever a public-access tuple
+exists. A `user` expression that resolved to a typed wildcard would therefore hand out every publicly shared
+object, so it is denied with `CamelOpenFgaDenyReason` set to `wildcard-subject`.
+
+=== Pin the authorization model
+
+`authorizationModelId` is optional, and leaving it out means "whichever model the store considers latest". A store
+keeps every model it was ever given and "latest" moves the moment somebody writes a new one, so an unpinned
+endpoint can start answering a different question than the one it was reviewed with — with no change to the route.
+The component logs a warning at startup when it is unset. Pin it in production, so that a model rollout is a
+deliberate, reviewable configuration change.
+
+=== Consistency
+
+OpenFGA's default read consistency may answer from a replica that has not caught up, which right after a revoke
+means a deleted tuple can still grant access for a moment. Set `consistency=HIGHER_CONSISTENCY` on the paths where
+that window matters, at the cost of latency.
+
+The value is checked when the endpoint starts, and an unrecognised one — `higher_consistency`, say — is refused
+rather than accepted and quietly sent as `unknown_default_open_api` on every request.
+
+=== Authentication and TLS
+
+For a server started with `--authn-method preshared`, set `apiToken`. For one behind an OIDC provider, set
+`clientId`, `clientSecret`, `apiTokenIssuer` and `apiAudience` for the OAuth 2.0 client-credentials flow. Both
+`apiToken` and `clientSecret` are marked secret and are masked wherever Camel prints an endpoint URI.
+
+`sslContextParameters` configures TLS, including presenting a client certificate to a server that requires mutual
+TLS. A SPIFFE X.509-SVID obtained through `camel-spiffe` works here, which closes the
+loop: the workload authenticates to the authorization decision point as itself.
+
+NOTE: `useGlobalSslContextParameters` on the component has no effect on `OpenFgaSecurityPolicy`. The policy is a
+standalone bean and is not bound to a component instance, so set `sslContextParameters` on it explicitly.
+
+=== Timeouts
+
+`connectTimeout` and `readTimeout` bound the call, and `maxRetries` bounds how often a retryable failure is
+re-attempted. The component supplies the SDK's HTTP client itself so that `connectTimeout` actually takes effect;
+the SDK's own `connectTimeout` setting is accepted and then never read, and the client it builds by default sets
+none, leaving the connect phase bounded only by the operating system.
+
+== Health checks
+
+Both the producer and `OpenFgaSecurityPolicy` register a readiness check that probes OpenFGA's `/healthz`
+endpoint. Because the component fails closed, a route that is up but cannot reach OpenFGA fails every message, so
+it is not ready — and this makes that visible before traffic arrives rather than only in the error logs afterwards.
+
+The check requires the server to report `SERVING`, not merely to answer with HTTP 200: the HTTP gateway can answer
+200 while the health service behind it reports `NOT_SERVING`.
+
+No check is registered for an injected `openFgaClient`, which can point anywhere the component has no way to ask
+about. Set `healthCheckProducerEnabled=false` on the component, or `healthCheckEnabled=false` on the policy, to
+turn them off.
+
+== What this component does not do yet
+
+* *Contextual tuples and condition context on a check.* A contextual tuple derived from a message is a
+  self-authorization primitive — `(user:me, owner, document:secret)` — so rather than ship a gate for it that has
+  not been reviewed, the first release leaves it out entirely.
+* The `expand`, `readTuples` and `readChanges` operations, and store or authorization-model management.
+
+== Examples
+
+Guarding an HTTP endpoint, with the identity coming from an authentication step earlier in the route:
+
+[source,java]
+------------------------------------------------------------
+from("platform-http:/orders/{orderId}")
+        // whatever verifies the caller, ending in a processor that records the verified subject as a property
+        .to("direct:authenticate")
+        .to("openfga:check?storeId={{fga.store}}&authorizationModelId={{fga.model}}"
+            + "&relation=can_view&user=user:${exchangeProperty.CamelKeycloakTokenSubject}"
+            + "&object=order:${header.orderId}")
+        .filter(header("CamelOpenFgaAllowed").isEqualTo(true))
+            .to("direct:serveOrder");
+------------------------------------------------------------

@@ -25,6 +25,9 @@ class ErrorInfo {
     String exchangeId;
     boolean handled;
     long timestamp;
+    /** How often this kind of error happened (CAMEL-24911); 1 when it only happened once. */
+    long repeatCount = 1;
+    long repeatFirstTimestamp;
     String location;
     String threadName;
     long elapsed;

@@ -16,7 +16,10 @@
  */
 package org.apache.camel.language.simple;
 
+import java.math.BigDecimal;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
@@ -656,6 +659,41 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     }
 
     @Test
+    void testCompareDecimalWithInteger() {
+        exchange.getIn().setHeader("amount", new BigDecimal("100.50"));
+        exchange.getIn().setHeader("price", 2.5d);
+        assertPredicate("${header.amount} > 100", true);
+        assertPredicate("${header.amount} == 100", false);
+        assertPredicate("${header.amount} != 100", true);
+        assertPredicate("${header.amount} <= 100", false);
+        assertPredicate("${header.price} > 2", true);
+        assertPredicate("${header.price} == 2", false);
+        assertPredicate("${header.price} range '1..2'", false);
+        assertPredicate("${header.price} range '2..3'", true);
+    }
+
+    @Test
+    void testInWithDecimals() {
+        exchange.getIn().setHeader("n", 2);
+        exchange.getIn().setHeader("big", 99L);
+        exchange.getIn().setHeader("amount", new BigDecimal("2.50"));
+        // the elements are compared with an integer header by their numeric values, without dropping the decimals
+        assertPredicate("${header.n} in '2.5,3.5'", false);
+        assertPredicate("${header.n} in '2.9'", false);
+        assertPredicate("${header.n} !in '2.5'", true);
+        assertPredicate("${header.n} in '2,3'", true);
+        assertPredicate("${header.n} in '1, 2'", true);
+        assertPredicate("${header.n} in '4294967298'", false);
+        // 2.0 is the same number as 2, as with ${header.n} == 2.0
+        assertPredicate("${header.n} in '2.0'", true);
+        assertPredicate("${header.n} == 2.0", true);
+        assertPredicate("${header.big} in '99.99,100.01'", false);
+        assertPredicate("${header.big} in '98,99'", true);
+        assertPredicate("${header.amount} in '2.5'", true);
+        assertPredicate("${header.amount} in '2'", false);
+    }
+
+    @Test
     public void testRange() {
         assertPredicate("${in.header.bar} range '100..200'", true);
         assertPredicate("${in.header.bar} range '200..300'", false);
@@ -943,6 +981,37 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testTernaryWithCompoundCondition() {
+        // CAMEL-24920: the condition of a ternary may be more than one comparison
+        exchange.getIn().setBody(5);
+        assertExpression("${body > 0 && body < 10 ? 'in' : 'out'}", "in");
+        assertExpression("${body > 0 || body > 100 ? 'in' : 'out'}", "in");
+        assertExpression("${body > 0 && body < 10 && body != 7 ? 'in' : 'out'}", "in");
+
+        exchange.getIn().setBody(50);
+        assertExpression("${body > 0 && body < 10 ? 'in' : 'out'}", "out");
+        assertExpression("${body > 0 || body > 100 ? 'in' : 'out'}", "in");
+
+        exchange.getIn().setBody("Hello");
+        assertExpression("${body != null && body contains 'ell' ? 'yes' : 'no'}", "yes");
+        assertExpression("${body != null && body contains 'xxx' ? 'yes' : 'no'}", "no");
+    }
+
+    @Test
+    public void testTernaryWithCompoundConditionCornerCases() {
+        exchange.getIn().setBody(5);
+        // a quoted value that holds the operator text is not a logical operator
+        assertExpression("${body > 0 && body < 10 ? 'in && out' : 'no'}", "in && out");
+        exchange.getIn().setBody("a && b");
+        assertExpression("${body contains 'a && b' ? 'yes' : 'no'}", "yes");
+        // simple has no word forms, and says so, as it does outside a ternary
+        exchange.getIn().setBody(5);
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body > 0 and body < 10 ? 'in' : 'out'}"));
+        assertTrue(e.getMessage().contains("use && for and"), e.getMessage());
+    }
+
+    @Test
     public void testTernaryValueForms() {
         // a value form the ternary accepts must be used as that value and not looked up as a function,
         // which is what an unquoted number or boolean used to be (CAMEL-24826)
@@ -1061,9 +1130,89 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${header.Account1} > 7", true);
     }
 
+    @Test
+    public void testNumericLiteralAsOtherNumberType() {
+        // CAMEL-24966: a numeric literal evaluated as another number type is converted, not cast
+        exchange.getIn().setBody(5);
+        Expression exp = context.resolveLanguage("simple").createExpression("${body > 0 ? 1 : 0}");
+        assertEquals(1L, exp.evaluate(exchange, Long.class));
+        assertEquals(1, exp.evaluate(exchange, int.class));
+        assertEquals(1.0d, exp.evaluate(exchange, Double.class));
+        assertEquals("1", exp.evaluate(exchange, String.class));
+    }
+
+    @Test
+    public void testNegativeLongLiteral() {
+        exchange.getIn().setHeader("x", 5);
+        assertPredicate("${header.x} > -3000000000", true);
+        assertPredicate("${header.x} < -3000000000", false);
+        assertPredicate("${header.x} > -2147483648", true);
+    }
+
+    @Test
+    public void testElvisAnyZero() {
+        exchange.getIn().setHeader("count", 0L);
+        assertExpression("${header.count} ?: 'none'", "none");
+        exchange.getIn().setHeader("count", 0.0d);
+        assertExpression("${header.count} ?: 'none'", "none");
+        exchange.getIn().setHeader("count", BigDecimal.ZERO);
+        assertExpression("${header.count} ?: 'none'", "none");
+        exchange.getIn().setHeader("count", -0.0d);
+        assertExpression("${header.count} ?: 'none'", "none");
+        // NaN is not zero
+        exchange.getIn().setHeader("count", Double.NaN);
+        assertExpression("${header.count} ?: 'none'", Double.NaN);
+        exchange.getIn().setHeader("count", 3L);
+        assertExpression("${header.count} ?: 'none'", 3L);
+    }
+
+    @Test
+    public void testLogicalExpressionToString() {
+        Expression exp = context.resolveLanguage("simple").createExpression("${body != null && body.size() > 0}");
+        assertEquals("${body} != null && ${body.size()} > 0", exp.toString());
+    }
+
+    @Test
+    public void testElvisEvaluatesLeftOnce() {
+        MyCounter counter = new MyCounter();
+        context.getRegistry().bind("counter", counter);
+        assertExpression("${bean:counter?method=next} ?: 'none'", 1);
+        assertEquals(1, counter.count);
+    }
+
+    @Test
+    public void testUnaryIncDecKeepsDecimals() {
+        exchange.getIn().setHeader("price", 1.5d);
+        assertExpression("${header.price}++", 2.5d);
+        assertExpression("${header.price}--", 0.5d);
+        exchange.getIn().setHeader("price", new BigDecimal("1.25"));
+        assertExpression("${header.price}++", new BigDecimal("2.25"));
+        exchange.getIn().setHeader("price", "1.5");
+        assertExpression("${header.price}++", "2.5");
+        exchange.getIn().setHeader("price", 7);
+        assertExpression("${header.price}--", 6);
+    }
+
+    @Test
+    public void testRegexAndRangeWithNullRightHandSide() {
+        exchange.getIn().setBody(5);
+        assertPredicate("${body} range ${header.none}", false);
+        assertPredicate("${body} !range ${header.none}", true);
+        assertPredicate("${body} regex ${header.none}", false);
+        assertPredicate("${body} !regex ${header.none}", true);
+    }
+
     @Override
     protected String getLanguageName() {
         return "simple";
+    }
+
+    public static class MyCounter {
+        private int count;
+
+        public int next() {
+            return ++count;
+        }
     }
 
     public static class MyFileNameGenerator {

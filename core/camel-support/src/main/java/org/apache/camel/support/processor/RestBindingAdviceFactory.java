@@ -135,12 +135,14 @@ public class RestBindingAdviceFactory {
             responseValidator = lookupRestClientResponseValidator(camelContext);
         }
 
-        return new RestBindingAdvice(
+        RestBindingAdvice advice = new RestBindingAdvice(
                 camelContext, json, xml, outJson, outXml,
                 bc.getConsumes(), bc.getProduces(), mode, bc.isSkipBindingOnErrorCode(), bc.isClientRequestValidation(),
                 bc.isClientResponseValidation(), bc.isEnableCORS(), bc.isEnableNoContentResponse(), bc.getCorsHeaders(),
                 bc.getQueryDefaultValues(), bc.getQueryAllowedValues(), bc.isRequiredBody(), bc.getRequiredQueryParameters(),
                 bc.getRequiredHeaders(), bc.getResponseCodes(), bc.getResponseHeaders(), requestValidator, responseValidator);
+        advice.setResponseCodeHeaders(bc.getResponseCodeHeaders());
+        return advice;
     }
 
     protected static void setupJson(

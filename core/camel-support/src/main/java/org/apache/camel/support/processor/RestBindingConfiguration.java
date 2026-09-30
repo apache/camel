@@ -45,6 +45,7 @@ public class RestBindingConfiguration {
     private Class<?> outTypeClass;
     private Map<String, String> responseCodes;
     private Set<String> responseHeaders;
+    private Map<String, Set<String>> responseCodeHeaders;
 
     public String getConsumes() {
         return consumes;
@@ -212,5 +213,16 @@ public class RestBindingConfiguration {
 
     public void setResponseHeaders(Set<String> responseHeaders) {
         this.responseHeaders = responseHeaders;
+    }
+
+    /**
+     * The response headers that are required, per response code
+     */
+    public Map<String, Set<String>> getResponseCodeHeaders() {
+        return responseCodeHeaders;
+    }
+
+    public void setResponseCodeHeaders(Map<String, Set<String>> responseCodeHeaders) {
+        this.responseCodeHeaders = responseCodeHeaders;
     }
 }

@@ -20,7 +20,10 @@ import org.apache.camel.support.PooledObjectFactorySupport;
 
 /**
  * A pool for reusing {@link CamelInternalTask} to reduce object allocations.
+ *
+ * @deprecated Exchange pooling is deprecated and will be removed in a future release.
  */
+@Deprecated(since = "4.23.0")
 final class CamelInternalPooledTaskFactory extends PooledObjectFactorySupport<CamelInternalTask> {
 
     @Override

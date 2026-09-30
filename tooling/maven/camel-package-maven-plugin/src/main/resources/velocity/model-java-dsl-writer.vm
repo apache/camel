@@ -67,6 +67,8 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         StringBuilder sb = new StringBuilder();
         #if( $name == "RouteDefinition" )
         writeRoute(sb, def);
+        #elseif( $name == "SwitchDefinition" )
+        writeSwitch(sb, def);
         #else
         beginStep(sb, "${element}", def);
         doWrite${name}(sb, def);
@@ -300,7 +302,9 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 #set( $n = $mojo.lowercase($t) )
             #end
             #set( $primaryArgs = $mojo.getPrimaryArgs($n, $cl) )
-            #if( !$primaryArgs.isEmpty() )
+            #if( $t == "SwitchDefinition" )
+                case "SwitchDefinition" -> writeSwitch(sb, (SwitchDefinition) v);
+            #elseif( !$primaryArgs.isEmpty() )
                 case "${t}" -> {
                     ${t} _d = (${t}) v;
                     handledAttributes.clear();

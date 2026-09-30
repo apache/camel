@@ -1849,6 +1849,18 @@ public interface PulsarEndpointBuilderFactory {
         public String pulsarProducerMessageDeliverAfter() {
             return "CamelPulsarProducerMessageDeliverAfter";
         }
+        /**
+         * The message id the broker assigned to the published message.
+         * 
+         * The option is a: {@code org.apache.pulsar.client.api.MessageId} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PulsarProducerMessageId}.
+         */
+        public String pulsarProducerMessageId() {
+            return "CamelPulsarProducerMessageId";
+        }
     }
     static PulsarEndpointBuilder endpointBuilder(String componentName, String path) {
         class PulsarEndpointBuilderImpl extends AbstractEndpointBuilder implements PulsarEndpointBuilder, AdvancedPulsarEndpointBuilder {

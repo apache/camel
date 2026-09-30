@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.opa;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
@@ -78,6 +80,17 @@ public class OpaProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         // the verdict is reported through the decision headers, so that the route can act on it with a
         // filter or a choice; the body is left untouched
-        getEndpoint().getEvaluator().evaluate(exchange);
+        OpaPolicyEvaluator evaluator = getEndpoint().getEvaluator();
+        if (getEndpoint().getConfiguration().isBatch()) {
+            Object body = exchange.getMessage().getBody();
+            if (!(body instanceof List<?> elements)) {
+                throw new IllegalArgumentException(
+                        "batch=true requires a List body, but the body was "
+                                                   + (body == null ? "null" : body.getClass().getName()));
+            }
+            evaluator.evaluateBatch(exchange, elements);
+        } else {
+            evaluator.evaluate(exchange);
+        }
     }
 }

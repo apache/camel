@@ -55,6 +55,20 @@ public class SamplingThrottlerTest extends ContextTestSupport {
     }
 
     @Test
+    public void testFirstExchangeIsSampledWithLongPeriod() throws Exception {
+        // the first exchange is sampled whatever the period is, also when it is longer than the time since the
+        // (arbitrary) origin of System.nanoTime(), which is usually the time since the machine was started
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("1");
+
+        for (int i = 1; i <= 5; i++) {
+            template.sendBody("direct:sample-long-period", String.valueOf(i));
+        }
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
     public void testBurstySampling() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
 
@@ -189,6 +203,8 @@ public class SamplingThrottlerTest extends ContextTestSupport {
                 from("direct:sample-messageFrequency").sample(10).to("mock:result");
 
                 from("direct:sample-messageFrequency-via-dsl").sample().sampleMessageFrequency(5).to("mock:result");
+
+                from("direct:sample-long-period").sample(Duration.ofDays(36500)).to("mock:result");
 
                 from("direct:sample-placeholder").sample("{{sample.period}}").to("mock:result");
 

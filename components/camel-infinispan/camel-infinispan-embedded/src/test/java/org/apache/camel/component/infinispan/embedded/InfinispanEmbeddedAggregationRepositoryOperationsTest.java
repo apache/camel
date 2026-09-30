@@ -237,6 +237,26 @@ public class InfinispanEmbeddedAggregationRepositoryOperationsTest extends Infin
     }
 
     @Test
+    public void testRecoverTheExchangeGivenToRemove() {
+        // cleanup
+        aggregationRepository.getCache().clear();
+        // Given - the group in the cache does not contain the message that completed it
+        Exchange exchange = new DefaultExchange(context());
+        exchange.setExchangeId("Exchange-RecoverLast");
+        exchange.getIn().setBody("a+b");
+        aggregationRepository.add(context(), "RecoverLast", exchange);
+        exchange.getIn().setBody("a+b+c");
+
+        // When
+        aggregationRepository.remove(context(), "RecoverLast", exchange);
+
+        // Then
+        Exchange recovered = aggregationRepository.recover(context(), "Exchange-RecoverLast");
+        assertNotNull(recovered);
+        assertEquals("a+b+c", recovered.getIn().getBody(String.class));
+    }
+
+    @Test
     public void testGetKeysIgnoresExchangesToRecover() {
         // cleanup
         aggregationRepository.getCache().clear();

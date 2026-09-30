@@ -16,7 +16,9 @@
  */
 package org.apache.camel.processor.aggregate;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +50,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.StreamCache;
 import org.apache.camel.TimeoutMap;
 import org.apache.camel.Traceable;
 import org.apache.camel.processor.BaseProcessorSupport;
@@ -62,12 +65,15 @@ import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultTimeoutMap;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.KeyValueAggregationRepository;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.NoLock;
+import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -132,6 +138,12 @@ public class AggregateProcessor extends BaseProcessorSupport
     private final WaitableInteger inProgressCount = new WaitableInteger();
     private final Set<String> unconfirmedCompleteExchanges = ConcurrentHashMap.newKeySet();
     private final Set<String> inProgressCompleteExchangesForRecoveryTask = ConcurrentHashMap.newKeySet();
+    // aggregated exchanges being completed (exchange id -> count): moved to the completed store of a recoverable
+    // repository, but not yet registered in inProgressCompleteExchanges by onSubmitCompletion
+    private final Map<String, Integer> completingExchanges = new ConcurrentHashMap<>();
+    // the references to spooled stream caches that the groups in the repository hold, by correlation key (only when
+    // isKeepingReferences, and guarded by the lock)
+    private final Map<String, SpooledStreamCaches> groupSpooledStreamCaches = new HashMap<>();
     private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<>();
 
     private final AggregateProcessorStatistics statistics = new Statistics();
@@ -448,19 +460,53 @@ public class AggregateProcessor extends BaseProcessorSupport
         removeFlagCompleteAllGroups(copy);
         removeFlagCompleteAllGroupsInclusive(copy);
 
-        List<Exchange> aggregated = null;
+        // a stream cache spooled to disk is deleted when the incoming exchange is done, but the group keeps the body
+        // for later, so the copy takes its own reference, which the aggregator releases when it is done with the body
+        SpooledStreamCaches spooled = null;
+        if (copy.getIn().getBody() instanceof StreamCache sc && !sc.inMemory()) {
+            // the copy is independent of the unit of work that the incoming exchange may release its stream caches with
+            // (such as the parent of a split), as the wire tap does
+            copy.removeProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK);
+            try {
+                StreamCache copied = sc.copy(copy);
+                if (copied != null) {
+                    copy.getIn().setBody(copied);
+                }
+            } catch (IOException e) {
+                UnitOfWorkHelper.doneSynchronizations(copy, copy.getExchangeExtension().handoverCompletions());
+                exchange.setException(e);
+                callback.done(sync);
+                return sync;
+            }
+            // the copy has no on completions of its own, so these are only the releases of the reference, which are
+            // kept apart from the on completions that the aggregation strategy may add to the exchanges (such as the
+            // ZipAggregationStrategy deleting its zip file when the aggregated exchange is done)
+            spooled = new SpooledStreamCaches();
+            spooled.add(copy.getExchangeExtension().handoverCompletions());
+        }
+
+        List<Exchange> aggregated = new ArrayList<>();
         lock.lock();
         try {
-            aggregated = doAggregation(key, copy);
+            // check again under the lock (and on every optimistic locking retry), as the key may have been closed
+            // by a completion that happened after the check in doProcess(Exchange, AsyncCallback)
+            if (closedCorrelationKeys != null && closedCorrelationKeys.containsKey(key)) {
+                throw new ClosedCorrelationKeyException(key, exchange);
+            }
+            doAggregation(key, copy, spooled, aggregated);
         } catch (CamelExchangeException e) {
             exchange.setException(e);
         } finally {
             lock.unlock();
-        }
-
-        // we are completed so do that work outside the lock
-        if (aggregated != null) {
-            // we are completed so submit to completion
+            if (spooled != null) {
+                // release the reference unless it was handed over to the group or the aggregated exchange: the copy
+                // failed, is retried with a new copy due to optimistic locking, or is discarded, or the repository has
+                // read the body when the copy was added (see isKeepingReferences)
+                spooled.onDone(copy);
+            }
+            // we are completed so submit to completion outside the lock. This must also be done when the aggregation
+            // failed, or must be retried due to optimistic locking, after a group was completed (such as a group
+            // completed by pre-completion), as that group has already been removed from the repository
             aggregated.forEach(agg -> onSubmitCompletion(key, agg));
         }
 
@@ -511,20 +557,22 @@ public class AggregateProcessor extends BaseProcessorSupport
      * <p/>
      * This method <b>must</b> be run synchronized as we cannot aggregate the same correlation key in parallel.
      * <p/>
-     * The returned {@link Exchange} should be send downstream using the
+     * The completed {@link Exchange}(s) are added to the given list as soon as they are completed (and removed from the
+     * repository), also if this method fails afterwards. They should be send downstream using the
      * {@link #onSubmitCompletion(String, org.apache.camel.Exchange)} method which sends out the aggregated and
      * completed {@link Exchange}.
      *
      * @param  key                                     the correlation key
      * @param  newExchange                             the exchange
-     * @return                                         the aggregated exchange(s) which is complete, or <tt>null</tt> if
-     *                                                 not yet complete
+     * @param  spooled                                 the references that the exchange holds to spooled stream caches,
+     *                                                 which are taken when they are handed over, or <tt>null</tt>
+     * @param  list                                    the list to add the aggregated exchange(s) which are complete to
      * @throws org.apache.camel.CamelExchangeException is thrown if error aggregating
      */
-    private List<Exchange> doAggregation(String key, Exchange newExchange) throws CamelExchangeException {
+    private void doAggregation(String key, Exchange newExchange, SpooledStreamCaches spooled, List<Exchange> list)
+            throws CamelExchangeException {
         LOG.trace("onAggregation +++ start +++ with correlation key: {}", key);
 
-        List<Exchange> list = new ArrayList<>();
         String complete = null;
 
         Exchange answer;
@@ -544,6 +592,13 @@ public class AggregateProcessor extends BaseProcessorSupport
 
         // prepare the exchanges for aggregation
         ExchangeHelper.prepareAggregation(oldExchange, newExchange);
+
+        // the group records its completion timeout (see updateGroupTimeout), so only a timeout that this aggregator
+        // tracks for the exchange counts
+        boolean groupTimeout = isGroupTimeout();
+        if (groupTimeout) {
+            newExchange.removeProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT);
+        }
 
         // check if we are pre complete
         if (preCompletion) {
@@ -606,7 +661,7 @@ public class AggregateProcessor extends BaseProcessorSupport
                 answer = oldExchange;
                 if (answer == null) {
                     // first message in group failed during aggregation and we should just discard this
-                    return null;
+                    return;
                 }
             } else {
                 // must catch any exception from aggregation
@@ -650,15 +705,27 @@ public class AggregateProcessor extends BaseProcessorSupport
         }
 
         if (!aggregateFailed && complete == null) {
+            if (groupTimeout) {
+                updateGroupTimeout(newExchange, originalExchange, answer);
+            }
             // only need to update aggregation repository if we are not complete
             doAggregationRepositoryAdd(newExchange.getContext(), key, originalExchange, answer);
+            if (spooled != null && isKeepingReferences()) {
+                // the group keeps the references until it is completed (see doOnCompletion)
+                groupSpooledStreamCaches.computeIfAbsent(key, k -> new SpooledStreamCaches()).add(spooled.take());
+            }
         } else {
             // if we are complete then add the answer to the list
             doAggregationComplete(complete, list, key, originalExchange, answer, aggregateFailed);
+            if (spooled != null && containsInstance(list, answer)) {
+                // the aggregated exchange takes over the references (onCompletion has handed over those of the group)
+                SpooledStreamCaches release = new SpooledStreamCaches();
+                release.add(spooled.take());
+                answer.getExchangeExtension().addOnCompletion(release);
+            }
         }
 
         LOG.trace("onAggregation +++  end  +++ with correlation key: {}", key);
-        return list;
     }
 
     protected void doAggregationComplete(
@@ -695,6 +762,18 @@ public class AggregateProcessor extends BaseProcessorSupport
         if (answer != null) {
             list.add(answer);
         }
+    }
+
+    /**
+     * Whether the groups in the repository keep the references to the spooled stream caches of their exchanges until
+     * they are completed. This is only the case with the memory repository, which keeps the exchange instances (and
+     * their bodies), and without optimistic locking, as all access to the groups is then under the lock. A persistent
+     * repository has read the body when the exchange is added, so the reference is released after the add. With
+     * optimistic locking the reference is released after the add as well, and only the body of the exchange that
+     * completes the group is kept.
+     */
+    private boolean isKeepingReferences() {
+        return !optimisticLocking && aggregationRepository instanceof MemoryAggregationRepository;
     }
 
     protected void doAggregationRepositoryAdd(
@@ -786,6 +865,35 @@ public class AggregateProcessor extends BaseProcessorSupport
         return null;
     }
 
+    /**
+     * Whether the group records if it has a completion timeout, and the timeout checker only completes a group that has
+     * one.
+     * <p/>
+     * With optimistic locking the timeout entry of a completed group is not removed (see
+     * {@link #onCompletion(String, Exchange, Exchange, boolean, boolean)}), so it can be left over when a new group for
+     * the same correlation key starts. A new group normally replaces the entry with its own timeout, but with a
+     * completion timeout expression a new group can have no timeout, and the left over entry must then not complete it.
+     */
+    private boolean isGroupTimeout() {
+        return optimisticLocking && completionTimeoutExpression != null;
+    }
+
+    /**
+     * Records the completion timeout of the group on the aggregated exchange, which is stored in the repository: the
+     * timeout tracked for the new exchange, otherwise the timeout of the group so far.
+     */
+    private static void updateGroupTimeout(Exchange newExchange, Exchange originalExchange, Exchange answer) {
+        Object timeout = newExchange.getProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT);
+        if (timeout == null && originalExchange != null) {
+            timeout = originalExchange.getProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT);
+        }
+        if (timeout != null) {
+            answer.setProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT, timeout);
+        } else {
+            answer.removeProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT);
+        }
+    }
+
     protected void trackTimeout(String key, Exchange exchange) {
         // timeout can be either evaluated based on an expression or from a fixed value
         // expression takes precedence
@@ -818,6 +926,28 @@ public class AggregateProcessor extends BaseProcessorSupport
     protected Exchange onCompletion(
             final String key, final Exchange original, final Exchange aggregated, boolean fromTimeout,
             boolean aggregateFailed) {
+        // a recoverable repository moves the exchange to its completed store when it is removed, so mark it as being
+        // completed until onSubmitCompletion has registered it as in progress, as otherwise the recover task could
+        // recover and send it as well
+        final boolean completing = original != null && isRecoverableRepository();
+        if (completing) {
+            markCompleting(aggregated.getExchangeId());
+        }
+        Exchange answer = null;
+        try {
+            answer = doOnCompletion(key, original, aggregated, fromTimeout, aggregateFailed);
+            return answer;
+        } finally {
+            if (completing && answer == null) {
+                // not removed, or not to be sent
+                unmarkCompleting(aggregated.getExchangeId());
+            }
+        }
+    }
+
+    private Exchange doOnCompletion(
+            final String key, final Exchange original, final Exchange aggregated, boolean fromTimeout,
+            boolean aggregateFailed) {
         // store the correlation key as property before we remove so the repository has that information
         if (original != null) {
             original.setProperty(ExchangePropertyKey.AGGREGATED_CORRELATION_KEY, key);
@@ -829,10 +959,18 @@ public class AggregateProcessor extends BaseProcessorSupport
         if (original != null) {
             // remove from repository as its completed, we do this first as to trigger any OptimisticLockingException's
             aggregationRepository.remove(aggregated.getContext(), key, original);
+            // the aggregated exchange takes over the references that the group holds to spooled stream caches
+            SpooledStreamCaches spooled = takeGroupSpooledStreamCaches(key);
+            if (spooled != null) {
+                aggregated.getExchangeExtension().addOnCompletion(spooled);
+            }
         }
 
-        if (!fromTimeout && timeoutMap != null) {
-            // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
+        // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
+        // but not with optimistic locking: the timeout map is keyed by correlation key, and without a lock the entry
+        // may already belong to a new group for the same key, which would then never time out. An entry left behind
+        // does no harm, as the timeout checker completes a group only if it can remove it from the repository.
+        if (!fromTimeout && timeoutMap != null && !optimisticLocking) {
             LOG.trace("Removing correlation key {} from timeout", key);
             timeoutMap.remove(key);
         }
@@ -864,6 +1002,14 @@ public class AggregateProcessor extends BaseProcessorSupport
         return answer;
     }
 
+    private void markCompleting(String exchangeId) {
+        completingExchanges.merge(exchangeId, 1, Integer::sum);
+    }
+
+    private void unmarkCompleting(String exchangeId) {
+        completingExchanges.computeIfPresent(exchangeId, (id, count) -> count > 1 ? count - 1 : null);
+    }
+
     private void discard(String key, Exchange aggregated) {
         // this exchange is discarded
         discarded.incrementAndGet();
@@ -873,7 +1019,80 @@ public class AggregateProcessor extends BaseProcessorSupport
         aggregationRepository.confirm(aggregated.getContext(), aggregated.getExchangeId());
         // and remove redelivery state as well
         redeliveryState.remove(aggregated.getExchangeId());
+        // and release the references that the discarded exchange holds to spooled stream caches (only those, as the
+        // other on completions of the exchange are left as they are when it is not discarded)
+        releaseSpooledStreamCaches(aggregated);
         // the completion was from timeout and we should just discard it
+    }
+
+    /**
+     * Takes the references that the group holds to spooled stream caches, when the group is removed from the
+     * repository.
+     */
+    private SpooledStreamCaches takeGroupSpooledStreamCaches(String key) {
+        return isKeepingReferences() ? groupSpooledStreamCaches.remove(key) : null;
+    }
+
+    /**
+     * Releases the references that the aggregator handed over to a discarded exchange (see doOnCompletion).
+     */
+    private static void releaseSpooledStreamCaches(Exchange exchange) {
+        List<Synchronization> completions = exchange.getExchangeExtension().handoverCompletions();
+        if (completions != null) {
+            for (Synchronization completion : completions) {
+                if (completion instanceof SpooledStreamCaches spooled) {
+                    spooled.onDone(exchange);
+                } else {
+                    exchange.getExchangeExtension().addOnCompletion(completion);
+                }
+            }
+        }
+    }
+
+    /**
+     * The on completions that release references that the aggregator took to spooled stream caches, so the bodies can
+     * be read until the aggregator is done with them. They are kept apart from the other on completions of the
+     * exchanges, which the aggregator leaves as they are. When added to an exchange as on completion, they are released
+     * when the exchange is done.
+     */
+    private static final class SpooledStreamCaches extends SynchronizationAdapter {
+        private List<Synchronization> releases;
+
+        void add(List<Synchronization> synchronizations) {
+            if (synchronizations != null && !synchronizations.isEmpty()) {
+                if (releases == null) {
+                    releases = new ArrayList<>(synchronizations);
+                } else {
+                    releases.addAll(synchronizations);
+                }
+            }
+        }
+
+        List<Synchronization> take() {
+            List<Synchronization> answer = releases;
+            releases = null;
+            return answer;
+        }
+
+        @Override
+        public void onDone(Exchange exchange) {
+            // release only once
+            UnitOfWorkHelper.doneSynchronizations(exchange, take());
+        }
+
+        @Override
+        public String toString() {
+            return "AggregateOnCompletion[SpooledStreamCaches]";
+        }
+    }
+
+    private static boolean containsInstance(List<Exchange> list, Exchange exchange) {
+        for (Exchange e : list) {
+            if (e == exchange) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void onSubmitCompletion(final String key, final Exchange exchange) {
@@ -885,6 +1104,8 @@ public class AggregateProcessor extends BaseProcessorSupport
         if (recoveryInProgress.get()) {
             inProgressCompleteExchangesForRecoveryTask.add(exchange.getExchangeId());
         }
+        // registered as in progress, so no longer needs to be marked as being completed
+        unmarkCompleting(exchange.getExchangeId());
         // invoke the on completion callback
         aggregationStrategy.onCompletion(exchange);
 
@@ -1201,6 +1422,10 @@ public class AggregateProcessor extends BaseProcessorSupport
         this.discardOnAggregationFailure = discardOnAggregationFailure;
     }
 
+    public boolean isForceCompletionOnStop() {
+        return forceCompletionOnStop;
+    }
+
     public void setForceCompletionOnStop(boolean forceCompletionOnStop) {
         this.forceCompletionOnStop = forceCompletionOnStop;
     }
@@ -1357,7 +1582,9 @@ public class AggregateProcessor extends BaseProcessorSupport
             }
             log.debug("Completion timeout triggered for correlation key: {}", key);
 
-            boolean inProgress = inProgressCompleteExchanges.contains(exchangeId);
+            // with optimistic locking the exchange id in the entry can belong to a group that has been completed
+            // while a newer group for the same key is in the repository, so the repository decides (see below)
+            boolean inProgress = !optimisticLocking && inProgressCompleteExchanges.contains(exchangeId);
             if (inProgress) {
                 log.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
                 return;
@@ -1368,6 +1595,11 @@ public class AggregateProcessor extends BaseProcessorSupport
             Exchange answer = aggregationRepository.get(camelContext, key);
             if (answer == null) {
                 evictionStolen = true;
+            } else if (isGroupTimeout() && answer.getProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT) == null) {
+                // the entry is left over from a completed group, and the current group has no completion timeout
+                log.debug("Completion timeout for correlation key: {} is left over from a completed group, as the group"
+                          + " has no completion timeout",
+                        key);
             } else {
                 // indicate it was completed by timeout
                 answer.setProperty(ExchangePropertyKey.AGGREGATED_COMPLETED_BY, COMPLETED_BY_TIMEOUT);
@@ -1488,8 +1720,10 @@ public class AggregateProcessor extends BaseProcessorSupport
                     lock.lock();
                     try {
                         // consider in progress if it was in progress before we did the scan, or currently after we did the scan
+                        // (or is being completed and not yet registered as in progress)
                         // its safer to consider it in progress than risk duplicates due both in progress + recovered
-                        final boolean inProgress = inProgressCompleteExchangesForRecoveryTask.contains(exchangeId);
+                        final boolean inProgress = inProgressCompleteExchangesForRecoveryTask.contains(exchangeId)
+                                || completingExchanges.containsKey(exchangeId);
                         if (inProgress) {
                             LOG.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
                             if (unconfirmedCompleteExchanges.contains(exchangeId)) {
@@ -1811,8 +2045,21 @@ public class AggregateProcessor extends BaseProcessorSupport
         // shutdown aggregation repository and the strategy
         ServiceHelper.stopAndShutdownServices(aggregationRepository, aggregationStrategy);
 
+        // the memory repository has dropped the groups, so release the references they held to spooled stream caches
+        if (!groupSpooledStreamCaches.isEmpty()) {
+            lock.lock();
+            try {
+                Exchange dummy = new DefaultExchange(camelContext);
+                groupSpooledStreamCaches.values().forEach(spooled -> spooled.onDone(dummy));
+                groupSpooledStreamCaches.clear();
+            } finally {
+                lock.unlock();
+            }
+        }
+
         // cleanup when shutting down
         inProgressCompleteExchanges.clear();
+        completingExchanges.clear();
         inProgressCount.reset();
 
         if (shutdownExecutorService) {
@@ -1838,13 +2085,11 @@ public class AggregateProcessor extends BaseProcessorSupport
         try {
             Exchange exchange = aggregationRepository.get(camelContext, key);
             if (exchange != null) {
-                total = 1;
                 LOG.trace("Force completion triggered for correlation key: {}", key);
                 // indicate it was completed by a force completion request
                 exchange.setProperty(ExchangePropertyKey.AGGREGATED_COMPLETED_BY, COMPLETED_BY_FORCE);
-                Exchange answer = onCompletion(key, exchange, exchange, false, false);
-                if (answer != null) {
-                    onSubmitCompletion(key, answer);
+                if (forceCompletion(key, exchange)) {
+                    total = 1;
                 }
             }
         } finally {
@@ -1885,10 +2130,7 @@ public class AggregateProcessor extends BaseProcessorSupport
                         LOG.trace("Force completion triggered for correlation key: {}", key);
                         // indicate it was completed by a force completion request
                         exchange.setProperty(ExchangePropertyKey.AGGREGATED_COMPLETED_BY, COMPLETED_BY_FORCE);
-                        Exchange answer = onCompletion(key, exchange, exchange, false, false);
-                        if (answer != null) {
-                            onSubmitCompletion(key, answer);
-                        }
+                        forceCompletion(key, exchange);
                     }
                 }
             } finally {
@@ -1911,10 +2153,10 @@ public class AggregateProcessor extends BaseProcessorSupport
         try {
             Exchange exchange = aggregationRepository.get(camelContext, key);
             if (exchange != null) {
-                total = 1;
                 LOG.trace("Force discarded triggered for correlation key: {}", key);
-                // force discarding by setting aggregate failed as true
-                onCompletion(key, exchange, exchange, false, true);
+                if (forceDiscarding(key, exchange)) {
+                    total = 1;
+                }
             }
         } finally {
             lock.unlock();
@@ -1952,8 +2194,7 @@ public class AggregateProcessor extends BaseProcessorSupport
                     Exchange exchange = aggregationRepository.get(camelContext, key);
                     if (exchange != null) {
                         LOG.trace("Force discarded triggered for correlation key: {}", key);
-                        // force discarding by setting aggregate failed as true
-                        onCompletion(key, exchange, exchange, false, true);
+                        forceDiscarding(key, exchange);
                     }
                 }
             } finally {
@@ -1966,6 +2207,53 @@ public class AggregateProcessor extends BaseProcessorSupport
             LOG.debug("Forcing discarding of all groups with {} exchanges", total);
         }
         return total;
+    }
+
+    /**
+     * Completes the group and sends the aggregated exchange. Must be called while holding the lock.
+     *
+     * @return {@code false} if another Camel instance has already completed the group (optimistic locking)
+     */
+    private boolean forceCompletion(String key, Exchange exchange) {
+        try {
+            Exchange answer = onCompletion(key, exchange, exchange, false, false);
+            if (answer != null) {
+                onSubmitCompletion(key, answer);
+            }
+            return true;
+        } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
+            LOG.debug("Another Camel instance has already completed the group with correlation key: {}", key);
+            return false;
+        }
+    }
+
+    /**
+     * Discards the group. Must be called while holding the lock.
+     *
+     * @return {@code false} if another Camel instance has already removed the group from the repository (optimistic
+     *         locking)
+     */
+    private boolean forceDiscarding(String key, Exchange exchange) {
+        try {
+            // force discarding by setting aggregate failed as true
+            Exchange answer = onCompletion(key, exchange, exchange, false, true);
+            if (answer != null) {
+                // onCompletion only discards on aggregation failure when discardOnAggregationFailure is enabled,
+                // so discard here, as otherwise the group is removed without being confirmed (and a recoverable
+                // repository would recover and send it later)
+                try {
+                    discard(key, answer);
+                } finally {
+                    // onCompletion returned the exchange, so it is still marked as being completed, but it is
+                    // discarded instead of passed to onSubmitCompletion, so clear the mark here
+                    unmarkCompleting(answer.getExchangeId());
+                }
+            }
+            return true;
+        } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
+            LOG.debug("Another Camel instance has already completed the group with correlation key: {}", key);
+            return false;
+        }
     }
 
     /**

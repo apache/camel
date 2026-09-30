@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -78,6 +80,35 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
         assertEquals(mock.getReceivedExchanges().get(0).getExchangeId(), last);
     }
 
+    @Test
+    public void testRedeliverSucceeds() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+
+        Object out = template.requestBody("direct:flaky", "Hello World");
+        assertEquals("Hello World", out);
+
+        // the processor failed twice, and the second redelivery succeeded
+        ObjectName on = getCamelObjectName(TYPE_PROCESSOR, "flaky-processor");
+        assertEquals(2L, mbeanServer.getAttribute(on, "ExchangesFailed"));
+        assertEquals(1L, mbeanServer.getAttribute(on, "ExchangesCompleted"));
+        assertEquals(2L, mbeanServer.getAttribute(on, "Redeliveries"));
+
+        // the exchange was redelivered and completed
+        on = getCamelObjectName(TYPE_ROUTE, "flaky");
+        assertEquals(1L, mbeanServer.getAttribute(on, "ExchangesCompleted"));
+        assertEquals(1L, mbeanServer.getAttribute(on, "Redeliveries"));
+
+        // the redelivered header stays on the exchange, but the later processors and routes were not redelivered
+        for (String id : new String[] { "after-flaky", "call-other", "in-other" }) {
+            on = getCamelObjectName(TYPE_PROCESSOR, id);
+            assertEquals(1L, mbeanServer.getAttribute(on, "ExchangesCompleted"), id);
+            assertEquals(0L, mbeanServer.getAttribute(on, "Redeliveries"), id);
+        }
+        on = getCamelObjectName(TYPE_ROUTE, "other");
+        assertEquals(1L, mbeanServer.getAttribute(on, "ExchangesCompleted"));
+        assertEquals(0L, mbeanServer.getAttribute(on, "Redeliveries"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -87,6 +118,19 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
                         .redeliveryDelay(0)
                         .maximumRedeliveries(4).logStackTrace(false)
                         .setBody().constant("Error");
+
+                AtomicInteger attempts = new AtomicInteger();
+                from("direct:flaky").routeId("flaky")
+                        .process(exchange -> {
+                            if (attempts.incrementAndGet() < 3) {
+                                throw new IllegalArgumentException("Forced");
+                            }
+                        }).id("flaky-processor")
+                        .log("after the flaky processor").id("after-flaky")
+                        .to("direct:other").id("call-other");
+
+                from("direct:other").routeId("other")
+                        .log("in the other route").id("in-other");
 
                 from("direct:start")
                         .to("mock:foo")

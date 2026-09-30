@@ -18,6 +18,7 @@ package org.apache.camel.support;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -62,7 +63,8 @@ import static org.apache.camel.util.StringHelper.startsWithIgnoreCase;
  * <li>map</li> - Properties can lookup in Map's using map syntax, eg foo[bar] where foo is the name of the property
  * that is a Map instance, and bar is the name of the key.</li>
  * <li>list</li> - Properties can refer or add to in List's using list syntax, eg foo[0] where foo is the name of the
- * property that is a List instance, and 0 is the index. To refer to the last element, then use last as key.</li>
+ * property that is a List instance, and 0 is the index. To refer to the last element, then use last as key. An index
+ * beyond the end of the list pads the list with null elements up to the index.</li>
  * <li>reference by property placeholder id - Values can refer to a property placeholder key with #property:myKey</li>
  * <li>reference by bean id - Values can refer to other beans in the registry by prefixing with # or #bean: eg #myBean
  * or #bean:myBean. It is recommended to favour using `#bean:` syntax to make it obvious it's a bean reference.</li>
@@ -612,6 +614,17 @@ public final class PropertyBindingSupport {
         return name.contains("[") && name.endsWith("]");
     }
 
+    /**
+     * The index of a list key: a number, or {@code last} for the last element of the list (index 0 if the list is
+     * empty).
+     */
+    private static int listIndex(String lookupKey, int size) {
+        if ("last".equals(lookupKey)) {
+            return Math.max(0, size - 1);
+        }
+        return Integer.parseInt(lookupKey);
+    }
+
     private static boolean setPropertyCollectionViaReflection(
             CamelContext context, Object target, String name, Object value,
             boolean ignoreCase, boolean reference, boolean optional)
@@ -672,7 +685,7 @@ public final class PropertyBindingSupport {
             return true;
         } else if (obj instanceof List list) {
             if (isNotEmpty(lookupKey)) {
-                int idx = Integer.parseInt(lookupKey);
+                int idx = listIndex(lookupKey, list.size());
                 org.apache.camel.util.ObjectHelper.addListByIndex(list, idx, value);
             } else {
                 list.add(value);
@@ -756,7 +769,7 @@ public final class PropertyBindingSupport {
             return true;
         } else if (obj instanceof List list) {
             if (isNotEmpty(lookupKey)) {
-                int idx = Integer.parseInt(lookupKey);
+                int idx = listIndex(lookupKey, list.size());
                 if (idx < list.size()) {
                     list.set(idx, value);
                 } else if (idx == list.size()) {
@@ -991,7 +1004,7 @@ public final class PropertyBindingSupport {
             }
         } else if (answer instanceof List list) {
             if (isNotEmpty(lookupKey)) {
-                int idx = Integer.parseInt(lookupKey);
+                int idx = listIndex(lookupKey, list.size());
                 answer = list.size() > idx ? list.get(idx) : null;
             } else {
                 if (list.isEmpty()) {
@@ -1008,7 +1021,12 @@ public final class PropertyBindingSupport {
                 if (parameterType != null
                         && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
                     Object instance = context.getInjector().newInstance(parameterType);
-                    list.add(instance);
+                    if (isNotEmpty(lookupKey)) {
+                        // create the element at its index (the list is padded with null if needed)
+                        org.apache.camel.util.ObjectHelper.addListByIndex(list, listIndex(lookupKey, list.size()), instance);
+                    } else {
+                        list.add(instance);
+                    }
                     answer = instance;
                 }
             }
@@ -1122,7 +1140,7 @@ public final class PropertyBindingSupport {
             }
         } else if (answer instanceof List list) {
             if (isNotEmpty(lookupKey)) {
-                int idx = Integer.parseInt(lookupKey);
+                int idx = listIndex(lookupKey, list.size());
                 answer = list.size() > idx ? list.get(idx) : null;
             } else {
                 if (list.isEmpty()) {
@@ -1152,7 +1170,12 @@ public final class PropertyBindingSupport {
                 if (parameterType != null
                         && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
                     Object instance = context.getInjector().newInstance(parameterType);
-                    list.add(instance);
+                    if (isNotEmpty(lookupKey)) {
+                        // create the element at its index (the list is padded with null if needed)
+                        org.apache.camel.util.ObjectHelper.addListByIndex(list, listIndex(lookupKey, list.size()), instance);
+                    } else {
+                        list.add(instance);
+                    }
                     answer = instance;
                 }
             }
@@ -1630,6 +1653,13 @@ public final class PropertyBindingSupport {
             }
         }
 
+        if (candidates.size() > 1) {
+            // more than one matches (such as overloaded with int and long), so choose the most specific
+            Constructor<?> best = mostSpecific(camelContext, candidates, params);
+            if (best != null) {
+                return best;
+            }
+        }
         return candidates.size() == 1 ? candidates.get(0) : fallbackCandidate;
     }
 
@@ -1756,7 +1786,63 @@ public final class PropertyBindingSupport {
             }
         }
 
+        if (candidates.size() > 1) {
+            // more than one matches (such as overloaded with int and long), so choose the most specific
+            Method best = mostSpecific(camelContext, candidates, params);
+            if (best != null) {
+                return best;
+            }
+        }
         return candidates.size() == 1 ? candidates.get(0) : fallbackCandidate;
+    }
+
+    /**
+     * Chooses the most specific of the matching constructors or factory methods, the same way as Java would choose for
+     * the given parameters: a whole number is an int (and then a long), a boolean is a boolean, and a bean is of its
+     * own type (rather than a super type).
+     *
+     * @return the most specific, or <tt>null</tt> if there is no single most specific
+     */
+    private static <T extends Executable> T mostSpecific(CamelContext camelContext, List<T> candidates, String[] params) {
+        T best = null;
+        int bestScore = -1;
+        boolean tie = false;
+        for (T candidate : candidates) {
+            int score = 0;
+            Class<?>[] types = candidate.getParameterTypes();
+            for (int i = 0; i < types.length; i++) {
+                String parameter = params[i] != null ? params[i].trim() : null;
+                score += specificity(getValidParameterType(camelContext, parameter), types[i]);
+            }
+            if (score > bestScore) {
+                best = candidate;
+                bestScore = score;
+                tie = false;
+            } else if (score == bestScore) {
+                tie = true;
+            }
+        }
+        return tie ? null : best;
+    }
+
+    private static int specificity(Class<?> parameterType, Class<?> expectedType) {
+        if (parameterType == null) {
+            // unknown type of parameter, so it does not prefer any candidate
+            return 0;
+        }
+        if (Number.class.equals(parameterType)) {
+            if (int.class.equals(expectedType) || Integer.class.equals(expectedType)) {
+                return 3;
+            }
+            if (long.class.equals(expectedType) || Long.class.equals(expectedType)) {
+                return 2;
+            }
+            return 1;
+        }
+        if (Boolean.class.equals(parameterType)) {
+            return boolean.class.equals(expectedType) || Boolean.class.equals(expectedType) ? 3 : 1;
+        }
+        return parameterType.equals(expectedType) ? 3 : 1;
     }
 
     /**

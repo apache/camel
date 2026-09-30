@@ -344,7 +344,7 @@ public interface MustacheEndpointBuilderFactory {
          * @return the name of the header {@code MustacheResourceUri}.
          */
         public String mustacheResourceUri() {
-            return "MustacheResourceUri";
+            return "CamelMustacheResourceUri";
         }
         /**
          * The template to use instead of the endpoint configured.
@@ -356,7 +356,7 @@ public interface MustacheEndpointBuilderFactory {
          * @return the name of the header {@code MustacheTemplate}.
          */
         public String mustacheTemplate() {
-            return "MustacheTemplate";
+            return "CamelMustacheTemplate";
         }
     }
     static MustacheEndpointBuilder endpointBuilder(String componentName, String path) {

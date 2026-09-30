@@ -32,6 +32,7 @@ import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.OnWhenDefinition;
+import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.PropertyExpressionDefinition;
@@ -39,6 +40,8 @@ import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRouteParameterDefinition;
 import org.apache.camel.model.ToDefinition;
@@ -86,6 +89,31 @@ import org.apache.camel.model.validator.ValidatorDefinition;
  * shared across threads. Create one instance per thread or per conversion.
  */
 public abstract class JavaDslModelWriterSupport {
+
+    protected void writeSwitch(StringBuilder sb, SwitchDefinition definition) {
+        definition.preCreateProcessor();
+        handledAttributes.clear();
+        sb.append(NL).append(indent()).append(".doSwitch(")
+                .append(expressionDsl(definition.getSelector().getExpressionType())).append(")");
+        doWriteProcessorDefinitionAttributes(sb, definition);
+        for (SwitchCaseDefinition c : definition.getCases()) {
+            sb.append(NL).append(indent()).append(".doCase(");
+            sb.append(quote(c.getValue()));
+            sb.append(")");
+            handledAttributes.clear();
+            doWriteOptionalIdentifiedDefinitionAttributes(sb, c);
+            sb.append(".to(").append(quote(c.getUri())).append(")");
+        }
+        if (definition.getOtherwise() != null) {
+            sb.append(NL).append(indent()).append(".otherwise(").append(quote(definition.getOtherwise().getUri())).append(")");
+        }
+        sb.append(NL).append(indent()).append(".end()");
+    }
+
+    protected abstract void doWriteProcessorDefinitionAttributes(StringBuilder sb, ProcessorDefinition<?> definition);
+
+    protected abstract void doWriteOptionalIdentifiedDefinitionAttributes(
+            StringBuilder sb, OptionalIdentifiedDefinition<?> definition);
 
     private static final String NL = "\n";
 
@@ -1135,7 +1163,10 @@ public abstract class JavaDslModelWriterSupport {
         if (s == null) {
             return "null";
         }
-        return "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
+        // escape as a java string literal (a line break is not allowed in a string literal)
+        return "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r")
+                .replace("\t", "\\t")
+               + "\"";
     }
 
     protected String classLiteral(String typeName) {

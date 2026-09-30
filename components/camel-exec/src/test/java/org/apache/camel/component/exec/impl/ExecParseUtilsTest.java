@@ -52,7 +52,8 @@ public class ExecParseUtilsTest {
     @Test
     public void testWhitespaceSeparatedArgsWithSpaces() {
         List<String> args = splitToWhiteSpaceSeparatedTokens("\"arg 0 \"   arg1 \"arg 2\"");
-        assertEquals("arg 0", args.get(0));
+        // the text inside quotes is kept as-is, like a shell does
+        assertEquals("arg 0 ", args.get(0));
         assertEquals("arg1", args.get(1));
         assertEquals("arg 2", args.get(2));
     }

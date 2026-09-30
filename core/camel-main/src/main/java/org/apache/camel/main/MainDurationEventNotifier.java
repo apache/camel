@@ -16,7 +16,6 @@
  */
 package org.apache.camel.main;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
@@ -42,11 +41,11 @@ public class MainDurationEventNotifier extends EventNotifierSupport implements N
         STOP;
 
         static Action toAction(String action) {
-            if ("shutdown".equals(action)) {
+            if ("shutdown".equalsIgnoreCase(action)) {
                 return SHUTDOWN;
             }
 
-            if ("stop".equals(action)) {
+            if ("stop".equalsIgnoreCase(action)) {
                 return STOP;
             }
 
@@ -61,10 +60,13 @@ public class MainDurationEventNotifier extends EventNotifierSupport implements N
     private final MainShutdownStrategy shutdownStrategy;
     private final boolean stopCamelContext;
     private final boolean restartDuration;
+    private final String actionName;
     private final Action action;
     private final LongAdder doneMessages;
     private volatile StopWatch watch;
     private volatile ScheduledExecutorService idleExecutorService;
+    // whether the idle event has been triggered (and not again until there is new activity)
+    private volatile boolean idleTriggered;
 
     public MainDurationEventNotifier(CamelContext camelContext, int maxMessages, long maxIdleSeconds,
                                      MainShutdownStrategy shutdownStrategy, boolean stopCamelContext,
@@ -75,6 +77,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport implements N
         this.shutdownStrategy = shutdownStrategy;
         this.stopCamelContext = stopCamelContext;
         this.restartDuration = restartDuration;
+        this.actionName = action;
         this.action = Action.toAction(action);
         this.doneMessages = new LongAdder();
 
@@ -152,6 +155,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport implements N
                 LOG.trace("Message activity so restarting stop watch");
                 watch.restart();
             }
+            idleTriggered = false;
         }
     }
 
@@ -163,6 +167,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport implements N
             if (watch != null) {
                 watch.restart();
             }
+            idleTriggered = false;
         }
     }
 
@@ -182,7 +187,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport implements N
         super.doInit();
 
         if (action == null) {
-            throw new IllegalArgumentException("Unknown action: " + action);
+            throw new IllegalArgumentException("Unknown action: " + actionName);
         }
     }
 
@@ -193,8 +198,17 @@ public class MainDurationEventNotifier extends EventNotifierSupport implements N
             camelContext.addStartupListener((context, alreadyStarted) -> watch = new StopWatch());
 
             // okay we need to trigger on idle after X period, and therefore we need a background task that checks this
-            idleExecutorService = Executors.newSingleThreadScheduledExecutor();
+            idleExecutorService = camelContext.getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "CamelMainDurationIdle");
             idleExecutorService.scheduleAtFixedRate(this::idleTask, 1, 1, TimeUnit.SECONDS);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (idleExecutorService != null) {
+            camelContext.getExecutorServiceManager().shutdownNow(idleExecutorService);
+            idleExecutorService = null;
         }
     }
 
@@ -218,8 +232,9 @@ public class MainDurationEventNotifier extends EventNotifierSupport implements N
         }
 
         // shutdown idle checker if in use as we are stopping
-        if (idleExecutorService != null) {
-            idleExecutorService.shutdownNow();
+        ScheduledExecutorService ses = idleExecutorService;
+        if (ses != null) {
+            ses.shutdownNow();
         }
 
         try {
@@ -257,7 +272,9 @@ public class MainDurationEventNotifier extends EventNotifierSupport implements N
         boolean result = seconds >= maxIdleSeconds;
         LOG.trace("Duration max idle check {} >= {} -> {}", seconds, maxIdleSeconds, result);
 
-        if (result && shutdownStrategy.isRunAllowed()) {
+        if (result && !idleTriggered && shutdownStrategy.isRunAllowed()) {
+            // only trigger once (until there is new activity)
+            idleTriggered = true;
             triggerIdleEvent();
         }
     }

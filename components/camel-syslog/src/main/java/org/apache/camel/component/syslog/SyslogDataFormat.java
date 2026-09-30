@@ -38,13 +38,14 @@ public class SyslogDataFormat extends ServiceSupport implements DataFormat, Data
     @Override
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
         SyslogMessage message = ExchangeHelper.convertToMandatoryType(exchange, SyslogMessage.class, body);
-        stream.write(SyslogConverter.toString(message).getBytes());
+        stream.write(SyslogConverter.toString(message).getBytes(ExchangeHelper.getCharset(exchange)));
     }
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        String body = ExchangeHelper.convertToMandatoryType(exchange, String.class, inputStream);
-        SyslogMessage message = SyslogConverter.parseMessage(body.getBytes());
+        // parse the bytes as received, and decode the text with the charset of the exchange (UTF-8 by default)
+        byte[] body = ExchangeHelper.convertToMandatoryType(exchange, byte[].class, inputStream);
+        SyslogMessage message = SyslogConverter.parseMessage(body, ExchangeHelper.getCharset(exchange));
 
         exchange.getMessage().setHeader(SyslogConstants.SYSLOG_FACILITY, message.getFacility());
         exchange.getMessage().setHeader(SyslogConstants.SYSLOG_SEVERITY, message.getSeverity());

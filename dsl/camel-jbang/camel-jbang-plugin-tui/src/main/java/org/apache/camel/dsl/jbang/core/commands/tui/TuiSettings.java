@@ -40,6 +40,7 @@ final class TuiSettings {
     static final String PROP_AI_MODEL = "camel.tui.ai.model";
     static final String PROP_AI_URL = "camel.tui.ai.url";
     static final String PROP_AI_TOOLS = "camel.tui.ai.tools";
+    static final String PROP_AI_OVERVIEW = "camel.tui.ai.overview";
     static final String PROP_AI_ACP_COMMAND = "camel.tui.ai.acp.command";
     static final String PROP_PROXY_HOST = "camel.tui.proxyHost";
     static final String PROP_PROXY_PORT = "camel.tui.proxyPort";
@@ -62,6 +63,7 @@ final class TuiSettings {
     private String aiModel;
     private String aiUrl;
     private String aiTools;
+    private String aiOverview;
     private String aiAcpCommand;
     private String shellHistory;
     private String aiPromptHistory;
@@ -170,6 +172,19 @@ final class TuiSettings {
         this.aiTools = aiTools;
     }
 
+    /**
+     * The AI project overview (CAMEL-25143): {@code manual} (default: the AI explains the project when asked with
+     * /overview), {@code auto} (also when the AI panel opens and the summary is missing or out of date) or {@code off}
+     * (no /overview, and no AI-assisted descriptions shown in the tabs).
+     */
+    String getAiOverview() {
+        return aiOverview;
+    }
+
+    void setAiOverview(String aiOverview) {
+        this.aiOverview = aiOverview;
+    }
+
     String getAiAcpCommand() {
         return aiAcpCommand;
     }
@@ -272,6 +287,7 @@ final class TuiSettings {
             settings.aiModel = trimToNull(TuiUserConfig.read(PROP_AI_MODEL));
             settings.aiUrl = trimToNull(TuiUserConfig.read(PROP_AI_URL));
             settings.aiTools = trimToNull(TuiUserConfig.read(PROP_AI_TOOLS));
+            settings.aiOverview = trimToNull(TuiUserConfig.read(PROP_AI_OVERVIEW));
             settings.aiAcpCommand = trimToNull(TuiUserConfig.read(PROP_AI_ACP_COMMAND));
             settings.shellHistory = trimToNull(TuiUserConfig.read(PROP_SHELL_HISTORY));
             settings.aiPromptHistory = trimToNull(TuiUserConfig.read(PROP_AI_PROMPT_HISTORY));
@@ -304,6 +320,7 @@ final class TuiSettings {
             TuiUserConfig.write(PROP_AI_MODEL, aiModel);
             TuiUserConfig.write(PROP_AI_URL, aiUrl);
             TuiUserConfig.write(PROP_AI_TOOLS, aiTools);
+            TuiUserConfig.write(PROP_AI_OVERVIEW, aiOverview);
             TuiUserConfig.write(PROP_AI_ACP_COMMAND, aiAcpCommand);
             TuiUserConfig.write(PROP_SHELL_HISTORY, shellHistory);
             TuiUserConfig.write(PROP_AI_PROMPT_HISTORY, aiPromptHistory);

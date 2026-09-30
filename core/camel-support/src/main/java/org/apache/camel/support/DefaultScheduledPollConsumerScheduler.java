@@ -16,9 +16,9 @@
  */
 package org.apache.camel.support;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -45,7 +45,8 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
     private Consumer consumer;
     private ScheduledExecutorService scheduledExecutorService;
     private boolean shutdownExecutor;
-    private final List<ScheduledFuture<?>> futures = new ArrayList<>();
+    // thread-safe as the task may be unscheduled by the (concurrent) polling threads (such as with repeatCount)
+    private final List<ScheduledFuture<?>> futures = new CopyOnWriteArrayList<>();
     private Runnable task;
     private int poolSize = 1;
     private int concurrentConsumers = 1;

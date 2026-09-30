@@ -87,6 +87,26 @@ from("platform-http:/orders")
 The decision headers are set here too, so an `onException(CamelAuthorizationException.class)` handler can read
 `CamelOpaDecision` to build a meaningful error response.
 
+The policy can also evaluate a WebAssembly bundle in-process, which is the mode to prefer for a hot path such as
+authorizing an AI tool call, where a network hop per decision is not wanted:
+
+[source,java]
+------------------------------------------------------------
+OpaSecurityPolicy opaPolicy = new OpaSecurityPolicy();
+opaPolicy.setPolicyPath("authz/orders/allow");
+opaPolicy.setEvaluationMode("wasm");
+opaPolicy.setPolicyBundle("classpath:orders-bundle.tar.gz");
+
+from("platform-http:/orders")
+    .policy(opaPolicy)
+        .to("direct:handleOrder");
+------------------------------------------------------------
+
+The decision contract is identical to `rest` mode - the same `CamelOpaDecision` headers, and a
+`CamelAuthorizationException` on a deny - so a route need not know which engine evaluated it. `serverUrl`,
+`bearerToken` and the readiness check do not apply in `wasm` mode; the *Evaluation modes* section below covers
+building a bundle and what each mode gives up.
+
 == The input document
 
 Camel sends OPA an `input` document shaped like this:
@@ -159,6 +179,37 @@ boolean verdict read out of it:
 
 Both headers are written on every evaluation, so a verdict set by an inbound message never survives into the
 route.
+
+== Batch evaluation
+
+A route that splits a payload and authorizes each element pays one OPA round-trip per element. Set `batch=true` and
+hand the producer a `List` instead: it builds one input document per element - each element as the `body`, sharing
+the exchange's headers and properties - and evaluates them in a single call through OPA's batch API (the SDK falls
+back to sequential requests when the server does not implement it).
+
+[source,java]
+------------------------------------------------------------
+from("direct:orders")
+    // the body is a List of orders to authorize
+    .to("opa:authz/orders/allow?batch=true")
+    // CamelOpaBatchDecision is now a List<Boolean> parallel to the body
+    .process(dropTheDeniedOrders);
+------------------------------------------------------------
+
+The per-element verdicts arrive in `CamelOpaBatchDecision`, a `List<Boolean>` parallel to the input list: element
+_i_ is allowed when entry _i_ is `true`. Neither `CamelOpaDecisionAllow` nor `CamelOpaDecision` is set in batch
+mode - there is no single verdict, and no single decision document - and both are cleared on entry like the other
+decision headers, so a value an inbound message supplied never survives. `CamelOpaPolicyPath` *is* set, to the same
+value a single evaluation records, so tooling can read it either way.
+
+Fail-closed applies *per element*: an element whose evaluation failed is denied (`false`) while every other element
+decides normally; `failOpen` allows it only when its decision point was unavailable (see <<failure-handling>>). The batch is never denied as a whole because
+one element failed, nor allowed because most of it succeeded. A call that fails entirely - the server could not be
+reached at all - fails the exchange rather than denying each element: it carries no verdict at all, not a list of
+`false`. Under `failOpen` a call that could not reach the server allows every element instead.
+
+`batch` requires `evaluationMode=rest`: it saves the per-element HTTP round-trip, which has no meaning for in-process
+`wasm` evaluation, and the endpoint rejects the combination at startup.
 
 [#authorizing-an-identity]
 == Authorizing an identity
@@ -242,9 +293,10 @@ Data that is *not* part of the bundle — what a server would receive through it
 equivalent in `wasm` mode. A policy depending on it needs `evaluationMode=rest`.
 
 Prefer `classpath:` or `file:` for a bundle shipped with the application, which is what a build-time artefact
-usually is. The bundle is fetched when the endpoint starts, and Camel resolves an `http:` resource with no
-connect or read timeout (CAMEL-24756), so a policy server that accepts the connection and then does not answer
-stalls `CamelContext` startup rather than failing the one route.
+usually is. The bundle is fetched when the endpoint starts, so an `http:` location makes startup depend on a
+server being reachable; since Camel 4.23 that fetch is bounded by `camel.resource.http.connect-timeout` and
+`camel.resource.http.read-timeout`, so an unresponsive server fails the route rather than stalling
+`CamelContext` startup indefinitely.
 
 Which to choose:
 
@@ -261,9 +313,9 @@ Which to choose:
 
 `serverUrl` and `bearerToken` have no meaning in `wasm` mode — there is no server to address or authenticate
 to, and the endpoint warns at startup if either was set — and no health check is registered, because there is
-nothing to probe. An absent health check is not a healthy one. `failOpen` still applies: a `wasm` evaluation
-can fail (a busy pool, a bad bundle), and `failOpen` governs whether that failure denies the exchange or lets
-it through, exactly as in `rest` mode.
+nothing to probe. An absent health check is not a healthy one. `failOpen` still applies: a `wasm` pool can
+stay busy past `borrowTimeout`, and `failOpen` governs whether that denies the exchange or lets it through, as
+it does for an unreachable server in `rest` mode.
 
 The decision contract is identical in both modes: the same headers, the same `allowKey` handling, and an
 undefined decision fails closed the same way. A route does not need to know which engine evaluated it.
@@ -317,6 +369,7 @@ context.getRegistry().bind("opaTls", spiffe);
 
 None of this applies in `wasm` mode, where there is no server to reach.
 
+[[failure-handling]]
 == Failure handling
 
 The component fails closed. If the policy cannot be evaluated at all — the OPA server is unreachable, times out,
@@ -325,8 +378,44 @@ or answers with an error — the producer throws an `OpaPolicyEvaluationExceptio
 different from a deny, which is a decision rather than a failure, so a route can tell "denied" from "no policy
 decision point available".
 
-Setting `failOpen=true` reverses this and lets the exchange proceed when the policy cannot be evaluated. It exists
-for development and for non-critical policies, and should not be enabled in production.
+Setting `failOpen=true` reverses this, but only for a policy decision point that is *unavailable*:
+
+* in `rest` mode, the OPA server cannot be reached or times out (see `connectionTimeout` and `requestTimeout`), or
+a gateway in front of it answers `502`, `503`, `504` or `429`;
+* in `wasm` mode, no evaluation instance frees up within `borrowTimeout`.
+
+A decision point that *answered* still fails closed, because each of these answers is a policy saying no or a
+request that could never be decided, not an outage:
+
+* an undefined decision - for example `opa:authz/allow` against a policy with no `default allow := false`, for an
+input the rule does not match;
+* a rejected request - `400`, or any other `4xx` such as a missing or expired `bearerToken` (`401`/`403`) or a
+wrong `policyPath` prefix (`404`);
+* an error evaluating the policy against this input - OPA answers `500`, as for a conflict between rule outputs;
+* an input document that cannot be serialized.
+
+The input document is built from the message, so a sender can influence all of these. Were they covered, a crafted
+message could turn a policy's "no" into "yes". `failOpen` exists for development and for non-critical policies, and
+should not be enabled in production.
+
+An exchange that proceeds that way carries `CamelOpaDecisionFailedOpen=true`. `CamelOpaDecisionAllow` is `true`
+in both cases, and on its own it cannot tell "a policy allowed this" from "no policy ran and we were told to
+proceed" — which is exactly the distinction an audit trail needs. The marker is set only on the fail-open path,
+so a route can branch on it and an operator can alert on its presence:
+
+[source,java]
+------------------------------------------------------------
+from("platform-http:/orders")
+    .to("opa:authz/orders/allow?failOpen=true")
+    .choice()
+        .when(header(OpaConstants.DECISION_FAILED_OPEN).isEqualTo(true))
+            .to("log:unauthorized?level=WARN")
+    .end()
+    .to("direct:orders")
+------------------------------------------------------------
+
+Like the other decision headers it is cleared before every evaluation, so a message cannot arrive claiming
+`CamelOpaDecisionFailedOpen=false` and disguise an unauthorized exchange as one a policy allowed.
 
 Note that OPA reports an *undefined* decision — no rule matched and the policy declares no default — as an error
 rather than as a deny, so it fails closed as well. Give every decision rule a default, as in the example above,
@@ -348,7 +437,9 @@ more important of the two: a denied producer merely records a verdict the route 
 `CamelAuthorizationException` and stops the exchange, so an unreachable server there fails every message outright.
 That is why the policy's check is on by default rather than opt-in like the producer's. Set
 `healthCheckEnabled=false` on the policy for a route that should stay ready regardless — one running `failOpen`, say
-— in preference to hiding the check with `camel.health.exclude-pattern`.
+— in preference to hiding the check with `camel.health.exclude-pattern`. A policy running `failOpen` marks the
+exchanges it let through with `CamelOpaDecisionFailedOpen`, exactly as the producer does; the evaluator is shared,
+so everything in <<failure-handling>> about that header applies to `.policy(...)` too.
 
 Neither check is registered when an `opaClient` was injected: that client may point anywhere and neither the
 endpoint nor the policy has a way to ask it where, so probing the configured `serverUrl` would report on a server

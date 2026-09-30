@@ -364,6 +364,61 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     }
 
     /**
+     * The onPrepareFailure processor failed (threw an exception), so the exchange is not delivered to the failure
+     * processor (such as the dead letter channel). A dead letter channel handles the new exception if
+     * deadLetterHandleNewException is enabled (default), otherwise the exchange fails with the new exception. The
+     * original caused exception is added as suppressed to the new exception.
+     */
+    protected void handleOnPrepareFailure(
+            Exchange exchange, Exception e, Processor processor, boolean isDeadLetterChannel) {
+        Throwable original = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
+        if (original != null && original != e) {
+            e.addSuppressed(original);
+        }
+        ExchangeHelper.setFailureHandled(exchange);
+        boolean handled = isDeadLetterChannel && deadLetterHandleNewException;
+        String target = isDeadLetterChannel && deadLetterUri != null ? URISupport.sanitizeUri(deadLetterUri) : "" + processor;
+        LOG.warn("Error during processing the onPrepareFailure processor on exchange: {}. The exchange is not delivered to: {}"
+                 + " and the new exception is {}. Caused by: {}",
+                exchange.getExchangeId(), target, handled ? "handled" : "not handled", e.getMessage(), e);
+        if (handled) {
+            exchange.setException(null);
+            exchange.getExchangeExtension().setErrorHandlerHandled(true);
+        } else {
+            exchange.getExchangeExtension().setErrorHandlerHandled(false);
+            exchange.setException(e);
+        }
+    }
+
+    /**
+     * Evaluates a predicate of the error handler (such as handled or continued). A predicate that fails (throws an
+     * exception) is regarded as <tt>false</tt>, as the error handler must still handle the exchange (such as the dead
+     * letter channel which always handles the exchange). The original caused exception is kept, and the exception from
+     * the predicate is logged and added as suppressed to the original exception.
+     */
+    static boolean matchesPredicate(Predicate predicate, Exchange exchange, String name) {
+        try {
+            return predicate.matches(exchange);
+        } catch (Exception e) {
+            onPredicateFailure(exchange, name, e);
+            return false;
+        }
+    }
+
+    static void onPredicateFailure(Exchange exchange, String name, Exception e) {
+        Throwable original = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
+        if (original == null) {
+            original = exchange.getException();
+        }
+        if (original != null && original != e) {
+            original.addSuppressed(e);
+        }
+        LOG.warn("Error evaluating the {} predicate of the error handler on exchange: {}. The predicate is regarded as false."
+                 + " Caused by: {}",
+                name, exchange.getExchangeId(), e.getMessage(), e);
+    }
+
+    /**
      * Simple task to perform calling the processor with no redelivery support
      */
     protected class SimpleTask implements PooledExchangeTask, AsyncCallback {
@@ -594,12 +649,23 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
                 // invoke custom on prepare
                 if (onPrepareProcessor != null) {
+                    Exception prepareException;
                     try {
                         LOG.trace("OnPrepare processor {} is processing Exchange: {}", onPrepareProcessor, exchange);
                         onPrepareProcessor.process(exchange);
+                        // the processor may be wrapped and set the exception on the exchange instead of throwing
+                        prepareException = exchange.getException();
                     } catch (Exception e) {
-                        // a new exception was thrown during prepare
-                        exchange.setException(e);
+                        prepareException = e;
+                    }
+                    if (prepareException != null) {
+                        // a new exception was thrown during prepare, then the exchange is not delivered to the
+                        // failure processor
+                        handleOnPrepareFailure(exchange, prepareException, processor, isDeadLetterChannel);
+                        AsyncCallback cb = callback;
+                        taskFactory.release(this);
+                        reactiveExecutor.schedule(cb);
+                        return;
                     }
                 }
 
@@ -629,7 +695,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                         reactiveExecutor.schedule(callback);
 
                         // create log message
-                        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                         msg = msg + ". Caught: " + caught;
                         if (isDeadLetterChannel && deadLetterUri != null) {
                             msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
@@ -672,7 +738,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     reactiveExecutor.schedule(callback);
 
                     // create log message
-                    String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                    String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                     msg = msg + ". Caught: " + caught;
                     if (processor != null) {
                         if (deadLetterUri != null) {
@@ -693,14 +759,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
         private boolean shouldHandle(Exchange exchange, Predicate handledPredicate) {
             if (handledPredicate != null) {
-                return handledPredicate.matches(exchange);
+                return matchesPredicate(handledPredicate, exchange, "handled");
             }
             return false;
         }
 
         private boolean shouldContinue(Exchange exchange, Predicate continuedPredicate) {
             if (continuedPredicate != null) {
-                return continuedPredicate.matches(exchange);
+                return matchesPredicate(continuedPredicate, exchange, "continued");
             }
             return false;
         }
@@ -804,6 +870,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // e is never null
 
             Throwable previous = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
+            if (previous != null && previous == exchange.getProperty(ExchangePropertyKey.EXCEPTION_HANDLED)) {
+                // the previous exception was handled (continued) so this is a new failure
+                previous = null;
+            }
             if (previous != null && previous != e && e != null) {
                 // a 2nd exception was thrown while handling a previous exception
                 // so we need to add the previous as suppressed by the new exception
@@ -898,7 +968,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
             if (redeliveryPolicy.isLogExhausted()) {
                 // create log message
-                String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                 msg = msg + ". Exhausted after delivery attempt: 1 caught: " + exchange.getException();
 
                 // log that we failed delivery as we are exhausted
@@ -916,7 +986,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
 
             if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
-                String msg = "Rollback " + ExchangeHelper.logIds(exchange);
+                String msg = "Rollback " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                 Throwable cause = exchange.getException() != null
                         ? exchange.getException() : exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
                 if (cause != null) {
@@ -996,13 +1066,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
         @Override
         public void prepare(Exchange exchange, AsyncCallback callback) {
-            this.retryWhilePredicate = retryWhilePolicy;
-            this.currentRedeliveryPolicy = redeliveryPolicy;
-            this.handledPredicate = getDefaultHandledPredicate();
-            this.useOriginalInMessage = useOriginalMessagePolicy;
-            this.useOriginalInBody = useOriginalBodyPolicy;
-            this.onRedeliveryProcessor = redeliveryProcessor;
-            this.onExceptionProcessor = RedeliveryErrorHandler.this.onExceptionProcessor;
+            useErrorHandlerDefaults();
             // do a defensive copy of the original Exchange, which is needed for redelivery so we can ensure the
             // original Exchange is being redelivered, and not a mutated Exchange
             this.original = redeliveryEnabled ? defensiveCopyExchangeIfNeeded(exchange) : null;
@@ -1010,10 +1074,27 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             this.callback = callback;
         }
 
+        /**
+         * Uses the behaviour configured on the error handler itself, which an exception policy (onException) matching
+         * the caught exception can then override.
+         */
+        private void useErrorHandlerDefaults() {
+            this.retryWhilePredicate = retryWhilePolicy;
+            this.currentRedeliveryPolicy = redeliveryPolicy;
+            this.failureProcessor = null;
+            this.handledPredicate = getDefaultHandledPredicate();
+            this.continuedPredicate = null;
+            this.useOriginalInMessage = useOriginalMessagePolicy;
+            this.useOriginalInBody = useOriginalBodyPolicy;
+            this.onRedeliveryProcessor = redeliveryProcessor;
+            this.onExceptionProcessor = RedeliveryErrorHandler.this.onExceptionProcessor;
+        }
+
         @Override
         public void reset() {
             this.retryWhilePredicate = null;
             this.currentRedeliveryPolicy = null;
+            this.failureProcessor = null;
             this.handledPredicate = null;
             this.continuedPredicate = null;
             this.useOriginalInMessage = false;
@@ -1048,9 +1129,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 doRun();
             } catch (Exception e) {
                 // unexpected exception during running so set exception and trigger callback
-                // (do not do taskFactory.release as that happens later)
                 exchange.setException(e);
-                callback.done(false);
+                AsyncCallback cb = callback;
+                taskFactory.release(this);
+                cb.done(false);
             }
         }
 
@@ -1069,8 +1151,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 exhausted = exchange.getExchangeExtension().isRedeliveryExhausted() || exchange.isRollbackOnly();
                 if (!exhausted && redeliveryCounter > 0) {
                     // its a potential redelivery so determine if we should redeliver or not
-                    redeliverAllowed
-                            = currentRedeliveryPolicy.shouldRedeliver(exchange, redeliveryCounter, retryWhilePredicate);
+                    try {
+                        redeliverAllowed
+                                = currentRedeliveryPolicy.shouldRedeliver(exchange, redeliveryCounter, retryWhilePredicate);
+                    } catch (Exception e) {
+                        // the retryWhile predicate failed, so do not redeliver (the failure processor handles it)
+                        onPredicateFailure(exchange, "retryWhile", e);
+                        redeliverAllowed = false;
+                    }
                 }
             }
             // if we are exhausted or redelivery is not allowed, then deliver to failure processor (eg such as DLC)
@@ -1200,6 +1288,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // letting onRedeliver be executed at first
             deliverToOnRedeliveryProcessor();
 
+            if (exchange.getException() != null) {
+                // the on redelivery processor failed, which is a new failure (the exchange must not be redelivered
+                // with the exception set), so loop back around to handle the new exception
+                reactiveExecutor.schedule(this);
+                return;
+            }
+
             if (exchange.isRouteStop()) {
                 // the on redelivery can mark that the exchange should stop and therefore not perform a redelivery
                 // and if so then we are done so continue callback
@@ -1255,9 +1350,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
             exchange.getExchangeExtension().setFailureHandled(false);
             // keep the Exchange.EXCEPTION_CAUGHT as property so end user knows the caused exception
+            // and mark it as handled (continued), so it is not regarded as a previous exception of a later failure
+            Exception handled = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
+            if (handled != null) {
+                exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, handled);
+            }
 
             // create log message
-            String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+            String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
             msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
             msg = msg + ". Handled and continue routing.";
 
@@ -1306,6 +1406,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // e is never null
 
             Throwable previous = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
+            if (previous != null && previous == exchange.getProperty(ExchangePropertyKey.EXCEPTION_HANDLED)) {
+                // the previous exception was handled (continued) so this is a new failure
+                previous = null;
+            }
             if (previous != null && previous != e) {
                 // a 2nd exception was thrown while handling a previous exception
                 // so we need to add the previous as suppressed by the new exception
@@ -1330,6 +1434,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
             // store the original caused exception in a property, so we can restore it later
             exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, e);
+
+            // the exception may differ from the one caught on a previous attempt, so start over from the
+            // error handler defaults and do not keep what a previous exception policy set (CAMEL-24981)
+            useErrorHandlerDefaults();
 
             // find the error handler to use (if any)
             ExceptionPolicy exceptionPolicy = getExceptionPolicy(exchange, e);
@@ -1370,18 +1478,19 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 }
             }
 
+            // store the route, node and location where the exception happened, before any failure processor
+            // (onException, dead letter channel, ...) runs and adds its own entries to the message history,
+            // and before the message below is built so that it can say where the failure is (CAMEL-24974)
+            ExchangeHelper.captureFailureOrigin(exchange);
+
             // only log if not failure handled or not an exhausted unit of work
             if (!ExchangeHelper.isFailureHandled(exchange) && !ExchangeHelper.isUnitOfWorkExhausted(exchange)) {
-                String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange)
+                String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange)
                              + ". On delivery attempt: " + redeliveryCounter + " caught: " + e;
                 logFailedDelivery(true, false, false, false, isDeadLetterChannel(), exchange, msg, e);
             }
 
             redeliveryCounter = incrementRedeliveryCounter(exchange);
-
-            // store the route, node and location where the exception happened, before any failure processor
-            // (onException, dead letter channel, ...) runs and adds its own entries to the message history
-            ExchangeHelper.captureFailureOrigin(exchange);
         }
 
         /**
@@ -1510,12 +1619,23 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
                 // invoke custom on prepare
                 if (onPrepareProcessor != null) {
+                    Exception prepareException;
                     try {
                         LOG.trace("OnPrepare processor {} is processing Exchange: {}", onPrepareProcessor, exchange);
                         onPrepareProcessor.process(exchange);
+                        // the processor may be wrapped and set the exception on the exchange instead of throwing
+                        prepareException = exchange.getException();
                     } catch (Exception e) {
-                        // a new exception was thrown during prepare
-                        exchange.setException(e);
+                        prepareException = e;
+                    }
+                    if (prepareException != null) {
+                        // a new exception was thrown during prepare, then the exchange is not delivered to the
+                        // failure processor
+                        handleOnPrepareFailure(exchange, prepareException, processor, isDeadLetterChannel);
+                        AsyncCallback cb = callback;
+                        taskFactory.release(this);
+                        reactiveExecutor.schedule(cb);
+                        return;
                     }
                 }
 
@@ -1545,7 +1665,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                         reactiveExecutor.schedule(callback);
 
                         // create log message
-                        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                         msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
                         if (isDeadLetterChannel && deadLetterUri != null) {
                             msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
@@ -1588,7 +1708,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     reactiveExecutor.schedule(callback);
 
                     // create log message
-                    String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                    String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                     msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
                     if (processor != null) {
                         if (deadLetterUri != null) {
@@ -1761,7 +1881,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 }
                 String msg = message;
                 if (msg == null) {
-                    msg = "New exception " + ExchangeHelper.logIds(exchange);
+                    msg = "New exception " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                     // special for logging the new exception
                     if (e != null) {
                         msg = msg + " due: " + e.getMessage();
@@ -1774,7 +1894,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     logger.log(msg, newLogLevel);
                 }
             } else if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
-                String msg = "Rollback " + ExchangeHelper.logIds(exchange);
+                String msg = "Rollback " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                 Throwable cause = exchange.getException() != null
                         ? exchange.getException() : exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
                 if (cause != null) {
@@ -1829,7 +1949,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
          */
         private boolean shouldContinue(Exchange exchange) {
             if (continuedPredicate != null) {
-                return continuedPredicate.matches(exchange);
+                return matchesPredicate(continuedPredicate, exchange, "continued");
             }
             // do not continue by default
             return false;
@@ -1843,7 +1963,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
          */
         private boolean shouldHandle(Exchange exchange) {
             if (handledPredicate != null) {
-                return handledPredicate.matches(exchange);
+                return matchesPredicate(handledPredicate, exchange, "handled");
             }
             // do not handle by default
             return false;
@@ -2022,6 +2142,34 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     @Override
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(deadLetter, output, outputAsync, taskFactory);
+    }
+
+    /**
+     * Where the failure happened, as the route and node the exchange was at and where that node is in the source, such
+     * as {@code at route1[to3] orders.camel.yaml:18}. Empty when nothing was captured - message history or source
+     * location can be off - so the message keeps its shape (CAMEL-24974).
+     */
+    private static String failureOrigin(Exchange exchange) {
+        String routeId = exchange.getProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, String.class);
+        String nodeId = exchange.getProperty(ExchangePropertyKey.FAILURE_NODE_ID, String.class);
+        String location = exchange.getProperty(ExchangePropertyKey.FAILURE_LOCATION, String.class);
+        if (routeId == null && nodeId == null && location == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder(64).append(" at ");
+        if (routeId != null) {
+            sb.append(routeId);
+        }
+        if (nodeId != null) {
+            sb.append("[").append(nodeId).append("]");
+        }
+        if (location != null) {
+            if (routeId != null || nodeId != null) {
+                sb.append(" ");
+            }
+            sb.append(location);
+        }
+        return sb.toString();
     }
 
 }

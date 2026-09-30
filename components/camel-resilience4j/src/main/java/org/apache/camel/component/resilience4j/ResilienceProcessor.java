@@ -588,14 +588,20 @@ public class ResilienceProcessor extends BaseProcessorSupport
             Callable<Exchange> callable;
 
             if (timeLimiter != null) {
-                Supplier<CompletableFuture<Exchange>> futureSupplier
-                        = () -> CompletableFuture.supplyAsync(ftask, executorService);
+                Supplier<CompletionStage<Exchange>> stage = () -> CompletableFuture.supplyAsync(ftask, executorService);
+                if (bulkhead != null) {
+                    // the bulkhead goes inside the time limiter, so the permit is held until the task is done,
+                    // and not released when the timeout fires while the task is still running
+                    stage = Bulkhead.decorateCompletionStage(bulkhead, stage);
+                }
+                final Supplier<CompletionStage<Exchange>> fstage = stage;
+                Supplier<CompletableFuture<Exchange>> futureSupplier = () -> fstage.get().toCompletableFuture();
                 callable = TimeLimiter.decorateFutureSupplier(timeLimiter, futureSupplier);
             } else {
                 callable = task;
-            }
-            if (bulkhead != null) {
-                callable = Bulkhead.decorateCallable(bulkhead, callable);
+                if (bulkhead != null) {
+                    callable = Bulkhead.decorateCallable(bulkhead, callable);
+                }
             }
 
             callable = CircuitBreaker.decorateCallable(circuitBreaker, callable);
@@ -658,11 +664,12 @@ public class ResilienceProcessor extends BaseProcessorSupport
             }
 
             // decorate with resilience4j CompletionStage decorators
-            if (timeLimiter != null) {
-                supplier = TimeLimiter.decorateCompletionStage(timeLimiter, scheduledExecutorService, supplier);
-            }
+            // (the bulkhead inside the time limiter, so the permit is held until the task is done)
             if (bulkhead != null) {
                 supplier = Bulkhead.decorateCompletionStage(bulkhead, supplier);
+            }
+            if (timeLimiter != null) {
+                supplier = TimeLimiter.decorateCompletionStage(timeLimiter, scheduledExecutorService, supplier);
             }
             supplier = CircuitBreaker.decorateCompletionStage(circuitBreaker, supplier);
 

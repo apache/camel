@@ -688,7 +688,20 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                             try {
                                 logger.info("Restarting route: {} attempt: {}", r.getId(), attempt);
                                 EventHelper.notifyRouteRestarting(getCamelContext(), r.get(), attempt);
-                                doStartRoute(r, false, rx -> DefaultSupervisingRouteController.super.startRoute(rx.getId()));
+                                lock.lock();
+                                try {
+                                    // the route may have been stopped or started manually (which cancels this task),
+                                    // or Camel may be stopping, while this attempt waited for the lock
+                                    if (routes.get(r) != context || context.getStatus() != BackOffTimer.Task.Status.Active
+                                            || !getCamelContext().isRunAllowed()) {
+                                        logger.info("Restarting route: {} attempt: {} is cancelled", r.getId(), attempt);
+                                        return false;
+                                    }
+                                    doStartRoute(r, false,
+                                            rx -> DefaultSupervisingRouteController.super.startRoute(rx.getId()));
+                                } finally {
+                                    lock.unlock();
+                                }
                                 logger.info("Route: {} started after {} attempts", r.getId(), attempt);
                                 return false;
                             } catch (Exception e) {
@@ -741,7 +754,9 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                                 }
                             }
 
-                            routes.remove(r);
+                            // a cancelled task completes again when its running attempt ends, and by then the route
+                            // may have a new restart task, which must not be removed
+                            routes.remove(r, task);
                         });
 
                         return task;
@@ -750,6 +765,8 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
         boolean release(RouteHolder route) {
             exceptions.remove(route.getId());
+            // the route is now managed manually, so it is no longer exhausted (and unhealthy) if it was
+            exhausted.remove(route);
             BackOffTimer.Task task = routes.remove(route);
             if (task != null) {
                 LOG.debug("Cancelling restart task for route: {}", route.getId());
@@ -947,6 +964,9 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             try {
                 routes.removeIf(
                         r -> ObjectHelper.equal(r.get(), route) || ObjectHelper.equal(r.getId(), route.getId()));
+                nonSupervisedRoutes.remove(route.getId());
+                // a removed route is no longer restarting or exhausted (and unhealthy)
+                routeManager.release(new RouteHolder(route, 0));
             } finally {
                 lock.unlock();
             }

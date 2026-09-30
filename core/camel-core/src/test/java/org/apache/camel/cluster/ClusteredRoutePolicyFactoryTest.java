@@ -19,6 +19,7 @@ package org.apache.camel.cluster;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -30,7 +31,9 @@ import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
 
@@ -108,6 +111,9 @@ public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
     @Test
     public void testClusteredRoutePolicyFactoryAddRouteAlreadyLeader() throws Exception {
         cs.getView().setLeader(true);
+        // the policy starts the routes on its own thread
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo")));
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -131,6 +137,61 @@ public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
 
         assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
         assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("bar"));
+    }
+
+    @Test
+    public void testNoPolicyThreadLeftWhenIdleOrRoutesRemoved() throws Exception {
+        cs.getView().setLeader(true);
+
+        for (int cycle = 0; cycle < 3; cycle++) {
+            final String prefix = "route-" + cycle + "-";
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    for (int i = 0; i < 20; i++) {
+                        from("seda:" + prefix + i).routeId(prefix + i)
+                                .to("mock:result");
+                    }
+                }
+            });
+
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                for (int i = 0; i < 20; i++) {
+                    assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus(prefix + i));
+                }
+            });
+
+            // each route has its own policy, and a policy keeps no thread while the leadership does not change
+            awaitNoPolicyThread();
+
+            for (int i = 0; i < 20; i++) {
+                context.getRouteController().stopRoute(prefix + i);
+                assertTrue(context.removeRoute(prefix + i));
+            }
+        }
+
+        // the removed routes left no thread behind
+        awaitNoPolicyThread();
+
+        // a leadership change after the policy thread has exited is still applied
+        cs.getView().setLeader(false);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo")));
+        awaitNoPolicyThread();
+    }
+
+    private void awaitNoPolicyThread() {
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(0, countPolicyThreads(), "live ClusteredRoutePolicy threads"));
+    }
+
+    private long countPolicyThreads() {
+        String camelId = "(" + context.getName() + ")";
+        return Thread.getAllStackTraces().keySet().stream()
+                .filter(Thread::isAlive)
+                .map(Thread::getName)
+                .filter(name -> name.contains(camelId) && name.endsWith(" - ClusteredRoutePolicy"))
+                .count();
     }
 
     // *********************************

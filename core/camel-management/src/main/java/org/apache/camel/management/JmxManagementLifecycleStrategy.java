@@ -90,6 +90,7 @@ import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BrowsableVariableRepository;
@@ -143,6 +144,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     // the wrapped processors is for performance counters, which are in use for the created routes
     // when a route is removed, we should remove the associated processors from this map
     private final Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor<?>>> wrappedProcessors = new HashMap<>();
+    // the managed object of a processor (by its definition), which is reused when its route is started again
+    private final Map<NamedNode, Object> managedProcessors = new HashMap<>();
     private final List<java.util.function.Consumer<JmxManagementLifecycleStrategy>> preServices = new ArrayList<>();
     private final TimerListenerManager loadTimer = new ManagedLoadTimer();
     private final TimerListenerManagerStartupListener loadTimerStartupListener = new TimerListenerManagerStartupListener();
@@ -516,6 +519,12 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 LOG.warn("Could not unregister service: {} as Service MBean.", service, e);
             }
         }
+        if (service instanceof Processor processor) {
+            KeyValueHolder<NamedNode, InstrumentationProcessor<?>> holder = wrappedProcessors.get(processor);
+            if (holder != null) {
+                managedProcessors.remove(holder.getKey());
+            }
+        }
     }
 
     private Object getManagedObjectForService(CamelContext context, Service service, Route route) {
@@ -635,9 +644,17 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             return null;
         }
 
-        // get the managed object as it can be a specialized type such as a Delayer/Throttler etc.
-        Object managedObject
-                = getManagementObjectStrategy().getManagedObjectForProcessor(context, processor, holder.getKey(), route);
+        // reuse the managed object of the processor, as it is already registered when its route is started again
+        // (otherwise the statistics would be counted on a new object that is not the registered MBean)
+        Object managedObject = managedProcessors.get(holder.getKey());
+        if (managedObject == null) {
+            // get the managed object as it can be a specialized type such as a Delayer/Throttler etc.
+            managedObject
+                    = getManagementObjectStrategy().getManagedObjectForProcessor(context, processor, holder.getKey(), route);
+            if (managedObject != null) {
+                managedProcessors.put(holder.getKey(), managedObject);
+            }
+        }
         // only manage if we have a name for it as otherwise we do not want to manage it anyway
         if (managedObject != null) {
             // is it a performance counter then we need to set our counter
@@ -667,7 +684,15 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             }
 
             if (!shouldRegister(route, route)) {
-                // avoid registering if not needed, skip to next route
+                // avoid registering if not needed, but the exchanges of the route are still counted on the
+                // CamelContext MBean (such as with mbeansLevel=ContextOnly)
+                if (camelContextMBean != null
+                        && route.getProcessor() instanceof InternalProcessor internal) {
+                    DefaultInstrumentationProcessor task = internal.getAdvice(DefaultInstrumentationProcessor.class);
+                    if (task != null) {
+                        task.setCounter(camelContextMBean);
+                    }
+                }
                 continue;
             }
 
@@ -925,6 +950,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 KeyValueHolder<NamedNode, InstrumentationProcessor<?>> holder = it.next();
                 RouteDefinition def = ProcessorDefinitionHelper.getRoute(holder.getKey());
                 if (def != null && id.equals(def.getId())) {
+                    managedProcessors.remove(holder.getKey());
                     it.remove();
                 }
             }
@@ -939,6 +965,18 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         List<ProcessorDefinition<?>> children = processor.getOutputs();
         for (ProcessorDefinition<?> child : children) {
             registerPerformanceCounters(route, child, registeredCounters);
+        }
+
+        // Switch destinations are literal sends rather than nested processor outputs.
+        if (processor instanceof SwitchDefinition sw) {
+            for (var c : sw.getCases()) {
+                c.prepareToDefinition();
+                registerPerformanceCounters(route, c.getToDefinition(), registeredCounters);
+            }
+            sw.prepareOtherwiseDefinition();
+            if (sw.getOtherwiseDefinition() != null) {
+                registerPerformanceCounters(route, sw.getOtherwiseDefinition(), registeredCounters);
+            }
         }
 
         // skip processors that should not be registered
@@ -1137,6 +1175,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         knowRouteIds.clear();
         preServices.clear();
         wrappedProcessors.clear();
+        managedProcessors.clear();
         managedBacklogTracers.clear();
         managedBacklogDebuggers.clear();
         managedThreadPools.clear();

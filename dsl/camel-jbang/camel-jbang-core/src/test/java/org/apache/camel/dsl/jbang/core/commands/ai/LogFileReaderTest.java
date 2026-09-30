@@ -53,6 +53,26 @@ class LogFileReaderTest {
     }
 
     @Test
+    void foldsAStormOfTheSameLineIntoOneRecord() {
+        List<String> storm = new java.util.ArrayList<>();
+        storm.add(LINES.get(0));
+        for (int i = 0; i < 100; i++) {
+            storm.add("2026-09-12 10:01:" + String.format("%02d", i % 60)
+                      + ".000 ERROR 42 --- [ timer://tick] route1 : Failed to call the API");
+        }
+        storm.add(LINES.get(6));
+
+        JsonObject result = LogFileReader.build(storm, 50, null, null, new JsonObject());
+        assertEquals(3, result.getInteger("returnedLines"), "the storm is one record between the two others");
+        List<JsonObject> rows = List.copyOf(result.getCollection("lines"));
+        JsonObject folded = rows.get(1);
+        assertEquals(100, folded.getLong("repeated"));
+        assertEquals("10:01:00.000", folded.getString("firstTime"), "when the storm started");
+        assertEquals("10:01:39.000", folded.getString("time"), "the newest occurrence");
+        assertNull(rows.get(0).get("repeated"), "a line that happened once has no repeat count");
+    }
+
+    @Test
     void filtersByLevelAndTextAndHonoursTheLimit() {
         JsonObject errors = LogFileReader.build(LINES, 50, null, "error", new JsonObject());
         assertEquals(1, errors.getInteger("returnedLines"));

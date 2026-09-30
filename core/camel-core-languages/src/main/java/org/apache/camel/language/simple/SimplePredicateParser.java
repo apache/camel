@@ -19,7 +19,6 @@ package org.apache.camel.language.simple;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
@@ -58,12 +57,16 @@ import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.PredicateBuilder;
-import org.apache.camel.util.StringHelper;
 
 /**
  * A parser to parse simple language as a Camel {@link Predicate}
  */
 public class SimplePredicateParser extends BaseSimpleParser {
+
+    {
+        // a ! in front of a function negates it, in a predicate only (CAMEL-24984)
+        tokenizer.setNotOperator(true);
+    }
 
     // use caches to avoid re-parsing the same expressions over and over again
     private final Map<String, Expression> cacheExpression;
@@ -91,22 +94,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 SimpleInitBlockParser initParser
                         = new SimpleInitBlockParser(camelContext, expression, allowEscape, skipFileFunctions, cacheExpression);
                 init = initParser.parseExpression();
-                if (init != null) {
-                    String part = StringHelper.after(expression, SimpleInitBlockTokenizer.INIT_END);
-                    if (part.startsWith("\n")) {
-                        // skip newline after ending init block
-                        part = part.substring(1);
-                    }
-                    this.expression = part;
-                    // use $$key as local variable in the expression afterwards.
-                    // Sort by descending length so a longer key (e.g. "$ab") is replaced before any
-                    // shorter prefix (e.g. "$a"), preventing "$ab" from becoming "${variable.a}b".
-                    List<String> sortedKeys = new ArrayList<>(initParser.getInitKeys());
-                    sortedKeys.sort(Comparator.comparingInt(String::length).reversed());
-                    for (String key : sortedKeys) {
-                        this.expression = this.expression.replace("$" + key, "${variable." + key + "}");
-                    }
-                }
+                // the init block may only define functions ($f ~:= ...) and then there is no init expression
+                this.expression = initParser.rewriteExpressionAfterInitBlock(expression);
             }
 
             parseTokens();
@@ -405,19 +394,25 @@ public class SimplePredicateParser extends BaseSimpleParser {
         tokens.removeIf(t -> t.getType().isIgnore());
 
         // white space can be removed if its not part of a quoted text or within function(s)
-        boolean quote = false;
+        // a single quote inside double quotes (and vice versa) is text, such as ${body.replace("'", "")}
+        boolean single = false;
+        boolean dubble = false;
         int functionCount = 0;
 
         Iterator<SimpleToken> it = tokens.iterator();
         while (it.hasNext()) {
             SimpleToken token = it.next();
-            if (token.getType().isSingleQuote()) {
-                quote = !quote;
-            } else if (!quote) {
+            if (token.getType().isSingleQuote() && !dubble) {
+                single = !single;
+            } else if (token.getType().isDoubleQuote() && !single) {
+                dubble = !dubble;
+            } else if (!single && !dubble) {
                 if (token.getType().isFunctionStart()) {
                     functionCount++;
                 } else if (token.getType().isFunctionEnd()) {
-                    functionCount--;
+                    if (functionCount > 0) {
+                        functionCount--;
+                    }
                 } else if (token.getType().isWhitespace() && functionCount == 0) {
                     it.remove();
                 }
@@ -668,6 +663,11 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
     protected boolean unaryOperator() {
         if (accept(TokenType.unaryOperator)) {
+            if ("!".equals(token.getText())) {
+                // ! is written in front of what it negates, and the tokenizer only makes it an operator when a
+                // function follows it, so leave that function to the next round of the grammar
+                return true;
+            }
             nextToken();
             // there should be a whitespace after the operator
             expect(TokenType.whiteSpace);
@@ -718,7 +718,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     literalSupported |= parameterType.isLiteralSupported();
                     literalWithFunctionsSupported |= parameterType.isLiteralWithFunctionSupport();
                     functionSupported |= parameterType.isFunctionSupport();
-                    nullSupported |= parameterType.isNumericValueSupported();
+                    numericSupported |= parameterType.isNumericValueSupported();
                     booleanSupported |= parameterType.isBooleanValueSupported();
                     nullSupported |= parameterType.isNullValueSupported();
                     minusSupported |= parameterType.isMinusValueSupported();
@@ -825,9 +825,10 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     || booleanValue()
                     || nullValue()) {
                 // then after the right hand side value, there should be a whitespace if there is more tokens
+                // (do not accept more, as the token after the whitespace, such as an operator, is parsed next)
                 nextToken();
                 if (!token.getType().isEol()) {
-                    expectAndAcceptMore(TokenType.whiteSpace);
+                    expect(TokenType.whiteSpace);
                 }
             } else {
                 throw new SimpleParserException(
@@ -847,6 +848,11 @@ public class SimplePredicateParser extends BaseSimpleParser {
             nextToken();
             // there should be at least one whitespace after the operator
             expectAndAcceptMore(TokenType.whiteSpace);
+
+            // the right hand side may be negated, and the function it negates follows it (CAMEL-24984)
+            if (accept(TokenType.unaryOperator) && "!".equals(token.getText())) {
+                nextToken();
+            }
 
             // then we expect either some quoted text, another function, or a numeric, boolean or null value
             if (singleQuotedLiteralWithFunctionsText()
@@ -886,6 +892,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
     }
 
     protected boolean minusValue() {
+        // note: this skips the current token without checking it is a minus sign, which is lenient on purpose
+        // as routes may compare with unquoted text such as ${header.version} == v2
         nextToken();
         return accept(TokenType.numericValue);
         // no other tokens to check so do not use nextToken

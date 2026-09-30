@@ -854,7 +854,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                     p.note(note);
                 }
             } else {
-                cbr.note(note);
+                cbr.setNote(note);
             }
             return asType();
         }
@@ -1220,6 +1220,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
         // okay end this and get back to the try
         def = end();
+        if (def instanceof CatchDefinition || def instanceof FinallyDefinition) {
+            // we ended a block inside doCatch or doFinally, so go back to the try that owns it
+            def = def.getParent();
+        }
         return (TryDefinition) def;
     }
 
@@ -1633,6 +1637,31 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         ChoiceDefinition answer = new ChoiceDefinition();
         addOutput(answer);
         return answer;
+    }
+
+    /**
+     * Routes to a fixed endpoint using a literal selector lookup.
+     *
+     * @param  selector the expression to evaluate once per entry
+     * @return          the switch builder
+     */
+    public SwitchDefinition doSwitch(Expression selector) {
+        SwitchDefinition answer = new SwitchDefinition(selector);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Routes to a fixed endpoint using a literal selector lookup.
+     *
+     * @return the selector expression builder
+     */
+    public ExpressionClause<SwitchDefinition> doSwitch() {
+        SwitchDefinition answer = new SwitchDefinition();
+        ExpressionClause<SwitchDefinition> clause = new ExpressionClause<>(answer);
+        answer.setSelector(new ExpressionSubElementDefinition((Expression) clause));
+        addOutput(answer);
+        return clause;
     }
 
     /**
@@ -2101,7 +2130,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                           the builder
      */
     public ThrottleDefinition throttle(Expression maximumConcurrentRequests, long correlationExpressionKey) {
-        ThrottleDefinition answer = new ThrottleDefinition(maximumConcurrentRequests, maximumConcurrentRequests);
+        ThrottleDefinition answer = new ThrottleDefinition(
+                maximumConcurrentRequests, new ConstantExpression(Long.toString(correlationExpressionKey)));
         addOutput(answer);
         return answer;
     }
@@ -2454,7 +2484,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             Class<? extends Throwable> exceptionType3) {
         if (this.getRouteConfiguration() != null) {
             // this is part of route configuration
-            return this.getRouteConfiguration().onException(exceptionType1, exceptionType2, exceptionType2);
+            return this.getRouteConfiguration().onException(exceptionType1, exceptionType2, exceptionType3);
         }
         OnExceptionDefinition answer = new OnExceptionDefinition(
                 Arrays.asList(exceptionType1, exceptionType2, exceptionType3));
@@ -2598,11 +2628,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type bean(Object bean) {
         BeanDefinition answer = new BeanDefinition();
-        if (bean instanceof String str) {
-            answer.setRef(str);
-        } else {
-            answer.setBean(bean);
-        }
+        setBeanOrRef(answer, bean);
         addOutput(answer);
         return asType();
     }
@@ -2614,6 +2640,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  bean the bean to invoke, or a reference to a bean if the type is a String
      * @return      the builder
      */
+    private static void setBeanOrRef(BeanDefinition answer, Object bean) {
+        if (bean instanceof String str) {
+            // type:com.foo.MyBean refers to the class of the bean
+            if (str.startsWith("type:")) {
+                answer.setBeanType(str.substring(5));
+            } else {
+                answer.setRef(str);
+            }
+        } else {
+            answer.setBean(bean);
+        }
+    }
+
     public Type bean(Supplier<Object> bean) {
         return bean(bean.get());
     }
@@ -2629,15 +2668,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type bean(Object bean, String method) {
         BeanDefinition answer = new BeanDefinition();
-        if (bean instanceof String str) {
-            if (str.startsWith("type:")) {
-                answer.setBeanType(str.substring(5));
-            } else {
-                answer.setRef(str);
-            }
-        } else {
-            answer.setBean(bean);
-        }
+        setBeanOrRef(answer, bean);
         answer.setMethod(method);
         addOutput(answer);
         return asType();
@@ -2678,11 +2709,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type bean(Object bean, BeanScope scope) {
         BeanDefinition answer = new BeanDefinition();
-        if (bean instanceof String str) {
-            answer.setRef(str);
-        } else {
-            answer.setBean(bean);
-        }
+        setBeanOrRef(answer, bean);
         answer.setScope(scope);
         addOutput(answer);
         return asType();
@@ -2699,11 +2726,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type bean(Object bean, String method, BeanScope scope) {
         BeanDefinition answer = new BeanDefinition();
-        if (bean instanceof String str) {
-            answer.setRef(str);
-        } else {
-            answer.setBean(bean);
-        }
+        setBeanOrRef(answer, bean);
         answer.setMethod(method);
         answer.setScope(scope);
         addOutput(answer);
@@ -3506,7 +3529,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                org.apache.camel.processor.Enricher
      */
     public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri EndpointProducerBuilder resourceUri) {
-        return enrichWith(resourceUri.getRawUri());
+        // same as the other endpoint builder variants (the uri may be dynamic)
+        return enrichWith(resourceUri, false, false);
     }
 
     /**

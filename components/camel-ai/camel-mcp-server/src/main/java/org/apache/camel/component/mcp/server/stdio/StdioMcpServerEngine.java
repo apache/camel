@@ -115,7 +115,7 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
                 .immediateExecution(true)
                 .build();
         for (McpServerFeatures.SyncToolSpecification spec : pendingTools) {
-            server.addTool(spec);
+            addTool(spec);
         }
         pendingTools.clear();
         LOG.info("MCP server '{}' serving ai-tool routes over stdio", info.serverName());
@@ -141,8 +141,21 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
             LOG.debug("MCP tool queued until stdio server starts: {}", tool.name());
             return;
         }
-        server.addTool(spec);
+        addTool(spec);
         LOG.debug("MCP tool added: {}", tool.name());
+    }
+
+    private void addTool(McpServerFeatures.SyncToolSpecification spec) {
+        try {
+            server.addTool(spec);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            // an invalid tool (such as its input schema)
+            throw e;
+        } catch (RuntimeException e) {
+            // the tool is registered before the connected client is notified that the tool list changed, and that
+            // notification fails when stdin is closed (the client went away); the tool must not fail the route
+            LOG.warn("MCP tool {} added, but the client could not be notified: {}", spec.tool().name(), e.getMessage());
+        }
     }
 
     @Override

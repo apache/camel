@@ -147,6 +147,19 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testTypeSafeAiUsesGenericLanguageModel() {
+        assertTrue(catalog.findLanguageNames().contains("typesafe-ai"));
+        LanguageModel model = catalog.languageModel("typesafe-ai");
+        assertNotNull(model);
+        assertEquals("camel-typesafe-ai", model.getArtifactId());
+        assertEquals("language", model.getModelName());
+        assertEquals("org.apache.camel.model.language.LanguageExpression", model.getModelJavaType());
+        assertTrue(catalog.validateLanguageExpression(null, "typesafe-ai", "Refund requested?").isSuccess());
+        assertTrue(catalog.validateLanguagePredicate(null, "typesafe-ai", "Refund requested?").isSuccess());
+        assertFalse(catalog.validateLanguagePredicate(null, "typesafe-ai", " ").isSuccess());
+    }
+
+    @Test
     public void testFindTransformerNames() {
         List<String> names = catalog.findTransformerNames();
 
@@ -948,8 +961,12 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties("timer://foo?fixedRate=#fixed&delay=#myDelay");
         assertTrue(result.isSuccess());
 
-        // optional consumer. prefix
+        // consumer. prefix is only optional for a few options
         result = catalog.validateEndpointProperties("file:inbox?consumer.delay=5000&consumer.greedy=true");
+        assertFalse(result.isSuccess());
+        result = catalog.validateEndpointProperties("file:inbox?consumer.bridgeErrorHandler=true");
+        assertFalse(result.isSuccess());
+        result = catalog.validateEndpointProperties("file:inbox?consumer.exceptionHandler=#myHandler");
         assertTrue(result.isSuccess());
 
         // optional without consumer. prefix
@@ -958,7 +975,7 @@ public class CamelCatalogTest {
 
         // mixed optional without consumer. prefix
         result = catalog.validateEndpointProperties("file:inbox?delay=5000&consumer.greedy=true");
-        assertTrue(result.isSuccess());
+        assertFalse(result.isSuccess());
 
         // prefix
         result = catalog.validateEndpointProperties("file:inbox?delay=5000&scheduler.foo=123&scheduler.bar=456");
@@ -1004,7 +1021,7 @@ public class CamelCatalogTest {
 
         // lenient on rss consumer only
         result = catalog.validateEndpointProperties(
-                "rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&consumer.delay=50&foo=bar", false, true,
+                "rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&delay=50&foo=bar", false, true,
                 false);
         assertTrue(result.isSuccess());
         assertEquals("foo", result.getLenient().iterator().next());
@@ -1073,7 +1090,14 @@ public class CamelCatalogTest {
         assertTrue(catalog.validateTimePattern("1h"));
         assertTrue(catalog.validateTimePattern("1hour"));
         assertTrue(catalog.validateTimePattern("2hours"));
+        // the same patterns as the runtime accepts
+        assertTrue(catalog.validateTimePattern("1d"));
+        assertTrue(catalog.validateTimePattern("500ms"));
+        assertTrue(catalog.validateTimePattern("1h 30m"));
+        assertTrue(catalog.validateTimePattern("PT5S"));
 
+        assertFalse(catalog.validateTimePattern(""));
+        assertFalse(catalog.validateTimePattern("5x"));
         assertFalse(catalog.validateTimePattern("bla"));
         assertFalse(catalog.validateTimePattern("2year"));
         assertFalse(catalog.validateTimePattern("60darn"));

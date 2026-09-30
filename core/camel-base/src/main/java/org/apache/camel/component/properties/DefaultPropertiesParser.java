@@ -24,6 +24,7 @@ import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
+import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,9 @@ import static org.apache.camel.util.IOHelper.lookupEnvironmentVariable;
  * A parser to parse a string which contains property placeholders.
  */
 public class DefaultPropertiesParser implements PropertiesParser {
+
+    // the mask of sensitive values (such as passwords) when logged
+    private static final String MASK = "xxxxxx";
 
     private static final String UNRESOLVED_PREFIX_TOKEN = "@@[";
 
@@ -71,7 +75,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
         ParsingContext context
                 = new ParsingContext(properties, defaultFallbackEnabled, keepUnresolvedOptional, nestedPlaceholder);
         String answer = context.parse(text);
-        if (keepUnresolvedOptional && answer != null && answer.contains(UNRESOLVED_PREFIX_TOKEN)) {
+        boolean ignoreMissing = propertiesComponent != null && propertiesComponent.isIgnoreMissingProperty();
+        if ((keepUnresolvedOptional || ignoreMissing) && answer != null && answer.contains(UNRESOLVED_PREFIX_TOKEN)) {
             // replace temporary unresolved keys back to with placeholders so they are kept as-is
             answer = answer.replace(UNRESOLVED_PREFIX_TOKEN, PREFIX_TOKEN);
             answer = answer.replace(UNRESOLVED_SUFFIX_TOKEN, SUFFIX_TOKEN);
@@ -110,12 +115,13 @@ public class DefaultPropertiesParser implements PropertiesParser {
         public String parse(String input) {
             // does the key turn on or off nested?
             boolean nested = nestedPlaceholder;
-            if (input.contains("?nested=true")) {
+            // the option is in the key of a placeholder (such as {{foo?nested=false}})
+            if (input.contains("?nested=true" + SUFFIX_TOKEN)) {
                 nested = true;
-                input = input.replace("?nested=true", "");
-            } else if (input.contains("?nested=false")) {
+                input = input.replace("?nested=true" + SUFFIX_TOKEN, SUFFIX_TOKEN);
+            } else if (input.contains("?nested=false" + SUFFIX_TOKEN)) {
                 nested = false;
-                input = input.replace("?nested=false", "");
+                input = input.replace("?nested=false" + SUFFIX_TOKEN, SUFFIX_TOKEN);
             }
             if (nested) {
                 return doParseNested(null, input, new HashSet<>());
@@ -138,19 +144,28 @@ public class DefaultPropertiesParser implements PropertiesParser {
             StringBuilder answer = new StringBuilder(input.length());
             Property property;
             String prevKey = null;
+            boolean first = true;
             while ((property = readProperty(prevKey, input)) != null) {
-                String before = input.substring(0, property.getBeginIndex());
+                int beginIndex = property.getBeginIndex();
+                if (beginIndex > 0 && input.charAt(beginIndex - 1) == '\\') {
+                    // The escape character has been escaped, so we need to restore it
+                    beginIndex--;
+                }
+                String before = input.substring(0, beginIndex);
                 String after = input.substring(property.getEndIndex());
                 String parsed = property.getValue();
-                if (parsed != null) {
-                    answer.append(before);
-                    answer.append(parsed);
-                } else if (property.getBeginIndex() == 0 && input.length() == property.getEndIndex()) {
+                if (parsed == null && first && property.getBeginIndex() == 0
+                        && input.length() == property.getEndIndex()) {
                     // its only a single placeholder which is parsed as null
                     return null;
                 }
+                answer.append(before);
+                if (parsed != null) {
+                    answer.append(parsed);
+                }
                 input = after;
                 prevKey = property.getKey();
+                first = false;
             }
             if (!input.isEmpty()) {
                 answer.append(input);
@@ -171,16 +186,16 @@ public class DefaultPropertiesParser implements PropertiesParser {
             }
             String answer = input;
             Property property;
-            while ((property = readProperty(prevKey, answer)) != null) {
+            // the index to continue scanning from (after the resolved value of the previous placeholder, as the
+            // resolved value must not be parsed again, such as a value that ends with an escape character)
+            int from = 0;
+            while ((property = readProperty(prevKey, answer, from)) != null) {
                 if (replacedPropertyKeys.contains(property.getKey())) {
-                    // Check for circular references (skip optional)
-                    boolean optional = property.getKey().startsWith(OPTIONAL_TOKEN);
-                    if (optional) {
-                        break;
-                    } else {
-                        throw new IllegalArgumentException(
-                                "Circular reference detected with key [" + property.getKey() + "] from text: " + input);
-                    }
+                    // Check for circular references, also for optional keys, as a circular reference can never be
+                    // resolved (returning the text unresolved would make the caller parse the same placeholder again,
+                    // and again, for ever)
+                    throw new IllegalArgumentException(
+                            "Circular reference detected with key [" + property.getKey() + "] from text: " + input);
                 }
 
                 if (propertiesComponent != null) {
@@ -193,7 +208,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 newReplaced.add(property.getKey());
 
                 int beginIndex = property.getBeginIndex();
-                if (beginIndex > 0 && answer.charAt(beginIndex - 1) == '\\') {
+                if (beginIndex > from && answer.charAt(beginIndex - 1) == '\\') {
                     // The escape character has been escaped, so we need to restore it
                     beginIndex--;
                 }
@@ -202,6 +217,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 String parsed = doParseNested(property.getKey(), property.getValue(), newReplaced);
                 if (parsed != null) {
                     answer = before + parsed + after;
+                    from = before.length() + parsed.length();
                 } else {
                     if (beginIndex == 0 && input.length() == property.getEndIndex()) {
                         // its only a single placeholder which is parsed as null
@@ -209,6 +225,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                         break;
                     } else {
                         answer = before + after;
+                        from = before.length();
                     }
                 }
             }
@@ -221,6 +238,18 @@ public class DefaultPropertiesParser implements PropertiesParser {
          * @param  input Input string
          * @return       A property in the given string or {@code null} if not found
          */
+        private Property readProperty(String prevKey, String input, int from) {
+            if (from <= 0) {
+                return readProperty(prevKey, input);
+            }
+            Property property = readProperty(prevKey, input.substring(from));
+            if (property == null) {
+                return null;
+            }
+            return new Property(
+                    property.getBeginIndex() + from, property.getEndIndex() + from, property.getKey(), property.getValue());
+        }
+
         private Property readProperty(String prevKey, String input) {
             // Find the index of the first valid suffix token
             int suffix = getSuffixIndex(input);
@@ -332,7 +361,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 PropertiesFunction function = propertiesComponent.getPropertiesFunction(prefix);
                 if (function != null) {
                     String remainder = StringHelper.after(key, ":");
-                    boolean remainderOptional = remainder.startsWith(OPTIONAL_TOKEN);
+                    // optional can be marked on the key ({{?fn:key}}) or on the remainder ({{fn:?key}})
+                    boolean remainderOptional = optional || remainder.startsWith(OPTIONAL_TOKEN);
                     if (function.lookupFirst(remainder)) {
                         String value = getPropertyValue(prevKey, remainder, input);
                         if (value == null && (remainderOptional || function.optional(remainder))) {
@@ -344,6 +374,9 @@ public class DefaultPropertiesParser implements PropertiesParser {
                         } else {
                             remainder = value;
                         }
+                    } else if (remainder.startsWith(OPTIONAL_TOKEN)) {
+                        // the function should use the key without the optional token
+                        remainder = remainder.substring(OPTIONAL_TOKEN.length());
                     }
                     log.debug("Property with key [{}] is applied by function [{}]", key, function.getName());
                     String value = function.apply(remainder);
@@ -372,7 +405,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                     } else {
                         if (log.isDebugEnabled()) {
                             log.debug("Property with key [{}] applied by function [{}] -> {}", key, function.getName(),
-                                    value);
+                                    function.isSensitive() ? MASK : mask(StringHelper.after(key, ":"), value));
                         }
                         String k = prevKey != null ? prevKey : key;
                         propertiesComponent.updateResolvedValue(k, value, function.getName());
@@ -390,7 +423,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
 
             String value = doGetPropertyValue(key, defaultValue);
             if (value == null && defaultValue != null) {
-                log.debug("Property with key [{}] not found, using default value: {}", key, defaultValue);
+                log.debug("Property with key [{}] not found, using default value: {}", key, mask(key, defaultValue));
                 value = defaultValue;
                 for (PropertiesLookupListener listener : propertiesComponent.getPropertiesLookupListeners()) {
                     try {
@@ -452,7 +485,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                         }
                     }
                     onLookup(key, value, localDefaultValue, loc);
-                    log.debug("Found local property: {} with value: {} to be used.", key, value);
+                    log.debug("Found local property: {} with value: {} to be used.", key, mask(key, value));
                 }
             }
 
@@ -468,21 +501,21 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 value = lookupEnvironmentVariable(key);
                 if (value != null) {
                     onLookup(key, value, defaultValue, "ENV");
-                    log.debug("Found an OS environment property: {} with value: {} to be used.", key, value);
+                    log.debug("Found an OS environment property: {} with value: {} to be used.", key, mask(key, value));
                 }
             }
             if (value == null && sysMode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE) {
                 value = System.getProperty(key);
                 if (value != null) {
                     onLookup(key, value, defaultValue, "SYS");
-                    log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
+                    log.debug("Found a JVM system property: {} with value: {} to be used.", key, mask(key, value));
                 }
             }
 
             if (value == null && properties != null) {
                 value = properties.lookup(key, defaultValue);
                 if (value != null) {
-                    log.debug("Found property: {} with value: {} to be used.", key, value);
+                    log.debug("Found property: {} with value: {} to be used.", key, mask(key, value));
                 }
             }
 
@@ -490,7 +523,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 // custom lookup in spring boot or other runtimes
                 value = customLookup(key);
                 if (value != null) {
-                    log.debug("Found property (custom lookup): {} with value: {} to be used.", key, value);
+                    log.debug("Found property (custom lookup): {} with value: {} to be used.", key, mask(key, value));
                 }
             }
 
@@ -498,14 +531,14 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 value = lookupEnvironmentVariable(key);
                 if (value != null) {
                     onLookup(key, value, defaultValue, "ENV");
-                    log.debug("Found an OS environment property: {} with value: {} to be used.", key, value);
+                    log.debug("Found an OS environment property: {} with value: {} to be used.", key, mask(key, value));
                 }
             }
             if (value == null && sysMode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_FALLBACK) {
                 value = System.getProperty(key);
                 if (value != null) {
                     onLookup(key, value, defaultValue, "SYS");
-                    log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
+                    log.debug("Found a JVM system property: {} with value: {} to be used.", key, mask(key, value));
                 }
             }
 
@@ -582,5 +615,9 @@ public class DefaultPropertiesParser implements PropertiesParser {
         public String getValue() {
             return value;
         }
+    }
+
+    private static Object mask(String key, Object value) {
+        return value != null && key != null && SensitiveUtils.containsSensitive(key) ? MASK : value;
     }
 }

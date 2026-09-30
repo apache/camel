@@ -61,13 +61,16 @@ public class MessageHistoryExceptionRouteTest extends AbstractOpenTelemetryTestS
 
         MockEndpoint.assertIsSatisfied(context);
 
-        // there should be 3 names for the message history (foo, bar, exception)
-        assertEquals(3, getAllPointData(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME).size());
-        assertEquals(5, getPointData("route1", "foo").getCount());
-        assertEquals(5, getPointData("route2", "bar").getCount());
-        // exception process node
-        await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals(5, getPointData("route2", "process1").getCount()));
+        // Metric recording via nodeProcessingDone() happens asynchronously on seda threads,
+        // so all metric assertions need to be wrapped in await() to avoid a race with mock receipt.
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            // there should be 3 names for the message history (foo, bar, process1)
+            assertEquals(3, getAllPointData(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME).size());
+            assertEquals(5, getPointData("route1", "foo").getCount());
+            assertEquals(5, getPointData("route2", "bar").getCount());
+            // exception process node
+            assertEquals(5, getPointData("route2", "process1").getCount());
+        });
     }
 
     private HistogramPointData getPointData(String routeId, String nodeId) {

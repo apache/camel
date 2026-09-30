@@ -130,6 +130,10 @@ public class BrowseDevConsole extends AbstractDevConsole {
                         begin = Math.max(0, list.size() - pos);
                         list = list.subList(begin, list.size());
                     }
+                    if (list != null && list.size() > max) {
+                        // fresh size gets all the messages (to know the size) but only limit messages are dumped
+                        list = list.subList(0, max);
+                    }
                     if (list != null) {
                         sb.append("\n");
                         sb.append(String.format("Browse: %s (size: %d limit: %d position: %d)%n", endpoint.getEndpointUri(),
@@ -177,6 +181,10 @@ public class BrowseDevConsole extends AbstractDevConsole {
                     if (list != null && pos > 0) {
                         begin = Math.max(0, list.size() - pos);
                         list = list.subList(begin, list.size());
+                    }
+                    if (list != null && list.size() > max) {
+                        // fresh size gets all the messages (to know the size) but only limit messages are dumped
+                        list = list.subList(0, max);
                     }
                     if (list != null) {
                         Long firstTimestamp = null;

@@ -1157,6 +1157,11 @@ public class MXParser implements XmlPullParser {
                                     needsMerging = true;
                                 }
                             }
+                            if (usePC) {
+                                // the earlier content has been joined into pc (by parseCDSect), so it must not be
+                                // joined again by the following text (which would duplicate it)
+                                needsMerging = false;
+                            }
 
                             // posStart = oldStart;
                             // posEnd = oldEnd;
@@ -2099,6 +2104,11 @@ public class MXParser implements XmlPullParser {
 
     protected char[] charRefOneCharBuf = new char[1];
 
+    private static int hexDigit(int charRef, int digit) {
+        // cap so a long reference cannot overflow into a valid code point
+        return Math.min(charRef * 16 + digit, Character.MAX_CODE_POINT + 1);
+    }
+
     protected char[] parseEntityRef() throws XmlPullParserException, IOException {
         // entity reference
         // http://www.w3.org/TR/2000/REC-xml-20001006#NT-Reference
@@ -2110,18 +2120,19 @@ public class MXParser implements XmlPullParser {
         char ch = more();
         if (ch == '#') {
             // parse character reference
-            char charRef = 0;
+            // the code point may be above U+FFFF (a supplementary character) so use an int
+            int charRef = 0;
             ch = more();
             if (ch == 'x') {
                 // encoded in hex
                 while (true) {
                     ch = more();
                     if (ch >= '0' && ch <= '9') {
-                        charRef = (char) (charRef * 16 + (ch - '0'));
+                        charRef = hexDigit(charRef, ch - '0');
                     } else if (ch >= 'a' && ch <= 'f') {
-                        charRef = (char) (charRef * 16 + (ch - ('a' - 10)));
+                        charRef = hexDigit(charRef, ch - ('a' - 10));
                     } else if (ch >= 'A' && ch <= 'F') {
-                        charRef = (char) (charRef * 16 + (ch - ('A' - 10)));
+                        charRef = hexDigit(charRef, ch - ('A' - 10));
                     } else if (ch == ';') {
                         break;
                     } else {
@@ -2133,7 +2144,7 @@ public class MXParser implements XmlPullParser {
                 // encoded in decimal
                 while (true) {
                     if (ch >= '0' && ch <= '9') {
-                        charRef = (char) (charRef * 10 + (ch - '0'));
+                        charRef = Math.min(charRef * 10 + (ch - '0'), Character.MAX_CODE_POINT + 1);
                     } else if (ch == ';') {
                         break;
                     } else {
@@ -2144,11 +2155,21 @@ public class MXParser implements XmlPullParser {
                 }
             }
             posEnd = pos - 1;
-            charRefOneCharBuf[0] = charRef;
-            if (tokenize) {
-                text = newString(charRefOneCharBuf, 0, 1);
+            if (!Character.isValidCodePoint(charRef)) {
+                throw new XmlPullParserException(
+                        "character reference is not a valid character: " + charRef, this, null);
             }
-            return charRefOneCharBuf;
+            final char[] chars;
+            if (Character.isBmpCodePoint(charRef)) {
+                charRefOneCharBuf[0] = (char) charRef;
+                chars = charRefOneCharBuf;
+            } else {
+                chars = Character.toChars(charRef);
+            }
+            if (tokenize) {
+                text = newString(chars, 0, chars.length);
+            }
+            return chars;
         } else {
             // [68] EntityRef ::= '&' Name ';'
             // scan name until ;

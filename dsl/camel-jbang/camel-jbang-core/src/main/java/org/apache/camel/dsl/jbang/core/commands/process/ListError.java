@@ -178,6 +178,8 @@ public class ListError extends ProcessWatchCommand {
                                     if (ts != null) {
                                         row.timestamp = ts;
                                     }
+                                    Long rc = jo.getLong("repeatCount");
+                                    row.repeatCount = rc != null ? rc : 1;
                                     row.location = jo.getString("location");
                                     row.rawJson = jo;
 
@@ -248,6 +250,8 @@ public class ListError extends ProcessWatchCommand {
                                 .with(r -> r.nodeId),
                         new Column().header("HANDLED").dataAlign(HorizontalAlign.CENTER)
                                 .with(r -> r.handled ? "true" : "false"),
+                        new Column().header("COUNT").dataAlign(HorizontalAlign.RIGHT)
+                                .with(r -> r.repeatCount > 1 ? Long.toString(r.repeatCount) : ""),
                         new Column().header("EXCEPTION").dataAlign(HorizontalAlign.LEFT)
                                 .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(r -> shortExceptionType(r.exceptionType)),
@@ -549,6 +553,7 @@ public class ListError extends ProcessWatchCommand {
         String nodeId;
         String exchangeId;
         boolean handled;
+        long repeatCount;
         String location;
         String exceptionType;
         String exceptionMessage;

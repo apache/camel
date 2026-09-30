@@ -655,6 +655,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         RouteDefinitionHelper.forceAssignIds(getCamelContextReference(), routeDefinitions);
         List<RouteDefinition> routeDefinitionsToRemove = null;
         for (RouteDefinition routeDefinition : routeDefinitions) {
+            boolean localPropertiesAdded = false;
             try {
                 // assign ids to the routes and validate that the id's is all unique
                 String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions,
@@ -691,47 +692,30 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     // registry and elsewhere
                     if (bbr != null && !bbr.isEmpty()) {
                         Map<String, String> beanNameMappings = new HashMap<>();
-                        for (Map.Entry<String, Object> param : params.entrySet()) {
-                            Object value = param.getValue();
-                            if (value instanceof String oldKey) {
-                                boolean clash = bbr.keys().stream().anyMatch(k -> k.equals(oldKey));
-                                if (clash) {
-                                    String newKey = oldKey + "-" + UUID.generateUuid();
-                                    LOG.debug(
-                                            "Route: {} re-assigning local-bean id: {} to: {} to ensure ids are globally unique",
-                                            routeDefinition.getId(), oldKey, newKey);
-                                    bbrCopy.put(newKey, bbr.remove(oldKey));
-                                    param.setValue(newKey);
-                                    beanNameMappings.put(oldKey, newKey);
-                                }
-                            }
-                        }
-                        // ensure bean names removed during clash detection are still
-                        // available as template parameters so they can be referenced
-                        // directly in routes via {{beanName}}
-                        for (Map.Entry<String, String> mapping : beanNameMappings.entrySet()) {
-                            if (!params.containsKey(mapping.getKey())) {
-                                params.put(mapping.getKey(), mapping.getValue());
-                            }
-                        }
-                        // the remainder of the local beans must also have their ids made global unique
                         for (Map.Entry<String, Map<Class<?>, Object>> entry : bbr.entrySet()) {
                             String oldKey = entry.getKey();
                             String newKey = oldKey + "-" + UUID.generateUuid();
                             LOG.debug(
                                     "Route: {} re-assigning local-bean id: {} to: {} to ensure ids are globally unique",
                                     routeDefinition.getId(), oldKey, newKey);
+                            // the beans stay in the local bean repository of the template context, so
+                            // their destroy methods are called when the route is removed
                             bbrCopy.put(newKey, entry.getValue());
-                            if (!params.containsKey(oldKey)) {
-                                // if a bean was bound as local bean with a key and it was not defined as
-                                // template parameter
-                                // then store it as if it was a template parameter with same key=value which
-                                // allows us
-                                // to use this local bean in the route without any problem such as:
-                                // to("bean:{{myBean}}")
-                                // and myBean is the local bean id.
-                                params.put(oldKey, newKey);
+                            beanNameMappings.put(oldKey, newKey);
+                        }
+                        // every parameter that refers to a local bean (such as myBeanRef and my-bean-ref, which
+                        // hold the same value) must refer to its new id
+                        for (Map.Entry<String, Object> param : params.entrySet()) {
+                            if (param.getValue() instanceof String oldKey && beanNameMappings.containsKey(oldKey)) {
+                                param.setValue(beanNameMappings.get(oldKey));
                             }
+                        }
+                        // if a bean was bound as local bean with a key and it was not defined as template parameter
+                        // then store it as if it was a template parameter with same key=value which allows us
+                        // to use this local bean in the route without any problem such as: to("bean:{{myBean}}")
+                        // and myBean is the local bean id.
+                        for (Map.Entry<String, String> mapping : beanNameMappings.entrySet()) {
+                            params.putIfAbsent(mapping.getKey(), mapping.getValue());
                         }
                     }
 
@@ -747,6 +731,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                         prop.putAll(routeDefinition.getLocation(), params);
                     }
                     pc.setLocalProperties(prop);
+                    localPropertiesAdded = true;
 
                     // we need to shadow the bean registry on the CamelContext with the local beans
                     // from the route template context
@@ -797,8 +782,10 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     routeDefinitionsToRemove.add(routeDefinition);
                 }
             } finally {
-                // clear local after the route is created via the reifier
-                pc.setLocalProperties(null);
+                // clear local after the route is created via the reifier (only if added for this route)
+                if (localPropertiesAdded) {
+                    pc.setLocalProperties(null);
+                }
                 if (localBeans != null) {
                     localBeans.setLocalBeanRepository(null);
                 }

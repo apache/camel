@@ -23,6 +23,7 @@ import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.OgnlHelper;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
 
@@ -38,7 +39,7 @@ public final class ExchangeFunctionFactory implements SimpleLanguageFunctionFact
     public Expression createFunction(CamelContext camelContext, String function, int index) {
         // camelContext OGNL
         String remainder = ifStartsWithReturnRemainder("camelContext", function);
-        if (remainder != null) {
+        if (remainder != null && startsOgnl(remainder)) {
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${camelContext.OGNL} was: " + function, index);
@@ -48,7 +49,7 @@ public final class ExchangeFunctionFactory implements SimpleLanguageFunctionFact
 
         // Exception OGNL — exchangeProperty/exchange checked separately, no prefix clash here
         remainder = ifStartsWithReturnRemainder("exception", function);
-        if (remainder != null) {
+        if (remainder != null && startsOgnl(remainder)) {
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${exception.OGNL} was: " + function, index);
@@ -58,7 +59,7 @@ public final class ExchangeFunctionFactory implements SimpleLanguageFunctionFact
 
         // exchangeProperty must be checked before exchange to avoid prefix clash
         remainder = ifStartsWithReturnRemainder("exchangeProperty", function);
-        if (remainder != null) {
+        if (remainder != null && (startsOgnl(remainder) || remainder.startsWith(":"))) {
             // remove leading character (dot, colon or ?)
             if (remainder.startsWith(".") || remainder.startsWith(":") || remainder.startsWith("?")) {
                 remainder = remainder.substring(1);
@@ -66,6 +67,11 @@ public final class ExchangeFunctionFactory implements SimpleLanguageFunctionFact
             // remove starting and ending brackets
             if (remainder.startsWith("[") && remainder.endsWith("]")) {
                 remainder = remainder.substring(1, remainder.length() - 1);
+                String unquoted = StringHelper.removeLeadingAndEndingQuotes(remainder);
+                if (!unquoted.equals(remainder)) {
+                    // a quoted key such as ['a.b'] is the name, not an OGNL expression
+                    return ExpressionBuilder.exchangePropertyExpression(unquoted);
+                }
             }
 
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
@@ -82,7 +88,7 @@ public final class ExchangeFunctionFactory implements SimpleLanguageFunctionFact
 
         // exchange OGNL
         remainder = ifStartsWithReturnRemainder("exchange", function);
-        if (remainder != null && (remainder.startsWith(".") || remainder.startsWith("?") || remainder.startsWith("["))) {
+        if (remainder != null && startsOgnl(remainder)) {
             // only ${exchange.OGNL}: ${exchangeCounter} is not an exchange OGNL but an unknown function
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (invalid) {
@@ -92,5 +98,13 @@ public final class ExchangeFunctionFactory implements SimpleLanguageFunctionFact
         }
 
         return null;
+    }
+
+    /**
+     * Whether the remainder after the function name starts an OGNL expression, so ${exchangeCounter} or
+     * ${exceptionInfo} are not taken as ${exchange} or ${exception} with some OGNL glued on.
+     */
+    private static boolean startsOgnl(String remainder) {
+        return remainder.startsWith(".") || remainder.startsWith("?") || remainder.startsWith("[");
     }
 }

@@ -29,7 +29,6 @@ public enum PQCSignatureAlgorithms {
 
     // Experimental and non-standardized
     FALCON("FALCON", "BCPQC"),
-    PICNIC("PICNIC", "BCPQC"),
     SNOVA("Snova", "BCPQC"),
     MAYO("Mayo", "BCPQC"),
     SPHINCSPLUS("SLH-DSA", "BC");

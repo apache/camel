@@ -1,0 +1,13 @@
+MIME-Version: 1.0
+Content-Type: Multipart/Related; boundary=example-1
+
+--example-1
+Content-Type: text/plain
+
+the body
+--example-1
+Content-Type: text/plain
+Content-ID: <a/b@example.com>
+
+related part whose Content-ID local part contains a slash
+--example-1--

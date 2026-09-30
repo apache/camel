@@ -40,7 +40,7 @@ class RecordableInputStream extends FilterInputStream {
     @Override
     public int read() throws IOException {
         int c = super.read();
-        if (c > 0 && recording) {
+        if (c >= 0 && recording) {
             buf.write(c);
         }
         return c;
@@ -55,19 +55,31 @@ class RecordableInputStream extends FilterInputStream {
         return n;
     }
 
+    /**
+     * Returns the recorded text before the given position, and stops recording.
+     *
+     * @param pos the position in characters (not bytes) as the scanner reports it
+     */
     public String getText(int pos) {
         String t = null;
+        int len = 0;
         recording = false;
         try {
+            // decode what was recorded and cut by characters, as a character may take more than one byte
             if (charset == null) {
-                t = new String(buf.getByteArray(), 0, pos);
+                t = new String(buf.getByteArray(), 0, buf.size());
+                t = t.substring(0, Math.min(pos, t.length()));
+                len = t.getBytes().length;
             } else {
-                t = new String(buf.getByteArray(), 0, pos, charset);
+                t = new String(buf.getByteArray(), 0, buf.size(), charset);
+                t = t.substring(0, Math.min(pos, t.length()));
+                len = t.getBytes(charset).length;
             }
         } catch (UnsupportedEncodingException e) {
             // ignore it as this encoding exception should have been caught earlier while scanning.
         } finally {
-            buf.trim(pos, 0);
+            // keep what was recorded after the text
+            buf.trim(Math.min(len, buf.size()), 0);
         }
 
         return t;

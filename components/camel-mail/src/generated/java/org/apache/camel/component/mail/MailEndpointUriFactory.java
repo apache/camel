@@ -25,7 +25,7 @@ public class MailEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(76);
+        Set<String> props = new HashSet<>(77);
         props.add("additionalJavaMailProperties");
         props.add("alternativeBodyHeader");
         props.add("attachmentsContentTransferEncodingResolver");
@@ -70,6 +70,7 @@ public class MailEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("mailUidGenerator");
         props.add("mapMailMessage");
         props.add("maxMessagesPerPoll");
+        props.add("maxMultipartDepth");
         props.add("mimeDecodeHeaders");
         props.add("moveTo");
         props.add("password");

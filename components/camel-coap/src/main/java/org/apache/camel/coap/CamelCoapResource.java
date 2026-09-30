@@ -148,6 +148,10 @@ final class CamelCoapResource extends CoapResource {
             camelExchange.getIn().setBody(bytes);
 
             consumer.getProcessor().process(camelExchange);
+            if (camelExchange.isFailed()) {
+                respondWithError(cexchange, consumer, camelExchange.getException());
+                return;
+            }
             Message target = camelExchange.getMessage();
 
             Long maxAge = target.getHeader(CoAPConstants.COAP_MAX_AGE, Long.class);
@@ -164,7 +168,11 @@ final class CamelCoapResource extends CoapResource {
             cexchange.respond(ResponseCode.CONTENT, target.getBody(byte[].class), format);
 
         } catch (Exception e) {
-            cexchange.respond(ResponseCode.INTERNAL_SERVER_ERROR, e.getMessage());
+            if (consumer != null) {
+                // report it here, as with muteException the client no longer receives it
+                consumer.getExceptionHandler().handleException("Error processing CoAP request", camelExchange, e);
+            }
+            respondWithError(cexchange, consumer, e);
         } finally {
             if (consumer != null) {
                 if (camelExchange != null) {
@@ -175,6 +183,15 @@ final class CamelCoapResource extends CoapResource {
                 LOG.warn(
                         "Skipping releasing the consumer exchange because the consumer is null. It may haven't been properly created earlier - exception was thrown");
             }
+        }
+    }
+
+    private static void respondWithError(CoapExchange cexchange, CoAPConsumer consumer, Exception cause) {
+        // the exception's message is only sent to the client when the endpoint opted out of muting it
+        if (consumer != null && !consumer.getCoapEndpoint().isMuteException()) {
+            cexchange.respond(ResponseCode.INTERNAL_SERVER_ERROR, cause.getMessage());
+        } else {
+            cexchange.respond(ResponseCode.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -1,0 +1,5 @@
+{
+  "helpfulness": {"type":"score","instructions":"How well does `assistant_answer` address `user_question`?","criteria":["Unhelpful","Partial","Helpful","Excellent"]},
+  "is_plausible": {"type":"noul","instructions":"Are all numeric values in `assistant_answer` physically plausible for their units?"},
+  "is_grounded": {"type":"noul","instructions":"Does `assistant_answer` stay within what `user_question` asked?"}
+}

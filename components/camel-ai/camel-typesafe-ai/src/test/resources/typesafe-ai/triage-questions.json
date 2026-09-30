@@ -1,0 +1,7 @@
+{
+  "is_urgent": {"type":"noul","instructions":"Does this message convey urgency or time-sensitivity?","criteria":{"true":"Explicitly time-sensitive, or describes an ongoing loss","false":"No urgency expressed"}},
+  "department": {"type":"choice","instructions":"Which team should handle this?","criteria":{"billing":"Payments, invoicing, refunds, subscriptions","technical":"Bugs, outages, integrations that do not work","sales":"Pricing, upgrades, new accounts","feedback":"Praise, suggestions, anything needing no action"}},
+  "frustration": {"type":"score","instructions":"How frustrated does the customer appear?","criteria":["Calm, just stating facts","Frustrated but civil","Very angry, strong language"]},
+  "bug_severity": {"type":"score","instructions":"If this reports a defect, how severe is it?","criteria":["Not a defect report","Cosmetic or minor inconvenience","A feature is unusable","Data loss, or a total outage"]},
+  "refund_requested": {"type":"noul","instructions":"Is the customer asking for money back?","criteria":{"true":"Asks for a refund, reversal or credit","false":"No request for money back"}}
+}

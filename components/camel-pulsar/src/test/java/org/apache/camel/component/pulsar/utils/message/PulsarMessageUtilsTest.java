@@ -17,10 +17,20 @@
 package org.apache.camel.component.pulsar.utils.message;
 
 import java.io.Serializable;
+import java.util.Collections;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.pulsar.client.api.Message;
+import org.apache.pulsar.client.api.MessageId;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PulsarMessageUtilsTest {
 
@@ -47,6 +57,30 @@ public class PulsarMessageUtilsTest {
         byte[] expected = PulsarMessageUtils.serialize(10);
 
         assertNotNull(expected);
+    }
+
+    @Test
+    public void testUpdateExchangeUpdatesTheGivenExchangeInPlace() {
+        final DefaultCamelContext context = new DefaultCamelContext();
+        final Exchange exchange = new DefaultExchange(context);
+
+        final MessageId messageId = mock(MessageId.class);
+        final Message<byte[]> message = mock(Message.class);
+        when(message.getValue()).thenReturn("Hello World!".getBytes());
+        when(message.getMessageId()).thenReturn(messageId);
+        when(message.getKey()).thenReturn("aKey");
+        when(message.getTopicName()).thenReturn("aTopic");
+        when(message.getProducerName()).thenReturn("aProducer");
+        when(message.getProperties()).thenReturn(Collections.emptyMap());
+
+        final Exchange updated = PulsarMessageUtils.updateExchange(message, exchange);
+
+        // a copy here would orphan the exchange the consumer took from the exchange factory
+        assertSame(exchange, updated);
+        assertEquals(messageId, updated.getIn().getHeader(PulsarMessageHeaders.MESSAGE_ID));
+        assertEquals("aKey", updated.getIn().getHeader(PulsarMessageHeaders.KEY));
+        assertEquals("aTopic", updated.getIn().getHeader(PulsarMessageHeaders.TOPIC_NAME));
+        assertEquals("Hello World!", updated.getIn().getBody(String.class));
     }
 }
 

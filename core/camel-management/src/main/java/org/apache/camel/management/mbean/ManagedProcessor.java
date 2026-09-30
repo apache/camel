@@ -16,8 +16,11 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.Objects;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.DisabledAware;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
@@ -33,6 +36,7 @@ import org.apache.camel.model.StepDefinition;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -259,5 +263,21 @@ public class ManagedProcessor extends ManagedPerformanceCounter
     @Override
     public String dumpProcessorAsXml() throws Exception {
         return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, definition);
+    }
+
+    @Override
+    protected boolean isRedeliveredHere(Exchange exchange) {
+        // only the processor that failed is redelivered (the later processors see the redelivered header as well)
+        return ExchangeHelper.isRedelivered(exchange)
+                && id.equals(exchange.getProperty(FAILED_PROCESSOR_ID))
+                && Objects.equals(getRouteId(), exchange.getProperty(FAILED_ROUTE_ID));
+    }
+
+    @Override
+    public void failedExchange(Exchange exchange) {
+        super.failedExchange(exchange);
+        // remember the processor that failed, as the error handler may redeliver it
+        exchange.setProperty(FAILED_ROUTE_ID, getRouteId());
+        exchange.setProperty(FAILED_PROCESSOR_ID, id);
     }
 }

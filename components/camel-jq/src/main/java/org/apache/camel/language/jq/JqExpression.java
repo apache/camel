@@ -210,8 +210,10 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
     private String nullSourceHint() {
         if ("body".equals(source.toString())) {
             // a timer alone, or a jq step placed before the file was read: nothing to evaluate
-            return "the jq expression got no message body to evaluate, the body is null: read the JSON before the step"
-                   + " with poll: file:..., pollEnrich or a from: consumer, or set it with setBody";
+            return "the jq expression got no message body to evaluate, the body is null: a route reached with direct:"
+                   + " has the body of its caller, so when the caller has none, read the data first - setBody with"
+                   + " constant: resource:file:data.json for a known file, or poll:, pollEnrich or a from: consumer"
+                   + " for one that is not";
         }
         return "the jq expression got no input from " + source + " to evaluate, it is null: set it before the step,"
                + " or leave source unset to use the message body";

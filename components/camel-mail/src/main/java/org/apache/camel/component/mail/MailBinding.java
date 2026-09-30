@@ -39,6 +39,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
 import jakarta.mail.Part;
 import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.ContentType;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
@@ -73,6 +74,8 @@ import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICAT
 public class MailBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailBinding.class);
+
+    private int maxMultipartDepth = MailConstants.MAIL_DEFAULT_MAX_MULTIPART_DEPTH;
     private final HeaderFilterStrategy headerFilterStrategy;
     private ContentTypeResolver contentTypeResolver;
     private boolean decodeFilename;
@@ -124,6 +127,14 @@ public class MailBinding {
 
     public void setFailOnDuplicateAttachment(boolean failOnDuplicateAttachment) {
         this.failOnDuplicateAttachment = failOnDuplicateAttachment;
+    }
+
+    public int getMaxMultipartDepth() {
+        return maxMultipartDepth;
+    }
+
+    public void setMaxMultipartDepth(int maxMultipartDepth) {
+        this.maxMultipartDepth = maxMultipartDepth;
     }
 
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange)
@@ -363,6 +374,20 @@ public class MailBinding {
 
     protected void extractAttachmentsFromMultipart(Multipart mp, Map<String, Attachment> map)
             throws MessagingException, IOException {
+        extractAttachmentsFromMultipart(mp, map, 0);
+    }
+
+    private void extractAttachmentsFromMultipart(Multipart mp, Map<String, Attachment> map, int depth)
+            throws MessagingException, IOException {
+
+        if (depth > maxMultipartDepth) {
+            // A single message must not be able to exhaust the stack: without a bound, a deeply nested
+            // multipart throws StackOverflowError before the message is processed, and the poll aborts
+            // on every subsequent attempt until the message is removed out of band.
+            LOG.warn("Ignoring multipart nested deeper than {} levels while extracting attachments",
+                    maxMultipartDepth);
+            return;
+        }
 
         for (int i = 0; i < mp.getCount(); i++) {
             Part part = mp.getBodyPart(i);
@@ -370,7 +395,7 @@ public class MailBinding {
 
             if (part.isMimeType("multipart/*")) {
                 LOG.trace("Part #{}: is mimetype: multipart/*", i);
-                extractAttachmentsFromMultipart((Multipart) part.getContent(), map);
+                extractAttachmentsFromMultipart((Multipart) part.getContent(), map, depth + 1);
                 continue;
             }
 
@@ -724,8 +749,12 @@ public class MailBinding {
                         LOG.trace("Attachment #{}: Using content type resolver: {} resolved content type as: {}", i,
                                 contentTypeResolver, contentType);
                         if (contentType != null) {
-                            String value = contentType + "; name=" + attachmentFilename;
-                            messageBodyPart.setHeader("Content-Type", value);
+                            // The file name comes from the message being relayed, so it must go out as a
+                            // parameter value rather than be concatenated into the header. ParameterList
+                            // quotes and escapes anything that would otherwise change the header's structure.
+                            ContentType parsed = new ContentType(contentType);
+                            parsed.setParameter("name", attachmentFilename);
+                            messageBodyPart.setHeader("Content-Type", parsed.toString());
                             LOG.trace("Attachment #{}: ContentType: {}", i, messageBodyPart.getContentType());
                         }
                     }

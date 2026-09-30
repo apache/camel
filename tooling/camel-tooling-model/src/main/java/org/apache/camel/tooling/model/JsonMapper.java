@@ -721,6 +721,7 @@ public final class JsonMapper {
         option.setSetterMethod(mp.getString("setterMethod"));
         option.setSupportFileReference(mp.getBooleanOrDefault("supportFileReference", false));
         option.setLargeInput(mp.getBooleanOrDefault("largeInput", false));
+        option.setSupportSimpleExpression(mp.getBooleanOrDefault("supportSimpleExpression", false));
         option.setInputLanguage(mp.getString("inputLanguage"));
         option.setImportant(mp.getBooleanOrDefault("important", false));
         option.setEndpointIdentity(mp.getBooleanOrDefault("endpointIdentity", false));
@@ -958,6 +959,10 @@ public final class JsonMapper {
         if (option.isLargeInput()) {
             // only include if supported to not regen all files
             prop.put("largeInput", option.isLargeInput());
+        }
+        if (option.isSupportSimpleExpression()) {
+            // only include if supported to not regen all files
+            prop.put("supportSimpleExpression", option.isSupportSimpleExpression());
         }
         if (!Strings.isNullOrEmpty(option.getInputLanguage())) {
             // only include if supported to not regen all files

@@ -515,7 +515,9 @@ public class MyRouteTemplates extends RouteBuilder {
 === Using hardcoded node IDs in route templates
 
 If route templates contain hardcoded node IDs, then routes created from templates will use the same IDs.
-Therefore, if two or more routes are created from the same template, you will have _duplicate id detected_ error.
+Camel gives every route created from a template its own prefix for the node IDs, so two or more routes
+created from the same template do not have duplicate IDs. However, if you create two routes with the same prefix,
+then you will have _duplicate id detected_ error.
 
 Given the route template below, then it has hardcoded ID (`_new-order_`) in node calling the http services.
 

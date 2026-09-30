@@ -124,7 +124,8 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
             } else if (aggStrategy instanceof BiFunction biFunction) {
                 strategy = new AggregationStrategyBiFunctionAdapter(biFunction);
             } else if (aggStrategy != null) {
-                strategy = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
+                strategy = new AggregationStrategyBeanAdapter(
+                        aggStrategy, parseString(definition.getAggregationStrategyMethodName()));
             } else {
                 throw new IllegalArgumentException(
                         "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategy());

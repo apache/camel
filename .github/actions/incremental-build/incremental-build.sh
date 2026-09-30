@@ -429,11 +429,15 @@ checkManualItTests() {
 # Write Scalpel shadow comparison section to the PR comment.
 # Shows what Scalpel would detect vs what the current approach actually tests,
 # with a one-line diff summary. Observation only — does not affect test execution.
+# Both sides of the comparison are filtered through EXCLUSION_LIST for a symmetric diff.
 # Args: $1=comment_file, $2=tested_reactor_ids (newline-separated, already filtered by EXCLUSION_LIST)
 writeScalpelComparison() {
   local comment_file="$1"
   local current_reactor_ids="${2:-}"
   local report="${3:-target/scalpel-report.json}"
+  # Build exclusion set from EXCLUSION_LIST (strip "!:" prefix) for symmetric comparison
+  local excl_set_cmp
+  excl_set_cmp=$(echo "$EXCLUSION_LIST" | sed 's/!://g' | tr ',' '\n')
 
   # If Scalpel failed, show why in the PR comment
   if [ -n "$scalpel_failure_reason" ]; then
@@ -459,7 +463,9 @@ writeScalpelComparison() {
   local scalpel_total=0
   local scalpel_skip_count=0
   if [ -n "$scalpel_module_ids" ]; then
-    scalpel_total=$(echo "$scalpel_module_ids" | tr ',' '\n' | grep -c . || true)
+    # Count after EXCLUSION_LIST filter (scalpel_sorted is built below, compute after)
+    # Defer: recomputed after scalpel_sorted is built
+    true
   fi
   if [ -n "$scalpel_would_skip" ]; then
     scalpel_skip_count=$(echo "$scalpel_would_skip" | tr ',' '\n' | grep -c . || true)
@@ -475,7 +481,17 @@ writeScalpelComparison() {
   fi
   local scalpel_sorted=""
   if [ -n "$scalpel_module_ids" ]; then
-    scalpel_sorted=$(echo "$scalpel_module_ids" | tr ',' '\n' | sed 's/^://' | sort)
+    # Filter through EXCLUSION_LIST so the set-diff is symmetric with current_sorted,
+    # which is already filtered (lines ~992-1001 in the main function).
+    scalpel_sorted=$(echo "$scalpel_module_ids" | tr ',' '\n' | sed 's/^://' | while read -r rid; do
+      if ! echo "$excl_set_cmp" | grep -qx "$rid"; then
+        echo "$rid"
+      fi
+    done | sort)
+  fi
+  # Recompute scalpel_total from the filtered sorted list
+  if [ -n "$scalpel_sorted" ]; then
+    scalpel_total=$(echo "$scalpel_sorted" | grep -c . || true)
   fi
 
   # Set differences: modules Scalpel found that current missed, and vice versa
@@ -561,6 +577,10 @@ writeScalpelComparison() {
     echo "" >> "$comment_file"
     echo "$scalpel_would_test" | tr ',' '\n' | while read -r m; do
       if [ -n "$m" ]; then
+        # Skip modules that are in EXCLUSION_LIST — they are intentionally not tested
+        if echo "$excl_set_cmp" | grep -qx "$m"; then
+          continue
+        fi
         # Pull evidence[] for this module from the report (explain=true populates it)
         local evidence=""
         evidence=$(jq -r --arg art "$m" '

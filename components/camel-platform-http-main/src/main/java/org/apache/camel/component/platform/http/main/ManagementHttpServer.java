@@ -21,12 +21,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.net.JarURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +43,7 @@ import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
@@ -67,7 +77,6 @@ import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
@@ -99,6 +108,8 @@ import org.slf4j.LoggerFactory;
 public class ManagementHttpServer extends ServiceSupport implements CamelContextAware, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ManagementHttpServer.class);
+    // the files camel run adds to the classpath
+    private static final String CLASSPATH_FILES = "camel.jbang.classpathFiles";
 
     private static final int BODY_MAX_CHARS = 128 * 1024;
     private static final int DEFAULT_POLL_TIMEOUT = 20000;
@@ -805,30 +816,27 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                 if (name == null || name.isBlank() || matcher.isPattern(name)) {
                     Set<String> names = new TreeSet<>();
                     if (cp) {
-                        // also look inside classpath
-                        PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
-                        resolver.addClassLoader(camelContext.getApplicationContextClassLoader());
-                        try {
-                            String pattern = "**/*";
-                            if (name != null && !name.isBlank()) {
-                                pattern = "**/" + name;
+                        // also include the resources of the application itself
+                        String pattern = "**/*";
+                        if (name != null && !name.isBlank()) {
+                            pattern = "**/" + name;
+                        }
+                        for (String n : findApplicationResources()) {
+                            if (matcher.match(pattern, n)) {
+                                names.add(n);
                             }
-                            for (Resource res : resolver.findResources(pattern)) {
-                                String loc = res.getLocation();
-                                loc = LoggerHelper.sourceNameOnly(loc);
-                                names.add(loc);
-                            }
-                        } catch (Exception e) {
-                            // ignore
                         }
                     }
                     // always include routes
                     for (org.apache.camel.Route route : camelContext.getRoutes()) {
                         String loc = route.getSourceLocation();
                         if (loc != null) {
-                            loc = LoggerHelper.sourceNameOnly(loc);
-                            if (name == null || name.isBlank() || matcher.match(name, loc)) {
-                                names.add(loc);
+                            final String n = sourceName(loc);
+                            // skip routes from a classpath directory that are already listed as a resource
+                            boolean listed = cp && FileUtil.isAbsolute(new File(n))
+                                    && names.stream().anyMatch(r -> n.endsWith("/" + r));
+                            if (!listed && (name == null || name.isBlank() || matcher.match(name, n))) {
+                                names.add(n);
                             }
                         }
                     }
@@ -867,11 +875,20 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                         for (org.apache.camel.Route route : camelContext.getRoutes()) {
                             String loc = route.getSourceLocation();
                             if (loc != null) {
-                                loc = LoggerHelper.sourceNameOnly(loc);
+                                loc = sourceName(loc);
                                 if (matcher.match(name, loc)) {
                                     res = route.getSourceResource();
                                     break;
                                 }
+                            }
+                        }
+                    }
+                    if (res == null || !res.exists()) {
+                        // files from the project directory (such as application.properties) when using camel run
+                        for (String f : findProjectFiles()) {
+                            if (name.equals(f)) {
+                                res = loader.resolveResource("file:" + f);
+                                break;
                             }
                         }
                     }
@@ -899,6 +916,147 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
 
         platformHttpComponent.addHttpManagementEndpoint("/q/download", "GET",
                 null, "text/plain,application/octet-stream", null);
+    }
+
+    /**
+     * The name of the source such as a route file, which for a packaged application is the path inside the JAR.
+     */
+    private static String sourceName(String location) {
+        String answer = LoggerHelper.sourceNameOnly(location);
+        int pos = answer.lastIndexOf("!/");
+        if (pos != -1) {
+            answer = answer.substring(pos + 2);
+        }
+        return answer;
+    }
+
+    /**
+     * Finds the resources of the application itself, that is the classpath directories and the classes folder of a
+     * packaged JAR, and the files from the project directory when using camel run. The content of dependency JARs is
+     * not included.
+     */
+    protected Set<String> findApplicationResources() {
+        Set<String> answer = new TreeSet<>();
+        // the application context classloader may not be the classloader of a packaged application
+        Set<ClassLoader> loaders = new LinkedHashSet<>();
+        if (camelContext.getApplicationContextClassLoader() != null) {
+            loaders.add(camelContext.getApplicationContextClassLoader());
+        }
+        if (Thread.currentThread().getContextClassLoader() != null) {
+            loaders.add(Thread.currentThread().getContextClassLoader());
+        }
+        loaders.add(ManagementHttpServer.class.getClassLoader());
+        // the base package of the application (such as the package of the main class) is used to find the JAR of
+        // a packaged application, as a JAR is not returned as a classpath root
+        String base = camelContext.getCamelContextExtension().getBasePackageScan();
+        String basePath = base != null && !base.isBlank() ? base.replace('.', '/') + "/" : null;
+        Map<String, Boolean> roots = new LinkedHashMap<>();
+        for (ClassLoader cl : loaders) {
+            try {
+                for (URL url : Collections.list(cl.getResources(""))) {
+                    roots.putIfAbsent(url.toExternalForm(), false);
+                }
+                if (basePath != null) {
+                    for (URL url : Collections.list(cl.getResources(basePath))) {
+                        String s = url.toExternalForm();
+                        int pos = s.lastIndexOf("!/");
+                        if (pos != -1) {
+                            roots.put(s.substring(0, pos + 2), true);
+                        } else if (s.endsWith(basePath)) {
+                            roots.putIfAbsent(s.substring(0, s.length() - basePath.length()), false);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                LOG.debug("Error finding application resources due to: {}. This exception is ignored.", e.getMessage(),
+                        e);
+            }
+        }
+        for (Map.Entry<String, Boolean> root : roots.entrySet()) {
+            try {
+                for (String n : listResourceRoot(URI.create(root.getKey()).toURL(), root.getValue())) {
+                    if (isApplicationResource(n)) {
+                        answer.add(n);
+                    }
+                }
+            } catch (Exception e) {
+                LOG.debug("Error listing resources in: {} due to: {}. This exception is ignored.", root.getKey(),
+                        e.getMessage(), e);
+            }
+        }
+        answer.addAll(findProjectFiles());
+        return answer;
+    }
+
+    private static List<String> listResourceRoot(URL url, boolean applicationJar) throws Exception {
+        List<String> answer = new ArrayList<>();
+        if ("file".equals(url.getProtocol())) {
+            Path root = Path.of(url.toURI());
+            if (Files.isDirectory(root)) {
+                try (Stream<Path> files = Files.walk(root)) {
+                    files.filter(Files::isRegularFile)
+                            .map(p -> FileUtil.normalizePath(root.relativize(p).toString()).replace('\\', '/'))
+                            .forEach(answer::add);
+                }
+            }
+        } else if ("jar".equals(url.getProtocol())) {
+            // the root of a dependency JAR is not part of the application, but the classes folder of a packaged
+            // application (such as jar:nested:/app.jar/!BOOT-INF/classes/!/) and the application JAR are
+            String s = url.toExternalForm();
+            if (s.endsWith("!/")) {
+                s = s.substring(0, s.length() - 2);
+            }
+            if (s.endsWith(".jar") && !applicationJar) {
+                return answer;
+            }
+            URLConnection con = url.openConnection();
+            if (con instanceof JarURLConnection jar) {
+                String prefix = jar.getEntryName() != null ? jar.getEntryName() : "";
+                // the JAR file is cached by the JDK so it must not be closed
+                jar.getJarFile().stream()
+                        .filter(e -> !e.isDirectory() && e.getName().startsWith(prefix))
+                        .map(e -> e.getName().substring(prefix.length()))
+                        .forEach(answer::add);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The files from the project directory that camel run has added to the classpath or loaded as properties.
+     */
+    private List<String> findProjectFiles() {
+        List<String> answer = new ArrayList<>();
+        List<String> files = new ArrayList<>();
+        camelContext.getPropertiesComponent().resolveProperty(CLASSPATH_FILES)
+                .ifPresent(s -> files.addAll(Arrays.asList(s.split(","))));
+        for (String loc : camelContext.getPropertiesComponent().getLocations()) {
+            loc = StringHelper.before(loc, ";", loc);
+            if (loc.startsWith("file:")) {
+                files.add(loc.substring(5));
+            }
+        }
+        // only files inside the project directory
+        Path dir = Path.of("").toAbsolutePath().normalize();
+        for (String f : files) {
+            f = f.trim();
+            Path p = dir.resolve(f).normalize();
+            if (!f.isEmpty() && p.startsWith(dir) && Files.isRegularFile(p)) {
+                String n = FileUtil.normalizePath(dir.relativize(p).toString()).replace('\\', '/');
+                if (isApplicationResource(n)) {
+                    answer.add(n);
+                }
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Whether the file is a resource that can be listed and downloaded, which excludes classes and JARs (camel run can
+     * add both to the classpath) and META-INF files.
+     */
+    private static boolean isApplicationResource(String name) {
+        return !name.endsWith(".class") && !name.endsWith(".jar") && !name.startsWith("META-INF/");
     }
 
     protected void setupSendConsole() {

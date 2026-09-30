@@ -1415,6 +1415,12 @@ final class StatusParser {
             ei.nodeId = ej.getString("nodeId");
             ei.exchangeId = ej.getString("exchangeId");
             ei.handled = Boolean.TRUE.equals(ej.get("handled"));
+            Long rc = ej.getLong("repeatCount");
+            ei.repeatCount = rc != null ? rc : 1;
+            Long rf = ej.getLong("repeatFirstTimestamp");
+            if (rf != null) {
+                ei.repeatFirstTimestamp = rf;
+            }
             Long ts = ej.getLong("timestamp");
             if (ts != null) {
                 ei.timestamp = ts;

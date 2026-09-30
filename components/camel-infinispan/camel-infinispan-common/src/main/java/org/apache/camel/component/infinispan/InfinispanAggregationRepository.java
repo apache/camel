@@ -103,16 +103,15 @@ public abstract class InfinispanAggregationRepository
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         LOG.trace("Removing an exchange with ID {} for key {}", exchange.getExchangeId(), key);
-        DefaultExchangeHolder holder = getCache().remove(key);
+        getCache().remove(key);
 
         if (useRecovery) {
-            // the aggregation is complete but the exchange has not been processed yet, so keep a copy that
-            // recovery can pick up if the processing never confirms it
-            if (holder == null) {
-                holder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
-            }
+            // the aggregation is complete but the exchange has not been processed yet, so keep a copy that recovery
+            // can pick up if the processing never confirms it (the given exchange, as the one in the cache does not
+            // contain the exchange that completed the aggregation)
             LOG.trace("Putting an exchange with ID {} into the recovery store", exchange.getExchangeId());
-            getCache().put(recoveryKey(exchange.getExchangeId()), holder);
+            getCache().put(recoveryKey(exchange.getExchangeId()),
+                    DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders));
         }
     }
 

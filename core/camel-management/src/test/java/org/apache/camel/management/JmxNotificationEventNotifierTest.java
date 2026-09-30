@@ -16,6 +16,11 @@
  */
 package org.apache.camel.management;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.management.MBeanNotificationInfo;
 import javax.management.Notification;
 import javax.management.NotificationFilter;
 import javax.management.NotificationListener;
@@ -30,7 +35,9 @@ import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_EVENT_NOTIFIER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class JmxNotificationEventNotifierTest extends ManagementTestSupport {
@@ -77,6 +84,18 @@ public class JmxNotificationEventNotifierTest extends ManagementTestSupport {
 
         assertEquals(8, listener.getEventCounter(), "Get a wrong number of events");
 
+        // the notification types that were sent are advertised by the MBean
+        Set<String> advertised = new HashSet<>();
+        for (MBeanNotificationInfo info : context.getManagementStrategy().getManagementAgent().getMBeanServer()
+                .getMBeanInfo(on).getNotifications()) {
+            assertEquals(Notification.class.getName(), info.getName());
+            advertised.addAll(Arrays.asList(info.getNotifTypes()));
+        }
+        assertFalse(listener.getTypes().isEmpty());
+        for (String type : listener.getTypes()) {
+            assertTrue(advertised.contains(type), "Notification type " + type + " should be advertised");
+        }
+
         context.stop();
     }
 
@@ -117,11 +136,17 @@ public class JmxNotificationEventNotifierTest extends ManagementTestSupport {
     private class MyNotificationListener implements NotificationListener {
 
         private int eventCounter;
+        private final Set<String> types = new HashSet<>();
 
         @Override
         public void handleNotification(Notification notification, Object handback) {
             log.debug("Get the notification : {}", notification);
             eventCounter++;
+            types.add(notification.getType());
+        }
+
+        public Set<String> getTypes() {
+            return types;
         }
 
         public int getEventCounter() {

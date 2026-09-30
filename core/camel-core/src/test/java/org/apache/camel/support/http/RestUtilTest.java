@@ -47,4 +47,15 @@ public class RestUtilTest {
         Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json,application/xml", "application/json"));
         Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json,application/xml", "application/xml"));
     }
+
+    @Test
+    public void testRestUtilWithParameters() {
+        // the parameters of each media type (such as q or charset) are not part of the match
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/json", "application/xml;q=0.9, application/json"));
+        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/json; charset=UTF-8"));
+        Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "application/xml;q=0.9, text/plain"));
+        // an empty part does not match
+        Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "application/xml,"));
+    }
 }

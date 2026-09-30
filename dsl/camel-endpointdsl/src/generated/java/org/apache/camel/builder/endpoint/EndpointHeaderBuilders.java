@@ -2321,6 +2321,19 @@ public class EndpointHeaderBuilders {
         return KeycloakEndpointBuilderFactory.KeycloakHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Knative (camel-knative)
+     * Send and receive events from Knative.
+     * 
+     * Category: cloud
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-knative
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static KnativeEndpointBuilderFactory.KnativeHeaderNameBuilder knative() {
+        return KnativeEndpointBuilderFactory.KnativeHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * KServe (camel-kserve)
      * Provide access to AI model servers with the KServe standard to run
      * inference with remote models
@@ -2995,8 +3008,9 @@ public class EndpointHeaderBuilders {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion, Responses API, embeddings, audio
-     * transcription, audio translation, and text-to-speech.
+     * LLM endpoint for chat completion, Responses API, embeddings, audio
+     * transcription, audio translation, and text-to-speech using
+     * OpenAI-compatible APIs. The openai scheme is a supported alias.
      * 
      * Category: ai
      * Since: 4.17
@@ -3006,6 +3020,20 @@ public class EndpointHeaderBuilders {
      */
     public static OpenAIEndpointBuilderFactory.OpenAIHeaderNameBuilder openai() {
         return OpenAIEndpointBuilderFactory.OpenAIHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * OpenFGA (camel-openfga)
+     * Authorize an Exchange against an OpenFGA relationship graph, and maintain
+     * the relationship tuples it is authorized against.
+     * 
+     * Category: security
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-openfga
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static OpenFgaEndpointBuilderFactory.OpenFgaHeaderNameBuilder openfga() {
+        return OpenFgaEndpointBuilderFactory.OpenFgaHeaderNameBuilder.INSTANCE;
     }
     /**
      * OpenSearch (camel-opensearch)

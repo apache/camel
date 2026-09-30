@@ -16,6 +16,9 @@
  */
 package org.apache.camel.impl.health;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
@@ -85,12 +88,20 @@ public class ConsumersHealthCheckRepository extends ServiceSupport
         //     void forEachRoute(Consumer<Route> consumer);
         // }
         //
-        return this.context != null && enabled
-                ? this.context.getRoutes()
-                        .stream()
-                        .filter(route -> route.getId() != null)
-                        .map(this::toConsumerHealthCheck)
-                : Stream.empty();
+        if (this.context == null || !enabled) {
+            return Stream.empty();
+        }
+        List<Route> routes = this.context.getRoutes();
+        // remove the checks of the routes that have been removed
+        Set<Consumer> consumers = new HashSet<>();
+        for (Route route : routes) {
+            consumers.add(route.getConsumer());
+        }
+        checks.keySet().retainAll(consumers);
+        return routes
+                .stream()
+                .filter(route -> route.getId() != null)
+                .map(this::toConsumerHealthCheck);
     }
 
     // *****************************

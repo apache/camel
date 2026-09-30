@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -142,10 +141,13 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         // we must use a delegate so we can use the fluent builder based on
         // TryDefinition
         // to configure all with try .. catch .. finally
-        // set the onWhen predicate on all the catch definitions
-        Collection<CatchDefinition> col = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
-        for (CatchDefinition doCatch : col) {
-            doCatch.setOnWhen(new OnWhenDefinition(predicate));
+        // set the onWhen predicate on the last doCatch (the one being configured) of this doTry
+        List<ProcessorDefinition<?>> list = getOutputs();
+        for (int i = list.size() - 1; i >= 0; i--) {
+            if (list.get(i) instanceof CatchDefinition doCatch) {
+                doCatch.setOnWhen(new OnWhenDefinition(predicate));
+                break;
+            }
         }
         return this;
     }

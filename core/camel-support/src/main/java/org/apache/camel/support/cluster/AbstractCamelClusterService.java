@@ -120,7 +120,10 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
                 lock,
                 () -> {
                     for (ViewHolder<T> holder : views.values()) {
-                        holder.get().start();
+                        // only start the views that are in use (a released view has been stopped)
+                        if (holder.count.get() > 0) {
+                            holder.get().start();
+                        }
                     }
                 });
     }

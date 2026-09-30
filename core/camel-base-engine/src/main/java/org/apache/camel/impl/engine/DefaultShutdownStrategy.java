@@ -665,13 +665,14 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             long loopDelaySeconds = 1;
             long loopCount = 0;
             while (!done && !timeoutOccurred.get()) {
-                int size = 0;
+                long size = 0;
                 // number of inflights per route
                 final Map<String, Integer> routeInflight = new LinkedHashMap<>();
 
                 for (RouteStartupOrder order : routes) {
-                    int inflight = context.getInflightRepository().size(order.getRoute().getId());
-                    inflight += getPendingInflightExchanges(order);
+                    long sum = (long) context.getInflightRepository().size(order.getRoute().getId())
+                               + getPendingInflightExchanges(order, suspendOnly);
+                    int inflight = (int) Math.min(Integer.MAX_VALUE, sum);
                     if (inflight > 0) {
                         String routeId = order.getRoute().getId();
                         routeInflight.put(routeId, inflight);
@@ -770,7 +771,18 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
      * @return       number of inflight exchanges
      */
     protected static int getPendingInflightExchanges(RouteStartupOrder order) {
-        int inflight = 0;
+        return getPendingInflightExchanges(order, false);
+    }
+
+    /**
+     * Calculates the total number of inflight exchanges for the given route
+     *
+     * @param  order       the route
+     * @param  suspendOnly whether the route is only being suspended (and not shutdown)
+     * @return             number of inflight exchanges
+     */
+    protected static int getPendingInflightExchanges(RouteStartupOrder order, boolean suspendOnly) {
+        long inflight = 0;
 
         // the consumer is the 1st service so we always get the consumer
         // the child services are EIPs in the routes which may also have pending
@@ -779,12 +791,14 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             Set<Service> children = ServiceHelper.getChildServices(service);
             for (Service child : children) {
                 if (child instanceof ShutdownAware shutdownAware) {
-                    inflight += shutdownAware.getPendingExchangesSize();
+                    // a negative size must not cancel out the pending exchanges of other services
+                    inflight += Math.max(0, shutdownAware.getPendingExchangesSize(suspendOnly));
                 }
             }
         }
 
-        return inflight;
+        // the same service can be a child of several route services, so the sum can exceed an int
+        return (int) Math.min(Integer.MAX_VALUE, inflight);
     }
 
     /**
@@ -829,8 +843,12 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             sb.append("\n\tInflightExchange: [exchangeId=").append(inflight.getExchange().getExchangeId())
                     .append(", fromRouteId=").append(inflight.getExchange().getFromRouteId())
                     .append(", atRouteId=").append(inflight.getAtRouteId())
-                    .append(", nodeId=").append(inflight.getNodeId())
-                    .append(", elapsed=").append(inflight.getElapsed())
+                    .append(", nodeId=").append(inflight.getNodeId());
+            if (inflight.getNodeSource() != null) {
+                // where the node is in the source, so it is clear which line is holding the shutdown up
+                sb.append(", nodeSource=").append(inflight.getNodeSource());
+            }
+            sb.append(", elapsed=").append(inflight.getElapsed())
                     .append(", duration=").append(inflight.getDuration())
                     .append("]");
         }

@@ -57,7 +57,7 @@ public class AuthoringTools {
                         + "includeHeaders=true adds the message headers of a component, includeDoc=true the AsciiDoc "
                         + "page.")
     public JsonObject camel_catalog_doc(
-            @ToolArg(description = "Name, e.g. kafka, json-jackson, simple, timer, choice, split, Exchange",
+            @ToolArg(description = "Name, e.g. kafka, json (a data format by its YAML name or artifact), simple, timer, choice, split, Exchange",
                      required = false) String name,
             @ToolArg(description = "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092",
                      required = false) String endpoint,
@@ -148,10 +148,25 @@ public class AuthoringTools {
             @ToolArg(description = "File path relative to the directory (subdirectories are created)",
                      required = true) String file,
             @ToolArg(description = "The complete new content", required = true) String content,
-            @ToolArg(description = "Validate before writing (default true)", required = false) Boolean validate,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         return call("camel_write_file", args("directory", directory, "file", file, "content", content,
-                "validate", validate, "camelVersion", camelVersion));
+                "camelVersion", camelVersion));
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = "Changes a file by replacing one snippet: the exact text to find (it must occur once) and "
+                        + "what to put there. Validated and reloaded as a write is. Use it to change an existing file, "
+                        + "camel_write_file for a new one.")
+    public JsonObject camel_edit_file(
+            @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
+            @ToolArg(description = "File path relative to the directory", required = true) String file,
+            @ToolArg(description = "The lines to replace as they stand in the file; other indentation is fine when "
+                                   + "the lines name one place",
+                     required = true) String find,
+            @ToolArg(description = "The text to put there; empty removes it", required = true) String replace,
+            @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
+        return call("camel_edit_file", args("directory", directory, "file", file, "find", find, "replace", replace,
+                "camelVersion", camelVersion));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = true),
@@ -197,8 +212,9 @@ public class AuthoringTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Evaluates an expression: in the running integration when there is one, else locally. "
-                        + "Returns the value (true/false for a predicate) or the syntax error, so check simple before "
+          description = "Evaluates an expression: in the running integration when there is one, else locally, in any "
+                        + "language (jsonpath, jq, xpath, groovy: its component is downloaded when needed). Returns "
+                        + "the value (true/false for a predicate) or the syntax error, so check an expression before "
                         + "answering or writing it.")
     public JsonObject camel_eval_expression(
             @ToolArg(description = "e.g. ${random(1,10)} or ${body} ?: 'none'", required = true) String expression,
@@ -226,6 +242,43 @@ public class AuthoringTools {
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         return call("camel_dependency_for_class", args("className", className, "runtime", runtime, "mavenCentral",
                 mavenCentral, "camelVersion", camelVersion));
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "A high-level overview of a project's integrations from its route sources (no running "
+                        + "integration needed): routes, entry points, how routes connect (call, hand-off, event), "
+                        + "external systems by category, findings (missing routes, cycles, routes without a "
+                        + "description), and the AI-assisted parts of its camel-summary.md (fields starting "
+                        + "with ai). Use it to explain a project, then camel_save_project_summary to keep the "
+                        + "explanation.")
+    public JsonObject camel_project_overview(
+            @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
+            @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
+        return call("camel_project_overview", args("directory", directory, "camelVersion", camelVersion));
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = "Saves what you wrote about a project into its camel-summary.md, marked as "
+                        + "AI-assisted, beside the facts derived from the sources, so people and tools can tell them "
+                        + "apart. Call camel_project_overview first. Omitted parts keep what the file has. Route "
+                        + "sources are not changed; to put a description into a route, edit the route.")
+    public JsonObject camel_save_project_summary(
+            @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
+            @ToolArg(description = "Two to four sentences on what the project does as a whole",
+                     required = false) String overview,
+            @ToolArg(description = "One line per capability: name: route ids comma separated | one sentence",
+                     required = false) String capabilities,
+            @ToolArg(description = "One line per route without a description: route id: short label (two to six words) |"
+                                   + " one sentence on what it does and why",
+                     required = false) String descriptions,
+            @ToolArg(description = "Route ids of plumbing with little business meaning (logging, dead letter, retries),"
+                                   + " comma separated",
+                     required = false) String utility,
+            @ToolArg(description = "The model writing this, recorded in the file", required = false) String model,
+            @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
+        return call("camel_save_project_summary", args("directory", directory, "overview", overview,
+                "capabilities", capabilities, "descriptions", descriptions, "utility", utility, "model", model,
+                "camelVersion", camelVersion));
     }
 
     /** Runs the registry tool of the same name and hands its JSON back; a tool error becomes an MCP tool error. */

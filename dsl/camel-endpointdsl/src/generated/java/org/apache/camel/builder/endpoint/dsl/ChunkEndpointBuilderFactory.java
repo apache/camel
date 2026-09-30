@@ -371,7 +371,7 @@ public interface ChunkEndpointBuilderFactory {
          * @return the name of the header {@code ChunkResourceUri}.
          */
         public String chunkResourceUri() {
-            return "ChunkResourceUri";
+            return "CamelChunkResourceUri";
         }
         /**
          * The template to use instead of the endpoint configured.
@@ -383,7 +383,7 @@ public interface ChunkEndpointBuilderFactory {
          * @return the name of the header {@code ChunkTemplate}.
          */
         public String chunkTemplate() {
-            return "ChunkTemplate";
+            return "CamelChunkTemplate";
         }
     }
     static ChunkEndpointBuilder endpointBuilder(String componentName, String path) {

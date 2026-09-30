@@ -85,7 +85,7 @@
                 <executions>
                     <execution>
                         <id>copy-legal</id>
-                        <phase>generate-resources</phase>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>

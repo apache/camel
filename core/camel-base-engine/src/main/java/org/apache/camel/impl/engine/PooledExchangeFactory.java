@@ -28,7 +28,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Pooled {@link ExchangeFactory} that reuses {@link Exchange} instance from a pool.
+ *
+ * @deprecated Exchange pooling is deprecated and will be removed in a future release.
  */
+@Deprecated(since = "4.23.0")
 public final class PooledExchangeFactory extends PrototypeExchangeFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(PooledExchangeFactory.class);

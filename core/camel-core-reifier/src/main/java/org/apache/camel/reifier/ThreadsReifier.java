@@ -61,9 +61,7 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
             ThreadPoolProfile profile = new ThreadPoolProfile(name);
             profile.setPoolSize(definition.getPoolSize() != null ? parseInt(definition.getPoolSize()) : null);
             profile.setMaxPoolSize(definition.getMaxPoolSize() != null ? parseInt(definition.getMaxPoolSize()) : null);
-            profile.setKeepAliveTime(
-                    definition.getKeepAliveTime() != null ? parseDuration(definition.getKeepAliveTime()) : null);
-            profile.setTimeUnit(definition.getTimeUnit() != null ? parse(TimeUnit.class, definition.getTimeUnit()) : null);
+            configureKeepAliveTime(profile);
             profile.setMaxQueueSize(definition.getMaxQueueSize() != null ? parseInt(definition.getMaxQueueSize()) : null);
             profile.setRejectedPolicy(policy);
             profile.setAllowCoreThreadTimeOut(definition.getAllowCoreThreadTimeOut() != null
@@ -103,6 +101,30 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
         ThreadsProcessor answer = new ThreadsProcessor(camelContext, threadPool, shutdownThreadPool, policy);
         answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
+    }
+
+    private void configureKeepAliveTime(ThreadPoolProfile profile) {
+        TimeUnit unit = definition.getTimeUnit() != null ? parse(TimeUnit.class, definition.getTimeUnit()) : null;
+        String text = parseString(definition.getKeepAliveTime());
+        Long keepAliveTime = null;
+        if (text != null) {
+            text = text.trim();
+            if (!text.isEmpty() && text.chars().allMatch(Character::isDigit)) {
+                // a plain number is in the time unit (seconds by default)
+                keepAliveTime = Long.parseLong(text);
+            } else {
+                // a duration such as 30s or 1m5s is in milliseconds, so convert it to the time unit
+                long millis = parseDuration(text);
+                if (unit != null) {
+                    keepAliveTime = unit.convert(millis, TimeUnit.MILLISECONDS);
+                } else {
+                    keepAliveTime = millis;
+                    unit = TimeUnit.MILLISECONDS;
+                }
+            }
+        }
+        profile.setKeepAliveTime(keepAliveTime);
+        profile.setTimeUnit(unit);
     }
 
     protected ThreadPoolRejectedPolicy resolveRejectedPolicy() {

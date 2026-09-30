@@ -50,7 +50,11 @@ class AiPanelPromptBudgetTest {
     // raised with the core budget (CAMEL-24760)
     // raised from 9200 when camel_control gained the reload action (CAMEL-24861): main was ~9180 already; the
     // camel_run and camel_control descriptions were shortened in the same change
-    static final int FULL_BUDGET_TOKENS = 9_300;
+    // raised from 9300 for camel_edit_file (CAMEL-24909), the tool that changes a file without rewriting it: it
+    // saves far more tokens per edit than its schema costs once
+    // raised from 9450 for camel_project_overview and camel_save_project_summary (CAMEL-25143), measured ~9750:
+    // full mode only (hosted models), and the panel's own /overview sends no tools at all
+    static final int FULL_BUDGET_TOKENS = 9_850;
 
     record Prefix(String mode, int tools, long promptChars, long toolChars) {
 

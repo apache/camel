@@ -96,7 +96,7 @@ to access Camel functionality and content of the message being routed.
 |`setHeader(name,type,exp)` | `null` | Sets a message header with the given expression (optional converting to the given type).
 |`setVariable(name,type,exp)` | `null` | Sets a variable with the given expression (optional converting to the given type).
 |`stepId` | `String` | Returns the id of the current step the `Exchange` is being routed. Returns `null` if there are no steps.
-|`throwException(type,msg)` | `Exception` | Deliberately throws an error. Uses `IllegalArgumentException` by default if no type is specified (use fully qualified classname).
+|`throwException(msg,type)` | `Exception` | Deliberately throws an error. Uses `IllegalArgumentException` by default if no type is specified (use fully qualified classname).
 |`type:name.field` | `Object` | To refer to a type or field by its fully qualified classname. For example: `type:org.apache.camel.Exchange.FILE_NAME`.
 |`val(exp)` | `Object` | Returns the expression as a constant value.
 |`variable.key` | `Object` | To look up the variable with the given key.
@@ -410,10 +410,10 @@ Various functions to work with numbers.
 |`abs()` | `long` | Converts the message body to a long number and return the absolute value.
 |`abs(exp)` | `Long` | Converts the message body (or expression) to a long number and return the absolute value.
 |`average(val1,val2,...)` | `long` | Returns the average number from all the values  (integral numbers only).
-|`ceil()` | `int` | Converts the message body to a floating number and return the ceil value (rounded up to nearest integer).
-|`ceil(exp)` | `int` | Converts the expression to a floating number and return the ceil value (rounded up to nearest integer).
-|`floor()` | `int` | Converts the message body to a floating number and return the floor value (rounded down to nearest integer).
-|`floor(exp)` | `int` | Converts the expression to a floating number and return the floor value (rounded down to nearest integer).
+|`ceil()` | `long` | Converts the message body to a floating number and return the ceil value (rounded up to nearest integer).
+|`ceil(exp)` | `long` | Converts the expression to a floating number and return the ceil value (rounded up to nearest integer).
+|`floor()` | `long` | Converts the message body to a floating number and return the floor value (rounded down to nearest integer).
+|`floor(exp)` | `long` | Converts the expression to a floating number and return the floor value (rounded down to nearest integer).
 |`max(val1,val2,...)` | `long` | Returns the maximum number from all the values (integral numbers only).
 |`min(val1,val2,...)` | `long` | Returns the minimum number from all the values (integral numbers only).
 |`random(max)` | `int` | Returns a random `Integer` between 0 (included) and max (excluded).
@@ -520,14 +520,14 @@ The string functions is various functions to work with values that are String an
 |`lowercase(exp)` | `String` | Lowercases the expression
 |`normalizeWhitespace()` | `String` | Normalizes the whitespace in the message body by cleaning up excess whitespaces.
 |`normalizeWhitespace(exp)` | `String` | Normalizes the whitespace in the expression by cleaning up excess whitespaces.
-|`pad(exp,width,separator)` | `String` | Pads the expression with extra padding if necessary, according the total width The separator is by default a space. If the width is negative then padding to the right, otherwise to the left.
+|`pad(exp,width,separator)` | `String` | Pads the expression with extra padding if necessary, according to the total width. The separator is by default a space. A positive width pads to the right (after the value), and a negative width pads to the left (before the value).
 |`replace(from,to)` | `String` | Replace all the string values in the message body. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
 |`replace(from,to,exp)` | `String` | Replace all the string values in the given expression. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
 |`safeQuote()` | `String` | Returns the message body safely quoted if needed
 |`safeQuote(exp)` | `String` | Returns the expression safely quoted if needed
 |`substring(num1)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
-|`substring(num1,num2)` | `String` | Returns a substring of the message body. `num1` clips from the beginning, `num2` clips from the ending. Negative values clip from the opposite end.
-|`substring(num1,num2,exp)` | `String` | Returns a substring of the given expression. `num1` clips from the beginning, `num2` clips from the ending. Negative values clip from the opposite end.
+|`substring(num1,num2)` | `String` | Returns a substring of the message body. `num1` is how many characters to clip from the beginning, and `num2` how many characters to clip from the ending. The sign of `num2` does not matter, so `-1` and `1` both clip one character.
+|`substring(num1,num2,exp)` | `String` | Returns a substring of the given expression. `num1` is how many characters to clip from the beginning, and `num2` how many characters to clip from the ending. The sign of `num2` does not matter, so `-1` and `1` both clip one character.
 |`substringAfter(after)` | `String` | Returns a substring of the message body that comes after. Returns `null` if nothing comes after.
 |`substringAfter(exp,after)` | `String` | Returns a substring of the expression that comes after. Returns `null` if nothing comes after.
 |`substringBefore(before)` | `String` | Returns a substring of the message body that comes before. Returns `null` if nothing comes before.
@@ -600,6 +600,9 @@ The `substring`, `substringBefore`, and `substringAfter` functions are all simil
 Suppose the message body contains `ABCDEFGHIJK` then `${substring(3)}` returns `DEFGHIJK`, and `${substring(-3)}` returns `ABCDEFGH`.
 If you want to clip the first and last character you can use `${substring(1,-1)}` returning `BCDEFGHIJ`.
 
+The numbers are how many characters to clip, not positions as in a Python slice: `${substring(3,-2)}` returns `DEFGHI`
+(three characters clipped from the beginning and two from the end), and `${substring(1,0)}` returns `BCDEFGHIJK`.
+
 [NOTE]
 ====
 These `substring` functions are Camel functions with their own semantics (such as negative numbers clipping
@@ -633,13 +636,16 @@ If the value is currently in single quote, then this will be converted to double
 
 If the message body contains `Hello World` then `${quote()}` returns `"Hello World"`.
 And using `${quote('Hi from me')}` then `"Hi from me"` is returned.
+The `quote` function does not escape the value, so a value with double quotes or backslashes is not a valid JSON string;
+use `safeQuote` (or `escape(json)`) for JSON.
 
 The `unquote` function removes any surrounding single or double quotes from a value.
 If the body contains `'hello'` then `${unquote()}` returns `hello` (without the quotes).
 
 The `safeQuote` function is quoting the value depending on the value type
 (uses the same logic as `kindOfType` function). In essence values that are null, boolean or numbers are not quoted,
-while everything else is. The `safeQuote` function is useful when working with JSON data.
+while everything else is. When quoted, double quotes, backslashes and control characters in the value are escaped,
+so the result is a valid JSON string. The `safeQuote` function is useful when working with JSON data.
 
 For example when doing JSON to JSON mapping you can extract values form the source document,
 to be included in the output, but the values may or may not need to be quoted. Then you can use the `~>` chain operator

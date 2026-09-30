@@ -18,6 +18,7 @@ package org.apache.camel.language.simple;
 
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
@@ -30,7 +31,9 @@ import org.apache.camel.support.LanguageHelper;
  */
 public final class DateExpressionBuilder {
 
-    private static final Pattern OFFSET_PATTERN = Pattern.compile("([+-])([^+-]+)");
+    // an offset starts with a digit, so a name such as header.Last-Modified is not an offset
+    private static final Pattern OFFSET_PATTERN = Pattern.compile("([+-])\\s*(\\d[^+-]*)");
+    private static final Pattern OFFSET_START = Pattern.compile("[+-]\\s*\\d");
 
     private DateExpressionBuilder() {
     }
@@ -46,7 +49,9 @@ public final class DateExpressionBuilder {
     public static Expression dateExpression(
             final String commandWithOffsets, final String timezone,
             final String pattern) {
-        final String command = commandWithOffsets.split("[+-]", 2)[0].trim();
+        final Matcher offsetStart = OFFSET_START.matcher(commandWithOffsets);
+        final String command
+                = (offsetStart.find() ? commandWithOffsets.substring(0, offsetStart.start()) : commandWithOffsets).trim();
         final List<Long> offsets = LanguageHelper.captureOffsets(commandWithOffsets, OFFSET_PATTERN);
 
         return new ExpressionAdapter() {

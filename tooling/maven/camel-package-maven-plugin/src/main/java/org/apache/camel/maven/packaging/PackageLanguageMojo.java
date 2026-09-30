@@ -153,7 +153,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                     for (Map.Entry<String, String> entry : javaTypes.entrySet()) {
                         String name = entry.getKey();
                         Class<?> javaType = loadClass(entry.getValue());
-                        String modelName = asModelName(name);
+                        String modelName = modelName(name, javaType);
 
                         String json = PackageHelper.loadText(new File(
                                 core, "src/generated/resources/META-INF/org/apache/camel/model/language/" + modelName
@@ -210,6 +210,20 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
 
     protected LanguageModel extractLanguageModel(MavenProject project, String json, String name, Class<?> javaType) {
         EipModel def = JsonMapper.generateEipModel(json);
+        Language language = javaType.getAnnotation(Language.class);
+        if ("language".equals(language.modelName())) {
+            Metadata metadata = javaType.getAnnotation(Metadata.class);
+            if (metadata == null || metadata.title().isBlank() || metadata.description().isBlank()
+                    || metadata.label().isBlank() || metadata.firstVersion().isBlank()) {
+                throw new IllegalArgumentException(
+                        "Languages using the generic model require @Metadata with title, "
+                                                   + "description, label and firstVersion: " + javaType.getName());
+            }
+            def.setTitle(metadata.title());
+            def.setDescription(metadata.description());
+            def.setLabel(metadata.label());
+            def.setFirstVersion(metadata.firstVersion());
+        }
         LanguageModel model = new LanguageModel();
         model.setName(name);
         model.setTitle(asTitle(name, def.getTitle()));
@@ -305,6 +319,11 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         }
 
         return model;
+    }
+
+    static String modelName(String name, Class<?> javaType) {
+        String modelName = javaType.getAnnotation(Language.class).modelName();
+        return modelName.isEmpty() ? asModelName(name) : modelName;
     }
 
     private void addFunction(LanguageModel model, Field field) throws Exception {

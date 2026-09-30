@@ -118,10 +118,6 @@ public class PQCComponent extends HealthCheckComponent {
                         configuration.setSigner(PQCDefaultFalconMaterial.signer);
                         configuration.setKeyPair(PQCDefaultFalconMaterial.keyPair);
                         break;
-                    case "PICNIC":
-                        configuration.setSigner(PQCDefaultPicnicMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultPicnicMaterial.keyPair);
-                        break;
                     case "SNOVA":
                         configuration.setSigner(PQCDefaultSNOVAMaterial.signer);
                         configuration.setKeyPair(PQCDefaultSNOVAMaterial.keyPair);

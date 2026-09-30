@@ -28,6 +28,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.util.StringHelper;
 import org.eclipse.tahu.SparkplugInvalidTypeException;
 import org.eclipse.tahu.message.model.Metric;
 import org.eclipse.tahu.message.model.MetricDataType;
@@ -74,7 +75,7 @@ public class TahuEdgePayloadConverter implements HeaderFilterStrategyAware {
                 // Skip headers where the headerFilterStrategy returns true, per
                 // HeaderFilterStrategy.applyFilterToCamelHeaders
 
-            } else if (headerName.equals(TahuConstants.MESSAGE_UUID)) {
+            } else if (headerName.equalsIgnoreCase(TahuConstants.MESSAGE_UUID)) {
 
                 dataPayloadBuilder.setUuid(headerValue.toString());
 
@@ -82,12 +83,12 @@ public class TahuEdgePayloadConverter implements HeaderFilterStrategyAware {
 
                 dataPayloadBuilder.addMetric(metricValue);
 
-            } else if (headerName.startsWith(TahuConstants.METRIC_HEADER_PREFIX)) {
+            } else if (StringHelper.startsWithIgnoreCase(headerName, TahuConstants.METRIC_HEADER_PREFIX)) {
 
                 String metricName = headerName;
 
                 // If using the default headerFilterStrategy, strip off the header name prefix
-                if (metricName.startsWith(TahuConstants.METRIC_HEADER_PREFIX)) {
+                if (StringHelper.startsWithIgnoreCase(metricName, TahuConstants.METRIC_HEADER_PREFIX)) {
                     metricName = metricName.substring(TahuConstants.METRIC_HEADER_PREFIX.length());
                 }
 

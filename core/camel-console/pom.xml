@@ -55,11 +55,23 @@
             <artifactId>camel-tooling-model</artifactId>
         </dependency>
 
+        <!-- required logging api dependency -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <!-- many consoles are driven by the managed MBeans (JMX) -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-management</artifactId>
             <scope>test</scope>
         </dependency>
        <dependency>

@@ -21,12 +21,17 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Base class for ordered properties implementations.
@@ -185,6 +190,187 @@ abstract class BaseOrderedProperties extends Properties {
     @Override
     public Collection<Object> values() {
         return new ArrayList<>(map.values());
+    }
+
+    @Override
+    public Enumeration<Object> elements() {
+        lock.lock();
+        try {
+            return new Vector<>(map.values()).elements();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void forEach(BiConsumer<? super Object, ? super Object> action) {
+        List<Map.Entry<String, Object>> entries;
+        lock.lock();
+        try {
+            // iterate a copy so the action can change the properties
+            entries = new ArrayList<>(map.entrySet());
+        } finally {
+            lock.unlock();
+        }
+        for (Map.Entry<String, Object> entry : entries) {
+            action.accept(entry.getKey(), entry.getValue());
+        }
+    }
+
+    @Override
+    public Object getOrDefault(Object key, Object defaultValue) {
+        Object answer = get(key);
+        return answer != null ? answer : defaultValue;
+    }
+
+    @Override
+    public Object putIfAbsent(Object key, Object value) {
+        lock.lock();
+        try {
+            Object answer = get(key);
+            if (answer == null) {
+                put(key, value);
+            }
+            return answer;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public boolean remove(Object key, Object value) {
+        lock.lock();
+        try {
+            if (containsKey(key) && Objects.equals(get(key), value)) {
+                remove(key);
+                return true;
+            }
+            return false;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public Object replace(Object key, Object value) {
+        lock.lock();
+        try {
+            return containsKey(key) ? put(key, value) : null;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public boolean replace(Object key, Object oldValue, Object newValue) {
+        lock.lock();
+        try {
+            if (containsKey(key) && Objects.equals(get(key), oldValue)) {
+                put(key, newValue);
+                return true;
+            }
+            return false;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void replaceAll(BiFunction<? super Object, ? super Object, ?> function) {
+        lock.lock();
+        try {
+            for (String key : new ArrayList<>(map.keySet())) {
+                put(key, function.apply(key, get(key)));
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public Object computeIfAbsent(Object key, Function<? super Object, ?> mappingFunction) {
+        lock.lock();
+        try {
+            Object answer = get(key);
+            if (answer == null) {
+                answer = mappingFunction.apply(key);
+                if (answer != null) {
+                    put(key, answer);
+                }
+            }
+            return answer;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public Object computeIfPresent(Object key, BiFunction<? super Object, ? super Object, ?> remappingFunction) {
+        lock.lock();
+        try {
+            Object old = get(key);
+            if (old == null) {
+                return null;
+            }
+            Object answer = remappingFunction.apply(key, old);
+            if (answer == null) {
+                remove(key);
+            } else {
+                put(key, answer);
+            }
+            return answer;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public Object compute(Object key, BiFunction<? super Object, ? super Object, ?> remappingFunction) {
+        lock.lock();
+        try {
+            Object answer = remappingFunction.apply(key, get(key));
+            if (answer == null) {
+                remove(key);
+            } else {
+                put(key, answer);
+            }
+            return answer;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public Object merge(Object key, Object value, BiFunction<? super Object, ? super Object, ?> remappingFunction) {
+        lock.lock();
+        try {
+            Object old = get(key);
+            Object answer = old == null ? value : remappingFunction.apply(old, value);
+            if (answer == null) {
+                remove(key);
+            } else {
+                put(key, answer);
+            }
+            return answer;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o instanceof BaseOrderedProperties other) {
+            return map.equals(other.map);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return map.hashCode();
     }
 
     @Override

@@ -84,12 +84,38 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         return true;
     }
 
+    /**
+     * Returns the number of pending exchanges the shutdown strategy must wait for before this consumer can be stopped.
+     * <p/>
+     * Note that this method has side effects and is not only a getter:
+     * <ul>
+     * <li>if {@code purgeWhenStopping} is enabled, the queue is purged first, so there are no pending exchanges to wait
+     * for.</li>
+     * <li>if this consumer is suspending or suspended, {@code 0} is returned: a suspended consumer does not poll the
+     * queue, so waiting for its pending exchanges would only wait for the shutdown timeout. The pending exchanges are
+     * kept on the queue (unless purged as above).</li>
+     * </ul>
+     * Otherwise the number of exchanges on the queue is returned.
+     *
+     * @return the number of pending exchanges to wait for
+     */
     @Override
     public int getPendingExchangesSize() {
+        return getPendingExchangesSize(false);
+    }
+
+    @Override
+    public int getPendingExchangesSize(boolean suspendOnly) {
         // the route is shutting down, so either we should purge the queue,
         // or return how many exchanges are still on the queue
-        if (getEndpoint().isPurgeWhenStopping()) {
+        // (a suspended route must keep its pending exchanges, so only purge when stopping)
+        if (!suspendOnly && getEndpoint().isPurgeWhenStopping()) {
             getEndpoint().purgeQueue();
+        }
+        if (isSuspending() || isSuspended()) {
+            // a suspended consumer does not poll the queue, so do not wait for it to complete the pending exchanges
+            // (they are kept on the queue)
+            return 0;
         }
         return getEndpoint().getQueue().size();
     }
@@ -173,10 +199,12 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
 
             // do not poll if we are suspended or starting again after resuming
             if (isSuspending() || isSuspended() || isStarting()) {
-                if (shutdownPending && queue.isEmpty()) {
-                    LOG.trace(
-                            "Consumer is suspended and shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
-                    // we want to shutdown so break out if there queue is empty
+                // a suspended consumer does not poll the task queue, so break out without waiting for the queue to be
+                // empty (any pending exchanges are kept on the queue), but a consumer that is starting will poll it,
+                // so only break out once the queue is empty
+                if (shutdownPending && (isSuspending() || isSuspended() || queue.isEmpty())) {
+                    LOG.trace("Consumer is suspended or starting and shutdown is pending, so this consumer thread is"
+                              + " breaking out.");
                     break;
                 } else {
                     LOG.trace("Consumer is suspended so skip polling");

@@ -30,6 +30,8 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import static org.apache.camel.component.opa.OpaSdkFailures.undefinedDecision;
+import static org.apache.camel.component.opa.OpaSdkFailures.unreachable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
@@ -43,18 +45,25 @@ class OpaSecurityPolicyTest extends CamelTestSupport {
 
     private final OPAClient client = mock(OPAClient.class);
     private final OpaSecurityPolicy policy = new OpaSecurityPolicy();
+    private final OpaSecurityPolicy failOpenPolicy = new OpaSecurityPolicy();
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         policy.setPolicyPath(PATH);
         policy.setOpaClient(client);
         policy.setIncludeProperties("subject");
+        failOpenPolicy.setPolicyPath(PATH);
+        failOpenPolicy.setOpaClient(client);
+        failOpenPolicy.setFailOpen(true);
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:start")
                         .policy(policy)
                         .to("mock:result");
+                from("direct:failOpen")
+                        .policy(failOpenPolicy)
+                        .to("mock:failOpen");
             }
         };
     }
@@ -103,7 +112,7 @@ class OpaSecurityPolicyTest extends CamelTestSupport {
 
     @Test
     void deniesWhenThePolicyCannotBeEvaluated() throws Exception {
-        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(new OPAException("connection refused"));
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(unreachable(PATH));
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(0);
 
@@ -111,6 +120,37 @@ class OpaSecurityPolicyTest extends CamelTestSupport {
 
         assertThat(out.getException()).isInstanceOf(CamelAuthorizationException.class)
                 .hasCauseInstanceOf(OpaPolicyEvaluationException.class);
+        // the marker belongs to the deliberate failOpen path only - a denial is not a fail-open
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
+        result.assertIsSatisfied();
+    }
+
+    @Test
+    void marksAnExchangeTheFailOpenPolicyLetThrough() throws Exception {
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(unreachable(PATH));
+        MockEndpoint result = getMockEndpoint("mock:failOpen");
+        result.expectedMessageCount(1);
+
+        Exchange out = template.request("direct:failOpen", e -> e.getMessage().setBody("an order"));
+
+        assertThat(out.getException()).isNull();
+        result.assertIsSatisfied();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isEqualTo(true);
+    }
+
+    @Test
+    void refusesAnUndefinedDecisionEvenUnderFailOpen() throws Exception {
+        // the rule did not match, so the policy did not say yes: failOpen covers an unavailable server, not that
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(undefinedDecision(PATH));
+        MockEndpoint result = getMockEndpoint("mock:failOpen");
+        result.expectedMessageCount(0);
+
+        Exchange out = template.request("direct:failOpen", e -> e.getMessage().setBody("an order"));
+
+        assertThat(out.getException()).isInstanceOf(CamelAuthorizationException.class)
+                .hasCauseInstanceOf(OpaPolicyEvaluationException.class);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
         result.assertIsSatisfied();
     }
 

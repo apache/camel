@@ -20,6 +20,10 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.PooledObjectFactorySupport;
 
+/**
+ * @deprecated Exchange pooling is deprecated and will be removed in a future release.
+ */
+@Deprecated(since = "4.23.0")
 public abstract class PooledTaskFactory extends PooledObjectFactorySupport<PooledExchangeTask>
         implements PooledExchangeTaskFactory {
 

@@ -48,6 +48,13 @@ import org.slf4j.LoggerFactory;
 
 public final class HttpMessageUtils {
 
+    /**
+     * Largest expansion accepted for a compressed AS2 entity. Chosen to be far above any realistic EDI payload while
+     * still bounding the pathological case; the overload taking an explicit bound is available where a deployment needs
+     * a different value.
+     */
+    public static final long MAX_COMPRESSED_ENTITY_EXPANSION = 100L * 1024 * 1024;
+
     private static final Logger LOG = LoggerFactory.getLogger(HttpMessageUtils.class);
 
     private HttpMessageUtils() {
@@ -335,9 +342,28 @@ public final class HttpMessageUtils {
             ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity, DecrpytingAndSigningInfo decrpytingAndSigningInfo,
             boolean hasValidSignature)
             throws HttpException {
+        return extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo, hasValidSignature,
+                MAX_COMPRESSED_ENTITY_EXPANSION);
+    }
+
+    /**
+     * As
+     * {@link #extractEdiPayloadFromCompressedEntity(ApplicationPkcs7MimeCompressedDataEntity, DecrpytingAndSigningInfo, boolean)},
+     * with an explicit bound on how far the compressed entity may expand.
+     *
+     * @param maxExpandedSize the largest expansion to accept, in bytes
+     */
+    public static ApplicationEntity extractEdiPayloadFromCompressedEntity(
+            ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity, DecrpytingAndSigningInfo decrpytingAndSigningInfo,
+            boolean hasValidSignature, long maxExpandedSize)
+            throws HttpException {
         ApplicationEntity ediEntity;
 
-        MimeEntity entity = compressedDataEntity.getCompressedEntity(new ZlibExpanderProvider());
+        // The expansion happens while extracting the payload, which is before the signature has been
+        // established, so the work is done on behalf of a sender that is not yet authenticated. zlib
+        // reaches roughly 1000:1, so an unbounded expander lets a small entity claim a large amount of
+        // memory. Bound it.
+        MimeEntity entity = compressedDataEntity.getCompressedEntity(new ZlibExpanderProvider(maxExpandedSize));
         String contentTypeString = entity.getContentType();
         if (contentTypeString == null) {
             throw new HttpException("Failed to extract EDI payload: content type missing from compressed entity");

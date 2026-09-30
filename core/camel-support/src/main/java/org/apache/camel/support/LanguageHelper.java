@@ -244,20 +244,23 @@ public final class LanguageHelper {
 
     public static Date dateFromExchangeProperty(
             Exchange exchange, String command, BiFunction<Exchange, Object, Date> orElseFunction) {
-        final String key = command.substring(command.lastIndexOf('.') + 1);
+        // the key may contain dots, such as header.my.date
+        final String key = command.substring(command.indexOf('.') + 1);
         final Object obj = exchange.getProperty(key);
 
         return toDate(exchange, orElseFunction, obj);
     }
 
     public static Date dateFromHeader(Exchange exchange, String command, BiFunction<Exchange, Object, Date> orElseFunction) {
-        final String key = command.substring(command.lastIndexOf('.') + 1);
+        // the key may contain dots, such as header.my.date
+        final String key = command.substring(command.indexOf('.') + 1);
         final Object obj = exchange.getMessage().getHeader(key);
         return toDate(exchange, orElseFunction, obj);
     }
 
     public static Date dateFromVariable(Exchange exchange, String command, BiFunction<Exchange, Object, Date> orElseFunction) {
-        final String key = command.substring(command.lastIndexOf('.') + 1);
+        // the key may contain dots, such as header.my.date
+        final String key = command.substring(command.indexOf('.') + 1);
         final Object obj = exchange.getVariable(key);
         return toDate(exchange, orElseFunction, obj);
     }

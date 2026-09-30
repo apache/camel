@@ -223,8 +223,10 @@ public class JsonPathEngine {
             // a timer alone, or a jsonpath step placed before the file was read: nothing to evaluate
             if (fromBody) {
                 throw new CamelExchangeException(
-                        "The jsonpath expression got no message body to evaluate (the body is null): read the JSON before"
-                                                 + " the step with poll: file:..., pollEnrich or a from: consumer, or set it with setBody",
+                        "The jsonpath expression got no message body to evaluate (the body is null): a route reached"
+                                                 + " with direct: has the body of its caller, so when the caller has none, read the data"
+                                                 + " first - setBody with constant: resource:file:data.json for a known file, or poll:,"
+                                                 + " pollEnrich or a from: consumer for one that is not",
                         exchange);
             }
             throw new CamelExchangeException(

@@ -83,6 +83,25 @@ public class DefaultAsyncProcessorAwaitManagerTest {
         waitForEndOfAsyncProcess();
     }
 
+    @Test
+    public void testNodeSourceIsNullWhenNoneWasRecorded() throws Exception {
+        startAsyncProcess();
+        AsyncProcessorAwaitManager.AwaitThread awaitThread = defaultAsyncProcessorAwaitManager.browse().iterator().next();
+        assertThat(awaitThread.getNodeSource(), is(nullValue()));
+        waitForEndOfAsyncProcess();
+    }
+
+    @Test
+    public void testNodeSourceSaysWhereTheNodeIs() throws Exception {
+        startAsyncProcess();
+        exchange.getExchangeExtension().setHistoryNodeId("nodeId");
+        exchange.getExchangeExtension().setHistoryNodeSource("orders.camel.yaml:18");
+        AsyncProcessorAwaitManager.AwaitThread awaitThread = defaultAsyncProcessorAwaitManager.browse().iterator().next();
+        assertThat(awaitThread.getNodeId(), is("nodeId"));
+        assertThat(awaitThread.getNodeSource(), is("orders.camel.yaml:18"));
+        waitForEndOfAsyncProcess();
+    }
+
     private void waitForEndOfAsyncProcess() throws InterruptedException {
         latch.countDown();
         thread.join(1000);

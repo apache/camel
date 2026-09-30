@@ -19,7 +19,6 @@ package org.apache.camel.component.cxf.common.header;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -39,8 +38,9 @@ import org.slf4j.LoggerFactory;
 public final class CxfHeaderHelper {
     private static final Logger LOG = LoggerFactory.getLogger(CxfHeaderHelper.class);
 
-    private static final Map<String, String> CAMEL_TO_CXF_HEADERS = new HashMap<>();
-    private static final Map<String, String> CXF_TO_CAMEL_HEADERS = new HashMap<>();
+    // the header names are case-insensitive
+    private static final Map<String, String> CAMEL_TO_CXF_HEADERS = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    private static final Map<String, String> CXF_TO_CAMEL_HEADERS = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     static {
         // initialize mappings between Camel and CXF header names
@@ -151,12 +151,12 @@ public final class CxfHeaderHelper {
 
             LOG.trace("Propagate Camel header: {}={} as {}", entry.getKey(), entry.getValue(), cxfHeaderName);
 
-            if (Exchange.CONTENT_TYPE.equals(entry.getKey())) {
+            if (Exchange.CONTENT_TYPE.equalsIgnoreCase(entry.getKey())) {
                 cxfMessage.put(cxfHeaderName, entry.getValue());
             }
-            if (Exchange.HTTP_RESPONSE_CODE.equals(entry.getKey())
-                    || Client.REQUEST_CONTEXT.equals(entry.getKey())
-                    || Client.RESPONSE_CONTEXT.equals(entry.getKey())) {
+            if (Exchange.HTTP_RESPONSE_CODE.equalsIgnoreCase(entry.getKey())
+                    || Client.REQUEST_CONTEXT.equalsIgnoreCase(entry.getKey())
+                    || Client.RESPONSE_CONTEXT.equalsIgnoreCase(entry.getKey())) {
                 cxfMessage.put(cxfHeaderName, entry.getValue());
             } else {
                 Object values = entry.getValue();

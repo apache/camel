@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -47,9 +48,13 @@ import org.apache.camel.util.json.Jsoner;
 public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorRegistry {
 
     private final ConcurrentLinkedDeque<BacklogErrorEventMessage> entries = new ConcurrentLinkedDeque<>();
+    /** How often each kind of error happened, so a storm is counted while only a few of its exchanges are kept. */
+    private final Map<String, Repeat> repeats = new ConcurrentHashMap<>();
     private final AtomicLong uidCounter = new AtomicLong();
     private volatile boolean enabled;
     private volatile int maximumEntries = 100;
+    /** How many exchanges of the same kind of error are kept, so one storm does not push out the other errors. */
+    private volatile int maximumEntriesPerKind = 3;
     private volatile Duration timeToLive = Duration.ZERO;
     private volatile int bodyMaxChars = 32 * 1024;
     private volatile boolean bodyIncludeStreams;
@@ -81,7 +86,12 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         if (event instanceof CamelEvent.ExchangeFailedEvent e) {
             capture(e.getExchange(), false);
         } else if (event instanceof CamelEvent.ExchangeFailureHandledEvent e) {
-            capture(e.getExchange(), true);
+            // the failure processor (such as onException) may not have handled the exception
+            // (a doCatch handles the exception without the error handler marking it)
+            Exchange exchange = e.getExchange();
+            boolean handled = !exchange.getExchangeExtension().isErrorHandlerHandledSet()
+                    || exchange.getExchangeExtension().isErrorHandlerHandled();
+            capture(exchange, handled);
         }
     }
 
@@ -100,6 +110,10 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         Throwable exception;
         if (handled) {
             exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
+            // the event means a failure processor (onException, dead letter channel, doCatch) has run, which has
+            // only handled the failure when the exchange no longer has an exception (not with handled(false) or a
+            // doCatch that throws again)
+            handled = exchange.getException() == null;
         } else {
             exception = exchange.getException();
         }
@@ -115,19 +129,6 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         long timestamp = System.currentTimeMillis();
         String exchangeId = correlationId != null ? correlationId : exchange.getExchangeId();
         String routeId = exchange.getProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, String.class);
-        if (routeId == null) {
-            routeId = exchange.getFromRouteId();
-        }
-        String fromRouteId = exchange.getFromRouteId();
-        String routeGroup = null;
-        if (routeId != null) {
-            org.apache.camel.Route route = exchange.getContext().getRoute(routeId);
-            if (route != null) {
-                routeGroup = route.getGroup();
-            }
-        }
-        String endpointUri = exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT, String.class);
-
         // capture node id and location where the exchange actually failed
         // (captured up-front by the error handler / doCatch, before any failure processor such as
         // onException or a dead letter channel ran its own processing steps - otherwise those steps
@@ -145,8 +146,25 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
                     toNode = last.getNode().getId();
                     location = LoggerHelper.getLineNumberLoggerName(last.getNode());
                 }
+                if (routeId == null) {
+                    // the route of the node (which is not the route the exchange came from when it failed in a
+                    // route it was sent to)
+                    routeId = last.getRouteId();
+                }
             }
         }
+        if (routeId == null) {
+            routeId = exchange.getFromRouteId();
+        }
+        String fromRouteId = exchange.getFromRouteId();
+        String routeGroup = null;
+        if (routeId != null) {
+            org.apache.camel.Route route = exchange.getContext().getRoute(routeId);
+            if (route != null) {
+                routeGroup = route.getGroup();
+            }
+        }
+        String endpointUri = exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT, String.class);
 
         // capture step id (set by Step EIP)
         String stepId = exchange.getProperty(ExchangePropertyKey.STEP_ID, String.class);
@@ -186,16 +204,24 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
                 endpointUri, toNode, stepId, fromEndpointUri, routeUptime, elapsed,
                 threadName, data, exception, handled, messageHistory);
 
-        // deduplicate by exchange ID:
+        // deduplicate the same failure of an exchange (the same exception, or one that wraps the other), as it is
+        // reported by both a correlated copy and the original exchange. Other failures of the same exchange (the
+        // failures of the parts of a split, a failure after a doCatch, a failure in onCompletion) are kept.
         // - correlated copy (inner): has more specific node info (e.g., throwException inside circuit breaker),
-        //   so it replaces any existing entry for the same original exchange
+        //   so it replaces an existing entry of the same failure
         // - original exchange (outer): if already captured from a correlated copy, skip it
         //   since the copy has more specific info about where the error actually occurred
         if (correlationId != null) {
-            entries.removeIf(e -> exchangeId.equals(e.getExchangeId()));
+            entries.removeIf(e -> exchangeId.equals(e.getExchangeId()) && isSameFailure(e.getException(), exception));
+            entry.fromCopy = true;
         } else {
             for (BacklogErrorEventMessage e : entries) {
-                if (exchangeId.equals(e.getExchangeId())) {
+                // the same exception again, or the failure of a correlated copy wrapped (or unwrapped) by the
+                // original exchange. A doCatch of the original exchange that throws a new exception wrapping the
+                // caught one is another failure, recorded besides the caught one
+                if (exchangeId.equals(e.getExchangeId()) && (e.getException() == exception
+                        || e instanceof DefaultBacklogErrorEventMessage dbe && dbe.fromCopy
+                                && isSameFailure(e.getException(), exception))) {
                     // the copy's entry stays (it names the node), but the original reporting the failure as
                     // handled (a circuit breaker's fallback, a doCatch around a multicast) means the exchange
                     // recovered: the entry is an error that was handled, not an error (CAMEL-24863)
@@ -206,8 +232,98 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
                 }
             }
         }
+        // count this kind of error and keep only a few of its exchanges, so a storm of one failure neither hides
+        // the count nor evicts everything else (CAMEL-24911)
+        String kind = kindOf(entry);
+        Repeat repeat = repeats.computeIfAbsent(kind, k -> new Repeat(timestamp));
+        long count = repeat.record(timestamp);
+        entry.setRepeat(count, repeat.first(), timestamp);
         entries.addFirst(entry);
+        evictKind(kind);
         evict();
+    }
+
+    /**
+     * Whether the two exceptions are the same failure: the same exception, or one is a cause of the other (such as the
+     * exception of a split part wrapped by the splitter).
+     */
+    private static boolean isSameFailure(Throwable a, Throwable b) {
+        return isCauseOf(a, b) || isCauseOf(b, a);
+    }
+
+    private static boolean isCauseOf(Throwable cause, Throwable exception) {
+        int depth = 0;
+        for (Throwable t = exception; t != null && depth < 20; t = t.getCause(), depth++) {
+            if (t == cause) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * What makes two errors the same kind: the route, the node that failed, and the type of the exception. The
+     * exception message is deliberately left out, because a real storm usually carries the failing payload in its
+     * message (an order id, a url), which would make every entry its own kind and let the storm flood the registry
+     * again. The messages are still there to read on the entries that are kept.
+     */
+    private static String kindOf(BacklogErrorEventMessage entry) {
+        return entry.getRouteId() + "|" + entry.getToNode() + "|" + entry.getExceptionType();
+    }
+
+    /** Keeps at most {@link #maximumEntriesPerKind} entries of one kind, the newest ones. */
+    private void evictKind(String kind) {
+        int seen = 0;
+        var it = entries.iterator();
+        while (it.hasNext()) {
+            BacklogErrorEventMessage e = it.next();
+            if (kind.equals(kindOf(e))) {
+                seen++;
+                if (seen > maximumEntriesPerKind) {
+                    it.remove();
+                }
+            }
+        }
+        // a counter costs little, but do not keep more of them than the registry keeps entries
+        while (repeats.size() > maximumEntries) {
+            String oldest = null;
+            long oldestTime = Long.MAX_VALUE;
+            for (Map.Entry<String, Repeat> en : repeats.entrySet()) {
+                if (en.getValue().last() < oldestTime) {
+                    oldestTime = en.getValue().last();
+                    oldest = en.getKey();
+                }
+            }
+            if (oldest == null) {
+                break;
+            }
+            repeats.remove(oldest);
+        }
+    }
+
+    /** How often one kind of error happened, and when it first and last did. */
+    private static final class Repeat {
+        private final AtomicLong count = new AtomicLong();
+        private final long first;
+        private volatile long last;
+
+        private Repeat(long first) {
+            this.first = first;
+            this.last = first;
+        }
+
+        private long record(long timestamp) {
+            this.last = timestamp;
+            return count.incrementAndGet();
+        }
+
+        private long first() {
+            return first;
+        }
+
+        private long last() {
+            return last;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -223,6 +339,11 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             String nodeId = mh.getNode() != null ? mh.getNode().getId() : null;
             long elapsed = mh.getElapsed();
             String step = mh.getRouteId() + "[" + nodeId + "]";
+            // where the step is in the source, so the reader can go to the line (CAMEL-24972)
+            String loc = LoggerHelper.getLineNumberLoggerName(mh.getNode());
+            if (loc != null) {
+                step += " " + loc;
+            }
             if (elapsed > 0) {
                 step += " (" + elapsed + " ms)";
             }
@@ -289,6 +410,7 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
     @Override
     public void clear() {
         entries.clear();
+        repeats.clear();
     }
 
     // -- Scoped view --
@@ -323,6 +445,16 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
     @Override
     public void setMaximumEntries(int maximumEntries) {
         this.maximumEntries = maximumEntries;
+    }
+
+    @Override
+    public int getMaximumEntriesPerKind() {
+        return maximumEntriesPerKind;
+    }
+
+    @Override
+    public void setMaximumEntriesPerKind(int maximumEntriesPerKind) {
+        this.maximumEntriesPerKind = maximumEntriesPerKind;
     }
 
     @Override
@@ -431,6 +563,8 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         @Override
         public void clear() {
             entries.removeIf(entry -> routeId.equals(entry.getRouteId()));
+            // and the counts of the kinds of errors of this route (as clear of the registry does)
+            repeats.keySet().removeIf(kind -> kind.startsWith(routeId + "|"));
         }
     }
 
@@ -456,6 +590,11 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         private final JsonObject data;
         private final Throwable exception;
         private volatile boolean handled;
+        // recorded from a correlated copy of the exchange (which the original exchange reports again)
+        private volatile boolean fromCopy;
+        private volatile long repeatCount = 1;
+        private volatile long repeatFirstTimestamp;
+        private volatile long repeatLastTimestamp;
         private final String[] messageHistory;
 
         private volatile String dataAsJson;
@@ -595,6 +734,28 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         }
 
         @Override
+        public long getRepeatCount() {
+            return repeatCount;
+        }
+
+        @Override
+        public long getRepeatFirstTimestamp() {
+            return repeatFirstTimestamp;
+        }
+
+        @Override
+        public long getRepeatLastTimestamp() {
+            return repeatLastTimestamp;
+        }
+
+        /** How often this kind of error happened so far, and when it first and last did (CAMEL-24911). */
+        void setRepeat(long count, long firstTimestamp, long lastTimestamp) {
+            this.repeatCount = count;
+            this.repeatFirstTimestamp = firstTimestamp;
+            this.repeatLastTimestamp = lastTimestamp;
+        }
+
+        @Override
         public String getExceptionType() {
             return exception.getClass().getName();
         }
@@ -655,6 +816,11 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             jo.put("elapsed", elapsed);
             jo.put("threadName", threadName);
             jo.put("handled", handled);
+            if (repeatCount > 1) {
+                jo.put("repeatCount", repeatCount);
+                jo.put("repeatFirstTimestamp", repeatFirstTimestamp);
+                jo.put("repeatLastTimestamp", repeatLastTimestamp);
+            }
             // message data (body, headers)
             Map<String, Object> msg = data.getMap("message");
             jo.put("message", msg);

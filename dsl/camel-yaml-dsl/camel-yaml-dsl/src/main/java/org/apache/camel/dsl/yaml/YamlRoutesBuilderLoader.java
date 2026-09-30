@@ -710,6 +710,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
         setDeserializationContext(root, ctx);
 
+        ctx.preParse(root);
         Object target = preConfigureNode(root, ctx, true);
         Iterator<?> it = ObjectHelper.createIterator(target);
         while (it.hasNext()) {

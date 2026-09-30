@@ -365,6 +365,15 @@ public final class Theme {
                 isDark() ? SyntaxHighlighter.MONOKAI_TEXT : SyntaxHighlighter.LIGHT_TEXT);
     }
 
+    /**
+     * Text an AI wrote shown among facts from the sources and the runtime, such as a route description suggested by the
+     * AI project overview (CAMEL-25143): italic in the optional {@code ai-assisted} color, else the theme's notice
+     * color, so the user learns to tell it apart.
+     */
+    public static synchronized Style aiAssisted() {
+        return Style.EMPTY.fg(color("ai-assisted", color("notice", Color.rgb(0xC5, 0x86, 0xC0)))).italic();
+    }
+
     /** Diagram box-drawing border color. */
     public static synchronized Color diagramBorder() {
         return color("diagram-border", FALLBACK_DIAGRAM_BORDER);

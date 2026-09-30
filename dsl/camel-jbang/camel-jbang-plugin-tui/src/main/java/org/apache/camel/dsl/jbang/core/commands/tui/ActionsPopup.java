@@ -1145,6 +1145,11 @@ class ActionsPopup {
         docViewerPopup.openMarkdown(title, markdown);
     }
 
+    void openMarkdownAt(String title, String markdown, String heading) {
+        showActionsMenu = false;
+        docViewerPopup.openMarkdownAt(title, markdown, heading);
+    }
+
     void openOptions(String name, String kind, org.apache.camel.catalog.CamelCatalog catalog) {
         showActionsMenu = false;
         optionsViewerPopup.open(name, kind, catalog);

@@ -1,0 +1,4 @@
+{
+  "selected_tool": {"type":"choice","instructions":"Which of these tools best serves the `user_request`?","criteria":{"currentWeather":"Returns the current temperature and conditions for a named place","sendEmail":"Sends an email message to one or more recipients","createInvoice":"Creates and issues an invoice for a customer","searchOrders":"Finds past orders belonging to a customer","bookMeeting":"Schedules a meeting in the calendar with a set of attendees"}},
+  "any_tool_applies": {"type":"noul","instructions":"Does any tool listed in `available_tools` do what the `user_request` needs?","criteria":{"true":"A listed tool performs the requested action","false":"The user can be answered without one of these tools"}}
+}

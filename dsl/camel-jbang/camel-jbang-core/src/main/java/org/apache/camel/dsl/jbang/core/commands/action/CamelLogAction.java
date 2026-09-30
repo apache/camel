@@ -37,7 +37,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
-import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -45,6 +44,7 @@ import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.jline.jansi.Ansi;
 import org.jline.jansi.AnsiConsole;
@@ -157,9 +157,9 @@ public class CamelLogAction extends ActionBaseCommand {
                 long millis;
                 if (StringHelper.isDigit(since)) {
                     // is in seconds by default
-                    millis = TimePatternConverter.toMilliSeconds(since) * 1000;
+                    millis = TimeUtils.toMilliSeconds(since) * 1000;
                 } else {
-                    millis = TimePatternConverter.toMilliSeconds(since);
+                    millis = TimeUtils.toMilliSeconds(since);
                 }
                 limit = new Date(System.currentTimeMillis() - millis);
             }

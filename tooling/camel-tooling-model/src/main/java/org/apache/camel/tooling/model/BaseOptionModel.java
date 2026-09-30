@@ -55,6 +55,7 @@ public abstract class BaseOptionModel {
     protected String description;
     protected String nestedType;  // optional and currently only used by configurer
     protected boolean supportFileReference;
+    protected boolean supportSimpleExpression;
     protected boolean largeInput;
     protected String inputLanguage;
     protected boolean important;
@@ -314,6 +315,14 @@ public abstract class BaseOptionModel {
 
     public void setSupportFileReference(boolean supportFileReference) {
         this.supportFileReference = supportFileReference;
+    }
+
+    public boolean isSupportSimpleExpression() {
+        return supportSimpleExpression;
+    }
+
+    public void setSupportSimpleExpression(boolean supportSimpleExpression) {
+        this.supportSimpleExpression = supportSimpleExpression;
     }
 
     public boolean isLargeInput() {

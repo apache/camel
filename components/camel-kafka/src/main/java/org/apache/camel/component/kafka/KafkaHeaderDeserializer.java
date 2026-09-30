@@ -85,7 +85,8 @@ public class KafkaHeaderDeserializer implements Processor {
      * Exclude special Kafka headers from auto deserialization.
      */
     private boolean shouldDeserialize(Map.Entry<String, Object> entry) {
-        return !entry.getKey().equals(KafkaConstants.HEADERS) && !entry.getKey().equals(KafkaConstants.MANUAL_COMMIT);
+        return !entry.getKey().equalsIgnoreCase(KafkaConstants.HEADERS)
+                && !entry.getKey().equalsIgnoreCase(KafkaConstants.MANUAL_COMMIT);
     }
 
     public void setEnabled(String enabled) {

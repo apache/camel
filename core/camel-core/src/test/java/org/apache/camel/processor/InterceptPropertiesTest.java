@@ -108,4 +108,30 @@ public class InterceptPropertiesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testInterceptSendToEndpointPropertiesTwoRoutes() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                interceptSendToEndpoint("mock:target")
+                        .to("mock:interceptSendToEndpoint");
+
+                from("direct:a").routeId("a").to("mock:target");
+                from("direct:b").routeId("b").to("mock:target");
+            }
+        });
+        // the intercepted route is the route that sends to the endpoint
+        getMockEndpoint("mock:interceptSendToEndpoint").expectedMessageCount(2);
+        getMockEndpoint("mock:interceptSendToEndpoint")
+                .expectedPropertyValuesReceivedInAnyOrder(ExchangePropertyKey.INTERCEPTED_ROUTE_ID.getName(), "a", "b");
+        getMockEndpoint("mock:interceptSendToEndpoint")
+                .expectedPropertyValuesReceivedInAnyOrder(ExchangePropertyKey.INTERCEPTED_ROUTE_ENDPOINT_URI.getName(),
+                        "direct://a", "direct://b");
+
+        template.sendBody("direct:a", "A");
+        template.sendBody("direct:b", "B");
+
+        assertMockEndpointsSatisfied();
+    }
+
 }

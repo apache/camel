@@ -39,6 +39,21 @@ public final class OpaConstants {
               javaType = "String")
     public static final String POLICY_PATH = HEADER_PREFIX + "PolicyPath";
 
+    @Metadata(label = "producer",
+              description = "Set to true only when the exchange proceeded because failOpen is enabled and the policy"
+                            + " could not be evaluated - nothing authorized it. Absent on every decision an actual"
+                            + " policy made, so a route or an audit trail can tell the two apart rather than seeing"
+                            + " the same CamelOpaDecisionAllow=true for both.",
+              javaType = "Boolean")
+    public static final String DECISION_FAILED_OPEN = HEADER_PREFIX + "DecisionFailedOpen";
+
+    @Metadata(label = "producer",
+              description = "The per-element allow/deny verdicts of a batch evaluation (batch=true), as a List of"
+                            + " Boolean parallel to the List body. Always overwritten by the component. An element"
+                            + " whose evaluation could not be reached is denied, unless failOpen is set.",
+              javaType = "java.util.List<Boolean>")
+    public static final String BATCH_DECISION = HEADER_PREFIX + "BatchDecision";
+
     private OpaConstants() {
     }
 }

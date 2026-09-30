@@ -298,10 +298,11 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
             cls = (end > 0 ? cls.substring(0, end) : cls).trim();
             return new RuntimeCamelException(
                     "Groovy cannot resolve the class " + cls + ": it is not on the classpath. Add the library that"
-                                             + " provides it as a dependency of the application (a Maven dependency;"
-                                             + " with the Camel CLI camel.jbang.dependencies=groupId:artifactId:version"
-                                             + " in application.properties, or a //DEPS line); a class of your own"
-                                             + " goes in a .groovy or .java file next to the route.",
+                                             + " provides it as a dependency of the application: a Maven dependency,"
+                                             + " or with the Camel CLI"
+                                             + " camel.jbang.dependencies=groupId:artifactId:version in"
+                                             + " application.properties. A class of your own goes in a .groovy or"
+                                             + " .java file next to the route.",
                     e);
         }
         return e;

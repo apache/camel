@@ -184,7 +184,11 @@ public class TotalRequestsThrottler extends AbstractThrottler {
                 exchange.setProperty(PROPERTY_EXCHANGE_QUEUED_TIMESTAMP, System.nanoTime());
             }
             exchange.setProperty(PROPERTY_EXCHANGE_STATE, State.ASYNC);
-            long delay = throttlingState.peek().getDelay(TimeUnit.NANOSECONDS);
+            ThrottlePermit next = throttlingState.peek();
+            // there is no permit in the queue when the rate is 0, or when the only permits are taken by other
+            // exchanges and not yet returned, so try again after one period
+            long delay = next != null
+                    ? next.getDelay(TimeUnit.NANOSECONDS) : TimeUnit.MILLISECONDS.toNanos(getTimePeriodMillis());
             asyncExecutor.schedule(() -> process(exchange, callback), delay, TimeUnit.NANOSECONDS);
             return false;
         } catch (final RejectedExecutionException e) {

@@ -19,6 +19,8 @@ package org.apache.camel.telemetry.propagation;
 import java.util.Map;
 
 import org.apache.camel.telemetry.SpanContextPropagationInjector;
+import org.apache.camel.telemetry.Tracer;
+import org.apache.camel.util.StringHelper;
 
 public final class CamelHeadersSpanContextPropagationInjector implements SpanContextPropagationInjector {
     private final Map<String, Object> map;
@@ -29,8 +31,10 @@ public final class CamelHeadersSpanContextPropagationInjector implements SpanCon
 
     @Override
     public void put(String key, String value) {
-        // Assume any header property that begins with 'Camel' is for internal use
-        if (!key.startsWith("Camel")) {
+        // Assume any header property that begins with 'Camel' (in any case) is for internal use,
+        // except the trace and span id headers that the tracer includes on purpose
+        if (!StringHelper.startsWithIgnoreCase(key, "Camel") || Tracer.TRACE_HEADER.equals(key)
+                || Tracer.SPAN_HEADER.equals(key)) {
             this.map.put(key, value);
         }
     }

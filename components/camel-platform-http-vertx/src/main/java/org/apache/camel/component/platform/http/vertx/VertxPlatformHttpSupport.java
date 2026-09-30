@@ -274,9 +274,11 @@ public final class VertxPlatformHttpSupport {
             applyHeaderFilterStrategy(ctx, headersMap, exchange, headerFilterStrategy, request);
         }
 
-        // Path parameters
+        // Path parameters: the value from the path wins over an incoming header of that name. A path parameter is
+        // single-valued and part of the route's contract, so appending would turn ${header.sku} into a list and a
+        // correct value would fail (CAMEL-24910); a query parameter may repeat and is still appended.
         for (Map.Entry<String, String> en : ctx.pathParams().entrySet()) {
-            appendEntry(headersMap, en.getKey(), en.getValue());
+            headersMap.put(en.getKey(), en.getValue());
         }
 
         SocketAddress localAddress = request.localAddress();

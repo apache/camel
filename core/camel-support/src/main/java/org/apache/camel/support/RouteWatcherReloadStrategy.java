@@ -23,10 +23,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -68,6 +71,10 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     private String pattern;
     private boolean removeAllRoutes = true;
     private final List<Resource> previousSources = new ArrayList<>();
+    /** The content of the sources of the last successful reload, by location: what a failed reload goes back to. */
+    private final Map<String, byte[]> lastGoodContent = new ConcurrentHashMap<>();
+    /** The sources of the last failed reload: retried when the properties change, as a missing property may be why. */
+    private final List<Resource> failedSources = new ArrayList<>();
 
     public RouteWatcherReloadStrategy() {
     }
@@ -142,15 +149,22 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             final String[] parts = pattern.split(",");
             setFileFilter(f -> {
                 for (String part : parts) {
-                    // strip starting directory, so we have a relative name to the starting folder
+                    part = part.trim();
+                    // the file name, and the path relative to the starting folder (such as sub/foo.yaml)
                     String path = f.getAbsolutePath();
+                    String relative = null;
                     if (path.startsWith(base)) {
+                        relative = path.substring(base.length()).replace('\\', '/');
+                        while (relative.startsWith("/")) {
+                            relative = relative.substring(1);
+                        }
                         path = FileUtil.stripPath(path);
                     }
 
                     String name = FileUtil.compactPath(f.getPath());
                     boolean exact = name.equals(part);
-                    boolean result = exact || matcher.match(part, path, false);
+                    boolean result = exact || matcher.match(part, path, false)
+                            || relative != null && matcher.match(part, relative, false);
                     LOG.trace("Accepting file pattern:{} path:{} -> {}", part, path, result);
 
                     if (result) {
@@ -199,7 +213,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 pr.onReload(resource.getLocation(), changed);
                 // trigger all routes to be reloaded
                 if (reloadRoutes) {
-                    onRouteReload(null, false);
+                    retryFailedOrReloadAll();
                 }
             } else {
                 // this may be a new properties file, so we need to add as new known location
@@ -219,6 +233,27 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         return reloaded;
     }
 
+    /**
+     * Reloads the routes after the properties changed. A file whose reload failed before is loaded from disk again
+     * rather than left on the content that last ran: a missing property is a common reason for that failure, and the
+     * property may be what just changed. Without this the file only loads on its next save, so an application whose
+     * route uses a property added afterwards keeps running the previous route (CAMEL-25032).
+     */
+    private void retryFailedOrReloadAll() {
+        if (failedSources.isEmpty()) {
+            onRouteReload(null, false);
+            return;
+        }
+        List<Resource> retry = new ArrayList<>(failedSources);
+        LOG.info("Reloading {} file(s) that failed to load before the properties changed", retry.size());
+        try {
+            onRouteReload(retry, false);
+        } catch (Exception e) {
+            // the retry failed for its own reason, which restorePreviousRoutes logged; the properties did reload
+            LOG.debug("Retrying the failed reload after the properties changed failed too: {}", e.getMessage(), e);
+        }
+    }
+
     private String getPropertiesByLocation(String loc) {
         PropertiesComponent pc = getCamelContext().getPropertiesComponent();
         for (String s : pc.getLocations()) {
@@ -230,6 +265,54 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             }
         }
         return null;
+    }
+
+    /**
+     * One save of several files is reloaded as one change: the properties (and any recompiled Groovy) are applied
+     * first, each without reloading the routes, and then the routes of the whole change are reloaded once. A route
+     * saved together with a property it uses is therefore built with that property already in place, instead of failing
+     * on it and being restored (CAMEL-25032).
+     * <p/>
+     * If the batch fails, the files are reloaded one at a time: the reload then fails on the one file that is wrong and
+     * says which it was, so a mistake in one file does not hide behind the others (CAMEL-24860).
+     */
+    @Override
+    protected void onReloadBatch(List<File> changed) {
+        if (changed.size() < 2) {
+            super.onReloadBatch(changed);
+            return;
+        }
+        List<Resource> routes = new ArrayList<>();
+        boolean others = false;
+        try {
+            setLastError(null);
+            for (File file : changed) {
+                String name = FileUtil.compactPath(file.getPath());
+                Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource("file:" + name);
+                if (name.endsWith(".properties")) {
+                    others |= onPropertiesReload(resource, false);
+                } else if (name.endsWith(".groovy")) {
+                    others |= onGroovyReload(resource, false);
+                } else {
+                    routes.add(resource);
+                }
+            }
+            if (!routes.isEmpty()) {
+                onRouteReload(routes, false);
+            } else if (others) {
+                // only properties or Groovy changed, so the routes are reloaded to pick them up
+                retryFailedOrReloadAll();
+            }
+            // the counter is files reloaded, as it is when they are reloaded one at a time
+            for (int i = 0; i < changed.size(); i++) {
+                incSucceededCounter();
+            }
+        } catch (Exception e) {
+            LOG.debug("Reloading {} changed file(s) together failed, reloading them one at a time to find the file"
+                      + " that is wrong: {}",
+                    changed.size(), e.getMessage(), e);
+            super.onReloadBatch(changed);
+        }
     }
 
     protected boolean onGroovyReload(Resource resource, boolean reloadRoutes) throws Exception {
@@ -322,6 +405,14 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
             // update okay, so clear as we do not need to remember those anymore
             previousSources.clear();
+            failedSources.clear();
+            if (removeEverything) {
+                // the route files are gone and nothing runs: the remembered content goes with them, so a later
+                // failed reload cannot put a deleted file back (CAMEL-24899)
+                lastGoodContent.clear();
+            } else {
+                rememberContent(sources);
+            }
 
             if (!ids.isEmpty()) {
                 List<String> lines = new ArrayList<>();
@@ -389,17 +480,48 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         } catch (Exception e) {
             // the routes that ran before were removed above and the new ones failed to load: the app has no routes
             // until the next successful reload. Restore the previous routes now, without the failed resources, so a
-            // mistake in one file leaves the rest running (CAMEL-24860); the failed file loads on its next save
+            // mistake in one file leaves the rest running (CAMEL-24860); the failed file loads on its next save,
+            // or when the properties change and a missing property was the reason it failed (CAMEL-25032)
             restorePreviousRoutes(resources, e);
+            failedSources.clear();
+            if (resources != null) {
+                failedSources.addAll(resources);
+            }
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
     }
 
     /**
-     * Reloads the sources of the routes that ran before a failed reload, without the resources that failed, so a
-     * mistake in one file does not leave the application without routes. After a successful restore the remembered set
-     * is cleared: the running routes are the last working set again, and the next reload collects their sources itself.
-     * The failed file is loaded again on its next save.
+     * Remembers the content of the sources that loaded, so a later failed reload of one of them can go back to the
+     * version that ran (the file on disk is then the broken one). Only the sources of the current set are kept; the
+     * caller drops the lot when everything is removed.
+     */
+    private void rememberContent(Collection<Resource> sources) {
+        if (!removeAllRoutes || sources == null) {
+            return;
+        }
+        Set<String> current = new HashSet<>();
+        for (Resource rs : sources) {
+            if (rs == null || !rs.exists()) {
+                continue;
+            }
+            current.add(rs.getLocation());
+            try (InputStream is = rs.getInputStream()) {
+                lastGoodContent.put(rs.getLocation(), is.readAllBytes());
+            } catch (Exception e) {
+                LOG.debug("Cannot remember the content of {} for a later failed reload: {}", rs.getLocation(),
+                        e.getMessage());
+            }
+        }
+        lastGoodContent.keySet().retainAll(current);
+    }
+
+    /**
+     * Reloads the sources of the routes that ran before a failed reload, so a mistake in one file does not leave the
+     * application without routes: the other files from disk, and the failed file from the content that last loaded,
+     * which is kept in memory for a project whose routes are all in one file (CAMEL-24899). After a successful restore
+     * the remembered set is cleared: the running routes are the last working set again, and the next reload collects
+     * their sources itself. The file on disk is untouched and its next save is loaded as usual.
      */
     protected void restorePreviousRoutes(Collection<Resource> failed, Exception cause) {
         if (!removeAllRoutes || previousSources.isEmpty()) {
@@ -409,6 +531,18 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         for (Resource rs : previousSources) {
             if (rs != null && (failed == null || !equalResourceLocation(failed, rs))) {
                 restore.add(rs);
+            }
+        }
+        // the failed file itself: its last loaded content, kept in memory, because the file on disk is the broken
+        // version (a project with a single route file has nothing else to go back to, CAMEL-24899)
+        int fromMemory = 0;
+        if (failed != null) {
+            for (Resource rs : failed) {
+                byte[] content = rs != null ? lastGoodContent.get(rs.getLocation()) : null;
+                if (content != null && !equalResourceLocation(restore, rs)) {
+                    restore.add(ResourceHelper.fromBytes(rs.getLocation(), content));
+                    fromMemory++;
+                }
             }
         }
         if (restore.isEmpty()) {
@@ -424,9 +558,10 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             Set<String> ids = PluginHelper.getRoutesLoader(getCamelContext()).updateRoutes(restore);
             // the running routes are the last working set again: the next reload collects their sources itself
             previousSources.clear();
-            LOG.warn("Reload failed due to: {}. The previous routes were restored ({} route(s) running); the changed"
+            LOG.warn("Reload failed due to: {}. The previous routes were restored ({} route(s) running{}); the changed"
                      + " file loads on its next save",
-                    cause.getMessage(), ids.size());
+                    cause.getMessage(), ids.size(),
+                    fromMemory > 0 ? ", " + fromMemory + " from the last loaded content of the changed file" : "");
         } catch (Exception e) {
             LOG.warn("Reload failed and the previous routes could not be restored due to: {}. The application runs"
                      + " without routes until the file is fixed",

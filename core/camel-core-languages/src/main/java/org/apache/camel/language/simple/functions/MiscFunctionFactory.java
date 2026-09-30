@@ -19,6 +19,7 @@ package org.apache.camel.language.simple.functions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.MiscExpressionBuilder;
+import org.apache.camel.language.simple.SimpleFunctionHelper;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.util.ObjectHelper;
@@ -47,7 +48,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             String exp = null;
             String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
-                exp = StringHelper.removeQuotes(value);
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return MiscExpressionBuilder.isEmptyExpression(exp);
         }
@@ -57,7 +58,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             String exp = null;
             String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
-                exp = StringHelper.removeQuotes(value);
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return MiscExpressionBuilder.isAlphaExpression(exp);
         }
@@ -67,7 +68,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             String exp = null;
             String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
-                exp = StringHelper.removeQuotes(value);
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return MiscExpressionBuilder.isAlphaNumericExpression(exp);
         }
@@ -77,7 +78,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             String exp = null;
             String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
-                exp = StringHelper.removeQuotes(value);
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return MiscExpressionBuilder.isNumericExpression(exp);
         }
@@ -97,7 +98,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             String exp = null;
             String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
-                exp = StringHelper.removeQuotes(value);
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return MiscExpressionBuilder.kindOfTypeExpression(exp);
         }
@@ -109,18 +110,17 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${throwException(msg)} or ${throwException(type,msg)} was: " + function, index);
+                        "Valid syntax: ${throwException(msg)} or ${throwException(msg,type)} was: " + function, index);
             }
-            if (values.contains(",")) {
-                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
-                if (tokens.length > 2) {
-                    throw new SimpleParserException(
-                            "Valid syntax: ${throwException(msg)} or ${throwException(type,msg)} was: " + function, index);
-                }
-                msg = StringHelper.removeQuotes(tokens[0]);
-                type = StringHelper.removeQuotes(tokens[1]);
-            } else {
-                msg = StringHelper.removeQuotes(values.trim());
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+            if (tokens.length > 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${throwException(msg)} or ${throwException(msg,type)} was: " + function, index);
+            }
+            // a comma inside a quoted message is part of the message
+            msg = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
+            if (tokens.length == 2) {
+                type = StringHelper.removeLeadingAndEndingQuotes(tokens[1]);
             }
             return MiscExpressionBuilder.throwExceptionExpression(msg, type);
         }
@@ -135,14 +135,15 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             if (tokens.length != 2) {
                 throw new SimpleParserException("Valid syntax: ${assert(exp,msg)} was: " + function, index);
             }
-            return MiscExpressionBuilder.assertExpression(tokens[0], StringHelper.removeQuotes(tokens[1]));
+            return MiscExpressionBuilder.assertExpression(tokens[0], StringHelper.removeLeadingAndEndingQuotes(tokens[1]));
         }
 
         remainder = ifStartsWithReturnRemainder("convertTo(", function);
         if (remainder != null) {
             String exp = "${body}";
             String type;
-            String values = StringHelper.before(remainder, ")");
+            int end = SimpleFunctionHelper.indexOfClosingParenthesis(remainder);
+            String values = end >= 0 ? remainder.substring(0, end) : null;
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${convertTo(type)} or ${convertTo(exp,type)} was: " + function, index);
@@ -153,12 +154,12 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
                     throw new SimpleParserException(
                             "Valid syntax: ${convertTo(type)} or ${convertTo(exp,type)} was: " + function, index);
                 }
-                exp = StringHelper.removeQuotes(tokens[0]);
-                type = StringHelper.removeQuotes(tokens[1]);
+                exp = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
+                type = StringHelper.removeLeadingAndEndingQuotes(tokens[1]);
             } else {
-                type = StringHelper.removeQuotes(values.trim());
+                type = StringHelper.removeLeadingAndEndingQuotes(values.trim());
             }
-            remainder = StringHelper.after(remainder, ")");
+            remainder = remainder.substring(end + 1);
             if (ObjectHelper.isNotEmpty(remainder)) {
                 boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
                 if (invalid) {
@@ -172,7 +173,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
         }
 
         remainder = ifStartsWithReturnRemainder("messageHistory", function);
-        if (remainder != null) {
+        if (remainder != null && remainder.startsWith("(")) {
             boolean detailed;
             String values = StringHelper.between(remainder, "(", ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
@@ -186,7 +187,8 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
         }
 
         remainder = ifStartsWithReturnRemainder("uuid", function);
-        if (remainder != null) {
+        // ${uuid(kind)}, but ${uuidv7} is not the uuid function
+        if (remainder != null && remainder.startsWith("(")) {
             String values = StringHelper.between(remainder, "(", ")");
             return MiscExpressionBuilder.uuidExpression(values);
         } else if (ObjectHelper.equal(function, "uuid")) {
@@ -200,15 +202,17 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
                 throw new SimpleParserException(
                         "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function, index);
             }
-            if (values.contains(",")) {
-                String[] tokens = values.split(",", 2);
-                if (tokens.length > 2) {
-                    throw new SimpleParserException(
-                            "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function, index);
-                }
-                return MiscExpressionBuilder.hashExpression(tokens[0].trim(), tokens[1].trim());
+            // a comma inside quotes is part of the value
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+            if (tokens.length > 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function, index);
+            }
+            String value = StringHelper.removeLeadingAndEndingQuotes(tokens[0].trim());
+            if (tokens.length == 2) {
+                return MiscExpressionBuilder.hashExpression(value, StringHelper.removeLeadingAndEndingQuotes(tokens[1].trim()));
             } else {
-                return MiscExpressionBuilder.hashExpression(values.trim(), "SHA-256");
+                return MiscExpressionBuilder.hashExpression(value, "SHA-256");
             }
         }
 
@@ -238,7 +242,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
                         "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, index);
             }
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
-            if (tokens.length > 3) {
+            if (tokens.length != 3) {
                 throw new SimpleParserException(
                         "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, index);
             }
@@ -251,7 +255,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             if (ObjectHelper.isEmpty(value)) {
                 throw new SimpleParserException("Valid syntax: ${load(name)} but was: " + function, index);
             }
-            return MiscExpressionBuilder.loadExpression(StringHelper.removeQuotes(value));
+            return MiscExpressionBuilder.loadExpression(StringHelper.removeLeadingAndEndingQuotes(value));
         }
 
         return null;

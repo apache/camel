@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -479,6 +481,26 @@ final class YamlSourceContext {
             }
         }
         return "root";
+    }
+
+    String findParentYamlPath(int fromRow) {
+        String line = editState.getLine(fromRow);
+        int indent = line.isBlank() ? effectiveBlankIndent(fromRow) : countLeadingSpaces(line);
+        List<String> keys = new ArrayList<>();
+        for (int i = fromRow - 1; i >= 0; i--) {
+            String parent = editState.getLine(i);
+            int parentIndent = countLeadingSpaces(parent);
+            if (!parent.isBlank() && parentIndent < indent) {
+                String key = extractEipName(parent.trim());
+                if (key == null) {
+                    break;
+                }
+                keys.add(URLEncoder.encode(dashToCamelCase(key), StandardCharsets.UTF_8));
+                indent = parentIndent;
+            }
+        }
+        Collections.reverse(keys);
+        return keys.isEmpty() ? "root" : "/" + String.join("/", keys);
     }
 
     YamlEipContext findEnclosingEip(int fromRow) {

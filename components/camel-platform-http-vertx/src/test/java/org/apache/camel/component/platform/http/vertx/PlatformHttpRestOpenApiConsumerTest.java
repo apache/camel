@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PlatformHttpRestOpenApiConsumerTest {
@@ -270,4 +273,41 @@ public class PlatformHttpRestOpenApiConsumerTest {
         }
     }
 
+    @Test
+    public void testRestOpenApiRouteRestart() throws Exception {
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final AtomicInteger counter = new AtomicInteger();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("rest-openapi:classpath:openapi-v3.json?missingOperation=ignore").routeId("api")
+                            .to("mock:result");
+
+                    from("direct:getPetById")
+                            .process(e -> counter.incrementAndGet())
+                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                }
+            });
+
+            VertxPlatformHttpEngineTest.startCamelContext(context);
+
+            // restart the route, which creates the consumer again
+            context.getRouteController().stopRoute("api");
+            context.getRouteController().startRoute("api");
+
+            given()
+                    .when()
+                    .get("/api/v3/pet/123")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("{\"pet\": \"tony the tiger\"}"));
+
+            // the operation must only be invoked once
+            assertEquals(1, counter.get());
+        } finally {
+            context.stop();
+        }
+    }
 }

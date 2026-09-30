@@ -159,6 +159,20 @@ class ErrorsTabRenderTest {
     }
 
     @Test
+    void renderShowsTheRepeatCountOfAStorm() {
+        addError("ID-001", "route1", "to1", "IOException", "Connection refused", false);
+        info.errors.get(0).repeatCount = 188;
+        info.errors.get(0).repeatFirstTimestamp = System.currentTimeMillis() - 60000;
+        addError("ID-002", "route2", "to2", "IllegalStateException", "boom", false);
+
+        ErrorsTab tab = new ErrorsTab(ctx);
+        String rendered = renderToString(tab, 160, 30);
+
+        assertTrue(rendered.contains("COUNT"), "Should show COUNT header");
+        assertTrue(rendered.contains("188"), "Should show how often this kind of error happened");
+    }
+
+    @Test
     void renderShowsErrorCount() {
         addError("ID-001", "r1", "n1", "Ex", "m1", false);
         addError("ID-002", "r2", "n2", "Ex", "m2", false);

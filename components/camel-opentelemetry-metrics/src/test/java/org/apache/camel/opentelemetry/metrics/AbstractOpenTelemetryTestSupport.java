@@ -26,6 +26,7 @@ import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.metrics.data.MetricData;
 import io.opentelemetry.sdk.metrics.data.PointData;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ROUTE_ID_ATTRIBUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AbstractOpenTelemetryTestSupport extends CamelTestSupport {
 
+    @RegisterExtension
     public final CamelOpenTelemetryExtension otelExtension = CamelOpenTelemetryExtension.create();
 
     protected List<MetricData> getMetricData(String metricName) {

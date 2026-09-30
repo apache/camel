@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,7 +98,7 @@ public final class LogFileReader {
 
     /** Groups raw lines into records and filters them, newest first; visible for tests. */
     static JsonObject build(List<String> lines, int limit, String filter, String level, JsonObject result) {
-        List<JsonObject> records = toRecords(lines);
+        List<JsonObject> records = fold(toRecords(lines));
         String needle = filter == null || filter.isBlank() ? null : filter.toLowerCase();
         JsonArray rows = new JsonArray();
         for (int i = records.size() - 1; i >= 0 && rows.size() < limit; i--) {
@@ -184,6 +185,36 @@ public final class LogFileReader {
             records.add(finish(head, detail, hidden));
         }
         return records;
+    }
+
+    /**
+     * Folds a run of identical records into one with a {@code repeated} count and the time of its first occurrence, so
+     * a storm of the same failure is one line to read instead of hundreds that push everything else out of the window
+     * (CAMEL-24911).
+     */
+    private static List<JsonObject> fold(List<JsonObject> records) {
+        List<JsonObject> folded = new ArrayList<>();
+        for (JsonObject r : records) {
+            JsonObject last = folded.isEmpty() ? null : folded.get(folded.size() - 1);
+            if (last != null && sameRecord(last, r)) {
+                // keep the newest occurrence, and remember when the run started and how long it is
+                String firstTime = last.getStringOrDefault("firstTime", last.getStringOrDefault("time", ""));
+                long repeated = last.getLongOrDefault("repeated", 1) + 1;
+                r.put("firstTime", firstTime);
+                r.put("repeated", repeated);
+                folded.set(folded.size() - 1, r);
+            } else {
+                folded.add(r);
+            }
+        }
+        return folded;
+    }
+
+    private static boolean sameRecord(JsonObject a, JsonObject b) {
+        return Objects.equals(a.get("level"), b.get("level"))
+                && Objects.equals(a.get("logger"), b.get("logger"))
+                && Objects.equals(a.get("message"), b.get("message"))
+                && Objects.equals(a.get("detail"), b.get("detail"));
     }
 
     private static JsonObject finish(JsonObject head, List<String> detail, int hidden) {

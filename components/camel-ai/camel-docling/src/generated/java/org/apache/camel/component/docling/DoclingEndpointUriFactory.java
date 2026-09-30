@@ -24,7 +24,7 @@ public class DoclingEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(55);
+        Set<String> props = new HashSet<>(56);
         props.add("abortOnError");
         props.add("allowFilePathSource");
         props.add("allowUrlSource");
@@ -70,6 +70,7 @@ public class DoclingEndpointUriFactory extends org.apache.camel.support.componen
         props.add("ocrLanguage");
         props.add("operation");
         props.add("operationId");
+        props.add("outputBaseDirectory");
         props.add("outputFormat");
         props.add("pdfBackend");
         props.add("pipeline");

@@ -51,4 +51,22 @@ public interface ShutdownAware extends ShutdownPrepared {
      */
     int getPendingExchangesSize();
 
+    /**
+     * Gets the number of pending exchanges, while the route is being suspended or shutdown.
+     * <p/>
+     * This is invoked by the {@link org.apache.camel.spi.ShutdownStrategy} while it waits for the pending exchanges to
+     * complete. Consumers which discard their pending exchanges on shutdown (for example the
+     * {@link org.apache.camel.component.seda.SedaConsumer} with the <tt>purgeWhenStopping</tt> option) must only do so
+     * when the route is being shutdown, and not when it is only being suspended.
+     * <p/>
+     * By default, this delegates to {@link #getPendingExchangesSize()}.
+     *
+     * @param  suspendOnly <tt>true</tt> if the route is only being suspended, <tt>false</tt> if it is being shutdown
+     * @return             number of pending exchanges
+     * @since              4.23
+     */
+    default int getPendingExchangesSize(boolean suspendOnly) {
+        return getPendingExchangesSize();
+    }
+
 }

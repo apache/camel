@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -25,8 +24,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -46,6 +47,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +73,6 @@ public class RecipientListProcessor extends MulticastProcessor {
     private final String delimiter;
     private final ProducerCache producerCache;
     private int cacheSize;
-    private Map<String, Object> txData;
 
     /**
      * Class that represent each step in the recipient list to do
@@ -80,6 +81,16 @@ public class RecipientListProcessor extends MulticastProcessor {
      * using it.
      */
     static final class RecipientProcessorExchangePair implements ProcessorExchangePair {
+        private static final int NEW = 0;
+        private static final int BEGUN = 1;
+        private static final int DONE = 2;
+        private static final int RELEASED = 3;
+        // used instead of the prepared processor when the pair was released before it could begin
+        private static final Processor SKIP = exchange -> {
+            // noop
+        };
+
+        private final AtomicInteger state = new AtomicInteger(NEW);
         private final int index;
         private final Endpoint endpoint;
         private final AsyncProducer producer;
@@ -120,12 +131,27 @@ public class RecipientListProcessor extends MulticastProcessor {
 
         @Override
         public Processor getProcessor() {
-            return prepared;
+            // the recipient list completed (and released the producer) before this pair could begin,
+            // so it must not be sent anymore
+            return state.get() == RELEASED ? SKIP : prepared;
+        }
+
+        /**
+         * Claims this pair to be sent, before any event is emitted for it. Fails when the recipient list is already
+         * done and has released the pair, as then it must not be sent anymore.
+         */
+        boolean claim() {
+            if (state.compareAndSet(NEW, BEGUN)) {
+                return true;
+            }
+            LOG.trace("RecipientProcessorExchangePair #{} not sent as the recipient list is already done: {}", index,
+                    exchange);
+            return false;
         }
 
         @Override
         public void begin() {
-            // we have already acquired and prepare the producer
+            // the pair has been claimed (see beforeSend), and we have already acquired and prepare the producer
             LOG.trace("RecipientProcessorExchangePair #{} begin: {}", index, exchange);
             exchange.setProperty(ExchangePropertyKey.RECIPIENT_LIST_ENDPOINT, endpoint.getEndpointUri());
             // ensure stream caching is reset
@@ -140,12 +166,32 @@ public class RecipientListProcessor extends MulticastProcessor {
 
         @Override
         public void done() {
+            if (!state.compareAndSet(BEGUN, DONE)) {
+                // not begun (released already), or done already
+                return;
+            }
             LOG.trace("RecipientProcessorExchangePair #{} done: {}", index, exchange);
+            // preserve original MEP
+            if (originalPattern != null) {
+                exchange.setPattern(originalPattern);
+            }
+            releaseProducer();
+        }
+
+        /**
+         * Releases the producer of this pair when the recipient list is done before the pair was begun (such as
+         * stopOnException or timeout), as then {@link #done()} is not called. If the pair has not begun yet, it will
+         * not be sent anymore.
+         */
+        void releaseIfNotBegun() {
+            if (state.compareAndSet(NEW, RELEASED)) {
+                LOG.trace("RecipientProcessorExchangePair #{} released as not sent: {}", index, exchange);
+                releaseProducer();
+            }
+        }
+
+        private void releaseProducer() {
             try {
-                // preserve original MEP
-                if (originalPattern != null) {
-                    exchange.setPattern(originalPattern);
-                }
                 // when we are done we should release back in pool
                 producerCache.releaseProducer(endpoint, producer);
                 // and stop prototype endpoints
@@ -205,52 +251,50 @@ public class RecipientListProcessor extends MulticastProcessor {
             recipientList = expression.evaluate(exchange, Object.class);
         }
 
-        // optimize for recipient without need for using delimiter
-        // (if its list/collection/array type)
-        if (recipientList instanceof List<?> col) {
-            int size = col.size();
-            List<ProcessorExchangePair> result = new ArrayList<>(size);
-            int index = 0;
-            for (Object recipient : col) {
-                index = doCreateProcessorExchangePairs(exchange, recipient, result, index);
-            }
-            return result;
-        } else if (recipientList instanceof Collection<?> col) {
-            int size = col.size();
-            List<ProcessorExchangePair> result = new ArrayList<>(size);
-            int index = 0;
-            for (Object recipient : col) {
-                index = doCreateProcessorExchangePairs(exchange, recipient, result, index);
-            }
-            return result;
-        } else if (recipientList != null && recipientList.getClass().isArray()) {
-            Object[] arr = (Object[]) recipientList;
-            int size = Array.getLength(recipientList);
-            List<ProcessorExchangePair> result = new ArrayList<>(size);
-            int index = 0;
-            for (Object recipient : arr) {
-                index = doCreateProcessorExchangePairs(exchange, recipient, result, index);
-            }
-            return result;
-        }
+        // each exchange (transaction) has its own transaction context data, shared by its copies
+        Map<String, Object> txData = exchange.isTransacted() ? new ConcurrentHashMap<>() : null;
 
-        // okay we have to use iterator based separated by delimiter
-        Iterator<?> iter;
-        if (delimiter != null && delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
-            iter = ObjectHelper.createIterator(recipientList, null);
-        } else {
-            iter = ObjectHelper.createIterator(recipientList, delimiter);
-        }
         List<ProcessorExchangePair> result = new ArrayList<>();
-        int index = 0;
-        while (iter.hasNext()) {
-            index = doCreateProcessorExchangePairs(exchange, iter.next(), result, index);
+        try {
+            int index = 0;
+            // optimize for recipient without need for using delimiter
+            // (if its collection/array type)
+            if (recipientList instanceof Collection<?> col) {
+                for (Object recipient : col) {
+                    index = doCreateProcessorExchangePairs(exchange, recipient, result, index, txData);
+                }
+            } else if (recipientList != null && recipientList.getClass().isArray()) {
+                for (Object recipient : (Object[]) recipientList) {
+                    index = doCreateProcessorExchangePairs(exchange, recipient, result, index, txData);
+                }
+            } else {
+                // okay we have to use iterator based separated by delimiter
+                Iterator<?> iter;
+                if (delimiter != null && delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
+                    iter = ObjectHelper.createIterator(recipientList, null);
+                } else {
+                    iter = ObjectHelper.createIterator(recipientList, delimiter);
+                }
+                while (iter.hasNext()) {
+                    index = doCreateProcessorExchangePairs(exchange, iter.next(), result, index, txData);
+                }
+            }
+        } catch (Exception e) {
+            // a recipient could not be resolved, so release the producers acquired for the recipients before it,
+            // as the recipient list is not sent to any of them
+            for (ProcessorExchangePair pair : result) {
+                if (pair instanceof RecipientProcessorExchangePair rpair) {
+                    rpair.releaseIfNotBegun();
+                }
+            }
+            throw e;
         }
         return result;
     }
 
     private int doCreateProcessorExchangePairs(
-            Exchange exchange, Object recipient, List<ProcessorExchangePair> result, int index)
+            Exchange exchange, Object recipient, List<ProcessorExchangePair> result, int index,
+            Map<String, Object> txData)
             throws NoTypeConversionAvailableException {
         boolean prototype = cacheSize < 0;
 
@@ -282,7 +326,7 @@ public class RecipientListProcessor extends MulticastProcessor {
         }
 
         // then create the exchange pair
-        result.add(createProcessorExchangePair(index++, endpoint, producer, exchange, pattern, prototype));
+        result.add(createProcessorExchangePair(index++, endpoint, producer, exchange, pattern, prototype, txData));
         return index;
     }
 
@@ -292,6 +336,13 @@ public class RecipientListProcessor extends MulticastProcessor {
     protected ProcessorExchangePair createProcessorExchangePair(
             int index, Endpoint endpoint, Producer producer,
             Exchange exchange, ExchangePattern pattern, boolean prototypeEndpoint) {
+        return createProcessorExchangePair(index, endpoint, producer, exchange, pattern, prototypeEndpoint,
+                exchange.isTransacted() ? new ConcurrentHashMap<>() : null);
+    }
+
+    private ProcessorExchangePair createProcessorExchangePair(
+            int index, Endpoint endpoint, Producer producer,
+            Exchange exchange, ExchangePattern pattern, boolean prototypeEndpoint, Map<String, Object> txData) {
         // copy exchange, and do not share the unit of work
         Exchange copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
         copy.getExchangeExtension().setTransacted(exchange.isTransacted());
@@ -302,10 +353,7 @@ public class RecipientListProcessor extends MulticastProcessor {
 
         // If we are in a transaction, set TRANSACTION_CONTEXT_DATA property for new exchanges to share txData
         // during the transaction.
-        if (exchange.isTransacted() && copy.getProperty(Exchange.TRANSACTION_CONTEXT_DATA) == null) {
-            if (txData == null) {
-                txData = new ConcurrentHashMap<>();
-            }
+        if (txData != null && copy.getProperty(Exchange.TRANSACTION_CONTEXT_DATA) == null) {
             copy.setProperty(Exchange.TRANSACTION_CONTEXT_DATA, txData);
         }
 
@@ -333,6 +381,32 @@ public class RecipientListProcessor extends MulticastProcessor {
         // and create the pair
         return new RecipientProcessorExchangePair(
                 index, producerCache, endpoint, producer, prepared, copy, pattern, prototypeEndpoint);
+    }
+
+    @Override
+    protected StopWatch beforeSend(ProcessorExchangePair pair) {
+        if (pair instanceof RecipientProcessorExchangePair rpair && !rpair.claim()) {
+            // the recipient list is already done and has released this pair, so it is skipped: it is not begun, its
+            // processor does nothing, and no exchange sending or sent event is emitted as nothing is sent
+            return null;
+        }
+        return super.beforeSend(pair);
+    }
+
+    @Override
+    protected void doDone(
+            Exchange original, Exchange subExchange, Iterable<ProcessorExchangePair> pairs,
+            AsyncCallback callback, boolean doneSync, boolean forceExhaust) {
+        if (pairs != null) {
+            // the producers are acquired up front for all recipients, so release the producers of the recipients
+            // that were not sent to, as the recipient list may be done before (such as stopOnException or timeout)
+            for (ProcessorExchangePair pair : pairs) {
+                if (pair instanceof RecipientProcessorExchangePair rpair) {
+                    rpair.releaseIfNotBegun();
+                }
+            }
+        }
+        super.doDone(original, subExchange, pairs, callback, doneSync, forceExhaust);
     }
 
     protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {

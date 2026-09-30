@@ -36,6 +36,10 @@
               "type": "string",
               "description": "The node ID"
             },
+            "nodeSource": {
+              "type": "string",
+              "description": "Where the node is in the source, such as orders.camel.yaml:18"
+            },
             "duration": {
               "type": "integer",
               "description": "The wait duration in milliseconds"

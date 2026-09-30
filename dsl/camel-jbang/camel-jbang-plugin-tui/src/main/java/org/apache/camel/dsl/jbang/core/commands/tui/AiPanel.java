@@ -221,6 +221,7 @@ class AiPanel {
 
     // Slash commands
     private final AiSlashCommandRegistry slashCommands = AiSlashCommandRegistry.defaults();
+    private final ProjectOverviewAssist projectOverview = new ProjectOverviewAssist();
     private AiSlashCommandContext slashCommandContext = new PanelSlashCommandContext();
     // Lines the LLM client prints while detecting the endpoint or failing a request (HTTP status, provider error
     // message, auto-selected model). The TUI hides stdout, so they are collected here and shown with the error.
@@ -525,6 +526,58 @@ class AiPanel {
         if (client == null) {
             initClient();
         }
+        if (acpPreset == null && client != null) {
+            // AI Overview: auto explains the project when its summary is missing or out of date (CAMEL-25143); reading
+            // the project is kept off the UI thread
+            LlmClient c = client;
+            Path dir = projectDirectory();
+            Thread t = new Thread(
+                    () -> projectOverview.autoExplain(dir, c, mcpFacade, this::addOverviewEntry),
+                    "tui-ai-overview-check");
+            t.setDaemon(true);
+            t.start();
+        }
+    }
+
+    /** The project the AI overview is about: the selected integration's sources, else the folder the TUI runs in. */
+    private Path projectDirectory() {
+        Path dir = mcpFacade != null ? mcpFacade.getSelectedSourceDirectory() : null;
+        return dir != null ? dir : Path.of("").toAbsolutePath();
+    }
+
+    private void addOverviewEntry(AiRole role, String text) {
+        conversation.add(new ConversationEntry(role, text));
+    }
+
+    /**
+     * Explains the project, as {@code /overview} does, and opens the panel so the user sees it start and the answer
+     * arrive: the Diagram tab's ai setting pressed when the project has no summary yet.
+     */
+    void startProjectOverview() {
+        if (client == null && acpPreset == null) {
+            initClient();
+        }
+        String message = projectOverview("");
+        if (message != null && !message.isBlank()) {
+            addOverviewEntry(AiRole.SYSTEM, message);
+        }
+        if (!visible) {
+            open();
+        }
+    }
+
+    String projectOverview(String arguments) {
+        if (acpPreset != null) {
+            return "Ask the agent to explain the project: it has the camel_project_overview and"
+                   + " camel_save_project_summary tools.";
+        }
+        if ("show".equalsIgnoreCase(arguments == null ? "" : arguments.strip()) && ctx != null
+                && ctx.openMarkdownAtCallback != null) {
+            // opened like a README, in the markdown viewer
+            String error = IntegrationSummaryDoc.open(ctx, projectDirectory(), null);
+            return error != null ? error : "";
+        }
+        return projectOverview.command(arguments, projectDirectory(), client, mcpFacade, this::addOverviewEntry);
     }
 
     void close() {
@@ -4035,6 +4088,11 @@ class AiPanel {
         @Override
         public boolean retryLastQuestion() {
             return AiPanel.this.retryLastQuestion();
+        }
+
+        @Override
+        public String projectOverview(String arguments) {
+            return AiPanel.this.projectOverview(arguments);
         }
 
         @Override

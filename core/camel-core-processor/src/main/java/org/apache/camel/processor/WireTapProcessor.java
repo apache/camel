@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -112,7 +113,6 @@ public class WireTapProcessor extends BaseProcessorSupport
 
         @Override
         public void run() {
-            taskCount.increment();
             LOG.debug(">>>> (wiretap) {} {}", uri, exchange);
             asyncProcessor.process(exchange, callback);
         }
@@ -210,6 +210,9 @@ public class WireTapProcessor extends BaseProcessorSupport
         }
 
         // send the exchange to the destination using an executor service
+        // count the task as pending from when it is submitted (not when it starts to run), so a graceful shutdown
+        // also waits for the tapped exchanges that are waiting in the thread pool queue
+        taskCount.increment();
         try {
             // create task which has state used during routing
             Runnable task = taskFactory.acquire(target, null);
@@ -217,6 +220,8 @@ public class WireTapProcessor extends BaseProcessorSupport
             task = ProcessorHelper.prepareMDCParallelTask(camelContext, task);
             executorService.submit(task);
         } catch (Exception e) {
+            // the task will not run
+            taskCount.decrement();
             // in case the thread pool rejects or cannot submit the task then we need to catch
             // so camel error handler can react
             exchange.setException(e);
@@ -376,7 +381,11 @@ public class WireTapProcessor extends BaseProcessorSupport
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(processorExchangeFactory, taskFactory, processor);
         if (shutdownExecutorService) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            List<Runnable> dropped = getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            if (dropped != null && !dropped.isEmpty()) {
+                // the tasks still queued in the thread pool will never run, so they are no longer pending
+                taskCount.add(-dropped.size());
+            }
         }
     }
 }

@@ -49,7 +49,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 throw new SimpleParserException(
                         "Valid syntax: ${setHeader(name,exp)} or ${setHeader(name,type,exp)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = splitArguments(values);
             if (tokens.length < 2 || tokens.length > 3) {
                 throw new SimpleParserException(
                         "Valid syntax: ${setHeader(name,exp)} or ${setHeader(name,type,exp)} was: " + function, index);
@@ -74,7 +74,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 throw new SimpleParserException(
                         "Valid syntax: ${setVariable(name,exp)} or ${setVariable(name,type,exp)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = splitArguments(values);
             if (tokens.length < 2 || tokens.length > 3) {
                 throw new SimpleParserException(
                         "Valid syntax: ${setVariable(name,exp)} or ${setVariable(name,type,exp)} was: " + function, index);
@@ -107,7 +107,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 }
                 return CollectionExpressionBuilder.rangeExpression(tokens[0].trim(), tokens[1].trim());
             } else {
-                return CollectionExpressionBuilder.rangeExpression("1", values.trim());
+                return CollectionExpressionBuilder.rangeExpression("0", values.trim());
             }
         }
 
@@ -153,7 +153,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             String exp = "${body}";
             String separator = ",";
             if (ObjectHelper.isNotEmpty(values)) {
-                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+                String[] tokens = splitArguments(values);
                 if (tokens.length > 2) {
                     throw new SimpleParserException(
                             "Valid syntax: ${split(separator)} or ${split(exp,separator)} was: " + function, index);
@@ -176,7 +176,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             String exp = "${body}";
             boolean reverse = false;
             if (ObjectHelper.isNotEmpty(values)) {
-                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+                String[] tokens = splitArguments(values);
                 if (tokens.length > 2) {
                     throw new SimpleParserException(
                             "Valid syntax: ${sort(reverse)} or ${sort(exp,reverse)} was: " + function, index);
@@ -184,8 +184,11 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 if (tokens.length == 2) {
                     exp = tokens[0];
                     reverse = Boolean.parseBoolean(tokens[1]);
-                } else {
+                } else if ("true".equalsIgnoreCase(tokens[0]) || "false".equalsIgnoreCase(tokens[0])) {
                     reverse = Boolean.parseBoolean(tokens[0]);
+                } else {
+                    // ${sort(${header.list})}: the only argument is what to sort
+                    exp = tokens[0];
                 }
             }
             return CollectionExpressionBuilder.sortExpression(exp, reverse);
@@ -198,7 +201,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 throw new SimpleParserException(
                         "Valid syntax: ${forEach(exp,exp)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = splitArguments(values);
             if (tokens.length < 2) {
                 throw new SimpleParserException(
                         "Valid syntax: ${forEach(exp,exp)} was: " + function, index);
@@ -215,7 +218,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 throw new SimpleParserException(
                         "Valid syntax: ${filter(exp,exp)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = splitArguments(values);
             if (tokens.length < 2) {
                 throw new SimpleParserException(
                         "Valid syntax: ${filter(exp,exp)} was: " + function, index);
@@ -232,7 +235,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 throw new SimpleParserException(
                         "Valid syntax: ${listAdd(exp)} or ${listAdd(exp,exp)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = splitArguments(values);
             int skip = 0;
             String exp1 = "${body}";
             if (tokens.length > 1) {
@@ -250,7 +253,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 throw new SimpleParserException(
                         "Valid syntax: ${listRemove(exp)} or ${listRemove(exp,exp)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = splitArguments(values);
             int skip = 0;
             String exp1 = "${body}";
             if (tokens.length > 1) {
@@ -268,7 +271,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 throw new SimpleParserException(
                         "Valid syntax: ${mapAdd(key,exp)} or ${mapAdd(exp,key,exp)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = splitArguments(values);
             int skip;
             String exp1 = "${body}";
             String key;
@@ -294,7 +297,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 throw new SimpleParserException(
                         "Valid syntax: ${mapRemove(key)} or ${mapRemove(exp,key)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = splitArguments(values);
             if (tokens.length > 2) {
                 throw new SimpleParserException(
                         "Valid syntax: ${mapRemove(key)} or ${mapRemove(exp,key)} was: " + function, index);
@@ -335,5 +338,23 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
         }
 
         return null;
+    }
+
+    /**
+     * Splits the function arguments by comma. Unquoted arguments are trimmed, so ${sort(${body}, true)} works, while a
+     * quoted argument such as ' ' is kept as written (without its quotes).
+     */
+    private static String[] splitArguments(String values) {
+        String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false, true);
+        for (int i = 0; i < tokens.length; i++) {
+            String token = tokens[i];
+            String trimmed = token.trim();
+            if (!trimmed.isEmpty()) {
+                // a whitespace only argument such as a new line is kept as-is
+                token = trimmed;
+            }
+            tokens[i] = StringHelper.removeLeadingAndEndingQuotes(token);
+        }
+        return tokens;
     }
 }

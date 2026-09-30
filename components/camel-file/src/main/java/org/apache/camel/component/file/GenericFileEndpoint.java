@@ -40,6 +40,7 @@ import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
@@ -96,6 +97,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                             + "file exists. This option configures what file name to use. Either you can specify a fixed name. Or you "
                             + "can use dynamic placeholders.The done file is always expected in the same folder as the original "
                             + "file.<p/> Only ${file.name} and ${file.name.next} is supported as dynamic placeholders.")
+    @Metadata(supportSimpleExpression = true)
     protected String doneFileName;
 
     @UriParam(label = "advanced", defaultValue = "100",

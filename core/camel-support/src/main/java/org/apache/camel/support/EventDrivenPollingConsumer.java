@@ -21,6 +21,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -44,7 +46,14 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
 
     private static final Logger LOG = LoggerFactory.getLogger(EventDrivenPollingConsumer.class);
 
+    // how often a receive() that waits for a message checks whether this consumer is still running
+    private static final long RUN_ALLOWED_CHECK_INTERVAL = 1000;
+
     private final BlockingQueue<Exchange> queue;
+    // guards beforePoll/afterPoll and the number of receive calls in progress (not the lifecycle lock, as a
+    // receive() may wait forever, and then this consumer could not be stopped)
+    private final Lock pollLock = new ReentrantLock();
+    private int activePolls;
     private ExceptionHandler interruptedExceptionHandler;
     private Consumer consumer;
     private boolean blockWhenFull = true;
@@ -124,6 +133,12 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         return receive(0);
     }
 
+    /**
+     * Waits until a message is available and then returns it.
+     * <p/>
+     * Returns <tt>null</tt> if this consumer is stopped while waiting, or if the calling thread is interrupted while
+     * waiting. In the latter case the interrupt status of the thread is kept.
+     */
     @Override
     public Exchange receive() {
         // must be started
@@ -131,22 +146,23 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             throw new RejectedExecutionException(this + " is not started, but in state: " + getStatus().name());
         }
 
-        while (isRunAllowed()) {
-            // synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
-            lock.lock();
-            try {
+        try {
+            beginPoll(0);
+            while (isRunAllowed()) {
                 try {
-                    beforePoll(0);
-                    // take will block waiting for message
-                    return queue.take();
+                    // wait for a message, but check regularly if we are still allowed to run
+                    Exchange answer = queue.poll(RUN_ALLOWED_CHECK_INTERVAL, TimeUnit.MILLISECONDS);
+                    if (answer != null) {
+                        return answer;
+                    }
                 } catch (InterruptedException e) {
+                    // the interrupt status is kept, so waiting again would fail at once: stop waiting
                     handleInterruptedException(e);
-                } finally {
-                    afterPoll();
+                    return null;
                 }
-            } finally {
-                lock.unlock();
             }
+        } finally {
+            endPoll();
         }
         LOG.trace("Consumer is not running, so returning null");
         return null;
@@ -159,21 +175,43 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             throw new RejectedExecutionException(this + " is not started, but in state: " + getStatus().name());
         }
 
-        // synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
-        lock.lock();
         try {
-            try {
-                // use the timeout value returned from beforePoll
-                timeout = beforePoll(timeout);
-                return queue.poll(timeout, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                handleInterruptedException(e);
-                return null;
-            } finally {
+            // use the timeout value returned from beforePoll
+            timeout = beginPoll(timeout);
+            return queue.poll(timeout, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            handleInterruptedException(e);
+            return null;
+        } finally {
+            endPoll();
+        }
+    }
+
+    /**
+     * Registers a receive call in progress and invokes beforePoll.
+     * <p/>
+     * Receive calls from several threads wait for a message at the same time, without holding a lock. afterPoll is
+     * therefore only invoked by the last receive call in progress, so a caller is never left waiting after another
+     * caller has invoked afterPoll (such as suspending the delegate consumer).
+     */
+    private long beginPoll(long timeout) {
+        pollLock.lock();
+        try {
+            activePolls++;
+            return beforePoll(timeout);
+        } finally {
+            pollLock.unlock();
+        }
+    }
+
+    private void endPoll() {
+        pollLock.lock();
+        try {
+            if (--activePolls == 0) {
                 afterPoll();
             }
         } finally {
-            lock.unlock();
+            pollLock.unlock();
         }
     }
 

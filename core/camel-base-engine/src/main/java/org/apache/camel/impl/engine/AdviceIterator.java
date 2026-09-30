@@ -28,9 +28,24 @@ final class AdviceIterator {
     }
 
     static void runAfterTasks(List<? extends CamelInternalProcessorAdvice> advices, Object[] states, Exchange exchange) {
-        int stateIndex = states.length - 1;
+        runAfterTasks(advices, advices.size(), states, states.length, exchange);
+    }
 
-        for (int i = advices.size() - 1; i >= 0; i--) {
+    /**
+     * Runs the after of the first advices in reverse order.
+     *
+     * @param advices    the advices
+     * @param count      number of advices (from the start) to run after for, such as those whose before was run
+     * @param states     the states
+     * @param stateCount number of states (from the start) that belongs to these advices
+     * @param exchange   the exchange
+     */
+    static void runAfterTasks(
+            List<? extends CamelInternalProcessorAdvice> advices, int count, Object[] states, int stateCount,
+            Exchange exchange) {
+        int stateIndex = stateCount - 1;
+
+        for (int i = count - 1; i >= 0; i--) {
             CamelInternalProcessorAdvice task = advices.get(i);
             Object state = null;
             if (task.hasState()) {
@@ -44,8 +59,14 @@ final class AdviceIterator {
         try {
             task.after(exchange, state);
         } catch (Exception e) {
-            exchange.setException(e);
-            // allow all advices to complete even if there was an exception
+            // allow all advices to complete even if there was an exception,
+            // and do not lose the exception the exchange already failed with
+            Exception existing = exchange.getException();
+            if (existing == null) {
+                exchange.setException(e);
+            } else if (existing != e) {
+                existing.addSuppressed(e);
+            }
         }
     }
 }

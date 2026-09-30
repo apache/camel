@@ -93,6 +93,9 @@ import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.model.StopDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
+import org.apache.camel.model.SwitchDefinition;
+import org.apache.camel.model.SwitchOtherwiseDefinition;
 import org.apache.camel.model.TemplatedRouteParameterDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.ThreadsDefinition;
@@ -18035,6 +18038,197 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            nodes = "case",
+            types = org.apache.camel.model.SwitchCaseDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Case",
+            description = "A literal switch case with one fixed endpoint destination",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
+                    @YamlProperty(name = "parameters", type = "object"),
+                    @YamlProperty(name = "uri", type = "string", required = true, description = "The fixed destination URI. Supports property placeholders, but not Simple expressions.", displayName = "Uri"),
+                    @YamlProperty(name = "value", type = "string", required = true, description = "The case-insensitive literal value for a scalar selector.", displayName = "Value")
+            }
+    )
+    public static class SwitchCaseDefinitionDeserializer extends YamlDeserializerEndpointAwareBase<SwitchCaseDefinition> {
+        public SwitchCaseDefinitionDeserializer() {
+            super(SwitchCaseDefinition.class);
+        }
+
+        @Override
+        protected SwitchCaseDefinition newInstance() {
+            return new SwitchCaseDefinition();
+        }
+
+        @Override
+        protected void setEndpointUri(CamelContext camelContext, Node node,
+                SwitchCaseDefinition target, Map<String, Object> parameters) {
+            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, node, target.getUri(), parameters));
+        }
+
+        @Override
+        protected boolean setProperty(SwitchCaseDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "uri": {
+                    String val = asText(node);
+                    target.setUri(val);
+                    break;
+                }
+                case "value": {
+                    String val = asText(node);
+                    target.setValue(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                case "note": {
+                    String val = asText(node);
+                    target.setNote(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "switch",
+            types = org.apache.camel.model.SwitchDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Switch",
+            description = "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar values",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "case", type = "array:org.apache.camel.model.SwitchCaseDefinition", description = "Literal cases. Duplicate values are rejected at startup, ignoring case.", displayName = "Case"),
+                    @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
+                    @YamlProperty(name = "otherwise", type = "object:org.apache.camel.model.SwitchOtherwiseDefinition", description = "Fixed fallback URI for null or unmatched selector results. Without a fallback processing continues.", displayName = "Otherwise"),
+                    @YamlProperty(name = "selector", type = "object:org.apache.camel.model.ExpressionSubElementDefinition", required = true, description = "Expression evaluated once per entry. Returns a scalar value to match against the literal cases.", displayName = "Selector")
+            }
+    )
+    public static class SwitchDefinitionDeserializer extends YamlDeserializerBase<SwitchDefinition> {
+        public SwitchDefinitionDeserializer() {
+            super(SwitchDefinition.class);
+        }
+
+        @Override
+        protected SwitchDefinition newInstance() {
+            return new SwitchDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(SwitchDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "case": {
+                    java.util.List<org.apache.camel.model.SwitchCaseDefinition> val = asFlatList(node, org.apache.camel.model.SwitchCaseDefinition.class);
+                    target.setCases(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "otherwise": {
+                    org.apache.camel.model.SwitchOtherwiseDefinition val = asType(node, org.apache.camel.model.SwitchOtherwiseDefinition.class);
+                    target.setOtherwise(val);
+                    break;
+                }
+                case "selector": {
+                    org.apache.camel.model.ExpressionSubElementDefinition val = asType(node, org.apache.camel.model.ExpressionSubElementDefinition.class);
+                    target.setSelector(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                case "note": {
+                    String val = asText(node);
+                    target.setNote(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "switchOtherwise",
+            types = org.apache.camel.model.SwitchOtherwiseDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Switch Otherwise",
+            description = "The fixed endpoint used when no switch case matches",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "parameters", type = "object"),
+                    @YamlProperty(name = "uri", type = "string", required = true, description = "The fixed destination URI. Supports property placeholders, but not Simple expressions.", displayName = "Uri")
+            }
+    )
+    public static class SwitchOtherwiseDefinitionDeserializer extends YamlDeserializerEndpointAwareBase<SwitchOtherwiseDefinition> {
+        public SwitchOtherwiseDefinitionDeserializer() {
+            super(SwitchOtherwiseDefinition.class);
+        }
+
+        @Override
+        protected SwitchOtherwiseDefinition newInstance() {
+            return new SwitchOtherwiseDefinition();
+        }
+
+        @Override
+        protected void setEndpointUri(CamelContext camelContext, Node node,
+                SwitchOtherwiseDefinition target, Map<String, Object> parameters) {
+            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, node, target.getUri(), parameters));
+        }
+
+        @Override
+        protected boolean setProperty(SwitchOtherwiseDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "uri": {
+                    String val = asText(node);
+                    target.setUri(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             nodes = "syslog",
             types = org.apache.camel.model.dataformat.SyslogDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -21124,10 +21318,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "keyCipherAlgorithm", type = "enum:RSA_v1dot5,RSA_OAEP,RSA_OAEP_11", defaultValue = "RSA_OAEP", description = "The cipher algorithm to be used for encryption/decryption of the asymmetric key.", displayName = "Key Cipher Algorithm"),
                     @YamlProperty(name = "keyOrTrustStoreParameters", type = "string", description = "Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.", displayName = "Key Or Trust Store Parameters"),
-                    @YamlProperty(name = "keyPassword", type = "string", description = "The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric decryption.", displayName = "Key Password"),
+                    @YamlProperty(name = "keyPassword", type = "string", format = "password", description = "The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric decryption.", displayName = "Key Password"),
                     @YamlProperty(name = "mgfAlgorithm", type = "enum:MGF1_SHA1,MGF1_SHA256,MGF1_SHA512", defaultValue = "MGF1_SHA1", description = "The MGF Algorithm to use with the RSA OAEP algorithm.", displayName = "Mgf Algorithm"),
                     @YamlProperty(name = "namespace", type = "string", description = "Refers to a Map of XML Namespaces of prefix to uri mappings.", displayName = "Namespace"),
-                    @YamlProperty(name = "passPhrase", type = "string", description = "A String used as passPhrase to encrypt/decrypt content.", displayName = "Pass Phrase"),
+                    @YamlProperty(name = "passPhrase", type = "string", format = "password", description = "A String used as passPhrase to encrypt/decrypt content.", displayName = "Pass Phrase"),
                     @YamlProperty(name = "passPhraseByte", type = "string", format = "binary", description = "A byte used as passPhrase to encrypt/decrypt content.", displayName = "Pass Phrase Byte"),
                     @YamlProperty(name = "recipientKeyAlias", type = "string", description = "The key alias to be used when retrieving the recipient's public or private key from a KeyStore when performing asymmetric key encryption or decryption.", displayName = "Recipient Key Alias"),
                     @YamlProperty(name = "secureTag", type = "string", description = "The XPath reference to the XML Element selected for encryption/decryption. If no tag is specified, the entire payload is encrypted/decrypted.", displayName = "Secure Tag"),

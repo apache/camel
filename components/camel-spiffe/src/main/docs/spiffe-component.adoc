@@ -62,10 +62,14 @@ The component supports the following producer operations:
 header to its SPIFFE ID.
 * `fetchJwtSvid` — fetches a JWT-SVID for the configured `audience` (or the `CamelSpiffeAudience` header). The
 message body is set to the JWT token string, with the `CamelSpiffeSpiffeId` and `CamelSpiffeExpiry` headers.
-* `validateJwtSvid` — validates the JWT-SVID passed in the `CamelSpiffeToken` header (or the body) against the
-`audience`. When several audiences are configured the token is accepted if it matches *any* of them — the
-Workload API validates one audience at a time, so each is tried in turn. The message body is set to the validated
-`io.spiffe.svid.jwtsvid.JwtSvid`.
+* `validateJwtSvid` — validates a JWT-SVID against the `audience`. The token is taken from the first of:
+the `CamelSpiffeToken` header, an `Authorization: Bearer <token>` header (the scheme matched case-insensitively), or
+the message body. The `Authorization` header is tried *before* the body so a request payload on a `POST`/`PUT` is not
+mistaken for the token; this lets a `platform-http` route validate an incoming bearer token without a bean to strip
+the scheme. On success the message body is set to the validated `io.spiffe.svid.jwtsvid.JwtSvid`, so a route that
+needs the original request payload afterwards must keep a copy before validating (or validate a bodiless request).
+When several audiences are configured the token is accepted if it matches *any* of them — the Workload API validates
+one audience at a time, so each is tried in turn.
 
 [NOTE]
 ====
@@ -87,6 +91,26 @@ from("direct:start")
     .setHeader("Authorization", simple("Bearer ${body}"))
     .to("http://backend.example.org/api");
 ------------------------------------------------------------
+
+Validate an incoming bearer token on a `platform-http` route, without a bean to strip the scheme:
+
+[source,yaml]
+------------------------------------------------------------
+- from:
+    uri: "platform-http:/api"
+    steps:
+      # the Authorization: Bearer <token> header is picked up automatically; validation replaces the body with the
+      # JwtSvid, so this fits a request whose payload is not needed afterwards
+      - to: "spiffe:auth?operation=validateJwtSvid&audience=spiffe://example.org/api"
+      # the token is a credential; drop it before the exchange goes further
+      - removeHeaders:
+          pattern: "Authorization"
+      - to: "direct:handleRequest"
+------------------------------------------------------------
+
+A missing token fails with `IllegalArgumentException`; a rejected one (invalid, expired, or a wrong audience) fails
+with `io.spiffe.exception.JwtSvidException`. Catch both — `onException(io.spiffe.exception.JwtSvidException.class,
+IllegalArgumentException.class)` — to answer `401`.
 
 == Mutual TLS with SPIFFE (SSLContextParameters)
 

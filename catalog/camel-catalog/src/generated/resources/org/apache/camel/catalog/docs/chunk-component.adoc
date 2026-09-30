@@ -168,7 +168,7 @@ Java::
 [source,java]
 ----
 from("direct:in")
-    .setHeader("ChunkResourceUri").constant("template")
+    .setHeader("CamelChunkResourceUri").constant("template")
     .to("chunk:dummy?allowTemplateFromHeader=true");
 ----
 
@@ -178,7 +178,7 @@ XML::
 ----
 <route>
   <from uri="direct:in"/>
-  <setHeader name="ChunkResourceUri">
+  <setHeader name="CamelChunkResourceUri">
     <constant>template</constant>
   </setHeader>
   <to uri="chunk:dummy?allowTemplateFromHeader=true"/>
@@ -194,7 +194,7 @@ YAML::
       uri: direct:in
       steps:
         - setHeader:
-            name: ChunkResourceUri
+            name: CamelChunkResourceUri
             expression:
               constant:
                 expression: template

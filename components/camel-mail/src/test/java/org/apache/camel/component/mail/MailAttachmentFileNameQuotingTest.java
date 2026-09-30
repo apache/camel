@@ -1,0 +1,116 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.mail;
+
+import java.util.Map;
+
+import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
+import jakarta.mail.internet.ContentType;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Producer;
+import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+/**
+ * Unit test for Camel attachments and Mail attachments.
+ */
+public class MailAttachmentFileNameQuotingTest extends CamelTestSupport {
+    private static final String HOSTILE_NAME = "report.jpeg; boundary=--injected";
+
+    private static final MailboxUser james = Mailbox.getOrCreateUser("MailAttachmentFileNameQuotingTest-james", "secret");
+
+    @Test
+    public void hostileAttachmentNameIsQuotedInTheContentTypeHeader() throws Exception {
+        // clear mailbox
+        Mailbox.clearAll();
+
+        // create an exchange with a normal body and attachment to be produced as email
+        Endpoint endpoint = context.getEndpoint(james.uriPrefix(Protocol.smtp));
+
+        // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
+        Exchange exchange = endpoint.createExchange();
+        AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
+        in.setBody("Hello World");
+        in.addAttachment(HOSTILE_NAME, new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
+
+        // create a producer that can produce the exchange (= send the mail)
+        Producer producer = endpoint.createProducer();
+        // start the producer
+        producer.start();
+        // and let it go (processes the exchange by sending the email)
+        producer.process(exchange);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.assertIsSatisfied();
+        Exchange out = mock.assertExchangeReceived(0);
+
+        // plain text
+        assertEquals("Hello World", out.getIn().getBody(String.class));
+
+        // attachment
+        Map<String, DataHandler> attachments = out.getIn(AttachmentMessage.class).getAttachments();
+        assertNotNull(attachments, "Should have attachments");
+        assertEquals(1, attachments.size());
+
+        DataHandler handler = attachments.values().iterator().next();
+        assertNotNull(handler, "The attachment should be there");
+
+        // The file name is relayed from the incoming message, so it must be emitted as a quoted
+        // parameter value. Concatenating it lets a name containing a semicolon add parameters of its
+        // own to the header - here a second boundary declaration.
+        // Parse it rather than string-match: the hostile text appearing anywhere in the header is fine,
+        // what matters is whether it is inside the quoted name or has become a parameter of its own.
+        ContentType contentType = new ContentType(handler.getContentType());
+        assertNull(contentType.getParameter("boundary"),
+                "Attachment name must not introduce a parameter: " + handler.getContentType());
+        assertEquals(HOSTILE_NAME, contentType.getParameter("name"),
+                "The whole name must survive as a single parameter value");
+
+        producer.stop();
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                MailComponent mail = getContext().getComponent("smtp", MailComponent.class);
+                mail.setContentTypeResolver(new ContentTypeResolver() {
+                    public String resolveContentType(String fileName) {
+                        return "image/jpeg";
+                    }
+                });
+
+                from(james.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100")
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
+            }
+        };
+    }
+}

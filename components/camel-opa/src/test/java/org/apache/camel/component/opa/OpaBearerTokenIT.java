@@ -130,4 +130,17 @@ public class OpaBearerTokenIT extends CamelTestSupport {
         assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
         assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
     }
+
+    @Test
+    void failsClosedWhenTheTokenIsWrongEvenUnderFailOpen() {
+        // OPA answered 401: a misconfigured or expired token is not an unavailable server, and under failOpen it
+        // used to let every exchange through
+        Exchange out = template.request(
+                "opa:" + PATH + "?serverUrl=" + service.getOpaUrl() + "&bearerToken=not-the-token&failOpen=true",
+                e -> e.getMessage().setHeader("user", "alice"));
+
+        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
+    }
 }

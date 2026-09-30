@@ -100,6 +100,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "mapMailMessage": target.getConfiguration().setMapMailMessage(property(camelContext, boolean.class, value)); return true;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
+        case "maxmultipartdepth":
+        case "maxMultipartDepth": target.getConfiguration().setMaxMultipartDepth(property(camelContext, int.class, value)); return true;
         case "mimedecodeheaders":
         case "mimeDecodeHeaders": target.getConfiguration().setMimeDecodeHeaders(property(camelContext, boolean.class, value)); return true;
         case "moveto":
@@ -238,6 +240,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "mapMailMessage": return boolean.class;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return int.class;
+        case "maxmultipartdepth":
+        case "maxMultipartDepth": return int.class;
         case "mimedecodeheaders":
         case "mimeDecodeHeaders": return boolean.class;
         case "moveto":
@@ -377,6 +381,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "mapMailMessage": return target.getConfiguration().isMapMailMessage();
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
+        case "maxmultipartdepth":
+        case "maxMultipartDepth": return target.getConfiguration().getMaxMultipartDepth();
         case "mimedecodeheaders":
         case "mimeDecodeHeaders": return target.getConfiguration().isMimeDecodeHeaders();
         case "moveto":

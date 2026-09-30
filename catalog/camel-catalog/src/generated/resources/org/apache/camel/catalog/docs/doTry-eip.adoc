@@ -204,6 +204,35 @@ If there is no `doFinally`, then the `end()` should be at the end of the last `d
 
 TIP: Instead of `end()` you can use `endDoTry()` to end and _return back_ to the try ... catch scope.
 
+A `doTry` must have one or more `doCatch` or `doFinally` blocks, otherwise the route fails to start.
+
+=== How doCatch matches an exception
+
+The `doCatch` blocks are tried in the order they are defined, and the first `doCatch` that matches is used
+(the same as in Java). For each `doCatch`, the exception and its causes are matched (starting from the root cause and going upwards to
+the thrown exception), and the `onWhen` predicate (if any) must also be true.
+
+This is different from `onException` (which selects the closest matching exception type across all its clauses).
+For example, if a `doCatch(IOException.class)` is defined before a `doCatch(RuntimeCamelException.class)`, then a
+`RuntimeCamelException` caused by an `IOException` is caught by the `doCatch(IOException.class)` block.
+
+The `Exchange.EXCEPTION_CAUGHT` exchange property contains the thrown exception (and not the cause that matched).
+
+=== Exceptions that are not caught
+
+An exception that is not caught by any `doCatch` (or an exception that is thrown in a `doCatch` or `doFinally` block)
+is not handled by the route error handler: `onException`, redelivery and the dead letter channel are not in use
+for the steps of a `doTry ... doCatch ... doFinally` block. The exception is thrown from the `doTry`, and the exchange fails.
+
+If an exception is thrown in the `doFinally` block while an exception from the `doTry` (or `doCatch`) block
+is still not handled, then the original exception is kept and the exception from the `doFinally` block is added
+as a suppressed exception.
+
+=== Stopping inside doTry
+
+Using `stop()` inside the `doTry` or `doCatch` block stops routing the message, and the `doFinally` block
+is not executed.
+
 === Nested doTry ... doCatch
 
 When nesting `doTry ... doCatch` from an outer `doTry ... doCatch` EIP,
@@ -226,7 +255,8 @@ from("direct:test")
     .end();
 ----
 
-Both `docatch 1` and `docatch 2` are in the inner `doTry`, and the outer `doTry` has no catch blocks.
+Both `docatch 1` and `docatch 2` are in the inner `doTry`, and the outer `doTry` has no catch blocks
+(and the route fails to start, as a `doTry` must have one or more `doCatch` or `doFinally` blocks).
 Use `endDoTry()` to end the blocks correctly:
 
 [source,java]

@@ -107,30 +107,30 @@ public class LwModelToJavaDumper implements ModelToJavaDumper {
                     if (!sb.isEmpty()) {
                         sb.append("\n\n");
                     }
-                    sb.append(writer.writeRouteTemplateDefinition(template));
+                    sb.append(writer.writeRouteTemplate(template));
                 }
             } else if (definition instanceof RouteTemplateDefinition template) {
-                sb.append(writer.writeRouteTemplateDefinition(template));
+                sb.append(writer.writeRouteTemplate(template));
             } else if (definition instanceof RestsDefinition rd) {
                 for (RestDefinition rest : rd.getRests()) {
                     if (!sb.isEmpty()) {
                         sb.append("\n\n");
                     }
-                    sb.append(writer.writeRestDefinition(rest));
+                    sb.append(writer.writeRest(rest));
                 }
             } else if (definition instanceof RestDefinition rest) {
-                sb.append(writer.writeRestDefinition(rest));
+                sb.append(writer.writeRest(rest));
             } else if (definition instanceof RouteConfigurationsDefinition rcd) {
                 for (RouteConfigurationDefinition config : rcd.getRouteConfigurations()) {
                     if (!sb.isEmpty()) {
                         sb.append("\n\n");
                     }
-                    sb.append(writer.writeRouteConfigurationDefinition(config));
+                    sb.append(writer.writeRouteConfiguration(config));
                 }
             } else if (definition instanceof RouteConfigurationDefinition config) {
-                sb.append(writer.writeRouteConfigurationDefinition(config));
+                sb.append(writer.writeRouteConfiguration(config));
             } else if (definition instanceof RestConfigurationDefinition restConfig) {
-                sb.append(writer.writeRestConfigurationDefinition(restConfig));
+                sb.append(writer.writeRestConfiguration(restConfig));
             } else if (definition instanceof TransformersDefinition td) {
                 for (TransformerDefinition t : td.getTransformers()) {
                     if (!sb.isEmpty()) {

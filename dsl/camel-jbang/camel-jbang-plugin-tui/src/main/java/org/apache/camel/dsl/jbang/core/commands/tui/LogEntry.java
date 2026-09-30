@@ -22,4 +22,6 @@ class LogEntry {
     String level = "INFO";
     String logger;
     String message = "";
+    /** How many identical lines in a row this entry stands for (CAMEL-24911); 1 for a line that happened once. */
+    int repeat = 1;
 }

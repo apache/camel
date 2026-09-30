@@ -195,6 +195,17 @@ public final class SimpleOperatorConstants {
 
     // --- Logical operators (precedence 30) ---
 
+    @Metadata(description = "Logical NOT. Negates the function that follows it, answering the opposite of what that"
+                            + " function answers as a predicate: a value that is not null and not false is true."
+                            + " Written directly in front of the function, in a predicate only: in an expression a !"
+                            + " is text, as in Hello ${body}!",
+              label = "logical",
+              examples = {
+                      "!${body.isEmpty()}", "${!body.isEmpty()}",
+                      "!${body.isEmpty()} && ${header.foo} == 'bar'" },
+              annotations = { "kind=logical", "syntax=!${fn}", "precedence=10" })
+    public static final String NOT = "!";
+
     @Metadata(description = "Logical AND. Both left and right predicates must evaluate to true.",
               label = "logical",
               examples = { "${header.title} contains 'Camel' && ${header.type} == 'gold'" },

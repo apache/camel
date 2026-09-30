@@ -73,6 +73,16 @@ public class ManagedErrorRegistry extends ManagedService implements ManagedError
     }
 
     @Override
+    public int getMaximumEntriesPerKind() {
+        return errorRegistry.getMaximumEntriesPerKind();
+    }
+
+    @Override
+    public void setMaximumEntriesPerKind(int maximumEntriesPerKind) {
+        errorRegistry.setMaximumEntriesPerKind(maximumEntriesPerKind);
+    }
+
+    @Override
     public long getTimeToLiveSeconds() {
         return errorRegistry.getTimeToLive().toSeconds();
     }
@@ -160,11 +170,12 @@ public class ManagedErrorRegistry extends ManagedService implements ManagedError
                 CompositeData data = new CompositeDataSupport(
                         ct,
                         new String[] {
-                                "exchangeId", "routeId", "routeGroup", "nodeId", "stepId",
+                                "uid", "exchangeId", "routeId", "routeGroup", "nodeId", "stepId",
                                 "endpointUri", "fromEndpointUri", "timestamp",
                                 "routeUptime", "elapsed",
                                 "handled", "exceptionType", "exceptionMessage" },
                         new Object[] {
+                                entry.getUid(),
                                 entry.getExchangeId(),
                                 entry.getRouteId(),
                                 entry.getRouteGroup(),

@@ -215,7 +215,7 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
             return StandardCode.ILLEGAL_PARAMETER_VALUE;
         } else if (code
                    == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode.INCOMPLETE_PARAMETER_GROUP) {
-            return StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION;
+            return StandardCode.INCOMPLETE_PARAMETER_GROUP;
         } else if (code
                    == org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode.UNSUPPORTED) {
             return StandardCode.UNSUPPORTED;

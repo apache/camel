@@ -429,6 +429,31 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     }
 
     @Test
+    void unmarshalAttachmentNameIsReducedToALeafName() {
+        // the attachment file name is chosen by the sender of the message being unmarshalled
+        in.setBody(new File("src/test/resources/multipart-traversal-name.txt"));
+        Exchange out = template.send("direct:unmarshalonlyinlineheaders", exchange);
+
+        AttachmentMessage am = out.getMessage(AttachmentMessage.class);
+        assertThat(am.getAttachmentNames())
+                .contains("evil.sh")
+                .doesNotContain("../../evil.sh");
+    }
+
+    @Test
+    void unmarshalContentIdKeyKeepsSlashesBecauseItIsNotAPath() {
+        // a Content-ID local part may legally contain '/' (RFC 5322 atext); it is an identifier, not a sender-chosen
+        // file name, so it must not be reduced to a leaf name the way a file name is
+        in.setBody(new File("src/test/resources/multipart-contentid-with-slash.txt"));
+        Exchange out = template.send("direct:unmarshalonlyinlineheaders", exchange);
+
+        AttachmentMessage am = out.getMessage(AttachmentMessage.class);
+        assertThat(am.getAttachmentNames())
+                .contains("a/b@example.com")
+                .doesNotContain("b@example.com");
+    }
+
+    @Test
     void unmarshalInlineHeadersFiltersMailSessionPropertyHeaders() {
         // MailHeaderFilterStrategy adds the mail.smtp. / mail.smtps. prefixes to the inbound filter
         // (CAMEL-23522) so an external mail message cannot inject JavaMail session properties. The

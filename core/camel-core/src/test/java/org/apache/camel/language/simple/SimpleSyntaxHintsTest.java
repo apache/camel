@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -49,7 +50,15 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
 
     @Test
     public void testOperatorInsideFunction() {
-        assertThat(predicateError("${body == 'x'}")).contains("Operators go outside the function: ${body} == 'x'");
+        // CAMEL-24921: the braces may hold a predicate, which is then what they answer
+        exchange.getIn().setBody("x");
+        assertEquals(true, context.resolveLanguage("simple").createPredicate("${body == 'x'}").matches(exchange));
+        exchange.getIn().setBody("y");
+        assertEquals(false, context.resolveLanguage("simple").createPredicate("${body == 'x'}").matches(exchange));
+        // and what is inside must still be a predicate the parser understands, reported against the wrapped text
+        assertThat(predicateError("${body == }"))
+                .contains("Unexpected token ==")
+                .contains("${body} ==");
     }
 
     @Test
@@ -87,6 +96,11 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         assertThat(expressionError("${Body}")).contains("case sensitive: ${body}");
         assertThat(expressionError("${ body }")).contains("remove the spaces: ${body}");
         assertThat(expressionError("${bodyy}")).contains("did you mean ${body}?");
+        // CAMEL-24970: the suggestions name the simple functions
+        assertThat(expressionError("${upper}")).contains("did you mean ${uppercase()}?");
+        assertThat(expressionError("${avg(1,2)}")).contains("did you mean ${average(1,2)}?");
+        assertThat(expressionError("${uppercse()}")).contains("did you mean ${uppercase()}?");
+        assertThat(expressionError("${count}")).contains("did you mean ${size()}?");
     }
 
     @Test
@@ -129,7 +143,11 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
 
     @Test
     public void testOperatorAfterOgnlMethod() {
-        assertThat(predicateError("${body.length() > 3}")).contains("Operators go outside the function: ${body.length()} > 3");
+        // CAMEL-24921: an OGNL call on the left of the operator is wrapped as the function it is
+        exchange.getIn().setBody("hello");
+        assertEquals(true, context.resolveLanguage("simple").createPredicate("${body.length() > 3}").matches(exchange));
+        exchange.getIn().setBody("hi");
+        assertEquals(false, context.resolveLanguage("simple").createPredicate("${body.length() > 3}").matches(exchange));
     }
 
     @Test
@@ -144,14 +162,50 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testOgnlDotOnAMapSaysToUseAKey() {
+    public void testOgnlDotOnAMapReadsTheKey() {
+        // CAMEL-24916: a map has no method type, so the key is what the dot can mean
         exchange.getIn().setBody(new java.util.LinkedHashMap<>(java.util.Map.of("type", "order")));
-        Exception e = assertThrows(Exception.class,
-                () -> context.resolveLanguage("simple").createExpression("${body.type}").evaluate(exchange,
-                        String.class));
-        assertThat(e.getMessage()).contains("the value is a Map: a key is read with [type], as in ${body[type]}");
+        assertEquals("order", context.resolveLanguage("simple").createExpression("${body.type}").evaluate(exchange,
+                String.class));
         assertEquals("order", context.resolveLanguage("simple").createExpression("${body[type]}").evaluate(exchange,
                 String.class));
+    }
+
+    @Test
+    public void testOgnlDotOnAMapWithoutThatKeySaysToUseAKey() {
+        exchange.getIn().setBody(new java.util.LinkedHashMap<>(java.util.Map.of("type", "order")));
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.typo}").evaluate(exchange,
+                        String.class));
+        assertThat(e.getMessage()).contains("the value is a Map: a key is read with [typo], as in ${body[typo]}");
+    }
+
+    @Test
+    public void testOgnlDotOnAMapWithANullValueAnswersNull() {
+        // a key that is there and holds null is a value, not a missing key
+        java.util.Map<String, Object> body = new java.util.HashMap<>();
+        body.put("sku", null);
+        exchange.getIn().setBody(body);
+        assertNull(context.resolveLanguage("simple").createExpression("${body.sku}").evaluate(exchange, Object.class),
+                "a null value is a map entry: the expression answers null rather than throwing");
+    }
+
+    @Test
+    public void testAMethodOfAMapStillWins() {
+        exchange.getIn().setBody(new java.util.LinkedHashMap<>(java.util.Map.of("size", "not the size")));
+        assertEquals("1", context.resolveLanguage("simple").createExpression("${body.size}").evaluate(exchange,
+                String.class), "size() is a method of Map, so it still answers before the key");
+    }
+
+    @Test
+    public void testOgnlDotOnANestedMapReadsTheKey() {
+        java.util.Map<String, Object> item = new java.util.LinkedHashMap<>();
+        item.put("sku", "CAMEL-MUG");
+        java.util.Map<String, Object> body = new java.util.LinkedHashMap<>();
+        body.put("item", item);
+        exchange.getIn().setBody(body);
+        assertEquals("CAMEL-MUG", context.resolveLanguage("simple").createExpression("${body.item.sku}")
+                .evaluate(exchange, String.class));
     }
 
     @Test

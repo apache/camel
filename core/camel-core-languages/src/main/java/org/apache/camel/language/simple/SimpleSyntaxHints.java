@@ -37,15 +37,21 @@ public final class SimpleSyntaxHints {
     /** Function names a model is likely to write, for the did-you-mean suggestion. */
     static final List<String> FUNCTIONS = List.of("body", "bodyAs", "mandatoryBodyAs", "bodyOneLine", "prettyBody",
             "originalBody", "header", "headerAs", "headers", "exchangeProperty", "exchangePropertyAs",
-            "exchangeProperties", "variable", "variableAs", "variables", "exception", "exchange", "camelContext",
+            "variable", "variableAs", "variables", "exception", "exchange", "camelContext",
             "camelId", "routeId", "routeGroup", "stepId", "id", "messageTimestamp", "threadName", "threadId",
-            "hostname", "date", "date-with-timezone", "random", "skip", "collate", "join", "sum", "avg", "min", "max",
-            "replace", "substring", "substringBefore", "substringAfter", "substringBetween", "contains", "pad",
-            "concat", "val", "length", "empty", "newEmpty", "iif", "hash", "convertTo", "throwException", "assert",
-            "load", "uuid", "env", "sys", "ref", "bean", "properties", "propertiesExist", "type", "messageAs",
-            "messageHistory", "pretty", "toJson", "toPrettyJson", "jq", "jsonpath", "xpath", "simpleJsonpath",
-            "function", "list", "map", "range", "split", "sort", "forEach", "filter", "listAdd", "listRemove",
-            "mapAdd", "mapRemove", "file", "null");
+            "hostname", "date", "date-with-timezone", "random", "skip", "collate", "join", "sum", "average", "min",
+            "max", "abs", "ceil", "floor", "replace", "substring", "substringBefore", "substringAfter",
+            "substringBetween", "contains", "pad", "concat", "val", "length", "size", "empty", "newEmpty", "iif",
+            "hash", "convertTo", "throwException", "assert", "load", "uuid", "env", "sys", "sysenv", "ref", "bean",
+            "properties", "propertiesExist", "type", "messageAs", "messageHistory", "logExchange", "pretty",
+            "toJson", "toPrettyJson", "jq", "jsonpath", "xpath", "simpleJsonpath", "function", "list", "map",
+            "range", "split", "sort", "distinct", "reverse", "shuffle", "forEach", "filter", "listAdd", "listRemove",
+            "mapAdd", "mapRemove", "setHeader", "setVariable", "uppercase", "lowercase", "trim", "capitalize",
+            "normalizeWhitespace", "quote", "unquote", "safeQuote", "escape", "isEmpty", "isAlpha", "isAlphaNumeric",
+            "isNumeric", "not", "kindOfType", "file", "null");
+
+    /** Functions that are called with parentheses, so a suggestion without arguments adds them. */
+    private static final Set<String> CALLED_WITH_PARENTHESES = Set.of("uppercase", "lowercase", "trim", "size", "average");
 
     /**
      * Functions that delegate to another language, all of them written {@code ${name(exp)}}. Unlike {@code bean:} or
@@ -64,14 +70,15 @@ public final class SimpleSyntaxHints {
             Map.entry("var", "variable"),
             Map.entry("prop", "exchangeProperty"),
             Map.entry("json", "jsonpath"),
-            Map.entry("upper", "bodyAs(String).toUpperCase()"),
-            Map.entry("lower", "bodyAs(String).toLowerCase()"),
-            Map.entry("trim", "bodyAs(String).trim()"),
+            Map.entry("upper", "uppercase"),
+            Map.entry("toUpperCase", "uppercase"),
+            Map.entry("lower", "lowercase"),
+            Map.entry("toLowerCase", "lowercase"),
             Map.entry("padding", "pad"),
             Map.entry("now", "date:now:yyyy-MM-dd'T'HH:mm:ss"),
             Map.entry("timestamp", "messageTimestamp"),
-            Map.entry("size", "length"),
-            Map.entry("count", "length"));
+            Map.entry("avg", "average"),
+            Map.entry("count", "size"));
 
     private static final String[] OPERATOR_WORDS = {
             "==", "!=", ">=", "<=", ">", "<", "=~", "!=~", "~~", "!~~", "contains",
@@ -94,6 +101,27 @@ public final class SimpleSyntaxHints {
             end++;
         }
         return expression.substring(start, end);
+    }
+
+    /**
+     * The same negation with its function in braces, or null when the text is not a negated name: {@code !x} is
+     * {@code !${x}}. The parser otherwise reports it as a missing predicate next to the operator (CAMEL-24984).
+     */
+    private static String negatedFunction(String word) {
+        if (word.length() < 2 || word.charAt(0) != '!' || word.startsWith("!${")) {
+            return null;
+        }
+        String rest = word.substring(1);
+        // !=, !contains and the other negated operators are words of their own, not a negated function
+        if (rest.charAt(0) == '=' || rest.charAt(0) == '$') {
+            return null;
+        }
+        for (String op : new String[] { "contains", "endsWith", "equals", "in", "is", "range", "regex", "startsWith", "~~" }) {
+            if (rest.equals(op)) {
+                return null;
+            }
+        }
+        return "!${" + rest + "}";
     }
 
     /** The message for a token the grammar does not know at the given index. */
@@ -122,7 +150,8 @@ public final class SimpleSyntaxHints {
                 return "Unknown operator " + word + ": use || for or, and && for and";
             case "not":
             case "!":
-                return "Unknown operator " + word + ": negate the operator instead, e.g. != or !contains";
+                return "Unknown operator " + word + ": ! negates a function and is written directly in front of it, "
+                       + "e.g. !${body.isEmpty()}; a comparison negates its operator instead, e.g. != or !contains";
             default:
         }
         String name = functionName(word);
@@ -138,6 +167,10 @@ public final class SimpleSyntaxHints {
     /** The message when an operator has no usable value next to it. */
     public static String unsupportedOperand(String kind, Object operator, String expression, int index) {
         String word = wordAt(expression, index);
+        String negated = negatedFunction(word);
+        if (negated != null) {
+            return "! negates a function, which is written as ${ }: " + word + " is written as " + negated;
+        }
         if ("Logical".equals(kind)) {
             return kind + " operator " + operator + " needs a predicate on the right hand side, e.g. ${header.foo} == 'bar'"
                    + (word.isEmpty() ? "" : "; was: " + word);
@@ -147,6 +180,131 @@ public final class SimpleSyntaxHints {
         }
         return kind + " operator " + operator + " does not accept " + word + " on the right hand side: write it as "
                + VALUE_FORMS + (isKnownFunction(functionName(word)) ? ", e.g. ${" + word + "}" : ", e.g. '" + word + "'");
+    }
+
+    /** The comparison operators, with the spaces they must be surrounded by. */
+    private static final String[] SPACED_OPERATORS = {
+            " >= ", " <= ", " > ", " < ", " == ", " != ", " =~ ", " !=~ ",
+            " contains ", " !contains ", " ~~ ", " !~~ ", " regex ", " !regex ",
+            " in ", " !in ", " is ", " !is ", " range ", " !range ",
+            " startsWith ", " !startsWith ", " endsWith ", " !endsWith " };
+
+    /**
+     * Wraps the function references of a predicate written inside {@code ${ }} so that it can be parsed as one:
+     * {@code body != null && body.size() > 0} becomes {@code ${body} != null && ${body.size()} > 0}.
+     * <p/>
+     * Each comparison is wrapped, not only the first, so that a compound condition reads the way it looks (CAMEL-24920,
+     * CAMEL-24921). An operator counts only when whitespace surrounds it outside quotes, which is what keeps
+     * {@code ${header.Content-Length}} and {@code ${date:now:yyyy-MM-dd}} a plain function.
+     */
+    public static String wrapFunctions(String text) {
+        StringBuilder answer = new StringBuilder();
+        int from = 0;
+        for (int at = logicalOperator(text, 0); at >= 0; at = logicalOperator(text, from)) {
+            // the operator matched with its trailing space, so the next space is at most two characters away
+            int end = text.indexOf(' ', at + 1);
+            answer.append(wrapComparison(text.substring(from, at).trim()));
+            answer.append(' ').append(text, at, end).append(' ');
+            from = end + 1;
+        }
+        answer.append(wrapComparison(text.substring(from).trim()));
+        return answer.toString();
+    }
+
+    /**
+     * The index of the next logical operator ({@code &&} or {@code ||}) outside quotes, or -1. Simple has no word
+     * forms: {@code and} and {@code or} are refused by the parser with a message that says so.
+     */
+    private static int logicalOperator(String text, int from) {
+        boolean single = false;
+        boolean dubble = false;
+        for (int i = from; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '\'' && !dubble) {
+                single = !single;
+            } else if (c == '"' && !single) {
+                dubble = !dubble;
+            } else if (!single && !dubble && c == ' ') {
+                for (String op : new String[] { "&& ", "|| " }) {
+                    if (text.startsWith(op, i + 1)) {
+                        return i + 1;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    /** Wraps the left hand side of one comparison with {@code ${ }} when it is a function reference. */
+    private static String wrapComparison(String text) {
+        // the first operator outside quotes, so ${body == 'a > b'} is compared with ==
+        String first = null;
+        int firstAt = -1;
+        for (String op : SPACED_OPERATORS) {
+            int at = indexOutsideQuotes(text, op);
+            if (at > 0 && (firstAt < 0 || at < firstAt)) {
+                firstAt = at;
+                first = op;
+            }
+        }
+        if (first != null) {
+            return wrapComparison(text, first, firstAt);
+        }
+        for (String op : SPACED_OPERATORS) {
+            if (text.endsWith(op.stripTrailing())) {
+                // the operator ends the text: wrap what is there, so the parser says what is missing after it
+                int at = text.length() - op.stripTrailing().length();
+                if (at > 0) {
+                    return wrapComparison(text, op, at);
+                }
+            }
+        }
+        if (text.length() > 1 && text.charAt(0) == '!' && !text.startsWith("!${")) {
+            // a negated function on its own, such as !body.isEmpty(): the predicate parser reads a ! in front of
+            // a ${ }, so give it that form (CAMEL-24984)
+            return "!${" + text.substring(1).trim() + "}";
+        }
+        return text;
+    }
+
+    private static String wrapComparison(String text, String op, int at) {
+        String left = text.substring(0, at).trim();
+        String right = at + op.length() <= text.length() ? text.substring(at + op.length()).trim() : "";
+        if (!left.startsWith("${") && !left.startsWith("'") && !left.startsWith("\"")
+                && !isNumeric(left) && !"true".equalsIgnoreCase(left)
+                && !"false".equalsIgnoreCase(left) && !"null".equalsIgnoreCase(left)) {
+            left = "${" + left + "}";
+        }
+        return left + op + right;
+    }
+
+    /** The index of the text outside single and double quotes, or -1. */
+    private static int indexOutsideQuotes(String text, String find) {
+        boolean single = false;
+        boolean dubble = false;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '\'' && !dubble) {
+                single = !single;
+            } else if (c == '"' && !single) {
+                dubble = !dubble;
+            } else if (!single && !dubble && text.startsWith(find, i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static boolean isNumeric(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+        try {
+            Double.parseDouble(text);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     /**
@@ -172,14 +330,20 @@ public final class SimpleSyntaxHints {
         }
         int open = 0;
         for (int i = 0; i < head.length(); i++) {
-            if (head.charAt(i) == '(') {
+            char c = head.charAt(i);
+            if (c == '(' || c == '[') {
                 open++;
-            } else if (head.charAt(i) == ')') {
+            } else if (c == ')' || c == ']') {
                 open--;
             }
         }
         if (open > 0) {
-            // the operator is inside an argument list that may hold a predicate (iif, filter, forEach)
+            // the operator is inside an argument list that may hold a predicate (iif, filter, forEach),
+            // or inside a key such as ${header[order in progress]}
+            return null;
+        }
+        if (head.startsWith("properties:") && head.indexOf(':', 11) > 0) {
+            // the operator word is in the default value: ${properties:msg:value is not set}
             return null;
         }
         return "${" + head + "}" + function.substring(best);
@@ -233,6 +397,9 @@ public final class SimpleSyntaxHints {
             }
         }
         if (alias != null) {
+            if (rest.isEmpty() && CALLED_WITH_PARENTHESES.contains(alias)) {
+                rest = "()";
+            }
             if (rest.startsWith(":") && QUERY_FUNCTIONS.contains(alias)) {
                 // ${json:$.status}: the alias resolves to jsonpath, so the argument moves into parentheses too
                 return parentheses(alias, rest.substring(1));

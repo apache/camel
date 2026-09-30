@@ -1,0 +1,215 @@
+---
+title: Late binding of cross-cutting features
+authors:
+  - "@davsclaus"
+reviewers: []
+approvers: []
+creation-date: 2026-09-29
+last-updated: 2026-09-29
+status: proposed
+see-also:
+  - "CAMEL-25142"
+  - "CAMEL-25140"
+  - "CAMEL-25141"
+  - "CAMEL-18923"
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+The cross-cutting features of Camel routes (`onException` and the error handler, `intercept`, `interceptFrom`,
+`interceptSendToEndpoint` and `onCompletion`) and the route configurations that hold them are bound to the routes
+when the routes are created. After that the binding is fixed. This proposal describes how they are bound today, and a
+model where they are bound late: the routes resolve what applies to them from a registry in the `CamelContext`, so
+changes to routes and route configurations while Camel runs keep working as expected.
+
+== Motivation
+
+Camel is increasingly used in a more dynamic way: dev mode reload, routes added and removed at runtime, route
+configurations managed by tooling or low-code editors, and restarting a `CamelContext` in place (which could make a
+reload on the `CamelContext` level possible, instead of reloading only the routes).
+
+The static binding does not handle this well:
+
+- Updating or removing a route configuration at runtime does not update the routes that use it
+  (see also CAMEL-18923, where this was explained as "not supported, as they can be global and affect running routes").
+- Dev mode reload works because by default it removes all the routes and loads all the files again.
+- Some features are lost when the routes are created again, such as on a `CamelContext` restart.
+- `interceptSendToEndpoint` bound the endpoint to the processors of one route, so removing that route broke the other
+  routes (CAMEL-25140).
+
+Historically these features were implemented as internal processors woven into each route, with a lot of logic to make
+them fast. That gives good performance, but makes them complex, and hard to change when routes and configurations are
+dynamic.
+
+== Goals
+
+- The cross-cutting features keep working when routes are added, removed, reloaded or restarted, and when route
+  configurations are added, updated or removed at runtime.
+- The per-message behaviour stays as today (which exception policy matches, `onWhen` predicates, endpoint patterns,
+  and the order of precedence).
+- No noticeable overhead on the hot path.
+- Simpler code than today, where possible.
+
+== Non-goals
+
+- Changing the scope of the interceptors (such as limiting `interceptSendToEndpoint` to the routes it is defined for);
+  see CAMEL-25141.
+- Changing the DSLs or the model classes that end users use.
+
+== Current design
+
+This describes the state of Camel 4.23 (main in September 2026).
+
+=== Model time: merging into the routes
+
+`RoutesDefinition.prepareRoute` merges the definitions of the `RouteBuilder` and the matching route configurations
+into each route, and `RouteDefinitionHelper.prepareRoute` adds them to the outputs of the route:
+
+- The route configurations are selected by the `routeConfigurationId` of the route (a list of ids or patterns), or the
+  global ones (without an id) when the route has none (`RouteDefinitionHelper.routesByIdOrPattern`).
+- For `onException`, the order is: the route's own, then the `RouteBuilder`'s, then the route configurations'. For the
+  error handler: the route's own, then the `RouteBuilder`'s, then the last matching route configuration, then the
+  default of the `CamelContext`. A route with an `onCompletion` of its own ignores the global ones.
+- The definition objects are shared by all the routes they apply to (the lists are new, the definitions are not).
+- A route is prepared only once (`RouteDefinition.isPrepared`). Changes to the route configurations after that are not
+  merged into it. `DefaultModel.addRouteConfiguration` and `removeRouteConfiguration` only change the list of
+  configurations.
+
+=== Reify time: processors per route
+
+- *onException / error handler:* `OnExceptionReifier` creates the `onException` processors of the route
+  (`Route.setOnException`). An error handler is created for each `Channel` (each EIP node), and each gets its own map
+  of exception policies built from the route's `onException` definitions (`ErrorHandlerReifier.configure`).
+- *intercept:* `InterceptReifier` adds an `InterceptStrategy` to the route, and removes its definition from the route
+  outputs. Each `Channel` applies the intercept strategies when the `Channel` is built (`DefaultChannel.initChannel`),
+  so only the `Channel`s built after the intercept is reified are intercepted (from reading the code, not verified
+  with a test).
+- *interceptFrom:* `InterceptFromReifier` creates a filter step at the start of the route.
+- *interceptSendToEndpoint:* until CAMEL-25140, the reifier registered an endpoint callback that wrapped the endpoint
+  with the processors of the route, and removed its definition from the route outputs. With CAMEL-25140 the endpoint
+  is wrapped once, and each route registers its interceptor on it while the route runs.
+- *onCompletion:* `OnCompletionReifier` stores the processors on the route (`Route.setOnCompletion`) and creates an
+  `OnCompletionProcessor` step, which adds a synchronization to the unit of work of each exchange.
+
+=== Runtime
+
+- Exception policies are only looked up when an exchange fails (`DefaultExceptionPolicyStrategy`), from the policies
+  of the error handler of the failing `Channel`.
+- Intercept strategies cost a wrap per `Channel`, decided when the route is built.
+- `onCompletion` adds a synchronization per exchange.
+
+=== Lifecycle
+
+[cols="2,3"]
+|===
+| Change | What happens today
+
+| Route configuration added or removed at runtime
+| Only the list changes. Existing routes keep the merged definitions; only routes prepared later see the change.
+
+| Route configuration updated (same id)
+| Only the list changes (the routes loader removes and adds it again). The routes keep the old definitions.
+
+| Dev mode reload (default `removeAllRoutes=true`)
+| All the routes are removed, and all the files are loaded again, so the routes are prepared again with the new
+  configurations.
+
+| Dev mode reload with `removeAllRoutes=false`
+| Only the routes of the changed files are prepared again. Routes in other files keep the old configurations, and
+  configurations removed from a file are never removed.
+
+| `CamelContext` stop and start
+| The routes are created again from their prepared definitions. The definitions that removed themselves from the route
+  outputs are lost: `interceptSendToEndpoint` before CAMEL-25140 (verified with a test), and `intercept` (from reading
+  the code, not verified).
+
+| Route removed
+| Its processors are removed. Before CAMEL-25140, an `interceptSendToEndpoint` shared by other routes stopped working.
+|===
+
+== Proposal
+
+=== A registry of cross-cutting definitions
+
+The `CamelContext` keeps the cross-cutting definitions in a registry, keyed by where they come from (a `RouteBuilder`
+or a route configuration), instead of copying them into the routes when the routes are prepared. A route knows its
+sources (its `RouteBuilder` and its `routeConfigurationId`), and resolves what applies to it from the registry, in the
+same order of precedence as today.
+
+The definitions of a route itself (a route-level `onException`) stay in the route, as they belong to it.
+
+=== Resolve late, cache, and check a generation
+
+To keep the hot path fast, the routes do not look up the registry per message:
+
+- The registry has a generation counter, which is incremented when a definition is added, updated or removed.
+- Each route (or `Channel`) caches what it resolved, together with the generation it resolved it at.
+- On the hot path, the check is a volatile read and an int compare. When the generation has changed, the route
+  resolves again (lazily, on the next exchange, or eagerly when the change is made).
+- The decision per message (which exception policy, `onWhen`, endpoint pattern) is the same as today.
+
+=== The processors of cross-cutting features
+
+The processors of a cross-cutting feature (such as the steps of an `onException` or an `intercept`) are created per
+route and per definition, and are created again (and the old ones stopped) when the definition changes. They follow the
+lifecycle of the route: started when the route starts, stopped when it stops or is removed (as CAMEL-25140 does for
+`interceptSendToEndpoint` with a route service).
+
+=== Per feature
+
+- *Route configurations:* adding, updating or removing a route configuration updates the routes that use it, by
+  incrementing the generation (no need to reload the routes). This is the unit of change for low-code tooling.
+- *onException / error handler:* the exception policies are resolved from the registry (route, `RouteBuilder`, route
+  configurations) by the route, instead of being copied into a map per `Channel`. This ties in with the refactoring of
+  `RedeliveryErrorHandler` (CAMEL-24980). The error handler itself (its type and redelivery settings) could be resolved
+  the same way.
+- *intercept / interceptFrom:* the `Channel` asks whether an intercept applies (cached per generation), instead of
+  being wrapped when it is built. The definitions are not removed from the model.
+- *interceptSendToEndpoint:* done in CAMEL-25140 (wrapped once, interceptors registered per route).
+- *onCompletion:* the global `onCompletion`s are resolved from the registry when the unit of work is created.
+
+=== Order of work
+
+. Route configurations: keep them in the registry and resolve them in the routes (the groundwork for the other steps).
+. onException and the error handler.
+. intercept and interceptFrom.
+. onCompletion.
+
+Each step keeps the public DSLs and model classes as they are, and adds tests for restart, reload and adding/removing
+routes and route configurations.
+
+== Compatibility
+
+The goal is to do this without changes to the public APIs and the DSLs, in which case it can be done in Camel 4.x
+(4.24). If a step needs changes to public APIs (such as `Route`, `Channel` or the SPIs of the error handler) or
+changes behaviour users rely on, that step becomes a goal for Camel 5.0.
+
+Known behaviour to keep:
+
+- The order of precedence of the route, the `RouteBuilder` and the route configurations.
+- `onCompletion` of a route overriding the global ones.
+- What the dumped routes (`dumpRoutes`, the dev consoles, the route diagrams in the TUI) show. Today they show the
+  merged definitions; they should show the resolved view.
+
+== Risks
+
+- *Performance:* every EIP node goes through a `Channel`, so any check there must be very cheap. Measure it with the
+  routing benchmarks (on Linux, as `System.nanoTime` does not scale across threads on macOS).
+- *Concurrency:* a change while exchanges are in flight. An exchange should finish with what it resolved when it
+  started (or at the step), and the old processors should be stopped when no exchange uses them.
+- *Semantics:* the order of precedence and the rules for which `onException` matches are documented and tested, and
+  must stay the same. The existing tests of camel-core and camel-spring-xml are the safety net.
+- *Tooling:* tools that read the merged model need the resolved view.
+
+== Related tickets
+
+- CAMEL-25142: this work.
+- CAMEL-25140: `interceptSendToEndpoint` registered per route on an endpoint wrapped once.
+- CAMEL-25141: limit `interceptSendToEndpoint` to the routes it is defined for.
+- CAMEL-18923: updating a route configuration with the routes loader.
+- CAMEL-5629: adding an intercept at runtime.
+- CAMEL-3870: reusable `onException`s (which became route configurations).
+- CAMEL-13912: error handlers are created when the routes are created (for performance).
+- CAMEL-24980: refactoring of `RedeliveryErrorHandler`.

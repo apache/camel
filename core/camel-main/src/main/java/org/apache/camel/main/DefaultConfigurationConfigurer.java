@@ -166,6 +166,8 @@ public final class DefaultConfigurationConfigurer {
         beanIntrospection.afterPropertiesConfigured(camelContext);
 
         if ("pooled".equals(config.getExchangeFactory())) {
+            LOG.warn(
+                    "Exchange pooling (exchangeFactory=pooled) is deprecated and will be removed in a future release. Please remove the 'camel.main.exchange-factory=pooled' configuration.");
             ecc.setExchangeFactory(new PooledExchangeFactory());
             ecc.setProcessorExchangeFactory(new PooledProcessorExchangeFactory());
         } else if ("prototype".equals(config.getExchangeFactory())) {
@@ -215,7 +217,12 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getStreamCachingStrategy().setDenyClasses(config.getStreamCachingDenyClasses());
         camelContext.getStreamCachingStrategy().setSpoolEnabled(config.isStreamCachingSpoolEnabled());
         camelContext.getStreamCachingStrategy().setAnySpoolRules(config.isStreamCachingAnySpoolRules());
-        camelContext.getStreamCachingStrategy().setBufferSize(config.getStreamCachingBufferSize());
+        if (config.getStreamCachingBufferSize() > 0) {
+            camelContext.getStreamCachingStrategy().setBufferSize(config.getStreamCachingBufferSize());
+        }
+        if (config.isStreamCachingStatisticsEnabled()) {
+            camelContext.getStreamCachingStrategy().getStatistics().setStatisticsEnabled(true);
+        }
         camelContext.getStreamCachingStrategy()
                 .setRemoveSpoolDirectoryWhenStopping(config.isStreamCachingRemoveSpoolDirectoryWhenStopping());
         camelContext.getStreamCachingStrategy().setSpoolCipher(config.getStreamCachingSpoolCipher());
@@ -410,7 +417,6 @@ public final class DefaultConfigurationConfigurer {
      */
     public static void afterConfigure(final CamelContext camelContext) throws Exception {
         final Registry registry = camelContext.getRegistry();
-        final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
 
         StartupStepRecorder ssr = getSingleBeanOfType(registry, StartupStepRecorder.class);
         if (ssr != null) {
@@ -448,6 +454,8 @@ public final class DefaultConfigurationConfigurer {
         if (ms != null) {
             camelContext.setManagementStrategy(ms);
         }
+        // must be the management strategy after a custom strategy has been set
+        final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
         ManagementObjectNameStrategy mons = getSingleBeanOfType(registry, ManagementObjectNameStrategy.class);
         if (mons != null) {
             managementStrategy.setManagementObjectNameStrategy(mons);
@@ -720,7 +728,10 @@ public final class DefaultConfigurationConfigurer {
         debugger.setIncludeExchangeVariables(config.isIncludeExchangeVariables());
         debugger.setIncludeException(config.isIncludeException());
         debugger.setLoggingLevel(config.getLoggingLevel().name());
-        debugger.setSuspendMode(config.isWaitForAttach()); // this option is named wait-for-attach
+        if (config.isWaitForAttach()) {
+            // this option is named wait-for-attach (only turn it on, so suspend mode set from the environment is kept)
+            debugger.setSuspendMode(true);
+        }
         debugger.setFallbackTimeout(config.getFallbackTimeout());
 
         // enable jmx connector if port is set

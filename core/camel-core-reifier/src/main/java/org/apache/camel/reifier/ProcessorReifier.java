@@ -101,6 +101,7 @@ import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.model.StopDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.ThrottleDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
@@ -217,6 +218,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new CacheReifier(route, definition);
         } else if (definition instanceof CatchDefinition) {
             return new CatchReifier(route, definition);
+        } else if (definition instanceof SwitchDefinition) {
+            return new SwitchReifier(route, definition);
         } else if (definition instanceof ChoiceDefinition) {
             return new ChoiceReifier(route, definition);
         } else if (definition instanceof CircuitBreakerDefinition) {
@@ -472,7 +475,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
                                                + " is not an ScheduledExecutorService instance");
         } else if (definition.getExecutorServiceRef() != null) {
             ScheduledExecutorService answer = lookupScheduledExecutorServiceRef(name, definition,
-                    definition.getExecutorServiceRef());
+                    parseString(definition.getExecutorServiceRef()));
             if (answer == null) {
                 throw new IllegalArgumentException(
                         "ExecutorServiceRef " + definition.getExecutorServiceRef()
@@ -761,6 +764,27 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     /**
+     * Injects the id, route id and step id of the definition into the processor (when it is aware of them).
+     */
+    protected void injectIds(Processor processor, ProcessorDefinition<?> output) {
+        if (processor instanceof IdAware idAware) {
+            String id = getId(output);
+            idAware.setId(id);
+        }
+        if (processor instanceof RouteIdAware routeIdAware) {
+            routeIdAware.setRouteId(route.getRouteId());
+        }
+        if (processor instanceof StepIdAware stepIdAware) {
+            StepDefinition step = ProcessorDefinitionHelper.findFirstParentOfType(
+                    StepDefinition.class, output, true);
+            if (step != null) {
+                stepIdAware.setStepId(step.idOrCreate(
+                        camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)));
+            }
+        }
+    }
+
+    /**
      * Creates a new instance of some kind of composite processor which defaults to using a {@link Pipeline} but derived
      * classes could change the behaviour
      */
@@ -782,22 +806,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
             Processor processor = createProcessor(output);
 
-            // inject id
-            if (processor instanceof IdAware idAware) {
-                String id = getId(output);
-                idAware.setId(id);
-            }
-            if (processor instanceof RouteIdAware routeIdAware) {
-                routeIdAware.setRouteId(route.getRouteId());
-            }
-            if (processor instanceof StepIdAware stepIdAware) {
-                StepDefinition step = ProcessorDefinitionHelper.findFirstParentOfType(
-                        StepDefinition.class, output, true);
-                if (step != null) {
-                    stepIdAware.setStepId(step.idOrCreate(
-                            camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)));
-                }
-            }
+            injectIds(processor, output);
 
             if (output instanceof Channel && processor == null) {
                 continue;
@@ -868,22 +877,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
                 processor = createProcessor();
             }
 
-            // inject id
-            if (processor instanceof IdAware idAware) {
-                String id = getId(definition);
-                idAware.setId(id);
-            }
-            if (processor instanceof RouteIdAware routeIdAware) {
-                routeIdAware.setRouteId(route.getRouteId());
-            }
-            if (processor instanceof StepIdAware stepIdAware) {
-                StepDefinition step = ProcessorDefinitionHelper.findFirstParentOfType(
-                        StepDefinition.class, definition, true);
-                if (step != null) {
-                    stepIdAware.setStepId(step.idOrCreate(
-                            camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)));
-                }
-            }
+            injectIds(processor, definition);
 
             if (processor == null) {
                 // no processor to make
@@ -955,7 +949,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
                 // closure.
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(
                         aggStrategy,
-                        definition.getAggregationStrategyMethodName());
+                        parseString(definition.getAggregationStrategyMethodName()));
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
                     adapter.setAllowNullNewExchange(
                             parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
@@ -1009,4 +1003,16 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         return disabled;
     }
 
+    /**
+     * Sets the step id (of the step the definition is inside) on the processor
+     */
+    protected void injectStepId(Object processor) {
+        if (processor instanceof StepIdAware stepIdAware) {
+            StepDefinition step = ProcessorDefinitionHelper.findFirstParentOfType(StepDefinition.class, definition, true);
+            if (step != null) {
+                stepIdAware.setStepId(
+                        step.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)));
+            }
+        }
+    }
 }

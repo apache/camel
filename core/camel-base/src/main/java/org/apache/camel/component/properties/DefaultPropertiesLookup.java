@@ -24,6 +24,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.util.OrderedLocationProperties;
+import org.apache.camel.util.SensitiveUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,9 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
     public String lookup(String name, String defaultValue) {
         try {
             String answer = doLookup(name, defaultValue);
-            LOG.trace("lookup(name: {} default: {}) -> {}", name, defaultValue, answer);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("lookup(name: {} default: {}) -> {}", name, mask(name, defaultValue), mask(name, answer));
+            }
             return answer;
         } catch (NoTypeConversionAvailableException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -81,7 +84,7 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
             Object value = component.getOverrideProperties().get(name);
             if (value != null) {
                 answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
-                String loc = location(local, name, "OverrideProperties");
+                String loc = location(component.getOverrideProperties(), name, "OverrideProperties");
                 onLookup(name, answer, defaultValue, loc);
             }
         }
@@ -100,7 +103,8 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
                     } else if (ps instanceof LocationPropertiesSource propSource) {
                         source = propSource.getLocation().getPath();
                     } else if (ps instanceof LoadablePropertiesSource propSource) {
-                        Properties prop = propSource.loadProperties();
+                        // only load this property (loading all the properties can be expensive for some sources)
+                        Properties prop = propSource.loadProperties(name::equals);
                         if (prop instanceof OrderedLocationProperties olp) {
                             source = olp.getLocation(name);
                         }
@@ -116,7 +120,7 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
             Object value = component.getInitialProperties().get(name);
             if (value != null) {
                 answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
-                String loc = location(local, name, "InitialProperties");
+                String loc = location(component.getInitialProperties(), name, "InitialProperties");
                 onLookup(name, answer, defaultValue, loc);
             }
         }
@@ -125,7 +129,10 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
     }
 
     private void onLookup(String name, String value, String defaultValue, String source) {
-        LOG.trace("Property (name: {} default: {}) resolved from source: {} -> {}", name, defaultValue, source, value);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Property (name: {} default: {}) resolved from source: {} -> {}", name, mask(name, defaultValue), source,
+                    mask(name, value));
+        }
         for (PropertiesLookupListener listener : component.getPropertiesLookupListeners()) {
             try {
                 listener.onLookup(name, value, defaultValue, source);
@@ -145,5 +152,10 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
             loc = defaultLocation;
         }
         return loc;
+    }
+
+    private static String mask(String name, String value) {
+        // do not log sensitive values (such as passwords)
+        return value != null && name != null && SensitiveUtils.containsSensitive(name) ? "xxxxxx" : value;
     }
 }
