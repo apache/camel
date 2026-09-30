@@ -73,6 +73,8 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
             public void configure() {
                 from("direct:hello").routeId("hello").setBody(simple("Hello ${body}"));
                 from("direct:boom").routeId("boom").throwException(new IllegalArgumentException("Forced"));
+                // half of a surrogate pair, as left by truncating a message body in the middle of an emoji
+                from("direct:broken").routeId("broken").setBody(constant("broken \uD83D"));
             }
         };
     }
@@ -206,6 +208,21 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
             }
             assertThat(traces).hasValueGreaterThanOrEqualTo(100);
         });
+        assertThat(tool.handshakes).hasValue(1);
+    }
+
+    @Test
+    void sendsResultsWithBrokenUnicode() throws Exception {
+        startConnector();
+        tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+
+        // the reply holds broken text (see the route): the JDK WebSocket refuses to send it as is, which must not cost
+        // the connection
+        tool.send(action("r1", "send", "endpoint", "direct:broken", "body", "x", "exchangePattern", "InOut"));
+
+        JsonObject result = tool.awaitResult("r1");
+        assertThat(result.getBoolean("ok")).isTrue();
+        assertThat(map(result, "result").toJson()).contains("broken �");
         assertThat(tool.handshakes).hasValue(1);
     }
 

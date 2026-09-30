@@ -228,10 +228,9 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
                 LOG.warn("Camel CLI connector was rejected by {} (HTTP {})", where(), code);
             }
         } else if (failures == 1) {
-            LOG.warn("Camel CLI connector cannot connect to {} due to: {}. Will keep retrying.", where(),
-                    cause.getMessage());
+            LOG.warn("Camel CLI connector cannot connect to {} due to: {}. Will keep retrying.", where(), describe(cause));
         } else {
-            LOG.debug("Camel CLI connector cannot connect to {} due to: {}", where(), cause.getMessage());
+            LOG.debug("Camel CLI connector cannot connect to {} due to: {}", where(), describe(cause));
         }
         reconnect();
     }
@@ -406,7 +405,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
             return;
         }
         try {
-            c.ws.sendText(frame.toJson(), true).get(SEND_TIMEOUT, TimeUnit.MILLISECONDS);
+            c.ws.sendText(wellFormed(frame.toJson()), true).get(SEND_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             // a send that fails or hangs leaves the socket unusable
             closed(c, "send failed: " + describe(e));
@@ -517,6 +516,33 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
                 // stopping
             }
         }
+    }
+
+    /**
+     * Replaces lone surrogates (half of an emoji, as left by truncating a message body) with U+FFFD: the JDK WebSocket
+     * refuses to send text that is not well-formed UTF-16, and fails the connection.
+     */
+    static String wellFormed(String text) {
+        StringBuilder sb = null;
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            boolean pair = Character.isHighSurrogate(ch) && i + 1 < text.length()
+                    && Character.isLowSurrogate(text.charAt(i + 1));
+            if (pair) {
+                if (sb != null) {
+                    sb.append(ch).append(text.charAt(i + 1));
+                }
+                i++;
+            } else if (Character.isSurrogate(ch)) {
+                if (sb == null) {
+                    sb = new StringBuilder(text.length()).append(text, 0, i);
+                }
+                sb.append('\uFFFD');
+            } else if (sb != null) {
+                sb.append(ch);
+            }
+        }
+        return sb != null ? sb.toString() : text;
     }
 
     private static String describe(Throwable e) {
