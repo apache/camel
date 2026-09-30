@@ -29,6 +29,7 @@ import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IllegalFormatException;
 import java.util.LinkedHashMap;
@@ -58,6 +59,7 @@ import org.apache.camel.java.in.JavaChainParser.ClassLit;
 import org.apache.camel.java.in.JavaChainParser.ClassName;
 import org.apache.camel.java.in.JavaChainParser.Concat;
 import org.apache.camel.java.in.JavaChainParser.Lambda;
+import org.apache.camel.java.in.JavaChainParser.Local;
 import org.apache.camel.java.in.JavaChainParser.New;
 import org.apache.camel.java.in.JavaChainParser.Node;
 import org.apache.camel.java.in.JavaChainParser.Null;
@@ -155,6 +157,8 @@ final class ChainReplayer {
     private final EndpointDslResolver endpointDsl;
     private final ConstantResolver constants;
     private final List<JavaParseResult.Unresolved> unresolved = new ArrayList<>();
+    /** The routes (or parts of one) kept in local variables of the builder being replayed, by name. */
+    private final Map<String, Object> locals = new HashMap<>();
     private final Set<String> resolving = new HashSet<>();
 
     ChainReplayer(JavaChainParser.Source source) {
@@ -186,6 +190,7 @@ final class ChainReplayer {
             List<Node> statements = source.builders().get(b);
             builderParameter = source.builderParameters().get(b);
             builder = new ReplayBuilder();
+            locals.clear();
             for (Node statement : statements) {
                 if (statement instanceof Chain chain && configuresTheContext(chain)) {
                     // getContext().getComponent("sql", SqlComponent.class).setDataSource(ds): not a route
@@ -194,6 +199,14 @@ final class ChainReplayer {
                     Object value = evaluate(chain);
                     if (value instanceof Unknown u) {
                         report(u.node(), u.reason());
+                    }
+                } else if (statement instanceof Local local) {
+                    // RouteDefinition route = from("direct:a"): built here, continued by route.to(...) later
+                    Object value = evaluate(local.value());
+                    if (value instanceof Unknown u) {
+                        report(u.node(), u.reason());
+                    } else {
+                        locals.put(local.name(), value);
                     }
                 } else {
                     report(statement, "not a route chain");
@@ -630,6 +643,9 @@ final class ChainReplayer {
         if (c.qualifier() != null && c.qualifier().equals(builderParameter)) {
             // rb.simple(...) in a builder lambda: the builder
             target = builder;
+        } else if (c.qualifier() != null && locals.containsKey(c.qualifier())) {
+            // route.to(...) on a route kept in a local variable
+            target = locals.get(c.qualifier());
         } else if (c.qualifier() != null) {
             Class<?> type = loadable(c.qualifier());
             if (type != null && STATIC_DSL.contains(type)) {
@@ -1398,6 +1414,8 @@ final class ChainReplayer {
             return c.name() + "(" + String.join(", ", c.args().stream().map(ChainReplayer::text).toList()) + ")";
         } else if (node instanceof New n) {
             return n.text();
+        } else if (node instanceof Local l) {
+            return l.name() + " = " + text(l.value());
         } else if (node instanceof Lambda l) {
             return l.text();
         } else if (node instanceof Opaque o) {

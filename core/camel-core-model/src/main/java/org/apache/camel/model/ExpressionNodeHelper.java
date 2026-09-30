@@ -18,7 +18,9 @@ package org.apache.camel.model;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ValueBuilder;
+import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.XPathExpression;
@@ -30,6 +32,24 @@ import org.apache.camel.spi.ExpressionResultTypeAware;
 public final class ExpressionNodeHelper {
 
     private ExpressionNodeHelper() {
+    }
+
+    /**
+     * A constant for a value given as data, such as in {@code setHeaders(Map.of("foo", "ABC"))}: the constant language
+     * for a String, number, boolean or char (with its type as the result type), so every DSL can write it; a Java
+     * constant expression for any other object.
+     */
+    public static Expression toConstantExpression(Object value) {
+        if (value instanceof String || value instanceof Number || value instanceof Boolean
+                || value instanceof Character) {
+            ConstantExpression answer = new ConstantExpression(value.toString());
+            if (!(value instanceof String)) {
+                answer.setResultType(value.getClass());
+                answer.setResultTypeName(value.getClass().getName());
+            }
+            return answer;
+        }
+        return ExpressionBuilder.constantExpression(value);
     }
 
     /**
