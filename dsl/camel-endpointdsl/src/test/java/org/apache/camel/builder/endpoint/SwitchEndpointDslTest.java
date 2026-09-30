@@ -22,18 +22,22 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
 import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.xml.jaxb.JaxbHelper;
 import org.apache.camel.xml.jaxb.JaxbModelToXMLDumper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SwitchEndpointDslTest extends BaseEndpointDslTest {
@@ -84,6 +88,42 @@ public class SwitchEndpointDslTest extends BaseEndpointDslTest {
         template.sendBodyAndHeader("direct:tickets", "other", "department", "other");
         template.sendBody("direct:tickets", "missing");
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void caseLabelToleratesBuilderFailureAndReflectsLaterChanges() {
+        class FailingEndpointBuilder extends AbstractEndpointBuilder implements EndpointProducerBuilder {
+            private boolean failing;
+
+            FailingEndpointBuilder() {
+                super("direct", "billing");
+            }
+
+            @Override
+            public String getRawUri() {
+                if (failing) {
+                    throw new IllegalStateException("Cannot build endpoint URI");
+                }
+                return super.getRawUri();
+            }
+        }
+
+        FailingEndpointBuilder builder = new FailingEndpointBuilder();
+        SwitchCaseDefinition c = new SwitchCaseDefinition();
+        c.setValue("billing");
+        c.setEndpointProducerBuilder(builder);
+        assertEquals("case[billing -> direct://billing]", c.getLabel());
+
+        builder.failing = true;
+        assertEquals("case[billing -> null]", c.getLabel());
+        assertEquals(c.getLabel(), c.toString());
+        assertThrows(IllegalStateException.class, c::getEndpointUri);
+
+        builder.failing = false;
+        builder.doSetProperty("password", "secret");
+        assertTrue(c.getLabel().startsWith("case[billing -> direct://billing?password="));
+        assertFalse(c.getLabel().contains("secret"));
+        assertEquals(c.getLabel(), c.toString());
     }
 
     @Override

@@ -36,7 +36,7 @@ import org.apache.camel.spi.Metadata;
 
 /** Routes a message to one fixed endpoint using a literal lookup table. */
 @Metadata(firstVersion = "4.23.0", label = "eip,routing",
-          aliases = { "decision-table", "dispatch-table", "lookup-table", "case" },
+          aliases = { "decision-table", "dispatch-table", "lookup-table" },
           description = "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar values")
 @XmlRootElement(name = "switch")
 @XmlAccessorType(XmlAccessType.FIELD)

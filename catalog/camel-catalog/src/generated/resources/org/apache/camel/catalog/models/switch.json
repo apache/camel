@@ -8,7 +8,7 @@
     "firstVersion": "4.23.0",
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.SwitchDefinition",
-    "aliases": [ "decision-table", "dispatch-table", "lookup-table", "case" ],
+    "aliases": [ "decision-table", "dispatch-table", "lookup-table" ],
     "abstract": false,
     "input": true,
     "output": false
