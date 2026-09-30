@@ -76,8 +76,7 @@ public class SpringRedisIdempotentRepositoryTest {
 
     @Test
     public void shouldReturnFalseWhenKeyIsAlreadyInTheSet() {
-        // the key was not in the set when checked, but another consumer added it before this one: SADD adds nothing
-        when(setOperations.isMember(REPOSITORY, KEY)).thenReturn(false);
+        // another consumer added the key already: SADD adds nothing
         when(setOperations.add(REPOSITORY, KEY)).thenReturn(0L);
 
         assertFalse(idempotentRepository.add(KEY));
