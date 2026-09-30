@@ -183,8 +183,10 @@ public class LocalCliConnector extends ServiceSupport
     protected CliConnectorTransport createTransport(String name) {
         if ("file".equalsIgnoreCase(name)) {
             return new FileCliConnectorTransport();
+        } else if ("websocket".equalsIgnoreCase(name)) {
+            return new WebSocketCliConnectorTransport();
         }
-        throw new IllegalArgumentException("Unknown camel.cli.transport: " + name + " (supported: file)");
+        throw new IllegalArgumentException("Unknown camel.cli.transport: " + name + " (supported: file, websocket)");
     }
 
     @Override

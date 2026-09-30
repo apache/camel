@@ -205,8 +205,7 @@ class LocalCliConnectorFileTransportTest extends CamelTestSupport {
 
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(sigterms).hasValue(1));
         // give the connector a few more polls, it must not terminate twice
-        long polls = 3;
-        await().pollDelay(polls, TimeUnit.SECONDS).atMost(polls + 1, TimeUnit.SECONDS)
+        await().during(2, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(sigterms).hasValue(1));
     }
 
