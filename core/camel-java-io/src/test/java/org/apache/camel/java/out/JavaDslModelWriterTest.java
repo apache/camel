@@ -49,7 +49,7 @@ public class JavaDslModelWriterTest {
 
     @Test
     void switchExportPreservesDisabledAndCaseMetadata() {
-        SwitchDefinition sw = new SwitchDefinition(new HeaderExpression("decision"));
+        SwitchDefinition sw = new RouteDefinition().doSwitch().header("decision");
         sw.id("dispatch").disabled(true).description("Table dispatch").note("dispatch note");
         sw.doCase("billing").id("billingCase").description("Billing destination").note("case note").to("mock:billing");
         sw.otherwise("mock:review");

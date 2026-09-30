@@ -29,7 +29,6 @@ import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SwitchCaseDefinition;
 import org.apache.camel.model.SwitchDefinition;
-import org.apache.camel.model.SwitchValueDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.processor.SwitchProcessor;
 import org.apache.camel.spi.NodeIdFactory;
@@ -41,39 +40,18 @@ public class SwitchReifier extends ProcessorReifier<SwitchDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
+        definition.preCreateProcessor();
         if (definition.getSelector() == null || definition.getSelector().getExpressionType() == null) {
             throw new IllegalArgumentException("Switch selector requires an expression");
         }
-        List<String> keys = definition.getKeys();
-        if (keys.stream().anyMatch(k -> k == null || k.isBlank()) || new HashSet<>(keys).size() != keys.size()) {
-            throw new IllegalArgumentException("Switch keys must be nonblank and unique");
-        }
         // Validate the complete table before creating endpoint processors.
-        List<Object> caseKeys = new ArrayList<>();
+        List<String> caseKeys = new ArrayList<>();
         List<String> uris = new ArrayList<>();
         for (SwitchCaseDefinition c : definition.getCases()) {
-            Object key;
-            if (keys.isEmpty()) {
-                if (c.getValue() == null || !c.getValues().isEmpty()) {
-                    throw new IllegalArgumentException("Scalar switch cases require value and cannot declare values");
-                }
-                key = c.getValue().toLowerCase(Locale.ENGLISH);
-            } else {
-                if (c.getValue() != null) {
-                    throw new IllegalArgumentException("Composite switch cases cannot declare scalar value");
-                }
-                Map<String, Object> values = new LinkedHashMap<>();
-                for (SwitchValueDefinition literal : c.getValues()) {
-                    if (literal.getName() == null || values.containsKey(literal.getName())) {
-                        throw new IllegalArgumentException("Duplicate or missing switch value name: " + literal.getName());
-                    }
-                    values.put(literal.getName(), literal.asLiteral());
-                }
-                if (!values.keySet().equals(new HashSet<>(keys))) {
-                    throw new IllegalArgumentException("Switch case values must contain exactly the declared keys: " + keys);
-                }
-                key = SwitchProcessor.compositeKey(values, keys);
+            if (c.getValue() == null) {
+                throw new IllegalArgumentException("Switch cases require value");
             }
+            String key = c.getValue().toLowerCase(Locale.ENGLISH);
             caseKeys.add(key);
             uris.add(staticUri(c.getUri()));
         }
@@ -83,7 +61,7 @@ public class SwitchReifier extends ProcessorReifier<SwitchDefinition> {
         String otherwiseUri = definition.getOtherwise() == null ? null : staticUri(definition.getOtherwise().getUri());
         Expression selector = createExpression(definition.getSelector().getExpressionType());
         NodeIdFactory ids = camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class);
-        Map<Object, Processor> cases = new LinkedHashMap<>();
+        Map<String, Processor> cases = new LinkedHashMap<>();
         for (int i = 0; i < definition.getCases().size(); i++) {
             SwitchCaseDefinition c = definition.getCases().get(i);
             c.setParent(definition);
@@ -100,7 +78,7 @@ public class SwitchReifier extends ProcessorReifier<SwitchDefinition> {
             send.setUri(otherwiseUri);
             otherwise = createSend(send);
         }
-        SwitchProcessor answer = new SwitchProcessor(camelContext, selector, keys, cases, otherwise);
+        SwitchProcessor answer = new SwitchProcessor(camelContext, selector, cases, otherwise);
         answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
     }

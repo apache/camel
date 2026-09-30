@@ -29,11 +29,21 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SwitchCaseDefinition;
 import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.processor.SwitchProcessor;
+import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed Switch")
 public class ManagedSwitch extends ManagedProcessor implements ManagedSwitchMBean {
+    private boolean mask;
+
     public ManagedSwitch(CamelContext context, SwitchProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
+    }
+
+    @Override
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
+        mask = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
     }
 
     @Override
@@ -68,7 +78,7 @@ public class ManagedSwitch extends ManagedProcessor implements ManagedSwitchMBea
             TabularDataSupport table = new TabularDataSupport(CamelOpenMBeanTypes.switchTabularType());
             for (int i = 0; i < getDefinition().getCases().size(); i++) {
                 SwitchCaseDefinition c = getDefinition().getCases().get(i);
-                addRow(table, c.getId(), c.getValue() != null ? c.getValue() : c.getValues().toString(),
+                addRow(table, c.getId(), c.getValue(),
                         c.getUri(), getProcessor().getMatchedCount(i));
             }
             if (getDefinition().getOtherwise() != null) {
@@ -85,6 +95,6 @@ public class ManagedSwitch extends ManagedProcessor implements ManagedSwitchMBea
         table.put(new CompositeDataSupport(
                 CamelOpenMBeanTypes.switchCompositeType(),
                 new String[] { "index", "id", "value", "uri", "matches" },
-                new Object[] { table.size(), id, value, uri, matches }));
+                new Object[] { table.size(), id, value, mask ? URISupport.sanitizeUri(uri) : uri, matches }));
     }
 }

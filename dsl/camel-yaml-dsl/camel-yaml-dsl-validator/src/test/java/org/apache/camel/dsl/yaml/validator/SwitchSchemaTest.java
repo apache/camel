@@ -42,6 +42,10 @@ class SwitchSchemaTest {
                               uri: direct:review
                 """;
         assertThat(validator.validate(route)).isEmpty();
+        assertThat(validator.validate(route.replace("case:", "keys: [department, urgent]\n            case:")))
+                .isNotEmpty();
+        assertThat(validator.validate(route.replace("value: billing", "values: [department: billing]")))
+                .isNotEmpty();
         for (String fallback : new String[] { "direct:review", "{}", "{steps: [{to: {uri: direct:review}}]}" }) {
             String invalid = route.replace("otherwise:\n              uri: direct:review", "otherwise: " + fallback);
             assertThat(validator.validate(invalid)).as("fallback: %s", fallback).isNotEmpty();

@@ -18,20 +18,36 @@ package org.apache.camel.dsl.yaml;
 
 import java.util.Map;
 
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SwitchDefinition;
+import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.yaml.LwModelToYAMLDumper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class SwitchYamlDumpTest extends YamlTestSupport {
+    @ParameterizedTest
+    @ValueSource(strings = { "001", "1.00", "1e2", "true" })
+    void scalarLiteralsRemainStringsAfterDump(String value) throws Exception {
+        RouteDefinition route = new RouteDefinition("direct:start").routeId("literal");
+        route.doSwitch(new HeaderExpression("decision")).doCase(value, "mock:matched");
+        String yaml = new LwModelToYAMLDumper().dumpModelAsYaml(context, route);
+        loadRoutes(yaml);
+        SwitchDefinition restored = (SwitchDefinition) context.getRouteDefinition("literal").getOutputs().get(0);
+        assertThat(restored.getCases().get(0).getValue()).isEqualTo(value);
+    }
+
     @Test
     void fluentSelectorSurvivesYamlDump() throws Exception {
         RouteDefinition route = new RouteDefinition().from("direct:start").routeId("fluent");
-        route.doSwitch().header("department").doCase("billing", "mock:billing");
+        SwitchDefinition sw = route.doSwitch().header("department").doCase("billing", "mock:billing");
+        assertThat(sw.getSelector().getExpressionType().getExpressionValue()).isInstanceOf(ExpressionClause.class);
         String yaml = new LwModelToYAMLDumper().dumpModelAsYaml(context, route);
         loadRoutes(yaml);
         SwitchDefinition restored = (SwitchDefinition) context.getRouteDefinition("fluent").getOutputs().get(0);

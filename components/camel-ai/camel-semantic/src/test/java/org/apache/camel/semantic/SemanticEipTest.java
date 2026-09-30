@@ -74,10 +74,6 @@ class SemanticEipTest extends CamelTestSupport {
                         "unfinished", question("unfinished", SemanticQuestion.Type.BOOLEAN),
                         "urgency", question("urgency", SemanticQuestion.Type.SCORE)));
 
-                from("direct:switch").doSwitch().language("semantic", "refs:department,actionable")
-                        .keys("department", "actionable")
-                        .doCase().value("department", "billing").value("actionable", true).to("mock:switchBilling")
-                        .otherwise("mock:switchReview");
                 from("direct:batch").setProperty("decision").language("semantic", "refs:actionable,department,urgency")
                         .setHeader("urgency").simple("${exchangeProperty.decision[urgency]}")
                         .choice()
@@ -160,16 +156,6 @@ class SemanticEipTest extends CamelTestSupport {
                         ? Map.of("billing", "Payments", "technical", "Bugs", "general", "Other requests") : null,
                 type == SemanticQuestion.Type.SCORE ? List.of("low", "medium", "high") : null,
                 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
-    }
-
-    @Test
-    void batchDecisionsSelectOneSwitchDestination() throws Exception {
-        getMockEndpoint("mock:switchBilling").expectedBodiesReceived("please fix this invoice");
-        getMockEndpoint("mock:switchReview").expectedMessageCount(0);
-        template.sendBody("direct:switch", "please fix this invoice");
-        MockEndpoint.assertIsSatisfied(context);
-        assertThat(calls.get("department").get()).isEqualTo(1);
-        assertThat(calls.get("actionable").get()).isEqualTo(1);
     }
 
     @Test

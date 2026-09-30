@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management;
 
-import java.util.Map;
-
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 
@@ -26,6 +24,9 @@ import org.apache.camel.processor.SendProcessor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ManagedSwitchTest extends ManagementTestSupport {
     @Test
     void exposesCaseDestinationsCountsAndCaseMBeans() throws Exception {
-        template.sendBodyAndHeader("direct:start", "first", "decision", Map.of("department", "BILLING", "urgent", true));
-        template.sendBodyAndHeader("direct:start", "second", "decision", Map.of("department", "billing", "urgent", true));
+        template.sendBodyAndHeader("direct:start", "first", "decision", "BILLING");
+        template.sendBodyAndHeader("direct:start", "second", "decision", "billing");
         template.sendBody("direct:start", "unmatched");
         ObjectName name = getCamelObjectName(TYPE_PROCESSOR, "p-dispatch");
         TabularData table = (TabularData) getMBeanServer().invoke(name, "extendedInformation", null, null);
@@ -59,14 +60,40 @@ class ManagedSwitchTest extends ManagementTestSupport {
         assertEquals(0L, getMBeanServer().getAttribute(name, "UnmatchedCount"));
     }
 
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(booleans = { true, false })
+    void masksCaseAndFallbackUris(Boolean mask) throws Exception {
+        // A null parameter exercises the agent's default without overriding it.
+        if (mask != null) {
+            context.getManagementStrategy().getManagementAgent().setMask(mask);
+        }
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:masked").nodePrefixId("p-")
+                        .doSwitch(header("decision")).id("masked")
+                        .doCase("billing", "mock:billing?password=caseSecret")
+                        .otherwise("mock:review?password=fallbackSecret");
+            }
+        });
+        TabularData table = (TabularData) getMBeanServer().invoke(
+                getCamelObjectName(TYPE_PROCESSOR, "p-masked"), "extendedInformation", null, null);
+        boolean sanitized = !Boolean.FALSE.equals(mask);
+        assertEquals("mock:billing?password=" + (sanitized ? "xxxxxx" : "caseSecret"),
+                table.get(new Object[] { 0 }).get("uri"));
+        assertEquals("mock:review?password=" + (sanitized ? "xxxxxx" : "fallbackSecret"),
+                table.get(new Object[] { 1 }).get("uri"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:start").routeId("switchRoute").nodePrefixId("p-")
-                        .doSwitch(header("decision")).id("dispatch").keys("department", "urgent")
-                        .doCase().value("department", "billing").value("urgent", true).id("urgentCase").to("mock:urgent")
+                        .doSwitch(header("decision")).id("dispatch")
+                        .doCase("billing").id("urgentCase").to("mock:urgent")
                         .otherwise("mock:review");
             }
         };

@@ -18050,8 +18050,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
                     @YamlProperty(name = "parameters", type = "object"),
                     @YamlProperty(name = "uri", type = "string", required = true, description = "The fixed destination URI. Supports property placeholders, but not Simple expressions.", displayName = "Uri"),
-                    @YamlProperty(name = "value", type = "string", description = "The case-insensitive literal value for a scalar selector. Mutually exclusive with values.", displayName = "Value"),
-                    @YamlProperty(name = "values", type = "array:org.apache.camel.model.SwitchValueDefinition", description = "Named, typed literal values for a composite selector. Every selected key must occur exactly once.", displayName = "Values")
+                    @YamlProperty(name = "value", type = "string", required = true, description = "The case-insensitive literal value for a scalar selector.", displayName = "Value")
             }
     )
     public static class SwitchCaseDefinitionDeserializer extends YamlDeserializerEndpointAwareBase<SwitchCaseDefinition> {
@@ -18085,11 +18084,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setValue(val);
                     break;
                 }
-                case "values": {
-                    java.util.List<org.apache.camel.model.SwitchValueDefinition> val = asFlatList(node, org.apache.camel.model.SwitchValueDefinition.class);
-                    target.setValues(val);
-                    break;
-                }
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
@@ -18118,17 +18112,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.SwitchDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Switch",
-            description = "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar or composite values",
+            description = "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar values",
             deprecated = false,
             properties = {
-                    @YamlProperty(name = "case", type = "array:org.apache.camel.model.SwitchCaseDefinition", description = "Literal cases. Duplicate combinations are rejected at startup.", displayName = "Case"),
+                    @YamlProperty(name = "case", type = "array:org.apache.camel.model.SwitchCaseDefinition", description = "Literal cases. Duplicate values are rejected at startup, ignoring case.", displayName = "Case"),
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "keys", type = "array:string", description = "Exact map field names forming a composite key. Additional result fields are ignored.", displayName = "Keys"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
                     @YamlProperty(name = "otherwise", type = "object:org.apache.camel.model.SwitchOtherwiseDefinition", description = "Fixed fallback URI for null or unmatched selector results. Without a fallback processing continues.", displayName = "Otherwise"),
-                    @YamlProperty(name = "selector", type = "object:org.apache.camel.model.ExpressionSubElementDefinition", required = true, description = "Expression evaluated once per entry. Returns a scalar, or a map when keys are configured.", displayName = "Selector")
+                    @YamlProperty(name = "selector", type = "object:org.apache.camel.model.ExpressionSubElementDefinition", required = true, description = "Expression evaluated once per entry. Returns a scalar value to match against the literal cases.", displayName = "Selector")
             }
     )
     public static class SwitchDefinitionDeserializer extends YamlDeserializerBase<SwitchDefinition> {
@@ -18154,11 +18147,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "disabled": {
                     String val = asText(node);
                     target.setDisabled(val);
-                    break;
-                }
-                case "keys": {
-                    java.util.List<String> val = asStringList(node);
-                    target.setKeys(val);
                     break;
                 }
                 case "otherwise": {

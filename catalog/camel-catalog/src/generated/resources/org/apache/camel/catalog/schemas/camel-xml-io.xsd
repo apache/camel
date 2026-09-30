@@ -1846,7 +1846,7 @@ Encode and decode SWIFT MX messages
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluates a selector once and dispatches to a fixed endpoint by literal scalar or composite values
+Evaluates a selector once and dispatches to a fixed endpoint by literal scalar values
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1856,15 +1856,6 @@ Evaluates a selector once and dispatches to a fixed endpoint by literal scalar o
       <xs:documentation xml:lang="en">
 <![CDATA[
 The fixed endpoint used when no switch case matches
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="switchValue" type="tns:switchValueDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-A named literal in a composite switch case
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -13066,22 +13057,12 @@ enables value-based watermarking instead of index-based. The expression is evalu
   <xs:complexType name="switchCaseDefinition">
     <xs:complexContent>
       <xs:extension base="tns:optionalIdentifiedDefinition">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="values" type="tns:switchValueDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-Named, typed literal values for a composite selector. Every selected key must occur exactly once.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute name="value" type="xs:string">
+        <xs:sequence/>
+        <xs:attribute name="value" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The case-insensitive literal value for a scalar selector. Mutually exclusive with values.
+The case-insensitive literal value for a scalar selector.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13098,36 +13079,6 @@ The fixed destination URI. Supports property placeholders, but not Simple expres
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="switchValueDefinition">
-    <xs:sequence/>
-    <xs:attribute name="name" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-The exact name of the selected field.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="value" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-The literal value, never an expression.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="type" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-The literal type. Default value: string
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
   <xs:complexType name="switchDefinition">
     <xs:complexContent>
       <xs:extension base="tns:noOutputDefinition">
@@ -13136,16 +13087,7 @@ The literal type. Default value: string
             <xs:annotation>
               <xs:documentation xml:lang="en">
 <![CDATA[
-Expression evaluated once per entry. Returns a scalar, or a map when keys are configured.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="keys" type="xs:string">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-Exact map field names forming a composite key. Additional result fields are ignored.
+Expression evaluated once per entry. Returns a scalar value to match against the literal cases.
 ]]>
               </xs:documentation>
             </xs:annotation>

@@ -683,13 +683,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteSwitchOtherwiseDefinition(sb, def);
         return sb.toString();
     }
-    public String writeSwitchValueDefinition(SwitchValueDefinition def) {
-        resetState();
-        StringBuilder sb = new StringBuilder();
-        beginStep(sb, "switchValue", def);
-        doWriteSwitchValueDefinition(sb, def);
-        return sb.toString();
-    }
     public String writeTemplatedRouteDefinition(TemplatedRouteDefinition def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -2607,22 +2600,15 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteOptionalIdentifiedDefinitionAttributes(sb, def);
         doWriteAttribute(sb, "value", def.getValue(), null);
         doWriteAttribute(sb, "uri", def.getUri(), null);
-        doWriteChildList(sb, "values", def.getValues(), this::doWriteSwitchValueDefinition);
     }
     protected void doWriteSwitchDefinition(StringBuilder sb, SwitchDefinition def) {
         doWriteProcessorDefinitionAttributes(sb, def);
         doWriteChildElement(sb, "selector", def.getSelector(), this::doWriteExpressionSubElementDefinition);
-        doWriteStringList(sb, null, "keys", def.getKeys());
         doWriteChildList(sb, "case", def.getCases(), this::doWriteSwitchCaseDefinition);
         doWriteChildElement(sb, "otherwise", def.getOtherwise(), this::doWriteSwitchOtherwiseDefinition);
     }
     protected void doWriteSwitchOtherwiseDefinition(StringBuilder sb, SwitchOtherwiseDefinition def) {
         doWriteAttribute(sb, "uri", def.getUri(), null);
-    }
-    protected void doWriteSwitchValueDefinition(StringBuilder sb, SwitchValueDefinition def) {
-        doWriteAttribute(sb, "name", def.getName(), null);
-        doWriteAttribute(sb, "value", def.getValue(), null);
-        doWriteAttribute(sb, "type", def.getType(), "string");
     }
     protected void doWriteTemplatedRouteDefinition(StringBuilder sb, TemplatedRouteDefinition def) {
         doWriteAttribute(sb, "routeTemplateRef", def.getRouteTemplateRef(), null);

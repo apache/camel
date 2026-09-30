@@ -510,7 +510,7 @@
         "type" : "object",
         "ref" : "switch",
         "title" : "Switch",
-        "description" : "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar or composite values",
+        "description" : "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar values",
         "label" : "eip,routing"
       }, {
         "name" : "threads",
@@ -8360,19 +8360,14 @@
       }, {
         "name" : "value",
         "type" : "string",
-        "description" : "The case-insensitive literal value for a scalar selector. Mutually exclusive with values.",
-        "title" : "Value"
-      }, {
-        "name" : "values",
-        "type" : "array",
-        "ref" : "switchValue",
-        "description" : "Named, typed literal values for a composite selector. Every selected key must occur exactly once.",
-        "title" : "Values"
+        "description" : "The case-insensitive literal value for a scalar selector.",
+        "title" : "Value",
+        "required" : true
       } ]
     },
     "switch" : {
       "title" : "Switch",
-      "description" : "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar or composite values",
+      "description" : "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar values",
       "label" : "eip,routing",
       "input" : true,
       "isListItem" : true,
@@ -8418,7 +8413,7 @@
         "name" : "selector",
         "type" : "object",
         "ref" : "expressionSubElement",
-        "description" : "Expression evaluated once per entry. Returns a scalar, or a map when keys are configured.",
+        "description" : "Expression evaluated once per entry. Returns a scalar value to match against the literal cases.",
         "title" : "Selector",
         "required" : true,
         "displayName" : "Selector",
@@ -8426,23 +8421,14 @@
         "index" : 4,
         "group" : "common"
       }, {
-        "name" : "keys",
-        "type" : "array",
-        "description" : "Exact map field names forming a composite key. Additional result fields are ignored.",
-        "title" : "Keys",
-        "displayName" : "Keys",
-        "kind" : "element",
-        "index" : 5,
-        "group" : "common"
-      }, {
         "name" : "case",
         "type" : "array",
         "ref" : "switchCase",
-        "description" : "Literal cases. Duplicate combinations are rejected at startup.",
+        "description" : "Literal cases. Duplicate values are rejected at startup, ignoring case.",
         "title" : "Case",
         "displayName" : "Case",
         "kind" : "element",
-        "index" : 6,
+        "index" : 5,
         "group" : "common"
       }, {
         "name" : "otherwise",
@@ -8452,7 +8438,7 @@
         "title" : "Otherwise",
         "displayName" : "Otherwise",
         "kind" : "element",
-        "index" : 7,
+        "index" : 6,
         "group" : "common"
       } ]
     },
@@ -8474,12 +8460,6 @@
         "name" : "parameters",
         "type" : "object"
       } ]
-    },
-    "switchValue" : {
-      "title" : "Switch Value",
-      "description" : "A named literal in a composite switch case",
-      "label" : "configuration",
-      "children" : [ ]
     },
     "templatedRoute" : {
       "title" : "Templated Route",

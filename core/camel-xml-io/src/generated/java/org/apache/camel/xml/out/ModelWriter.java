@@ -329,9 +329,6 @@ public class ModelWriter extends BaseWriter {
     public void writeSwitchOtherwiseDefinition(SwitchOtherwiseDefinition def) throws IOException {
         doWriteSwitchOtherwiseDefinition("switchOtherwise", def);
     }
-    public void writeSwitchValueDefinition(SwitchValueDefinition def) throws IOException {
-        doWriteSwitchValueDefinition("switchValue", def);
-    }
     public void writeTemplatedRouteDefinition(TemplatedRouteDefinition def) throws IOException {
         doWriteTemplatedRouteDefinition("templatedRoute", def);
     }
@@ -1837,14 +1834,12 @@ public class ModelWriter extends BaseWriter {
         doWriteOptionalIdentifiedDefinitionAttributes(def);
         doWriteAttribute("value", def.getValue(), null);
         doWriteAttribute("uri", def.getUri(), null);
-        doWriteList(null, "values", def.getValues(), this::doWriteSwitchValueDefinition);
         endElement(name);
     }
     protected void doWriteSwitchDefinition(String name, SwitchDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
         doWriteElement("selector", def.getSelector(), this::doWriteExpressionSubElementDefinition);
-        doWriteList(null, "keys", def.getKeys(), this::doWriteString);
         doWriteList(null, "case", def.getCases(), this::doWriteSwitchCaseDefinition);
         doWriteElement("otherwise", def.getOtherwise(), this::doWriteSwitchOtherwiseDefinition);
         endElement(name);
@@ -1852,13 +1847,6 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSwitchOtherwiseDefinition(String name, SwitchOtherwiseDefinition def) throws IOException {
         startElement(name);
         doWriteAttribute("uri", def.getUri(), null);
-        endElement(name);
-    }
-    protected void doWriteSwitchValueDefinition(String name, SwitchValueDefinition def) throws IOException {
-        startElement(name);
-        doWriteAttribute("name", def.getName(), null);
-        doWriteAttribute("value", def.getValue(), null);
-        doWriteAttribute("type", def.getType(), "string");
         endElement(name);
     }
     protected void doWriteTemplatedRouteDefinition(String name, TemplatedRouteDefinition def) throws IOException {
