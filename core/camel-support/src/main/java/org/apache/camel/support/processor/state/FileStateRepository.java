@@ -19,6 +19,9 @@ package org.apache.camel.support.processor.state;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -182,12 +185,9 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
             if (!fileStore.exists()) {
                 FileUtil.createNewFile(fileStore);
             }
-            // append to store
+            // append to store (as a single write, so the line is not split in several writes)
             fos = new FileOutputStream(fileStore, true);
-            fos.write(key.getBytes());
-            fos.write(KEY_VALUE_DELIMITER.getBytes());
-            fos.write(value.getBytes());
-            fos.write(STORE_DELIMITER.getBytes());
+            fos.write((key + KEY_VALUE_DELIMITER + value + STORE_DELIMITER).getBytes());
         } catch (IOException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } finally {
@@ -200,19 +200,33 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
      */
     protected void trunkStore() {
         LOG.info("Trunking state filestore: {}", fileStore);
+        // write the 1st level cache to a temporary file and then replace the file store with it, so the file store
+        // is never left truncated or half written (such as if writing fails, or the JVM crashes while writing)
+        File tmp = new File(fileStore.getPath() + ".tmp");
+        boolean written = false;
         FileOutputStream fos = null;
         try {
-            fos = new FileOutputStream(fileStore);
+            fos = new FileOutputStream(tmp);
             for (Map.Entry<String, String> entry : cache.entrySet()) {
-                fos.write(entry.getKey().getBytes());
-                fos.write(KEY_VALUE_DELIMITER.getBytes());
-                fos.write(entry.getValue().getBytes());
-                fos.write(STORE_DELIMITER.getBytes());
+                fos.write((entry.getKey() + KEY_VALUE_DELIMITER + entry.getValue() + STORE_DELIMITER).getBytes());
             }
+            fos.getFD().sync();
+            fos.close();
+            fos = null;
+            try {
+                Files.move(tmp.toPath(), fileStore.toPath(), StandardCopyOption.REPLACE_EXISTING,
+                        StandardCopyOption.ATOMIC_MOVE);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(tmp.toPath(), fileStore.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+            written = true;
         } catch (IOException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } finally {
             IOHelper.close(fos, "Trunking file state repository", LOG);
+            if (!written) {
+                FileUtil.deleteFile(tmp);
+            }
         }
     }
 
@@ -243,6 +257,11 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
             while (scanner.hasNext()) {
                 String line = scanner.next();
                 int separatorIndex = line.indexOf(KEY_VALUE_DELIMITER);
+                if (separatorIndex < 0) {
+                    // an incomplete line (such as the last line, if the JVM crashed while appending to the store)
+                    LOG.warn("Skipping invalid line in state filestore: {}", fileStore);
+                    continue;
+                }
                 String key = line.substring(0, separatorIndex);
                 String value = line.substring(separatorIndex + KEY_VALUE_DELIMITER.length());
                 cache.put(key, value);
@@ -266,10 +285,16 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
 
     @Override
     protected void doStop() throws Exception {
-        // reset will trunk and clear the cache
-        trunkStore();
-        cache.clear();
-        init.set(false);
+        // must hold the lock, as the store may still be updated while stopping
+        cacheAndStoreLock.lock();
+        try {
+            // reset will trunk and clear the cache
+            trunkStore();
+            cache.clear();
+            init.set(false);
+        } finally {
+            cacheAndStoreLock.unlock();
+        }
     }
 
     public File getFileStore() {
