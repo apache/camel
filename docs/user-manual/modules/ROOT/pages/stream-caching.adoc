@@ -6,6 +6,8 @@ Streams are cached in memory. However, for large stream messages, you can set `s
 and then large message (over 128 KB) will be cached in a temporary file instead.
 Camel itself will handle deleting the temporary file once the cached stream is no longer necessary.
 
+TIP: For routes that move large payloads, such as big files, see xref:large-payloads.adoc[Large payloads].
+
 == Why is my message empty?
 
 In Camel the message body can be of any types. Some types are safely
