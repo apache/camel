@@ -208,10 +208,6 @@ public final class ProjectCapabilities {
     }
 
     /**
-     * Plumbing, as the sources show it: only error handling (onException, a dead letter channel) reaches the route, or
-     * every step of it only logs and it is not where messages enter.
-     */
-    /**
      * Whether a route starts a flow: it is an entry point (work comes in from outside) and passes the work on to
      * another route of the project. Such a route is business intake, never plumbing, whatever a model says.
      */
@@ -221,6 +217,10 @@ public final class ProjectCapabilities {
                 .anyMatch(l -> l.from().equals(r.key()) && !l.onError() && !l.to().equals(r.key()));
     }
 
+    /**
+     * Plumbing, as the sources show it: only error handling (onException, a dead letter channel) reaches the route, or
+     * every step of it only logs and it is not where messages enter.
+     */
     static boolean isUtility(Route r, Overview overview) {
         List<Link> incoming = overview.links().stream().filter(l -> l.to().equals(r.key())).toList();
         if (!incoming.isEmpty() && incoming.stream().allMatch(Link::onError)) {
