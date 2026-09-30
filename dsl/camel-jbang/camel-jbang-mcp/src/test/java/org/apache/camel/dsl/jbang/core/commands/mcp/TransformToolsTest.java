@@ -70,6 +70,25 @@ class TransformToolsTest {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = { "xml", "yaml" })
+    void emptySemanticRegistryDoesNotPreventConversion(String target) {
+        String route = """
+                import org.apache.camel.builder.RouteBuilder;
+                import static org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions;
+                public class EmptySemanticRoute extends RouteBuilder {
+                    public void configure() {
+                        semanticQuestions(this).register();
+                        from("direct:input").log("Hello");
+                    }
+                }
+                """;
+        var result = createTools().camel_transform_route(route, "java", target);
+
+        assertThat(result.supported).isTrue();
+        assertThat(result.result).contains("direct:input").doesNotContain("semantic");
+    }
+
+    @ParameterizedTest
     @CsvSource({ "yaml,xml", "java,xml", "java,yaml" })
     void semanticConversionReportsMissingNumericProperty(String source, String target) {
         String route = semanticRoute(source, "{{semantic.export.missing.threshold}}");

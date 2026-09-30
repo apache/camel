@@ -34,7 +34,6 @@ import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.semantic.SemanticQuestions;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
@@ -170,9 +169,14 @@ public class TransformTools {
         }
     }
 
-    private static void requireSeparateDeclarations(DefaultCamelContext context) {
-        SemanticQuestions questions = context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class);
-        if (questions != null && !questions.isEmpty()) {
+    private static void requireSeparateDeclarations(DefaultCamelContext context) throws ReflectiveOperationException {
+        // Semantic declarations are optional and live outside the model exported by this converter.
+        Class<?> type = context.getClassResolver().resolveClass("org.apache.camel.semantic.SemanticQuestions");
+        if (type == null) {
+            return;
+        }
+        Object questions = context.getCamelContextExtension().getContextPlugin(type);
+        if (questions != null && !(boolean) type.getMethod("isEmpty").invoke(questions)) {
             throw new IllegalArgumentException(
                     "Semantic declarations cannot be exported by the generic route converter. "
                                                + "Keep them in a separate declaration resource and convert only the routes.");
