@@ -1,0 +1,137 @@
+---
+title: Reading Java DSL routes without compiling them
+authors:
+  - "@davsclaus"
+reviewers: []
+approvers: []
+creation-date: 2026-09-30
+last-updated: 2026-09-30
+status: implementable
+see-also:
+  - "CAMEL-25148"
+  - "CAMEL-25143"
+  - "CAMEL-25157"
+  - "CAMEL-25161"
+  - "CAMEL-25166"
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+`LwJavaParser` in `camel-java-io` reads the routes of a Java DSL source (a `RouteBuilder`, a `LambdaRouteBuilder` or a
+snippet as in the documentation) into the Camel model without compiling it, the reverse of `LwModelToJavaDumper`. It
+reads the source as text, then replays each chain of calls against Camel's own DSL to build the model. Nothing of the
+project it reads is compiled, loaded or run; it needs no class path of the project and takes milliseconds.
+
+== Motivation
+
+XML and YAML routes can be read into the model by tools; Java routes could only be read by compiling the
+`RouteBuilder` and running `configure()` (`camel transform`), which needs the full class path of the project, may
+download dependencies, takes seconds and runs the project's code. Tools that want to show or check Java routes
+(the project overview and the TUI, AI prompts, documentation checks) fell back on pattern matching on string literals,
+which misses constants, nesting, error paths and the endpoint DSL.
+
+== Goals
+
+* The model a compiled route has, for the ways people usually write routes.
+* No code of the parsed project runs, and no class of it is loaded; a source nobody vetted is safe to read.
+* Say clearly what could not be read, rather than guess: the result lists each unresolved part with its line.
+* Pluggable knowledge a tool has and the parser does not: the catalog (endpoint DSL, component header constants and
+  enums) and the project's other source files.
+
+== Non-Goals
+
+* A Java compiler. Values computed at runtime, routes built in helper methods of other classes, generated code, and
+  lambdas or processors (they are placeholders) are out of reach.
+* Replacing `camel transform`'s compiling mode, which stays the precise option.
+
+== Proposal
+
+=== Reading the source
+
+A small tokenizer and parser read the package, the imports (static ones too), the constants of the class, the class
+names it declares and extends, and the statements of each `configure()` (or `configuration()`), each builder lambda
+(`rb -> rb.from(...)`), or the whole source when it is a snippet. Each statement starting with a DSL call is a chain of
+calls with arguments: literals, text blocks, constants, `+` and arithmetic, class literals, nested calls, `new`,
+lambdas. Control statements (`for`, `if`, `try`) are stepped into: a route built in a loop is read once, with the loop
+variable unresolved.
+
+=== Replay rather than a mapping table
+
+Each chain is replayed by reflection against Camel's own DSL: `from("a").to("b")` calls `from("a")` on a route
+builder and `to("b")` on the route it returns. `end()`, blocks, expression clauses (`setHeader("x").constant("y")`)
+and ids behave as in a compiled route, for every EIP, with no table to keep in step with the model. The alternative,
+a table of fluent method to model class generated from the model metadata, would need hand-kept overrides for the
+argument mapping of hundreds of overloads and reimplement the DSL's semantics.
+
+Afterwards the model is normalized to what the other DSLs have: expression clauses and value builders become their
+language, a class kept as a `Class` option also gets its name in the String option next to it, and
+`constant(value)` keeps its text.
+
+Overloads are chosen as Java does: the one the arguments fit, preferring exact types over stand-ins, and of equal ones
+the most specific; candidates are tried in a stable order.
+
+=== Values the parser cannot see
+
+* A class of the project (`onException(InvalidOrderException.class)`) becomes an empty abstract stub class with its
+  name, so the model keeps the name. Nested classes get their binary name.
+* A lambda, an anonymous class or `new MyProcessor()` becomes a placeholder object of the interface the DSL method
+  takes; `new Foo()` prefers the overload whose parameter type `Foo` is named for.
+* A value it cannot work out is kept in the model as `?{source text}` and reported.
+* An exception of the JDK or of Camel (`new IllegalArgumentException("x")`) is created, from messages and causes only.
+
+=== Plugs
+
+* `EndpointDslResolver`: the endpoint DSL (`kafka("orders").brokers("b")`). The default reverses the rules the
+  endpoint DSL is generated with (the factory is the scheme in camel case, with four exceptions; each builder method is
+  the option of that name), for sources that use the endpoint DSL. A resolver with the catalog confirms components,
+  checks options and knows the prefix of multi-value options.
+* `ConstantResolver`: constants of classes the parser cannot see. camel-jbang's resolver reads the project's other
+  source files, and the catalog's component header constants (`KafkaConstants.KEY`) and enum values
+  (`HazelcastOperation.PUT`).
+
+== Security
+
+The parser reads sources nobody vetted: a cloned example opened in the TUI, documentation, a project an AI agent
+points a tool at. What it guarantees, and how each is enforced:
+
+* *No code of the project runs, and none of its classes is loaded.* Only Camel's DSL is called: methods declared by
+  Camel's model and builder types (`org.apache.camel.model.*`, `org.apache.camel.builder.*`,
+  `org.apache.camel.support.builder.*`), and the static DSL of `Builder`, `PredicateBuilder` and
+  `AggregationStrategies`. A class of the project is a stub with no code, in a class loader of its own for one parse.
+* *No CamelContext.* The replay builder never has one: no method that takes or returns a `CamelContext`, none of the
+  builder's life cycle (populate, configure, prepare, update, initialize, set, check, add, remove, customize), no
+  registry or properties (`bindToRegistry`, `propertyInject`, `endpoint`). So nothing is resolved, looked up or
+  started, and property placeholders and vault references stay as written.
+* *The reachable DSL is pinned.* The methods a source can call on the route builder and the static DSL are listed in
+  `replay-builder-methods.txt` in camel-java-io's tests; a method added to Camel fails the build until someone has
+  checked it only builds the model, then regenerated the list (`-Dcamel.java.in.updateSurface=true`). The model's
+  definitions are data objects: their methods are covered by the package and context rules.
+* *Reading a constant initializes its class*: only public static final Strings, primitives and enums of Camel classes
+  and a few JDK classes (the boxed numbers, `TimeUnit`, `StandardCharsets`) are read.
+* *Only exceptions are created*, through constructors taking messages and causes.
+* *Bounded work.* At most 1000 stub classes per parse, arguments nested at most 100 deep, sources of at most 2 MB;
+  every loop of the parser makes progress, and `parse()` never throws. A fuzz test feeds cut and broken sources.
+* *Its output is data.* The model carries strings the source's author chose (URIs, expressions, descriptions);
+  consumers treat them as data, never as instructions (an AI prompt included).
+
+== Testing
+
+* Round trips: the XML routes of camel-xml-io, camel-core's model tests and camel-java-io's own tests, and the
+  dumper's golden Java files, are dumped as Java, read back and dumped again; the XML routes of camel-spring-xml's
+  tests hold a floor. Routes that do not read back because of the Java the dumper writes are listed with the reason
+  (CAMEL-25157).
+* Corpora read for what is not understood: the RouteBuilders of camel-core's and the endpoint DSL's tests, and any
+  directory given with `-Dcamel.java.in.corpus`: the components' tests, the camel-spring-boot and camel-quarkus
+  repositories, and the example projects read with the catalog plugs as the project overview reads them.
+* Security: the pinned surface, the context and constant rules, the stub and nesting limits, and a fuzz test.
+
+== Future Work
+
+* Checking the Java examples of the documentation in the build, as the YAML and XML ones are.
+* `camel transform` reading Java without compiling by default, compiling when a route is partial.
+* Plain-language labels for the decision points of routes in the AI project overview (CAMEL-25161).
+* A Java DSL for Camel 5 designed with what the parser found hard (end() scoping, expression clauses, a class or its
+  name for the same option, varargs options), with this replay as the bridge from the current Java DSL: the findings
+  are in CAMEL-25166.

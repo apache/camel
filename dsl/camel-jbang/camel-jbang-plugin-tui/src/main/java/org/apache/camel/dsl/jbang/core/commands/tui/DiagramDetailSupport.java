@@ -200,6 +200,42 @@ final class DiagramDetailSupport {
     }
 
     /**
+     * The title of a route's diagram with what the topology box of the route shows: its label (its own description,
+     * else the AI's, marked) and its group, in the group's colour, so going down a level keeps the context
+     * (CAMEL-25147).
+     */
+    static Line withRouteContext(Line title, IntegrationInfo info, String routeId, Path dir, boolean groups) {
+        List<Span> spans = new ArrayList<>(title.spans());
+        String label = null;
+        boolean ai = false;
+        if (info != null) {
+            for (RouteInfo r : info.routes) {
+                if (routeId.equals(r.routeId) && r.description != null && !r.description.isBlank()) {
+                    label = r.description;
+                }
+            }
+        }
+        if (label == null) {
+            label = IntegrationSummaryHints.description(dir, routeId);
+            ai = label != null;
+        }
+        if (label != null) {
+            spans.add(Span.styled("\u00b7 ", Theme.muted()));
+            spans.add(ai
+                    ? Span.styled(IntegrationSummaryHints.MARK + label.strip() + " ", Theme.aiAssisted())
+                    : Span.styled(label.strip() + " ", Style.EMPTY.fg(Theme.baseFg())));
+        }
+        RouteGroups.Tag tag = groups ? RouteGroups.of(dir).get(routeId) : null;
+        if (tag != null) {
+            spans.add(Span.styled("\u00b7 ", Theme.muted()));
+            spans.add(tag.ai()
+                    ? Span.styled("\u25b8 " + IntegrationSummaryHints.MARK + tag.name() + " ", Theme.aiAssisted())
+                    : Span.styled("\u25b8 " + tag.name() + " ", Style.EMPTY.fg(RouteGroups.colorOf(tag.index()))));
+        }
+        return Line.from(spans);
+    }
+
+    /**
      * The full description of the route, word-wrapped, which a topology box can only show the start of: the route's
      * own, else the one the AI project overview suggested, marked and styled as AI-assisted (CAMEL-25143).
      */

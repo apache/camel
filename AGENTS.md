@@ -315,6 +315,7 @@ jump straight to implementation after reading the issue description and the curr
    - **MDC / Logging** (MDC propagation, logging context): [`design/mdc.adoc`](design/mdc.adoc)
    - **Headers** (naming conventions, constants, upgrade policy): [`design/headers.adoc`](design/headers.adoc)
    - **Cross-cutting features** (onException, interceptors, onCompletion, route configurations and how they bind to routes): [`design/cross-cutting-binding.adoc`](design/cross-cutting-binding.adoc)
+   - **Java DSL parsing** (reading Java routes into the model without compiling them, `LwJavaParser`, its safety rules): [`design/java-dsl-parser.adoc`](design/java-dsl-parser.adoc)
 5. **Understand the broader context**: If the issue involves a module that replaced or deprecated
    another (e.g., `camel-opentelemetry2` replacing `camel-opentelemetry`), understand *why* the
    replacement was made and what was intentionally changed vs. accidentally omitted.

@@ -65,7 +65,9 @@ final class IntegrationSummaryHints {
         if (dir == null || routeId == null || !enabled()) {
             return null;
         }
-        return entry(dir.toAbsolutePath().normalize()).descriptions().get(routeId);
+        Map<String, String> descriptions = entry(dir.toAbsolutePath().normalize()).descriptions();
+        String d = descriptions.get(routeId);
+        return d != null ? d : descriptions.get(RouteKeys.sourceKey(dir, routeId));
     }
 
     /** The AI descriptions of a project by route id; empty when there are none or the hints are off. */
@@ -73,7 +75,20 @@ final class IntegrationSummaryHints {
         if (dir == null || !enabled()) {
             return Map.of();
         }
-        return entry(dir.toAbsolutePath().normalize()).descriptions();
+        Map<String, String> descriptions = entry(dir.toAbsolutePath().normalize()).descriptions();
+        Map<String, String> running = RouteKeys.runningIds(dir);
+        if (running.isEmpty()) {
+            return descriptions;
+        }
+        // also under the running id of a source route without one, as the topology names it
+        Map<String, String> answer = new HashMap<>(descriptions);
+        running.forEach((source, id) -> {
+            String d = descriptions.get(source);
+            if (d != null) {
+                answer.putIfAbsent(id, d);
+            }
+        });
+        return answer;
     }
 
     /**
@@ -84,7 +99,8 @@ final class IntegrationSummaryHints {
         if (dir == null || routeId == null) {
             return null;
         }
-        Note n = entry(dir.toAbsolutePath().normalize()).notes().get(routeId);
+        Map<String, Note> notes = entry(dir.toAbsolutePath().normalize()).notes();
+        Note n = notes.containsKey(routeId) ? notes.get(routeId) : notes.get(RouteKeys.sourceKey(dir, routeId));
         return n == null || n.ai() && !enabled() ? null : n;
     }
 

@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.Supplier;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes.Endpoint;
@@ -129,6 +130,8 @@ public final class ProjectOverview {
     /** Reads the route files of a directory and builds the overview. */
     public static Overview analyze(Path dir, CamelCatalog catalog) {
         Map<String, String> sources = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        // every Java file, read only when a route refers to one of its constants
+        Map<String, Supplier<String>> java = new LinkedHashMap<>();
         for (Path p : AuthoringTools.projectFiles(dir)) {
             String rel = AuthoringTools.relativePath(dir, p);
             if (IntegrationSummary.FILE_NAME.equals(rel)) {
@@ -142,8 +145,17 @@ public final class ProjectOverview {
                     // an unreadable file is left out
                 }
             }
+            if (rel.endsWith(".java")) {
+                java.put(rel, () -> {
+                    try {
+                        return Files.readString(p, StandardCharsets.UTF_8);
+                    } catch (IOException e) {
+                        return null;
+                    }
+                });
+            }
         }
-        return analyze(dir, sources, catalog);
+        return analyze(dir, sources, new ProjectConstantResolver(java, catalog), catalog);
     }
 
     /**
@@ -152,9 +164,16 @@ public final class ProjectOverview {
      * @param sources the content of each route file by its path relative to the directory
      */
     public static Overview analyze(Path dir, Map<String, String> sources, CamelCatalog catalog) {
+        Map<String, Supplier<String>> java = new LinkedHashMap<>();
+        sources.forEach((file, content) -> java.put(file, () -> content));
+        return analyze(dir, sources, new ProjectConstantResolver(java, catalog), catalog);
+    }
+
+    private static Overview analyze(
+            Path dir, Map<String, String> sources, ProjectConstantResolver constants, CamelCatalog catalog) {
         List<Route> routes = new ArrayList<>();
         for (Map.Entry<String, String> e : sources.entrySet()) {
-            routes.addAll(ProjectRoutes.parse(e.getKey(), e.getValue(), catalog));
+            routes.addAll(ProjectRoutes.parse(e.getKey(), e.getValue(), catalog, constants));
         }
         if (routes.size() > MAX_ROUTES) {
             routes = new ArrayList<>(routes.subList(0, MAX_ROUTES));
@@ -229,7 +248,7 @@ public final class ProjectOverview {
      * Whether the component talks to remote systems, as the catalog says; a component the catalog does not know is
      * taken as remote.
      */
-    static boolean isRemote(String scheme, CamelCatalog catalog) {
+    public static boolean isRemote(String scheme, CamelCatalog catalog) {
         ComponentModel model = componentModel(scheme.toLowerCase(Locale.ROOT), catalog);
         return model == null || model.isRemote();
     }
@@ -430,8 +449,8 @@ public final class ProjectOverview {
         long heuristic = flows.stream().filter(Route::heuristic).count();
         if (heuristic > 0) {
             answer.add(new Finding(
-                    "info", "java-dsl", heuristic + " Java DSL routes were read by pattern matching:"
-                                        + " endpoints built from constants or the endpoint DSL are not shown",
+                    "info", "java-dsl", heuristic + " Java DSL routes have parts that are only known at runtime"
+                                        + " (a lambda, a value from a helper method): their endpoints may be incomplete",
                     null));
         }
         if (truncated) {

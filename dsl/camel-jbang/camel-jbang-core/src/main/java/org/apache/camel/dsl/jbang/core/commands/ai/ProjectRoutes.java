@@ -38,6 +38,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.java.in.ConstantResolver;
 import org.apache.camel.util.URISupport;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -54,9 +55,10 @@ import org.yaml.snakeyaml.nodes.SequenceNode;
  * of a project needs to show how its routes connect; it is not a full model of the DSL.
  * <p/>
  * The YAML DSL (canonical and Kaoto style, route templates, templated routes, REST DSL, Integration and Kamelet
- * resources) and the XML DSL are read structurally. The Java DSL is read by looking for string literals in
- * {@code from}, {@code to}, {@code routeId} and friends, so a route built from constants or the endpoint DSL is missed;
- * such routes are marked {@code heuristic}.
+ * resources) and the XML DSL are read structurally. The Java DSL is read into the model by the Java DSL parser of
+ * camel-java-io ({@link JavaRouteReader}): constants, nesting and the endpoint DSL are seen; a route with a part the
+ * parser could not work out (a lambda, a value from a helper method) is marked {@code heuristic}. Only when the parser
+ * finds no route are string literals in {@code from}, {@code to} and friends looked for.
  */
 public final class ProjectRoutes {
 
@@ -149,6 +151,14 @@ public final class ProjectRoutes {
      * parse is not an error for an overview.
      */
     public static List<Route> parse(String file, String content, CamelCatalog catalog) {
+        return parse(file, content, catalog, null);
+    }
+
+    /**
+     * @param constants the constants a Java route refers to in other classes (other project files, component header
+     *                  constants); may be null
+     */
+    static List<Route> parse(String file, String content, CamelCatalog catalog, ConstantResolver constants) {
         if (content == null || content.isBlank()) {
             return List.of();
         }
@@ -161,7 +171,9 @@ public final class ProjectRoutes {
                 return new XmlReader(file, content, catalog).read();
             }
             if (lower.endsWith(".java")) {
-                return readJava(file, content, catalog);
+                // the Java DSL parser gives the model of the routes; the patterns only when it finds none
+                List<Route> routes = JavaRouteReader.read(file, content, catalog, constants);
+                return !routes.isEmpty() ? routes : readJava(file, content, catalog);
             }
         } catch (RuntimeException e) {
             // an overview skips what it cannot read; the validator reports what is wrong with the file
@@ -176,7 +188,7 @@ public final class ProjectRoutes {
      * the query and joins the brokers that are one system (jms, activemq, sjms, amqp), so a producer and a consumer of
      * the same destination match.
      */
-    static Endpoint endpoint(String uri, Map<String, Object> parameters, boolean dynamic, CamelCatalog catalog) {
+    public static Endpoint endpoint(String uri, Map<String, Object> parameters, boolean dynamic, CamelCatalog catalog) {
         if (uri == null || uri.isBlank()) {
             return null;
         }
@@ -655,7 +667,7 @@ public final class ProjectRoutes {
         }
     }
 
-    private static String joinPath(String base, String path) {
+    static String joinPath(String base, String path) {
         String b = base == null ? "" : base;
         String p = path == null ? "" : path;
         if (b.endsWith("/") && p.startsWith("/")) {

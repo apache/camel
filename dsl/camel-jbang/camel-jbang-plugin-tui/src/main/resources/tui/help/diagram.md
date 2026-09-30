@@ -94,8 +94,9 @@ source, the capabilities the AI project overview proposed (`✦`,
 italic), shared services (routes several groups use), Other, and
 Utility (plumbing: error handling, logging; `u` shows it). A box
 lists its route count, entry points and external systems; the
-panel at the bottom right shows the inside of the selected group,
-its routes as a tree from where messages enter.
+Flow panel at the bottom right shows the inside of the selected group:
+each route in flow order, with the routes and remote systems it
+hands off to (a log is left out).
 `Enter` goes down to the topology of all routes with the group's
 routes highlighted, `Enter` on a route opens its diagram,
 `Esc` goes back up. It follows edited routes and a new summary

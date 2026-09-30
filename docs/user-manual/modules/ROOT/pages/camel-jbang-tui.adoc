@@ -345,10 +345,12 @@ routes, such as a `direct` endpoint no route consumes. Arrows between boxes are 
 their routes, with the strongest kind (a call over a hand-off over an event). The Info panel on the
 left lists the routes, entry points, systems, and what the AI wrote about a capability.
 
-A small panel at the bottom right shows the inside of the selected group, what *Enter* goes down to:
-a tree from where messages enter its routes, along the links between them (call, async, event, on
-error), with a route of another group as a leaf named by its group, in that group's colour. It is not
-shown for an external system, whose Info panel lists its routes.
+A small *Flow* panel at the bottom right shows the inside of the selected group, what *Enter* goes
+down to: each of its routes in the order messages flow, with where messages enter it and what it hands
+off to. That is the routes it links to (call, async, event, on error; a route of another group is named
+with its group, in that group's colour) and the remote systems it sends to, such as a queue or an HTTP
+service. Sends that stay inside the integration, such as a log, are left out, as the catalog says the
+component is not remote. It is not shown for an external system, whose Info panel lists its routes.
 
 Press *e* to draw the external systems as boxes of their own, dashed as in the topology: the systems
 messages come in from above the groups, the ones they go out to below, each linked to the groups that

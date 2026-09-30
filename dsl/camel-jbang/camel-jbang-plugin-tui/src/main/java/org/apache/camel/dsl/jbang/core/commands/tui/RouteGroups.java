@@ -87,7 +87,23 @@ final class RouteGroups {
             t.setDaemon(true);
             t.start();
         }
-        return e != null ? e.tags() : Map.of();
+        return e != null ? withRunningIds(dir, e.tags()) : Map.of();
+    }
+
+    /** The tags also under the running id of a source route without one, as the topology names it. */
+    private static Map<String, Tag> withRunningIds(Path dir, Map<String, Tag> tags) {
+        Map<String, String> running = RouteKeys.runningIds(dir);
+        if (running.isEmpty()) {
+            return tags;
+        }
+        Map<String, Tag> answer = new LinkedHashMap<>(tags);
+        running.forEach((source, id) -> {
+            Tag t = tags.get(source);
+            if (t != null) {
+                answer.putIfAbsent(id, t);
+            }
+        });
+        return answer;
     }
 
     /** Reads the groups now; for tests and the first read. */

@@ -182,4 +182,35 @@ class LabelAndNoteTest {
         assertThat(after.route("store").description()).isEqualTo("Order storage");
         assertThat(after.route("x").note()).isEqualTo("X note.");
     }
+
+    /** A route without an id has a colon in its key: the description is still its own, full key or short form. */
+    @Test
+    void routesWithoutIdsInTheAnswer() {
+        String order = """
+                public class OrderRoute extends RouteBuilder {
+                    public void configure() {
+                        from("file:src/main/data").to("amqp:queue:order.queue");
+                    }
+                }
+                """;
+        String widget = """
+                public class WidgetGadgetRoute extends RouteBuilder {
+                    public void configure() {
+                        from("amqp:queue:order.queue").to("amqp:queue:widget.queue");
+                    }
+                }
+                """;
+        ProjectOverview.Overview o = ProjectOverview.analyze(Path.of("wg"), Map.of(
+                "src/main/java/sample/OrderRoute.java", order, "src/main/java/sample/WidgetGadgetRoute.java", widget),
+                ProjectOverviewTest.CATALOG);
+        IntegrationSummary.AiContent ai = IntegrationSummary.parseAnswer("""
+                DESCRIPTIONS:
+                - src/main/java/sample/OrderRoute.java:3: Order intake | Reads order files and queues them.
+                - `WidgetGadgetRoute.java:3`: Order classification | Sends each order to the widget or gadget queue.
+                """, o);
+        assertThat(ai.descriptions()).containsOnly(
+                Map.entry("src/main/java/sample/OrderRoute.java:3", "Order intake"),
+                Map.entry("src/main/java/sample/WidgetGadgetRoute.java:3", "Order classification"));
+        assertThat(ai.notes()).containsKey("src/main/java/sample/WidgetGadgetRoute.java:3");
+    }
 }

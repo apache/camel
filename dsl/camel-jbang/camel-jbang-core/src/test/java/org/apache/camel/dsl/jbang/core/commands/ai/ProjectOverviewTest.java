@@ -147,7 +147,8 @@ class ProjectOverviewTest {
 
         Route report = o.route("report");
         assertThat(report.format()).isEqualTo("java");
-        assertThat(report.heuristic()).isTrue();
+        // read into the model by the Java DSL parser: exact, not a guess
+        assertThat(report.heuristic()).isFalse();
         assertThat(report.produces()).extracting(ProjectRoutes.Endpoint::uri).containsExactly("file:reports",
                 "direct:nowhere");
 
@@ -187,7 +188,8 @@ class ProjectOverviewTest {
     void findings() {
         List<Finding> findings = overview().findings();
         assertThat(findings).extracting(Finding::kind)
-                .contains("missing-route", "no-description", "java-dsl", "pass-through");
+                .contains("missing-route", "no-description", "pass-through")
+                .doesNotContain("java-dsl");
         assertThat(findings).filteredOn(f -> "missing-route".equals(f.kind())).extracting(Finding::message)
                 .containsExactly("report sends to direct:nowhere but no route in the project consumes from it");
         // process-order -> urgent -> intake calls back, but intake reaches process-order over kafka: not a call cycle
@@ -243,5 +245,87 @@ class ProjectOverviewTest {
                 <routes><route id="a"><from uri="direct:&x;"/></route></routes>
                 """;
         assertThat(ProjectRoutes.parse("evil.xml", xxe, CATALOG)).isEmpty();
+    }
+
+    @Test
+    void javaRoutesReadIntoTheModel() {
+        String java = """
+                import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+
+                public class Shipping extends EndpointRouteBuilder {
+                    private static final String TOPIC = "orders";
+
+                    @Override
+                    public void configure() {
+                        errorHandler(deadLetterChannel("seda:dead"));
+
+                        from(kafka(TOPIC).groupId("shipping")).routeId("ship")
+                            .choice()
+                                .when(simple("${header.express}"))
+                                    .to(direct("express"))
+                                .otherwise()
+                                    .to("seda:standard")
+                            .end()
+                            .doTry()
+                                .to(http("carrier/api").httpMethod("POST"))
+                            .doCatch(Exception.class)
+                                .to("direct:retry")
+                            .end()
+                            .process(exchange -> exchange.getIn().setHeader("x", 1))
+                            .to(labelUri());
+
+                        from(scheduler("tick").delay(5000).schedulerProperties("foo", "bar")).routeId("tick")
+                            .log("tick");
+                    }
+                }
+                """;
+        Overview o = ProjectOverview.analyze(Path.of("shop"), Map.of("Shipping.java", java), CATALOG);
+        Route ship = o.route("ship");
+        // a constant, the endpoint DSL, nesting in choice and doTry, and the error path are all seen
+        assertThat(ship.from().uri()).isEqualTo("kafka:orders");
+        assertThat(ship.produces()).extracting(ProjectRoutes.Endpoint::uri)
+                .contains("direct:express", "seda:standard", "http:carrier/api", "direct:retry");
+        assertThat(ship.produces()).filteredOn(ProjectRoutes.Endpoint::onError)
+                .extracting(ProjectRoutes.Endpoint::uri).containsExactly("direct:retry");
+        // the lambda and the helper method are only known at runtime
+        assertThat(ship.heuristic()).isTrue();
+        assertThat(o.findings()).extracting(Finding::kind).contains("java-dsl");
+
+        Route tick = o.route("tick");
+        assertThat(tick.heuristic()).as("the catalog knows the scheduler prefix").isFalse();
+        assertThat(tick.from().uri()).isEqualTo("scheduler:tick");
+        assertThat(tick.logOnly()).isTrue();
+        assertThat(o.routes()).extracting(Route::kind).contains("errorHandler");
+    }
+
+    /** A header constant of a component, and a constant of another file of the project, are known. */
+    @Test
+    void constantsOfOtherClasses() {
+        String routes = """
+                package com.acme;
+
+                import org.apache.camel.component.kafka.KafkaConstants;
+
+                public class Routes extends RouteBuilder {
+                    public void configure() {
+                        from("seda:" + Names.QUEUE).routeId("in")
+                            .setHeader(KafkaConstants.KEY, constant("x"))
+                            .to("kafka:" + Names.TOPIC);
+                    }
+                }
+                """;
+        String names = """
+                package com.acme;
+
+                public final class Names {
+                    public static final String QUEUE = "orders";
+                    public static final String TOPIC = QUEUE + ".events";
+                }
+                """;
+        Overview o = ProjectOverview.analyze(Path.of("shop"), Map.of("Routes.java", routes, "Names.java", names), CATALOG);
+        Route in = o.route("in");
+        assertThat(in.from().uri()).isEqualTo("seda:orders");
+        assertThat(in.produces()).extracting(ProjectRoutes.Endpoint::uri).containsExactly("kafka:orders.events");
+        assertThat(in.heuristic()).as("the header constant comes from the catalog").isFalse();
     }
 }
