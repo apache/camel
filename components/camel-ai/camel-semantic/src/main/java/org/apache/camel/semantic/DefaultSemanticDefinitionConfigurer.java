@@ -53,8 +53,8 @@ public class DefaultSemanticDefinitionConfigurer implements SemanticDefinitionCo
         SemanticQuestions.get(context).replace("model:" + source, resource, questions);
     }
 
-    /** Export a snapshot of the registered questions and their effective decision policies. */
-    public static SemanticDefinition getDefinition(CamelContext context) {
+    @Override
+    public SemanticDefinition getDefinition(CamelContext context) {
         SemanticQuestions questions = context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class);
         if (questions == null) {
             return null;
@@ -68,8 +68,15 @@ public class DefaultSemanticDefinitionConfigurer implements SemanticDefinitionCo
             question.getCriteria().forEach(target::criterion);
             question.getLevels().forEach(target::level);
             if (question.getType() == SemanticQuestion.Type.BOOLEAN) {
-                target.threshold(question.getThreshold()).uncertainty(question.getUncertainty())
-                        .uncertaintyPolicy(question.getUncertaintyPolicy().name().toLowerCase(Locale.ROOT).replace('_', '-'));
+                if (question.getThreshold() != 0.5) {
+                    target.threshold(question.getThreshold());
+                }
+                if (question.getUncertainty() != 0) {
+                    target.uncertainty(question.getUncertainty());
+                }
+                if (question.getUncertaintyPolicy() != SemanticQuestion.UncertaintyPolicy.FAIL) {
+                    target.uncertaintyPolicy(question.getUncertaintyPolicy().name().toLowerCase(Locale.ROOT).replace('_', '-'));
+                }
             }
         });
         return definition;
