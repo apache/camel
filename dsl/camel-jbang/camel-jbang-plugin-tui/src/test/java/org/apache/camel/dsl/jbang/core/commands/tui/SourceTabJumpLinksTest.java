@@ -128,6 +128,37 @@ class SourceTabJumpLinksTest {
         assertThat(back.routeId()).isEqualTo("file:inbox");
     }
 
+    @Test
+    void xmlRoutesLinkToAndFromTheOthers() throws Exception {
+        // CAMEL-25196: XML routes have the jump links of the YAML and Java ones
+        Path orders = Files.writeString(dir.resolve("orders.xml"), """
+                <routes xmlns="http://camel.apache.org/schema/xml-io">
+                  <route id="orders">
+                    <from uri="file:inbox"/>
+                    <to uri="direct:billing"/>
+                  </route>
+                </routes>
+                """);
+        Path billing = Files.writeString(dir.resolve("billing.camel.yaml"), """
+                - route:
+                    id: billing
+                    from:
+                      uri: direct:billing
+                      steps:
+                        - to:
+                            uri: log:billing
+                """);
+        SourceTab tab = newTab();
+        assertThat(tab.loadDirectory(dir)).isTrue();
+
+        SourceViewer.JumpLink link = tab.computeJumpLinks(orders).get(3);
+        assertThat(link.routeId()).isEqualTo("billing");
+        assertThat(link.filePath()).isEqualTo(billing.toString());
+        SourceViewer.JumpLink back = tab.computeJumpLinks(billing).get(2);
+        assertThat(back.routeId()).isEqualTo("orders");
+        assertThat(back.targetLine()).isEqualTo(3);
+    }
+
     private static SourceTab newTab() {
         return new SourceTab(new MonitorContext(new AtomicReference<>(List.of()), new AtomicReference<>(List.of())));
     }
