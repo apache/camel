@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -105,7 +106,7 @@ class SourceTab extends AbstractTab {
         }
         configureEditAssist(file);
         sourceViewer.loadFile(file);
-        if (isCamelSourceFile(file)) {
+        if (hasJumpLinks(file)) {
             sourceViewer.setJumpLinks(computeJumpLinks(file));
         }
         if (!sourceViewer.isEditable()) {
@@ -144,7 +145,7 @@ class SourceTab extends AbstractTab {
         });
         sourceViewer.setOnFileCreated(this::refreshFiles);
         sourceViewer.setOnFileLoaded(p -> {
-            if (isCamelSourceFile(p)) {
+            if (hasJumpLinks(p)) {
                 sourceViewer.setJumpLinks(computeJumpLinks(p));
             }
         });
@@ -591,7 +592,7 @@ class SourceTab extends AbstractTab {
         String viewedPath = sourceViewer.getCurrentFilePath();
         if (viewedPath != null) {
             Path viewedFile = Path.of(viewedPath);
-            if (isCamelSourceFile(viewedFile)) {
+            if (hasJumpLinks(viewedFile)) {
                 sourceViewer.setJumpLinks(computeJumpLinks(viewedFile));
             }
         }
@@ -787,7 +788,7 @@ class SourceTab extends AbstractTab {
                 Path filePath = Path.of(entry.path());
                 configureEditAssist(filePath);
                 sourceViewer.loadFile(filePath);
-                if (isCamelSourceFile(filePath)) {
+                if (hasJumpLinks(filePath)) {
                     sourceViewer.setJumpLinks(computeJumpLinks(filePath));
                 }
                 focusOnViewer = true;
@@ -844,6 +845,23 @@ class SourceTab extends AbstractTab {
             return TuiHelper.isCamelXml(path);
         }
         return false;
+    }
+
+    /** Whether the file gets route jump links: Camel YAML and XML, and Java sources with a route builder. */
+    private boolean hasJumpLinks(Path path) {
+        return isCamelSourceFile(path) || isJavaRouteFile(path);
+    }
+
+    private static boolean isJavaRouteFile(Path path) {
+        String name = path.getFileName().toString();
+        if (!name.endsWith(".java")) {
+            return false;
+        }
+        try {
+            return JavaRouteScanner.isJavaRoutes(name, Files.readString(path, StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     private void renderFileList(Frame frame, Rect area) {
@@ -995,11 +1013,23 @@ class SourceTab extends AbstractTab {
     private void buildRouteIndex() {
         List<RouteEntry> fromEntries = new ArrayList<>();
         List<ToEntry> toEntries = new ArrayList<>();
+        // the Java sources of the folder, for the constants a route takes from another class
+        Map<String, Supplier<String>> javaSources = new LinkedHashMap<>();
+        for (FilesBrowser.FileEntry entry : entries) {
+            if (!entry.directory() && entry.name().endsWith(".java")) {
+                Path path = Path.of(entry.path());
+                javaSources.put(entry.path(), () -> readQuietly(path));
+            }
+        }
         for (FilesBrowser.FileEntry entry : entries) {
             if (entry.directory()) {
                 continue;
             }
             Path path = Path.of(entry.path());
+            if (isJavaRouteFile(path)) {
+                scanJavaRoutes(path, javaSources, fromEntries, toEntries);
+                continue;
+            }
             if (!isCamelSourceFile(path)) {
                 continue;
             }
@@ -1009,6 +1039,35 @@ class SourceTab extends AbstractTab {
         }
         routeIndex = fromEntries;
         toIndex = toEntries;
+    }
+
+    /** The routes of a Java source, read by the Java DSL parser without compiling or running it. */
+    private void scanJavaRoutes(
+            Path file, Map<String, Supplier<String>> javaSources, List<RouteEntry> fromEntries, List<ToEntry> toEntries) {
+        String content = readQuietly(file);
+        if (content == null) {
+            return;
+        }
+        String filePath = file.toString();
+        for (JavaRouteScanner.Route route : JavaRouteScanner.scan(content, javaSources, ArchitectureView.catalog())) {
+            int before = fromEntries.size();
+            emitRouteEntry(fromEntries, route.id(), route.fromUri(), filePath, route.line());
+            String routeId = fromEntries.size() > before ? fromEntries.get(before).routeId() : "";
+            for (JavaRouteScanner.To to : route.tos()) {
+                String toUri = stripQueryParams(to.uri());
+                if (toUri != null && !toUri.isEmpty()) {
+                    toEntries.add(new ToEntry(routeId, toUri, filePath, to.line()));
+                }
+            }
+        }
+    }
+
+    private static String readQuietly(Path file) {
+        try {
+            return Files.readString(file, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     private List<YamlRouteNodeScanner.NodeEntry> buildSourceNodeIndex() {
@@ -1172,6 +1231,21 @@ class SourceTab extends AbstractTab {
             fromUriToRoute.put(re.fromUri(), re);
         }
 
+        if (currentFilePath.endsWith(".java")) {
+            // the steps of a Java route are in the index with their lines, as the parser read them
+            for (ToEntry te : toIndex) {
+                if (currentFilePath.equals(te.filePath())) {
+                    RouteEntry target = fromUriToRoute.get(te.toUri());
+                    if (target != null && !target.routeId().equals(te.routeId())) {
+                        result.putIfAbsent(te.toLine(),
+                                new SourceViewer.JumpLink(target.routeId(), target.filePath(), target.fromLine()));
+                    }
+                }
+            }
+            addReverseLinks(currentFilePath, result);
+            return result;
+        }
+
         // forward links: to/toD/wireTap → target route's from
         boolean inLinkableBlock = false;
         int linkableBlockIndent = -1;
@@ -1238,7 +1312,12 @@ class SourceTab extends AbstractTab {
             }
         }
 
-        // reverse links: from URI ← routes that send to it (jump to the caller's to: line)
+        addReverseLinks(currentFilePath, result);
+        return result;
+    }
+
+    /** Reverse links: a from line to a route that sends to it (jumps to the caller's to line). */
+    private void addReverseLinks(String currentFilePath, Map<Integer, SourceViewer.JumpLink> result) {
         for (RouteEntry re : routeIndex) {
             if (!currentFilePath.equals(re.filePath())) {
                 continue;
@@ -1256,8 +1335,6 @@ class SourceTab extends AbstractTab {
                 }
             }
         }
-
-        return result;
     }
 
     private void openFileAt(String targetFilePath, int targetLine) {

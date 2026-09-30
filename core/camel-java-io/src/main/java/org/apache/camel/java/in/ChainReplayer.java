@@ -62,9 +62,13 @@ import org.apache.camel.java.in.JavaChainParser.Num;
 import org.apache.camel.java.in.JavaChainParser.Opaque;
 import org.apache.camel.java.in.JavaChainParser.Ref;
 import org.apache.camel.java.in.JavaChainParser.Str;
+import org.apache.camel.model.ChoiceDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.support.builder.Namespaces;
@@ -901,6 +905,14 @@ final class ChainReplayer {
             if (result instanceof LineNumberAware la && la.getLineNumber() < 0) {
                 la.setLineNumber(call.line());
             }
+            if (result instanceof RouteDefinition route && route.getInput() != null
+                    && route.getInput().getLineNumber() < 0) {
+                route.getInput().setLineNumber(call.line());
+            }
+            if (target instanceof ProcessorDefinition<?> step) {
+                // to(...) returns the route, not the step it adds: the step is the one without a line
+                lineOfNewSteps(step, call.line());
+            }
             return result;
         } catch (InvocationTargetException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
@@ -912,6 +924,37 @@ final class ChainReplayer {
             return new Unknown(call, "the DSL refused it: " + message);
         } catch (ReflectiveOperationException | RuntimeException e) {
             return new Unknown(call, "the DSL refused it: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Gives the line of a call to the steps it added. A DSL call appends to the step it is called on, or to the block
+     * open in it (the when of a choice, the body of a split), and an open block is always the last output; so the steps
+     * without a line on the path of last outputs are the new ones.
+     */
+    private static void lineOfNewSteps(ProcessorDefinition<?> step, int line) {
+        ProcessorDefinition<?> current = step;
+        for (int depth = 0; depth < JavaChainParser.MAX_DEPTH && current != null; depth++) {
+            if (current instanceof ChoiceDefinition choice) {
+                // the outputs of a choice are those of its open branch; the branches themselves are apart
+                for (WhenDefinition when : choice.getWhenClauses()) {
+                    if (when.getLineNumber() < 0) {
+                        when.setLineNumber(line);
+                    }
+                }
+                if (choice.getOtherwise() != null && choice.getOtherwise().getLineNumber() < 0) {
+                    choice.getOtherwise().setLineNumber(line);
+                }
+            }
+            List<ProcessorDefinition<?>> outputs = current.getOutputs();
+            if (outputs == null || outputs.isEmpty()) {
+                return;
+            }
+            ProcessorDefinition<?> last = outputs.get(outputs.size() - 1);
+            if (last.getLineNumber() < 0) {
+                last.setLineNumber(line);
+            }
+            current = last;
         }
     }
 

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,6 +40,7 @@ import org.xml.sax.InputSource;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.java.in.ConstantResolver;
+import org.apache.camel.java.in.JavaParseResult;
 import org.apache.camel.util.URISupport;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -179,6 +181,16 @@ public final class ProjectRoutes {
             // an overview skips what it cannot read; the validator reports what is wrong with the file
         }
         return List.of();
+    }
+
+    /**
+     * A Java DSL source read into the Camel model by the Java DSL parser, without compiling or running it: the endpoint
+     * DSL and the constants of the project's Java sources (by path, read when first needed) are resolved as in the
+     * project overview. For tools that need the steps and their lines, such as the TUI Source tab.
+     */
+    public static JavaParseResult parseJava(
+            String content, Map<String, Supplier<String>> javaSources, CamelCatalog catalog) {
+        return JavaRouteReader.parse(content, catalog, new ProjectConstantResolver(javaSources, catalog));
     }
 
     // ---- endpoints ----

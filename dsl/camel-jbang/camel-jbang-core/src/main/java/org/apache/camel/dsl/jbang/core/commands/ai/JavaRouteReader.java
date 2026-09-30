@@ -75,13 +75,7 @@ final class JavaRouteReader {
 
     /** The routes of the source, or an empty list when the parser finds none. */
     static List<Route> read(String file, String content, CamelCatalog catalog, ConstantResolver constants) {
-        LwJavaParser parser = new LwJavaParser();
-        if (catalog != null) {
-            parser.setEndpointDslResolver(new CatalogEndpointDslResolver(catalog));
-        }
-        parser.setConstantResolver(constants != null
-                ? constants : new ProjectConstantResolver(Map.of(), catalog));
-        JavaParseResult result = parser.parse(content);
+        JavaParseResult result = parse(content, catalog, constants);
         JavaRouteReader reader = new JavaRouteReader(file, catalog);
         List<Integer> starts = new ArrayList<>();
         result.routes().getRoutes().forEach(r -> starts.add(r.getLineNumber()));
@@ -98,6 +92,17 @@ final class JavaRouteReader {
         }
         reader.errorHandlers(result);
         return reader.routes;
+    }
+
+    /** The source read by the Java DSL parser, with the endpoint DSL and constants resolved through the catalog. */
+    static JavaParseResult parse(String content, CamelCatalog catalog, ConstantResolver constants) {
+        LwJavaParser parser = new LwJavaParser();
+        if (catalog != null) {
+            parser.setEndpointDslResolver(new CatalogEndpointDslResolver(catalog));
+        }
+        parser.setConstantResolver(constants != null
+                ? constants : new ProjectConstantResolver(Map.of(), catalog));
+        return parser.parse(content);
     }
 
     /** Whether something the parser did not work out lies between this route's line and the next route's. */
