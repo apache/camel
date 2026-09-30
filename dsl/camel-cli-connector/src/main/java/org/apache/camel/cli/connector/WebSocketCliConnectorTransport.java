@@ -409,7 +409,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
             c.ws.sendText(frame.toJson(), true).get(SEND_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             // a send that fails or hangs leaves the socket unusable
-            closed(c, "send failed: " + e.getMessage());
+            closed(c, "send failed: " + describe(e));
         }
     }
 
@@ -519,6 +519,11 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         }
     }
 
+    private static String describe(Throwable e) {
+        Throwable cause = e.getCause() != null ? e.getCause() : e;
+        return cause.getClass().getSimpleName() + (cause.getMessage() != null ? ": " + cause.getMessage() : "");
+    }
+
     private static JsonObject envelope(String type) {
         JsonObject frame = new JsonObject();
         frame.put("v", VERSION);
@@ -626,7 +631,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
 
         @Override
         public void onError(WebSocket webSocket, Throwable error) {
-            execute(() -> closed(this, "error: " + error.getMessage()));
+            LOG.debug("Camel CLI connector websocket error: {}", error.getMessage(), error);
+            execute(() -> closed(this, "error: " + describe(error)));
         }
 
         void close(int code, String reason) {
