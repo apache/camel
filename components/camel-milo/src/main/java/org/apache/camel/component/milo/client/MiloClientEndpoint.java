@@ -67,6 +67,12 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     private Double samplingInterval = 0.0;
 
     /**
+     * The queue size used for subscriptions
+     */
+    @UriParam(description = "queue size for subscription")
+    private Integer queueSize;
+
+    /**
      * The client configuration
      */
     @UriParam
@@ -178,6 +184,14 @@ public class MiloClientEndpoint extends DefaultEndpoint {
 
     public void setSamplingInterval(final Double samplingInterval) {
         this.samplingInterval = samplingInterval;
+    }
+
+    public Integer getQueueSize() {
+        return this.queueSize;
+    }
+
+    public void setQueueSize(final Integer queueSize) {
+        this.queueSize = queueSize;
     }
 
     public boolean isDefaultAwaitWrites() {

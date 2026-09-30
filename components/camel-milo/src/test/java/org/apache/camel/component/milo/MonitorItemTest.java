@@ -45,6 +45,7 @@ public class MonitorItemTest extends AbstractMiloServerTest {
     private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:opc.tcp://foo:bar@localhost:@@port@@?node="
                                                         + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI,
                                                                 "myitem1")
+                                                        + "&requestedPublishingInterval=2000&samplingInterval=100&queueSize=10"
                                                         + "&allowedSecurityPolicies=None&overrideHost=true";
 
     private static final String MOCK_TEST_1 = "mock:test1";
@@ -78,15 +79,16 @@ public class MonitorItemTest extends AbstractMiloServerTest {
     }
 
     /**
-     * Monitor multiple events
+     * Monitor multiple events With explicit parameters for requestedPublishingInterval, samplingInterval, and queueSize
      */
     @Test
     public void testMonitorItem1() throws Exception {
         /*
-         * we will wait 2 * 1_000 milliseconds between server updates since the
-         * default server update rate is 1_000 milliseconds
+         * we will wait 2 * 100 milliseconds between server updates since the
+         * sexplicit set update rate is 100 milliseconds (samplingInterval)
+         * With longer requestedPublishingInterval and bigger queueSize we should also get all updates
          */
-        final var time = 2 * 1_000;
+        final var time = 2 * 100;
         final var timeout = 10 * 1_000; // 10 seconds timeout for assertions
 
         // item 1 ... only this one receives
