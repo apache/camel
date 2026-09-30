@@ -18,12 +18,14 @@ package org.apache.camel.component.hivemq;
 
 import java.util.concurrent.TimeUnit;
 
+import com.hivemq.client.mqtt.MqttVersion;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -46,10 +48,12 @@ class HiveMQEndpointConnectTest {
         camelContext.stop();
     }
 
-    @Test
+    @ParameterizedTest(name = "{0}")
+    @EnumSource(MqttVersion.class)
     @DisplayName("Unreachable broker fails connect() within a bounded time instead of hanging")
-    void connectToUnreachableBrokerFailsBounded() {
+    void connectToUnreachableBrokerFailsBounded(MqttVersion mqttVersion) {
         HiveMQConfiguration configuration = new HiveMQConfiguration();
+        configuration.setMqttVersion(mqttVersion);
         configuration.setHost("127.0.0.1");
         configuration.setPort(1);
 
@@ -65,10 +69,12 @@ class HiveMQEndpointConnectTest {
                 .untilAsserted(() -> assertThat(client.isConnectedOrReconnecting()).isFalse());
     }
 
-    @Test
+    @ParameterizedTest(name = "{0}")
+    @EnumSource(MqttVersion.class)
     @DisplayName("stop() cancels automatic reconnect when the client is not CONNECTED")
-    void stopClientCancelsReconnect() {
+    void stopClientCancelsReconnect(MqttVersion mqttVersion) {
         HiveMQConfiguration configuration = new HiveMQConfiguration();
+        configuration.setMqttVersion(mqttVersion);
         configuration.setHost("127.0.0.1");
         configuration.setPort(1);
 

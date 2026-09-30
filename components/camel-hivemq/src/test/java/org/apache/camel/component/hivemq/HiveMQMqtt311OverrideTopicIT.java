@@ -18,10 +18,10 @@ package org.apache.camel.component.hivemq;
 
 import com.hivemq.client.mqtt.MqttVersion;
 
-public class HiveMQEmptyPayloadIT extends AbstractHiveMQEmptyPayloadIT {
+public class HiveMQMqtt311OverrideTopicIT extends AbstractHiveMQOverrideTopicIT {
 
     @Override
     protected MqttVersion mqttVersion() {
-        return MqttVersion.MQTT_5_0;
+        return MqttVersion.MQTT_3_1_1;
     }
 }

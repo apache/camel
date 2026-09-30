@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hivemq;
 
+import com.hivemq.client.mqtt.MqttVersion;
 import com.hivemq.client.mqtt.mqtt3.Mqtt3AsyncClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -23,6 +24,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -61,31 +64,42 @@ class HiveMQClientAccessTest {
         assertThat(consumer.getClient(Mqtt5AsyncClient.class)).isEmpty();
     }
 
-    @Test
-    @DisplayName("Producer exposes the underlying Mqtt5AsyncClient once created, not the Mqtt3 type")
-    void producerExposesMatchingClientTypeAfterConnectAttempt() {
-        HiveMQProducer producer = new HiveMQProducer(newEndpoint(unreachableConfiguration()));
+    @ParameterizedTest(name = "{0}")
+    @EnumSource(MqttVersion.class)
+    @DisplayName("Producer exposes the client matching its configured protocol version, not the other one")
+    void producerExposesMatchingClientTypeAfterConnectAttempt(MqttVersion mqttVersion) {
+        HiveMQProducer producer = new HiveMQProducer(newEndpoint(unreachableConfiguration(mqttVersion)));
 
         assertThatThrownBy(producer::doStart);
 
-        assertThat(producer.getClient(Mqtt5AsyncClient.class)).isPresent();
-        assertThat(producer.getClient(Mqtt3AsyncClient.class)).isEmpty();
+        assertThat(producer.getClient(matchingClientType(mqttVersion))).isPresent();
+        assertThat(producer.getClient(otherClientType(mqttVersion))).isEmpty();
     }
 
-    @Test
-    @DisplayName("Consumer exposes the underlying Mqtt5AsyncClient once created, not the Mqtt3 type")
-    void consumerExposesMatchingClientTypeAfterConnectAttempt() {
-        HiveMQConsumer consumer = new HiveMQConsumer(newEndpoint(unreachableConfiguration()), exchange -> {
+    @ParameterizedTest(name = "{0}")
+    @EnumSource(MqttVersion.class)
+    @DisplayName("Consumer exposes the client matching its configured protocol version, not the other one")
+    void consumerExposesMatchingClientTypeAfterConnectAttempt(MqttVersion mqttVersion) {
+        HiveMQConsumer consumer = new HiveMQConsumer(newEndpoint(unreachableConfiguration(mqttVersion)), exchange -> {
         });
 
         assertThatThrownBy(consumer::doStart);
 
-        assertThat(consumer.getClient(Mqtt5AsyncClient.class)).isPresent();
-        assertThat(consumer.getClient(Mqtt3AsyncClient.class)).isEmpty();
+        assertThat(consumer.getClient(matchingClientType(mqttVersion))).isPresent();
+        assertThat(consumer.getClient(otherClientType(mqttVersion))).isEmpty();
     }
 
-    private static HiveMQConfiguration unreachableConfiguration() {
+    private static Class<?> matchingClientType(MqttVersion mqttVersion) {
+        return mqttVersion == MqttVersion.MQTT_5_0 ? Mqtt5AsyncClient.class : Mqtt3AsyncClient.class;
+    }
+
+    private static Class<?> otherClientType(MqttVersion mqttVersion) {
+        return mqttVersion == MqttVersion.MQTT_5_0 ? Mqtt3AsyncClient.class : Mqtt5AsyncClient.class;
+    }
+
+    private static HiveMQConfiguration unreachableConfiguration(MqttVersion mqttVersion) {
         HiveMQConfiguration configuration = new HiveMQConfiguration();
+        configuration.setMqttVersion(mqttVersion);
         configuration.setHost("127.0.0.1");
         configuration.setPort(1);
         return configuration;
