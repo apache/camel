@@ -68,6 +68,8 @@ import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -913,6 +915,10 @@ final class ChainReplayer {
                 // to(...) returns the route, not the step it adds: the step is the one without a line
                 lineOfNewSteps(step, call.line());
             }
+            if (result instanceof SwitchDefinition sw) {
+                // doCase(value, uri), doCase(value).to(uri) and otherwise(uri) add to the switch, not its outputs
+                lineOfNewCases(sw, call.line());
+            }
             return result;
         } catch (InvocationTargetException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
@@ -955,6 +961,18 @@ final class ChainReplayer {
                 last.setLineNumber(line);
             }
             current = last;
+        }
+    }
+
+    /** Gives the line of a call to the switch cases and fallback it added. */
+    private static void lineOfNewCases(SwitchDefinition sw, int line) {
+        for (SwitchCaseDefinition c : sw.getCases()) {
+            if (c.getLineNumber() < 0) {
+                c.setLineNumber(line);
+            }
+        }
+        if (sw.getOtherwiseDefinition() != null && sw.getOtherwiseDefinition().getLineNumber() < 0) {
+            sw.getOtherwiseDefinition().setLineNumber(line);
         }
     }
 

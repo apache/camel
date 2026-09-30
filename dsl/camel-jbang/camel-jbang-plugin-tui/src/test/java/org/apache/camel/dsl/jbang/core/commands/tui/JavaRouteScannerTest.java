@@ -101,6 +101,27 @@ class JavaRouteScannerTest {
     }
 
     @Test
+    void switchCasesAndFallback() {
+        String source = """
+                public class R extends RouteBuilder {
+                    public void configure() {
+                        from("direct:tickets")
+                            .doSwitch(header("department"))
+                                .doCase("billing", "direct:billing")
+                                .doCase("technical").to("direct:technical")
+                                .otherwise("direct:review")
+                            .end();
+                    }
+                }
+                """;
+        List<JavaRouteScanner.Route> routes = JavaRouteScanner.scan(source, Map.of(), new DefaultCamelCatalog());
+        assertThat(routes.get(0).tos()).containsExactly(
+                new JavaRouteScanner.To("direct:billing", 4),
+                new JavaRouteScanner.To("direct:technical", 5),
+                new JavaRouteScanner.To("direct:review", 6));
+    }
+
+    @Test
     void onlyJavaSourcesWithARouteBuilder() {
         assertThat(JavaRouteScanner.isJavaRoutes("Orders.java", ORDERS)).isTrue();
         assertThat(JavaRouteScanner.isJavaRoutes("Endpoints.java", ENDPOINTS)).isFalse();

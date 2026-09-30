@@ -25,6 +25,8 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SplitDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.junit.jupiter.api.Test;
@@ -174,6 +176,26 @@ class LwJavaParserTest {
         assertThat(choice.getOtherwise().getLineNumber()).isEqualTo(8);
         assertThat(choice.getOtherwise().getOutputs().get(0).getLineNumber()).isEqualTo(9);
         assertThat(routes.get(1).getOutputs().get(0).getLineNumber()).isEqualTo(12);
+    }
+
+    @Test
+    void switchCasesHaveTheLineOfTheirCall() {
+        JavaParseResult result = new LwJavaParser().parse("""
+                from("direct:tickets")
+                    .doSwitch(header("department"))
+                        .doCase("billing", "direct:billing")
+                        .doCase("technical").id("tech").to("direct:technical")
+                        .otherwise("direct:review")
+                    .end();
+                """);
+        assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
+        SwitchDefinition sw = (SwitchDefinition) result.routes().getRoutes().get(0).getOutputs().get(0);
+        assertThat(sw.getLineNumber()).isEqualTo(2);
+        assertThat(sw.getCases()).extracting(SwitchCaseDefinition::getUri)
+                .containsExactly("direct:billing", "direct:technical");
+        assertThat(sw.getCases()).extracting(SwitchCaseDefinition::getLineNumber).containsExactly(3, 4);
+        assertThat(sw.getOtherwiseDefinition().getUri()).isEqualTo("direct:review");
+        assertThat(sw.getOtherwiseDefinition().getLineNumber()).isEqualTo(5);
     }
 
     @Test

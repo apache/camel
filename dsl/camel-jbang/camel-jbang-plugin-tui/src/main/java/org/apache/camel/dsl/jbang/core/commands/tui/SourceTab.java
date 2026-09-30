@@ -121,8 +121,9 @@ class SourceTab extends AbstractTab {
         return sourceViewer.isEditMode();
     }
 
+    /** Steps whose uri: lines are destinations; for switch those of its cases and fallback. */
     private static final Set<String> LINKABLE_KEYWORDS = Set.of(
-            "to", "toD", "wireTap", "enrich", "pollEnrich", "deadLetterChannel");
+            "to", "toD", "wireTap", "enrich", "pollEnrich", "deadLetterChannel", "switch");
 
     record RouteEntry(String routeId, String fromUri, String filePath, int fromLine) {
     }
@@ -541,7 +542,7 @@ class SourceTab extends AbstractTab {
         }
     }
 
-    private boolean loadDirectory(Path dir) {
+    boolean loadDirectory(Path dir) {
         return loadDirectory(dir, null);
     }
 
@@ -1195,8 +1196,8 @@ class SourceTab extends AbstractTab {
             }
 
             // uri: under a linkable block → index it as a to entry
-            if (inLinkableBlock && trimmed.startsWith("uri:")) {
-                String val = extractYamlValue(trimmed, "uri");
+            if (inLinkableBlock && isUriLine(trimmed)) {
+                String val = extractYamlValue(uriLine(trimmed), "uri");
                 if (val != null && !val.isEmpty()) {
                     String toUri = stripQueryParams(val);
                     if (toUri != null && !toUri.isEmpty()) {
@@ -1223,7 +1224,7 @@ class SourceTab extends AbstractTab {
         index.add(new RouteEntry(routeId, baseUri, filePath, fromLine));
     }
 
-    private Map<Integer, SourceViewer.JumpLink> computeJumpLinks(Path currentFile) {
+    Map<Integer, SourceViewer.JumpLink> computeJumpLinks(Path currentFile) {
         if (routeIndex.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -1308,8 +1309,8 @@ class SourceTab extends AbstractTab {
                 }
             }
 
-            if (uri == null && inLinkableBlock && trimmed.startsWith("uri:")) {
-                String val = extractYamlValue(trimmed, "uri");
+            if (uri == null && inLinkableBlock && isUriLine(trimmed)) {
+                String val = extractYamlValue(uriLine(trimmed), "uri");
                 if (val != null && !val.isEmpty()) {
                     uri = val;
                 }
@@ -1378,6 +1379,15 @@ class SourceTab extends AbstractTab {
 
     private void handleJumpLink(SourceViewer.JumpLink link) {
         openFileAt(link.filePath(), link.targetLine());
+    }
+
+    /** A uri: line, also as the first key of a list item: - uri: direct:billing in the cases of a switch. */
+    private static boolean isUriLine(String trimmed) {
+        return trimmed.startsWith("uri:") || trimmed.startsWith("- uri:");
+    }
+
+    private static String uriLine(String trimmed) {
+        return trimmed.startsWith("- ") ? trimmed.substring(2).trim() : trimmed;
     }
 
     static String extractYamlValue(String trimmed, String key) {

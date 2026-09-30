@@ -33,6 +33,8 @@ import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.language.ConstantExpression;
@@ -101,6 +103,15 @@ final class JavaRouteScanner {
         if (uri != null && p.getLineNumber() > 0) {
             tos.add(new To(uri(uri), p.getLineNumber() - 1));
         }
+        if (p instanceof SwitchDefinition sw) {
+            // the destinations of a switch are its cases and fallback, not outputs
+            for (SwitchCaseDefinition c : sw.getCases()) {
+                add(tos, c.getUri(), c.getLineNumber());
+            }
+            if (sw.getOtherwiseDefinition() != null) {
+                add(tos, sw.getOtherwiseDefinition().getUri(), sw.getOtherwiseDefinition().getLineNumber());
+            }
+        }
         for (ProcessorDefinition<?> child : p.getOutputs()) {
             walk(child, tos, seen, depth + 1);
         }
@@ -109,6 +120,12 @@ final class JavaRouteScanner {
                 walk(c, tos, seen, depth + 1);
             }
             walk(t.getFinallyClause(), tos, seen, depth + 1);
+        }
+    }
+
+    private static void add(List<To> tos, String uri, int line) {
+        if (uri != null && line > 0) {
+            tos.add(new To(uri(uri), line - 1));
         }
     }
 
