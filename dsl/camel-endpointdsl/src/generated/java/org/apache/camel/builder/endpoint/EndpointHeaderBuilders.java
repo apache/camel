@@ -3022,6 +3022,20 @@ public class EndpointHeaderBuilders {
         return OpenAIEndpointBuilderFactory.OpenAIHeaderNameBuilder.INSTANCE;
     }
     /**
+     * OpenFGA (camel-openfga)
+     * Authorize an Exchange against an OpenFGA relationship graph, and maintain
+     * the relationship tuples it is authorized against.
+     * 
+     * Category: security
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-openfga
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static OpenFgaEndpointBuilderFactory.OpenFgaHeaderNameBuilder openfga() {
+        return OpenFgaEndpointBuilderFactory.OpenFgaHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * OpenSearch (camel-opensearch)
      * Send requests to OpenSearch via Java Client API.
      * 

@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.1",
+  "type_definitions": [
+    { "type": "user", "relations": {} },
+    {
+      "type": "document",
+      "relations": {
+        "owner": { "this": {} },
+        "reader": { "union": { "child": [ { "this": {} }, { "computedUserset": { "relation": "owner" } } ] } },
+        "writer": { "union": { "child": [ { "this": {} }, { "computedUserset": { "relation": "owner" } } ] } }
+      },
+      "metadata": {
+        "relations": {
+          "owner":  { "directly_related_user_types": [ { "type": "user" } ] },
+          "reader": { "directly_related_user_types": [ { "type": "user" }, { "type": "user", "wildcard": {} } ] },
+          "writer": { "directly_related_user_types": [ { "type": "user" } ] }
+        }
+      }
+    }
+  ]
+}

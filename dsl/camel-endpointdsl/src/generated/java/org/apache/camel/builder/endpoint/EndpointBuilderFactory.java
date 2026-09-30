@@ -290,6 +290,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.OnceEndpointBuilderFactory.OnceBuilders,
             org.apache.camel.builder.endpoint.dsl.OpaEndpointBuilderFactory.OpaBuilders,
             org.apache.camel.builder.endpoint.dsl.OpenAIEndpointBuilderFactory.OpenAIBuilders,
+            org.apache.camel.builder.endpoint.dsl.OpenFgaEndpointBuilderFactory.OpenFgaBuilders,
             org.apache.camel.builder.endpoint.dsl.OpenTelemetryEndpointBuilderFactory.OpenTelemetryBuilders,
             org.apache.camel.builder.endpoint.dsl.OpensearchEndpointBuilderFactory.OpensearchBuilders,
             org.apache.camel.builder.endpoint.dsl.OpenshiftBuildConfigsEndpointBuilderFactory.OpenshiftBuildConfigsBuilders,
