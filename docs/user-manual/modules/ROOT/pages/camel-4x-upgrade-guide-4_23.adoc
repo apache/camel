@@ -2928,6 +2928,23 @@ default, stop seeing in-progress aggregations re-delivered, and start seeing gen
 now also holds one entry per completed and not yet confirmed exchange; those entries are removed on
 confirmation.
 
+=== camel-caffeine, camel-ehcache - the aggregation repositories keep completed exchanges for recovery
+
+`CaffeineAggregationRepository` and `EhcacheAggregationRepository` implement `RecoverableAggregationRepository`,
+but like the Infinispan repository before 4.23 they had no recovery store: `remove` deleted the completed exchange,
+`confirm` removed the exchange id from a cache keyed by correlation key, and `scan` returned the correlation keys of
+the aggregations still in progress. The recovery task therefore sent aggregations that were still in progress
+(marked `CamelRedelivered`, and to the dead letter channel once `maximumRedeliveries` was reached), while exchanges
+that failed after completion could never be recovered.
+
+A completed exchange is now kept in the same cache under a `camel-recovery:<exchange id>` key until it is
+confirmed, which is what `scan` reports and `recover` reads. `getKeys` reports only the aggregations in progress.
+
+Routes that set `useRecovery=false` are unaffected. Routes that left recovery enabled, which is the default, no
+longer see aggregations in progress sent by the recovery task, and a completed exchange whose processing failed is
+now recovered. The cache now also holds one entry per completed and not yet confirmed exchange; those entries are
+removed on confirmation. A cache with a size limit or an expiry applies it to these entries as well.
+
 === camel-qdrant - the PayloadSelector header is now honoured
 
 `QdrantHeaders.PAYLOAD_SELECTOR` (`CamelQdrantPointsPayloadSelector`) was declared and advertised in
