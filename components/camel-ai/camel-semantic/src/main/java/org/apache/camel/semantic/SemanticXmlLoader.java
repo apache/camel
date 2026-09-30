@@ -17,14 +17,17 @@
 package org.apache.camel.semantic;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteBuilderLifecycleStrategy;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.support.CachedResource;
@@ -38,6 +41,8 @@ final class SemanticXmlLoader extends RoutesBuilderLoaderSupport {
     static final String REGISTRY_KEY = "semantic-xml-routes-loader";
     private RoutesBuilderLoader delegate;
     private final SemanticXmlRoutesBuilderLoader semantic = new SemanticXmlRoutesBuilderLoader();
+    private Registry loaderRegistry;
+    private List<RoutesBuilderLoader> otherLoaders = List.of();
 
     @Override
     public String getSupportedExtension() {
@@ -46,10 +51,23 @@ final class SemanticXmlLoader extends RoutesBuilderLoaderSupport {
 
     @Override
     public boolean isSupportedExtension(String extension) {
-        // DefaultCamelContext may build before application beans are bound. Give later custom loaders precedence too.
         return ("xml".equals(extension) || extension.endsWith(".xml"))
-                && getCamelContext().getRegistry().findByType(RoutesBuilderLoader.class).stream()
-                        .noneMatch(loader -> loader != this && loader.isSupportedExtension(extension));
+                && otherLoaders().stream().noneMatch(loader -> loader.isSupportedExtension(extension));
+    }
+
+    private synchronized List<RoutesBuilderLoader> otherLoaders() {
+        Registry registry = getCamelContext().getRegistry();
+        if (loaderRegistry != registry) {
+            // Discover lazily: the context may build before application loaders are registered.
+            otherLoaders = registry.findByType(RoutesBuilderLoader.class).stream().filter(loader -> loader != this).toList();
+            loaderRegistry = registry;
+        }
+        return otherLoaders;
+    }
+
+    synchronized void resetLoaderDiscovery() {
+        loaderRegistry = null;
+        otherLoaders = List.of();
     }
 
     @Override
@@ -107,6 +125,7 @@ final class SemanticXmlLoader extends RoutesBuilderLoaderSupport {
     protected void doStop() throws Exception {
         ServiceHelper.stopAndShutdownServices(delegate, semantic);
         delegate = null;
+        resetLoaderDiscovery();
         super.doStop();
     }
 
@@ -141,16 +160,36 @@ final class SemanticXmlLoader extends RoutesBuilderLoaderSupport {
                             if (!"routes".equals(reader.getLocalName())) {
                                 return false;
                             }
-                        } else if (depth == 2 && "semantic".equals(reader.getLocalName())) {
-                            return true;
+                        } else if (depth == 2) {
+                            if ("semantic".equals(reader.getLocalName())) {
+                                return true;
+                            }
+                            // Only direct children can declare questions. Consume nested route content without
+                            // inspecting names or namespaces, then continue looking for declarations after routes.
+                            skipSubtree(reader);
+                            depth--;
                         }
                     } else if (event == XMLStreamConstants.END_ELEMENT) {
-                        depth--;
+                        if (--depth == 0) {
+                            return false;
+                        }
                     }
                 }
                 return false;
             } finally {
                 reader.close();
+            }
+        }
+    }
+
+    private static void skipSubtree(XMLStreamReader reader) throws XMLStreamException {
+        int depth = 1;
+        while (depth != 0) {
+            int event = reader.next();
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                depth++;
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
+                depth--;
             }
         }
     }

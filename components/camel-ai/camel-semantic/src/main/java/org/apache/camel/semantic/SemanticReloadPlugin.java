@@ -26,7 +26,7 @@ import org.apache.camel.support.service.ServiceHelper;
 
 /** Installs optional XML declaration support and removes definitions from deleted files before route reload. */
 public class SemanticReloadPlugin implements ContextServicePlugin {
-    private RoutesBuilderLoader xmlLoader;
+    private SemanticXmlLoader xmlLoader;
     private LifecycleStrategy lifecycle;
 
     @Override
@@ -37,6 +37,9 @@ public class SemanticReloadPlugin implements ContextServicePlugin {
             public void onContextInitializing(CamelContext camelContext) {
                 // Applications can replace the registry after the context's eager build phase.
                 installXmlLoader(camelContext);
+                if (xmlLoader != null) {
+                    xmlLoader.resetLoaderDiscovery();
+                }
             }
         };
         context.addLifecycleStrategy(lifecycle);
@@ -82,6 +85,9 @@ public class SemanticReloadPlugin implements ContextServicePlugin {
 
     @Override
     public void onReload(CamelContext context) {
+        if (xmlLoader != null) {
+            xmlLoader.resetLoaderDiscovery();
+        }
         SemanticQuestions questions = context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class);
         if (questions != null) {
             questions.removeDeletedResources();
