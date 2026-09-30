@@ -275,6 +275,9 @@ if available, or the version of the currently running `camel-jbang`.
 
 Unless you pass `--fresh`, the content from Quarkus Extension Registry is fetched at most once a day
 and cached under `~/.camel/quarkus-extension-registries`.
+The Quarkus Platform resolved for a released Camel version is cached next to it for 7 days,
+but only when the platform carries exactly that Camel version; a `-SNAPSHOT` Camel version is never cached.
+`--fresh` clears both caches.
 You may force using the cached resource by passing `--download=false`.
 
 Finally, the default base URI `https://registry.quarkus.io` of Quarkus Extension Registry

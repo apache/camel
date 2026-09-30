@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -212,8 +214,27 @@ public class QuarkusHelperTest {
     private static QuarkusPlatformBom find(
             String camelVersion, Function<MavenGav, MavenArtifact> mavenResolver, boolean download, boolean fresh,
             Path registriesDir) {
+        return find(camelVersion, mavenResolver, download, fresh, registriesDir, Clock.systemUTC());
+    }
+
+    private static QuarkusPlatformBom find(
+            String camelVersion, Function<MavenGav, MavenArtifact> mavenResolver, boolean download, boolean fresh,
+            Path registriesDir, Clock clock) {
         return QuarkusHelper.findQuarkusPlatformBom(
-                camelVersion, mavenResolver, download, wireMock.baseUrl(), fresh, registriesDir);
+                camelVersion, mavenResolver, download, wireMock.baseUrl(), fresh, registriesDir, clock);
+    }
+
+    private static Clock clockAt(Instant instant) {
+        return Clock.fixed(instant, ZoneOffset.UTC);
+    }
+
+    private static QuarkusPlatformBom find(String camelVersion, Path registriesDir, Clock clock) {
+        return find(camelVersion, QuarkusHelperTest::resolve, true, false, registriesDir, clock);
+    }
+
+    private static long resolvedAt(Path mappingFile, String camelVersion) throws Exception {
+        JsonObject mappings = (JsonObject) Jsoner.deserialize(Files.readString(mappingFile));
+        return ((Number) mappings.getMap(camelVersion).get("resolvedAt")).longValue();
     }
 
     private static void backdate(Path file) throws IOException {
@@ -225,7 +246,8 @@ public class QuarkusHelperTest {
         stubRegistry();
         Path registriesDir = newRegistriesDir();
 
-        QuarkusPlatformBom bom = find("4.14.5", true, false, registriesDir);
+        Instant start = Instant.parse("2026-01-01T00:00:00Z");
+        QuarkusPlatformBom bom = find("4.14.5", registriesDir, clockAt(start));
 
         Assertions.assertThat(bom).isEqualTo(
                 new QuarkusPlatformBom("io.quarkus.platform", CAMEL_4_14_5_PLATFORM, "4.14.5", wireMock.baseUrl()));
@@ -234,7 +256,8 @@ public class QuarkusHelperTest {
         Assertions.assertThat(entry)
                 .containsEntry("groupId", "io.quarkus.platform")
                 .containsEntry("version", CAMEL_4_14_5_PLATFORM)
-                .hasSize(2);
+                .hasSize(3);
+        Assertions.assertThat(resolvedAt(mappingFile(registriesDir), "4.14.5")).isEqualTo(start.toEpochMilli());
     }
 
     @Test
@@ -260,7 +283,6 @@ public class QuarkusHelperTest {
         QuarkusPlatformBom first = find("4.14.5", true, false, registriesDir);
 
         backdate(registryCacheFile(registriesDir));
-        backdate(mappingFile(registriesDir));
         QuarkusPlatformBom second = find("4.14.5", true, false, registriesDir);
 
         Assertions.assertThat(second).isEqualTo(first);
@@ -289,7 +311,8 @@ public class QuarkusHelperTest {
         Path registriesDir = newRegistriesDir();
         Path mappingFile = mappingFile(registriesDir);
         Files.createDirectories(mappingFile.getParent());
-        String planted = "{\"4.14.5-SNAPSHOT\":{\"groupId\":\"planted\",\"version\":\"0\"}}";
+        String planted = "{\"4.14.5-SNAPSHOT\":{\"groupId\":\"planted\",\"version\":\"0\",\"resolvedAt\":"
+                         + System.currentTimeMillis() + "}}";
         Files.writeString(mappingFile, planted);
 
         QuarkusPlatformBom bom = find("4.14.5-SNAPSHOT", true, false, registriesDir);
@@ -305,9 +328,10 @@ public class QuarkusHelperTest {
         Path registriesDir = newRegistriesDir();
         Path mappingFile = mappingFile(registriesDir);
         Files.createDirectories(mappingFile.getParent());
-        Files.writeString(mappingFile, "{\"4.14.5\":{\"groupId\":\"planted\",\"version\":\"0\"}}");
+        Files.writeString(mappingFile, "{\"4.14.5\":{\"groupId\":\"planted\",\"version\":\"0\",\"resolvedAt\":"
+                                       + System.currentTimeMillis() + "}}");
 
-        // the planted entry is not trusted: the registry is asked and the entry rebuilt
+        // the planted entry is fresh enough to be trusted, but --fresh does not trust it: the registry is asked
         QuarkusPlatformBom bom = find("4.14.5", true, true, registriesDir);
         Assertions.assertThat(bom.groupId()).isEqualTo("io.quarkus.platform");
         Assertions.assertThat(bom.version()).isEqualTo(CAMEL_4_14_5_PLATFORM);
@@ -370,14 +394,16 @@ public class QuarkusHelperTest {
         QuarkusPlatformBom expected = find("4.14.5", true, false, registriesDir);
         Path mappingFile = mappingFile(registriesDir);
 
+        String now = String.valueOf(System.currentTimeMillis());
         for (String corrupt : List.of(
                 "",
                 "not json {",
                 "[1, 2]",
                 "{\"4.14.5\":\"3.27.3.1\"}",
-                "{\"4.14.5\":{\"version\":\"3.27.3.1\"}}",
-                "{\"4.14.5\":{\"groupId\":\" \",\"version\":\"3.27.3.1\"}}",
-                "{\"4.14.5\":{\"groupId\":\"io.quarkus.platform\",\"version\":7}}")) {
+                "{\"4.14.5\":{\"version\":\"3.27.3.1\",\"resolvedAt\":" + now + "}}",
+                "{\"4.14.5\":{\"groupId\":\" \",\"version\":\"3.27.3.1\",\"resolvedAt\":" + now + "}}",
+                "{\"4.14.5\":{\"groupId\":\"io.quarkus.platform\",\"version\":7,\"resolvedAt\":" + now + "}}",
+                "{\"4.14.5\":{\"groupId\":\"io.quarkus.platform\",\"version\":\"3.27.3.1\",\"resolvedAt\":\"yesterday\"}}")) {
             Files.writeString(mappingFile, corrupt);
 
             Assertions.assertThat(find("4.14.5", true, false, registriesDir)).as(corrupt).isEqualTo(expected);
@@ -397,6 +423,7 @@ public class QuarkusHelperTest {
 
         Assertions.assertThat(bom.version()).isEqualTo(CAMEL_4_14_5_PLATFORM);
         Assertions.assertThat(mappingFile(registriesDir)).isDirectory();
+        assertNoTempFiles(registriesDir);
     }
 
     @Test
@@ -410,9 +437,125 @@ public class QuarkusHelperTest {
         baseUri = baseUri.substring(0, baseUri.length() - 1);
 
         QuarkusPlatformBom bom = QuarkusHelper.findQuarkusPlatformBom(
-                "4.14.5", QuarkusHelperTest::resolve, true, baseUri, false, registriesDir);
+                "4.14.5", QuarkusHelperTest::resolve, true, baseUri, false, registriesDir, Clock.systemUTC());
 
         Assertions.assertThat(bom.version()).isEqualTo(CAMEL_4_14_5_PLATFORM);
         Assertions.assertThat(registriesDir).isEmptyDirectory();
+    }
+
+    private static void assertNoTempFiles(Path registriesDir) throws IOException {
+        try (Stream<Path> files = Files.list(mappingFile(registriesDir).getParent())) {
+            Assertions.assertThat(files.map(f -> f.getFileName().toString())).noneMatch(name -> name.endsWith(".tmp"));
+        }
+    }
+
+    @Test
+    void entryWithinTtlIsAHit() throws Exception {
+        stubRegistry();
+        Path registriesDir = newRegistriesDir();
+        Instant start = Instant.parse("2026-01-01T00:00:00Z");
+        QuarkusPlatformBom first = find("4.14.5", registriesDir, clockAt(start));
+        wireMock.resetRequests();
+
+        QuarkusPlatformBom second = find("4.14.5", platform -> {
+            throw new IllegalStateException("Maven should not be asked for " + platform);
+        }, true, false, registriesDir, clockAt(start.plus(Duration.ofDays(6))));
+
+        Assertions.assertThat(second).isEqualTo(first);
+        verifyRegistryRequests(0);
+        Assertions.assertThat(resolvedAt(mappingFile(registriesDir), "4.14.5")).isEqualTo(start.toEpochMilli());
+    }
+
+    @Test
+    void entryPastTtlIsRefreshed() throws Exception {
+        stubRegistry();
+        Path registriesDir = newRegistriesDir();
+        Instant start = Instant.parse("2026-01-01T00:00:00Z");
+        QuarkusPlatformBom first = find("4.14.5", registriesDir, clockAt(start));
+
+        // the registry answers from its own cache for a day, so age it to see the mapping being asked again
+        backdate(registryCacheFile(registriesDir));
+        Instant later = start.plus(Duration.ofDays(8));
+        QuarkusPlatformBom second = find("4.14.5", registriesDir, clockAt(later));
+
+        Assertions.assertThat(second).isEqualTo(first);
+        verifyRegistryRequests(2);
+        Assertions.assertThat(resolvedAt(mappingFile(registriesDir), "4.14.5")).isEqualTo(later.toEpochMilli());
+    }
+
+    @Test
+    void respinIsPickedUpAfterTtl() throws Exception {
+        stubRegistry();
+        Path registriesDir = newRegistriesDir();
+        Instant start = Instant.parse("2026-01-01T00:00:00Z");
+        Assertions.assertThat(find("4.14.5", registriesDir, clockAt(start)).version()).isEqualTo(CAMEL_4_14_5_PLATFORM);
+
+        // the registry now has a respin for the same Camel version; its BOM is the same document as 3.27.3.1
+        wireMock.resetAll();
+        wireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/client/platforms/all"))
+                .willReturn(WireMock.ok()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(Files.readString(
+                                Path.of("target/test-classes/QuarkusHelperTest/quarkus-registry-client-platforms.json"))
+                                .replace(CAMEL_4_14_5_PLATFORM, "3.27.4"))));
+        Function<MavenGav, MavenArtifact> resolver = gav -> resolve(MavenGav.fromCoordinates(
+                gav.getGroupId(), gav.getArtifactId(),
+                "3.27.4".equals(gav.getVersion()) ? CAMEL_4_14_5_PLATFORM : gav.getVersion(), "pom", null));
+        backdate(registryCacheFile(registriesDir));
+
+        QuarkusPlatformBom bom = find("4.14.5", resolver, true, false, registriesDir,
+                clockAt(start.plus(Duration.ofDays(8))));
+
+        Assertions.assertThat(bom.version()).isEqualTo("3.27.4");
+        Assertions.assertThat(bom.camelVersion()).isEqualTo("4.14.5");
+        verifyRegistryRequests(1);
+        Assertions.assertThat(mappingFile(registriesDir)).content().contains("3.27.4").doesNotContain(CAMEL_4_14_5_PLATFORM);
+    }
+
+    @Test
+    void entryWithoutTimestampIsAMiss() throws Exception {
+        stubRegistry();
+        Path registriesDir = newRegistriesDir();
+        Path mappingFile = mappingFile(registriesDir);
+        Files.createDirectories(mappingFile.getParent());
+        Files.writeString(mappingFile,
+                "{\"4.14.5\":{\"groupId\":\"planted\",\"version\":\"0\"}}");
+
+        QuarkusPlatformBom bom = find("4.14.5", true, false, registriesDir);
+
+        Assertions.assertThat(bom.groupId()).isEqualTo("io.quarkus.platform");
+        Assertions.assertThat(bom.version()).isEqualTo(CAMEL_4_14_5_PLATFORM);
+        verifyRegistryRequests(1);
+        Assertions.assertThat(mappingFile).content().doesNotContain("planted").contains("resolvedAt");
+    }
+
+    @Test
+    void entryFromTheFutureIsAMiss() throws Exception {
+        stubRegistry();
+        Path registriesDir = newRegistriesDir();
+        Instant start = Instant.parse("2026-01-01T00:00:00Z");
+        find("4.14.5", registriesDir, clockAt(start.plus(Duration.ofDays(1))));
+        backdate(registryCacheFile(registriesDir));
+
+        // the clock went backwards since the entry was written
+        find("4.14.5", registriesDir, clockAt(start));
+
+        verifyRegistryRequests(2);
+        Assertions.assertThat(resolvedAt(mappingFile(registriesDir), "4.14.5")).isEqualTo(start.toEpochMilli());
+    }
+
+    @Test
+    void storeLeavesNoTempFiles() throws Exception {
+        stubRegistry();
+        Path registriesDir = newRegistriesDir();
+
+        find("4.14.5", true, false, registriesDir);
+        find("4.14.5", true, true, registriesDir);
+
+        assertNoTempFiles(registriesDir);
+        try (Stream<Path> files = Files.list(mappingFile(registriesDir).getParent())) {
+            Assertions.assertThat(files.map(f -> f.getFileName().toString()))
+                    .containsExactlyInAnyOrder("all.json", "platform-mapping.json");
+        }
     }
 }
