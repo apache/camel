@@ -150,6 +150,52 @@ public interface SpiffeEndpointBuilderFactory {
             doSetProperty("spiffeSocketPath", spiffeSocketPath);
             return this;
         }
+        /**
+         * What the fetchX509Svid operation returns in the message body.
+         * Defaults to chain: the X.509 certificate chain without the private
+         * key, so a route never handles key material unless it asks for it.
+         * Choose svid to get the whole X509Svid including the private key
+         * (needed for programmatic mTLS), or id to leave the body untouched.
+         * The SPIFFE ID and expiry are exposed through the CamelSpiffeSpiffeId
+         * and CamelSpiffeExpiry headers in every case.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.spiffe.SpiffeX509Response</code>
+         * type.
+         * 
+         * Default: chain
+         * Group: security
+         * 
+         * @param x509Response the value to set
+         * @return the dsl builder
+         */
+        default SpiffeEndpointBuilder x509Response(org.apache.camel.component.spiffe.SpiffeX509Response x509Response) {
+            doSetProperty("x509Response", x509Response);
+            return this;
+        }
+        /**
+         * What the fetchX509Svid operation returns in the message body.
+         * Defaults to chain: the X.509 certificate chain without the private
+         * key, so a route never handles key material unless it asks for it.
+         * Choose svid to get the whole X509Svid including the private key
+         * (needed for programmatic mTLS), or id to leave the body untouched.
+         * The SPIFFE ID and expiry are exposed through the CamelSpiffeSpiffeId
+         * and CamelSpiffeExpiry headers in every case.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.spiffe.SpiffeX509Response</code>
+         * type.
+         * 
+         * Default: chain
+         * Group: security
+         * 
+         * @param x509Response the value to set
+         * @return the dsl builder
+         */
+        default SpiffeEndpointBuilder x509Response(String x509Response) {
+            doSetProperty("x509Response", x509Response);
+            return this;
+        }
     }
 
     /**
@@ -366,7 +412,8 @@ public interface SpiffeEndpointBuilderFactory {
             return "CamelSpiffeSpiffeId";
         }
         /**
-         * The expiry of the returned JWT-SVID.
+         * The expiry of the returned SVID: the token expiry for fetchJwtSvid,
+         * or the leaf certificate's notAfter for fetchX509Svid.
          * 
          * The option is a: {@code java.util.Date} type.
          * 

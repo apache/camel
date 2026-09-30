@@ -57,9 +57,12 @@ For advanced scenarios an already-configured `io.spiffe.workloadapi.WorkloadApiC
 
 The component supports the following producer operations:
 
-* `fetchX509Svid` — fetches the default X.509-SVID from the Workload API. The message body is set to the
-`io.spiffe.svid.x509svid.X509Svid` (certificate chain, private key and SPIFFE ID) and the `CamelSpiffeSpiffeId`
-header to its SPIFFE ID.
+* `fetchX509Svid` — fetches the default X.509-SVID from the Workload API. By default (`x509Response=chain`) the message
+body is set to the certificate chain only (a `List<java.security.cert.X509Certificate>`, without the private key), so a
+route never handles key material unless it asks for it. Set `x509Response=svid` to get the whole
+`io.spiffe.svid.x509svid.X509Svid` including the private key (needed for programmatic mTLS), or `x509Response=id` to
+leave the body untouched. In every case the `CamelSpiffeSpiffeId` and `CamelSpiffeExpiry` (the leaf certificate's
+expiry) headers carry the identity.
 * `fetchJwtSvid` — fetches a JWT-SVID for the configured `audience` (or the `CamelSpiffeAudience` header). The
 message body is set to the JWT token string, with the `CamelSpiffeSpiffeId` and `CamelSpiffeExpiry` headers.
 * `validateJwtSvid` — validates a JWT-SVID against the `audience`. The token is taken from the first of:
@@ -77,7 +80,8 @@ The `fetchX509Svid` and `fetchJwtSvid` operations place sensitive key material o
 carries the workload's private key, and the JWT-SVID is a bearer token. Route authors are trusted with Exchange
 contents, but you should avoid logging or tracing the message body for these operations — for example via the
 `log`/`trace` components or the message-history / breadcrumb EIPs — to prevent accidental disclosure of the key
-or token.
+or token. `fetchX509Svid` only puts the private key on the body when `x509Response=svid` is set explicitly; the
+default (`chain`) and `id` keep the key off the message entirely.
 ====
 
 == Example

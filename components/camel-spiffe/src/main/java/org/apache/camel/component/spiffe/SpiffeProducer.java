@@ -52,8 +52,19 @@ public class SpiffeProducer extends DefaultProducer {
     private void fetchX509Svid(WorkloadApiClient client, Exchange exchange) throws Exception {
         X509Svid svid = client.fetchX509Context().getDefaultSvid();
         Message message = getMessageForResponse(exchange);
-        message.setBody(svid);
+        // the identity is always available through the headers, so a route that only needs it can avoid the key
         message.setHeader(SpiffeConstants.SPIFFE_ID, svid.getSpiffeId().toString());
+        message.setHeader(SpiffeConstants.EXPIRY, svid.getLeaf().getNotAfter());
+        switch (getEndpoint().getConfiguration().getX509Response()) {
+            // the full SVID carries the private key; the chain does not; id leaves the body untouched
+            case svid -> message.setBody(svid);
+            case chain -> message.setBody(svid.getChain());
+            case id -> {
+                // leave the body untouched: the identity is exposed through the headers only
+            }
+            default -> throw new IllegalArgumentException(
+                    "Unsupported x509Response: " + getEndpoint().getConfiguration().getX509Response());
+        }
     }
 
     private void fetchJwtSvid(WorkloadApiClient client, Exchange exchange) throws Exception {
