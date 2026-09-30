@@ -178,6 +178,26 @@ public class RedisAggregationRepositoryOperationsIT extends CamelTestSupport {
     }
 
     @Test
+    public void testPessimisticRemoveRecoversTheGivenExchange() {
+        RedisAggregationRepository repo = createRepo("pessimisticRemoveGiven", false);
+        try {
+            repo.add(context, "key1", createExchange("a+b"));
+
+            // the Aggregate EIP aggregates the message that completes the group into the exchange it read from the
+            // repository, and removes the group without adding that exchange first
+            Exchange completed = repo.get(context, "key1");
+            completed.getIn().setBody("a+b+c");
+            repo.remove(context, "key1", completed);
+
+            Exchange recovered = repo.recover(context, completed.getExchangeId());
+            assertNotNull(recovered);
+            assertEquals("a+b+c", recovered.getIn().getBody(String.class));
+        } finally {
+            repo.stop();
+        }
+    }
+
+    @Test
     public void testRemoveWithoutRecovery() {
         RedisAggregationRepository repo
                 = new RedisAggregationRepository("removeNoRecovery", service.getServiceAddress(), true);
