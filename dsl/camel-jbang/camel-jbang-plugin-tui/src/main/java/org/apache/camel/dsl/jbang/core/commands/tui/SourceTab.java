@@ -837,10 +837,20 @@ class SourceTab extends AbstractTab {
                 sourceViewer.setListItemNodeChecker(assist::isListChildrenNode);
                 sourceViewer.setEditQuickDocProvider(assist::provideEditQuickDoc);
             } else {
+                // XML: the quick doc of the routes read into the model (CAMEL-25208)
+                sourceViewer.setQuickDocProvider(cd -> assist.provideRouteQuickDocs(filePath, cd));
                 sourceViewer.setAutocompleteProvider(null);
                 sourceViewer.setAutocompleteValueProvider(null);
-                sourceViewer.setEditQuickDocProvider(null);
+                sourceViewer.setEditQuickDocProvider(
+                        (lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row));
             }
+        } else if (routeFile) {
+            // Java: the quick doc of the routes read into the model by the Java DSL parser (CAMEL-25208)
+            sourceViewer.setQuickDocProvider(cd -> assist.provideRouteQuickDocs(filePath, cd));
+            sourceViewer.setDeprecatedLineScanner(null);
+            sourceViewer.setAutocompleteProvider(null);
+            sourceViewer.setAutocompleteValueProvider(null);
+            sourceViewer.setEditQuickDocProvider((lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row));
         } else if (SourceEditAssist.isPropertiesFile(filePath)) {
             sourceViewer.setQuickDocProvider(assist::providePropertiesQuickDocs);
             sourceViewer.setDeprecatedLineScanner(assist::scanDeprecatedProperties);

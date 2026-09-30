@@ -20,6 +20,8 @@ explorer on the left and a source viewer on the right.
 - **Ctrl+R** — open refactoring menu in edit mode (YAML files only; choose an action for the current line)
 - **Space** — cycle format (YAML/Java/XML) for Camel routes
 - Quick documentation panel is shown at the bottom for Camel source files
+  (YAML, XML and Java DSL routes: the component and options of an endpoint,
+  the EIP of a step, the language of an expression)
 - **/** — search in source
 - **h** — highlight text
 - **n/N** — next/previous match

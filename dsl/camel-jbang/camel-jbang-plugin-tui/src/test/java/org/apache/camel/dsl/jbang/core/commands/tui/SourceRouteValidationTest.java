@@ -19,12 +19,15 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -88,6 +91,58 @@ class SourceRouteValidationTest {
                 """);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0)).startsWith("Line 4: Simple syntax error");
+    }
+
+    @Test
+    void theQuickDocOfAJavaLine() {
+        String src = """
+                import org.apache.camel.builder.RouteBuilder;
+
+                public class MyRoute extends RouteBuilder {
+                    @Override
+                    public void configure() throws Exception {
+                        from("timer:tick?period=1000")
+                            .filter(simple("${header.foo} == 'bar'"))
+                                .to("seda:out");
+                    }
+                }
+                """;
+        List<String> lines = List.of(src.split("\n"));
+        SourceEditAssist assist = assist();
+        List<SourceViewer.DocEntry> from = assist.provideRouteEditQuickDoc(Path.of("MyRoute.java"), lines, 5);
+        assertThat(from).extracting(SourceViewer.DocEntry::text)
+                .satisfies(t -> assertThat(t.get(0)).startsWith("Timer — "))
+                .anySatisfy(t -> assertThat(t).startsWith("period=1000 — "));
+        List<SourceViewer.DocEntry> filter = assist.provideRouteEditQuickDoc(Path.of("MyRoute.java"), lines, 6);
+        assertThat(filter).extracting(SourceViewer.DocEntry::text)
+                .containsExactly(filter.get(0).text(), "Simple predicate: ${header.foo} == 'bar'");
+        assertThat(filter.get(0).text()).startsWith("Filter — ");
+        // a line of plain Java has none
+        assertThat(assist.provideRouteEditQuickDoc(Path.of("MyRoute.java"), lines, 2)).isEmpty();
+
+        List<JsonObject> codeData = new ArrayList<>();
+        for (String l : lines) {
+            JsonObject jo = new JsonObject();
+            jo.put("code", l);
+            codeData.add(jo);
+        }
+        Map<Integer, List<SourceViewer.DocEntry>> all = assist.provideRouteQuickDocs(Path.of("MyRoute.java"), codeData);
+        assertThat(all).containsKeys(5, 6, 7);
+        assertThat(all.get(7).get(0).text()).startsWith("SEDA — ");
+    }
+
+    @Test
+    void theQuickDocOfAnXmlLine() {
+        List<String> lines = List.of("""
+                <routes xmlns="http://camel.apache.org/schema/xml-io">
+                    <route>
+                        <from uri="timer:tick?period=1000"/>
+                        <to uri="seda:out"/>
+                    </route>
+                </routes>
+                """.split("\n"));
+        List<SourceViewer.DocEntry> from = assist().provideRouteEditQuickDoc(Path.of("routes.xml"), lines, 2);
+        assertThat(from.get(0).text()).startsWith("Timer — ");
     }
 
     @Test
