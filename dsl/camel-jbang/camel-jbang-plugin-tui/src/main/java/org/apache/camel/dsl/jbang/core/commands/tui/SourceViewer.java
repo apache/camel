@@ -187,6 +187,8 @@ class SourceViewer {
     private PropertiesValidator propertiesValidator;
     private EndpointValidator endpointValidator;
     private EndpointValidator simpleValidator;
+    private EndpointValidator routeValidator;
+    private List<String> routeProblems = List.of();
     private List<String> validationErrors;
     private int validationErrorScroll;
     private Map<Integer, String> inlineErrors = Collections.emptyMap();
@@ -257,6 +259,15 @@ class SourceViewer {
         this.simpleValidator = simpleValidator;
     }
 
+    /**
+     * The Camel checks of a Java or XML DSL route file (CAMEL-25208): its problems are marked on their lines while
+     * editing and said on save, which they do not block - a Java file is the application's code, and what the checks
+     * cannot know must never keep it from being saved.
+     */
+    void setRouteValidator(EndpointValidator routeValidator) {
+        this.routeValidator = routeValidator;
+    }
+
     void hide() {
         exitEditMode();
         visible = false;
@@ -268,6 +279,7 @@ class SourceViewer {
         propertiesValidator = null;
         endpointValidator = null;
         simpleValidator = null;
+        routeValidator = null;
     }
 
     void reset() {
@@ -307,6 +319,7 @@ class SourceViewer {
         propertiesValidator = null;
         endpointValidator = null;
         simpleValidator = null;
+        routeValidator = null;
     }
 
     boolean isMarkdownMode() {
@@ -633,6 +646,11 @@ class SourceViewer {
     /** Package-private for tests that assert on edit buffer content. */
     String editText() {
         return editState.text();
+    }
+
+    /** Package-private for tests: the problems marked on the lines of the edit buffer, by 0-based line. */
+    Map<Integer, String> inlineErrors() {
+        return inlineErrors;
     }
 
     private boolean handleEditKeyEvent(KeyEvent ke) {
@@ -1274,7 +1292,7 @@ class SourceViewer {
             dirty = false;
             Path path = editableFile;
             boolean restoreMarkdownMode = markdownModeBeforeEdit;
-            notifySave("Saved: " + editableFile.getFileName(), false);
+            notifySaved(editableFile);
             editMode = false;
             editState.clear();
             markdownModeBeforeEdit = false;
@@ -1301,13 +1319,14 @@ class SourceViewer {
             dirty = false;
             originalEditText = content;
             lineStatuses = null;
-            notifySave("Saved: " + editableFile.getFileName(), false);
+            notifySaved(editableFile);
         } catch (IOException e) {
             notifySave("Save failed: " + e.getMessage(), true);
         }
     }
 
     private void validateAndNotify(String content) {
+        routeProblems = List.of();
         if (validateOnSave && isCamelYamlFile()) {
             List<String> msgs = new ArrayList<>();
             msgs.addAll(SourceValidationSupport.formatSchemaErrors(validateYaml(content)));
@@ -1337,8 +1356,25 @@ class SourceViewer {
                 inlineErrors = buildInlineErrors(msgs, content);
                 return;
             }
+        } else if (validateOnSave && routeValidator != null) {
+            // marked, and said when saved, but not blocking the save
+            List<String> msgs = routeValidator.validate(content);
+            routeProblems = msgs != null ? msgs : List.of();
+            inlineErrors = routeProblems.isEmpty() ? Collections.emptyMap() : buildInlineErrors(routeProblems, content);
+            return;
         }
         inlineErrors = Collections.emptyMap();
+    }
+
+    /** The notice of a save: the file, and the Camel problems of a Java or XML route file when it has some. */
+    private void notifySaved(Path file) {
+        if (routeProblems.isEmpty()) {
+            notifySave("Saved: " + file.getFileName(), false);
+        } else {
+            notifySave("Saved: " + file.getFileName() + " with " + routeProblems.size() + " Camel problem"
+                       + (routeProblems.size() > 1 ? "s" : "") + ": " + routeProblems.get(0),
+                    true);
+        }
     }
 
     private void jumpToNextError() {
@@ -1389,6 +1425,11 @@ class SourceViewer {
             }
         } else if (isPropertiesFile() && propertiesValidator != null) {
             msgs.addAll(validateProperties(content));
+        } else if (routeValidator != null) {
+            List<String> routeErrors = routeValidator.validate(content);
+            if (routeErrors != null) {
+                msgs.addAll(routeErrors);
+            }
         }
         inlineErrors = msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
     }

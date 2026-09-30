@@ -822,6 +822,10 @@ class SourceTab extends AbstractTab {
      * type (Camel YAML, other Camel source, properties, or none).
      */
     private void configureEditAssist(Path filePath) {
+        // the Camel checks of a Java or XML DSL route file (CAMEL-25208); YAML has its own
+        boolean routeFile = !SourceEditAssist.isYamlFile(filePath)
+                && (isJavaRouteFile(filePath) || isCamelSourceFile(filePath));
+        sourceViewer.setRouteValidator(routeFile ? content -> assist.validateRoutes(filePath, content) : null);
         if (isCamelSourceFile(filePath)) {
             sourceViewer.setQuickDocProvider(assist::provideCamelQuickDocs);
             sourceViewer.setDeprecatedLineScanner(null);

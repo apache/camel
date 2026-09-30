@@ -38,6 +38,10 @@ explorer on the left and a source viewer on the right.
 - Quick documentation panel is shown at the bottom (shows doc for current line)
 - **F7** — show diff of unsaved changes
 - **F9** — jump to next validation error
+- Java and XML DSL routes are checked as you type, like YAML routes: endpoint
+  options, simple expressions, and a `to` with `${...}` that should be a `toD`.
+  The problems are marked on their lines and said when saving, but never keep a
+  Java or XML file from being saved.
 
 ## Edit Mode (Tab Completion)
 Press **F4** to enter edit mode, then **Tab** for context-aware completion:

@@ -29,13 +29,16 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.RouteAssist;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -75,6 +78,12 @@ final class SourceEditAssist {
     private final Map<String, Map<String, BaseOptionModel>> componentOptionsCache = new HashMap<>();
     private final Map<String, Map<String, BaseOptionModel>> languageOptionsCache = new HashMap<>();
     private final Map<String, Map<String, BaseOptionModel>> dataformatOptionsCache = new HashMap<>();
+
+    // Java sources of the project, for the constants of the Java route checks (read lazily, refreshed now and then)
+    private static final long JAVA_SOURCES_TTL_MS = 10_000;
+    private Map<String, Supplier<String>> javaSourcesCache;
+    private long javaSourcesCacheTime;
+    private Path javaSourcesCacheDir;
 
     // Component name completion cache (keyed by catalog version)
     private String componentsCatalogVersion;
@@ -1550,6 +1559,34 @@ final class SourceEditAssist {
 
     List<String> validateYamlEndpoints(String content) {
         return SourceValidator.validateYamlEndpoints(content, validationCatalog());
+    }
+
+    /**
+     * The Camel checks of a Java or XML DSL route file (CAMEL-25208): the endpoint uris and simple expressions the
+     * compiler cannot see, as "Line N: message". The endpoints no route consumes are left to camel validate: the editor
+     * runs this while typing, and would read the whole project each time.
+     */
+    List<String> validateRoutes(Path file, String content) {
+        List<String> answer = new ArrayList<>();
+        for (RouteAssist.Diagnostic d : RouteAssist.diagnostics(file.getFileName().toString(), content,
+                validationCatalog(), null, javaSources(), false)) {
+            if (d.severity() == RouteAssist.Severity.ERROR) {
+                answer.add(d.format());
+            }
+        }
+        return answer;
+    }
+
+    /** The Java sources of the project, for the constants a route refers to in another class; kept for a while. */
+    private Map<String, Supplier<String>> javaSources() {
+        long now = System.currentTimeMillis();
+        if (javaSourcesCache == null || now - javaSourcesCacheTime > JAVA_SOURCES_TTL_MS
+                || !Objects.equals(javaSourcesCacheDir, rootDir)) {
+            javaSourcesCache = RouteAssist.javaSources(rootDir);
+            javaSourcesCacheTime = now;
+            javaSourcesCacheDir = rootDir;
+        }
+        return javaSourcesCache;
     }
 
     List<String> validateYamlSimple(String content) {
