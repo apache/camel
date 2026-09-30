@@ -28,6 +28,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -63,6 +65,22 @@ public class SpringRedisIdempotentRepositoryTest {
     public void shouldAddKey() {
         idempotentRepository.add(KEY);
         verify(setOperations).add(REPOSITORY, KEY);
+    }
+
+    @Test
+    public void shouldReturnTrueWhenKeyIsAdded() {
+        when(setOperations.add(REPOSITORY, KEY)).thenReturn(1L);
+
+        assertTrue(idempotentRepository.add(KEY));
+    }
+
+    @Test
+    public void shouldReturnFalseWhenKeyIsAlreadyInTheSet() {
+        // the key was not in the set when checked, but another consumer added it before this one: SADD adds nothing
+        when(setOperations.isMember(REPOSITORY, KEY)).thenReturn(false);
+        when(setOperations.add(REPOSITORY, KEY)).thenReturn(0L);
+
+        assertFalse(idempotentRepository.add(KEY));
     }
 
     @Test

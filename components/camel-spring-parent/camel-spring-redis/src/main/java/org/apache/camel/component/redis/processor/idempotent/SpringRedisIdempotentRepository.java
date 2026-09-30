@@ -82,11 +82,10 @@ public class SpringRedisIdempotentRepository extends ServiceSupport implements I
     @Override
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(String key) {
-        if (!contains(key)) {
-            return setOperations.add(repositoryName, key) != null;
-        } else {
-            return false;
-        }
+        // SADD is atomic and returns the number of members it added, which is 0 when the key is already in the set
+        // (also when another consumer added it concurrently), so only one caller adds a given key
+        Long added = setOperations.add(repositoryName, key);
+        return added != null && added > 0;
     }
 
     @Override
