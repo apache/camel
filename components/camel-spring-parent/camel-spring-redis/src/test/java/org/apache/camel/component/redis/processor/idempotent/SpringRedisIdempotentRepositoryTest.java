@@ -68,6 +68,22 @@ public class SpringRedisIdempotentRepositoryTest {
     }
 
     @Test
+    public void shouldReturnTrueWhenKeyIsAdded() {
+        when(setOperations.add(REPOSITORY, KEY)).thenReturn(1L);
+
+        assertTrue(idempotentRepository.add(KEY));
+    }
+
+    @Test
+    public void shouldReturnFalseWhenKeyIsAlreadyInTheSet() {
+        // the key was not in the set when checked, but another consumer added it before this one: SADD adds nothing
+        when(setOperations.isMember(REPOSITORY, KEY)).thenReturn(false);
+        when(setOperations.add(REPOSITORY, KEY)).thenReturn(0L);
+
+        assertFalse(idempotentRepository.add(KEY));
+    }
+
+    @Test
     public void shoulCheckForMembers() {
         idempotentRepository.contains(KEY);
         verify(setOperations).isMember(REPOSITORY, KEY);
