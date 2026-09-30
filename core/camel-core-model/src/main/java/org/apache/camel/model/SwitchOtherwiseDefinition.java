@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.spi.Metadata;
 
 /** The fixed fallback destination of a switch. */
@@ -34,19 +35,38 @@ public class SwitchOtherwiseDefinition implements EndpointRequiredDefinition {
     @Metadata(description = "The fixed destination URI. Supports property placeholders, but not Simple expressions.")
     private String uri;
     @XmlTransient
+    private EndpointProducerBuilder endpointProducerBuilder;
+    @XmlTransient
     private final ToDefinition toDefinition = new ToDefinition();
 
     public SwitchOtherwiseDefinition copyDefinition() {
         SwitchOtherwiseDefinition copy = new SwitchOtherwiseDefinition();
-        copy.setUri(uri);
+        if (endpointProducerBuilder != null) {
+            copy.setEndpointProducerBuilder(endpointProducerBuilder);
+        } else {
+            copy.setUri(uri);
+        }
         return copy;
     }
 
     public String getUri() {
-        return uri;
+        return endpointProducerBuilder != null ? endpointProducerBuilder.getRawUri() : uri;
+    }
+
+    @XmlTransient
+    public EndpointProducerBuilder getEndpointProducerBuilder() {
+        return endpointProducerBuilder;
+    }
+
+    public void setEndpointProducerBuilder(EndpointProducerBuilder endpointProducerBuilder) {
+        this.endpointProducerBuilder = endpointProducerBuilder;
+        // JAXB reads this field; the dump helper refreshes it if the builder changes.
+        this.uri = endpointProducerBuilder != null ? endpointProducerBuilder.getRawUri() : null;
+        toDefinition.setEndpointProducerBuilder(endpointProducerBuilder);
     }
 
     public void setUri(String uri) {
+        this.endpointProducerBuilder = null;
         this.uri = uri;
         toDefinition.setUri(uri);
     }
@@ -68,6 +88,6 @@ public class SwitchOtherwiseDefinition implements EndpointRequiredDefinition {
     @Override
     @XmlTransient
     public String getEndpointUri() {
-        return uri;
+        return getUri();
     }
 }

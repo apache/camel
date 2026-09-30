@@ -118,6 +118,10 @@ a|image::eip/ContentBasedRouterIcon.gif[image]
 a situation where the implementation of a single logical function (e.g.,
 inventory check) is spread across multiple physical systems?
 
+a|image::eip/ContentBasedRouterIcon.gif[image]
+|xref:switch-eip.adoc[Switch] |How do we route a message to a fixed endpoint by
+the literal value of a single selector, using a decision table?
+
 a|image::eip/MessageFilterIcon.gif[image]
 |xref:filter-eip.adoc[Message Filter] |How can a component avoid
 receiving uninteresting messages?
