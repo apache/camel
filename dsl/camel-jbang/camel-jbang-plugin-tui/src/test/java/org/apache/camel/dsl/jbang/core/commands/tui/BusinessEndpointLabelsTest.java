@@ -39,6 +39,15 @@ class BusinessEndpointLabelsTest {
     }
 
     @Test
+    void systemOfAnEdge() {
+        // CAMEL-25161: the system a message leaves to or comes in from, beside the box
+        assertThat(BusinessEndpointLabels.systemName(node("to", "to[amqp:queue:widget.queue]", null))).isEqualTo("AMQP");
+        assertThat(BusinessEndpointLabels.systemName(node("from", "from[file:src/main/data?noop=true]", null)))
+                .isEqualTo("File");
+        assertThat(BusinessEndpointLabels.systemName(null)).isNull();
+    }
+
+    @Test
     void endpointsWithoutADescriptionGetOne() {
         RouteInfo r = new RouteInfo();
         r.routeId = "route1";

@@ -30,7 +30,7 @@ import org.apache.camel.tooling.model.ComponentModel;
  * rather than {@code from[file:src/main/data?noop=true]}. The component's title comes from the catalog, the options are
  * left out. A step with a description of its own keeps it.
  */
-final class BusinessEndpointLabels {
+public final class BusinessEndpointLabels {
 
     /** The steps whose uri is an endpoint. */
     static final Set<String> ENDPOINT_TYPES = Set.of("from", "to", "toD", "wireTap", "enrich", "pollEnrich", "poll");
@@ -51,6 +51,18 @@ final class BusinessEndpointLabels {
                 }
             }
         }
+    }
+
+    /**
+     * The system of an endpoint by its component's title: {@code AMQP} for {@code amqp:queue:x}; null without a uri.
+     */
+    public static String systemName(NodeInfo node) {
+        String label = node != null ? label(DiagramSupport.getBaseUri(node), ProjectOverviewAssist.catalog()) : null;
+        if (label == null) {
+            return null;
+        }
+        int colon = label.indexOf(':');
+        return colon > 0 ? label.substring(0, colon) : label;
     }
 
     /** {@code amqp:queue:order.queue} as {@code AMQP: queue:order.queue}; null when there is no uri. */

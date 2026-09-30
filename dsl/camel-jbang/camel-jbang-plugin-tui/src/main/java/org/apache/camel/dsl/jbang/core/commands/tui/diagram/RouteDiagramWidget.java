@@ -33,6 +33,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.StatInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
+import org.apache.camel.dsl.jbang.core.commands.tui.BusinessEndpointLabels;
 import org.apache.camel.dsl.jbang.core.commands.tui.Theme;
 
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.BRANCH_CHILD_TYPES;
@@ -200,7 +201,8 @@ public class RouteDiagramWidget implements Widget {
         if (highlighted) {
             eipColor = highlightFailed ? highlightFailColor() : highlightOkColor();
         } else {
-            eipColor = getEipColor(node.type);
+            // a remote endpoint is an edge of the integration: its own color, as in the topology
+            eipColor = external ? externalColor() : getEipColor(node.type);
         }
         Style borderStyle = Style.EMPTY.fg(eipColor);
         if (selected) {
@@ -263,6 +265,13 @@ public class RouteDiagramWidget implements Widget {
                 }
             }
             writeText(buffer, area, bottom, col + boxWidth, name != null ? " ↵ " + name : " ↵", linkStyle);
+        } else if (external && node.treeNode != null) {
+            // no route of the integration on the other side: the message comes in from, or leaves to, a system
+            String system = BusinessEndpointLabels.systemName(node.treeNode.info);
+            if (system != null) {
+                String edge = "from".equals(node.type) ? " ◀─── " + system : " ───▶ " + system;
+                writeText(buffer, area, bottom, col + boxWidth, edge, Style.EMPTY.fg(externalColor()).bold());
+            }
         }
 
         nodeBoxes.add(new EipNodeBox(node.id, node.type, row, row + height - 1, col, col + boxWidth - 1, node));

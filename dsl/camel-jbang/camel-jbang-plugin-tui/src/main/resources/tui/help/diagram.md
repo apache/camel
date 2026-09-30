@@ -117,6 +117,13 @@ business view (`b`), marked with `✦`; the technical view (`n`)
 keeps the expression. The Info panel of such a node shows the
 label, why the route decides there, and the code.
 
+The endpoints of remote systems are the edges of the integration
+and have their own color, in the route diagram as in the topology.
+Where no route of the integration is on the other side, an arrow
+beside the box names the system: `───▶ AMQP` where a message
+leaves, `◀─── File` where work comes in. A hand-off to another
+route of the integration shows `↵` instead.
+
 ## Route Diagram
 
 In the route diagram, each EIP node shows its type tag (colored)
