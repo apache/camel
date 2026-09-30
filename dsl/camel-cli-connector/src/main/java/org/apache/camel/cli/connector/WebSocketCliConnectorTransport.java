@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.concurrent.ThreadHelper;
+import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -88,6 +88,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     private long snapshotInterval;
     private long heartbeatInterval;
 
+    private String threadNamePattern;
     private HttpClient client;
     private ThreadPoolExecutor actions;
     private ScheduledExecutorService scheduler;
@@ -142,11 +143,14 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         }
 
         client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
+        // Camel's thread factory (naming, virtual threads when enabled) but not Camel's thread pools: these threads must
+        // keep running while Camel is stopping, to report it and to send the close frame
+        threadNamePattern = camelContext.getExecutorServiceManager().getThreadNamePattern();
         actions = new ThreadPoolExecutor(
                 1, 1, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(MAX_PENDING_ACTIONS),
-                r -> new Thread(r, ThreadHelper.resolveThreadName(null, "CliConnectorActions")));
+                new CamelThreadFactory(threadNamePattern, "CliConnectorActions", true));
         scheduler = Executors.newSingleThreadScheduledExecutor(
-                r -> new Thread(r, ThreadHelper.resolveThreadName(null, "CliConnectorWebSocket")));
+                new CamelThreadFactory(threadNamePattern, "CliConnectorWebSocket", true));
 
         stopping = false;
         ready = camelContext.isStarted();
@@ -489,7 +493,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
             LOG.info("Camel CLI connector stopping the application as requested by {}", where());
             stopping = true;
             // shutting down stops this transport, which must not happen on its own thread
-            new Thread(shutdown, ThreadHelper.resolveThreadName(null, "CliConnectorShutdown")).start();
+            new CamelThreadFactory(threadNamePattern, "CliConnectorShutdown", false).newThread(shutdown).start();
         });
     }
 
