@@ -145,6 +145,38 @@ class JavaStringCompletionTest {
     }
 
     @Test
+    void aNameInTheMiddleOfTheUriIsReplacedWhole() throws Exception {
+        // found in the live TUI: Tab after siz in ?siz=100 wrote size==100
+        SourceViewer viewer = viewer("""
+                public class MyRoute extends RouteBuilder {
+                    public void configure() {
+                        from("timer:tick")
+                            .to("seda:orders?siz=100&blockWhenFull=true");
+                    }
+                }
+                """);
+        cursorAt(viewer, 3, "=100&blockWhenFull=true\");");
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertThat(line(viewer, 3)).isEqualTo("            .to(\"seda:orders?size=100&blockWhenFull=true\");");
+
+        // Tab with the cursor inside a name: the rest of it is replaced as well
+        viewer = viewer("""
+                public class MyRoute extends RouteBuilder {
+                    public void configure() {
+                        from("timer:tick")
+                            .to("sedx:orders");
+                    }
+                }
+                """);
+        cursorAt(viewer, 3, "x:orders\");");
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.NONE));
+        type(viewer, "da");
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertThat(line(viewer, 3)).isEqualTo("            .to(\"seda:orders\");");
+    }
+
+    @Test
     void noCompletionOutsideAnEndpoint() throws Exception {
         SourceViewer viewer = viewer("""
                 public class MyRoute extends RouteBuilder {

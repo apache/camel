@@ -90,7 +90,7 @@ class SourceRouteValidationTest {
                 </routes>
                 """);
         assertThat(errors).hasSize(1);
-        assertThat(errors.get(0)).startsWith("Line 4: Simple syntax error");
+        assertThat(errors.get(0)).startsWith("Line 5: Simple syntax error");
     }
 
     @Test

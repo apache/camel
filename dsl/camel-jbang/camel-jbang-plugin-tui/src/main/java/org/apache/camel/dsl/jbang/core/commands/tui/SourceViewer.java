@@ -1098,7 +1098,27 @@ class SourceViewer {
         for (int i = 0; i < jc.prefix().length(); i++) {
             editState.deleteBackward();
         }
-        editState.insert(item.key() + jc.suffix());
+        // Tab in the middle of a word replaces all of it: the rest of the name after the cursor goes too
+        String line = editState.getLine(jc.row());
+        int from = editState.cursorCol();
+        int end = from;
+        while (end < line.length() && isUriWordChar(line.charAt(end), jc.suffix())) {
+            end++;
+        }
+        for (int i = from; i < end; i++) {
+            editState.deleteForward();
+        }
+        // the : or = the name is followed by is not doubled when it is there already
+        boolean hasSuffix = !jc.suffix().isEmpty() && line.startsWith(jc.suffix(), end);
+        editState.insert(item.key() + (hasSuffix ? "" : jc.suffix()));
+    }
+
+    /** A character of the name or value being completed: up to the : of a component, the = of an option, the & or ". */
+    private static boolean isUriWordChar(char c, String suffix) {
+        if (suffix.isEmpty()) {
+            return c != '&' && c != '"' && c != '\\';
+        }
+        return Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '.';
     }
 
     private void openPropertiesAutocomplete() {

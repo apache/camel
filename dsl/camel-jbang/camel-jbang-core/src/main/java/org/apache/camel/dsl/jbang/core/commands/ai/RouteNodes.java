@@ -128,6 +128,48 @@ public final class RouteNodes {
         return answer;
     }
 
+    /**
+     * The nodes with each expression on the line its text is on, which is often not the line of its step: the
+     * {@code <simple>} element under a {@code <when>}, the {@code simple("...")} of a Java call written over several
+     * lines. The first line at or after the step's that has the start of the text (or, in XML, the element of its
+     * language) is taken; the step's line stays when there is none.
+     */
+    public static List<Node> withExpressionLines(List<Node> nodes, String content) {
+        String[] lines = content.split("\n", -1);
+        List<Node> answer = new ArrayList<>(nodes.size());
+        for (Node n : nodes) {
+            if (n.kind() == Kind.EXPRESSION && n.line() > 0 && n.text() != null && !n.text().isBlank()) {
+                int found = expressionLine(lines, n);
+                if (found > 0 && found != n.line()) {
+                    n = new Node(
+                            n.kind(), found, n.eip(), n.uri(), n.language(), n.text(), n.option(), n.predicate(),
+                            n.parents());
+                }
+            }
+            answer.add(n);
+        }
+        answer.sort(Comparator.comparingInt(Node::line));
+        return answer;
+    }
+
+    private static int expressionLine(String[] lines, Node n) {
+        String text = n.text().strip();
+        // the start of the text up to what a DSL may write escaped (a quote, a < or & in XML)
+        int cut = 0;
+        while (cut < text.length() && cut < 20 && "\"'<>&\\\n".indexOf(text.charAt(cut)) < 0) {
+            cut++;
+        }
+        String start = text.substring(0, cut);
+        String tag = "<" + n.language();
+        for (int i = n.line() - 1; i < lines.length && i < n.line() - 1 + 15; i++) {
+            if (start.length() >= 3 && lines[i].contains(start) || lines[i].contains(tag + ">")
+                    || lines[i].contains(tag + " ")) {
+                return i + 1;
+            }
+        }
+        return 0;
+    }
+
     /** The nodes on a line. */
     public static List<Node> at(List<Node> nodes, int line) {
         List<Node> answer = new ArrayList<>();

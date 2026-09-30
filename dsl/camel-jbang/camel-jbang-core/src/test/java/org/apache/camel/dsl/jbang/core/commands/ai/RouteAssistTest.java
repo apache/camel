@@ -151,6 +151,19 @@ class RouteAssistTest {
     }
 
     @Test
+    void aSimpleExpressionOnTheLineAfterItsStep() {
+        String src = java("""
+                        from("timer:tick")
+                            .filter(
+                                simple("${header.foo} =="))
+                            .to("seda:out");
+                """);
+        List<Diagnostic> errors = errors("MyRoute.java", src);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).line()).isEqualTo(8);
+    }
+
+    @Test
     void aSimpleExpressionOfTheFluentBuilder() {
         String src = java("""
                         from("timer:tick")
@@ -306,7 +319,8 @@ class RouteAssistTest {
                 """;
         List<Diagnostic> errors = errors("camel.xml", xml);
         assertThat(errors).hasSize(1);
-        assertThat(errors.get(0).line()).isEqualTo(4);
+        // the line of the <simple> element, not of the filter it belongs to
+        assertThat(errors.get(0).line()).isEqualTo(5);
         assertThat(errors.get(0).message()).startsWith("Simple syntax error");
     }
 

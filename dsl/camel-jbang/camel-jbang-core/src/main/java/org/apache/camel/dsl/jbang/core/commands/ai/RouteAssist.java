@@ -110,7 +110,7 @@ public final class RouteAssist {
                 answer.add(new Diagnostic(u.line(), Severity.ERROR, u.reason()));
             }
         }
-        List<RouteNodes.Node> nodes = RouteNodes.of(model, catalog);
+        List<RouteNodes.Node> nodes = RouteNodes.withExpressionLines(RouteNodes.of(model, catalog), content);
         Set<String> consumed = checkConsumers && directory != null
                 ? EndpointConsumerChecks.consumed(directory, fileName) : null;
         for (String msg : ModelChecks.check(model, nodes, content, catalog, consumed)) {
@@ -132,7 +132,7 @@ public final class RouteAssist {
     public static List<RouteNodes.Node> nodes(
             String fileName, String content, CamelCatalog catalog, Map<String, Supplier<String>> javaSources) {
         RouteModel model = RouteModel.read(fileName, content, catalog, javaSources);
-        return model != null ? RouteNodes.of(model, catalog) : List.of();
+        return model != null ? RouteNodes.withExpressionLines(RouteNodes.of(model, catalog), content) : List.of();
     }
 
     /**
