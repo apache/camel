@@ -79,6 +79,8 @@ class DiagramSupport {
     private boolean topologyMode;
     private boolean showDescription;
     private Path aiSourceDirectory;
+    /** The AI labels of the decision points of the routes shown, by their node (CAMEL-25161). */
+    private volatile Map<RouteDiagramLayoutEngine.NodeInfo, IntegrationSummary.StepLabel> stepLabels = Map.of();
     private Map<String, List<TopologyDiagramWidget.NodeLine>> nodeLines = Map.of();
     /** Routes highlighted in the topology: the routes of the capability the user came down from, and its name. */
     private Set<String> focusRouteIds = Set.of();
@@ -943,6 +945,11 @@ class DiagramSupport {
         return showDescription ? IntegrationSummaryHints.descriptionsIfEnabled(aiSourceDirectory) : Map.of();
     }
 
+    /** What the AI wrote about a decision point of a route shown, or null. */
+    IntegrationSummary.StepLabel stepLabel(RouteDiagramLayoutEngine.NodeInfo node) {
+        return node != null ? stepLabels.get(node) : null;
+    }
+
     /**
      * The title with the AI-assisted mark when a box of the topology shows an AI description: a route without a
      * description of its own that the AI project overview described.
@@ -1607,6 +1614,7 @@ class DiagramSupport {
             }
         }
 
+        stepLabels = RouteStepHints.apply(routes, aiSourceDirectory, showDescription);
         RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
                 ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
                 : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
@@ -2142,6 +2150,7 @@ class DiagramSupport {
                         }
                     }
                 }
+                stepLabels = RouteStepHints.apply(routes, aiSourceDirectory, showDescription);
                 RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
                         ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
                         : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
