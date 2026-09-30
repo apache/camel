@@ -170,10 +170,51 @@ public class RouteDiagramWidget implements Widget {
         }
 
         // Nodes (on top, skip the structural "route" node)
+        markers.clear();
         for (LayoutNode ln : layoutRoute.nodes) {
             if (!"route".equals(ln.type)) {
                 drawNode(buffer, area, ln);
             }
+        }
+        // the markers beside the boxes last, so a long one stops at a box instead of drawing over it
+        for (Marker m : markers) {
+            writeMarker(buffer, area, m);
+        }
+    }
+
+    /** Text beside a box: where it links to, or the system a message leaves to or comes in from. */
+    private record Marker(int row, int col, String text, Style style) {
+    }
+
+    private final List<Marker> markers = new ArrayList<>();
+
+    private boolean inBox(int row, int col) {
+        for (EipNodeBox b : nodeBoxes) {
+            if (row >= b.startRow() && row <= b.endRow() && col >= b.startCol() && col <= b.endCol()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void writeMarker(Buffer buffer, Rect area, Marker m) {
+        int y = area.y() + m.row() - scrollY;
+        if (y < area.top() || y >= area.bottom()) {
+            return;
+        }
+        for (int i = 0; i < m.text().length(); i++) {
+            int x = area.x() + m.col() - scrollX + i;
+            if (x >= area.right()) {
+                return;
+            }
+            if (x < area.left()) {
+                continue;
+            }
+            if (inBox(m.row(), m.col() + i)) {
+                // lines may be crossed, another box not
+                return;
+            }
+            buffer.setString(x, y, String.valueOf(m.text().charAt(i)), m.style());
         }
     }
 
@@ -257,20 +298,21 @@ public class RouteDiagramWidget implements Widget {
         if (linkedRouteId != null) {
             Style linkStyle = Theme.label().bold();
             String name = linkedRouteId;
-            if (showDescription) {
+            if (showDescription && "from".equals(node.type)) {
+                // a from box names its caller in words; a to box already shows the route it links to in words, so
+                // its marker names the route by id, as the breadcrumb does
                 String desc = routeDescriptions.get(linkedRouteId);
                 if (desc != null && !desc.isBlank()) {
-                    // a to box already shows the route it links to; a from box names its caller in words
-                    name = "from".equals(node.type) ? desc : null;
+                    name = desc;
                 }
             }
-            writeText(buffer, area, bottom, col + boxWidth, name != null ? " ↵ " + name : " ↵", linkStyle);
+            markers.add(new Marker(bottom, col + boxWidth, " ↵ " + name, linkStyle));
         } else if (external && node.treeNode != null) {
             // no route of the integration on the other side: the message comes in from, or leaves to, a system
             String system = BusinessEndpointLabels.systemName(node.treeNode.info);
             if (system != null) {
                 String edge = "from".equals(node.type) ? " ◀─── " + system : " ───▶ " + system;
-                writeText(buffer, area, bottom, col + boxWidth, edge, Style.EMPTY.fg(externalColor()).bold());
+                markers.add(new Marker(bottom, col + boxWidth, edge, Style.EMPTY.fg(externalColor()).bold()));
             }
         }
 
