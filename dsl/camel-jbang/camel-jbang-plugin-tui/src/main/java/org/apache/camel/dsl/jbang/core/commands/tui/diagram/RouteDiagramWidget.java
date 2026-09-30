@@ -307,12 +307,33 @@ public class RouteDiagramWidget implements Widget {
                 }
             }
             markers.add(new Marker(bottom, col + boxWidth, " ↵ " + name, linkStyle));
-        } else if (external && node.treeNode != null) {
-            // no route of the integration on the other side: the message comes in from, or leaves to, a system
+        }
+        if ("from".equals(node.type) && !external && node.treeNode != null && isScheduled(node.treeNode.info)) {
+            // the route starts itself on a schedule: a repeat sign where the input comes in
+            int middle = row + (height - 1) / 2;
+            String in = "↻ ───▶ ";
+            if (col >= in.length()) {
+                markers.add(new Marker(middle, col - in.length(), in, Theme.label().bold()));
+            } else {
+                markers.add(new Marker(middle, col + boxWidth, " ◀─── ↻", Theme.label().bold()));
+            }
+        }
+        if (external && node.treeNode != null) {
             String system = BusinessEndpointLabels.systemName(node.treeNode.info);
-            if (system != null) {
-                String edge = "from".equals(node.type) ? " ◀─── " + system : " ───▶ " + system;
-                markers.add(new Marker(bottom, col + boxWidth, edge, Style.EMPTY.fg(externalColor()).bold()));
+            Style edgeStyle = Style.EMPTY.fg(externalColor()).bold();
+            if (system != null && "from".equals(node.type)) {
+                // where the route's input comes from: AMQP ───▶ on the left of the box, or on its right when there
+                // is no room; on the middle row, apart from a link marker on the bottom row
+                int middle = row + (height - 1) / 2;
+                String in = system + " ───▶ ";
+                if (col >= in.length()) {
+                    markers.add(new Marker(middle, col - in.length(), in, edgeStyle));
+                } else {
+                    markers.add(new Marker(middle, col + boxWidth, " ◀─── " + system, edgeStyle));
+                }
+            } else if (system != null && linkedRouteId == null) {
+                // no route of the integration on the other side: the message leaves to a system
+                markers.add(new Marker(bottom, col + boxWidth, " ───▶ " + system, edgeStyle));
             }
         }
 
@@ -566,6 +587,15 @@ public class RouteDiagramWidget implements Widget {
             return 0;
         }
         return pixelX * boxWidth / nodeWidth;
+    }
+
+    /** The components a route starts itself with, on a schedule. */
+    private static final Set<String> SCHEDULED = Set.of("timer", "cron", "quartz", "scheduler");
+
+    private static boolean isScheduled(RouteDiagramLayoutEngine.NodeInfo info) {
+        String uri = getBaseUri(info);
+        int colon = uri != null ? uri.indexOf(':') : -1;
+        return colon > 0 && SCHEDULED.contains(uri.substring(0, colon));
     }
 
     private boolean isExternalEndpoint(LayoutNode node) {
