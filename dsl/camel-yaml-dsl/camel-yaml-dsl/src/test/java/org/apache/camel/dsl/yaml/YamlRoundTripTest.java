@@ -54,12 +54,7 @@ class YamlRoundTripTest {
      * in the Java DSL; the XML routes of the corpus keep them apart.
      */
     private static final Map<String, String> KNOWN = Map.of(
-            "kamelet.xml", "the steps after kamelet are its own in YAML: they run at the kamelet's sink",
-            "saga.xml", "the steps after saga are its own in YAML, the only form that runs: an empty saga fails to start",
-            "transacted.xml",
-            "the steps after transacted are its own in YAML, the only form that runs: an empty transacted fails to start",
-            "interceptFrom.xml",
-            "the routes loader prepares the route: its interceptFrom seda:* does not match direct:start and is removed");
+            "kamelet.xml", "the steps after kamelet are its own in YAML: they run at the kamelet's sink");
 
     private static List<RouteDefinition> routes(Path file) {
         for (String ns : List.of("http://camel.apache.org/schema/xml-io", "http://camel.apache.org/schema/spring")) {
@@ -106,6 +101,11 @@ class YamlRoundTripTest {
         String xml;
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             yaml = new LwModelToYAMLDumper().dumpModelAsYaml(context, route);
+            // prepared as the routes loader prepares the route read back (transacted and saga take the route,
+            // an interceptFrom that does not match the route is removed)
+            RoutesDefinition routes = new RoutesDefinition();
+            routes.setCamelContext(context);
+            routes.prepareRoute(route);
             xml = new LwModelToXMLDumper().dumpModelAsXml(context, route);
         }
         try (DefaultCamelContext context = new DefaultCamelContext()) {
