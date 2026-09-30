@@ -47,7 +47,7 @@ final class SemanticXmlLoader extends RoutesBuilderLoaderSupport {
     @Override
     public boolean isSupportedExtension(String extension) {
         // DefaultCamelContext may build before application beans are bound. Give later custom loaders precedence too.
-        return ("xml".equals(extension) || "camel.xml".equals(extension))
+        return ("xml".equals(extension) || extension.endsWith(".xml"))
                 && getCamelContext().getRegistry().findByType(RoutesBuilderLoader.class).stream()
                         .noneMatch(loader -> loader != this && loader.isSupportedExtension(extension));
     }

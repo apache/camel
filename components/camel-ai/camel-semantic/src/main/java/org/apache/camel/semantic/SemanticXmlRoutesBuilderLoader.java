@@ -16,18 +16,14 @@
  */
 package org.apache.camel.semantic;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -40,6 +36,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.RoutesBuilderLoaderSupport;
 import org.apache.camel.xml.in.ModelParser;
+import org.apache.camel.xml.io.XmlPullParserException;
 
 /** Parses standalone semantic declarations or declarations alongside XML routes. */
 @RoutesLoader("semantic.xml")
@@ -104,25 +101,44 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
                     }
                     found = true;
                     declarations(child, questions);
-                    root.removeChild(child);
                 } else if (!"route".equals(child.getLocalName())) {
                     throw new IllegalArgumentException("Unexpected element in routes: " + child.getTagName());
                 }
             }
-            TransformerFactory transformer = TransformerFactory.newInstance();
-            transformer.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            transformer.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            transformer.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-            StringWriter xml = new StringWriter();
-            transformer.newTransformer().transform(new DOMSource(root), new StreamResult(xml));
-            routes = new ModelParser(new StringReader(xml.toString()), namespace).parseRoutesDefinition()
-                    .orElseThrow(() -> new IllegalArgumentException("Expected XML routes"));
+            try (InputStream stream = resource.getInputStream()) {
+                routes = new SemanticModelParser(resource, stream, namespace).parseRoutesDefinition()
+                        .orElseThrow(() -> new IllegalArgumentException("Expected XML routes"));
+            }
         } else {
             throw new IllegalArgumentException("Expected semantic or routes root element");
         }
         // Parse the complete document and validate every question before publishing any definitions.
         questions.register();
         return routes;
+    }
+
+    private static final class SemanticModelParser extends ModelParser {
+        private SemanticModelParser(
+                                    Resource resource, InputStream stream, String namespace)
+                                                                                             throws IOException,
+                                                                                             XmlPullParserException {
+            super(stream, namespace);
+            this.resource = resource;
+        }
+
+        @Override
+        protected boolean handleUnexpectedElement(String namespace, String name) throws XmlPullParserException {
+            if ("semantic".equals(name) && parser.getDepth() == 2) {
+                // The DOM pass already validated this block. Keep the original route bytes and source positions.
+                try {
+                    parser.skipSubTree();
+                } catch (IOException e) {
+                    throw new XmlPullParserException("Cannot read semantic declaration", parser, e);
+                }
+                return true;
+            }
+            return super.handleUnexpectedElement(namespace, name);
+        }
     }
 
     private static void declarations(Element semantic, SemanticQuestionsBuilder questions) {

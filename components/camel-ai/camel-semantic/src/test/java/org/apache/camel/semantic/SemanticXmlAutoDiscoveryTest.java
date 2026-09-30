@@ -32,6 +32,7 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.xml.io.XmlPullParserLocationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,13 +40,34 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SemanticXmlAutoDiscoveryTest {
+    private static final String LOCATED_ROUTES = """
+            <?xml version="1.0"?>
+            <routes xmlns="http://camel.apache.org/schema/xml-io">
+              <semantic xmlns="http://camel.apache.org/schema/semantic">
+                <question name="urgent" type="boolean">
+                  <instructions>Urgent?</instructions>
+                </question>
+              </semantic>
+              <route id="located">
+                <from uri="direct:located"/>
+                <filter>
+                  <simple>${body} != null</simple>
+                  <log message="Hello"/>
+                </filter>
+              </route>
+            </routes>
+            """;
+
     @TempDir
     Path directory;
 
     @ParameterizedTest
-    @CsvSource({ "false,routes.xml", "true,routes.xml", "false,routes.camel.xml", "true,routes.camel.xml" })
+    @CsvSource({
+            "false,routes.xml", "true,routes.xml", "false,routes.camel.xml", "true,routes.camel.xml",
+            "false,my.tickets.xml", "true,my.tickets.xml", "false,my.tickets.semantic.xml", "true,my.tickets.semantic.xml" })
     void mainLoadsOrdinaryXmlWithoutLoaderRegistration(boolean standalone, String filename) throws Exception {
         String declarations = """
                 <semantic xmlns="http://camel.apache.org/schema/semantic">
@@ -63,7 +85,7 @@ class SemanticXmlAutoDiscoveryTest {
         Path routes = directory.resolve(filename);
         String files;
         if (standalone) {
-            Path questions = directory.resolve("questions.xml");
+            Path questions = directory.resolve("my.questions.xml");
             Files.writeString(questions, declarations);
             Files.writeString(routes, "<routes>" + route + "</routes>");
             // The consumer is deliberately listed first.
@@ -83,6 +105,56 @@ class SemanticXmlAutoDiscoveryTest {
             }
         } finally {
             main.stop();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "tickets.xml", "tickets.semantic.xml", "my.tickets.xml", "my.tickets.semantic.xml" })
+    void declarationsPreserveOriginalRouteSourceLocations(String filename) throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            context.setSourceLocationEnabled(true);
+            PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString(filename, LOCATED_ROUTES));
+            var route = context.getRouteDefinitions().get(0);
+            assertThat(route.getLocation()).isEqualTo(filename);
+            assertThat(route.getLineNumber()).isEqualTo(8);
+            assertThat(route.getInput().getLocation()).isEqualTo(filename);
+            assertThat(route.getInput().getLineNumber()).isEqualTo(9);
+            var filter = route.getOutputs().get(0);
+            assertThat(filter.getLocation()).isEqualTo(filename);
+            assertThat(filter.getLineNumber()).isEqualTo(10);
+            assertThat(filter.getOutputs().get(0).getLocation()).isEqualTo(filename);
+            assertThat(filter.getOutputs().get(0).getLineNumber()).isEqualTo(12);
+        }
+    }
+
+    @Test
+    void nestedSemanticElementIsRejectedWithOriginalSourceLocation() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            context.setSourceLocationEnabled(true);
+            String xml = LOCATED_ROUTES.replace("<log message=\"Hello\"/>", "<semantic/>");
+            assertThatThrownBy(() -> PluginHelper.getRoutesLoader(context)
+                    .loadRoutes(ResourceHelper.fromString("invalid.tickets.xml", xml)))
+                    .isInstanceOfSatisfying(XmlPullParserLocationException.class, error -> {
+                        assertThat(error.getResource().getLocation()).isEqualTo("invalid.tickets.xml");
+                        assertThat(error.getLineNumber()).isEqualTo(12);
+                        assertThat(error).hasMessageContaining("invalid.tickets.xml, line 12")
+                                .hasMessageContaining("<semantic/>");
+                    });
+            assertThat(SemanticQuestions.get(context).isEmpty()).isTrue();
+        }
+    }
+
+    @Test
+    void applicationLoaderForDottedExtensionTakesPrecedence() throws Exception {
+        XmlRoutesBuilderLoader custom = new XmlRoutesBuilderLoader() {
+            @Override
+            public boolean isSupportedExtension(String extension) {
+                return "tickets.xml".equals(extension);
+            }
+        };
+        try (var context = new DefaultCamelContext()) {
+            context.getRegistry().bind("ticketsLoader", custom);
+            assertThat(PluginHelper.getRoutesLoader(context).getRoutesLoader("tickets.xml")).isSameAs(custom);
         }
     }
 

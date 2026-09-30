@@ -148,6 +148,8 @@ automatically at startup: use ordinary `*.xml` files without registering a loade
 the Camel core model. XML documents without semantic declarations are handled by the standard
 XML loader, including its bean and route configuration support. XML loaders registered by the
 application before route loading retain precedence over automatic discovery.
+Filenames may contain dots, such as `my.tickets.xml`. Routes retain their original resource
+locations and line numbers for debugging and error messages.
 
 Both layouts are supported. To keep declarations alongside routes, use `tickets.xml`:
 

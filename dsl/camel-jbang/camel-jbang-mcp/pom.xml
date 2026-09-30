@@ -116,11 +116,6 @@
             <artifactId>camel-java-joor-dsl</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-semantic</artifactId>
-        </dependency>
-
         <!-- Swagger/OpenAPI parser for contract-first OpenAPI tools -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
@@ -152,6 +147,11 @@
         </dependency>
 
         <!-- test dependencies -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-semantic</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-io-dsl</artifactId>
