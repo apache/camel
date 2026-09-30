@@ -428,6 +428,13 @@ class SourceTab extends AbstractTab {
             sourceViewer.renderFooter(spans);
             if (!sourceViewer.isEditMode()) {
                 TuiHelper.hint(spans, "Tab", "files");
+                // also after a jump, which moves the focus to the viewer; not while g is typed into search
+                if (!sourceViewer.isTextInputActive()) {
+                    if (!routeIndex.isEmpty()) {
+                        TuiHelper.hint(spans, "g", "go to route");
+                    }
+                    TuiHelper.hint(spans, "Ctrl+G", "go to");
+                }
             }
         } else {
             TuiHelper.hint(spans, "Enter", "open");
