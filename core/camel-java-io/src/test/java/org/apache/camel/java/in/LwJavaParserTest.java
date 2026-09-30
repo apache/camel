@@ -299,6 +299,30 @@ class LwJavaParserTest {
     }
 
     @Test
+    void theLocalsOfOneBuilderAreNotThoseOfTheNext() {
+        JavaParseResult result = new LwJavaParser().parse("""
+                public class Routes {
+                    static class A extends RouteBuilder {
+                        public void configure() {
+                            RouteDefinition route = from("direct:a");
+                            route.to("mock:a");
+                        }
+                    }
+                    static class B extends RouteBuilder {
+                        public void configure() {
+                            route.to("mock:b");
+                            from("direct:b").to("mock:b");
+                        }
+                    }
+                }
+                """);
+        List<RouteDefinition> routes = result.routes().getRoutes();
+        assertThat(routes).extracting(r -> r.getInput().getUri()).containsExactly("direct:a", "direct:b");
+        // route.to("mock:b") in B is not a continuation of A's route
+        assertThat(routes.get(0).getOutputs()).hasSize(1);
+    }
+
+    @Test
     void aLocalThatIsNotARouteStaysAValue() {
         // Predicate god = ...: a value, used where the route refers to it, not a route of its own
         JavaParseResult result = new LwJavaParser().parse("""

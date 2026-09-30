@@ -182,6 +182,8 @@ final class JavaChainParser {
             for (int[] body : bodies) {
                 pos = body[0];
                 alias = body[2] >= 0 ? aliases.get(body[2]) : null;
+                // the locals of one configure() are not those of the next, as the replay has them
+                routeLocals.clear();
                 List<Node> statements = new ArrayList<>();
                 statements(body[1], statements, constants);
                 builders.add(statements);
