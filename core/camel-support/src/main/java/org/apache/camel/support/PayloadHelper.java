@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -67,8 +66,8 @@ public final class PayloadHelper {
     /**
      * Gets the length of the given value, without reading it.
      * <p/>
-     * The length is known for files, byte arrays and buffers, stream caches, and input streams backed by a byte array
-     * or a file.
+     * The length is known for files, byte arrays, stream caches of bytes, and input streams backed by a byte array or a
+     * file.
      *
      * @param  value the value, such as a message body or an input stream
      * @return       the length in bytes, or <tt>-1</tt> if the length cannot be determined without reading the value
@@ -81,10 +80,9 @@ public final class PayloadHelper {
                 return Files.isRegularFile(path) ? Files.size(path) : -1;
             } else if (value instanceof byte[] bytes) {
                 return bytes.length;
-            } else if (value instanceof ByteBuffer buffer) {
-                return buffer.remaining();
-            } else if (value instanceof StreamCache cache && cache.length() > 0) {
-                // a stream cache may return 0 when the length cannot be computed
+            } else if (value instanceof StreamCache cache && value instanceof InputStream && cache.length() > 0) {
+                // only a stream cache that is a byte stream has a length in bytes (a reader cache counts characters),
+                // and a stream cache may return 0 when the length cannot be computed
                 return cache.length();
             } else if (value instanceof ByteArrayInputStream is) {
                 return is.available();

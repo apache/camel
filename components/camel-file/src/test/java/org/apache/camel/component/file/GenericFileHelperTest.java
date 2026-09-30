@@ -155,4 +155,21 @@ public class GenericFileHelperTest {
             }
         }
     }
+
+    @Test
+    public void shouldEncodeStreamBodyWithCharsetThatWritesByteOrderMark() throws Exception {
+        // longer than the internal character buffer, so the body is encoded in several chunks
+        String text = "a\u00e6".repeat(4000);
+
+        try (CamelContext context = new DefaultCamelContext()) {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.UTF_8.name());
+            exchange.getIn().setBody(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8)));
+
+            try (InputStream is = GenericFileHelper.toInputStream(exchange, StandardCharsets.UTF_16.name())) {
+                // the byte order mark is written once, at the start
+                assertArrayEquals(text.getBytes(StandardCharsets.UTF_16), is.readAllBytes());
+            }
+        }
+    }
 }

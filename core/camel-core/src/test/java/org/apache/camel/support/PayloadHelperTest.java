@@ -20,7 +20,6 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
@@ -74,7 +73,6 @@ public class PayloadHelperTest extends ContextTestSupport {
         assertEquals(PAYLOAD_SIZE, PayloadHelper.getLength(file));
         assertEquals(PAYLOAD_SIZE, PayloadHelper.getLength(file.toFile()));
         assertEquals(PAYLOAD_SIZE, PayloadHelper.getLength(payload));
-        assertEquals(PAYLOAD_SIZE, PayloadHelper.getLength(ByteBuffer.wrap(payload)));
         assertEquals(PAYLOAD_SIZE, PayloadHelper.getLength(new ByteArrayInputStream(payload)));
         try (FileInputStream fis = new FileInputStream(file.toFile())) {
             // only the remaining bytes are counted

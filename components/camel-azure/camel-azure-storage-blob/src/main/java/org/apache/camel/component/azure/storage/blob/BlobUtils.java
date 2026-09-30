@@ -36,8 +36,10 @@ public final class BlobUtils {
     /**
      * Gets the length of the input stream, without reading it.
      *
-     * @return the length, or <tt>-1</tt> if the length cannot be determined without reading the stream
+     * @return     the length, or <tt>-1</tt> if the length cannot be determined without reading the stream
+     * @deprecated use {@link PayloadHelper#getLength(Object)}
      */
+    @Deprecated(since = "4.23.0")
     public static long getInputStreamLength(InputStream is) throws IOException {
         return PayloadHelper.getLength(is);
     }

@@ -39,6 +39,9 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CoderResult;
+import java.nio.charset.CodingErrorAction;
 import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -737,12 +740,14 @@ public final class IOHelper {
 
         private final Lock lock = new ReentrantLock();
         private final Reader reader;
-        private final Charset charset;
-
-        private ByteBuffer bufferBytes;
-        private final CharBuffer bufferedChars = CharBuffer.allocate(4096);
-        // the first half of a surrogate pair that was read at the end of the buffer
-        private char pendingHighSurrogate;
+        // a single encoder for the whole stream, so a charset that writes a byte order mark (such as UTF-16) writes
+        // it only once, and a stateful charset keeps its state from one chunk to the next
+        private final CharsetEncoder encoder;
+        private final CharBuffer chars = CharBuffer.allocate(4096);
+        private final ByteBuffer bytes;
+        private boolean endOfInput;
+        private boolean encoded;
+        private boolean flushed;
 
         /**
          * @param reader  the reader to read the characters from
@@ -750,12 +755,18 @@ public final class IOHelper {
          */
         public ReaderInputStream(Reader reader, Charset charset) {
             this.reader = reader;
-            this.charset = charset;
+            // replace malformed and unmappable characters, the same way as Charset.encode and String.getBytes
+            this.encoder = charset.newEncoder()
+                    .onMalformedInput(CodingErrorAction.REPLACE)
+                    .onUnmappableCharacter(CodingErrorAction.REPLACE);
+            this.bytes = ByteBuffer.allocate((int) Math.ceil(chars.capacity() * encoder.maxBytesPerChar()));
+            // nothing to read yet
+            bytes.limit(0);
         }
 
         @Override
         public int read() throws IOException {
-            return fill() ? bufferBytes.get() & 0xFF : -1;
+            return fill() ? bytes.get() & 0xFF : -1;
         }
 
         @Override
@@ -767,8 +778,8 @@ public final class IOHelper {
             if (!fill()) {
                 return -1;
             }
-            int n = Math.min(len, bufferBytes.remaining());
-            bufferBytes.get(b, off, n);
+            int n = Math.min(len, bytes.remaining());
+            bytes.get(b, off, n);
             return n;
         }
 
@@ -778,25 +789,29 @@ public final class IOHelper {
          * @return <tt>false</tt> if the end of the reader has been reached
          */
         private boolean fill() throws IOException {
-            while (bufferBytes == null || bufferBytes.remaining() <= 0) {
-                BufferCaster.cast(bufferedChars).clear();
-                if (pendingHighSurrogate != 0) {
-                    bufferedChars.put(pendingHighSurrogate);
-                    pendingHighSurrogate = 0;
-                }
-                int len = reader.read(bufferedChars);
-                bufferedChars.flip();
-                if (len == -1 && !bufferedChars.hasRemaining()) {
+            while (!bytes.hasRemaining()) {
+                if (flushed) {
                     return false;
                 }
-                int limit = bufferedChars.limit();
-                if (len != -1 && limit > 0 && Character.isHighSurrogate(bufferedChars.get(limit - 1))) {
-                    // a surrogate pair (such as an emoji) is split at the end of the buffer, so encode the high
-                    // surrogate together with the low surrogate in the next read (alone it would be encoded as ?)
-                    pendingHighSurrogate = bufferedChars.get(limit - 1);
-                    bufferedChars.limit(limit - 1);
+                bytes.clear();
+                if (encoded) {
+                    // write what the encoder may still hold
+                    flushed = encoder.flush(bytes).isUnderflow();
+                } else {
+                    if (!endOfInput && reader.read(chars) == -1) {
+                        endOfInput = true;
+                    }
+                    chars.flip();
+                    // characters that cannot be encoded yet (such as the first half of a surrogate pair at the end
+                    // of the buffer) are kept for the next chunk
+                    CoderResult result = encoder.encode(chars, bytes, endOfInput);
+                    chars.compact();
+                    if (endOfInput && result.isUnderflow()) {
+                        encoded = true;
+                        flushed = encoder.flush(bytes).isUnderflow();
+                    }
                 }
-                bufferBytes = charset.encode(bufferedChars);
+                bytes.flip();
             }
             return true;
         }
@@ -811,6 +826,13 @@ public final class IOHelper {
             lock.lock();
             try {
                 reader.reset();
+                encoder.reset();
+                chars.clear();
+                bytes.clear();
+                bytes.limit(0);
+                endOfInput = false;
+                encoded = false;
+                flushed = false;
             } finally {
                 lock.unlock();
             }

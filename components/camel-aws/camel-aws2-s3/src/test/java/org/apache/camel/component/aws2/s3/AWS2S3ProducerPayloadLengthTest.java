@@ -19,11 +19,13 @@ package org.apache.camel.component.aws2.s3;
 import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.stream.ReaderCache;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
@@ -107,6 +109,23 @@ public class AWS2S3ProducerPayloadLengthTest {
 
         assertEquals(PAYLOAD_SIZE, uploadedLength);
         assertArrayEquals(payload, uploadedContent);
+    }
+
+    @Test
+    public void uploadReaderCacheBodyWithNonAsciiText() throws Exception {
+        // the length of a reader cache is a number of characters, not bytes
+        String text = "\u00e6\u00f8\u00e5".repeat(1000);
+        byte[] expected = text.getBytes(StandardCharsets.UTF_8);
+
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.UTF_8.name());
+        exchange.getIn().setHeader(AWS2S3Constants.KEY, "text.txt");
+        exchange.getIn().setBody(new ReaderCache(text));
+
+        producer.process(exchange);
+
+        assertEquals(expected.length, uploadedLength);
+        assertArrayEquals(expected, uploadedContent);
     }
 
     @Test
