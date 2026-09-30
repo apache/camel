@@ -41,10 +41,11 @@ import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.RoutesBuilderLoaderSupport;
 import org.apache.camel.xml.in.ModelParser;
 
-/** Loads standalone declarations or declarations alongside routes from {@code *.semantic.xml} resources. */
+/** Parses standalone semantic declarations or declarations alongside XML routes. */
 @RoutesLoader("semantic.xml")
 public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
-    private static final Set<String> NAMESPACES = Set.of("", "http://camel.apache.org/schema/semantic",
+    static final String NAMESPACE = "http://camel.apache.org/schema/semantic";
+    private static final Set<String> NAMESPACES = Set.of("", NAMESPACE,
             "http://camel.apache.org/schema/xml-io", "http://camel.apache.org/schema/spring");
 
     @Override
@@ -188,7 +189,9 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
         List<Element> answer = new ArrayList<>();
         for (Node child = parent.getFirstChild(); child != null; child = child.getNextSibling()) {
             if (child instanceof Element element) {
-                if (!namespace(parent).equals(namespace(element))) {
+                boolean semanticBlock = "routes".equals(parent.getLocalName())
+                        && "semantic".equals(element.getLocalName()) && NAMESPACE.equals(namespace(element));
+                if (!semanticBlock && !namespace(parent).equals(namespace(element))) {
                     throw new IllegalArgumentException("Unexpected namespace on " + element.getTagName());
                 }
                 answer.add(element);
