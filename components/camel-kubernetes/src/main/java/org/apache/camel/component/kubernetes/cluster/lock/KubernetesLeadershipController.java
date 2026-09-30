@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -131,6 +132,28 @@ public class KubernetesLeadershipController implements Service {
     }
 
     private void refreshStatus() {
+        try {
+            doRefreshStatus();
+        } catch (Exception e) {
+            ScheduledExecutorService executor = this.serializedExecutor;
+            if (executor == null || executor.isShutdown()) {
+                LOG.debug("{} Exception thrown while refreshing the leadership status during stop", logPrefix, e);
+                return;
+            }
+            // a failure must not end the refresh loop: the next run pulls the current state from the cluster again
+            LOG.warn("{} Error while refreshing the leadership status (will try again): {}", logPrefix, e.getMessage());
+            LOG.debug("{} Exception thrown while refreshing the leadership status", logPrefix, e);
+            try {
+                executor.schedule(this::refreshStatus,
+                        jitter(this.lockConfiguration.getRetryPeriodMillis(), this.lockConfiguration.getJitterFactor()),
+                        TimeUnit.MILLISECONDS);
+            } catch (RejectedExecutionException ex) {
+                LOG.debug("{} Cannot reschedule the leadership status refresh as the controller is stopping", logPrefix);
+            }
+        }
+    }
+
+    private void doRefreshStatus() {
         switch (currentState) {
             case NOT_LEADER:
                 refreshStatusNotLeader();
