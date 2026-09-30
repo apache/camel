@@ -191,7 +191,7 @@ Additional features:
 
 === Source Editor
 
-Press *F4* to enter edit mode for YAML routes, `application.properties`, and other local files.
+Press *F4* to enter edit mode for YAML, Java and XML routes, `application.properties`, and other local files.
 The editor provides a plain-text editing experience with features designed for working with
 Camel routes:
 
@@ -206,6 +206,13 @@ Camel routes:
    and Spring Boot auto-configuration properties (`+server.*+`, `+spring.*+`, `+management.*+`, etc.)
    resolved from starter JARs in the local Maven repository — works even for stopped projects
 ** In YAML DSL routes: EIP names, component URIs, option keys and values
+** In Java and XML DSL routes: in the endpoint URI of `from`, `to`, `toD`, `wireTap`, `enrich`, `pollEnrich`
+   and `poll` (the string given to them in Java, their `uri` attribute in XML), the component name, the
+   endpoint options and their values
+
+A quick documentation panel at the bottom shows the documentation of the line the cursor is on: for YAML, Java
+and XML routes the component and options of an endpoint, the EIP of a step and the language of its expression.
+Java routes are read by the Java DSL parser without compiling them, so constants and the endpoint DSL are resolved.
 
 The editor shows *gutter change markers* -- a green background on line numbers that have been
 modified or added since the file was opened. This gives an at-a-glance view of what you've changed.
@@ -226,6 +233,12 @@ file is not saved and errors are displayed in a popup. This catches mistakes ear
   Camel catalog
 * *Simple expression validation* -- validates Simple language expressions for syntax errors,
   detecting the correct context (predicate vs expression) from the parent EIP
+
+Java and XML routes get the same Camel checks, on the Camel model the routes are read into: the endpoint URIs
+(also those built with the endpoint DSL, or from a constant), Simple expressions, and a `to` whose URI holds
+`+${...}+` and should be a `toD`. Their problems are marked on their lines while you type (*F9* jumps to the next)
+and said when saving, but they never keep a Java or XML file from being saved: a Java file is the application's
+code, and a check that cannot know something (a value computed at runtime) must not stop you.
 
 Validation can be toggled off in the Settings (F2 > Settings).
 
