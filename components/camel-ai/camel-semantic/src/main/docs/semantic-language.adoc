@@ -147,7 +147,8 @@ xref:others:java-xml-io-dsl.adoc[XML DSL] (`camel-xml-io-dsl`). Camel discovers 
 automatically at startup: use ordinary `*.xml` files without registering a loader or changing
 the Camel core model. XML documents without semantic declarations are handled by the standard
 XML loader, including its bean and route configuration support. XML loaders registered by the
-application before route loading retain precedence over automatic discovery.
+application before route resource discovery retain precedence over automatic discovery.
+Loader discovery is refreshed when the context starts or routes are reloaded.
 Filenames may contain dots, such as `my.tickets.xml`. Routes retain their original resource
 locations and line numbers for debugging and error messages.
 
