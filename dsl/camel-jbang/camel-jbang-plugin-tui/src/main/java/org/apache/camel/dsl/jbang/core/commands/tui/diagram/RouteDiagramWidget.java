@@ -182,7 +182,18 @@ public class RouteDiagramWidget implements Widget {
         }
     }
 
-    /** Text beside a box: where it links to, or the system a message leaves to or comes in from. */
+    /**
+     * The text set in a border for where a message comes in ({@code " AMQP ──▶ "}) or leaves ({@code " ──▶ AMQP "}),
+     * the name cut with an ellipsis to leave some border on both sides.
+     */
+    private String borderText(String name, boolean in) {
+        String arrow = "──▶";
+        int room = boxWidth - 6 - arrow.length() - 3;
+        String n = name.length() > room ? name.substring(0, Math.max(1, room - 1)) + "…" : name;
+        return in ? " " + n + " " + arrow + " " : " " + arrow + " " + n + " ";
+    }
+
+    /** Text beside a box: where it links to. */
     private record Marker(int row, int col, String text, Style style) {
     }
 
@@ -308,32 +319,21 @@ public class RouteDiagramWidget implements Widget {
             }
             markers.add(new Marker(bottom, col + boxWidth, " ↵ " + name, linkStyle));
         }
+        // where the input comes from and where a message leaves, set in the border so every box keeps its size:
+        // in at the top left (AMQP ──▶), out at the bottom right (──▶ AMQP)
         if ("from".equals(node.type) && !external && node.treeNode != null && isScheduled(node.treeNode.info)) {
-            // the route starts itself on a schedule: a repeat sign where the input comes in
-            int middle = row + (height - 1) / 2;
-            String in = "↻ ───▶ ";
-            if (col >= in.length()) {
-                markers.add(new Marker(middle, col - in.length(), in, Theme.label().bold()));
-            } else {
-                markers.add(new Marker(middle, col + boxWidth, " ◀─── ↻", Theme.label().bold()));
-            }
+            // the route starts itself on a schedule
+            writeText(buffer, area, row, col + 1, borderText("↻", true), Theme.label().bold());
         }
         if (external && node.treeNode != null) {
             String system = BusinessEndpointLabels.systemName(node.treeNode.info);
             Style edgeStyle = Style.EMPTY.fg(externalColor()).bold();
             if (system != null && "from".equals(node.type)) {
-                // where the route's input comes from: AMQP ───▶ on the left of the box, or on its right when there
-                // is no room; on the middle row, apart from a link marker on the bottom row
-                int middle = row + (height - 1) / 2;
-                String in = system + " ───▶ ";
-                if (col >= in.length()) {
-                    markers.add(new Marker(middle, col - in.length(), in, edgeStyle));
-                } else {
-                    markers.add(new Marker(middle, col + boxWidth, " ◀─── " + system, edgeStyle));
-                }
+                writeText(buffer, area, row, col + 1, borderText(system, true), edgeStyle);
             } else if (system != null && linkedRouteId == null) {
                 // no route of the integration on the other side: the message leaves to a system
-                markers.add(new Marker(bottom, col + boxWidth, " ───▶ " + system, edgeStyle));
+                String out = borderText(system, false);
+                writeText(buffer, area, bottom, col + boxWidth - 1 - out.length(), out, edgeStyle);
             }
         }
 
