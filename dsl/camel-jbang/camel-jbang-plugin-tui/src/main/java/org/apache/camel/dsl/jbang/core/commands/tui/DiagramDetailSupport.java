@@ -516,9 +516,16 @@ final class DiagramDetailSupport {
                             Span.styled(" ↵ ", Theme.label().bold()),
                             Span.styled(linkedRoute, Style.EMPTY.fg(Theme.baseFg()))));
                 }
-            } else if (ln.treeNode != null && ln.treeNode.info.remote) {
-                lines.add(Line.from(Span.raw("")));
-                String arrow = "from".equals(ln.type) ? " external → " : " → external";
+            }
+            if (ln.treeNode != null && ln.treeNode.info.remote) {
+                if (linkedRoute == null || diagram.getRouteLayout(linkedRoute) == null) {
+                    lines.add(Line.from(Span.raw("")));
+                }
+                // the direction in words, so it is not read the wrong way: the system comes in to Camel, or Camel
+                // sends to it
+                String system = BusinessEndpointLabels.systemName(ln.treeNode.info);
+                String external = system != null ? "external " + system : "external";
+                String arrow = "from".equals(ln.type) ? " " + external + " → Camel" : " Camel → " + external;
                 lines.add(Line.from(
                         Span.styled(arrow, Theme.muted())));
             }
