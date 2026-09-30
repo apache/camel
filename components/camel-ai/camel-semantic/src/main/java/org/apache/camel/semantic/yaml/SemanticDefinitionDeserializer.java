@@ -57,7 +57,7 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
 
     @Override
     public Object construct(Node node) {
-        read(node);
+        read(getDeserializationContext(node).getCamelContext(), node);
         // Registration happens once for the entire resource, including declarations after routes.
         return (CamelContextCustomizer) context -> {
         };
@@ -76,7 +76,7 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
             }
             for (NodeTuple tuple : mapping.getValue()) {
                 if ("semantic".equals(asText(tuple.getKeyNode()))) {
-                    read(tuple.getValueNode()).forEach((name, question) -> {
+                    read(dc.getCamelContext(), tuple.getValueNode()).forEach((name, question) -> {
                         if (definitions.putIfAbsent(name, question) != null) {
                             throw new YamlDeserializationException(
                                     tuple.getValueNode(), "Duplicate semantic question: " + name);
@@ -98,7 +98,7 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
         }
     }
 
-    private static Map<String, SemanticQuestion> read(Node node) {
+    private static Map<String, SemanticQuestion> read(CamelContext context, Node node) {
         Map<String, Node> semantic = fields(node, "semantic declaration");
         if (!semantic.keySet().equals(Set.of("question"))) {
             throw new YamlDeserializationException(node, "Semantic declaration requires only question");
@@ -109,7 +109,7 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
                 throw new YamlDeserializationException(definition, "Semantic question requires a nonblank name");
             }
             try {
-                result.put(name, readQuestion(name, definition));
+                result.put(name, readQuestion(context, name, definition));
             } catch (IllegalArgumentException e) {
                 throw new YamlDeserializationException(
                         definition, "Invalid semantic question '" + name + "': " + e.getMessage(), e);
@@ -118,7 +118,7 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
         return result;
     }
 
-    private static SemanticQuestion readQuestion(String name, Node definition) {
+    private static SemanticQuestion readQuestion(CamelContext context, String name, Node definition) {
         Map<String, Node> values = fields(definition, "semantic question '" + name + "'");
         values.forEach((field, value) -> {
             if (!FIELDS.contains(field)) {
@@ -152,7 +152,8 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
                 : SemanticQuestion.UncertaintyPolicy.FAIL;
         return new SemanticQuestion(
                 type, asText(values.get("instructions")), asText(values.get("state")),
-                criteria, levels, number(values, name, "threshold", 0.5), number(values, name, "uncertainty", 0), policy);
+                criteria, levels, number(context, values, name, "threshold", 0.5),
+                number(context, values, name, "uncertainty", 0), policy);
     }
 
     private static <T extends Enum<T>> T enumeration(Node node, String question, String field, Class<T> type) {
@@ -164,14 +165,15 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
         }
     }
 
-    private static double number(Map<String, Node> values, String question, String name, double fallback) {
+    private static double number(
+            CamelContext context, Map<String, Node> values, String question, String name, double fallback) {
         if (!values.containsKey(name)) {
             return fallback;
         }
         Node node = values.get(name);
         String raw = asText(node);
         try {
-            return Double.parseDouble(raw);
+            return Double.parseDouble(context.resolvePropertyPlaceholders(raw));
         } catch (NumberFormatException e) {
             throw new YamlDeserializationException(
                     node,

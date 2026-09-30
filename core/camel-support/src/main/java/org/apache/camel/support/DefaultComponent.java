@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.AfterPropertiesConfigured;
@@ -54,11 +52,6 @@ import org.slf4j.LoggerFactory;
 public abstract class DefaultComponent extends ServiceSupport implements Component {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultComponent.class);
-
-    /**
-     * Simple RAW() pattern used only for validating URI in this class
-     */
-    private static final Pattern RAW_PATTERN = Pattern.compile("RAW[({].*&&.*[)}]");
 
     private volatile PropertyConfigurer componentPropertyConfigurer;
     private volatile PropertyConfigurer endpointPropertyConfigurer;
@@ -123,10 +116,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             // and use method parseParameters
             parameters = URISupport.parseParameters(u);
         }
-        if (properties != null) {
+        if (properties != null && !properties.isEmpty()) {
             parameters.putAll(properties);
         }
-        // This special property is only to identify endpoints in a unique manner
+        // This special property is only to identify endpoints in a unique manner. The endpoint-dsl adds it to the
+        // uri, which can later be resolved from the uri alone, and it is also used in uris to create unique endpoints
         parameters.remove("hash");
 
         if (resolveRawParameterValues()) {
@@ -315,17 +309,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
      */
     protected void validateURI(String uri, String path, Map<String, Object> parameters) {
-        // check for uri containing double && markers without include by RAW
-        if (uri.contains("&&")) {
-            Matcher m = RAW_PATTERN.matcher(uri);
-            // we should skip the RAW part
-            if (!m.find()) {
-                throw new ResolveEndpointFailedException(
-                        uri, "Invalid uri syntax: Double && marker found. "
-                             + "Check the uri and remove the duplicate & marker.");
-            }
-        }
-
         // if we have a trailing & then that is invalid as well
         if (uri.endsWith("&")) {
             throw new ResolveEndpointFailedException(
@@ -564,7 +547,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             if (EndpointHelper.isReferenceParameter(str)) {
                 return EndpointHelper.resolveReferenceParameter(getCamelContext(), str, type);
             } else {
-                return getCamelContext().getTypeConverter().convertTo(type, value);
+                T answer = getCamelContext().getTypeConverter().convertTo(type, value);
+                return answer != null ? answer : defaultValue;
             }
         }
     }
@@ -653,8 +637,17 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             Map<String, Object> parameters, String key, Class<T> elementType, List<T> defaultValue) {
         // the value may already be a list such as when using endpoint-dsl
         Object value = getAndRemoveParameter(parameters, key, Object.class);
-        if (value instanceof List) {
-            return (List<T>) value;
+        if (value instanceof List<?> list) {
+            // the elements may be references (such as #myBean) to resolve
+            List<T> answer = new ArrayList<>(list.size());
+            for (Object element : list) {
+                if (element instanceof String str && EndpointHelper.isReferenceParameter(str)) {
+                    answer.add(EndpointHelper.resolveReferenceParameter(getCamelContext(), str, elementType));
+                } else {
+                    answer.add((T) element);
+                }
+            }
+            return answer;
         }
         if (value == null) {
             return defaultValue;

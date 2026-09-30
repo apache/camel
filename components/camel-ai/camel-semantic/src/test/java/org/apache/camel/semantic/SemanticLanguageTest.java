@@ -29,6 +29,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Expression;
@@ -301,6 +302,35 @@ class SemanticLanguageTest {
         assertThatThrownBy(() -> language.createExpression("ref:q")).hasMessageContaining("Unknown function: invalidFunction");
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void placeholderResolvingToEmptyStateRetainsSingleQuestionBehavior(boolean questionState) {
+        Properties properties = new Properties();
+        properties.setProperty("selected", "");
+        context.getPropertiesComponent().setInitialProperties(properties);
+        if (questionState) {
+            questions(question(SemanticQuestion.Type.BOOLEAN, "{{selected}}", 0.5, 0,
+                    SemanticQuestion.UncertaintyPolicy.FAIL));
+        } else {
+            language.setDefaultState("{{selected}}");
+        }
+        var exchange = new DefaultExchange(context);
+        exchange.getMessage().setBody("original");
+        assertThat(language.createExpression("ref:q").evaluate(exchange, Boolean.class)).isTrue();
+        CountingAdapter adapter
+                = context.getRegistry().lookupByNameAndType(SemanticLanguage.ADAPTER_NAME, CountingAdapter.class);
+        assertThat(adapter.state).isEqualTo("");
+        assertThat(exchange.getMessage().getBody()).isEqualTo("original");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "", " " })
+    void literalBlankSelectorsStillFailBeforeEvaluation(String selector) {
+        language.setDefaultState(selector);
+        assertThatThrownBy(() -> language.createExpression("ref:q"))
+                .isExactlyInstanceOf(IllegalArgumentException.class).hasMessageContaining("must not be blank");
+    }
+
     @Test
     void registryNameTakesPrecedenceOverClassName() {
         CountingAdapter bean = new CountingAdapter();
@@ -344,7 +374,8 @@ class SemanticLanguageTest {
         questions(question(SemanticQuestion.Type.BOOLEAN, null, 0.5, 0.1, SemanticQuestion.UncertaintyPolicy.NON_MATCH));
         assertThat(predicate.matches(exchange)).isFalse();
         adapter.failure = new IllegalStateException("provider failed");
-        assertThatThrownBy(() -> predicate.matches(exchange)).hasMessageContaining("provider failed");
+        assertThatThrownBy(() -> predicate.matches(exchange)).isExactlyInstanceOf(RuntimeCamelException.class)
+                .hasCause(adapter.failure).hasMessageContaining("provider failed");
         assertThat(exchange.getProperty(SemanticLanguage.RESULT)).isNull();
     }
 
@@ -375,11 +406,13 @@ class SemanticLanguageTest {
         assertThat(predicate.matches(exchange)).isTrue();
         assertThat(exchange.getProperty(SemanticLanguage.RESULT)).isNotNull();
         questions(question(SemanticQuestion.Type.CHOICE, null, 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL));
-        assertThatThrownBy(() -> predicate.matches(exchange)).hasMessageContaining("boolean");
+        assertThatThrownBy(() -> predicate.matches(exchange))
+                .isExactlyInstanceOf(IllegalArgumentException.class).hasMessageContaining("boolean");
         assertThat(exchange.getProperty(SemanticLanguage.RESULT)).isNull();
         exchange.setProperty(SemanticLanguage.RESULT, "old");
         SemanticQuestions.get(context).replace("test", Map.of());
-        assertThatThrownBy(() -> predicate.matches(exchange)).hasMessageContaining("Unknown");
+        assertThatThrownBy(() -> predicate.matches(exchange))
+                .isExactlyInstanceOf(IllegalArgumentException.class).hasMessageContaining("Unknown");
         assertThat(exchange.getProperty(SemanticLanguage.RESULT)).isNull();
     }
 

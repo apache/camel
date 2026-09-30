@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -40,6 +41,13 @@ public class JMXAgentPropertiesTest extends DefaultJMXAgentTest {
         ManagementAgent agent = ctx.getManagementStrategy().getManagementAgent();
         agent.start();
         assertTrue(agent.getUseHostIPAddress());
+    }
+
+    @Test
+    public void testMBeanServerDefaultDomain() throws Exception {
+        CamelContext ctx = createCamelContext();
+        ManagementAgent agent = ctx.getManagementStrategy().getManagementAgent();
+        assertEquals("myDomain", agent.getMBeanServerDefaultDomain());
     }
 
 }

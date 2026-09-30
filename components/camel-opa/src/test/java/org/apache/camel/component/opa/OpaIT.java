@@ -126,11 +126,23 @@ public class OpaIT extends CamelTestSupport {
     @Test
     void failsClosedOnAnUndefinedDecision() {
         // authz/strict_allow has no default, so OPA answers with an empty result rather than false. The WASM
-        // engine sees the same rule as an empty result array - OpaWasmEvaluatorTest asserts the same outcome.
+        // engine sees the same rule as an empty result array - OpaWasmIT asserts the same outcome.
         Exchange out = template.request(opa("authz/strict_allow"), e -> e.getMessage().setHeader("user", "mallory"));
 
         assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
         assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+    }
+
+    @Test
+    void failsClosedOnAnUndefinedDecisionEvenUnderFailOpen() {
+        // the rule not matching is the policy not saying yes, not an unavailable server, so failOpen must not let
+        // mallory through. OpaWasmIT.failsClosedOnAnUndefinedDecisionEvenUnderFailOpen is the twin
+        Exchange out = template.request(opa("authz/strict_allow") + "&failOpen=true",
+                e -> e.getMessage().setHeader("user", "mallory"));
+
+        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
     }
 
     @Test
@@ -140,6 +152,18 @@ public class OpaIT extends CamelTestSupport {
 
         assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
         assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+    }
+
+    @Test
+    void failsOpenWhenTheServerIsNotReachableAndFailOpenIsSet() {
+        // the real SDK wraps the refused connection as the cause of its OPAException: this is the unavailability
+        // failOpen is for, and it must still be recognised through that wrapping
+        Exchange out = template.request("opa:authz/allow?serverUrl=http://localhost:1&failOpen=true", e -> {
+        });
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isEqualTo(true);
     }
 
     @Test

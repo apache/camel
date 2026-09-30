@@ -32,6 +32,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.ExchangeConstantProvider;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -662,31 +663,81 @@ public class CaseInsensitiveMapTest {
     public void testKnownKeyDeduplication() {
         // Register known keys
         CaseInsensitiveMap.registerKnownKeys(List.of("CamelCharsetName", "CamelExchangeId", "breadcrumbId"));
+        try {
+            Map<String, Object> map = new CaseInsensitiveMap();
 
-        Map<String, Object> map = new CaseInsensitiveMap();
+            // simulate deserialized key (new String to guarantee a different object)
+            String deserializedKey = new String("CamelCharsetName");
+            map.put(deserializedKey, "UTF-8");
 
-        // simulate deserialized key (new String to guarantee a different object)
-        String deserializedKey = new String("CamelCharsetName");
-        map.put(deserializedKey, "UTF-8");
+            // the stored key should be the canonical reference, not the deserialized copy
+            Map.Entry<String, Object> entry = map.entrySet().iterator().next();
+            assertSame("CamelCharsetName", entry.getKey());
+            assertNotSame(deserializedKey, entry.getKey());
 
-        // the stored key should be the canonical reference, not the deserialized copy
-        Map.Entry<String, Object> entry = map.entrySet().iterator().next();
-        assertSame("CamelCharsetName", entry.getKey());
-        assertNotSame(deserializedKey, entry.getKey());
+            // a key with a different case is not replaced by the canonical key, as the map preserves the key case
+            Map<String, Object> map2 = new CaseInsensitiveMap();
+            String lowerCaseKey = "camelcharsetname";
+            map2.put(lowerCaseKey, "UTF-8");
+            Map.Entry<String, Object> entry2 = map2.entrySet().iterator().next();
+            assertSame(lowerCaseKey, entry2.getKey());
+            assertEquals("UTF-8", map2.get("CamelCharsetName"));
 
-        // case-insensitive dedup: different case should still map to canonical
-        Map<String, Object> map2 = new CaseInsensitiveMap();
-        map2.put("camelcharsetname", "UTF-8");
-        Map.Entry<String, Object> entry2 = map2.entrySet().iterator().next();
-        assertSame("CamelCharsetName", entry2.getKey());
-
-        // non-registered key is stored as-is
-        String custom = new String("CustomHeader");
-        map.put(custom, "value");
-        for (Map.Entry<String, Object> e : map.entrySet()) {
-            if (e.getValue().equals("value")) {
-                assertSame(custom, e.getKey());
+            // non-registered key is stored as-is
+            String custom = new String("CustomHeader");
+            map.put(custom, "value");
+            for (Map.Entry<String, Object> e : map.entrySet()) {
+                if (e.getValue().equals("value")) {
+                    assertSame(custom, e.getKey());
+                }
             }
+        } finally {
+            CaseInsensitiveMap.registerKnownKeys(ExchangeConstantProvider.values());
+        }
+    }
+
+    @Test
+    public void testKnownKeyKeepsKeyCase() {
+        CaseInsensitiveMap.registerKnownKeys(List.of("Content-Type", "CamelFileName"));
+        try {
+            Map<String, Object> map = new CaseInsensitiveMap();
+            map.put("content-type", "text/plain");
+            map.put("camelfilename", "a.txt");
+            map.put(new String("Content-Length"), "12");
+
+            assertEquals(List.of("content-type", "camelfilename", "Content-Length"), new ArrayList<>(map.keySet()));
+            List<String> entryKeys = new ArrayList<>();
+            for (Map.Entry<String, Object> e : map.entrySet()) {
+                entryKeys.add(e.getKey());
+            }
+            assertEquals(List.of("content-type", "camelfilename", "Content-Length"), entryKeys);
+
+            // lookups are still case-insensitive
+            assertEquals("text/plain", map.get("Content-Type"));
+            assertEquals("text/plain", map.get("CONTENT-TYPE"));
+            assertEquals("a.txt", map.get("CamelFileName"));
+            assertTrue(map.containsKey("Content-Type"));
+
+            // the first put decides the case: a later put with another case only replaces the value
+            map.put("Content-Type", "application/json");
+            assertEquals(1, map.keySet().stream().filter("content-type"::equalsIgnoreCase).count());
+            assertTrue(map.containsKey("content-type"));
+            assertEquals("content-type", map.keySet().iterator().next());
+            assertEquals("application/json", map.get("content-type"));
+
+            // an equal key still shares the canonical instance
+            Map<String, Object> map2 = new CaseInsensitiveMap();
+            String key = new String("Content-Type");
+            map2.put(key, "text/plain");
+            String stored = map2.keySet().iterator().next();
+            assertSame("Content-Type", stored);
+            assertNotSame(key, stored);
+
+            // also when copied from another map
+            Map<String, Object> copy = new CaseInsensitiveMap(map);
+            assertEquals(List.of("content-type", "camelfilename", "Content-Length"), new ArrayList<>(copy.keySet()));
+        } finally {
+            CaseInsensitiveMap.registerKnownKeys(ExchangeConstantProvider.values());
         }
     }
 

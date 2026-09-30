@@ -50,6 +50,7 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -1262,7 +1263,11 @@ class OverviewTab extends AbstractTab {
         java.nio.file.Path srcDir = FilesBrowser.resolveSourceDirectory(info);
         if (srcDir != null) {
             try (java.util.stream.Stream<java.nio.file.Path> files = java.nio.file.Files.list(srcDir)) {
-                return files.anyMatch(p -> p.getFileName().toString().toLowerCase(java.util.Locale.ROOT).startsWith("readme"));
+                // a README, or the integration summary the AI project overview writes (CAMEL-25143)
+                return files.anyMatch(p -> {
+                    String name = p.getFileName().toString().toLowerCase(java.util.Locale.ROOT);
+                    return name.startsWith("readme") || IntegrationSummary.FILE_NAME.equals(name);
+                });
             } catch (Exception e) {
                 // ignore
             }

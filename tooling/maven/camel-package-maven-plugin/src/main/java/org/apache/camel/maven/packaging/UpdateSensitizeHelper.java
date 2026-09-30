@@ -60,6 +60,8 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
     private static final String PATTERN_END_TOKEN = "// SENSITIVE-PATTERN: END";
     private static final String SECURITY_START_TOKEN = "// SECURITY-OPTIONS: START";
     private static final String SECURITY_END_TOKEN = "// SECURITY-OPTIONS: END";
+    private static final String OWNERS_START_TOKEN = "// SECURITY-OPTION-OWNERS: START";
+    private static final String OWNERS_END_TOKEN = "// SECURITY-OPTION-OWNERS: END";
 
     private static final String SECRET = "secret";
     private static final String INSECURE_DEV = "insecure:dev";
@@ -83,7 +85,8 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
     // OpenAI api-key header, and "authorization" covers the standard Authorization header.
     private static final String[] EXTRA_KEYS
             = new String[] {
-                    "apipassword", "apiuser", "apiusername", "api_key", "api-key", "api_secret", "authorization",
+                    "apipassword", "apisecret", "apiuser", "apiusername", "api_key", "api-key", "api_secret", "authorization",
+                    "db_password",
                     SECRET, "keystorePassword" };
 
     // extra security options from camel-main properties that are not in component JSON files
@@ -128,6 +131,8 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
         Set<String> secrets = new TreeSet<>();
         // key -> [category, insecureValue]
         Map<String, String[]> securityOptions = new TreeMap<>();
+        // key -> the components, data formats and languages that declare the option (such as component:netty)
+        Map<String, Set<String>> securityOptionOwners = new TreeMap<>();
 
         for (Path file : jsonFiles) {
             final String name = PackageHelper.asName(file);
@@ -153,22 +158,26 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
 
                 if (isComponent) {
                     ComponentModel cm = JsonMapper.generateComponentModel(json);
+                    Set<String> owners = owners("component:", cm.getScheme(), cm.getAlternativeSchemes());
                     cm.getComponentOptions().forEach(o -> {
                         collectSecretOption(o, secrets);
-                        collectSecurityOption(o, securityOptions);
+                        collectSecurityOption(o, securityOptions, securityOptionOwners, owners);
                     });
-                    cm.getEndpointOptions().forEach(o -> collectSecurityOption(o, securityOptions));
+                    cm.getEndpointOptions()
+                            .forEach(o -> collectSecurityOption(o, securityOptions, securityOptionOwners, owners));
                 } else if (isDataFormat) {
                     DataFormatModel dm = JsonMapper.generateDataFormatModel(json);
+                    Set<String> owners = owners("dataformat:", dm.getName(), null);
                     dm.getOptions().forEach(o -> {
                         collectSecretOption(o, secrets);
-                        collectSecurityOption(o, securityOptions);
+                        collectSecurityOption(o, securityOptions, securityOptionOwners, owners);
                     });
                 } else if (isLanguage) {
                     LanguageModel lm = JsonMapper.generateLanguageModel(json);
+                    Set<String> owners = owners("language:", lm.getName(), null);
                     lm.getOptions().forEach(o -> {
                         collectSecretOption(o, secrets);
-                        collectSecurityOption(o, securityOptions);
+                        collectSecurityOption(o, securityOptions, securityOptionOwners, owners);
                     });
                 }
             } catch (Exception e) {
@@ -211,6 +220,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
                           + " distinct insecure security options across all the Camel components/dataformats/languages");
             try {
                 boolean updated = updateSecurityUtils(camelDir, securityOptions);
+                updated |= updateSecurityOptionOwners(camelDir, securityOptionOwners);
                 if (updated) {
                     getLog().info("Updated camel-util/src/main/java/org/apache/camel/util/SecurityUtils.java file");
                 } else {
@@ -313,8 +323,30 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
         }
     }
 
+    /**
+     * The owner names (such as component:nettyhttp) of a component, data format or language, in the same form as
+     * SecurityUtils computes them from a configuration key (lower case and without dashes)
+     */
+    private static Set<String> owners(String kind, String name, String alternativeNames) {
+        Set<String> answer = new TreeSet<>();
+        answer.add(kind + normalizeOwnerName(name));
+        if (!Strings.isNullOrEmpty(alternativeNames)) {
+            for (String alternative : alternativeNames.split(",")) {
+                if (!alternative.isBlank()) {
+                    answer.add(kind + normalizeOwnerName(alternative.trim()));
+                }
+            }
+        }
+        return answer;
+    }
+
+    private static String normalizeOwnerName(String name) {
+        return name.toLowerCase(Locale.ENGLISH).replace("-", "");
+    }
+
     private static void collectSecurityOption(
-            BaseOptionModel o, Map<String, String[]> securityOptions) {
+            BaseOptionModel o, Map<String, String[]> securityOptions, Map<String, Set<String>> securityOptionOwners,
+            Set<String> owners) {
         String security = o.getSecurity();
         if (!Strings.isNullOrEmpty(security) && !SECRET.equals(security)) {
             // only collect insecure:* categories; secrets are handled by SensitiveUtils
@@ -327,6 +359,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
             }
             // only add if not already present (first wins)
             securityOptions.putIfAbsent(key, new String[] { security, insecureValue });
+            securityOptionOwners.computeIfAbsent(key, k -> new TreeSet<>()).addAll(owners);
         }
     }
 
@@ -358,6 +391,40 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
                 String before = Strings.before(text, SECURITY_START_TOKEN);
                 String after = Strings.after(text, SECURITY_END_TOKEN);
                 text = before + SECURITY_START_TOKEN + "\n" + spaces8 + changed + "\n" + spaces8 + SECURITY_END_TOKEN + after;
+                PackageHelper.writeText(java, text);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean updateSecurityOptionOwners(File camelDir, Map<String, Set<String>> securityOptionOwners)
+            throws Exception {
+        File java = new File(camelDir, "src/main/java/org/apache/camel/util/SecurityUtils.java");
+        String text = PackageHelper.loadText(java);
+        String spaces8 = "        ";
+        String spaces16 = "                ";
+
+        // one owner per line (the block is not formatted, as an option can have many owners)
+        StringJoiner sb = new StringJoiner("\n");
+        for (Map.Entry<String, Set<String>> entry : securityOptionOwners.entrySet()) {
+            StringJoiner owners = new StringJoiner(",\n");
+            entry.getValue().forEach(o -> owners.add(spaces16 + "\"" + o + "\""));
+            sb.add(spaces8 + "owners.put(\"" + entry.getKey() + "\", Set.of(\n" + owners + "));");
+        }
+        String changed = sb.toString();
+
+        String existing = Strings.between(text, OWNERS_START_TOKEN, OWNERS_END_TOKEN);
+        if (existing != null) {
+            existing = existing.trim();
+            changed = changed.trim();
+            if (existing.equals(changed)) {
+                return false;
+            } else {
+                String before = Strings.before(text, OWNERS_START_TOKEN);
+                String after = Strings.after(text, OWNERS_END_TOKEN);
+                text = before + OWNERS_START_TOKEN + "\n" + spaces8 + changed + "\n" + spaces8 + OWNERS_END_TOKEN + after;
                 PackageHelper.writeText(java, text);
                 return true;
             }

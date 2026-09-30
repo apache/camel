@@ -122,7 +122,8 @@ public final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
     @Override
     public void reset() {
         this.currentAttempts = 0;
-        this.currentDelay = 0;
+        // start over from the initial delay (as when the task was created)
+        this.currentDelay = backOff.getDelay().toMillis();
         this.currentElapsedTime = 0;
         this.firstAttemptTime = BackOff.NEVER;
         this.lastAttemptTime = BackOff.NEVER;
@@ -217,12 +218,16 @@ public final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
 
     void complete(Throwable throwable) {
         this.cause = throwable;
+        List<BiConsumer<BackOffTimer.Task, Throwable>> copy;
         lock.lock();
         try {
-            consumers.forEach(c -> c.accept(this, throwable));
+            copy = new ArrayList<>(consumers);
         } finally {
             lock.unlock();
         }
+        // call the consumers without holding the lock, as they may take locks of their own,
+        // which could deadlock with a thread holding such a lock and cancelling this task
+        copy.forEach(c -> c.accept(this, throwable));
     }
 
     // *****************************
@@ -248,8 +253,10 @@ public final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
                 currentDelay = BackOff.NEVER;
                 status = Status.Exhausted;
             } else {
-                if (currentDelay <= backOff.getMaxDelay().toMillis()) {
-                    currentDelay = (long) (currentDelay * backOff.getMultiplier());
+                // the delay grows by the multiplier but must not go above the max delay
+                long maxDelay = backOff.getMaxDelay().toMillis();
+                if (currentDelay < maxDelay) {
+                    currentDelay = Math.min((long) (currentDelay * backOff.getMultiplier()), maxDelay);
                 }
 
                 currentElapsedTime += currentDelay;

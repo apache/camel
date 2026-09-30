@@ -28,9 +28,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension;
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Result;
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Scope;
+import org.apache.camel.api.management.mbean.ComponentVerifierExtension.VerificationError;
 import org.apache.camel.component.direct.DirectComponent;
+import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
+import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.support.DefaultComponent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
@@ -98,6 +101,24 @@ public class ManagedComponentTest extends ManagementTestSupport {
         assertEquals(Scope.PARAMETERS, res.getScope());
     }
 
+    @Test
+    public void testVerifyErrorCode() throws Exception {
+        MBeanServerConnection mbeanServer = getMBeanServer();
+
+        ObjectName on = getCamelObjectName(TYPE_COMPONENT, "my-verifiable-component");
+
+        // each standard code is returned as the same code
+        for (StandardCode code : new StandardCode[] {
+                StandardCode.INCOMPLETE_PARAMETER_GROUP, StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION }) {
+            ComponentVerifierExtension.Result res = invoke(mbeanServer, on, "verify",
+                    new Object[] { "parameters", Map.of("errorCode", code) }, VERIFY_SIGNATURE);
+            assertEquals(Result.Status.ERROR, res.getStatus());
+            assertEquals(1, res.getErrors().size());
+            VerificationError.Code actual = res.getErrors().get(0).getCode();
+            assertEquals(code.getName(), actual.getName());
+        }
+    }
+
     // ***********************************
     //
     // ***********************************
@@ -112,6 +133,12 @@ public class ManagedComponentTest extends ManagementTestSupport {
 
                 @Override
                 protected Result verifyParameters(Map<String, Object> parameters) {
+                    Object code = parameters.get("errorCode");
+                    if (code != null) {
+                        return ResultBuilder.withStatusAndScope(Result.Status.ERROR, Scope.PARAMETERS)
+                                .error(ResultErrorBuilder.withCode((StandardCode) code).build())
+                                .build();
+                    }
                     return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).build();
                 }
             });

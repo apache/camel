@@ -1403,6 +1403,16 @@
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - choice:\n            when:\n              - simple: \"${body} contains 'Hello'\"\n                steps:\n                  - to:\n                      uri: mock:hello\n              - simple: \"${body} contains 'Bye'\"\n                steps:\n                  - to:\n                      uri: mock:bye\n                  - stop: {}\n            otherwise:\n              steps:\n                - to:\n                    uri: mock:other\n        - to:\n            uri: mock:result\n"
     }
   ],
+  "switch": [
+    {
+      "source": "switch-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:tickets\n      steps:\n        - switch:\n            selector:\n              header:\n                expression: department\n            case:\n              - value: billing\n                uri: direct:billing\n              - value: technical\n                uri: direct:technical\n            otherwise:\n              uri: direct:review\n"
+    },
+    {
+      "source": "switch-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:billing\n      steps:\n        - log: \"Billing: ${body}\"\n- route:\n    from:\n      uri: direct:technical\n      steps:\n        - log: \"Technical: ${body}\"\n- route:\n    from:\n      uri: direct:review\n      steps:\n        - log: \"Review: ${body}\"\n"
+    }
+  ],
   "threads": [
     {
       "source": "threads-eip.adoc",

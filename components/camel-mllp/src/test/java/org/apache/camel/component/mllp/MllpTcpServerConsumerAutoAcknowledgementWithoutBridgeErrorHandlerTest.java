@@ -17,6 +17,7 @@
 package org.apache.camel.component.mllp;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
@@ -56,6 +57,24 @@ public class MllpTcpServerConsumerAutoAcknowledgementWithoutBridgeErrorHandlerTe
 
         assertThat(acknowledgement, startsWith("MSH|^~\\&|^org^sys||APP_A|FAC_A|"));
         assertThat(acknowledgement, endsWith("||ACK^A04^ACK|||2.6\rMSA|AA|\r"));
+    }
+
+    @Test
+    public void testReceiveMessageWithOtherComponentSeparator() throws Exception {
+        // MSH-2 defines the separators, and the component separator does not have to be '^'
+        final String testMessage = TEST_MESSAGE.replace("MSH|^~\\&|APP_A|FAC_A|^org^sys||||ADT^A04^ADT_A04|",
+                "MSH|$~\\&|APP_A|FAC_A|$org$sys||||ADT$A04$ADT_A04|");
+
+        result.expectedBodiesReceived(testMessage);
+        complete.expectedBodiesReceived(testMessage);
+        complete.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
+
+        mllpClient.connect();
+        String acknowledgement = mllpClient.sendMessageAndWaitForAcknowledgement(testMessage);
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertThat(acknowledgement, startsWith("MSH|$~\\&|$org$sys||APP_A|FAC_A|"));
+        assertThat(acknowledgement, endsWith("||ACK$A04$ACK|||2.6\rMSA|AA|\r"));
     }
 
     public void testAcknowledgementDeliveryFailure() throws Exception {

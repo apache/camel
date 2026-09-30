@@ -16,7 +16,10 @@
  */
 package org.apache.camel.semantic;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -40,7 +43,11 @@ public final class SemanticQuestions {
         }
     }
 
-    /** Replace all definitions from one source; an empty map removes obsolete declarations. */
+    /**
+     * Replace all definitions from one source; an empty map removes obsolete declarations. The Java fluent helper
+     * reserves {@code java:} followed by the resource location (or a generated key for embedded builders). XML and YAML
+     * declarations use the resource location as their source key.
+     */
     public synchronized void replace(String source, Map<String, SemanticQuestion> definitions) {
         Map<String, SemanticQuestion> replacement = new HashMap<>();
         sources.forEach((location, entries) -> {
@@ -67,16 +74,31 @@ public final class SemanticQuestions {
 
     /** Track a route resource so deleted files can be discarded before development-mode reload. */
     public synchronized void replace(Resource source, Map<String, SemanticQuestion> definitions) {
+        replace(source.getLocation(), source, definitions);
+    }
+
+    synchronized void replace(String location, Resource source, Map<String, SemanticQuestion> definitions) {
         removeDeletedResources();
-        replace(source.getLocation(), definitions);
-        if (!definitions.isEmpty() && "file".equals(source.getScheme())) {
-            resources.put(source.getLocation(), source);
+        replace(location, definitions);
+        if (source != null && !definitions.isEmpty() && "file".equals(source.getScheme())) {
+            resources.put(location, source);
         }
     }
 
     synchronized void removeDeletedResources() {
-        resources.values().stream().filter(resource -> !resource.exists()).map(Resource::getLocation).toList()
+        resources.entrySet().stream().filter(entry -> !entry.getValue().exists()).map(Map.Entry::getKey).toList()
                 .forEach(location -> replace(location, Map.of()));
+    }
+
+    synchronized void remove(String source) {
+        if (sources.containsKey(source)) {
+            replace(source, Map.of());
+        }
+    }
+
+    /** Whether any named questions have been registered. */
+    public boolean isEmpty() {
+        return questions.isEmpty();
     }
 
     public SemanticQuestion get(String name) {
@@ -85,5 +107,19 @@ public final class SemanticQuestions {
             throw new IllegalArgumentException("Unknown semantic question: " + name);
         }
         return question;
+    }
+
+    /** Resolve all requested names from one immutable snapshot, preserving reference order. */
+    public Map<String, SemanticQuestion> get(List<String> names) {
+        Map<String, SemanticQuestion> snapshot = questions;
+        Map<String, SemanticQuestion> selected = new LinkedHashMap<>();
+        for (String name : names) {
+            SemanticQuestion question = snapshot.get(name);
+            if (question == null) {
+                throw new IllegalArgumentException("Unknown semantic question: " + name);
+            }
+            selected.put(name, question);
+        }
+        return Collections.unmodifiableMap(selected);
     }
 }

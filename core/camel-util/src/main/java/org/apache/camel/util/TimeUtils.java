@@ -17,6 +17,7 @@
 package org.apache.camel.util;
 
 import java.time.Duration;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -183,8 +184,9 @@ public final class TimeUtils {
     /**
      * Converts to milliseconds.
      *
-     * @param  source duration which can be in text format such as 15s
-     * @return        time in millis, will return 0 if the input is null or empty
+     * @param  source                   duration which can be in text format such as 15s
+     * @return                          time in millis, will return 0 if the input is null or empty
+     * @throws IllegalArgumentException if the input is not a number or a valid time pattern
      */
     public static long toMilliSeconds(String source) {
         if (source == null || source.isEmpty()) {
@@ -209,73 +211,58 @@ public final class TimeUtils {
             return Long.parseLong(source);
         }
 
-        long days = 0;
-        long hours = 0;
-        long minutes = 0;
-        long seconds = 0;
-        long millis = 0;
-
-        int pos = source.indexOf('d');
-        if (pos != -1) {
-            String s = source.substring(0, pos);
-            days = Long.parseLong(s);
-            source = source.substring(pos + 1);
-        }
-
-        pos = source.indexOf('h');
-        if (pos != -1) {
-            String s = source.substring(0, pos);
-            hours = Long.parseLong(s);
-            source = source.substring(pos + 1);
-        }
-
-        pos = source.indexOf('m');
-        if (pos != -1) {
-            boolean valid;
-            if (source.length() - 1 <= pos) {
-                valid = true;
-            } else {
-                // beware of minutes and not milliseconds
-                valid = source.charAt(pos + 1) != 's';
-            }
-            if (valid) {
-                String s = source.substring(0, pos);
-                minutes = Long.parseLong(s);
-                source = source.substring(pos + 1);
-            }
-        }
-
-        pos = source.indexOf('s');
-        // beware of seconds and not milliseconds
-        if (pos != -1 && source.charAt(pos - 1) != 'm') {
-            String s = source.substring(0, pos);
-            seconds = Long.parseLong(s);
-            source = source.substring(pos + 1);
-        }
-
-        pos = source.indexOf("ms");
-        if (pos != -1) {
-            String s = source.substring(0, pos);
-            millis = Long.parseLong(s);
-        }
-
-        long answer = millis;
-        if (seconds > 0) {
-            answer += 1000 * seconds;
-        }
-        if (minutes > 0) {
-            answer += 60000 * minutes;
-        }
-        if (hours > 0) {
-            answer += 3600000 * hours;
-        }
-        if (days > 0) {
-            answer += 86400000 * days;
-        }
-
+        long answer = parseTimePattern(source);
         LOG.trace("input: [{}], milliseconds: {}", source, answer);
-
         return answer;
+    }
+
+    private static long parseTimePattern(String source) {
+        String text = source.trim();
+        boolean negative = text.startsWith("-");
+        if (negative) {
+            text = text.substring(1);
+        }
+        if (text.isEmpty()) {
+            throw new IllegalArgumentException("Invalid time pattern: " + source);
+        }
+
+        // the whole text must be groups of a number followed by an unit (such as 1h30m or 5s)
+        long answer = 0;
+        int len = text.length();
+        int i = 0;
+        while (i < len) {
+            int start = i;
+            while (i < len && Character.isDigit(text.charAt(i))) {
+                i++;
+            }
+            if (start == i) {
+                throw new IllegalArgumentException("Invalid time pattern: " + source);
+            }
+            long num = Long.parseLong(text.substring(start, i));
+            start = i;
+            while (i < len && Character.isLetter(text.charAt(i))) {
+                i++;
+            }
+            String unit = text.substring(start, i).toLowerCase(Locale.ENGLISH);
+            long factor = switch (unit) {
+                case "d", "day", "days" -> 86400000L;
+                case "h", "hour", "hours" -> 3600000L;
+                case "m", "min", "mins", "minute", "minutes" -> 60000L;
+                case "s", "sec", "secs", "second", "seconds" -> 1000L;
+                case "ms", "milli", "millis" -> 1L;
+                default -> throw new IllegalArgumentException("Invalid time pattern: " + source);
+            };
+            try {
+                answer = Math.addExact(answer, Math.multiplyExact(num, factor));
+            } catch (ArithmeticException e) {
+                throw new IllegalArgumentException("Invalid time pattern: " + source, e);
+            }
+            // allow whitespace between the groups such as 1h 30m
+            while (i < len && Character.isWhitespace(text.charAt(i))) {
+                i++;
+            }
+        }
+        return negative ? -answer : answer;
     }
 
     /**

@@ -69,7 +69,9 @@ public final class DomConverter {
             int size = nodeList.getLength();
             for (int i = 0; i < size; i++) {
                 Node node = nodeList.item(i);
-                String s = toString(node, exchange);
+                // the text nodes of the list are appended each (and not joined with their siblings, which may be
+                // in the list as well)
+                String s = node instanceof Text ? node.getNodeValue() : toString(node, exchange);
                 if (org.apache.camel.util.ObjectHelper.isNotEmpty(s)) {
                     found = true;
                     buffer.append(s);
@@ -90,14 +92,17 @@ public final class DomConverter {
     public String toString(Node node, Exchange exchange) throws TransformerException {
         String s;
         if (node instanceof Text textNode) {
+            // join the adjacent text nodes (such as text and cdata), but not the text after an element or comment
             StringBuilder b = new StringBuilder(128);
             b.append(textNode.getNodeValue());
-            textNode = (Text) textNode.getNextSibling();
-            while (textNode != null) {
-                b.append(textNode.getNodeValue());
-                textNode = (Text) textNode.getNextSibling();
+            Node sibling = textNode.getNextSibling();
+            while (sibling instanceof Text) {
+                b.append(sibling.getNodeValue());
+                sibling = sibling.getNextSibling();
             }
             s = b.toString();
+        } else if (node instanceof Attr attr) {
+            s = attr.getValue();
         } else {
             s = xml.toString(new DOMSource(node), exchange);
         }

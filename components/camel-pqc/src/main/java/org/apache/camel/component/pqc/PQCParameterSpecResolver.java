@@ -20,22 +20,18 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.util.Set;
 
 import org.apache.camel.util.ObjectHelper;
+import org.bouncycastle.jcajce.spec.CMCEParameterSpec;
+import org.bouncycastle.jcajce.spec.FrodoKEMParameterSpec;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
 import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.KyberParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.PicnicParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec;
 
 /**
  * Resolves the BouncyCastle {@link AlgorithmParameterSpec} for a PQC algorithm from the parameter-set name configured
@@ -55,7 +51,7 @@ public final class PQCParameterSpecResolver {
      */
     private static final Set<String> SUPPORTED_ALGORITHMS = Set.of(
             // Signature algorithms
-            "MLDSA", "SLHDSA", "FALCON", "DILITHIUM", "SPHINCSPLUS", "PICNIC",
+            "MLDSA", "SLHDSA", "FALCON", "DILITHIUM", "SPHINCSPLUS",
             // Key encapsulation algorithms
             "MLKEM", "KYBER", "NTRU", "NTRULPRime", "SNTRUPrime", "BIKE", "HQC", "CMCE", "FRODO", "SABER");
 
@@ -97,7 +93,7 @@ public final class PQCParameterSpecResolver {
         try {
             resolved = doResolve(algorithm, name);
         } catch (IllegalArgumentException e) {
-            // The ML-DSA/ML-KEM/SLH-DSA specs throw for an unknown name
+            // The ML-DSA/ML-KEM/SLH-DSA/CMCE/FrodoKEM specs throw for an unknown name
             throw new IllegalArgumentException(
                     "Unknown parameterSpec '" + parameterSpec + "' for algorithm " + algorithm, e);
         }
@@ -118,17 +114,17 @@ public final class PQCParameterSpecResolver {
                 return SLHDSAParameterSpec.fromName(parameterSpec);
             case "FALCON":
                 return FalconParameterSpec.fromName(parameterSpec);
+            // DILITHIUM and SPHINCSPLUS generate ML-DSA and SLH-DSA keys (see PQCSignatureAlgorithms), so they take the
+            // standardized parameter sets
             case "DILITHIUM":
-                return DilithiumParameterSpec.fromName(parameterSpec);
+                return MLDSAParameterSpec.fromName(parameterSpec);
             case "SPHINCSPLUS":
-                return SPHINCSPlusParameterSpec.fromName(parameterSpec);
-            case "PICNIC":
-                return PicnicParameterSpec.fromName(parameterSpec);
+                return SLHDSAParameterSpec.fromName(parameterSpec);
             // Key encapsulation algorithms
             case "MLKEM":
-                return MLKEMParameterSpec.fromName(parameterSpec);
             case "KYBER":
-                return KyberParameterSpec.fromName(parameterSpec);
+                // KYBER generates ML-KEM keys (see PQCKeyEncapsulationAlgorithms)
+                return MLKEMParameterSpec.fromName(parameterSpec);
             case "NTRU":
                 return NTRUParameterSpec.fromName(parameterSpec);
             case "NTRULPRime":
@@ -142,7 +138,7 @@ public final class PQCParameterSpecResolver {
             case "CMCE":
                 return CMCEParameterSpec.fromName(parameterSpec);
             case "FRODO":
-                return FrodoParameterSpec.fromName(parameterSpec);
+                return FrodoKEMParameterSpec.fromName(parameterSpec);
             case "SABER":
                 return SABERParameterSpec.fromName(parameterSpec);
             default:

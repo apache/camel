@@ -19,7 +19,10 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -37,6 +40,7 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import org.apache.camel.dsl.jbang.core.commands.ai.ProjectCapabilities;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -58,6 +62,13 @@ class DiagramTab extends AbstractTab {
 
     private boolean detailMode;
     private final DiagramDetailSupport detail = new DiagramDetailSupport(ctx, diagram);
+    private final ArchitectureView architecture
+            = new ArchitectureView(ctx, this::focusGroup, () -> diagram.isShowDescription());
+    private final DiagramLevelBar levelBar = new DiagramLevelBar();
+    /** Whether the user chose descriptions on or off with n; until then they are on when the routes have any. */
+    private boolean descriptionChosen;
+    /** Whether the topology shows each route's group; null until the user presses g (then on when there are groups). */
+    private Boolean showGroups;
     private final DragSplit vSplit = new DragSplit();
 
     DiagramTab(MonitorContext ctx) {
@@ -88,6 +99,49 @@ class DiagramTab extends AbstractTab {
 
         // Source view scrolling (takes priority when active)
         if (sourceViewer.handleKeyEvent(ke)) {
+            return true;
+        }
+
+        // v moves through the zoom levels: architecture, topology, route (CAMEL-25147)
+        if (diagram.isShowDiagram() && ke.isCharIgnoreCase('v')) {
+            cycleLevel();
+            return true;
+        }
+
+        // AI-assisted hints shown or not, at every level: off shows what the sources and the runtime say
+        if (diagram.isShowDiagram() && ke.isCharIgnoreCase('a') && IntegrationSummaryHints.settingEnabled()) {
+            if (!IntegrationSummaryHints.hasSummary(selectedSourceDirectory())) {
+                // nothing to show yet: have the AI explain the project, in the AI panel
+                IntegrationSummaryHints.setShown(true);
+                if (ctx.projectOverviewCallback != null) {
+                    ctx.projectOverviewCallback.run();
+                }
+                return true;
+            }
+            IntegrationSummaryHints.setShown(!IntegrationSummaryHints.isShown());
+            architecture.refresh();
+            diagram.endLoad();
+            reloadDiagram();
+            return true;
+        }
+
+        // Architecture view: it takes the keys while shown; b switches its boxes between business and technical too
+        if (architecture.isActive()) {
+            if (isViewKey(ke)) {
+                descriptionChosen = true;
+                diagram.setShowDescription(!diagram.isShowDescription());
+                architecture.refresh();
+                return true;
+            }
+            if (ke.isChar('s')) {
+                IntegrationSummaryDoc.open(ctx, selectedSourceDirectory(), IntegrationSummaryDoc.ARCHITECTURE);
+                return true;
+            }
+            return architecture.handleKeyEvent(ke);
+        }
+        if (diagram.isShowDiagram() && ke.isChar('s')) {
+            // the integration summary, opened like a README at its routes (CAMEL-25143)
+            IntegrationSummaryDoc.open(ctx, selectedSourceDirectory(), IntegrationSummaryDoc.ROUTES);
             return true;
         }
 
@@ -218,6 +272,7 @@ class DiagramTab extends AbstractTab {
 
         // Jump back to topology from any depth
         if (!topologyMode && diagram.isShowDiagram() && ke.isChar('t')) {
+            architecture.close();
             routeNavigationStack.clear();
             diagram.setPendingSelectionRouteId(drillDownRouteId);
             drillDownRouteId = null;
@@ -255,8 +310,21 @@ class DiagramTab extends AbstractTab {
             return true;
         }
 
-        // Toggle description
-        if (diagram.isShowDiagram() && ke.isCharIgnoreCase('n')) {
+        // Groups in the topology: each route's route group, capability, shared services or utility
+        if (topologyMode && diagram.isShowDiagram() && ke.isCharIgnoreCase('g')) {
+            showGroups = !isShowGroups();
+            return true;
+        }
+
+        // Utility routes: one setting for the architecture and the topology, so both show the same groups
+        if (topologyMode && diagram.isShowDiagram() && ke.isCharIgnoreCase('u') && hasUtilityRoutes()) {
+            architecture.setShowUtility(!architecture.isShowUtility());
+            return true;
+        }
+
+        // Business or technical view: labels and what things do, or ids and endpoints
+        if (diagram.isShowDiagram() && isViewKey(ke)) {
+            descriptionChosen = true;
             diagram.setShowDescription(!diagram.isShowDescription());
             diagram.endLoad();
             reloadDiagram();
@@ -317,6 +385,13 @@ class DiagramTab extends AbstractTab {
         if (gotoNodePopup.isVisible()) {
             return true;
         }
+        if (me.isClick()) {
+            DiagramLevelBar.Level clicked = levelBar.hit(me.x(), me.y());
+            if (clicked != null) {
+                goToLevel(clicked);
+                return true;
+            }
+        }
         if (detailMode && detail.containsMouse(me.x(), me.y())) {
             if (me.kind() == MouseEventKind.SCROLL_UP) {
                 detail.scrollBy(-3);
@@ -365,6 +440,14 @@ class DiagramTab extends AbstractTab {
             sourceViewer.hide();
             return true;
         }
+        if (architecture.isActive()) {
+            return architecture.handleEscape();
+        }
+        if (topologyMode && diagram.isShowDiagram()) {
+            // Esc zooms out: from the topology up to the architecture
+            goToLevel(DiagramLevelBar.Level.ARCHITECTURE);
+            return true;
+        }
         if (!topologyMode) {
             if (!routeNavigationStack.isEmpty()) {
                 // Go back to the previous route in the stack
@@ -402,8 +485,31 @@ class DiagramTab extends AbstractTab {
         // Scroll diagram down
     }
 
+    /**
+     * Descriptions on by default when a route has one, in its source or suggested by the AI project overview
+     * (CAMEL-25143): the boxes then read as what the routes do, with the route id beneath. Until the user presses n.
+     */
+    private void applyDefaultDescription() {
+        if (descriptionChosen) {
+            return;
+        }
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        boolean described = info != null && (info.routes.stream()
+                .anyMatch(r -> r.description != null && !r.description.isBlank())
+                || !IntegrationSummaryHints.descriptionsIfEnabled(selectedSourceDirectory()).isEmpty());
+        if (described != diagram.isShowDescription()) {
+            diagram.setShowDescription(described);
+            if (diagram.isShowDiagram()) {
+                // the route diagrams are laid out with their labels: load them again
+                diagram.endLoad();
+                reloadDiagram();
+            }
+        }
+    }
+
     @Override
     public void onTabSelected() {
+        applyDefaultDescription();
         if (!diagram.isShowDiagram()) {
             if (ctx.selectedPid != null && diagram.hasCachedData(ctx.selectedPid)) {
                 diagram.showCached();
@@ -417,8 +523,245 @@ class DiagramTab extends AbstractTab {
         }
     }
 
+    // ---- zoom levels (CAMEL-25147) ----
+
+    /** The level shown: the capability groups, the topology of all routes, or one route's diagram. */
+    DiagramLevelBar.Level level() {
+        if (architecture.isActive()) {
+            return DiagramLevelBar.Level.ARCHITECTURE;
+        }
+        return topologyMode ? DiagramLevelBar.Level.TOPOLOGY : DiagramLevelBar.Level.ROUTE;
+    }
+
+    /**
+     * The route the Route level would show: the one shown, else the one selected in the topology when the integration
+     * runs it.
+     */
+    private String routeCandidate() {
+        if (!topologyMode) {
+            return drillDownRouteId;
+        }
+        String selected = diagram.getSelectedRouteId();
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return selected != null && info != null && info.routes.stream().anyMatch(r -> selected.equals(r.routeId))
+                ? selected : null;
+    }
+
+    /** v: architecture, topology, route, and round again; the route level is skipped when no route is selected. */
+    private void cycleLevel() {
+        goToLevel(switch (level()) {
+            case ARCHITECTURE -> DiagramLevelBar.Level.TOPOLOGY;
+            case TOPOLOGY -> routeCandidate() != null ? DiagramLevelBar.Level.ROUTE : DiagramLevelBar.Level.ARCHITECTURE;
+            case ROUTE -> DiagramLevelBar.Level.ARCHITECTURE;
+        });
+    }
+
+    void goToLevel(DiagramLevelBar.Level target) {
+        DiagramLevelBar.Level now = level();
+        if (target == now) {
+            return;
+        }
+        switch (target) {
+            case ARCHITECTURE -> {
+                if (now == DiagramLevelBar.Level.ROUTE) {
+                    leaveRoute();
+                }
+                diagram.setFocus(null, null);
+                if (architecture.isSuspended()) {
+                    architecture.resume();
+                } else {
+                    architecture.open(selectedSourceDirectory());
+                }
+            }
+            case TOPOLOGY -> {
+                if (now == DiagramLevelBar.Level.ROUTE) {
+                    leaveRoute();
+                } else if (!architecture.openSelectedGroup()) {
+                    architecture.close();
+                }
+            }
+            case ROUTE -> {
+                String route = routeCandidate();
+                if (route != null) {
+                    drillIntoRoute(route);
+                }
+            }
+        }
+    }
+
+    /**
+     * Down from a capability: the topology of all routes, so how every route connects stays in view, with the group's
+     * routes highlighted and the first of them selected.
+     */
+    private void focusGroup(ProjectCapabilities.Group group) {
+        Set<String> running = new LinkedHashSet<>();
+        for (String route : group.routes()) {
+            running.add(RouteKeys.runningId(selectedSourceDirectory(), route));
+        }
+        diagram.setFocus(running, group.name());
+        topologyMode = true;
+        diagram.setTopologyMode(true);
+        if (!group.routes().isEmpty()) {
+            String first = RouteKeys.runningId(selectedSourceDirectory(), group.routes().get(0));
+            int idx = diagram.findNodeIndexByRouteId(first);
+            if (idx >= 0) {
+                diagram.setSelectedNodeIndex(idx);
+                diagram.scrollToSelectedNode();
+            } else {
+                diagram.setPendingSelectionRouteId(first);
+            }
+        }
+        if (!diagram.hasNativeLayout()) {
+            diagram.endLoad();
+            reloadDiagram();
+        }
+    }
+
+    /** From a route's diagram back to the topology. */
+    private void leaveRoute() {
+        routeNavigationStack.clear();
+        diagram.setPendingSelectionRouteId(drillDownRouteId);
+        topologyMode = true;
+        detailMode = false;
+        detail.reset();
+        diagram.setTopologyMode(true);
+        diagram.setSelectedEipNodeIndex(-1);
+        diagram.resetScroll();
+        if (!diagram.hasNativeLayout()) {
+            diagram.endLoad();
+            reloadDiagram();
+        }
+    }
+
+    private void renderLevelBar(Frame frame, Rect row) {
+        DiagramLevelBar.Level current = level();
+        String group = diagram.getFocusName();
+        String route = routeCandidate();
+        List<DiagramLevelBar.Segment> segments = List.of(
+                new DiagramLevelBar.Segment(DiagramLevelBar.Level.ARCHITECTURE, "Architecture", true),
+                new DiagramLevelBar.Segment(
+                        DiagramLevelBar.Level.TOPOLOGY,
+                        group != null ? "Topology \u00b7 " + group : "Topology", true),
+                new DiagramLevelBar.Segment(
+                        DiagramLevelBar.Level.ROUTE,
+                        route != null ? "Route: " + route : "Route", route != null));
+        levelBar.render(frame, row, segments, current, viewToggles());
+    }
+
+    /**
+     * Before the topology is drawn: the AI hints, each route's group, the utility routes to leave out, and a new layout
+     * when those or the box width changed.
+     */
+    private void prepareTopology() {
+        diagram.setAiSourceDirectory(selectedSourceDirectory());
+        Map<String, RouteGroups.Tag> all = RouteGroups.of(selectedSourceDirectory());
+        Map<String, RouteGroups.Tag> tags = isShowGroups() ? all : Map.of();
+        Set<String> hidden = architecture.isShowUtility() ? Set.of() : RouteGroups.utility(all);
+        diagram.setGroups(RouteGroups.tagLines(tags), RouteGroups.colors(tags));
+        diagram.setGroupLegend(RouteGroups.legend(tags, hidden));
+        diagram.setHiddenRoutes(hidden);
+        if (diagram.isTopologyStale() && !diagram.isLoading()) {
+            reloadDiagram();
+        }
+    }
+
+    /** Whether there is AI-assisted content to show or hide: a summary, and the AI overview setting not off. */
+    private boolean hasAiHints() {
+        return IntegrationSummaryHints.settingEnabled() && IntegrationSummaryHints.hasSummary(selectedSourceDirectory());
+    }
+
+    private boolean hasUtilityRoutes() {
+        return !RouteGroups.utility(RouteGroups.of(selectedSourceDirectory())).isEmpty();
+    }
+
+    /** Groups are shown when the user said so, else when the project has any. */
+    private boolean isShowGroups() {
+        return showGroups != null ? showGroups : RouteGroups.any(selectedSourceDirectory());
+    }
+
+    /** b switches the view between business and technical; n, the key of the former description toggle, too. */
+    private static boolean isViewKey(KeyEvent ke) {
+        return ke.isCharIgnoreCase('b') || ke.isCharIgnoreCase('n');
+    }
+
+    /** The view settings of the level shown, with their state: they sit on the level bar, beside the diagram. */
+    List<DiagramLevelBar.Toggle> viewToggles() {
+        List<DiagramLevelBar.Toggle> toggles = new ArrayList<>();
+        if (IntegrationSummaryHints.settingEnabled()) {
+            // without a summary yet the setting is off, and a has the AI write one
+            toggles.add(new DiagramLevelBar.Toggle(
+                    "a", "ai", hasAiHints() && IntegrationSummaryHints.isShown() ? "on" : "off"));
+        }
+        toggles.addAll(levelToggles());
+        return toggles;
+    }
+
+    private List<DiagramLevelBar.Toggle> levelToggles() {
+        DiagramLevelBar.Toggle view
+                = new DiagramLevelBar.Toggle("b", "view", diagram.isShowDescription() ? "business" : "technical");
+        String metrics = diagramMetrics ? "on" : "off";
+        return switch (level()) {
+            case ARCHITECTURE -> List.of(view,
+                    new DiagramLevelBar.Toggle("u", "utility", architecture.isShowUtility() ? "on" : "off"),
+                    new DiagramLevelBar.Toggle("e", "external", architecture.isShowExternal() ? "edges" : "off"));
+            case TOPOLOGY -> {
+                List<DiagramLevelBar.Toggle> toggles = new ArrayList<>();
+                toggles.add(view);
+                toggles.add(new DiagramLevelBar.Toggle("g", "group", isShowGroups() ? "on" : "off"));
+                if (hasUtilityRoutes()) {
+                    toggles.add(new DiagramLevelBar.Toggle("u", "utility", architecture.isShowUtility() ? "on" : "off"));
+                }
+                toggles.add(new DiagramLevelBar.Toggle("m", "metrics", metrics));
+                toggles.add(new DiagramLevelBar.Toggle(
+                        "e", "external",
+                        switch (externalMode) {
+                            case 1 -> "edges";
+                            case 2 -> "all";
+                            default -> "off";
+                        }));
+                yield toggles;
+            }
+            case ROUTE -> List.of(view, new DiagramLevelBar.Toggle("m", "metrics", metrics),
+                    new DiagramLevelBar.Toggle("d", "detail", detailMode ? "on" : "off"));
+        };
+    }
+
+    @Override
+    public void renderViewToggles(List<Span> spans) {
+        if (diagram.isShowDiagram() && !sourceViewer.isVisible()) {
+            for (DiagramLevelBar.Toggle t : viewToggles()) {
+                hint(spans, t.key(), t.label() + " [" + t.state() + "]");
+            }
+        }
+    }
+
+    /**
+     * Opens the route diagram of a route (the Route level), when the integration runs that route.
+     *
+     * @return whether it opened
+     */
+    private boolean drillIntoRoute(String routeId) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.routes.stream().noneMatch(r -> routeId.equals(r.routeId))) {
+            return false;
+        }
+        routeNavigationStack.clear();
+        drillDownRouteId = routeId;
+        topologyMode = false;
+        diagram.setTopologyMode(false);
+        diagram.selectFromNode(routeId);
+        diagram.resetScroll();
+        diagram.endLoad();
+        if (diagram.getRouteLayout(routeId) == null) {
+            reloadDiagram();
+        }
+        return true;
+    }
+
     @Override
     public void onIntegrationChanged() {
+        architecture.close();
+        diagram.setFocus(null, null);
         topologyMode = true;
         drillDownRouteId = null;
         routeNavigationStack.clear();
@@ -441,9 +784,22 @@ class DiagramTab extends AbstractTab {
             renderNoSelection(frame, area);
             return;
         }
+        // the running routes, so a source route without an id is known by the id Camel gave it
+        RouteKeys.remember(selectedSourceDirectory(), info.routes);
 
         if (sourceViewer.isVisible()) {
             sourceViewer.render(frame, area);
+            return;
+        }
+
+        if (diagram.isShowDiagram() && area.height() > 3) {
+            List<Rect> rows = Layout.vertical().constraints(Constraint.length(1), Constraint.fill()).split(area);
+            renderLevelBar(frame, rows.get(0));
+            area = rows.get(1);
+        }
+
+        if (architecture.isActive()) {
+            architecture.render(frame, area, info.name);
             return;
         }
 
@@ -467,14 +823,18 @@ class DiagramTab extends AbstractTab {
                             .split(area);
                     hSplit.setBorderPos(hChunks.get(1).x());
                     detail.renderRouteInfoPanel(frame, hChunks.get(0), info, selectedRouteId);
+                    prepareTopology();
                     diagram.renderNativeDiagram(frame, hChunks.get(1), title, diagramMetrics);
                 } else {
+                    prepareTopology();
                     diagram.renderNativeDiagram(frame, area, title, diagramMetrics);
                 }
                 return;
             } else if (!topologyMode && drillDownRouteId != null
                     && diagram.getRouteLayout(drillDownRouteId) != null) {
-                Line title = DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId);
+                Line title = DiagramDetailSupport.withRouteContext(
+                        DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId), info,
+                        drillDownRouteId, selectedSourceDirectory(), isShowGroups());
                 var routeLayout = diagram.getRouteLayout(drillDownRouteId);
                 if (area.width() > 60) {
                     infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
@@ -538,34 +898,27 @@ class DiagramTab extends AbstractTab {
             sourceViewer.renderFooter(spans);
             return;
         }
+        if (architecture.isActive()) {
+            architecture.renderFooter(spans);
+            return;
+        }
         if (diagram.isShowDiagram()) {
+            // actions only: the levels are on the level bar, the view settings beside it
             if (!topologyMode && !diagram.getEipNodeBoxes().isEmpty()) {
                 hint(spans, "Esc", "back");
-                hint(spans, "t", "topology");
-                hint(spans, TuiIcons.HINT_NAV, "navigate");
-                hint(spans, "PgUp/PgDn", "page");
                 hint(spans, "c", "source");
-                hint(spans, "d", "detail" + (detailMode ? " [on]" : " [off]"));
                 hint(spans, "g", "go to");
+                hint(spans, "s", "summary");
             } else if (!topologyMode) {
                 hint(spans, "Esc", "back");
-                hint(spans, "t", "topology");
-                hint(spans, TuiIcons.HINT_NAV, "scroll");
-                hint(spans, "PgUp/PgDn", "page");
+                hint(spans, "s", "summary");
             } else if (!diagram.getNodeBoxes().isEmpty()) {
-                hint(spans, "Esc", "close");
-                hint(spans, TuiIcons.HINT_NAV, "navigate");
                 hint(spans, "Enter", "drill-down");
-                hint(spans, "PgUp/PgDn", "page");
                 hint(spans, "c", "source");
+                hint(spans, "s", "summary");
             } else {
                 diagram.renderFooterHints(spans);
             }
-            hint(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
-            if (topologyMode) {
-                hint(spans, "e", "external" + EXTERNAL_LABELS[externalMode]);
-            }
-            hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : " [off]"));
         }
     }
 

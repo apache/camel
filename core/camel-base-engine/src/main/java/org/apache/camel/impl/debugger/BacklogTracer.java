@@ -25,12 +25,14 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Predicate;
 import org.apache.camel.Route;
@@ -49,6 +51,8 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A tracer used for message tracing, storing a copy of the message details in a backlog.
@@ -80,6 +84,8 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     private final ActivityEventNotifier activityEventNotifier = new ActivityEventNotifier();
     private volatile int activitySize = 100;
     private static final long INFLIGHT_EVICTION_MILLIS = 5 * 60 * 1000;
+    private static final Logger LOG = LoggerFactory.getLogger(BacklogTracer.class);
+    private static final Pattern LANGUAGE_NAME = Pattern.compile("[a-zA-Z][a-zA-Z0-9-]*");
     private final Object historyLock = new Object();
     private volatile String lastCompletedBreadcrumbId;
     private volatile boolean removeOnDump = true;
@@ -333,7 +339,14 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     }
 
     private boolean shouldTraceFilter(Exchange exchange, Predicate predicate) {
-        return predicate.matches(exchange);
+        try {
+            return predicate.matches(exchange);
+        } catch (Exception e) {
+            // a trace filter that cannot be evaluated must not fail the exchange
+            LOG.debug("Error evaluating trace filter on exchange: {} due to: {}. The exchange is not traced.",
+                    exchange.getExchangeId(), e.getMessage(), e);
+            return false;
+        }
     }
 
     @Override
@@ -507,12 +520,22 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     @Override
     public void setTraceFilter(String filter) {
         if (filter != null) {
-            // assume simple language
-            Predicate p;
+            // a language name as prefix (such as jq:.foo), otherwise simple language (which may also contain a colon
+            // such as ${header.foo} == 'a:b' or ${date:now})
+            Predicate p = null;
             String name = StringHelper.before(filter, ":");
-            if (name != null) {
-                p = camelContext.resolveLanguage(name).createPredicate(filter);
-            } else {
+            if (name != null && LANGUAGE_NAME.matcher(name).matches()) {
+                Language language = null;
+                try {
+                    language = camelContext.resolveLanguage(name);
+                } catch (NoSuchLanguageException e) {
+                    // not a language, so its a simple predicate
+                }
+                if (language != null) {
+                    p = language.createPredicate(StringHelper.after(filter, ":"));
+                }
+            }
+            if (p == null) {
                 // use simple language by default
                 p = simple.createPredicate(filter);
             }

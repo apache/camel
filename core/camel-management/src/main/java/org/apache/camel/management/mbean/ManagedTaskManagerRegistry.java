@@ -65,9 +65,11 @@ public class ManagedTaskManagerRegistry extends ManagedService implements Manage
                 CompositeData data = new CompositeDataSupport(
                         ct,
                         new String[] {
-                                "name", "kind", "status", "attempts", "delay", "elapsed", "firstTime", "lastTime", "nextTime",
-                                "failure" },
-                        new Object[] { name, kind, status, attempts, delay, elapsed, firstTime, lastTime, nextTime, failure });
+                                "index", "name", "kind", "status", "attempts", "delay", "elapsed", "firstTime", "lastTime",
+                                "nextTime", "failure" },
+                        new Object[] {
+                                answer.size(), name, kind, status, attempts, delay, elapsed, firstTime, lastTime, nextTime,
+                                failure });
                 answer.put(data);
             }
             return answer;

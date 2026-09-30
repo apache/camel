@@ -790,6 +790,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         return quote;
     }
 
+    public boolean isQuotingEscaped() {
+        return quotingEscaped;
+    }
+
     public Boolean getRemoveQuotes() {
         return removeQuotes;
     }

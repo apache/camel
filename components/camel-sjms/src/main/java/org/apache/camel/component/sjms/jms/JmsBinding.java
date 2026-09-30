@@ -27,8 +27,10 @@ import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import jakarta.jms.BytesMessage;
 import jakarta.jms.Destination;
@@ -67,6 +69,15 @@ import static org.apache.camel.component.sjms.jms.JmsMessageHelper.normalizeDest
 public class JmsBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsBinding.class);
+
+    // the standard JMS headers (matched in any case, as Camel headers are case-insensitive)
+    private static final Set<String> STANDARD_JMS_HEADERS = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+
+    static {
+        STANDARD_JMS_HEADERS.addAll(List.of("JMSCorrelationID", "JMSDeliveryMode", "JMSDeliveryTime", "JMSDestination",
+                "JMSExpiration", "JMSMessageID", "JMSPriority", "JMSRedelivered", "JMSReplyTo", "JMSTimestamp", "JMSType"));
+    }
+
     private final boolean mapJmsMessage;
     private final boolean allowNullBody;
     private final HeaderFilterStrategy headerFilterStrategy;
@@ -315,9 +326,9 @@ public class JmsBinding {
     public void appendJmsProperty(Message jmsMessage, Exchange exchange, String headerName, Object headerValue)
             throws JMSException {
         if (isStandardJMSHeader(headerName)) {
-            if (headerName.equals(JmsConstants.JMS_CORRELATION_ID)) {
+            if (headerName.equalsIgnoreCase(JmsConstants.JMS_CORRELATION_ID)) {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-            } else if (headerName.equals(JmsConstants.JMS_REPLY_TO) && headerValue != null) {
+            } else if (headerName.equalsIgnoreCase(JmsConstants.JMS_REPLY_TO) && headerValue != null) {
                 if (headerValue instanceof String s) {
                     // if the value is a String we must normalize it first, and must include the prefix
                     // as ActiveMQ requires that when converting the String to a jakarta.jms.Destination type
@@ -325,13 +336,13 @@ public class JmsBinding {
                 }
                 Destination replyTo = ExchangeHelper.convertToType(exchange, Destination.class, headerValue);
                 JmsMessageHelper.setJMSReplyTo(jmsMessage, replyTo);
-            } else if (headerName.equals("JMSType")) {
+            } else if (headerName.equalsIgnoreCase("JMSType")) {
                 jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-            } else if (headerName.equals("JMSPriority")) {
+            } else if (headerName.equalsIgnoreCase("JMSPriority")) {
                 jmsMessage.setJMSPriority(ExchangeHelper.convertToType(exchange, Integer.class, headerValue));
-            } else if (headerName.equals("JMSDeliveryMode")) {
+            } else if (headerName.equalsIgnoreCase("JMSDeliveryMode")) {
                 JmsMessageHelper.setJMSDeliveryMode(exchange, jmsMessage, headerValue);
-            } else if (headerName.equals("JMSExpiration")) {
+            } else if (headerName.equalsIgnoreCase("JMSExpiration")) {
                 jmsMessage.setJMSExpiration(ExchangeHelper.convertToType(exchange, Long.class, headerValue));
             } else {
                 // The following properties are set by the MessageProducer:
@@ -365,6 +376,9 @@ public class JmsBinding {
      * @return            <tt>true</tt> if its a standard JMS header
      */
     protected boolean isStandardJMSHeader(String headerName) {
+        if (STANDARD_JMS_HEADERS.contains(headerName)) {
+            return true;
+        }
         if (!headerName.startsWith("JMS")) {
             return false;
         }

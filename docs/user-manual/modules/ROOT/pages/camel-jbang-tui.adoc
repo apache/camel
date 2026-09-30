@@ -277,6 +277,96 @@ back to the previous route, and eventually back to the topology view.
 
 Press *t* to jump straight back to the topology from any depth.
 
+=== Diagram levels
+
+The Diagram tab shows one diagram at three zoom levels, and the line above it says which one you see:
+
+----
+ v  ◇ Architecture  ›  ◆ Topology  ›  ◇ Route: order-intake   b  view: business   g  group ●   m  metrics ●   e  external ○
+----
+
+* *Architecture* -- the routes grouped by what they do for the business (see below);
+* *Topology* -- all the routes and how they connect; coming down from a capability, its routes are
+  highlighted, as the label says (`Topology · Order intake`);
+* *Route* -- the steps of one route.
+
+The level shown is highlighted; the others stay visible, and one that does not apply yet (Route,
+until a route is selected) is greyed out. *Enter* zooms in and *Esc* zooms out, from a route to its
+topology and from the topology to the architecture (at the architecture, *Esc* goes back to the Overview
+tab as on any tab). *v*, shown at the start of the line, moves to the next level and round again, and a
+click on a level goes there.
+
+The right side of the line holds the view settings of the level shown, with their state (● on, ○ off,
+or the mode). *a* ai, shown unless the AI Overview setting is off, switches every level between the view with the
+AI-assisted parts and the facts alone: off, the architecture groups only by what the sources say (route
+groups, shared services, utility, and Other for the rest), and the topology, the Info panel and the
+Routes tab show no AI label, note or group. It changes what is shown only: the AI overview setting, the
+summary and its automatic updates stay as they are. When the project has no `camel-summary.md` yet, *a*
+has the AI write one, as `/overview` does: the AI panel opens to show it start, and the diagram picks up
+the summary once it is saved. *b* switches every level between the *business* view and the *technical* view: route
+labels and what capabilities achieve (the AI-assisted parts marked ✦), or route ids with their
+endpoints and the entry points and systems of each capability. The business view is the default when
+the routes have descriptions, from their source or the AI project overview; *n*, the key of the former
+description toggle, does the same. *m* metrics and *e* external systems apply to the topology, *m* and
+*d* detail to a route. *g* group, in the topology, shows the architecture one level down: each route
+box names its group (a route group, an AI capability marked ✦, shared services or utility), each group
+has the border colour of its box in the architecture, and a legend at the bottom of the topology lists
+the groups in their colours; it is on when the project has groups. *u* shows or hides the utility
+routes, one setting for the architecture and the topology, so both show the same groups. The route
+boxes widen, within reason, so a label and its group fit on a line, and the Info panel of a route
+names its group (✦ when the AI placed it). The footer lists only actions, such as
+*Enter* drill-down, *c* source and *s* summary.
+
+=== Architecture View
+
+A topology of many routes turns into spaghetti. The Architecture level shows the
+routes grouped by what they do for the business, one box per group, so a project of eighty routes
+reads as a handful of boxes. The view reads the source files of the selected integration, not the
+running routes.
+
+Each route has one role:
+
+* *route group* -- the routes that set `group` in the source. The source always wins, and these
+  groups are drawn as facts, without a mark.
+* *capability* -- the business capabilities the <<_ai_project_overview,AI project overview>>
+  proposed (`/overview` in the AI panel). An AI decided them, so they are drawn in the
+  `ai-assisted` style, italic with a `✦`.
+* *Shared services* -- routes that routes of two or more groups call or hand off to, such as an
+  audit or notification route. Derived from the links between routes, and shown once instead of in
+  every group that uses them.
+* *Utility* -- plumbing with little business meaning: a route reached only while handling a failure
+  (from a `doCatch`, an `onException` or a dead letter channel), a route that only logs, or one the
+  AI marked as utility. Hidden until you press *u*.
+* *Other* -- routes nothing above placed yet; `/overview` groups them.
+
+A box shows how many routes the group has, its entry points (HTTP, schedules, consumers) and the
+external systems its routes use; a warning count when the project overview found problems in its
+routes, such as a `direct` endpoint no route consumes. Arrows between boxes are the links between
+their routes, with the strongest kind (a call over a hand-off over an event). The Info panel on the
+left lists the routes, entry points, systems, and what the AI wrote about a capability.
+
+A small *Flow* panel at the bottom right shows the inside of the selected group, what *Enter* goes
+down to: each of its routes in the order messages flow, with where messages enter it and what it hands
+off to. That is the routes it links to (call, async, event, on error; a route of another group is named
+with its group, in that group's colour) and the remote systems it sends to, such as a queue or an HTTP
+service. Sends that stay inside the integration, such as a log, are left out, as the catalog says the
+component is not remote. It is not shown for an external system, whose Info panel lists its routes.
+
+Press *e* to draw the external systems as boxes of their own, dashed as in the topology: the systems
+messages come in from above the groups, the ones they go out to below, each linked to the groups that
+use it. A system only utility routes use goes away with them. Select a system to see in the Info panel
+which groups and routes use it and each of its endpoints with its route; *Enter* goes down to the
+topology with those routes highlighted. Press *e* again for the boxes alone.
+
+Press *Enter* on a box to go down to the topology of all routes, with that group's routes highlighted
+and the first of them selected, so you see the group in the whole picture of how the routes connect.
+*Esc* from there comes back to the architecture, on the group you came from. The view
+follows the project by itself: edited routes and a summary `/overview` has just written show up within a
+few seconds.
+
+`camel overview` prints the same grouping as the Architecture section of `camel-summary.md` (see
+xref:camel-jbang-ai.adoc#_project_overview[Project overview]).
+
 === External Endpoints
 
 Press *e* to cycle through three modes for external endpoints:
@@ -289,7 +379,7 @@ Press *e* to cycle through three modes for external endpoints:
 
 * Press *m* to toggle metrics overlay (message counts on each node)
 * Press *c* to view the source code of the selected route, with syntax highlighting
-* Press *n* to toggle description labels on/off
+* Press *b* (or *n*) to switch between the business view (labels) and the technical view (route ids and endpoints)
 
 == Message Insight
 
@@ -619,6 +709,9 @@ Open the *F2* actions menu and choose *Settings...* to change TUI preferences in
   *top*.
 * *Panel Space* -- whether those panels push the tab content aside (*move*, default) or are drawn
   on top of it (*overlay*), so the tab keeps its full height underneath.
+* *AI Overview* -- the <<_ai_project_overview,AI project overview>>: *manual* (default, only with
+  `/overview`), *auto* (also when the AI panel opens and the project summary is missing or out of
+  date), or *off* (no `/overview`, and no AI-assisted descriptions in the tabs).
 
 Use *↑*/*↓* to move between rows, *Space* (or *←*/*→*) to cycle the theme and tab settings, type to
 edit the default folder, *Enter* to save, and *Esc* to cancel.
@@ -627,7 +720,7 @@ Settings are stored under `camel.tui.*` keys (`camel.tui.theme`, `camel.tui.star
 `camel.tui.selectTab`, `camel.tui.confirmActions`, `camel.tui.defaultFolder`,
 `camel.tui.panelPosition`, `camel.tui.panelSpace`,
 `camel.tui.shell.history`, `camel.tui.ai.provider`, `camel.tui.ai.model`, `camel.tui.ai.url`,
-`camel.tui.ai.tools`, `camel.tui.ai.promptHistory`) in the Camel CLI configuration file. Each key is read from and
+`camel.tui.ai.tools`, `camel.tui.ai.overview`, `camel.tui.ai.promptHistory`) in the Camel CLI configuration file. Each key is read from and
 written back to the file where it currently lives: a key present in the local
 `./camel-cli.properties` is treated as a project-level override and stays local, while every
 other key defaults to the global `~/.camel-cli.properties`. This means a project can
@@ -725,9 +818,14 @@ line breaks are sent as *Enter*, so a multi-line paste runs line by line as in a
 | *Esc* | Go back (previous route or topology)
 | *t* | Jump to topology view
 | *m* | Toggle metrics overlay
-| *e* | Cycle external endpoints (off / edges / all)
-| *n* | Toggle description labels
+| *e* | External systems: in the topology off, edges, all; in the architecture off or edges
+| *a* | AI-assisted parts shown, or the facts alone; without a `camel-summary.md` yet, has the AI write one
+| *b* (or *n*) | Business view (labels, what capabilities achieve) or technical view (route ids, endpoints)
 | *c* | View route source code
+| *v* | Next level: Architecture, Topology, Route
+| *u* | In the architecture and the topology: show or hide the utility routes
+| *g* | In the topology: show each route's group (route group, AI capability, shared services, utility)
+| *s* | Open the integration summary (`camel-summary.md`) in the document viewer, from any level
 |===
 
 === Inspect Tab
@@ -1116,9 +1214,51 @@ cycles backward.
 | `/infra <camel infra args>` (`/i`)
 | Run `camel infra` with the provided arguments.
 
+| `/overview [refresh\|show\|apply]` (`/o`)
+| The <<_ai_project_overview,AI project overview>> of the selected integration's project: without an argument it shows the summary when it is up to date and asks the model to explain the project otherwise; `refresh` explains it again, `show` opens the summary file in the document viewer, `apply` puts the suggested route descriptions into the route sources.
+
 | `/send <endpoint> <message text \| @file>` (`/s`)
 | Send a message through `camel cmd send`. A body that is exactly one `@file` token is sent as `file:<path>`; inline `@file` text is sent literally.
 |===
+
+=== AI project overview
+
+A route diagram of many routes becomes spaghetti quickly, above all when the routes have no
+`description`. `/overview` asks the model to explain the project of the selected integration (or the
+folder the TUI runs in): an overview of what it does, the business capabilities its routes implement,
+and a description of each route that has none. The facts come from the route sources, the same ones
+`camel overview` prints (see xref:camel-jbang-ai.adoc#_project_overview[Project overview]): routes,
+entry points, how routes connect, external systems and findings. The model gets them with excerpts of
+the routes (values of passwords, tokens and other sensitive options masked) in one request without
+tools, so a local model does it as well as a hosted one. It runs in the background and the answer
+appears in the panel.
+
+The answer is saved in `camel-summary.md` in the project directory, a Markdown file you can read,
+review and commit. The TUI treats it as the project's generated README: `/overview show`, or *s* in the
+Diagram tab, opens it rendered in the document viewer (*t* lists its sections), at the routes from the
+topology and at the Architecture section from the architecture view. The title says when the routes changed since
+the AI wrote its part. A project without a summary gets the facts derived from its sources, with a note
+on how to add the AI part. In the Overview tab a project with a summary shows the 📖 mark, as one with a
+README does. Its AI-assisted sections are marked `✦ AI-assisted` and kept apart from the
+sections derived from the sources, and the file records the model, the date and a fingerprint of the
+routes, so the TUI knows when the routes changed afterwards: `/overview` then explains them again.
+
+A route description comes in two parts: a short label, and a note of a sentence or two, the
+`description` and `note` of a route in the DSL. The model writes both for a route that lacks them.
+
+What an AI wrote is never shown as if it came from the source or the runtime. When a route has no
+description of its own, the *Routes* tab (with descriptions on, *n*) and the topology in the *Diagram*
+tab show the suggested label in italic, in the `ai-assisted` theme color, marked with `✦`. The *Info*
+panel beside the topology shows the whole label and note of the selected route, word-wrapped, the
+AI-assisted parts marked the same way. Once you agree with them, `/overview apply` puts the suggestions
+into the route sources (`description` and `note` in YAML and XML, `.routeDescription(...)` and
+`.routeNote(...)` in Java); each changed file goes through the confirm dialog with its diff, whatever the
+`/write` mode. From then on they are part of the routes and no longer marked.
+
+With *AI Overview* set to *auto* in *F2 -> Settings*, the panel explains the project by itself when
+it opens and the summary is missing or out of date, once per project state. External AI agents get the
+same through the `camel_project_overview` and `camel_save_project_summary` tools; from the TUI's MCP
+server the summary they save goes through the confirm dialog too.
 
 Submitted prompts (including slash commands) participate in AI prompt history when
 `camel.tui.ai.promptHistory` is not `0`. Use *↑*/*↓* on the prompt line to recall them.

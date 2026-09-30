@@ -45,6 +45,7 @@ import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -54,6 +55,7 @@ import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.KeyValueHolder;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.yaml.out.YamlModelWriter;
 
@@ -112,6 +114,7 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
                     doWriteAttribute(jo, "id", def.getId(), null);
                 }
                 doWriteAttribute(jo, "description", def.getDescription(), null);
+                doWriteAttribute(jo, "note", def.getNote(), null);
                 if (sourceLocation || context.isDebugging()) {
                     String loc = (def instanceof RouteDefinition rd1 ? rd1.getInput() : def).getLocation();
                     int line = (def instanceof RouteDefinition rd2 ? rd2.getInput() : def).getLineNumber();
@@ -254,6 +257,13 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
      * @param namespaces the map of namespaces to add discovered XML namespaces into
      */
     private static void extractNamespaces(RouteDefinition route, Map<String, String> namespaces) {
+        for (SwitchDefinition sw : filterTypeInOutputs(route.getOutputs(), SwitchDefinition.class)) {
+            sw.preCreateProcessor();
+            NamespaceAware aware = getNamespaceAwareFromExpression(sw);
+            if (aware != null && aware.getNamespaces() != null) {
+                namespaces.putAll(aware.getNamespaces());
+            }
+        }
         Collection<ExpressionNode> col = filterTypeInOutputs(route.getOutputs(), ExpressionNode.class);
         for (ExpressionNode en : col) {
             NamespaceAware na = getNamespaceAwareFromExpression(en);
@@ -321,6 +331,17 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             }
         }
         return () -> restorers.forEach(Runnable::run);
+    }
+
+    private static NamespaceAware getNamespaceAwareFromExpression(SwitchDefinition definition) {
+        if (definition.getSelector() == null || definition.getSelector().getExpressionType() == null) {
+            return null;
+        }
+        ExpressionDefinition expression = definition.getSelector().getExpressionType();
+        if (expression.getExpressionValue() instanceof NamespaceAware aware) {
+            return aware;
+        }
+        return expression instanceof NamespaceAware aware ? aware : null;
     }
 
     private static NamespaceAware getNamespaceAwareFromExpression(ExpressionNode expressionNode) {
@@ -460,22 +481,24 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
                 return;
             }
 
-            buffer.write("- dataFormats:\n");
-
-            DataFormatsDefinition def = new DataFormatsDefinition();
-            def.setDataFormats(new ArrayList<>(dataFormats.values()));
-
-            YamlModelWriter writer = new YamlModelWriter();
+            // a list of data formats, each as its own single-key map (such as - json: ...), as the yaml dsl loads them
+            // (and so two data formats of the same kind do not overwrite each other)
+            var writer = new YamlModelWriter() {
+                @Override
+                public JsonObject doWriteDataFormatsDefinition(DataFormatsDefinition def) {
+                    return super.doWriteDataFormatsDefinition(def);
+                }
+            };
             writer.setCamelContext(camelContext);
-            JsonObject jo = writer.writeDataFormatsDefinition(def);
-            List<JsonObject> roots = new ArrayList<>();
-            roots.add(jo);
-            String yaml = writer.printAsYaml(roots);
-            for (String line : yaml.split("\n")) {
-                buffer.write("    ");
-                buffer.write(line);
-                buffer.write("\n");
+            JsonArray list = new JsonArray();
+            for (DataFormatDefinition df : dataFormats.values()) {
+                DataFormatsDefinition def = new DataFormatsDefinition();
+                def.setDataFormats(List.of(df));
+                list.add(writer.doWriteDataFormatsDefinition(def));
             }
+            JsonObject root = new JsonObject();
+            root.put("dataFormats", list);
+            buffer.write(writer.printAsYaml(List.of(root)));
         }
     }
 

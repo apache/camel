@@ -476,6 +476,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("camelJMXAgent", factoryBean.getCamelJMXAgent());
                 builder.addPropertyValue("camelStreamCachingStrategy", factoryBean.getCamelStreamCachingStrategy());
                 builder.addPropertyValue("camelRouteController", factoryBean.getCamelRouteController());
+                builder.addPropertyValue("defaultResilience4jConfiguration",
+                        factoryBean.getDefaultResilience4jConfiguration());
+                builder.addPropertyValue("resilience4jConfigurations", factoryBean.getResilience4jConfigurations());
+                builder.addPropertyValue("defaultFaultToleranceConfiguration",
+                        factoryBean.getDefaultFaultToleranceConfiguration());
+                builder.addPropertyValue("faultToleranceConfigurations", factoryBean.getFaultToleranceConfigurations());
                 builder.addPropertyValue("threadPoolProfiles", factoryBean.getThreadPoolProfiles());
                 builder.addPropertyValue("beansFactory", factoryBean.getBeansFactory());
                 builder.addPropertyValue("beans", factoryBean.getBeans());

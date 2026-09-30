@@ -171,23 +171,6 @@ public interface HivemqComponentBuilderFactory {
     
         
         /**
-         * Whether to enable SSL/TLS encryption for the broker connection.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param ssl the value to set
-         * @return the dsl builder
-         */
-        default HivemqComponentBuilder ssl(boolean ssl) {
-            doSetProperty("ssl", ssl);
-            return this;
-        }
-    
-        
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions (if possible) occurred while the Camel
          * consumer is trying to pickup incoming messages, or the likes, will
@@ -276,6 +259,23 @@ public interface HivemqComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether to enable SSL/TLS encryption for the broker connection.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
+         */
+        default HivemqComponentBuilder ssl(boolean ssl) {
+            doSetProperty("ssl", ssl);
+            return this;
+        }
+    
         /**
          * Username for authentication with the HiveMQ broker.
          * 
@@ -318,11 +318,11 @@ public interface HivemqComponentBuilderFactory {
             case "port": getOrCreateConfiguration((HiveMQComponent) component).setPort((int) value); return true;
             case "qos": getOrCreateConfiguration((HiveMQComponent) component).setQos((com.hivemq.client.mqtt.datatypes.MqttQos) value); return true;
             case "retained": getOrCreateConfiguration((HiveMQComponent) component).setRetained((boolean) value); return true;
-            case "ssl": getOrCreateConfiguration((HiveMQComponent) component).setSsl((boolean) value); return true;
             case "bridgeErrorHandler": ((HiveMQComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((HiveMQComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((HiveMQComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "password": getOrCreateConfiguration((HiveMQComponent) component).setPassword((java.lang.String) value); return true;
+            case "ssl": getOrCreateConfiguration((HiveMQComponent) component).setSsl((boolean) value); return true;
             case "username": getOrCreateConfiguration((HiveMQComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }

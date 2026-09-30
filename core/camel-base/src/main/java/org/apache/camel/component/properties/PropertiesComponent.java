@@ -16,13 +16,15 @@
  */
 package org.apache.camel.component.properties;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.Stack;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -49,6 +51,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.PropertiesHelper;
+import org.apache.camel.util.SensitiveUtils;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +117,9 @@ public class PropertiesComponent extends ServiceSupport
     private final List<PropertiesLookupListener> propertiesLookupListeners = new ArrayList<>();
     private final PropertiesSourceFactory propertiesSourceFactory = new DefaultPropertiesSourceFactory(this);
     private final DefaultPropertiesLookupListener defaultPropertiesLookupListener = new DefaultPropertiesLookupListener();
-    private final List<PropertiesSource> sources = new ArrayList<>();
+    private final List<PropertiesLocation> unknownLocations = new ArrayList<>();
+    // thread-safe as sources may be added at runtime (such as when reloading) while properties are looked up
+    private final List<PropertiesSource> sources = new CopyOnWriteArrayList<>();
     private List<PropertiesLocation> locations = new ArrayList<>();
     private String location;
     private boolean ignoreMissingLocation;
@@ -123,7 +129,8 @@ public class PropertiesComponent extends ServiceSupport
     private boolean defaultFallbackEnabled = true;
     private Properties initialProperties;
     private Properties overrideProperties;
-    private final Stack<Properties> localProperties = new Stack<>();;
+    // the local properties are per thread (such as route template parameters when creating a route from a template)
+    private final ThreadLocal<Deque<Properties>> localProperties = new ThreadLocal<>();
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
     private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_OVERRIDE;
     private boolean autoDiscoverPropertiesSources = true;
@@ -315,6 +322,52 @@ public class PropertiesComponent extends ServiceSupport
         return prop;
     }
 
+    private boolean isSensitive(String uri) {
+        // the uri uses a function with sensitive values (such as a vault) or refers to a sensitive key
+        for (PropertiesFunction function : propertiesFunctionResolver.getFunctions().values()) {
+            if (function.isSensitive() && uri.contains(function.getName() + ":")) {
+                return true;
+            }
+        }
+        // the keys of the placeholders (without any default value)
+        int start = uri.indexOf(PREFIX_TOKEN);
+        if (start == -1) {
+            return isSensitiveKey(uri);
+        }
+        while (start != -1) {
+            int end = uri.indexOf(SUFFIX_TOKEN, start);
+            if (end == -1) {
+                return false;
+            }
+            if (isSensitiveKey(uri.substring(start + PREFIX_TOKEN.length(), end))) {
+                return true;
+            }
+            start = uri.indexOf(PREFIX_TOKEN, end);
+        }
+        return false;
+    }
+
+    private boolean isSensitiveKey(String key) {
+        // the key with a default value (key:default), or the key of a function (such as env:DB_PASSWORD)
+        String name = StringHelper.before(key, ":", key);
+        String remainder = StringHelper.after(key, ":");
+        if (remainder != null) {
+            remainder = StringHelper.before(remainder, ":", remainder);
+        }
+        if (!name.isEmpty() && SensitiveUtils.containsSensitive(name)
+                || remainder != null && !remainder.isEmpty() && SensitiveUtils.containsSensitive(remainder)) {
+            return true;
+        }
+        // the value of the key is resolved by a function with sensitive values (such as {{app.db.conn}} set to a vault)
+        PropertiesResolvedValue resolved = defaultPropertiesLookupListener.getProperty(name);
+        return resolved != null && isSensitiveFunction(resolved.source());
+    }
+
+    private boolean isSensitiveFunction(String name) {
+        PropertiesFunction function = name != null ? propertiesFunctionResolver.getFunctions().get(name) : null;
+        return function != null && function.isSensitive();
+    }
+
     protected String parseUri(final String uri, PropertiesLookup properties, boolean keepUnresolvedOptional) {
         LOG.trace("Parsing uri {}", uri);
 
@@ -346,7 +399,9 @@ public class PropertiesComponent extends ServiceSupport
             // Remove the escape characters if any
             answer = unescape(answer);
         }
-        LOG.trace("Parsed uri {} -> {}", uri, answer);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Parsed uri {} -> {}", uri, isSensitive(uri) ? "xxxxxx" : answer);
+        }
         return answer;
     }
 
@@ -370,6 +425,7 @@ public class PropertiesComponent extends ServiceSupport
 
         // we need to re-create the property sources which may have already been created from locations
         this.sources.removeIf(s -> s instanceof LocationPropertiesSource);
+        this.unknownLocations.clear();
         // ensure the locations are in the same order as here, and therefore we provide the order number
         int order = 100;
         for (PropertiesLocation loc : locations) {
@@ -398,7 +454,11 @@ public class PropertiesComponent extends ServiceSupport
     }
 
     public void addLocation(PropertiesLocation location) {
-        this.locations.add(location);
+        if (location != null) {
+            List<PropertiesLocation> newLocations = new ArrayList<>(locations);
+            newLocations.add(location);
+            setLocations(newLocations);
+        }
     }
 
     @Override
@@ -562,10 +622,18 @@ public class PropertiesComponent extends ServiceSupport
 
     @Override
     public void setLocalProperties(Properties localProperties) {
+        Deque<Properties> stack = this.localProperties.get();
         if (localProperties != null) {
-            this.localProperties.push(localProperties);
-        } else if (!this.localProperties.isEmpty()) {
-            this.localProperties.pop();
+            if (stack == null) {
+                stack = new ArrayDeque<>();
+                this.localProperties.set(stack);
+            }
+            stack.push(localProperties);
+        } else if (stack != null) {
+            stack.poll();
+            if (stack.isEmpty()) {
+                this.localProperties.remove();
+            }
         }
     }
 
@@ -574,10 +642,8 @@ public class PropertiesComponent extends ServiceSupport
      * currently in use.
      */
     public Properties getLocalProperties() {
-        if (localProperties.isEmpty()) {
-            return null;
-        }
-        return localProperties.peek();
+        Deque<Properties> stack = this.localProperties.get();
+        return stack != null ? stack.peek() : null;
     }
 
     @Override
@@ -800,6 +866,7 @@ public class PropertiesComponent extends ServiceSupport
 
     @Override
     protected void doStart() throws Exception {
+        checkUnknownLocations();
         ServiceHelper.startService(sources, propertiesFunctionResolver, defaultPropertiesLookupListener);
     }
 
@@ -820,6 +887,22 @@ public class PropertiesComponent extends ServiceSupport
             addPropertiesSource(new FilePropertiesSource(this, location, order));
         } else if ("classpath".equals(location.getResolver())) {
             addPropertiesSource(new ClasspathPropertiesSource(this, location, order));
+        } else if (!location.isOptional()) {
+            // validated when starting (as ignoreMissingLocation may be configured afterwards)
+            unknownLocations.add(location);
+            if (isStarted()) {
+                checkUnknownLocations();
+            }
+        } else {
+            LOG.debug("Ignored properties location with unknown resolver: {}", location);
+        }
+    }
+
+    private void checkUnknownLocations() {
+        if (!ignoreMissingLocation && !unknownLocations.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Unknown resolver in properties locations: " + unknownLocations
+                                               + ". Supported resolvers are: classpath, file, ref.");
         }
     }
 

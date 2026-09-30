@@ -97,6 +97,34 @@ become code, must not redirect the route to a different endpoint, must not be
 deserialised into arbitrary types, and must not be parsed in ways that resolve
 remote resources, unless the route author explicitly asked for it.
 
+=== Reading route sources without running them
+
+Route authors are trusted because their routes *run*. Camel tooling also
+*reads* route sources without running them: the Java DSL parser of
+`camel-java-io` (`LwJavaParser`), the project overview behind `camel overview`,
+the Camel TUI's Architecture view and the `camel_project_overview` MCP tool.
+The sources they read may come from anywhere, such as a cloned example or a
+project an AI agent points a tool at. For this use the source is untrusted
+input, and the contract is:
+
+* Reading a route source (YAML, XML, or Java through `LwJavaParser`) does not
+  run code from it, does not load its classes, does not resolve its property
+  placeholders or secrets, and does not reach the network.
+* It always finishes, in bounded time and memory, whatever the source.
+* What it returns (endpoint URIs, descriptions, labels, the model) is text the
+  source's author chose. Consumers treat it as data, never as instructions,
+  including when it goes into an AI prompt. What an AI proposes from it goes
+  through the TUI's confirmation dialogs before anything is written.
+
+A crafted source that makes the tooling break this contract is in scope: for
+example parsing that executes code, loads a class from the source, defines a
+class in a `java.*` package, reads a file, or does not finish. Running the
+routes (`camel run`, compiling a `RouteBuilder`) is the trusted route-author
+case described above, not a finding. How `LwJavaParser` enforces each rule
+(the Camel DSL it may call, pinned by a test, stub classes for the project's
+classes, the limits) is described in
+https://github.com/apache/camel/blob/main/design/java-dsl-parser.adoc[`design/java-dsl-parser.adoc`].
+
 === Adversary model
 
 The adversary the framework defends against is the *External message senders*
@@ -923,7 +951,11 @@ be closed as `not a vulnerability`.
   `circuitBreaker`, `resilience4j`, JVM heap limits, and the relevant
   component-level options. Algorithmic-complexity attacks in third-party
   libraries are reported to the upstream project unless Camel exposes the
-  parser in a way that bypasses the library's own limits.
+  parser in a way that bypasses the library's own limits. A resource limit
+  that Camel itself offers, such as `maxDecompressedSize` on the Zip File and
+  Tar File data formats, is defence in depth for a property the framework
+  does not claim: a defect that stops it enforcing its documented value is a
+  bug, fixed as `VALID-HARDENING` rather than published as a CVE.
 * *A deployer placing `camel-management`, the developer console,
   `camel-jolokia`, JMX or another management surface on a public network.*
   These are management surfaces; they assume a trusted network. The
@@ -1209,16 +1241,20 @@ not provided_), not to close the report ad hoc.
   invariants_, _In-scope vulnerability classes_, _Adversary model_
 
 | `VALID-HARDENING`
-| No claimed property is violated, but a recurring misuse or scanner
-  pattern makes the framework elect to harden the default or add a
-  defence-in-depth check at maintainer discretion. Reported privately;
+| No claimed property is violated, but the framework elects to harden the
+  default or add a defence-in-depth check at maintainer discretion - either
+  because a recurring misuse or scanner pattern warrants it, or because a
+  resource limit Camel itself offers for a property it does not claim (such
+  as `maxDecompressedSize` on the Zip File and Tar File data formats) fails
+  to enforce its documented value. Reported privately;
   usually shipped without a CVE; documented in the upgrade guide. The PMC
   may still publish an advisory when a sibling component's accepted
   finding would otherwise make the change look like a silent fix -
   CVE-2026-56140 (`camel-aws2-sns`) documents an inbound filter added to
   a producer-only component with no reachable injection path, alongside
   CVE-2026-46456 in `camel-aws2-sqs` where the path was reachable.
-| _Known limitations_, _Guidance for component authors and reviewers_
+| _Known limitations_, _Guidance for component authors and reviewers_,
+  _Out of scope_
 
 | `OUT-OF-MODEL: trusted-input`
 | Requires control over an input the model marks trusted (route DSL,

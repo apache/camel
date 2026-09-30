@@ -153,13 +153,8 @@ public class StaxConverter {
     @Converter(order = 8)
     public XMLStreamReader createXMLStreamReader(File file, Exchange exchange)
             throws XMLStreamException, FileNotFoundException {
-        XMLInputFactory factory = getInputFactory();
-        try {
-            return factory.createXMLStreamReader(IOHelper.buffered(new FileInputStream(file)),
-                    ExchangeHelper.getCharsetName(exchange));
-        } finally {
-            returnXMLInputFactory(factory);
-        }
+        // same as from a stream (the encoding of the xml declaration is used unless the exchange has a charset)
+        return createXMLStreamReader(new FileInputStream(file), exchange);
     }
 
     @Converter(order = 9)
@@ -209,13 +204,8 @@ public class StaxConverter {
 
     @Converter(order = 13)
     public XMLEventReader createXMLEventReader(File file, Exchange exchange) throws XMLStreamException, FileNotFoundException {
-        XMLInputFactory factory = getInputFactory();
-        try {
-            return factory.createXMLEventReader(IOHelper.buffered(new FileInputStream(file)),
-                    ExchangeHelper.getCharsetName(exchange));
-        } finally {
-            returnXMLInputFactory(factory);
-        }
+        // same as from a stream (the encoding of the xml declaration is used unless the exchange has a charset)
+        return createXMLEventReader(new FileInputStream(file), exchange);
     }
 
     @Converter(order = 14)

@@ -22,9 +22,9 @@ import javax.crypto.KeyGenerator;
 
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
+import org.bouncycastle.jcajce.spec.CMCEParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
 
 public class PQCDefaultCMCEMaterial {
 

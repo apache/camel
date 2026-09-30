@@ -108,7 +108,8 @@ class DocExamplesXmlSchemaTest {
      * tag, a Spring bean next to route fragments, and the {@code <namespace>} child of an expression, which the model
      * and the xml-io parser support but no generated schema can express next to the expression text (JAXB
      * {@code @XmlValue}), so Spring XML declares the namespaces as {@code xmlns:} attributes instead; and the endpoint
-     * page's unescaped {@code &}, which is there to show the error it causes.
+     * page's unescaped {@code &}, which is there to show the error it causes. Semantic declaration documents use a
+     * component-owned loader outside the core schemas and are covered by camel-semantic's loader tests.
      */
     private static final Map<String, String> EXAMPLES_SKIPPED = Map.of(
             "xmlsecurity-sign-component", "<bean id=\"xadesProperties\"",
@@ -116,7 +117,8 @@ class DocExamplesXmlSchemaTest {
             "spring-summary", "<beans xmlns=\"http://www.springframework.org/schema/beans\"",
             "split-eip", "<namespace key=",
             "xtokenize-language", "<namespace key=",
-            "endpoint", "paramA=1&paramB=2");
+            "endpoint", "paramA=1&paramB=2",
+            "semantic-language", "<semantic>");
 
     private static CamelCatalog catalog;
     private static Schema springSchema;

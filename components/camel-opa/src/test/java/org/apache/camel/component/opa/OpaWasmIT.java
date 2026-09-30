@@ -152,7 +152,7 @@ public class OpaWasmIT extends CamelTestSupport {
     }
 
     /**
-     * {@code failOpen} still governs an evaluation failure (a busy pool, a bad bundle) in {@code wasm} mode, so it must
+     * {@code failOpen} still governs a pool that stays busy past {@code borrowTimeout} in {@code wasm} mode, so it must
      * not be rejected (CAMEL-24743).
      */
     @Test
@@ -221,6 +221,18 @@ public class OpaWasmIT extends CamelTestSupport {
 
         assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
         assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+    }
+
+    @Test
+    void failsClosedOnAnUndefinedDecisionEvenUnderFailOpen() {
+        // the rule not matching is the policy not saying yes, not an unavailable decision point, so failOpen must
+        // not let mallory through. OpaIT.failsClosedOnAnUndefinedDecisionEvenUnderFailOpen is the twin
+        Exchange out = template.request(wasm("authz/strict_allow") + "&failOpen=true",
+                e -> e.getMessage().setHeader("user", "mallory"));
+
+        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
     }
 
     @Test

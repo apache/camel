@@ -148,6 +148,16 @@
 
         <!-- test dependencies -->
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-semantic</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-io-dsl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit</artifactId>
             <scope>test</scope>

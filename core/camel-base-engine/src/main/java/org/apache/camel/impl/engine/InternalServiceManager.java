@@ -20,10 +20,13 @@ package org.apache.camel.impl.engine;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -51,6 +54,13 @@ final class InternalServiceManager {
 
     private final DeferServiceStartupListener deferStartupListener = new DeferServiceStartupListener();
     private final List<Service> services = new CopyOnWriteArrayList<>();
+    // the services that were stopped when CamelContext was stopped, so they can be registered again on a restart
+    private final List<Service> stoppedServices = new CopyOnWriteArrayList<>();
+    // how the services were added, so they are registered again the same way on a restart
+    private final Map<Service, Registration> registrations = new ConcurrentHashMap<>();
+
+    private record Registration(boolean forceStart, boolean useLifecycleStrategies) {
+    }
 
     InternalServiceManager(InternalRouteStartupManager internalRouteStartupManager, List<StartupListener> startupListeners) {
         /*
@@ -115,6 +125,12 @@ final class InternalServiceManager {
             }
 
             if (!forceStart) {
+                // only a singleton service (not an endpoint) is added to the list of services to stop
+                boolean listed = !(service instanceof Endpoint)
+                        && (!(service instanceof IsSingleton singletonService) || singletonService.isSingleton());
+                if (stopOnShutdown && listed) {
+                    registrations.put(service, new Registration(false, useLifecycleStrategies));
+                }
                 ServiceHelper.initService(service);
                 // now start the service (and defer starting if CamelContext is
                 // starting up itself)
@@ -134,6 +150,7 @@ final class InternalServiceManager {
                         // special for type converter / type converter registry which is stopped manual later
                         boolean tc = service instanceof TypeConverter || service instanceof TypeConverterRegistry;
                         if (!tc) {
+                            registrations.put(service, new Registration(true, useLifecycleStrategies));
                             services.add(service);
                         }
                     }
@@ -177,6 +194,9 @@ final class InternalServiceManager {
     }
 
     public boolean removeService(Service service) {
+        // a service removed while CamelContext is stopped is not registered again on a restart
+        stoppedServices.remove(service);
+        registrations.remove(service);
         return services.remove(service);
     }
 
@@ -186,7 +206,8 @@ final class InternalServiceManager {
             return Collections.emptySet();
         }
 
-        Set<T> set = new HashSet<>();
+        // keep the order the services were added in (such as for cluster service selectors)
+        Set<T> set = new LinkedHashSet<>();
         for (Service service : services) {
             if (type.isInstance(service)) {
                 set.add((T) service);
@@ -227,7 +248,33 @@ final class InternalServiceManager {
 
     public void shutdownServices(CamelContext camelContext) {
         InternalServiceManager.shutdownServices(camelContext, services);
+        // keep the services (in the order they were added) so they can be registered again when restarted
+        stoppedServices.clear();
+        stoppedServices.addAll(services);
         services.clear();
+    }
+
+    /**
+     * Registers the services that were stopped when CamelContext was stopped, in the order they were added, so they are
+     * started again (and stopped when CamelContext stops again) when CamelContext is restarted.
+     *
+     * @param skip services that are not registered again, as they are created again on a restart
+     */
+    public void restoreStoppedServices(CamelContext camelContext, Predicate<Service> skip) {
+        List<Service> list = new ArrayList<>(stoppedServices);
+        stoppedServices.clear();
+        for (Service service : list) {
+            Registration registration = registrations.remove(service);
+            if (skip.test(service)) {
+                continue;
+            }
+            if (registration != null) {
+                addService(camelContext, service, true, registration.forceStart(), registration.useLifecycleStrategies());
+            } else {
+                // the service was deferred to start with CamelContext
+                deferStartService(camelContext, service, true, false);
+            }
+        }
     }
 
     public static void shutdownServices(CamelContext camelContext, Collection<?> services) {

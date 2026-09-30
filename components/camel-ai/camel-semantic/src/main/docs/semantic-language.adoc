@@ -96,14 +96,151 @@ Reloading a resource replaces its complete set of questions, including removing 
 no longer present. Development-mode route reload also removes definitions from deleted or renamed files
 before parsing replacements. This replacement does not make the surrounding route reload transactional.
 Existing expressions resolve the current definition on their next evaluation.
-Loading declarations does not perform inference. Java applications can register immutable
+Loading declarations does not perform inference.
+
+=== Java declarations
+
+Use the fluent helper from `camel-semantic` inside an ordinary `RouteBuilder`:
+
+[source,java]
+----
+import static org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions;
+
+@Override
+public void configure() {
+    semanticQuestions(this)
+        .question("department")
+            .type("choice")
+            .state("${header.myState}")
+            .instructions("Which department should handle this message?")
+            .criterion("billing", "Invoices, payments, and refunds")
+            .criterion("technical", "Bugs, outages, and technical problems")
+            .criterion("other", "Everything else")
+        .register();
+
+    from("direct:tickets")
+        .setProperty("department").language("semantic", "ref:department")
+        .to("direct:dispatch");
+}
+----
+
+Call `.end().question("anotherName")` to add another question to the group, then `.register()`
+once to validate and install the entire group atomically. Register before creating expressions
+that refer to these names. When adding builders to a running context, add the builder declaring
+shared questions before builders whose routes reference them.
+
+Use `.type("boolean")` with optional `.threshold(0.8)`, `.uncertainty(0.1)` and
+`.uncertaintyPolicy("non-match")` for boolean questions. Use `.type("score")` and successive
+`.level("description")` calls for ordered score levels. Applications can also register immutable
 `SemanticQuestion` definitions using `SemanticQuestions.get(context).replace(source, questions)`.
+
+Each Java resource owns one group. Register all of its questions together; registering again
+replaces that resource's previous group. Reloading a Java resource without the helper removes
+its declarations. Embedded builders without a resource receive distinct generated source keys.
+The helper reserves `"java:" + resource.getLocation()` as the resource source key; passing that
+key and an empty map to `replace` removes the resource's questions.
+
+=== XML declarations
+
+The XML extension belongs to `camel-semantic`. Include `camel-semantic` and
+xref:others:java-xml-io-dsl.adoc[XML DSL] (`camel-xml-io-dsl`). Camel discovers the extension
+automatically at startup: use ordinary `*.xml` files without registering a loader or changing
+the Camel core model. XML documents without semantic declarations are handled by the standard
+XML loader, including its bean and route configuration support. XML loaders registered by the
+application before route resource discovery retain precedence over automatic discovery.
+Loader discovery is refreshed when the context starts or routes are reloaded.
+Filenames may contain dots, such as `my.tickets.xml`. Routes retain their original resource
+locations and line numbers for debugging and error messages.
+
+Both layouts are supported. To keep declarations alongside routes, use `tickets.xml`:
+
+[source,xml]
+----
+<routes>
+  <semantic>
+    <question name="department" type="choice" state="${header.myState}">
+      <instructions>Which department should handle this message?</instructions>
+      <criterion key="billing" value="Invoices, payments, and refunds"/>
+      <criterion key="technical" value="Bugs, outages, and technical problems"/>
+      <criterion key="other" value="Everything else"/>
+    </question>
+  </semantic>
+  <route id="classify-ticket">
+    <from uri="direct:tickets"/>
+    <setProperty name="department">
+      <language language="semantic">ref:department</language>
+    </setProperty>
+    <to uri="direct:dispatch"/>
+  </route>
+</routes>
+----
+
+To share declarations across route files, use a standalone `questions.xml`:
+
+[source,xml]
+----
+<semantic>
+  <question name="department" type="choice" state="${header.myState}">
+    <instructions>Which department should handle this message?</instructions>
+    <criterion key="billing" value="Invoices, payments, and refunds"/>
+    <criterion key="technical" value="Bugs, outages, and technical problems"/>
+    <criterion key="other" value="Everything else"/>
+  </question>
+</semantic>
+----
+
+Load this together with ordinary `*.xml`, Java or YAML route resources that use `ref:department`.
+For example, with Camel Main, set
+`camel.main.routes-include-pattern=classpath:questions.xml,classpath:routes.xml`.
+Declarations are registered before consuming routes are configured. Reload replaces the source's
+questions; removing the `semantic` block, using an empty block, or deleting the resource removes
+obsolete definitions. XML source keys are the resource locations.
+
+The combined format supports a `routes` root with one optional `semantic` block and ordinary
+`route` elements. The standalone format uses a `semantic` root. Namespace-free documents are
+supported, as are documents consistently using `http://camel.apache.org/schema/semantic`,
+`http://camel.apache.org/schema/xml-io`, or `http://camel.apache.org/schema/spring`.
+A `semantic` block can also declare `xmlns="http://camel.apache.org/schema/semantic"` inside a
+standard `routes` document; its question elements inherit that namespace. The extension detects
+the declaration block or semantic root namespace automatically.
+
+These extensions do not validate against Camel's standard core XSDs. Automatic discovery applies
+to Camel's route resource loader; it does not extend Spring's XML application-context parser
+or direct JAXB unmarshalling.
+
+For boolean questions, `threshold`, `uncertainty` and `uncertaintyPolicy` are optional question
+attributes. For score questions, replace the named `criterion` elements with ordered `level`
+elements, such as `<level>Routine</level><level>Urgent</level><level>Critical</level>`.
+
+The numeric `threshold` and `uncertainty` options accept property placeholders in all three
+DSLs. For example, Java accepts `.threshold("{{semantic.threshold:0.5}}")`, and XML accepts
+`threshold="{{semantic.threshold:0.5}}"`. Values are resolved and validated when declarations
+are registered.
+
+Java and XML declarations use the same context-wide registry, validation, defaults and adapters
+as YAML. They do not require `camel-yaml-dsl`. Their questions can also be selected together
+using `refs:name1,name2`, as described below.
+
+=== Exporting routes
+
+Question declarations live outside Camel's core route model. Generic model exports and runtime
+route dumps such as `camel.main.dumpRoutes=yaml` contain only routes; keep declarations separately
+and load them before reloading an exported route.
+
+The MCP route conversion tool rejects Java or YAML inputs containing semantic declarations
+because a generic route export would lose those declarations. Convert the routes separately.
+Extended XML documents must also be separated into declarations and ordinary routes before
+using the generic converter.
+
+=== Selected state
 
 A question's optional `state` Simple expression overrides
 `camel.language.semantic.default-state`, whose default is `$\{body}`. Selectors are compiled
 before evaluation; selected strings, maps and lists are passed as data and are never evaluated recursively.
-A missing selected header fails instead of falling back to the body. Blank or invalid selectors
-fail. The original message is preserved. `CamelSemanticResult` contains the latest successful
+A missing selected header fails instead of falling back to the body. A selector must be nonblank
+before property placeholders are resolved. A placeholder that resolves to an empty string retains
+the existing Simple behavior: it selects an empty string as state. Invalid Simple syntax fails.
+The original message is preserved. `CamelSemanticResult` contains the latest successful
 normalized result and is cleared before each evaluation, including one that fails.
 
 State must be a string, map or list. For byte arrays or stream bodies, explicitly select
@@ -129,6 +266,90 @@ remain absent. Results can retain provider/model identity and usage metadata. Th
 do not imply equivalent quality or calibration when switching providers. Timeouts, malformed
 answers and unsupported capabilities are errors, distinct from valid negative decisions or
 unmatched Choice results.
+
+== Batching named questions
+
+Use `refs:name1,name2` to evaluate independent questions against the same selected state.
+The expression returns a map of normalized decisions keyed by question name. For example,
+using the declarations above:
+
+[source,java]
+----
+from("direct:tickets")
+    .setProperty("decision").language("semantic", "refs:actionable,department,urgency")
+    .choice()
+        .when(simple("${exchangeProperty.decision[actionable]} == true && ${exchangeProperty.decision[department]} == 'billing'"))
+            .to("direct:billing")
+        .otherwise()
+            .to("direct:review");
+----
+
+The same expression works through the generic language integration in YAML and XML.
+For example, replace the route above with:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:tickets
+      steps:
+        - setProperty:
+            name: decision
+            expression:
+              language:
+                language: semantic
+                expression: refs:actionable,department,urgency
+        - setHeader:
+            name: urgency
+            expression:
+              simple:
+                expression: "${exchangeProperty.decision[urgency]}"
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${exchangeProperty.decision[department]} == 'billing'"
+                steps:
+                  - to: direct:billing
+            otherwise:
+              steps:
+                - to: direct:review
+----
+
+A result might contain `actionable -> true`, `department -> "billing"` and `urgency -> 1.2`.
+Reading the stored map does not invoke the provider again. Each question retains its own
+threshold and uncertainty policy. There is no implicit AND/OR: batch expressions, including
+a batch containing one boolean question, cannot be used as predicates.
+
+`CamelSemanticResults` holds an immutable map of the detailed `SemanticResult` objects,
+keyed by the same names. These retain available probabilities, confidence and provider
+metadata. `CamelSemanticResult` remains the single-question diagnostic property for
+`ref:name`. Both diagnostic properties are cleared before every semantic evaluation;
+a batch publishes its decisions and diagnostics only after every answer passes validation.
+Missing, extra or invalid answers, operational failures and an uncertainty policy of `fail`
+fail the entire evaluation through Camel error handling. A valid negative decision or
+uncertainty handled by `non-match` remains a normal `false` result. A route property assigned
+by Set Property is owned by the route; clear it explicitly before reevaluation if an error
+handler could otherwise reuse a decision from an earlier attempt.
+
+Batch references are comma-separated names with surrounding whitespace removed. Empty,
+duplicate and unknown references are rejected. There is no quoting or escaping in this
+syntax: names containing commas or leading/trailing whitespace require a single `ref:name`
+evaluation. Existing single references are unchanged.
+
+All selected questions must use the same effective Simple state selector, after applying
+`camel.language.semantic.default-state` and resolving property placeholders. Selectors
+must match exactly; different expressions that happen to return equal values are not
+interchangeable. The selector is evaluated once per batch. Missing or unsupported state
+fails before inference. One snapshot of the question definitions is used throughout each
+batch, including validation and decision policies; the next evaluation sees replacements
+from resource reload. Questions that need a previous answer require separate evaluations.
+
+`SemanticAdapter.evaluateBatch(Map<String, SemanticQuestion>, Object)` has a default
+implementation that invokes the existing single-question method sequentially, preserving
+compatibility with existing adapters. TypeSafe AI overrides it to send all questions in
+one HTTP request using the component's existing timeout and concurrency limits. No results
+are cached or combined across exchanges.
 
 == EIP integration
 
@@ -276,10 +497,13 @@ redeliveries after the initial attempt. Each failure refreshes the selected stat
 restarts at the failed processor, not at the beginning of the route. A negative decision or
 an exhausted budget sends the message to `direct:escalate` through normal exception handling.
 
-Evaluation errors are distinct from a negative decision. If the retry predicate throws,
-Camel reports the evaluation failure on the exchange; it does not automatically execute
-the exception clause's escalation route. Arrange caller or supervising-route handling for
-that failure. Bound provider timeouts as well as the retry count.
+If the retry predicate throws (such as a provider timeout, or a malformed or uncertain result),
+Camel logs the evaluation failure at `WARN` level and regards the predicate as `false`. The message
+is not redelivered and is sent to `direct:escalate` through normal exception handling, the same
+as for a negative decision. The original exception is kept as the caught exception, with the
+evaluation failure attached as a suppressed exception. To tell an evaluation failure apart from a
+negative decision in the escalation route, check `getSuppressed()` of the
+`Exchange.EXCEPTION_CAUGHT` exception. Bound provider timeouts as well as the retry count.
 
 === Contextual action validation
 

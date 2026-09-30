@@ -38,7 +38,8 @@ public final class PropertiesLocation {
         }
 
         idx = location.lastIndexOf(';');
-        if (idx != -1) {
+        // only when the location ends with an option (a path may contain a semicolon)
+        if (idx != -1 && location.substring(idx + 1).startsWith("optional=")) {
             this.optional = StringHelper.after(location.substring(idx + 1), "optional=", Boolean::valueOf).orElse(false);
             location = location.substring(0, idx);
         } else {

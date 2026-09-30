@@ -76,19 +76,21 @@ class AuthoringToolsTest {
         assertEquals(List.of("camel_catalog_doc", "camel_catalog_find", "camel_catalog_sample", "camel_validate_source",
                 "camel_get_files",
                 "camel_write_file", "camel_edit_file", "camel_run", "camel_control", "camel_get_log", "camel_get_errors",
-                "camel_eval_expression", "camel_dependency_for_class", "camel_error_diagnose"), names);
+                "camel_eval_expression", "camel_dependency_for_class", "camel_error_diagnose", "camel_project_overview",
+                "camel_save_project_summary"), names);
         for (ToolDescriptor td : shared) {
             assertTrue(td.name().startsWith("camel_"), td.name());
             assertFalse(td.description().isBlank(), td.name());
             assertNotNull(td.executor(), td.name());
         }
         // what changes something is not read-only, so an access filter or a permission handler can tell
-        for (String mutating : List.of("camel_write_file", "camel_run", "camel_control")) {
+        for (String mutating : List.of("camel_write_file", "camel_run", "camel_control", "camel_save_project_summary")) {
             assertFalse(ToolRegistry.findTool(mutating).isReadOnly(), mutating);
         }
         for (String reading : List.of("camel_catalog_doc", "camel_catalog_sample", "camel_get_files", "camel_get_log",
                 "camel_get_errors",
-                "camel_eval_expression", "camel_dependency_for_class", "camel_error_diagnose", "camel_validate_source")) {
+                "camel_eval_expression", "camel_dependency_for_class", "camel_error_diagnose", "camel_validate_source",
+                "camel_project_overview")) {
             assertTrue(ToolRegistry.findTool(reading).isReadOnly(), reading);
         }
         assertTrue(ToolRegistry.findTool("camel_control").isDestructive());
@@ -168,6 +170,28 @@ class AuthoringToolsTest {
         assertEquals("invalid", call("camel_write_file", new ToolContext(), Map.of("directory", dir.toString(),
                 "file", "application.properties", "content", "camel.main.nme=x", "validate", false))
                 .getString("status"));
+    }
+
+    @Test
+    void aMissingConsumerIsReportedButDoesNotRefuseTheWrite(@TempDir Path dir) throws IOException {
+        // the route that consumes direct:lookup is often the next file the agent writes (CAMEL-24955)
+        String caller = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: direct:lookup
+                """;
+        JsonObject validated = call("camel_validate_source", new ToolContext(),
+                Map.of("directory", dir.toString(), "file", "main.camel.yaml", "content", caller));
+        assertFalse(validated.getBoolean("valid"), validated.toJson());
+        assertTrue(validated.getCollection("errors").stream().anyMatch(m -> m.toString().contains("direct:lookup")),
+                validated.toJson());
+
+        JsonObject written = call("camel_write_file", new ToolContext(),
+                Map.of("directory", dir.toString(), "file", "main.camel.yaml", "content", caller));
+        assertEquals("created", written.getString("status"), written.toJson());
+        assertEquals(caller, Files.readString(dir.resolve("main.camel.yaml"), StandardCharsets.UTF_8));
     }
 
     @Test

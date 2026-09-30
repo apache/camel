@@ -18,6 +18,9 @@ package org.apache.camel.component.xslt;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -44,19 +47,62 @@ public class XsltUriResolver implements URIResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltUriResolver.class);
 
+    // protocols governed by the JAXP ACCESS_EXTERNAL_STYLESHEET attribute; Camel's classpath:, ref: and bean: are
+    // internal resource schemes outside the JAXP external-access model and are always resolved
+    private static final Set<String> EXTERNAL_PROTOCOLS = Set.of("http", "https", "ftp", "file");
+
     private final CamelContext context;
     private final String location;
     private final String baseScheme;
+    private final Set<String> allowedExternalProtocols;
 
     public XsltUriResolver(CamelContext context, String location) {
+        this(context, location, null);
+    }
+
+    /**
+     * @param allowedExternalProtocols the external protocols this resolver may load, mirroring the factory's
+     *                                 {@code ACCESS_EXTERNAL_STYLESHEET}; {@code null} leaves external access
+     *                                 unrestricted (the default), an empty set forbids every external protocol
+     */
+    public XsltUriResolver(CamelContext context, String location, Set<String> allowedExternalProtocols) {
         this.context = context;
         this.location = location;
+        this.allowedExternalProtocols = allowedExternalProtocols;
         if (ResourceHelper.hasScheme(location)) {
             baseScheme = ResourceHelper.getScheme(location);
         } else {
             // default to use classpath
             baseScheme = "classpath:";
         }
+    }
+
+    /**
+     * Returns a copy of this resolver that additionally enforces the given external-protocol allow-list, preserving the
+     * {@link CamelContext} and location so relative resolution is unchanged. Used to install a restricted resolver at
+     * transform time (for {@code document()}) while leaving stylesheet compilation unrestricted.
+     */
+    public XsltUriResolver withAllowedExternalProtocols(Set<String> allowedExternalProtocols) {
+        return new XsltUriResolver(context, location, allowedExternalProtocols);
+    }
+
+    /**
+     * Parses a JAXP {@code ACCESS_EXTERNAL_*} attribute value into the set of allowed protocols, or {@code null} when
+     * access is unrestricted. The value is a comma-separated protocol list; {@code "all"} means unrestricted and an
+     * empty string forbids every external protocol.
+     */
+    public static Set<String> parseAllowedProtocols(String accessExternalValue) {
+        if (accessExternalValue == null || "all".equals(accessExternalValue.trim())) {
+            return null;
+        }
+        Set<String> protocols = new HashSet<>();
+        for (String protocol : accessExternalValue.split(",")) {
+            String trimmed = protocol.trim();
+            if (!trimmed.isEmpty()) {
+                protocols.add(trimmed);
+            }
+        }
+        return protocols;
     }
 
     @Override
@@ -74,6 +120,7 @@ public class XsltUriResolver implements URIResolver {
         String scheme = ResourceHelper.getScheme(href);
 
         if (scheme != null) {
+            checkExternalAccessAllowed(href, scheme);
             // need to compact paths for file/classpath as it can be relative paths using .. to go backwards
             String hrefPath = StringHelper.after(href, scheme);
             if ("file:".equals(scheme)) {
@@ -112,6 +159,37 @@ public class XsltUriResolver implements URIResolver {
                 path = baseScheme + path + "/" + href;
             }
             return resolve(path, base);
+        }
+    }
+
+    /**
+     * Enforces the configured {@code ACCESS_EXTERNAL_STYLESHEET} restriction by throwing a {@link TransformerException}
+     * for a forbidden external protocol. JAXP applies that attribute only when no custom {@link URIResolver} returns a
+     * {@link Source}, and Camel always installs this resolver, so it must apply the same limit itself. Throwing matches
+     * plain JAXP behaviour: the processor reports an access error rather than silently reading the resource (the JDK's
+     * XSLTC turns a resolver exception into a document retrieval failure and does not fall back to reading it). Only
+     * the standard external protocols are governed; Camel's {@code classpath:}, {@code ref:} and {@code bean:} schemes
+     * are internal lookups outside the JAXP model and are always resolved. Does nothing when external access is
+     * unrestricted ({@code allowedExternalProtocols == null}).
+     */
+    private void checkExternalAccessAllowed(String href, String scheme) throws TransformerException {
+        if (allowedExternalProtocols == null) {
+            return;
+        }
+        // scheme carries a trailing ':' (e.g. "http:"); compare case-insensitively so an upper/mixed-case scheme
+        // cannot slip past the guard
+        String protocol = scheme.endsWith(":") ? scheme.substring(0, scheme.length() - 1) : scheme;
+        protocol = protocol.toLowerCase(Locale.ROOT);
+        if (EXTERNAL_PROTOCOLS.contains(protocol) && !allowedExternalProtocols.contains(protocol)) {
+            // log the denial explicitly: the XSLT processor turns this exception into a generic document retrieval
+            // failure, so this WARN is what actually tells an operator why document() did not read the resource
+            LOG.warn("Refusing to resolve external resource {} for the XSLT document() function: protocol '{}' is not"
+                     + " permitted by the transformer factory's ACCESS_EXTERNAL_STYLESHEET restriction",
+                    href, protocol);
+            throw new TransformerException(
+                    "Refusing to resolve external resource " + href + " for the XSLT document() function: protocol '"
+                                           + protocol
+                                           + "' is not permitted by the transformer factory's ACCESS_EXTERNAL_STYLESHEET restriction");
         }
     }
 

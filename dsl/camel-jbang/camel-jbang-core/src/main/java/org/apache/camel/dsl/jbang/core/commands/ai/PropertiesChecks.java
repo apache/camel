@@ -141,6 +141,11 @@ final class PropertiesChecks {
                     if (msg != null) {
                         msg = msg.trim();
                         String hint = mainOptionHint(line, catalog);
+                        if (hint != null) {
+                            // the hint says what to write; the catalog's edit-distance suggestion over the full keys
+                            // can point elsewhere (camel.main.loggingLevel -> camel.debug.loggingLevel)
+                            msg = msg.replaceFirst("\\. Did you mean: \\[[^]]*]", "");
+                        }
                         if (hint == null && km.reset().find() && "component".equals(km.group(1))) {
                             hint = endpointOptionHint(km.group(2), line, catalog);
                         }

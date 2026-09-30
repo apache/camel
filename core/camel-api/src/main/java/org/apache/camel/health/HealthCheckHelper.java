@@ -184,11 +184,25 @@ public final class HealthCheckHelper {
                     } else {
                         return downs;
                     }
-                } else {
-                    // all up so grab first
-                    HealthCheck.Result up = result.iterator().next();
-                    return Collections.singleton(up);
                 }
+                // there may be results that are not up (such as unknown) which must be included, so readiness
+                // gives the same result regardless of the exposure level (a disabled check does not count)
+                Collection<HealthCheck.Result> notUps = result.stream()
+                        .filter(r -> !r.getState().equals(HealthCheck.State.UP) && !isDisabled(r))
+                        .collect(Collectors.toCollection(ArrayList::new));
+                if (!notUps.isEmpty()) {
+                    if ("oneline".equals(exposureLevel)) {
+                        return Collections.singleton(notUps.iterator().next());
+                    } else {
+                        return notUps;
+                    }
+                }
+                // all up so grab first (that is not disabled)
+                return result.stream()
+                        .filter(r -> !isDisabled(r))
+                        .findFirst()
+                        .map(Collections::singleton)
+                        .orElse(Collections.emptySet());
             }
         }
 
@@ -341,13 +355,20 @@ public final class HealthCheckHelper {
         Objects.requireNonNull(results, "results");
         boolean up;
         if (readiness) {
-            // readiness requires that all are UP
-            up = results.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
+            // readiness requires that all are UP (a disabled check does not count)
+            up = results.stream().filter(r -> !isDisabled(r)).allMatch(r -> r.getState().equals(HealthCheck.State.UP));
         } else {
             // liveness will fail if there is any down
             up = results.stream().noneMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
         }
         return up;
+    }
+
+    /**
+     * Whether the result is of a check that is disabled (which does not influence the outcome).
+     */
+    private static boolean isDisabled(HealthCheck.Result result) {
+        return Boolean.FALSE.equals(result.getDetails().get(HealthCheck.CHECK_ENABLED));
     }
 
     /**

@@ -17,11 +17,14 @@
 package org.apache.camel.impl.cluster;
 
 import java.time.Duration;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -40,12 +43,14 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.cluster.ClusterServiceHelper;
 import org.apache.camel.support.cluster.ClusterServiceSelectors;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReferenceCount;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +58,9 @@ import org.slf4j.LoggerFactory;
 public final class ClusteredRoutePolicy extends RoutePolicySupport implements CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClusteredRoutePolicy.class);
+    private static final String THREAD_NAME = "ClusteredRoutePolicy";
+    // how long the policy thread waits for another leadership change before it exits
+    private static final long LEADERSHIP_THREAD_KEEP_ALIVE_MILLIS = 1000;
 
     private final AtomicBoolean leader;
     private final Set<Route> autoStartupRoutes;
@@ -66,12 +74,16 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private final String namespace;
     private final CamelClusterService.Selector clusterServiceSelector;
     private final Lock lock;
+    private final Lock retainLock;
+    private final AtomicReference<CamelClusterView> clusterView;
+    private final AtomicBoolean leadershipChangePending;
     private CamelClusterService clusterService;
-    private CamelClusterView clusterView;
     private volatile boolean startManagedRoutesEarly;
+    private volatile boolean initialDelayElapsed;
 
     private Duration initialDelay;
-    private ScheduledExecutorService executorService;
+    private volatile ExecutorService leadershipExecutor;
+    private volatile ScheduledExecutorService initialDelayExecutor;
 
     private CamelContext camelContext;
 
@@ -86,9 +98,13 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         this.leadershipEventListener = new CamelClusterLeadershipListener();
 
         this.lock = new ReentrantLock();
-        this.stoppedRoutes = new HashSet<>();
-        this.startedRoutes = new HashSet<>();
-        this.autoStartupRoutes = new HashSet<>();
+        this.retainLock = new ReentrantLock();
+        this.leadershipChangePending = new AtomicBoolean();
+        // the routes are started and stopped on the policy thread, while routes are added and removed by the caller
+        this.stoppedRoutes = ConcurrentHashMap.newKeySet();
+        this.startedRoutes = ConcurrentHashMap.newKeySet();
+        this.autoStartupRoutes = ConcurrentHashMap.newKeySet();
+        this.clusterView = new AtomicReference<>();
         this.leader = new AtomicBoolean();
         this.contextStarted = new AtomicBoolean();
         this.initialDelay = Duration.ofMillis(0);
@@ -126,8 +142,8 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             this.camelContext = camelContext;
             this.camelContext.addStartupListener(this.listener);
             this.camelContext.getManagementStrategy().addEventNotifier(this.listener);
-            this.executorService
-                    = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ClusteredRoutePolicy");
+            this.leadershipExecutor = camelContext.getExecutorServiceManager()
+                    .newThreadPool(this, THREAD_NAME, newLeadershipThreadPoolProfile());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -161,7 +177,12 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         super.onInit(route);
 
         // Increase number of managed routes by this policy, acquire policy view on first run
-        this.refCount.retain();
+        retainLock.lock();
+        try {
+            this.refCount.retain();
+        } finally {
+            retainLock.unlock();
+        }
 
         if (route.isAutoStartup()) {
             autoStartupRoutes.add(route);
@@ -196,13 +217,26 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     @Override
     public void onRemove(Route route) {
         // Decrease number of managed routes, release view once there are no route left
-        refCount.release();
+        retainLock.lock();
+        try {
+            refCount.release();
+        } finally {
+            retainLock.unlock();
+        }
         autoStartupRoutes.remove(route);
+        // a route added later with the same id must not be started or stopped by this policy
+        startedRoutes.remove(route);
+        stoppedRoutes.remove(route);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        releaseClusterView();
+        retainLock.lock();
+        try {
+            releaseClusterView();
+        } finally {
+            retainLock.unlock();
+        }
         removeCamelEventListeners();
     }
 
@@ -213,44 +247,58 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private void removeCamelEventListeners() {
         if (camelContext != null) {
             camelContext.getManagementStrategy().removeEventNotifier(listener);
-            if (executorService != null) {
-                camelContext.getExecutorServiceManager().shutdownNow(executorService);
+            ExecutorService executor = leadershipExecutor;
+            if (executor != null) {
+                camelContext.getExecutorServiceManager().shutdownNow(executor);
+            }
+            ScheduledExecutorService scheduler = initialDelayExecutor;
+            if (scheduler != null) {
+                initialDelayExecutor = null;
+                camelContext.getExecutorServiceManager().shutdownNow(scheduler);
             }
         }
     }
 
+    // The view and the cluster service are called without holding the policy lock. The view holds its own lock while
+    // it notifies the listeners, and the policy thread holds the policy lock while it starts or stops routes, which
+    // needs the CamelContext route lock. onRemove (and so releaseClusterView) can run while the caller holds that route
+    // lock, for example CamelContext.removeRoute, so taking the policy lock here could deadlock (CAMEL-24545).
+    //
+    // Retain and release are serialized by the retain lock instead, so a route added and a route removed at the same
+    // time on a shared policy cannot release the view that has just been retained. Only the threads adding and
+    // removing routes (and the shutdown) take the retain lock, and they never wait for the policy lock or the policy
+    // thread while they hold it.
+
     private void retainClusterView() {
-        lock.lock();
         try {
-            clusterView = clusterService.getView(namespace);
-            clusterView.addEventListener(leadershipEventListener);
+            CamelClusterView view = clusterService.getView(namespace);
+            clusterView.set(view);
+            // Take the current leadership right away, as the listener applies it asynchronously: onInit uses it to
+            // decide whether the route controller can start the route. No route is managed yet, so there is nothing
+            // to start or stop here.
+            leader.set(view.getLocalMember().isLeader());
+            view.addEventListener(leadershipEventListener);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-            lock.unlock();
         }
     }
 
     private void releaseClusterView() {
-        lock.lock();
+        CamelClusterView view = clusterView.getAndSet(null);
         try {
-            // Remove event listener
-            if (clusterView != null) {
-                clusterView.removeEventListener(leadershipEventListener);
+            if (view != null) {
+                // Remove event listener
+                view.removeEventListener(leadershipEventListener);
 
                 // If all the routes have been removed then the view and its
                 // resources can eventually be released.
-                clusterView.getClusterService().releaseView(clusterView);
-                clusterView = null;
+                view.getClusterService().releaseView(view);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            try {
-                setLeader(false);
-            } finally {
-                lock.unlock();
-            }
+            // the routes managed by this policy have been removed or are being shut down, so there is nothing to stop
+            leader.set(false);
         }
     }
 
@@ -263,9 +311,25 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     // Route managements
     // ****************************************************
 
-    private void setLeader(boolean isLeader) {
+    private void setLeader() {
         lock.lock();
         try {
+            // the leadership is read when the change is applied, not when it was handed over, so the last change wins
+            CamelClusterView view = clusterView.get();
+            if (view == null) {
+                // the view has been released in the meantime
+                return;
+            }
+
+            if (camelContext.isStopping()) {
+                // The CamelContext stops all its routes, starting with their consumers, so neither a leadership taken
+                // nor a leadership lost is applied: a route must not be started now, and stopping it here would run a
+                // second shutdown of the route next to the one of the CamelContext.
+                LOG.debug("Ignoring leadership change as CamelContext is stopping");
+                return;
+            }
+
+            boolean isLeader = view.getLocalMember().isLeader();
             if (isLeader && leader.compareAndSet(false, isLeader)) {
                 LOG.debug("Leadership taken");
                 startManagedRoutes();
@@ -292,6 +356,12 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         // if we are currently starting up Camel context then defer starting routes till its fully started
         if (camelContext.isStarting()) {
             LOG.debug("Will defer starting managed routes until camel context is fully started");
+            startManagedRoutesEarly = true;
+            return;
+        }
+        // and if the initial delay has not elapsed yet, then defer starting routes till it has
+        if (!initialDelayElapsed && initialDelay != null && initialDelay.toMillis() > 0) {
+            LOG.debug("Will defer starting managed routes until the initial delay {} has elapsed", initialDelay);
             startManagedRoutesEarly = true;
             return;
         }
@@ -358,11 +428,18 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
                     startedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")));
         }
 
-        if (startManagedRoutesEarly) {
-            LOG.debug(
-                    "CamelContext is now fully started, can now start managed routes eager as we were appointed leader during early startup");
-            startManagedRoutesEarly = false;
-            startManagedRoutes();
+        // under the policy lock, as the policy thread may be handling a leadership change and deferring the start of
+        // the routes while the CamelContext is starting
+        lock.lock();
+        try {
+            if (startManagedRoutesEarly) {
+                LOG.debug(
+                        "CamelContext is now fully started, can now start managed routes eager as we were appointed leader during early startup");
+                startManagedRoutesEarly = false;
+                startManagedRoutes();
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -373,8 +450,67 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private class CamelClusterLeadershipListener implements CamelClusterEventListener.Leadership {
         @Override
         public void leadershipChanged(CamelClusterView view, CamelClusterMember leader) {
-            setLeader(clusterView.getLocalMember().isLeader());
+            if (clusterView.get() == null) {
+                // the view has been released
+                return;
+            }
+
+            // The view calls the listeners while it holds its lock, so the routes are started and stopped on the
+            // policy thread instead. Starting a route can take a while, and it needs the CamelContext route lock,
+            // which a thread removing a route or stopping the CamelContext may hold while it releases the view.
+            handOverLeadershipChange();
         }
+    }
+
+    private void handOverLeadershipChange() {
+        // The policy thread reads the leadership when it applies a change, so a change that is still queued covers
+        // this one too, and at most one change is queued. getAndSet is used on both sides so the policy thread sees
+        // the leadership that the view has set before it fired this event.
+        if (leadershipChangePending.getAndSet(true)) {
+            return;
+        }
+
+        final ExecutorService executor = leadershipExecutor;
+        if (executor == null) {
+            // Never apply the change on this thread, as it holds the lock of the view
+            leadershipChangePending.set(false);
+            LOG.warn("Ignoring leadership change as ClusteredRoutePolicy for namespace {} has no CamelContext", namespace);
+            return;
+        }
+
+        try {
+            executor.execute(this::applyLeadershipChange);
+        } catch (RejectedExecutionException e) {
+            leadershipChangePending.set(false);
+            LOG.debug("Ignoring leadership change as ClusteredRoutePolicy for namespace {} has been shut down", namespace);
+        }
+    }
+
+    private void applyLeadershipChange() {
+        // from now on a leadership change queues a new task
+        leadershipChangePending.getAndSet(false);
+        try {
+            setLeader();
+        } catch (Exception e) {
+            LOG.warn("Error applying leadership change of ClusteredRoutePolicy for namespace {}. This exception is ignored.",
+                    namespace, e);
+        }
+    }
+
+    private static ThreadPoolProfile newLeadershipThreadPoolProfile() {
+        ThreadPoolProfile profile = new ThreadPoolProfile(THREAD_NAME);
+        // A single thread, so the changes are applied one after the other, and no thread while the leadership does
+        // not change, so a policy per route does not keep a thread per route.
+        profile.setPoolSize(0);
+        profile.setMaxPoolSize(1);
+        profile.setKeepAliveTime(LEADERSHIP_THREAD_KEEP_ALIVE_MILLIS);
+        profile.setTimeUnit(TimeUnit.MILLISECONDS);
+        profile.setAllowCoreThreadTimeOut(true);
+        // at most one change is queued (see handOverLeadershipChange)
+        profile.setMaxQueueSize(1);
+        // never run a change on the thread of the view: reject it once the policy has been shut down
+        profile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
+        return profile;
     }
 
     private class CamelContextStartupListener extends SimpleEventNotifierSupport
@@ -420,8 +556,19 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
                 // Eventually delay the startup of the routes a later time
                 if (initialDelay.toMillis() > 0) {
                     LOG.debug("Policy will be effective in {}", initialDelay);
-                    executorService.schedule(ClusteredRoutePolicy.this::onCamelContextStarted, initialDelay.toMillis(),
-                            TimeUnit.MILLISECONDS);
+                    ScheduledExecutorService scheduler = camelContext.getExecutorServiceManager()
+                            .newSingleThreadScheduledExecutor(ClusteredRoutePolicy.this, THREAD_NAME);
+                    initialDelayExecutor = scheduler;
+                    scheduler.schedule(() -> {
+                        try {
+                            initialDelayElapsed = true;
+                            ClusteredRoutePolicy.this.onCamelContextStarted();
+                        } finally {
+                            // the delay applies once, so its thread is not needed anymore
+                            initialDelayExecutor = null;
+                            camelContext.getExecutorServiceManager().shutdown(scheduler);
+                        }
+                    }, initialDelay.toMillis(), TimeUnit.MILLISECONDS);
                 } else {
                     ClusteredRoutePolicy.this.onCamelContextStarted();
                 }

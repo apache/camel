@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "switchOtherwise",
+    "title": "Switch Otherwise",
+    "description": "The fixed endpoint used when no switch case matches",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.SwitchOtherwiseDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "uri": { "index": 0, "kind": "attribute", "displayName": "Uri", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The fixed destination URI. Supports property placeholders, but not Simple expressions." }
+  }
+}

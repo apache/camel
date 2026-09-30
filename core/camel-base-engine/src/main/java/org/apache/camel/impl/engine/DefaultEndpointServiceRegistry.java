@@ -83,7 +83,8 @@ public class DefaultEndpointServiceRegistry extends ServiceSupport implements En
                 hosted = dc.isHostedService();
                 routeId = dc.getRouteId();
             }
-            var stat = findStats(endpoint.getEndpointUri(), dir);
+            // the stats of the route of the consumer, as several routes can consume from the same endpoint
+            var stat = findStats(endpoint.getEndpointUri(), dir, routeId);
             long hits = 0;
             if (stat.isPresent()) {
                 var s = stat.get();
@@ -92,7 +93,7 @@ public class DefaultEndpointServiceRegistry extends ServiceSupport implements En
             }
             if ("out".equals(dir) && stat.isEmpty()) {
                 // no OUT stat, then the endpoint may be used only for IN
-                stat = findStats(endpoint.getEndpointUri(), "in");
+                stat = findStats(endpoint.getEndpointUri(), "in", null);
                 if (stat.isPresent()) {
                     return null;
                 }
@@ -115,12 +116,13 @@ public class DefaultEndpointServiceRegistry extends ServiceSupport implements En
         return size;
     }
 
-    private Optional<RuntimeEndpointRegistry.Statistic> findStats(String uri, String direction) {
+    private Optional<RuntimeEndpointRegistry.Statistic> findStats(String uri, String direction, String routeId) {
         if (camelContext.getRuntimeEndpointRegistry() == null) {
             return Optional.empty();
         }
         return camelContext.getRuntimeEndpointRegistry().getEndpointStatistics().stream()
-                .filter(s -> uri.equals(s.getUri()) && (direction == null || s.getDirection().equals(direction)))
+                .filter(s -> uri.equals(s.getUri()) && (direction == null || s.getDirection().equals(direction))
+                        && (routeId == null || routeId.equals(s.getRouteId())))
                 .findFirst();
     }
 

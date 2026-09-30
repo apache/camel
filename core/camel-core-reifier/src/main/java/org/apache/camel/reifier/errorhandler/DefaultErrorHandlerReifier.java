@@ -62,6 +62,9 @@ public class DefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultError
         if (answer == null && definition.getLoggerRef() != null) {
             answer = mandatoryLookup(definition.getLoggerRef(), CamelLogger.class);
         }
+        if (answer == null && definition.getLogName() != null) {
+            answer = new CamelLogger(LoggerFactory.getLogger(parseString(definition.getLogName())), LoggingLevel.ERROR);
+        }
         if (answer == null) {
             answer = new CamelLogger(LoggerFactory.getLogger(DefaultErrorHandler.class), LoggingLevel.ERROR);
         }
@@ -105,7 +108,9 @@ public class DefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultError
                     if (executorService == null) {
                         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
                         ThreadPoolProfile profile = manager.getThreadPoolProfile(executorServiceRef);
-                        executorService = manager.newScheduledThreadPool(this, executorServiceRef, profile);
+                        if (profile != null) {
+                            executorService = manager.newScheduledThreadPool(this, executorServiceRef, profile);
+                        }
                     }
                     if (executorService == null) {
                         throw new IllegalArgumentException("ExecutorService " + executorServiceRef + " not found in registry.");

@@ -90,6 +90,25 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
         assertThatCode(() -> engine.toolRemoved("ephemeral")).doesNotThrowAnyException();
     }
 
+    @Test
+    void toolAddedAfterStdinClosedDoesNotFail() throws Exception {
+        StdioMcpServerEngine engine = new StdioMcpServerEngine();
+        engine.initialize(new org.apache.camel.component.mcp.server.McpServerInfo(
+                "test", "1.0", "/mcp", 0, 0, null, null, null, null, null));
+        // an empty stdin is a client that went away: the session closes and notifications can no longer be sent
+        engine.setTransportStreams(new ByteArrayInputStream(new byte[0]), new ByteArrayOutputStream());
+        engine.start();
+        try {
+            for (int i = 0; i < 20; i++) {
+                String name = "late_tool_" + i;
+                assertThatCode(() -> engine.toolAdded(sampleTool(name, "Added after stdin closed")))
+                        .doesNotThrowAnyException();
+            }
+        } finally {
+            engine.stop();
+        }
+    }
+
     private static McpServerTool sampleTool(String name, String description) {
         McpToolCallHandler handler = arguments -> new McpToolCallResult("ok", false);
         return new McpServerTool() {

@@ -43,6 +43,7 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
@@ -61,8 +62,10 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.xml.LwModelHelper;
@@ -436,7 +439,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
 
     @Override
     public String dumpRouteAsXml(boolean resolvePlaceholders, boolean generatedIds) throws Exception {
-        return dumpRouteAsXml(resolvePlaceholders, true, false);
+        return dumpRouteAsXml(resolvePlaceholders, generatedIds, false);
     }
 
     @Override
@@ -589,7 +592,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
             answer.append(String.format(" group=\"%s\"", escapeXml(getRouteGroup())));
         }
         if (sourceLocation != null) {
-            answer.append(String.format(" sourceLocation=\"%s\"", getSourceLocation()));
+            answer.append(String.format(" sourceLocation=\"%s\"", escapeXml(getSourceLocation())));
         }
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
@@ -759,7 +762,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
             answer.append(String.format(" group=\"%s\"", escapeXml(getRouteGroup())));
         }
         if (sourceLocation != null) {
-            answer.append(String.format(" sourceLocation=\"%s\"", getSourceLocation()));
+            answer.append(String.format(" sourceLocation=\"%s\"", escapeXml(getSourceLocation())));
         }
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
@@ -812,7 +815,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
                 sb.append("\n    <routeLocation")
                         .append(String.format(
                                 " routeId=\"%s\" id=\"%s\" index=\"%s\" sourceLocation=\"%s\" sourceLineNumber=\"%s\"/>",
-                                escapeXml(route.getRouteId()), id, 0, location, line));
+                                escapeXml(route.getRouteId()), escapeXml(id), 0, escapeXml(location), line));
             }
             for (ManagedProcessorMBean processor : processors) {
                 // the step must belong to this route
@@ -823,7 +826,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
                             .append(String.format(
                                     " routeId=\"%s\" id=\"%s\" index=\"%s\" sourceLocation=\"%s\" sourceLineNumber=\"%s\"/>",
                                     escapeXml(route.getRouteId()), escapeXml(processor.getProcessorId()), processor.getIndex(),
-                                    location, line));
+                                    escapeXml(location), line));
                 }
             }
         }
@@ -832,9 +835,14 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
     }
 
     @Override
+    public void reset() {
+        super.reset();
+        load.reset();
+    }
+
+    @Override
     public void reset(boolean includeProcessors) throws Exception {
         reset();
-        load.reset();
 
         // and now reset all processors for this route
         if (includeProcessors) {
@@ -842,12 +850,16 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
             if (server != null) {
                 // get all the processor mbeans and sort them accordingly to their index
                 String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-                ObjectName query = ObjectName.getInstance(
-                        jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
-                QueryExp queryExp = Query.match(new AttributeValueExp("RouteId"), new StringValueExp(getRouteId()));
-                Set<ObjectName> names = server.queryNames(query, queryExp);
-                for (ObjectName name : names) {
-                    server.invoke(name, "reset", null, null);
+                // the route id must be equal (match would treat * and ? in the route id as wildcards)
+                QueryExp queryExp = Query.eq(new AttributeValueExp("RouteId"), new StringValueExp(getRouteId()));
+                // steps are registered as their own type
+                for (String type : new String[] { "processors", "steps" }) {
+                    ObjectName query = ObjectName.getInstance(
+                            jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=" + type + ",*");
+                    Set<ObjectName> names = server.queryNames(query, queryExp);
+                    for (ObjectName name : names) {
+                        server.invoke(name, "reset", null, null);
+                    }
                 }
             }
         }
@@ -1029,10 +1041,15 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
     }
 
     private static String escapeXml(String text) {
-        return text
-                .replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;");
+        // also quotes as the values are used in attributes
+        return StringHelper.xmlEncode(text);
     }
 
+    @Override
+    protected boolean isRedeliveredHere(Exchange exchange) {
+        // only the route of the processor that failed is redelivered (the later routes see the redelivered header too)
+        return ExchangeHelper.isRedelivered(exchange)
+                && exchange.getProperty(FAILED_PROCESSOR_ID) != null
+                && route.getId().equals(exchange.getProperty(FAILED_ROUTE_ID));
+    }
 }

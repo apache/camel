@@ -27,11 +27,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.bson.BsonDocument;
 import org.bson.Document;
+import org.bson.codecs.DecoderContext;
+import org.bson.codecs.DocumentCodec;
 import org.bson.types.ObjectId;
 
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 
 class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
+
+    private static final DocumentCodec DOCUMENT_CODEC = new DocumentCodec();
+
     private List<BsonDocument> bsonFilter;
     private BsonDocument resumeToken;
     private CommitManager commitManager;
@@ -86,28 +91,38 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
                 ChangeStreamDocument<Document> dbObj = (ChangeStreamDocument<Document>) cursor.next();
                 Exchange exchange = createMongoDbExchange(dbObj.getFullDocument());
 
-                ObjectId documentId = dbObj.getDocumentKey().getObjectId(MONGO_ID).getValue();
+                Object documentId = readDocumentId(dbObj.getDocumentKey());
                 OperationType operationType = dbObj.getOperationType();
                 BsonDocument currentResumeToken = dbObj.getResumeToken();
 
-                exchange.getIn().setHeader(MongoDbConstants.STREAM_OPERATION_TYPE, operationType.getValue());
-                exchange.getIn().setHeader(MongoDbConstants.MONGO_ID, documentId);
+                if (operationType != null) {
+                    exchange.getIn().setHeader(MongoDbConstants.STREAM_OPERATION_TYPE, operationType.getValue());
+                }
+                if (documentId != null) {
+                    exchange.getIn().setHeader(MongoDbConstants.MONGO_ID, documentId);
+                }
                 if (currentResumeToken != null) {
                     exchange.getIn().setHeader(Exchange.OFFSET, MongoDbResumable.of(resumeTokenKey, currentResumeToken));
                 }
-                if (operationType == OperationType.DELETE) {
+                if (operationType == OperationType.DELETE && documentId != null) {
                     exchange.getIn().setBody(new Document(MONGO_ID, documentId));
                 }
 
                 try {
                     if (log.isTraceEnabled()) {
-                        log.trace("Sending exchange: {}, ObjectId: {}", exchange, dbObj.getFullDocument().get(MONGO_ID));
+                        log.trace("Sending exchange: {}, id: {}", exchange, documentId);
                     }
-                    consumer.getProcessor().process(exchange);
-                    this.resumeToken = currentResumeToken;
-                    commitManager.recordResumeToken(currentResumeToken);
-                    commitManager.commit();
-                } catch (Exception ignored) {
+                    // a failed event does not advance the resume token itself, but a later event that
+                    // succeeds commits its own, so the failure is reported rather than retried
+                    if (processExchange(exchange)) {
+                        this.resumeToken = currentResumeToken;
+                        commitManager.recordResumeToken(currentResumeToken);
+                        commitManager.commit();
+                    }
+                } catch (Exception e) {
+                    getExceptionHandler().handleException("Error committing the change stream resume token", exchange, e);
+                } finally {
+                    consumer.releaseExchange(exchange, false);
                 }
             }
         } catch (MongoException e) {
@@ -122,8 +137,36 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
         }
     }
 
+    /**
+     * Reads the {@code _id} out of the change event's document key.
+     * <p>
+     * The key is absent on the events that do not belong to a single document ({@code invalidate}, {@code drop},
+     * {@code rename}, {@code dropDatabase}), and {@code _id} is only an {@link ObjectId} when the collection lets
+     * MongoDB generate it - a document may just as well be keyed by a string, a number or a compound value. Reading it
+     * blindly as an {@link ObjectId} threw before the exchange was ever created, and since the resume token is only
+     * advanced after a successful exchange, the regenerated cursor kept returning the same event.
+     *
+     * @param  documentKey the change event's document key, which may be {@code null}
+     * @return             the id as its natural Java type, or {@code null} when the event carries no document key
+     */
+    static Object readDocumentId(BsonDocument documentKey) {
+        if (documentKey == null || !documentKey.containsKey(MONGO_ID)) {
+            return null;
+        }
+
+        if (documentKey.get(MONGO_ID).isObjectId()) {
+            return documentKey.getObjectId(MONGO_ID).getValue();
+        }
+
+        // anything else - a string, a number, a compound key - is decoded the way the driver decodes a
+        // document, so the header carries the id in its natural Java type
+        Document decoded = DOCUMENT_CODEC.decode(documentKey.asBsonReader(), DecoderContext.builder().build());
+        return decoded.get(MONGO_ID);
+    }
+
     private Exchange createMongoDbExchange(Document dbObj) {
-        Exchange exchange = consumer.createExchange(true);
+        // released by doRun once the outcome has been read, as an auto-released exchange may already be reset by then
+        Exchange exchange = consumer.createExchange(false);
         Message message = exchange.getIn();
         message.setHeader(MongoDbConstants.DATABASE, endpoint.getDatabase());
         message.setHeader(MongoDbConstants.COLLECTION, endpoint.getCollection());

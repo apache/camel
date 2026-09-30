@@ -174,7 +174,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
         if (pattern != null && pattern.contains("?optional=true")) {
             StringJoiner sj1 = new StringJoiner(",");
             StringJoiner sj2 = new StringJoiner(",");
-            for (String p : pattern.split(",")) {
+            for (String p : pattern.trim().split("\\s*,\\s*")) {
                 if (p.endsWith("?optional=true")) {
                     sj2.add(p.substring(0, p.length() - 14));
                 } else {
@@ -233,8 +233,8 @@ public class DefaultRoutesCollector implements RoutesCollector {
             String excludePattern,
             String includePattern) {
         final PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
-        final String[] includes = includePattern != null ? includePattern.split(",") : null;
-        final String[] excludes = excludePattern != null ? excludePattern.split(",") : null;
+        final String[] includes = includePattern != null ? includePattern.trim().split("\\s*,\\s*") : null;
+        final String[] excludes = excludePattern != null ? excludePattern.trim().split("\\s*,\\s*") : null;
 
         if (includes == null || ObjectHelper.equal("false", includePattern)) {
             log.debug("Include pattern is empty/false, no routes will be discovered from resources");

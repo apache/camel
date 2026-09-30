@@ -19,10 +19,12 @@ package org.apache.camel.component.disruptor;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.lmax.disruptor.InsufficientCapacityException;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.WaitForTaskToComplete;
@@ -85,9 +87,15 @@ public class DisruptorProducer extends DefaultAsyncProducer {
 
                 // latch that waits until we are complete
                 final CountDownLatch latch = new CountDownLatch(1);
+                // either the response, the timeout or an interrupt completes the exchange, whichever claims it first
+                final AtomicBoolean completed = new AtomicBoolean();
 
                 // we should wait for the reply so install a on completion so we know when its complete
-                copy.getExchangeExtension().addOnCompletion(newOnCompletion(exchange, latch));
+                copy.getExchangeExtension().addOnCompletion(newOnCompletion(exchange, latch, completed));
+                // the consumer ignores the copy if we no longer wait for it (timeout or interrupt) before it is processed,
+                // this must be on the published copy, not on the exchange of the caller, as later copies of the caller's
+                // exchange (such as a redelivery) would inherit it and be ignored as well
+                copy.setProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE, completed);
 
                 doPublish(copy);
 
@@ -105,21 +113,15 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                         Thread.currentThread().interrupt();
                     }
                     if (!done) {
-                        // Remove timed out Exchange from disruptor endpoint.
-
-                        // We can't actually remove a published exchange from an active Disruptor.
-                        // Instead we prevent processing of the exchange by setting a Property on the exchange and the value
-                        // would be an AtomicBoolean. This is set by the Producer and the Consumer would look up that Property and
-                        // check the AtomicBoolean. If the AtomicBoolean says that we are good to proceed, it will process the
-                        // exchange. If false, it will simply disregard the exchange.
-                        // But since the Property map is a Concurrent one, maybe we don't need the AtomicBoolean. Check with Simon.
-                        // Also check the TimeoutHandler of the new Disruptor 3.0.0, consider making the switch to the latest version.
-                        exchange.setProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE, true);
-
-                        exchange.setException(new ExchangeTimedOutException(exchange, timeout));
-
-                        // count down to indicate timeout
-                        latch.countDown();
+                        if (completed.compareAndSet(false, true)) {
+                            // We can't remove a published exchange from an active Disruptor, but the consumer
+                            // ignores the copy, if it has not started it yet, as we have claimed the completed flag
+                            exchange.setException(new ExchangeTimedOutException(exchange, timeout));
+                        } else {
+                            // the response is being copied into the exchange, so wait for the copy to complete
+                            // (the exchange must not be changed after we have returned)
+                            awaitUninterruptibly(latch);
+                        }
                     }
                 } else {
                     if (LOG.isTraceEnabled()) {
@@ -130,6 +132,15 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                         latch.await();
                     } catch (InterruptedException e) {
                         LOG.info("Interrupted while waiting for the task to complete");
+                        if (completed.compareAndSet(false, true)) {
+                            // the task has not completed so fail the exchange (do not return the request as the reply),
+                            // and a later reply is ignored
+                            exchange.setException(e);
+                        } else {
+                            // the response is being copied into the exchange, so wait for the copy to complete
+                            // (the exchange must not be changed after we have returned)
+                            awaitUninterruptibly(latch);
+                        }
                         Thread.currentThread().interrupt();
                     }
                 }
@@ -137,7 +148,15 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                 // no wait, eg its a InOnly then just publish to the ringbuffer and return
                 // handover the completion so its the copy which performs that, as we do not wait
                 final Exchange copy = prepareCopy(exchange, true);
-                doPublish(copy);
+                try {
+                    doPublish(copy);
+                } catch (RuntimeException e) {
+                    // the copy is not published (such as when the ringbuffer is full), so the exchange takes back its on
+                    // completions (such as a consumer rolling back the message), which also releases the stream cache
+                    // of the copy
+                    copy.getExchangeExtension().handoverCompletions(exchange);
+                    throw e;
+                }
             }
         } catch (Exception e) {
             exchange.setException(e);
@@ -149,12 +168,27 @@ public class DisruptorProducer extends DefaultAsyncProducer {
         return true;
     }
 
-    private SynchronizationAdapter newOnCompletion(Exchange exchange, CountDownLatch latch) {
+    private static void awaitUninterruptibly(CountDownLatch latch) {
+        boolean interrupted = false;
+        while (true) {
+            try {
+                latch.await();
+                break;
+            } catch (InterruptedException e) {
+                interrupted = true;
+            }
+        }
+        if (interrupted) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private SynchronizationAdapter newOnCompletion(Exchange exchange, CountDownLatch latch, AtomicBoolean completed) {
         return new SynchronizationAdapter() {
             @Override
             public void onDone(final Exchange response) {
-                // check for timeout, which then already would have invoked the latch
-                if (latch.getCount() == 0) {
+                // check for timeout, which then already has completed the exchange
+                if (!completed.compareAndSet(false, true)) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("{}. Timeout occurred so response will be ignored: {}", this, response.getMessage());
                     }
@@ -164,6 +198,8 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                     }
                     try {
                         ExchangeHelper.copyResults(exchange, response);
+                        // the flag of the published copy must not be copied back to the caller
+                        exchange.removeProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE);
                     } finally {
                         // always ensure latch is triggered
                         latch.countDown();
@@ -204,9 +240,15 @@ public class DisruptorProducer extends DefaultAsyncProducer {
     private Exchange prepareCopy(final Exchange exchange, final boolean copy) throws IOException {
         // use a new copy of the exchange to route async
         final Exchange target = ExchangeHelper.createCorrelatedCopy(exchange, copy);
+        // a flag from an earlier send must not be inherited, it is set for this send only when we wait for the reply
+        target.removeProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE);
         // set a new from endpoint to be the disruptor
         target.getExchangeExtension().setFromEndpoint(endpoint);
         if (copy) {
+            // the copy is routed independently of the original exchange, so any stream cache it holds must be
+            // released when the copy is done, and not with the unit of work of a parent (multicast/split) exchange
+            // (same as the Wire Tap EIP does, see CAMEL-12108)
+            target.removeProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK);
             // if the body is stream caching based we need to make a deep copy
             if (target.getMessage().getBody() instanceof StreamCache sc) {
                 StreamCache newBody = sc.copy(target);

@@ -17,6 +17,8 @@
 package org.apache.camel.management.mbean;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
@@ -89,15 +91,20 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listEndpointsTabularType());
             Collection<Endpoint> endpoints = endpointRegistry.values();
+            Set<String> urls = new HashSet<>();
             for (Endpoint endpoint : endpoints) {
                 CompositeType ct = CamelOpenMBeanTypes.listEndpointsCompositeType();
                 String url = endpoint.getEndpointUri();
+                // look up by the real uri (and not the sanitized)
+                boolean fromStatic = endpointRegistry.isStatic(url);
+                boolean fromDynamic = endpointRegistry.isDynamic(url);
                 if (sanitize) {
                     url = URISupport.sanitizeUri(url);
                 }
-
-                boolean fromStatic = endpointRegistry.isStatic(url);
-                boolean fromDynamic = endpointRegistry.isDynamic(url);
+                if (!urls.add(url)) {
+                    // endpoints that only differ in a secret are the same url when sanitized
+                    continue;
+                }
 
                 CompositeData data = new CompositeDataSupport(
                         ct, new String[] { "url", "static", "dynamic" }, new Object[] { url, fromStatic, fromDynamic });

@@ -26,6 +26,7 @@ import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -224,78 +225,74 @@ public class DefaultModel implements Model {
                         }
                     }
                 }
+                // how many rest services call each direct route
+                Map<String, Integer> directUsage = new HashMap<>();
+                for (RouteDefinition r : allRoutes) {
+                    ToDefinition to = restRouteToInline(r);
+                    if (to != null) {
+                        directUsage.merge(to.getEndpointUri(), 1, Integer::sum);
+                    }
+                }
                 for (RouteDefinition r : allRoutes) {
                     // loop all rest routes
                     FromDefinition from = r.getInput();
-                    if (from != null && !r.isInlined()) {
-                        // only attempt to inline if not already inlined
-                        String uri = from.getEndpointUri();
-                        if (uri != null && uri.startsWith("rest:")) {
-                            // find first EIP in the outputs (skip abstract which are onException/intercept
-                            // etc)
-                            ToDefinition to = null;
-                            for (ProcessorDefinition<?> def : r.getOutputs()) {
-                                if (def.isAbstract()) {
-                                    continue;
+                    ToDefinition to = restRouteToInline(r);
+                    if (to != null) {
+                        String toUri = to.getEndpointUri();
+                        RouteDefinition toBeInlined = directs.get(toUri);
+                        // a route used by more than one rest service is not inlined (its outputs can only
+                        // belong to one route), so the rest services call it
+                        if (toBeInlined != null && directUsage.getOrDefault(toUri, 0) == 1) {
+                            toBeRemoved.add(toBeInlined);
+                            // inline the source loc:line as starting from this direct input
+                            FromDefinition inlinedFrom = toBeInlined.getInput();
+                            from.setLocation(inlinedFrom.getLocation());
+                            from.setLineNumber(inlinedFrom.getLineNumber());
+                            // inline by replacing the outputs (preserve all abstracts such as interceptors)
+                            List<ProcessorDefinition<?>> toBeRemovedOut = new ArrayList<>();
+                            for (ProcessorDefinition<?> out : r.getOutputs()) {
+                                // should be removed if to be added via inlined
+                                boolean remove = toBeInlined.getOutputs().stream().anyMatch(o -> o == out);
+                                if (!remove) {
+                                    remove = !out.isAbstract(); // remove all non abstract
                                 }
-                                if (def instanceof ToDefinition toDefinition) {
-                                    to = toDefinition;
-                                }
-                                break;
-                            }
-                            if (to != null) {
-                                String toUri = to.getEndpointUri();
-                                RouteDefinition toBeInlined = directs.get(toUri);
-                                if (toBeInlined != null) {
-                                    toBeRemoved.add(toBeInlined);
-                                    // inline the source loc:line as starting from this direct input
-                                    FromDefinition inlinedFrom = toBeInlined.getInput();
-                                    from.setLocation(inlinedFrom.getLocation());
-                                    from.setLineNumber(inlinedFrom.getLineNumber());
-                                    // inline by replacing the outputs (preserve all abstracts such as interceptors)
-                                    List<ProcessorDefinition<?>> toBeRemovedOut = new ArrayList<>();
-                                    for (ProcessorDefinition<?> out : r.getOutputs()) {
-                                        // should be removed if to be added via inlined
-                                        boolean remove = toBeInlined.getOutputs().stream().anyMatch(o -> o == out);
-                                        if (!remove) {
-                                            remove = !out.isAbstract(); // remove all non abstract
-                                        }
-                                        if (remove) {
-                                            toBeRemovedOut.add(out);
-                                        }
-                                    }
-                                    r.getOutputs().removeAll(toBeRemovedOut);
-                                    r.getOutputs().addAll(toBeInlined.getOutputs());
-                                    // inlined outputs should have re-assigned parent to this route
-                                    r.getOutputs().forEach(o -> o.setParent(r));
-                                    // and copy over various configurations
-                                    if (toBeInlined.getRouteId() != null) {
-                                        r.setId(toBeInlined.getRouteId());
-                                    }
-                                    r.setNodePrefixId(toBeInlined.getNodePrefixId());
-                                    r.setGroup(toBeInlined.getGroup());
-                                    r.setAutoStartup(toBeInlined.getAutoStartup());
-                                    r.setDelayer(toBeInlined.getDelayer());
-                                    r.setInputType(toBeInlined.getInputType());
-                                    r.setOutputType(toBeInlined.getOutputType());
-                                    r.setLogMask(toBeInlined.getLogMask());
-                                    r.setMessageHistory(toBeInlined.getMessageHistory());
-                                    r.setStreamCache(toBeInlined.getStreamCache());
-                                    r.setTrace(toBeInlined.getTrace());
-                                    r.setStartupOrder(toBeInlined.getStartupOrder());
-                                    r.setRoutePolicyRef(toBeInlined.getRoutePolicyRef());
-                                    r.setRouteConfigurationId(toBeInlined.getRouteConfigurationId());
-                                    r.setRoutePolicies(toBeInlined.getRoutePolicies());
-                                    r.setShutdownRoute(toBeInlined.getShutdownRoute());
-                                    r.setShutdownRunningTask(toBeInlined.getShutdownRunningTask());
-                                    r.setErrorHandlerRef(toBeInlined.getErrorHandlerRef());
-                                    r.setPrecondition(toBeInlined.getPrecondition());
-                                    if (toBeInlined.isErrorHandlerFactorySet()) {
-                                        r.setErrorHandler(toBeInlined.getErrorHandler());
-                                    }
-                                    r.markInlined();
+                                if (remove) {
+                                    toBeRemovedOut.add(out);
                                 }
                             }
+                            r.getOutputs().removeAll(toBeRemovedOut);
+                            r.getOutputs().addAll(toBeInlined.getOutputs());
+                            // inlined outputs should have re-assigned parent to this route
+                            r.getOutputs().forEach(o -> o.setParent(r));
+                            // and copy over various configurations
+                            if (toBeInlined.getRouteId() != null) {
+                                r.setId(toBeInlined.getRouteId());
+                            }
+                            r.setNodePrefixId(toBeInlined.getNodePrefixId());
+                            r.setGroup(toBeInlined.getGroup());
+                            r.setAutoStartup(toBeInlined.getAutoStartup());
+                            r.setDelayer(toBeInlined.getDelayer());
+                            r.setInputType(toBeInlined.getInputType());
+                            r.setOutputType(toBeInlined.getOutputType());
+                            r.setLogMask(toBeInlined.getLogMask());
+                            r.setMessageHistory(toBeInlined.getMessageHistory());
+                            if (toBeInlined.getStreamCache() != null) {
+                                // keep stream caching from the rest verb unless the inlined route sets it
+                                r.setStreamCache(toBeInlined.getStreamCache());
+                            }
+                            r.setTrace(toBeInlined.getTrace());
+                            r.setStartupOrder(toBeInlined.getStartupOrder());
+                            r.setRoutePolicyRef(toBeInlined.getRoutePolicyRef());
+                            r.setRouteConfigurationId(toBeInlined.getRouteConfigurationId());
+                            r.setRoutePolicies(toBeInlined.getRoutePolicies());
+                            r.setShutdownRoute(toBeInlined.getShutdownRoute());
+                            r.setShutdownRunningTask(toBeInlined.getShutdownRunningTask());
+                            r.setErrorHandlerRef(toBeInlined.getErrorHandlerRef());
+                            r.setPrecondition(toBeInlined.getPrecondition());
+                            if (toBeInlined.isErrorHandlerFactorySet()) {
+                                r.setErrorHandler(toBeInlined.getErrorHandler());
+                            }
+                            r.markInlined();
                         }
                     }
                 }
@@ -317,6 +314,28 @@ public class DefaultModel implements Model {
         } finally {
             lock.unlock();
         }
+    }
+
+    /**
+     * The to of a rest route (not already inlined) that is a candidate for inlining, which is the first EIP in the
+     * outputs (skipping abstracts such as onException and intercept)
+     */
+    private static ToDefinition restRouteToInline(RouteDefinition r) {
+        FromDefinition from = r.getInput();
+        if (from == null || r.isInlined()) {
+            return null;
+        }
+        String uri = from.getEndpointUri();
+        if (uri == null || !uri.startsWith("rest:")) {
+            return null;
+        }
+        for (ProcessorDefinition<?> def : r.getOutputs()) {
+            if (def.isAbstract()) {
+                continue;
+            }
+            return def instanceof ToDefinition toDefinition ? toDefinition : null;
+        }
+        return null;
     }
 
     @Override
@@ -578,8 +597,14 @@ public class DefaultModel implements Model {
         // so it has all parameters available
         if (target.getTemplateParameters() != null) {
             for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
-                if (!routeTemplateContext.hasParameter(temp.getName()) && temp.getDefaultValue() != null) {
-                    routeTemplateContext.setParameter(temp.getName(), temp.getDefaultValue());
+                if (!routeTemplateContext.hasParameter(temp.getName())) {
+                    // same precedence as above: environment variable, then default value
+                    if (routeTemplateContext.hasEnvironmentVariable(temp.getName())) {
+                        routeTemplateContext.setParameter(temp.getName(),
+                                routeTemplateContext.getEnvironmentVariable(temp.getName()));
+                    } else if (temp.getDefaultValue() != null) {
+                        routeTemplateContext.setParameter(temp.getName(), temp.getDefaultValue());
+                    }
                 }
             }
         }
@@ -628,7 +653,13 @@ public class DefaultModel implements Model {
         }
 
         if (target.getConfigurer() != null) {
-            routeTemplateContext.setConfigurer(target.getConfigurer());
+            // the template configurer runs first, and then any configurer from the templated route builder
+            Consumer<RouteTemplateContext> configurer = routeTemplateContext.getConfigurer();
+            if (configurer != null) {
+                routeTemplateContext.setConfigurer(target.getConfigurer().andThen(configurer));
+            } else {
+                routeTemplateContext.setConfigurer(target.getConfigurer());
+            }
         }
 
         // assign ids to the routes and validate that the id's are all unique

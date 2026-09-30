@@ -70,6 +70,11 @@
             <artifactId>camel-resourceresolver-github</artifactId>
         </dependency>
         <dependency>
+            <!-- the Java DSL parser for the project overview; also comes with camel-kamelet-main -->
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-java-io</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-io-util</artifactId>
         </dependency>
@@ -335,25 +340,6 @@
 
     <profiles>
 
-        <profile>
-            <!-- the dependency analysis CI job compiles without regenerating: the plugin comes from
-                 the local repository and eip-samples.json is pre-committed (see .github/workflows/dep-check.yml) -->
-            <id>dep-check</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>camel-yaml-dsl-validator-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>generate-doc-samples</id>
-                                <phase>none</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
         <profile>
             <id>sync-example-catalog</id>
             <build>

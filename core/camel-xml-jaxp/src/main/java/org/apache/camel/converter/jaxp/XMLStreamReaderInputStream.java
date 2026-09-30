@@ -38,6 +38,7 @@ class XMLStreamReaderInputStream extends InputStream {
     private final byte[] buffer;
     private final String charset;
     private int bpos;
+    private boolean started;
 
     XMLStreamReaderInputStream(XMLStreamReader reader, String charset, XMLOutputFactory outfactory) {
         this.reader = reader;
@@ -63,6 +64,9 @@ class XMLStreamReaderInputStream extends InputStream {
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
+        if (len == 0) {
+            return 0;
+        }
         int tlen = 0;
         while (len > 0) {
             int n = ensureBuffering(len);
@@ -89,47 +93,22 @@ class XMLStreamReaderInputStream extends InputStream {
         try {
 
             // very first event
-            if (XMLStreamConstants.START_DOCUMENT == reader.getEventType()) {
-                writer.writeStartDocument(charset, "1.0");
+            if (!started) {
+                started = true;
+                int event = reader.getEventType();
+                if (XMLStreamConstants.START_DOCUMENT == event) {
+                    writer.writeStartDocument(charset, "1.0");
+                } else if (XMLStreamConstants.START_ELEMENT == event) {
+                    // the reader is already positioned at an element (such as by nextTag)
+                    writeEvent(event);
+                }
+                writer.flush();
             }
             if (chunk.size() < buffer.length) {
                 while (reader.hasNext()) {
-                    int code = reader.next();
-                    switch (code) {
-                        case XMLStreamConstants.END_DOCUMENT:
-                            writer.writeEndDocument();
-                            break;
-                        case XMLStreamConstants.START_ELEMENT:
-                            QName qname = reader.getName();
-                            writer.writeStartElement(qname.getPrefix(), qname.getLocalPart(), qname.getNamespaceURI());
-                            for (int i = 0; i < reader.getAttributeCount(); i++) {
-                                String namespaceUri = reader.getAttributeNamespace(i);
-                                writer.writeAttribute(reader.getAttributePrefix(i), namespaceUri == null ? "" : namespaceUri,
-                                        reader.getAttributeLocalName(i),
-                                        reader.getAttributeValue(i));
-                            }
-                            for (int i = 0; i < reader.getNamespaceCount(); i++) {
-                                String namespacePrefix = reader.getNamespacePrefix(i);
-                                String namespaceURI = reader.getNamespaceURI(i);
-                                writer.writeNamespace(namespacePrefix == null ? "" : namespacePrefix,
-                                        namespaceURI == null ? "" : namespaceURI);
-                            }
-                            break;
-                        case XMLStreamConstants.END_ELEMENT:
-                            writer.writeEndElement();
-                            break;
-                        case XMLStreamConstants.CHARACTERS:
-                            writer.writeCharacters(reader.getText());
-                            break;
-                        case XMLStreamConstants.COMMENT:
-                            writer.writeComment(reader.getText());
-                            break;
-                        case XMLStreamConstants.CDATA:
-                            writer.writeCData(reader.getText());
-                            break;
-                        default:
-                            break;
-                    }
+                    writeEvent(reader.next());
+                    // the writer may buffer (such as for another charset than utf-8)
+                    writer.flush();
 
                     // check if the chunk is full
                     final int csize = buffer.length - bpos;
@@ -152,6 +131,44 @@ class XMLStreamReaderInputStream extends InputStream {
             }
         } catch (XMLStreamException e) {
             throw new IOException(e);
+        }
+    }
+
+    private void writeEvent(int code) throws XMLStreamException {
+        switch (code) {
+            case XMLStreamConstants.END_DOCUMENT:
+                writer.writeEndDocument();
+                break;
+            case XMLStreamConstants.START_ELEMENT:
+                QName qname = reader.getName();
+                writer.writeStartElement(qname.getPrefix(), qname.getLocalPart(), qname.getNamespaceURI());
+                for (int i = 0; i < reader.getAttributeCount(); i++) {
+                    String namespaceUri = reader.getAttributeNamespace(i);
+                    String prefix = reader.getAttributePrefix(i);
+                    writer.writeAttribute(prefix == null ? "" : prefix, namespaceUri == null ? "" : namespaceUri,
+                            reader.getAttributeLocalName(i), reader.getAttributeValue(i));
+                }
+                for (int i = 0; i < reader.getNamespaceCount(); i++) {
+                    String namespacePrefix = reader.getNamespacePrefix(i);
+                    String namespaceURI = reader.getNamespaceURI(i);
+                    writer.writeNamespace(namespacePrefix == null ? "" : namespacePrefix,
+                            namespaceURI == null ? "" : namespaceURI);
+                }
+                break;
+            case XMLStreamConstants.END_ELEMENT:
+                writer.writeEndElement();
+                break;
+            case XMLStreamConstants.CHARACTERS:
+                writer.writeCharacters(reader.getText());
+                break;
+            case XMLStreamConstants.COMMENT:
+                writer.writeComment(reader.getText());
+                break;
+            case XMLStreamConstants.CDATA:
+                writer.writeCData(reader.getText());
+                break;
+            default:
+                break;
         }
     }
 

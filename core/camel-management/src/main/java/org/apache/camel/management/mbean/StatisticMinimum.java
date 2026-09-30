@@ -24,12 +24,14 @@ public class StatisticMinimum extends Statistic {
 
     @Override
     public void updateValue(long newValue) {
-        // its okay its not 100% thread safe (these jmx counters are not guaranteed to be accurate for min/max values)
-        // if we use the atomic operation updateAndGet then the JVM creates a new lambda per call which creates a new object
-        // in the JVM and causes higher memory footprint
+        // compare and set in a loop (and not updateAndGet, which creates a new lambda per call), so a concurrent
+        // update cannot be lost
         long current = value.get();
-        if (current == -1 || current > newValue) {
-            value.set(newValue);
+        while (current == -1 || current > newValue) {
+            if (value.compareAndSet(current, newValue)) {
+                return;
+            }
+            current = value.get();
         }
     }
 

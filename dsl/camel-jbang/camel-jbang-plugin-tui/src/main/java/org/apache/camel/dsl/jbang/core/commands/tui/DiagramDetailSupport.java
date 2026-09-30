@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedHashMap;
@@ -198,6 +199,111 @@ final class DiagramDetailSupport {
         return Line.from(spans);
     }
 
+    /**
+     * The title of a route's diagram with what the topology box of the route shows: its label (its own description,
+     * else the AI's, marked) and its group, in the group's colour, so going down a level keeps the context
+     * (CAMEL-25147).
+     */
+    static Line withRouteContext(Line title, IntegrationInfo info, String routeId, Path dir, boolean groups) {
+        List<Span> spans = new ArrayList<>(title.spans());
+        String label = null;
+        boolean ai = false;
+        if (info != null) {
+            for (RouteInfo r : info.routes) {
+                if (routeId.equals(r.routeId) && r.description != null && !r.description.isBlank()) {
+                    label = r.description;
+                }
+            }
+        }
+        if (label == null) {
+            label = IntegrationSummaryHints.description(dir, routeId);
+            ai = label != null;
+        }
+        if (label != null) {
+            spans.add(Span.styled("\u00b7 ", Theme.muted()));
+            spans.add(ai
+                    ? Span.styled(IntegrationSummaryHints.MARK + label.strip() + " ", Theme.aiAssisted())
+                    : Span.styled(label.strip() + " ", Style.EMPTY.fg(Theme.baseFg())));
+        }
+        RouteGroups.Tag tag = groups ? RouteGroups.of(dir).get(routeId) : null;
+        if (tag != null) {
+            spans.add(Span.styled("\u00b7 ", Theme.muted()));
+            spans.add(tag.ai()
+                    ? Span.styled("\u25b8 " + IntegrationSummaryHints.MARK + tag.name() + " ", Theme.aiAssisted())
+                    : Span.styled("\u25b8 " + tag.name() + " ", Style.EMPTY.fg(RouteGroups.colorOf(tag.index()))));
+        }
+        return Line.from(spans);
+    }
+
+    /**
+     * The full description of the route, word-wrapped, which a topology box can only show the start of: the route's
+     * own, else the one the AI project overview suggested, marked and styled as AI-assisted (CAMEL-25143).
+     */
+    private static void addDescription(List<Line> lines, IntegrationInfo info, RouteInfo route, int width) {
+        Path dir = FilesBrowser.resolveSourceDirectory(info);
+        String text = route.description;
+        boolean ai = false;
+        if (text == null || text.isBlank()) {
+            text = IntegrationSummaryHints.description(dir, route.routeId);
+            ai = text != null;
+        }
+        IntegrationSummaryHints.Note note = IntegrationSummaryHints.note(dir, route.routeId);
+        if ((text == null || text.isBlank()) && note == null) {
+            return;
+        }
+        lines.add(Line.from(Span.raw("")));
+        if (text != null && !text.isBlank()) {
+            addWrapped(lines, text, ai, width, true);
+        }
+        if (note != null) {
+            addWrapped(lines, note.text(), note.ai(), width, false);
+        }
+    }
+
+    /**
+     * The route's group: its route group from the source, or where the AI project overview placed it (a capability,
+     * utility), marked and styled as AI-assisted (CAMEL-25147).
+     */
+    private static void addGroup(List<Line> lines, IntegrationInfo info, RouteInfo route) {
+        RouteGroups.Tag tag = RouteGroups.of(FilesBrowser.resolveSourceDirectory(info)).get(route.routeId);
+        if (tag == null) {
+            return;
+        }
+        lines.add(Line.from(
+                Span.styled(" Group: ", Theme.muted()),
+                tag.ai()
+                        ? Span.styled(IntegrationSummaryHints.MARK + tag.name(), Theme.aiAssisted())
+                        : Span.styled(tag.name(), Style.EMPTY.fg(RouteGroups.colorOf(tag.index())))));
+    }
+
+    /** A description (bold) or note, word-wrapped; an AI-assisted one marked and in the ai-assisted style. */
+    static void addWrapped(List<Line> lines, String text, boolean ai, int width, boolean label) {
+        Style style = ai ? Theme.aiAssisted() : Style.EMPTY.fg(Theme.baseFg());
+        if (label) {
+            style = style.bold();
+        }
+        for (String line : wrapWords((ai ? IntegrationSummaryHints.MARK : "") + text.strip(), Math.max(10, width))) {
+            lines.add(Line.from(Span.styled(" " + line, style)));
+        }
+    }
+
+    /** Words onto lines of at most the given width; a longer word gets a line of its own. */
+    static List<String> wrapWords(String text, int width) {
+        List<String> out = new ArrayList<>();
+        StringBuilder line = new StringBuilder();
+        for (String word : text.split("\\s+")) {
+            if (!line.isEmpty() && line.length() + 1 + word.length() > width) {
+                out.add(line.toString());
+                line.setLength(0);
+            }
+            line.append(line.isEmpty() ? "" : " ").append(word);
+        }
+        if (!line.isEmpty()) {
+            out.add(line.toString());
+        }
+        return out;
+    }
+
     void renderRouteInfoPanel(Frame frame, Rect area, IntegrationInfo info, String routeId) {
         RouteInfo route = null;
         for (RouteInfo r : info.routes) {
@@ -220,6 +326,8 @@ final class DiagramDetailSupport {
             lines.add(Line.from(
                     Span.styled(" State: ", Theme.muted()),
                     Span.styled(stateLabel, stateStyle)));
+            addGroup(lines, info, route);
+            addDescription(lines, info, route, area.width() - 3);
 
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(

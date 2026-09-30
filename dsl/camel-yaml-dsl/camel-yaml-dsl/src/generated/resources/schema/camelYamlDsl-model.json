@@ -506,6 +506,13 @@
         "description" : "Stops processing of the current message and marks the exchange as completed without sending it to any further steps",
         "label" : "eip,flowcontrol,routing"
       }, {
+        "name" : "switch",
+        "type" : "object",
+        "ref" : "switch",
+        "title" : "Switch",
+        "description" : "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar values",
+        "label" : "eip,routing"
+      }, {
         "name" : "threads",
         "type" : "object",
         "ref" : "threads",
@@ -8321,6 +8328,137 @@
         "index" : 3,
         "group" : "advanced",
         "label" : "advanced"
+      } ]
+    },
+    "switchCase" : {
+      "title" : "Case",
+      "description" : "A literal switch case with one fixed endpoint destination",
+      "children" : [ {
+        "name" : "description",
+        "type" : "string",
+        "description" : "The description for this node",
+        "title" : "Description"
+      }, {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id"
+      }, {
+        "name" : "note",
+        "type" : "string",
+        "description" : "The note for this node",
+        "title" : "Note"
+      }, {
+        "name" : "parameters",
+        "type" : "object"
+      }, {
+        "name" : "uri",
+        "type" : "string",
+        "description" : "The fixed destination URI. Supports property placeholders, but not Simple expressions.",
+        "title" : "Uri",
+        "required" : true
+      }, {
+        "name" : "value",
+        "type" : "string",
+        "description" : "The case-insensitive literal value for a scalar selector.",
+        "title" : "Value",
+        "required" : true
+      } ]
+    },
+    "switch" : {
+      "title" : "Switch",
+      "description" : "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar values",
+      "label" : "eip,routing",
+      "input" : true,
+      "isListItem" : true,
+      "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "note",
+        "type" : "string",
+        "description" : "The note for this node",
+        "title" : "Note",
+        "displayName" : "Note",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
+      }, {
+        "name" : "description",
+        "type" : "string",
+        "description" : "The description for this node",
+        "title" : "Description",
+        "displayName" : "Description",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
+      }, {
+        "name" : "disabled",
+        "type" : "boolean",
+        "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
+        "title" : "Disabled",
+        "default" : "false",
+        "displayName" : "Disabled",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
+        "name" : "selector",
+        "type" : "object",
+        "ref" : "expressionSubElement",
+        "description" : "Expression evaluated once per entry. Returns a scalar value to match against the literal cases.",
+        "title" : "Selector",
+        "required" : true,
+        "displayName" : "Selector",
+        "kind" : "expression",
+        "index" : 4,
+        "group" : "common"
+      }, {
+        "name" : "case",
+        "type" : "array",
+        "ref" : "switchCase",
+        "description" : "Literal cases. Duplicate values are rejected at startup, ignoring case.",
+        "title" : "Case",
+        "displayName" : "Case",
+        "kind" : "element",
+        "index" : 5,
+        "group" : "common"
+      }, {
+        "name" : "otherwise",
+        "type" : "object",
+        "ref" : "switchOtherwise",
+        "description" : "Fixed fallback URI for null or unmatched selector results. Without a fallback processing continues.",
+        "title" : "Otherwise",
+        "displayName" : "Otherwise",
+        "kind" : "element",
+        "index" : 6,
+        "group" : "common"
+      } ]
+    },
+    "switchOtherwise" : {
+      "title" : "Switch Otherwise",
+      "description" : "The fixed endpoint used when no switch case matches",
+      "label" : "configuration",
+      "children" : [ {
+        "name" : "uri",
+        "type" : "string",
+        "description" : "The fixed destination URI. Supports property placeholders, but not Simple expressions.",
+        "title" : "Uri",
+        "required" : true,
+        "displayName" : "Uri",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "parameters",
+        "type" : "object"
       } ]
     },
     "templatedRoute" : {

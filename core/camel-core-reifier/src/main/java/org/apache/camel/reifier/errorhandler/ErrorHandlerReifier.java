@@ -251,44 +251,38 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         if (definition == null) {
             return null;
         }
+        // only the options that are set, so the others are inherited from the error handler (when used by onException)
         Map<RedeliveryOption, String> policy = new EnumMap<>(RedeliveryOption.class);
         setOption(policy, RedeliveryOption.maximumRedeliveries, definition.getMaximumRedeliveries());
-        setOption(policy, RedeliveryOption.redeliveryDelay, definition.getRedeliveryDelay(), "1000");
+        setOption(policy, RedeliveryOption.redeliveryDelay, definition.getRedeliveryDelay());
         setOption(policy, RedeliveryOption.asyncDelayedRedelivery, definition.getAsyncDelayedRedelivery());
-        setOption(policy, RedeliveryOption.backOffMultiplier, definition.getBackOffMultiplier(), "2");
+        setOption(policy, RedeliveryOption.backOffMultiplier, definition.getBackOffMultiplier());
         setOption(policy, RedeliveryOption.useExponentialBackOff, definition.getUseExponentialBackOff());
-        setOption(policy, RedeliveryOption.collisionAvoidanceFactor, definition.getCollisionAvoidanceFactor(), "0.15");
+        setOption(policy, RedeliveryOption.collisionAvoidanceFactor, definition.getCollisionAvoidanceFactor());
         setOption(policy, RedeliveryOption.useCollisionAvoidance, definition.getUseCollisionAvoidance());
-        setOption(policy, RedeliveryOption.maximumRedeliveryDelay, definition.getMaximumRedeliveryDelay(), "60000");
-        setOption(policy, RedeliveryOption.retriesExhaustedLogLevel, definition.getRetriesExhaustedLogLevel(), "ERROR");
-        setOption(policy, RedeliveryOption.retryAttemptedLogLevel, definition.getRetryAttemptedLogLevel(), "DEBUG");
-        setOption(policy, RedeliveryOption.retryAttemptedLogInterval, definition.getRetryAttemptedLogInterval(), "1");
-        setOption(policy, RedeliveryOption.logRetryAttempted, definition.getLogRetryAttempted(), "true");
-        setOption(policy, RedeliveryOption.logStackTrace, definition.getLogStackTrace(), "true");
+        setOption(policy, RedeliveryOption.maximumRedeliveryDelay, definition.getMaximumRedeliveryDelay());
+        setOption(policy, RedeliveryOption.retriesExhaustedLogLevel, definition.getRetriesExhaustedLogLevel());
+        setOption(policy, RedeliveryOption.retryAttemptedLogLevel, definition.getRetryAttemptedLogLevel());
+        setOption(policy, RedeliveryOption.retryAttemptedLogInterval, definition.getRetryAttemptedLogInterval());
+        setOption(policy, RedeliveryOption.logRetryAttempted, definition.getLogRetryAttempted());
+        setOption(policy, RedeliveryOption.logStackTrace, definition.getLogStackTrace());
         setOption(policy, RedeliveryOption.logRetryStackTrace, definition.getLogRetryStackTrace());
         setOption(policy, RedeliveryOption.logHandled, definition.getLogHandled());
-        setOption(policy, RedeliveryOption.logNewException, definition.getLogNewException(), "true");
+        setOption(policy, RedeliveryOption.logNewException, definition.getLogNewException());
         setOption(policy, RedeliveryOption.logContinued, definition.getLogContinued());
-        setOption(policy, RedeliveryOption.logExhausted, definition.getLogExhausted(), "true");
+        setOption(policy, RedeliveryOption.logExhausted, definition.getLogExhausted());
         setOption(policy, RedeliveryOption.logExhaustedMessageHistory, definition.getLogExhaustedMessageHistory());
         setOption(policy, RedeliveryOption.logExhaustedMessageBody, definition.getLogExhaustedMessageBody());
         setOption(policy, RedeliveryOption.disableRedelivery, definition.getDisableRedelivery());
         setOption(policy, RedeliveryOption.delayPattern, definition.getDelayPattern());
-        setOption(policy, RedeliveryOption.allowRedeliveryWhileStopping, definition.getAllowRedeliveryWhileStopping(), "true");
+        setOption(policy, RedeliveryOption.allowRedeliveryWhileStopping, definition.getAllowRedeliveryWhileStopping());
         setOption(policy, RedeliveryOption.exchangeFormatterRef, definition.getExchangeFormatterRef());
         return policy;
     }
 
     private void setOption(Map<RedeliveryOption, String> policy, RedeliveryOption option, String value) {
-        setOption(policy, option, value, null);
-    }
-
-    private void setOption(
-            Map<RedeliveryOption, String> policy, RedeliveryOption option, String value, String defaultValue) {
         if (value != null) {
             policy.put(option, parseString(value));
-        } else if (defaultValue != null) {
-            policy.put(option, defaultValue);
         }
     }
 
@@ -301,13 +295,15 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         List<Class<? extends Throwable>> list;
         if (ObjectHelper.isNotEmpty(exceptionType.getExceptions())) {
             list = createExceptionClasses(exceptionType);
+            // create the predicate (once) when the route is created (such as resolving placeholders of route templates)
+            Predicate when = exceptionType.getOnWhen() != null
+                    ? createPredicate(exceptionType.getOnWhen().getExpression()) : null;
             for (Class<? extends Throwable> clazz : list) {
                 String routeId = null;
                 // only get the route id, if the exception type is route scoped
                 if (exceptionType.isRouteScoped()) {
                     routeId = route.getRouteId();
                 }
-                Predicate when = exceptionType.getOnWhen() != null ? exceptionType.getOnWhen().getExpression() : null;
                 ExceptionPolicyKey key = new ExceptionPolicyKey(routeId, clazz, when);
                 ExceptionPolicy policy = createExceptionPolicy(exceptionType);
                 handlerSupport.addExceptionPolicy(key, policy);
@@ -330,7 +326,11 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
     }
 
     protected Class<? extends Throwable> resolveExceptionClass(String name) throws ClassNotFoundException {
-        return camelContext.getClassResolver().resolveMandatoryClass(name, Throwable.class);
+        Class<? extends Throwable> answer = camelContext.getClassResolver().resolveMandatoryClass(name, Throwable.class);
+        if (!Throwable.class.isAssignableFrom(answer)) {
+            throw new IllegalArgumentException("The class: " + name + " in onException is not an exception");
+        }
+        return answer;
     }
 
     /**

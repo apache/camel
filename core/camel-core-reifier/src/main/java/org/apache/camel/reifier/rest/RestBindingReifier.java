@@ -16,6 +16,10 @@
  */
 package org.apache.camel.reifier.rest;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.camel.Route;
 import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.model.rest.RestBindingMode;
@@ -85,6 +89,11 @@ public class RestBindingReifier extends AbstractReifier {
         rbc.setOutTypeClass(definition.getOutTypeClass());
         rbc.setResponseCodes(parseMap(definition.getResponseCodes()));
         rbc.setResponseHeaders(parseSet(definition.getResponseHeaders()));
+        if (definition.getResponseCodeHeaders() != null) {
+            Map<String, Set<String>> headers = new HashMap<>();
+            definition.getResponseCodeHeaders().forEach((k, v) -> headers.put(k, parseSet(v)));
+            rbc.setResponseCodeHeaders(headers);
+        }
 
         // use factory to create advice
         return RestBindingAdviceFactory.build(camelContext, rbc);

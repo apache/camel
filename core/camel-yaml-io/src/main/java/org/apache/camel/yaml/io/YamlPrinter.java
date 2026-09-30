@@ -28,7 +28,9 @@ import java.util.regex.Pattern;
 public final class YamlPrinter {
 
     private static final String INDENT = "  ";
-    private static final Pattern NUMBER_PATTERN = Pattern.compile("-?(0|[1-9]\\d*)(\\.\\d+)?([eE][+-]?\\d+)?");
+    // what a yaml parser reads as a number (yaml 1.2 core schema, such as 007, +5, 1., .5, .inf, 0x1f)
+    private static final Pattern NUMBER_PATTERN = Pattern.compile(
+            "[-+]?(\\.[0-9]+|[0-9]+(\\.[0-9]*)?)([eE][-+]?[0-9]+)?|0o[0-7]+|0x[0-9a-fA-F]+|[-+]?\\.(inf|Inf|INF)|\\.(nan|NaN|NAN)");
 
     private YamlPrinter() {
     }
@@ -89,7 +91,7 @@ public final class YamlPrinter {
                 writeSequenceItems(sb, col, indent + 1, false);
             } else {
                 sb.append(' ');
-                if (value instanceof String s && s.contains("\n")) {
+                if (value instanceof String s && s.contains("\n") && canBeBlockScalar(s)) {
                     writeBlockScalar(sb, s, indent + 1);
                 } else {
                     writeScalar(sb, value);
@@ -97,6 +99,15 @@ public final class YamlPrinter {
                 }
             }
         }
+    }
+
+    /**
+     * Whether the value can be written as a literal block scalar (|- or |), otherwise it is written double-quoted. A
+     * block scalar cannot keep more than one trailing line break (without |+), a first line that starts with a space
+     * (without an indentation indicator), or a carriage return.
+     */
+    private static boolean canBeBlockScalar(String value) {
+        return !value.endsWith("\n\n") && !value.startsWith(" ") && !value.startsWith("\t") && !value.contains("\r");
     }
 
     private static void writeBlockScalar(StringBuilder sb, String value, int indent) {
@@ -126,7 +137,8 @@ public final class YamlPrinter {
             String s = String.valueOf(value);
             if (needsQuoting(s)) {
                 sb.append('"');
-                sb.append(s.replace("\\", "\\\\").replace("\"", "\\\""));
+                sb.append(s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r")
+                        .replace("\t", "\\t"));
                 sb.append('"');
             } else {
                 sb.append(s);
@@ -143,11 +155,12 @@ public final class YamlPrinter {
         if (first == ' ' || first == '\t' || first == '-' || first == '?' || first == '*'
                 || first == '&' || first == '!' || first == '%' || first == '@' || first == '`'
                 || first == '\'' || first == '"' || first == '{' || first == '[' || first == '>'
-                || first == '|' || first == '#' || first == '$') {
+                || first == '|' || first == '#' || first == '$' || first == ',' || first == ']' || first == '}') {
             return true;
         }
 
-        if (s.charAt(s.length() - 1) == ' ' || s.charAt(s.length() - 1) == '\t') {
+        char last = s.charAt(s.length() - 1);
+        if (last == ' ' || last == '\t' || last == ':') {
             return true;
         }
 
@@ -165,7 +178,7 @@ public final class YamlPrinter {
             if (c == '{' && i + 1 < s.length() && s.charAt(i + 1) == '{') {
                 return true;
             }
-            if (c == '\n') {
+            if (c == '\n' || c == '\r') {
                 return true;
             }
         }

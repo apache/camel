@@ -261,7 +261,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
                 // must unquote tokens before use
                 if (Boolean.TRUE.equals(removeQuotes)) {
-                    result = unquoteTokens(result, separators, quote);
+                    result = unquoteTokens(result, separators, quote, factory.isQuotingEscaped());
                 }
 
                 if (result.isEmpty()) {
@@ -293,7 +293,8 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
      * Unquote the tokens, by removing leading and trailing quote chars, as will handling fixing broken tokens which may
      * have been split by a separator inside a quote.
      */
-    private List<String> unquoteTokens(List<String> result, List<String> separators, String quote) {
+    private List<String> unquoteTokens(
+            List<String> result, List<String> separators, String quote, boolean quotingEscaped) {
         // a current quoted token which we assemble from the broken pieces
         // we need to do this as we use the split method on the String class
         // to split the line using regular expression, and it does not handle
@@ -332,7 +333,11 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             // "not empty"+quote
             if (s.endsWith(quote)) {
                 boolean escaped = false;
-                if (quote.equals("\"")) {
+                // RFC 4180: a double quote inside a quoted field is written as two double quotes, so the final
+                // quote is escaped when an odd number of quotes precedes it. With quotingEscaped a quote inside the
+                // field is written as a backslash and the quote (see BindyCsvFactory#unbind), so this rule does not
+                // apply and the final quote closes the field.
+                if (quote.equals("\"") && !quotingEscaped) {
                     int i;
                     for (i = s.length() - 2; i > 0; i--) {
                         char ch = s.charAt(i);

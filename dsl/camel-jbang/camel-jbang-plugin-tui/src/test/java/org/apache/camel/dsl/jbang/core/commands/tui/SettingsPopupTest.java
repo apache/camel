@@ -258,6 +258,40 @@ class SettingsPopupTest {
     }
 
     @Test
+    void aiOverviewRowCyclesModesAndPersistsNonDefault(@TempDir Path tempDir) {
+        useHome(tempDir);
+        SettingsPopup popup = new SettingsPopup();
+        popup.setTabEntries(tabs());
+        popup.open();
+
+        // navigate to AI Overview (row 17)
+        for (int i = 0; i < 17; i++) {
+            popup.handleKeyEvent(key(KeyCode.DOWN));
+        }
+        assertEquals(17, popup.selectedRow());
+        assertEquals("manual", popup.selectedAiOverview());
+        popup.handleKeyEvent(KeyEvent.ofChar(' '));
+        assertEquals("auto", popup.selectedAiOverview());
+        popup.handleKeyEvent(key(KeyCode.RIGHT));
+        assertEquals("off", popup.selectedAiOverview());
+        popup.handleKeyEvent(key(KeyCode.ENTER));
+        assertEquals("off", TuiSettings.load().getAiOverview());
+
+        // manual is the default and is not written to the settings file
+        SettingsPopup reopened = new SettingsPopup();
+        reopened.setTabEntries(tabs());
+        reopened.open();
+        assertEquals("off", reopened.selectedAiOverview());
+        for (int i = 0; i < 17; i++) {
+            reopened.handleKeyEvent(key(KeyCode.DOWN));
+        }
+        reopened.handleKeyEvent(key(KeyCode.RIGHT));
+        assertEquals("manual", reopened.selectedAiOverview());
+        reopened.handleKeyEvent(key(KeyCode.ENTER));
+        assertNull(TuiSettings.load().getAiOverview());
+    }
+
+    @Test
     void historyFieldsPersistValues(@TempDir Path tempDir) {
         useHome(tempDir);
         SettingsPopup popup = new SettingsPopup();
@@ -274,11 +308,11 @@ class SettingsPopupTest {
         }
         assertEquals("50", popup.shellHistoryText());
 
-        // navigate to AI Prompt History (row 17)
-        for (int i = 0; i < 5; i++) {
+        // navigate to AI Prompt History (row 18)
+        for (int i = 0; i < 6; i++) {
             popup.handleKeyEvent(key(KeyCode.DOWN));
         }
-        assertEquals(17, popup.selectedRow());
+        assertEquals(18, popup.selectedRow());
         for (char c : "200".toCharArray()) {
             popup.handleKeyEvent(KeyEvent.ofChar(c));
         }

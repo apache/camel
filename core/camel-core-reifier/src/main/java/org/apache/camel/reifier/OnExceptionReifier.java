@@ -49,7 +49,8 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
             definition.validateConfiguration();
         }
 
-        if (parseBoolean(definition.getUseOriginalMessage(), false)) {
+        if (parseBoolean(definition.getUseOriginalMessage(), false)
+                || parseBoolean(definition.getUseOriginalBody(), false)) {
             // ensure allow original is turned on
             route.setAllowUseOriginalMessage(true);
         }
@@ -82,7 +83,8 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
             classes = createExceptionClasses(camelContext.getClassResolver());
         }
 
-        if (parseBoolean(definition.getUseOriginalMessage(), false)) {
+        if (parseBoolean(definition.getUseOriginalMessage(), false)
+                || parseBoolean(definition.getUseOriginalBody(), false)) {
             // ensure allow original is turned on
             route.setAllowUseOriginalMessage(true);
         }

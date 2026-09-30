@@ -693,6 +693,18 @@ YAML::
 ----
 ====
 
+=== Several routes and interceptors on the same endpoint
+
+An `interceptSendToEndpoint` in a `RouteBuilder` (or a route configuration) applies to each of its routes, and each route
+uses its own interceptor when it sends to the endpoint. The interceptor of a route is active while the route is running,
+so stopping or removing a route does not affect the other routes. When the endpoint is sent to from somewhere that has no
+interceptor of its own (such as another route or a `ProducerTemplate`), the interceptor of the first route that
+registered one is used.
+
+When several interceptors apply to the same endpoint, they run in a fixed order: first the interceptors of the route
+that is sending, and then the interceptor of the endpoint itself, such as when mocking endpoints with
+`mockEndpoints`.
+
 == Intercepting endpoints using pattern matching
 
 The `interceptFrom` and `interceptSendToEndpoint` support endpoint pattern

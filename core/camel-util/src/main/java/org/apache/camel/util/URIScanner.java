@@ -110,8 +110,10 @@ class URIScanner {
 
             // the & denote parameter is ended
             if (ch == '&') {
-                // parameter is ended, as we hit & separator
-                addParameter(answer, useRaw || isRaw);
+                // parameter is ended, as we hit & separator (an empty parameter such as from && is skipped)
+                if (!key.isEmpty() || !value.isEmpty()) {
+                    addParameter(answer, useRaw || isRaw);
+                }
                 initState();
             }
         }

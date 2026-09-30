@@ -4464,13 +4464,15 @@ public interface MongoDbEndpointBuilderFactory {
             return "CamelMongoDbBulkOrdered";
         }
         /**
-         * A document that contains the _id of the document created or modified
-         * by the insert, replace, delete, update operations (i.e. CRUD
-         * operations). For sharded collections, also displays the full shard
-         * key for the document. The _id field is not repeated if it is already
-         * a part of the shard key.
+         * The _id of the document created or modified by the insert, replace,
+         * delete or update operation (i.e. CRUD operations). It is an
+         * org.bson.types.ObjectId when MongoDB generated the id, and otherwise
+         * the id in its natural Java type: a String, a number, or a Document
+         * for a compound key. The header is absent on the events that do not
+         * belong to a single document, such as invalidate, drop, rename and
+         * dropDatabase.
          * 
-         * The option is a: {@code org.bson.types.ObjectId} type.
+         * The option is a: {@code Object} type.
          * 
          * Group: consumer changeStreams
          * 

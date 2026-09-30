@@ -71,11 +71,11 @@ public interface OpaEndpointBuilderFactory {
          * element as the body, sharing the exchange's headers and properties -
          * and returns the per-element verdicts in the CamelOpaBatchDecision
          * header, a List parallel to the input. An element whose evaluation
-         * could not be reached is denied, unless failOpen is set; the batch is
-         * never allowed or denied as a whole because one element failed. Only
-         * for {code evaluationMode=rest}: it saves the per-element HTTP
-         * round-trip via OPA's batch API, which has no meaning for in-process
-         * wasm.
+         * failed is denied, unless failOpen is set and its decision point was
+         * unavailable; the batch is never allowed or denied as a whole because
+         * one element failed. Only for {code evaluationMode=rest}: it saves the
+         * per-element HTTP round-trip via OPA's batch API, which has no meaning
+         * for in-process wasm.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -95,11 +95,11 @@ public interface OpaEndpointBuilderFactory {
          * element as the body, sharing the exchange's headers and properties -
          * and returns the per-element verdicts in the CamelOpaBatchDecision
          * header, a List parallel to the input. An element whose evaluation
-         * could not be reached is denied, unless failOpen is set; the batch is
-         * never allowed or denied as a whole because one element failed. Only
-         * for {code evaluationMode=rest}: it saves the per-element HTTP
-         * round-trip via OPA's batch API, which has no meaning for in-process
-         * wasm.
+         * failed is denied, unless failOpen is set and its decision point was
+         * unavailable; the batch is never allowed or denied as a whole because
+         * one element failed. Only for {code evaluationMode=rest}: it saves the
+         * per-element HTTP round-trip via OPA's batch API, which has no meaning
+         * for in-process wasm.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -287,9 +287,14 @@ public interface OpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to allow the exchange to proceed when the policy cannot be
-         * evaluated at all, for example because the OPA server is unreachable.
-         * Disabled by default so that an unreachable policy decision point
+         * Whether to allow the exchange to proceed when the policy decision
+         * point is unavailable: in rest mode the OPA server cannot be reached,
+         * times out, or a gateway in front of it answers 502, 503, 504 or 429;
+         * in wasm mode no instance frees up within borrowTimeout. It never
+         * applies to an answer: an undefined decision, a rejected request (400,
+         * or any other 4xx such as a wrong or expired bearer token) and an
+         * error evaluating the policy (500) fail closed even when this is set.
+         * Disabled by default so that an unavailable policy decision point
          * denies rather than grants access. Do not enable this in production.
          * 
          * The option is a: <code>boolean</code> type.
@@ -305,9 +310,14 @@ public interface OpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to allow the exchange to proceed when the policy cannot be
-         * evaluated at all, for example because the OPA server is unreachable.
-         * Disabled by default so that an unreachable policy decision point
+         * Whether to allow the exchange to proceed when the policy decision
+         * point is unavailable: in rest mode the OPA server cannot be reached,
+         * times out, or a gateway in front of it answers 502, 503, 504 or 429;
+         * in wasm mode no instance frees up within borrowTimeout. It never
+         * applies to an answer: an undefined decision, a rejected request (400,
+         * or any other 4xx such as a wrong or expired bearer token) and an
+         * error evaluating the policy (500) fail closed even when this is set.
+         * Disabled by default so that an unavailable policy decision point
          * denies rather than grants access. Do not enable this in production.
          * 
          * The option will be converted to a <code>boolean</code> type.

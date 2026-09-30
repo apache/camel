@@ -19,6 +19,8 @@ package org.apache.camel.component.syslog;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -51,6 +53,9 @@ public final class SyslogConverter {
         nov,
         dec
     }
+
+    // the UTF-8 byte order mark that starts a MSG-UTF8 (RFC 5424), as the chars that the parse loops read for its bytes
+    private static final String UTF8_BOM_AS_BYTES = "\u00EF\u00BB\u00BF";
 
     private static Map<String, MONTHS> monthValueMap = new HashMap<String, MONTHS>() {
         private static final long serialVersionUID = 1L;
@@ -142,10 +147,26 @@ public final class SyslogConverter {
 
     @Converter
     public static SyslogMessage toSyslogMessage(String body) {
-        return parseMessage(body.getBytes());
+        return parseMessage(body.getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
     }
 
+    /**
+     * Parses a syslog message whose text is encoded in UTF-8.
+     */
     public static SyslogMessage parseMessage(byte[] bytes) {
+        return parseMessage(bytes, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Parses a syslog message.
+     *
+     * @param  bytes   the message
+     * @param  charset the charset of the text fields, which must be ASCII-compatible (such as UTF-8 or ISO-8859-1), as
+     *                 the fields are split on ASCII bytes before they are decoded. A MSG that starts with the UTF-8
+     *                 byte order mark is always decoded as UTF-8, without the byte order mark (MSG-UTF8 of RFC 5424).
+     * @return         the parsed message
+     */
+    public static SyslogMessage parseMessage(byte[] bytes, Charset charset) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length);
         byteBuffer.put(bytes);
         cast(byteBuffer).rewind();
@@ -203,56 +224,74 @@ public final class SyslogConverter {
                 LOG.error("Invalid syslog message, missing a mandatory space after version");
             }
 
-            // This should be the timestamp
+            // This should be the timestamp, or the NILVALUE when the sender has no time (RFC 5424 6.2.3)
             StringBuilder date = new StringBuilder();
-            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
+            while (byteBuffer.hasRemaining() && (charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
                 date.append(charFound);
             }
 
-            syslogMessage.setTimestamp(DatatypeConverter.parseDateTime(date.toString()));
+            if (!"-".contentEquals(date)) {
+                syslogMessage.setTimestamp(DatatypeConverter.parseDateTime(date.toString()));
+            }
         }
 
-        // The host is the char sequence until the next ' '
+        // The host is the char sequence until the next ' ', or the end of the message: MSG is optional (RFC 5424 6),
+        // so any field can be the last one
 
         StringBuilder host = new StringBuilder();
-        while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
+        while (byteBuffer.hasRemaining() && (charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
             host.append(charFound);
         }
 
-        syslogMessage.setHostname(host.toString());
+        syslogMessage.setHostname(decode(host, charset));
 
         if (isRfc5424) {
             Rfc5424SyslogMessage rfc5424SyslogMessage = (Rfc5424SyslogMessage) syslogMessage;
             StringBuilder appName = new StringBuilder();
-            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
+            while (byteBuffer.hasRemaining() && (charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
                 appName.append(charFound);
             }
-            rfc5424SyslogMessage.setAppName(appName.toString());
+            rfc5424SyslogMessage.setAppName(decode(appName, charset));
 
             StringBuilder procId = new StringBuilder();
-            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
+            while (byteBuffer.hasRemaining() && (charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
                 procId.append(charFound);
             }
-            rfc5424SyslogMessage.setProcId(procId.toString());
+            rfc5424SyslogMessage.setProcId(decode(procId, charset));
 
             StringBuilder msgId = new StringBuilder();
-            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
+            while (byteBuffer.hasRemaining() && (charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
                 msgId.append(charFound);
             }
-            rfc5424SyslogMessage.setMsgId(msgId.toString());
+            rfc5424SyslogMessage.setMsgId(decode(msgId, charset));
 
+            // STRUCTURED-DATA is the NILVALUE or SD-ELEMENTs (RFC 5424 6.3). A PARAM-VALUE is quoted, and escapes
+            // '"', '\' and ']' with a backslash, so a ']' only closes the element outside a PARAM-VALUE
             StringBuilder structuredData = new StringBuilder();
             boolean inblock = false;
-            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ' || inblock) {
-                if (charFound == '[') {
+            boolean inValue = false;
+            boolean escaped = false;
+            char previous = 0;
+            while (byteBuffer.hasRemaining() && ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ' || inblock)) {
+                if (inValue) {
+                    if (escaped) {
+                        escaped = false;
+                    } else if (charFound == '\\') {
+                        escaped = true;
+                    } else if (charFound == '"') {
+                        inValue = false;
+                    }
+                } else if (charFound == '[') {
                     inblock = true;
-                }
-                if (charFound == ']') {
+                } else if (charFound == ']') {
                     inblock = false;
+                } else if (charFound == '"' && inblock && previous == '=') {
+                    inValue = true;
                 }
+                previous = charFound;
                 structuredData.append(charFound);
             }
-            rfc5424SyslogMessage.setStructuredData(structuredData.toString());
+            rfc5424SyslogMessage.setStructuredData(decode(structuredData, charset));
         }
 
         StringBuilder msg = new StringBuilder();
@@ -261,10 +300,23 @@ public final class SyslogConverter {
             msg.append(charFound);
         }
 
-        syslogMessage.setLogMessage(msg.toString());
+        if (msg.toString().startsWith(UTF8_BOM_AS_BYTES)) {
+            syslogMessage.setLogMessage(decode(msg.substring(UTF8_BOM_AS_BYTES.length()), StandardCharsets.UTF_8));
+        } else {
+            syslogMessage.setLogMessage(decode(msg, charset));
+        }
         LOG.trace("Syslog message : {}", syslogMessage);
 
         return syslogMessage;
+    }
+
+    /**
+     * The parse loops read one char per byte ({@code (char) (b & 0xff)}), so each char of a field is one of its bytes.
+     * Turns the chars back into those bytes, and decodes the bytes with the charset of the message. The charset must be
+     * ASCII-compatible, as the fields were split on ASCII bytes (a charset such as UTF-16 is not supported).
+     */
+    private static String decode(CharSequence bytesAsChars, Charset charset) {
+        return new String(bytesAsChars.toString().getBytes(StandardCharsets.ISO_8859_1), charset);
     }
 
     private static void addRfc3164TimeStamp(StringBuilder sbr, SyslogMessage message) {
