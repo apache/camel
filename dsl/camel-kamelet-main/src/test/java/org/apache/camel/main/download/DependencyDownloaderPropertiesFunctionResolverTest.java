@@ -122,6 +122,15 @@ public class DependencyDownloaderPropertiesFunctionResolverTest {
                 new Class[] { DependencyDownloader.class },
                 (proxy, method, args) -> {
                     switch (method.getName()) {
+                        case "hashCode" -> {
+                            return System.identityHashCode(proxy);
+                        }
+                        case "equals" -> {
+                            return proxy == args[0];
+                        }
+                        case "toString" -> {
+                            return "RecordingDependencyDownloader";
+                        }
                         case "downloadDependency" -> {
                             // every overload starts with (String groupId, String artifactId, String version, ...)
                             downloaded.add(args[0] + ":" + args[1]);
