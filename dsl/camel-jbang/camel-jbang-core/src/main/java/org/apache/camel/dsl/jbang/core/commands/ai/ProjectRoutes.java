@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -126,10 +127,20 @@ public final class ProjectRoutes {
      * @param restPath  the path of a REST operation
      * @param logOnly   whether every step of the route only logs: plumbing, not business logic
      * @param note      the route's note: a longer explanation beside the short description, may be null
+     * @param decisions the decision points of the route (choice, filter, split, ...), in route order
      */
     public record Route(String id, String kind, String description, String group, String file, int line, String format,
             boolean heuristic, Endpoint from, List<Endpoint> consumes, List<Endpoint> produces, int steps,
-            int insertAt, int indent, String restVerb, String restPath, boolean logOnly, String note) {
+            int insertAt, int indent, String restVerb, String restPath, boolean logOnly, String note,
+            List<RouteDecisions.DecisionPoint> decisions) {
+
+        /** A route without decision points. */
+        public Route(String id, String kind, String description, String group, String file, int line, String format,
+                     boolean heuristic, Endpoint from, List<Endpoint> consumes, List<Endpoint> produces, int steps,
+                     int insertAt, int indent, String restVerb, String restPath, boolean logOnly, String note) {
+            this(id, kind, description, group, file, line, format, heuristic, from, consumes, produces, steps, insertAt,
+                 indent, restVerb, restPath, logOnly, note, List.of());
+        }
 
         /** The route id, or where the route is written when it has none. */
         public String key() {
@@ -299,6 +310,24 @@ public final class ProjectRoutes {
 
     // ---- YAML ----
 
+    /** The names of the expression languages: those of the catalog, or the common ones without one. */
+    static Set<String> languages(CamelCatalog catalog) {
+        if (catalog == null) {
+            return COMMON_LANGUAGES;
+        }
+        Set<String> names = LANGUAGES.get();
+        if (names == null) {
+            names = Set.copyOf(catalog.findLanguageNames());
+            LANGUAGES.set(names);
+        }
+        return names;
+    }
+
+    private static final Set<String> COMMON_LANGUAGES = Set.of(
+            "simple", "constant", "header", "exchangeProperty", "variable", "jsonpath", "xpath", "jq", "groovy",
+            "tokenize", "method");
+    private static final AtomicReference<Set<String>> LANGUAGES = new AtomicReference<>();
+
     private static final class YamlReader {
         private final String file;
         private final CamelCatalog catalog;
@@ -426,7 +455,7 @@ public final class ProjectRoutes {
             routes.set(i, new Route(
                     r.id(), r.kind(), description, r.group(), r.file(), r.line(), r.format(),
                     r.heuristic(), r.from(), r.consumes(), r.produces(), r.steps(), r.insertAt(), r.indent(), null,
-                    null, r.logOnly(), r.note()));
+                    null, r.logOnly(), r.note(), r.decisions()));
         }
 
         private Route route(String kind, MappingNode m, String idOverride, int line, int insertAt, int indent) {
@@ -456,13 +485,87 @@ public final class ProjectRoutes {
             if ("routeTemplate".equals(kind) && id != null) {
                 consumes.add(endpoint("kamelet:" + id, null, false, catalog));
             }
+            List<RouteDecisions.DecisionPoint> decisions = new ArrayList<>();
+            RouteDecisions.Scope scope = RouteDecisions.Scope.route();
+            if (fromNode instanceof MappingNode fm3) {
+                decisions(child(fm3, "steps"), scope, decisions, 0);
+            }
+            decisions(child(m, "steps"), scope, decisions, 0);
             Route r = new Route(
                     id, kind, str(value(m, "description")), str(value(m, "group")), file, line, "yaml",
                     false, from, consumes, produces, steps[0], insertAt, indent, null, null,
                     logOnly(fromNode instanceof MappingNode fm2 ? child(fm2, "steps") : child(m, "steps")),
-                    str(value(m, "note")));
+                    str(value(m, "note")), decisions);
             routes.add(r);
             return r;
+        }
+
+        /** The decision points below a node, with their paths (see {@link RouteDecisions}). */
+        private void decisions(
+                org.yaml.snakeyaml.nodes.Node node, RouteDecisions.Scope scope, List<RouteDecisions.DecisionPoint> found,
+                int depth) {
+            if (node == null || depth > MAX_DEPTH) {
+                return;
+            }
+            if (node instanceof SequenceNode seq) {
+                for (org.yaml.snakeyaml.nodes.Node item : seq.getValue()) {
+                    decisions(item, scope, found, depth + 1);
+                }
+            } else if (node instanceof MappingNode map) {
+                for (NodeTuple t : map.getValue()) {
+                    String key = scalar(t.getKeyNode());
+                    org.yaml.snakeyaml.nodes.Node value = t.getValueNode();
+                    if (key == null || "parameters".equals(key) || "switch".equals(key)) {
+                        // endpoint options, and a switch, whose otherwise is a destination, not a branch
+                        continue;
+                    }
+                    if (RouteDecisions.TYPES.contains(key)) {
+                        // when and doCatch are lists of branches, the others one mapping
+                        List<org.yaml.snakeyaml.nodes.Node> nodes = value instanceof SequenceNode s
+                                ? s.getValue() : List.of(value);
+                        for (org.yaml.snakeyaml.nodes.Node n : nodes) {
+                            RouteDecisions.Scope below = scope.child(key);
+                            MappingNode nm = n instanceof MappingNode x ? x : null;
+                            RouteDecisions.add(found, below, key, nm != null ? decisionText(key, nm) : scalar(n), line(n));
+                            decisions(n, below, found, depth + 1);
+                        }
+                    } else if (value instanceof MappingNode || value instanceof SequenceNode) {
+                        decisions(value, scope, found, depth + 1);
+                    }
+                }
+            }
+        }
+
+        /** What a decision point decides on, such as simple: ${header.x} > 5. */
+        private String decisionText(String type, MappingNode m) {
+            if ("doCatch".equals(type) && child(m, "exception") instanceof SequenceNode ex) {
+                List<String> names = new ArrayList<>();
+                ex.getValue().forEach(e -> names.add(scalar(e)));
+                return String.join(", ", names);
+            }
+            if ("aggregate".equals(type) && child(m, "correlationExpression") instanceof MappingNode ce) {
+                return languageText(ce);
+            }
+            return child(m, "expression") instanceof MappingNode e ? languageText(e) : languageText(m);
+        }
+
+        /** The language and text of an expression mapping: simple: ${body}, or the expression: form. */
+        private String languageText(MappingNode m) {
+            for (NodeTuple t : m.getValue()) {
+                String key = scalar(t.getKeyNode());
+                if (key == null || !isLanguage(key)) {
+                    continue;
+                }
+                org.yaml.snakeyaml.nodes.Node v = t.getValueNode();
+                String text = v instanceof ScalarNode sv ? sv.getValue()
+                        : v instanceof MappingNode vm ? str(value(vm, "expression")) : null;
+                return text != null ? key + ": " + text : null;
+            }
+            return null;
+        }
+
+        private boolean isLanguage(String name) {
+            return languages(catalog).contains(name);
         }
 
         /** Where an onException or error handler sends failed messages, as a route that only error handling uses. */
@@ -788,7 +891,60 @@ public final class ProjectRoutes {
             routes.add(new Route(
                     id, kind, description, attr(e, "group"), file, lineOf(template != null ? "routeTemplate" : "route", id),
                     "xml", false, from, consumes, produces, steps, -1, 0, null, null, logOnly(e),
-                    attr(template != null ? template : e, "note")));
+                    attr(template != null ? template : e, "note"), decisions(e)));
+        }
+
+        /** The decision points of a route, with their paths (see {@link RouteDecisions}). */
+        private List<RouteDecisions.DecisionPoint> decisions(Element route) {
+            List<RouteDecisions.DecisionPoint> found = new ArrayList<>();
+            decisions(route, RouteDecisions.Scope.route(), found, 0);
+            return found;
+        }
+
+        private void decisions(Element e, RouteDecisions.Scope scope, List<RouteDecisions.DecisionPoint> found, int depth) {
+            if (depth > MAX_DEPTH) {
+                return;
+            }
+            NodeList children = e.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                if (!(children.item(i) instanceof Element c)) {
+                    continue;
+                }
+                String name = localName(c);
+                if ("switch".equals(name)) {
+                    // its otherwise is a destination, not a branch
+                    continue;
+                }
+                RouteDecisions.Scope below = scope;
+                if (RouteDecisions.TYPES.contains(name)) {
+                    below = scope.child(name);
+                    RouteDecisions.add(found, below, name, decisionText(name, c), 0);
+                }
+                decisions(c, below, found, depth + 1);
+            }
+        }
+
+        /** What a decision point decides on, such as simple: ${header.x} > 5. */
+        private String decisionText(String type, Element e) {
+            if ("doCatch".equals(type)) {
+                List<String> names = new ArrayList<>();
+                NodeList ex = e.getElementsByTagNameNS("*", "exception");
+                for (int i = 0; i < ex.getLength(); i++) {
+                    names.add(ex.item(i).getTextContent().strip());
+                }
+                return names.isEmpty() ? null : String.join(", ", names);
+            }
+            Element holder = "aggregate".equals(type) ? firstChild(e, "correlationExpression") : e;
+            if (holder == null) {
+                return null;
+            }
+            NodeList children = holder.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                if (children.item(i) instanceof Element c && languages(catalog).contains(localName(c))) {
+                    return localName(c) + ": " + c.getTextContent().strip();
+                }
+            }
+            return null;
         }
 
         private void errorHandler(Element e) {
