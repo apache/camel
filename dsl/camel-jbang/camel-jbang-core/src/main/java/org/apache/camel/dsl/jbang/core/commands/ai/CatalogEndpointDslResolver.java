@@ -45,11 +45,12 @@ final class CatalogEndpointDslResolver implements EndpointDslResolver {
             return null;
         }
         String scheme = named.uri().substring(0, named.uri().indexOf("://"));
-        // kafka("myKafka", "orders"): a component under another name, the catalog cannot say what it is
-        ComponentModel model = args.size() == 2 ? null : catalog.componentModel(scheme);
-        if (args.size() != 2 && model == null) {
+        if (catalog.componentModel(scheme) == null) {
+            // and(user, admin) is no endpoint
             return null;
         }
+        // kafka("myKafka", "orders"): a component under another name, the catalog cannot say what its options are
+        ComponentModel model = args.size() == 2 ? null : catalog.componentModel(scheme);
         List<Option> resolved = new ArrayList<>();
         List<String> problems = new ArrayList<>();
         for (Option o : options) {

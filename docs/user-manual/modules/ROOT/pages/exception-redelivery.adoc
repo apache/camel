@@ -115,10 +115,12 @@ All redelivery attempts start at the point of the failure. So the route:
 [source,java]
 ----
 onException(ConnectException.class)
-    .from("direct:start")
+    .maximumRedeliveries(3);
+
+from("direct:start")
     .process("processor1")
     .process("processor2") // <--- throws a ConnectException
-    .to("mock:theEnd")
+    .to("mock:theEnd");
 ----
 
 Will retry from *`processor2`* - not the complete route.
