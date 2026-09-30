@@ -393,7 +393,7 @@ project `directory` as an argument, the runtime tools take the integration `name
 
 | `camel_save_project_summary`
 | Saves what the agent wrote about a project (an overview, the business capabilities, the utility routes, and for
-  routes that lack them a short label and a one-sentence note, as `route id: label | sentence`) into
+  routes that lack them a short label and a one-sentence note, as `route id: label \| sentence`) into
   `camel-summary.md`, next to the facts derived from the sources. The AI-assisted sections
   are marked, so people and tools can tell them apart from what the sources say. Route sources are not changed.
   See xref:camel-jbang-ai.adoc#_project_overview[Project overview].
