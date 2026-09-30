@@ -1430,6 +1430,9 @@ class DiagramSupport {
                 }
             }
         }
+        // a route without a description of its own shows the AI's label, marked
+        IntegrationSummaryHints.descriptionsIfEnabled(aiSourceDirectory)
+                .forEach((id, d) -> descriptions.putIfAbsent(id, IntegrationSummaryHints.MARK + d));
         return descriptions;
     }
 
@@ -1625,6 +1628,9 @@ class DiagramSupport {
         }
 
         stepLabels = RouteStepHints.apply(routes, aiSourceDirectory, showDescription);
+        if (showDescription) {
+            BusinessEndpointLabels.apply(routes);
+        }
         RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
                 ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
                 : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
@@ -2161,6 +2167,9 @@ class DiagramSupport {
                     }
                 }
                 stepLabels = RouteStepHints.apply(routes, aiSourceDirectory, showDescription);
+                if (showDescription) {
+                    BusinessEndpointLabels.apply(routes);
+                }
                 RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
                         ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
                         : RouteDiagramLayoutEngine.NodeLabelMode.CODE;

@@ -118,11 +118,21 @@ public class RouteDiagramWidget implements Widget {
         this.highlightFailed = highlightFailed;
         if (showDescription) {
             String desc = null;
+            String from = null;
             for (LayoutNode ln : layoutRoute.nodes) {
                 if ("route".equals(ln.type) && ln.treeNode != null) {
                     desc = ln.treeNode.info.description;
-                    break;
+                } else if ("from".equals(ln.type) && ln.treeNode != null && from == null) {
+                    from = ln.treeNode.info.description;
                 }
+            }
+            // the route's description, else its AI label, else what it consumes in plain words; the id of a route
+            // without one in its source is generated and says nothing
+            if (desc == null || desc.isBlank()) {
+                desc = routeDescriptions.get(layoutRoute.routeId);
+            }
+            if (desc == null || desc.isBlank()) {
+                desc = from;
             }
             this.currentRouteLabel = (desc != null && !desc.isBlank()) ? desc : layoutRoute.routeId;
         } else {

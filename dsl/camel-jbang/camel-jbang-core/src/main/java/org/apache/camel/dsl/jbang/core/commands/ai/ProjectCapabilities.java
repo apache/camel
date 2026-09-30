@@ -136,9 +136,9 @@ public final class ProjectCapabilities {
                 }
             }
         }
-        // a route that starts a flow and is left ungrouped goes with the one group it feeds
+        // a route that starts a flow, which an AI wrongly called utility, goes with the one group it feeds
         for (Route r : flows) {
-            if (!groupOf.containsKey(r.key()) && startsAFlow(r, overview)) {
+            if (!groupOf.containsKey(r.key()) && aiUtility.contains(r.key()) && startsAFlow(r, overview)) {
                 Set<String> fed = new LinkedHashSet<>();
                 for (Link l : overview.links()) {
                     if (l.from().equals(r.key()) && !l.onError() && !l.to().equals(r.key())) {
