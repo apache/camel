@@ -54,15 +54,17 @@ class YamlRoundTripTest {
     /**
      * Routes that read back differently, and why. In YAML an EIP with no steps of its own takes the steps after it, as
      * in the Java DSL; the XML routes of the corpus keep them apart. The YAML DSL has no route scoped onException,
-     * onCompletion or interceptors yet (CAMEL-25207): the YAML written for them does not validate.
+     * onCompletion or interceptors (they go at the top level or in a routeConfiguration): the YAML written for them
+     * does not validate.
      */
     private static final Map<String, String> KNOWN = Map.of(
             "kamelet.xml", "the steps after kamelet are its own in YAML: they run at the kamelet's sink",
-            "barOnExceptionRoute.xml", "route scoped onException (CAMEL-25207)",
-            "onCompletion.xml", "route scoped onCompletion (CAMEL-25207)",
-            "barInterceptorRoute.xml", "route scoped intercept (CAMEL-25207)",
-            "interceptFrom.xml", "route scoped interceptFrom (CAMEL-25207)",
-            "interceptFromAndSendTo.xml", "route scoped interceptSendToEndpoint (CAMEL-25207)");
+            "barOnExceptionRoute.xml", "route scoped onException: YAML has it at the top level or in a routeConfiguration",
+            "onCompletion.xml", "route scoped onCompletion: YAML has it at the top level or in a routeConfiguration",
+            "barInterceptorRoute.xml", "route scoped intercept: YAML has it at the top level or in a routeConfiguration",
+            "interceptFrom.xml", "route scoped interceptFrom: YAML has it at the top level or in a routeConfiguration",
+            "interceptFromAndSendTo.xml",
+            "route scoped interceptSendToEndpoint: YAML has it at the top level or in a routeConfiguration");
 
     private static List<RouteDefinition> routes(Path file) {
         for (String ns : List.of("http://camel.apache.org/schema/xml-io", "http://camel.apache.org/schema/spring")) {
