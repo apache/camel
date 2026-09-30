@@ -1049,6 +1049,11 @@ class SourceTab extends AbstractTab {
             }
             if (SourceEditAssist.isYamlFile(path)) {
                 scanYamlRoutes(path, fromEntries, toEntries);
+            } else if (path.getFileName().toString().toLowerCase().endsWith(".xml")) {
+                String content = readQuietly(path);
+                if (content != null) {
+                    addRoutes(path, XmlRouteScanner.scan(content), fromEntries, toEntries);
+                }
             }
         }
         routeIndex = fromEntries;
@@ -1059,16 +1064,20 @@ class SourceTab extends AbstractTab {
     private void scanJavaRoutes(
             Path file, Map<String, Supplier<String>> javaSources, List<RouteEntry> fromEntries, List<ToEntry> toEntries) {
         String content = readQuietly(file);
-        if (content == null) {
-            return;
+        if (content != null) {
+            addRoutes(file, JavaRouteScanner.scan(content, javaSources, ArchitectureView.catalog()), fromEntries, toEntries);
         }
+    }
+
+    /** Adds the routes a scanner read from a file (Java or XML) to the index. */
+    private void addRoutes(Path file, List<ScannedRoute> routes, List<RouteEntry> fromEntries, List<ToEntry> toEntries) {
         String filePath = file.toString();
-        for (JavaRouteScanner.Route route : JavaRouteScanner.scan(content, javaSources, ArchitectureView.catalog())) {
+        for (ScannedRoute route : routes) {
             int before = fromEntries.size();
-            emitRouteEntry(fromEntries, route.id(), route.fromUri(), filePath, route.line());
+            emitRouteEntry(fromEntries, route.id(), JavaRouteScanner.uri(route.fromUri()), filePath, route.line());
             String routeId = fromEntries.size() > before ? fromEntries.get(before).routeId() : "";
-            for (JavaRouteScanner.To to : route.tos()) {
-                String toUri = stripQueryParams(to.uri());
+            for (ScannedRoute.To to : route.tos()) {
+                String toUri = stripQueryParams(JavaRouteScanner.uri(to.uri()));
                 if (toUri != null && !toUri.isEmpty()) {
                     toEntries.add(new ToEntry(routeId, toUri, filePath, to.line()));
                 }
@@ -1244,7 +1253,7 @@ class SourceTab extends AbstractTab {
             fromUriToRoute.put(re.fromUri(), re);
         }
 
-        if (currentFilePath.endsWith(".java")) {
+        if (currentFilePath.endsWith(".java") || currentFilePath.toLowerCase().endsWith(".xml")) {
             // the steps of a Java route are in the index with their lines, as the parser read them
             for (ToEntry te : toIndex) {
                 if (currentFilePath.equals(te.filePath())) {

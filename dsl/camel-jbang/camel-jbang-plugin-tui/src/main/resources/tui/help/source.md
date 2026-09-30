@@ -74,7 +74,9 @@ Lines with `to:`, `toD:`, `wireTap:`, or similar endpoints that reference
 another route show a **↵ routeId** indicator. Press **Enter** on such a line
 to jump to the target route's definition (within the same file or across files).
 Reverse links are shown on `from:` lines, indicating which route calls this one.
-Jump indicators are hidden in plain mode.
+This works for YAML, XML and Java DSL routes, also across files of different
+DSLs; Java routes are read without compiling them. The case and otherwise of a
+switch link like a `to`. Jump indicators are hidden in plain mode.
 
 ## Go to Route
 - **g** — open a filterable popup listing all routes found in the source files.
