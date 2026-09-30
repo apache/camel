@@ -308,6 +308,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "${t}" -> {
                     ${t} _d = (${t}) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".${n}(");
                     boolean _first = true;
                 #foreach( $arg in $primaryArgs )

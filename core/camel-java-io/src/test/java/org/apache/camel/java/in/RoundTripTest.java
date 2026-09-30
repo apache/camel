@@ -67,12 +67,7 @@ class RoundTripTest {
      * the list only shrinks.
      */
     private static final Map<String, String> KNOWN = Map.of(
-            "resequencerBatch.xml", "the DSL stores timeout(2000) as 2s0ms, which the dumper writes unquoted",
-            "resequencerStream.xml", "the DSL stores timeout(2000) as 2s0ms, which the dumper writes unquoted",
-            "routeWithCircuitBreaker.xml", "the dumper writes steps after onFallback() without end(): the DSL nests them",
-            "circuitBreakerResilience4j.xml", "the dumper writes steps after onFallback() without end(): the DSL nests them",
-            "routeWithSetHeaders.xml", "the dumper writes setHeaders() as nested setHeader calls, not varargs",
-            "routeWithSetVariables.xml", "the dumper writes setVariables() as nested setVariable calls, not varargs");
+            "circuitBreakerResilience4j.xml", "failureRateThreshold(float) keeps 30 as 30.0: the same value, written apart");
 
     static String dump(RouteDefinition route) {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
@@ -239,9 +234,10 @@ class RoundTripTest {
         }
         String report = String.format("%d of %d routes read back (%d the dumper could not write)%n%s%n%n%s", same, routes,
                 dumpFailed, reasons, String.join("\n\n", examples));
-        System.out.println(report);
+        Files.writeString(Path.of("target/spring-xml-corpus-report.txt"), report);
         assertThat(routes).isGreaterThan(500);
-        // most of the rest is Java the dumper writes that is not Java DSL (CAMEL-25157); raise the floor as it improves
-        assertThat(same).as(report).isGreaterThanOrEqualTo(674);
+        // the rest has no Java DSL form (throwException with a ref, options of marshal and unmarshal, a logger ref)
+        // or is written apart from what XML holds; raise the floor as it improves
+        assertThat(same).as(report).isGreaterThanOrEqualTo(815);
     }
 }

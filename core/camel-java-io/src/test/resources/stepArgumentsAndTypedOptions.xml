@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- Options the Java DSL takes as arguments of the step, or in another form than name("value") (CAMEL-25157) -->
+<routes xmlns="http://camel.apache.org/schema/xml-io">
+  <route id="options" startupOrder="5" errorHandlerRef="myErrorHandler">
+    <from uri="direct:options"/>
+    <inputType urn="json:Order"/>
+    <convertBodyTo type="java.lang.String" charset="UTF-8"/>
+    <convertBodyTo type="java.lang.Integer" mandatory="false"/>
+    <convertHeaderTo name="a" toName="b" type="java.lang.String"/>
+    <removeHeaders pattern="Beer*" excludePattern="BeerKeep"/>
+    <removeProperties pattern="f*" excludePattern="fiu"/>
+    <setHeaders>
+      <setHeader name="h1"><simple>${body}</simple></setHeader>
+      <setHeader name="h2"><constant>two</constant></setHeader>
+    </setHeaders>
+    <setVariables>
+      <setVariable name="v1"><constant>one</constant></setVariable>
+    </setVariables>
+    <to uri="direct:send" variableSend="v1"/>
+    <toD uri="mock:${header.foo}" ignoreInvalidEndpoint="true"/>
+    <log message="hi" logName="my.log" loggingLevel="WARN"/>
+    <sample messageFrequency="10"/>
+    <recipientList stopOnException="true" ignoreInvalidEndpoints="true"><header>to</header></recipientList>
+    <to uri="mock:end"/>
+  </route>
+  <route id="blocks">
+    <from uri="direct:blocks"/>
+    <onCompletion mode="BeforeConsumer">
+      <to uri="mock:done"/>
+    </onCompletion>
+    <loop doWhile="true">
+      <simple>${body} != 'done'</simple>
+      <to uri="mock:loop"/>
+    </loop>
+    <aggregate aggregationStrategy="myStrategy">
+      <correlationExpression><header>id</header></correlationExpression>
+      <completionSizeExpression><header>size</header></completionSizeExpression>
+      <to uri="mock:aggregated"/>
+    </aggregate>
+    <enrich aggregationStrategy="myStrategy"><constant>direct:resource</constant></enrich>
+    <split>
+      <tokenize token=","/>
+      <to uri="mock:part"/>
+    </split>
+    <loadBalance>
+      <weightedLoadBalancer distributionRatio="4,2,1"/>
+      <to uri="mock:x"/>
+      <to uri="mock:y"/>
+      <to uri="mock:z"/>
+    </loadBalance>
+    <policy ref="myPolicy">
+      <to uri="mock:policy"/>
+    </policy>
+    <to uri="mock:after"/>
+  </route>
+  <route id="rollback">
+    <from uri="direct:rollback"/>
+    <rollback markRollbackOnly="true"/>
+  </route>
+</routes>
