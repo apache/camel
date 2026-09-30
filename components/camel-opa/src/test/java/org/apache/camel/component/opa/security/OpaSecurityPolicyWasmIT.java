@@ -46,7 +46,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * committed beside it (CAMEL-24742). The startup failures that never need a bundle to evaluate stay unit tests in
  * {@link OpaSecurityPolicyWasmTest}.
  */
-public class OpaSecurityPolicyWasmIT extends CamelTestSupport {
+class OpaSecurityPolicyWasmIT extends CamelTestSupport {
 
     @TempDir
     static Path bundles;
