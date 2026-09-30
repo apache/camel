@@ -254,7 +254,15 @@ public class RouteDiagramWidget implements Widget {
         String linkedRouteId = findLinkedRouteId(node);
         if (linkedRouteId != null) {
             Style linkStyle = Theme.label().bold();
-            writeText(buffer, area, bottom, col + boxWidth, " ↵ " + linkedRouteId, linkStyle);
+            String name = linkedRouteId;
+            if (showDescription) {
+                String desc = routeDescriptions.get(linkedRouteId);
+                if (desc != null && !desc.isBlank()) {
+                    // a to box already shows the route it links to; a from box names its caller in words
+                    name = "from".equals(node.type) ? desc : null;
+                }
+            }
+            writeText(buffer, area, bottom, col + boxWidth, name != null ? " ↵ " + name : " ↵", linkStyle);
         }
 
         nodeBoxes.add(new EipNodeBox(node.id, node.type, row, row + height - 1, col, col + boxWidth - 1, node));

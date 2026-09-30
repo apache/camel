@@ -504,9 +504,18 @@ final class DiagramDetailSupport {
             String linkedRoute = diagram.findLinkedRouteId(drillDownRouteId);
             if (linkedRoute != null && diagram.getRouteLayout(linkedRoute) != null) {
                 lines.add(Line.from(Span.raw("")));
-                lines.add(Line.from(
-                        Span.styled(" ↵ ", Theme.label().bold()),
-                        Span.styled(linkedRoute, Style.EMPTY.fg(Theme.baseFg()))));
+                String linkedLabel = diagram.routeLabel(linkedRoute);
+                if (linkedLabel != null) {
+                    // the route in words, and its id, which the breadcrumb and the other views use
+                    lines.add(Line.from(
+                            Span.styled(" ↵ ", Theme.label().bold()),
+                            Span.styled(linkedLabel, Style.EMPTY.fg(Theme.baseFg())),
+                            Span.styled("  " + linkedRoute, Theme.muted())));
+                } else {
+                    lines.add(Line.from(
+                            Span.styled(" ↵ ", Theme.label().bold()),
+                            Span.styled(linkedRoute, Style.EMPTY.fg(Theme.baseFg()))));
+                }
             } else if (ln.treeNode != null && ln.treeNode.info.remote) {
                 lines.add(Line.from(Span.raw("")));
                 String arrow = "from".equals(ln.type) ? " external → " : " → external";

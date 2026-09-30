@@ -945,6 +945,15 @@ class DiagramSupport {
         return showDescription ? IntegrationSummaryHints.descriptionsIfEnabled(aiSourceDirectory) : Map.of();
     }
 
+    /** A route in words in the business view: its description, else its AI label (marked); null otherwise. */
+    String routeLabel(String routeId) {
+        if (!showDescription || routeId == null) {
+            return null;
+        }
+        String label = computeRouteDescriptions().get(routeId);
+        return label != null && !label.isBlank() ? label : null;
+    }
+
     /** What the AI wrote about a decision point of a route shown, or null. */
     IntegrationSummary.StepLabel stepLabel(String routeId, String nodeId) {
         return routeId != null && nodeId != null ? stepLabels.get(RouteStepHints.key(routeId, nodeId)) : null;
