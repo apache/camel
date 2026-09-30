@@ -20,6 +20,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.Map;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -611,8 +612,10 @@ class RoutesTab extends AbstractTab {
                         .split(area);
                 hSplit.setBorderPos(hChunks.get(1).x());
                 detail.renderRouteInfoPanel(frame, hChunks.get(0), info, selectedRouteId);
+                diagram.setAiSourceDirectory(selectedSourceDirectory());
                 diagram.renderNativeDiagram(frame, hChunks.get(1), title, diagramMetrics);
             } else {
+                diagram.setAiSourceDirectory(selectedSourceDirectory());
                 diagram.renderNativeDiagram(frame, area, title, diagramMetrics);
             }
             return;
@@ -670,6 +673,7 @@ class RoutesTab extends AbstractTab {
      */
     private Table buildRouteTopTable(List<RouteInfo> sortedRoutes) {
         List<Row> routeRows = new ArrayList<>();
+        Map<String, String> aiDescriptions = aiDescriptions();
         for (RouteInfo route : sortedRoutes) {
             Style failStyle = route.failed > 0
                     ? Theme.error().bold()
@@ -677,7 +681,7 @@ class RoutesTab extends AbstractTab {
 
             routeRows.add(Row.from(
                     Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Theme.accent()))),
-                    Cell.from(routeFromLabel(route)),
+                    routeFromCell(route, aiDescriptions),
                     rightCell(route.total > 0 ? formatDurationMs(route.meanTime) : "", 8,
                             topTimeStyle(route.meanTime)),
                     rightCell(route.total > 0 ? formatDurationMs(route.maxTime) : "", 8,
@@ -772,6 +776,7 @@ class RoutesTab extends AbstractTab {
         int fw = Math.max(numWidth(maxFailed), 6);
 
         List<Row> routeRows = new ArrayList<>();
+        Map<String, String> aiDescriptions = aiDescriptions();
         for (RouteInfo route : sortedRoutes) {
             Style stateStyle = "Started".equals(route.state)
                     ? Theme.success()
@@ -803,7 +808,7 @@ class RoutesTab extends AbstractTab {
 
             routeRows.add(Row.from(
                     Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Theme.accent()))),
-                    Cell.from(routeFromLabel(route)),
+                    routeFromCell(route, aiDescriptions),
                     Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
                     rightCell(formatThroughput(route.throughput), 8),
                     Cell.from(totalCell),
@@ -934,6 +939,25 @@ class RoutesTab extends AbstractTab {
             return route.description;
         }
         return route.from != null ? route.from : "";
+    }
+
+    /**
+     * The from or description cell. A route without a description of its own shows the one the AI project overview
+     * suggested, marked and styled as AI-assisted so it is not taken for what the route says (CAMEL-25143).
+     */
+    private Cell routeFromCell(RouteInfo route, Map<String, String> aiDescriptions) {
+        if (showDescription && (route.description == null || route.description.isBlank())) {
+            String ai = route.routeId != null ? aiDescriptions.get(route.routeId) : null;
+            if (ai != null) {
+                return Cell.from(Span.styled(IntegrationSummaryHints.MARK + ai, Theme.aiAssisted()));
+            }
+        }
+        return Cell.from(routeFromLabel(route));
+    }
+
+    /** The AI-assisted descriptions of the selected integration's project, read once per table. */
+    private Map<String, String> aiDescriptions() {
+        return showDescription ? IntegrationSummaryHints.descriptionsIfEnabled(selectedSourceDirectory()) : Map.of();
     }
 
     // ---- Diagram open/close ----

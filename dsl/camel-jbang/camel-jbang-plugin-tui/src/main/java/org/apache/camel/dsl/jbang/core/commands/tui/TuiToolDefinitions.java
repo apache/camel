@@ -403,7 +403,8 @@ final class TuiToolDefinitions {
                 List.of("section"))));
         tools.add(toToolDef(toolDef(
                 "tui_get_readme",
-                "Returns the README/documentation content from a running integration. "
+                "Returns the README/documentation content from a running integration, or its project's "
+                                  + "integration summary when there is no README. "
                                   + "Useful for understanding what the integration does, its configuration, and usage. "
                                   + "If no name is provided, returns the README for the currently selected integration.",
                 Map.of("name", propDef("string",

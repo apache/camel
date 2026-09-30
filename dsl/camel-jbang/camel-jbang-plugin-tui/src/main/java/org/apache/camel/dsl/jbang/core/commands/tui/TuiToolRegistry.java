@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -32,6 +33,8 @@ import dev.tamboui.export.ExportRequest;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools;
+import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
@@ -111,6 +114,7 @@ class TuiToolRegistry {
             case EDIT_TOOL -> !hasDirectory && facadeSelection ? callEditFile(args) : executeShared(name, args);
             case VALIDATE_TOOL -> !hasDirectory && facadeSelection && args.get("content") == null
                     ? callValidateSource(args) : executeShared(name, args);
+            case SAVE_SUMMARY_TOOL -> !hasDirectory && facadeSelection ? callSaveSummary(args) : executeShared(name, args);
             default -> executeShared(name, args);
         };
     }
@@ -124,12 +128,28 @@ class TuiToolRegistry {
         if (descriptor == null) {
             throw new IllegalArgumentException("Unknown tool: " + name);
         }
+        Map<String, String> stringArgs = stringArgs(args);
+        ToolContext ctx = sharedContext();
+        try {
+            Object result = ToolRegistry.execute(name, ctx, stringArgs);
+            return result != null ? result.toString() : "";
+        } catch (ToolExecutionException e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    private static Map<String, String> stringArgs(Map<String, Object> args) {
         Map<String, String> stringArgs = new LinkedHashMap<>();
         for (Map.Entry<String, Object> e : args.entrySet()) {
             if (e.getValue() != null) {
                 stringArgs.put(e.getKey(), String.valueOf(e.getValue()));
             }
         }
+        return stringArgs;
+    }
+
+    /** A tool context over the TUI's selection: pid, Camel version, source directory, property check. */
+    private ToolContext sharedContext() {
         ToolContext ctx = new ToolContext();
         // what the user selected is the integration; nothing selected means nothing, not the only one running
         ctx.setAutoSelectSingleProcess(false);
@@ -146,9 +166,29 @@ class TuiToolRegistry {
             ctx.setDefaultDirectory(facade.getSelectedSourceDirectory());
             ctx.setPropertyLineValidator(facade.getPropertyLineValidator());
         }
+        return ctx;
+    }
+
+    /**
+     * Saves the AI project summary of the selected integration through the TUI's write path, so the user sees and
+     * confirms it like any file the model writes (CAMEL-25143).
+     */
+    private String callSaveSummary(Map<String, Object> args) {
+        Path dir = facade.getSelectedSourceDirectory();
+        if (dir == null) {
+            return executeShared(SAVE_SUMMARY_TOOL, args);
+        }
         try {
-            Object result = ToolRegistry.execute(name, ctx, stringArgs);
-            return result != null ? result.toString() : "";
+            AuthoringTools.SummaryUpdate update = AuthoringTools.summaryUpdate(dir, sharedContext(), stringArgs(args));
+            String name = args.get("name") instanceof String n ? n : null;
+            JsonObject written = facade.writeFile(name, IntegrationSummary.FILE_NAME, update.content(), true);
+            JsonObject result = update.result();
+            result.put("status", written.get("status"));
+            if (written.get("message") != null) {
+                result.put("message", written.get("message"));
+            }
+            IntegrationSummaryHints.invalidate(dir);
+            return result.toJson();
         } catch (ToolExecutionException e) {
             return "Error: " + e.getMessage();
         }
@@ -167,6 +207,7 @@ class TuiToolRegistry {
     static final String WRITE_TOOL = "camel_write_file";
     static final String EDIT_TOOL = "camel_edit_file";
     static final String VALIDATE_TOOL = "camel_validate_source";
+    static final String SAVE_SUMMARY_TOOL = "camel_save_project_summary";
 
     /** The TUI's own tools in the core subset; the shared tools add those flagged core in the registry. */
     // CAMEL-24760: a tool earns its place here by the questions a local model gets asked, not by its size.
@@ -1343,7 +1384,12 @@ class TuiToolRegistry {
     private String callGetReadme(Map<String, Object> args) {
         String name = args.get("name") instanceof String s ? s : null;
         JsonObject response = facade.getReadme(name);
+        JsonObject summary = facade.getIntegrationSummary(name);
         if (response == null) {
+            // the project's generated README: an overview, capabilities and route texts, partly AI-assisted
+            if (summary != null) {
+                return Jsoner.serialize(summary);
+            }
             return name != null
                     ? "No README found for integration '" + name + "'"
                     : "No README found for the selected integration";
@@ -1353,6 +1399,9 @@ class TuiToolRegistry {
         String file = response.getStringOrDefault("file", "README");
         result.put("file", file);
         result.put("content", content != null ? content : "");
+        if (summary != null) {
+            result.put("alsoSee", IntegrationSummary.FILE_NAME + ": an AI-assisted summary of the project (camel_get_files)");
+        }
         return Jsoner.serialize(result);
     }
 

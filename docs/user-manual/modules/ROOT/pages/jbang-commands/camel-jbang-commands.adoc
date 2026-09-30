@@ -34,6 +34,7 @@ TIP: You can also use `camel --help` or `camel <command> --help` to see availabl
 | xref:jbang-commands/camel-jbang-jolokia.adoc[camel jolokia] | Attach Jolokia JVM Agent to a running Camel integration
 | xref:jbang-commands/camel-jbang-log.adoc[camel log] | Tail logs from running Camel integrations
 | xref:jbang-commands/camel-jbang-nano.adoc[camel nano] | Nano editor to edit file
+| xref:jbang-commands/camel-jbang-overview.adoc[camel overview] | High-level overview of the integrations in a project, optionally explained by AI/LLM
 | xref:jbang-commands/camel-jbang-plugin.adoc[camel plugin] | Manage plugins that add sub-commands to this CLI
 | xref:jbang-commands/camel-jbang-ps.adoc[camel ps] | List running Camel integrations
 | xref:jbang-commands/camel-jbang-restart.adoc[camel restart] | Restarts running Camel integrations (stop + re-launch)

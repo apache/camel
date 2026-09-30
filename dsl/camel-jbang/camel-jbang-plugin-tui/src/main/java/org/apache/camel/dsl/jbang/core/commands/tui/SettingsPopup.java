@@ -62,9 +62,10 @@ class SettingsPopup {
     private static final int ROW_AI_MODEL = 14;
     private static final int ROW_AI_URL = 15;
     private static final int ROW_AI_TOOLS = 16;
-    private static final int ROW_AI_PROMPT_HISTORY = 17;
-    private static final int ROW_AI_ACP_COMMAND = 18;
-    static final int ROW_COUNT = 19;
+    private static final int ROW_AI_OVERVIEW = 17;
+    private static final int ROW_AI_PROMPT_HISTORY = 18;
+    private static final int ROW_AI_ACP_COMMAND = 19;
+    static final int ROW_COUNT = 20;
     /** Separator lines drawn between the row groups, after rows 2, 6, 9 and 12. */
     static final int DIVIDERS = 4;
 
@@ -74,6 +75,8 @@ class SettingsPopup {
     private static final String[] PANEL_SPACE_OPTIONS = { "move", "overlay" };
     private static final String[] AI_TOOLS_OPTIONS
             = { AiPanel.TOOL_MODE_AUTO, AiPanel.TOOL_MODE_CORE, AiPanel.TOOL_MODE_FULL };
+    private static final String[] AI_OVERVIEW_OPTIONS = {
+            ProjectOverviewAssist.MODE_MANUAL, ProjectOverviewAssist.MODE_AUTO, ProjectOverviewAssist.MODE_OFF };
     private static final List<String> AI_PROVIDERS = buildAiProviderList();
 
     private static List<String> buildAiProviderList() {
@@ -108,6 +111,7 @@ class SettingsPopup {
     private int validateOnSaveIndex;
     private int aiProviderIndex;
     private int aiToolsIndex;
+    private int aiOverviewIndex;
     private TextInputState folderInput;
     private TextInputState proxyHostInput;
     private TextInputState proxyPortInput;
@@ -200,6 +204,8 @@ class SettingsPopup {
         String currentTools = AiPanel.normalizeToolMode(settings.getAiTools());
         int toolsIdx = List.of(AI_TOOLS_OPTIONS).indexOf(currentTools != null ? currentTools : AiPanel.TOOL_MODE_AUTO);
         aiToolsIndex = Math.max(0, toolsIdx);
+        aiOverviewIndex = Math.max(0, List.of(AI_OVERVIEW_OPTIONS).indexOf(
+                ProjectOverviewAssist.normalizeMode(settings.getAiOverview())));
         aiPromptHistoryInput = new TextInputState(
                 settings.getAiPromptHistory() != null ? settings.getAiPromptHistory() : "");
         aiAcpCommandInput = new TextInputState(settings.getAiAcpCommand() != null ? settings.getAiAcpCommand() : "");
@@ -352,6 +358,14 @@ class SettingsPopup {
             }
             return true;
         }
+        if (selectedRow == ROW_AI_OVERVIEW) {
+            if (ke.isChar(' ') || ke.isRight()) {
+                aiOverviewIndex = (aiOverviewIndex + 1) % AI_OVERVIEW_OPTIONS.length;
+            } else if (ke.isLeft()) {
+                aiOverviewIndex = (aiOverviewIndex - 1 + AI_OVERVIEW_OPTIONS.length) % AI_OVERVIEW_OPTIONS.length;
+            }
+            return true;
+        }
         if (selectedRow == ROW_AI_PROMPT_HISTORY) {
             handleTextInput(ke, aiPromptHistoryInput);
             return true;
@@ -403,6 +417,8 @@ class SettingsPopup {
         settings.setAiUrl(stripControlChars(aiUrlInput.text().trim()));
         String aiToolsValue = AI_TOOLS_OPTIONS[aiToolsIndex];
         settings.setAiTools(AiPanel.TOOL_MODE_AUTO.equals(aiToolsValue) ? null : aiToolsValue);
+        String aiOverviewValue = AI_OVERVIEW_OPTIONS[aiOverviewIndex];
+        settings.setAiOverview(ProjectOverviewAssist.MODE_MANUAL.equals(aiOverviewValue) ? null : aiOverviewValue);
         settings.setAiPromptHistory(stripControlChars(aiPromptHistoryInput.text().trim()));
         settings.setAiAcpCommand(stripControlChars(aiAcpCommandInput.text().trim()));
         settings.save();
@@ -546,6 +562,10 @@ class SettingsPopup {
         renderValue(frame, innerX + labelW, rowY, fieldW, aiToolsLabel(), selectedRow == ROW_AI_TOOLS);
         rowY++;
 
+        renderLabel(frame, innerX, rowY, labelW, "AI Overview:", selectedRow == ROW_AI_OVERVIEW);
+        renderValue(frame, innerX + labelW, rowY, fieldW, aiOverviewLabel(), selectedRow == ROW_AI_OVERVIEW);
+        rowY++;
+
         renderLabel(frame, innerX, rowY, labelW, "AI History:", selectedRow == ROW_AI_PROMPT_HISTORY);
         renderTextInput(frame, innerX + labelW, rowY, fieldW, aiPromptHistoryInput,
                 selectedRow == ROW_AI_PROMPT_HISTORY, "(100)");
@@ -561,7 +581,7 @@ class SettingsPopup {
                 || selectedRow == ROW_LOG_PIN || selectedRow == ROW_RATE_PER
                 || selectedRow == ROW_PANEL_POSITION || selectedRow == ROW_PANEL_SPACE
                 || selectedRow == ROW_CONFIRM_ACTIONS || selectedRow == ROW_VALIDATE_ON_SAVE
-                || selectedRow == ROW_AI_PROVIDER || selectedRow == ROW_AI_TOOLS) {
+                || selectedRow == ROW_AI_PROVIDER || selectedRow == ROW_AI_TOOLS || selectedRow == ROW_AI_OVERVIEW) {
             hint(spans, "Space", "cycle");
         }
         hint(spans, "Enter", "save");
@@ -724,6 +744,18 @@ class SettingsPopup {
             case AiPanel.TOOL_MODE_CORE -> "core (troubleshooting only)";
             case AiPanel.TOOL_MODE_FULL -> "full (all tools)";
             default -> "auto (core if local model)";
+        };
+    }
+
+    String selectedAiOverview() {
+        return AI_OVERVIEW_OPTIONS[aiOverviewIndex];
+    }
+
+    private String aiOverviewLabel() {
+        return switch (AI_OVERVIEW_OPTIONS[aiOverviewIndex]) {
+            case ProjectOverviewAssist.MODE_AUTO -> "auto (explain when out of date)";
+            case ProjectOverviewAssist.MODE_OFF -> "off (no AI-assisted hints)";
+            default -> "manual (/overview)";
         };
     }
 
