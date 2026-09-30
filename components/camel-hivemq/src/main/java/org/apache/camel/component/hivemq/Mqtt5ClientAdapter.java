@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import com.hivemq.client.mqtt.MqttClient;
-import com.hivemq.client.mqtt.MqttClientState;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5ClientBuilder;
@@ -44,31 +43,12 @@ final class Mqtt5ClientAdapter implements HiveMQClientAdapter {
 
     Mqtt5ClientAdapter(HiveMQConfiguration configuration) {
         AtomicReference<Mqtt5AsyncClient> clientRef = new AtomicReference<>();
-        Mqtt5ClientBuilder builder = MqttClient.builder()
-                .serverHost(configuration.getHost())
-                .serverPort(configuration.getPort())
-                .automaticReconnectWithDefaultConfig()
-                .addDisconnectedListener(context -> {
-                    // Initial connect() does not complete while auto-reconnect keeps retrying (HiveMQ #302).
-                    // Also honour an explicit stop so DISCONNECTED_RECONNECT / CONNECTING_RECONNECT are cancelled.
-                    if (cancelReconnect.get() || context.getClientConfig().getState() == MqttClientState.CONNECTING) {
-                        context.getReconnector().reconnect(false);
-                    }
-                })
-                .addConnectedListener(context -> {
-                    // HiveMQ schedules reconnect after listeners return; cancelReconnect cannot abort that delay.
-                    // If a reconnect succeeds after Camel stop, disconnect immediately (USER source skips auto-reconnect).
-                    if (cancelReconnect.get()) {
-                        Mqtt5AsyncClient started = clientRef.get();
-                        if (started != null && started.getState().isConnected()) {
-                            try {
-                                started.disconnect();
-                            } catch (Exception e) {
-                                // Already disconnecting or not connected
-                            }
-                        }
-                    }
-                })
+        Mqtt5ClientBuilder builder = MqttReconnectCancellation.apply(
+                MqttClient.builder()
+                        .serverHost(configuration.getHost())
+                        .serverPort(configuration.getPort())
+                        .automaticReconnectWithDefaultConfig(),
+                cancelReconnect, clientRef::get, () -> clientRef.get().disconnect())
                 .useMqttVersion5();
 
         if (configuration.getClientId() != null) {
