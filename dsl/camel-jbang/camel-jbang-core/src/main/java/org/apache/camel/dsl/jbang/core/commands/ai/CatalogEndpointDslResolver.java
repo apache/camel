@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.java.in.EndpointDslResolver;
@@ -36,6 +37,50 @@ final class CatalogEndpointDslResolver implements EndpointDslResolver {
 
     CatalogEndpointDslResolver(CamelCatalog catalog) {
         this.catalog = catalog;
+    }
+
+    @Override
+    public String headerName(String component, String method) {
+        // the component method is the factory's name: kafka, aws2S3
+        Endpoint named = NAMING.endpoint(component, List.of("x"), List.of());
+        if (named == null) {
+            return null;
+        }
+        ComponentModel model = catalog.componentModel(named.uri().substring(0, named.uri().indexOf("://")));
+        if (model == null) {
+            return null;
+        }
+        for (ComponentModel.EndpointHeaderModel header : model.getEndpointHeaders()) {
+            if (method.equals(headerMethod(header.getName()))) {
+                return header.getName();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The method of a header in the endpoint DSL, as the endpoint DSL is generated (EndpointDslMojo): a leading Camel
+     * dropped, then camel case at : - . and _, else the first letter lower case.
+     */
+    static String headerMethod(String header) {
+        String name = header.toLowerCase(Locale.ROOT).startsWith("camel") ? header.substring(5) : header;
+        if (name.isEmpty()) {
+            return name;
+        }
+        if (name.chars().anyMatch(c -> c == ':' || c == '-' || c == '.' || c == '_')) {
+            StringBuilder sb = new StringBuilder();
+            boolean upper = false;
+            for (char ch : name.toLowerCase(Locale.ROOT).toCharArray()) {
+                if (ch == ':' || ch == '-' || ch == '.' || ch == '_') {
+                    upper = sb.length() > 0;
+                } else {
+                    sb.append(upper ? Character.toUpperCase(ch) : ch);
+                    upper = false;
+                }
+            }
+            return sb.toString();
+        }
+        return Character.toLowerCase(name.charAt(0)) + name.substring(1);
     }
 
     @Override

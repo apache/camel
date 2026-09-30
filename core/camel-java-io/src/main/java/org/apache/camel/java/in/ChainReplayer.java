@@ -635,6 +635,12 @@ final class ChainReplayer {
             String text = formatText(c.calls().get(0).args());
             return text != null ? text : new Unknown(c, "a format the parser cannot work out");
         }
+        if (isEndpointHeader(c)) {
+            // headers().kafka().kafkaKey(): the header name, as the endpoint DSL has it
+            String name = endpointDsl != null
+                    ? endpointDsl.headerName(c.calls().get(1).name(), c.calls().get(2).name()) : null;
+            return name != null ? name : new Unknown(c, "a header of the endpoint DSL the parser does not know");
+        }
         if (c.qualifier() != null && c.calls().size() == 1
                 && COLLECTIONS.contains(c.qualifier() + "." + c.calls().get(0).name())) {
             // setHeaders(Map.of("foo", constant("ABC"))): a collection of values the parser works out
@@ -699,6 +705,13 @@ final class ChainReplayer {
             target = result;
         }
         return target;
+    }
+
+    /** {@code headers().kafka().kafkaKey()} of EndpointRouteBuilder: three calls without arguments. */
+    private static boolean isEndpointHeader(Chain c) {
+        List<Call> calls = c.calls();
+        return (c.qualifier() == null || "EndpointRouteBuilder".equals(c.qualifier())) && calls.size() == 3
+                && calls.get(0).name().equals("headers") && calls.stream().allMatch(call -> call.args().isEmpty());
     }
 
     /** Factories of JDK collections a route passes values in: only data, nothing of the project runs. */
