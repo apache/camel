@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,6 +40,7 @@ import org.xml.sax.InputSource;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.java.in.ConstantResolver;
+import org.apache.camel.java.in.JavaParseResult;
 import org.apache.camel.util.URISupport;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -179,6 +181,16 @@ public final class ProjectRoutes {
             // an overview skips what it cannot read; the validator reports what is wrong with the file
         }
         return List.of();
+    }
+
+    /**
+     * A Java DSL source read into the Camel model by the Java DSL parser, without compiling or running it: the endpoint
+     * DSL and the constants of the project's Java sources (by path, read when first needed) are resolved as in the
+     * project overview. For tools that need the steps and their lines, such as the TUI Source tab.
+     */
+    public static JavaParseResult parseJava(
+            String content, Map<String, Supplier<String>> javaSources, CamelCatalog catalog) {
+        return JavaRouteReader.parse(content, catalog, new ProjectConstantResolver(javaSources, catalog));
     }
 
     // ---- endpoints ----
@@ -575,6 +587,8 @@ public final class ProjectRoutes {
                         }
                     } else if (DYNAMIC_KEYS.contains(key)) {
                         sent.add(dynamicEndpoint(key));
+                    } else if ("switch".equals(key) && value instanceof MappingNode sw) {
+                        switchEndpoints(sw, sent);
                     }
                     if (value instanceof MappingNode || value instanceof SequenceNode) {
                         walk(value, produces, consumes, steps, depth + 1,
@@ -584,6 +598,20 @@ public final class ProjectRoutes {
                 if (sent != produces) {
                     sent.forEach(e -> produces.add(e.asOnError()));
                 }
+            }
+        }
+
+        /** The fixed destinations of a switch: the uri of each case and of the fallback. */
+        private void switchEndpoints(MappingNode sw, List<Endpoint> sent) {
+            if (child(sw, "case") instanceof SequenceNode cases) {
+                for (org.yaml.snakeyaml.nodes.Node c : cases.getValue()) {
+                    if (c instanceof MappingNode cm && value(cm, "uri") instanceof String uri) {
+                        add(sent, endpoint(uri, null, false, catalog));
+                    }
+                }
+            }
+            if (child(sw, "otherwise") instanceof MappingNode o && value(o, "uri") instanceof String uri) {
+                add(sent, endpoint(uri, null, false, catalog));
             }
         }
 
@@ -746,6 +774,11 @@ public final class ProjectRoutes {
                     add(produces, endpoint("kamelet:" + attr(s, "name"), null, false, catalog));
                 } else if (DYNAMIC_KEYS.contains(name)) {
                     produces.add(dynamicEndpoint(name));
+                } else if (("case".equals(name) || "otherwise".equals(name)) && attr(s, "uri") != null
+                        && s.getParentNode() instanceof Element parent && "switch".equals(localName(parent))) {
+                    // the fixed destinations of a switch
+                    Endpoint ep = endpoint(attr(s, "uri"), null, false, catalog);
+                    add(produces, handlesFailure(s, e) ? onErrorOf(ep) : ep);
                 }
             }
             String kind = template != null ? "routeTemplate" : "route";

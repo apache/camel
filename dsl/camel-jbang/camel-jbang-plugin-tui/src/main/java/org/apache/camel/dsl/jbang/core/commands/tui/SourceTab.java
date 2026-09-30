@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -105,7 +106,7 @@ class SourceTab extends AbstractTab {
         }
         configureEditAssist(file);
         sourceViewer.loadFile(file);
-        if (isCamelSourceFile(file)) {
+        if (hasJumpLinks(file)) {
             sourceViewer.setJumpLinks(computeJumpLinks(file));
         }
         if (!sourceViewer.isEditable()) {
@@ -120,8 +121,9 @@ class SourceTab extends AbstractTab {
         return sourceViewer.isEditMode();
     }
 
+    /** Steps whose uri: lines are destinations; for switch those of its cases and fallback. */
     private static final Set<String> LINKABLE_KEYWORDS = Set.of(
-            "to", "toD", "wireTap", "enrich", "pollEnrich", "deadLetterChannel");
+            "to", "toD", "wireTap", "enrich", "pollEnrich", "deadLetterChannel", "switch");
 
     record RouteEntry(String routeId, String fromUri, String filePath, int fromLine) {
     }
@@ -131,8 +133,8 @@ class SourceTab extends AbstractTab {
 
     private List<RouteEntry> routeIndex = Collections.emptyList();
     private List<ToEntry> toIndex = Collections.emptyList();
-    private final GotoRoutePopup gotoRoutePopup = new GotoRoutePopup();
-    private final GotoSourceNodePopup gotoSourceNodePopup = new GotoSourceNodePopup();
+    final GotoRoutePopup gotoRoutePopup = new GotoRoutePopup();
+    final GotoSourceNodePopup gotoSourceNodePopup = new GotoSourceNodePopup();
     private final FileActionsPopup fileActionsPopup = new FileActionsPopup();
 
     SourceTab(MonitorContext ctx) {
@@ -144,7 +146,7 @@ class SourceTab extends AbstractTab {
         });
         sourceViewer.setOnFileCreated(this::refreshFiles);
         sourceViewer.setOnFileLoaded(p -> {
-            if (isCamelSourceFile(p)) {
+            if (hasJumpLinks(p)) {
                 sourceViewer.setJumpLinks(computeJumpLinks(p));
             }
         });
@@ -157,9 +159,9 @@ class SourceTab extends AbstractTab {
     }
 
     boolean isSourceViewerTextInputActive() {
-        // also treat the file-actions menu as active input so global single-key shortcuts (q, ?, ...)
-        // do not fire while the menu, its name prompt, or delete confirmation is open
-        return sourceViewer.isTextInputActive() || fileActionsPopup.isVisible();
+        // also treat the file-actions menu and the go-to popups as active input so global single-key shortcuts
+        // (q, ?, digits switching tabs, ...) do not fire while the menu, a prompt or a filter is open
+        return sourceViewer.isTextInputActive() || fileActionsPopup.isVisible() || isGotoPopupVisible();
     }
 
     void handlePaste(String text) {
@@ -315,7 +317,13 @@ class SourceTab extends AbstractTab {
 
     @Override
     public boolean isOverlayActive() {
-        return fileActionsPopup.isVisible() || (focusOnViewer && sourceViewer.isTextInputActive());
+        return fileActionsPopup.isVisible() || isGotoPopupVisible()
+                || (focusOnViewer && sourceViewer.isTextInputActive());
+    }
+
+    /** Whether the go to route or go to line popup is open: it takes typed text, digits too. */
+    private boolean isGotoPopupVisible() {
+        return gotoRoutePopup.isVisible() || gotoSourceNodePopup.isVisible();
     }
 
     @Override
@@ -421,6 +429,13 @@ class SourceTab extends AbstractTab {
             sourceViewer.renderFooter(spans);
             if (!sourceViewer.isEditMode()) {
                 TuiHelper.hint(spans, "Tab", "files");
+                // also after a jump, which moves the focus to the viewer; not while g is typed into search
+                if (!sourceViewer.isTextInputActive()) {
+                    if (!routeIndex.isEmpty()) {
+                        TuiHelper.hint(spans, "g", "go to route");
+                    }
+                    TuiHelper.hint(spans, "Ctrl+G", "go to");
+                }
             }
         } else {
             TuiHelper.hint(spans, "Enter", "open");
@@ -527,7 +542,7 @@ class SourceTab extends AbstractTab {
         }
     }
 
-    private boolean loadDirectory(Path dir) {
+    boolean loadDirectory(Path dir) {
         return loadDirectory(dir, null);
     }
 
@@ -591,7 +606,7 @@ class SourceTab extends AbstractTab {
         String viewedPath = sourceViewer.getCurrentFilePath();
         if (viewedPath != null) {
             Path viewedFile = Path.of(viewedPath);
-            if (isCamelSourceFile(viewedFile)) {
+            if (hasJumpLinks(viewedFile)) {
                 sourceViewer.setJumpLinks(computeJumpLinks(viewedFile));
             }
         }
@@ -787,7 +802,7 @@ class SourceTab extends AbstractTab {
                 Path filePath = Path.of(entry.path());
                 configureEditAssist(filePath);
                 sourceViewer.loadFile(filePath);
-                if (isCamelSourceFile(filePath)) {
+                if (hasJumpLinks(filePath)) {
                     sourceViewer.setJumpLinks(computeJumpLinks(filePath));
                 }
                 focusOnViewer = true;
@@ -844,6 +859,23 @@ class SourceTab extends AbstractTab {
             return TuiHelper.isCamelXml(path);
         }
         return false;
+    }
+
+    /** Whether the file gets route jump links: Camel YAML and XML, and Java sources with a route builder. */
+    private boolean hasJumpLinks(Path path) {
+        return isCamelSourceFile(path) || isJavaRouteFile(path);
+    }
+
+    private static boolean isJavaRouteFile(Path path) {
+        String name = path.getFileName().toString();
+        if (!name.endsWith(".java")) {
+            return false;
+        }
+        try {
+            return JavaRouteScanner.isJavaRoutes(name, Files.readString(path, StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     private void renderFileList(Frame frame, Rect area) {
@@ -995,11 +1027,23 @@ class SourceTab extends AbstractTab {
     private void buildRouteIndex() {
         List<RouteEntry> fromEntries = new ArrayList<>();
         List<ToEntry> toEntries = new ArrayList<>();
+        // the Java sources of the folder, for the constants a route takes from another class
+        Map<String, Supplier<String>> javaSources = new LinkedHashMap<>();
+        for (FilesBrowser.FileEntry entry : entries) {
+            if (!entry.directory() && entry.name().endsWith(".java")) {
+                Path path = Path.of(entry.path());
+                javaSources.put(entry.path(), () -> readQuietly(path));
+            }
+        }
         for (FilesBrowser.FileEntry entry : entries) {
             if (entry.directory()) {
                 continue;
             }
             Path path = Path.of(entry.path());
+            if (isJavaRouteFile(path)) {
+                scanJavaRoutes(path, javaSources, fromEntries, toEntries);
+                continue;
+            }
             if (!isCamelSourceFile(path)) {
                 continue;
             }
@@ -1009,6 +1053,35 @@ class SourceTab extends AbstractTab {
         }
         routeIndex = fromEntries;
         toIndex = toEntries;
+    }
+
+    /** The routes of a Java source, read by the Java DSL parser without compiling or running it. */
+    private void scanJavaRoutes(
+            Path file, Map<String, Supplier<String>> javaSources, List<RouteEntry> fromEntries, List<ToEntry> toEntries) {
+        String content = readQuietly(file);
+        if (content == null) {
+            return;
+        }
+        String filePath = file.toString();
+        for (JavaRouteScanner.Route route : JavaRouteScanner.scan(content, javaSources, ArchitectureView.catalog())) {
+            int before = fromEntries.size();
+            emitRouteEntry(fromEntries, route.id(), route.fromUri(), filePath, route.line());
+            String routeId = fromEntries.size() > before ? fromEntries.get(before).routeId() : "";
+            for (JavaRouteScanner.To to : route.tos()) {
+                String toUri = stripQueryParams(to.uri());
+                if (toUri != null && !toUri.isEmpty()) {
+                    toEntries.add(new ToEntry(routeId, toUri, filePath, to.line()));
+                }
+            }
+        }
+    }
+
+    private static String readQuietly(Path file) {
+        try {
+            return Files.readString(file, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     private List<YamlRouteNodeScanner.NodeEntry> buildSourceNodeIndex() {
@@ -1123,8 +1196,8 @@ class SourceTab extends AbstractTab {
             }
 
             // uri: under a linkable block → index it as a to entry
-            if (inLinkableBlock && trimmed.startsWith("uri:")) {
-                String val = extractYamlValue(trimmed, "uri");
+            if (inLinkableBlock && isUriLine(trimmed)) {
+                String val = extractYamlValue(uriLine(trimmed), "uri");
                 if (val != null && !val.isEmpty()) {
                     String toUri = stripQueryParams(val);
                     if (toUri != null && !toUri.isEmpty()) {
@@ -1142,17 +1215,16 @@ class SourceTab extends AbstractTab {
             return;
         }
         if (routeId == null || routeId.isEmpty()) {
-            // derive route id from the from URI
+            // a route without an id is named by its from endpoint, with the component so file:src/main/data
+            // does not read as a folder name
             int colon = baseUri.indexOf(':');
-            routeId = colon >= 0 ? baseUri.substring(colon + 1) : baseUri;
-            if (routeId.startsWith("//")) {
-                routeId = routeId.substring(2);
-            }
+            routeId = colon > 0 && baseUri.startsWith("//", colon + 1)
+                    ? baseUri.substring(0, colon + 1) + baseUri.substring(colon + 3) : baseUri;
         }
         index.add(new RouteEntry(routeId, baseUri, filePath, fromLine));
     }
 
-    private Map<Integer, SourceViewer.JumpLink> computeJumpLinks(Path currentFile) {
+    Map<Integer, SourceViewer.JumpLink> computeJumpLinks(Path currentFile) {
         if (routeIndex.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -1170,6 +1242,21 @@ class SourceTab extends AbstractTab {
         Map<String, RouteEntry> fromUriToRoute = new HashMap<>();
         for (RouteEntry re : routeIndex) {
             fromUriToRoute.put(re.fromUri(), re);
+        }
+
+        if (currentFilePath.endsWith(".java")) {
+            // the steps of a Java route are in the index with their lines, as the parser read them
+            for (ToEntry te : toIndex) {
+                if (currentFilePath.equals(te.filePath())) {
+                    RouteEntry target = fromUriToRoute.get(te.toUri());
+                    if (target != null && !target.routeId().equals(te.routeId())) {
+                        result.putIfAbsent(te.toLine(),
+                                new SourceViewer.JumpLink(target.routeId(), target.filePath(), target.fromLine()));
+                    }
+                }
+            }
+            addReverseLinks(currentFilePath, result);
+            return result;
         }
 
         // forward links: to/toD/wireTap → target route's from
@@ -1222,8 +1309,8 @@ class SourceTab extends AbstractTab {
                 }
             }
 
-            if (uri == null && inLinkableBlock && trimmed.startsWith("uri:")) {
-                String val = extractYamlValue(trimmed, "uri");
+            if (uri == null && inLinkableBlock && isUriLine(trimmed)) {
+                String val = extractYamlValue(uriLine(trimmed), "uri");
                 if (val != null && !val.isEmpty()) {
                     uri = val;
                 }
@@ -1238,7 +1325,12 @@ class SourceTab extends AbstractTab {
             }
         }
 
-        // reverse links: from URI ← routes that send to it (jump to the caller's to: line)
+        addReverseLinks(currentFilePath, result);
+        return result;
+    }
+
+    /** Reverse links: a from line to a route that sends to it (jumps to the caller's to line). */
+    private void addReverseLinks(String currentFilePath, Map<Integer, SourceViewer.JumpLink> result) {
         for (RouteEntry re : routeIndex) {
             if (!currentFilePath.equals(re.filePath())) {
                 continue;
@@ -1256,8 +1348,6 @@ class SourceTab extends AbstractTab {
                 }
             }
         }
-
-        return result;
     }
 
     private void openFileAt(String targetFilePath, int targetLine) {
@@ -1289,6 +1379,15 @@ class SourceTab extends AbstractTab {
 
     private void handleJumpLink(SourceViewer.JumpLink link) {
         openFileAt(link.filePath(), link.targetLine());
+    }
+
+    /** A uri: line, also as the first key of a list item: - uri: direct:billing in the cases of a switch. */
+    private static boolean isUriLine(String trimmed) {
+        return trimmed.startsWith("uri:") || trimmed.startsWith("- uri:");
+    }
+
+    private static String uriLine(String trimmed) {
+        return trimmed.startsWith("- ") ? trimmed.substring(2).trim() : trimmed;
     }
 
     static String extractYamlValue(String trimmed, String key) {

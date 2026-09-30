@@ -21,9 +21,12 @@ import java.util.List;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SplitDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.junit.jupiter.api.Test;
@@ -141,6 +144,58 @@ class LwJavaParserTest {
                 """);
         assertThat(result.routes().getRoutes()).hasSize(1);
         assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
+    }
+
+    @Test
+    void everyStepHasTheLineOfItsCall() {
+        // CAMEL-25192: the TUI Source tab links a to(...) line to the route it sends to
+        JavaParseResult result = new LwJavaParser().parse("""
+                public class R extends RouteBuilder {
+                    public void configure() {
+                        from("direct:a")
+                            .setHeader("x").constant("y")
+                            .choice()
+                                .when(header("x").isEqualTo("y"))
+                                    .to("direct:b")
+                                .otherwise()
+                                    .toD("direct:${header.x}")
+                            .end()
+                            .wireTap("direct:tap");
+                        from("direct:b").to("log:b");
+                    }
+                }
+                """);
+        List<RouteDefinition> routes = result.routes().getRoutes();
+        RouteDefinition a = routes.get(0);
+        assertThat(a.getLineNumber()).isEqualTo(3);
+        assertThat(a.getInput().getLineNumber()).isEqualTo(3);
+        assertThat(a.getOutputs()).extracting(ProcessorDefinition::getLineNumber).containsExactly(4, 5, 11);
+        ChoiceDefinition choice = (ChoiceDefinition) a.getOutputs().get(1);
+        assertThat(choice.getWhenClauses().get(0).getLineNumber()).isEqualTo(6);
+        assertThat(choice.getWhenClauses().get(0).getOutputs().get(0).getLineNumber()).isEqualTo(7);
+        assertThat(choice.getOtherwise().getLineNumber()).isEqualTo(8);
+        assertThat(choice.getOtherwise().getOutputs().get(0).getLineNumber()).isEqualTo(9);
+        assertThat(routes.get(1).getOutputs().get(0).getLineNumber()).isEqualTo(12);
+    }
+
+    @Test
+    void switchCasesHaveTheLineOfTheirCall() {
+        JavaParseResult result = new LwJavaParser().parse("""
+                from("direct:tickets")
+                    .doSwitch(header("department"))
+                        .doCase("billing", "direct:billing")
+                        .doCase("technical").id("tech").to("direct:technical")
+                        .otherwise("direct:review")
+                    .end();
+                """);
+        assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
+        SwitchDefinition sw = (SwitchDefinition) result.routes().getRoutes().get(0).getOutputs().get(0);
+        assertThat(sw.getLineNumber()).isEqualTo(2);
+        assertThat(sw.getCases()).extracting(SwitchCaseDefinition::getUri)
+                .containsExactly("direct:billing", "direct:technical");
+        assertThat(sw.getCases()).extracting(SwitchCaseDefinition::getLineNumber).containsExactly(3, 4);
+        assertThat(sw.getOtherwiseDefinition().getUri()).isEqualTo("direct:review");
+        assertThat(sw.getOtherwiseDefinition().getLineNumber()).isEqualTo(5);
     }
 
     @Test
