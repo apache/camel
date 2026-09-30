@@ -113,9 +113,11 @@ camel overview src/main/resources/camel
 camel overview --format=json
 ----
 
-YAML and XML routes are read structurally. Java DSL routes are read by pattern matching on string literals in
-`from`, `to`, `routeId` and friends, so endpoints built from constants or the endpoint DSL are not shown; the
-overview says when it contains Java routes.
+YAML and XML routes are read structurally. Java DSL routes are read into the Camel model without compiling
+them: constants, nested EIPs (`choice`, `doTry`), error paths and the endpoint DSL are seen as in a compiled route,
+and nothing of the project is loaded or run. What is only known at runtime, such as a lambda or a value returned by
+a helper method, cannot be read; the overview says which Java routes have such parts, as their endpoints may be
+incomplete.
 Endpoint URIs are shown without their query, as a query may carry credentials.
 
 === AI-assisted summary

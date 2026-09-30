@@ -796,6 +796,7 @@ public final class IntegrationSummary {
 
         Set<String> ungrouped = new LinkedHashSet<>();
         overview.flows().stream().filter(r -> r.group() == null).forEach(r -> ungrouped.add(r.key()));
+        List<String> keys = overview.flows().stream().map(Route::key).toList();
 
         StringBuilder text = new StringBuilder();
         List<Capability> capabilities = new ArrayList<>();
@@ -831,8 +832,7 @@ public final class IntegrationSummary {
                     Matcher item = ITEM.matcher(raw);
                     String body = item.matches() ? item.group(1) : raw.strip();
                     // "- id" or "- id: why"
-                    int colon = body.indexOf(':');
-                    String key = clean(colon > 0 ? body.substring(0, colon) : body);
+                    String key = keyAndRest(body, keys)[0];
                     if (ungrouped.contains(key) && !utility.contains(key)) {
                         utility.add(key);
                     }
@@ -840,10 +840,10 @@ public final class IntegrationSummary {
                 default -> {
                     Matcher item = ITEM.matcher(raw);
                     String body = item.matches() ? item.group(1) : raw.strip();
-                    int colon = body.indexOf(':');
-                    if (colon > 0) {
-                        String key = clean(body.substring(0, colon));
-                        String[] parts = labelAndNote(body.substring(colon + 1));
+                    String[] keyAndRest = keyAndRest(body, keys);
+                    if (keyAndRest[1] != null) {
+                        String key = keyAndRest[0];
+                        String[] parts = labelAndNote(keyAndRest[1]);
                         if (parts[0] != null && unlabelled.contains(key)) {
                             descriptions.put(key, parts[0]);
                         }
@@ -920,6 +920,46 @@ public final class IntegrationSummary {
     }
 
     /** Strips Markdown emphasis, code ticks and quotes around a value. */
+    /**
+     * The route a line of the answer is about, and what follows its colon (null when there is no colon). A route
+     * without an id has a key with a colon of its own ({@code src/main/java/OrderRoute.java:32}), so the key is the
+     * longest one of the project the line starts with, or its short form ({@code OrderRoute.java:32}) when that names
+     * one route only; else the line up to its first colon.
+     */
+    static String[] keyAndRest(String body, List<String> keys) {
+        String line = body.strip().replaceAll("^[*_`\"']+", "");
+        List<String> sorted = new ArrayList<>(keys);
+        sorted.sort((a, b) -> b.length() - a.length());
+        for (String key : sorted) {
+            List<String> forms = new ArrayList<>(List.of(key));
+            String shortForm = shortKey(key);
+            if (!shortForm.equals(key) && keys.stream().filter(k -> shortKey(k).equals(shortForm)).count() == 1) {
+                forms.add(shortForm);
+            }
+            for (String form : forms) {
+                if (line.startsWith(form)) {
+                    String after = line.substring(form.length()).replaceAll("^[*_`\"']+", "").strip();
+                    if (after.isEmpty()) {
+                        return new String[] { key, null };
+                    }
+                    if (after.startsWith(":")) {
+                        return new String[] { key, after.substring(1) };
+                    }
+                }
+            }
+        }
+        int colon = body.indexOf(':');
+        return colon > 0
+                ? new String[] { clean(body.substring(0, colon)), body.substring(colon + 1) }
+                : new String[] { clean(body), null };
+    }
+
+    /** {@code src/main/java/OrderRoute.java:32} as {@code OrderRoute.java:32}; other keys as they are. */
+    static String shortKey(String key) {
+        int slash = key.lastIndexOf('/');
+        return slash >= 0 && key.matches(".*:\\d+$") ? key.substring(slash + 1) : key;
+    }
+
     private static String clean(String s) {
         String t = s.strip();
         t = t.replaceAll("^[*_`\"']+|[*_`\"']+$", "").strip();

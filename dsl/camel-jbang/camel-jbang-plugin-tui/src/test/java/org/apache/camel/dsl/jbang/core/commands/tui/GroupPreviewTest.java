@@ -105,14 +105,54 @@ class GroupPreviewTest {
         assertThat(panel.lines().toList()).first().asString().contains("⇢", "platform-http:/orders");
         assertThat(panel).contains(" order\n", "call → validate", "call → invoice  billing",
                 "on error → dlq  Utility");
-        // validate is inside the group: its own call is followed, one level deeper; only this group calls audit, and
-        // the AI did not place it
-        assertThat(panel).contains("\u2502  \u2514\u2500 call \u2192 audit  Other");
+        // validate has a block of its own after order, which hands off to it; only this group calls audit, and the
+        // AI did not place it
+        assertThat(panel).contains(" validate\n \u2514\u2500 call \u2192 audit  Other");
+        assertThat(panel.indexOf(" order\n")).isLessThan(panel.indexOf(" validate\n"));
         // cut to the height, with what is left counted
         List<Line> cut = GroupPreview.lines(orders, caps, o, 60, 3);
         assertThat(cut).hasSize(3);
         assertThat(text(cut)).contains("more");
         // and to the width
         assertThat(text(GroupPreview.lines(orders, caps, o, 12, 20)).lines()).allMatch(l -> l.length() <= 12);
+    }
+
+    @Test
+    void sendsOutsideTheProjectAreLeaves() {
+        String order = """
+                public class OrderRoute extends RouteBuilder {
+                    public void configure() {
+                        from("file:src/main/data?noop=true").to("amqp:queue:order.queue");
+                    }
+                }
+                """;
+        String widgetGadget = """
+                public class WidgetGadgetRoute extends RouteBuilder {
+                    public void configure() {
+                        from("amqp:queue:order.queue")
+                            .choice()
+                                .when().jsonpath("$.order[?(@.product=='widget')]")
+                                    .to("log:widget").to("amqp:queue:widget.queue")
+                                .otherwise()
+                                    .to("log:gadget").to("amqp:queue:gadget.queue");
+                    }
+                }
+                """;
+        ProjectOverview.Overview o = ProjectOverview.analyze(Path.of("wg"),
+                Map.of("OrderRoute.java", order, "WidgetGadgetRoute.java", widgetGadget), new DefaultCamelCatalog());
+        ProjectCapabilities.Capabilities caps = ProjectCapabilities.build(o, null);
+        ProjectCapabilities.Group other = caps.group(ProjectCapabilities.OTHER);
+
+        String panel = text(GroupPreview.lines(other, caps, o, 60, 20, r -> r.replaceAll("Route.java:\\d+", ""),
+                scheme -> ProjectOverview.isRemote(scheme, new DefaultCamelCatalog())));
+        // a block per route in the order messages flow; the logs stay inside the integration and are left out
+        assertThat(panel).isEqualTo(String.join("\n",
+                " \u21e2 file:src/main/data",
+                " Order",
+                " \u2514\u2500 event \u2192 WidgetGadget",
+                " \u21e2 amqp:queue:order.queue",
+                " WidgetGadget",
+                " \u251c\u2500 to \u2192 amqp:queue:widget.queue",
+                " \u2514\u2500 to \u2192 amqp:queue:gadget.queue"));
     }
 }

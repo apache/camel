@@ -315,6 +315,7 @@ jump straight to implementation after reading the issue description and the curr
    - **MDC / Logging** (MDC propagation, logging context): [`design/mdc.adoc`](design/mdc.adoc)
    - **Headers** (naming conventions, constants, upgrade policy): [`design/headers.adoc`](design/headers.adoc)
    - **Cross-cutting features** (onException, interceptors, onCompletion, route configurations and how they bind to routes): [`design/cross-cutting-binding.adoc`](design/cross-cutting-binding.adoc)
+   - **Java DSL parsing** (reading Java routes into the model without compiling them, `LwJavaParser`, its safety rules): [`design/java-dsl-parser.adoc`](design/java-dsl-parser.adoc)
 5. **Understand the broader context**: If the issue involves a module that replaced or deprecated
    another (e.g., `camel-opentelemetry2` replacing `camel-opentelemetry`), understand *why* the
    replacement was made and what was intentionally changed vs. accidentally omitted.
@@ -430,6 +431,10 @@ PMC has historically accepted:
   enabled out of the box.
 - **Injection into back-end queries** built by Camel itself (Cypher, XSLT extension functions,
   etc.).
+- **Tooling that reads route sources without running them** (`LwJavaParser`, the project overview,
+  the TUI Architecture view, the `camel_project_overview` MCP tool) running code from the source,
+  loading its classes, resolving its secrets, reaching the network or not finishing. Running the
+  routes is the trusted route-author case.
 
 ### What is out of scope
 
@@ -484,6 +489,12 @@ format, parser, or anything that handles `@UriParam` security knobs:
   default needs an upgrade-guide entry and PMC sign-off.
 - Does an authentication or authorization component enforce what its option names claim — issuer
   validation, audience checking, signature verification, every advertised sub-path covered?
+- Does the change add a public method to the route builder (`RouteBuilder`, `BuilderSupport`,
+  `RouteConfigurationBuilder`) or the static DSL (`Builder`, `PredicateBuilder`, `AggregationStrategies`)?
+  `LwJavaParserSecurityTest` then fails on purpose: `LwJavaParser` can call these methods while reading an
+  unvetted source. Check that the new method only builds the model (no `CamelContext`, files, class loading
+  or network) before regenerating `replay-builder-methods.txt` with `-Dcamel.java.in.updateSurface=true`.
+  See [`design/java-dsl-parser.adoc`](design/java-dsl-parser.adoc).
 
 ## Structure
 

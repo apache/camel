@@ -547,13 +547,14 @@ final class ArchitectureView {
         if (w < 20 || h < 5 || area.width() < 60 || area.height() < 14) {
             return;
         }
-        List<Line> lines = GroupPreview.lines(g, capabilities, overview, w - 2, h - 2);
+        List<Line> lines = GroupPreview.lines(g, capabilities, overview, w - 2, h - 2, r -> RouteKeys.display(dir, r),
+                scheme -> ProjectOverview.isRemote(scheme, catalog()));
         h = Math.min(h, lines.size() + 2);
         Rect rect = new Rect(area.x() + area.width() - w - 2, area.y() + area.height() - h - 1, w, h);
         frame.renderWidget(Clear.INSTANCE, rect);
-        // named for what it lists, as the topology's panel is: the group's name is on its box and in the Info panel
+        // how messages flow through the group, as the summary's flows between routes: the group's name is on its box
         Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(Line.from(Span.styled(" Routes ", Style.EMPTY.dim()))))
+                .title(Title.from(Line.from(Span.styled(" Flow ", Style.EMPTY.dim()))))
                 .build();
         frame.renderWidget(block, rect);
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), block.inner(rect));
@@ -592,7 +593,7 @@ final class ArchitectureView {
                 }
             }
             section(lines, "Used by", groups, Set.of());
-            section(lines, "Routes", g.routes(), Set.of());
+            section(lines, "Routes", names(g.routes()), Set.of());
             section(lines, "Endpoints", g.entryPoints(), Set.of());
             frame.renderWidget(Paragraph.builder()
                     .text(Text.from(lines))
@@ -601,7 +602,7 @@ final class ArchitectureView {
                     .build(), area);
             return;
         }
-        section(lines, "Routes", g.routes(), g.aiRoutes());
+        section(lines, "Routes", names(g.routes()), names(g.aiRoutes()));
         section(lines, "Entry points", g.entryPoints(), Set.of());
         section(lines, "Systems", g.systems(), Set.of());
         List<String> to = new ArrayList<>();
@@ -622,6 +623,17 @@ final class ArchitectureView {
                 .overflow(Overflow.WRAP_WORD)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Info ").build())
                 .build(), area);
+    }
+
+    /** Routes as the views name them: the running id, or the file name and line of one without an id. */
+    private List<String> names(List<String> routes) {
+        return routes.stream().map(r -> RouteKeys.display(dir, r)).toList();
+    }
+
+    private Set<String> names(Set<String> routes) {
+        Set<String> answer = new LinkedHashSet<>();
+        routes.forEach(r -> answer.add(RouteKeys.display(dir, r)));
+        return answer;
     }
 
     private static void section(List<Line> lines, String title, List<String> items, Set<String> aiItems) {

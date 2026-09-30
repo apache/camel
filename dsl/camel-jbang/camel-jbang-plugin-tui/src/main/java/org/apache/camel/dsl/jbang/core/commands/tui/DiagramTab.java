@@ -594,11 +594,15 @@ class DiagramTab extends AbstractTab {
      * routes highlighted and the first of them selected.
      */
     private void focusGroup(ProjectCapabilities.Group group) {
-        diagram.setFocus(new LinkedHashSet<>(group.routes()), group.name());
+        Set<String> running = new LinkedHashSet<>();
+        for (String route : group.routes()) {
+            running.add(RouteKeys.runningId(selectedSourceDirectory(), route));
+        }
+        diagram.setFocus(running, group.name());
         topologyMode = true;
         diagram.setTopologyMode(true);
         if (!group.routes().isEmpty()) {
-            String first = group.routes().get(0);
+            String first = RouteKeys.runningId(selectedSourceDirectory(), group.routes().get(0));
             int idx = diagram.findNodeIndexByRouteId(first);
             if (idx >= 0) {
                 diagram.setSelectedNodeIndex(idx);
@@ -780,6 +784,8 @@ class DiagramTab extends AbstractTab {
             renderNoSelection(frame, area);
             return;
         }
+        // the running routes, so a source route without an id is known by the id Camel gave it
+        RouteKeys.remember(selectedSourceDirectory(), info.routes);
 
         if (sourceViewer.isVisible()) {
             sourceViewer.render(frame, area);
@@ -826,7 +832,9 @@ class DiagramTab extends AbstractTab {
                 return;
             } else if (!topologyMode && drillDownRouteId != null
                     && diagram.getRouteLayout(drillDownRouteId) != null) {
-                Line title = DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId);
+                Line title = DiagramDetailSupport.withRouteContext(
+                        DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId), info,
+                        drillDownRouteId, selectedSourceDirectory(), isShowGroups());
                 var routeLayout = diagram.getRouteLayout(drillDownRouteId);
                 if (area.width() > 60) {
                     infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));

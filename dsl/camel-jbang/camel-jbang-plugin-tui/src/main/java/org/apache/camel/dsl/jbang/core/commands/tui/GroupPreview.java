@@ -16,11 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import dev.tamboui.style.Style;
 import dev.tamboui.text.CharWidth;
@@ -29,6 +33,7 @@ import dev.tamboui.text.Span;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectCapabilities.Capabilities;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectCapabilities.Group;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
+import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes;
 
 /**
  * The mini panel of the architecture view (CAMEL-25147): the inside of the selected group, as a tree from where
@@ -42,81 +47,135 @@ final class GroupPreview {
 
     /** The lines of the panel, at most {@code maxLines}, each at most {@code width} columns. */
     static List<Line> lines(Group group, Capabilities caps, ProjectOverview.Overview overview, int width, int maxLines) {
+        return lines(group, caps, overview, width, maxLines, r -> r,
+                scheme -> ProjectOverview.isRemote(scheme, ProjectOverviewAssist.catalog()));
+    }
+
+    /**
+     * @param name   how a route is named: the running id of a route without one in the source, for instance
+     * @param remote whether a component talks to a system outside the integration: sends to others (a log, a mock) are
+     *               left out, they say nothing about how the routes and systems connect
+     */
+    static List<Line> lines(
+            Group group, Capabilities caps, ProjectOverview.Overview overview, int width, int maxLines,
+            Function<String, String> name, Predicate<String> remote) {
         List<Line> lines = new ArrayList<>();
+        for (String route : flowOrder(group, overview)) {
+            for (ProjectOverview.EntryPoint e : overview.entryPoints()) {
+                if (route.equals(e.route())) {
+                    lines.add(line(width, Span.styled(" \u21e2 " + e.label(), Style.EMPTY.fg(Theme.accent()))));
+                }
+            }
+            lines.add(line(width, Span.styled(" " + name.apply(route), Style.EMPTY.fg(Theme.baseFg()).bold())));
+            List<Child> out = children(route, overview, remote);
+            for (int i = 0; i < out.size(); i++) {
+                lines.add(childLine(out.get(i), i == out.size() - 1, group, caps, width, name));
+            }
+        }
+        if (lines.size() > maxLines) {
+            List<Line> cut = new ArrayList<>(lines.subList(0, Math.max(0, maxLines - 1)));
+            cut.add(Line.from(Span.styled(" \u2026 " + (lines.size() - cut.size()) + " more", Theme.muted())));
+            return cut;
+        }
+        return lines;
+    }
+
+    /**
+     * The routes of the group in the order messages flow: those nothing in the group calls first, then the routes they
+     * hand off to, then what a cycle left.
+     */
+    private static List<String> flowOrder(Group group, ProjectOverview.Overview overview) {
         Set<String> members = new LinkedHashSet<>(group.routes());
-        // roots: where messages enter from outside, or that nothing in the group calls
         Set<String> called = new HashSet<>();
         for (ProjectOverview.Link l : overview.links()) {
             if (members.contains(l.from()) && members.contains(l.to()) && !l.from().equals(l.to())) {
                 called.add(l.to());
             }
         }
-        Set<String> visited = new HashSet<>();
+        Set<String> order = new LinkedHashSet<>();
+        Deque<String> queue = new ArrayDeque<>();
         for (String route : group.routes()) {
-            boolean entry = overview.entryPoints().stream().anyMatch(e -> route.equals(e.route()));
-            if (entry || !called.contains(route)) {
-                addRoot(lines, route, group, caps, overview, visited, width);
+            if (!called.contains(route)) {
+                queue.add(route);
             }
         }
-        // what a cycle left out
-        for (String route : group.routes()) {
-            if (!visited.contains(route)) {
-                addRoot(lines, route, group, caps, overview, visited, width);
+        while (!queue.isEmpty() || order.size() < members.size()) {
+            if (queue.isEmpty()) {
+                // a cycle: start it at the first route not shown
+                members.stream().filter(r -> !order.contains(r)).findFirst().ifPresent(queue::add);
             }
-        }
-        if (lines.size() > maxLines) {
-            List<Line> cut = new ArrayList<>(lines.subList(0, Math.max(0, maxLines - 1)));
-            cut.add(Line.from(Span.styled(" … " + (lines.size() - cut.size()) + " more", Theme.muted())));
-            return cut;
-        }
-        return lines;
-    }
-
-    private static void addRoot(
-            List<Line> lines, String route, Group group, Capabilities caps, ProjectOverview.Overview overview,
-            Set<String> visited, int width) {
-        for (ProjectOverview.EntryPoint e : overview.entryPoints()) {
-            if (route.equals(e.route())) {
-                lines.add(line(width, Span.styled(" ⇢ " + e.label(), Style.EMPTY.fg(Theme.accent()))));
+            String route = queue.poll();
+            if (route == null || !order.add(route)) {
+                continue;
             }
-        }
-        visited.add(route);
-        lines.add(line(width, Span.styled(" " + route, Style.EMPTY.fg(Theme.baseFg()).bold())));
-        addChildren(lines, route, " ", group, caps, overview, visited, width);
-    }
-
-    private static void addChildren(
-            List<Line> lines, String route, String indent, Group group, Capabilities caps,
-            ProjectOverview.Overview overview, Set<String> visited, int width) {
-        List<ProjectOverview.Link> out = new ArrayList<>();
-        Set<String> seen = new HashSet<>();
-        for (ProjectOverview.Link l : overview.links()) {
-            if (route.equals(l.from()) && !route.equals(l.to()) && seen.add(l.to())) {
-                out.add(l);
-            }
-        }
-        for (int i = 0; i < out.size(); i++) {
-            ProjectOverview.Link l = out.get(i);
-            boolean last = i == out.size() - 1;
-            String kind = l.onError() ? "on error" : l.kind();
-            List<Span> spans = new ArrayList<>();
-            spans.add(Span.styled(indent + (last ? "└─ " : "├─ ") + kind + " → ", Theme.muted()));
-            spans.add(Span.styled(l.to(), Style.EMPTY.fg(Theme.baseFg())));
-            String owner = caps.groupOf().get(l.to());
-            boolean inside = group.id().equals(owner);
-            if (!inside && owner != null) {
-                Group g = caps.group(owner);
-                if (g != null) {
-                    spans.add(Span.styled("  " + (g.ai() ? IntegrationSummaryHints.MARK : "") + g.name(),
-                            Style.EMPTY.fg(RouteGroups.colorOf(caps.groups().indexOf(g)))));
+            for (ProjectOverview.Link l : overview.links()) {
+                if (route.equals(l.from()) && members.contains(l.to()) && !order.contains(l.to())) {
+                    queue.add(l.to());
                 }
             }
-            lines.add(line(width, spans.toArray(new Span[0])));
-            // follow the links inside the group only, and each route once
-            if (inside && visited.add(l.to())) {
-                addChildren(lines, l.to(), indent + (last ? "   " : "│  "), group, caps, overview, visited, width);
+        }
+        return new ArrayList<>(order);
+    }
+
+    /** A child in the tree: a link to another route, or an endpoint outside the project the route sends to. */
+    private record Child(ProjectOverview.Link link, ProjectRoutes.Endpoint endpoint) {
+    }
+
+    /**
+     * What a route sends to, in order: the routes it links to, and the remote endpoints no route of the project
+     * consumes.
+     */
+    private static List<Child> children(String route, ProjectOverview.Overview overview, Predicate<String> remote) {
+        List<Child> answer = new ArrayList<>();
+        Set<String> targets = new HashSet<>();
+        ProjectRoutes.Route r = overview.route(route);
+        List<ProjectRoutes.Endpoint> produces = r != null ? r.produces() : List.of();
+        for (ProjectRoutes.Endpoint e : produces) {
+            boolean linked = false;
+            for (ProjectOverview.Link l : overview.links()) {
+                if (route.equals(l.from()) && !route.equals(l.to()) && e.uri().equals(l.endpoint())) {
+                    linked = true;
+                    if (targets.add(l.to())) {
+                        answer.add(new Child(l, null));
+                    }
+                }
+            }
+            if (!linked && (e.dynamic() || remote.test(e.scheme()))) {
+                answer.add(new Child(null, e));
             }
         }
+        // links over what the route consumes (poll, enrich), which are not among its sends
+        for (ProjectOverview.Link l : overview.links()) {
+            if (route.equals(l.from()) && !route.equals(l.to()) && targets.add(l.to())) {
+                answer.add(new Child(l, null));
+            }
+        }
+        return answer;
+    }
+
+    private static Line childLine(
+            Child c, boolean last, Group group, Capabilities caps, int width, Function<String, String> name) {
+        String branch = last ? " \u2514\u2500 " : " \u251c\u2500 ";
+        if (c.endpoint() != null) {
+            ProjectRoutes.Endpoint e = c.endpoint();
+            String kind = e.onError() ? "on error" : "to";
+            return line(width, Span.styled(branch + kind + " \u2192 ", Theme.muted()),
+                    Span.styled(e.uri(), Style.EMPTY.fg(Theme.accent())));
+        }
+        ProjectOverview.Link l = c.link();
+        String kind = l.onError() ? "on error" : l.kind();
+        List<Span> spans = new ArrayList<>();
+        spans.add(Span.styled(branch + kind + " \u2192 ", Theme.muted()));
+        spans.add(Span.styled(name.apply(l.to()), Style.EMPTY.fg(Theme.baseFg())));
+        String owner = caps.groupOf().get(l.to());
+        if (owner != null && !group.id().equals(owner)) {
+            Group g = caps.group(owner);
+            if (g != null) {
+                spans.add(Span.styled("  " + (g.ai() ? IntegrationSummaryHints.MARK : "") + g.name(),
+                        Style.EMPTY.fg(RouteGroups.colorOf(caps.groups().indexOf(g)))));
+            }
+        }
+        return line(width, spans.toArray(new Span[0]));
     }
 
     /** A line cut to the width, with an ellipsis. */

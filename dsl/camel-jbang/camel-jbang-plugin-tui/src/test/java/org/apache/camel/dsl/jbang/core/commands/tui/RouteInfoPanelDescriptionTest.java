@@ -19,9 +19,11 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
@@ -153,5 +155,20 @@ class RouteInfoPanelDescriptionTest {
     void wrapWords() {
         assertEquals(List.of("one two", "three", "averyverylongword"),
                 DiagramDetailSupport.wrapWords("one two three averyverylongword", 8));
+    }
+
+    /** Going down to the route's diagram keeps its label in the title, as the topology box showed it. */
+    @Test
+    void routeDiagramTitleKeepsTheLabel() {
+        Line base = DiagramDetailSupport.buildBreadcrumbTitle(new ArrayDeque<>(), "order-intake");
+        String title = DiagramDetailSupport.withRouteContext(base, info, "order-intake", project, true).spans().stream()
+                .map(Span::content).collect(Collectors.joining());
+        assertTrue(title.startsWith(" Route [order-intake] "), title);
+        assertTrue(title.contains(IntegrationSummaryHints.MARK + "Receives an order over HTTP"), "the AI label: " + title);
+
+        info.routes.get(0).description = "Order entry";
+        title = DiagramDetailSupport.withRouteContext(base, info, "order-intake", project, true).spans().stream()
+                .map(Span::content).collect(Collectors.joining());
+        assertTrue(title.contains("\u00b7 Order entry") && !title.contains(IntegrationSummaryHints.MARK), title);
     }
 }
