@@ -141,7 +141,13 @@ public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCas
 
     @Override
     public String getLabel() {
-        return "case[" + value + " -> " + URISupport.sanitizeUri(getEndpointUri()) + "]";
+        String endpointUri = null;
+        try {
+            endpointUri = getEndpointUri();
+        } catch (RuntimeException e) {
+            // Keep diagnostic output available when the endpoint URI cannot be built.
+        }
+        return "case[" + value + " -> " + URISupport.sanitizeUri(endpointUri) + "]";
     }
 
     @Override

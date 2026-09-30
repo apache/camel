@@ -99,6 +99,8 @@ public class CatalogSamplesTest {
             assertThat(yaml(sample, 0)).contains("switch:", "uri: direct:billing", "uri: direct:technical",
                     "uri: direct:review");
         }
+        assertThat(catalog.eipModel("case").getName()).isEqualTo("case");
+        assertThat(catalog.suggestEipNames("case", 0)).containsExactly("case");
         for (String term : List.of("case", "switchOtherwise")) {
             assertThat(CatalogSamples.sample(catalog, term, 1).getString("partOf")).isEqualTo("switch");
         }
