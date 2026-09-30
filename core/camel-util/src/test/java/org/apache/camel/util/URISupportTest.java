@@ -149,6 +149,40 @@ public class URISupportTest {
     }
 
     @Test
+    public void testNormalizeSpaceTheSameInEverySpelling() throws Exception {
+        // CAMEL-25188: the fast and the complex normalizer both write a space in a value as +
+        assertThat(URISupport.normalizeUri("log:foo?marker=a+b")).isEqualTo("log://foo?marker=a+b");
+        assertThat(URISupport.normalizeUri("log:foo?marker=a%20b")).isEqualTo("log://foo?marker=a+b");
+        assertThat(URISupport.normalizeUri("log:foo?marker=a b")).isEqualTo("log://foo?marker=a+b");
+        assertThat(URISupport.normalizeUri("log:foo?showAll=true&marker=a+b"))
+                .isEqualTo("log://foo?marker=a+b&showAll=true");
+        assertThat(URISupport.normalizeUri("log:foo?marker=a++b")).isEqualTo("log://foo?marker=a++b");
+    }
+
+    @Test
+    public void testNormalizeTwiceGivesTheSameUri() throws Exception {
+        // CAMEL-25188: a normalized uri normalizes to itself, so endpoint keys and lookups agree
+        String[] uris = {
+                "http://localhost:8080/foo?a=1&b=2",
+                "http://localhost:8080/foo?b=hello world&a=1",
+                "http://localhost:8080/foo?q=a+b",
+                "http://localhost:8080/foo?q=a%20b",
+                "http://localhost:8080/foo?q=a+b&x=1",
+                "ftp://user@host.com:21/dir?password=se+cret&binary=true",
+                "ftp://user@host.com:21/dir?password=RAW(se+cret)&binary=true",
+                "log:foo?level=INFO&showAll=true",
+                "timer:tick?period=1s&delay=2s",
+                "direct:start?b=\u00f8&a=1",
+                "file:target/in?include=.*\\.txt&noop=true",
+                "http://h/p?x=a&x=b&y=1",
+                "mock:a?b=x+y+z&a=1" };
+        for (String uri : uris) {
+            String once = URISupport.normalizeUri(uri);
+            assertThat(URISupport.normalizeUri(once)).as("normalizing %s twice", uri).isEqualTo(once);
+        }
+    }
+
+    @Test
     public void testParseParametersURLEncodedValue() throws Exception {
         String out = URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren%20Hansen");
         URI uri = new URI(out);

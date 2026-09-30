@@ -955,6 +955,9 @@ public final class URISupport {
             // characters in a URI query per RFC 3986 - UnsafeUriCharactersEncoder does not escape them
             // as it is also used outside of this query-value context
             String encoded = UnsafeUriCharactersEncoder.encode(value).replace("&", "%26").replace("=", "%3D");
+            // a space as +, as the complex normalizer (createQueryString) writes it, so normalizing a normalized
+            // uri gives the same uri; the fast parser only takes uris without %, so %20 here is always a space
+            encoded = encoded.replace("%20", "+");
             sb.append(encoded);
         }
     }
