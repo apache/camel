@@ -279,10 +279,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
             #if( $name == "RouteDefinition" )
         doMoveStepsUnderFrom(jo);
             #end
-            #if( $name == "SwitchValueDefinition" )
-        jo.clear();
-        jo.put(def.getName(), def.asLiteral());
-            #elseif( $name == "SwitchCaseDefinition" )
+            #if( $name == "SwitchCaseDefinition" )
+        // Preserve literal strings such as "001" instead of converting them to numbers.
         if (def.getValue() != null) {
             jo.put("value", def.getValue());
         }

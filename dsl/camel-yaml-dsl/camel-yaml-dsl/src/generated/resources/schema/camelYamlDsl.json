@@ -6623,29 +6623,21 @@
           "value" : {
             "type" : "string",
             "title" : "Value",
-            "description" : "The case-insensitive literal value for a scalar selector. Mutually exclusive with values."
-          },
-          "values" : {
-            "type" : "array",
-            "title" : "Values",
-            "description" : "Named, typed literal values for a composite selector. Every selected key must occur exactly once.",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.SwitchValueDefinition"
-            }
+            "description" : "The case-insensitive literal value for a scalar selector."
           }
         },
-        "required" : [ "uri" ]
+        "required" : [ "uri", "value" ]
       },
       "org.apache.camel.model.SwitchDefinition" : {
         "title" : "Switch",
-        "description" : "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar or composite values",
+        "description" : "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar values",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
           "case" : {
             "type" : "array",
             "title" : "Case",
-            "description" : "Literal cases. Duplicate combinations are rejected at startup.",
+            "description" : "Literal cases. Duplicate values are rejected at startup, ignoring case.",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.SwitchCaseDefinition"
             }
@@ -6666,14 +6658,6 @@
             "title" : "Id",
             "description" : "The id of this node"
           },
-          "keys" : {
-            "type" : "array",
-            "title" : "Keys",
-            "description" : "Exact map field names forming a composite key. Additional result fields are ignored.",
-            "items" : {
-              "type" : "string"
-            }
-          },
           "note" : {
             "type" : "string",
             "title" : "Note",
@@ -6686,7 +6670,7 @@
           },
           "selector" : {
             "title" : "Selector",
-            "description" : "Expression evaluated once per entry. Returns a scalar, or a map when keys are configured.",
+            "description" : "Expression evaluated once per entry. Returns a scalar value to match against the literal cases.",
             "$ref" : "#/items/definitions/org.apache.camel.model.ExpressionSubElementDefinition"
           }
         },
@@ -6708,14 +6692,6 @@
           }
         },
         "required" : [ "uri" ]
-      },
-      "org.apache.camel.model.SwitchValueDefinition" : {
-        "type" : "object",
-        "minProperties" : 1,
-        "maxProperties" : 1,
-        "additionalProperties" : {
-          "type" : [ "string", "boolean", "number" ]
-        }
       },
       "org.apache.camel.model.TemplatedRouteDefinition" : {
         "type" : "object",

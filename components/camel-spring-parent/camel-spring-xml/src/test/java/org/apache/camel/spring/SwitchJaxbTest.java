@@ -33,11 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SwitchJaxbTest {
     @Test
-    void compositeLiteralsSurviveJaxbRoundTripAndExecute() throws Exception {
+    void scalarLiteralsSurviveJaxbRoundTripAndExecute() throws Exception {
         try (var context = new DefaultCamelContext()) {
             RoutesDefinition routes = new RoutesDefinition();
-            routes.from("direct:start").doSwitch().header("decision").keys("department", "urgent", "score")
-                    .doCase().value("department", "billing").value("urgent", true).value("score", 2)
+            routes.from("direct:start").doSwitch().header("decision")
+                    .doCase("billing")
                     .id("billingCase").to("mock:billing")
                     .otherwise("mock:other");
             String xml = new JaxbModelToXMLDumper().dumpModelAsXml(context, routes);
@@ -50,9 +50,9 @@ class SwitchJaxbTest {
             context.getEndpoint("mock:other", MockEndpoint.class).expectedBodiesReceived("other");
             try (var template = context.createProducerTemplate()) {
                 template.sendBodyAndHeader("direct:start", "matched", "decision",
-                        Map.of("department", "BILLING", "urgent", true, "score", 2.0));
+                        "BILLING");
                 template.sendBodyAndHeader("direct:start", "other", "decision",
-                        Map.of("department", "billing", "urgent", "true", "score", 2));
+                        "other");
             }
             MockEndpoint.assertIsSatisfied(context);
         }

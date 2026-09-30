@@ -18,8 +18,8 @@ package org.apache.camel.processor;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,7 +31,7 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -54,38 +54,30 @@ class SwitchTest extends ContextTestSupport {
     }
 
     @Test
-    void compositeMatchesNamedTypedValuesAndIgnoresExtraFields() throws Exception {
-        getMockEndpoint("mock:urgent").expectedBodiesReceived("first", "second");
-        getMockEndpoint("mock:billing").expectedBodiesReceived("third");
-        getMockEndpoint("mock:review").expectedBodiesReceived("string", "unknown", "null");
-        template.sendBodyAndHeader("direct:composite", "first", "decision", Map.of("department", "billing", "urgent", true));
-        template.sendBodyAndHeader("direct:composite", "second", "decision",
-                Map.of("urgent", true, "department", "BILLING", "score", 3));
-        template.sendBodyAndHeader("direct:composite", "third", "decision", Map.of("urgent", false, "department", "billing"));
-        template.sendBodyAndHeader("direct:composite", "string", "decision", Map.of("department", "billing", "urgent", "true"));
-        template.sendBodyAndHeader("direct:composite", "unknown", "decision", Map.of("department", "other", "urgent", true));
-        template.sendBody("direct:composite", "null");
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    void malformedCompositeDoesNotUseFallback() throws Exception {
+    void structuredSelectorResultsFailWithoutUsingFallback() throws Exception {
         getMockEndpoint("mock:review").expectedMessageCount(0);
+        getMockEndpoint("mock:after").expectedMessageCount(0);
         for (Object result : new Object[] {
-                "billing", Map.of("department", "billing"), Map.of("department", "billing", "urgent", Map.of()) }) {
-            Exchange answer = template.request("direct:composite", e -> e.getIn().setHeader("decision", result));
-            assertNotNull(answer.getException());
+                Map.of("department", "billing", "urgent", true),
+                List.of("billing"), new String[] { "billing" } }) {
+            Exchange answer = template.request("direct:scalar", e -> e.getIn().setHeader("department", result));
+            IllegalArgumentException failure = assertInstanceOf(IllegalArgumentException.class, answer.getException());
+            assertTrue(failure.getMessage().contains("Switch requires a scalar selector result"));
+            if (result instanceof Map<?, ?>) {
+                assertTrue(failure.getMessage().contains("Composite selector results are not supported"));
+            }
         }
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    void numericTypesShareAKeyButStringsRemainDistinct() throws Exception {
-        getMockEndpoint("mock:number").expectedMessageCount(3);
-        getMockEndpoint("mock:string").expectedMessageCount(1);
-        for (Object number : new Object[] { 2, 2.0, new BigDecimal("2.00"), "2" }) {
-            template.sendBodyAndHeader("direct:numbers", "message", "decision", Map.of("score", number));
-        }
+    void mapSelectorResultFollowsErrorHandling() throws Exception {
+        getMockEndpoint("mock:error").expectedMessageCount(1);
+        getMockEndpoint("mock:review").expectedMessageCount(0);
+        getMockEndpoint("mock:after").expectedMessageCount(0);
+        Exchange answer = template.request("direct:map", e -> e.getIn().setBody("message"));
+        assertNull(answer.getException());
+        assertInstanceOf(IllegalArgumentException.class, answer.getProperty(Exchange.EXCEPTION_CAUGHT));
         assertMockEndpointsSatisfied();
     }
 
@@ -112,7 +104,7 @@ class SwitchTest extends ContextTestSupport {
         getMockEndpoint("mock:urgent").expectedMessageCount(1);
         getMockEndpoint("mock:after").expectedMessageCount(1);
         template.sendBodyAndHeaders("direct:nested", "message",
-                Map.of("department", "billing", "decision", Map.of("department", "billing", "urgent", true)));
+                Map.of("department", "billing", "decision", "urgent"));
         assertMockEndpointsSatisfied();
     }
 
@@ -156,13 +148,6 @@ class SwitchTest extends ContextTestSupport {
                         .doCase("billing", "mock:billing").doCase("", "mock:empty").doCase("billing*", "mock:literal")
                         .doCase("otherwise", "mock:otherwiseLiteral")
                         .otherwise("mock:review").end().to("mock:after");
-                from("direct:composite").doSwitch(header("decision")).keys("department", "urgent")
-                        .doCase().value("department", "billing").value("urgent", true).id("urgentCase").to("mock:urgent")
-                        .doCase().value("urgent", false).value("department", "billing").to("mock:billing")
-                        .otherwise("mock:review");
-                from("direct:numbers").doSwitch(header("decision")).keys("score")
-                        .doCase().value("score", 2).to("mock:number")
-                        .doCase().value("score", "2").to("mock:string");
                 from("direct:noFallback").doSwitch(header("department")).doCase("billing", "mock:billing")
                         .end().to("mock:after");
                 from("direct:loop").loop(3).doSwitch(new ExpressionAdapter() {
@@ -172,8 +157,16 @@ class SwitchTest extends ContextTestSupport {
                     }
                 }).doCase("1", "mock:one").doCase("2", "mock:two").doCase("3", "mock:three").end().end();
                 from("direct:nested").choice().when(header("department").isEqualTo("billing"))
-                        .doSwitch(header("department")).doCase("billing", "direct:composite")
+                        .doSwitch(header("department")).doCase("billing", "direct:priority")
                         .end().end().to("mock:after");
+                from("direct:priority").doSwitch(header("decision")).doCase("urgent", "mock:urgent");
+                from("direct:map").onException(IllegalArgumentException.class).handled(true).to("mock:error").end()
+                        .doSwitch(new ExpressionAdapter() {
+                            @Override
+                            public Object evaluate(Exchange exchange) {
+                                return Map.of("department", "billing", "urgent", true);
+                            }
+                        }).otherwise("mock:review").end().to("mock:after");
                 from("direct:failure").onException(IllegalStateException.class).handled(true).to("mock:error").end()
                         .doSwitch(new ExpressionAdapter() {
                             @Override

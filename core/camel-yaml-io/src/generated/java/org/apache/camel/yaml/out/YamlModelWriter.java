@@ -322,9 +322,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeSwitchOtherwiseDefinition(SwitchOtherwiseDefinition def) {
         return wrapNode("switchOtherwise", doWriteSwitchOtherwiseDefinition(def));
     }
-    public JsonObject writeSwitchValueDefinition(SwitchValueDefinition def) {
-        return wrapNode("switchValue", doWriteSwitchValueDefinition(def));
-    }
     public JsonObject writeTemplatedRouteDefinition(TemplatedRouteDefinition def) {
         return wrapNode("templatedRoute", doWriteTemplatedRouteDefinition(def));
     }
@@ -1833,7 +1830,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
         doWriteAttribute(jo, "value", def.getValue(), null);
         doWriteAttribute(jo, "uri", def.getUri(), null);
-        doWriteChildList(jo, null, "values", def.getValues(), this::doWriteSwitchValueDefinition);
+        // Preserve literal strings such as "001" instead of converting them to numbers.
         if (def.getValue() != null) {
             jo.put("value", def.getValue());
         }
@@ -1843,7 +1840,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
         doWriteChildElement(jo, "selector", def.getSelector(), this::doWriteExpressionSubElementDefinition);
-        doWriteStringList(jo, null, "keys", def.getKeys());
         doWriteChildList(jo, null, "case", def.getCases(), this::doWriteSwitchCaseDefinition);
         doWriteChildElement(jo, "otherwise", def.getOtherwise(), this::doWriteSwitchOtherwiseDefinition);
         return jo;
@@ -1851,15 +1847,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteSwitchOtherwiseDefinition(SwitchOtherwiseDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteAttribute(jo, "uri", def.getUri(), null);
-        return jo;
-    }
-    protected JsonObject doWriteSwitchValueDefinition(SwitchValueDefinition def) {
-        JsonObject jo = new JsonObject();
-        doWriteAttribute(jo, "name", def.getName(), null);
-        doWriteAttribute(jo, "value", def.getValue(), null);
-        doWriteAttribute(jo, "type", def.getType(), "string");
-        jo.clear();
-        jo.put(def.getName(), def.asLiteral());
         return jo;
     }
     protected JsonObject doWriteTemplatedRouteDefinition(TemplatedRouteDefinition def) {

@@ -23,7 +23,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.SwitchOtherwiseDefinition;
-import org.apache.camel.model.SwitchValueDefinition;
 import org.apache.camel.model.language.HeaderExpression;
 import org.junit.jupiter.api.Test;
 
@@ -64,7 +63,7 @@ class SwitchValidationTest {
 
     @Test
     void rejectsMissingValue() {
-        rejects(s -> s.doCase((String) null, "mock:a"), "require value");
+        rejects(s -> s.doCase(null, "mock:a"), "require value");
     }
 
     @Test
@@ -75,55 +74,6 @@ class SwitchValidationTest {
     @Test
     void rejectsEmptySelector() {
         rejects(s -> s.setSelector(new ExpressionSubElementDefinition()), "selector requires an expression");
-    }
-
-    @Test
-    void rejectsDuplicateKeys() {
-        rejects(s -> s.keys("department", "department"), "keys must be nonblank and unique");
-    }
-
-    @Test
-    void rejectsMissingCompositeKey() {
-        rejects(s -> s.keys("department", "urgent").doCase().value("department", "billing").to("mock:a"),
-                "exactly the declared keys");
-    }
-
-    @Test
-    void rejectsExtraCompositeKey() {
-        rejects(s -> s.keys("department").doCase().value("department", "billing").value("urgent", true).to("mock:a"),
-                "exactly the declared keys");
-    }
-
-    @Test
-    void rejectsRepeatedCompositeKey() {
-        rejects(s -> s.keys("department").doCase().value("department", "billing").value("department", "technical").to("mock:a"),
-                "Duplicate or missing switch value name");
-    }
-
-    @Test
-    void rejectsMixedForms() {
-        rejects(s -> s.keys("department").doCase("billing", "mock:a"), "cannot declare scalar value");
-    }
-
-    @Test
-    void rejectsDuplicateCompositeValues() {
-        rejects(s -> s.keys("department", "score")
-                .doCase().value("department", "billing").value("score", 2).to("mock:a")
-                .doCase().value("score", 2.0).value("department", "BILLING").to("mock:b"), "Duplicate switch case");
-    }
-
-    @Test
-    void rejectsNonFiniteNumbers() {
-        rejects(s -> s.keys("score").doCase().value("score", Double.NaN).to("mock:a"), "NaN");
-    }
-
-    @Test
-    void rejectsInvalidBoolean() {
-        rejects(s -> {
-            s.keys("urgent").doCase().value("urgent", true).to("mock:a");
-            SwitchValueDefinition value = s.getCases().get(0).getValues().get(0);
-            value.setValue("yes");
-        }, "boolean must be true or false");
     }
 
     private void rejects(Consumer<SwitchDefinition> configure, String message) {

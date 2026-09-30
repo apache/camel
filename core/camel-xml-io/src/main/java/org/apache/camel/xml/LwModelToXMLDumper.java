@@ -249,6 +249,7 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
      */
     private static void extractNamespaces(RouteDefinition route, Map<String, String> namespaces) {
         for (SwitchDefinition sw : filterTypeInOutputs(route.getOutputs(), SwitchDefinition.class)) {
+            sw.preCreateProcessor();
             NamespaceAware aware = getNamespaceAwareFromExpression(sw);
             if (aware != null && aware.getNamespaces() != null) {
                 namespaces.putAll(aware.getNamespaces());

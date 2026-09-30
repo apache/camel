@@ -25,16 +25,6 @@
       <case id="billing" description="Billing destination" note="case note" value="billing" uri="mock:billing"/>
       <otherwise uri="mock:other"/>
     </switch>
-    <switch id="composite">
-      <selector><header>decision</header></selector>
-      <keys>department</keys><keys>urgent</keys><keys>score</keys>
-      <case id="urgent" uri="mock:urgent">
-        <values name="department" value="billing"/>
-        <values name="urgent" type="boolean" value="true"/>
-        <values name="score" type="number" value="2.0"/>
-      </case>
-      <otherwise uri="mock:review"/>
-    </switch>
     <to uri="mock:after"/>
   </route>
 </routes>

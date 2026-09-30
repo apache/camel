@@ -17,9 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -36,20 +34,17 @@ import org.apache.camel.spi.Metadata;
 
 /** Routes a message to one fixed endpoint using a literal lookup table. */
 @Metadata(firstVersion = "4.23.0", label = "eip,routing",
-          description = "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar or composite values")
+          description = "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar values")
 @XmlRootElement(name = "switch")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "selector", "keys", "cases", "otherwise" })
+@XmlType(propOrder = { "selector", "cases", "otherwise" })
 public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
     @XmlElement(required = true)
     @Metadata(required = true,
-              description = "Expression evaluated once per entry. Returns a scalar, or a map when keys are configured.")
+              description = "Expression evaluated once per entry. Returns a scalar value to match against the literal cases.")
     private ExpressionSubElementDefinition selector;
-    @XmlElement(name = "keys")
-    @Metadata(description = "Exact map field names forming a composite key. Additional result fields are ignored.")
-    private List<String> keys = new ArrayList<>();
     @XmlElement(name = "case")
-    @Metadata(description = "Literal cases. Duplicate combinations are rejected at startup.")
+    @Metadata(description = "Literal cases. Duplicate values are rejected at startup, ignoring case.")
     private List<SwitchCaseDefinition> cases = new ArrayList<>();
     @XmlElement
     @Metadata(description = "Fixed fallback URI for null or unmatched selector results. Without a fallback processing continues.")
@@ -67,7 +62,6 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
     protected SwitchDefinition(SwitchDefinition source) {
         super(source);
         this.selector = source.selector != null ? source.selector.copyDefinition() : null;
-        this.keys = new ArrayList<>(source.keys);
         this.otherwise = source.otherwise != null ? source.otherwise.copyDefinition() : null;
         for (SwitchCaseDefinition c : source.cases) {
             SwitchCaseDefinition copy = c.copyDefinition();
@@ -82,7 +76,6 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
     }
 
     public ExpressionSubElementDefinition getSelector() {
-        preCreateProcessor();
         return selector;
     }
 
@@ -97,14 +90,6 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
 
     public void setSelector(ExpressionSubElementDefinition selector) {
         this.selector = selector;
-    }
-
-    public List<String> getKeys() {
-        return keys;
-    }
-
-    public void setKeys(List<String> keys) {
-        this.keys = keys;
     }
 
     public List<SwitchCaseDefinition> getCases() {
@@ -145,23 +130,9 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
         return otherwiseDefinition;
     }
 
-    /** Select the named fields participating in composite matching. */
-    public SwitchDefinition keys(String... keys) {
-        setKeys(new ArrayList<>(Arrays.asList(keys)));
-        return this;
-    }
-
     /** Add a scalar literal and its destination. */
     public SwitchDefinition doCase(String value, String uri) {
         return doCase(new SwitchCaseDefinition(value, uri));
-    }
-
-    /** Add a composite combination and its destination. */
-    public SwitchDefinition doCase(Map<String, ?> values, String uri) {
-        SwitchCaseDefinition c = new SwitchCaseDefinition();
-        values.forEach((name, value) -> c.getValues().add(new SwitchValueDefinition(name, value)));
-        c.setUri(uri);
-        return doCase(c);
     }
 
     /** Add a case definition. */
@@ -174,11 +145,6 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
             ProcessorDefinitionHelper.prepareSourceLocation(ProcessorDefinitionHelper.getResource(this), value);
         }
         return this;
-    }
-
-    /** Build a composite case with named literal values. */
-    public CaseBuilder doCase() {
-        return new CaseBuilder(this, new SwitchCaseDefinition());
     }
 
     /** Build a scalar case. */
@@ -230,11 +196,6 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
         private CaseBuilder(SwitchDefinition parent, SwitchCaseDefinition definition) {
             this.parent = parent;
             this.definition = definition;
-        }
-
-        public CaseBuilder value(String name, Object value) {
-            definition.getValues().add(new SwitchValueDefinition(name, value));
-            return this;
         }
 
         public CaseBuilder id(String id) {

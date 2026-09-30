@@ -16,30 +16,23 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
-/** One literal combination and one fixed destination. */
+/** One literal value and one fixed destination. */
 @Metadata(label = "configuration", description = "A literal switch case with one fixed endpoint destination")
 @XmlRootElement(name = "case")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCaseDefinition>
         implements EndpointRequiredDefinition {
-    @XmlAttribute
-    @Metadata(description = "The case-insensitive literal value for a scalar selector. Mutually exclusive with values.")
+    @XmlAttribute(required = true)
+    @Metadata(description = "The case-insensitive literal value for a scalar selector.")
     private String value;
-    @XmlElement(name = "values")
-    @Metadata(description = "Named, typed literal values for a composite selector. Every selected key must occur exactly once.")
-    private List<SwitchValueDefinition> values = new ArrayList<>();
     @XmlAttribute(required = true)
     @Metadata(description = "The fixed destination URI. Supports property placeholders, but not Simple expressions.")
     private String uri;
@@ -60,9 +53,6 @@ public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCas
         super(source);
         this.value = source.value;
         this.uri = source.uri;
-        for (SwitchValueDefinition literal : source.values) {
-            values.add(literal.copyDefinition());
-        }
     }
 
     public SwitchCaseDefinition copyDefinition() {
@@ -75,14 +65,6 @@ public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCas
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public List<SwitchValueDefinition> getValues() {
-        return values;
-    }
-
-    public void setValues(List<SwitchValueDefinition> values) {
-        this.values = values;
     }
 
     public String getUri() {
@@ -133,7 +115,7 @@ public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCas
 
     @Override
     public String getLabel() {
-        return "case[" + (value != null ? value : values) + "]";
+        return "case[" + value + "]";
     }
 
     @Override

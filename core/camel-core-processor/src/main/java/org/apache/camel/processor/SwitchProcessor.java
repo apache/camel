@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -49,8 +48,7 @@ public class SwitchProcessor extends BaseProcessorSupport
     private static final Logger LOG = LoggerFactory.getLogger(SwitchProcessor.class);
     private final CamelContext context;
     private final Expression selector;
-    private final List<String> keys;
-    private final Map<Object, Integer> table = new LinkedHashMap<>();
+    private final Map<String, Integer> table = new LinkedHashMap<>();
     private final List<AsyncProcessor> processors = new ArrayList<>();
     private final AsyncProcessor otherwise;
     private final AtomicLongArray counts;
@@ -58,11 +56,10 @@ public class SwitchProcessor extends BaseProcessorSupport
     private String routeId;
     private String stepId;
 
-    public SwitchProcessor(CamelContext context, Expression selector, List<String> keys,
-                           Map<Object, Processor> cases, Processor otherwise) {
+    public SwitchProcessor(CamelContext context, Expression selector,
+                           Map<String, Processor> cases, Processor otherwise) {
         this.context = context;
         this.selector = selector;
-        this.keys = List.copyOf(keys);
         cases.forEach((key, processor) -> {
             table.put(key, processors.size());
             processors.add(AsyncProcessorConverterHelper.convert(processor));
@@ -71,54 +68,22 @@ public class SwitchProcessor extends BaseProcessorSupport
         counts = new AtomicLongArray(processors.size() + 1);
     }
 
-    /** Normalize a typed literal, preserving the distinction between strings, booleans and numbers. */
-    public static Object normalizeLiteral(Object value) {
-        if (value instanceof String text) {
-            return text.toLowerCase(Locale.ENGLISH);
-        }
-        if (value instanceof Boolean) {
-            return value;
-        }
-        if (value instanceof Number number) {
-            try {
-                return new BigDecimal(number.toString()).stripTrailingZeros();
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Switch numbers must be finite decimal values", e);
-            }
-        }
-        throw new IllegalArgumentException("Switch values must be non-null strings, booleans or numbers");
-    }
-
-    /** Build the same immutable composite key for case declarations and selector results. */
-    public static List<Object> compositeKey(Map<?, ?> values, List<String> keys) {
-        List<Object> key = new ArrayList<>(keys.size());
-        for (String name : keys) {
-            if (!values.containsKey(name)) {
-                throw new IllegalArgumentException("Missing switch result key: " + name);
-            }
-            key.add(normalizeLiteral(values.get(name)));
-        }
-        return List.copyOf(key);
-    }
-
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        Object key = null;
+        String key = null;
         try {
             Object result = selector.evaluate(exchange, Object.class);
             if (result != null) {
-                if (!keys.isEmpty()) {
-                    if (!(result instanceof Map<?, ?> values)) {
-                        throw new IllegalArgumentException("Composite switch selector must return a Map");
-                    }
-                    key = compositeKey(values, keys);
-                } else {
-                    if (result instanceof Map<?, ?> || result instanceof Iterable<?> || result.getClass().isArray()) {
-                        throw new IllegalArgumentException("Scalar switch selector must return a scalar value");
-                    }
-                    String text = context.getTypeConverter().mandatoryConvertTo(String.class, exchange, result);
-                    key = text.toLowerCase(Locale.ENGLISH);
+                if (result instanceof Map<?, ?>) {
+                    throw new IllegalArgumentException(
+                            "Switch requires a scalar selector result, but received a Map. Composite selector results are not supported.");
                 }
+                if (result instanceof Iterable<?> || result.getClass().isArray()) {
+                    throw new IllegalArgumentException(
+                            "Switch requires a scalar selector result, but received a collection or array");
+                }
+                String text = context.getTypeConverter().mandatoryConvertTo(String.class, exchange, result);
+                key = text.toLowerCase(Locale.ENGLISH);
             }
         } catch (Exception e) {
             exchange.setException(e);

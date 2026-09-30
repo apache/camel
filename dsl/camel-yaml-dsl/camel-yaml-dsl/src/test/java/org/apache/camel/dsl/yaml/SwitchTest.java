@@ -16,9 +16,6 @@
  */
 package org.apache.camel.dsl.yaml;
 
-import java.math.BigDecimal;
-import java.util.Map;
-
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.SwitchDefinition;
@@ -33,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SwitchTest extends YamlTestSupport {
     @Test
-    void compositeValuesAndEndpointParametersRoundTrip() throws Exception {
+    void scalarValuesAndEndpointParametersRoundTrip() throws Exception {
         loadRoutes("""
                 - route:
                     id: decision
@@ -44,16 +41,17 @@ class SwitchTest extends YamlTestSupport {
                             selector:
                               header:
                                 expression: decision
-                            keys: [department, urgent]
                             case:
-                              - values: [department: billing, urgent: true]
+                              - value: urgent
                                 uri: direct
                                 parameters:
                                   name: urgent
-                              - values: [urgent: false, department: billing]
+                              - value: billing
                                 uri: direct:billing
                             otherwise:
-                              uri: direct:review
+                              uri: direct
+                              parameters:
+                                name: review
                 - route:
                     from:
                       uri: direct:urgent
@@ -75,7 +73,7 @@ class SwitchTest extends YamlTestSupport {
                 """);
         SwitchDefinition sw = (SwitchDefinition) context.getRouteDefinition("decision").getOutputs().get(0);
         assertThat(sw.getCases().get(0).getUri()).isEqualTo("direct:urgent");
-        assertThat(sw.getCases().get(0).getValues().get(1).asLiteral()).isEqualTo(true);
+        assertThat(sw.getCases().get(0).getValue()).isEqualTo("urgent");
         assertThat(sw.getOtherwise().getUri()).isEqualTo("direct:review");
         try (var restored = new DefaultCamelContext()) {
             for (var route : context.getRouteDefinitions()) {
@@ -85,64 +83,34 @@ class SwitchTest extends YamlTestSupport {
             restored.start();
             try (var template = restored.createProducerTemplate()) {
                 assertThat(template.requestBodyAndHeader("direct:start", "original", "decision",
-                        Map.of("department", "BILLING", "urgent", true))).isEqualTo("urgent");
+                        "URGENT")).isEqualTo("urgent");
                 assertThat(template.requestBodyAndHeader("direct:start", "original", "decision",
-                        Map.of("department", "billing", "urgent", false))).isEqualTo("billing");
+                        "BILLING")).isEqualTo("billing");
                 assertThat(template.requestBodyAndHeader("direct:start", "original", "decision",
-                        Map.of("department", "billing", "urgent", "true"))).isEqualTo("review");
+                        "other")).isEqualTo("review");
             }
         }
     }
 
     @Test
-    void quotedScalarsRetainTheirTypesAfterDump() throws Exception {
-        loadRoutes("""
+    void rejectsCompositeConfiguration() throws Exception {
+        String yaml = """
                 - route:
-                    id: quoted
                     from:
                       uri: direct:start
                       steps:
                         - switch:
                             selector:
                               header: decision
-                            keys: [urgent, score]
                             case:
-                              - values: [urgent: 'true', score: '2']
-                                uri: mock:string
-                              - values: [urgent: true, score: 2.0]
-                                uri: mock:boolean
-                """);
-        var route = context.getRouteDefinition("quoted");
-        String yaml = new LwModelToYAMLDumper().dumpModelAsYaml(context, route);
-        try (var restored = new DefaultCamelContext()) {
-            PluginHelper.getRoutesLoader(restored).loadRoutes(ResourceHelper.fromString("restored.yaml", yaml));
-            SwitchDefinition sw = (SwitchDefinition) restored.getRouteDefinition("quoted").getOutputs().get(0);
-            assertThat(sw.getCases().get(0).getValues().get(0).asLiteral()).isEqualTo("true");
-            assertThat(sw.getCases().get(1).getValues().get(0).asLiteral()).isEqualTo(true);
-            assertThat(sw.getCases().get(0).getValues().get(1).asLiteral()).isEqualTo("2");
-            assertThat(sw.getCases().get(1).getValues().get(1).asLiteral()).isInstanceOf(BigDecimal.class);
-            assertThat((BigDecimal) sw.getCases().get(1).getValues().get(1).asLiteral()).isEqualByComparingTo("2.0");
-        }
-    }
-
-    @Test
-    void rejectsNonScalarOrMultipleBindingsPerEntry() {
-        for (String values : new String[] { "[{urgent: true, department: billing}]", "[urgent: [true]]", "[urgent: null]" }) {
-            String yaml = """
-                    - route:
-                        from:
-                          uri: direct:start
-                          steps:
-                            - switch:
-                                selector:
-                                  header: decision
-                                keys: [urgent]
-                                case:
-                                  - values: %s
-                                    uri: mock:a
-                    """.formatted(values);
-            assertThatThrownBy(() -> loadRoutes(yaml)).isInstanceOf(Exception.class);
-        }
+                              - value: billing
+                                uri: mock:billing
+                """;
+        loadRoutes(yaml);
+        assertThatThrownBy(() -> loadRoutesNoValidate(yaml.replace("case:", "keys: [department, urgent]\n            case:")))
+                .hasStackTraceContaining("unsupported field: keys");
+        assertThatThrownBy(() -> loadRoutesNoValidate(yaml.replace("value: billing", "values: [department: billing]")))
+                .hasStackTraceContaining("unsupported field: values");
     }
 
     @Test
