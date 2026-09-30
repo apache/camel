@@ -32,9 +32,9 @@ import org.junit.jupiter.api.io.TempDir;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tab completion in the endpoint uris of a Java route file (CAMEL-25208).
+ * Tab completion in the endpoint uris of Java and XML route files (CAMEL-25208).
  */
-class JavaStringCompletionTest {
+class EndpointUriCompletionTest {
 
     @TempDir
     Path tempDir;
@@ -46,30 +46,82 @@ class JavaStringCompletionTest {
 
     @Test
     void theStringTheCursorIsIn() {
-        JavaStringContext c = JavaStringContext.at("        from(\"timer:tick?per\")", 28);
+        EndpointUriContext c = EndpointUriContext.inJava("        from(\"timer:tick?per\")", 28);
         assertThat(c.call()).isEqualTo("from");
         assertThat(c.before()).isEqualTo("timer:tick?per");
         assertThat(c.isEndpoint()).isTrue();
         assertThat(c.role()).isEqualTo("consumer");
 
-        c = JavaStringContext.at("            .to( \"kaf", 21);
+        c = EndpointUriContext.inJava("            .to( \"kaf", 21);
         assertThat(c.call()).isEqualTo("to");
         assertThat(c.before()).isEqualTo("kaf");
         assertThat(c.role()).isEqualTo("producer");
 
         // after the string, in another call, in a comment, not in a string
-        assertThat(JavaStringContext.at("        from(\"timer:tick\").to(", 30)).isNull();
+        assertThat(EndpointUriContext.inJava("        from(\"timer:tick\").to(", 30)).isNull();
         // the second string of a concatenation is not the argument's start
-        assertThat(JavaStringContext.at("        log.info(\"x\" + \"y", 25)).isNull();
-        assertThat(JavaStringContext.at("        log.info(\"x", 19).call()).isEqualTo("info");
-        assertThat(JavaStringContext.at("        // to(\"kaf", 18)).isNull();
-        assertThat(JavaStringContext.at("        x = \"kaf", 17)).isNull();
+        assertThat(EndpointUriContext.inJava("        log.info(\"x\" + \"y", 25)).isNull();
+        assertThat(EndpointUriContext.inJava("        log.info(\"x", 19).call()).isEqualTo("info");
+        assertThat(EndpointUriContext.inJava("        // to(\"kaf", 18)).isNull();
+        assertThat(EndpointUriContext.inJava("        x = \"kaf", 17)).isNull();
         // an escaped quote stays in the string
-        assertThat(JavaStringContext.at("        to(\"a\\\"b", 16).before()).isEqualTo("a\\\"b");
+        assertThat(EndpointUriContext.inJava("        to(\"a\\\"b", 16).before()).isEqualTo("a\\\"b");
+    }
+
+    @Test
+    void theUriAttributeTheCursorIsIn() {
+        String line = "        <from uri=\"timer:tick?per\"/>";
+        EndpointUriContext c = EndpointUriContext.inXml(line, line.length() - 3);
+        assertThat(c.call()).isEqualTo("from");
+        assertThat(c.before()).isEqualTo("timer:tick?per");
+        assertThat(c.role()).isEqualTo("consumer");
+
+        line = "<camel:to id=\"x\" uri='kafka:t?a=1&amp;b";
+        c = EndpointUriContext.inXml(line, line.length());
+        assertThat(c.call()).isEqualTo("to");
+        assertThat(c.before()).isEqualTo("kafka:t?a=1&b");
+
+        // the attribute closed before the cursor, another attribute, no element
+        line = "        <to uri=\"seda:a\" id=\"x";
+        assertThat(EndpointUriContext.inXml(line, line.length())).isNull();
+        line = "        <to id=\"seda";
+        assertThat(EndpointUriContext.inXml(line, line.length())).isNull();
+        assertThat(EndpointUriContext.inXml("uri=\"seda", 9)).isNull();
+    }
+
+    @Test
+    void anXmlUri() throws Exception {
+        SourceViewer viewer = viewer("routes.xml", """
+                <routes xmlns="http://camel.apache.org/schema/xml-io">
+                    <route>
+                        <from uri="timer:tick?period=1000&amp;fixedR"/>
+                        <to uri="sed"/>
+                    </route>
+                </routes>
+                """);
+        viewer.setUriCompletion("xml");
+        cursorAt(viewer, 3, "\"/>");
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.NONE));
+        type(viewer, "a");
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertThat(line(viewer, 3)).isEqualTo("        <to uri=\"seda:\"/>");
+
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.UP, KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.END, KeyModifiers.NONE));
+        for (int i = 0; i < 3; i++) {
+            viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.LEFT, KeyModifiers.NONE));
+        }
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertThat(line(viewer, 2)).isEqualTo("        <from uri=\"timer:tick?period=1000&amp;fixedRate=\"/>");
     }
 
     private SourceViewer viewer(String src) throws Exception {
-        Path file = tempDir.resolve("MyRoute.java");
+        return viewer("MyRoute.java", src);
+    }
+
+    private SourceViewer viewer(String fileName, String src) throws Exception {
+        Path file = tempDir.resolve(fileName);
         Files.writeString(file, src, StandardCharsets.UTF_8);
         AtomicReference<List<IntegrationInfo>> data = new AtomicReference<>(List.of());
         AtomicReference<List<InfraInfo>> infraData = new AtomicReference<>(List.of());
@@ -77,7 +129,7 @@ class JavaStringCompletionTest {
         SourceViewer viewer = new SourceViewer();
         viewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
         viewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
-        viewer.setJavaStringCompletion(true);
+        viewer.setUriCompletion("java");
         viewer.loadFile(file);
         viewer.enterEditMode();
         return viewer;

@@ -19,22 +19,23 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.Set;
 
 /**
- * The string literal of a Java line the cursor is in, and the method it is an argument of: to("kafka:orders?bro| is in
- * to, with kafka:orders?bro before the cursor. Read from the line alone, so it works on a line being typed, which does
- * not parse (CAMEL-25208).
+ * The endpoint uri the cursor is in, read from the line alone so it works on a line being typed, which does not parse
+ * (CAMEL-25208): in Java the string literal given to a DSL method, to("kafka:orders?bro| is in to with kafka:orders?bro
+ * before the cursor; in XML the uri attribute of an element, &lt;to uri="kafka:orders?bro| is in to (its &amp;amp; read
+ * as &amp;).
  *
- * @param call   the method the literal is the first text of the arguments of, such as to or from
- * @param before the text of the literal before the cursor
+ * @param call   the DSL method (Java) or element (XML) of the uri, such as to or from
+ * @param before the text of the uri before the cursor
  */
-record JavaStringContext(String call, String before) {
+record EndpointUriContext(String call, String before) {
 
-    /** The DSL methods whose argument is an endpoint uri. */
+    /** The DSL methods and elements whose argument or attribute is an endpoint uri. */
     static final Set<String> ENDPOINT_CALLS = Set.of("from", "to", "toD", "wireTap", "enrich", "pollEnrich", "poll");
     /** The ones of them that consume from their endpoint. */
     static final Set<String> CONSUMER_CALLS = Set.of("from", "pollEnrich", "poll");
 
-    /** The context at the cursor, or null when the cursor is not in a string literal given to a method. */
-    static JavaStringContext at(String line, int col) {
+    /** The context at the cursor in a Java line, or null when it is not in a string literal given to a method. */
+    static EndpointUriContext inJava(String line, int col) {
         if (line == null || col < 0 || col > line.length()) {
             return null;
         }
@@ -70,7 +71,42 @@ record JavaStringContext(String call, String before) {
         if (call.isEmpty()) {
             return null;
         }
-        return new JavaStringContext(call, line.substring(open + 1, col));
+        return new EndpointUriContext(call, line.substring(open + 1, col));
+    }
+
+    /** The context at the cursor in an XML line, or null when it is not in the uri attribute of an element. */
+    static EndpointUriContext inXml(String line, int col) {
+        if (line == null || col < 0 || col > line.length()) {
+            return null;
+        }
+        String head = line.substring(0, col);
+        int attr = Math.max(head.lastIndexOf("uri=\""), head.lastIndexOf("uri='"));
+        if (attr < 0 || attr > 0 && !Character.isWhitespace(head.charAt(attr - 1))) {
+            return null;
+        }
+        char quote = head.charAt(attr + 4);
+        String value = head.substring(attr + 5);
+        if (value.indexOf(quote) >= 0) {
+            // the attribute is closed before the cursor
+            return null;
+        }
+        int lt = head.lastIndexOf('<', attr);
+        if (lt < 0 || head.indexOf('>', lt) >= 0 && head.indexOf('>', lt) < attr) {
+            return null;
+        }
+        int start = lt + 1;
+        int end = start;
+        while (end < head.length() && (Character.isLetterOrDigit(head.charAt(end)) || head.charAt(end) == ':'
+                || head.charAt(end) == '-')) {
+            end++;
+        }
+        String element = head.substring(start, end);
+        // a namespace prefix: <camel:to uri="...
+        element = element.substring(element.indexOf(':') + 1);
+        if (element.isEmpty()) {
+            return null;
+        }
+        return new EndpointUriContext(element, value.replace("&amp;", "&"));
     }
 
     /** Whether the literal is the endpoint uri of a DSL method. */

@@ -826,7 +826,8 @@ class SourceTab extends AbstractTab {
         boolean routeFile = !SourceEditAssist.isYamlFile(filePath)
                 && (isJavaRouteFile(filePath) || isCamelSourceFile(filePath));
         sourceViewer.setRouteValidator(routeFile ? content -> assist.validateRoutes(filePath, content) : null);
-        sourceViewer.setJavaStringCompletion(routeFile && filePath.getFileName().toString().endsWith(".java"));
+        String name = filePath.getFileName().toString();
+        sourceViewer.setUriCompletion(!routeFile ? null : name.endsWith(".java") ? "java" : "xml");
         if (isCamelSourceFile(filePath)) {
             sourceViewer.setQuickDocProvider(assist::provideCamelQuickDocs);
             sourceViewer.setDeprecatedLineScanner(null);
@@ -838,10 +839,10 @@ class SourceTab extends AbstractTab {
                 sourceViewer.setListItemNodeChecker(assist::isListChildrenNode);
                 sourceViewer.setEditQuickDocProvider(assist::provideEditQuickDoc);
             } else {
-                // XML: the quick doc of the routes read into the model (CAMEL-25208)
+                // XML: the quick doc of the routes read into the model, Tab in the uri attributes (CAMEL-25208)
                 sourceViewer.setQuickDocProvider(cd -> assist.provideRouteQuickDocs(filePath, cd));
-                sourceViewer.setAutocompleteProvider(null);
-                sourceViewer.setAutocompleteValueProvider(null);
+                sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
+                sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
                 sourceViewer.setEditQuickDocProvider(
                         (lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row));
             }

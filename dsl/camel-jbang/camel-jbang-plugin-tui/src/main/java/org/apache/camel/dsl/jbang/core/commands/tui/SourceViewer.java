@@ -188,9 +188,10 @@ class SourceViewer {
     private EndpointValidator endpointValidator;
     private EndpointValidator simpleValidator;
     private EndpointValidator routeValidator;
-    private boolean javaStringCompletion;
-    /** The completion being chosen in a Java string: its row, the column its prefix ends at, the prefix and suffix. */
-    private JavaCompletion javaCompletion;
+    /** java or xml: Tab completes the endpoint uris of a Java or XML route file; null for neither. */
+    private String uriCompletion;
+    /** The completion being chosen in a uri: its row, the column its prefix ends at, the prefix and suffix. */
+    private UriCompletion pendingUriCompletion;
     private List<String> routeProblems = List.of();
     private List<String> validationErrors;
     private int validationErrorScroll;
@@ -272,14 +273,17 @@ class SourceViewer {
     }
 
     /**
-     * Tab completion inside the strings of a Java route file (CAMEL-25208): in the endpoint uri of from, to, toD... the
-     * component names, the endpoint options and their values, from the completion providers the YAML uris use.
+     * Tab completion in the endpoint uris of a Java or XML route file (CAMEL-25208): in the string given to from, to,
+     * toD... of Java, or the uri attribute of those elements in XML, the component names, the endpoint options and
+     * their values, from the completion providers the YAML uris use.
+     *
+     * @param dsl java or xml; null for a file that is neither
      */
-    void setJavaStringCompletion(boolean javaStringCompletion) {
-        this.javaStringCompletion = javaStringCompletion;
+    void setUriCompletion(String dsl) {
+        this.uriCompletion = dsl;
     }
 
-    private record JavaCompletion(int row, int endCol, String prefix, String suffix) {
+    private record UriCompletion(int row, int endCol, String prefix, String suffix) {
     }
 
     void hide() {
@@ -294,7 +298,7 @@ class SourceViewer {
         endpointValidator = null;
         simpleValidator = null;
         routeValidator = null;
-        javaStringCompletion = false;
+        uriCompletion = null;
     }
 
     void reset() {
@@ -335,7 +339,7 @@ class SourceViewer {
         endpointValidator = null;
         simpleValidator = null;
         routeValidator = null;
-        javaStringCompletion = false;
+        uriCompletion = null;
     }
 
     boolean isMarkdownMode() {
@@ -1011,24 +1015,26 @@ class SourceViewer {
     }
 
     private void openAutocomplete() {
-        javaCompletion = null;
+        pendingUriCompletion = null;
         if (isCamelYamlFile()) {
             openYamlAutocomplete();
-        } else if (javaStringCompletion) {
-            openJavaStringAutocomplete();
+        } else if (uriCompletion != null) {
+            openUriAutocomplete();
         } else {
             openPropertiesAutocomplete();
         }
     }
 
     /**
-     * The completion of the endpoint uri the cursor is in, in a Java route: the component before the colon, an option
-     * after ? or &, its value after =. Read from the line alone, so it works while the file does not parse.
+     * The completion of the endpoint uri the cursor is in, in a Java or XML route: the component before the colon, an
+     * option after ? or &, its value after =. Read from the line alone, so it works while the file does not parse.
      */
-    private void openJavaStringAutocomplete() {
+    private void openUriAutocomplete() {
         int row = editState.cursorRow();
         int col = editState.cursorCol();
-        JavaStringContext c = JavaStringContext.at(editState.getLine(row), col);
+        String line = editState.getLine(row);
+        EndpointUriContext c = "xml".equals(uriCompletion)
+                ? EndpointUriContext.inXml(line, col) : EndpointUriContext.inJava(line, col);
         if (c == null || !c.isEndpoint() || autocompleteProvider == null) {
             return;
         }
@@ -1076,14 +1082,14 @@ class SourceViewer {
             if (colon < 0) {
                 autocompletePopup.setTitlePrefix("Components");
             }
-            javaCompletion = new JavaCompletion(row, col, prefix, suffix);
+            pendingUriCompletion = new UriCompletion(row, col, prefix, suffix);
         }
     }
 
     /** Replaces the prefix the completion was opened on with the chosen item and what follows it (: or =). */
-    private void insertJavaCompletion(AutocompletePopup.CompletionItem item) {
-        JavaCompletion jc = javaCompletion;
-        javaCompletion = null;
+    private void insertUriCompletion(AutocompletePopup.CompletionItem item) {
+        UriCompletion jc = pendingUriCompletion;
+        pendingUriCompletion = null;
         if (editState.cursorRow() != jc.row()) {
             return;
         }
@@ -1116,7 +1122,7 @@ class SourceViewer {
     /** A character of the name or value being completed: up to the : of a component, the = of an option, the & or ". */
     private static boolean isUriWordChar(char c, String suffix) {
         if (suffix.isEmpty()) {
-            return c != '&' && c != '"' && c != '\\';
+            return c != '&' && c != '"' && c != '\'' && c != '\\';
         }
         return Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '.';
     }
@@ -1286,8 +1292,8 @@ class SourceViewer {
 
     private void insertCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, boolean listItem) {
         recordEditChange();
-        if (javaCompletion != null) {
-            insertJavaCompletion(item);
+        if (pendingUriCompletion != null) {
+            insertUriCompletion(item);
             return;
         }
         String currentLine = editState.getLine(editState.cursorRow());

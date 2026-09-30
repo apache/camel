@@ -72,10 +72,11 @@ Press **F4** to enter edit mode, then **Tab** for context-aware completion:
 - Value completion shows enum choices, boolean values, and `{{placeholder}}`
   suggestions from your `.properties` files
 
-**Java DSL routes:**
+**Java and XML DSL routes:**
 - In the endpoint uri of `from`, `to`, `toD`, `wireTap`, `enrich`, `pollEnrich`
-  and `poll`, Tab completes the component name before the `:`, the endpoint
-  options after `?` or `&` (filtered by consumer/producer role, already given
+  and `poll` (the string given to them in Java, their `uri` attribute in XML),
+  Tab completes the component name before the `:`, the endpoint options after
+  `?` or `&` (`&amp;` in XML; filtered by consumer/producer role, already given
   ones left out), and the value of an option after `=`
 
 Use **Up/Down** to navigate, **Enter** to accept, **Esc** to dismiss, and
