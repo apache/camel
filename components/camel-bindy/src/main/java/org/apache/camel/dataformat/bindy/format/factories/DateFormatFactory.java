@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import java.text.DateFormat;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -84,7 +85,17 @@ public class DateFormatFactory extends AbstractFormatFactory {
                 return date;
 
             } else {
-                throw new FormatException("Date provided does not fit the pattern defined");
+                // A formatted date can be longer than its pattern (M, d, H or h with two digits, MMMM, EEEE, a),
+                // so a longer string is accepted when it is parsed completely. A date followed by other
+                // characters, such as 20090901-10:32:30 with the pattern yyyyMMdd, is still rejected
+                df.setLenient(false);
+                ParsePosition position = new ParsePosition(0);
+                date = df.parse(string, position);
+                if (date == null || position.getIndex() != string.length()) {
+                    throw new FormatException("Date provided does not fit the pattern defined");
+                }
+
+                return date;
             }
 
         }
