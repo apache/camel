@@ -325,7 +325,8 @@ public class OpenFgaProducer extends DefaultProducer {
             // a part that is configured but resolved to nothing, like a partly configured triple, is a mistake rather
             // than an invitation to fill the rest in from the message, so validated() reports which part it was
             return List.of(validated(new Tuple(
-                    authorizer.rawUser(exchange), authorizer.rawRelation(exchange), authorizer.rawObject(exchange))));
+                    authorizer.rawUser(exchange), authorizer.rawRelation(exchange), authorizer.rawObject(exchange)),
+                    true));
         }
 
         List<Tuple> tuples = new ArrayList<>();
@@ -349,11 +350,11 @@ public class OpenFgaProducer extends DefaultProducer {
 
     private Tuple toTuple(Object element) {
         if (element instanceof ClientTupleKeyWithoutCondition key) {
-            return validated(new Tuple(key.getUser(), key.getRelation(), key.getObject()));
+            return validated(new Tuple(key.getUser(), key.getRelation(), key.getObject()), false);
         }
         if (element instanceof Map<?, ?> map) {
             return validated(new Tuple(
-                    stringValue(map, "user"), stringValue(map, "relation"), stringValue(map, "object")));
+                    stringValue(map, "user"), stringValue(map, "relation"), stringValue(map, "object")), false);
         }
         throw new IllegalArgumentException(
                 "A relationship tuple must be a Map with user, relation and object entries, or a ClientTupleKey, but was "
@@ -365,23 +366,26 @@ public class OpenFgaProducer extends DefaultProducer {
      * but naming the offending part here is the difference between a fixable message and a validation error from the
      * server that does not say which of the tuples in the batch was at fault.
      */
-    private Tuple validated(Tuple tuple) {
-        reject(OpenFgaIdentifiers.validateTupleValue(tuple.user), "user", tuple.user);
-        reject(OpenFgaIdentifiers.validateRelation(tuple.relation), "relation", tuple.relation);
-        reject(OpenFgaIdentifiers.validateTupleValue(tuple.object), "object", tuple.object);
+    private Tuple validated(Tuple tuple, boolean fromConfiguration) {
+        reject(OpenFgaIdentifiers.validateTupleValue(tuple.user), "user", tuple.user, fromConfiguration);
+        reject(OpenFgaIdentifiers.validateRelation(tuple.relation), "relation", tuple.relation, fromConfiguration);
+        reject(OpenFgaIdentifiers.validateTupleValue(tuple.object), "object", tuple.object, fromConfiguration);
         return tuple;
     }
 
-    private static void reject(String reason, String what, String value) {
+    private static void reject(String reason, String what, String value, boolean fromConfiguration) {
         if (reason == null) {
             return;
         }
         if (value == null || value.isEmpty()) {
-            // distinct from a malformed value, because the cause and the remedy are different: the endpoint asked for
-            // this part and the exchange did not carry it
+            // distinct from a malformed value, because the cause and the remedy differ - and distinct between the two
+            // sources, because pointing at the configuration when the tuple came from the body sends the reader to
+            // the wrong place entirely
             throw new IllegalArgumentException(
-                    "The " + what + " configured for this relationship tuple resolved to nothing; a configured tuple"
-                                               + " is never completed from the message body");
+                    fromConfiguration
+                            ? "The " + what + " configured for this relationship tuple resolved to nothing;"
+                              + " a configured tuple is never completed from the message body"
+                            : "A relationship tuple in the message body has no " + what);
         }
         throw new IllegalArgumentException(
                 "A relationship tuple has an unusable " + what + " (" + reason + "): '" + value + "'");

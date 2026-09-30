@@ -171,10 +171,12 @@ public class OpenFgaAuthorizer {
             }
             if (failOpen) {
                 // worth saying out loud: the operator asked to fail open and did not get it, and the reason is that
-                // this was not the kind of failure failOpen is for
-                LOG.warn("OpenFGA rejected the question about {} having {} on {}, so the exchange is denied even"
-                         + " though failOpen is enabled: a rejected request is not an unavailable decision point."
-                         + " Reason: {}",
+                // this was not the kind of failure failOpen is for. Deliberately does not say OpenFGA rejected
+                // anything - this also fires for an interrupt, a request the SDK refused to build and input that
+                // could not be serialised, where OpenFGA was never reached at all
+                LOG.warn("failOpen is enabled but does not cover this failure, so the exchange is denied: nothing"
+                         + " established whether {} has {} on {}, and the failure is not an unreachable decision"
+                         + " point. Reason: {}",
                         resolvedUser, resolvedRelation, resolvedObject, e.getMessage());
             }
             throw e;

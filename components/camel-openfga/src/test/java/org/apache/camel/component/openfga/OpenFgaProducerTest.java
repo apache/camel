@@ -280,17 +280,20 @@ class OpenFgaProducerTest extends CamelTestSupport {
         when(client.check(any(ClientCheckRequest.class), any())).thenReturn(new CompletableFuture<>());
 
         Exchange out;
+        boolean flagStillSet;
         try {
             Thread.currentThread().interrupt();
             out = request(ENDPOINT + "&failOpen=true");
         } finally {
-            // the component restores the flag on this path, so clear it rather than leak it into the next test
-            Thread.interrupted();
+            // clears the flag rather than leak it into the next test, and captures it: the interruptible wait cleared
+            // it, so its being set again is what proves the component restored it for the caller
+            flagStillSet = Thread.interrupted();
         }
 
         assertThat(out.getException()).isInstanceOf(OpenFgaEvaluationException.class);
         assertThat(out.getException()).hasMessageContaining("Interrupted");
         assertThat(out.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
+        assertThat(flagStillSet).isTrue();
     }
 
     @Test

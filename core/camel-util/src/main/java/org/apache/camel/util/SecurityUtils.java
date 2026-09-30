@@ -147,7 +147,8 @@ public final class SecurityUtils {
         owners.put("failonunknownhost", Set.of(
                 "component:ssh"));
         owners.put("failopen", Set.of(
-                "component:opa"));
+                "component:opa",
+                "component:openfga"));
         owners.put("hostnameverification", Set.of(
                 "component:netty",
                 "component:nettyhttp"));

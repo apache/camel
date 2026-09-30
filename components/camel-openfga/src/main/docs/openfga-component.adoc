@@ -237,9 +237,11 @@ right now" — as do transport errors, timeouts and 5xx.
 The rule is an allowlist rather than a list of exclusions: `failOpen` applies to a rate limit, a 5xx, a transport
 error and a timeout, and to nothing else. A failure the component does not recognise — a request the SDK refused to
 build, input it could not serialise, an interrupt during shutdown — is not evidence that OpenFGA was unreachable, so
-it denies. Anything unfamiliar therefore fails closed rather than being waved through for being unfamiliar. The query operations ignore it entirely: a `batchCheck` or
-`listObjects` that failed has no safe way to proceed, since handing back the objects it never managed to filter
-would be exactly the leak the filtering was there to prevent.
+it denies. Anything unfamiliar therefore fails closed rather than being waved through for being unfamiliar.
+
+The query operations ignore `failOpen` entirely: a `batchCheck` or `listObjects` that failed has no safe way to
+proceed, since handing back the objects it never managed to filter would be exactly the leak the filtering was there
+to prevent.
 
 === What is asked is not up to the message
 

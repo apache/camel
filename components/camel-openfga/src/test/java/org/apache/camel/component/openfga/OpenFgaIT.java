@@ -49,7 +49,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * The store, the model and the starting tuples are created through OpenFGA's HTTP API rather than through the
  * component, so that what the component does is measured against a graph it did not build.
  */
-public class OpenFgaIT extends CamelTestSupport {
+class OpenFgaIT extends CamelTestSupport {
 
     @RegisterExtension
     static OpenFgaService service = OpenFgaServiceFactory.createSingletonService();

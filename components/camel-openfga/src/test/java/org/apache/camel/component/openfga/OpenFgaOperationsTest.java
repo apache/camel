@@ -304,6 +304,18 @@ class OpenFgaOperationsTest extends CamelTestSupport {
     }
 
     @Test
+    void writeTuplesSaysTheBodyIsAtFaultWhenTheBodySuppliedTheTuple() {
+        // the same blank-value path serves both sources, and pointing at the configuration for a body-supplied tuple
+        // would send the reader looking in the wrong place
+        Exchange out = template.request("openfga:writeTuples" + BASE, e -> e.getMessage().setBody(
+                Map.of("user", "", "relation", "owner", "object", "document:budget")));
+
+        assertThat(out.getException()).isInstanceOf(IllegalArgumentException.class);
+        assertThat(out.getException()).hasMessageContaining("message body has no user");
+        assertThat(out.getException()).hasMessageNotContaining("configured");
+    }
+
+    @Test
     void writeTuplesNamesTheOffendingPartOfAnUnusableTuple() {
         Exchange out = template.request("openfga:writeTuples" + BASE, e -> e.getMessage().setBody(
                 Map.of("user", "anne", "relation", "owner", "object", "document:budget")));
