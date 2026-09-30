@@ -77,6 +77,8 @@ public final class QuarkusHelper {
 
     public static final String QUARKUS_PLATFORM_URL_PROPERTY = "camel.jbang.quarkus.platform.url";
 
+    private static final String PLATFORM_MAPPING_FILE = "platform-mapping.json";
+
     private QuarkusHelper() {
     }
 
@@ -127,6 +129,9 @@ public final class QuarkusHelper {
      * <p>
      * This is used by export/run commands to query the registry for the correct platform BOM version instead of using
      * the build-time constant. The registry may have a newer compatible version.
+     * <p>
+     * A platform whose Camel version is exactly the requested released {@code camelVersion} is remembered next to the
+     * cached registry response and reused without asking the registry again. {@code fresh} drops it.
      *
      * @param  camelVersion                    if specified, the value of {@code --camel-version} CLI parameter or the
      *                                         Camel version of the currently running camel-jbang. Must not be
@@ -142,17 +147,107 @@ public final class QuarkusHelper {
             boolean download,
             String quarkusExtensionRegistryBaseUri,
             boolean fresh) {
+        return findQuarkusPlatformBom(
+                camelVersion, mavenResolver, download, quarkusExtensionRegistryBaseUri, fresh, registriesDir());
+    }
+
+    static QuarkusPlatformBom findQuarkusPlatformBom(
+            String camelVersion,
+            Function<MavenGav, MavenArtifact> mavenResolver,
+            boolean download,
+            String quarkusExtensionRegistryBaseUri,
+            boolean fresh,
+            Path registriesDir) {
         if (camelVersion == null) {
             camelVersion = RuntimeType.main.version();
         }
+        final boolean snapshot = camelVersion.endsWith("-SNAPSHOT");
 
-        JsonArray streams = fetchPlatformStreams(quarkusExtensionRegistryBaseUri, download, fresh, registriesDir());
+        final Path mappingFile = platformMappingFile(quarkusExtensionRegistryBaseUri, registriesDir);
+        if (mappingFile != null) {
+            if (fresh) {
+                if (download) {
+                    try {
+                        Files.deleteIfExists(mappingFile);
+                    } catch (IOException e) {
+                        // the mapping is only a cache, the registry is asked below
+                    }
+                }
+            } else if (!snapshot) {
+                QuarkusPlatformBom cached = readPlatformMapping(mappingFile, camelVersion, quarkusExtensionRegistryBaseUri);
+                if (cached != null) {
+                    return cached;
+                }
+            }
+        }
+
+        JsonArray streams = fetchPlatformStreams(quarkusExtensionRegistryBaseUri, download, fresh, registriesDir);
         if (streams == null || streams.isEmpty()) {
             return null;
         }
         Optional<QuarkusPlatformBom> resolved
                 = findPlatformBom(streams, new MajorMinor(camelVersion), mavenResolver, quarkusExtensionRegistryBaseUri);
+        // only a platform with exactly the requested released Camel version is final; a fallback may be replaced
+        if (mappingFile != null && !snapshot && resolved.isPresent() && camelVersion.equals(resolved.get().camelVersion())) {
+            storePlatformMapping(mappingFile, camelVersion, resolved.get());
+        }
         return resolved.orElse(null);
+    }
+
+    /**
+     * @return the file remembering the Camel version to platform mapping of the given registry, or {@code null} for a
+     *         {@code file://} registry, which is not cached, or an invalid URI, which {@link #fetchPlatformStreams}
+     *         reports
+     */
+    private static Path platformMappingFile(String quarkusExtensionRegistryBaseUri, Path registriesDir) {
+        try {
+            final URI uri = new URI(quarkusExtensionRegistryBaseUri + "/client/platforms/all");
+            if ("file".equals(uri.getScheme())) {
+                return null;
+            }
+            return cacheFile(uri, registriesDir).resolveSibling(PLATFORM_MAPPING_FILE);
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
+    /**
+     * @return the platform remembered for the given Camel version, or {@code null} if there is none or the entry is
+     *         unusable
+     */
+    private static QuarkusPlatformBom readPlatformMapping(
+            Path mappingFile, String camelVersion, String quarkusExtensionRegistryBaseUri) {
+        if (readPlatformMappings(mappingFile).get(camelVersion) instanceof JsonObject entry
+                && entry.get("groupId") instanceof String groupId && !groupId.isBlank()
+                && entry.get("version") instanceof String version && !version.isBlank()) {
+            return new QuarkusPlatformBom(groupId, version, camelVersion, quarkusExtensionRegistryBaseUri);
+        }
+        return null;
+    }
+
+    private static void storePlatformMapping(Path mappingFile, String camelVersion, QuarkusPlatformBom bom) {
+        JsonObject mappings = readPlatformMappings(mappingFile);
+        JsonObject entry = new JsonObject();
+        entry.put("groupId", bom.groupId());
+        entry.put("version", bom.version());
+        mappings.put(camelVersion, entry);
+        try {
+            Files.createDirectories(mappingFile.getParent());
+            Files.writeString(mappingFile, Jsoner.serialize(mappings));
+        } catch (IOException e) {
+            // the mapping is only a cache, the next run asks the registry again
+        }
+    }
+
+    private static JsonObject readPlatformMappings(Path mappingFile) {
+        try {
+            if (Jsoner.deserialize(Files.readString(mappingFile)) instanceof JsonObject mappings) {
+                return mappings;
+            }
+        } catch (IOException | DeserializationException e) {
+            // a missing, unreadable or corrupt mapping is a cache miss
+        }
+        return new JsonObject();
     }
 
     public static String resolveCamelVersionFromQuarkusCamelBom(
