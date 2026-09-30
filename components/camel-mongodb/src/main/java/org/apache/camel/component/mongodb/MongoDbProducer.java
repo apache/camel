@@ -30,6 +30,7 @@ import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.DistinctIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.BulkWriteOptions;
 import com.mongodb.client.model.Filters;
@@ -362,11 +363,10 @@ public class MongoDbProducer extends DefaultProducer {
             } else {
                 ret = dbCol.distinct(distinctFieldName, String.class);
             }
-            try {
-                ret.iterator().forEachRemaining(result::add);
+            // hold the cursor: every call to iterator() executes the query again
+            try (MongoCursor<String> cursor = ret.iterator()) {
+                cursor.forEachRemaining(result::add);
                 exchange.getMessage().setHeader(MongoDbConstants.RESULT_PAGE_SIZE, result.size());
-            } finally {
-                ret.iterator().close();
             }
             return result;
         };
@@ -420,12 +420,11 @@ public class MongoDbProducer extends DefaultProducer {
 
             ret.allowDiskUse(exchange.getIn().getHeader(MongoDbConstants.ALLOW_DISK_USE, Boolean.class));
             if (!MongoDbOutputType.MongoIterable.equals(endpoint.getOutputType())) {
-                try {
-                    result = new ArrayList<>();
-                    ret.iterator().forEachRemaining(((List<Document>) result)::add);
+                result = new ArrayList<>();
+                // hold the cursor: every call to iterator() executes the query again
+                try (MongoCursor<Document> cursor = ret.iterator()) {
+                    cursor.forEachRemaining(((List<Document>) result)::add);
                     exchange.getMessage().setHeader(RESULT_PAGE_SIZE, ((List<Document>) result).size());
-                } finally {
-                    ret.iterator().close();
                 }
             } else {
                 result = ret;
@@ -572,12 +571,11 @@ public class MongoDbProducer extends DefaultProducer {
 
                 Iterable<Document> result;
                 if (!MongoDbOutputType.MongoIterable.equals(endpoint.getOutputType())) {
-                    try {
-                        result = new ArrayList<>();
-                        aggregationResult.iterator().forEachRemaining(((List<Document>) result)::add);
+                    result = new ArrayList<>();
+                    // hold the cursor: every call to iterator() executes the pipeline again
+                    try (MongoCursor<Document> cursor = aggregationResult.iterator()) {
+                        cursor.forEachRemaining(((List<Document>) result)::add);
                         exchange.getMessage().setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ((List<Document>) result).size());
-                    } finally {
-                        aggregationResult.iterator().close();
                     }
                 } else {
                     result = aggregationResult;
