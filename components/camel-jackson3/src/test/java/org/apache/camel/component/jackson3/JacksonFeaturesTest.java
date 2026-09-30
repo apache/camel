@@ -78,7 +78,7 @@ public class JacksonFeaturesTest extends CamelTestSupport {
         assertTrue(format1.getObjectMapper().isEnabled(StreamReadFeature.STRICT_DUPLICATE_DETECTION));
         assertFalse(format1.getObjectMapper().isEnabled(StreamWriteFeature.STRICT_DUPLICATE_DETECTION));
 
-        // Explizit declaration of implementing feature set
+        // Explicit declaration of implementing feature set
         JacksonDataFormat format2 = new JacksonDataFormat();
         format2.setEnableFeatures("StreamReadFeature.STRICT_DUPLICATE_DETECTION");
         format2.setCamelContext(context());
