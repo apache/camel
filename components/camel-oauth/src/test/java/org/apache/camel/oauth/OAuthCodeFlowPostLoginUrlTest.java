@@ -107,6 +107,24 @@ class OAuthCodeFlowPostLoginUrlTest {
         assertEquals("https://app.example.com/hello", postLoginUrl());
     }
 
+    /**
+     * A mismatched origin is only a diagnostic, so the warning fires at most once - a forged Host must not let anyone
+     * flood the log. The later calls take the warn-once branch that drops to DEBUG, and every call still confines the
+     * url to the configured origin, not just the first.
+     */
+    @Test
+    void repeatedForeignOriginRequestsStayConfinedOnTheSameProcessor() {
+        var processor = new OAuthCodeFlowProcessor();
+        var msg = exchange.getMessage();
+        msg.setHeader("X-Forwarded-Proto", "https");
+        msg.setHeader("X-Forwarded-Host", "evil.example.net");
+        msg.setHeader(Exchange.HTTP_URI, "/hello");
+
+        assertEquals("https://app.example.com/hello", processor.getPostLoginUrl(exchange));
+        assertEquals("https://app.example.com/hello", processor.getPostLoginUrl(exchange));
+        assertEquals("https://app.example.com/hello", processor.getPostLoginUrl(exchange));
+    }
+
     @Test
     void aForwardedProtoOnAnotherSchemeIsConfinedToTheConfiguredOrigin() {
         var msg = exchange.getMessage();

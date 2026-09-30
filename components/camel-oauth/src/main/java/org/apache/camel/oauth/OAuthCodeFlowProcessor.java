@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -36,6 +37,10 @@ public class OAuthCodeFlowProcessor extends AbstractOAuthProcessor {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private final Logger log = LoggerFactory.getLogger(getClass());
+
+    // every candidate origin is caller controlled, so warn at most once and keep further mismatches at DEBUG -
+    // otherwise a forged Host or X-Forwarded-Host header would let anyone flood the diagnostic log
+    private final AtomicBoolean foreignOriginWarned = new AtomicBoolean();
 
     @Override
     public void process(Exchange exchange) {
@@ -126,6 +131,9 @@ public class OAuthCodeFlowProcessor extends AbstractOAuthProcessor {
      * Warns when the origin the caller announces is not the configured one. This is purely diagnostic - the post login
      * url is built from the configured origin either way - but behind an ingress or an OpenShift Route a mismatch is
      * the usual symptom of {@link OAuth#CAMEL_OAUTH_REDIRECT_URI} not naming the address the browser actually reaches.
+     * <p>
+     * Every candidate origin is caller controlled, so the warning fires at most once and any further mismatch drops to
+     * DEBUG - otherwise a forged Host or X-Forwarded-Host header would let anyone flood the log.
      */
     private void warnOnForeignOrigin(Message msg, String expectedOrigin) {
         var observedOrigin = forwardedOrigin(msg);
@@ -134,8 +142,14 @@ public class OAuthCodeFlowProcessor extends AbstractOAuthProcessor {
             observedOrigin = originOf(msg.getHeader(Exchange.HTTP_URL, String.class));
         }
         if (observedOrigin != null && !expectedOrigin.equals(observedOrigin)) {
-            log.warn("Post login origin {} does not match the configured {}, now using: {}",
-                    observedOrigin, CAMEL_OAUTH_REDIRECT_URI, expectedOrigin);
+            if (foreignOriginWarned.compareAndSet(false, true)) {
+                log.warn("Post login origin {} does not match the configured {}, now using: {}."
+                         + " Further mismatches are logged at DEBUG.",
+                        observedOrigin, CAMEL_OAUTH_REDIRECT_URI, expectedOrigin);
+            } else if (log.isDebugEnabled()) {
+                log.debug("Post login origin {} does not match the configured {}, now using: {}",
+                        observedOrigin, CAMEL_OAUTH_REDIRECT_URI, expectedOrigin);
+            }
         }
     }
 
