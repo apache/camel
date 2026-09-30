@@ -199,7 +199,7 @@ like:
 ._Java-only: thread pool added to SEDA endpoint_
 [source,java]
 ----
-from("seda:stageName").thread(5).process(...)
+from("seda:stageName").threads(5).process(...)
 ----
 
 Can wind up with two `BlockQueues`: one from the SEDA endpoint, and one
@@ -211,7 +211,7 @@ asynchronously. For example:
 ._Java-only: thread pool on a Direct endpoint_
 [source,java]
 ----
-from("direct:stageName").thread(5).process(...)
+from("direct:stageName").threads(5).process(...)
 ----
 
 You can also directly configure number of threads that process messages

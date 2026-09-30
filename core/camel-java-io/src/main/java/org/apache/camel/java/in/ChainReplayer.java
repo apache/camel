@@ -32,11 +32,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.IllegalFormatException;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,6 +53,7 @@ import org.apache.camel.java.in.JavaChainParser.BinOp;
 import org.apache.camel.java.in.JavaChainParser.Bool;
 import org.apache.camel.java.in.JavaChainParser.Call;
 import org.apache.camel.java.in.JavaChainParser.Chain;
+import org.apache.camel.java.in.JavaChainParser.Chr;
 import org.apache.camel.java.in.JavaChainParser.ClassLit;
 import org.apache.camel.java.in.JavaChainParser.ClassName;
 import org.apache.camel.java.in.JavaChainParser.Concat;
@@ -118,7 +121,7 @@ final class ChainReplayer {
     private static final Set<String> READABLE_JDK = Set.of(
             "java.lang.Integer", "java.lang.Long", "java.lang.Short", "java.lang.Byte", "java.lang.Double",
             "java.lang.Float", "java.lang.Boolean", "java.lang.Character", "java.util.concurrent.TimeUnit",
-            "java.nio.charset.StandardCharsets");
+            "java.nio.charset.StandardCharsets", "java.util.zip.Deflater");
 
     /** Classes whose static DSL methods a route may call, qualified or statically imported: language(...), and(...). */
     private static final List<Class<?>> STATIC_DSL
@@ -135,12 +138,13 @@ final class ChainReplayer {
 
     private static final Set<String> DENIED_METHODS = Set.of(
             "getContext", "getCamelContext", "setContext", "setCamelContext", "addRoutesToCamelContext",
-            "addRouteConfigurationsToCamelContext", "addTemplatedRoutesToCamelContext", "configure", "configuration",
+            "addRouteConfigurationsToCamelContext", "addTemplatedRoutesToCamelContext",
             "includeRoutes", "bindToRegistry", "propertyInject", "endpoint", "getClass", "wait", "notify", "notifyAll");
 
     /** The life cycle of a route builder, which a parse never runs: only the DSL it offers is called. */
     private static final List<String> BUILDER_LIFE_CYCLE = List.of(
-            "populate", "configure", "prepare", "update", "initialize", "set", "check", "add", "remove", "customize");
+            "populate", "configure", "configuration", "prepare", "update", "initialize", "set", "check", "add", "remove",
+            "customize");
 
     /** The builder of the configure() being replayed. */
     private ReplayBuilder builder;
@@ -247,6 +251,8 @@ final class ChainReplayer {
     private Object evaluate(Node node) {
         if (node instanceof Str s) {
             return s.value();
+        } else if (node instanceof Chr c) {
+            return c.value();
         } else if (node instanceof Num n) {
             return number(n.text());
         } else if (node instanceof Bool b) {
@@ -546,6 +552,12 @@ final class ChainReplayer {
             for (String pkg : CAMEL_PACKAGES) {
                 candidates.add(pkg + name);
             }
+            // a snippet without its imports: TimeUnit.SECONDS, Deflater.BEST_COMPRESSION
+            for (String jdk : READABLE_JDK) {
+                if (jdk.endsWith("." + first)) {
+                    candidates.add(jdk + name.substring(first.length()));
+                }
+            }
         }
         for (String candidate : candidates) {
             String binary = candidate;
@@ -610,6 +622,11 @@ final class ChainReplayer {
             String text = formatText(c.calls().get(0).args());
             return text != null ? text : new Unknown(c, "a format the parser cannot work out");
         }
+        if (c.qualifier() != null && c.calls().size() == 1
+                && COLLECTIONS.contains(c.qualifier() + "." + c.calls().get(0).name())) {
+            // setHeaders(Map.of("foo", constant("ABC"))): a collection of values the parser works out
+            return collection(c);
+        }
         if (c.qualifier() != null && c.qualifier().equals(builderParameter)) {
             // rb.simple(...) in a builder lambda: the builder
             target = builder;
@@ -666,6 +683,36 @@ final class ChainReplayer {
             target = result;
         }
         return target;
+    }
+
+    /** Factories of JDK collections a route passes values in: only data, nothing of the project runs. */
+    private static final Set<String> COLLECTIONS = Set.of(
+            "Map.of", "java.util.Map.of", "List.of", "java.util.List.of", "Set.of", "java.util.Set.of",
+            "Arrays.asList", "java.util.Arrays.asList", "Collections.singletonList", "java.util.Collections.singletonList");
+
+    private Object collection(Chain c) {
+        Call call = c.calls().get(0);
+        List<Object> values = new ArrayList<>();
+        for (Node arg : call.args()) {
+            Object v = evaluate(arg);
+            if (v instanceof Unknown || v == null) {
+                return new Unknown(c, "a collection of values the parser cannot work out");
+            }
+            values.add(v);
+        }
+        String qualifier = c.qualifier().substring(c.qualifier().lastIndexOf('.') + 1);
+        if (qualifier.equals("Map")) {
+            if (values.size() % 2 != 0) {
+                return new Unknown(c, "a collection of values the parser cannot work out");
+            }
+            // in the order of the source, which Map.of does not keep but the model and a dump should
+            Map<Object, Object> map = new LinkedHashMap<>();
+            for (int i = 0; i < values.size(); i += 2) {
+                map.put(values.get(i), values.get(i + 1));
+            }
+            return map;
+        }
+        return qualifier.equals("Set") ? new LinkedHashSet<>(values) : values;
     }
 
     /** Why a statement that sets up the CamelContext (components, beans, properties) is not read: it is not a route. */
@@ -794,9 +841,21 @@ final class ChainReplayer {
     /** The URI of an endpoint DSL chain, or null when the resolver does not know its factory. */
     private String endpoint(Chain c) {
         Call factory = c.calls().get(0);
-        List<String> args = new ArrayList<>();
+        if (factory.args().size() > 2) {
+            return null;
+        }
+        List<Object> paths = new ArrayList<>();
         for (Node arg : factory.args()) {
-            args.add(uriValue(arg));
+            Object v = evaluate(arg);
+            if (!(v instanceof String) && !(v instanceof Unknown)) {
+                // a factory of the endpoint DSL takes the path as text: split(stax(Record.class)) is StAXBuilder
+                return null;
+            }
+            paths.add(v);
+        }
+        List<String> args = new ArrayList<>();
+        for (int i = 0; i < paths.size(); i++) {
+            args.add(uriValue(factory.args().get(i), paths.get(i)));
         }
         List<EndpointDslResolver.Option> options = new ArrayList<>();
         for (int i = 1; i < c.calls().size(); i++) {
@@ -819,7 +878,10 @@ final class ChainReplayer {
 
     /** A value in an endpoint URI as the endpoint DSL writes it; a marked placeholder when unknown (reported). */
     private String uriValue(Node node) {
-        Object v = evaluate(node);
+        return uriValue(node, evaluate(node));
+    }
+
+    private String uriValue(Node node, Object v) {
         if (v instanceof Unknown u) {
             report(node, u.reason());
             return LwJavaParser.UNRESOLVED_PREFIX + text(node) + "}";
@@ -851,6 +913,10 @@ final class ChainReplayer {
     }
 
     private Object invoke(Object target, Call call) {
+        Object value = valueCall(target, call);
+        if (value != null) {
+            return value;
+        }
         List<Method> candidates = candidates(target.getClass(), call.name(), call.args().size());
         if (candidates.isEmpty()) {
             String reason = target == builder
@@ -859,6 +925,31 @@ final class ChainReplayer {
             return new Unknown(call, reason);
         }
         return call(target, candidates, call);
+    }
+
+    /**
+     * A call on a JDK value that only computes a value: {@code TimeUnit.MILLISECONDS.toString()},
+     * {@code TimeUnit.SECONDS.toMillis(5)}; null for anything else.
+     */
+    private Object valueCall(Object target, Call call) {
+        if (target instanceof Enum<?> e && call.args().isEmpty()
+                && (call.name().equals("name") || call.name().equals("toString"))) {
+            return e.name();
+        }
+        if (target instanceof TimeUnit unit && call.args().size() == 1 && call.name().startsWith("to")
+                && evaluate(call.args().get(0)) instanceof Number n) {
+            return switch (call.name()) {
+                case "toNanos" -> unit.toNanos(n.longValue());
+                case "toMicros" -> unit.toMicros(n.longValue());
+                case "toMillis" -> unit.toMillis(n.longValue());
+                case "toSeconds" -> unit.toSeconds(n.longValue());
+                case "toMinutes" -> unit.toMinutes(n.longValue());
+                case "toHours" -> unit.toHours(n.longValue());
+                case "toDays" -> unit.toDays(n.longValue());
+                default -> null;
+            };
+        }
+        return null;
     }
 
     /** Calls the overload the arguments fit best; a static one when {@code target} is null. */
@@ -923,6 +1014,11 @@ final class ChainReplayer {
         } catch (InvocationTargetException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             String message = String.valueOf(cause.getMessage());
+            if (standsIn(values)) {
+                // the DSL checks or uses right away what stands in for a value: configuration(builder) calls
+                // builder.build(), setHeaders(headerMap) needs the map; the source is not wrong
+                return new Unknown(call, "needs a value the parser cannot see");
+            }
             if (cause instanceof NullPointerException && message.contains("CamelContext")) {
                 // the replay builder never has a context: whatever needs one is not done in a parse
                 return new Unknown(call, "needs a running CamelContext, which a parse does not have");
@@ -974,6 +1070,16 @@ final class ChainReplayer {
         if (sw.getOtherwiseDefinition() != null && sw.getOtherwiseDefinition().getLineNumber() < 0) {
             sw.getOtherwiseDefinition().setLineNumber(line);
         }
+    }
+
+    /** Whether something stands in for a value the parser does not know, in the arguments of a call. */
+    private static boolean standsIn(Object[] values) {
+        for (Object v : values) {
+            if (v instanceof Unknown) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** How well a method's parameter types match the values: exactly the value's type counts most, Object least. */
@@ -1204,6 +1310,13 @@ final class ChainReplayer {
                 default -> defaultValue(method.getReturnType());
             });
         }
+        if (!type.isPrimitive() && !type.isEnum() && type != Class.class) {
+            // an object of a class, such as xpath("/c:n", ns) with Namespaces ns built in the method: null stands
+            // in, as the parser creates no objects of a route
+            cost[0] += 30;
+            reports.add(new JavaParseResult.Unresolved(node.line(), text, u.reason()));
+            return null;
+        }
         return NO;
     }
 
@@ -1260,6 +1373,8 @@ final class ChainReplayer {
     static String text(Node node) {
         if (node instanceof Str s) {
             return "\"" + s.value() + "\"";
+        } else if (node instanceof Chr c) {
+            return "'" + c.value() + "'";
         } else if (node instanceof Num n) {
             return n.text();
         } else if (node instanceof Bool b) {

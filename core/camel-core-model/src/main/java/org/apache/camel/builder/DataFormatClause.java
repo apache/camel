@@ -66,6 +66,9 @@ import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
 import org.apache.camel.model.dataformat.ToonDataFormat;
 import org.apache.camel.model.dataformat.UblDataFormat;
+import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
+import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
+import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
@@ -1119,6 +1122,34 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         UblDataFormat ublDataFormat = new UblDataFormat();
         ublDataFormat.setPrettyPrint(Boolean.toString(prettyPrint));
         return dataFormat(ublDataFormat);
+    }
+
+    /**
+     * Uses the uniVocity CSV data format
+     */
+    public T univocityCsv() {
+        return dataFormat(new UniVocityCsvDataFormat());
+    }
+
+    /**
+     * Uses the uniVocity fixed-length data format
+     */
+    public T univocityFixed() {
+        return dataFormat(new UniVocityFixedDataFormat());
+    }
+
+    /**
+     * Uses the uniVocity TSV data format
+     */
+    public T univocityTsv() {
+        return dataFormat(new UniVocityTsvDataFormat());
+    }
+
+    /**
+     * Uses the YAML data format with the SnakeYAML library
+     */
+    public T yaml() {
+        return dataFormat(new YAMLDataFormat());
     }
 
     /**

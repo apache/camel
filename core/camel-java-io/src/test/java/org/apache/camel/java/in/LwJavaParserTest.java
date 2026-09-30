@@ -19,16 +19,22 @@ package org.apache.camel.java.in;
 import java.util.List;
 
 import org.apache.camel.model.ChoiceDefinition;
+import org.apache.camel.model.CircuitBreakerDefinition;
+import org.apache.camel.model.DelayDefinition;
+import org.apache.camel.model.FilterDefinition;
+import org.apache.camel.model.MarshalDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
+import org.apache.camel.model.SetHeadersDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.SwitchCaseDefinition;
 import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TryDefinition;
+import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -196,6 +202,66 @@ class LwJavaParserTest {
         assertThat(sw.getCases()).extracting(SwitchCaseDefinition::getLineNumber).containsExactly(3, 4);
         assertThat(sw.getOtherwiseDefinition().getUri()).isEqualTo("direct:review");
         assertThat(sw.getOtherwiseDefinition().getLineNumber()).isEqualTo(5);
+    }
+
+    @Test
+    void charLiteralsCollectionsAndJdkConstants() {
+        // CAMEL-25182: shapes of the Java examples of the documentation
+        JavaParseResult result = new LwJavaParser().parse("""
+                from("direct:a")
+                    .split(body().tokenize(","))
+                    .setHeaders(Map.of("foo", constant("ABC"), "bar", "XYZ"))
+                    .marshal().zipDeflater(Deflater.BEST_COMPRESSION)
+                    .setHeader("unit").constant(TimeUnit.MILLISECONDS.toString())
+                    .delay(TimeUnit.SECONDS.toMillis(5))
+                    .to("mock:a");
+                """);
+        assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
+        RouteDefinition route = result.routes().getRoutes().get(0);
+        SplitDefinition split = (SplitDefinition) route.getOutputs().get(0);
+        SetHeadersDefinition headers = (SetHeadersDefinition) split.getOutputs().get(0);
+        assertThat(headers.getHeaders()).extracting(SetHeaderDefinition::getName).containsExactly("foo", "bar");
+        MarshalDefinition marshal = (MarshalDefinition) split.getOutputs().get(1);
+        assertThat(((ZipDeflaterDataFormat) marshal.getDataFormatType()).getCompressionLevel()).isEqualTo("9");
+        SetHeaderDefinition unit = (SetHeaderDefinition) split.getOutputs().get(2);
+        assertThat(unit.getExpression().getExpression()).isEqualTo("MILLISECONDS");
+        DelayDefinition delay = (DelayDefinition) split.getOutputs().get(3);
+        assertThat(delay.getExpression().getExpression()).isEqualTo("5000");
+    }
+
+    @Test
+    void anObjectOfAClassBuiltInTheMethod() {
+        // Namespaces ns = new Namespaces(...): null stands in, and the rest of the route is read
+        JavaParseResult result = new LwJavaParser().parse("""
+                from("direct:a")
+                    .filter(xpath("/c:number = 55", ns))
+                        .to("mock:result");
+                """);
+        assertThat(result.unresolved()).extracting(JavaParseResult.Unresolved::text).containsExactly("ns");
+        FilterDefinition filter = (FilterDefinition) result.routes().getRoutes().get(0).getOutputs().get(0);
+        assertThat(filter.getExpression().getExpression()).isEqualTo("/c:number = 55");
+        assertThat(filter.getOutputs()).hasSize(1);
+
+        // xtokenize(path, 'i', ns) is the DSL method with a char, which uses ns right away
+        result = new LwJavaParser().parse("""
+                from("direct:a").split().xtokenize("//order", 'i', ns).to("mock:order");
+                """);
+        assertThat(result.unresolved()).extracting(JavaParseResult.Unresolved::reason)
+                .contains("needs a value the parser cannot see");
+    }
+
+    @Test
+    void modelMethodsNamedLikeTheBuilderLifeCycle() {
+        // configuration(...) and configure(...) are only the builder's life cycle on the route builder
+        JavaParseResult result = new LwJavaParser().parse("""
+                from("direct:a")
+                    .circuitBreaker().configuration("myConfig")
+                        .to("mock:a")
+                    .end();
+                """);
+        assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
+        CircuitBreakerDefinition cb = (CircuitBreakerDefinition) result.routes().getRoutes().get(0).getOutputs().get(0);
+        assertThat(cb.getConfiguration()).isEqualTo("myConfig");
     }
 
     @Test

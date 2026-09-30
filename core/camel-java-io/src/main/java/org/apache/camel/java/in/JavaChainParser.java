@@ -45,6 +45,10 @@ final class JavaChainParser {
     record Num(String text, int line) implements Node {
     }
 
+    /** A char literal: {@code 'i'}. */
+    record Chr(char value, int line) implements Node {
+    }
+
     record Bool(boolean value, int line) implements Node {
     }
 
@@ -428,9 +432,13 @@ final class JavaChainParser {
         Token t = peek();
         int line = t.line();
         switch (t.kind()) {
-            case STRING, CHAR -> {
+            case STRING -> {
                 pos++;
                 return new Str(t.text(), line);
+            }
+            case CHAR -> {
+                pos++;
+                return t.text().length() == 1 ? new Chr(t.text().charAt(0), line) : new Str(t.text(), line);
             }
             case NUMBER -> {
                 pos++;
