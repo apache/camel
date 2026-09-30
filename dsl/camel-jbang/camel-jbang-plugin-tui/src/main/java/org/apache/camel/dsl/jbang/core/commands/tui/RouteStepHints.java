@@ -19,7 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.IdentityHashMap;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +37,11 @@ import org.apache.camel.dsl.jbang.core.commands.ai.RouteDecisions;
 final class RouteStepHints {
 
     private RouteStepHints() {
+    }
+
+    /** How a node of a route is looked up: by ids, as the diagram keeps its layout while the route is unchanged. */
+    static String key(String routeId, String nodeId) {
+        return routeId + " " + nodeId;
     }
 
     /** The path of each decision point of a running route, by node id, in route order. */
@@ -67,10 +72,10 @@ final class RouteStepHints {
      * Finds the AI labels of the decision points of the routes; in the business view a decision point without a
      * description of its own shows its label, marked.
      *
-     * @return the label of each node that has one
+     * @return the label of each node that has one, by {@link #key(String, String)}
      */
-    static Map<NodeInfo, IntegrationSummary.StepLabel> apply(List<RouteInfo> routes, Path dir, boolean business) {
-        Map<NodeInfo, IntegrationSummary.StepLabel> answer = new IdentityHashMap<>();
+    static Map<String, IntegrationSummary.StepLabel> apply(List<RouteInfo> routes, Path dir, boolean business) {
+        Map<String, IntegrationSummary.StepLabel> answer = new HashMap<>();
         if (dir == null || !IntegrationSummaryHints.enabled()) {
             return answer;
         }
@@ -82,7 +87,7 @@ final class RouteStepHints {
                 if (st == null) {
                     continue;
                 }
-                answer.put(n, st);
+                answer.put(key(r.routeId, n.id), st);
                 if (business && st.label() != null && (n.description == null || n.description.isBlank())) {
                     n.description = IntegrationSummaryHints.MARK + st.label();
                 }

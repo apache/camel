@@ -484,7 +484,7 @@ final class DiagramDetailSupport {
             }
 
             // a decision point with an AI label: the label, why, and what it decides on (CAMEL-25161)
-            var step = ln.treeNode != null ? diagram.stepLabel(ln.treeNode.info) : null;
+            var step = diagram.stepLabel(drillDownRouteId, ln.id);
             if (step != null) {
                 lines.add(Line.from(Span.raw("")));
                 if (step.label() != null) {
@@ -493,7 +493,7 @@ final class DiagramDetailSupport {
                 if (step.why() != null) {
                     addWrapped(lines, step.why(), true, area.width() - 3, false);
                 }
-                String code = ln.treeNode.info.code;
+                String code = ln.treeNode != null ? ln.treeNode.info.code : null;
                 if (code != null && !code.isBlank() && !label.equals(code)) {
                     lines.add(Line.from(
                             Span.styled(" Code: ", Theme.muted()),

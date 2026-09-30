@@ -96,9 +96,9 @@ class RouteStepHintsTest {
                 """.formatted(IntegrationSummary.AI_MARK));
         RouteInfo r = route();
         NodeInfo when2 = r.nodes.get(7);
-        Map<NodeInfo, IntegrationSummary.StepLabel> labels = RouteStepHints.apply(List.of(r), dir, true);
-        assertThat(labels).containsOnlyKeys(when2);
-        assertThat(labels.get(when2).why()).isEqualTo("Rush orders skip the queue.");
+        Map<String, IntegrationSummary.StepLabel> labels = RouteStepHints.apply(List.of(r), dir, true);
+        assertThat(labels).containsOnlyKeys(RouteStepHints.key("a", "when2"));
+        assertThat(labels.get(RouteStepHints.key("a", "when2")).why()).isEqualTo("Rush orders skip the queue.");
         assertThat(when2.description).isEqualTo(IntegrationSummaryHints.MARK + "Rush orders");
         // the technical view keeps the code
         RouteInfo technical = route();

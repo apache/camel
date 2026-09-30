@@ -80,7 +80,7 @@ class DiagramSupport {
     private boolean showDescription;
     private Path aiSourceDirectory;
     /** The AI labels of the decision points of the routes shown, by their node (CAMEL-25161). */
-    private volatile Map<RouteDiagramLayoutEngine.NodeInfo, IntegrationSummary.StepLabel> stepLabels = Map.of();
+    private volatile Map<String, IntegrationSummary.StepLabel> stepLabels = Map.of();
     private Map<String, List<TopologyDiagramWidget.NodeLine>> nodeLines = Map.of();
     /** Routes highlighted in the topology: the routes of the capability the user came down from, and its name. */
     private Set<String> focusRouteIds = Set.of();
@@ -946,8 +946,8 @@ class DiagramSupport {
     }
 
     /** What the AI wrote about a decision point of a route shown, or null. */
-    IntegrationSummary.StepLabel stepLabel(RouteDiagramLayoutEngine.NodeInfo node) {
-        return node != null ? stepLabels.get(node) : null;
+    IntegrationSummary.StepLabel stepLabel(String routeId, String nodeId) {
+        return routeId != null && nodeId != null ? stepLabels.get(RouteStepHints.key(routeId, nodeId)) : null;
     }
 
     /**
