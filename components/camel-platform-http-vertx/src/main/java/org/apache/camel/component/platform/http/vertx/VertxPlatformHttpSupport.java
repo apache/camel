@@ -18,6 +18,8 @@ package org.apache.camel.component.platform.http.vertx;
 
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
@@ -43,6 +45,7 @@ import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.http.HttpUtil;
+import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -186,7 +189,13 @@ public final class VertxPlatformHttpSupport {
                 ctx.end();
                 promise.complete();
             } else if (body instanceof String string) {
-                ctx.end(string);
+                // write the text in the charset declared by the response Content-Type (vert.x writes a String as UTF-8)
+                String charset = responseCharset(ctx);
+                if (charset != null) {
+                    ctx.end(Buffer.buffer(string, charset));
+                } else {
+                    ctx.end(string);
+                }
                 promise.complete();
             } else if (body instanceof InputStream inputstream) {
                 writeResponseAs(promise, ctx, inputstream);
@@ -203,6 +212,26 @@ public final class VertxPlatformHttpSupport {
         }
 
         return promise.future();
+    }
+
+    /**
+     * The charset of the response Content-Type header (UTF-8 when it declares none), or null when there is no
+     * Content-Type header or its charset is not supported.
+     */
+    private static String responseCharset(RoutingContext ctx) {
+        String contentType = ctx.response().headers().get("Content-Type");
+        if (contentType == null) {
+            return null;
+        }
+        String charset = IOHelper.getCharsetNameFromContentType(contentType);
+        if (charset == null || charset.isEmpty()) {
+            return null;
+        }
+        try {
+            return Charset.isSupported(charset) ? charset : null;
+        } catch (IllegalCharsetNameException e) {
+            return null;
+        }
     }
 
     private static void writeResponseAsFallback(Promise<Void> promise, Exchange camelExchange, Object body, RoutingContext ctx)

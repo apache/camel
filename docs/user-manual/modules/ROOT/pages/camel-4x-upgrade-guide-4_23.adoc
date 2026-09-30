@@ -707,6 +707,15 @@ Before, the first five fell back to the charset of the exchange (UTF-8 by defaul
 unmarshal sets `CamelCharsetName` to it. A message whose MSH-18 names one of these charsets but that is actually
 encoded in another one (such as UTF-8) is now decoded in the charset it names.
 
+=== camel-platform-http-vertx - String response in the charset of the Content-Type
+
+A `String` response body was always written as UTF-8, even when the response `Content-Type` declared another
+charset (for example `text/plain; charset=ISO-8859-1`, set by the route or kept from the request). It is now written
+in the charset that the `Content-Type` declares, so the bytes match the header. Responses without a charset in the
+`Content-Type`, or with UTF-8, are written as before, and so are bodies that are not a `String`. A client that ignored
+the declared charset and read such a response as UTF-8 must now use the declared charset, and characters that the
+declared charset cannot represent are written as `?`.
+
 === Components and Language removal
 
 ==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
