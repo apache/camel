@@ -3812,6 +3812,8 @@ public abstract class AbstractCamelContext extends BaseService
             camelContextExtension.resetInjector();
             camelContextExtension.resetTypeConverterRegistry();
             camelContextExtension.resetTypeConverter();
+            // the other internal services are kept, so register them again to start and stop them with CamelContext
+            camelContextExtension.reRegisterServices();
         }
         final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, camelContextExtension.getName(),
