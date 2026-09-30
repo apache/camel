@@ -538,7 +538,7 @@
         <yetus-audience-annotations-version>0.15.1</yetus-audience-annotations-version>
         <zeebe-version>8.9.13</zeebe-version>
         <zendesk-client-version>1.5.2</zendesk-client-version>
-        <zookeeper-version>3.9.5</zookeeper-version>
+        <zookeeper-version>3.9.6</zookeeper-version>
         <zxing-version>3.5.4</zxing-version>
     </properties>
 
