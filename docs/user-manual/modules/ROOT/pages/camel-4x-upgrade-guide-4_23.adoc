@@ -3964,6 +3964,21 @@ Previously it read the `SessionID` header when the route completed, so a route t
 which session received the reply. A route that changed the `SessionID` header to send the reply to another session
 must now send that message with a QuickFIX/J producer endpoint that sets the `sessionID` option.
 
+=== camel-xslt and camel-xslt-saxon - implicit DOM sources
+
+When a non-`Source` input is implicitly converted to a `DOMSource` pointing at its owner document's
+root element, the Saxon-backed XSLT transformer now starts at the document node. This preserves
+document-root (`match="/"`) template behavior when, for example, a CXF payload is converted to a DOM
+source. The default JDK XSLT transformer already starts at the document node; the change also applies
+to `xslt:` when configured with Saxon as its transformer factory.
+The original DOM and source system ID are preserved. Nested and detached elements are unchanged.
+Explicit `Source` inputs, including a `Source` returned by the endpoint's `source` expression,
+retain their selected context node, and streaming sources are unchanged.
+
+Custom implicit converters that intentionally select the document element as the XSLT context
+may observe different template selection. To retain element-context semantics, provide an explicit
+`DOMSource(element)` as the body or through the endpoint's `source` expression.
+
 === camel-xslt / camel-xslt-saxon - external document() access is denied by default
 
 Camel's default XSLT transformer factory (`XMLConverterHelper`) sets `ACCESS_EXTERNAL_DTD` and
