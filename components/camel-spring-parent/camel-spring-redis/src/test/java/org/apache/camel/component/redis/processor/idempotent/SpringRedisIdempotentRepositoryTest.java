@@ -28,6 +28,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -75,6 +77,29 @@ public class SpringRedisIdempotentRepositoryTest {
     public void shouldRemoveKey() {
         idempotentRepository.remove(KEY);
         verify(setOperations).remove(REPOSITORY, KEY);
+    }
+
+    @Test
+    public void shouldReturnTrueWhenKeyIsRemoved() {
+        when(setOperations.remove(REPOSITORY, KEY)).thenReturn(1L);
+
+        assertTrue(idempotentRepository.remove(KEY));
+    }
+
+    @Test
+    public void shouldReturnFalseWhenKeyIsNotInTheSet() {
+        // SREM removes nothing
+        when(setOperations.remove(REPOSITORY, KEY)).thenReturn(0L);
+
+        assertFalse(idempotentRepository.remove(KEY));
+    }
+
+    @Test
+    public void shouldReturnFalseWhenRemoveHasNoResult() {
+        // Spring Data Redis returns null inside a pipeline or a transaction
+        when(setOperations.remove(REPOSITORY, KEY)).thenReturn(null);
+
+        assertFalse(idempotentRepository.remove(KEY));
     }
 
     @Test
