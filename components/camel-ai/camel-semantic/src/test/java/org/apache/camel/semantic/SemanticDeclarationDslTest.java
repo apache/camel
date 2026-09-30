@@ -25,12 +25,8 @@ import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
-import org.apache.camel.dsl.xml.jaxb.JaxbXmlRoutesBuilderLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.language.semantic.SemanticLanguage;
-import org.apache.camel.model.SemanticDefinitionHelper;
-import org.apache.camel.model.app.SemanticDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PluginHelper;
@@ -45,6 +41,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -81,7 +78,7 @@ class SemanticDeclarationDslTest {
         context.close();
     }
 
-    private static void questions(SemanticDefinition semantic) {
+    private static void questions(SemanticQuestionsBuilder semantic) {
         semantic.question("urgent").type("boolean").instructions("Is this urgent?")
                 .state("${header.myState}").threshold(0.8).uncertainty(0.1).uncertaintyPolicy("non-match");
         semantic.question("department").type("choice").instructions("Which department?")
@@ -89,6 +86,7 @@ class SemanticDeclarationDslTest {
                 .criterion("technical", "Bugs and outages");
         semantic.question("priority").type("score").instructions("How urgent?")
                 .state("${header.myState}").level("Routine").level("Urgent").level("Critical");
+        semantic.register();
     }
 
     private static String xmlQuestions() {
@@ -116,8 +114,8 @@ class SemanticDeclarationDslTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "java", "camel", "routes", "jaxb" })
-    void nativeDeclarationsEvaluateSingleQuestionsAndMixedBatches(String dsl) throws Exception {
+    @ValueSource(strings = { "java", "routes", "standalone", "no-namespace", "component-namespace", "xml-io-namespace" })
+    void componentDeclarationsEvaluateSingleQuestionsAndMixedBatches(String dsl) throws Exception {
         if (dsl.equals("java")) {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -125,7 +123,7 @@ class SemanticDeclarationDslTest {
                     from("direct:batch").setProperty("decision").language("semantic", "refs:urgent,department,priority")
                             .setHeader("department", simple("${exchangeProperty.decision[department]}"));
                     // Declarations are collected before route initialization, including those after the route.
-                    questions(semanticQuestions());
+                    questions(semanticQuestions(this));
                 }
             });
         } else {
@@ -138,15 +136,20 @@ class SemanticDeclarationDslTest {
                       <setHeader name="department"><simple>${exchangeProperty.decision[department]}</simple></setHeader>
                     </route>
                     """;
-            if (dsl.equals("jaxb")) {
-                try (var loader = new JaxbXmlRoutesBuilderLoader()) {
-                    loader.setCamelContext(context);
-                    loader.start();
-                    context.addRoutes(loader.loadRoutesBuilder(
-                            ResourceHelper.fromString("questions.xml", document("routes", route + xmlQuestions()))));
-                }
+            if (dsl.equals("standalone")) {
+                PluginHelper.getRoutesLoader(context).loadRoutes(List.of(
+                        ResourceHelper.fromString("use.xml", document("routes", route)),
+                        ResourceHelper.fromString("questions.semantic.xml", xmlQuestions())));
             } else {
-                load("questions.xml", document(dsl, route + xmlQuestions()));
+                String xml = document("routes", route + xmlQuestions());
+                if (dsl.equals("no-namespace")) {
+                    xml = xml.replace(" xmlns=\"http://camel.apache.org/schema/spring\"", "");
+                } else if (dsl.equals("component-namespace")) {
+                    xml = xml.replace("schema/spring", "schema/semantic");
+                } else if (dsl.equals("xml-io-namespace")) {
+                    xml = xml.replace("schema/spring", "schema/xml-io");
+                }
+                load("questions.semantic.xml", xml);
             }
         }
         assertThat(states).isEmpty();
@@ -177,14 +180,15 @@ class SemanticDeclarationDslTest {
     @ParameterizedTest
     @MethodSource("invalidXml")
     void invalidDeclarationsLeaveThePreviousDefinitionsIntact(String declaration, String message) throws Exception {
-        load("questions.xml", document("routes", xmlQuestions()));
+        load("questions.semantic.xml", document("routes", xmlQuestions()));
         SemanticQuestion previous = SemanticQuestions.get(context).get("department");
         assertThatThrownBy(() -> PluginHelper.getRoutesLoader(context).updateRoutes(
-                ResourceHelper.fromString("questions.xml", document("routes", "<semantic>" + declaration + "</semantic>"))))
+                ResourceHelper.fromString("questions.semantic.xml",
+                        document("routes", "<semantic>" + declaration + "</semantic>"))))
                 .hasMessageContaining(message);
         assertThat(SemanticQuestions.get(context).get("department")).isSameAs(previous);
         assertThat(states).isEmpty();
-        PluginHelper.getRoutesLoader(context).updateRoutes(ResourceHelper.fromString("questions.xml",
+        PluginHelper.getRoutesLoader(context).updateRoutes(ResourceHelper.fromString("questions.semantic.xml",
                 document("routes", xmlQuestions().replace("header.myState", "header.corrected"))));
         assertThat(SemanticQuestions.get(context).get("department").getState()).isEqualTo("${header.corrected}");
     }
@@ -226,7 +230,7 @@ class SemanticDeclarationDslTest {
             @Override
             public void configure() {
                 if (name != null) {
-                    semanticQuestions().question(name).type("boolean").instructions("Valid?");
+                    semanticQuestions(this).question(name).type("boolean").instructions("Valid?").register();
                 }
             }
         }
@@ -236,24 +240,6 @@ class SemanticDeclarationDslTest {
         assertThat(SemanticQuestions.get(context).get("second")).isNotNull();
         context.addRoutes(new Questions(null));
         assertThatThrownBy(() -> SemanticQuestions.get(context).get("second")).hasMessageContaining("Unknown");
-        assertThat(states).isEmpty();
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = { false, true })
-    void declarationSourceCanBeReplacedAndRemovedIndependentlyOfItsResource(boolean trackResource) {
-        Resource resource = trackResource ? ResourceHelper.fromString("questions.xml", "") : null;
-        SemanticDefinition definition = new SemanticDefinition();
-        definition.question("first").type("boolean").instructions("Valid?");
-        SemanticDefinitionHelper.configure(context, resource, "declared-source", definition);
-        SemanticDefinition replacement = new SemanticDefinition();
-        replacement.question("second").type("boolean").instructions("Updated?");
-        SemanticDefinitionHelper.configure(context, resource, "declared-source", replacement);
-        SemanticQuestions questions = SemanticQuestions.get(context);
-        assertThatThrownBy(() -> questions.get("first")).hasMessageContaining("Unknown");
-        assertThat(questions.get("second")).isNotNull();
-        questions.replace("model:declared-source", Map.of());
-        assertThatThrownBy(() -> questions.get("second")).hasMessageContaining("Unknown");
         assertThat(states).isEmpty();
     }
 
@@ -269,7 +255,7 @@ class SemanticDeclarationDslTest {
             @Override
             public void configure() {
                 if (name != null) {
-                    semanticQuestions().question(name).type("boolean").instructions("Valid?");
+                    semanticQuestions(this).question(name).type("boolean").instructions("Valid?").register();
                 }
             }
         }
@@ -287,7 +273,8 @@ class SemanticDeclarationDslTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                semanticQuestions().question("urgent").type("BOOLEAN").instructions("Urgent?").uncertaintyPolicy(policy);
+                semanticQuestions(this).question("urgent").type("BOOLEAN").instructions("Urgent?").uncertaintyPolicy(policy)
+                        .register();
             }
         });
         assertThat(SemanticQuestions.get(context).get("urgent").getUncertaintyPolicy())
@@ -299,10 +286,10 @@ class SemanticDeclarationDslTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                questions(semanticQuestions());
+                questions(semanticQuestions(this));
             }
         });
-        assertThatThrownBy(() -> load("duplicate.xml", document("routes", xmlQuestions())))
+        assertThatThrownBy(() -> load("duplicate.semantic.xml", document("routes", xmlQuestions())))
                 .hasMessageContaining("Duplicate semantic question");
         assertThat(states).isEmpty();
     }
@@ -314,18 +301,18 @@ class SemanticDeclarationDslTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    semanticQuestions().question("urgent").type("boolean").instructions("Urgent?")
-                            .threshold("{{threshold:0.8}}").uncertainty("{{uncertainty:0.1}}");
+                    semanticQuestions(this).question("urgent").type("boolean").instructions("Urgent?")
+                            .threshold("{{threshold:0.8}}").uncertainty("{{uncertainty:0.1}}").register();
                 }
             });
         } else {
-            load("questions.xml", document("routes", xmlQuestions()
+            load("questions.semantic.xml", document("routes", xmlQuestions()
                     .replace("threshold=\"0.8\"", "threshold=\"{{threshold:0.8}}\"")
                     .replace("uncertainty=\"0.1\"", "uncertainty=\"{{uncertainty:0.1}}\"")));
         }
         assertThat(SemanticQuestions.get(context).get("urgent").getThreshold()).isEqualTo(0.8);
         assertThat(SemanticQuestions.get(context).get("urgent").getUncertainty()).isEqualTo(0.1);
-        assertThatThrownBy(() -> load("invalid.xml", document("routes", """
+        assertThatThrownBy(() -> load("invalid.semantic.xml", document("routes", """
                 <semantic><question name="invalid" type="boolean" threshold="{{threshold:abc}}">
                   <instructions>Urgent?</instructions>
                 </question></semantic>
@@ -334,106 +321,19 @@ class SemanticDeclarationDslTest {
                 .hasRootCauseInstanceOf(NumberFormatException.class);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "routes", "camel" })
-    void repeatedUnchangedPreparsePreservesDeclarationsAndBeans(String root) throws Exception {
-        var loader = PluginHelper.getRoutesLoader(context).getRoutesLoader("xml");
-        Resource resource = ResourceHelper.fromString("questions.xml", document(root, xmlQuestions()
-                                                                                      + (root.equals("camel")
-                                                                                              ? "<bean name=\"counter\" type=\"java.util.concurrent.atomic.AtomicInteger\"/>"
-                                                                                              : "")));
-        loader.preParseRoute(resource);
-        SemanticQuestion question = SemanticQuestions.get(context).get("urgent");
-        Object bean = context.getRegistry().lookupByName("counter");
-        loader.preParseRoute(resource);
-        assertThat(SemanticQuestions.get(context).get("urgent")).isSameAs(question);
-        if (root.equals("camel")) {
-            assertThat(bean).isNotNull();
-            assertThat(context.getRegistry().lookupByName("counter")).isSameAs(bean);
-        }
-    }
-
-    @ParameterizedTest
-    @MethodSource("externalFailures")
-    void retryAfterExternalFailureReadsChangedXml(String root, boolean failPreparse) throws Exception {
-        var failingLoader = new RouteBuilderLoaderSupport("fail") {
-            @Override
-            public void preParseRoute(Resource resource) {
-                if (failPreparse) {
-                    throw new IllegalStateException("foreign preparse failure");
-                }
-            }
-
-            @Override
-            public RouteBuilder doLoadRouteBuilder(Resource resource) {
-                return new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        throw new IllegalStateException("earlier builder failure");
-                    }
-                };
-            }
-        };
-        context.getRegistry().bind("routes-builder-loader-fail", failingLoader);
-        Path file = directory.resolve("questions.xml");
-        Files.writeString(file, document(root, xmlQuestions()));
-        Resource resource = ResourceHelper.resolveResource(context, file.toUri().toString());
-        Resource broken = ResourceHelper.fromString("broken.fail", "");
-        var loader = PluginHelper.getRoutesLoader(context);
-        assertThatThrownBy(() -> loader.loadRoutes(failPreparse
-                ? List.of(resource, broken) : List.of(broken, resource)))
-                .hasMessageContaining(failPreparse ? "foreign preparse failure" : "earlier builder failure");
-        assertThat(SemanticQuestions.get(context).get("department").getState()).isEqualTo("${header.myState}");
-        Files.writeString(file, document(root, xmlQuestions().replace("header.myState", "header.updated") + """
-                <route id="updated"><from uri="direct:updated"/>
-                  <setBody><language language="semantic">ref:department</language></setBody>
-                </route>
-                """));
-        loader.loadRoutes(resource);
-        assertThat(SemanticQuestions.get(context).get("department").getState()).isEqualTo("${header.updated}");
-        try (var template = context.createProducerTemplate()) {
-            assertThat(template.requestBodyAndHeader("direct:updated", "old", "updated", "new")).isEqualTo("billing");
-        }
-        assertThat(states).containsExactly("new");
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = { false, true })
-    void deferredBeansKeepTheirOwningResourceWhenAnotherBuilderFails(boolean removeBean) throws Exception {
-        var loader = PluginHelper.getRoutesLoader(context);
-        Resource first = ResourceHelper.fromString("first.xml", document("camel", xmlQuestions()));
-        Resource second = ResourceHelper.fromString("second.xml", document("camel", """
-                <bean name="deferred" type="java.lang.String" factoryBean="factory" factoryMethod="create"/>
-                """));
-        assertThatThrownBy(() -> loader.loadRoutes(List.of(first, second))).hasMessageContaining("Error creating bean");
-        if (removeBean) {
-            loader.loadRoutes(ResourceHelper.fromString("second.xml", document("camel", "")));
-            assertThat(context.getRegistry().lookupByName("deferred")).isNull();
-        } else {
-            context.getRegistry().bind("factory", new DeferredBeanFactory());
-            loader.loadRoutes(second);
-            assertThat(context.getRegistry().lookupByName("deferred")).isEqualTo("created");
-        }
-    }
-
-    static Stream<Arguments> externalFailures() {
-        return Stream.of(Arguments.of("routes", true), Arguments.of("routes", false),
-                Arguments.of("camel", true), Arguments.of("camel", false));
-    }
-
     @Test
     void failedResourceBatchDoesNotReuseEarlierCachedDeclarationsOnRetry() throws Exception {
         String second = "<semantic><question name=\"second\" type=\"boolean\">"
                         + "<instructions>Valid?</instructions></question></semantic>";
         var loader = PluginHelper.getRoutesLoader(context);
         assertThatThrownBy(() -> loader.loadRoutes(List.of(
-                ResourceHelper.fromString("first.xml", document("routes", xmlQuestions())),
-                ResourceHelper.fromString("second.xml", document("routes", second.replace("boolean", "unknown"))))))
+                ResourceHelper.fromString("first.semantic.xml", document("routes", xmlQuestions())),
+                ResourceHelper.fromString("second.semantic.xml", document("routes", second.replace("boolean", "unknown"))))))
                 .hasMessageContaining("Invalid semantic question");
         loader.loadRoutes(List.of(
-                ResourceHelper.fromString("first.xml",
+                ResourceHelper.fromString("first.semantic.xml",
                         document("routes", xmlQuestions().replace("header.myState", "header.new"))),
-                ResourceHelper.fromString("second.xml", document("routes", second))));
+                ResourceHelper.fromString("second.semantic.xml", document("routes", second))));
         assertThat(SemanticQuestions.get(context).get("department").getState()).isEqualTo("${header.new}");
         assertThat(SemanticQuestions.get(context).get("second")).isNotNull();
         assertThat(states).isEmpty();
@@ -447,7 +347,7 @@ class SemanticDeclarationDslTest {
                           <setBody><language language="semantic">ref:department</language></setBody>
                         </route>
                         """)),
-                ResourceHelper.fromString("definitions.xml", document("camel", xmlQuestions()))));
+                ResourceHelper.fromString("definitions.semantic.xml", document("routes", xmlQuestions()))));
         assertThat(states).isEmpty();
         try (var template = context.createProducerTemplate()) {
             assertThat(template.requestBodyAndHeader("direct:use", "original", "myState", "invoice")).isEqualTo("billing");
@@ -466,29 +366,30 @@ class SemanticDeclarationDslTest {
 
     @Test
     void reloadingReplacesAndRemovesDeclarationsUsedByExistingExpressions() throws Exception {
-        load("questions.xml", document("camel", xmlQuestions()));
+        load("questions.semantic.xml", document("routes", xmlQuestions()));
         var expression = context.resolveLanguage("semantic").createExpression("ref:department");
         var exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader("myState", "old");
         assertThat(expression.evaluate(exchange, String.class)).isEqualTo("billing");
-        PluginHelper.getRoutesLoader(context).updateRoutes(ResourceHelper.fromString("questions.xml",
-                document("camel", xmlQuestions().replace("header.myState", "header.updated"))));
+        PluginHelper.getRoutesLoader(context).updateRoutes(ResourceHelper.fromString("questions.semantic.xml",
+                document("routes", xmlQuestions().replace("header.myState", "header.updated"))));
         exchange.getMessage().setHeader("updated", "new");
         assertThat(expression.evaluate(exchange, String.class)).isEqualTo("billing");
         assertThat(states).containsExactly("old", "new");
-        PluginHelper.getRoutesLoader(context).updateRoutes(ResourceHelper.fromString("questions.xml", document("camel", "")));
+        PluginHelper.getRoutesLoader(context)
+                .updateRoutes(ResourceHelper.fromString("questions.semantic.xml", document("routes", "")));
         assertThatThrownBy(() -> expression.evaluate(exchange, Object.class)).hasMessageContaining("Unknown semantic question");
     }
 
     @Test
     void watcherRemovesDeletedAndRenamedDeclarationResources() throws Exception {
-        Path original = directory.resolve("questions.xml");
-        Files.writeString(original, document("camel", xmlQuestions()));
+        Path original = directory.resolve("questions.semantic.xml");
+        Files.writeString(original, document("routes", xmlQuestions()));
         Resource source = ResourceHelper.resolveResource(context, original.toUri().toString());
         PluginHelper.getRoutesLoader(context).loadRoutes(source);
         TestWatcher watcher = new TestWatcher();
         watcher.setCamelContext(context);
-        Path renamed = Files.move(original, directory.resolve("renamed.xml"));
+        Path renamed = Files.move(original, directory.resolve("renamed.semantic.xml"));
         watcher.reload(source);
         assertThatThrownBy(() -> SemanticQuestions.get(context).get("department")).hasMessageContaining("Unknown");
         Resource replacement = ResourceHelper.resolveResource(context, renamed.toUri().toString());
@@ -500,14 +401,83 @@ class SemanticDeclarationDslTest {
         assertThatThrownBy(() -> SemanticQuestions.get(context).get("department")).hasMessageContaining("Unknown");
     }
 
-    private void load(String location, String xml) throws Exception {
-        PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString(location, xml));
+    @ParameterizedTest
+    @ValueSource(strings = { "", "http://camel.apache.org/schema/semantic", "http://camel.apache.org/schema/xml-io" })
+    void standaloneXmlSupportsOptionalNamespace(String namespace) throws Exception {
+        load("questions.semantic.xml", xmlQuestions().replace("<semantic>", "<semantic xmlns=\"" + namespace + "\">"));
+        assertThat(SemanticQuestions.get(context).get("department").getCriteria()).containsKey("billing");
+        load("questions.semantic.xml", "<semantic/>");
+        assertThat(SemanticQuestions.get(context).isEmpty()).isTrue();
     }
 
-    public static class DeferredBeanFactory {
-        public static String create() {
-            return "created";
+    @Test
+    void failedJavaReplacementKeepsPreviousDefinitions() throws Exception {
+        class Questions extends RouteBuilder {
+            private final String instructions;
+
+            Questions(String instructions) {
+                this.instructions = instructions;
+                setResource(ResourceHelper.fromString("Questions.java", ""));
+            }
+
+            @Override
+            public void configure() {
+                semanticQuestions(this).question("urgent").type("boolean").instructions(instructions).end()
+                        .question("other").type("boolean").instructions("Other?").register();
+            }
         }
+        context.addRoutes(new Questions("Urgent?"));
+        var previous = SemanticQuestions.get(context).get("urgent");
+        assertThatThrownBy(() -> context.addRoutes(new Questions(" "))).hasMessageContaining("instructions must not be blank");
+        assertThat(SemanticQuestions.get(context).get("urgent")).isSameAs(previous);
+        assertThat(SemanticQuestions.get(context).get("other")).isNotNull();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "<routes><semantic/><semantic/></routes>",
+            "<routes><semantic xmlns='urn:unexpected'/></routes>",
+            "<semantic><question name='q' type='boolean'><instructions>Hi</instructions><unexpected/></question></semantic>",
+            "<!DOCTYPE semantic [<!ENTITY external SYSTEM 'file:///nonexistent'>]><semantic>&external;</semantic>",
+            "<routes><semantic><question name='q' type='boolean'><instructions>Hi</instructions></question></semantic><route><wrong/></route></routes>"
+    })
+    void malformedXmlDoesNotReplacePreviousDefinitions(String xml) throws Exception {
+        load("questions.semantic.xml", xmlQuestions());
+        var previous = SemanticQuestions.get(context).get("department");
+        assertThatThrownBy(() -> load("questions.semantic.xml", xml)).isInstanceOf(Exception.class);
+        assertThat(SemanticQuestions.get(context).get("department")).isSameAs(previous);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "java", "xml" })
+    void loadingPlainBuilderDiscardsDeletedDeclarationResources(String dsl) throws Exception {
+        Path file = directory.resolve(dsl.equals("java") ? "Questions.java" : "questions.semantic.xml");
+        Files.writeString(file, xmlQuestions());
+        Resource resource = ResourceHelper.resolveResource(context, file.toUri().toString());
+        if (dsl.equals("java")) {
+            RouteBuilder builder = new RouteBuilder() {
+                @Override
+                public void configure() {
+                    semanticQuestions(this).question("urgent").type("boolean").instructions("Urgent?").register();
+                }
+            };
+            builder.setResource(resource);
+            context.addRoutes(builder);
+        } else {
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
+        }
+        assertThat(SemanticQuestions.get(context).isEmpty()).isFalse();
+        Files.delete(file);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+            }
+        });
+        assertThat(SemanticQuestions.get(context).isEmpty()).isTrue();
+    }
+
+    private void load(String location, String xml) throws Exception {
+        PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString(location, xml));
     }
 
     private static class TestWatcher extends RouteWatcherReloadStrategy {

@@ -20,32 +20,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class XmlRoutesBuilderLoaderTest {
-    @Test
-    public void semanticDeclarationsRequireTheOptionalComponent() throws Exception {
-        try (DefaultCamelContext context = new DefaultCamelContext()) {
-            context.start();
-            Resource resource = ResourceHelper.fromString("questions.xml", """
-                    <routes xmlns="http://camel.apache.org/schema/spring">
-                      <semantic>
-                        <question name="valid" type="boolean"><instructions>Valid?</instructions></question>
-                      </semantic>
-                    </routes>
-                    """);
-            var error = assertThrows(IllegalArgumentException.class,
-                    () -> PluginHelper.getRoutesLoader(context).loadRoutes(resource));
-            assertEquals("Semantic question declarations require camel-semantic on the classpath", error.getMessage());
-        }
-    }
-
     @Test
     public void canLoadRoutes() throws Exception {
         String content = ""

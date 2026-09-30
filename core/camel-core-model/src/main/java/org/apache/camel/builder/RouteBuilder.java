@@ -46,10 +46,8 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.SemanticDefinitionHelper;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
-import org.apache.camel.model.app.SemanticDefinition;
 import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -200,18 +198,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @throws Exception can be thrown during configuration
      */
     public abstract void configure() throws Exception;
-
-    /**
-     * Declares named semantic questions for use with the semantic language. Requires camel-semantic at runtime.
-     *
-     * @since 4.23
-     */
-    public SemanticDefinition semanticQuestions() {
-        if (getRouteCollection().getSemantic() == null) {
-            getRouteCollection().setSemantic(new SemanticDefinition());
-        }
-        return getRouteCollection().getSemantic();
-    }
 
     /**
      * <b>Called on initialization to build routes configuration (global routes configurations) using the fluent builder
@@ -923,13 +909,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             }
 
             configure();
-
-            if (getResource() != null || getRouteCollection().getSemantic() != null) {
-                String source = getResource() != null
-                        ? getResource().getLocation()
-                        : "java:" + camelContext.getUuidGenerator().generateUuid();
-                SemanticDefinitionHelper.configure(camelContext, getResource(), source, getRouteCollection().getSemantic());
-            }
 
             // remember the source resource
             getRouteCollection().setResource(getResource());

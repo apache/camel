@@ -100,19 +100,23 @@ Loading declarations does not perform inference.
 
 === Java declarations
 
-Use `semanticQuestions().question(name)` in a `RouteBuilder` to declare questions alongside routes:
+Use the fluent helper from `camel-semantic` inside an ordinary `RouteBuilder`:
 
 [source,java]
 ----
+import static org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions;
+
 @Override
 public void configure() {
-    semanticQuestions().question("department")
-        .type("choice")
-        .state("${header.myState}")
-        .instructions("Which department should handle this message?")
-        .criterion("billing", "Invoices, payments, and refunds")
-        .criterion("technical", "Bugs, outages, and technical problems")
-        .criterion("other", "Everything else");
+    semanticQuestions(this)
+        .question("department")
+            .type("choice")
+            .state("${header.myState}")
+            .instructions("Which department should handle this message?")
+            .criterion("billing", "Invoices, payments, and refunds")
+            .criterion("technical", "Bugs, outages, and technical problems")
+            .criterion("other", "Everything else")
+        .register();
 
     from("direct:tickets")
         .setProperty("department").language("semantic", "ref:department")
@@ -120,28 +124,34 @@ public void configure() {
 }
 ----
 
-Declarations are installed after `configure()` completes and before the routes are initialized.
-They can appear before or after the routes that reference them within the same builder.
-When adding builders to a running context, add the builder declaring shared questions before
-builders whose routes reference them. Use `.type("boolean")` with
-optional `.threshold(0.8)`, `.uncertainty(0.1)` and `.uncertaintyPolicy("non-match")` for boolean
-questions. Use `.type("score")` and successive `.level("description")` calls for ordered score
-levels. Java applications can also continue to register immutable `SemanticQuestion` definitions
-using `SemanticQuestions.get(context).replace(source, questions)`.
+Call `.end().question("anotherName")` to add another question to the group, then `.register()`
+once to validate and install the entire group atomically. Register before creating expressions
+that refer to these names. When adding builders to a running context, add the builder declaring
+shared questions before builders whose routes reference them.
 
-Java/XML declarations reserve source keys beginning with `model:`. For a route resource, the
-key is `"model:" + resource.getLocation()`; passing this key and an empty map to `replace`
-removes that resource's questions. Reloading the resource installs them again. Embedded Java
-builders without a resource receive distinct generated source keys.
+Use `.type("boolean")` with optional `.threshold(0.8)`, `.uncertainty(0.1)` and
+`.uncertaintyPolicy("non-match")` for boolean questions. Use `.type("score")` and successive
+`.level("description")` calls for ordered score levels. Applications can also register immutable
+`SemanticQuestion` definitions using `SemanticQuestions.get(context).replace(source, questions)`.
+
+Each Java resource owns one group. Register all of its questions together; registering again
+replaces that resource's previous group. Reloading a Java resource without the helper removes
+its declarations. Embedded builders without a resource receive distinct generated source keys.
+The helper reserves `"java:" + resource.getLocation()` as the resource source key; passing that
+key and an empty map to `replace` removes the resource's questions.
 
 === XML declarations
 
-With xref:others:java-xml-io-dsl.adoc[XML DSL], place a `semantic` element inside the `camel` or
-`routes` document, before the routes to comply with the XML schema:
+The optional XML extension belongs to `camel-semantic`. Include `camel-semantic` and
+xref:others:java-xml-io-dsl.adoc[XML DSL] (`camel-xml-io-dsl`), and give declaration files the
+extension `*.semantic.xml`. This selects the component's loader without changing the standard
+XML loader or Camel core model.
+
+Both layouts are supported. To keep declarations alongside routes, use `tickets.semantic.xml`:
 
 [source,xml]
 ----
-<camel xmlns="http://camel.apache.org/schema/xml-io">
+<routes>
   <semantic>
     <question name="department" type="choice" state="${header.myState}">
       <instructions>Which department should handle this message?</instructions>
@@ -150,51 +160,67 @@ With xref:others:java-xml-io-dsl.adoc[XML DSL], place a `semantic` element insid
       <criterion key="other" value="Everything else"/>
     </question>
   </semantic>
-  <route>
+  <route id="classify-ticket">
     <from uri="direct:tickets"/>
     <setProperty name="department">
       <language language="semantic">ref:department</language>
     </setProperty>
     <to uri="direct:dispatch"/>
   </route>
-</camel>
+</routes>
 ----
 
-For boolean questions, `threshold`, `uncertainty` and `uncertaintyPolicy` are optional question
-attributes. For score questions, replace the named `criterion` elements with ordered
-`level` elements, such as `<level>Routine</level><level>Urgent</level><level>Critical</level>`.
-XML declarations are loaded before route references are initialized, including those in another
-resource loaded together. Reload replaces the source's questions;
-removing its declarations or deleting the resource removes obsolete definitions.
+To share declarations across route files, use a standalone `questions.semantic.xml`:
 
-The JAXB XML loader also supports declarations inside a `routes` document using the
-`http://camel.apache.org/schema/spring` namespace. With JAXB, load a separate declaration
-resource before the routes that reference it.
+[source,xml]
+----
+<semantic>
+  <question name="department" type="choice" state="${header.myState}">
+    <instructions>Which department should handle this message?</instructions>
+    <criterion key="billing" value="Invoices, payments, and refunds"/>
+    <criterion key="technical" value="Bugs, outages, and technical problems"/>
+    <criterion key="other" value="Everything else"/>
+  </question>
+</semantic>
+----
+
+Load this together with ordinary `*.xml`, Java or YAML route resources that use `ref:department`.
+For example, with Camel Main, set
+`camel.main.routes-include-pattern=classpath:questions.semantic.xml,classpath:routes.xml`.
+Declarations are registered before consuming routes are configured. Reload replaces the source's
+questions; removing the `semantic` block, using an empty block, or deleting the resource removes
+obsolete definitions. XML source keys are the resource locations.
+
+The combined format supports a `routes` root with one optional `semantic` block and ordinary
+`route` elements. The standalone format uses a `semantic` root. Namespace-free documents are
+supported, as are documents consistently using `http://camel.apache.org/schema/semantic`,
+`http://camel.apache.org/schema/xml-io`, or `http://camel.apache.org/schema/spring`.
+These extensions do not validate against Camel's standard core XSDs. Ordinary `*.xml` files
+and the JAXB loader do not accept embedded semantic declarations.
+
+For boolean questions, `threshold`, `uncertainty` and `uncertaintyPolicy` are optional question
+attributes. For score questions, replace the named `criterion` elements with ordered `level`
+elements, such as `<level>Routine</level><level>Urgent</level><level>Critical</level>`.
 
 The numeric `threshold` and `uncertainty` options accept property placeholders in all three
 DSLs. For example, Java accepts `.threshold("{{semantic.threshold:0.5}}")`, and XML accepts
 `threshold="{{semantic.threshold:0.5}}"`. Values are resolved and validated when declarations
-are registered; Java model exports preserve the placeholder text.
+are registered.
 
-Both Java and XML declarations require `camel-semantic` and use the same context-wide registry,
-validation, defaults and adapters as YAML. They do not require `camel-yaml-dsl`. Their questions
-can also be selected together using `refs:name1,name2`, as described below.
+Java and XML declarations use the same context-wide registry, validation, defaults and adapters
+as YAML. They do not require `camel-yaml-dsl`. Their questions can also be selected together
+using `refs:name1,name2`, as described below.
 
-=== Exporting declarations
+=== Exporting routes
 
-Direct exports of a `RoutesDefinition` containing semantic declarations preserve them. The MCP
-route transformation tool also preserves declarations in XML-to-YAML, YAML-to-XML, and
-Java-to-YAML/XML conversions. YAML-to-XML and Java-to-YAML/XML conversions load a temporary
-Camel context and export the registered questions with their effective numeric policies,
-omitting settings that match the defaults. Numeric placeholders must resolve in that context;
-the tool does not load the application's external properties. Provide a placeholder default,
-such as `{{semantic.threshold:0.5}}`, or a concrete value when the property is unavailable.
-Unresolved required properties fail conversion. XML-to-YAML conversion preserves placeholder
-text without resolving it.
+Question declarations live outside Camel's core route model. Generic model exports and runtime
+route dumps such as `camel.main.dumpRoutes=yaml` contain only routes; keep declarations separately
+and load them before reloading an exported route.
 
-Runtime route dumps such as `camel.main.dumpRoutes=yaml` contain only
-the routes and omit the question declarations. Supply the declarations separately before
-reloading those dumps.
+The MCP route conversion tool rejects Java or YAML inputs containing semantic declarations
+because a generic route export would lose those declarations. Convert the routes separately.
+Extended XML documents must also be separated into declarations and ordinary routes before
+using the generic converter.
 
 === Selected state
 

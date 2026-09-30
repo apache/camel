@@ -23,17 +23,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.builder.EndpointConsumerBuilder;
-import org.apache.camel.model.app.SemanticDefinition;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
@@ -51,7 +48,6 @@ import static org.apache.camel.model.RouteDefinitionHelper.routesByIdOrPattern;
  */
 @Metadata(label = "configuration", description = "Container for a collection of route definitions")
 @XmlRootElement(name = "routes")
-@XmlType(propOrder = { "semantic", "routes" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinition>
         implements RouteContainer, ResourceAware {
@@ -78,10 +74,6 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     @XmlElementRef
     @Metadata(description = "The Camel routes.")
     private List<RouteDefinition> routes = new ArrayList<>();
-
-    @XmlElement(name = "semantic")
-    @Metadata(description = "Named semantic question declarations.")
-    private SemanticDefinition semantic;
 
     public RoutesDefinition() {
     }
@@ -111,14 +103,6 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     @Override
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
-    }
-
-    public SemanticDefinition getSemantic() {
-        return semantic;
-    }
-
-    public void setSemantic(SemanticDefinition semantic) {
-        this.semantic = semantic;
     }
 
     public List<InterceptFromDefinition> getInterceptFroms() {
