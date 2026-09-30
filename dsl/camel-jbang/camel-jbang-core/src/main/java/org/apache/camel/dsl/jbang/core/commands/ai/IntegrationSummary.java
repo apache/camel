@@ -683,7 +683,8 @@ public final class IntegrationSummary {
 
                 Group the routes listed as needing grouping into two to six business capabilities, each route in one. \
                 A route that is plumbing with little business meaning (logging, dead letter, error handling, retries, \
-                housekeeping) goes under UTILITY instead of a capability. Routes already grouped by the source keep \
+                housekeeping) goes under UTILITY instead of a capability. A route that receives work from outside (an \
+                entry point) and passes it on is not utility: it belongs to the capability it feeds. Routes already grouped by the source keep \
                 their group: leave them out. Write a description only for the routes listed as needing one: the label is \
                 what a diagram box shows (such as "Order intake & validation"), the sentence explains it. Use the \
                 route ids exactly as given. Under STEPS, label each decision point listed, with its route id and step path \
@@ -929,7 +930,10 @@ public final class IntegrationSummary {
                     String body = item.matches() ? item.group(1) : raw.strip();
                     // "- id" or "- id: why"
                     String key = keyAndRest(body, keys)[0];
-                    if (ungrouped.contains(key) && !utility.contains(key)) {
+                    Route route = overview.route(key);
+                    // a route that starts a flow is intake, not plumbing
+                    if (ungrouped.contains(key) && !utility.contains(key)
+                            && (route == null || !ProjectCapabilities.startsAFlow(route, overview))) {
                         utility.add(key);
                     }
                 }

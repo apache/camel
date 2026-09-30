@@ -110,6 +110,51 @@ class ProjectCapabilitiesTest {
     }
 
     @Test
+    void aRouteThatStartsAFlowIsNeverUtility() {
+        // CAMEL-25161: a model called the file intake of widget-gadget plumbing
+        Overview o = ProjectOverview.analyze(Path.of("widget-gadget"), Map.of(
+                "src/main/java/OrderRoute.java", """
+                        public class OrderRoute extends RouteBuilder {
+                            public void configure() {
+                                from("file:src/main/data?noop=true")
+                                        .to("amqp:queue:order.queue");
+                            }
+                        }
+                        """,
+                "src/main/java/WidgetGadgetRoute.java", """
+                        public class WidgetGadgetRoute extends RouteBuilder {
+                            public void configure() {
+                                from("amqp:queue:order.queue")
+                                    .choice()
+                                        .when().jsonpath("$.order[?(@.product=='widget')]").to("amqp:queue:widget.queue")
+                                        .otherwise().to("amqp:queue:gadget.queue");
+                            }
+                        }
+                        """), ProjectOverviewTest.CATALOG);
+        String intake = "src/main/java/OrderRoute.java:3";
+        String distribution = "src/main/java/WidgetGadgetRoute.java:3";
+        assertThat(ProjectCapabilities.startsAFlow(o.route(intake), o)).isTrue();
+        assertThat(ProjectCapabilities.startsAFlow(o.route(distribution), o)).isFalse();
+
+        // what the model answered
+        AiContent ai = IntegrationSummary.parseAnswer("""
+                CAPABILITIES:
+                - Order Distribution: %s | Routes incoming orders to queues by product.
+                UTILITY:
+                - %s
+                """.formatted(distribution, intake), o);
+        assertThat(ai.utility()).isEmpty();
+
+        // an older summary that has it as utility: it goes with the capability it feeds
+        AiContent old = new AiContent(
+                null, List.of(new Capability("Order Distribution", List.of(distribution), "x")),
+                Map.of(), List.of(intake));
+        Capabilities caps = ProjectCapabilities.build(o, old);
+        assertThat(caps.group("capability:Order Distribution").routes()).containsExactlyInAnyOrder(intake, distribution);
+        assertThat(caps.group(ProjectCapabilities.UTILITY)).isNull();
+    }
+
+    @Test
     void rolesOfEveryRoute() {
         Capabilities caps = ProjectCapabilities.build(overview(), AI);
         assertThat(caps.groups()).extracting(Group::id)
