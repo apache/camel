@@ -132,8 +132,8 @@ class SourceTab extends AbstractTab {
 
     private List<RouteEntry> routeIndex = Collections.emptyList();
     private List<ToEntry> toIndex = Collections.emptyList();
-    private final GotoRoutePopup gotoRoutePopup = new GotoRoutePopup();
-    private final GotoSourceNodePopup gotoSourceNodePopup = new GotoSourceNodePopup();
+    final GotoRoutePopup gotoRoutePopup = new GotoRoutePopup();
+    final GotoSourceNodePopup gotoSourceNodePopup = new GotoSourceNodePopup();
     private final FileActionsPopup fileActionsPopup = new FileActionsPopup();
 
     SourceTab(MonitorContext ctx) {
@@ -158,9 +158,9 @@ class SourceTab extends AbstractTab {
     }
 
     boolean isSourceViewerTextInputActive() {
-        // also treat the file-actions menu as active input so global single-key shortcuts (q, ?, ...)
-        // do not fire while the menu, its name prompt, or delete confirmation is open
-        return sourceViewer.isTextInputActive() || fileActionsPopup.isVisible();
+        // also treat the file-actions menu and the go-to popups as active input so global single-key shortcuts
+        // (q, ?, digits switching tabs, ...) do not fire while the menu, a prompt or a filter is open
+        return sourceViewer.isTextInputActive() || fileActionsPopup.isVisible() || isGotoPopupVisible();
     }
 
     void handlePaste(String text) {
@@ -316,7 +316,13 @@ class SourceTab extends AbstractTab {
 
     @Override
     public boolean isOverlayActive() {
-        return fileActionsPopup.isVisible() || (focusOnViewer && sourceViewer.isTextInputActive());
+        return fileActionsPopup.isVisible() || isGotoPopupVisible()
+                || (focusOnViewer && sourceViewer.isTextInputActive());
+    }
+
+    /** Whether the go to route or go to line popup is open: it takes typed text, digits too. */
+    private boolean isGotoPopupVisible() {
+        return gotoRoutePopup.isVisible() || gotoSourceNodePopup.isVisible();
     }
 
     @Override
