@@ -98,21 +98,28 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                 if (body instanceof File || body instanceof WrappedFile<?>) {
                     // file based (could potentially also be a FTP file etc)
                     File file = message.getBody(File.class);
+                    Buffer buf;
+                    String fileName;
                     if (file != null) {
                         try (InputStream is = new FileInputStream(file)) {
-                            Buffer buf = VertxBufferConverter.toBuffer(is);
-                            if (multipart) {
-                                String type = MimeTypeHelper.probeMimeType(file.getName());
-                                if (type == null) {
-                                    type = "application/octet-stream"; // default binary
-                                }
-                                MultipartForm form
-                                        = MultipartForm.create().binaryFileUpload(multipartName, file.getName(), buf, type);
-                                request.sendMultipartForm(form, resultHandler);
-                            } else {
-                                request.sendBuffer(buf, resultHandler);
-                            }
+                            buf = VertxBufferConverter.toBuffer(is);
                         }
+                        fileName = file.getName();
+                    } else {
+                        // not a local file, such as a remote file (ftp, sftp, smb) with its content in memory,
+                        // so send its content
+                        buf = message.getMandatoryBody(Buffer.class);
+                        fileName = message.getHeader(Exchange.FILE_NAME_ONLY, multipartName, String.class);
+                    }
+                    if (multipart) {
+                        String type = MimeTypeHelper.probeMimeType(fileName);
+                        if (type == null) {
+                            type = "application/octet-stream"; // default binary
+                        }
+                        MultipartForm form = MultipartForm.create().binaryFileUpload(multipartName, fileName, buf, type);
+                        request.sendMultipartForm(form, resultHandler);
+                    } else {
+                        request.sendBuffer(buf, resultHandler);
                     }
                 } else if (body instanceof String str) {
                     // Try to extract URL encoded form data from the message body
