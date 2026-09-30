@@ -288,10 +288,39 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
             exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
             exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
             this.pendingExchanges = total - index - 1;
-            getProcessor().process(exchange);
+            processExchange(exchange);
+        }
+
+        // anything still queued was never handed to the route - the batch was cut short because the consumer
+        // is stopping, or the poll returned more rows than maxMessagesPerPoll. Nothing else will release these,
+        // and a pooled exchange that is never released never returns to the pool
+        Exchange remaining;
+        while ((remaining = (Exchange) exchanges.poll()) != null) {
+            releaseExchange(remaining, false);
         }
 
         return answer;
+    }
+
+    /**
+     * Hands the exchange to the route and reports a failure through the consumer's exception handler.
+     * <p/>
+     * A failing route does not throw out of {@code process()} - the consumer processor is asynchronous, so the failure
+     * is left on the exchange instead. That is why the exception is read back afterwards rather than only caught: a
+     * try/catch on its own never sees the common case, and the failure would go unreported. It matters here in
+     * particular because with {@code consumerProcessedStrategy=delete} the document has already been removed from
+     * Couchbase by the time the route runs, so a silent failure loses the message outright.
+     */
+    private void processExchange(Exchange exchange) {
+        try {
+            getProcessor().process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+        Exception cause = exchange.getException();
+        if (cause != null) {
+            getExceptionHandler().handleException("Error processing exchange", exchange, cause);
+        }
     }
 
     private void logDetails(String id, Object doc, String key, String designDocumentName, String viewName, Exchange exchange) {

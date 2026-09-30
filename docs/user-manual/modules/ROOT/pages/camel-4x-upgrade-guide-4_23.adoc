@@ -466,6 +466,10 @@ setting the option should now set `connectTimeout=10000` explicitly.
 documented 2500 ms default is much shorter than the SDK's 75 seconds and applying it unconditionally would cut short
 queries that currently succeed.
 
+The consumer now reports a failed exchange to its exception handler, so `bridgeErrorHandler` works for this component.
+Previously the result of routing was discarded and a failing route produced no log line at all. Routes whose failures
+went unnoticed will now surface them.
+
 === camel-console
 
 The `context` developer console no longer counts routes created by Kamelets in its `routesTotal` and `routesStarted`
