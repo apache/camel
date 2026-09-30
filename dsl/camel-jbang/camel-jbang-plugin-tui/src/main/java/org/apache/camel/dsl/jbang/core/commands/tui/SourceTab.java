@@ -1201,12 +1201,11 @@ class SourceTab extends AbstractTab {
             return;
         }
         if (routeId == null || routeId.isEmpty()) {
-            // derive route id from the from URI
+            // a route without an id is named by its from endpoint, with the component so file:src/main/data
+            // does not read as a folder name
             int colon = baseUri.indexOf(':');
-            routeId = colon >= 0 ? baseUri.substring(colon + 1) : baseUri;
-            if (routeId.startsWith("//")) {
-                routeId = routeId.substring(2);
-            }
+            routeId = colon > 0 && baseUri.startsWith("//", colon + 1)
+                    ? baseUri.substring(0, colon + 1) + baseUri.substring(colon + 3) : baseUri;
         }
         index.add(new RouteEntry(routeId, baseUri, filePath, fromLine));
     }

@@ -157,7 +157,7 @@ class GotoRoutePopup {
         int maxUriW = 0;
         for (RouteItem entry : filteredEntries) {
             maxIdW = Math.max(maxIdW, entry.routeId().length());
-            maxUriW = Math.max(maxUriW, entry.fromUri().length());
+            maxUriW = Math.max(maxUriW, entry.fromUri().equals(entry.routeId()) ? 0 : entry.fromUri().length());
         }
 
         Style normalStyle = Style.EMPTY;
@@ -183,7 +183,8 @@ class GotoRoutePopup {
                 spans.add(Span.styled(padded, normalStyle));
             }
 
-            String uri = entry.fromUri();
+            // a route without an id is named by its endpoint: no need to show it twice
+            String uri = entry.fromUri().equals(entry.routeId()) ? "" : entry.fromUri();
             String paddedUri = uri + " ".repeat(Math.max(0, maxUriW - uri.length()));
             spans.add(Span.styled("  " + paddedUri, dimStyle));
 
