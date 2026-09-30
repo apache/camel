@@ -343,6 +343,21 @@ class RouteAssistTest {
     }
 
     @Test
+    void anXmlFileThatIsNotWellFormed() {
+        String xml = """
+                <routes xmlns="http://camel.apache.org/schema/xml-io">
+                    <route>
+                        <from uri="timer:tick"/>
+                    </route>
+                </roues>
+                """;
+        List<Diagnostic> errors = errors("routes.xml", xml);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).line()).isEqualTo(5);
+        assertThat(errors.get(0).message()).contains("</roues>").doesNotContain("position:");
+    }
+
+    @Test
     void aSpringXmlFileIsNotRead() {
         String xml = """
                 <beans xmlns="http://www.springframework.org/schema/beans">

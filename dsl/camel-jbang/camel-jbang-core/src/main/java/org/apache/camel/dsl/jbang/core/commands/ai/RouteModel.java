@@ -238,7 +238,10 @@ public final class RouteModel {
     private static String firstLine(Throwable e) {
         String msg = String.valueOf(e.getMessage());
         int nl = msg.indexOf('\n');
-        return nl > 0 ? msg.substring(0, nl).trim() : msg.trim();
+        msg = nl > 0 ? msg.substring(0, nl).trim() : msg.trim();
+        // the parser appends where it is ("(position: TEXT seen ...</roues>... @11:9)"), which the line already says
+        int position = msg.indexOf(" (position:");
+        return position > 0 ? msg.substring(0, position) : msg;
     }
 
     /** The local name and the default namespace of the root element; null when there is none. */
