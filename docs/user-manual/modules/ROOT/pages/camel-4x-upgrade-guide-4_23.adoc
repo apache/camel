@@ -68,6 +68,16 @@ camel.resource.http.read-timeout = 30000
 
 OAuth client credentials token caching now distinguishes profiles by client secret and requested scope, in addition to token endpoint and client ID. Profiles with different credentials or scopes request separate tokens instead of reusing the same cached token. Applications using such profiles may make additional token requests after upgrading.
 
+The post login url of the authorization code flow is now always built from the origin (`scheme://host[:port]`)
+of the configured `camel.oauth.redirect-uri`, plus the requested path. `OAuthCodeFlowProcessor` previously
+rebuilt that url from the `X-Forwarded-Proto` / `X-Forwarded-Host` / `X-Forwarded-Port` request headers, or
+from the `Host` header behind `CamelHttpUrl` when those were absent. All of those are set by the caller, so
+a request could point the post login redirect at any origin. A deployment behind an ingress or an OpenShift
+Route still redirects to its externally reachable address, because `camel.oauth.redirect-uri` is the address
+the identity provider sends the browser back to. Deployments whose external address differs from that
+property must set it to the address the browser actually reaches; a request announcing another origin is now
+redirected to the configured one and a warning is logged.
+
 === Simple language
 
 `${ }` may now hold a predicate, as the braces do in Jakarta EL, Groovy and a JavaScript template:
