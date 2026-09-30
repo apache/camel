@@ -7054,6 +7054,11 @@
         "type" : "object",
         "ref" : "from",
         "required" : true
+      }, {
+        "name" : "routeProperty",
+        "type" : "array",
+        "ref" : "property",
+        "description" : "To set metadata as properties on the route."
       } ]
     },
     "routeTemplate" : {
