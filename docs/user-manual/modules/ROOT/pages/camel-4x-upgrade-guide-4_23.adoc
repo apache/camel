@@ -389,11 +389,27 @@ The Event developer console now exposes the full structured JSON payload in the 
 each event entry, while keeping the existing flat `type`, `timestamp`, `exchangeId`, and
 `message` fields for backwards compatibility.
 
-=== Intercept Send To Endpoint - intercepted route
+=== Intercept Send To Endpoint EIP
 
-When an `interceptSendToEndpoint` applies to several routes (such as one defined in a `RouteBuilder` with several
-routes), the `CamelInterceptedRouteId` and `CamelInterceptedParentEndpointUri` exchange properties are now those of the route
-that sends to the endpoint. Before, they were always those of the first route of the `RouteBuilder`.
+The interceptors of `interceptSendToEndpoint` are now registered by each route while it is running, on an endpoint that
+is wrapped once:
+
+- Each route uses its own interceptor. Before, the endpoint was wrapped by the interceptor of one of the routes (which
+  one depended on the order of an unordered set), and all the routes used that one.
+- Removing a route no longer breaks the other routes that send to the intercepted endpoint (they failed with
+  `RejectedExecutionException` when the route whose interceptor wrapped the endpoint was removed).
+- The interception is kept when the `CamelContext` is restarted.
+- The interceptor of a stopped route is no longer used.
+- Interceptors from two `RouteBuilder`s for the same endpoint are both used, each by the routes of its own
+  `RouteBuilder`. Before, only the one that wrapped the endpoint first was used.
+- `mockEndpoints` together with an `interceptSendToEndpoint` on the same endpoint now both run, in a fixed order: the
+  interceptors of the route that is sending first, and then the mock. Before, only the one that wrapped the endpoint
+  first was used.
+- When an interceptor applies to several routes (such as one defined in a `RouteBuilder` with several routes), the
+  `CamelInterceptedRouteId` and `CamelInterceptedParentEndpointUri` exchange properties are those of the route that
+  sends to the endpoint. Before, they were always those of the first route of the `RouteBuilder`.
+
+The `org.apache.camel.processor.InterceptSendToEndpointCallback` class is deprecated, as it is no longer used.
 
 === Route templates
 

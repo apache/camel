@@ -16,7 +16,9 @@
  */
 package org.apache.camel.support;
 
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
@@ -35,8 +37,28 @@ import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * This is an endpoint when sending to it, is intercepted and is routed in a detour (before and optionally after).
+ * <p/>
+ * The endpoint has one interceptor set by {@link #setBefore(Processor)}, {@link #setAfter(Processor)},
+ * {@link #setSkip(boolean)} and {@link #setOnWhen(Predicate)} (such as when mocking endpoints), and it can have
+ * interceptors that routes register and unregister with {@link #addInterceptor(Interceptor)} and
+ * {@link #removeInterceptor(Interceptor)} (the interceptSendToEndpoint EIP).
  */
 public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, ShutdownableService {
+
+    /**
+     * An interceptor that a route has registered on the endpoint.
+     *
+     * @param routeId the id of the route the interceptor belongs to
+     * @param before  the processor to route to before sending to the endpoint, which takes care of the onWhen predicate
+     *                (and sets the {@link org.apache.camel.ExchangePropertyKey#INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED}
+     *                property when it has one)
+     * @param after   the optional processor to route to after sending to the endpoint
+     * @param skip    whether to skip sending to the endpoint (when the onWhen predicate matched, if any)
+     */
+    public record Interceptor(String routeId, Processor before, Processor after, boolean skip) {
+    }
+
+    private final CopyOnWriteArrayList<Interceptor> interceptors = new CopyOnWriteArrayList<>();
 
     private final CamelContext camelContext;
     private final Endpoint delegate;
@@ -75,6 +97,27 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
 
     public void setSkip(boolean skip) {
         this.skip = skip;
+    }
+
+    /**
+     * Adds an interceptor that a route registers (if not already added)
+     */
+    public void addInterceptor(Interceptor interceptor) {
+        interceptors.addIfAbsent(interceptor);
+    }
+
+    /**
+     * Removes an interceptor that a route has registered
+     */
+    public void removeInterceptor(Interceptor interceptor) {
+        interceptors.remove(interceptor);
+    }
+
+    /**
+     * The interceptors that routes have registered, in the order they were added
+     */
+    public List<Interceptor> getInterceptors() {
+        return interceptors;
     }
 
     @Override
