@@ -358,7 +358,7 @@ public class VertxPlatformHttpEngineTest {
     @Test
     public void testEngineSSLClientAuthenticationRequired() throws Exception {
         final CamelContext context
-                = createCamelContextForTest(configuration -> configuration.setSslContextParameters(serverSSLParameters));
+                = createCamelContext(configuration -> configuration.setSslContextParameters(serverSSLParameters));
 
         try {
             // the client trusts the server but has no certificate
@@ -422,7 +422,7 @@ public class VertxPlatformHttpEngineTest {
         clientSuites.setCipherSuite(List.of("TLS_AES_128_GCM_SHA256"));
         client.setCipherSuites(clientSuites);
 
-        final CamelContext context = createCamelContextForTest(configuration -> configuration.setSslContextParameters(server));
+        final CamelContext context = createCamelContext(configuration -> configuration.setSslContextParameters(server));
 
         try {
             context.getRegistry().bind("client", client);
