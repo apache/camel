@@ -15,7 +15,6 @@
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "note": { "index": 1, "kind": "attribute", "displayName": "Note", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The note for this node" },
     "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The description for this node" },
-    "routes": { "index": 3, "kind": "element", "displayName": "Routes", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteDefinition>", "oneOf": [ "route" ], "deprecated": false, "autowired": false, "secret": false, "description": "Contains the Camel routes" },
-    "semantic": { "index": 4, "kind": "element", "displayName": "Semantic", "group": "common", "required": false, "type": "object", "javaType": "org.apache.camel.model.app.SemanticDefinition", "deprecated": false, "autowired": false, "secret": false, "description": "Named semantic question declarations." }
+    "routes": { "index": 3, "kind": "element", "displayName": "Routes", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteDefinition>", "oneOf": [ "route" ], "deprecated": false, "autowired": false, "secret": false, "description": "Contains the Camel routes" }
   }
 }

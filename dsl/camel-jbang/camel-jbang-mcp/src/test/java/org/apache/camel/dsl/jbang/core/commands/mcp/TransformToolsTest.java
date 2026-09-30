@@ -20,7 +20,6 @@ import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.SetBodyDefinition;
-import org.apache.camel.semantic.SemanticQuestions;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.junit.jupiter.api.Test;
@@ -57,99 +56,17 @@ class TransformToolsTest {
     }
 
     @Test
-    void transformXmlToYamlPreservesSemanticDeclarations() {
-        var result = createTools().camel_transform_route(
-                """
-                        <routes xmlns="http://camel.apache.org/schema/spring">
-                          <semantic><question name="urgent" type="boolean"><instructions>Urgent?</instructions></question></semantic>
-                          <route><from uri="direct:input"/><setBody><language language="semantic">ref:urgent</language></setBody></route>
-                        </routes>
-                        """,
-                "xml", "yaml");
-        assertThat(result.supported).isTrue();
-        assertThat(result.result).contains("semantic:", "question:", "urgent:", "Urgent?", "ref:urgent");
+    void genericXmlConversionRejectsComponentDeclarations() {
+        assertThatThrownBy(() -> createTools().camel_transform_route(
+                "<routes><semantic/><route><from uri='direct:input'/><log message='Hello'/></route></routes>", "xml", "yaml"))
+                .isInstanceOf(ToolCallException.class).hasMessageContaining("semantic");
     }
 
     @ParameterizedTest
     @CsvSource({ "yaml,xml", "java,xml", "java,yaml" })
-    void semanticDeclarationsSurviveConversionAndReload(String source, String target) throws Exception {
-        String yaml = """
-                - semantic:
-                    question:
-                      urgent:
-                        type: boolean
-                        instructions: Urgent?
-                        threshold: "{{semantic.export.threshold:0.8}}"
-                        uncertainty: "{{semantic.export.uncertainty:0.1}}"
-                        uncertaintyPolicy: non-match
-                      department:
-                        type: choice
-                        state: ${header.selected}
-                        instructions: Which department?
-                        criteria:
-                          billing: Invoices
-                          technical: Bugs
-                      priority:
-                        type: score
-                        instructions: Priority?
-                        criteria: [Low, High]
-                - route:
-                    from:
-                      uri: direct:input
-                      steps:
-                        - setBody:
-                            expression:
-                              language:
-                                language: semantic
-                                expression: ref:department
-                """;
-        String java = """
-                import org.apache.camel.builder.RouteBuilder;
-                public class SemanticRoute extends RouteBuilder {
-                    public void configure() {
-                        semanticQuestions().question("urgent").type("boolean").instructions("Urgent?")
-                            .threshold("{{semantic.export.threshold:0.8}}")
-                            .uncertainty("{{semantic.export.uncertainty:0.1}}").uncertaintyPolicy("non-match");
-                        semanticQuestions().question("department").type("choice").instructions("Which department?")
-                            .state("${header.selected}").criterion("billing", "Invoices").criterion("technical", "Bugs");
-                        semanticQuestions().question("priority").type("score").instructions("Priority?")
-                            .level("Low").level("High");
-                        from("direct:input").setBody().language("semantic", "ref:department");
-                    }
-                }
-                """;
-        var result = createTools().camel_transform_route(source.equals("java") ? java : yaml, source, target);
-        assertThat(result.supported).isTrue();
-        assertThat(result.result).contains("ref:department").doesNotContain("{{semantic.export.");
-        try (var context = new DefaultCamelContext()) {
-            context.build();
-            PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("result." + target, result.result));
-            var questions = SemanticQuestions.get(context);
-            assertThat(questions.get("urgent").getThreshold()).isEqualTo(0.8);
-            assertThat(questions.get("urgent").getUncertainty()).isEqualTo(0.1);
-            assertThat(questions.get("urgent").getUncertaintyPolicy().name()).isEqualTo("NON_MATCH");
-            assertThat(questions.get("department").getCriteria()).containsEntry("billing", "Invoices")
-                    .containsEntry("technical", "Bugs");
-            assertThat(questions.get("department").getState()).isEqualTo("${header.selected}");
-            assertThat(questions.get("priority").getLevels()).containsExactly("Low", "High");
-        }
-    }
-
-    @ParameterizedTest
-    @CsvSource({ "yaml,xml", "java,xml", "java,yaml" })
-    void semanticConversionOmitsDefaultPolicies(String source, String target) throws Exception {
-        var result = createTools().camel_transform_route(semanticRoute(source, "0.5"), source, target);
-
-        assertThat(result.supported).isTrue();
-        assertThat(result.result).contains("urgent", "Urgent?").doesNotContain("threshold", "uncertainty");
-        try (var context = new DefaultCamelContext()) {
-            context.build();
-            PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("result." + target, result.result));
-            var question = SemanticQuestions.get(context).get("urgent");
-            assertThat(question.getThreshold()).isEqualTo(0.5);
-            assertThat(question.getUncertainty()).isZero();
-            assertThat(question.getUncertaintyPolicy().name()).isEqualTo("FAIL");
-        }
+    void genericConversionDoesNotSilentlyLoseSemanticDeclarations(String source, String target) {
+        assertThatThrownBy(() -> createTools().camel_transform_route(semanticRoute(source, "0.8"), source, target))
+                .isInstanceOf(ToolCallException.class).hasMessageContaining("Keep them in a separate declaration resource");
     }
 
     @ParameterizedTest
@@ -165,9 +82,15 @@ class TransformToolsTest {
     private static String semanticRoute(String source, String threshold) {
         if (source.equals("java")) {
             return """
-                    semanticQuestions().question("urgent").type("boolean").instructions("Urgent?")
-                        .threshold("%s").uncertainty(0).uncertaintyPolicy("fail");
-                    from("direct:input").setBody().language("semantic", "ref:urgent");
+                    import org.apache.camel.builder.RouteBuilder;
+                    import static org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions;
+                    public class SemanticRoute extends RouteBuilder {
+                        public void configure() {
+                            semanticQuestions(this).question("urgent").type("boolean").instructions("Urgent?")
+                                .threshold("%s").uncertainty(0).uncertaintyPolicy("fail").register();
+                            from("direct:input").setBody().language("semantic", "ref:urgent");
+                        }
+                    }
                     """.formatted(threshold);
         }
         return """

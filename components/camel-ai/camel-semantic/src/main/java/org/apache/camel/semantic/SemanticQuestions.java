@@ -44,9 +44,9 @@ public final class SemanticQuestions {
     }
 
     /**
-     * Replace all definitions from one source; an empty map removes obsolete declarations. Java/XML declarations
-     * reserve the {@code model:} prefix. Resource declarations use {@code model:} followed by
-     * {@link Resource#getLocation()}, while embedded Java builders use unique generated source keys.
+     * Replace all definitions from one source; an empty map removes obsolete declarations. The Java fluent helper
+     * reserves {@code java:} followed by the resource location (or a generated key for embedded builders). XML and YAML
+     * declarations use the resource location as their source key.
      */
     public synchronized void replace(String source, Map<String, SemanticQuestion> definitions) {
         Map<String, SemanticQuestion> replacement = new HashMap<>();
@@ -90,8 +90,15 @@ public final class SemanticQuestions {
                 .forEach(location -> replace(location, Map.of()));
     }
 
-    Map<String, SemanticQuestion> snapshot() {
-        return questions;
+    synchronized void remove(String source) {
+        if (sources.containsKey(source)) {
+            replace(source, Map.of());
+        }
+    }
+
+    /** Whether any named questions have been registered. */
+    public boolean isEmpty() {
+        return questions.isEmpty();
     }
 
     public SemanticQuestion get(String name) {

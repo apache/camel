@@ -161,9 +161,6 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         List<JsonObject> roots = new ArrayList<>();
         try {
             if (definition instanceof RoutesDefinition rd) {
-                if (rd.getSemantic() != null) {
-                    roots.add(writer.writeSemanticDefinition(rd.getSemantic()));
-                }
                 for (RouteDefinition route : rd.getRoutes()) {
                     roots.add(writer.writeRouteDefinition(route));
                 }

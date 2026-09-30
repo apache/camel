@@ -34,8 +34,7 @@ import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.SemanticDefinitionHelper;
-import org.apache.camel.model.app.SemanticDefinition;
+import org.apache.camel.semantic.SemanticQuestions;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
@@ -136,9 +135,6 @@ public class TransformTools {
 
         YamlModelWriter writer = new YamlModelWriter();
         List<JsonObject> roots = new ArrayList<>();
-        if (routes.getSemantic() != null) {
-            roots.add(writer.writeSemanticDefinition(routes.getSemantic()));
-        }
         for (RouteDefinition route : routes.getRoutes()) {
             roots.add(writer.writeRouteDefinition(route));
         }
@@ -164,13 +160,22 @@ public class TransformTools {
 
             RoutesDefinition rd = new RoutesDefinition();
             rd.setRoutes(routeDefs);
-            rd.setSemantic(SemanticDefinitionHelper.getDefinition(ctx));
+            requireSeparateDeclarations(ctx);
 
             StringWriter sw = new StringWriter();
             new org.apache.camel.xml.out.ModelWriter(sw).writeRoutesDefinition(rd);
             return sw.toString();
         } finally {
             ctx.stop();
+        }
+    }
+
+    private static void requireSeparateDeclarations(DefaultCamelContext context) {
+        SemanticQuestions questions = context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class);
+        if (questions != null && !questions.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Semantic declarations cannot be exported by the generic route converter. "
+                                               + "Keep them in a separate declaration resource and convert only the routes.");
         }
     }
 
@@ -197,10 +202,7 @@ public class TransformTools {
             if ("yaml".equals(targetFormat)) {
                 YamlModelWriter writer = new YamlModelWriter();
                 List<JsonObject> roots = new ArrayList<>();
-                SemanticDefinition semantic = SemanticDefinitionHelper.getDefinition(ctx);
-                if (semantic != null) {
-                    roots.add(writer.writeSemanticDefinition(semantic));
-                }
+                requireSeparateDeclarations(ctx);
                 for (RouteDefinition route : routeDefs) {
                     roots.add(writer.writeRouteDefinition(route));
                 }
@@ -208,7 +210,7 @@ public class TransformTools {
             } else {
                 RoutesDefinition rd = new RoutesDefinition();
                 rd.setRoutes(routeDefs);
-                rd.setSemantic(SemanticDefinitionHelper.getDefinition(ctx));
+                requireSeparateDeclarations(ctx);
 
                 StringWriter sw = new StringWriter();
                 new org.apache.camel.xml.out.ModelWriter(sw).writeRoutesDefinition(rd);
