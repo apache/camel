@@ -1254,7 +1254,7 @@ class SourceTab extends AbstractTab {
         }
 
         if (currentFilePath.endsWith(".java") || currentFilePath.toLowerCase().endsWith(".xml")) {
-            // the steps of a Java route are in the index with their lines, as the parser read them
+            // the steps of a Java or XML route are in the index with their lines, as the parser read them
             for (ToEntry te : toIndex) {
                 if (currentFilePath.equals(te.filePath())) {
                     RouteEntry target = fromUriToRoute.get(te.toUri());
