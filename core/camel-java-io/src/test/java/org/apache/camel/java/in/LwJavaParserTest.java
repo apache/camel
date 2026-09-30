@@ -18,6 +18,7 @@ package org.apache.camel.java.in;
 
 import java.util.List;
 
+import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.DelayDefinition;
@@ -221,6 +222,8 @@ class LwJavaParserTest {
         SplitDefinition split = (SplitDefinition) route.getOutputs().get(0);
         SetHeadersDefinition headers = (SetHeadersDefinition) split.getOutputs().get(0);
         assertThat(headers.getHeaders()).extracting(SetHeaderDefinition::getName).containsExactly("foo", "bar");
+        // a plain value is the constant language, which the dumpers write (it was a Java-only expression)
+        assertThat(RoundTripTest.dump(route)).contains(".setHeaders(\"foo\", constant(\"ABC\"), \"bar\", constant(\"XYZ\"))");
         MarshalDefinition marshal = (MarshalDefinition) split.getOutputs().get(1);
         assertThat(((ZipDeflaterDataFormat) marshal.getDataFormatType()).getCompressionLevel()).isEqualTo("9");
         SetHeaderDefinition unit = (SetHeaderDefinition) split.getOutputs().get(2);
@@ -262,6 +265,72 @@ class LwJavaParserTest {
         assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
         CircuitBreakerDefinition cb = (CircuitBreakerDefinition) result.routes().getRoutes().get(0).getOutputs().get(0);
         assertThat(cb.getConfiguration()).isEqualTo("myConfig");
+    }
+
+    @Test
+    void aRouteKeptInALocalVariable() {
+        // a route built in steps: RouteDefinition route = from(...); route.to(...)
+        JavaParseResult result = new LwJavaParser().parse("""
+                public class R extends RouteBuilder {
+                    public void configure() {
+                        RouteDefinition route = from("direct:start").routeId("start");
+                        route.split().body();
+                        route.to("mock:split");
+
+                        AggregateDefinition agg = from("direct:joinBrothers").aggregate(header("type"), new MyStrategy());
+                        agg.completionSize(2);
+                        agg.to("mock:brothers");
+
+                        from("direct:other").to("mock:other");
+                    }
+                }
+                """);
+        List<RouteDefinition> routes = result.routes().getRoutes();
+        assertThat(routes).extracting(r -> r.getInput().getUri())
+                .containsExactly("direct:start", "direct:joinBrothers", "direct:other");
+        RouteDefinition start = routes.get(0);
+        assertThat(start.getRouteId()).isEqualTo("start");
+        assertThat(start.getOutputs()).extracting(ProcessorDefinition::getShortName).containsExactly("split", "to");
+        AggregateDefinition agg = (AggregateDefinition) routes.get(1).getOutputs().get(0);
+        assertThat(agg.getCompletionSize()).isEqualTo("2");
+        assertThat(agg.getOutputs()).extracting(ProcessorDefinition::getShortName).containsExactly("to");
+        // only the strategy object is unknown
+        assertThat(result.unresolved()).extracting(JavaParseResult.Unresolved::text).containsExactly("new MyStrategy()");
+    }
+
+    @Test
+    void theLocalsOfOneBuilderAreNotThoseOfTheNext() {
+        JavaParseResult result = new LwJavaParser().parse("""
+                public class Routes {
+                    static class A extends RouteBuilder {
+                        public void configure() {
+                            RouteDefinition route = from("direct:a");
+                            route.to("mock:a");
+                        }
+                    }
+                    static class B extends RouteBuilder {
+                        public void configure() {
+                            route.to("mock:b");
+                            from("direct:b").to("mock:b");
+                        }
+                    }
+                }
+                """);
+        List<RouteDefinition> routes = result.routes().getRoutes();
+        assertThat(routes).extracting(r -> r.getInput().getUri()).containsExactly("direct:a", "direct:b");
+        // route.to("mock:b") in B is not a continuation of A's route
+        assertThat(routes.get(0).getOutputs()).hasSize(1);
+    }
+
+    @Test
+    void aLocalThatIsNotARouteStaysAValue() {
+        // Predicate god = ...: a value, used where the route refers to it, not a route of its own
+        JavaParseResult result = new LwJavaParser().parse("""
+                Predicate god = header("type").isEqualTo("god");
+                from("direct:start").choice().when(god).to("mock:god").end();
+                """);
+        assertThat(result.routes().getRoutes()).hasSize(1);
+        assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
     }
 
     @Test
