@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.model.RemoveHeadersDefinition;
+import org.apache.camel.model.RemovePropertiesDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.support.builder.ValueBuilder;
@@ -71,6 +73,15 @@ final class ModelNormalizer {
         }
         if (!o.getClass().getName().startsWith("org.apache.camel.model.")) {
             return;
+        }
+        // removeHeaders("*", "keep") keeps one exclude in an array, XML and YAML in the excludePattern option
+        if (o instanceof RemoveHeadersDefinition rh && rh.getExcludePattern() == null && rh.getExcludePatterns() != null
+                && rh.getExcludePatterns().length == 1) {
+            rh.setExcludePattern(rh.getExcludePatterns()[0]);
+        }
+        if (o instanceof RemovePropertiesDefinition rp && rp.getExcludePattern() == null
+                && rp.getExcludePatterns() != null && rp.getExcludePatterns().length == 1) {
+            rp.setExcludePattern(rp.getExcludePatterns()[0]);
         }
         if (o instanceof ConstantExpression ce && ce.getExpression() == null && ce.getExpressionValue() != null) {
             // expression().constant(value) keeps the value as a runtime expression; the other DSLs have its text

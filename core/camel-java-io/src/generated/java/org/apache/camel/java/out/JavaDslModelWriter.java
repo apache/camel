@@ -4125,6 +4125,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "AggregateDefinition" -> {
                     AggregateDefinition _d = (AggregateDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".aggregate(");
                     boolean _first = true;
                     if (_d.getCorrelationExpression() != null && _d.getCorrelationExpression().getExpressionType() != null) {
@@ -4141,6 +4142,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "BeanDefinition" -> {
                     BeanDefinition _d = (BeanDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".bean(");
                     boolean _first = true;
                     if (_d.getRef() != null) {
@@ -4162,6 +4164,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "CacheDefinition" -> {
                     CacheDefinition _d = (CacheDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".cache(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -4178,6 +4181,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "CatchDefinition" -> {
                     CatchDefinition _d = (CatchDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".doCatch(");
                     boolean _first = true;
                     if (_d.getExceptions() != null) {
@@ -4206,6 +4210,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ClaimCheckDefinition" -> {
                     ClaimCheckDefinition _d = (ClaimCheckDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".claimCheck(");
                     boolean _first = true;
                     if (_d.getOperation() != null) {
@@ -4233,6 +4238,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ConvertBodyDefinition" -> {
                     ConvertBodyDefinition _d = (ConvertBodyDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".convertBodyTo(");
                     boolean _first = true;
                     if (_d.getType() != null) {
@@ -4248,6 +4254,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ConvertHeaderDefinition" -> {
                     ConvertHeaderDefinition _d = (ConvertHeaderDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".convertHeaderTo(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -4269,6 +4276,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ConvertVariableDefinition" -> {
                     ConvertVariableDefinition _d = (ConvertVariableDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".convertVariableTo(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -4290,6 +4298,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "DelayDefinition" -> {
                     DelayDefinition _d = (DelayDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".delay(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -4306,6 +4315,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "DynamicRouterDefinition" -> {
                     DynamicRouterDefinition _d = (DynamicRouterDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".dynamicRouter(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -4327,6 +4337,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "FilterDefinition" -> {
                     FilterDefinition _d = (FilterDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".filter(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -4353,6 +4364,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "IdempotentConsumerDefinition" -> {
                     IdempotentConsumerDefinition _d = (IdempotentConsumerDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".idempotentConsumer(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -4379,6 +4391,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "InterceptFromDefinition" -> {
                     InterceptFromDefinition _d = (InterceptFromDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".interceptFrom(");
                     boolean _first = true;
                     if (_d.getUri() != null) {
@@ -4394,6 +4407,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "InterceptSendToEndpointDefinition" -> {
                     InterceptSendToEndpointDefinition _d = (InterceptSendToEndpointDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".interceptSendToEndpoint(");
                     boolean _first = true;
                     if (_d.getUri() != null) {
@@ -4409,6 +4423,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "KameletDefinition" -> {
                     KameletDefinition _d = (KameletDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".kamelet(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -4429,6 +4444,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "LogDefinition" -> {
                     LogDefinition _d = (LogDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".log(");
                     boolean _first = true;
                     if (_d.getLoggingLevel() != null) {
@@ -4450,6 +4466,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "LoopDefinition" -> {
                     LoopDefinition _d = (LoopDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".loop(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -4481,6 +4498,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "OnExceptionDefinition" -> {
                     OnExceptionDefinition _d = (OnExceptionDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".onException(");
                     boolean _first = true;
                     if (_d.getExceptions() != null) {
@@ -4529,6 +4547,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "PolicyDefinition" -> {
                     PolicyDefinition _d = (PolicyDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".policy(");
                     boolean _first = true;
                     if (_d.getRef() != null) {
@@ -4544,6 +4563,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "PollDefinition" -> {
                     PollDefinition _d = (PollDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".poll(");
                     boolean _first = true;
                     if (_d.getUri() != null) {
@@ -4570,6 +4590,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ProcessDefinition" -> {
                     ProcessDefinition _d = (ProcessDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".process(");
                     boolean _first = true;
                     if (_d.getRef() != null) {
@@ -4585,6 +4606,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RecipientListDefinition" -> {
                     RecipientListDefinition _d = (RecipientListDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".recipientList(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -4601,6 +4623,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RemoveHeaderDefinition" -> {
                     RemoveHeaderDefinition _d = (RemoveHeaderDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".removeHeader(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -4616,6 +4639,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RemoveHeadersDefinition" -> {
                     RemoveHeadersDefinition _d = (RemoveHeadersDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".removeHeaders(");
                     boolean _first = true;
                     if (_d.getPattern() != null) {
@@ -4631,6 +4655,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RemovePropertiesDefinition" -> {
                     RemovePropertiesDefinition _d = (RemovePropertiesDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".removeProperties(");
                     boolean _first = true;
                     if (_d.getPattern() != null) {
@@ -4646,6 +4671,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RemovePropertyDefinition" -> {
                     RemovePropertyDefinition _d = (RemovePropertyDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".removeProperty(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -4661,6 +4687,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RemoveVariableDefinition" -> {
                     RemoveVariableDefinition _d = (RemoveVariableDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".removeVariable(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -4686,6 +4713,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RollbackDefinition" -> {
                     RollbackDefinition _d = (RollbackDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".rollback(");
                     boolean _first = true;
                     if (_d.getMessage() != null) {
@@ -4731,6 +4759,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RoutingSlipDefinition" -> {
                     RoutingSlipDefinition _d = (RoutingSlipDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".routingSlip(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -4757,6 +4786,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ScriptDefinition" -> {
                     ScriptDefinition _d = (ScriptDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".script(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -4773,6 +4803,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SetBodyDefinition" -> {
                     SetBodyDefinition _d = (SetBodyDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".setBody(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -4789,6 +4820,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SetExchangePatternDefinition" -> {
                     SetExchangePatternDefinition _d = (SetExchangePatternDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".setExchangePattern(");
                     boolean _first = true;
                     if (_d.getPattern() != null) {
@@ -4804,6 +4836,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SetHeaderDefinition" -> {
                     SetHeaderDefinition _d = (SetHeaderDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".setHeader(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -4831,6 +4864,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SetPropertyDefinition" -> {
                     SetPropertyDefinition _d = (SetPropertyDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".setProperty(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -4853,6 +4887,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SetVariableDefinition" -> {
                     SetVariableDefinition _d = (SetVariableDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".setVariable(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -4880,6 +4915,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SortDefinition" -> {
                     SortDefinition _d = (SortDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".sort(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -4896,6 +4932,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SplitDefinition" -> {
                     SplitDefinition _d = (SplitDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".split(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -4938,6 +4975,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ThreadsDefinition" -> {
                     ThreadsDefinition _d = (ThreadsDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".threads(");
                     boolean _first = true;
                     if (_d.getPoolSize() != null) {
@@ -4959,6 +4997,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ThrottleDefinition" -> {
                     ThrottleDefinition _d = (ThrottleDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".throttle(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -4975,6 +5014,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ThrowExceptionDefinition" -> {
                     ThrowExceptionDefinition _d = (ThrowExceptionDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".throwException(");
                     boolean _first = true;
                     if (_d.getExceptionType() != null) {
@@ -4996,6 +5036,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ToDefinition" -> {
                     ToDefinition _d = (ToDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".to(");
                     boolean _first = true;
                     if (_d.getPattern() != null) {
@@ -5017,6 +5058,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ToDynamicDefinition" -> {
                     ToDynamicDefinition _d = (ToDynamicDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".toD(");
                     boolean _first = true;
                     if (_d.getUri() != null) {
@@ -5042,6 +5084,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "TransformDataTypeDefinition" -> {
                     TransformDataTypeDefinition _d = (TransformDataTypeDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".transformDataType(");
                     boolean _first = true;
                     if (_d.getFromType() != null) {
@@ -5063,6 +5106,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "TransformDefinition" -> {
                     TransformDefinition _d = (TransformDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".transform(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -5089,6 +5133,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ValidateDefinition" -> {
                     ValidateDefinition _d = (ValidateDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".validate(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -5105,6 +5150,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "WhenDefinition" -> {
                     WhenDefinition _d = (WhenDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".when(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -5121,6 +5167,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "WireTapDefinition" -> {
                     WireTapDefinition _d = (WireTapDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".wireTap(");
                     boolean _first = true;
                     if (_d.getUri() != null) {
@@ -5136,6 +5183,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "DeleteDefinition" -> {
                     DeleteDefinition _d = (DeleteDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".delete(");
                     boolean _first = true;
                     if (_d.getPath() != null) {
@@ -5151,6 +5199,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "GetDefinition" -> {
                     GetDefinition _d = (GetDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".get(");
                     boolean _first = true;
                     if (_d.getPath() != null) {
@@ -5166,6 +5215,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "HeadDefinition" -> {
                     HeadDefinition _d = (HeadDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".head(");
                     boolean _first = true;
                     if (_d.getPath() != null) {
@@ -5186,6 +5236,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "PatchDefinition" -> {
                     PatchDefinition _d = (PatchDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".patch(");
                     boolean _first = true;
                     if (_d.getPath() != null) {
@@ -5201,6 +5252,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "PostDefinition" -> {
                     PostDefinition _d = (PostDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".post(");
                     boolean _first = true;
                     if (_d.getPath() != null) {
@@ -5216,6 +5268,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "PutDefinition" -> {
                     PutDefinition _d = (PutDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".put(");
                     boolean _first = true;
                     if (_d.getPath() != null) {
@@ -5236,6 +5289,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RestDefinition" -> {
                     RestDefinition _d = (RestDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".rest(");
                     boolean _first = true;
                     if (_d.getPath() != null) {
@@ -5278,6 +5332,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "AggregateDefinition" -> {
                     AggregateDefinition _d = (AggregateDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".aggregate(");
                     boolean _first = true;
                     if (_d.getCorrelationExpression() != null && _d.getCorrelationExpression().getExpressionType() != null) {
@@ -5294,6 +5349,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "BeanDefinition" -> {
                     BeanDefinition _d = (BeanDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".bean(");
                     boolean _first = true;
                     if (_d.getRef() != null) {
@@ -5315,6 +5371,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "CacheDefinition" -> {
                     CacheDefinition _d = (CacheDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".cache(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -5331,6 +5388,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "CatchDefinition" -> {
                     CatchDefinition _d = (CatchDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".doCatch(");
                     boolean _first = true;
                     if (_d.getExceptions() != null) {
@@ -5359,6 +5417,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ClaimCheckDefinition" -> {
                     ClaimCheckDefinition _d = (ClaimCheckDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".claimCheck(");
                     boolean _first = true;
                     if (_d.getOperation() != null) {
@@ -5386,6 +5445,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ConvertBodyDefinition" -> {
                     ConvertBodyDefinition _d = (ConvertBodyDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".convertBodyTo(");
                     boolean _first = true;
                     if (_d.getType() != null) {
@@ -5401,6 +5461,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ConvertHeaderDefinition" -> {
                     ConvertHeaderDefinition _d = (ConvertHeaderDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".convertHeaderTo(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -5422,6 +5483,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ConvertVariableDefinition" -> {
                     ConvertVariableDefinition _d = (ConvertVariableDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".convertVariableTo(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -5443,6 +5505,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "DelayDefinition" -> {
                     DelayDefinition _d = (DelayDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".delay(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -5459,6 +5522,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "DynamicRouterDefinition" -> {
                     DynamicRouterDefinition _d = (DynamicRouterDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".dynamicRouter(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -5480,6 +5544,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "FilterDefinition" -> {
                     FilterDefinition _d = (FilterDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".filter(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -5501,6 +5566,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "IdempotentConsumerDefinition" -> {
                     IdempotentConsumerDefinition _d = (IdempotentConsumerDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".idempotentConsumer(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -5522,6 +5588,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "InterceptFromDefinition" -> {
                     InterceptFromDefinition _d = (InterceptFromDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".interceptFrom(");
                     boolean _first = true;
                     if (_d.getUri() != null) {
@@ -5537,6 +5604,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "InterceptSendToEndpointDefinition" -> {
                     InterceptSendToEndpointDefinition _d = (InterceptSendToEndpointDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".interceptSendToEndpoint(");
                     boolean _first = true;
                     if (_d.getUri() != null) {
@@ -5552,6 +5620,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "KameletDefinition" -> {
                     KameletDefinition _d = (KameletDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".kamelet(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -5572,6 +5641,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "LogDefinition" -> {
                     LogDefinition _d = (LogDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".log(");
                     boolean _first = true;
                     if (_d.getLoggingLevel() != null) {
@@ -5593,6 +5663,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "LoopDefinition" -> {
                     LoopDefinition _d = (LoopDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".loop(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -5624,6 +5695,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "OnExceptionDefinition" -> {
                     OnExceptionDefinition _d = (OnExceptionDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".onException(");
                     boolean _first = true;
                     if (_d.getExceptions() != null) {
@@ -5652,6 +5724,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "PolicyDefinition" -> {
                     PolicyDefinition _d = (PolicyDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".policy(");
                     boolean _first = true;
                     if (_d.getRef() != null) {
@@ -5667,6 +5740,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "PollDefinition" -> {
                     PollDefinition _d = (PollDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".poll(");
                     boolean _first = true;
                     if (_d.getUri() != null) {
@@ -5693,6 +5767,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ProcessDefinition" -> {
                     ProcessDefinition _d = (ProcessDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".process(");
                     boolean _first = true;
                     if (_d.getRef() != null) {
@@ -5708,6 +5783,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RecipientListDefinition" -> {
                     RecipientListDefinition _d = (RecipientListDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".recipientList(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -5724,6 +5800,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RemoveHeaderDefinition" -> {
                     RemoveHeaderDefinition _d = (RemoveHeaderDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".removeHeader(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -5739,6 +5816,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RemoveHeadersDefinition" -> {
                     RemoveHeadersDefinition _d = (RemoveHeadersDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".removeHeaders(");
                     boolean _first = true;
                     if (_d.getPattern() != null) {
@@ -5754,6 +5832,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RemovePropertiesDefinition" -> {
                     RemovePropertiesDefinition _d = (RemovePropertiesDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".removeProperties(");
                     boolean _first = true;
                     if (_d.getPattern() != null) {
@@ -5769,6 +5848,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RemovePropertyDefinition" -> {
                     RemovePropertyDefinition _d = (RemovePropertyDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".removeProperty(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -5784,6 +5864,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RemoveVariableDefinition" -> {
                     RemoveVariableDefinition _d = (RemoveVariableDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".removeVariable(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -5809,6 +5890,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RollbackDefinition" -> {
                     RollbackDefinition _d = (RollbackDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".rollback(");
                     boolean _first = true;
                     if (_d.getMessage() != null) {
@@ -5829,6 +5911,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RoutingSlipDefinition" -> {
                     RoutingSlipDefinition _d = (RoutingSlipDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".routingSlip(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -5855,6 +5938,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ScriptDefinition" -> {
                     ScriptDefinition _d = (ScriptDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".script(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -5871,6 +5955,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SetBodyDefinition" -> {
                     SetBodyDefinition _d = (SetBodyDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".setBody(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -5887,6 +5972,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SetExchangePatternDefinition" -> {
                     SetExchangePatternDefinition _d = (SetExchangePatternDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".setExchangePattern(");
                     boolean _first = true;
                     if (_d.getPattern() != null) {
@@ -5902,6 +5988,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SetHeaderDefinition" -> {
                     SetHeaderDefinition _d = (SetHeaderDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".setHeader(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -5929,6 +6016,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SetPropertyDefinition" -> {
                     SetPropertyDefinition _d = (SetPropertyDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".setProperty(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -5951,6 +6039,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SetVariableDefinition" -> {
                     SetVariableDefinition _d = (SetVariableDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".setVariable(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -5978,6 +6067,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SortDefinition" -> {
                     SortDefinition _d = (SortDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".sort(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -5994,6 +6084,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SplitDefinition" -> {
                     SplitDefinition _d = (SplitDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".split(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -6021,6 +6112,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ThreadsDefinition" -> {
                     ThreadsDefinition _d = (ThreadsDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".threads(");
                     boolean _first = true;
                     if (_d.getPoolSize() != null) {
@@ -6042,6 +6134,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ThrottleDefinition" -> {
                     ThrottleDefinition _d = (ThrottleDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".throttle(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -6058,6 +6151,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ThrowExceptionDefinition" -> {
                     ThrowExceptionDefinition _d = (ThrowExceptionDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".throwException(");
                     boolean _first = true;
                     if (_d.getExceptionType() != null) {
@@ -6079,6 +6173,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ToDefinition" -> {
                     ToDefinition _d = (ToDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".to(");
                     boolean _first = true;
                     if (_d.getPattern() != null) {
@@ -6100,6 +6195,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ToDynamicDefinition" -> {
                     ToDynamicDefinition _d = (ToDynamicDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".toD(");
                     boolean _first = true;
                     if (_d.getUri() != null) {
@@ -6125,6 +6221,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "TransformDataTypeDefinition" -> {
                     TransformDataTypeDefinition _d = (TransformDataTypeDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".transformDataType(");
                     boolean _first = true;
                     if (_d.getFromType() != null) {
@@ -6146,6 +6243,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "TransformDefinition" -> {
                     TransformDefinition _d = (TransformDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".transform(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -6172,6 +6270,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "ValidateDefinition" -> {
                     ValidateDefinition _d = (ValidateDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".validate(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -6188,6 +6287,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "WireTapDefinition" -> {
                     WireTapDefinition _d = (WireTapDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".wireTap(");
                     boolean _first = true;
                     if (_d.getUri() != null) {
@@ -6242,6 +6342,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SetHeaderDefinition" -> {
                     SetHeaderDefinition _d = (SetHeaderDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".setHeader(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -6270,6 +6371,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SetVariableDefinition" -> {
                     SetVariableDefinition _d = (SetVariableDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".setVariable(");
                     boolean _first = true;
                     if (_d.getName() != null) {
@@ -6309,6 +6411,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "WhenDefinition" -> {
                     WhenDefinition _d = (WhenDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".when(");
                     boolean _first = true;
                     if (_d.getExpression() != null) {
@@ -6510,6 +6613,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "RestDefinition" -> {
                     RestDefinition _d = (RestDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".rest(");
                     boolean _first = true;
                     if (_d.getPath() != null) {
@@ -6542,6 +6646,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "DeleteDefinition" -> {
                     DeleteDefinition _d = (DeleteDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".delete(");
                     boolean _first = true;
                     if (_d.getPath() != null) {
@@ -6557,6 +6662,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "GetDefinition" -> {
                     GetDefinition _d = (GetDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".get(");
                     boolean _first = true;
                     if (_d.getPath() != null) {
@@ -6572,6 +6678,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "HeadDefinition" -> {
                     HeadDefinition _d = (HeadDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".head(");
                     boolean _first = true;
                     if (_d.getPath() != null) {
@@ -6587,6 +6694,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "PatchDefinition" -> {
                     PatchDefinition _d = (PatchDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".patch(");
                     boolean _first = true;
                     if (_d.getPath() != null) {
@@ -6602,6 +6710,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "PostDefinition" -> {
                     PostDefinition _d = (PostDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".post(");
                     boolean _first = true;
                     if (_d.getPath() != null) {
@@ -6617,6 +6726,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "PutDefinition" -> {
                     PutDefinition _d = (PutDefinition) v;
                     handledAttributes.clear();
+                    beginInlineStep(sb, _d);
                     sb.append("\n").append(indent()).append(".put(");
                     boolean _first = true;
                     if (_d.getPath() != null) {
