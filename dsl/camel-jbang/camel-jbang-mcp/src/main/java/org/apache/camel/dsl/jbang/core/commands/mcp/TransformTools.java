@@ -34,11 +34,12 @@ import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.SemanticDefinitionHelper;
 import org.apache.camel.model.app.SemanticDefinition;
-import org.apache.camel.semantic.DefaultSemanticDefinitionConfigurer;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.xml.in.ModelParser;
 import org.apache.camel.yaml.out.YamlModelWriter;
@@ -100,8 +101,13 @@ public class TransformTools {
                 result.note = "Unsupported transformation: " + fromFormat + " to " + toFormat;
             }
         } catch (Throwable e) {
+            Throwable cause = ObjectHelper.createExceptionIterator(e).next();
+            String message = e.getMessage();
+            if (cause != e) {
+                message += ": " + cause.getMessage();
+            }
             throw new ToolCallException(
-                    "Failed to transform route (" + e.getClass().getName() + "): " + e.getMessage(), null);
+                    "Failed to transform route (" + e.getClass().getName() + "): " + message, null);
         }
 
         return result;
@@ -158,7 +164,7 @@ public class TransformTools {
 
             RoutesDefinition rd = new RoutesDefinition();
             rd.setRoutes(routeDefs);
-            rd.setSemantic(DefaultSemanticDefinitionConfigurer.getDefinition(ctx));
+            rd.setSemantic(SemanticDefinitionHelper.getDefinition(ctx));
 
             StringWriter sw = new StringWriter();
             new org.apache.camel.xml.out.ModelWriter(sw).writeRoutesDefinition(rd);
@@ -191,7 +197,7 @@ public class TransformTools {
             if ("yaml".equals(targetFormat)) {
                 YamlModelWriter writer = new YamlModelWriter();
                 List<JsonObject> roots = new ArrayList<>();
-                SemanticDefinition semantic = DefaultSemanticDefinitionConfigurer.getDefinition(ctx);
+                SemanticDefinition semantic = SemanticDefinitionHelper.getDefinition(ctx);
                 if (semantic != null) {
                     roots.add(writer.writeSemanticDefinition(semantic));
                 }
@@ -202,7 +208,7 @@ public class TransformTools {
             } else {
                 RoutesDefinition rd = new RoutesDefinition();
                 rd.setRoutes(routeDefs);
-                rd.setSemantic(DefaultSemanticDefinitionConfigurer.getDefinition(ctx));
+                rd.setSemantic(SemanticDefinitionHelper.getDefinition(ctx));
 
                 StringWriter sw = new StringWriter();
                 new org.apache.camel.xml.out.ModelWriter(sw).writeRoutesDefinition(rd);

@@ -184,8 +184,15 @@ can also be selected together using `refs:name1,name2`, as described below.
 
 Direct exports of a `RoutesDefinition` containing semantic declarations preserve them. The MCP
 route transformation tool also preserves declarations in XML-to-YAML, YAML-to-XML, and
-Java-to-YAML/XML conversions. Conversions that load a Camel context export the registered
-questions with their effective numeric policies. Runtime route dumps such as `camel.main.dumpRoutes=yaml` contain only
+Java-to-YAML/XML conversions. YAML-to-XML and Java-to-YAML/XML conversions load a temporary
+Camel context and export the registered questions with their effective numeric policies,
+omitting settings that match the defaults. Numeric placeholders must resolve in that context;
+the tool does not load the application's external properties. Provide a placeholder default,
+such as `{{semantic.threshold:0.5}}`, or a concrete value when the property is unavailable.
+Unresolved required properties fail conversion. XML-to-YAML conversion preserves placeholder
+text without resolving it.
+
+Runtime route dumps such as `camel.main.dumpRoutes=yaml` contain only
 the routes and omit the question declarations. Supply the declarations separately before
 reloading those dumps.
 

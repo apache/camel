@@ -27,4 +27,9 @@ public interface SemanticDefinitionConfigurer {
      * the owner independently of the optional resource used to track deletion.
      */
     void configure(CamelContext context, Resource resource, String source, SemanticDefinition definition);
+
+    /** Export registered questions with their effective policies, or {@code null} if no definitions are available. */
+    default SemanticDefinition getDefinition(CamelContext context) {
+        return null;
+    }
 }

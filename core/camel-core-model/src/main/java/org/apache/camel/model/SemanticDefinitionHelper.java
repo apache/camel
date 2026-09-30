@@ -35,14 +35,33 @@ public final class SemanticDefinitionHelper {
             if (definition == null || definition.getQuestions().isEmpty()) {
                 return;
             }
+            configurer = getConfigurer(context);
+            if (configurer == null) {
+                throw new IllegalArgumentException("Semantic question declarations require camel-semantic on the classpath");
+            }
+        }
+        configurer.configure(context, resource, source, definition);
+    }
+
+    /** Export registered questions without requiring the semantic module for ordinary routes. */
+    public static SemanticDefinition getDefinition(CamelContext context) {
+        // YAML declarations can populate the registry before the configurer has been discovered.
+        SemanticDefinitionConfigurer configurer = getConfigurer(context);
+        return configurer != null ? configurer.getDefinition(context) : null;
+    }
+
+    private static SemanticDefinitionConfigurer getConfigurer(CamelContext context) {
+        SemanticDefinitionConfigurer configurer
+                = context.getCamelContextExtension().getContextPlugin(SemanticDefinitionConfigurer.class);
+        if (configurer == null) {
             // Concurrent discovery may create equivalent instances of the stateless default configurer.
             // The semantic module synchronizes access to shared question state.
             configurer = context.getCamelContextExtension().getDefaultFactoryFinder()
-                    .newInstance("semantic-configurer", SemanticDefinitionConfigurer.class)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Semantic question declarations require camel-semantic on the classpath"));
-            context.getCamelContextExtension().addContextPlugin(SemanticDefinitionConfigurer.class, configurer);
+                    .newInstance("semantic-configurer", SemanticDefinitionConfigurer.class).orElse(null);
+            if (configurer != null) {
+                context.getCamelContextExtension().addContextPlugin(SemanticDefinitionConfigurer.class, configurer);
+            }
         }
-        configurer.configure(context, resource, source, definition);
+        return configurer;
     }
 }

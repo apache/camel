@@ -16,15 +16,20 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.FilterDefinition;
+import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.semantic.SemanticQuestions;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TransformToolsTest {
 
@@ -74,8 +79,8 @@ class TransformToolsTest {
                       urgent:
                         type: boolean
                         instructions: Urgent?
-                        threshold: 0.8
-                        uncertainty: 0.1
+                        threshold: "{{semantic.export.threshold:0.8}}"
+                        uncertainty: "{{semantic.export.uncertainty:0.1}}"
                         uncertaintyPolicy: non-match
                       department:
                         type: choice
@@ -103,7 +108,8 @@ class TransformToolsTest {
                 public class SemanticRoute extends RouteBuilder {
                     public void configure() {
                         semanticQuestions().question("urgent").type("boolean").instructions("Urgent?")
-                            .threshold(0.8).uncertainty(0.1).uncertaintyPolicy("non-match");
+                            .threshold("{{semantic.export.threshold:0.8}}")
+                            .uncertainty("{{semantic.export.uncertainty:0.1}}").uncertaintyPolicy("non-match");
                         semanticQuestions().question("department").type("choice").instructions("Which department?")
                             .state("${header.selected}").criterion("billing", "Invoices").criterion("technical", "Bugs");
                         semanticQuestions().question("priority").type("score").instructions("Priority?")
@@ -114,7 +120,7 @@ class TransformToolsTest {
                 """;
         var result = createTools().camel_transform_route(source.equals("java") ? java : yaml, source, target);
         assertThat(result.supported).isTrue();
-        assertThat(result.result).contains("ref:department");
+        assertThat(result.result).contains("ref:department").doesNotContain("{{semantic.export.");
         try (var context = new DefaultCamelContext()) {
             context.build();
             PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("result." + target, result.result));
@@ -126,6 +132,87 @@ class TransformToolsTest {
                     .containsEntry("technical", "Bugs");
             assertThat(questions.get("department").getState()).isEqualTo("${header.selected}");
             assertThat(questions.get("priority").getLevels()).containsExactly("Low", "High");
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "yaml,xml", "java,xml", "java,yaml" })
+    void semanticConversionOmitsDefaultPolicies(String source, String target) throws Exception {
+        var result = createTools().camel_transform_route(semanticRoute(source, "0.5"), source, target);
+
+        assertThat(result.supported).isTrue();
+        assertThat(result.result).contains("urgent", "Urgent?").doesNotContain("threshold", "uncertainty");
+        try (var context = new DefaultCamelContext()) {
+            context.build();
+            PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("result." + target, result.result));
+            var question = SemanticQuestions.get(context).get("urgent");
+            assertThat(question.getThreshold()).isEqualTo(0.5);
+            assertThat(question.getUncertainty()).isZero();
+            assertThat(question.getUncertaintyPolicy().name()).isEqualTo("FAIL");
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "yaml,xml", "java,xml", "java,yaml" })
+    void semanticConversionReportsMissingNumericProperty(String source, String target) {
+        String route = semanticRoute(source, "{{semantic.export.missing.threshold}}");
+
+        assertThatThrownBy(() -> createTools().camel_transform_route(route, source, target))
+                .isInstanceOf(ToolCallException.class)
+                .hasMessageContaining("Property with key [semantic.export.missing.threshold] not found");
+    }
+
+    private static String semanticRoute(String source, String threshold) {
+        if (source.equals("java")) {
+            return """
+                    semanticQuestions().question("urgent").type("boolean").instructions("Urgent?")
+                        .threshold("%s").uncertainty(0).uncertaintyPolicy("fail");
+                    from("direct:input").setBody().language("semantic", "ref:urgent");
+                    """.formatted(threshold);
+        }
+        return """
+                - semantic:
+                    question:
+                      urgent:
+                        type: boolean
+                        instructions: Urgent?
+                        threshold: "%s"
+                        uncertainty: 0
+                        uncertaintyPolicy: fail
+                - route:
+                    from:
+                      uri: direct:input
+                      steps:
+                        - setBody:
+                            expression:
+                              language:
+                                language: semantic
+                                expression: ref:urgent
+                """.formatted(threshold);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "yaml", "xml" })
+    void nonSemanticExpressionClausesSurviveConversionAndReload(String target) throws Exception {
+        String route = """
+                from("direct:input")
+                    .filter().simple("${body} == 'hello'")
+                        .setBody().simple("${body.toUpperCase()}")
+                    .end();
+                """;
+        var result = createTools().camel_transform_route(route, "java", target);
+
+        assertThat(result.supported).isTrue();
+        assertThat(result.result).doesNotContain("semantic");
+        try (var context = new DefaultCamelContext()) {
+            context.build();
+            PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("result." + target, result.result));
+            var filter = (FilterDefinition) context.getRouteDefinitions().get(0).getOutputs().get(0);
+            assertThat(filter.getExpression().getLanguage()).isEqualTo("simple");
+            assertThat(filter.getExpression().getExpression()).isEqualTo("${body} == 'hello'");
+            var setBody = (SetBodyDefinition) filter.getOutputs().get(0);
+            assertThat(setBody.getExpression().getLanguage()).isEqualTo("simple");
+            assertThat(setBody.getExpression().getExpression()).isEqualTo("${body.toUpperCase()}");
         }
     }
 
