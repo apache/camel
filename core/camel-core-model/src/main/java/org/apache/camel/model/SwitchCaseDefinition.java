@@ -78,9 +78,15 @@ public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCas
     /** The destination node shared by reification and management instrumentation. */
     @XmlTransient
     public ToDefinition getToDefinition() {
+        return toDefinition;
+    }
+
+    /** Prepare the destination node before processor creation and management instrumentation. */
+    public void prepareToDefinition() {
         if (toDefinition == null) {
-            toDefinition = new ToDefinition(uri);
+            toDefinition = new ToDefinition();
         }
+        toDefinition.setUri(uri);
         toDefinition.setParent(parent);
         if (hasCustomIdAssigned()) {
             toDefinition.setId(getId());
@@ -91,7 +97,6 @@ public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCas
         toDefinition.setNote(getNote());
         toDefinition.setLocation(getLocation());
         toDefinition.setLineNumber(getLineNumber());
-        return toDefinition;
     }
 
     @Override

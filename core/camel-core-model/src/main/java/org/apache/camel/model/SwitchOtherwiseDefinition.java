@@ -16,10 +16,12 @@
  */
 package org.apache.camel.model;
 
+import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -31,10 +33,12 @@ public class SwitchOtherwiseDefinition implements EndpointRequiredDefinition {
     @XmlAttribute(required = true)
     @Metadata(description = "The fixed destination URI. Supports property placeholders, but not Simple expressions.")
     private String uri;
+    @XmlTransient
+    private final ToDefinition toDefinition = new ToDefinition();
 
     public SwitchOtherwiseDefinition copyDefinition() {
         SwitchOtherwiseDefinition copy = new SwitchOtherwiseDefinition();
-        copy.uri = uri;
+        copy.setUri(uri);
         return copy;
     }
 
@@ -44,9 +48,25 @@ public class SwitchOtherwiseDefinition implements EndpointRequiredDefinition {
 
     public void setUri(String uri) {
         this.uri = uri;
+        toDefinition.setUri(uri);
+    }
+
+    /** The destination node, available for endpoint discovery before route startup. */
+    @XmlTransient
+    public ToDefinition getToDefinition() {
+        return toDefinition;
+    }
+
+    // JAXB populates fields directly, so initialize the traversal node after loading.
+    private void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
+        toDefinition.setUri(uri);
+        if (parent instanceof SwitchDefinition sw) {
+            sw.setOtherwise(this);
+        }
     }
 
     @Override
+    @XmlTransient
     public String getEndpointUri() {
         return uri;
     }

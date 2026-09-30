@@ -67,6 +67,7 @@ public class SwitchReifier extends ProcessorReifier<SwitchDefinition> {
             c.setParent(definition);
             c.setCamelContext(camelContext);
             c.idOrCreate(ids);
+            c.prepareToDefinition();
             ToDefinition send = c.getToDefinition();
             send.setUri(uris.get(i));
             cases.put(caseKeys.get(i), createSend(send));
@@ -74,6 +75,7 @@ public class SwitchReifier extends ProcessorReifier<SwitchDefinition> {
         Processor otherwise = null;
         if (otherwiseUri != null) {
             definition.idOrCreate(ids);
+            definition.prepareOtherwiseDefinition();
             ToDefinition send = definition.getOtherwiseDefinition();
             send.setUri(otherwiseUri);
             otherwise = createSend(send);

@@ -49,8 +49,6 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
     @XmlElement
     @Metadata(description = "Fixed fallback URI for null or unmatched selector results. Without a fallback processing continues.")
     private SwitchOtherwiseDefinition otherwise;
-    @XmlTransient
-    private ToDefinition otherwiseDefinition;
 
     public SwitchDefinition() {
     }
@@ -62,7 +60,7 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
     protected SwitchDefinition(SwitchDefinition source) {
         super(source);
         this.selector = source.selector != null ? source.selector.copyDefinition() : null;
-        this.otherwise = source.otherwise != null ? source.otherwise.copyDefinition() : null;
+        setOtherwise(source.otherwise != null ? source.otherwise.copyDefinition() : null);
         for (SwitchCaseDefinition c : source.cases) {
             SwitchCaseDefinition copy = c.copyDefinition();
             copy.setParent(this);
@@ -106,19 +104,34 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
 
     public void setOtherwise(SwitchOtherwiseDefinition otherwise) {
         this.otherwise = otherwise;
-        this.otherwiseDefinition = null;
+        prepareOtherwiseDefinition();
+    }
+
+    @Override
+    public void setId(String id) {
+        super.setId(id);
+        prepareOtherwiseDefinition();
+    }
+
+    @Override
+    public void setGeneratedId(String id) {
+        super.setGeneratedId(id);
+        prepareOtherwiseDefinition();
     }
 
     /** The fallback send node, used by route traversal and processor creation. */
     @XmlTransient
     public ToDefinition getOtherwiseDefinition() {
-        if (otherwise == null) {
-            return null;
-        }
+        return otherwise != null ? otherwise.getToDefinition() : null;
+    }
+
+    /** Prepare the fallback node before processor creation and management instrumentation. */
+    public void prepareOtherwiseDefinition() {
+        ToDefinition otherwiseDefinition = getOtherwiseDefinition();
         if (otherwiseDefinition == null) {
-            otherwiseDefinition = new ToDefinition();
-            otherwiseDefinition.setParent(this);
+            return;
         }
+        otherwiseDefinition.setParent(this);
         otherwiseDefinition.setUri(otherwise.getUri());
         if (getId() != null) {
             if (hasCustomIdAssigned()) {
@@ -127,7 +140,6 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
                 otherwiseDefinition.setGeneratedId(getId() + "-otherwise");
             }
         }
-        return otherwiseDefinition;
     }
 
     /** Add a scalar literal and its destination. */
