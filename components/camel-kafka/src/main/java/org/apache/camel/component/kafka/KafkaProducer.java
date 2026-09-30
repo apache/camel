@@ -476,10 +476,13 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
             return producerCallBack.allSent();
         } catch (Exception e) {
             exchange.setException(e);
+            // Do not continue routing immediately. In the batch/iterator path, records already dispatched before the
+            // failure have in-flight Kafka callbacks, and completing the exchange now would let those late callbacks
+            // mutate a continued - and, with exchange pooling, possibly recycled - exchange. Arm completion instead:
+            // allSent() releases the initial hold and, when sends are still in flight, defers done() to the last
+            // callback; when nothing is in flight (the common non-batch failure) it completes here (CAMEL-24783).
+            return producerCallBack.allSent();
         }
-
-        callback.done(true);
-        return true;
     }
 
     private void processIterableAsync(Exchange exchange, KafkaProducerCallBack producerCallBack, Message message) {
@@ -506,16 +509,26 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                     record.key());
         }
 
-        if (key != null) {
-            KafkaProducerMetadataCallBack metadataCallBack = new KafkaProducerMetadataCallBack(
-                    key, configuration.isRecordMetadata());
+        try {
+            if (key != null) {
+                KafkaProducerMetadataCallBack metadataCallBack = new KafkaProducerMetadataCallBack(
+                        key, configuration.isRecordMetadata());
 
-            // make sure to cb is last in the order here
-            DelegatingCallback delegatingCallback = new DelegatingCallback(metadataCallBack, cb);
+                // make sure to cb is last in the order here
+                DelegatingCallback delegatingCallback = new DelegatingCallback(metadataCallBack, cb);
 
-            kafkaProducer.send(record, delegatingCallback);
-        } else {
-            kafkaProducer.send(record, cb);
+                kafkaProducer.send(record, delegatingCallback);
+            } else {
+                kafkaProducer.send(record, cb);
+            }
+        } catch (RuntimeException dispatchFailure) {
+            // send() threw synchronously (e.g. buffer exhaustion / max.block.ms timeout, a serialization error, or a
+            // closed producer), so no Kafka callback will ever fire for this record. Undo the increment above to keep
+            // the completion counter accurate; otherwise a mid-batch failure would leave it above zero and routing
+            // would never continue. The exception propagates to process(), which records it and arms completion for
+            // the records already in flight (CAMEL-24783).
+            cb.decrement();
+            throw dispatchFailure;
         }
     }
 

@@ -56,6 +56,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -189,6 +190,43 @@ public class KafkaProducerTest {
         Callback kafkaCallback = callBackCaptor.getValue();
         kafkaCallback.onCompletion(new RecordMetadata(null, 0, 0, 0, 0, 0), null);
         assertRecordMetadataExists();
+    }
+
+    @Test
+    void processAsyncMidBatchDispatchFailureDefersRoutingUntilInflightSendsComplete() {
+        // CAMEL-24783: when a later record in a batch fails to dispatch, the records already dispatched still have
+        // in-flight Kafka callbacks. Routing must not continue until those callbacks have run, otherwise they would
+        // mutate a continued - and, with exchange pooling, possibly recycled - exchange.
+        endpoint.getConfiguration().setTopic("sometopic");
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getMessage()).thenReturn(in);
+
+        // the first record is accepted (its callback stays in flight), the second fails to dispatch mid-batch
+        Producer kp = producer.getKafkaProducer();
+        Future future = Mockito.mock(Future.class);
+        Mockito.when(kp.send(any(ProducerRecord.class), any(Callback.class)))
+                .thenReturn(future)
+                .thenThrow(new ApiException());
+
+        ArrayNode node = JsonNodeFactory.instance.arrayNode();
+        node.add(1);
+        node.add(2);
+        in.setBody(node);
+
+        boolean sync = producer.process(exchange, callback);
+
+        // the dispatch failure is recorded, but routing is deferred while the first send is still in flight
+        Mockito.verify(exchange).setException(isA(ApiException.class));
+        assertFalse(sync);
+        Mockito.verify(callback, Mockito.never()).done(Mockito.anyBoolean());
+
+        // the first record now completes on the Kafka sender thread; only now may routing continue, exactly once
+        ArgumentCaptor<Callback> callBackCaptor = ArgumentCaptor.forClass(Callback.class);
+        Mockito.verify(kp, Mockito.times(2)).send(any(ProducerRecord.class), callBackCaptor.capture());
+        callBackCaptor.getAllValues().get(0).onCompletion(new RecordMetadata(null, 0, 0, 0, 0, 0), null);
+
+        // done() is delivered from the worker pool
+        Mockito.verify(callback, Mockito.timeout(2000)).done(eq(false));
     }
 
     @Test

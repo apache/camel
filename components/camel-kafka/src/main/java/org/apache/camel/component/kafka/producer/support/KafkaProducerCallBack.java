@@ -59,6 +59,16 @@ public final class KafkaProducerCallBack implements Callback {
         count.incrementAndGet();
     }
 
+    /**
+     * Undoes an {@link #increment()} for a record whose dispatch failed synchronously, so that no Kafka callback will
+     * ever fire for it. Unlike {@link #onCompletion} it never continues routing: it is only called while the initial
+     * hold is still in place (a mid-batch dispatch failure in {@code KafkaProducer.doSend}), so the counter cannot
+     * reach zero here (CAMEL-24783).
+     */
+    public void decrement() {
+        count.decrementAndGet();
+    }
+
     public boolean allSent() {
         if (count.decrementAndGet() == 0) {
             LOG.trace("All messages sent, continue routing.");
