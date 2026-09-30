@@ -98,7 +98,9 @@ public class SpringRedisIdempotentRepository extends ServiceSupport implements I
     @Override
     @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(String key) {
-        return setOperations.remove(repositoryName, key) != null;
+        // SREM returns the number of members it removed, which is 0 when the key is not in the set
+        Long removed = setOperations.remove(repositoryName, key);
+        return removed != null && removed > 0;
     }
 
     @Override

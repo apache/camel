@@ -1764,6 +1764,11 @@ from("spring-redis://localhost:6379?command=SUBSCRIBE&channels=myChannel"
 Setting the `serializer` option to a custom `RedisSerializer` bypasses the filter entirely, since
 Camel then no longer controls how the payload is read.
 
+=== camel-spring-redis - SpringRedisIdempotentRepository.remove returns false for a missing key
+
+`SpringRedisIdempotentRepository.remove` now returns `false` when the key was not in the repository, as documented by
+`IdempotentRepository`. It previously returned `true` for any key. The Idempotent Consumer does not use the returned value.
+
 === camel-langchain4j
 
 The legacy `sse` `transportType` has been removed. It follows the support removal in 
