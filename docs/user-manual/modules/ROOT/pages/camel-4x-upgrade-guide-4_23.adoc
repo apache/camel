@@ -455,6 +455,17 @@ A header that carries a literal `${...}` string is now used as the object key ve
 A configured `keyName` or `bucketName` whose Simple expression resolves to `null` now fails with an
 `IllegalArgumentException` at the producer, instead of passing a `null` key/bucket on to the AWS SDK.
 
+=== camel-couchbase
+
+The `connectTimeout` option is now applied. It previously sat inside a condition that tested `queryTimeout`, so
+setting it on its own had no effect and the documented default of 30000 ms never reached the SDK - connections used
+the Couchbase SDK's own default of 10 seconds instead. Deployments that relied on that 10 second behaviour without
+setting the option should now set `connectTimeout=10000` explicitly.
+
+`queryTimeout` is unchanged: it is still only applied when set to something other than its default, because the
+documented 2500 ms default is much shorter than the SDK's 75 seconds and applying it unconditionally would cut short
+queries that currently succeed.
+
 === camel-console
 
 The `context` developer console no longer counts routes created by Kamelets in its `routesTotal` and `routesStarted`

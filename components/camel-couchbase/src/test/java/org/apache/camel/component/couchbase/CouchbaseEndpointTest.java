@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.couchbase;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -283,6 +284,46 @@ public class CouchbaseEndpointTest {
             assertEquals("com.couchbase.client.java.codec.JsonValueSerializerWrapper",
                     serializer.getClass().getName(),
                     "ClusterEnvironment should wrap DefaultJsonSerializer in JsonValueSerializerWrapper");
+        } finally {
+            env.shutdown();
+        }
+    }
+
+    /**
+     * connectTimeout used to sit inside a guard that tested queryTimeout, so setting it on its own did nothing and the
+     * documented 30s default never applied - the SDK's own 10s did.
+     */
+    @Test
+    void connectTimeoutIsAppliedOnItsOwn() {
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
+        endpoint.setConnectTimeout(1234);
+        ClusterEnvironment env = endpoint.createClusterEnvironment();
+        try {
+            assertEquals(Duration.ofMillis(1234), env.timeoutConfig().connectTimeout());
+        } finally {
+            env.shutdown();
+        }
+    }
+
+    @Test
+    void connectTimeoutDefaultIsApplied() {
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
+        ClusterEnvironment env = endpoint.createClusterEnvironment();
+        try {
+            assertEquals(Duration.ofMillis(CouchbaseConstants.DEFAULT_CONNECT_TIMEOUT),
+                    env.timeoutConfig().connectTimeout());
+        } finally {
+            env.shutdown();
+        }
+    }
+
+    @Test
+    void queryTimeoutIsAppliedWhenSet() {
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
+        endpoint.setQueryTimeout(9999);
+        ClusterEnvironment env = endpoint.createClusterEnvironment();
+        try {
+            assertEquals(Duration.ofMillis(9999), env.timeoutConfig().queryTimeout());
         } finally {
             env.shutdown();
         }

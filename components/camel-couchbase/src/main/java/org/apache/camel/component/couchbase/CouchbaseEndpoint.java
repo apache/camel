@@ -750,10 +750,12 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     ClusterEnvironment createClusterEnvironment() {
         ClusterEnvironment.Builder cfb = ClusterEnvironment.builder();
         cfb.jsonSerializer(DefaultJsonSerializer.create());
+        // connectTimeout is always applied, so that the documented default of 30s holds rather than the SDK's
+        // own 10s. queryTimeout keeps its guard on purpose: the documented 2500ms default is far shorter than
+        // the SDK's 75s, and applying it unconditionally would cut short every query that is slower than that
+        cfb.timeoutConfig().connectTimeout(Duration.ofMillis(connectTimeout));
         if (queryTimeout != DEFAULT_QUERY_TIMEOUT) {
-            cfb.timeoutConfig()
-                    .connectTimeout(Duration.ofMillis(connectTimeout))
-                    .queryTimeout(Duration.ofMillis(queryTimeout));
+            cfb.timeoutConfig().queryTimeout(Duration.ofMillis(queryTimeout));
         }
         return cfb.build();
     }
