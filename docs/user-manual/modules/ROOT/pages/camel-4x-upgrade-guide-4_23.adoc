@@ -244,6 +244,19 @@ With optimistic locking, or a persistent aggregation repository, the spool file 
 exchange has been added to the repository (a persistent repository has read the body at that time), and only the
 spool file of the exchange that completes a group is kept until the aggregated exchange is done.
 
+=== camel-sql - JdbcAggregationRepository with optimistic locking
+
+With optimistic locking, `JdbcAggregationRepository` (and `ClusteredJdbcAggregationRepository`,
+`PostgresAggregationRepository` and `ClusteredPostgresAggregationRepository`) now fails with an
+`OptimisticLockingException`, so that the aggregator retries, when a message was aggregated on a group that another
+thread or Camel instance completed meanwhile. Prior to Camel 4.23 the completed group was stored again together with
+the new message, so its messages were sent a second time, or a new group of the same correlation key was overwritten
+and its messages were lost.
+
+A new group now starts with a random positive version instead of `1`, so that a version read from an earlier group of
+the same correlation key never matches it. The `version` column must therefore be a 64-bit integer, as in the
+documented `version BIGINT NOT NULL`. Groups stored before the upgrade keep their version.
+
 === Variable Receive
 
 When an EIP with `variableReceive` stores a message into a variable that already holds a message, the header variables
