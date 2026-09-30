@@ -393,6 +393,7 @@ final class ChainReplayer {
                 case "*" -> x * y;
                 case "/" -> x / y;
                 case "%" -> x % y;
+                // only '-' reaches here: '+' is a Concat, not a BinOp
                 default -> x - y;
             };
             return wide ? (Number) v : narrow(v);
