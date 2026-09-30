@@ -2321,6 +2321,19 @@ public class EndpointHeaderBuilders {
         return KeycloakEndpointBuilderFactory.KeycloakHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Knative (camel-knative)
+     * Send and receive events from Knative.
+     * 
+     * Category: cloud
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-knative
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static KnativeEndpointBuilderFactory.KnativeHeaderNameBuilder knative() {
+        return KnativeEndpointBuilderFactory.KnativeHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * KServe (camel-kserve)
      * Provide access to AI model servers with the KServe standard to run
      * inference with remote models
