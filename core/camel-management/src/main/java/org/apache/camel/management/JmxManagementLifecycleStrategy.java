@@ -970,8 +970,10 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         // Switch destinations are literal sends rather than nested processor outputs.
         if (processor instanceof SwitchDefinition sw) {
             for (var c : sw.getCases()) {
+                c.prepareToDefinition();
                 registerPerformanceCounters(route, c.getToDefinition(), registeredCounters);
             }
+            sw.prepareOtherwiseDefinition();
             if (sw.getOtherwiseDefinition() != null) {
                 registerPerformanceCounters(route, sw.getOtherwiseDefinition(), registeredCounters);
             }
