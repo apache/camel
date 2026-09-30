@@ -17,6 +17,7 @@
 package org.apache.camel.component.rest.openapi.validator.client;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ import org.junit.jupiter.api.Test;
 public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
 
     static OpenAPI openAPI;
+    static OpenAPI headerArrayOpenAPI;
     static OpenApiRestClientRequestValidator validator;
 
     @BeforeAll
@@ -42,6 +44,26 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
         OpenAPIV3Parser parser = new OpenAPIV3Parser();
         SwaggerParseResult out = parser.readContents(data);
         openAPI = out.getOpenAPI();
+        headerArrayOpenAPI = parser.readContents("""
+                openapi: 3.0.3
+                info:
+                  title: header array
+                  version: 1.0.0
+                paths:
+                  /items:
+                    get:
+                      parameters:
+                        - name: X-Ids
+                          in: header
+                          required: true
+                          schema:
+                            type: array
+                            items:
+                              type: integer
+                      responses:
+                        '200':
+                          description: OK
+                """).getOpenAPI();
         validator = new OpenApiRestClientRequestValidator();
     }
 
@@ -166,7 +188,7 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testValidateRepeatedArrayHeaderIsReported() {
+    public void testValidateRepeatedArrayHeaderIsAccepted() {
         exchange.setProperty(Exchange.REST_OPENAPI, openAPI);
         exchange.setProperty(Exchange.CONTENT_TYPE, "application/json");
         exchange.getMessage().setHeader(Exchange.HTTP_METHOD, "GET");
@@ -174,18 +196,57 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
         exchange.getMessage().setHeader("Accept", "application/json");
         exchange.getMessage().setBody("");
 
-        // tags is "type": "array", but a header array is serialized as ONE header with a
-        // comma-separated value (style "simple", explode=false) - repeating the header is not the
-        // wire form the contract describes, and is reported as such once the values reach the
-        // validator at all.
+        // tags is "type": "array". Per RFC 9110 section 5.3 repeating a list-based header is
+        // equivalent to one header with the values joined by commas, so tags: dog + tags: cat
+        // means the same as tags: dog,cat
         exchange.getMessage().setHeader("tags", List.of("dog", "cat"));
 
         RestClientRequestValidator.ValidationError error
                 = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
                         "application/json", "application/json", true, null, null, null, null));
 
+        Assertions.assertNull(error);
+    }
+
+    @Test
+    public void testValidateRepeatedArrayHeaderWithInvalidItemIsReported() {
+        exchange.setProperty(Exchange.REST_OPENAPI, headerArrayOpenAPI);
+        exchange.getMessage().setHeader(Exchange.HTTP_METHOD, "GET");
+        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "items");
+        exchange.getMessage().setBody("");
+
+        // the values are joined, not waved through: each one is still checked against the items schema
+        exchange.getMessage().setHeader("X-Ids", List.of("1", "abc"));
+
+        RestClientRequestValidator.ValidationError error
+                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", false, null, null, null, null));
+
         Assertions.assertNotNull(error);
-        Assertions.assertTrue(error.body().contains("expected an array style of 'simple'"), error.body());
+        Assertions.assertTrue(error.body().contains("@header.X-Ids"), error.body());
+
+        exchange.getMessage().setHeader("X-Ids", List.of("1", "2"));
+        error = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                "application/json", "application/json", false, null, null, null, null));
+
+        Assertions.assertNull(error);
+    }
+
+    @Test
+    public void testValidateRepeatedArrayHeaderWithNullValueIsSkipped() {
+        exchange.setProperty(Exchange.REST_OPENAPI, headerArrayOpenAPI);
+        exchange.getMessage().setHeader(Exchange.HTTP_METHOD, "GET");
+        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "items");
+        exchange.getMessage().setBody("");
+
+        // a null element carries no value and must not be joined in as the text "null"
+        exchange.getMessage().setHeader("X-Ids", Arrays.asList("1", null, "2"));
+
+        RestClientRequestValidator.ValidationError error
+                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", false, null, null, null, null));
+
+        Assertions.assertNull(error);
     }
 
     @Test

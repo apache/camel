@@ -3886,6 +3886,20 @@ JAXP external-access model and remain resolvable. Stylesheet `xsl:include` / `xs
 are resolved at compile time (they are part of the route definition, authored by the route author)
 and are unaffected by this change.
 
+=== camel-openapi-validator - repeated request headers are validated value by value
+
+A header that occurs more than once in a request used to be passed to the request validator as the
+text of the Java collection holding its values, such as `[a, b]`. The values are now passed as they
+were sent. As a result:
+
+* A header that the contract declares as a single value (not an array) and that occurs more than
+  once is now rejected with `400`, where it was accepted before.
+* A header that the contract declares as an array may be repeated. This is treated like one header
+  with the values joined by commas (RFC 9110, section 5.3), and each value is checked against the
+  item schema of the array. This applies to OpenAPI 3.0 contracts: for an OpenAPI 3.1 contract the
+  validator does not recognise a header parameter as an array, so a repeated header is rejected
+  like a single-value one.
+
 == ThrottlingExceptionRoutePolicy
 
 `ThrottlingExceptionRoutePolicy.setKeepOpen(true)` now opens the circuit immediately and synchronously (the consumer
