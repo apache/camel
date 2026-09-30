@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.vertx.http;
 
+import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -40,7 +41,16 @@ public class VertxHttpRemoteFileBodyTest extends VertxHttpTestSupport {
 
     @Test
     public void testRemoteFileBody() throws Exception {
-        Exchange out = send(getProducerUri() + "/echo");
+        Exchange out = send(getProducerUri() + "/echo", false, true);
+
+        assertFalse(out.isFailed(), "Should not fail");
+        assertEquals("Hello World", out.getMessage().getBody(String.class));
+    }
+
+    @Test
+    public void testRemoteFileStreamBody() throws Exception {
+        // streamDownload=true: the content is an InputStream
+        Exchange out = send(getProducerUri() + "/echo", true, true);
 
         assertFalse(out.isFailed(), "Should not fail");
         assertEquals("Hello World", out.getMessage().getBody(String.class));
@@ -48,28 +58,49 @@ public class VertxHttpRemoteFileBodyTest extends VertxHttpTestSupport {
 
     @Test
     public void testRemoteFileBodyMultipartUpload() throws Exception {
-        Exchange out = send(getProducerUri() + "/upload?multipartUpload=true&multipartUploadName=cheese");
+        Exchange out = send(getProducerUri() + "/upload?multipartUpload=true&multipartUploadName=cheese", false, true);
 
         assertFalse(out.isFailed(), "Should not fail");
         assertEquals("hello.txt=Hello World", out.getMessage().getBody(String.class));
     }
 
-    private Exchange send(String uri) throws Exception {
+    @Test
+    public void testRemoteFileStreamBodyMultipartUpload() throws Exception {
+        Exchange out = send(getProducerUri() + "/upload?multipartUpload=true&multipartUploadName=cheese", true, true);
+
+        assertFalse(out.isFailed(), "Should not fail");
+        assertEquals("hello.txt=Hello World", out.getMessage().getBody(String.class));
+    }
+
+    @Test
+    public void testRemoteFileBodyMultipartUploadFileNameFromFile() throws Exception {
+        // without the CamelFileNameOnly header the name of the file is used, not the form field name
+        Exchange out = send(getProducerUri() + "/upload?multipartUpload=true&multipartUploadName=cheese", false, false);
+
+        assertFalse(out.isFailed(), "Should not fail");
+        assertEquals("hello.txt=Hello World", out.getMessage().getBody(String.class));
+    }
+
+    private Exchange send(String uri, boolean stream, boolean fileNameHeader) throws Exception {
         CompletableFuture<Exchange> future = template.asyncSend(uri, exchange -> {
-            exchange.getMessage().setBody(createRemoteFile());
-            exchange.getMessage().setHeader(Exchange.FILE_NAME_ONLY, "hello.txt");
+            exchange.getMessage().setBody(createRemoteFile(stream));
+            if (fileNameHeader) {
+                exchange.getMessage().setHeader(Exchange.FILE_NAME_ONLY, "hello.txt");
+            }
         });
         // the exchange must complete, without the content being sent it never did
         return future.get(10, TimeUnit.SECONDS);
     }
 
-    private static GenericFile<Object> createRemoteFile() {
+    private static GenericFile<Object> createRemoteFile(boolean stream) {
         // like a remote file: the file handle is not a java.io.File, and the content is downloaded in memory
+        // (byte[]), or streamed (an InputStream, with streamDownload=true)
         GenericFile<Object> file = new GenericFile<>();
         file.setFile(new Object());
         file.setFileNameOnly("hello.txt");
         file.setFileName("hello.txt");
-        file.setBody("Hello World".getBytes(StandardCharsets.UTF_8));
+        byte[] content = "Hello World".getBytes(StandardCharsets.UTF_8);
+        file.setBody(stream ? new ByteArrayInputStream(content) : content);
         return file;
     }
 

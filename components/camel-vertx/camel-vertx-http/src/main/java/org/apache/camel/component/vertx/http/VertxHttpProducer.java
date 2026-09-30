@@ -37,6 +37,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.vertx.common.VertxBufferConverter;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.MessageHelper;
@@ -109,7 +110,14 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                         // not a local file, such as a remote file (ftp, sftp, smb) with its content in memory,
                         // so send its content
                         buf = message.getMandatoryBody(Buffer.class);
-                        fileName = message.getHeader(Exchange.FILE_NAME_ONLY, multipartName, String.class);
+                        // the header first, so it can be overridden, then the name of the file itself
+                        fileName = message.getHeader(Exchange.FILE_NAME_ONLY, String.class);
+                        if (fileName == null && body instanceof GenericFile<?> gf) {
+                            fileName = gf.getFileNameOnly();
+                        }
+                        if (fileName == null) {
+                            fileName = multipartName;
+                        }
                     }
                     if (multipart) {
                         String type = MimeTypeHelper.probeMimeType(fileName);
