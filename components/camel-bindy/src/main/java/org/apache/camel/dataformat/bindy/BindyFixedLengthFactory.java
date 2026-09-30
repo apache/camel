@@ -485,8 +485,13 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                         StringBuilder temp = new StringBuilder();
 
+                        // count the length the same way as unmarshal does (code points, or graphemes with
+                        // countGrapheme), not in UTF-16 chars
+                        UnicodeHelper unicodeResult = new UnicodeHelper(result, unicodeMethod());
+                        int resultLength = unicodeResult.length();
+
                         // Check if we must pad
-                        if (result.length() < fieldLength) {
+                        if (resultLength < fieldLength) {
 
                             // No padding defined for the field
                             if (padCharField == 0) {
@@ -497,13 +502,13 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                             }
 
                             if (align.contains("R")) {
-                                temp.append(generatePaddingChars(padChar, fieldLength, result.length()));
+                                temp.append(generatePaddingChars(padChar, fieldLength, resultLength));
                                 temp.append(result);
                             } else if (align.contains("L")) {
                                 temp.append(result);
-                                temp.append(generatePaddingChars(padChar, fieldLength, result.length()));
+                                temp.append(generatePaddingChars(padChar, fieldLength, resultLength));
                             } else if (align.contains("B")) {
-                                temp.append(generatePaddingChars(padChar, fieldLength, result.length()));
+                                temp.append(generatePaddingChars(padChar, fieldLength, resultLength));
                                 temp.append(result);
                             } else {
                                 throw new IllegalArgumentException(
@@ -512,16 +517,16 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                             }
 
                             result = temp.toString();
-                        } else if (result.length() > fieldLength) {
+                        } else if (resultLength > fieldLength) {
                             // we are bigger than allowed
 
                             // is clipped enabled? if so clip the field
                             if (datafield.clip()) {
-                                result = result.substring(0, fieldLength);
+                                result = unicodeResult.substring(0, fieldLength);
                             } else {
                                 throw new IllegalArgumentException(
                                         "Length for the " + field.getName()
-                                                                   + " must not be larger than allowed, was: " + result.length()
+                                                                   + " must not be larger than allowed, was: " + resultLength
                                                                    + ", allowed: " + fieldLength);
                             }
                         }
@@ -552,6 +557,13 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
         }
 
+    }
+
+    /**
+     * How the length of a field is counted, on unmarshal and on marshal.
+     */
+    public UnicodeHelper.Method unicodeMethod() {
+        return countGrapheme ? UnicodeHelper.Method.GRAPHEME : UnicodeHelper.Method.CODEPOINTS;
     }
 
     private String generatePaddingChars(char pad, int lengthField, int lengthString) {
