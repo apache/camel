@@ -23,6 +23,7 @@ import java.net.http.WebSocket;
 import java.net.http.WebSocketHandshakeException;
 import java.nio.ByteBuffer;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +42,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.concurrent.ThreadHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
@@ -70,6 +72,9 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     private static final long STABLE_CONNECTION = 10000;
     private static final int MAX_FRAME_SIZE = 16 * 1024 * 1024;
     private static final int MAX_PENDING_ACTIONS = 64;
+    // WebSocket servers commonly refuse messages over 256 KB (Vert.x, Quarkus): trace and receive snapshots can be
+    // much larger (after a reconnect they hold every retained message), so they are split into frames of this size
+    private static final int MAX_SNAPSHOT_SIZE = 128 * 1024;
 
     private CamelContext camelContext;
     private CliActionDispatcher dispatcher;
@@ -347,10 +352,45 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
             if (onlyIfChanged && !c.changed(kind, data)) {
                 return;
             }
-            sendSnapshot(c, kind, data);
+            if ("trace".equals(kind)) {
+                sendInBatches(c, kind, data, "traces");
+            } else if ("receive".equals(kind)) {
+                sendInBatches(c, kind, data, "messages");
+            } else {
+                sendSnapshot(c, kind, data);
+            }
         } catch (Exception e) {
             LOG.trace("Error sending {} snapshot due to: {}. This exception is ignored.", kind, e.getMessage(), e);
         }
+    }
+
+    /**
+     * Sends the messages in as many snapshots as needed to keep each under {@link #MAX_SNAPSHOT_SIZE} (a single message
+     * larger than that is sent on its own).
+     */
+    private void sendInBatches(Connection c, String kind, JsonObject data, String key) {
+        List<JsonObject> messages = data.getCollection(key);
+        List<JsonObject> batch = new ArrayList<>();
+        int size = 0;
+        for (JsonObject m : messages) {
+            int length = m.toJson().length();
+            if (!batch.isEmpty() && size + length > MAX_SNAPSHOT_SIZE) {
+                sendSnapshot(c, kind, withMessages(data, key, batch));
+                batch = new ArrayList<>();
+                size = 0;
+            }
+            batch.add(m);
+            size += length;
+        }
+        if (!batch.isEmpty()) {
+            sendSnapshot(c, kind, withMessages(data, key, batch));
+        }
+    }
+
+    private static JsonObject withMessages(JsonObject data, String key, List<JsonObject> messages) {
+        JsonObject copy = new JsonObject(data);
+        copy.put(key, new JsonArray(messages));
+        return copy;
     }
 
     private void sendSnapshot(Connection c, String kind, JsonObject data) {

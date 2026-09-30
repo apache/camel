@@ -87,8 +87,10 @@ same JSON the file transport reads and writes:
 * `result` answers each action, with the same `requestId`. `ok` is `false` when the action is unknown, fails, or
   reports a failure in its result (for example a message sent to a route that throws an exception).
 * `snapshot` kinds are `status`, `trace`, `receive`, `debug`, `history`, `error` and `activity`. `trace` and
-  `receive` only hold the messages not sent yet on this connection; `debug`, `history`, `error` and `activity` are
-  only sent when they change.
+  `receive` only hold the messages not sent yet on this connection, split over several frames of about 128 KB at most
+  (many WebSocket servers refuse messages over 256 KB by default); `debug`, `history`, `error` and `activity` are only
+  sent when they change. The `status` snapshot is sent whole: for integrations with many routes, make sure the tool
+  accepts messages of that size.
 * The extra `stop` action stops the integration.
 
 === Security

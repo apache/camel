@@ -185,6 +185,31 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
     }
 
     @Test
+    void splitsLargeTraceSnapshotsIntoFramesTheToolAccepts() throws Exception {
+        // traced before connecting: the first trace snapshot holds the 100 retained traces (about 600 KB), more than the
+        // 256 KB WebSocket servers accept by default (Vert.x, Quarkus)
+        String body = "x".repeat(6000);
+        for (int i = 0; i < 100; i++) {
+            template.sendBody("direct:hello", body);
+        }
+        startConnector();
+        tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+
+        AtomicInteger traces = new AtomicInteger();
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            JsonObject frame;
+            while ((frame = tool.frames.poll()) != null) {
+                if (isSnapshot(frame, "trace")) {
+                    List<JsonObject> list = map(frame, "data").getCollection("traces");
+                    traces.addAndGet(list.size());
+                }
+            }
+            assertThat(traces).hasValueGreaterThanOrEqualTo(100);
+        });
+        assertThat(tool.handshakes).hasValue(1);
+    }
+
+    @Test
     void reconnectsWhenTheToolRestarts() throws Exception {
         startConnector();
         tool.awaitFrame(f -> "hello".equals(f.getString("type")));
