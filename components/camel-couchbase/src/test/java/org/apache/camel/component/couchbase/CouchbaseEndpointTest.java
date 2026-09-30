@@ -19,17 +19,33 @@ package org.apache.camel.component.couchbase;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Cluster;
+import com.couchbase.client.java.ClusterOptions;
+import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.Scope;
 import com.couchbase.client.java.codec.DefaultJsonSerializer;
 import com.couchbase.client.java.codec.JsonSerializer;
 import com.couchbase.client.java.env.ClusterEnvironment;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_COUCHBASE_PORT;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class CouchbaseEndpointTest {
 
@@ -269,6 +285,42 @@ public class CouchbaseEndpointTest {
                     "ClusterEnvironment should wrap DefaultJsonSerializer in JsonValueSerializerWrapper");
         } finally {
             env.shutdown();
+        }
+    }
+
+    /**
+     * The connection used to be opened once per producer and once per consumer and never closed at all: both sides
+     * called {@code bucket.core().shutdown()}, which returns a cold Mono nobody subscribed to.
+     */
+    @Test
+    void oneConnectionPerEndpointAndItIsClosedOnStop() throws Exception {
+        Cluster cluster = mock(Cluster.class);
+        Bucket bucket = mock(Bucket.class);
+        Scope scope = mock(Scope.class);
+        when(cluster.bucket(anyString())).thenReturn(bucket);
+        when(bucket.defaultScope()).thenReturn(scope);
+        when(bucket.defaultCollection()).thenReturn(mock(Collection.class));
+
+        try (MockedStatic<Cluster> clusters = mockStatic(Cluster.class)) {
+            clusters.when(() -> Cluster.connect(anyString(), any(ClusterOptions.class))).thenReturn(cluster);
+
+            CamelContext context = new DefaultCamelContext();
+            CouchbaseEndpoint endpoint = new CouchbaseEndpoint(
+                    "couchbase:http://localhost:8091",
+                    "http://localhost:8091", new CouchbaseComponent(context));
+            endpoint.setBucket("bucket");
+            endpoint.setUsername("user");
+            endpoint.setPassword("secret");
+            endpoint.start();
+
+            endpoint.createProducer();
+            endpoint.createProducer();
+
+            clusters.verify(() -> Cluster.connect(anyString(), any(ClusterOptions.class)), times(1));
+            verify(cluster, never()).disconnect();
+
+            endpoint.stop();
+            verify(cluster).disconnect();
         }
     }
 }

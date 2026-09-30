@@ -47,7 +47,6 @@ public class CouchbaseProducer extends DefaultProducer {
 
     private final AtomicLong startId = new AtomicLong();
     private final CouchbaseEndpoint endpoint;
-    private final Bucket client;
     private final Collection collection;
     private final PersistTo persistTo;
     private final ReplicateTo replicateTo;
@@ -58,7 +57,6 @@ public class CouchbaseProducer extends DefaultProducer {
     public CouchbaseProducer(CouchbaseEndpoint endpoint, Bucket client, int persistTo, int replicateTo) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.client = client;
         Scope scope;
 
         if (endpoint.getScope() != null) {
@@ -153,14 +151,6 @@ public class CouchbaseProducer extends DefaultProducer {
         }
         // cleanup the cache headers
         exchange.getIn().removeHeader(HEADER_ID);
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-        if (client != null) {
-            client.core().shutdown();
-        }
     }
 
 }

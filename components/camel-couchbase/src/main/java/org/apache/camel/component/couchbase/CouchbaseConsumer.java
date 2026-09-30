@@ -136,14 +136,6 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
     }
 
     @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        if (bucket != null) {
-            bucket.core().shutdown();
-        }
-    }
-
-    @Override
     protected int poll() throws Exception {
         lock.lock();
         try {
