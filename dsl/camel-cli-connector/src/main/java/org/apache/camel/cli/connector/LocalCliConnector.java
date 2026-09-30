@@ -682,6 +682,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             if (body != null) {
                 args.put("body", body);
             }
+            String bodyEncoding = root.getString("bodyEncoding");
+            if (bodyEncoding != null) {
+                args.put("bodyEncoding", bodyEncoding);
+            }
             if (exchangePattern != null) {
                 args.put("exchangePattern", exchangePattern);
             }
