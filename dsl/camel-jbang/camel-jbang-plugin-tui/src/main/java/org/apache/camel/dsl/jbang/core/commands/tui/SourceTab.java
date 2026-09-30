@@ -826,6 +826,7 @@ class SourceTab extends AbstractTab {
         boolean routeFile = !SourceEditAssist.isYamlFile(filePath)
                 && (isJavaRouteFile(filePath) || isCamelSourceFile(filePath));
         sourceViewer.setRouteValidator(routeFile ? content -> assist.validateRoutes(filePath, content) : null);
+        sourceViewer.setJavaStringCompletion(routeFile && filePath.getFileName().toString().endsWith(".java"));
         if (isCamelSourceFile(filePath)) {
             sourceViewer.setQuickDocProvider(assist::provideCamelQuickDocs);
             sourceViewer.setDeprecatedLineScanner(null);
@@ -848,8 +849,9 @@ class SourceTab extends AbstractTab {
             // Java: the quick doc of the routes read into the model by the Java DSL parser (CAMEL-25208)
             sourceViewer.setQuickDocProvider(cd -> assist.provideRouteQuickDocs(filePath, cd));
             sourceViewer.setDeprecatedLineScanner(null);
-            sourceViewer.setAutocompleteProvider(null);
-            sourceViewer.setAutocompleteValueProvider(null);
+            // Tab in the endpoint uri of from, to, toD...: component names, options and values, as YAML uris have
+            sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
+            sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
             sourceViewer.setEditQuickDocProvider((lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row));
         } else if (SourceEditAssist.isPropertiesFile(filePath)) {
             sourceViewer.setQuickDocProvider(assist::providePropertiesQuickDocs);

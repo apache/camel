@@ -72,8 +72,14 @@ Press **F4** to enter edit mode, then **Tab** for context-aware completion:
 - Value completion shows enum choices, boolean values, and `{{placeholder}}`
   suggestions from your `.properties` files
 
+**Java DSL routes:**
+- In the endpoint uri of `from`, `to`, `toD`, `wireTap`, `enrich`, `pollEnrich`
+  and `poll`, Tab completes the component name before the `:`, the endpoint
+  options after `?` or `&` (filtered by consumer/producer role, already given
+  ones left out), and the value of an option after `=`
+
 Use **Up/Down** to navigate, **Enter** to accept, **Esc** to dismiss, and
-type to filter the completion list.
+type to filter the completion list (an exact or prefix match comes first).
 
 ## Route Jump Links
 Lines with `to:`, `toD:`, `wireTap:`, or similar endpoints that reference

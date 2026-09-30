@@ -188,6 +188,9 @@ class SourceViewer {
     private EndpointValidator endpointValidator;
     private EndpointValidator simpleValidator;
     private EndpointValidator routeValidator;
+    private boolean javaStringCompletion;
+    /** The completion being chosen in a Java string: its row, the column its prefix ends at, the prefix and suffix. */
+    private JavaCompletion javaCompletion;
     private List<String> routeProblems = List.of();
     private List<String> validationErrors;
     private int validationErrorScroll;
@@ -268,6 +271,17 @@ class SourceViewer {
         this.routeValidator = routeValidator;
     }
 
+    /**
+     * Tab completion inside the strings of a Java route file (CAMEL-25208): in the endpoint uri of from, to, toD... the
+     * component names, the endpoint options and their values, from the completion providers the YAML uris use.
+     */
+    void setJavaStringCompletion(boolean javaStringCompletion) {
+        this.javaStringCompletion = javaStringCompletion;
+    }
+
+    private record JavaCompletion(int row, int endCol, String prefix, String suffix) {
+    }
+
     void hide() {
         exitEditMode();
         visible = false;
@@ -280,6 +294,7 @@ class SourceViewer {
         endpointValidator = null;
         simpleValidator = null;
         routeValidator = null;
+        javaStringCompletion = false;
     }
 
     void reset() {
@@ -320,6 +335,7 @@ class SourceViewer {
         endpointValidator = null;
         simpleValidator = null;
         routeValidator = null;
+        javaStringCompletion = false;
     }
 
     boolean isMarkdownMode() {
@@ -995,11 +1011,94 @@ class SourceViewer {
     }
 
     private void openAutocomplete() {
+        javaCompletion = null;
         if (isCamelYamlFile()) {
             openYamlAutocomplete();
+        } else if (javaStringCompletion) {
+            openJavaStringAutocomplete();
         } else {
             openPropertiesAutocomplete();
         }
+    }
+
+    /**
+     * The completion of the endpoint uri the cursor is in, in a Java route: the component before the colon, an option
+     * after ? or &, its value after =. Read from the line alone, so it works while the file does not parse.
+     */
+    private void openJavaStringAutocomplete() {
+        int row = editState.cursorRow();
+        int col = editState.cursorCol();
+        JavaStringContext c = JavaStringContext.at(editState.getLine(row), col);
+        if (c == null || !c.isEndpoint() || autocompleteProvider == null) {
+            return;
+        }
+        String before = c.before();
+        int colon = before.indexOf(':');
+        List<AutocompletePopup.CompletionItem> items;
+        String prefix;
+        String suffix;
+        if (colon < 0) {
+            items = autocompleteProvider.provide("yaml-uri:" + c.role());
+            prefix = before;
+            suffix = ":";
+        } else {
+            String scheme = before.substring(0, colon);
+            int q = before.indexOf('?');
+            if (q < 0) {
+                // the path of the uri: what goes there is the component's own
+                return;
+            }
+            int sep = Math.max(before.lastIndexOf('?'), before.lastIndexOf('&'));
+            String segment = before.substring(sep + 1);
+            int eq = segment.indexOf('=');
+            if (eq >= 0) {
+                if (autocompleteValueProvider == null) {
+                    return;
+                }
+                items = autocompleteValueProvider.provide("yaml:" + scheme + ":" + segment.substring(0, eq));
+                prefix = segment.substring(eq + 1);
+                suffix = "";
+            } else {
+                List<String> given = new ArrayList<>();
+                for (String pair : (sep > q ? before.substring(q + 1, sep) : "").split("&")) {
+                    if (!pair.isEmpty()) {
+                        given.add(pair.contains("=") ? pair.substring(0, pair.indexOf('=')) : pair);
+                    }
+                }
+                items = autocompleteProvider.provide("yaml:" + scheme + ":" + c.role() + ":" + String.join(",", given)
+                                                     + "|" + before.substring(0, sep));
+                prefix = segment;
+                suffix = "=";
+            }
+        }
+        if (items != null && !items.isEmpty()) {
+            autocompletePopup = new AutocompletePopup(items, prefix, prefix, true);
+            if (colon < 0) {
+                autocompletePopup.setTitlePrefix("Components");
+            }
+            javaCompletion = new JavaCompletion(row, col, prefix, suffix);
+        }
+    }
+
+    /** Replaces the prefix the completion was opened on with the chosen item and what follows it (: or =). */
+    private void insertJavaCompletion(AutocompletePopup.CompletionItem item) {
+        JavaCompletion jc = javaCompletion;
+        javaCompletion = null;
+        if (editState.cursorRow() != jc.row()) {
+            return;
+        }
+        // the arrows move the cursor within the prefix while the popup is open: back to its end
+        int col = editState.cursorCol();
+        for (; col < jc.endCol(); col++) {
+            editState.moveCursorRight();
+        }
+        for (; col > jc.endCol(); col--) {
+            editState.moveCursorLeft();
+        }
+        for (int i = 0; i < jc.prefix().length(); i++) {
+            editState.deleteBackward();
+        }
+        editState.insert(item.key() + jc.suffix());
     }
 
     private void openPropertiesAutocomplete() {
@@ -1167,6 +1266,10 @@ class SourceViewer {
 
     private void insertCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, boolean listItem) {
         recordEditChange();
+        if (javaCompletion != null) {
+            insertJavaCompletion(item);
+            return;
+        }
         String currentLine = editState.getLine(editState.cursorRow());
         if (isCamelYamlFile()) {
             insertYamlCompletion(item, valueMode, currentLine, listItem);

@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import dev.tamboui.layout.Rect;
@@ -535,8 +536,17 @@ class AutocompletePopup {
                     filteredItems.add(item);
                 }
             }
+            // what was typed exactly first, then what starts with it: seda before hazelcast-seda
+            filteredItems.sort(Comparator.comparingInt(item -> rank(item.key(), f)));
         }
         listState.select(filteredItems.isEmpty() ? null : 0);
+    }
+
+    private static int rank(String key, String filter) {
+        if (key.equalsIgnoreCase(filter)) {
+            return 0;
+        }
+        return key.regionMatches(true, 0, filter, 0, filter.length()) ? 1 : 2;
     }
 
     private static boolean matchesLabel(String group, String filter) {

@@ -877,7 +877,7 @@ final class SourceEditAssist {
         if (!context.startsWith("yaml:")) {
             return List.of();
         }
-        CamelCatalog catalog = getCatalog();
+        CamelCatalog catalog = validationCatalog();
         if (catalog == null) {
             return List.of();
         }
@@ -946,7 +946,7 @@ final class SourceEditAssist {
     }
 
     List<AutocompletePopup.CompletionItem> provideComponentNameCompletions(String role) {
-        CamelCatalog catalog = getCatalog();
+        CamelCatalog catalog = validationCatalog();
         if (catalog == null) {
             return List.of();
         }
@@ -1231,7 +1231,7 @@ final class SourceEditAssist {
         if (!context.startsWith("yaml:")) {
             return List.of();
         }
-        CamelCatalog catalog = getCatalog();
+        CamelCatalog catalog = validationCatalog();
         if (catalog == null) {
             return List.of();
         }
