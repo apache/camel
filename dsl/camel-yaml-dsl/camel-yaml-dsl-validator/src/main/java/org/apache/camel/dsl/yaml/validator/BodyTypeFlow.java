@@ -101,12 +101,15 @@ final class BodyTypeFlow {
      * @param routes   the routes of the target, in both the canonical and the short form
      * @param callers  for a route, the routes that send to the endpoint it starts from
      * @param restless the endpoints that deliver no body: the REST verbs without one, and what the caller knows
+     * @param handlers the endpoints that are called by an error handler or a saga, and not by a step: the message they
+     *                 get is the one that was being handled, which can have a body
      */
-    record Analysis(List<Route> routes, Map<Route, List<Route>> callers, Set<String> restless) {
+    record Analysis(
+            List<Route> routes, Map<Route, List<Route>> callers, Set<String> restless, Set<String> handlers) {
 
         /** Whether it is certain that no message reaching the route can have a body. */
         boolean certainlyWithoutABody(Route route) {
-            return BodyTypeFlow.certainlyWithoutABody(route, callers, restless, new HashSet<>());
+            return BodyTypeFlow.certainlyWithoutABody(route, callers, restless, handlers, new HashSet<>());
         }
 
         /**
@@ -123,9 +126,19 @@ final class BodyTypeFlow {
      * @param known the endpoints the caller knows deliver no body, as for {@link #check}
      */
     static Analysis analyze(JsonNode target, Set<String> known) {
+        return analyze(target, known, Set.of());
+    }
+
+    /**
+     * @param known    the endpoints the caller knows deliver no body, as for {@link #check}
+     * @param handlers the endpoints that are called by an error handler or a saga rather than by a step, in the form
+     *                 {@link #key} gives: what they get is the message that was being handled, so no route that is one
+     *                 of them, or that they call, is certain to have no body
+     */
+    static Analysis analyze(JsonNode target, Set<String> known, Set<String> handlers) {
         List<Route> routes = routes(target);
         if (routes.isEmpty()) {
-            return new Analysis(routes, Map.of(), Set.of());
+            return new Analysis(routes, Map.of(), Set.of(), handlers);
         }
         // the graph: which routes send to the endpoint a route starts from
         Map<String, List<Route>> byFrom = new HashMap<>();
@@ -146,7 +159,7 @@ final class BodyTypeFlow {
         for (String uri : known) {
             restless.add(key(uri));
         }
-        return new Analysis(routes, callers, restless);
+        return new Analysis(routes, callers, restless, handlers);
     }
 
     /**
@@ -193,10 +206,13 @@ final class BodyTypeFlow {
      * check quiet.
      */
     private static boolean certainlyWithoutABody(
-            Route route, Map<Route, List<Route>> callers, Set<String> restless,
+            Route route, Map<Route, List<Route>> callers, Set<String> restless, Set<String> handlers,
             Set<Route> seen) {
         if (!seen.add(route)) {
             return false; // a cycle: say nothing
+        }
+        if (handlers.contains(key(route.fromUri()))) {
+            return false; // an error handler or a saga calls it too, with the message it was handling
         }
         String scheme = scheme(route.fromUri());
         if (scheme == null) {
@@ -218,7 +234,7 @@ final class BodyTypeFlow {
             if (setsTheBodyBeforeSendingTo(caller, route)) {
                 return false;
             }
-            if (!certainlyWithoutABody(caller, callers, restless, seen)) {
+            if (!certainlyWithoutABody(caller, callers, restless, handlers, seen)) {
                 return false;
             }
         }

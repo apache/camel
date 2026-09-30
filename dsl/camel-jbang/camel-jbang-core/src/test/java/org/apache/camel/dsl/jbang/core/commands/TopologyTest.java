@@ -434,6 +434,47 @@ class TopologyTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void aDeadLetterRouteIsNotSaidToBeCalledByNoRoute() throws Exception {
+        write("dlq.camel.yaml", """
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: "direct:dlq"
+                - route:
+                    id: dlq
+                    from:
+                      uri: direct:dlq
+                      steps:
+                        - log: dead
+                """);
+
+        assertThat(command().doCall()).isZero();
+
+        assertThat(printer.getOutput())
+                .contains("body in: from the message an error handler or a saga was handling")
+                .doesNotContain("no route in the files calls it");
+    }
+
+    @Test
+    void aDeadLetterRouteHasTheHandlerAsItsBodyOriginInJson() throws Exception {
+        write("dlq.camel.yaml", """
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: "direct:dlq"
+                - route:
+                    id: dlq
+                    from:
+                      uri: direct:dlq
+                      steps:
+                        - log: dead
+                """);
+
+        JsonArray nodes = json(command()).getCollection("nodes");
+
+        JsonObject body = ((JsonObject) nodes.get(0)).getMap("body");
+        assertThat(body.getString("origin")).isEqualTo("handler");
+    }
+
+    @Test
     void theCommandIsRegisteredAndParsesItsArguments() {
         StringWriter out = new StringWriter();
         CamelJBangMain main = new CamelJBangMain() {

@@ -440,7 +440,9 @@ running integration, with the file and the body of each route, the findings and 
 The external endpoints are the remote systems the routes read from and send to, as the Camel catalog says which
 components are remote: `kafka:` and `http:` are, `log:`, `bean:` and `mock:` are not. An endpoint that is between two
 routes is a connection, and not an external endpoint. `body in:` is the body of the message that reaches the route,
-and the step after it is the first one that may put something else there: only a `setBody` certainly does.
+and the step after it is the first one that may put something else there: only a `setBody` certainly does. A route
+that is the dead letter endpoint of an error handler, or the compensation or completion of a saga, gets the message
+that was being handled, so its body is not said to be missing.
 
 The findings are informational, and never make the command fail: an endpoint a route sends to with `direct:` or
 `seda:` and no route consumes, a route that reads a body that neither it nor the routes that call it set, and a

@@ -101,6 +101,11 @@ public final class SourceTopology {
         CALLERS,
         /** The consumer of the route brings its own: a kafka message, an HTTP request. */
         CONSUMER,
+        /**
+         * The route is the dead letter endpoint of an error handler, or the compensation or completion of a saga: it
+         * gets the message that was being handled, whatever body that has.
+         */
+        HANDLER,
         /** A route only another route can call, and no route in the files does. */
         UNKNOWN
     }
@@ -193,9 +198,17 @@ public final class SourceTopology {
             }
         }
 
+        // what an error handler or a saga calls, and no step: these routes get the message that was being handled
+        List<String> handlerUris = new ArrayList<>();
+        urisOfOtherCallers(entries, handlerUris);
+        Set<String> handlers = new HashSet<>();
+        for (String uri : handlerUris) {
+            handlers.add(endpoint(uri));
+        }
+
         // NOTE: the analysis of the body keeps its callers by route, and a route is equal to another that is written
         // exactly alike (the same id, endpoint and steps), so two such routes in different files are taken as one
-        BodyTypeFlow.Analysis analysis = BodyTypeFlow.analyze(entries, Set.of());
+        BodyTypeFlow.Analysis analysis = BodyTypeFlow.analyze(entries, Set.of(), handlers);
         List<Route> routes = analysis.routes();
         Map<Route, Placed> placed = place(routes, fileOf);
 
@@ -232,7 +245,7 @@ public final class SourceTopology {
             }
         }
         if (!templates) {
-            uncalled(routes, entries, placed, findings);
+            uncalled(routes, entries, handlerUris, placed, findings);
         }
 
         return new Result(
@@ -323,6 +336,9 @@ public final class SourceTopology {
         if (scheme == null) {
             return BodyOrigin.UNKNOWN;
         }
+        if (analysis.handlers().contains(endpoint(r.fromUri()))) {
+            return BodyOrigin.HANDLER;
+        }
         if (analysis.certainlyWithoutABody(r)) {
             return BodyOrigin.NONE;
         }
@@ -367,23 +383,25 @@ public final class SourceTopology {
      * Quiet when a way in is not in the files: an OpenAPI binding, a recipient list or a routing slip, an endpoint only
      * known at runtime.
      */
-    private static void uncalled(List<Route> routes, JsonNode entries, Map<Route, Placed> placed, List<Finding> findings) {
+    private static void uncalled(
+            List<Route> routes, JsonNode entries, List<String> handlerUris, Map<Route, Placed> placed,
+            List<Finding> findings) {
         if (hasKey(entries, IMPLICIT_CALLERS)) {
             return;
         }
         Set<String> called = new HashSet<>();
+        List<String> uris = new ArrayList<>(handlerUris);
         // every entry, not only the routes: a rest operation, an onException or a route configuration sends as well
         for (JsonNode entry : entries) {
-            List<String> uris = sendsTo(entry);
-            urisOfOtherCallers(entry, uris);
-            for (String uri : uris) {
-                if (EndpointConsumers.isDynamic(uri)) {
-                    return;
-                }
-                String endpoint = EndpointConsumers.endpoint(uri);
-                if (endpoint != null) {
-                    called.add(endpoint);
-                }
+            uris.addAll(sendsTo(entry));
+        }
+        for (String uri : uris) {
+            if (EndpointConsumers.isDynamic(uri)) {
+                return;
+            }
+            String endpoint = EndpointConsumers.endpoint(uri);
+            if (endpoint != null) {
+                called.add(endpoint);
             }
         }
         for (Route r : routes) {

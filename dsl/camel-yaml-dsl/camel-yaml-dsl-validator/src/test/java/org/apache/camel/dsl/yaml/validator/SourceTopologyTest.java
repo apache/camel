@@ -692,4 +692,107 @@ public class SourceTopologyTest {
         assertThat(info(result, "lookup").bodyOrigin()).isEqualTo(BodyOrigin.NONE);
         assertThat(kinds(result)).containsExactly(SourceTopology.BODY_NEVER_SET);
     }
+
+    private static final String DEAD_LETTER = """
+            - errorHandler:
+                deadLetterChannel:
+                  deadLetterUri: "direct:dlq"
+            """;
+
+    private static final String TIMER_TO_DLQ = """
+            - route:
+                id: tick
+                from:
+                  uri: timer:tick
+                  steps:
+                    - to: direct:dlq
+            """;
+
+    private static final String DLQ_READER = """
+            - route:
+                id: dlq
+                from:
+                  uri: direct:dlq
+                  steps:
+                    - setHeader:
+                        name: id
+                        expression:
+                          jsonpath:
+                            expression: $.id
+            """;
+
+    @Test
+    public void testTheBodyOfADeadLetterRouteIsTheMessageThatWasBeingHandled() {
+        String dlq = """
+                - route:
+                    id: dlq
+                    from:
+                      uri: direct:dlq
+                      steps:
+                        - log: dead
+                """;
+
+        Result result = SourceTopology.analyze(files("dlq.camel.yaml", DEAD_LETTER + dlq));
+
+        // not unknown: something calls it, an error handler
+        assertThat(info(result, "dlq").bodyOrigin()).isEqualTo(BodyOrigin.HANDLER);
+        assertThat(info(result, "dlq").callers()).isEmpty();
+        assertThat(result.findings()).isEmpty();
+    }
+
+    @Test
+    public void testARouteThatIsAlsoADeadLetterIsNotSaidToHaveNoBody() {
+        // a timer calls it and nothing sets a body, but the error handler calls it with the message that failed
+        Result withHandler = SourceTopology.analyze(
+                files("routes.camel.yaml", DEAD_LETTER + TIMER_TO_DLQ + DLQ_READER));
+
+        assertThat(info(withHandler, "dlq").bodyOrigin()).isEqualTo(BodyOrigin.HANDLER);
+        assertThat(info(withHandler, "dlq").callers()).containsExactly("tick");
+        assertThat(kinds(withHandler)).doesNotContain(SourceTopology.BODY_NEVER_SET);
+
+        // the same routes without the error handler: nothing sets a body, and the route reads one
+        Result without = SourceTopology.analyze(files("routes.camel.yaml", TIMER_TO_DLQ + DLQ_READER));
+
+        assertThat(info(without, "dlq").bodyOrigin()).isEqualTo(BodyOrigin.NONE);
+        assertThat(kinds(without)).containsExactly(SourceTopology.BODY_NEVER_SET);
+    }
+
+    @Test
+    public void testTheRoutesASagaRouteCallsAreNotSaidToHaveNoBodyEither() {
+        String routes = """
+                - route:
+                    id: work
+                    from:
+                      uri: timer:t
+                      steps:
+                        - saga:
+                            compensation: direct:comp
+                            steps:
+                              - log: work
+                        - to: direct:comp
+                - route:
+                    id: comp
+                    from:
+                      uri: direct:comp
+                      steps:
+                        - to: direct:audit
+                - route:
+                    id: audit
+                    from:
+                      uri: direct:audit
+                      steps:
+                        - setHeader:
+                            name: id
+                            expression:
+                              jsonpath:
+                                expression: $.id
+                """;
+
+        Result result = SourceTopology.analyze(files("saga.camel.yaml", routes));
+
+        assertThat(info(result, "comp").bodyOrigin()).isEqualTo(BodyOrigin.HANDLER);
+        // called by comp, whose body is not known
+        assertThat(info(result, "audit").bodyOrigin()).isEqualTo(BodyOrigin.CALLERS);
+        assertThat(result.findings()).isEmpty();
+    }
 }

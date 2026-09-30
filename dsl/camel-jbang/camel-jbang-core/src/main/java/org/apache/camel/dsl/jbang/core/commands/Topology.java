@@ -238,6 +238,7 @@ public class Topology extends CamelCommand {
             case NONE -> "none";
             case CALLERS -> "from " + String.join(", ", info.callers());
             case CONSUMER -> "from the consumer of the route";
+            case HANDLER -> "from the message an error handler or a saga was handling";
             case UNKNOWN -> "unknown - no route in the files calls it";
         };
         if (info.bodySetBy() == null) {
