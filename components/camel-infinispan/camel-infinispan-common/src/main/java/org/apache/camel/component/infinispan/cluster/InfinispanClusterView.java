@@ -56,7 +56,14 @@ public abstract class InfinispanClusterView extends AbstractCamelClusterView {
             if (!master && this.leader.compareAndSet(true, false)) {
                 LOGGER.debug("Leadership lost for id: {}", id);
 
-                fireLeadershipChangedEvent(getLeader().orElse(null));
+                CamelClusterMember newLeader = null;
+                try {
+                    newLeader = getLeader().orElse(null);
+                } catch (Exception e) {
+                    // the event must be fired even if the current leader cannot be looked up
+                    LOGGER.debug("Cannot look up the current leader", e);
+                }
+                fireLeadershipChangedEvent(newLeader);
                 return;
             }
         }

@@ -190,16 +190,21 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
 
             getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
 
-            if (cache != null) {
-                if (this.version != null) {
-                    cache.removeWithVersion(InfinispanClusterService.LEADER_KEY, this.version);
+            try {
+                if (cache != null) {
+                    if (this.version != null) {
+                        cache.removeWithVersion(InfinispanClusterService.LEADER_KEY, this.version);
+                    }
+
+                    LOGGER.info("Removing local member, key={}", getLocalMember().getId());
+                    cache.remove(getLocalMember().getId());
                 }
+            } finally {
+                this.version = null;
 
-                LOGGER.info("Removing local member, key={}", getLocalMember().getId());
-                cache.remove(getLocalMember().getId());
+                // the local member is no longer the leader, so tell the listeners
+                setLeader(false);
             }
-
-            this.version = null;
         }
 
         private boolean isLeader() {
@@ -269,6 +274,17 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
                 // refresh local membership
                 cache.put(getLocalMember().getId(), isLeader() ? "true" : "false", configuration.getLifespan(),
                         configuration.getLifespanTimeUnit());
+            } catch (Exception e) {
+                // an exception must not end the periodic refresh of the leadership (as it would with an exception
+                // thrown out of this task), and as the leadership could not be refreshed, give it up until the next run
+                LOGGER.warn("Error while refreshing the leadership of id={} (will try again): {}",
+                        getLocalMember().getId(), e.getMessage());
+                LOGGER.debug("Error while refreshing the leadership", e);
+                try {
+                    setLeader(false);
+                } catch (Exception ex) {
+                    LOGGER.debug("Error while giving up the leadership", ex);
+                }
             } finally {
                 lock.unlock();
             }

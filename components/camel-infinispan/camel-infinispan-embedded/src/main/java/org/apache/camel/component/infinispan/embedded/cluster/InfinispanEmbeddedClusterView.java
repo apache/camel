@@ -182,11 +182,16 @@ public class InfinispanEmbeddedClusterView extends InfinispanClusterView {
 
             getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
 
-            if (cache != null) {
-                cache.remove(InfinispanClusterService.LEADER_KEY, getClusterService().getId());
+            try {
+                if (cache != null) {
+                    cache.remove(InfinispanClusterService.LEADER_KEY, getClusterService().getId());
 
-                LOGGER.info("Removing local member, key={}", getLocalMember().getId());
-                cache.remove(getLocalMember().getId());
+                    LOGGER.info("Removing local member, key={}", getLocalMember().getId());
+                    cache.remove(getLocalMember().getId());
+                }
+            } finally {
+                // the local member is no longer the leader, so tell the listeners
+                setLeader(false);
             }
         }
 
@@ -244,6 +249,17 @@ public class InfinispanEmbeddedClusterView extends InfinispanClusterView {
                 // refresh local membership
                 cache.put(getLocalMember().getId(), isLeader() ? "true" : "false", configuration.getLifespan(),
                         configuration.getLifespanTimeUnit());
+            } catch (Exception e) {
+                // an exception must not end the periodic refresh of the leadership (as it would with an exception
+                // thrown out of this task), and as the leadership could not be refreshed, give it up until the next run
+                LOGGER.warn("Error while refreshing the leadership of id={} (will try again): {}",
+                        getLocalMember().getId(), e.getMessage());
+                LOGGER.debug("Error while refreshing the leadership", e);
+                try {
+                    setLeader(false);
+                } catch (Exception ex) {
+                    LOGGER.debug("Error while giving up the leadership", ex);
+                }
             } finally {
                 lock.unlock();
             }
