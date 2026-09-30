@@ -383,6 +383,8 @@ final class ChainReplayer {
                     case "*" -> x * y;
                     case "/" -> x / y;
                     case "%" -> x % y;
+                    // only '-' reaches here: '+' is a Concat, not a BinOp
+                    // only '-' reaches here: '+' is a Concat, not a BinOp
                     default -> x - y;
                 };
             }
@@ -890,7 +892,11 @@ final class ChainReplayer {
         }
         unresolved.addAll(bestReports);
         try {
-            best.setAccessible(true);
+            if (!Modifier.isPublic(best.getModifiers())) {
+                // a protected method of the route builder, as a RouteBuilder subclass calls it; this needs Camel's
+                // builder package open to camel-java-io, as it is on the class path (see design/java-dsl-parser.adoc)
+                best.setAccessible(true);
+            }
             Object result = best.invoke(target, bestArgs);
             if (result instanceof LineNumberAware la && la.getLineNumber() < 0) {
                 la.setLineNumber(call.line());

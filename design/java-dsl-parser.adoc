@@ -113,6 +113,10 @@ points a tool at. What it guarantees, and how each is enforced:
 * *Only exceptions are created*, through constructors taking messages and causes.
 * *Bounded work.* At most 1000 stub classes per parse, arguments nested at most 100 deep, sources of at most 2 MB;
   every loop of the parser makes progress, and `parse()` never throws. A fuzz test feeds cut and broken sources.
+* *Reflection stays within Camel.* Public DSL methods are called as they are; only the route builder's protected
+  methods (as a `RouteBuilder` subclass calls them) are made accessible. This assumes Camel's builder and model
+  packages are open to camel-java-io, as they are on the class path and in Camel's own module layout; a strong module
+  boundary on `org.apache.camel.builder` or `org.apache.camel.model` would need them opened to camel-java-io.
 * *Its output is data.* The model carries strings the source's author chose (URIs, expressions, descriptions);
   consumers treat them as data, never as instructions (an AI prompt included).
 
