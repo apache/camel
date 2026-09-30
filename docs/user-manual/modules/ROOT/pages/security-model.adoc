@@ -97,6 +97,34 @@ become code, must not redirect the route to a different endpoint, must not be
 deserialised into arbitrary types, and must not be parsed in ways that resolve
 remote resources, unless the route author explicitly asked for it.
 
+=== Reading route sources without running them
+
+Route authors are trusted because their routes *run*. Camel tooling also
+*reads* route sources without running them: the Java DSL parser of
+`camel-java-io` (`LwJavaParser`), the project overview behind `camel overview`,
+the Camel TUI's Architecture view and the `camel_project_overview` MCP tool.
+The sources they read may come from anywhere, such as a cloned example or a
+project an AI agent points a tool at. For this use the source is untrusted
+input, and the contract is:
+
+* Reading a route source (YAML, XML, or Java through `LwJavaParser`) does not
+  run code from it, does not load its classes, does not resolve its property
+  placeholders or secrets, and does not reach the network.
+* It always finishes, in bounded time and memory, whatever the source.
+* What it returns (endpoint URIs, descriptions, labels, the model) is text the
+  source's author chose. Consumers treat it as data, never as instructions,
+  including when it goes into an AI prompt. What an AI proposes from it goes
+  through the TUI's confirmation dialogs before anything is written.
+
+A crafted source that makes the tooling break this contract is in scope: for
+example parsing that executes code, loads a class from the source, defines a
+class in a `java.*` package, reads a file, or does not finish. Running the
+routes (`camel run`, compiling a `RouteBuilder`) is the trusted route-author
+case described above, not a finding. How `LwJavaParser` enforces each rule
+(the Camel DSL it may call, pinned by a test, stub classes for the project's
+classes, the limits) is described in
+https://github.com/apache/camel/blob/main/design/java-dsl-parser.adoc[`design/java-dsl-parser.adoc`].
+
 === Adversary model
 
 The adversary the framework defends against is the *External message senders*
