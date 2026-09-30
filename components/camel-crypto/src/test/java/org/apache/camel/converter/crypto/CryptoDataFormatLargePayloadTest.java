@@ -16,14 +16,20 @@
  */
 package org.apache.camel.converter.crypto;
 
+import java.util.Arrays;
+
 import javax.crypto.KeyGenerator;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * The HMAC (appended by default) is split off in a circular buffer on unmarshal. The buffer must wrap around for any
@@ -49,6 +55,30 @@ public class CryptoDataFormatLargePayloadTest extends CamelTestSupport {
     @Test
     void testRoundTripLarge() throws Exception {
         doRoundTrip(100_000);
+    }
+
+    @Test
+    void testTamperedCiphertextLargerThanBufferFailsAuthentication() {
+        byte[] encrypted = template.requestBody("direct:marshal", payload(5000), byte[].class);
+        encrypted[encrypted.length / 2] ^= 0x01;
+
+        assertAuthenticationFailed(encrypted);
+    }
+
+    @Test
+    void testTruncatedCiphertextLargerThanBufferFailsAuthentication() {
+        byte[] encrypted = template.requestBody("direct:marshal", payload(5000), byte[].class);
+        // drop the last cipher block (DES has 8 byte blocks)
+        byte[] truncated = Arrays.copyOf(encrypted, encrypted.length - 8);
+
+        assertAuthenticationFailed(truncated);
+    }
+
+    private void assertAuthenticationFailed(byte[] encrypted) {
+        CamelExecutionException e
+                = assertThrows(CamelExecutionException.class, () -> template.requestBody("direct:unmarshal", encrypted));
+        IllegalStateException cause = assertInstanceOf(IllegalStateException.class, e.getCause());
+        assertEquals(HMACAccumulator.AUTHENTICATION_FAILED, cause.getMessage());
     }
 
     private void doRoundTrip(int size) throws Exception {
@@ -81,6 +111,12 @@ public class CryptoDataFormatLargePayloadTest extends CamelTestSupport {
                         .marshal(cryptoFormat)
                         .unmarshal(cryptoFormat)
                         .to("mock:unencrypted");
+
+                from("direct:marshal")
+                        .marshal(cryptoFormat);
+
+                from("direct:unmarshal")
+                        .unmarshal(cryptoFormat);
             }
         };
     }

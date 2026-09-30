@@ -139,6 +139,10 @@ public class HMACAccumulator {
                 System.arraycopy(data, pos + first, buffer, 0, len - first);
                 write = (write + len) % buffer.length;
                 available -= len;
+            } else {
+                // cannot happen with the sizes used by decryptUpdate, but fail loudly rather than drop data
+                throw new IllegalStateException(
+                        "Cannot write " + len + " bytes to the circular buffer, only " + available + " available");
             }
         }
 

@@ -189,7 +189,8 @@ public class HMACAccumulatorTest {
         assertEquals(payload.length, buffer.availableForWrite());
         buffer.write(payload, 0, payload.length);
         assertEquals(0, buffer.availableForWrite());
-        buffer.write(payload, 0, payload.length);
+        // a write that does not fit is not silently dropped
+        assertThrows(IllegalStateException.class, () -> buffer.write(payload, 0, payload.length));
         assertEquals(0, buffer.availableForWrite());
     }
 
