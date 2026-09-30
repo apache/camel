@@ -362,7 +362,7 @@ YAML::
 
 | `useTokenIntrospection` | false | Enable OAuth 2.0 token introspection. When enabled, tokens are validated via Keycloak's introspection endpoint instead of local JWT parsing.
 | `introspectionCacheEnabled` | true | Enable caching of introspection results to reduce API calls to Keycloak. Highly recommended for production use.
-| `introspectionCacheTtl` | 60 | Time-to-live for cached introspection results in seconds. Balance between security (lower TTL) and performance (higher TTL).
+| `introspectionCacheTtl` | 60 | Time-to-live for cached introspection results in seconds. A cached result is additionally bounded by the token's own expiry (`exp`), so it is never returned after the token has expired even if the TTL has not elapsed. Balance between security (lower TTL) and performance (higher TTL).
 |===
 
 NOTE: Token introspection requires a confidential client with client credentials (client ID and client secret).
@@ -576,7 +576,7 @@ YAML::
 | Internal Services | 300-600 seconds | Trusted environment, prioritize performance
 |===
 
-NOTE: When a token is introspected and cached, subsequent requests with the same token will use the cached result until the TTL expires. Balance security requirements with performance needs.
+NOTE: When a token is introspected and cached, subsequent requests with the same token will use the cached result until the TTL expires or the token's own expiry (`exp`) is reached, whichever comes first. A cached result is never returned after the token has expired. Balance security requirements with performance needs.
 
 === Pluggable Cache Implementation
 
