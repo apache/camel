@@ -3780,6 +3780,13 @@ JAXP external-access model and remain resolvable. Stylesheet `xsl:include` / `xs
 are resolved at compile time (they are part of the route definition, authored by the route author)
 and are unaffected by this change.
 
+=== camel-semantic - automatic XML route loading
+
+When `camel-semantic` and the XML DSL are on the classpath, Camel now automatically detects
+semantic declarations in ordinary XML route resources. XML documents without declarations
+continue through the standard XML loader. Explicitly registered XML loaders retain precedence.
+This changes route resource discovery only; Spring XML application-context parsing is unaffected.
+
 == ThrottlingExceptionRoutePolicy
 
 `ThrottlingExceptionRoutePolicy.setKeepOpen(true)` now opens the circuit immediately and synchronously (the consumer

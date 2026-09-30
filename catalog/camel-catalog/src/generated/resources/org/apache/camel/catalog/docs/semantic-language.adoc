@@ -142,12 +142,14 @@ key and an empty map to `replace` removes the resource's questions.
 
 === XML declarations
 
-The optional XML extension belongs to `camel-semantic`. Include `camel-semantic` and
-xref:others:java-xml-io-dsl.adoc[XML DSL] (`camel-xml-io-dsl`), and give declaration files the
-extension `*.semantic.xml`. This selects the component's loader without changing the standard
-XML loader or Camel core model.
+The XML extension belongs to `camel-semantic`. Include `camel-semantic` and
+xref:others:java-xml-io-dsl.adoc[XML DSL] (`camel-xml-io-dsl`). Camel discovers the extension
+automatically at startup: use ordinary `*.xml` files without registering a loader or changing
+the Camel core model. XML documents without semantic declarations are handled by the standard
+XML loader, including its bean and route configuration support. XML loaders registered by the
+application before route loading retain precedence over automatic discovery.
 
-Both layouts are supported. To keep declarations alongside routes, use `tickets.semantic.xml`:
+Both layouts are supported. To keep declarations alongside routes, use `tickets.xml`:
 
 [source,xml]
 ----
@@ -170,7 +172,7 @@ Both layouts are supported. To keep declarations alongside routes, use `tickets.
 </routes>
 ----
 
-To share declarations across route files, use a standalone `questions.semantic.xml`:
+To share declarations across route files, use a standalone `questions.xml`:
 
 [source,xml]
 ----
@@ -186,7 +188,7 @@ To share declarations across route files, use a standalone `questions.semantic.x
 
 Load this together with ordinary `*.xml`, Java or YAML route resources that use `ref:department`.
 For example, with Camel Main, set
-`camel.main.routes-include-pattern=classpath:questions.semantic.xml,classpath:routes.xml`.
+`camel.main.routes-include-pattern=classpath:questions.xml,classpath:routes.xml`.
 Declarations are registered before consuming routes are configured. Reload replaces the source's
 questions; removing the `semantic` block, using an empty block, or deleting the resource removes
 obsolete definitions. XML source keys are the resource locations.
@@ -195,8 +197,13 @@ The combined format supports a `routes` root with one optional `semantic` block 
 `route` elements. The standalone format uses a `semantic` root. Namespace-free documents are
 supported, as are documents consistently using `http://camel.apache.org/schema/semantic`,
 `http://camel.apache.org/schema/xml-io`, or `http://camel.apache.org/schema/spring`.
-These extensions do not validate against Camel's standard core XSDs. Ordinary `*.xml` files
-and the JAXB loader do not accept embedded semantic declarations.
+A `semantic` block can also declare `xmlns="http://camel.apache.org/schema/semantic"` inside a
+standard `routes` document; its question elements inherit that namespace. The extension detects
+the declaration block or semantic root namespace automatically.
+
+These extensions do not validate against Camel's standard core XSDs. Automatic discovery applies
+to Camel's route resource loader; it does not extend Spring's XML application-context parser
+or direct JAXB unmarshalling.
 
 For boolean questions, `threshold`, `uncertainty` and `uncertaintyPolicy` are optional question
 attributes. For score questions, replace the named `criterion` elements with ordered `level`
