@@ -112,7 +112,8 @@ public final class ProjectCapabilities {
         for (Route r : flows) {
             if (!groupOf.containsKey(r.key())) {
                 boolean fact = isUtility(r, overview);
-                if (fact || aiUtility.contains(r.key())) {
+                // a route that starts a flow is where work comes in, whatever an AI says
+                if (fact || aiUtility.contains(r.key()) && !startsAFlow(r, overview)) {
                     groupOf.put(r.key(), UTILITY);
                     if (!fact) {
                         aiPlaced.add(r.key());
@@ -132,6 +133,21 @@ public final class ProjectCapabilities {
                         groupOf.put(key, id);
                         aiPlaced.add(key);
                     }
+                }
+            }
+        }
+        // a route that starts a flow, which an AI wrongly called utility, goes with the one group it feeds
+        for (Route r : flows) {
+            if (!groupOf.containsKey(r.key()) && aiUtility.contains(r.key()) && startsAFlow(r, overview)) {
+                Set<String> fed = new LinkedHashSet<>();
+                for (Link l : overview.links()) {
+                    if (l.from().equals(r.key()) && !l.onError() && !l.to().equals(r.key())) {
+                        fed.add(groupOf.get(l.to()));
+                    }
+                }
+                if (fed.size() == 1 && fed.iterator().next() != null && !UTILITY.equals(fed.iterator().next())) {
+                    groupOf.put(r.key(), fed.iterator().next());
+                    aiPlaced.add(r.key());
                 }
             }
         }
@@ -189,6 +205,16 @@ public final class ProjectCapabilities {
                     systems(overview, routes), warnings(overview, routes)));
         });
         return new Capabilities(groups, links(overview, groupOf), groupOf);
+    }
+
+    /**
+     * Whether a route starts a flow: it is an entry point (work comes in from outside) and passes the work on to
+     * another route of the project. Such a route is business intake, never plumbing, whatever a model says.
+     */
+    static boolean startsAFlow(Route r, Overview overview) {
+        boolean entry = overview.entryPoints().stream().anyMatch(e -> r.key().equals(e.route()));
+        return entry && overview.links().stream()
+                .anyMatch(l -> l.from().equals(r.key()) && !l.onError() && !l.to().equals(r.key()));
     }
 
     /**

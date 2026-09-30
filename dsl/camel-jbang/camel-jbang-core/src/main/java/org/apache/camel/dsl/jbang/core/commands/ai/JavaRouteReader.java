@@ -23,8 +23,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.NamedNode;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes.Endpoint;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes.Route;
@@ -32,6 +35,7 @@ import org.apache.camel.java.in.ConstantResolver;
 import org.apache.camel.java.in.JavaParseResult;
 import org.apache.camel.java.in.LwJavaParser;
 import org.apache.camel.model.CatchDefinition;
+import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.FinallyDefinition;
@@ -140,11 +144,69 @@ final class JavaRouteReader {
             consumes.add(ProjectRoutes.endpoint("kamelet:" + id, null, false, catalog));
         }
         int line = template != null && template.getLineNumber() > 0 ? template.getLineNumber() : r.getLineNumber();
+        List<RouteDecisions.DecisionPoint> decisions = new ArrayList<>();
+        Set<Object> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+        RouteDecisions.Scope scope = RouteDecisions.Scope.route();
+        for (ProcessorDefinition<?> p : r.getOutputs()) {
+            decisions(p, scope, decisions, visited, 0);
+        }
         routes.add(new Route(
                 id, template != null ? "routeTemplate" : "route", description, r.getGroup(), file, Math.max(1, line),
                 "java", partial, from, consumes, produces, r.getOutputs().size(), -1, 0, null, null,
-                logOnly(r, produces), note));
+                logOnly(r, produces), note, decisions));
     }
+
+    /** The decision points below a step, with their paths (see {@link RouteDecisions}). */
+    private static void decisions(
+            NamedNode node, RouteDecisions.Scope scope, List<RouteDecisions.DecisionPoint> found, Set<Object> visited,
+            int depth) {
+        if (node == null || depth > MAX_DEPTH || !visited.add(node)) {
+            return;
+        }
+        String type = node.getShortName();
+        RouteDecisions.Scope below = scope;
+        if (RouteDecisions.TYPES.contains(type)) {
+            below = scope.child(type);
+            int line = node.getLineNumber();
+            RouteDecisions.add(found, below, type, decisionText(node), line);
+        }
+        // the children as the running route tree has them: the when and otherwise of a choice, not their steps
+        List<NamedNode> children = new ArrayList<>();
+        if (node instanceof ChoiceDefinition choice) {
+            children.addAll(choice.getWhenClauses());
+            if (choice.getOtherwise() != null) {
+                children.add(choice.getOtherwise());
+            }
+        } else if (node.getChildren() != null) {
+            children.addAll(node.getChildren());
+        }
+        for (NamedNode c : children) {
+            decisions(c, below, found, visited, depth + 1);
+        }
+    }
+
+    /** What a decision point decides on: the part of its label in brackets, such as simple{${header.x} > 5}. */
+    private static String decisionText(NamedNode node) {
+        if (!RouteDecisions.hasExpression(node.getShortName())) {
+            // a choice's label lists its branches
+            return null;
+        }
+        String label = node.getLabel();
+        int start = label != null ? label.indexOf('[') : -1;
+        if (start < 0 || !label.endsWith("]")) {
+            return null;
+        }
+        String text = label.substring(start + 1, label.length() - 1);
+        // an expression the parser could not work out is marked, not text to show
+        if (text.contains(LwJavaParser.UNRESOLVED_PREFIX)) {
+            return null;
+        }
+        // simple{${body} > 5} as the YAML and XML readers give it: simple: ${body} > 5
+        Matcher m = LANGUAGE_TEXT.matcher(text);
+        return m.matches() ? m.group(1) + ": " + m.group(2) : text;
+    }
+
+    private static final Pattern LANGUAGE_TEXT = Pattern.compile("(\\w+)\\{(.*)\\}", Pattern.DOTALL);
 
     /** The endpoints below a step, whatever EIP nests them; those in doCatch or onException carry a failure. */
     private void walk(

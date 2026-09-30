@@ -409,6 +409,15 @@ public final class Theme {
         return color("diagram-eip", FALLBACK_DIAGRAM_EIP);
     }
 
+    /**
+     * Diagram color for the edges of an integration: the endpoints of remote systems, where messages come in or leave
+     * (CAMEL-25161). Optional: a theme may define #diagram-external, else the info color is used, so the edges stand
+     * out from the steps.
+     */
+    public static synchronized Color diagramExternal() {
+        return color("diagram-external", info().fg().orElse(FALLBACK_DIAGRAM_TO));
+    }
+
     /** Diagram fallback color for unknown EIP types. */
     public static synchronized Color diagramDefault() {
         return color("diagram-default", FALLBACK_DIAGRAM_DEFAULT);

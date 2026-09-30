@@ -56,6 +56,87 @@ class IntegrationSummaryTest {
             - nightly: Starts the nightly report.
             """;
 
+    private static final String TICKETS = """
+            - route:
+                id: tickets
+                from:
+                  uri: direct:tickets
+                  steps:
+                    - choice:
+                        when:
+                          - simple: "${header.department} == 'billing'"
+                            steps:
+                              - to:
+                                  uri: direct:billing
+                        otherwise:
+                          steps:
+                            - to:
+                                uri: direct:review
+            """;
+
+    private static final String ORDERS = """
+            public class Orders extends RouteBuilder {
+                public void configure() {
+                    from("direct:orders")
+                        .filter(simple("${body.amount} > 1000"))
+                            .to("direct:approval");
+                }
+            }
+            """;
+
+    private static Overview stepsOverview(String tickets) {
+        return ProjectOverview.analyze(
+                Path.of("helpdesk"), Map.of("tickets.camel.yaml", tickets, "src/main/java/Orders.java", ORDERS),
+                ProjectOverviewTest.CATALOG);
+    }
+
+    @Test
+    void stepLabels() throws Exception {
+        // CAMEL-25161: the decision points of the routes get a label and why, by route and path
+        Overview o = stepsOverview(TICKETS);
+        String prompt = IntegrationSummary.userPrompt(o, Map.of());
+        assertThat(prompt).contains("tickets / choice[1]/when[1]: when, simple: ${header.department} == 'billing'")
+                .contains("src/main/java/Orders.java:3 / filter[1]: filter, simple: ${body.amount} > 1000");
+
+        AiContent ai = IntegrationSummary.parseAnswer("""
+                STEPS:
+                - tickets / choice[1]: Route by department | Tickets go to the team that owns them.
+                - **tickets / choice[1]/when[1]**: Billing tickets | The billing team handles invoices.
+                - Orders.java:3 / filter[1]: Large orders | Orders over 1000 need an approval.
+                - tickets / choice[9]: Not a step | Dropped.
+                - nosuch / choice[1]: Not a route | Dropped.
+                """, o);
+        assertThat(ai.steps()).extracting(IntegrationSummary.StepLabel::path)
+                .containsExactly("choice[1]", "choice[1]/when[1]", "filter[1]");
+        assertThat(ai.steps().get(1).label()).isEqualTo("Billing tickets");
+        assertThat(ai.steps().get(1).why()).isEqualTo("The billing team handles invoices.");
+        assertThat(ai.steps().get(2).route()).isEqualTo("src/main/java/Orders.java:3");
+
+        String md = IntegrationSummary.render(o, ai, o.fingerprint(), "test-model", "2026-09-30");
+        assertThat(md).contains("## Steps " + IntegrationSummary.AI_MARK)
+                .contains("- `tickets` `choice[1]/when[1]`: Billing tickets | The billing team handles invoices.");
+        Summary back = IntegrationSummary.parse(md);
+        assertThat(back.steps()).isEqualTo(ai.steps());
+        assertThat(back.step("src/main/java/Orders.java:3", "filter[1]").label()).isEqualTo("Large orders");
+
+        // the when is gone: its label is dropped, the others stay
+        Overview changed = stepsOverview("""
+                - route:
+                    id: tickets
+                    from:
+                      uri: direct:tickets
+                      steps:
+                        - choice:
+                            otherwise:
+                              steps:
+                                - to:
+                                    uri: direct:review
+                """);
+        AiContent merged = IntegrationSummary.merge(changed, back.ai(), new AiContent(null, List.of(), Map.of()));
+        assertThat(merged.steps()).extracting(IntegrationSummary.StepLabel::path)
+                .containsExactly("choice[1]", "filter[1]");
+    }
+
     @Test
     void parsesTheAnswerTolerantly() {
         Overview o = ProjectOverviewTest.overview();

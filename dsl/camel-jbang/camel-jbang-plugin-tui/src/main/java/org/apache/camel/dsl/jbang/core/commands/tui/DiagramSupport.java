@@ -79,6 +79,8 @@ class DiagramSupport {
     private boolean topologyMode;
     private boolean showDescription;
     private Path aiSourceDirectory;
+    /** The AI labels of the decision points of the routes shown, by their node (CAMEL-25161). */
+    private volatile Map<String, IntegrationSummary.StepLabel> stepLabels = Map.of();
     private Map<String, List<TopologyDiagramWidget.NodeLine>> nodeLines = Map.of();
     /** Routes highlighted in the topology: the routes of the capability the user came down from, and its name. */
     private Set<String> focusRouteIds = Set.of();
@@ -943,6 +945,20 @@ class DiagramSupport {
         return showDescription ? IntegrationSummaryHints.descriptionsIfEnabled(aiSourceDirectory) : Map.of();
     }
 
+    /** A route in words in the business view: its description, else its AI label (marked); null otherwise. */
+    String routeLabel(String routeId) {
+        if (!showDescription || routeId == null) {
+            return null;
+        }
+        String label = computeRouteDescriptions().get(routeId);
+        return label != null && !label.isBlank() ? label : null;
+    }
+
+    /** What the AI wrote about a decision point of a route shown, or null. */
+    IntegrationSummary.StepLabel stepLabel(String routeId, String nodeId) {
+        return routeId != null && nodeId != null ? stepLabels.get(RouteStepHints.key(routeId, nodeId)) : null;
+    }
+
     /**
      * The title with the AI-assisted mark when a box of the topology shows an AI description: a route without a
      * description of its own that the AI project overview described.
@@ -1173,19 +1189,29 @@ class DiagramSupport {
             }
         }
 
-        // Fallback: match uri against route "from" endpoints in routeLayouts
-        if (!"from".equals(type)) {
-            for (var entry : routeLayouts.entrySet()) {
-                if (currentRouteId.equals(entry.getKey())) {
-                    continue;
-                }
-                String fromBaseUri = findFromUri(entry.getValue());
-                if (baseUri.equals(fromBaseUri)) {
-                    return entry.getKey();
-                }
+        // Fallback: match uri against the routes in routeLayouts, which has the routes hidden in the topology too
+        // (utility routes turned off), whose edges are left out
+        for (var entry : routeLayouts.entrySet()) {
+            if (currentRouteId.equals(entry.getKey())) {
+                continue;
+            }
+            if ("from".equals(type) ? sendsTo(entry.getValue(), baseUri) : baseUri.equals(findFromUri(entry.getValue()))) {
+                return entry.getKey();
             }
         }
         return null;
+    }
+
+    /** Whether a route sends to the endpoint: a to, toD, wireTap or enrich of that base uri. */
+    private static boolean sendsTo(RouteDiagramLayoutEngine.LayoutRoute lr, String baseUri) {
+        for (var node : lr.nodes) {
+            if (node.treeNode != null && ("to".equals(node.type) || "toD".equals(node.type)
+                    || "wireTap".equals(node.type) || "enrich".equals(node.type))
+                    && baseUri.equals(getBaseUri(node.treeNode.info))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String resolveThrough(String nodeId, String excludeRouteId) {
@@ -1413,6 +1439,9 @@ class DiagramSupport {
                 }
             }
         }
+        // a route without a description of its own shows the AI's label, marked
+        IntegrationSummaryHints.descriptionsIfEnabled(aiSourceDirectory)
+                .forEach((id, d) -> descriptions.putIfAbsent(id, IntegrationSummaryHints.MARK + d));
         return descriptions;
     }
 
@@ -1607,6 +1636,10 @@ class DiagramSupport {
             }
         }
 
+        stepLabels = RouteStepHints.apply(routes, aiSourceDirectory, showDescription);
+        if (showDescription) {
+            BusinessEndpointLabels.apply(routes);
+        }
         RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
                 ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
                 : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
@@ -2141,6 +2174,10 @@ class DiagramSupport {
                             }
                         }
                     }
+                }
+                stepLabels = RouteStepHints.apply(routes, aiSourceDirectory, showDescription);
+                if (showDescription) {
+                    BusinessEndpointLabels.apply(routes);
                 }
                 RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
                         ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION

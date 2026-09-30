@@ -110,6 +110,23 @@ panel) suggested, in italic and marked with `✦`. It was written by
 an AI, not taken from the route: review it, and `/overview apply`
 puts it into the route source once you agree.
 
+Inside a route, the decision points (choice, when, otherwise,
+filter, split, aggregate, loop, doTry, doCatch, circuitBreaker)
+show a short plain-language label from the AI overview in the
+business view (`b`), marked with `✦`; the technical view (`n`)
+keeps the expression. The Info panel of such a node shows the
+label, why the route decides there, and the code.
+
+The endpoints of remote systems are the edges of the integration
+and have their own color, in the route diagram as in the topology.
+The input of a route from a remote system shows where it comes
+from in the top border of its box, `AMQP ──▶`. Where a message is
+sent to a remote system and no route of the integration consumes
+it, the bottom border names where it leaves to: `──▶ AMQP`. A
+hand-off to another route of the integration shows `↵ route`
+beside the box. A route that starts itself on a schedule (timer,
+cron, quartz, scheduler) shows `↻ ──▶` at its input.
+
 ## Route Diagram
 
 In the route diagram, each EIP node shows its type tag (colored)
