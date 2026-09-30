@@ -603,6 +603,20 @@ data format also writes the message with the charset of the exchange when it mar
 US-ASCII messages are parsed as before. A route that repaired the wrongly decoded text itself must stop
 doing so.
 
+=== camel-bindy - fixed-length records with characters outside the BMP
+
+Since Camel 3.1 a fixed-length record is read by counting code points (or graphemes with
+`@FixedLengthRecord(countGrapheme = true)`), but it was written by counting UTF-16 chars, so a field with a
+character outside the Basic Multilingual Plane (such as an emoji) was written one padding character short and the
+following fields were read shifted. Marshal now pads and clips each field with the same count as unmarshal, and the
+record `length` is checked with that count too. A field with such characters (or, with `countGrapheme = true`, with
+combining characters) is padded to its length in code points (or graphemes), so it gets one padding character more
+than before for each extra UTF-16 char (or code point). Text in the Basic Multilingual Plane without combining
+characters is written and read as before. A record with such characters written by an older Camel version is too
+short by that count, so it now fails the record `length` check (unless `ignoreMissingChars = true`) instead of being
+read with shifted fields. A system that reads these records by counting UTF-16 chars must count code points (or
+graphemes) instead.
+
 === Components and Language removal
 
 ==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
