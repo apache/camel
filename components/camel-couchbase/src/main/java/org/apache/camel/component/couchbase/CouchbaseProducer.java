@@ -87,6 +87,9 @@ public class CouchbaseProducer extends DefaultProducer {
             case 1:
                 this.persistTo = PersistTo.ACTIVE;
                 break;
+            case 2:
+                this.persistTo = PersistTo.TWO;
+                break;
             case 3:
                 this.persistTo = PersistTo.THREE;
                 break;
