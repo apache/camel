@@ -564,6 +564,27 @@ public final class ProjectOverview {
             if (r.heuristic()) {
                 jo.put("heuristic", true);
             }
+            if (!r.decisions().isEmpty()) {
+                // the decision points, by their path in the route; aiLabel/aiWhy from the summary (CAMEL-25161)
+                JsonArray decisions = new JsonArray();
+                for (RouteDecisions.DecisionPoint d : r.decisions()) {
+                    JsonObject dj = new JsonObject();
+                    dj.put("path", d.path());
+                    dj.put("type", d.type());
+                    if (d.expression() != null) {
+                        dj.put("expression", d.expression());
+                    }
+                    IntegrationSummary.StepLabel st = summary != null ? summary.step(r.key(), d.path()) : null;
+                    if (st != null && st.label() != null) {
+                        dj.put("aiLabel", st.label());
+                    }
+                    if (st != null && st.why() != null) {
+                        dj.put("aiWhy", st.why());
+                    }
+                    decisions.add(dj);
+                }
+                jo.put("decisions", decisions);
+            }
             routes.add(jo);
         }
         out.put("routes", routes);

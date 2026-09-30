@@ -58,7 +58,7 @@ class RouteDecisionsTest {
                 }
                 """);
         assertThat(r.decisions()).extracting(DecisionPoint::path).containsExactlyElementsOf(PATHS);
-        assertThat(r.decisions().get(1).expression()).isEqualTo("simple{${header.x} > 5}");
+        assertThat(r.decisions().get(1).expression()).isEqualTo("simple: ${header.x} > 5");
         assertThat(r.decisions().get(1).line()).isEqualTo(5);
         assertThat(r.decisions().get(6).expression()).isEqualTo("java.lang.IllegalArgumentException");
         assertThat(r.decisions().get(0).expression()).isNull();

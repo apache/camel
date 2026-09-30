@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
@@ -196,8 +198,15 @@ final class JavaRouteReader {
         }
         String text = label.substring(start + 1, label.length() - 1);
         // an expression the parser could not work out is marked, not text to show
-        return text.contains(LwJavaParser.UNRESOLVED_PREFIX) ? null : text;
+        if (text.contains(LwJavaParser.UNRESOLVED_PREFIX)) {
+            return null;
+        }
+        // simple{${body} > 5} as the YAML and XML readers give it: simple: ${body} > 5
+        Matcher m = LANGUAGE_TEXT.matcher(text);
+        return m.matches() ? m.group(1) + ": " + m.group(2) : text;
     }
+
+    private static final Pattern LANGUAGE_TEXT = Pattern.compile("(\\w+)\\{(.*)\\}", Pattern.DOTALL);
 
     /** The endpoints below a step, whatever EIP nests them; those in doCatch or onException carry a failure. */
     private void walk(
