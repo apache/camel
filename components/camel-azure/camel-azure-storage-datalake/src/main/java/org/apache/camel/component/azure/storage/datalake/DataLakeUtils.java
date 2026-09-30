@@ -21,8 +21,8 @@ import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.support.PayloadHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.io.IOUtils;
 
 public final class DataLakeUtils {
     private DataLakeUtils() {
@@ -35,14 +35,12 @@ public final class DataLakeUtils {
         return exchange.getIn();
     }
 
+    /**
+     * Gets the length of the input stream, without reading it.
+     *
+     * @return the length, or <tt>-1</tt> if the length cannot be determined without reading the stream
+     */
     public static Long getInputStreamLength(final InputStream inputStream) throws IOException {
-        if (!inputStream.markSupported()) {
-            throw new IllegalArgumentException("Inputstream with mark reset support required");
-        }
-
-        final long length = IOUtils.toByteArray(inputStream).length;
-        inputStream.reset();
-
-        return length;
+        return PayloadHelper.getLength(inputStream);
     }
 }

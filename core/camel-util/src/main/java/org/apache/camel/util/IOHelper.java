@@ -43,6 +43,7 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -729,28 +730,54 @@ public final class IOHelper {
     }
 
     /**
-     * Encoding-aware input stream.
+     * An input stream that reads characters from a {@link Reader} and encodes them with the given charset, a chunk at a
+     * time, so the content is never held in memory as a whole.
      */
-    public static class EncodingInputStream extends InputStream {
+    public static class ReaderInputStream extends InputStream {
 
         private final Lock lock = new ReentrantLock();
-        private final Path file;
-        private final BufferedReader reader;
-        private final Charset defaultStreamCharset;
+        private final Reader reader;
+        private final Charset charset;
 
         private ByteBuffer bufferBytes;
         private final CharBuffer bufferedChars = CharBuffer.allocate(4096);
         // the first half of a surrogate pair that was read at the end of the buffer
         private char pendingHighSurrogate;
 
-        public EncodingInputStream(Path file, String charset) throws IOException {
-            this.file = file;
-            reader = toReader(file, charset);
-            defaultStreamCharset = defaultCharset.get();
+        /**
+         * @param reader  the reader to read the characters from
+         * @param charset the charset to encode the characters with
+         */
+        public ReaderInputStream(Reader reader, Charset charset) {
+            this.reader = reader;
+            this.charset = charset;
         }
 
         @Override
         public int read() throws IOException {
+            return fill() ? bufferBytes.get() & 0xFF : -1;
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            Objects.checkFromIndexSize(off, len, b.length);
+            if (len == 0) {
+                return 0;
+            }
+            if (!fill()) {
+                return -1;
+            }
+            int n = Math.min(len, bufferBytes.remaining());
+            bufferBytes.get(b, off, n);
+            return n;
+        }
+
+        /**
+         * Encodes the next chunk of characters if all the encoded bytes have been read.
+         *
+         * @return <tt>false</tt> if the end of the reader has been reached
+         */
+        private boolean fill() throws IOException {
             while (bufferBytes == null || bufferBytes.remaining() <= 0) {
                 BufferCaster.cast(bufferedChars).clear();
                 if (pendingHighSurrogate != 0) {
@@ -760,7 +787,7 @@ public final class IOHelper {
                 int len = reader.read(bufferedChars);
                 bufferedChars.flip();
                 if (len == -1 && !bufferedChars.hasRemaining()) {
-                    return -1;
+                    return false;
                 }
                 int limit = bufferedChars.limit();
                 if (len != -1 && limit > 0 && Character.isHighSurrogate(bufferedChars.get(limit - 1))) {
@@ -769,9 +796,9 @@ public final class IOHelper {
                     pendingHighSurrogate = bufferedChars.get(limit - 1);
                     bufferedChars.limit(limit - 1);
                 }
-                bufferBytes = defaultStreamCharset.encode(bufferedChars);
+                bufferBytes = charset.encode(bufferedChars);
             }
-            return bufferBytes.get() & 0xFF;
+            return true;
         }
 
         @Override
@@ -787,6 +814,19 @@ public final class IOHelper {
             } finally {
                 lock.unlock();
             }
+        }
+    }
+
+    /**
+     * Encoding-aware input stream.
+     */
+    public static class EncodingInputStream extends ReaderInputStream {
+
+        private final Path file;
+
+        public EncodingInputStream(Path file, String charset) throws IOException {
+            super(toReader(file, charset), defaultCharset.get());
+            this.file = file;
         }
 
         public InputStream toOriginalInputStream() throws IOException {

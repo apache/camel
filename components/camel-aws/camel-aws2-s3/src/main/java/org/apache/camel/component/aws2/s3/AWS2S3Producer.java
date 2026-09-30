@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.s3;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -36,6 +34,7 @@ import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.aws2.s3.utils.AWS2S3Utils;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.PayloadHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -192,18 +191,19 @@ public class AWS2S3Producer extends DefaultProducer {
             contentLength = f.length();
         } else {
             // okay we use input stream
+            if (contentLength <= 0) {
+                // such as a java.nio.file.Path, byte[] or stream cache
+                contentLength = PayloadHelper.getLength(obj);
+            }
             inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
             if (contentLength <= 0) {
-                contentLength = AWS2S3Utils.determineLengthInputStream(inputStream);
+                contentLength = PayloadHelper.getLength(inputStream);
                 if (contentLength == -1) {
-                    // fallback to read into memory to calculate length
-                    LOG.debug(
-                            "The content length is not defined. It needs to be determined by reading the data into memory");
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    IOHelper.copyAndCloseInput(inputStream, baos);
-                    byte[] arr = baos.toByteArray();
-                    contentLength = arr.length;
-                    inputStream = new ByteArrayInputStream(arr);
+                    // fallback to copy the data to calculate the length, which uses stream caching
+                    // so big payloads are spooled to disk when spooling is enabled
+                    LOG.debug("The content length is not defined. It needs to be determined by copying the data");
+                    inputStream = PayloadHelper.cacheStream(exchange, inputStream);
+                    contentLength = PayloadHelper.getLength(inputStream);
                 }
             }
         }
@@ -369,18 +369,19 @@ public class AWS2S3Producer extends DefaultProducer {
                 contentLength = filePayload.length();
             } else {
                 // okay we use input stream
+                if (contentLength <= 0) {
+                    // such as a java.nio.file.Path, byte[] or stream cache
+                    contentLength = PayloadHelper.getLength(obj);
+                }
                 inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
                 if (contentLength <= 0) {
-                    contentLength = AWS2S3Utils.determineLengthInputStream(inputStream);
+                    contentLength = PayloadHelper.getLength(inputStream);
                     if (contentLength == -1) {
-                        // fallback to read into memory to calculate length
-                        LOG.debug(
-                                "The content length is not defined. It needs to be determined by reading the data into memory");
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        IOHelper.copyAndCloseInput(inputStream, baos);
-                        byte[] arr = baos.toByteArray();
-                        contentLength = arr.length;
-                        inputStream = new ByteArrayInputStream(arr);
+                        // fallback to copy the data to calculate the length, which uses stream caching
+                        // so big payloads are spooled to disk when spooling is enabled
+                        LOG.debug("The content length is not defined. It needs to be determined by copying the data");
+                        inputStream = PayloadHelper.cacheStream(exchange, inputStream);
+                        contentLength = PayloadHelper.getLength(inputStream);
                     }
                 }
             }

@@ -16,17 +16,27 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -126,5 +136,23 @@ public class GenericFileHelperTest {
         // a target that still resolves upwards escapes even when no directory boundary is configured
         assertFalse(GenericFileHelper.isWithinDirectory("..", "", '/'));
         assertFalse(GenericFileHelper.isWithinDirectory("../secret.txt", "", '/'));
+    }
+
+    @Test
+    public void shouldEncodeStreamBodyWithCharsetWhileReading() throws Exception {
+        // longer than the internal character buffer, with characters that are encoded differently in the charsets
+        String text = "\u00e6\u00f8\u00e5 \u00a9 ".repeat(2000);
+
+        try (CamelContext context = new DefaultCamelContext()) {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.UTF_8.name());
+            exchange.getIn().setBody(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8)));
+
+            try (InputStream is = GenericFileHelper.toInputStream(exchange, StandardCharsets.ISO_8859_1.name())) {
+                // the body is encoded while it is read, instead of being loaded into memory as a whole
+                assertInstanceOf(IOHelper.ReaderInputStream.class, is);
+                assertArrayEquals(text.getBytes(StandardCharsets.ISO_8859_1), is.readAllBytes());
+            }
+        }
     }
 }

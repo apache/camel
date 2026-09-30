@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.azure.storage.blob;
 
-import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
 import com.azure.core.util.Base64Util;
 import com.azure.storage.blob.models.Block;
+import org.apache.camel.support.PayloadHelper;
 
 public final class BlobBlock {
     private final InputStream blockStream;
@@ -38,11 +39,13 @@ public final class BlobBlock {
     }
 
     public static BlobBlock createBlobBlock(final String blockId, final InputStream inputStream) throws IOException {
-        InputStream is = inputStream;
-        if (!is.markSupported()) {
-            is = new BufferedInputStream(is);
+        long length = PayloadHelper.getLength(inputStream);
+        if (length < 0) {
+            // the block must be read to determine its length
+            byte[] data = inputStream.readAllBytes();
+            return createBlobBlock(blockId, data.length, new ByteArrayInputStream(data));
         }
-        return createBlobBlock(blockId, BlobUtils.getInputStreamLength(is), is);
+        return createBlobBlock(blockId, length, inputStream);
     }
 
     public static BlobBlock createBlobBlock(final String blockId, final long size, final InputStream inputStream) {

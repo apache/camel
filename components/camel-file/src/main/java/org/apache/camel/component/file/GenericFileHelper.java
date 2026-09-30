@@ -16,16 +16,23 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 
 public final class GenericFileHelper {
 
@@ -132,6 +139,30 @@ public final class GenericFileHelper {
             dir = dir.substring(0, dir.length() - 1);
         }
         return compactTarget.equals(dir) || compactTarget.startsWith(dir + separator);
+    }
+
+    /**
+     * Gets the message body as an input stream with the content encoded in the given charset.
+     * <p/>
+     * The body is read as a {@link Reader} (which decodes the content the same way as converting the body to a
+     * {@link String}) and encoded while the stream is read, so a big body is not loaded into memory. A {@link String}
+     * body, or a body that cannot be read as a {@link Reader}, is encoded as a whole.
+     *
+     * @param  exchange                the exchange
+     * @param  charset                 the charset to encode the content with
+     * @return                         the input stream
+     * @throws InvalidPayloadException if the body cannot be converted
+     * @throws IOException             if the charset is not supported
+     */
+    public static InputStream toInputStream(Exchange exchange, String charset) throws InvalidPayloadException, IOException {
+        Message message = exchange.getIn();
+        if (!(message.getBody() instanceof String)) {
+            Reader reader = message.getBody(Reader.class);
+            if (reader != null) {
+                return new IOHelper.ReaderInputStream(reader, Charset.forName(charset));
+            }
+        }
+        return new ByteArrayInputStream(message.getMandatoryBody(String.class).getBytes(charset));
     }
 
     public static String asExclusiveReadLockKey(GenericFile file, String key) {
