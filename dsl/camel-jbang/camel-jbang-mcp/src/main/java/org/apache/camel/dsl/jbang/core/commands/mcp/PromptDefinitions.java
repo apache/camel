@@ -63,7 +63,7 @@ public class PromptDefinitions {
                 Call `camel_catalog_find` with the protocol or product (kind="component") to find matching components.
 
                 ### Step 2: Identify EIPs
-                Determine which Enterprise Integration Patterns are needed (e.g., split, aggregate, filter, choice).
+                Determine which Enterprise Integration Patterns are needed (e.g., split, aggregate, filter, choice, switch).
                 Call `camel_catalog_find` with kind="eip" and a term such as fan-out, dedup or retry to find \
                 matching patterns; `camel_catalog_sample` gives a validated YAML sample of one.
 

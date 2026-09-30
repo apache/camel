@@ -28,12 +28,15 @@ import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
+import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 
 /** Routes a message to one fixed endpoint using a literal lookup table. */
 @Metadata(firstVersion = "4.23.0", label = "eip,routing",
+          aliases = { "decision-table", "dispatch-table", "lookup-table", "case" },
           description = "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar values")
 @XmlRootElement(name = "switch")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -132,7 +135,11 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
             return;
         }
         otherwiseDefinition.setParent(this);
-        otherwiseDefinition.setUri(otherwise.getUri());
+        if (otherwise.getEndpointProducerBuilder() != null) {
+            otherwiseDefinition.setEndpointProducerBuilder(otherwise.getEndpointProducerBuilder());
+        } else {
+            otherwiseDefinition.setUri(otherwise.getUri());
+        }
         if (getId() != null) {
             if (hasCustomIdAssigned()) {
                 otherwiseDefinition.setId(getId() + "-otherwise");
@@ -145,6 +152,14 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
     /** Add a scalar literal and its destination. */
     public SwitchDefinition doCase(String value, String uri) {
         return doCase(new SwitchCaseDefinition(value, uri));
+    }
+
+    /** Add a scalar literal and its destination using the Endpoint DSL. */
+    public SwitchDefinition doCase(String value, @AsEndpointUri EndpointProducerBuilder endpoint) {
+        SwitchCaseDefinition c = new SwitchCaseDefinition();
+        c.setValue(value);
+        c.setEndpointProducerBuilder(endpoint);
+        return doCase(c);
     }
 
     /** Add a case definition. */
@@ -170,6 +185,17 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
         if (uri != null) {
             fallback = new SwitchOtherwiseDefinition();
             fallback.setUri(uri);
+        }
+        setOtherwise(fallback);
+        return this;
+    }
+
+    /** Set the fixed fallback destination using the Endpoint DSL. */
+    public SwitchDefinition otherwise(@AsEndpointUri EndpointProducerBuilder endpoint) {
+        SwitchOtherwiseDefinition fallback = null;
+        if (endpoint != null) {
+            fallback = new SwitchOtherwiseDefinition();
+            fallback.setEndpointProducerBuilder(endpoint);
         }
         setOtherwise(fallback);
         return this;
@@ -223,6 +249,11 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
         public CaseBuilder note(String note) {
             definition.setNote(note);
             return this;
+        }
+
+        public SwitchDefinition to(@AsEndpointUri EndpointProducerBuilder endpoint) {
+            definition.setEndpointProducerBuilder(endpoint);
+            return parent.doCase(definition);
         }
 
         public SwitchDefinition to(String uri) {

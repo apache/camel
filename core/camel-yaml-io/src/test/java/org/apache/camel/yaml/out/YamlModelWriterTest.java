@@ -75,6 +75,7 @@ import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.model.StopDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.ThrottleDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
@@ -154,6 +155,21 @@ public class YamlModelWriterTest {
                 writer.writeRouteDefinition(route2));
         String out = writer.printAsYaml(roots);
         String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-two.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testSwitch() throws Exception {
+        RouteDefinition route = new RouteDefinition("direct:start").routeId("myRoute");
+        SwitchDefinition sw = route.doSwitch().header("department");
+        sw.doCase("billing", "direct:billing").doCase("001", "direct:numeric").otherwise("direct:review");
+        sw.getCases().get(0).setId("billingCase");
+        sw.preCreateProcessor();
+        route.to("mock:after");
+
+        YamlModelWriter writer = new YamlModelWriter();
+        String out = writer.printAsYaml(List.of(writer.writeRouteDefinition(route)));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-switch.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 

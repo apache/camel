@@ -56,7 +56,9 @@ import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
 import org.apache.camel.model.SwitchDefinition;
+import org.apache.camel.model.SwitchOtherwiseDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
@@ -168,6 +170,21 @@ public final class JaxbHelper {
                 EndpointProducerBuilder builder = to.getEndpointProducerBuilder();
                 to.setUri(builder.getRawUri());
                 restorers.add(() -> to.setUri(null));
+            }
+        }
+        for (SwitchDefinition sw : filterTypeInOutputs(route.getOutputs(), SwitchDefinition.class)) {
+            for (SwitchCaseDefinition c : sw.getCases()) {
+                EndpointProducerBuilder builder = c.getEndpointProducerBuilder();
+                if (builder != null) {
+                    c.setUri(builder.getRawUri());
+                    restorers.add(() -> c.setEndpointProducerBuilder(builder));
+                }
+            }
+            SwitchOtherwiseDefinition fallback = sw.getOtherwise();
+            if (fallback != null && fallback.getEndpointProducerBuilder() != null) {
+                EndpointProducerBuilder builder = fallback.getEndpointProducerBuilder();
+                fallback.setUri(builder.getRawUri());
+                restorers.add(() -> fallback.setEndpointProducerBuilder(builder));
             }
         }
         return () -> restorers.forEach(Runnable::run);

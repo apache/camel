@@ -24,6 +24,8 @@ import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SplitDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.junit.jupiter.api.Test;
@@ -318,6 +320,35 @@ class LwJavaParserTest {
         assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
         String java = RoundTripTest.dump(result.routes().getRoutes().get(0));
         assertThat(java).contains("routingSlip(constant(\"mock://m2,direct://c\"))", "com.acme.Errors$Invalid");
+    }
+
+    @Test
+    void switchDestinationsAcceptEndpointDslSyntax() {
+        JavaParseResult result = new LwJavaParser().parse("""
+                import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+
+                public class Tickets extends EndpointRouteBuilder {
+                    public void configure() {
+                        from(direct("tickets")).routeId("tickets")
+                            .doSwitch(header("department"))
+                                .doCase("billing", direct("billing"))
+                                .doCase("technical").id("technicalCase").to(direct("technical"))
+                                .otherwise(direct("review"))
+                            .end()
+                            .to(mock("after"));
+                    }
+                }
+                """);
+        assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
+        RouteDefinition route = result.routes().getRoutes().get(0);
+        assertThat(route.getInput().getUri()).isEqualTo("direct://tickets");
+        SwitchDefinition sw = (SwitchDefinition) route.getOutputs().get(0);
+        assertThat(sw.getCases()).extracting(SwitchCaseDefinition::getValue).containsExactly("billing", "technical");
+        assertThat(sw.getCases()).extracting(SwitchCaseDefinition::getUri)
+                .containsExactly("direct://billing", "direct://technical");
+        assertThat(sw.getCases().get(1).getId()).isEqualTo("technicalCase");
+        assertThat(sw.getOtherwise().getUri()).isEqualTo("direct://review");
+        assertThat(((ToDefinition) route.getOutputs().get(1)).getUri()).isEqualTo("mock://after");
     }
 
     @Test
