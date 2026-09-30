@@ -88,14 +88,58 @@ class GoogleCloudStorageConsumerDownloadPathTest extends CamelTestSupport {
     }
 
     @Test
-    void routeAuthorSuppliedExpressionIsNotConfined() throws Exception {
-        // a downloadFileName that already contains an expression is built by the route author, who is trusted, so it is
-        // evaluated as configured and deliberately left outside the containment check
-        String expression = "target/${file:name}";
+    void plainObjectNameResolvesInsideStaticPrefixOfExpression() throws Exception {
+        // the ${file:name} token resolves to the remote object name, so the static directory prefix of the configured
+        // downloadFileName confines the download just like a plain directory does
+        String expression = DOWNLOAD_DIR + "/${file:name}";
+        GoogleCloudStorageConsumer consumer = createConsumer(DOWNLOAD_DIR);
+        Exchange exchange = new DefaultExchange(context);
+
+        assertThat(consumer.evaluateFileExpression(exchange, expression, "file.txt"))
+                .isEqualTo(DOWNLOAD_DIR + "/file.txt");
+    }
+
+    @Test
+    void nestedObjectNameResolvesInsideStaticPrefixOfExpression() throws Exception {
+        String expression = DOWNLOAD_DIR + "/${file:name}";
+        GoogleCloudStorageConsumer consumer = createConsumer(DOWNLOAD_DIR);
+        Exchange exchange = new DefaultExchange(context);
+
+        assertThat(consumer.evaluateFileExpression(exchange, expression, "nested/file.txt"))
+                .isEqualTo(DOWNLOAD_DIR + "/nested/file.txt");
+    }
+
+    @Test
+    void objectNameWithParentSegmentIsRejectedOnTheExpressionBranch() throws Exception {
+        String expression = DOWNLOAD_DIR + "/${file:name}";
+        GoogleCloudStorageConsumer consumer = createConsumer(DOWNLOAD_DIR);
+        Exchange exchange = new DefaultExchange(context);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> consumer.evaluateFileExpression(exchange, expression, "../escape.txt"))
+                .withMessageContaining("../escape.txt")
+                .withMessageContaining(DOWNLOAD_DIR);
+    }
+
+    @Test
+    void objectNameWithParentSegmentNestedInTheKeyIsRejectedOnTheExpressionBranch() throws Exception {
+        String expression = DOWNLOAD_DIR + "/${file:name}";
+        GoogleCloudStorageConsumer consumer = createConsumer(DOWNLOAD_DIR);
+        Exchange exchange = new DefaultExchange(context);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> consumer.evaluateFileExpression(exchange, expression, "nested/../../escape.txt"));
+    }
+
+    @Test
+    void fullyDynamicExpressionIsNotConfined() throws Exception {
+        // the route author configured no static directory at all, so there is nothing to confine the download to and
+        // the evaluated path is used as-is
+        String expression = "${file:name}";
         GoogleCloudStorageConsumer consumer = createConsumer(DOWNLOAD_DIR);
         Exchange exchange = new DefaultExchange(context);
 
         assertThat(consumer.evaluateFileExpression(exchange, expression, "../escape.txt"))
-                .isEqualTo("target/../escape.txt");
+                .isEqualTo("../escape.txt");
     }
 }

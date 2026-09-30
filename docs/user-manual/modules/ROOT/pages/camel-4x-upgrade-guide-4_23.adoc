@@ -2974,6 +2974,14 @@ path segments before checking that the destination remains inside that directory
 symbolic link that resolves outside the configured directory are rejected. Valid object names using `/`
 as a pseudo-directory separator continue to work.
 
+The containment check is now also applied when `downloadFileName` is configured as a directory followed
+by an expression, such as `downloadFileName=/tmp/downloads/${file:name}`. The `${file:name}` token resolves
+to the remote object name, which is untrusted input, so the destination must stay within the static
+directory prefix configured before the first expression token (`/tmp/downloads` in the example). Object
+names that resolve outside that prefix are rejected. A `downloadFileName` that is fully dynamic and has no
+static directory prefix (for example `downloadFileName=${file:name}`) is unchanged and is still evaluated
+without any containment check.
+
 === camel-jt400
 
 The endpoint syntax in the component metadata is now `jt400:userID:password@systemName/objectPath`, which is what the

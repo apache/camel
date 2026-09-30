@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
@@ -84,6 +85,38 @@ class GoogleCloudStorageFileNameHelperTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> GoogleCloudStorageFileNameHelper.assertWithinDirectory(DIR,
                         DIR + "-evil/file.txt", "../gcs-download-evil/file.txt"));
+    }
+
+    @Test
+    void staticDirectoryPrefixIsTheDirectoryBeforeTheExpression() {
+        assertThat(GoogleCloudStorageFileNameHelper.staticDirectoryPrefix("/tmp/downloads/${file:name}"))
+                .isEqualTo("/tmp/downloads");
+    }
+
+    @Test
+    void staticDirectoryPrefixIsTrimmedBackToARealDirectory() {
+        // /tmp/down is a partial path segment, not a directory, so it must not be used as the containment directory
+        assertThat(GoogleCloudStorageFileNameHelper.staticDirectoryPrefix("/tmp/down${file:name}"))
+                .isEqualTo("/tmp");
+    }
+
+    @Test
+    void staticDirectoryPrefixCanBeTheFilesystemRoot() {
+        assertThat(GoogleCloudStorageFileNameHelper.staticDirectoryPrefix("/${file:name}"))
+                .isEqualTo("/");
+    }
+
+    @Test
+    void staticDirectoryPrefixOfAFullyDynamicValueIsEmpty() {
+        assertThat(GoogleCloudStorageFileNameHelper.staticDirectoryPrefix("${file:name}")).isEmpty();
+        assertThat(GoogleCloudStorageFileNameHelper.staticDirectoryPrefix("${header.dir}/file.txt")).isEmpty();
+        assertThat(GoogleCloudStorageFileNameHelper.staticDirectoryPrefix("prefix-${file:name}")).isEmpty();
+    }
+
+    @Test
+    void staticDirectoryPrefixStopsAtTheFirstExpressionToken() {
+        assertThat(GoogleCloudStorageFileNameHelper.staticDirectoryPrefix("target/a/${header.dir}/${file:name}"))
+                .isEqualTo("target/a");
     }
 
     @Test

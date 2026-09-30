@@ -68,6 +68,29 @@ final class GoogleCloudStorageFileNameHelper {
         }
     }
 
+    /**
+     * Extracts the static directory prefix of a configured {@code downloadFileName} that contains an expression token,
+     * that is the part before the first {@code $} trimmed back to the last path separator. Trimming back to a separator
+     * is required so that a partial path segment is not mistaken for a directory: {@code /tmp/down${file:name}} has
+     * {@code /tmp} as its static directory prefix, not {@code /tmp/down}.
+     *
+     * @param  downloadFileName the configured {@code downloadFileName} containing at least one expression token
+     * @return                  the static directory prefix, or an empty string when the configured value is fully
+     *                          dynamic and has no static directory prefix (for example {@code ${file:name}})
+     */
+    static String staticDirectoryPrefix(String downloadFileName) {
+        final String beforeExpression = downloadFileName.substring(0, downloadFileName.indexOf('$'));
+        final int lastSeparator = Math.max(beforeExpression.lastIndexOf('/'), beforeExpression.lastIndexOf('\\'));
+        if (lastSeparator < 0) {
+            return "";
+        }
+        if (lastSeparator == 0) {
+            // the prefix is the filesystem root itself
+            return beforeExpression.substring(0, 1);
+        }
+        return beforeExpression.substring(0, lastSeparator);
+    }
+
     private static Path resolveExistingPathSegments(Path path) throws IOException {
         // Preserve the raw path segments here. Normalizing before resolving links changes the filesystem meaning of
         // paths such as link/../file when link points to another directory.

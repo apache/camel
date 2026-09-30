@@ -361,12 +361,25 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         exchange.getMessage().setHeader(GoogleCloudStorageConstants.FILE_NAME, blogName);
 
         String eval = downloadFileName;
-        // when the configured downloadFileName is a plain directory, the remote object name is appended to it. That
-        // name is untrusted input, so the resolved path has to be confined to the configured directory. When the
-        // configuration already contains an expression the local path is built by the route author, who is trusted.
-        boolean confineToDirectory = !downloadFileName.contains("$");
-        if (confineToDirectory) {
+        // the local path is resolved from GoogleCloudStorageConstants.FILE_NAME set above, which carries the remote
+        // object name and is therefore untrusted input, no matter whether the token is appended here or already part
+        // of the configured downloadFileName. The resolved path is confined to the directory the route author
+        // configured:
+        // - plain directory (no expression): the object name is appended to it and the configured value itself is the
+        //   directory the download must stay within
+        // - directory followed by an expression (for example /tmp/downloads/${file:name}): the static directory
+        //   prefix before the first expression token is the directory the download must stay within
+        // - fully dynamic value with no static directory prefix (for example ${file:name}): the route author did not
+        //   configure any directory, so there is nothing to confine to and the evaluated path is used as-is
+        final String confinementDirectory;
+        final boolean confineToDirectory;
+        if (downloadFileName.contains("$")) {
+            confinementDirectory = GoogleCloudStorageFileNameHelper.staticDirectoryPrefix(downloadFileName);
+            confineToDirectory = !confinementDirectory.isEmpty();
+        } else {
             eval = downloadFileName + "/${file:name}";
+            confinementDirectory = downloadFileName;
+            confineToDirectory = true;
         }
         Expression exp = language.createExpression(eval);
         exp.init(camelContext);
@@ -376,7 +389,7 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
             throw RuntimeCamelException.wrapRuntimeCamelException(exchange.getException());
         }
         if (confineToDirectory && result != null) {
-            GoogleCloudStorageFileNameHelper.assertWithinDirectory(downloadFileName, result, blogName);
+            GoogleCloudStorageFileNameHelper.assertWithinDirectory(confinementDirectory, result, blogName);
         }
         return result;
     }
