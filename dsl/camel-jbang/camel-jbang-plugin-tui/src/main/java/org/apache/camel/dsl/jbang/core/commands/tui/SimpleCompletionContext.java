@@ -107,6 +107,55 @@ record SimpleCompletionContext(Kind kind, String prefix, String closing, List<St
         return new SimpleCompletionContext(Kind.OPERATOR, m.group(1), " ", owners(lines, row, firstOpen));
     }
 
+    /**
+     * A function of a simple expression on a line: the text between ${ and } (to the end of the line when it is not
+     * closed yet), nested functions included.
+     *
+     * @param text  the text of the function, such as date:now-24h or header.priority
+     * @param start where the text starts in the line, after the ${
+     */
+    record Function(String text, int start) {
+    }
+
+    /**
+     * The function the cursor is on, the innermost one when they are nested (${abs(${header.price})}), the ${ and }
+     * included; null when the cursor is not in one.
+     */
+    static Function functionAt(String line, int col) {
+        Function best = null;
+        for (Function f : functions(line)) {
+            int end = f.start() + f.text().length();
+            if (col >= f.start() - 2 && col <= end && (best == null || f.start() > best.start())) {
+                best = f;
+            }
+        }
+        return best;
+    }
+
+    /** The functions of a line, in the order they start. */
+    static List<Function> functions(String line) {
+        List<Function> found = new ArrayList<>();
+        List<Integer> open = new ArrayList<>();
+        List<Integer> slots = new ArrayList<>();
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '$' && i + 1 < line.length() && line.charAt(i + 1) == '{') {
+                open.add(i + 2);
+                slots.add(found.size());
+                found.add(null);
+                i++;
+            } else if (c == '}' && !open.isEmpty()) {
+                int start = open.remove(open.size() - 1);
+                found.set(slots.remove(slots.size() - 1), new Function(line.substring(start, i), start));
+            }
+        }
+        // the ones still open run to the end of the line, being typed
+        for (int k = 0; k < open.size(); k++) {
+            found.set(slots.get(k), new Function(line.substring(open.get(k)), open.get(k)));
+        }
+        return found;
+    }
+
     /** The words before the expression that starts at col of row, nearest first. */
     private static List<String> owners(List<String> lines, int row, int col) {
         List<String> owners = new ArrayList<>();
