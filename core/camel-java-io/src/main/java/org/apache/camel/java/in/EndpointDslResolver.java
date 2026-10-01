@@ -50,6 +50,17 @@ public interface EndpointDslResolver {
      */
     Endpoint endpoint(String factory, List<String> args, List<Option> options);
 
+    /**
+     * The name of a header of the endpoint DSL, {@code headers().kafka().kafkaKey()}, or null when it is not known: the
+     * method names are generated from the header names of the component, which only a resolver with the catalog has.
+     *
+     * @param component the component method, such as {@code kafka} or {@code file}
+     * @param method    the header method, such as {@code kafkaKey}
+     */
+    default String headerName(String component, String method) {
+        return null;
+    }
+
     /** The rules the endpoint DSL is generated with; the default. */
     EndpointDslResolver NAMING = new NamingEndpointDslResolver();
 }

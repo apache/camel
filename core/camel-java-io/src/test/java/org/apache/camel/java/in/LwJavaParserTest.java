@@ -334,6 +334,40 @@ class LwJavaParserTest {
     }
 
     @Test
+    void theHeaderNamesOfTheEndpointDsl() {
+        // CAMEL-25204: headers().kafka().kafkaKey() is a header name, which a resolver with the catalog knows
+        String source = """
+                public class R extends EndpointRouteBuilder {
+                    public void configure() {
+                        from(direct("in"))
+                            .setHeader(headers().kafka().kafkaKey(), constant("myKey"))
+                            .to(kafka("orders"));
+                    }
+                }
+                """;
+        EndpointDslResolver withHeaders = new EndpointDslResolver() {
+            @Override
+            public Endpoint endpoint(String factory, List<String> args, List<Option> options) {
+                return EndpointDslResolver.NAMING.endpoint(factory, args, options);
+            }
+
+            @Override
+            public String headerName(String component, String method) {
+                return "kafka".equals(component) && "kafkaKey".equals(method) ? "CamelKafkaKey" : null;
+            }
+        };
+        JavaParseResult result = new LwJavaParser().setEndpointDslResolver(withHeaders).parse(source);
+        assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
+        SetHeaderDefinition header = (SetHeaderDefinition) result.routes().getRoutes().get(0).getOutputs().get(0);
+        assertThat(header.getName()).isEqualTo("CamelKafkaKey");
+
+        // without one it is unknown, and said so
+        result = new LwJavaParser().parse(source);
+        assertThat(result.unresolved()).extracting(JavaParseResult.Unresolved::reason)
+                .contains("a header of the endpoint DSL the parser does not know");
+    }
+
+    @Test
     void globalErrorHandlingAndRest() {
         JavaParseResult result = new LwJavaParser().parse("""
                 public class R extends RouteBuilder {
