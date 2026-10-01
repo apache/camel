@@ -18,6 +18,7 @@ package org.apache.camel.component.kafka.consumer;
 
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
 import org.apache.kafka.common.TopicPartition;
 
 public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
@@ -62,6 +63,15 @@ public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
 
     public long getCommitTimeout() {
         return kafkaRecordPayload.commitTimeout;
+    }
+
+    /**
+     * Gets the consumer group metadata of the source consumer, for use with
+     * {@link org.apache.kafka.clients.producer.Producer#sendOffsetsToTransaction} when driving exactly-once semantics.
+     * Must be called on the consumer poll thread, as the Kafka consumer is not safe for multi-threaded access.
+     */
+    public ConsumerGroupMetadata getConsumerGroupMetadata() {
+        return camelExchangePayload.consumer.groupMetadata();
     }
 
     /**
