@@ -33,6 +33,7 @@ import dev.openfga.sdk.api.client.model.ClientWriteResponse;
 import dev.openfga.sdk.api.configuration.ClientReadChangesOptions;
 import dev.openfga.sdk.api.configuration.ClientReadOptions;
 import dev.openfga.sdk.api.model.Node;
+import dev.openfga.sdk.api.model.Tuple;
 import dev.openfga.sdk.api.model.TupleChange;
 import dev.openfga.sdk.api.model.TupleKey;
 import dev.openfga.sdk.api.model.TupleOperation;
@@ -60,13 +61,13 @@ class OpenFgaReadOperationsTest extends CamelTestSupport {
     @BindToRegistry("fgaClient")
     private final OpenFgaClient client = mock(OpenFgaClient.class);
 
-    private static dev.openfga.sdk.api.model.Tuple storedTuple(String user, String relation, String object) {
-        return new dev.openfga.sdk.api.model.Tuple()
+    private static Tuple storedTuple(String user, String relation, String object) {
+        return new Tuple()
                 .key(new TupleKey().user(user).relation(relation)._object(object))
                 .timestamp(OffsetDateTime.parse("2026-10-01T10:00:00Z"));
     }
 
-    private void givenStoredTuples(String token, dev.openfga.sdk.api.model.Tuple... tuples) throws Exception {
+    private void givenStoredTuples(String token, Tuple... tuples) throws Exception {
         ClientReadResponse response = mock(ClientReadResponse.class);
         when(response.getTuples()).thenReturn(List.of(tuples));
         when(response.getContinuationToken()).thenReturn(token);
