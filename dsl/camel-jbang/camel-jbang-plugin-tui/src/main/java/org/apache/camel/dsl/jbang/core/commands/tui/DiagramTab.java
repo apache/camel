@@ -48,6 +48,13 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
 class DiagramTab extends AbstractTab {
 
+    /** The zoom levels of the tab (CAMEL-25147): Architecture › Topology › Route. */
+    enum Level {
+        ARCHITECTURE,
+        TOPOLOGY,
+        ROUTE
+    }
+
     private final DiagramSupport diagram = new DiagramSupport();
     private final SourceViewer sourceViewer = new SourceViewer();
     private final GotoNodePopup gotoNodePopup = new GotoNodePopup();
@@ -64,7 +71,6 @@ class DiagramTab extends AbstractTab {
     private final DiagramDetailSupport detail = new DiagramDetailSupport(ctx, diagram);
     private final ArchitectureView architecture
             = new ArchitectureView(ctx, this::focusGroup, () -> diagram.isShowDescription());
-    private final DiagramLevelBar levelBar = new DiagramLevelBar();
     /** Whether the user chose descriptions on or off with n; until then they are on when the routes have any. */
     private boolean descriptionChosen;
     /** Whether the topology shows each route's group; null until the user presses g (then on when there are groups). */
@@ -385,13 +391,6 @@ class DiagramTab extends AbstractTab {
         if (gotoNodePopup.isVisible()) {
             return true;
         }
-        if (me.isClick()) {
-            DiagramLevelBar.Level clicked = levelBar.hit(me.x(), me.y());
-            if (clicked != null) {
-                goToLevel(clicked);
-                return true;
-            }
-        }
         if (detailMode && detail.containsMouse(me.x(), me.y())) {
             if (me.kind() == MouseEventKind.SCROLL_UP) {
                 detail.scrollBy(-3);
@@ -445,7 +444,7 @@ class DiagramTab extends AbstractTab {
         }
         if (topologyMode && diagram.isShowDiagram()) {
             // Esc zooms out: from the topology up to the architecture
-            goToLevel(DiagramLevelBar.Level.ARCHITECTURE);
+            goToLevel(Level.ARCHITECTURE);
             return true;
         }
         if (!topologyMode) {
@@ -526,11 +525,11 @@ class DiagramTab extends AbstractTab {
     // ---- zoom levels (CAMEL-25147) ----
 
     /** The level shown: the capability groups, the topology of all routes, or one route's diagram. */
-    DiagramLevelBar.Level level() {
+    Level level() {
         if (architecture.isActive()) {
-            return DiagramLevelBar.Level.ARCHITECTURE;
+            return Level.ARCHITECTURE;
         }
-        return topologyMode ? DiagramLevelBar.Level.TOPOLOGY : DiagramLevelBar.Level.ROUTE;
+        return topologyMode ? Level.TOPOLOGY : Level.ROUTE;
     }
 
     /**
@@ -550,20 +549,20 @@ class DiagramTab extends AbstractTab {
     /** v: architecture, topology, route, and round again; the route level is skipped when no route is selected. */
     private void cycleLevel() {
         goToLevel(switch (level()) {
-            case ARCHITECTURE -> DiagramLevelBar.Level.TOPOLOGY;
-            case TOPOLOGY -> routeCandidate() != null ? DiagramLevelBar.Level.ROUTE : DiagramLevelBar.Level.ARCHITECTURE;
-            case ROUTE -> DiagramLevelBar.Level.ARCHITECTURE;
+            case ARCHITECTURE -> Level.TOPOLOGY;
+            case TOPOLOGY -> routeCandidate() != null ? Level.ROUTE : Level.ARCHITECTURE;
+            case ROUTE -> Level.ARCHITECTURE;
         });
     }
 
-    void goToLevel(DiagramLevelBar.Level target) {
-        DiagramLevelBar.Level now = level();
+    void goToLevel(Level target) {
+        Level now = level();
         if (target == now) {
             return;
         }
         switch (target) {
             case ARCHITECTURE -> {
-                if (now == DiagramLevelBar.Level.ROUTE) {
+                if (now == Level.ROUTE) {
                     leaveRoute();
                 }
                 diagram.setFocus(null, null);
@@ -574,7 +573,7 @@ class DiagramTab extends AbstractTab {
                 }
             }
             case TOPOLOGY -> {
-                if (now == DiagramLevelBar.Level.ROUTE) {
+                if (now == Level.ROUTE) {
                     leaveRoute();
                 } else if (!architecture.openSelectedGroup()) {
                     architecture.close();
@@ -633,19 +632,25 @@ class DiagramTab extends AbstractTab {
         }
     }
 
-    private void renderLevelBar(Frame frame, Rect row) {
-        DiagramLevelBar.Level current = level();
+    @Override
+    public SubViewBar.Spec subViewBar() {
+        if (ctx.findSelectedIntegration() == null || sourceViewer.isVisible() || !diagram.isShowDiagram()) {
+            return null;
+        }
+        Level current = level();
         String group = diagram.getFocusName();
         String route = routeCandidate();
-        List<DiagramLevelBar.Segment> segments = List.of(
-                new DiagramLevelBar.Segment(DiagramLevelBar.Level.ARCHITECTURE, "Architecture", true),
-                new DiagramLevelBar.Segment(
-                        DiagramLevelBar.Level.TOPOLOGY,
-                        group != null ? "Topology \u00b7 " + group : "Topology", true),
-                new DiagramLevelBar.Segment(
-                        DiagramLevelBar.Level.ROUTE,
-                        route != null ? "Route: " + route : "Route", route != null));
-        levelBar.render(frame, row, segments, current, viewToggles());
+        List<SubViewBar.View> views = List.of(
+                new SubViewBar.View(
+                        "Architecture", current == Level.ARCHITECTURE, true,
+                        () -> goToLevel(Level.ARCHITECTURE)),
+                new SubViewBar.View(
+                        group != null ? "Topology \u00b7 " + group : "Topology", current == Level.TOPOLOGY,
+                        true, () -> goToLevel(Level.TOPOLOGY)),
+                new SubViewBar.View(
+                        route != null ? "Route: " + route : "Route", current == Level.ROUTE, route != null,
+                        () -> goToLevel(Level.ROUTE)));
+        return new SubViewBar.Spec("v", views, viewToggles(), true);
     }
 
     /**
@@ -685,34 +690,34 @@ class DiagramTab extends AbstractTab {
     }
 
     /** The view settings of the level shown, with their state: they sit on the level bar, beside the diagram. */
-    List<DiagramLevelBar.Toggle> viewToggles() {
-        List<DiagramLevelBar.Toggle> toggles = new ArrayList<>();
+    List<SubViewBar.Toggle> viewToggles() {
+        List<SubViewBar.Toggle> toggles = new ArrayList<>();
         if (IntegrationSummaryHints.settingEnabled()) {
             // without a summary yet the setting is off, and a has the AI write one
-            toggles.add(new DiagramLevelBar.Toggle(
+            toggles.add(new SubViewBar.Toggle(
                     "a", "ai", hasAiHints() && IntegrationSummaryHints.isShown() ? "on" : "off"));
         }
         toggles.addAll(levelToggles());
         return toggles;
     }
 
-    private List<DiagramLevelBar.Toggle> levelToggles() {
-        DiagramLevelBar.Toggle view
-                = new DiagramLevelBar.Toggle("b", "view", diagram.isShowDescription() ? "business" : "technical");
+    private List<SubViewBar.Toggle> levelToggles() {
+        SubViewBar.Toggle view
+                = new SubViewBar.Toggle("b", "view", diagram.isShowDescription() ? "business" : "technical");
         String metrics = diagramMetrics ? "on" : "off";
         return switch (level()) {
             case ARCHITECTURE -> List.of(view,
-                    new DiagramLevelBar.Toggle("u", "utility", architecture.isShowUtility() ? "on" : "off"),
-                    new DiagramLevelBar.Toggle("e", "external", architecture.isShowExternal() ? "edges" : "off"));
+                    new SubViewBar.Toggle("u", "utility", architecture.isShowUtility() ? "on" : "off"),
+                    new SubViewBar.Toggle("e", "external", architecture.isShowExternal() ? "edges" : "off"));
             case TOPOLOGY -> {
-                List<DiagramLevelBar.Toggle> toggles = new ArrayList<>();
+                List<SubViewBar.Toggle> toggles = new ArrayList<>();
                 toggles.add(view);
-                toggles.add(new DiagramLevelBar.Toggle("g", "group", isShowGroups() ? "on" : "off"));
+                toggles.add(new SubViewBar.Toggle("g", "group", isShowGroups() ? "on" : "off"));
                 if (hasUtilityRoutes()) {
-                    toggles.add(new DiagramLevelBar.Toggle("u", "utility", architecture.isShowUtility() ? "on" : "off"));
+                    toggles.add(new SubViewBar.Toggle("u", "utility", architecture.isShowUtility() ? "on" : "off"));
                 }
-                toggles.add(new DiagramLevelBar.Toggle("m", "metrics", metrics));
-                toggles.add(new DiagramLevelBar.Toggle(
+                toggles.add(new SubViewBar.Toggle("m", "metrics", metrics));
+                toggles.add(new SubViewBar.Toggle(
                         "e", "external",
                         switch (externalMode) {
                             case 1 -> "edges";
@@ -721,18 +726,9 @@ class DiagramTab extends AbstractTab {
                         }));
                 yield toggles;
             }
-            case ROUTE -> List.of(view, new DiagramLevelBar.Toggle("m", "metrics", metrics),
-                    new DiagramLevelBar.Toggle("d", "detail", detailMode ? "on" : "off"));
+            case ROUTE -> List.of(view, new SubViewBar.Toggle("m", "metrics", metrics),
+                    new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"));
         };
-    }
-
-    @Override
-    public void renderViewToggles(List<Span> spans) {
-        if (diagram.isShowDiagram() && !sourceViewer.isVisible()) {
-            for (DiagramLevelBar.Toggle t : viewToggles()) {
-                hint(spans, t.key(), t.label() + " [" + t.state() + "]");
-            }
-        }
     }
 
     /**
@@ -790,12 +786,6 @@ class DiagramTab extends AbstractTab {
         if (sourceViewer.isVisible()) {
             sourceViewer.render(frame, area);
             return;
-        }
-
-        if (diagram.isShowDiagram() && area.height() > 3) {
-            List<Rect> rows = Layout.vertical().constraints(Constraint.length(1), Constraint.fill()).split(area);
-            renderLevelBar(frame, rows.get(0));
-            area = rows.get(1);
         }
 
         if (architecture.isActive()) {

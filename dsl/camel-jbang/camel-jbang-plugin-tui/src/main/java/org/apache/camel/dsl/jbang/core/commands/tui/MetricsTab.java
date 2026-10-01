@@ -613,6 +613,32 @@ class MetricsTab extends AbstractTableTab {
     }
 
     @Override
+    public SubViewBar.Spec subViewBar() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        boolean raw = findMetricsUrl(info) != null;
+        List<SubViewBar.View> views = List.of(
+                new SubViewBar.View("Dashboard", !showRaw && !tableMode, true, () -> {
+                    handleEscape();
+                    if (tableMode) {
+                        pressKey('d');
+                    }
+                }),
+                new SubViewBar.View("Table", !showRaw && tableMode, true, () -> {
+                    handleEscape();
+                    if (!tableMode) {
+                        pressKey('d');
+                    }
+                }),
+                new SubViewBar.View("Prometheus", showRaw, raw, () -> pressKey('r')));
+        List<SubViewBar.Toggle> toggles = !showRaw && tableMode
+                ? List.of(new SubViewBar.Toggle("f", "filter", filterType)) : List.of();
+        return new SubViewBar.Spec("d", views, toggles, false);
+    }
+
+    @Override
     public void renderFooter(List<Span> spans) {
         if (showRaw) {
             hint(spans, "Esc", "close");
@@ -621,10 +647,8 @@ class MetricsTab extends AbstractTableTab {
             return;
         }
         hint(spans, "Esc", "back");
-        hint(spans, "d", tableMode ? "dashboard" : "table");
         if (tableMode) {
             hint(spans, "s", "sort");
-            hint(spans, "f", "filter:" + filterType);
         }
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info != null && findMetricsUrl(info) != null) {

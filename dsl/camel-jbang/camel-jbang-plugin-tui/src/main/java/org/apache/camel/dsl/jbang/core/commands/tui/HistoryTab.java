@@ -792,6 +792,46 @@ class HistoryTab extends AbstractTab {
     }
 
     @Override
+    public SubViewBar.Spec subViewBar() {
+        if (ctx.findSelectedIntegration() == null) {
+            return null;
+        }
+        boolean diagramShown = diagram.isShowDiagram();
+        boolean historyDiagram = diagramShown && diagram.isHistoryMode() && diagram.hasHistoryData();
+        boolean tracerActive = !traces.get().isEmpty();
+        boolean exchangeList = tracerActive && !traceDetailView;
+        boolean waterfallApplies = !exchangeList;
+        boolean waterfall = !diagramShown && showWaterfall && waterfallApplies;
+        List<SubViewBar.View> views = List.of(
+                new SubViewBar.View(exchangeList ? "Exchanges" : "Steps", !diagramShown && !waterfall, true, () -> {
+                    if (diagram.isShowDiagram()) {
+                        pressKey('d');
+                    }
+                    if (showWaterfall) {
+                        pressKey('g');
+                    }
+                }),
+                new SubViewBar.View("Waterfall", waterfall, waterfallApplies, () -> {
+                    if (diagram.isShowDiagram()) {
+                        pressKey('d');
+                    }
+                    if (!showWaterfall) {
+                        pressKey('g');
+                    }
+                }),
+                new SubViewBar.View("Diagram", diagramShown, true, () -> pressKey('d')));
+        List<SubViewBar.Toggle> toggles = new ArrayList<>();
+        if (!diagramShown || historyDiagram) {
+            toggles.add(new SubViewBar.Toggle("n", "description", showDescription ? "on" : "off"));
+        }
+        boolean traceWrap = historyDiagram ? !diagramTraceSteps.isEmpty() : tracerActive;
+        if (historyDiagram || !diagramShown && !waterfall && !exchangeList) {
+            toggles.add(new SubViewBar.Toggle("w", "wrap", (traceWrap ? traceWordWrap : historyWordWrap) ? "on" : "off"));
+        }
+        return new SubViewBar.Spec(null, views, toggles, false);
+    }
+
+    @Override
     public void renderFooter(List<Span> spans) {
         if (diagram.isShowDiagram()) {
             if (diagram.isHistoryMode() && diagram.hasHistoryData()) {
@@ -800,7 +840,6 @@ class HistoryTab extends AbstractTab {
                 boolean sh = isTraceMode ? showTraceHeaders : showHistoryHeaders;
                 boolean sp = isTraceMode ? showTraceProperties : showHistoryProperties;
                 boolean sv = isTraceMode ? showTraceVariables : showHistoryVariables;
-                boolean sw = isTraceMode ? traceWordWrap : historyWordWrap;
                 String infoLabel = switch (infoPanelSize) {
                     case INFO_WIDE -> "info [wide]";
                     case INFO_FULL -> "info [full]";
@@ -811,9 +850,7 @@ class HistoryTab extends AbstractTab {
                     hint(spans, TuiIcons.HINT_NAV, "navigate");
                     hint(spans, "Enter", "drill-down");
                     hint(spans, "i", infoLabel);
-                    hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
                     hintShowBhpv(spans, sb, sh, sp, sv);
-                    hintLast(spans, "w", "wrap" + (sw ? " [on]" : " [off]"));
                 } else {
                     hint(spans, "d", "close");
                     hint(spans, "Esc", "back");
@@ -821,9 +858,7 @@ class HistoryTab extends AbstractTab {
                     hint(spans, TuiIcons.HINT_H, "h-scroll");
                     hint(spans, "t", "topology");
                     hint(spans, "i", infoLabel);
-                    hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
                     hintShowBhpv(spans, sb, sh, sp, sv);
-                    hintLast(spans, "w", "wrap" + (sw ? " [on]" : " [off]"));
                 }
                 return;
             }
@@ -839,17 +874,14 @@ class HistoryTab extends AbstractTab {
             if (!showWaterfall && !traceWordWrap) {
                 hint(spans, TuiIcons.HINT_H, "h-scroll");
             }
-            hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
-            hint(spans, "g", "waterfall" + (showWaterfall ? " [on]" : ""));
+            hint(spans, "g", "waterfall");
             hint(spans, "d", "diagram");
             if (!showWaterfall) {
                 hintShowBhpv(spans, showTraceBody, showTraceHeaders, showTraceProperties, showTraceVariables);
             }
-            hintLast(spans, "w", "wrap" + (traceWordWrap ? " [on]" : " [off]"));
         } else if (tracerActive) {
             hint(spans, "Esc", "back");
             hint(spans, "s", "sort");
-            hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
             hint(spans, "d", "diagram");
             hint(spans, "Enter", "details");
             hintLast(spans, "F5", "refresh");
@@ -861,12 +893,10 @@ class HistoryTab extends AbstractTab {
             if (!showWaterfall && !historyWordWrap) {
                 hint(spans, TuiIcons.HINT_H, "h-scroll");
             }
-            hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
-            hint(spans, "g", "waterfall" + (showWaterfall ? " [on]" : ""));
+            hint(spans, "g", "waterfall");
             hint(spans, "d", "diagram");
             if (!showWaterfall) {
                 hintShowBhpv(spans, showHistoryBody, showHistoryHeaders, showHistoryProperties, showHistoryVariables);
-                hint(spans, "w", "wrap" + (historyWordWrap ? " [on]" : " [off]"));
             }
             hintLast(spans, "F5", "refresh");
         }
