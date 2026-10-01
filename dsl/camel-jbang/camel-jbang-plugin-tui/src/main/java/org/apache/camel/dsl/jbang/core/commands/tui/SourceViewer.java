@@ -119,6 +119,19 @@ class SourceViewer {
     record JumpLink(String routeId, String filePath, int targetLine) {
     }
 
+    /**
+     * What a line of a running integration's source did: the exchanges of the processors on it, the failed ones and the
+     * mean processing time.
+     */
+    record LiveLine(long total, long failed, long meanMillis) {
+    }
+
+    /** The live run data of a file by its path: per 0-based line, what the processors on it did. */
+    @FunctionalInterface
+    interface LiveRunData {
+        Map<Integer, LiveLine> lines(String filePath);
+    }
+
     private boolean visible;
     private List<String> lines = Collections.emptyList();
     private List<JsonObject> codeData = Collections.emptyList();
@@ -188,6 +201,13 @@ class SourceViewer {
     private EndpointValidator endpointValidator;
     private EndpointValidator simpleValidator;
     private EndpointValidator routeValidator;
+    private LiveRunData liveRunData;
+    private Map<Integer, LiveLine> liveLines = Collections.emptyMap();
+    private long liveLinesTime;
+    private int liveTotalWidth;
+    private int liveFailedWidth;
+    private int liveMeanWidth;
+    private String liveWidthsFile;
     /** java or xml: Tab completes the endpoint uris of a Java or XML route file; null for neither. */
     private String uriCompletion;
     /** The completion being chosen in a uri: its row, the column its prefix ends at, the prefix and suffix. */
@@ -268,6 +288,101 @@ class SourceViewer {
      * editing. An XML file with problems is not saved, as a YAML file; a Java file is saved and the problems are said,
      * as a Java file is the application's code, and what the checks cannot know must never keep it from being saved.
      */
+    /**
+     * The live run data of the running integration, shown at the end of the lines of its source: how many exchanges the
+     * processors on a line handled, how many failed, and their mean time (a heat map of the source while it runs).
+     */
+    void setLiveRunData(LiveRunData liveRunData) {
+        this.liveRunData = liveRunData;
+    }
+
+    /**
+     * The live run data as a column of its own after the line numbers, so the numbers line up whatever the length of
+     * the code: the exchanges right-aligned, then the failures and the mean time when any line has them, blank on the
+     * lines without data. Nothing when the integration does not run.
+     */
+    private void addLiveColumn(List<Span> spans, int lineIndex, Style selBg) {
+        Map<Integer, LiveLine> lines = liveLines();
+        if (lines.isEmpty() || liveTotalWidth == 0) {
+            return;
+        }
+        LiveLine live = lines.get(lineIndex);
+        boolean data = live != null && live.total() > 0;
+        String total = data ? Long.toString(live.total()) : "";
+        String failed = data && live.failed() > 0 ? "✗" + live.failed() : "";
+        String mean = data && live.meanMillis() > 0 ? live.meanMillis() + "ms" : "";
+        Style totalStyle = data ? Theme.label() : Style.EMPTY;
+        Style failedStyle = Theme.error().bold();
+        Style dim = Style.EMPTY.dim();
+        if (selBg != null) {
+            totalStyle = totalStyle.patch(selBg);
+            failedStyle = failedStyle.patch(selBg);
+            dim = dim.patch(selBg);
+        }
+        spans.add(Span.styled(" " + " ".repeat(liveTotalWidth - total.length()) + total, totalStyle));
+        if (liveFailedWidth > 0) {
+            spans.add(Span.styled(" " + failed + " ".repeat(liveFailedWidth - failed.length()), failedStyle));
+        }
+        if (liveMeanWidth > 0) {
+            spans.add(Span.styled(" " + " ".repeat(liveMeanWidth - mean.length()) + mean, dim));
+        }
+        spans.add(Span.styled(" │", dim));
+    }
+
+    /** The live run data of the loaded file, read again at most once a second (the status is polled about as often). */
+    private Map<Integer, LiveLine> liveLines() {
+        if (liveRunData == null || loadedFilePath == null) {
+            return Collections.emptyMap();
+        }
+        long now = System.currentTimeMillis();
+        if (now - liveLinesTime > 1000) {
+            refreshLiveLines(now);
+        }
+        return liveLines;
+    }
+
+    /** Package-private for tests: reads the live run data again now, as the render does once a second. */
+    void refreshLiveLinesForTesting() {
+        refreshLiveLines(System.currentTimeMillis());
+    }
+
+    /** Package-private for tests: the text of the live column of a line. */
+    String liveColumnForTesting(int lineIndex) {
+        List<Span> spans = new ArrayList<>();
+        addLiveColumn(spans, lineIndex, null);
+        StringBuilder sb = new StringBuilder();
+        spans.forEach(sp -> sb.append(sp.content()));
+        return sb.toString();
+    }
+
+    private void refreshLiveLines(long now) {
+        {
+            Map<Integer, LiveLine> lines = liveRunData.lines(loadedFilePath);
+            liveLines = lines != null ? lines : Collections.emptyMap();
+            liveLinesTime = now;
+            // the widths of the column, for all the lines alike; they only grow while the same file is shown (from
+            // a minimum), so the column does not jitter when a number crosses 99 -> 100 and back (a mean time going
+            // up and down, a reset of the statistics); another file, or the integration stopping, starts afresh
+            if (liveLines.isEmpty() || !loadedFilePath.equals(liveWidthsFile)) {
+                liveTotalWidth = 0;
+                liveFailedWidth = 0;
+                liveMeanWidth = 0;
+                liveWidthsFile = liveLines.isEmpty() ? null : loadedFilePath;
+            }
+            for (LiveLine l : liveLines.values()) {
+                if (l.total() > 0) {
+                    liveTotalWidth = Math.max(liveTotalWidth, Math.max(3, Long.toString(l.total()).length()));
+                    if (l.failed() > 0) {
+                        liveFailedWidth = Math.max(liveFailedWidth, Math.max(3, 1 + Long.toString(l.failed()).length()));
+                    }
+                    if (l.meanMillis() > 0) {
+                        liveMeanWidth = Math.max(liveMeanWidth, Math.max(4, Long.toString(l.meanMillis()).length() + 2));
+                    }
+                }
+            }
+        }
+    }
+
     void setRouteValidator(EndpointValidator routeValidator) {
         this.routeValidator = routeValidator;
     }
@@ -2975,6 +3090,7 @@ class SourceViewer {
             if (!prefix.isEmpty()) {
                 spans.add(Span.styled(prefix, (focused ? Theme.label().bold() : Theme.label().dim()).patch(selBg)));
             }
+            addLiveColumn(spans, lineIndex, selBg);
             for (Span s : highlighted.spans()) {
                 spans.add(Span.styled(s.content(), s.style().patch(selBg)));
             }
@@ -2985,6 +3101,7 @@ class SourceViewer {
             if (!prefix.isEmpty()) {
                 spans.add(Span.styled(prefix, Style.EMPTY.dim()));
             }
+            addLiveColumn(spans, lineIndex, null);
             spans.addAll(highlighted.spans());
         }
 
@@ -2996,7 +3113,6 @@ class SourceViewer {
             }
             spans.add(Span.styled(" ↵ " + jl.routeId(), linkStyle));
         }
-
         Line full = Line.from(spans);
 
         if (hSkip > 0) {

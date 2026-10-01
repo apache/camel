@@ -189,6 +189,22 @@ Additional features:
   source line.
 * *Resizable panels* -- drag the split border with the mouse to resize the file list and viewer
 
+=== Live Run Data
+
+While the integration runs, a column after the line numbers shows what the processors on each line do: the exchanges
+they handled (`79`), how many failed (`✗10`, in red), and their mean time when it is 1 ms or more. The column keeps its
+width, so the code does not move as the numbers grow. The source reads as a heat map of the route: where the messages
+go, and where they fail.
+
+[source,text]
+----
+  7 | 1014 ✗98 │        from("timer:tick?period=500")
+  8 |          │            .routeId("live")
+  9 | 1014     │            .setBody(simple("${random(10)}"))
+ 10 | 1014     │            .filter(simple("${body} > 3"))
+ 11 |  605     │                .to("log:big?level=OFF")
+----
+
 === Source Editor
 
 Press *F4* to enter edit mode for YAML, Java and XML routes, `application.properties`, and other local files.

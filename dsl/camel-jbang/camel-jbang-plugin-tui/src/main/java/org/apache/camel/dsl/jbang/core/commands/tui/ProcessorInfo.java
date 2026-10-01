@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 class ProcessorInfo {
     String id;
     String processor;
+    /** Where the processor is in the source, file:line (only when the runtime records source locations). */
+    String source;
     int level;
     long total;
     long failed;
