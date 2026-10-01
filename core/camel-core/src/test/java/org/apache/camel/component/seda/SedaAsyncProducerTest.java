@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -38,7 +40,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class SedaAsyncProducerTest extends ContextTestSupport {
 
-    private String route = "";
+    /**
+     * Thread-safe accumulator for the route execution order. Each step appends its token atomically using
+     * AtomicReference.updateAndGet() to avoid the non-atomic read-modify-write of the plain String field that caused
+     * the flaky ordering assertions.
+     */
+    private final AtomicReference<String> route = new AtomicReference<>("");
+
+    /**
+     * Latch used in testAsyncProducer to guarantee that the test thread records "send" before the route processor is
+     * allowed to record "process". Without this, a heavily loaded CI machine can preempt the test thread for >100ms
+     * after asyncRequestBody() returns, letting the async thread win the race even though a 100ms delay was inserted in
+     * the route.
+     */
+    private final CountDownLatch sendLatch = new CountDownLatch(1);
 
     @Test
     public void testAsyncProducer() throws Exception {
@@ -48,12 +63,14 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
         // using the new async API we can fire a real async message
         Future<String> future = template.asyncRequestBody("direct:start", "Hello World", String.class);
 
-        // I should happen before mock
-        route = route + "send";
+        // Record "send" atomically, then signal the route processor it may proceed.
+        // The processor waits on sendLatch so ordering is deterministic regardless of CI load.
+        route.updateAndGet(s -> s + "send");
+        sendLatch.countDown();
 
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
-        assertEquals("sendprocess", route, "Send should occur before processor");
+        assertEquals("sendprocess", route.get(), "Send should occur before processor");
 
         // and get the response with the future handle
         String response = future.get();
@@ -70,14 +87,18 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
         exchange.getIn().setBody("Hello World");
         exchange.setPattern(ExchangePattern.InOut);
         exchange.setProperty(Exchange.ASYNC_WAIT, WaitForTaskToComplete.IfReplyExpected);
+        // WaitForTaskToComplete.IfReplyExpected on InOut blocks until processing is complete,
+        // so the processor always records "process" before template.send() returns.
+        // The latch is not used in this test; count it down immediately so the processor is not blocked.
+        sendLatch.countDown();
         template.send("direct:start", exchange);
 
-        // I should not happen before mock
-        route = route + "send";
+        // I should not happen before mock – processor already finished above
+        route.updateAndGet(s -> s + "send");
 
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
-        assertEquals("processsend", route, "Send should occur before processor");
+        assertEquals("processsend", route.get(), "Send should occur after processor");
 
         String response = exchange.getMessage().getBody(String.class);
         assertEquals("Bye World", response);
@@ -91,8 +112,13 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
                 errorHandler(noErrorHandler());
 
                 from("direct:start").delay(100).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        route = route + "process";
+                    public void process(Exchange exchange) throws Exception {
+                        // Wait until the test thread has recorded "send" (only relevant for
+                        // testAsyncProducer; testAsyncProducerWait counts down the latch before send).
+                        if (!sendLatch.await(30, TimeUnit.SECONDS)) {
+                            throw new IllegalStateException("Timed out waiting for sendLatch");
+                        }
+                        route.updateAndGet(s -> s + "process");
                         // set the response
                         exchange.getMessage().setBody("Bye World");
                     }
