@@ -101,6 +101,17 @@ Press **F4** to enter edit mode, then **Tab** for context-aware completion:
   `?` or `&` (`&amp;` in XML; filtered by consumer/producer role, already given
   ones left out), and the value of an option after `=`
 
+**Java DSL routes:**
+- After a dot in a route chain, Tab lists the methods that compile there: the
+  options of the EIP the chain is on first (`.split(body()).` offers
+  `parallelProcessing`, `streaming`...), then the EIPs, and the `end()`,
+  `endChoice()` or `endDoTry()` that closes the block you are in
+- The method is inserted with its parentheses, the cursor inside them when it
+  takes arguments; the documentation comes from the catalog
+- Light help for hand-written edits: routes in variables, the REST DSL and
+  expression builders inside arguments are not completed; an AI coding agent
+  helps with more: the F8 AI panel, or any agent that speaks ACP
+
 **XML DSL routes:**
 - After `<`, or on an empty line, Tab lists the elements that go inside the
   parent element (the EIPs of a route, `when` and `otherwise` in a `choice`,
