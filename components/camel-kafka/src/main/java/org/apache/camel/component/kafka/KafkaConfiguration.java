@@ -1021,8 +1021,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     /**
      * Where a consumer group starts reading when it has no committed offset, or the committed offset is out of range.
      * Valid values are: earliest (seek to the earliest available offset), latest (seek to the latest offset, the
-     * default), none (throw an exception if no previous offset is found), by_duration: followed by an ISO-8601
-     * duration (e.g. by_duration:PT5M or by_duration:P1D; requires Kafka 4.0 or later).
+     * default), none (throw an exception if no previous offset is found), by_duration: followed by an ISO-8601 duration
+     * (e.g. by_duration:PT5M or by_duration:P1D; requires Kafka 4.0 or later).
      */
     public void setAutoOffsetReset(String autoOffsetReset) {
         this.autoOffsetReset = autoOffsetReset;
