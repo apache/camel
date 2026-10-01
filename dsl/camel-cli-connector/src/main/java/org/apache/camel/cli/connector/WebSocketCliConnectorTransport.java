@@ -101,6 +101,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     private boolean listenerAdded;
     // the snapshot task, only (re)scheduled from the scheduler thread or before it runs anything
     private ScheduledFuture<?> snapshotFuture;
+    private long debugInterval;
+    private ScheduledFuture<?> debugFuture;
     private int failures;
     private long ticks;
 
@@ -138,9 +140,9 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         }
         reconnectDelay = Long.parseLong(property("camel.cli.websocket.reconnect-delay", "1000"));
         reconnectMaxDelay = Long.parseLong(property("camel.cli.websocket.reconnect-max-delay", "30000"));
-        // as the file transport: faster when debugging
-        snapshotInterval = Long.parseLong(
-                property("camel.cli.websocket.snapshot-interval", camelContext.isDebugging() ? "100" : "1000"));
+        snapshotInterval = Long.parseLong(property("camel.cli.websocket.snapshot-interval", "1000"));
+        // when debugging, the debug snapshot (breakpoints) is sent faster than the others, as the file transport does
+        debugInterval = camelContext.isDebugging() ? 100 : 0;
         heartbeatInterval = Long.parseLong(property("camel.cli.websocket.heartbeat-interval", "10000"));
 
         LOG.warn("Camel CLI connector connects to {} which gets full control of this application (development use only)",
@@ -187,8 +189,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
 
     @Override
     public void updateDelay(int delay) {
-        // e.g. camel-cli-debug makes it faster so breakpoints show up quickly
-        snapshotInterval = delay;
+        // camel-cli-debug makes it faster so breakpoints show up quickly: only the debug snapshot needs that
+        debugInterval = delay;
         execute(this::scheduleSnapshots);
     }
 
@@ -198,6 +200,22 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         }
         snapshotFuture = scheduler.scheduleWithFixedDelay(() -> safely(this::snapshotTask), snapshotInterval,
                 snapshotInterval, TimeUnit.MILLISECONDS);
+        if (debugFuture != null) {
+            debugFuture.cancel(false);
+            debugFuture = null;
+        }
+        if (debugInterval > 0) {
+            debugFuture = scheduler.scheduleWithFixedDelay(() -> safely(this::debugTask), debugInterval,
+                    debugInterval, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    private void debugTask() {
+        Connection c = connection;
+        if (c != null && c.helloSent) {
+            // only sent when it changed, so the regular snapshot task does not send it again
+            snapshot(c, "debug", true);
+        }
     }
 
     @Override

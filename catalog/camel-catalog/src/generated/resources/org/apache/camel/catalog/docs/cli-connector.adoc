@@ -60,7 +60,8 @@ java -Dcamel.cli.transport=websocket \
 | `camel.cli.websocket.token` | | Sent as `Authorization: Bearer <token>` when connecting. Required unless the URL
   is a loopback address. Can be set with the `CAMEL_CLI_WEBSOCKET_TOKEN` environment variable, which other users
   on the machine cannot read from the process list.
-| `camel.cli.websocket.snapshot-interval` | `1000` | How often snapshots are sent, in millis.
+| `camel.cli.websocket.snapshot-interval` | `1000` | How often snapshots are sent, in millis. When Camel is
+  debugging, the `debug` snapshot is sent every 100 ms, so breakpoints show up quickly.
 | `camel.cli.websocket.heartbeat-interval` | `10000` | How often the connection is checked with a ping, in millis.
   The connection is re-established when the tool does not answer for three intervals.
 | `camel.cli.websocket.reconnect-delay` | `1000` | Delay before reconnecting, in millis. It doubles after each
