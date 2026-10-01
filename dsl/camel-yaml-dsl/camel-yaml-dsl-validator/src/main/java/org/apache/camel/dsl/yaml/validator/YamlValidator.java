@@ -1214,36 +1214,14 @@ public class YamlValidator {
     }
 
     /**
-     * Whether the schema rejected a scalar that the Camel runtime accepts, in which case the error is dropped.
-     * <p>
-     * Camel's model declares nearly every scalar attribute as a {@code String} field carrying the real type in
-     * {@code @Metadata(javaType = ...)}, so that property placeholders can be used and the text is converted when the
-     * route starts. The generated schema keeps the real type because tooling (Kaoto forms, TUI completion, catalog
-     * docs) relies on it, which makes the schema stricter than the runtime in two ways:
-     * <ul>
-     * <li>a property placeholder at a typed attribute - the runtime resolves it before converting;</li>
-     * <li>a number or boolean at a string-typed attribute (e.g. a {@code duration}) - the runtime converts any scalar
-     * to text;</li>
-     * <li>a quoted scalar that parses as the expected type (e.g. {@code parallelProcessing: "true"}) - the runtime
-     * converts the text.</li>
-     * </ul>
-     * Everything else stays strict: unknown properties, structure (a map where a list is expected), enums, and strings
-     * that do not parse as the expected type.
-     * <p>
-     * This assumes the runtime defers the conversion for every scalar attribute the schema exposes. The only model
-     * attribute that is still converted while deserializing (so a placeholder is never resolved for it) is
-     * {@code BeanConstructorDefinition.index}, which is a map key and is not reachable from the schema - see
-     * CAMEL-24696 before exposing it.
-     */
-    /**
      * Drops "required property X not found" where one of the alternatives is in fact there.
      * <p/>
      * The branches of a {@code oneOf} each require their own key, and when all of them are reported the file is told it
      * needs a key it does not: {@code unmarshal: {fhirXml: ...}} in one when branch of a choice was told "required
      * property 'fhirJson' not found", because the winner of the other when branch was chosen for it as well. Collected
-     * per construct and per place, the required names of the branches are the alternatives; if the object at that place
-     * has any of them, one branch is satisfied and the rest are noise. When none of them is there, the file really does
-     * have to pick one and the errors stay (CAMEL-25238).
+     * per construct and per place, they name the keys the file did not write; if the object at that place has anything
+     * in it, a branch was chosen and the rest are noise. When it is empty, the file really does have to pick one and
+     * the errors stay (CAMEL-25238).
      */
     private static void removeSatisfiedAlternatives(List<Error> errors) {
         Map<String, List<Error>> groups = new LinkedHashMap<>();
@@ -1272,14 +1250,6 @@ public class YamlValidator {
         }
     }
 
-    private static final Pattern REQUIRED_PROPERTY = Pattern.compile("required property '([^']+)' not found");
-
-    /** The property name a "required property 'X' not found" error names, or null. */
-    private static String requiredPropertyOf(Error error) {
-        Matcher m = REQUIRED_PROPERTY.matcher(String.valueOf(error.getMessage()));
-        return m.find() ? m.group(1) : null;
-    }
-
     /**
      * The schema construct an error came from when it came from inside a branch of a {@code oneOf} or an {@code anyOf}:
      * its evaluation path up to and including that keyword, or null when it is not inside one.
@@ -1289,6 +1259,28 @@ public class YamlValidator {
         return at < 0 ? null : evaluationPath.substring(0, at + 7);
     }
 
+    /**
+     * Whether the schema rejected a scalar that the Camel runtime accepts, in which case the error is dropped.
+     * <p>
+     * Camel's model declares nearly every scalar attribute as a {@code String} field carrying the real type in
+     * {@code @Metadata(javaType = ...)}, so that property placeholders can be used and the text is converted when the
+     * route starts. The generated schema keeps the real type because tooling (Kaoto forms, TUI completion, catalog
+     * docs) relies on it, which makes the schema stricter than the runtime in two ways:
+     * <ul>
+     * <li>a property placeholder at a typed attribute - the runtime resolves it before converting;</li>
+     * <li>a number or boolean at a string-typed attribute (e.g. a {@code duration}) - the runtime converts any scalar
+     * to text;</li>
+     * <li>a quoted scalar that parses as the expected type (e.g. {@code parallelProcessing: "true"}) - the runtime
+     * converts the text.</li>
+     * </ul>
+     * Everything else stays strict: unknown properties, structure (a map where a list is expected), enums, and strings
+     * that do not parse as the expected type.
+     * <p>
+     * This assumes the runtime defers the conversion for every scalar attribute the schema exposes. The only model
+     * attribute that is still converted while deserializing (so a placeholder is never resolved for it) is
+     * {@code BeanConstructorDefinition.index}, which is a map key and is not reachable from the schema - see
+     * CAMEL-24696 before exposing it.
+     */
     static boolean isRuntimeAcceptedScalar(Error error) {
         String keyword = error.getKeyword();
         if (!"type".equals(keyword) && !"enum".equals(keyword)) {
