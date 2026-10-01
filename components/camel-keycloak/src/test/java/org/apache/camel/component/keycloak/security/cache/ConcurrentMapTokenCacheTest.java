@@ -18,11 +18,13 @@ package org.apache.camel.component.keycloak.security.cache;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.keycloak.security.KeycloakTokenIntrospector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ConcurrentMapTokenCacheTest {
@@ -171,5 +173,57 @@ class ConcurrentMapTokenCacheTest {
         }
 
         assertEquals(threadCount, cache.size());
+    }
+
+    @Test
+    void testExpiredResultNotServed() {
+        // A result whose token has already expired is not cached at all: put() rejects it up front via the
+        // isExpired() early-return, so get() returns null because no entry was ever inserted. The TTL bounding
+        // for a not-yet-expired token is covered by testResultExpiringBeforeTtlNotServedAfterExp.
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("active", true);
+        claims.put("sub", "test-user");
+        claims.put("exp", System.currentTimeMillis() / 1000 - 60); // expired 60 seconds ago
+        KeycloakTokenIntrospector.IntrospectionResult expired
+                = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+
+        cache.put("expired-token", expired);
+
+        assertNull(cache.get("expired-token"));
+    }
+
+    @Test
+    void testResultWithFutureExpirationServed() {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("active", true);
+        claims.put("sub", "test-user");
+        claims.put("exp", System.currentTimeMillis() / 1000 + 300); // valid for 5 more minutes
+        KeycloakTokenIntrospector.IntrospectionResult valid
+                = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+
+        cache.put("valid-token", valid);
+
+        KeycloakTokenIntrospector.IntrospectionResult retrieved = cache.get("valid-token");
+        assertNotNull(retrieved);
+        assertTrue(retrieved.isActive());
+    }
+
+    @Test
+    void testResultExpiringBeforeTtlNotServedAfterExp() {
+        // The token's exp lands inside the TTL window (~2s vs a 300s TTL), so the entry must expire at exp,
+        // not at the configured TTL. This exercises effectiveTtlMillis()'s min(ttl, remaining): replacing that
+        // with a plain ttlMillis would keep the entry served for 300s and fail this test.
+        ConcurrentMapTokenCache longTtlCache = new ConcurrentMapTokenCache(300);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("active", true);
+        claims.put("sub", "test-user");
+        claims.put("exp", System.currentTimeMillis() / 1000 + 2); // expires in ~2 seconds
+        KeycloakTokenIntrospector.IntrospectionResult shortLived
+                = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+
+        longTtlCache.put("short-lived-token", shortLived);
+        assertNotNull(longTtlCache.get("short-lived-token"));
+
+        await().atMost(10, TimeUnit.SECONDS).until(() -> longTtlCache.get("short-lived-token") == null);
     }
 }
