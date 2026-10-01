@@ -1032,6 +1032,11 @@ class DiagramTab extends AbstractTab {
 
     // ---- MCP programmatic navigation ----
 
+    /** Whether the diagram has loaded and is drawn: a route or node not found then is not there. */
+    boolean isDiagramShown() {
+        return !diagram.isLoading() && !diagram.getNodeBoxes().isEmpty();
+    }
+
     boolean selectRoute(String routeId) {
         int idx = diagram.findNodeIndexByRouteId(routeId);
         if (idx < 0) {

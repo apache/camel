@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
@@ -1908,7 +1909,14 @@ public class CamelMonitor extends CamelCommand {
         boolean anyDiagramShowing = tabRegistry.routesTab().isShowDiagram()
                 || tabRegistry.diagramTab().isShowDiagram();
         long interval = anyDiagramShowing ? Math.max(refreshInterval, 1000) : refreshInterval;
-        boolean dataRefreshed = false;
+        // the selection changed without a key or click (an integration started, stopped or was auto-selected):
+        // every tab is told, as it is when the user switches
+        boolean selectionChanged = !Objects.equals(ctx.selectedPid, notifiedSelectedPid);
+        if (selectionChanged) {
+            resetIntegrationTabState();
+        }
+        // the background refresh brought new data: draw it now, not at the next refresh
+        boolean dataRefreshed = dataService.takeFreshData() || selectionChanged;
         if (now - dataService.lastRefresh() >= interval) {
             dataService.refresh(runner, this::refreshLogData, this::refreshConditionalData);
             tabRegistry.routesTab().refreshDiagramIfNeeded();
@@ -1953,8 +1961,12 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void resetIntegrationTabState() {
+        notifiedSelectedPid = ctx.selectedPid;
         tabRegistry.resetIntegrationTabState(dataService, filesBrowser);
     }
+
+    // the selected integration the tabs were last told about
+    private String notifiedSelectedPid;
 
     // ---- Rendering ----
 

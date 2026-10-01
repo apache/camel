@@ -25,6 +25,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -458,7 +460,8 @@ class TuiToolRegistry {
 
         // Diagram route/node navigation (route selection in topology doesn't need render wait)
         if (node == null && route != null) {
-            String selected = facade.navigateDiagramToRoute(route);
+            // the diagram of an integration just selected (or a tab just opened) is still loading: wait for it
+            String selected = facade.navigateDiagramToRoute(route, DIAGRAM_WAIT_MS);
             if (selected != null) {
                 result.put("selectedRoute", route);
             } else {
@@ -469,9 +472,9 @@ class TuiToolRegistry {
         // When drilling down with a node, we first drill into the route, then wait
         // for render to populate the EIP node boxes, then select the node
         if (node != null) {
-            // Drill into the route first (sets topologyMode=false)
+            // Drill into the route first (sets topologyMode=false), once its diagram has loaded
             if (route != null) {
-                facade.navigateDiagramToNode(route, null);
+                facade.navigateDiagramToNode(route, null, DIAGRAM_WAIT_MS);
             }
         }
 
@@ -1033,6 +1036,25 @@ class TuiToolRegistry {
                 addUptimeText(child);
             }
         }
+    }
+
+    /** How long tui_navigate waits for the diagram of an integration to load before it says a route is not there. */
+    static final long DIAGRAM_WAIT_MS = 20000;
+
+    /** Calls the lookup until it finds something or the time is up; the last answer (null when not found). */
+    static String retryUntilFound(Supplier<String> lookup, BooleanSupplier settled, long maxWaitMs) {
+        long until = System.currentTimeMillis() + maxWaitMs;
+        String found = lookup.get();
+        while (found == null && !settled.getAsBoolean() && System.currentTimeMillis() < until) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return null;
+            }
+            found = lookup.get();
+        }
+        return found;
     }
 
     private String callAction(Map<String, Object> args) {
