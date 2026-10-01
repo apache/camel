@@ -100,6 +100,16 @@ Press **F4** to enter edit mode, then **Tab** for context-aware completion:
   `?` or `&` (`&amp;` in XML; filtered by consumer/producer role, already given
   ones left out), and the value of an option after `=`
 
+**Simple expressions (YAML, Java and XML routes):**
+- After `${`, Tab lists the functions of the simple language, with their
+  parameters and examples; the chosen one is inserted as it is written
+  (`${body}`, `${date:`, `${random(`)
+- After `${header.` (also `exchangeProperty.` and `variable.`), Tab lists the
+  names the file sets or reads, then the headers of the components it uses
+- After a function and a space, Tab lists the operators: comparisons and
+  `&&` `||` where the EIP takes a predicate (`when`, `filter`, `validate`,
+  `onWhen`...), chaining (`~>`) and the default value (`?:`) elsewhere
+
 Use **Up/Down** to navigate, **Enter** to accept, **Esc** to dismiss, and
 type to filter the completion list (an exact or prefix match comes first).
 

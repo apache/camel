@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
@@ -214,6 +215,8 @@ class SourceViewer {
     private String uriCompletion;
     /** The completion being chosen in a uri: its row, the column its prefix ends at, the prefix and suffix. */
     private UriCompletion pendingUriCompletion;
+    private BiFunction<SimpleCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> simpleCompletion;
+    private SimpleCompletion pendingSimpleCompletion;
     private List<String> routeProblems = List.of();
     private List<String> validationErrors;
     private int validationErrorScroll;
@@ -407,6 +410,19 @@ class SourceViewer {
     private record UriCompletion(int row, int endCol, String prefix, String suffix) {
     }
 
+    /**
+     * Tab completion in the simple expressions of a YAML, Java or XML route file (CAMEL-25219): the functions after ${,
+     * the header names after ${header., the operators after a function. Given the context at the cursor and the lines
+     * of the file; null for a file without routes.
+     */
+    void setSimpleCompletion(
+            BiFunction<SimpleCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> provider) {
+        this.simpleCompletion = provider;
+    }
+
+    private record SimpleCompletion(int row, int endCol, SimpleCompletionContext context) {
+    }
+
     /** Opens the AI panel to fix the problem of the cursor line (Shift+F8); null when there is no AI panel. */
     void setAskAi(MonitorContext.AskAi askAi) {
         this.askAi = askAi;
@@ -425,6 +441,7 @@ class SourceViewer {
         simpleValidator = null;
         routeValidator = null;
         uriCompletion = null;
+        simpleCompletion = null;
     }
 
     void reset() {
@@ -466,6 +483,7 @@ class SourceViewer {
         simpleValidator = null;
         routeValidator = null;
         uriCompletion = null;
+        simpleCompletion = null;
     }
 
     boolean isMarkdownMode() {
@@ -1176,6 +1194,10 @@ class SourceViewer {
 
     private void openAutocomplete() {
         pendingUriCompletion = null;
+        pendingSimpleCompletion = null;
+        if (openSimpleAutocomplete()) {
+            return;
+        }
         if (isCamelYamlFile()) {
             openYamlAutocomplete();
         } else if (uriCompletion != null) {
@@ -1244,6 +1266,95 @@ class SourceViewer {
             }
             pendingUriCompletion = new UriCompletion(row, col, prefix, suffix);
         }
+    }
+
+    /**
+     * The completion of the simple expression the cursor is in, read from the line alone like the uris: true when the
+     * cursor is in one, so no other completion is tried, also when nothing matches there.
+     */
+    private boolean openSimpleAutocomplete() {
+        if (simpleCompletion == null) {
+            return false;
+        }
+        int row = editState.cursorRow();
+        int col = editState.cursorCol();
+        List<String> all = new ArrayList<>(editState.lineCount());
+        for (int i = 0; i < editState.lineCount(); i++) {
+            all.add(editState.getLine(i));
+        }
+        SimpleCompletionContext c = SimpleCompletionContext.at(all, row, col);
+        if (c == null) {
+            return false;
+        }
+        List<AutocompletePopup.CompletionItem> items = simpleCompletion.apply(c, all);
+        if (items != null && !items.isEmpty()) {
+            // not in value mode, which puts a popup with a long description over the line being edited
+            autocompletePopup = new AutocompletePopup(items, c.prefix(), c.prefix(), false);
+            autocompletePopup.setFullKeys(true);
+            autocompletePopup.setTitlePrefix(switch (c.kind()) {
+                case FUNCTION -> "Simple functions";
+                case HEADER -> "Headers";
+                case PROPERTY -> "Exchange properties";
+                case VARIABLE -> "Variables";
+                case OPERATOR -> "Operators";
+            });
+            pendingSimpleCompletion = new SimpleCompletion(row, col, c);
+        }
+        return true;
+    }
+
+    /**
+     * Replaces the prefix the simple completion was opened on with the chosen item, and what closes it (the } of a
+     * function or name, the space after an operator) unless that is there already. A chosen header. or
+     * exchangeProperty. opens the names right away.
+     */
+    private void insertSimpleCompletion(AutocompletePopup.CompletionItem item) {
+        SimpleCompletion sc = pendingSimpleCompletion;
+        pendingSimpleCompletion = null;
+        if (editState.cursorRow() != sc.row()) {
+            return;
+        }
+        SimpleCompletionContext c = sc.context();
+        int col = editState.cursorCol();
+        for (; col < sc.endCol(); col++) {
+            editState.moveCursorRight();
+        }
+        for (; col > sc.endCol(); col--) {
+            editState.moveCursorLeft();
+        }
+        for (int i = 0; i < c.prefix().length(); i++) {
+            editState.deleteBackward();
+        }
+        // Tab in the middle of a word replaces all of it
+        String line = editState.getLine(sc.row());
+        int from = editState.cursorCol();
+        int end = from;
+        boolean operator = c.kind() == SimpleCompletionContext.Kind.OPERATOR;
+        while (end < line.length() && isSimpleWordChar(line.charAt(end), operator)) {
+            end++;
+        }
+        for (int i = from; i < end; i++) {
+            editState.deleteForward();
+        }
+        String text = item.insertText();
+        String closing = c.closing();
+        if (c.kind() == SimpleCompletionContext.Kind.FUNCTION && text.endsWith("}")) {
+            text = text.substring(0, text.length() - 1);
+            closing = "}";
+        }
+        boolean hasClosing = !closing.isEmpty() && line.startsWith(closing, end);
+        editState.insert(text + (hasClosing ? "" : closing));
+        if (c.kind() == SimpleCompletionContext.Kind.FUNCTION && (text.endsWith(".") || text.endsWith("["))) {
+            openAutocomplete();
+        }
+    }
+
+    /** A character of the function, name or operator being completed. */
+    private static boolean isSimpleWordChar(char c, boolean operator) {
+        if (operator) {
+            return !Character.isWhitespace(c) && c != '$' && c != '\'' && c != '"';
+        }
+        return Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '.' || c == ':';
     }
 
     /** Replaces the prefix the completion was opened on with the chosen item and what follows it (: or =). */
@@ -1454,6 +1565,10 @@ class SourceViewer {
         recordEditChange();
         if (pendingUriCompletion != null) {
             insertUriCompletion(item);
+            return;
+        }
+        if (pendingSimpleCompletion != null) {
+            insertSimpleCompletion(item);
             return;
         }
         String currentLine = editState.getLine(editState.cursorRow());
