@@ -9,13 +9,15 @@ routes.
 
 * <<_live_run_data,*Live run data*>> -- the exchanges and failures of each line of the running integration, next to
   the code.
-* <<_problems_as_you_type,*Problems as you type*>> -- endpoint options, Simple expressions and more are checked while
-  you type, in YAML, Java and XML routes; a YAML or XML file with problems is not saved.
+* <<_problems_as_you_type,*Problems as you type*>> -- endpoint options, Simple expressions and more are checked as soon
+  as a file opens and while you type, in YAML, Java and XML routes; a YAML or XML file with problems is not saved.
 * <<_quick_fixes,*Quick fixes*>> -- *Shift+F9* applies the fix a problem names, such as an option typo.
 * <<_fix_with_ai,*Fix with AI*>> -- *Shift+F8* asks the AI to fix the problem of a line; you confirm every change.
 * <<_completion,*Completion*>> -- *Tab* completes components, endpoint options and their values.
-* <<_quick_documentation,*Quick documentation*>> -- the documentation of the line the cursor is on, at the bottom.
-* <<_navigation,*Navigation*>> -- jump between routes, find any node with *Ctrl+G*, see where the cursor is in the route.
+* <<_quick_documentation,*Quick documentation*>> -- the documentation of the line the cursor is on, at the bottom, with
+  the values of its property placeholders and where its bean is declared.
+* <<_navigation,*Navigation*>> -- jump between routes and to beans, see where an endpoint is used with *u*, find any node
+  with *Ctrl+G*, see where the cursor is in the route.
 * <<_changes_and_diff,*Changes and diff*>> -- changed lines are marked, and *F7* shows the unsaved changes as a diff.
 * <<_yaml_java_and_xml,*YAML, Java and XML*>> -- *Space* shows a route in any of the three DSLs.
 
@@ -50,8 +52,14 @@ The editor checks your routes while you type: endpoint URIs and their options ag
 expressions, the YAML DSL schema, and a `to` whose URI holds `+${...}+` and should be a `toD`. Java routes are read
 without compiling them, so endpoints built with the endpoint DSL or from a constant are checked too.
 
-A line with a problem has a red line number, the title shows how many errors there are, and the Error panel at the
-bottom says what is wrong with the line the cursor is on. *F9* jumps to the next problem.
+The problems are marked as soon as a file opens, before you change anything: a red `✗` on the line, and the count in
+the title. The panel at the bottom says the problem of the selected line, and *F9* goes to the next one.
+
+image::jbang/camel-tui-source-problems-on-open.png[The problem of a YAML route marked when the file opens]
+
+In the editor, a line with a problem has a red line number, the title shows how many errors there are, and the Error
+panel at the bottom says what is wrong with the line the cursor is on. They are checked again as you type, and *F9*
+jumps to the next problem.
 
 image::jbang/camel-tui-source-problems.png[A misspelled seda option marked while typing]
 
@@ -70,8 +78,9 @@ The checks can be turned off in the Settings (*F2* > Settings).
 == Quick Fixes
 
 Many problems say how to fix them: an option typo (`siz` instead of `size`), an enum value a letter off, a `to` that
-should be a `toD`, or `+${key}+` where the property placeholder `+{{key}}+` is meant. For these, the Error panel shows
-the fix, and *Shift+F9* applies it to the line:
+should be a `toD`, `+${key}+` where the property placeholder `+{{key}}+` is meant, or a Simple function the error names
+the right one of (`+${bdy}+` for `+${body}+`). For these, the Error panel shows the fix, and *Shift+F9* applies it to the
+line:
 
 image::jbang/camel-tui-source-quick-fix.png[Shift+F9 fixed the option typo]
 
@@ -91,7 +100,7 @@ what the AI wants to change, *d* shows the diff, *Enter* applies it and *Esc* re
 image::jbang/camel-tui-source-ai-edit-confirm.png[The change of the AI waits for your confirmation]
 
 A file the AI writes is checked like one you save, and a write that brings new problems is refused, so the AI gets the
-problems back and can try again. With `/write live` in the AI panel, you can also watch the AI type its change in the
+problems back and can try again. The view shows the file as the AI wrote it as soon as you apply the change. With `/write live` in the AI panel, you can also watch the AI type its change in the
 editor; see xref:camel-jbang-tui.adoc#_watching_the_ai_edit_live_mode[Watching the AI edit].
 
 The AI panel works with a hosted provider or with a local model through Ollama; see
@@ -126,15 +135,32 @@ image::jbang/camel-tui-source-quick-doc.png[The documentation of the timer compo
 
 This makes an unfamiliar route easy to read without leaving the terminal.
 
+What the project knows about the line comes first. A property placeholder shows its value, from the `.properties` files
+of the project, or the default that is used when it is not set:
+
+image::jbang/camel-tui-source-placeholder-doc.png[The value of a property placeholder in the quick documentation]
+
+A line that refers to a bean (`bean:name`, `.bean(MyBean.class)`, `ref: name`, `#class:com.foo.MyBean`...) says where the
+project declares it (`@BindToRegistry`, `@Named`, `@Component`, `@Bean`, or the beans of a YAML or XML file), and shows a
+`↵ name` jump link: *Enter* goes to the declaration.
+
+image::jbang/camel-tui-source-bean-jump.png[Where the bean of a line is declared, with a jump link to it]
+
 == Navigation
 
 * *Jump links* -- a line that sends to another route, such as `to("seda:shipping")`, shows `↵ shipping`. Press *Enter*
   on the line to go to that route, also when it is in another file or another DSL. A `from` shows which route calls
   it.
 * *Go to route* -- *g* lists all the routes of the project; type to filter, and *Enter* opens the route.
-* *Go to node* -- *Ctrl+G* shows the routes and their processors as a tree. Type to filter by route ID, EIP or label,
-  or type a line number, and *Enter* jumps there.
+* *Bean jumps* -- a line that refers to a bean shows `↵ name`, and *Enter* goes to where the project declares it.
+* *Usages* -- *u* on a line with an endpoint lists where it is used: the routes that consume from it and the steps that
+  send to it, across the project and its DSLs. *Enter* goes there.
+* *Go to node* -- *Ctrl+G* shows the routes of the YAML, Java and XML files and their processors as a tree (the `when`
+  and `otherwise` of a choice included). Type to filter by route ID, EIP or label, or type a line number, and *Enter*
+  jumps there.
 * *Search* -- */* searches the source, *n*/*N* go to the next and previous match, and *h* highlights a text.
+
+image::jbang/camel-tui-source-usages.png[The usages of a seda endpoint: its consumer and the steps sending to it]
 
 image::jbang/camel-tui-source-go-to-node.png[Ctrl+G filters the route tree]
 
@@ -169,7 +195,7 @@ mode, which hides the line numbers and borders for easy copying.
 | Key | Action
 
 | *Up/Down* | Navigate files (left panel) or scroll source (right panel)
-| *Enter* | Open file or directory; on a jump link, go to the linked route
+| *Enter* | Open file or directory; on a jump link, go to the linked route or bean
 | *Backspace* | Go to parent directory
 | *Tab* | Toggle focus between file list and source viewer
 | *F12* | File actions (new file, new folder, rename, duplicate, delete, copy path)
@@ -181,6 +207,8 @@ mode, which hides the line numbers and borders for easy copying.
 | *p* | Toggle plain mode (borderless)
 | *g* | Go to route
 | *Ctrl+G* | Go to node or line
+| *u* | Usages of the endpoint of the line
+| *F9* | Next problem
 | *Esc* / *c* | Close source viewer
 | *F4* | Enter edit mode
 |===
