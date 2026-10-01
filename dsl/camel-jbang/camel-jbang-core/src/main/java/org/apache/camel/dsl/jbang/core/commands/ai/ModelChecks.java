@@ -22,7 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteNodes.Kind;
@@ -41,13 +40,10 @@ final class ModelChecks {
 
     /** The EIPs that consume from their endpoint; the others send to it. */
     private static final Set<String> CONSUMERS = Set.of("from", "poll", "pollEnrich");
-    /** The EIPs whose uri is evaluated per message, where ${...} is what it is for. */
-    private static final Set<String> DYNAMIC = Set.of("toD", "wireTap", "enrich", "pollEnrich");
     /** The EIPs that send to a direct: or seda: endpoint some route must consume. */
     private static final Set<String> SENDING = Set.of("to", "wireTap", "enrich");
     /** The one component whose path is a script, so what is in it is not the catalog's to say. */
     private static final Set<String> SCRIPT_PATH = Set.of("language");
-    private static final Pattern OPTION_ON_LINE = Pattern.compile("[?&\"'\\s(]%s=");
 
     private final RouteModel model;
     private final List<Node> nodes;
@@ -191,9 +187,8 @@ final class ModelChecks {
             if (name.isEmpty() || !name.matches("[\\w.\\[\\]-]+")) {
                 continue;
             }
-            Pattern p = Pattern.compile(String.format(OPTION_ON_LINE.pattern(), Pattern.quote(name)));
             for (int i = lineIdx; i < lines.length && i < lineIdx + 10; i++) {
-                if (p.matcher(lines[i]).find()) {
+                if (hasOption(lines[i], name)) {
                     if (i != lineIdx) {
                         answer.put(name, i);
                     }
@@ -202,6 +197,19 @@ final class ModelChecks {
             }
         }
         return answer;
+    }
+
+    /**
+     * Whether the line has the option name= as an option of a uri: after ?, &, a quote, a space or a parenthesis.
+     */
+    private static boolean hasOption(String line, String name) {
+        String key = name + "=";
+        for (int i = line.indexOf(key); i >= 0; i = line.indexOf(key, i + 1)) {
+            if (i > 0 && "?&\"' \t(".indexOf(line.charAt(i - 1)) >= 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

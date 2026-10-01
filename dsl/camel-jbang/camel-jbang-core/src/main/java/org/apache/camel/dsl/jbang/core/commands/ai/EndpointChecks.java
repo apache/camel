@@ -608,10 +608,10 @@ final class EndpointChecks {
             }
             for (var option : model.getEndpointOptions()) {
                 String prefix = option.getPrefix();
-                if (option.getName().equals(camel) && option.getJavaType() != null
-                        && option.getJavaType().startsWith("java.util.Map")
-                        || option.isMultiValue() && prefix != null
-                                && (prefix.equals(base + ".") || prefix.equals(camel + "."))) {
+                if ((option.getName().equals(camel) && option.getJavaType() != null
+                        && option.getJavaType().startsWith("java.util.Map"))
+                        || (option.isMultiValue() && prefix != null
+                                && (prefix.equals(base + ".") || prefix.equals(camel + ".")))) {
                     return true;
                 }
             }
