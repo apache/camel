@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,6 +57,10 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
             .withStatus("false").endCondition().build();
 
     private boolean refuseRequests;
+
+    private volatile boolean refuseUpdateRequests;
+
+    private final AtomicInteger refusedUpdateRequests = new AtomicInteger();
 
     private Long delayRequests;
 
@@ -241,6 +246,10 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
                         if (refuseRequests) {
                             return 500;
                         }
+                        if (refuseUpdateRequests) {
+                            refusedUpdateRequests.incrementAndGet();
+                            return 500;
+                        }
 
                         T resource;
                         try {
@@ -286,6 +295,17 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
 
     public void setRefuseRequests(boolean refuseRequests) {
         this.refuseRequests = refuseRequests;
+    }
+
+    /**
+     * Refuses (with an internal server error) only the requests that update the lock resource.
+     */
+    public void setRefuseUpdateRequests(boolean refuseUpdateRequests) {
+        this.refuseUpdateRequests = refuseUpdateRequests;
+    }
+
+    public int getRefusedUpdateRequests() {
+        return refusedUpdateRequests.get();
     }
 
     public synchronized Collection<String> getCurrentPods() {
