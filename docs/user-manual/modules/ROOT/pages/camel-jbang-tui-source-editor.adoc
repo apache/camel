@@ -1,0 +1,210 @@
+= Camel TUI Source Editor
+
+The Source tab (*2*) of the xref:camel-jbang-tui.adoc[Camel TUI] is where you read and write your routes. It knows
+Camel: it checks your routes as you type, completes endpoint options from the Camel catalog, explains the line the
+cursor is on, and shows what each line of a running integration is doing. It works the same for YAML, Java and XML
+routes.
+
+== Top Features
+
+* <<_live_run_data,*Live run data*>> -- the exchanges and failures of each line of the running integration, next to
+  the code.
+* <<_problems_as_you_type,*Problems as you type*>> -- endpoint options, Simple expressions and more are checked while
+  you type, in YAML, Java and XML routes; a YAML or XML file with problems is not saved.
+* <<_quick_fixes,*Quick fixes*>> -- *Shift+F9* applies the fix a problem names, such as an option typo.
+* <<_fix_with_ai,*Fix with AI*>> -- *Shift+F8* asks the AI to fix the problem of a line; you confirm every change.
+* <<_completion,*Completion*>> -- *Tab* completes components, endpoint options and their values.
+* <<_quick_documentation,*Quick documentation*>> -- the documentation of the line the cursor is on, at the bottom.
+* <<_navigation,*Navigation*>> -- jump between routes, find any node with *Ctrl+G*, see where the cursor is in the route.
+* <<_changes_and_diff,*Changes and diff*>> -- changed lines are marked, and *F7* shows the unsaved changes as a diff.
+* <<_yaml_java_and_xml,*YAML, Java and XML*>> -- *Space* shows a route in any of the three DSLs.
+
+== Browsing and Editing
+
+The left panel lists the files of the integration's project, and the right panel shows the selected file with syntax
+highlighting. *Tab* switches between the two panels, and you can drag the border between them with the mouse.
+
+Press *Enter* to view a file, or *F4* to edit it. The editor is a plain-text editor with helpers for Camel routes:
+undo and redo, moving and duplicating YAML blocks, smart *Home*, and word navigation. In YAML routes, *Ctrl+R* opens a
+refactoring menu for the current line. *Ctrl+S* saves and keeps editing, *F5* saves and closes, and *Esc* cancels
+(and asks before it discards unsaved changes). A running integration in dev mode reloads the saved file.
+
+== Live Run Data
+
+While the integration runs, a column after the line numbers shows what the processors on each line do: the exchanges
+they handled, and how many failed (`✗`, in red). The mean time is shown too, when it is 1 ms or more. The numbers
+follow the running integration, so the source reads as a heat map of the route: where the messages go, and where they
+fail.
+
+image::jbang/camel-tui-source-live-run-data.png[Live run data in a column after the line numbers]
+
+In the example the timer fired 227 times; the `filter` let 137 of those through to `log:big`, and 27 orders failed at
+`throwException`. You see this without leaving the code, and without adding a single log statement.
+
+The column keeps its width, so the code does not move as the numbers grow. It works for YAML, Java and XML routes, as
+`camel run` records the source line of every processor.
+
+== Problems as You Type
+
+The editor checks your routes while you type: endpoint URIs and their options against the Camel catalog, Simple
+expressions, the YAML DSL schema, and a `to` whose URI holds `+${...}+` and should be a `toD`. Java routes are read
+without compiling them, so endpoints built with the endpoint DSL or from a constant are checked too.
+
+A line with a problem has a red line number, the title shows how many errors there are, and the Error panel at the
+bottom says what is wrong with the line the cursor is on. *F9* jumps to the next problem.
+
+image::jbang/camel-tui-source-problems.png[A misspelled seda option marked while typing]
+
+=== Saving
+
+When you save, the file is checked first. A YAML or XML file with problems is not saved, and the problems are shown in
+a popup:
+
+image::jbang/camel-tui-source-save-blocked.png[A YAML file with a problem is not saved]
+
+A Java file is saved anyway and its problems are reported: it is the application's code, and a check cannot know
+everything a Java route computes at runtime.
+
+The checks can be turned off in the Settings (*F2* > Settings).
+
+== Quick Fixes
+
+Many problems say how to fix them: an option typo (`siz` instead of `size`), an enum value a letter off, a `to` that
+should be a `toD`, or `+${key}+` where the property placeholder `+{{key}}+` is meant. For these, the Error panel shows
+the fix, and *Shift+F9* applies it to the line:
+
+image::jbang/camel-tui-source-quick-fix.png[Shift+F9 fixed the option typo]
+
+The same fixes are part of the result of the `camel_validate_source` MCP tool, so an AI agent can apply them too.
+
+== Fix with AI
+
+When a problem has no quick fix, *Shift+F8* asks the AI. The file is saved as it is, and the AI panel opens with the
+question already written: the file, the line, the problem, and how to fix it. Press *Enter* to send it, or change it
+first.
+
+image::jbang/camel-tui-source-fix-with-ai.png[Shift+F8 writes the question for the AI]
+
+The AI changes the file with the same tools an AI agent uses over MCP, and every change waits for you: the dialog shows
+what the AI wants to change, *d* shows the diff, *Enter* applies it and *Esc* rejects it.
+
+image::jbang/camel-tui-source-ai-edit-confirm.png[The change of the AI waits for your confirmation]
+
+A file the AI writes is checked like one you save, and a write that brings new problems is refused, so the AI gets the
+problems back and can try again. With `/write live` in the AI panel, you can also watch the AI type its change in the
+editor; see xref:camel-jbang-tui.adoc#_watching_the_ai_edit_live_mode[Watching the AI edit].
+
+The AI panel works with a hosted provider or with a local model through Ollama; see
+xref:camel-jbang-tui.adoc#_choosing_an_ai_provider[Choosing an AI provider].
+
+== Completion
+
+In edit mode, *Tab* completes what the cursor is on. Type to filter the list (an exact or prefix match comes first),
+use *Up*/*Down* to choose, and *Enter* to accept. The details panel shows the documentation of the choice: its type,
+default value and description.
+
+image::jbang/camel-tui-source-completion.png[Tab completes the options of an endpoint]
+
+What can be completed:
+
+* *Java and XML routes* -- in the endpoint URI of `from`, `to`, `toD`, `wireTap`, `enrich`, `pollEnrich` and `poll` (the
+  string given to them in Java, their `uri` attribute in XML): the component name before the `:`, the endpoint options
+  after `?` or `&` (consumer or producer options, depending on where the endpoint is, and without the ones already
+  given), and the value of an option after `=`.
+* *YAML routes* -- EIP names, component names (only the components that can consume on a `from`, and produce on a
+  `to`), endpoint options in a `parameters:` block (the required ones first), EIP options, and option values.
+* *`application.properties`* -- Camel options (`+camel.main.*+`, `+camel.component.*+`, ...) and Spring Boot properties
+  (`+server.*+`, `+spring.*+`, ...), with their values and `+{{placeholder}}+` suggestions. This works even when the
+  project is not running.
+
+== Quick Documentation
+
+The panel at the bottom shows the documentation of the line the cursor is on, from the Camel catalog: the component
+and the options of an endpoint, the EIP of a step, or the language of an expression.
+
+image::jbang/camel-tui-source-quick-doc.png[The documentation of the timer component and its period option]
+
+This makes an unfamiliar route easy to read without leaving the terminal.
+
+== Navigation
+
+* *Jump links* -- a line that sends to another route, such as `to("seda:shipping")`, shows `↵ shipping`. Press *Enter*
+  on the line to go to that route, also when it is in another file or another DSL. A `from` shows which route calls
+  it.
+* *Go to route* -- *g* lists all the routes of the project; type to filter, and *Enter* opens the route.
+* *Go to node* -- *Ctrl+G* shows the routes and their processors as a tree. Type to filter by route ID, EIP or label,
+  or type a line number, and *Enter* jumps there.
+* *Search* -- */* searches the source, *n*/*N* go to the next and previous match, and *h* highlights a text.
+
+image::jbang/camel-tui-source-go-to-node.png[Ctrl+G filters the route tree]
+
+In a YAML route, the title shows where the cursor is in the route, such as `route > from > choice > when > setHeader`:
+
+image::jbang/camel-tui-source-change-markers.png[The path of the cursor in the route, and the changed lines]
+
+== Changes and Diff
+
+The line numbers of the lines you changed since the file was opened are green (see the picture above), so you see at a
+glance what you changed. *F7* shows all the unsaved changes as a diff, with the line numbers of the file. *F7* or *Esc*
+returns to the editor.
+
+image::jbang/camel-tui-source-diff.png[F7 shows the unsaved changes]
+
+== YAML, Java and XML
+
+When you open the source of a route from the Diagram or Route tab (*c*), *Space* shows that route in YAML, Java or
+XML. The title shows the three formats, and the one marked with `*` is the file the route is written in.
+
+image::jbang/camel-tui-source-format-cycling.png[A Java route shown in YAML]
+
+This is handy to see how a route reads in another DSL, or to copy it into a file of another DSL. Press *p* for plain
+mode, which hides the line numbers and borders for easy copying.
+
+== Keyboard Shortcuts
+
+=== Viewing
+
+[cols="2,5",options="header"]
+|===
+| Key | Action
+
+| *Up/Down* | Navigate files (left panel) or scroll source (right panel)
+| *Enter* | Open file or directory; on a jump link, go to the linked route
+| *Backspace* | Go to parent directory
+| *Tab* | Toggle focus between file list and source viewer
+| *F12* | File actions (new file, new folder, rename, duplicate, delete, copy path)
+| *Space* | Cycle format (YAML/Java/XML), when the source of a route is shown
+| */* | Search in source
+| *h* | Highlight text
+| *n* / *N* | Next / previous search match
+| *w* | Toggle word wrap
+| *p* | Toggle plain mode (borderless)
+| *g* | Go to route
+| *Ctrl+G* | Go to node or line
+| *Esc* / *c* | Close source viewer
+| *F4* | Enter edit mode
+|===
+
+=== Editing
+
+[cols="2,5",options="header"]
+|===
+| Key | Action
+
+| *Tab* | Completion
+| *Ctrl+Z* | Undo
+| *Ctrl+Y* | Redo
+| *Alt+Up/Down* | Move YAML block up/down
+| *Ctrl+D* | Duplicate block
+| *Ctrl+K* | Delete current line
+| *Ctrl+Left/Right* | Word navigation
+| *Home* | Smart home (content indent / column 0)
+| *Ctrl+R* | Refactoring menu (YAML)
+| *F9* | Next problem
+| *Shift+F9* | Apply the quick fix of the problem on the line
+| *Shift+F8* | Ask the AI to fix the problem on the line
+| *F7* | Diff view (unsaved changes)
+| *Ctrl+S* | Save and continue editing
+| *F5* | Save and close
+| *Esc* | Cancel (asks before it discards unsaved changes)
+|===

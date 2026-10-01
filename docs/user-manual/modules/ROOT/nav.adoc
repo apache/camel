@@ -11,6 +11,7 @@
 *** xref:camel-jbang-kubernetes.adoc[Camel Kubernetes Plugin]
 *** xref:camel-jbang-test.adoc[Camel Testing Plugin]
 *** xref:camel-jbang-tui.adoc[Camel TUI]
+**** xref:camel-jbang-tui-source-editor.adoc[Camel TUI Source Editor]
 *** xref:camel-jbang-mcp.adoc[Camel MCP Server]
 *** xref:camel-jbang-container.adoc[Camel CLI container]
 ** xref:camel-maven-plugin.adoc[Camel Maven Plugin]

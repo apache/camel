@@ -135,7 +135,7 @@ to any tab, or use *Tab* / *Shift+Tab* to cycle.
 | Key | Tab | What It Shows
 
 | 1 | Overview | All running integrations and infrastructure services. Start here.
-| 2 | Source | File explorer for your project code with syntax highlighting and inline Camel documentation.
+| 2 | Source | File explorer and editor for your project code, with Camel checks, completion and documentation.
 | 3 | Log | Real-time application logs with search and filtering.
 | 4 | Activity | Live exchange activity with elapsed times, endpoint sends, and failure tracking.
 | 5 | Diagram | Visual route topology with drill-down into individual routes.
@@ -169,112 +169,14 @@ questions about the running integrations.
 
 == Source Code Browser
 
-The Source tab (Tab 2) gives you a file explorer into your project code. The left panel shows
-a navigable file tree of the integration's source directory. Select any file to view it in the
-right panel with full syntax highlighting.
+The Source tab (Tab 2) is a file explorer and editor for your project code that knows Camel. It checks your YAML,
+Java and XML routes as you type, completes endpoint options from the Camel catalog, explains the line the cursor is on,
+fixes problems for you (or asks the AI to), and shows the exchanges and failures of each line of the running
+integration next to the code.
 
-For Camel source files (YAML, XML, Java routes, and `application.properties`), press *i* to toggle
-inline documentation. The TUI uses the Camel catalog to look up every component, EIP, language,
-and data format used in your route and shows their documentation right next to the source code.
-For properties files, it resolves `+camel.component.*+` and `+camel.main.*+` keys to their catalog
-descriptions. This makes it easy to understand unfamiliar routes without leaving the terminal.
+image::jbang/camel-tui-source-live-run-data.png[Live run data in the source editor]
 
-Additional features:
-
-* *Format cycling* -- press *Space* to convert Camel routes between YAML, Java, and XML DSL formats
-* *Search* -- press */* to search within the source code, *n*/*N* to jump between matches
-* *Highlight* -- press *h* to highlight text occurrences
-* *Go to node* -- press *Ctrl+G* to open a fuzzy-search popup showing the route tree structure,
-  matching the diagram panel format (`route[id]`, `├─to[uri]`, etc.). Select a node to jump to its
-  source line.
-* *Resizable panels* -- drag the split border with the mouse to resize the file list and viewer
-
-=== Live Run Data
-
-While the integration runs, a column after the line numbers shows what the processors on each line do: the exchanges
-they handled (`79`), how many failed (`✗10`, in red), and their mean time when it is 1 ms or more. The column keeps its
-width, so the code does not move as the numbers grow. The source reads as a heat map of the route: where the messages
-go, and where they fail.
-
-[source,text]
-----
-  7 | 1014 ✗98 │        from("timer:tick?period=500")
-  8 |          │            .routeId("live")
-  9 | 1014     │            .setBody(simple("${random(10)}"))
- 10 | 1014     │            .filter(simple("${body} > 3"))
- 11 |  605     │                .to("log:big?level=OFF")
-----
-
-=== Source Editor
-
-Press *F4* to enter edit mode for YAML, Java and XML routes, `application.properties`, and other local files.
-The editor provides a plain-text editing experience with features designed for working with
-Camel routes:
-
-* *Undo / Redo* -- *Ctrl+Z* to undo, *Ctrl+Y* to redo
-* *Block operations* -- *Alt+Up/Down* to move YAML list blocks up/down, *Ctrl+D* to duplicate
-  a block
-* *Delete line* -- *Ctrl+K* to delete the current line
-* *Word navigation* -- *Ctrl+Left/Right* to jump by word
-* *Smart Home* -- *Home* key alternates between content indent and column 0
-* *Tab completion* -- press *Tab* for context-aware completion:
-** In `application.properties`: Camel configuration options (`+camel.main.*+`, `+camel.component.*+`, etc.)
-   and Spring Boot auto-configuration properties (`+server.*+`, `+spring.*+`, `+management.*+`, etc.)
-   resolved from starter JARs in the local Maven repository — works even for stopped projects
-** In YAML DSL routes: EIP names, component URIs, option keys and values
-** In Java and XML DSL routes: in the endpoint URI of `from`, `to`, `toD`, `wireTap`, `enrich`, `pollEnrich`
-   and `poll` (the string given to them in Java, their `uri` attribute in XML), the component name, the
-   endpoint options and their values
-
-A quick documentation panel at the bottom shows the documentation of the line the cursor is on: for YAML, Java
-and XML routes the component and options of an endpoint, the EIP of a step and the language of its expression.
-Java routes are read by the Java DSL parser without compiling them, so constants and the endpoint DSL are resolved.
-What the project knows about the line comes first: the values of its property placeholders (`{{orders.period}} = 500
-(application.properties)`, or the default that is used when it is not set), and where the bean it refers to is declared.
-
-A line that refers to a bean (`bean:name`, `.bean(MyBean.class)`, `ref: name`, `#class:com.foo.MyBean`...) shows a
-`↵ name` jump link when the project declares the bean (`@BindToRegistry`, `@Named`, `@Component`, `@Bean`, or the beans
-of a YAML or XML file); *Enter* goes to its declaration, as it goes to the route a `to` sends to. Press *u* on a line
-with an endpoint to see its usages: the routes that consume from it and the steps that send to it, across the project.
-
-The editor shows *gutter change markers* -- a green background on line numbers that have been
-modified or added since the file was opened. This gives an at-a-glance view of what you've changed.
-
-Press *F7* to open a *diff view* showing all unsaved changes in a unified diff format with
-red/green background coloring (like `git diff`). Line numbers correspond to the actual source
-file positions. Press *Esc* or *F7* to return to editing.
-
-Press *F5* to save and close, or *Shift+F5* to save and continue editing.
-
-=== Validate on Save
-
-When saving, the editor validates the content before writing to disk. If validation fails, the
-file is not saved and errors are displayed in a popup. This catches mistakes early:
-
-* *YAML schema validation* -- checks the YAML DSL structure against the Camel schema
-* *Endpoint URI validation* -- validates component URIs, option names, and values against the
-  Camel catalog
-* *Simple expression validation* -- validates Simple language expressions for syntax errors,
-  detecting the correct context (predicate vs expression) from the parent EIP
-
-Java and XML routes get the same Camel checks, on the Camel model the routes are read into: the endpoint URIs
-(also those built with the endpoint DSL, or from a constant), Simple expressions, and a `to` whose URI holds
-`+${...}+` and should be a `toD`. Their problems are marked on their lines while you type (*F9* jumps to the next).
-The problems of a file are marked as soon as it opens, in the view too: a red `✗` on the line, the count in the title,
-and the problem of the selected line in the panel at the bottom.
-An XML file with problems is not saved, as a YAML file; a Java file is saved and its problems are said, as it is
-the application's code, and a check that cannot know something (a value computed at runtime) must not stop you.
-
-When the problem on the line of the cursor says its fix (an option that is a typo of another, an enum value a letter
-off, a `to` that should be a `toD`, a Simple expression `+${key}+` where the property placeholder `+{{key}}+` is meant),
-the Error panel shows it and *Shift+F9* applies it; *Ctrl+Z* takes it back. *Shift+F8* asks the AI to fix the problem on the
-line instead: the file is saved as it is, and the AI panel opens with the question in its input (the file, the line,
-the problem and its text), for you to send with *Enter* or change first. `camel_validate_source` gives the same fixes to
-an agent, as `fixes` with the text to find and its replacement.
-
-A Simple function the error names the right one of, such as `+${bdy}+` for `+${body}+`, has a quick fix too.
-
-Validation can be toggled off in the Settings (F2 > Settings).
+See xref:camel-jbang-tui-source-editor.adoc[Camel TUI Source Editor] for all its features and keys.
 
 == Activity
 
@@ -814,45 +716,7 @@ line breaks are sent as *Enter*, so a multi-line paste runs line by line as in a
 
 === Source Tab
 
-[cols="2,5",options="header"]
-|===
-| Key | Action
-
-| *Up/Down* | Navigate files (left panel) or scroll source (right panel)
-| *Enter* | Open file or directory
-| *Backspace* | Go to parent directory
-| *Tab* | Toggle focus between file list and source viewer
-| *Space* | Cycle format (YAML/Java/XML) for Camel routes
-| *i* | Toggle inline Camel documentation
-| */* | Search in source
-| *h* | Highlight text
-| *n* / *N* | Next / previous search match
-| *w* | Toggle word wrap
-| *p* | Toggle plain mode (borderless)
-| *Ctrl+G* | Go to node (fuzzy search popup)
-| *Esc* / *c* | Close source viewer
-| *F4* | Enter edit mode
-|===
-
-==== Edit Mode
-
-[cols="2,5",options="header"]
-|===
-| Key | Action
-
-| *Ctrl+Z* | Undo
-| *Ctrl+Y* | Redo
-| *Alt+Up/Down* | Move YAML block up/down
-| *Ctrl+D* | Duplicate block
-| *Ctrl+K* | Delete current line
-| *Ctrl+Left/Right* | Word navigation
-| *Home* | Smart home (content indent / column 0)
-| *Tab* | Context-aware completion
-| *F7* | Diff view (unsaved changes)
-| *F5* | Save and close
-| *Shift+F5* | Save and continue editing
-| *Esc* | Cancel (discard prompt if unsaved changes)
-|===
+See the xref:camel-jbang-tui-source-editor.adoc#_keyboard_shortcuts[keyboard shortcuts] of the Source Editor.
 
 === Diagram Tab
 
