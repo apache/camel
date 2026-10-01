@@ -24,16 +24,18 @@ public class Sjms2EndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(55);
+        Set<String> props = new HashSet<>(57);
         props.add("acknowledgementMode");
         props.add("allowNullBody");
         props.add("asyncConsumer");
         props.add("asyncStartListener");
         props.add("asyncStopListener");
         props.add("autoStartup");
-        props.add("batchSize");
-        props.add("batchTimeout");
         props.add("batching");
+        props.add("batchingAggregationStrategy");
+        props.add("batchingInterval");
+        props.add("batchingSize");
+        props.add("batchingTimeout");
         props.add("bridgeErrorHandler");
         props.add("clientId");
         props.add("concurrentConsumers");

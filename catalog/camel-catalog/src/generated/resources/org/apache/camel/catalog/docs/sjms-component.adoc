@@ -303,6 +303,37 @@ use TemporaryQueue destinations or use a unique reply to
 destination per InOut producer endpoint. The producer handles message
 correlation is handled, not with message selectors at the broker.
 
+=== Batch consuming
+
+The consumer can be configured to receive messages in batches instead of one at a time, by setting
+`batching=true`. Instead of one Exchange per message, the route receives a single Exchange whose body
+is a `List<Exchange>`, one per JMS message in the batch, with a `CamelSjmsBatchSize` header giving the
+batch's size.
+
+Batching only supports the InOnly exchange pattern. There is no reply-to/request-response support for
+batched consumption — a batch of N unrelated messages has no well-defined single reply, so InOut
+routes are not supported when `batching=true`.
+
+A batch completes when either `batchingSize` messages have been received, or a time-based condition
+elapses, whichever comes first:
+
+* `batchingInterval` — measured from the first message in the batch, comparable to the Aggregator
+  EIP's `completionInterval`. This is the default (1000ms) if neither `batchingInterval` nor
+  `batchingTimeout` is set.
+* `batchingTimeout` — an idle timeout: the batch completes if no further message arrives within this
+  time, with the clock resetting on every message, comparable to the Aggregator EIP's
+  `completionTimeout`. Mutually exclusive with `batchingInterval`.
+
+By default, batch messages are combined into the `List<Exchange>` body using a built-in
+`AggregationStrategy`. A custom `org.apache.camel.AggregationStrategy` can be supplied via
+`batchingAggregationStrategy` to control how the batch body is assembled instead — for example, to
+produce a `List` of message bodies rather than full exchanges.
+
+Commit/acknowledgement happens once per batch rather than once per message. With
+`acknowledgementMode=AUTO_ACKNOWLEDGE`, messages are acknowledged as they're received into the batch,
+before routing — so a failed batch cannot be redelivered. Use `transacted=true` or
+`acknowledgementMode=CLIENT_ACKNOWLEDGE` if the whole batch should be redelivered together on failure.
+
 [NOTE]
 ====
 You should only use queues as reply-to destination types, topics are not recommended or fully supported.
