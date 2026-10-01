@@ -1181,6 +1181,17 @@ class SourceTab extends AbstractTab {
         return answer;
     }
 
+    /** The Java sources among the files by path, for the constants a Java route takes from another class. */
+    private static Map<String, Supplier<String>> javaSources(List<Path> files) {
+        Map<String, Supplier<String>> answer = new LinkedHashMap<>();
+        for (Path f : files) {
+            if (f.getFileName().toString().endsWith(".java")) {
+                answer.put(f.toString(), () -> readQuietly(f));
+            }
+        }
+        return answer;
+    }
+
     private static boolean isRouteSourceName(String name) {
         String lower = name.toLowerCase();
         return lower.endsWith(".java") || lower.endsWith(".xml") || lower.endsWith(".yaml") || lower.endsWith(".yml");
@@ -1227,17 +1238,33 @@ class SourceTab extends AbstractTab {
         }
     }
 
+    /** Shows a file again when the viewer shows it and it is not being edited: a file an AI tool wrote. */
+    void reloadIfShowing(Path file) {
+        sourceViewer.reloadIfShowing(file);
+    }
+
     private List<YamlRouteNodeScanner.NodeEntry> buildSourceNodeIndex() {
         List<YamlRouteNodeScanner.NodeEntry> nodes = new ArrayList<>();
+        Map<String, Supplier<String>> javaSources = null;
         for (FilesBrowser.FileEntry entry : entries) {
             if (entry.directory()) {
                 continue;
             }
             Path path = Path.of(entry.path());
-            if (!isCamelSourceFile(path) || !SourceEditAssist.isYamlFile(path)) {
-                continue;
+            if (isJavaRouteFile(path)
+                    || isCamelSourceFile(path) && path.getFileName().toString().toLowerCase().endsWith(".xml")) {
+                String content = readQuietly(path);
+                if (content != null) {
+                    if (javaSources == null) {
+                        javaSources = javaSources(routeSources());
+                    }
+                    nodes.addAll(ModelRouteNodeScanner.scan(
+                            path.toString(), path.getFileName().toString(), content, javaSources,
+                            ArchitectureView.catalog()));
+                }
+            } else if (isCamelSourceFile(path) && SourceEditAssist.isYamlFile(path)) {
+                nodes.addAll(YamlRouteNodeScanner.scanFile(path));
             }
-            nodes.addAll(YamlRouteNodeScanner.scanFile(path));
         }
         return nodes;
     }

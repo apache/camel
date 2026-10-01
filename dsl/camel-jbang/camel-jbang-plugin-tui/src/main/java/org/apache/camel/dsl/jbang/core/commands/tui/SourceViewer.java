@@ -562,6 +562,20 @@ class SourceViewer {
         return selectedLine;
     }
 
+    /**
+     * Shows the file again, at the same line, when it is the file shown and it is not being edited: a file an AI tool
+     * wrote while the viewer showed the old content. An edit in progress is left alone, as it holds the user's work.
+     */
+    void reloadIfShowing(Path file) {
+        if (editMode || editableFile == null || file == null
+                || !editableFile.toAbsolutePath().normalize().equals(file.toAbsolutePath().normalize())) {
+            return;
+        }
+        int line = selectedLine;
+        loadFile(editableFile);
+        goToLine(Math.min(line, Math.max(0, getLineCount() - 1)));
+    }
+
     int getLineCount() {
         if (editMode) {
             return editState.lineCount();
@@ -2179,6 +2193,11 @@ class SourceViewer {
                 }
             }
         }
+        if (!diffOverlay && !visibleErrors.isEmpty()) {
+            // a block has one title at the top: the error count goes on the line of the file name, not instead of it
+            Style errorStyle = Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
+            titleSpans.add(Span.styled(" errors: " + visibleErrors.size() + " ", errorStyle));
+        }
         Title posTitle;
         if (diffOverlay) {
             posTitle = Title.from(
@@ -2198,11 +2217,6 @@ class SourceViewer {
             blockBuilder.borders(Borders.ALL)
                     .title(Title.from(Line.from(titleSpans)))
                     .titleBottom(posTitle);
-            if (!visibleErrors.isEmpty()) {
-                Style errorStyle = Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
-                blockBuilder.title(Title.from(Line.from(
-                        Span.styled(" errors: " + visibleErrors.size() + " ", errorStyle))).right());
-            }
         }
         if (borderStyle != null) {
             blockBuilder.borderStyle(borderStyle);

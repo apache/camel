@@ -272,6 +272,8 @@ line instead: the file is saved as it is, and the AI panel opens with the questi
 the problem and its text), for you to send with *Enter* or change first. `camel_validate_source` gives the same fixes to
 an agent, as `fixes` with the text to find and its replacement.
 
+A Simple function the error names the right one of, such as `+${bdy}+` for `+${body}+`, has a quick fix too.
+
 Validation can be toggled off in the Settings (F2 > Settings).
 
 == Activity

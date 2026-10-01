@@ -59,7 +59,8 @@ a heat map of the route: where messages go, where they fail.
   line, problem); press Enter to send it, or change it first
 - **Shift+F9** — apply the fix of the problem on the cursor line, when the problem
   says it (an option typo, an enum value a letter off, `to` that should be
-  `toD`, `${key}` where `{{key}}` is meant); the Error panel shows the fix
+  `toD`, `${key}` where `{{key}}` is meant, a Simple function the error names
+  the right one of, such as `${bdy}` → `${body}`); the Error panel shows the fix
 - Java and XML DSL routes are checked as you type, like YAML routes: endpoint
   options, simple expressions, and a `to` with `${...}` that should be a `toD`.
   The problems are marked on their lines; an XML file with problems is not saved
