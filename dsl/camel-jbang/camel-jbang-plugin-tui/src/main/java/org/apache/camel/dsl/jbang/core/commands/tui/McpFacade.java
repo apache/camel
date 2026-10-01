@@ -159,6 +159,26 @@ class McpFacade {
     }
 
     // Tab name constants
+    /**
+     * The index of a main tab by its name, by the label the tab bar shows (Route, Endpoint) or by its number key, else
+     * -1.
+     */
+    static int tabIndex(String tabName) {
+        if (tabName == null) {
+            return -1;
+        }
+        String name = tabName.trim();
+        for (int i = 0; i < TAB_NAMES.length; i++) {
+            String tab = TAB_NAMES[i];
+            String label = tab.endsWith("s") && !"Errors".equals(tab) ? tab.substring(0, tab.length() - 1) : tab;
+            String key = String.valueOf((i + 1) % 10);
+            if (tab.equalsIgnoreCase(name) || label.equalsIgnoreCase(name) || key.equals(name)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     static final String[] TAB_NAMES = {
             "Overview", "Source", "Log", "Activity", "Diagram",
             "Routes", "Endpoints", "Inspect", "Errors", "More"
@@ -375,6 +395,11 @@ class McpFacade {
     // ---- Tab navigation ----
 
     String navigateToTab(String tabName) {
+        int index = tabIndex(tabName);
+        if (index >= 0) {
+            bridge.handleTabKey(index);
+            return TAB_NAMES[index];
+        }
         for (int i = 0; i < TAB_NAMES.length; i++) {
             if (TAB_NAMES[i].equalsIgnoreCase(tabName)) {
                 bridge.handleTabKey(i);

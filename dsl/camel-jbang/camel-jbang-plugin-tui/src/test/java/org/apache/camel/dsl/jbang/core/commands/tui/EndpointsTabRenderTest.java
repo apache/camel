@@ -83,6 +83,8 @@ class EndpointsTabRenderTest {
     @Test
     void renderComponentNameInCyan() {
         addEndpoint("http", "http://example.com/api", "out", "http-route", 5);
+        // a second row: the first is selected, and the selection highlight hides its colors
+        addEndpoint("http", "http://example.com/api2", "out", "http-route", 5);
 
         EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
 
@@ -98,6 +100,7 @@ class EndpointsTabRenderTest {
     @Test
     void renderInDirectionColor() {
         addEndpoint("timer", "timer://tick", "in", "route1", 10);
+        addEndpoint("timer", "timer://tock", "in", "route1", 10);
 
         EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
 
@@ -114,6 +117,7 @@ class EndpointsTabRenderTest {
     @Test
     void renderOutDirectionInCyan() {
         addEndpoint("log", "log://output", "out", "route1", 10);
+        addEndpoint("log", "log://output2", "out", "route1", 10);
 
         EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
 

@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -144,6 +145,22 @@ final class TuiHelper {
         }
         int slash = name.lastIndexOf('/');
         return slash >= 0 ? name.substring(slash + 1) : name;
+    }
+
+    /**
+     * An endpoint URI as people write it: Camel normalizes URIs with their placeholders and spaces percent-encoded
+     * (platform-http:///stock/%7Bsku%7D), which reads poorly in a table. Only for display; the URI itself stays the
+     * key.
+     */
+    static String displayUri(String uri) {
+        if (uri == null || uri.indexOf('%') < 0) {
+            return uri;
+        }
+        try {
+            return URLDecoder.decode(uri.replace("+", "%2B"), StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            return uri;
+        }
     }
 
     static String truncate(String s, int max) {
@@ -583,7 +600,10 @@ final class TuiHelper {
         if (minutes > 0) {
             return minutes + "m" + (seconds % 60) + "s";
         }
-        return seconds + "s" + (ms % 1000) + "ms";
+        // 2.02s reads better than 2s20ms; a tenth is enough from 10 seconds on
+        return seconds < 10
+                ? String.format(Locale.US, "%.2fs", ms / 1000.0)
+                : String.format(Locale.US, "%.1fs", ms / 1000.0);
     }
 
     static String formatLoad(String l1, String l5, String l15) {
