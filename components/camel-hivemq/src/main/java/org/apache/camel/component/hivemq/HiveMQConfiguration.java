@@ -64,7 +64,9 @@ public class HiveMQConfiguration implements Cloneable {
 
     /**
      * Whether to initiate a clean session upon connecting to the broker (called "clean session" in MQTT 3.1.1 and
-     * "clean start" in MQTT 5).
+     * "clean start" in MQTT 5). The two protocol versions behave differently when this is false: with MQTT 3.1.1 the
+     * broker keeps the session (subscriptions and queued QoS 1/2 messages) indefinitely, while with MQTT 5 the session
+     * still expires on disconnect, since this component does not set a session expiry interval.
      */
     @UriParam(defaultValue = "true")
     private boolean cleanStart = true;

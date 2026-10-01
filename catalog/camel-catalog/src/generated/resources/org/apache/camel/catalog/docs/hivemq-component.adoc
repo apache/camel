@@ -237,6 +237,11 @@ from("hivemq:some/topic"
     .to("mock:test");
 ----
 
+The `cleanStart` option behaves differently between the two protocol versions when set to
+`false`. With MQTT 3.1.1, the broker keeps the session (subscriptions and queued QoS 1/2
+messages) indefinitely; with MQTT 5 the session still expires on disconnect, since this
+component does not set a session expiry interval.
+
 === Client identifier
 
 A custom MQTT client identifier can be configured using the `clientId` option:
