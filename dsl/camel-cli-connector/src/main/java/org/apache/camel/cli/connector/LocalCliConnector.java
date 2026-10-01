@@ -1672,8 +1672,8 @@ public class LocalCliConnector extends ServiceSupport
     }
 
     private JsonObject callConsole(String id, Map<String, Object> options) {
-        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
-                .resolveById(id);
+        DevConsoleRegistry dcr = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
+        DevConsole dc = dcr != null ? dcr.resolveById(id) : null;
         if (dc == null) {
             return null;
         }

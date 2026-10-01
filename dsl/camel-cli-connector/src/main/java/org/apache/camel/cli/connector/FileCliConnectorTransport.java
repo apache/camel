@@ -194,11 +194,11 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     private static JsonObject loadAction(File file) {
         try {
             if (file != null && file.exists()) {
-                FileInputStream fis = new FileInputStream(file);
-                String text = IOHelper.loadText(fis);
-                IOHelper.close(fis);
-                if (!text.isEmpty()) {
-                    return (JsonObject) Jsoner.deserialize(text);
+                try (FileInputStream fis = new FileInputStream(file)) {
+                    String text = IOHelper.loadText(fis);
+                    if (!text.isEmpty()) {
+                        return (JsonObject) Jsoner.deserialize(text);
+                    }
                 }
             }
         } catch (Exception e) {
