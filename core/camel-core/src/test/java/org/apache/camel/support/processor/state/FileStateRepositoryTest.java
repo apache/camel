@@ -260,18 +260,37 @@ public class FileStateRepositoryTest extends TestSupport {
         assumeTrue(FileSystems.getDefault().supportedFileAttributeViews().contains("posix"),
                 "POSIX file permissions are not supported");
 
-        // Given a store with specific permissions
+        // Given a store that only its owner can read
         Path store = repositoryStore.toPath();
         Files.writeString(store, "key1=value1\n");
-        Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("rw-r-----");
+        Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("rw-------");
         Files.setPosixFilePermissions(store, permissions);
-
-        // When updating the state and stopping the repository (which rewrites the store)
-        FileStateRepository repository = createRepository();
+        CountDownLatch rewriting = new CountDownLatch(1);
+        CountDownLatch resume = new CountDownLatch(1);
+        PausingMap cache = new PausingMap(rewriting, resume);
+        FileStateRepository repository = fileStateRepository(repositoryStore, cache);
+        repository.start();
         repository.setState("key2", "value2");
-        repository.stop();
 
-        // Then the rewritten store has the same permissions
+        // When stopping the repository (which rewrites the store), paused while the state is written
+        AtomicReference<Exception> stopFailure = new AtomicReference<>();
+        cache.pauseThread = new Thread(() -> {
+            try {
+                repository.stop();
+            } catch (Exception e) {
+                stopFailure.set(e);
+            }
+        });
+        cache.pauseThread.start();
+        assertTrue(rewriting.await(10, TimeUnit.SECONDS));
+        Set<PosixFilePermission> whileWriting = Files.getPosixFilePermissions(Path.of(store + ".tmp"));
+        resume.countDown();
+        cache.pauseThread.join(10000);
+
+        // Then the temporary file already had the permissions of the store while the state was written to it,
+        // and the rewritten store keeps them
+        assertNull(stopFailure.get());
+        assertEquals(permissions, whileWriting);
         assertEquals(permissions, Files.getPosixFilePermissions(store));
         assertEquals("value2", createRepository().getState("key2"));
     }

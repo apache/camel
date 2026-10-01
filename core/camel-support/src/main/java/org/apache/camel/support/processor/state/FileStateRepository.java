@@ -24,9 +24,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -215,6 +218,15 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
                 target = target.toRealPath();
             }
             tmp = new File(target + ".tmp");
+            if (Files.exists(target) && Files.getFileAttributeView(target, PosixFileAttributeView.class) != null) {
+                // give the temporary file the permissions of the store before the state is written to it, so the
+                // state is never readable with wider permissions than the store
+                Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(target);
+                Files.deleteIfExists(tmp.toPath());
+                Files.createFile(tmp.toPath(), PosixFilePermissions.asFileAttribute(permissions));
+                // the umask may have removed some of them
+                Files.setPosixFilePermissions(tmp.toPath(), permissions);
+            }
             fos = new FileOutputStream(tmp);
             for (Map.Entry<String, String> entry : cache.entrySet()) {
                 fos.write((entry.getKey() + KEY_VALUE_DELIMITER + entry.getValue() + STORE_DELIMITER).getBytes());
@@ -222,10 +234,6 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
             fos.getFD().sync();
             fos.close();
             fos = null;
-            // keep the permissions of the store
-            if (Files.exists(target) && Files.getFileAttributeView(target, PosixFileAttributeView.class) != null) {
-                Files.setPosixFilePermissions(tmp.toPath(), Files.getPosixFilePermissions(target));
-            }
             try {
                 Files.move(tmp.toPath(), target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             } catch (AtomicMoveNotSupportedException e) {
