@@ -295,6 +295,7 @@ final class StatusParser {
                         ProcessorInfo pi = new ProcessorInfo();
                         pi.id = pj.getString("id");
                         pi.processor = pj.getString("processor");
+                        pi.source = pj.getString("source");
                         pi.level = pj.getIntegerOrDefault("level", 0);
 
                         Map<String, ?> ps = pj.getMap("statistics");

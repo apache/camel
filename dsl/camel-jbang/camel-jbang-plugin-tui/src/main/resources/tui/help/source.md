@@ -29,6 +29,12 @@ explorer on the left and a source viewer on the right.
 - **p** — toggle plain mode (hides line numbers, borders, and file panel for easy copy/paste)
 - **Esc/c** — close source viewer
 
+## Live Run Data
+While the integration runs, the lines of its source show what the processors
+on them do: `● 79` exchanges, `✗ 10` failed (in red), and the mean time when
+it is 1 ms or more. The numbers follow the running integration, so the source
+reads as a heat map of the route: where messages go, where they fail.
+
 ## Edit Mode (Shortcuts)
 - **Ctrl+Z** — undo
 - **Ctrl+Y / Ctrl+Shift+Z** — redo

@@ -119,6 +119,19 @@ class SourceViewer {
     record JumpLink(String routeId, String filePath, int targetLine) {
     }
 
+    /**
+     * What a line of a running integration's source did: the exchanges of the processors on it, the failed ones and the
+     * mean processing time.
+     */
+    record LiveLine(long total, long failed, long meanMillis) {
+    }
+
+    /** The live run data of a file by its path: per 0-based line, what the processors on it did. */
+    @FunctionalInterface
+    interface LiveRunData {
+        Map<Integer, LiveLine> lines(String filePath);
+    }
+
     private boolean visible;
     private List<String> lines = Collections.emptyList();
     private List<JsonObject> codeData = Collections.emptyList();
@@ -188,6 +201,9 @@ class SourceViewer {
     private EndpointValidator endpointValidator;
     private EndpointValidator simpleValidator;
     private EndpointValidator routeValidator;
+    private LiveRunData liveRunData;
+    private Map<Integer, LiveLine> liveLines = Collections.emptyMap();
+    private long liveLinesTime;
     /** java or xml: Tab completes the endpoint uris of a Java or XML route file; null for neither. */
     private String uriCompletion;
     /** The completion being chosen in a uri: its row, the column its prefix ends at, the prefix and suffix. */
@@ -268,6 +284,28 @@ class SourceViewer {
      * editing. An XML file with problems is not saved, as a YAML file; a Java file is saved and the problems are said,
      * as a Java file is the application's code, and what the checks cannot know must never keep it from being saved.
      */
+    /**
+     * The live run data of the running integration, shown at the end of the lines of its source: how many exchanges the
+     * processors on a line handled, how many failed, and their mean time (a heat map of the source while it runs).
+     */
+    void setLiveRunData(LiveRunData liveRunData) {
+        this.liveRunData = liveRunData;
+    }
+
+    /** The live run data of the loaded file, read again at most once a second (the status is polled about as often). */
+    private Map<Integer, LiveLine> liveLines() {
+        if (liveRunData == null || loadedFilePath == null) {
+            return Collections.emptyMap();
+        }
+        long now = System.currentTimeMillis();
+        if (now - liveLinesTime > 1000) {
+            Map<Integer, LiveLine> lines = liveRunData.lines(loadedFilePath);
+            liveLines = lines != null ? lines : Collections.emptyMap();
+            liveLinesTime = now;
+        }
+        return liveLines;
+    }
+
     void setRouteValidator(EndpointValidator routeValidator) {
         this.routeValidator = routeValidator;
     }
@@ -2995,6 +3033,21 @@ class SourceViewer {
                 linkStyle = linkStyle.patch(selBg);
             }
             spans.add(Span.styled(" ↵ " + jl.routeId(), linkStyle));
+        }
+        LiveLine live = plainMode ? null : liveLines().get(lineIndex);
+        if (live != null && live.total() > 0) {
+            // what the line did while the integration runs: exchanges, failures, mean time
+            Style liveStyle = isSelected ? Theme.label().patch(selBg) : Theme.label();
+            spans.add(Span.styled("  ● " + live.total(), liveStyle));
+            if (live.failed() > 0) {
+                Style failedStyle = Theme.error().bold();
+                spans.add(Span.styled(" ✗ " + live.failed(), isSelected ? failedStyle.patch(selBg) : failedStyle));
+            }
+            if (live.meanMillis() > 0) {
+                // the mean time only where it is worth a look; a fast processor's 0ms is noise
+                spans.add(Span.styled(" " + live.meanMillis() + "ms",
+                        isSelected ? Style.EMPTY.dim().patch(selBg) : Style.EMPTY.dim()));
+            }
         }
 
         Line full = Line.from(spans);

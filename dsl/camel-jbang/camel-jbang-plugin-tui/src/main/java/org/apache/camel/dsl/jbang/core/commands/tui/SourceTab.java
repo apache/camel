@@ -147,6 +147,11 @@ class SourceTab extends AbstractTab {
             }
         });
         sourceViewer.setOnFileCreated(this::refreshFiles);
+        // the live run data of the selected integration at the end of the lines of its source
+        sourceViewer.setLiveRunData(path -> {
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            return info != null ? LiveRunLines.of(info.routes, path) : Map.of();
+        });
         sourceViewer.setOnFileLoaded(p -> {
             if (hasJumpLinks(p)) {
                 sourceViewer.setJumpLinks(computeJumpLinks(p));

@@ -189,6 +189,12 @@ Additional features:
   source line.
 * *Resizable panels* -- drag the split border with the mouse to resize the file list and viewer
 
+=== Live Run Data
+
+While the integration runs, the lines of its source show what the processors on them do: the exchanges they handled
+(`● 79`), how many failed (`✗ 10`, in red), and their mean time when it is 1 ms or more. The numbers follow the running
+integration, so the source reads as a heat map of the route: where the messages go, and where they fail.
+
 === Source Editor
 
 Press *F4* to enter edit mode for YAML, Java and XML routes, `application.properties`, and other local files.
