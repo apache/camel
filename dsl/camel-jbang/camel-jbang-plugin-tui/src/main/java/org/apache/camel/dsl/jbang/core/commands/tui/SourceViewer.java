@@ -187,6 +187,12 @@ class SourceViewer {
     private PropertiesValidator propertiesValidator;
     private EndpointValidator endpointValidator;
     private EndpointValidator simpleValidator;
+    private EndpointValidator routeValidator;
+    /** java or xml: Tab completes the endpoint uris of a Java or XML route file; null for neither. */
+    private String uriCompletion;
+    /** The completion being chosen in a uri: its row, the column its prefix ends at, the prefix and suffix. */
+    private UriCompletion pendingUriCompletion;
+    private List<String> routeProblems = List.of();
     private List<String> validationErrors;
     private int validationErrorScroll;
     private Map<Integer, String> inlineErrors = Collections.emptyMap();
@@ -257,6 +263,29 @@ class SourceViewer {
         this.simpleValidator = simpleValidator;
     }
 
+    /**
+     * The Camel checks of a Java or XML DSL route file (CAMEL-25208): its problems are marked on their lines while
+     * editing. An XML file with problems is not saved, as a YAML file; a Java file is saved and the problems are said,
+     * as a Java file is the application's code, and what the checks cannot know must never keep it from being saved.
+     */
+    void setRouteValidator(EndpointValidator routeValidator) {
+        this.routeValidator = routeValidator;
+    }
+
+    /**
+     * Tab completion in the endpoint uris of a Java or XML route file (CAMEL-25208): in the string given to from, to,
+     * toD... of Java, or the uri attribute of those elements in XML, the component names, the endpoint options and
+     * their values, from the completion providers the YAML uris use.
+     *
+     * @param dsl java or xml; null for a file that is neither
+     */
+    void setUriCompletion(String dsl) {
+        this.uriCompletion = dsl;
+    }
+
+    private record UriCompletion(int row, int endCol, String prefix, String suffix) {
+    }
+
     void hide() {
         exitEditMode();
         visible = false;
@@ -268,6 +297,8 @@ class SourceViewer {
         propertiesValidator = null;
         endpointValidator = null;
         simpleValidator = null;
+        routeValidator = null;
+        uriCompletion = null;
     }
 
     void reset() {
@@ -307,6 +338,8 @@ class SourceViewer {
         propertiesValidator = null;
         endpointValidator = null;
         simpleValidator = null;
+        routeValidator = null;
+        uriCompletion = null;
     }
 
     boolean isMarkdownMode() {
@@ -633,6 +666,11 @@ class SourceViewer {
     /** Package-private for tests that assert on edit buffer content. */
     String editText() {
         return editState.text();
+    }
+
+    /** Package-private for tests: the problems marked on the lines of the edit buffer, by 0-based line. */
+    Map<Integer, String> inlineErrors() {
+        return inlineErrors;
     }
 
     private boolean handleEditKeyEvent(KeyEvent ke) {
@@ -968,6 +1006,10 @@ class SourceViewer {
                 && editableFile.getFileName().toString().toLowerCase().endsWith(".properties");
     }
 
+    private boolean isXmlFile() {
+        return editableFile != null && editableFile.getFileName().toString().toLowerCase().endsWith(".xml");
+    }
+
     private boolean isCamelYamlFile() {
         if (editableFile == null) {
             return false;
@@ -977,11 +1019,116 @@ class SourceViewer {
     }
 
     private void openAutocomplete() {
+        pendingUriCompletion = null;
         if (isCamelYamlFile()) {
             openYamlAutocomplete();
+        } else if (uriCompletion != null) {
+            openUriAutocomplete();
         } else {
             openPropertiesAutocomplete();
         }
+    }
+
+    /**
+     * The completion of the endpoint uri the cursor is in, in a Java or XML route: the component before the colon, an
+     * option after ? or &, its value after =. Read from the line alone, so it works while the file does not parse.
+     */
+    private void openUriAutocomplete() {
+        int row = editState.cursorRow();
+        int col = editState.cursorCol();
+        String line = editState.getLine(row);
+        EndpointUriContext c = "xml".equals(uriCompletion)
+                ? EndpointUriContext.inXml(line, col) : EndpointUriContext.inJava(line, col);
+        if (c == null || !c.isEndpoint() || autocompleteProvider == null) {
+            return;
+        }
+        String before = c.before();
+        int colon = before.indexOf(':');
+        List<AutocompletePopup.CompletionItem> items;
+        String prefix;
+        String suffix;
+        if (colon < 0) {
+            items = autocompleteProvider.provide("yaml-uri:" + c.role());
+            prefix = before;
+            suffix = ":";
+        } else {
+            String scheme = before.substring(0, colon);
+            int q = before.indexOf('?');
+            if (q < 0) {
+                // the path of the uri: what goes there is the component's own
+                return;
+            }
+            int sep = Math.max(before.lastIndexOf('?'), before.lastIndexOf('&'));
+            String segment = before.substring(sep + 1);
+            int eq = segment.indexOf('=');
+            if (eq >= 0) {
+                if (autocompleteValueProvider == null) {
+                    return;
+                }
+                items = autocompleteValueProvider.provide("yaml:" + scheme + ":" + segment.substring(0, eq));
+                prefix = segment.substring(eq + 1);
+                suffix = "";
+            } else {
+                List<String> given = new ArrayList<>();
+                for (String pair : (sep > q ? before.substring(q + 1, sep) : "").split("&")) {
+                    if (!pair.isEmpty()) {
+                        given.add(pair.contains("=") ? pair.substring(0, pair.indexOf('=')) : pair);
+                    }
+                }
+                items = autocompleteProvider.provide("yaml:" + scheme + ":" + c.role() + ":" + String.join(",", given)
+                                                     + "|" + before.substring(0, sep));
+                prefix = segment;
+                suffix = "=";
+            }
+        }
+        if (items != null && !items.isEmpty()) {
+            autocompletePopup = new AutocompletePopup(items, prefix, prefix, true);
+            if (colon < 0) {
+                autocompletePopup.setTitlePrefix("Components");
+            }
+            pendingUriCompletion = new UriCompletion(row, col, prefix, suffix);
+        }
+    }
+
+    /** Replaces the prefix the completion was opened on with the chosen item and what follows it (: or =). */
+    private void insertUriCompletion(AutocompletePopup.CompletionItem item) {
+        UriCompletion jc = pendingUriCompletion;
+        pendingUriCompletion = null;
+        if (editState.cursorRow() != jc.row()) {
+            return;
+        }
+        // the arrows move the cursor within the prefix while the popup is open: back to its end
+        int col = editState.cursorCol();
+        for (; col < jc.endCol(); col++) {
+            editState.moveCursorRight();
+        }
+        for (; col > jc.endCol(); col--) {
+            editState.moveCursorLeft();
+        }
+        for (int i = 0; i < jc.prefix().length(); i++) {
+            editState.deleteBackward();
+        }
+        // Tab in the middle of a word replaces all of it: the rest of the name after the cursor goes too
+        String line = editState.getLine(jc.row());
+        int from = editState.cursorCol();
+        int end = from;
+        while (end < line.length() && isUriWordChar(line.charAt(end), jc.suffix())) {
+            end++;
+        }
+        for (int i = from; i < end; i++) {
+            editState.deleteForward();
+        }
+        // the : or = the name is followed by is not doubled when it is there already
+        boolean hasSuffix = !jc.suffix().isEmpty() && line.startsWith(jc.suffix(), end);
+        editState.insert(item.key() + (hasSuffix ? "" : jc.suffix()));
+    }
+
+    /** A character of the name or value being completed: up to the : of a component, the = of an option, the & or ". */
+    private static boolean isUriWordChar(char c, String suffix) {
+        if (suffix.isEmpty()) {
+            return c != '&' && c != '"' && c != '\'' && c != '\\';
+        }
+        return Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '.';
     }
 
     private void openPropertiesAutocomplete() {
@@ -1149,6 +1296,10 @@ class SourceViewer {
 
     private void insertCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, boolean listItem) {
         recordEditChange();
+        if (pendingUriCompletion != null) {
+            insertUriCompletion(item);
+            return;
+        }
         String currentLine = editState.getLine(editState.cursorRow());
         if (isCamelYamlFile()) {
             insertYamlCompletion(item, valueMode, currentLine, listItem);
@@ -1274,7 +1425,7 @@ class SourceViewer {
             dirty = false;
             Path path = editableFile;
             boolean restoreMarkdownMode = markdownModeBeforeEdit;
-            notifySave("Saved: " + editableFile.getFileName(), false);
+            notifySaved(editableFile);
             editMode = false;
             editState.clear();
             markdownModeBeforeEdit = false;
@@ -1301,13 +1452,14 @@ class SourceViewer {
             dirty = false;
             originalEditText = content;
             lineStatuses = null;
-            notifySave("Saved: " + editableFile.getFileName(), false);
+            notifySaved(editableFile);
         } catch (IOException e) {
             notifySave("Save failed: " + e.getMessage(), true);
         }
     }
 
     private void validateAndNotify(String content) {
+        routeProblems = List.of();
         if (validateOnSave && isCamelYamlFile()) {
             List<String> msgs = new ArrayList<>();
             msgs.addAll(SourceValidationSupport.formatSchemaErrors(validateYaml(content)));
@@ -1337,8 +1489,32 @@ class SourceViewer {
                 inlineErrors = buildInlineErrors(msgs, content);
                 return;
             }
+        } else if (validateOnSave && routeValidator != null) {
+            List<String> msgs = routeValidator.validate(content);
+            msgs = msgs != null ? msgs : List.of();
+            inlineErrors = msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
+            if (isXmlFile() && !msgs.isEmpty()) {
+                // XML routes as YAML routes: the problems are shown and the file is not saved
+                validationErrors = msgs;
+                validationErrorScroll = 0;
+            } else {
+                // Java: marked, and said when saved, but not blocking the save
+                routeProblems = msgs;
+            }
+            return;
         }
         inlineErrors = Collections.emptyMap();
+    }
+
+    /** The notice of a save: the file, and the Camel problems of a Java or XML route file when it has some. */
+    private void notifySaved(Path file) {
+        if (routeProblems.isEmpty()) {
+            notifySave("Saved: " + file.getFileName(), false);
+        } else {
+            notifySave("Saved: " + file.getFileName() + " with " + routeProblems.size() + " Camel problem"
+                       + (routeProblems.size() > 1 ? "s" : "") + ": " + routeProblems.get(0),
+                    true);
+        }
     }
 
     private void jumpToNextError() {
@@ -1389,6 +1565,11 @@ class SourceViewer {
             }
         } else if (isPropertiesFile() && propertiesValidator != null) {
             msgs.addAll(validateProperties(content));
+        } else if (routeValidator != null) {
+            List<String> routeErrors = routeValidator.validate(content);
+            if (routeErrors != null) {
+                msgs.addAll(routeErrors);
+            }
         }
         inlineErrors = msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
     }

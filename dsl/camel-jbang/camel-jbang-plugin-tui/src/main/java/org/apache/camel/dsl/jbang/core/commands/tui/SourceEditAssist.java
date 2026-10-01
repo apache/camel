@@ -29,13 +29,17 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.RouteAssist;
+import org.apache.camel.dsl.jbang.core.commands.ai.RouteNodes;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -75,6 +79,17 @@ final class SourceEditAssist {
     private final Map<String, Map<String, BaseOptionModel>> componentOptionsCache = new HashMap<>();
     private final Map<String, Map<String, BaseOptionModel>> languageOptionsCache = new HashMap<>();
     private final Map<String, Map<String, BaseOptionModel>> dataformatOptionsCache = new HashMap<>();
+
+    // Java sources of the project, for the constants of the Java route checks (read lazily, refreshed now and then)
+    private static final long JAVA_SOURCES_TTL_MS = 10_000;
+    private Map<String, Supplier<String>> javaSourcesCache;
+    private long javaSourcesCacheTime;
+    private Path javaSourcesCacheDir;
+
+    // the nodes of the route file last read for its quick doc
+    private List<RouteNodes.Node> routeNodesCache = List.of();
+    private String routeNodesContent;
+    private Path routeNodesFile;
 
     // Component name completion cache (keyed by catalog version)
     private String componentsCatalogVersion;
@@ -862,7 +877,7 @@ final class SourceEditAssist {
         if (!context.startsWith("yaml:")) {
             return List.of();
         }
-        CamelCatalog catalog = getCatalog();
+        CamelCatalog catalog = validationCatalog();
         if (catalog == null) {
             return List.of();
         }
@@ -931,7 +946,7 @@ final class SourceEditAssist {
     }
 
     List<AutocompletePopup.CompletionItem> provideComponentNameCompletions(String role) {
-        CamelCatalog catalog = getCatalog();
+        CamelCatalog catalog = validationCatalog();
         if (catalog == null) {
             return List.of();
         }
@@ -1216,7 +1231,7 @@ final class SourceEditAssist {
         if (!context.startsWith("yaml:")) {
             return List.of();
         }
-        CamelCatalog catalog = getCatalog();
+        CamelCatalog catalog = validationCatalog();
         if (catalog == null) {
             return List.of();
         }
@@ -1550,6 +1565,146 @@ final class SourceEditAssist {
 
     List<String> validateYamlEndpoints(String content) {
         return SourceValidator.validateYamlEndpoints(content, validationCatalog());
+    }
+
+    /**
+     * The Camel checks of a Java or XML DSL route file (CAMEL-25208): the endpoint uris and simple expressions the
+     * compiler cannot see, as "Line N: message". The endpoints no route consumes are left to camel validate: the editor
+     * runs this while typing, and would read the whole project each time.
+     */
+    List<String> validateRoutes(Path file, String content) {
+        List<String> answer = new ArrayList<>();
+        for (RouteAssist.Diagnostic d : RouteAssist.diagnostics(file.getFileName().toString(), content,
+                validationCatalog(), null, javaSources(), false)) {
+            if (d.severity() == RouteAssist.Severity.ERROR) {
+                answer.add(d.format());
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The quick doc of each line of a Java or XML DSL route file (CAMEL-25208), read from its model: the component of
+     * an endpoint and the options it is given, the EIP of a step.
+     */
+    Map<Integer, List<SourceViewer.DocEntry>> provideRouteQuickDocs(Path file, List<JsonObject> codeData) {
+        CamelCatalog catalog = validationCatalog();
+        if (catalog == null || codeData.isEmpty()) {
+            return Map.of();
+        }
+        List<String> lines = new ArrayList<>(codeData.size());
+        for (JsonObject jo : codeData) {
+            lines.add(jo.getString("code") != null ? jo.getString("code") : "");
+        }
+        Map<Integer, List<SourceViewer.DocEntry>> result = new LinkedHashMap<>();
+        for (RouteNodes.Node n : routeNodes(file, lines)) {
+            int idx = n.line() - 1;
+            if (idx < 0 || idx >= codeData.size() || result.containsKey(idx)) {
+                continue;
+            }
+            if (n.kind() == RouteNodes.Kind.ENDPOINT) {
+                EipDocSupport.buildEndpointInlineDoc(result, codeData, catalog, n.uri(), idx);
+            } else if (n.kind() == RouteNodes.Kind.STEP && !hasEndpoint(file, lines, n.line())
+                    && catalog.eipModel(n.eip()) != null) {
+                EipDocSupport.buildEipInlineDoc(result, codeData, catalog, n.eip(), null, idx);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * The quick doc of the line the cursor is on in a Java or XML DSL route file (CAMEL-25208): the component of an
+     * endpoint with the options it is given, else the EIP of the step and the language of its expression.
+     */
+    List<SourceViewer.DocEntry> provideRouteEditQuickDoc(Path file, List<String> lines, int cursorRow) {
+        CamelCatalog catalog = validationCatalog();
+        if (catalog == null || lines == null || cursorRow < 0 || cursorRow >= lines.size()) {
+            return List.of();
+        }
+        List<RouteNodes.Node> here = RouteNodes.at(routeNodes(file, lines), cursorRow + 1);
+        List<SourceViewer.DocEntry> answer = new ArrayList<>();
+        for (RouteNodes.Node n : here) {
+            if (n.kind() == RouteNodes.Kind.ENDPOINT && n.uri() != null) {
+                endpointDoc(catalog, n.uri(), answer);
+                return answer;
+            }
+        }
+        for (RouteNodes.Node n : here) {
+            if (n.kind() == RouteNodes.Kind.STEP && answer.isEmpty()) {
+                EipModel eip = catalog.eipModel(n.eip());
+                if (eip != null) {
+                    answer.add(SourceViewer.DocEntry.of((eip.getTitle() != null ? eip.getTitle() : n.eip()) + " — "
+                                                        + (eip.getDescription() != null ? eip.getDescription() : "")));
+                }
+            } else if (n.kind() == RouteNodes.Kind.EXPRESSION && n.language() != null) {
+                LanguageModel language = catalog.languageModel(n.language());
+                if (language != null) {
+                    answer.add(SourceViewer.DocEntry.of((language.getTitle() != null ? language.getTitle() : n.language())
+                                                        + (n.predicate() ? " predicate" : " expression") + ": "
+                                                        + (n.text() != null ? n.text() : "")));
+                }
+            }
+        }
+        return answer;
+    }
+
+    /** The component of an endpoint, then each option it is given with its doc. */
+    private static void endpointDoc(CamelCatalog catalog, String uri, List<SourceViewer.DocEntry> answer) {
+        String component = uri.contains(":") ? uri.substring(0, uri.indexOf(':')) : uri;
+        ComponentModel model = catalog.componentModel(component);
+        if (model == null) {
+            return;
+        }
+        String title = model.getTitle() != null ? model.getTitle() : component;
+        answer.add(SourceViewer.DocEntry.of(title + " — " + (model.getDescription() != null ? model.getDescription() : "")));
+        Map<String, String> props;
+        try {
+            props = catalog.endpointProperties(uri);
+        } catch (Exception e) {
+            return;
+        }
+        int q = uri.indexOf('?');
+        String query = q >= 0 ? uri.substring(q + 1) : "";
+        for (ComponentModel.EndpointOptionModel opt : model.getEndpointOptions()) {
+            String value = props != null ? props.get(opt.getName()) : null;
+            // the options written in the uri's query, not the path parameters already in the title's line
+            if (value != null && (query.startsWith(opt.getName() + "=") || query.contains("&" + opt.getName() + "="))) {
+                String doc = EipDocSupport.formatOptionDoc(opt);
+                answer.add(SourceViewer.DocEntry.of(opt.getName() + "=" + value + (doc != null ? " — " + doc : "")));
+            }
+        }
+    }
+
+    private boolean hasEndpoint(Path file, List<String> lines, int line) {
+        for (RouteNodes.Node n : RouteNodes.at(routeNodes(file, lines), line)) {
+            if (n.kind() == RouteNodes.Kind.ENDPOINT) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** The nodes of a route file's content, read again only when the content changed. */
+    private List<RouteNodes.Node> routeNodes(Path file, List<String> lines) {
+        String content = String.join("\n", lines);
+        if (!content.equals(routeNodesContent) || !Objects.equals(file, routeNodesFile)) {
+            routeNodesCache = RouteAssist.nodes(file.getFileName().toString(), content, validationCatalog(), javaSources());
+            routeNodesContent = content;
+            routeNodesFile = file;
+        }
+        return routeNodesCache;
+    }
+
+    /** The Java sources of the project, for the constants a route refers to in another class; kept for a while. */
+    private Map<String, Supplier<String>> javaSources() {
+        long now = System.currentTimeMillis();
+        if (javaSourcesCache == null || now - javaSourcesCacheTime > JAVA_SOURCES_TTL_MS
+                || !Objects.equals(javaSourcesCacheDir, rootDir)) {
+            javaSourcesCache = RouteAssist.javaSources(rootDir);
+            javaSourcesCacheTime = now;
+            javaSourcesCacheDir = rootDir;
+        }
+        return javaSourcesCache;
     }
 
     List<String> validateYamlSimple(String content) {

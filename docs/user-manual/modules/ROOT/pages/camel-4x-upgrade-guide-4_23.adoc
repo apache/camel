@@ -1598,6 +1598,14 @@ named as written.
 `--dep=camel-groovy`; before, the file was silently ignored unless the dependency was added. The dependency is
 also written to the run settings, so `camel export` includes it.
 
+`camel validate source`, and the `camel_validate_source` and `camel_write_file` MCP tools, now check the routes of
+Java and XML DSL files as they check YAML routes: the endpoint URIs against the catalog (also those built with the
+endpoint DSL or from a constant), simple expressions, and a `to` whose URI holds `+${...}+` and should be a `toD`.
+A Java file used to be checked only by the compiler and an XML file only for being well formed, so a file that
+validated before can now report errors, and `camel_write_file` refuses to write it until they are fixed. In the
+TUI Source tab an XML route file with such problems is not saved, as a YAML
+file; a Java file is saved and its problems are shown.
+
 === camel-jbang (MCP servers)
 
 The Camel authoring tools for AI agents are now defined once, in `camel-jbang-core`, and exposed under the

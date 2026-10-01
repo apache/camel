@@ -110,7 +110,7 @@ public class AuthoringTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Validates Camel YAML DSL or .properties source without writing: schema (misspelled options "
+          description = "Validates Camel YAML/Java/XML DSL or .properties source without writing: schema (misspelled options "
                         + "such as logLevel instead of loggingLevel), endpoint URIs, simple expressions, camel.* "
                         + "options, and how each bean under beans: is created (the properties a class built through "
                         + "its builder() accepts, the ways to create a class with no constructor). Use on content "

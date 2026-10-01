@@ -140,16 +140,48 @@ public final class SourceValidator {
             if (directory != null && !msgs.isEmpty()) {
                 msgs = withSiblingClassHints(msgs, BeanDeclarations.scan(directory, fileName));
             }
-            return msgs;
+            // what the compiler cannot see: the endpoint uris and simple expressions inside the strings (CAMEL-25208)
+            return withRouteChecks(msgs, fileName, content, catalog, directory, checkConsumers);
         }
         if (name.endsWith(".xsl") || name.endsWith(".xslt")) {
             return validateXslt(content);
         }
         if (name.endsWith(".xml")) {
-            return validateXml(content);
+            List<String> msgs = validateXml(content);
+            // a well formed file of the XML DSL: its routes against the XML DSL and the catalog (CAMEL-25208)
+            return msgs.isEmpty() ? withRouteChecks(msgs, fileName, content, catalog, directory, checkConsumers) : msgs;
         }
         return List.of();
     }
+
+    /**
+     * Adds the errors of the Camel checks of a Java or XML DSL source ({@link RouteAssist}) to the messages, leaving
+     * out one on a line that already has a message.
+     */
+    private static List<String> withRouteChecks(
+            List<String> msgs, String fileName, String content, CamelCatalog catalog, Path directory,
+            boolean checkConsumers) {
+        if (!RouteAssist.supports(fileName, content)) {
+            return msgs;
+        }
+        List<String> answer = new ArrayList<>(msgs);
+        Set<String> linesWithMessages = new HashSet<>();
+        for (String m : msgs) {
+            Matcher lm = MESSAGE_LINE.matcher(m);
+            if (lm.find()) {
+                linesWithMessages.add(lm.group(1));
+            }
+        }
+        for (RouteAssist.Diagnostic d : RouteAssist.diagnostics(fileName, content, catalog, directory,
+                RouteAssist.javaSources(directory), checkConsumers && directory != null)) {
+            if (d.severity() == RouteAssist.Severity.ERROR && !linesWithMessages.contains(Integer.toString(d.line()))) {
+                answer.add(d.format());
+            }
+        }
+        return answer;
+    }
+
+    private static final Pattern MESSAGE_LINE = Pattern.compile("^Line (\\d+)\\b");
 
     /**
      * Validates Camel YAML DSL source: the YAML DSL schema first, then endpoint URIs and simple expressions against the

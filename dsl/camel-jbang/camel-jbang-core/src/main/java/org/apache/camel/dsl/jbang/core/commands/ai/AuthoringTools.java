@@ -146,7 +146,7 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_validate_source",
-                "Validates Camel YAML DSL or .properties source without writing: schema (misspelled options such as "
+                "Validates Camel YAML/Java/XML DSL or .properties source without writing: schema (misspelled options such as "
                                                       + "logLevel instead of loggingLevel), endpoint URIs, simple expressions, "
                                                       + "camel.* options. Use on content before writing it, or on an existing "
                                                       + "file (no content) to explain a reload error.")
@@ -497,6 +497,19 @@ public final class AuthoringTools {
         result.put("valid", errors.isEmpty());
         result.put("file", file);
         result.put("errors", new JsonArray(errors));
+        if (RouteAssist.supports(file, content)) {
+            // the parts of a Java or XML route the parser could not read, so the checks did not see (CAMEL-25208)
+            JsonArray notChecked = new JsonArray();
+            for (RouteAssist.Diagnostic d : RouteAssist.diagnostics(file, content, ctx.catalog(), null,
+                    RouteAssist.javaSources(dir), false)) {
+                if (d.severity() == RouteAssist.Severity.INFO) {
+                    notChecked.add(d.format());
+                }
+            }
+            if (!notChecked.isEmpty()) {
+                result.put("notChecked", notChecked);
+            }
+        }
         result.put("message", errors.isEmpty()
                 ? "The source is valid"
                 : errors.size() + " problem(s) found; fix them before writing the file");

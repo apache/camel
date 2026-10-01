@@ -822,6 +822,12 @@ class SourceTab extends AbstractTab {
      * type (Camel YAML, other Camel source, properties, or none).
      */
     private void configureEditAssist(Path filePath) {
+        // the Camel checks of a Java or XML DSL route file (CAMEL-25208); YAML has its own
+        boolean routeFile = !SourceEditAssist.isYamlFile(filePath)
+                && (isJavaRouteFile(filePath) || isCamelSourceFile(filePath));
+        sourceViewer.setRouteValidator(routeFile ? content -> assist.validateRoutes(filePath, content) : null);
+        String name = filePath.getFileName().toString();
+        sourceViewer.setUriCompletion(!routeFile ? null : name.endsWith(".java") ? "java" : "xml");
         if (isCamelSourceFile(filePath)) {
             sourceViewer.setQuickDocProvider(assist::provideCamelQuickDocs);
             sourceViewer.setDeprecatedLineScanner(null);
@@ -833,10 +839,21 @@ class SourceTab extends AbstractTab {
                 sourceViewer.setListItemNodeChecker(assist::isListChildrenNode);
                 sourceViewer.setEditQuickDocProvider(assist::provideEditQuickDoc);
             } else {
-                sourceViewer.setAutocompleteProvider(null);
-                sourceViewer.setAutocompleteValueProvider(null);
-                sourceViewer.setEditQuickDocProvider(null);
+                // XML: the quick doc of the routes read into the model, Tab in the uri attributes (CAMEL-25208)
+                sourceViewer.setQuickDocProvider(cd -> assist.provideRouteQuickDocs(filePath, cd));
+                sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
+                sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
+                sourceViewer.setEditQuickDocProvider(
+                        (lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row));
             }
+        } else if (routeFile) {
+            // Java: the quick doc of the routes read into the model by the Java DSL parser (CAMEL-25208)
+            sourceViewer.setQuickDocProvider(cd -> assist.provideRouteQuickDocs(filePath, cd));
+            sourceViewer.setDeprecatedLineScanner(null);
+            // Tab in the endpoint uri of from, to, toD...: component names, options and values, as YAML uris have
+            sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
+            sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
+            sourceViewer.setEditQuickDocProvider((lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row));
         } else if (SourceEditAssist.isPropertiesFile(filePath)) {
             sourceViewer.setQuickDocProvider(assist::providePropertiesQuickDocs);
             sourceViewer.setDeprecatedLineScanner(assist::scanDeprecatedProperties);
