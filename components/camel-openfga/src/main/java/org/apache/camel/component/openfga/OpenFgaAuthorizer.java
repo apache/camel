@@ -65,6 +65,7 @@ public class OpenFgaAuthorizer {
     private final Expression user;
     private final Expression object;
     private final Expression relation;
+    private final Expression continuationToken;
     private final ConsistencyPreference consistency;
     private final boolean failOpen;
     private final long awaitTimeoutMillis;
@@ -76,6 +77,7 @@ public class OpenFgaAuthorizer {
         this.user = compile(camelContext, configuration.getUser());
         this.object = compile(camelContext, configuration.getObject());
         this.relation = compile(camelContext, configuration.getRelation());
+        this.continuationToken = compile(camelContext, configuration.getContinuationToken());
         this.consistency = parseConsistency(configuration.getConsistency());
         this.failOpen = configuration.isFailOpen();
         this.awaitTimeoutMillis = awaitTimeout(configuration);
@@ -409,6 +411,14 @@ public class OpenFgaAuthorizer {
 
     String rawObject(Exchange exchange) {
         return evaluate(exchange, object);
+    }
+
+    /**
+     * Evaluates the {@code continuationToken} option, so a route can page by feeding back the token the previous page
+     * left on the message.
+     */
+    String rawContinuationToken(Exchange exchange) {
+        return evaluate(exchange, continuationToken);
     }
 
     ConsistencyPreference getConsistency() {

@@ -19,6 +19,7 @@ package org.apache.camel.component.openfga;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,19 +27,31 @@ import java.util.function.Consumer;
 
 import dev.openfga.sdk.api.client.model.ClientBatchCheckClientResponse;
 import dev.openfga.sdk.api.client.model.ClientCheckRequest;
+import dev.openfga.sdk.api.client.model.ClientExpandRequest;
+import dev.openfga.sdk.api.client.model.ClientExpandResponse;
 import dev.openfga.sdk.api.client.model.ClientListObjectsRequest;
 import dev.openfga.sdk.api.client.model.ClientListRelationsRequest;
 import dev.openfga.sdk.api.client.model.ClientListUsersRequest;
+import dev.openfga.sdk.api.client.model.ClientReadChangesRequest;
+import dev.openfga.sdk.api.client.model.ClientReadChangesResponse;
+import dev.openfga.sdk.api.client.model.ClientReadRequest;
+import dev.openfga.sdk.api.client.model.ClientReadResponse;
 import dev.openfga.sdk.api.client.model.ClientTupleKey;
 import dev.openfga.sdk.api.client.model.ClientTupleKeyWithoutCondition;
 import dev.openfga.sdk.api.configuration.ClientBatchCheckClientOptions;
+import dev.openfga.sdk.api.configuration.ClientExpandOptions;
 import dev.openfga.sdk.api.configuration.ClientListObjectsOptions;
 import dev.openfga.sdk.api.configuration.ClientListRelationsOptions;
 import dev.openfga.sdk.api.configuration.ClientListUsersOptions;
+import dev.openfga.sdk.api.configuration.ClientReadChangesOptions;
+import dev.openfga.sdk.api.configuration.ClientReadOptions;
 import dev.openfga.sdk.api.model.ConsistencyPreference;
 import dev.openfga.sdk.api.model.FgaObject;
+import dev.openfga.sdk.api.model.TupleChange;
+import dev.openfga.sdk.api.model.TupleKey;
 import dev.openfga.sdk.api.model.User;
 import dev.openfga.sdk.api.model.UserTypeFilter;
+import dev.openfga.sdk.api.model.UsersetTree;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.health.HealthCheckHelper;
@@ -113,6 +126,9 @@ public class OpenFgaProducer extends DefaultProducer {
             case listRelations -> listRelations(exchange, authorizer);
             case listUsers -> listUsers(exchange, authorizer);
             case writeTuples -> writeTuples(exchange, authorizer);
+            case readTuples -> readTuples(exchange, authorizer);
+            case readChanges -> readChanges(exchange, authorizer);
+            case expand -> expand(exchange, authorizer);
             case deleteTuples -> deleteTuples(exchange, authorizer);
             // unreachable today; here so that adding an operation to the enum without wiring it up fails loudly
             // instead of silently letting the exchange through an endpoint that was asked to authorize it
@@ -274,6 +290,207 @@ public class OpenFgaProducer extends DefaultProducer {
             }
         }
         exchange.getMessage().setBody(identifiers);
+    }
+
+    /**
+     * Reads the stored relationship tuples, filtered by whichever of user, relation and object the endpoint configured.
+     * <p/>
+     * Unlike every other operation these three are optional here: an unset part means "do not filter on this", and
+     * leaving all three unset reads the whole store a page at a time. That is why the raw resolvers are used rather
+     * than the check-path ones, which treat a blank value as a missing identity and deny.
+     */
+    private void readTuples(Exchange exchange, OpenFgaAuthorizer authorizer) throws Exception {
+        String filterUser = trimmedOrNull(authorizer.rawUser(exchange));
+        String filterRelation = trimmedOrNull(authorizer.rawRelation(exchange));
+        String filterObject = trimmedOrNull(authorizer.rawObject(exchange));
+        validateReadFilter(filterUser, filterRelation, filterObject);
+
+        ClientReadRequest request = new ClientReadRequest();
+        if (filterUser != null) {
+            request.user(filterUser);
+        }
+        if (filterRelation != null) {
+            request.relation(filterRelation);
+        }
+        if (filterObject != null) {
+            request._object(filterObject);
+        }
+
+        ClientReadOptions options = new ClientReadOptions();
+        if (getEndpoint().getConfiguration().getPageSize() != null) {
+            options.pageSize(getEndpoint().getConfiguration().getPageSize());
+        }
+        String token = authorizer.rawContinuationToken(exchange);
+        if (ObjectHelper.isNotEmpty(token)) {
+            options.continuationToken(token);
+        }
+        if (authorizer.getConsistency() != null) {
+            options.consistency(authorizer.getConsistency());
+        }
+
+        ClientReadResponse response = authorizer.await(exchange, "read the stored tuples",
+                () -> authorizer.getClient().read(request, options));
+
+        List<Map<String, Object>> tuples = new ArrayList<>();
+        if (response.getTuples() != null) {
+            // qualified because this class already has its own Tuple, the holder the write paths use; that one is
+            // referenced far more often, so it keeps the simple name
+            for (dev.openfga.sdk.api.model.Tuple tuple : response.getTuples()) {
+                TupleKey key = tuple.getKey();
+                if (key == null) {
+                    continue;
+                }
+                // the user/relation/object keys are deliberately the ones writeTuples and deleteTuples accept, so a
+                // route can feed what it read straight back into a revoke without reshaping it
+                Map<String, Object> entry = new LinkedHashMap<>();
+                entry.put("user", key.getUser());
+                entry.put("relation", key.getRelation());
+                entry.put("object", key.getObject());
+                entry.put("timestamp", tuple.getTimestamp());
+                tuples.add(entry);
+            }
+        }
+        setContinuationToken(exchange, response.getContinuationToken());
+        exchange.getMessage().setBody(tuples);
+    }
+
+    /**
+     * Reads the store's change log, so a route can keep something outside OpenFGA in step with the graph.
+     */
+    private void readChanges(Exchange exchange, OpenFgaAuthorizer authorizer) throws Exception {
+        ClientReadChangesRequest request = new ClientReadChangesRequest();
+        if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getType())) {
+            request.type(getEndpoint().getConfiguration().getType());
+        }
+        if (getEndpoint().getStartTime() != null) {
+            request.startTime(getEndpoint().getStartTime());
+        }
+
+        ClientReadChangesOptions options = new ClientReadChangesOptions();
+        if (getEndpoint().getConfiguration().getPageSize() != null) {
+            options.pageSize(getEndpoint().getConfiguration().getPageSize());
+        }
+        String token = authorizer.rawContinuationToken(exchange);
+        if (ObjectHelper.isNotEmpty(token)) {
+            options.continuationToken(token);
+        }
+
+        ClientReadChangesResponse response = authorizer.await(exchange, "read the change log",
+                () -> authorizer.getClient().readChanges(request, options));
+
+        List<Map<String, Object>> changes = new ArrayList<>();
+        if (response.getChanges() != null) {
+            for (TupleChange change : response.getChanges()) {
+                TupleKey key = change.getTupleKey();
+                if (key == null) {
+                    continue;
+                }
+                Map<String, Object> entry = new LinkedHashMap<>();
+                entry.put("user", key.getUser());
+                entry.put("relation", key.getRelation());
+                entry.put("object", key.getObject());
+                // the enum's name rather than the enum, so a route can compare against "WRITE" without importing
+                // an SDK type, and so the body marshals without a custom serializer
+                entry.put("operation", change.getOperation() != null ? change.getOperation().name() : null);
+                entry.put("timestamp", change.getTimestamp());
+                changes.add(entry);
+            }
+        }
+        setContinuationToken(exchange, response.getContinuationToken());
+        exchange.getMessage().setBody(changes);
+    }
+
+    /**
+     * Expands a relation on an object into its userset tree.
+     * <p/>
+     * This is the one operation that does not leave a {@code List<String>} on the body, because its answer is not a
+     * list: it is a tree of usersets explaining how a relation resolves. The {@link UsersetTree} goes on the body as it
+     * comes back from the SDK rather than being flattened, since flattening is exactly what destroys the information
+     * the operation exists to provide.
+     */
+    private void expand(Exchange exchange, OpenFgaAuthorizer authorizer) throws Exception {
+        OpenFgaAuthorizer.clearDecisionHeaders(exchange);
+        String object = authorizer.resolveObject(exchange);
+        String relation = authorizer.resolveRelation(exchange);
+        if (object == null || relation == null) {
+            exchange.getMessage().setBody(null);
+            return;
+        }
+
+        ClientExpandRequest request = new ClientExpandRequest()
+                ._object(object)
+                .relation(relation);
+        ClientExpandOptions options = new ClientExpandOptions();
+        applyModelAndConsistency(authorizer, options::authorizationModelId, options::consistency);
+
+        ClientExpandResponse response = authorizer.await(exchange, "expand " + relation + " on " + object,
+                () -> authorizer.getClient().expand(request, options));
+        exchange.getMessage().setBody(response.getTree());
+    }
+
+    private static String trimmedOrNull(String value) {
+        if (ObjectHelper.isEmpty(value)) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    /**
+     * Checks a read filter against what OpenFGA's Read API actually accepts, which is narrower than "every part is
+     * optional".
+     * <p/>
+     * Measured against OpenFGA 1.21.0: no filter at all reads the whole store, {@code object=document:} with a user or
+     * a full {@code object=document:budget} are accepted, and a filter of user alone, relation alone, or object type
+     * alone is rejected with an HTTP 400 reading <em>"the 'tuple_key' field was provided but the object type field is
+     * required and both the object id and user cannot be empty"</em>. Catching it here turns that into something that
+     * names the option to change.
+     * <p/>
+     * Note that the object is deliberately not put through {@link OpenFgaIdentifiers#validateTupleValue}: a type-only
+     * {@code document:} is a legitimate read filter and not a legitimate identifier, so the two have different rules.
+     */
+    private static void validateReadFilter(String user, String relation, String object) {
+        if (user == null && relation == null && object == null) {
+            return;
+        }
+        // only the parts that were actually given: here an unset part means "do not filter on this", which is the
+        // opposite of what it means on the write path, where reject() must still fire for a configured part that
+        // resolved to nothing
+        if (user != null) {
+            reject(OpenFgaIdentifiers.validateTupleValue(user), "user", user, false);
+        }
+        if (relation != null) {
+            reject(OpenFgaIdentifiers.validateRelation(relation), "relation", relation, false);
+        }
+        if (object == null) {
+            throw new IllegalArgumentException(
+                    "A readTuples filter must include object: OpenFGA requires an object type as soon as any filter is"
+                                               + " given. Use object=<type>: to filter on the type alone, or leave"
+                                               + " user, relation and object all unset to read the whole store");
+        }
+        int separator = object.indexOf(':');
+        if (separator <= 0) {
+            throw new IllegalArgumentException(
+                    "The object filter '" + object + "' must name a type, as in document: or document:budget");
+        }
+        if (separator == object.length() - 1 && user == null) {
+            throw new IllegalArgumentException(
+                    "A readTuples filter of object type alone is not enough for OpenFGA: give an object id"
+                                               + " (object=" + object + "<id>) or a user (user=<type>:<id>) alongside"
+                                               + " object=" + object);
+        }
+    }
+
+    /**
+     * Records the page token, and removes a token a previous exchange left behind when this page is the last one -
+     * otherwise a route looping on the header would read the same final page for ever.
+     */
+    private static void setContinuationToken(Exchange exchange, String token) {
+        if (ObjectHelper.isNotEmpty(token)) {
+            exchange.getMessage().setHeader(OpenFgaConstants.CONTINUATION_TOKEN, token);
+        } else {
+            exchange.getMessage().removeHeader(OpenFgaConstants.CONTINUATION_TOKEN);
+        }
     }
 
     /**

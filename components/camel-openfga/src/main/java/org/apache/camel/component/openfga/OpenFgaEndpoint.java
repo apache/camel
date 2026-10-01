@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.openfga;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
+
 import javax.net.ssl.SSLContext;
 
 import dev.openfga.sdk.api.client.OpenFgaClient;
@@ -56,6 +59,7 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
 
     private volatile OpenFgaAuthorizer authorizer;
     private volatile SSLContext sslContext;
+    private volatile OffsetDateTime startTime;
 
     public OpenFgaEndpoint(final String uri, final Component component, final OpenFgaConfiguration configuration) {
         super(uri, component);
@@ -76,6 +80,7 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
             sslContext = createSslContext();
             client = OpenFgaClientFactory.createClient(configuration, sslContext);
         }
+        this.startTime = parseStartTime();
         validateOperationOptions();
         authorizer = new OpenFgaAuthorizer(client, configuration, getCamelContext());
     }
@@ -85,6 +90,31 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
      * it - a missing {@code relation} on a check would otherwise surface as a deny, which looks exactly like a policy
      * decision and is a thoroughly misleading thing to debug.
      */
+    /**
+     * Parses {@code startTime} when the endpoint starts, so a malformed timestamp stops the route rather than failing
+     * the first exchange that happens to reach a readChanges.
+     */
+    private OffsetDateTime parseStartTime() {
+        if (ObjectHelper.isEmpty(configuration.getStartTime())) {
+            return null;
+        }
+        try {
+            return OffsetDateTime.parse(configuration.getStartTime());
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(
+                    "startTime '" + configuration.getStartTime() + "' is not an ISO-8601 timestamp, for example"
+                                               + " 2026-10-01T00:00:00Z",
+                    e);
+        }
+    }
+
+    /**
+     * The parsed {@code startTime}, or null when none was configured.
+     */
+    OffsetDateTime getStartTime() {
+        return startTime;
+    }
+
     private void validateOperationOptions() {
         switch (operation) {
             case check, batchCheck -> {
@@ -108,9 +138,14 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
                 require(configuration.getObject(), "object", "names the object to list users of");
                 require(configuration.getRelation(), "relation", "names the relation to list users for");
             }
+            case expand -> {
+                require(configuration.getObject(), "object", "names the object whose relation is expanded");
+                require(configuration.getRelation(), "relation", "names the relation to expand");
+            }
             default -> {
                 // writeTuples and deleteTuples take their tuples from the message body, falling back to the
-                // user/relation/object triple, so there is nothing that must be configured up front
+                // user/relation/object triple; readTuples treats user, relation and object as an optional filter and
+                // readChanges needs nothing at all - so none of them has anything that must be configured up front
             }
         }
     }
