@@ -82,10 +82,14 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         terminating.set(false);
 
         // create thread from JDK so it is not managed by Camel because we want the pool to be independent when
-        // camel is being stopped which otherwise can lead to stopping the thread pool while the task is running
+        // camel is being stopped which otherwise can lead to stopping the thread pool while the task is running.
+        // a daemon thread: the connector starts before Camel, so when the application fails to start (Spring Boot
+        // APPLICATION FAILED TO START) Camel never stops it, and it must not keep the JVM alive (CAMEL-25230)
         executor = Executors.newSingleThreadScheduledExecutor(r -> {
             String threadName = ThreadHelper.resolveThreadName(null, "LocalCliConnector");
-            return new Thread(r, threadName);
+            Thread thread = new Thread(r, threadName);
+            thread.setDaemon(true);
+            return thread;
         });
 
         // make it go faster in debug mode

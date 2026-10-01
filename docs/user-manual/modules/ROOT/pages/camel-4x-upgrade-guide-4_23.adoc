@@ -4097,3 +4097,9 @@ only just modified for the next scan, so a save still being written is not reloa
 The ~/.camel file handling moved from `LocalCliConnector` to the new `FileCliConnectorTransport`, so the protected
 `task()`, `actionTask()`, `statusTask()` and `traceTask()` methods were removed from `LocalCliConnector`. Subclasses
 that only override `sigterm()` are not affected.
+
+The thread of the file transport (`LocalCliConnector` in its name) is now a daemon thread, as the threads of the
+WebSocket transport already were. Before, it kept the JVM alive when the application failed to start, for example a
+Spring Boot application whose port was in use: Camel had not started, so it never stopped the connector. An application
+that only kept running because of this thread now exits; keep it running on purpose, for example with
+`camel.main.run-controller=true` for a Spring Boot application without a web server.
