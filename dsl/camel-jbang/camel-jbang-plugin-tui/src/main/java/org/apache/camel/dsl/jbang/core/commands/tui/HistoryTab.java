@@ -2111,16 +2111,17 @@ class HistoryTab extends AbstractTab {
                 .build();
     }
 
-    private static Title buildHistoryTitle(List<HistoryEntry> entries) {
+    static Title buildHistoryTitle(List<HistoryEntry> entries) {
         if (entries.isEmpty()) {
             return Title.from(" History of last completed ");
         }
         HistoryEntry first = entries.get(0);
+        // the exchange completes at its last "last" step: a route called with direct or seda returns earlier, with
+        // its own (shorter) elapsed time
         HistoryEntry last = null;
         for (HistoryEntry e : entries) {
             if (e.last) {
                 last = e;
-                break;
             }
         }
         if (last == null) {
@@ -2247,11 +2248,7 @@ class HistoryTab extends AbstractTab {
             } else {
                 lines.add(Line.from(Span.styled(" Body:", headerStyle)));
             }
-            try {
-                body = Jsoner.unescape(body);
-            } catch (Exception e) {
-                // ignore
-            }
+            // the body is unescaped when it is parsed (StatusParser.bodyText)
             String[] bodyParts = body.split("\n");
             for (String bl : bodyParts) {
                 lines.add(Line.from(Span.raw("   " + stripControlChars(bl))));

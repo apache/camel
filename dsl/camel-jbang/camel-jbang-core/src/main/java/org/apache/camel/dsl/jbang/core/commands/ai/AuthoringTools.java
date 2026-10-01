@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor.tool;
 
@@ -304,7 +305,7 @@ public final class AuthoringTools {
                 .executor((ctx, args) -> {
                     selectProcess(ctx, args);
                     JsonObject errors = ctx.readErrorFile();
-                    return errors != null ? errors.toJson() : "No errors captured.";
+                    return errors != null ? unescapeBodies(errors).toJson() : "No errors captured.";
                 }));
 
         registry.accept(tool("camel_eval_expression",
@@ -1347,5 +1348,27 @@ public final class AuthoringTools {
         } catch (NumberFormatException e) {
             return defaultValue;
         }
+    }
+
+    /**
+     * Camel JSON-escapes the body of a message dump (MessageHelper), so a JSON body would reach the AI escaped twice (a
+     * body like {"orderId":1} showed as {\\"orderId\\":1}). The body values of the errors are unescaped once, as the
+     * TUI shows them.
+     */
+    static JsonObject unescapeBodies(JsonObject errors) {
+        Collection<Object> list = errors.getCollection("errors");
+        if (list != null) {
+            for (Object e : list) {
+                if (e instanceof JsonObject error && error.get("message") instanceof JsonObject message
+                        && message.get("body") instanceof JsonObject body && body.get("value") instanceof String value) {
+                    try {
+                        body.put("value", Jsoner.unescape(value));
+                    } catch (Exception ex) {
+                        // keep the value as it came
+                    }
+                }
+            }
+        }
+        return errors;
     }
 }

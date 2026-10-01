@@ -393,19 +393,40 @@ class McpFacade {
     }
 
     String selectIntegration(String nameOrPid) {
-        List<IntegrationInfo> infos = data.get();
+        IntegrationInfo info = findIntegration(data.get(), nameOrPid);
+        if (info == null) {
+            return null;
+        }
+        ctx.selectedPid = info.pid;
+        bridge.resetIntegrationTabState();
+        return info.name != null ? info.name : info.pid;
+    }
+
+    /**
+     * The integration by its pid or name, else by the folder of its project: an opened project runs under the name its
+     * app gives itself (camel.main.name, spring.application.name), not the name of the folder it was opened as.
+     */
+    static IntegrationInfo findIntegration(List<IntegrationInfo> infos, String nameOrPid) {
         for (IntegrationInfo info : infos) {
-            if (info.vanishing) {
-                continue;
+            if (!info.vanishing && (nameOrPid.equals(info.pid)
+                    || (info.name != null && info.name.equalsIgnoreCase(nameOrPid)))) {
+                return info;
             }
-            if (nameOrPid.equals(info.pid)
-                    || (info.name != null && info.name.equalsIgnoreCase(nameOrPid))) {
-                ctx.selectedPid = info.pid;
-                bridge.resetIntegrationTabState();
-                return info.name != null ? info.name : info.pid;
+        }
+        for (IntegrationInfo info : infos) {
+            if (!info.vanishing && (folderNamed(info.directory, nameOrPid) || folderNamed(info.sourceDir, nameOrPid))) {
+                return info;
             }
         }
         return null;
+    }
+
+    private static boolean folderNamed(String dir, String name) {
+        if (dir == null || dir.isBlank()) {
+            return false;
+        }
+        Path folder = Path.of(dir).getFileName();
+        return folder != null && folder.toString().equalsIgnoreCase(name);
     }
 
     List<String> getTabNames() {

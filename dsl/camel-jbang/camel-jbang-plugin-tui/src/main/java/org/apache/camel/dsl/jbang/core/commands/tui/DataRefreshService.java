@@ -77,6 +77,7 @@ class DataRefreshService {
 
     // Sparkline/chart history for all metric families
     private final MetricsCollector metrics = new MetricsCollector();
+    private final RateEstimator rates = new RateEstimator();
 
     // Cached PID list -- full process scan throttled to every 2 seconds (1 second in burst mode)
     private volatile List<Long> cachedPids = Collections.emptyList();
@@ -274,6 +275,7 @@ class DataRefreshService {
                         info.activity = prev.activity;
                         info.errors = prev.errors;
                     }
+                    rates.fill(info, now);
                     infos.add(info);
                     metrics.updateThroughputHistory(info);
                     metrics.updateEndpointHistory(info);
@@ -314,6 +316,7 @@ class DataRefreshService {
 
         handleVanishing(infos, now);
         mergePhantoms(infos);
+        rates.retain(infos.stream().map(i -> i.pid).collect(Collectors.toSet()));
         data.set(infos);
         return fullScan;
     }

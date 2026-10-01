@@ -189,4 +189,22 @@ class HistoryTabRenderTest {
         return te;
     }
 
+    @Test
+    void theTitleGivesTheElapsedTimeOfTheWholeExchange() {
+        // checkout calls payment-provider over direct: the called route returns first, after 0ms
+        HistoryEntry from = historyEntry("checkout", 0, false);
+        HistoryEntry called = historyEntry("payment-provider", 0, true);
+        HistoryEntry done = historyEntry("checkout", 17, true);
+        String title = HistoryTab.buildHistoryTitle(List.of(from, called, done)).content().spans().stream()
+                .map(Span::content).reduce("", String::concat);
+        assertTrue(title.contains("elapsed:17ms"), title);
+    }
+
+    private static HistoryEntry historyEntry(String routeId, long elapsed, boolean last) {
+        HistoryEntry e = new HistoryEntry();
+        e.routeId = routeId;
+        e.elapsed = elapsed;
+        e.last = last;
+        return e;
+    }
 }
