@@ -94,6 +94,74 @@ class KameletValidationTest {
     }
 
     @Test
+    void aTemplateMayDeclareBeansBesideItsFrom() throws Exception {
+        // an entry of a route file is exactly one of route/from/beans/...; a Kamelet template is not, and 60 of the
+        // 250 kamelets of the library declare a bean beside their from, counter-source among them
+        assertThat(validate("""
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: counter-source
+                spec:
+                  template:
+                    beans:
+                      - name: counter
+                        type: java.util.concurrent.atomic.AtomicInteger
+                    from:
+                      uri: timer:counter
+                      steps:
+                        - bean:
+                            ref: "{{counter}}"
+                            method: getAndIncrement
+                """)).isEmpty();
+    }
+
+    @Test
+    void aPropertyOfTheDefinitionIsNotAStepOfTheSameName() throws Exception {
+        // spec.definition is the JSON schema of the Kamelet's properties: a property named delay is not the Delay EIP,
+        // which is what aws-s3-source and eight others of the library were told
+        assertThat(validate("""
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: aws-s3-source
+                spec:
+                  definition:
+                    title: AWS S3 Source
+                    properties:
+                      delay:
+                        title: Delay
+                        type: integer
+                        default: 500
+                  template:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: "kamelet:sink"
+                """)).isEmpty();
+    }
+
+    @Test
+    void aPlaceholderWhereAnEnumerationIsExpectedIsAccepted() throws Exception {
+        // a Kamelet template is made of placeholders, and the runtime resolves one before it looks at the value:
+        // fhir-source has fhirVersion: "{{fhirVersion}}" where the schema lists the six versions
+        assertThat(validate("""
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: fhir-source
+                spec:
+                  template:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - marshal:
+                            fhirJson:
+                              fhirVersion: "{{fhirVersion}}"
+                """)).isEmpty();
+    }
+
+    @Test
     void aRouteFileIsStillValidatedAsAListOfEntries() throws Exception {
         assertThat(validate("""
                 - route:

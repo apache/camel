@@ -622,9 +622,33 @@ public class YamlValidator {
         specProperties.putObject("types").put("type", "object");
         specProperties.putObject("dataTypes").put("type", "object");
         specProperties.putObject("dependencies").put("type", "array");
-        specProperties.putObject("template").put("$ref", "#/items");
+        specProperties.putObject("template").put("$ref", "#/templateEntry");
+        // an entry of a route file is exactly one of route/from/beans/..., which is what maxProperties says. The
+        // template of a Kamelet is not: counter-source declares its bean beside its from, and 60 of the 250 kamelets
+        // of the library do the same. Everything else about an entry still holds, and the $refs inside the copy point
+        // at #/items/definitions/..., which is why the items node is kept as well.
+        ObjectNode template = routeModel.get("items").deepCopy();
+        template.remove("maxProperties");
+        root.set("templateEntry", template);
         root.set("items", routeModel.get("items"));
         return root;
+    }
+
+    /**
+     * The Kamelet without the parts that are not Camel: {@code spec.definition} is the JSON schema of its properties,
+     * and the type declarations are schemas too. The checks that walk the document for Camel nodes would otherwise read
+     * a property of that schema as a step of the same name. Keys are only removed, so every path under
+     * {@code spec.template} is unchanged and the reported lines stay right.
+     */
+    private static JsonNode withoutKameletMetadata(JsonNode target) {
+        ObjectNode copy = ((ObjectNode) target).deepCopy();
+        JsonNode spec = copy.get("spec");
+        if (spec instanceof ObjectNode specNode) {
+            specNode.remove("definition");
+            specNode.remove("types");
+            specNode.remove("dataTypes");
+        }
+        return copy;
     }
 
     /**
@@ -642,7 +666,31 @@ public class YamlValidator {
     private List<Error> validate(JsonNode target, Set<String> bodylessEndpoints) {
         Schema against = isKamelet(target) ? kameletSchema : schema;
         var errors = filterOneOfNoise(new ArrayList<>(against.validate(target)));
+        // the checks below walk the document looking for Camel nodes, and spec.definition of a Kamelet is a JSON
+        // schema of its properties, not Camel: a property named delay is not the Delay EIP, which is what
+        // aws-s3-source and eight others were told. Removing the branch leaves every path under spec.template as it
+        // was, so the locations and the lines stay right.
+        JsonNode camelOnly = isKamelet(target) ? withoutKameletMetadata(target) : target;
+        // the locations the runtime accepts after all, before they are dropped: a branch of an anyOf that failed only
+        // because of one of them leaves its companions behind, and those say the file needs a property it does not
+        // (fhir-sink unmarshals with fhirXml, whose fhirVersion is a placeholder, and was told fhirJson was required)
+        List<String> accepted = new ArrayList<>();
+        for (Error e : errors) {
+            if (isRuntimeAcceptedScalar(e)) {
+                accepted.add(String.valueOf(e.getInstanceLocation()));
+            }
+        }
         errors.removeIf(YamlValidator::isRuntimeAcceptedScalar);
+        if (!accepted.isEmpty()) {
+            errors.removeIf(e -> {
+                String keyword = e.getKeyword();
+                if (!"required".equals(keyword) && !"oneOf".equals(keyword) && !"anyOf".equals(keyword)) {
+                    return false;
+                }
+                String at = String.valueOf(e.getInstanceLocation());
+                return accepted.stream().anyMatch(a -> a.startsWith(at + "/"));
+            });
+        }
         if (canonical) {
             errors = SchemaHints.apply(SchemaHints.COMPACT, errors, this);
         }
@@ -654,7 +702,7 @@ public class YamlValidator {
         // plus one "required property <language> not found" per language; replace that with one line that says
         // what to write, at the node's own location
         List<Error> missing = new ArrayList<>();
-        checkRequiredExpressions(target, new NodePath(PathType.JSON_POINTER), missing);
+        checkRequiredExpressions(camelOnly, new NodePath(PathType.JSON_POINTER), missing);
         for (Error m : missing) {
             String at = String.valueOf(m.getInstanceLocation());
             errors.removeIf(e -> String.valueOf(e.getInstanceLocation()).equals(at)
@@ -674,13 +722,13 @@ public class YamlValidator {
                     && ("oneOf".equals(e.getKeyword()) || "required".equals(e.getKeyword())));
         }
         if (errors.isEmpty()) {
-            checkSimpleSyntaxInScripts(target, new NodePath(PathType.JSON_POINTER), errors);
-            checkDynamicUri(target, new NodePath(PathType.JSON_POINTER), errors);
+            checkSimpleSyntaxInScripts(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
+            checkDynamicUri(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             // where the body comes from, across the routes of the file (CAMEL-24844)
-            BodyTypeFlow.check(target, new NodePath(PathType.JSON_POINTER), errors, bodylessEndpoints);
+            BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, bodylessEndpoints);
         }
         if (canonical) {
-            checkOneOfCardinality(target, new NodePath(PathType.JSON_POINTER), errors);
+            checkOneOfCardinality(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             // unmarshal: {jackson: {}}: the unknown key already got its hint; the list of every data format that
             // "found none" adds at the same location only buries it
             errors.removeIf(e -> "oneOf".equals(e.getKeyword())
@@ -1184,18 +1232,26 @@ public class YamlValidator {
      * CAMEL-24696 before exposing it.
      */
     static boolean isRuntimeAcceptedScalar(Error error) {
-        if (!"type".equals(error.getKeyword())) {
+        String keyword = error.getKeyword();
+        if (!"type".equals(keyword) && !"enum".equals(keyword)) {
             return false;
         }
         JsonNode instance = error.getInstanceNode();
         if (instance == null) {
             return false;
         }
+        if (instance.isTextual() && hasPropertyPlaceholder(instance.asText())) {
+            // the runtime resolves the placeholder before it looks at the value, so neither its type nor its
+            // membership of an enumeration can be told from here. A Kamelet template is made of them:
+            // fhir-source has fhirVersion: "{{fhirVersion}}" where the schema lists the six versions
+            return true;
+        }
+        if (!"type".equals(keyword)) {
+            // what follows is the leniency of a converted scalar, which is about types only
+            return false;
+        }
         if (instance.isTextual()) {
             String text = instance.asText();
-            if (hasPropertyPlaceholder(text)) {
-                return true;
-            }
             if (isExpectedType(error, "boolean")) {
                 return isBooleanText(text);
             }
