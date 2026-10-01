@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -158,8 +159,11 @@ class RunExistingProjectTest extends CamelCommandBaseTestSupport {
         List<String> args = run("--profile=dev", "--port=9090", "--prop=foo=bar", "--jvm-args=-Xmx512m", "pom.xml")
                 .buildExistingSpringBootJvmArgs();
 
-        assertThat(args).containsExactly(
-                "-Dlogging.config=classpath:logback-camel-jbang.xml",
+        // the logback configuration is a temp file: the project needs no src/main/resources and is not changed
+        assertThat(args.get(0)).startsWith("-Dlogging.config=file:").endsWith(".xml");
+        assertThat(Path.of(URI.create(args.get(0).substring("-Dlogging.config=".length())))).exists()
+                .content().contains("<configuration");
+        assertThat(args.subList(1, args.size())).containsExactly(
                 "-Dcamel.main.profile=dev",
                 "-Dserver.port=9090",
                 "-Dfoo=bar",

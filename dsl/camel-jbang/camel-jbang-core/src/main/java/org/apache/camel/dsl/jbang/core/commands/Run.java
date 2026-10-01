@@ -590,6 +590,9 @@ public class Run extends CamelCommand {
         return run();
     }
 
+    // the logback configuration of an existing Spring Boot project run, in a temp file
+    private Path springBootLogback;
+
     public Integer runExport() throws Exception {
         return runExport(false);
     }
@@ -2433,9 +2436,33 @@ public class Run extends CamelCommand {
      * The JVM arguments ({@code spring-boot.run.jvmArguments}) an existing Spring Boot project is run with: logging to
      * file, the profile, the port and properties, the flight recording and {@code --jvm-args}.
      */
+    /**
+     * The logback configuration an existing Spring Boot project runs with, logging to file so the TUI can read the log:
+     * a temp file, so the project is not changed and needs no src/main/resources. Null when it cannot be written.
+     */
+    Path springBootLogbackConfig() {
+        if (springBootLogback == null) {
+            try (InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml")) {
+                if (is == null) {
+                    return null;
+                }
+                Path file = Files.createTempFile("camel-jbang-logback-", ".xml");
+                file.toFile().deleteOnExit();
+                Files.copy(is, file, StandardCopyOption.REPLACE_EXISTING);
+                springBootLogback = file;
+            } catch (IOException e) {
+                return null;
+            }
+        }
+        return springBootLogback;
+    }
+
     List<String> buildExistingSpringBootJvmArgs() {
         List<String> args = new ArrayList<>();
-        args.add("-Dlogging.config=classpath:logback-camel-jbang.xml");
+        Path logback = springBootLogbackConfig();
+        if (logback != null) {
+            args.add("-Dlogging.config=" + logback.toUri());
+        }
         if (profile != null && !"prod".equals(profile)) {
             args.add("-Dcamel.main.profile=" + profile);
         }
@@ -2487,14 +2514,6 @@ public class Run extends CamelCommand {
             w.write(fos, model);
         }
 
-        // copy logback config for logging to file (so TUI can read logs)
-        Path logbackPath = projectDir.resolve("src/main/resources/logback-camel-jbang.xml");
-        try (InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml")) {
-            if (is != null) {
-                Files.copy(is, logbackPath, StandardCopyOption.REPLACE_EXISTING);
-            }
-        }
-
         // shutdown hook to clean up temp files
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
@@ -2513,7 +2532,9 @@ public class Run extends CamelCommand {
                     }
                 }
                 Files.deleteIfExists(tempPom);
-                Files.deleteIfExists(logbackPath);
+                if (springBootLogback != null) {
+                    Files.deleteIfExists(springBootLogback);
+                }
             } catch (Exception e) {
                 // ignore
             }
