@@ -129,29 +129,26 @@ public class HMACAccumulator {
 
         public void write(byte[] data, int pos, int len) {
             if (available >= len) {
-                if (write + len > buffer.length) {
-                    int overlap = write + len % buffer.length;
-                    System.arraycopy(data, 0, buffer, write, len - overlap);
-                    System.arraycopy(data, len - overlap, buffer, 0, overlap);
-                } else {
-                    System.arraycopy(data, pos, buffer, write, len);
-                }
+                // copy up to the end of the array, and the rest (if any) to its start
+                int first = Math.min(len, buffer.length - write);
+                System.arraycopy(data, pos, buffer, write, first);
+                System.arraycopy(data, pos + first, buffer, 0, len - first);
                 write = (write + len) % buffer.length;
                 available -= len;
+            } else {
+                // cannot happen with the sizes used by decryptUpdate, but fail loudly rather than drop data
+                throw new IllegalStateException(
+                        "Cannot write " + len + " bytes to the circular buffer, only " + available + " available");
             }
         }
 
         public int read(byte[] dest, int position, int len) {
             if (dest.length - position >= len) {
                 if (buffer.length - available >= len) {
-                    int overlap = (read + len) % buffer.length;
-                    if (read > write) {
-                        int x = buffer.length - read;
-                        System.arraycopy(buffer, read, dest, position, buffer.length - read);
-                        System.arraycopy(buffer, 0, dest, position + x, overlap);
-                    } else {
-                        System.arraycopy(buffer, read, dest, position, len);
-                    }
+                    // copy up to the end of the array, and the rest (if any) from its start
+                    int first = Math.min(len, buffer.length - read);
+                    System.arraycopy(buffer, read, dest, position, first);
+                    System.arraycopy(buffer, 0, dest, position + first, len - first);
                     read = (read + len) % buffer.length;
                     available += len;
                     return len;
