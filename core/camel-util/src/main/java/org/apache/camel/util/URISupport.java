@@ -900,6 +900,12 @@ public final class URISupport {
         // createQueryString()/URLEncoder, which would needlessly percent-encode characters that are
         // legal unescaped in a URI query, such as ':' (eg host:port) or '/' (eg produces=application/json)
         query = buildSafeQueryString(keys, parameters);
+        if (query.indexOf('%') != -1) {
+            // a key or value needed a percent escape (such as = or # in a value), and a uri with % is normalized by
+            // the complex normalizer, which form-encodes the whole query; encode the same way here so normalizing a
+            // normalized uri gives the same uri (the fast parser only takes uris without %, so all % come from here)
+            query = createQueryString(keys, parameters, true);
+        }
         return buildUri(scheme, path, query);
     }
 
@@ -939,7 +945,7 @@ public final class URISupport {
     }
 
     private static void appendSafeQueryStringParameter(String key, String value, StringBuilder sb) {
-        sb.append(key);
+        sb.append(safeEncodeQueryPart(key));
         if (value == null) {
             return;
         }
@@ -950,16 +956,19 @@ public final class URISupport {
             // need to replace % with %25 to avoid losing "%" when decoding
             sb.append(URIScanner.replacePercent(value));
         } else {
-            // '&' and '=' are structurally significant in Camel's key=value&key=value query syntax
-            // and must stay escaped inside a value even though they are otherwise legal, unescaped
-            // characters in a URI query per RFC 3986 - UnsafeUriCharactersEncoder does not escape them
-            // as it is also used outside of this query-value context
-            String encoded = UnsafeUriCharactersEncoder.encode(value).replace("&", "%26").replace("=", "%3D");
-            // a space as +, as the complex normalizer (createQueryString) writes it, so normalizing a normalized
-            // uri gives the same uri; the fast parser only takes uris without %, so %20 here is always a space
-            encoded = encoded.replace("%20", "+");
-            sb.append(encoded);
+            sb.append(safeEncodeQueryPart(value));
         }
+    }
+
+    private static String safeEncodeQueryPart(String text) {
+        // '&' and '=' are structurally significant in Camel's key=value&key=value query syntax
+        // and must stay escaped inside a key or value even though they are otherwise legal, unescaped
+        // characters in a URI query per RFC 3986 - UnsafeUriCharactersEncoder does not escape them
+        // as it is also used outside of this query-value context
+        String encoded = UnsafeUriCharactersEncoder.encode(text).replace("&", "%26").replace("=", "%3D");
+        // a space as +, as the complex normalizer (createQueryString) writes it; the fast parser only takes uris
+        // without %, so %20 here is always a space
+        return encoded.replace("%20", "+");
     }
 
     private static String buildUri(String scheme, String path, String query) {
