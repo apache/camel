@@ -54,6 +54,9 @@ a heat map of the route: where messages go, where they fail.
 - Quick documentation panel is shown at the bottom (shows doc for current line)
 - **F7** — show diff of unsaved changes
 - **F9** — jump to next validation error
+- **Shift+F8** — ask the AI to fix the problem on the cursor line: the file is
+  saved as it is, and the AI panel opens with the question in its input (file,
+  line, problem); press Enter to send it, or change it first
 - **Shift+F9** — apply the fix of the problem on the cursor line, when the problem
   says it (an option typo, an enum value a letter off, `to` that should be
   `toD`, `${key}` where `{{key}}` is meant); the Error panel shows the fix
