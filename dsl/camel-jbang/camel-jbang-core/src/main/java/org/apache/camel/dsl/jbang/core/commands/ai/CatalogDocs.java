@@ -105,6 +105,12 @@ public final class CatalogDocs {
 
     /** How much of a component's documentation prose is carried in the answer by default (CAMEL-25040). */
     static final int DOC_EXCERPT_BUDGET = 1400;
+    /**
+     * The same for a language or a data format (CAMEL-25235). More than a component's, because a component says most of
+     * what it does through its options and these say it in prose: the semantic language's named questions, their type,
+     * instructions, criteria and threshold are not options at all.
+     */
+    static final int DOC_EXCERPT_BUDGET_PROSE = 3600;
 
     private static final Pattern XREF = Pattern.compile("xref:[^\\[]*\\[([^]]*)]");
     private static final Pattern INTERNAL_REF = Pattern.compile("<<[^,>]*,([^>]*)>>");
@@ -141,6 +147,10 @@ public final class CatalogDocs {
             }
             if (trimmed.startsWith("include::") || trimmed.startsWith("ifdef::") || trimmed.startsWith("endif::")
                     || trimmed.startsWith("ifndef::")) {
+                continue;
+            }
+            if (!fenced && trimmed.startsWith("//")) {
+                // an asciidoc line comment, such as the "// language options: START" markers around a generated table
                 continue;
             }
             if (trimmed.startsWith("----")) {
@@ -206,8 +216,9 @@ public final class CatalogDocs {
             String artifact = YAML_DATAFORMAT_NAMES.getOrDefault(name.toLowerCase(), name);
             DataFormatModel dm = catalog.dataFormatModel(artifact);
             if (dm != null) {
-                String doc = includeDoc ? catalog.asciiDoc(artifact + "-dataformat") : null;
-                JsonObject result = dataFormatDoc(dm, lowerFilter, scope, doc);
+                String adoc = catalog.asciiDoc(artifact + "-dataformat");
+                JsonObject result = dataFormatDoc(dm, lowerFilter, scope, includeDoc ? adoc : null,
+                        includeDoc ? null : docExcerpt(adoc, DOC_EXCERPT_BUDGET_PROSE));
                 String shape = YAML_DATAFORMAT_SHAPES.get(artifact);
                 if (shape != null) {
                     result.put("yaml", "marshal: {" + shape + "} or unmarshal: {" + shape + "}"
@@ -234,7 +245,10 @@ public final class CatalogDocs {
                     doc = catalog.asciiDoc(name + "-language");
                 }
                 boolean docPageOnly = page != null && !page.isEmpty();
-                return languageDoc(lm, lowerFilter, scope, doc, languageDocPages(catalog, name), docPageOnly);
+                // the start of the page unless the whole of it, or one of its sub-pages, was asked for
+                String excerpt = docPageOnly || includeDoc
+                        ? null : docExcerpt(catalog.asciiDoc(name + "-language"), DOC_EXCERPT_BUDGET_PROSE);
+                return languageDoc(lm, lowerFilter, scope, doc, languageDocPages(catalog, name), docPageOnly, excerpt);
             }
             if (kind != null) {
                 return notFound("Language", name, catalog.suggestLanguageNames(name, 5));
@@ -1103,7 +1117,8 @@ public final class CatalogDocs {
         return result;
     }
 
-    private static JsonObject dataFormatDoc(DataFormatModel model, String filter, OptionScope scope, String doc) {
+    private static JsonObject dataFormatDoc(
+            DataFormatModel model, String filter, OptionScope scope, String doc, String docExcerpt) {
         JsonObject result = new JsonObject();
         result.put("kind", "dataformat");
         result.put("name", model.getName());
@@ -1121,6 +1136,11 @@ public final class CatalogDocs {
         if (doc != null) {
             result.put("doc", doc);
         }
+        if (docExcerpt != null) {
+            // what the options cannot say: the syntax and the essentials, from the page itself
+            result.put("documentation", docExcerpt);
+            result.put("documentationHint", "the start of the documentation page; includeDoc=true for all of it");
+        }
         return result;
     }
 
@@ -1136,7 +1156,7 @@ public final class CatalogDocs {
 
     private static JsonObject languageDoc(
             LanguageModel model, String filter, OptionScope scope, String doc, List<String> docPages,
-            boolean docPageOnly) {
+            boolean docPageOnly, String docExcerpt) {
         JsonObject result = new JsonObject();
         result.put("kind", "language");
         result.put("name", model.getName());
@@ -1171,6 +1191,11 @@ public final class CatalogDocs {
         }
         if (doc != null) {
             result.put("doc", doc);
+        }
+        if (docExcerpt != null) {
+            // what the options cannot say: the syntax and the essentials, from the page itself
+            result.put("documentation", docExcerpt);
+            result.put("documentationHint", "the start of the documentation page; includeDoc=true for all of it");
         }
         return result;
     }
