@@ -127,7 +127,7 @@ public final class SourceValidator {
                 msgs.addAll(GroovyImportChecks.validateYamlGroovyImports(content, null, declarations.javaClasses()));
                 if (checkConsumers) {
                     // a direct: or seda: endpoint no route of the application consumes (CAMEL-24955)
-                    msgs.addAll(EndpointConsumerChecks.validateYamlConsumers(content, directory, fileName));
+                    msgs.addAll(EndpointConsumerChecks.validateYamlConsumers(content, directory, fileName, catalog));
                 }
             }
             return msgs;

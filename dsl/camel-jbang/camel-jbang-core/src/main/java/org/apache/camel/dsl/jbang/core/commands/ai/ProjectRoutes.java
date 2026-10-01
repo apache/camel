@@ -78,19 +78,6 @@ public final class ProjectRoutes {
     /** The id given to an onException or error handler outside a route, followed by where it is written. */
     public static final String ERROR_HANDLER_PREFIX = "error-handler@";
 
-    private static final Pattern JAVA_FROM = Pattern.compile("(?<![.\\w])from\\s*\\(\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
-    private static final Pattern JAVA_CALL = Pattern.compile(
-            "\\.(to|toD|wireTap|enrich|pollEnrich|poll|routeId|routeDescription|routeNote|routeGroup|kamelet|recipientList|routingSlip"
-                                                             + "|dynamicRouter)\\s*\\(\\s*(\"((?:[^\"\\\\]|\\\\.)*)\")?");
-    private static final Pattern JAVA_STEP = Pattern.compile("\\.(\\w+)\\s*\\(");
-    private static final Pattern JAVA_ON_EXCEPTION = Pattern.compile("(?<![.\\w])onException\\s*\\(");
-    private static final Pattern JAVA_DEAD_LETTER = Pattern.compile(
-            "deadLetterChannel\\s*\\(\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
-    private static final Pattern JAVA_TO = Pattern.compile("\\.to\\s*\\(\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
-    /** Java DSL calls that do not change what a route does: naming and describing it. */
-    private static final Set<String> JAVA_NAMING
-            = Set.of("routeId", "routeDescription", "routeNote", "routeGroup", "id", "description", "note");
-
     private ProjectRoutes() {
     }
 
@@ -184,9 +171,8 @@ public final class ProjectRoutes {
                 return new XmlReader(file, content, catalog).read();
             }
             if (lower.endsWith(".java")) {
-                // the Java DSL parser gives the model of the routes; the patterns only when it finds none
-                List<Route> routes = JavaRouteReader.read(file, content, catalog, constants);
-                return !routes.isEmpty() ? routes : readJava(file, content, catalog);
+                // read into the model by the Java DSL parser, without compiling the source
+                return JavaRouteReader.read(file, content, catalog, constants);
             }
         } catch (RuntimeException e) {
             // an overview skips what it cannot read; the validator reports what is wrong with the file
@@ -1093,172 +1079,6 @@ public final class ProjectRoutes {
             }
         }
         return line;
-    }
-
-    // ---- Java ----
-
-    /**
-     * The routes of a Java RouteBuilder, one per {@code from("...")}: every string literal passed to an endpoint method
-     * until the next from belongs to it.
-     */
-    private static List<Route> readJava(String file, String content, CamelCatalog catalog) {
-        String code = stripComments(content);
-        List<Route> routes = new ArrayList<>();
-        Matcher from = JAVA_FROM.matcher(code);
-        List<int[]> starts = new ArrayList<>();
-        List<String> uris = new ArrayList<>();
-        while (from.find()) {
-            starts.add(new int[] { from.start(), from.end() });
-            uris.add(unescape(from.group(1)));
-        }
-        for (int i = 0; i < starts.size(); i++) {
-            int end = i + 1 < starts.size() ? starts.get(i + 1)[0] : code.length();
-            String body = code.substring(starts.get(i)[1], end);
-            // a statement ends the route: stop at the first semicolon outside a string
-            int stop = statementEnd(body);
-            body = body.substring(0, stop);
-            Endpoint fromEp = endpoint(uris.get(i), null, false, catalog);
-            List<Endpoint> consumes = new ArrayList<>();
-            List<Endpoint> produces = new ArrayList<>();
-            add(consumes, fromEp);
-            String id = null;
-            String description = null;
-            String note = null;
-            String group = null;
-            Matcher m = JAVA_CALL.matcher(body);
-            while (m.find()) {
-                String method = m.group(1);
-                String literal = m.group(3) != null ? unescape(m.group(3)) : null;
-                switch (method) {
-                    case "routeId" -> id = literal;
-                    case "routeDescription" -> description = literal;
-                    case "routeNote" -> note = literal;
-                    case "routeGroup" -> group = literal;
-                    case "kamelet" ->
-                        add(produces, literal != null ? endpoint("kamelet:" + literal, null, false, catalog) : null);
-                    case "poll", "pollEnrich" -> add(consumes,
-                            literal != null ? endpoint(literal, null, true, catalog) : dynamicEndpoint(method));
-                    case "recipientList", "routingSlip", "dynamicRouter" -> produces.add(dynamicEndpoint(method));
-                    default -> add(produces, literal != null
-                            ? endpoint(literal, null, !"to".equals(method), catalog) : dynamicEndpoint(method));
-                }
-            }
-            int steps = 0;
-            Matcher s = JAVA_STEP.matcher(body);
-            while (s.find()) {
-                steps++;
-            }
-            routes.add(new Route(
-                    id, "route", description, group, file, lineAt(content, starts.get(i)[0]),
-                    "java", true, fromEp, consumes, produces, steps, -1, 0, null, null,
-                    javaLogOnly(body, produces), note));
-        }
-        javaErrorHandlers(file, content, code, catalog, routes);
-        return routes;
-    }
-
-    /** onException statements and dead letter channels outside a route, as error handler routes. */
-    private static void javaErrorHandlers(
-            String file, String content, String code, CamelCatalog catalog, List<Route> routes) {
-        List<Endpoint> produces = new ArrayList<>();
-        int first = -1;
-        Matcher on = JAVA_ON_EXCEPTION.matcher(code);
-        while (on.find()) {
-            String statement = code.substring(on.start(), on.start() + statementEnd(code.substring(on.start())));
-            Matcher to = JAVA_TO.matcher(statement);
-            while (to.find()) {
-                add(produces, endpoint(unescape(to.group(1)), null, false, catalog));
-                first = first < 0 ? on.start() : first;
-            }
-        }
-        Matcher dlc = JAVA_DEAD_LETTER.matcher(code);
-        while (dlc.find()) {
-            add(produces, endpoint(unescape(dlc.group(1)), null, false, catalog));
-            first = first < 0 ? dlc.start() : Math.min(first, dlc.start());
-        }
-        if (!produces.isEmpty()) {
-            int line = lineAt(content, first);
-            routes.add(new Route(
-                    ERROR_HANDLER_PREFIX + file + ":" + line, "errorHandler", null, null, file, line, "java", true, null,
-                    List.of(), produces.stream().map(Endpoint::asOnError).toList(), 0, -1, 0, null, null, false, null));
-        }
-    }
-
-    /** Whether a Java route only logs: its calls are log, to a log endpoint, or naming the route. */
-    private static boolean javaLogOnly(String body, List<Endpoint> produces) {
-        boolean logs = false;
-        Matcher m = JAVA_STEP.matcher(body);
-        while (m.find()) {
-            String method = m.group(1);
-            if ("log".equals(method) || "to".equals(method)) {
-                logs = true;
-            } else if (!JAVA_NAMING.contains(method)) {
-                return false;
-            }
-        }
-        return logs && produces.stream().allMatch(e -> "log".equals(e.scheme()));
-    }
-
-    /** Comments are replaced by spaces so offsets in the code still match the file. */
-    private static String stripComments(String content) {
-        StringBuilder sb = new StringBuilder(content.length());
-        int i = 0;
-        boolean inString = false;
-        while (i < content.length()) {
-            char c = content.charAt(i);
-            if (inString) {
-                sb.append(c);
-                if (c == '\\' && i + 1 < content.length()) {
-                    sb.append(content.charAt(++i));
-                } else if (c == '"') {
-                    inString = false;
-                }
-                i++;
-            } else if (c == '"') {
-                inString = true;
-                sb.append(c);
-                i++;
-            } else if (c == '/' && i + 1 < content.length() && content.charAt(i + 1) == '/') {
-                while (i < content.length() && content.charAt(i) != '\n') {
-                    sb.append(' ');
-                    i++;
-                }
-            } else if (c == '/' && i + 1 < content.length() && content.charAt(i + 1) == '*') {
-                int end = content.indexOf("*/", i + 2);
-                end = end < 0 ? content.length() : end + 2;
-                while (i < end) {
-                    sb.append(content.charAt(i) == '\n' ? '\n' : ' ');
-                    i++;
-                }
-            } else {
-                sb.append(c);
-                i++;
-            }
-        }
-        return sb.toString();
-    }
-
-    private static int statementEnd(String body) {
-        boolean inString = false;
-        for (int i = 0; i < body.length(); i++) {
-            char c = body.charAt(i);
-            if (inString) {
-                if (c == '\\') {
-                    i++;
-                } else if (c == '"') {
-                    inString = false;
-                }
-            } else if (c == '"') {
-                inString = true;
-            } else if (c == ';') {
-                return i;
-            }
-        }
-        return body.length();
-    }
-
-    private static String unescape(String literal) {
-        return literal.replace("\\\"", "\"").replace("\\\\", "\\");
     }
 
     /**

@@ -268,6 +268,29 @@ class LwJavaParserTest {
     }
 
     @Test
+    void anAnonymousRouteBuilderPassedToACall() {
+        // CAMEL-25199: camel.configure() is a call, the configure() of the anonymous RouteBuilder the declaration
+        JavaParseResult result = new LwJavaParser().parse("""
+                public final class Application {
+                    public static void main(String[] args) throws Exception {
+                        try (Main camel = new Main()) {
+                            camel.configure().addRoutesBuilder(new RouteBuilder() {
+                                @Override
+                                public void configure() throws Exception {
+                                    from("timer:foo?repeatCount=1").to("direct:aggregator");
+                                    from("direct:aggregator").to("log:out");
+                                }
+                            });
+                            camel.run();
+                        }
+                    }
+                }
+                """);
+        assertThat(result.routes().getRoutes()).extracting(r -> r.getInput().getUri())
+                .containsExactly("timer:foo?repeatCount=1", "direct:aggregator");
+    }
+
+    @Test
     void aRouteKeptInALocalVariable() {
         // a route built in steps: RouteDefinition route = from(...); route.to(...)
         JavaParseResult result = new LwJavaParser().parse("""
