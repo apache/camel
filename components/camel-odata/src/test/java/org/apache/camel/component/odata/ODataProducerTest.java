@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -28,7 +29,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.google.common.io.Resources;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.http.base.HttpOperationFailedException;
@@ -67,7 +67,7 @@ public class ODataProducerTest extends CamelTestSupport {
             .options(wireMockConfig()
                     .dynamicPort()
                     .dynamicHttpsPort()
-                    .keystorePath(Resources.getResource("localhost.p12").toString())
+                    .keystorePath(Objects.requireNonNull(ODataProducerTest.class.getResource("/localhost.p12")).getFile())
                     .keystoreType("PKCS12")
                     .keystorePassword("changeit")
                     .keyManagerPassword("changeit"))
@@ -1072,7 +1072,20 @@ public class ODataProducerTest extends CamelTestSupport {
 
             Exchange exchangeWithoutSsl = endpointWithoutSsl.createExchange();
 
-            assertThrows(Exception.class, () -> endpointWithoutSslProducer.process(exchangeWithoutSsl));
+            Throwable thrown = assertThrows(Throwable.class, () -> endpointWithoutSslProducer.process(exchangeWithoutSsl));
+
+            // Check for SSLException / SSLHandshakeException in the cause chain
+            boolean hasSslCause = false;
+            Throwable current = thrown;
+            while (current != null) {
+                if (current instanceof javax.net.ssl.SSLException) { // Use jakarta.net.ssl.SSLException if on Jakarta/Camel 4+
+                    hasSslCause = true;
+                    break;
+                }
+                current = current.getCause();
+            }
+
+            assertTrue(hasSslCause, "Expected SSL failure cause, but received: " + thrown);
         } finally {
             endpointWithoutSslProducer.stop();
             httpsProducer.stop();
