@@ -23,6 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import dev.openfga.sdk.api.client.OpenFgaClient;
 import dev.openfga.sdk.api.client.model.ClientCheckRequest;
 import dev.openfga.sdk.api.client.model.ClientCheckResponse;
+import dev.openfga.sdk.api.client.model.ClientListObjectsRequest;
 import dev.openfga.sdk.api.client.model.ClientListObjectsResponse;
 import dev.openfga.sdk.api.client.model.ClientTupleKey;
 import org.apache.camel.BindToRegistry;
@@ -33,6 +34,7 @@ import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -76,8 +78,8 @@ class OpenFgaContextualTuplesTest extends CamelTestSupport {
         assertThat(captureCheck().getContextualTuples())
                 .extracting(ClientTupleKey::getUser, ClientTupleKey::getRelation, ClientTupleKey::getObject)
                 .containsExactly(
-                        org.assertj.core.groups.Tuple.tuple("user:anne", "member", "team:eng"),
-                        org.assertj.core.groups.Tuple.tuple("user:anne", "on_network", "network:corp"));
+                        tuple("user:anne", "member", "team:eng"),
+                        tuple("user:anne", "on_network", "network:corp"));
     }
 
     @Test
@@ -184,8 +186,7 @@ class OpenFgaContextualTuplesTest extends CamelTestSupport {
                 e -> {
                 });
 
-        ArgumentCaptor<dev.openfga.sdk.api.client.model.ClientListObjectsRequest> captor
-                = ArgumentCaptor.forClass(dev.openfga.sdk.api.client.model.ClientListObjectsRequest.class);
+        ArgumentCaptor<ClientListObjectsRequest> captor = ArgumentCaptor.forClass(ClientListObjectsRequest.class);
         verify(client).listObjects(captor.capture(), any());
         assertThat(captor.getValue().getContextualTupleKeys()).singleElement()
                 .satisfies(tuple -> assertThat(tuple.getObject()).isEqualTo("team:eng"));

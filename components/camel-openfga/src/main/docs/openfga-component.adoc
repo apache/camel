@@ -328,10 +328,14 @@ It takes semicolon-separated `user,relation,object` triples, each part a Simple 
 
 [source,java]
 ------------------------------------------------------------
+// both the subject and the team come from exchange properties the route's own token-validating step set.
+// the object may come from the request - asking about a document is the caller's prerogative - but the
+// granting tuple must not, which is what the IMPORTANT block below is about
 to("openfga:check?storeId={{fga.store}}&relation=reader"
    + "&user=user:${exchangeProperty.CamelKeycloakTokenSubject}"
    + "&object=document:${header.documentId}"
-   + "&contextualTuples=user:${exchangeProperty.CamelKeycloakTokenSubject},member,team:${header.team}");
+   + "&contextualTuples=user:${exchangeProperty.CamelKeycloakTokenSubject},member,"
+   + "team:${exchangeProperty.tokenTeam}");
 ------------------------------------------------------------
 
 It applies to `check`, `batchCheck`, `listObjects`, `listRelations` and `listUsers`.
