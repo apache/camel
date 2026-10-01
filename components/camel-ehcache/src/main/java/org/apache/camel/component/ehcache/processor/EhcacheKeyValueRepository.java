@@ -127,9 +127,9 @@ public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValu
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
     public Object put(String key, Object value, Duration ttl) {
-        long expiresAt = hasPositiveTtl(ttl) ? System.currentTimeMillis() + ttl.toMillis() : Long.MAX_VALUE;
+        KeyValueTtlValue entry = newEntry(value, ttl);
         KeyValueTtlValue previous = cache.get(key);
-        cache.put(key, new KeyValueTtlValue(value, expiresAt));
+        cache.put(key, entry);
         if (previous == null || previous.isExpired()) {
             return null;
         }
