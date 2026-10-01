@@ -58,13 +58,15 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
-# [NOTE]
+[NOTE]
+====
+This is a producer-only component. Per-message options can be supplied through `CamelOData` headers in addition to endpoint options.
+====
 
-# This is a producer-only component. Per-message options can be supplied through `CamelOData` headers in addition to endpoint options.
-
-# [NOTE]
-
-# If the route receives messages from an untrusted producer, take care when forwarding internal Camel headers to this component. In particular, an inbound `Authorization` header can be used for the OData request and takes precedence over endpoint authentication.
+[NOTE]
+====
+If the route receives messages from an untrusted producer, take care when forwarding internal Camel headers to this component. In particular, an inbound `Authorization` header can be used for the OData request and takes precedence over endpoint authentication.
+====
 
 == Operations
 
@@ -280,7 +282,7 @@ For example:
 from("direct:updateProduct")
 .setHeader("CamelODataOperation", constant("UPDATE"))
 .setHeader("CamelODataKey", constant("101"))
-.setHeader("CamelODataETag", constant("W/"etag-value""))
+.setHeader("CamelODataETag", constant("W/\"etag-value\""))
 .setBody(constant(Map.of("Price", 249.99)))
 .to("odata:http://my-odata-service/odata/Products");
 ----------------------------------------------------
@@ -376,7 +378,7 @@ The component serializes the message body as JSON and sends it using HTTP `POST`
 from("direct:updateProduct")
 .setHeader("CamelODataOperation", constant("UPDATE"))
 .setHeader("CamelODataKey", constant("101"))
-.setHeader("CamelODataETag", constant("W/"etag-value""))
+.setHeader("CamelODataETag", constant("W/\"etag-value\""))
 .setBody(constant(Map.of("Price", 249.99)))
 .to("odata:http://my-odata-service/odata/Products");
 ----------------------------------------------------
