@@ -101,10 +101,10 @@ image::jbang/camel-tui-source-ai-edit-confirm.png[The change of the AI waits for
 
 A file the AI writes is checked like one you save, and a write that brings new problems is refused, so the AI gets the
 problems back and can try again. The view shows the file as the AI wrote it as soon as you apply the change. With `/write live` in the AI panel, you can also watch the AI type its change in the
-editor; see xref:camel-jbang-tui.adoc#_watching_the_ai_edit_live_mode[Watching the AI edit].
+editor; see xref:camel-jbang-tui-ai-agents.adoc#_watching_the_ai_edit_live_mode[Watching the AI edit].
 
 The AI panel works with a hosted provider or with a local model through Ollama; see
-xref:camel-jbang-tui.adoc#_choosing_an_ai_provider[Choosing an AI provider].
+xref:camel-jbang-tui-ai.adoc#_choosing_an_ai_provider[Choosing an AI provider].
 
 == Completion
 
