@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.networknt.schema.Error;
 import com.networknt.schema.Schema;
@@ -87,6 +88,13 @@ public class YamlValidator {
     private final String schemaJson;
     private CamelCatalog catalog;
     private Schema schema;
+    /**
+     * The schema for a Kamelet: the envelope, with its {@code spec.template} being one entry of the route schema. A
+     * {@code .kamelet.yaml} is a YAML object and not the list of entries a route file is, so the route schema rejects
+     * every one of them as "object found, array expected" -- and because the tools validate before they write, the file
+     * cannot be written at all (CAMEL-25194).
+     */
+    private Schema kameletSchema;
     private Map<String, OneOfGroup> oneOfGroups;
 
     private record OneOfGroup(Set<String> alternatives, boolean required) {
@@ -585,8 +593,55 @@ public class YamlValidator {
         return null;
     }
 
+    /**
+     * A schema document for a Kamelet, built from the route schema so that one is the source of truth for both. The
+     * {@code items} node of the route schema is kept at {@code /items} so that the {@code #/items/definitions/...}
+     * references inside it still resolve, and {@code spec.template} points at it: the template of a Kamelet is one
+     * entry of a route file, which is what the loader makes of it.
+     * <p/>
+     * The envelope is described loosely on purpose. Camel does not own the Kamelet CRD, so the parts it does not read
+     * are accepted as they come rather than failed for being unknown.
+     */
+    private JsonNode kameletModel(JsonNode routeModel) {
+        ObjectNode root = mapper.createObjectNode();
+        JsonNode dialect = routeModel.get("$schema");
+        if (dialect != null) {
+            root.set("$schema", dialect);
+        }
+        root.put("type", "object");
+        root.put("additionalProperties", true);
+        ObjectNode properties = root.putObject("properties");
+        properties.putObject("apiVersion").put("type", "string");
+        properties.putObject("kind").put("type", "string");
+        properties.putObject("metadata").put("type", "object");
+        ObjectNode spec = properties.putObject("spec");
+        spec.put("type", "object");
+        spec.put("additionalProperties", true);
+        ObjectNode specProperties = spec.putObject("properties");
+        specProperties.putObject("definition").put("type", "object");
+        specProperties.putObject("types").put("type", "object");
+        specProperties.putObject("dataTypes").put("type", "object");
+        specProperties.putObject("dependencies").put("type", "array");
+        specProperties.putObject("template").put("$ref", "#/items");
+        root.set("items", routeModel.get("items"));
+        return root;
+    }
+
+    /**
+     * Whether the document is a Kamelet rather than a list of route entries: {@code kind: Kamelet}, which is what the
+     * loader looks at too.
+     */
+    static boolean isKamelet(JsonNode target) {
+        if (target == null || !target.isObject()) {
+            return false;
+        }
+        JsonNode kind = target.get("kind");
+        return kind != null && kind.isTextual() && "Kamelet".equals(kind.asText());
+    }
+
     private List<Error> validate(JsonNode target, Set<String> bodylessEndpoints) {
-        var errors = filterOneOfNoise(new ArrayList<>(schema.validate(target)));
+        Schema against = isKamelet(target) ? kameletSchema : schema;
+        var errors = filterOneOfNoise(new ArrayList<>(against.validate(target)));
         errors.removeIf(YamlValidator::isRuntimeAcceptedScalar);
         if (canonical) {
             errors = SchemaHints.apply(SchemaHints.COMPACT, errors, this);
@@ -1380,6 +1435,7 @@ public class YamlValidator {
         // Use a proper URI for the schema location to ensure $ref resolution works
         var schemaLocation = SchemaLocation.of(location);
         schema = schemaRegistry.getSchema(schemaLocation, model);
+        kameletSchema = schemaRegistry.getSchema(SchemaLocation.of(location + "-kamelet"), kameletModel(model));
 
         if (canonical) {
             oneOfGroups = loadOneOfGroups();
