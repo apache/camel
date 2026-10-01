@@ -12568,7 +12568,7 @@ public class StaticEndpointBuilders {
      * OData (camel-odata)
      * Camel OData Component
      * 
-     * Category: http,cloud
+     * Category: http
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-odata
      * 
@@ -12587,7 +12587,7 @@ public class StaticEndpointBuilders {
      * OData (camel-odata)
      * Camel OData Component
      * 
-     * Category: http,cloud
+     * Category: http
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-odata
      * 
