@@ -665,7 +665,11 @@ public class YamlValidator {
 
     private List<Error> validate(JsonNode target, Set<String> bodylessEndpoints) {
         Schema against = isKamelet(target) ? kameletSchema : schema;
-        var errors = filterOneOfNoise(new ArrayList<>(against.validate(target)));
+        // before the noise filter, which keeps one branch per construct: the alternatives of a construct are the
+        // keys its branches require, and they are only all present while nothing has been dropped yet
+        List<Error> raw = new ArrayList<>(against.validate(target));
+        removeSatisfiedAlternatives(raw);
+        var errors = filterOneOfNoise(raw);
         // the checks below walk the document looking for Camel nodes, and spec.definition of a Kamelet is a JSON
         // schema of its properties, not Camel: a property named delay is not the Delay EIP, which is what
         // aws-s3-source and eight others were told. Removing the branch leaves every path under spec.template as it
@@ -1207,6 +1211,52 @@ public class YamlValidator {
             }
         }
         return groups;
+    }
+
+    /**
+     * Drops "required property X not found" where one of the alternatives is in fact there.
+     * <p/>
+     * The branches of a {@code oneOf} each require their own key, and when all of them are reported the file is told it
+     * needs a key it does not: {@code unmarshal: {fhirXml: ...}} in one when branch of a choice was told "required
+     * property 'fhirJson' not found", because the winner of the other when branch was chosen for it as well. Collected
+     * per construct and per place, they name the keys the file did not write; if the object at that place has anything
+     * in it, a branch was chosen and the rest are noise. When it is empty, the file really does have to pick one and
+     * the errors stay (CAMEL-25238).
+     */
+    private static void removeSatisfiedAlternatives(List<Error> errors) {
+        Map<String, List<Error>> groups = new LinkedHashMap<>();
+        for (Error e : errors) {
+            if (!"required".equals(e.getKeyword())) {
+                continue;
+            }
+            String construct = constructOf(String.valueOf(e.getEvaluationPath()));
+            if (construct != null) {
+                groups.computeIfAbsent(construct + "@" + e.getInstanceLocation(), k -> new ArrayList<>()).add(e);
+            }
+        }
+        for (List<Error> group : groups.values()) {
+            JsonNode instance = group.get(0).getInstanceNode();
+            if (instance == null || !instance.isObject()) {
+                continue;
+            }
+            // the branches of a pick-one construct each require their own key, so one error per key the file did not
+            // write. The key it did write is the one missing from them: that branch got past its required check and
+            // failed, if at all, further in. So a non-empty object means a branch was chosen and the rest are noise.
+            // An object with nothing in it, or with a key no branch knows, still gets the construct's own error and
+            // the additionalProperties error, which is what actually tells the author what to do.
+            if (!instance.isEmpty() && group.size() > 1) {
+                errors.removeAll(group);
+            }
+        }
+    }
+
+    /**
+     * The schema construct an error came from when it came from inside a branch of a {@code oneOf} or an {@code anyOf}:
+     * its evaluation path up to and including that keyword, or null when it is not inside one.
+     */
+    private static String constructOf(String evaluationPath) {
+        int at = Math.max(evaluationPath.lastIndexOf("/oneOf/"), evaluationPath.lastIndexOf("/anyOf/"));
+        return at < 0 ? null : evaluationPath.substring(0, at + 7);
     }
 
     /**
