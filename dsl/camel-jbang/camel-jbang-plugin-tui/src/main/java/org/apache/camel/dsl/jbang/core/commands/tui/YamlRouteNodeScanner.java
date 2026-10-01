@@ -208,7 +208,7 @@ class YamlRouteNodeScanner {
                 EntryKind.ROUTE, resolvedId, fromUri, "route", fromUri, filePath, fromLine, 0, fromLine));
     }
 
-    private static String resolveRouteId(String routeId, String fromUri) {
+    static String resolveRouteId(String routeId, String fromUri) {
         if (routeId != null && !routeId.isEmpty()) {
             return routeId;
         }

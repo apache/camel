@@ -193,6 +193,8 @@ public class CamelMonitor extends CamelCommand {
     private final EditReplay editReplay = new EditReplay();
     // a live write waiting to start on the UI thread, and the promise its tool thread waits on
     private volatile McpFacade.FileWrite pendingReplay;
+    /** The files AI tools wrote, for the source viewer to show again on the UI thread. */
+    private final Queue<Path> writtenFiles = new ConcurrentLinkedQueue<>();
     private volatile CompletableFuture<McpFacade.ReplayOutcome> pendingReplayOutcome;
     // both are read by the tool thread to decide whether a write can be replayed
     private volatile McpFacade.FileWrite activeReplay;
@@ -811,6 +813,11 @@ public class CamelMonitor extends CamelCommand {
                     public String parkedReplayFile() {
                         McpFacade.FileWrite parked = activeReplay;
                         return parked != null && activeReplayOutcome == null ? parked.file() : null;
+                    }
+
+                    @Override
+                    public void fileWritten(Path file) {
+                        writtenFiles.add(file);
                     }
 
                     @Override
@@ -1867,6 +1874,9 @@ public class CamelMonitor extends CamelCommand {
         drawOverlay.tick(now);
         captionOverlay.tick(now);
         tickEditReplay(now);
+        for (Path written = writtenFiles.poll(); written != null; written = writtenFiles.poll()) {
+            tabRegistry.sourceTab().reloadIfShowing(written);
+        }
         recordingManager.tickRecentKeys(now);
         boolean anyDiagramShowing = tabRegistry.routesTab().isShowDiagram()
                 || tabRegistry.diagramTab().isShowDiagram();

@@ -82,6 +82,23 @@ class QuickFixesTest {
     }
 
     @Test
+    void aSimpleFunctionTheErrorNamesTheRightOneOf() {
+        assertThat(fixed("MyRoute.java", java(
+                "        from(\"timer:tick\").filter(simple(\"${bdy} > 3\")).to(\"seda:out\");")))
+                .isEqualTo("from(\"timer:tick\").filter(simple(\"${body} > 3\")).to(\"seda:out\");");
+        assertThat(fixed("MyRoute.java", java(
+                "        from(\"timer:tick\").setBody(simple(\"${Body}\")).to(\"seda:out\");")))
+                .isEqualTo("from(\"timer:tick\").setBody(simple(\"${body}\")).to(\"seda:out\");");
+    }
+
+    @Test
+    void aSimpleFunctionWithoutASuggestionHasNoFix() {
+        String error = "Line 6: Simple syntax error: Unknown function: zzzzqqq (the functions are documented on the"
+                       + " simple language page (functions))";
+        assertThat(QuickFixes.fixFor(error, "    .setBody(simple(\"${zzzzqqq}\"))")).isNull();
+    }
+
+    @Test
     void aTypoOfAYamlOption() {
         assertThat(fixed("route.camel.yaml", """
                 - route:
