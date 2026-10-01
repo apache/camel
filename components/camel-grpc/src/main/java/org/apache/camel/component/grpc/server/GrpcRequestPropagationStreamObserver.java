@@ -35,8 +35,14 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
         super(endpoint, consumer, responseObserver, headers);
     }
 
+    // set when a failed exchange ended the call with an error: nothing more can be sent to the client
+    private volatile boolean failed;
+
     @Override
     public void onNext(Object request) {
+        if (failed) {
+            return;
+        }
         CountDownLatch latch = new CountDownLatch(1);
 
         exchange = endpoint.createExchange();
@@ -47,6 +53,11 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
 
         try {
             latch.await();
+
+            if (sendFailure(exchange)) {
+                failed = true;
+                return;
+            }
 
             Object responseBody = exchange.getMessage().getBody();
             if (responseBody instanceof List) {
@@ -67,7 +78,9 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
         exchange = endpoint.createExchange();
         exchange.getIn().setHeaders(headers);
         consumer.onError(exchange, throwable);
-        responseObserver.onError(throwable);
+        if (!failed) {
+            responseObserver.onError(throwable);
+        }
     }
 
     @Override
@@ -75,6 +88,8 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
         exchange = endpoint.createExchange();
         exchange.getIn().setHeaders(headers);
         consumer.onCompleted(exchange);
-        responseObserver.onCompleted();
+        if (!failed) {
+            responseObserver.onCompleted();
+        }
     }
 }
