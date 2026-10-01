@@ -393,7 +393,9 @@ public final class QuarkusHelper {
         if (relPath != null && relPath.startsWith("/")) {
             relPath = relPath.substring(1);
         }
-        final Path cacheFile = registriesDir.resolve(uri.getHost()).resolve(relPath + ".json").normalize();
+        // the port is part of the registry: two registries on one host must not share their caches
+        final String registryDir = uri.getPort() < 0 ? uri.getHost() : uri.getHost() + "_" + uri.getPort();
+        final Path cacheFile = registriesDir.resolve(registryDir).resolve(relPath + ".json").normalize();
         if (!cacheFile.startsWith(registriesDir)) {
             throw new IllegalStateException(
                     "Could not create a safe cache directory for " + uri + ": " + cacheFile + " is not under "

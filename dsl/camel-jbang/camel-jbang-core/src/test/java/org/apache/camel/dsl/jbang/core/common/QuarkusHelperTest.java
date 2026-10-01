@@ -166,7 +166,7 @@ public class QuarkusHelperTest {
                         .withBody(allPlatformsJson)));
         JsonArray arr = QuarkusHelper.fetchPlatformStreams(wireMock.baseUrl(), true, false, registriesDir);
 
-        Assertions.assertThat(registriesDir.resolve("localhost/client/platforms/all.json")).hasContent(allPlatformsJson);
+        Assertions.assertThat(registryDir(registriesDir).resolve("client/platforms/all.json")).hasContent(allPlatformsJson);
 
         wireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/client/platforms/all"))
                 .willReturn(WireMock.forbidden()));
@@ -184,12 +184,17 @@ public class QuarkusHelperTest {
         return registriesDir;
     }
 
+    /** The cache directory of the WireMock registry: its host and, as it is not a default one, its port */
+    private static Path registryDir(Path registriesDir) {
+        return registriesDir.resolve("localhost_" + wireMock.getPort());
+    }
+
     private static Path mappingFile(Path registriesDir) {
-        return registriesDir.resolve("localhost/client/platforms/platform-mapping.json");
+        return registryDir(registriesDir).resolve("client/platforms/platform-mapping.json");
     }
 
     private static Path registryCacheFile(Path registriesDir) {
-        return registriesDir.resolve("localhost/client/platforms/all.json");
+        return registryDir(registriesDir).resolve("client/platforms/all.json");
     }
 
     /** Serves the registry document matching the BOM fixtures of this test and forgets earlier requests. */
