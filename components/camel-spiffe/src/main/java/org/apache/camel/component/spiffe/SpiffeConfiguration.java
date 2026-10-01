@@ -28,6 +28,9 @@ public class SpiffeConfiguration implements Cloneable {
     @UriParam(defaultValue = "fetchX509Svid")
     private SpiffeOperation operation = SpiffeOperation.fetchX509Svid;
 
+    @UriParam(label = "producer,security", defaultValue = "chain")
+    private SpiffeX509Response x509Response = SpiffeX509Response.chain;
+
     @UriParam(label = "security")
     private String spiffeSocketPath;
 
@@ -52,6 +55,22 @@ public class SpiffeConfiguration implements Cloneable {
 
     public void setOperation(SpiffeOperation operation) {
         this.operation = operation;
+    }
+
+    public SpiffeX509Response getX509Response() {
+        return x509Response;
+    }
+
+    /**
+     * What the {@code fetchX509Svid} operation returns in the message body.
+     * <p/>
+     * Defaults to {@code chain}: the X.509 certificate chain without the private key, so a route never handles key
+     * material unless it asks for it. Choose {@code svid} to get the whole {@code X509Svid} including the <em>private
+     * key</em> (needed for programmatic mTLS), or {@code id} to leave the body untouched. The SPIFFE ID and expiry are
+     * exposed through the {@code CamelSpiffeSpiffeId} and {@code CamelSpiffeExpiry} headers in every case.
+     */
+    public void setX509Response(SpiffeX509Response x509Response) {
+        this.x509Response = x509Response;
     }
 
     /**

@@ -33,6 +33,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.StatInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
+import org.apache.camel.dsl.jbang.core.commands.tui.BusinessEndpointLabels;
 import org.apache.camel.dsl.jbang.core.commands.tui.Theme;
 
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.BRANCH_CHILD_TYPES;
@@ -118,11 +119,21 @@ public class RouteDiagramWidget implements Widget {
         this.highlightFailed = highlightFailed;
         if (showDescription) {
             String desc = null;
+            String from = null;
             for (LayoutNode ln : layoutRoute.nodes) {
                 if ("route".equals(ln.type) && ln.treeNode != null) {
                     desc = ln.treeNode.info.description;
-                    break;
+                } else if ("from".equals(ln.type) && ln.treeNode != null && from == null) {
+                    from = ln.treeNode.info.description;
                 }
+            }
+            // the route's description, else its AI label, else what it consumes in plain words; the id of a route
+            // without one in its source is generated and says nothing
+            if (desc == null || desc.isBlank()) {
+                desc = routeDescriptions.get(layoutRoute.routeId);
+            }
+            if (desc == null || desc.isBlank()) {
+                desc = from;
             }
             this.currentRouteLabel = (desc != null && !desc.isBlank()) ? desc : layoutRoute.routeId;
         } else {
@@ -159,10 +170,62 @@ public class RouteDiagramWidget implements Widget {
         }
 
         // Nodes (on top, skip the structural "route" node)
+        markers.clear();
         for (LayoutNode ln : layoutRoute.nodes) {
             if (!"route".equals(ln.type)) {
                 drawNode(buffer, area, ln);
             }
+        }
+        // the markers beside the boxes last, so a long one stops at a box instead of drawing over it
+        for (Marker m : markers) {
+            writeMarker(buffer, area, m);
+        }
+    }
+
+    /**
+     * The text set in a border for where a message comes in ({@code " AMQP ──▶ "}) or leaves ({@code " ──▶ AMQP "}),
+     * the name cut with an ellipsis to leave some border on both sides.
+     */
+    private String borderText(String name, boolean in) {
+        String arrow = "──▶";
+        int room = boxWidth - 6 - arrow.length() - 3;
+        String n = name.length() > room ? name.substring(0, Math.max(1, room - 1)) + "…" : name;
+        return in ? " " + n + " " + arrow + " " : " " + arrow + " " + n + " ";
+    }
+
+    /** Text beside a box: where it links to. */
+    private record Marker(int row, int col, String text, Style style) {
+    }
+
+    private final List<Marker> markers = new ArrayList<>();
+
+    private boolean inBox(int row, int col) {
+        for (EipNodeBox b : nodeBoxes) {
+            if (row >= b.startRow() && row <= b.endRow() && col >= b.startCol() && col <= b.endCol()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void writeMarker(Buffer buffer, Rect area, Marker m) {
+        int y = area.y() + m.row() - scrollY;
+        if (y < area.top() || y >= area.bottom()) {
+            return;
+        }
+        for (int i = 0; i < m.text().length(); i++) {
+            int x = area.x() + m.col() - scrollX + i;
+            if (x >= area.right()) {
+                return;
+            }
+            if (x < area.left()) {
+                continue;
+            }
+            if (inBox(m.row(), m.col() + i)) {
+                // lines may be crossed, another box not
+                return;
+            }
+            buffer.setString(x, y, String.valueOf(m.text().charAt(i)), m.style());
         }
     }
 
@@ -190,7 +253,8 @@ public class RouteDiagramWidget implements Widget {
         if (highlighted) {
             eipColor = highlightFailed ? highlightFailColor() : highlightOkColor();
         } else {
-            eipColor = getEipColor(node.type);
+            // a remote endpoint is an edge of the integration: its own color, as in the topology
+            eipColor = external ? externalColor() : getEipColor(node.type);
         }
         Style borderStyle = Style.EMPTY.fg(eipColor);
         if (selected) {
@@ -244,7 +308,33 @@ public class RouteDiagramWidget implements Widget {
         String linkedRouteId = findLinkedRouteId(node);
         if (linkedRouteId != null) {
             Style linkStyle = Theme.label().bold();
-            writeText(buffer, area, bottom, col + boxWidth, " ↵ " + linkedRouteId, linkStyle);
+            String name = linkedRouteId;
+            if (showDescription && "from".equals(node.type)) {
+                // a from box names its caller in words; a to box already shows the route it links to in words, so
+                // its marker names the route by id, as the breadcrumb does
+                String desc = routeDescriptions.get(linkedRouteId);
+                if (desc != null && !desc.isBlank()) {
+                    name = desc;
+                }
+            }
+            markers.add(new Marker(bottom, col + boxWidth, " ↵ " + name, linkStyle));
+        }
+        // where the input comes from and where a message leaves, set in the border so every box keeps its size:
+        // in at the top left (AMQP ──▶), out at the bottom right (──▶ AMQP)
+        if ("from".equals(node.type) && !external && node.treeNode != null && isScheduled(node.treeNode.info)) {
+            // the route starts itself on a schedule
+            writeText(buffer, area, row, col + 1, borderText("↻", true), Theme.label().bold());
+        }
+        if (external && node.treeNode != null) {
+            String system = BusinessEndpointLabels.systemName(node.treeNode.info);
+            Style edgeStyle = Style.EMPTY.fg(externalColor()).bold();
+            if (system != null && "from".equals(node.type)) {
+                writeText(buffer, area, row, col + 1, borderText(system, true), edgeStyle);
+            } else if (system != null && linkedRouteId == null) {
+                // no route of the integration on the other side: the message leaves to a system
+                String out = borderText(system, false);
+                writeText(buffer, area, bottom, col + boxWidth - 1 - out.length(), out, edgeStyle);
+            }
         }
 
         nodeBoxes.add(new EipNodeBox(node.id, node.type, row, row + height - 1, col, col + boxWidth - 1, node));
@@ -497,6 +587,15 @@ public class RouteDiagramWidget implements Widget {
             return 0;
         }
         return pixelX * boxWidth / nodeWidth;
+    }
+
+    /** The components a route starts itself with, on a schedule. */
+    private static final Set<String> SCHEDULED = Set.of("timer", "cron", "quartz", "scheduler");
+
+    private static boolean isScheduled(RouteDiagramLayoutEngine.NodeInfo info) {
+        String uri = getBaseUri(info);
+        int colon = uri != null ? uri.indexOf(':') : -1;
+        return colon > 0 && SCHEDULED.contains(uri.substring(0, colon));
     }
 
     private boolean isExternalEndpoint(LayoutNode node) {

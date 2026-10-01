@@ -340,6 +340,25 @@ class SourceViewerEditTest {
     }
 
     @Test
+    void gotoPopupsTakeTypedDigits() {
+        // CAMEL-25192: a digit typed in go to route / go to line must not switch tabs
+        MonitorContext ctx = new MonitorContext(
+                new AtomicReference<>(List.of()),
+                new AtomicReference<>(List.of()));
+        SourceTab tab = new SourceTab(ctx);
+        assertThat(tab.isSourceViewerTextInputActive()).isFalse();
+
+        tab.gotoRoutePopup.open(List.of(new SourceTab.RouteEntry("a", "direct:a", "a.java", 0)));
+        assertThat(tab.isSourceViewerTextInputActive()).isTrue();
+        assertThat(tab.isOverlayActive()).isTrue();
+        tab.gotoRoutePopup.close();
+
+        tab.gotoSourceNodePopup.open(List.of(), 10);
+        assertThat(tab.isSourceViewerTextInputActive()).isTrue();
+        assertThat(tab.isOverlayActive()).isTrue();
+    }
+
+    @Test
     void saveMessageClearedOnSubsequentLoad() throws Exception {
         viewer.loadFile(sourceFile);
         viewer.enterEditMode();

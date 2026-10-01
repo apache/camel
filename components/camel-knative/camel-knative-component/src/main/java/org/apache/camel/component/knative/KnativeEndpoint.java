@@ -54,7 +54,8 @@ import org.slf4j.LoggerFactory;
              scheme = "knative",
              syntax = "knative:type/typeId",
              title = "Knative",
-             category = Category.CLOUD)
+             category = Category.CLOUD,
+             headersClass = KnativeConstants.class)
 @Metadata(annotations = {
         "protocol=http",
 })

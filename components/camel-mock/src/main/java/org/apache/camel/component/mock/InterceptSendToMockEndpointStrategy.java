@@ -24,6 +24,7 @@ import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.support.DefaultInterceptSendToEndpoint;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +72,24 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
 
     @Override
     public Endpoint registerEndpoint(String uri, Endpoint endpoint) {
-        if (endpoint instanceof InterceptSendToEndpoint) {
+        if (endpoint instanceof DefaultInterceptSendToEndpoint dise && dise.getBefore() == null
+                && dise.getAfter() == null && !dise.getEndpointUri().startsWith("mock:")
+                && matchPattern(uri, dise.getOriginalEndpoint(), pattern)) {
+            // endpoint decorated for the interceptors of routes (intercept send to endpoint EIP), which the mock
+            // interceptor is added to (and runs after the interceptors of the routes)
+            dise.setSkip(skip);
+            try {
+                Producer producer = createProducer(endpoint.getCamelContext(), uri, dise);
+                // allow custom logic
+                producer = onInterceptEndpoint(uri, dise.getOriginalEndpoint(), producer.getEndpoint(), producer);
+                dise.setBefore(producer);
+                // the endpoint may already be started
+                ServiceHelper.startService(producer);
+            } catch (Exception e) {
+                throw new RuntimeCamelException(e);
+            }
+            return dise;
+        } else if (endpoint instanceof InterceptSendToEndpoint) {
             // endpoint already decorated
             return endpoint;
         } else if (endpoint.getEndpointUri().startsWith("mock:")) {

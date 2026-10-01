@@ -52,8 +52,19 @@ public class SpiffeProducer extends DefaultProducer {
     private void fetchX509Svid(WorkloadApiClient client, Exchange exchange) throws Exception {
         X509Svid svid = client.fetchX509Context().getDefaultSvid();
         Message message = getMessageForResponse(exchange);
-        message.setBody(svid);
+        // the identity is always available through the headers, so a route that only needs it can avoid the key
         message.setHeader(SpiffeConstants.SPIFFE_ID, svid.getSpiffeId().toString());
+        message.setHeader(SpiffeConstants.EXPIRY, svid.getLeaf().getNotAfter());
+        switch (getEndpoint().getConfiguration().getX509Response()) {
+            // the full SVID carries the private key; the chain does not; id leaves the body untouched
+            case svid -> message.setBody(svid);
+            case chain -> message.setBody(svid.getChain());
+            case id -> {
+                // leave the body untouched: the identity is exposed through the headers only
+            }
+            default -> throw new IllegalArgumentException(
+                    "Unsupported x509Response: " + getEndpoint().getConfiguration().getX509Response());
+        }
     }
 
     private void fetchJwtSvid(WorkloadApiClient client, Exchange exchange) throws Exception {
@@ -70,11 +81,18 @@ public class SpiffeProducer extends DefaultProducer {
     private void validateJwtSvid(WorkloadApiClient client, Exchange exchange) throws Exception {
         String token = exchange.getIn().getHeader(SpiffeConstants.TOKEN, String.class);
         if (ObjectHelper.isEmpty(token)) {
+            // a JWT-SVID is presented over HTTP as "Authorization: Bearer <token>", so an HTTP route can validate it
+            // without a bean to strip the scheme; check it before the body so a request payload on a POST/PUT is not
+            // mistaken for the token
+            token = bearerToken(exchange.getIn().getHeader("Authorization", String.class));
+        }
+        if (ObjectHelper.isEmpty(token)) {
             token = exchange.getIn().getBody(String.class);
         }
         if (ObjectHelper.isEmpty(token)) {
             throw new IllegalArgumentException(
-                    "A JWT-SVID token is required for validateJwtSvid (set the CamelSpiffeToken header or the body)");
+                    "A JWT-SVID token is required for validateJwtSvid (set the CamelSpiffeToken header, an"
+                                               + " Authorization: Bearer header, or the message body)");
         }
         // the audience is the check here, not a parameter: it is what binds the token to THIS workload, so it
         // comes from the configuration only. Honouring CamelSpiffeAudience would let a caller validate a token
@@ -109,6 +127,24 @@ public class SpiffeProducer extends DefaultProducer {
             throw new IllegalStateException("No audience was configured to validate against");
         }
         throw failure;
+    }
+
+    /**
+     * Extracts the token from an {@code Authorization: Bearer <token>} value, matching the scheme case-insensitively
+     * and trimming the token. Returns {@code null} for a missing, empty or non-bearer value, so such a request falls
+     * through to the single "token required" error rather than a scheme-specific one.
+     */
+    private static String bearerToken(String authorization) {
+        if (ObjectHelper.isEmpty(authorization)) {
+            return null;
+        }
+        String value = authorization.trim();
+        String scheme = "Bearer ";
+        if (value.length() > scheme.length() && value.regionMatches(true, 0, scheme, 0, scheme.length())) {
+            String token = value.substring(scheme.length()).trim();
+            return token.isEmpty() ? null : token;
+        }
+        return null;
     }
 
     private SpiffeOperation determineOperation(Exchange exchange) {

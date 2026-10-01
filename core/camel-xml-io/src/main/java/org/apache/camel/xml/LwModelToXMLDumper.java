@@ -44,6 +44,7 @@ import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -247,6 +248,13 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
      * @param namespaces the map of namespaces to add discovered XML namespaces into
      */
     private static void extractNamespaces(RouteDefinition route, Map<String, String> namespaces) {
+        for (SwitchDefinition sw : filterTypeInOutputs(route.getOutputs(), SwitchDefinition.class)) {
+            sw.preCreateProcessor();
+            NamespaceAware aware = getNamespaceAwareFromExpression(sw);
+            if (aware != null && aware.getNamespaces() != null) {
+                namespaces.putAll(aware.getNamespaces());
+            }
+        }
         for (ExpressionNode en : filterTypeInOutputs(route.getOutputs(), ExpressionNode.class)) {
             NamespaceAware na = getNamespaceAwareFromExpression(en);
             if (na != null) {
@@ -325,6 +333,17 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             }
         }
         return () -> restorers.forEach(Runnable::run);
+    }
+
+    private static NamespaceAware getNamespaceAwareFromExpression(SwitchDefinition definition) {
+        if (definition.getSelector() == null || definition.getSelector().getExpressionType() == null) {
+            return null;
+        }
+        ExpressionDefinition expression = definition.getSelector().getExpressionType();
+        if (expression.getExpressionValue() instanceof NamespaceAware aware) {
+            return aware;
+        }
+        return expression instanceof NamespaceAware aware ? aware : null;
     }
 
     private static NamespaceAware getNamespaceAwareFromExpression(ExpressionNode expressionNode) {

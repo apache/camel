@@ -30,6 +30,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.RuntimeProvider;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.YAML_URI_PATTERN;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.countLeadingSpaces;
@@ -218,31 +219,50 @@ final class EndpointChecks {
                 }
             }
 
-            String fullUri = uriBuilder.toString();
-            try {
-                EndpointValidationResult result
-                        = catalog.validateEndpointProperties(fullUri, false, consumerOnly, producerOnly);
-                String scheme = fullUri.contains(":") ? fullUri.substring(0, fullUri.indexOf(':')) : fullUri;
-                if (result.getUnknownComponent() != null) {
-                    // a warning to the catalog, an error when the runtime is what lacks the component
-                    String missing = missingInRuntime(catalog, scheme);
-                    if (missing != null) {
-                        errors.add(linePrefix(i) + missing);
-                    }
-                }
-                if (!result.isSuccess()) {
-                    collectEndpointErrors(errors, result, scheme, i, optionLineMap);
-                }
-                checkRegexOptions(errors, fullUri, i, optionLineMap);
-                checkDynamicDirectory(errors, fullUri, i, eipName);
-                checkSimplePlaceholders(errors, fullUri, i, optionLineMap, eipName);
-                checkRequiredPathOptions(errors, fullUri, catalog, i, eipName);
-                checkSqlNamedParameters(errors, fullUri, line, i, optionLineMap);
-            } catch (Exception e) {
-                // ignore validation errors
-            }
+            checkUri(errors, catalog, uriBuilder.toString(), line, i, optionLineMap, eipName, consumerOnly, producerOnly,
+                    false);
         }
         return errors;
+    }
+
+    /**
+     * The checks of one endpoint uri, whatever the DSL it is written in: the options against the catalog, then the
+     * mistakes the catalog does not see.
+     *
+     * @param fullUri       the uri with all its options
+     * @param rawLine       the source line of the uri (the sql check reads a statement with spaces from it)
+     * @param lineIdx       the index of the line of the uri
+     * @param optionLineMap the index of the line of each option written on a line of its own
+     * @param eipName       the EIP of the uri: from, to, toD...
+     * @param uriForm       whether the options are written in the uri (Java and XML) rather than under parameters
+     *                      (YAML), for the fix the messages suggest
+     */
+    static void checkUri(
+            List<String> errors, CamelCatalog catalog, String fullUri, String rawLine, int lineIdx,
+            Map<String, Integer> optionLineMap, String eipName, boolean consumerOnly, boolean producerOnly,
+            boolean uriForm) {
+        try {
+            EndpointValidationResult result
+                    = catalog.validateEndpointProperties(fullUri, false, consumerOnly, producerOnly);
+            String scheme = fullUri.contains(":") ? fullUri.substring(0, fullUri.indexOf(':')) : fullUri;
+            if (result.getUnknownComponent() != null) {
+                // a warning to the catalog, an error when the runtime is what lacks the component
+                String missing = missingInRuntime(catalog, scheme);
+                if (missing != null) {
+                    errors.add(linePrefix(lineIdx) + missing);
+                }
+            }
+            if (!result.isSuccess()) {
+                collectEndpointErrors(errors, result, scheme, catalog, lineIdx, optionLineMap);
+            }
+            checkRegexOptions(errors, fullUri, lineIdx, optionLineMap);
+            checkDynamicDirectory(errors, fullUri, lineIdx, eipName);
+            checkSimplePlaceholders(errors, fullUri, lineIdx, optionLineMap, eipName, uriForm);
+            checkRequiredPathOptions(errors, fullUri, catalog, lineIdx, eipName, uriForm);
+            checkSqlNamedParameters(errors, fullUri, rawLine, lineIdx, optionLineMap);
+        } catch (Exception e) {
+            // ignore validation errors
+        }
     }
 
     private static volatile CamelCatalog defaultCatalog;
@@ -477,7 +497,8 @@ final class EndpointChecks {
      * the uri as Simple first and are left alone.
      */
     static void checkSimplePlaceholders(
-            List<String> errors, String fullUri, int uriLineIdx, Map<String, Integer> optionLineMap, String eipName) {
+            List<String> errors, String fullUri, int uriLineIdx, Map<String, Integer> optionLineMap, String eipName,
+            boolean uriForm) {
         if (eipName != null && DYNAMIC_URI_EIPS.contains(eipName)) {
             return;
         }
@@ -499,7 +520,8 @@ final class EndpointChecks {
             String key = YamlLines.propertyKeyOf(value);
             errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx)) + scheme + ": " + name + "=" + value
                        + " is a Simple expression, which an endpoint option is not evaluated as: a property placeholder"
-                       + " is written {{key}}, so " + name + ": \"{{" + key + "}}\"");
+                       + " is written {{key}}, so "
+                       + (uriForm ? name + "={{" + key + "}}" : name + ": \"{{" + key + "}}\""));
         }
     }
 
@@ -509,7 +531,8 @@ final class EndpointChecks {
      * (CAMEL-24858). Says both places it can go.
      */
     static void checkRequiredPathOptions(
-            List<String> errors, String fullUri, CamelCatalog catalog, int uriLineIdx, String eipName) {
+            List<String> errors, String fullUri, CamelCatalog catalog, int uriLineIdx, String eipName,
+            boolean uriForm) {
         int colon = fullUri.indexOf(':');
         if (colon < 0 || fullUri.contains("{{") || !"from".equals(eipName) && !"to".equals(eipName)) {
             return; // only an endpoint that is created: an intercept pattern such as jms* names no destination
@@ -538,8 +561,10 @@ final class EndpointChecks {
                 if (option.isRequired() && "path".equals(option.getKind()) && !given.contains(option.getName())) {
                     errors.add(linePrefix(uriLineIdx) + scheme + ": the required option '" + option.getName()
                                + "' is missing (the runtime says 'Option " + option.getName() + " is required'): write"
-                               + " it in the uri, uri: " + scheme + ":<" + option.getName() + ">, or under parameters"
-                               + " as " + option.getName() + ": <value>");
+                               + (uriForm
+                                       ? " it as the path of the uri, " + scheme + ":<" + option.getName() + ">"
+                                       : " it in the uri, uri: " + scheme + ":<" + option.getName()
+                                         + ">, or under parameters as " + option.getName() + ": <value>"));
                 }
             }
         } catch (Exception e) {
@@ -564,11 +589,48 @@ final class EndpointChecks {
         return sb.toString();
     }
 
+    /**
+     * Whether an option the catalog does not know is an entry of a map option, written name[key]:
+     * additional-properties[transactional.id] on kafka is the key transactional.id of additionalProperties, which the
+     * runtime binds as such.
+     */
+    static boolean isMapKey(CamelCatalog catalog, String scheme, String name) {
+        int bracket = name.indexOf('[');
+        if (bracket <= 0 || !name.endsWith("]")) {
+            return false;
+        }
+        String base = name.substring(0, bracket);
+        String camel = StringHelper.dashToCamelCase(base);
+        try {
+            var model = catalog.componentModel(scheme);
+            if (model == null) {
+                return false;
+            }
+            for (var option : model.getEndpointOptions()) {
+                String prefix = option.getPrefix();
+                if ((option.getName().equals(camel) && option.getJavaType() != null
+                        && option.getJavaType().startsWith("java.util.Map"))
+                        || (option.isMultiValue() && prefix != null
+                                && (prefix.equals(base + ".") || prefix.equals(camel + ".")))) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            // a component the catalog cannot read: say nothing rather than the wrong thing
+            return true;
+        }
+        return false;
+    }
+
     static void collectEndpointErrors(
-            List<String> errors, EndpointValidationResult result, String scheme,
+            List<String> errors, EndpointValidationResult result, String scheme, CamelCatalog catalog,
             int uriLineIdx, Map<String, Integer> optionLineMap) {
-        if (result.getUnknown() != null) {
+        if (result.getUnknown() != null && !"kamelet".equals(scheme)) {
+            // the options of a kamelet: endpoint are the parameters of its template, which the catalog does not know
             for (String name : result.getUnknown()) {
+                if (isMapKey(catalog, scheme, name)) {
+                    continue;
+                }
                 StringBuilder sb = new StringBuilder(scheme).append(": Unknown option '").append(name).append("'");
                 if (result.getUnknownSuggestions() != null) {
                     String[] suggestions = result.getUnknownSuggestions().get(name);
@@ -609,6 +671,11 @@ final class EndpointChecks {
         }
         if (result.getNotProducerOnly() != null) {
             for (String name : result.getNotProducerOnly()) {
+                if ("exchangePattern".equals(name)) {
+                    // a consumer option to the catalog, but a to reads it from the uri too (SendProcessor resolves the
+                    // pattern from the url): to jms:queue:x?exchangePattern=InOut is a request-reply
+                    continue;
+                }
                 errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx))
                            + scheme + ": Option '" + name + "' is not applicable in producer only mode (to: sends to the"
                            + " endpoint, for " + scheme + ": it writes the body; to read from an endpoint in the middle of a"

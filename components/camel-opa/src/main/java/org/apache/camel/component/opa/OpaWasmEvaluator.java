@@ -180,6 +180,16 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
     }
 
     /**
+     * In-process evaluation has no server to lose, so the only failure that is about availability rather than about
+     * this message or this policy is a pool that stayed busy past {@code borrowTimeout}. An undefined rule, a trap
+     * during evaluation, and an input document that cannot be serialized fail closed even under {@code failOpen}.
+     */
+    @Override
+    protected boolean isDecisionPointUnavailable(Exception failure) {
+        return failure instanceof TimeoutException;
+    }
+
+    /**
      * Unwraps the WebAssembly ABI's result envelope, which is an array of result objects:
      * <code>[{"result": &lt;value&gt;}]</code>.
      * <p/>

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -58,6 +60,8 @@ import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutEdge;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutNode;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
+import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -66,9 +70,29 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 
 class DiagramSupport {
 
+    /** The width of a topology box in columns, as the layout engine draws it by default. */
+    static final int DEFAULT_BOX_COLUMNS = new TopologyLayoutEngine().getNodeWidth() / 15;
+    /** How wide a topology box may grow so its label and group tag fit on a line. */
+    static final int MAX_BOX_COLUMNS = 34;
+
     private boolean showDiagram;
     private boolean topologyMode;
     private boolean showDescription;
+    private Path aiSourceDirectory;
+    /** The AI labels of the decision points of the routes shown, by their node (CAMEL-25161). */
+    private volatile Map<String, IntegrationSummary.StepLabel> stepLabels = Map.of();
+    private Map<String, List<TopologyDiagramWidget.NodeLine>> nodeLines = Map.of();
+    /** Routes highlighted in the topology: the routes of the capability the user came down from, and its name. */
+    private Set<String> focusRouteIds = Set.of();
+    private String focusName;
+    /** The group of each route in the topology, when groups are shown: tag lines and border colours. */
+    private Map<String, TopologyDiagramWidget.NodeLine> groupTags = Map.of();
+    private Map<String, Color> groupColors = Map.of();
+    private Line groupLegend;
+    /** Routes left out of the topology (the utility routes when hidden), and what the current layout was made for. */
+    private volatile Set<String> hiddenRouteIds = Set.of();
+    private Set<String> layoutHidden = Set.of();
+    private int layoutBoxColumns = DEFAULT_BOX_COLUMNS;
     private int scrollY;
     private int scrollX;
     private final ScrollbarState vScrollState = new ScrollbarState();
@@ -801,17 +825,177 @@ class DiagramSupport {
         return boxes;
     }
 
+    /**
+     * Shows a topology whose nodes are not the running routes, such as the architecture view (CAMEL-25147): the nodes
+     * and edges are laid out as the route topology is, and each box shows the given lines. Selection and scrolling work
+     * as in the route topology; the node ids are what {@link #getSelectedRouteId()} returns.
+     *
+     * @param select the node to select, or null for the first
+     */
+    void showCustomTopology(
+            List<TopologyNodeInfo> nodes, List<TopologyEdgeInfo> edges,
+            Map<String, List<TopologyDiagramWidget.NodeLine>> lines, String select) {
+        // boxes as wide as their longest line (the widget draws nodeWidth / 15 columns), within reason
+        int longest = lines.values().stream().flatMap(List::stream).mapToInt(l -> l.text().length()).max().orElse(12);
+        // two border columns and a space of padding each side, one to spare
+        int box = Math.max(16, Math.min(44, longest + 5));
+        TopologyLayoutEngine engine = engineFor(box);
+        TopologyLayoutResult result = engine.layout(nodes, edges);
+        normalizeTopologyLayoutY(result);
+        topologyLayout = result;
+        topologyNodeWidth = engine.getNodeWidth();
+        topologyNodes = result.nodes;
+        topologyEdges = result.edges;
+        nodeLines = lines;
+        nodeBoxes = computeNodeBoxes(result, topologyNodeWidth, false);
+        int idx = select != null ? findNodeIndexByRouteId(select) : -1;
+        selectedNodeIndex = idx >= 0 ? idx : nodeBoxes.isEmpty() ? -1 : 0;
+        scrollX = 0;
+        scrollY = 0;
+        topologyMode = true;
+        showDiagram = true;
+    }
+
+    /** A layout engine whose boxes the widget draws the given number of columns wide. */
+    static TopologyLayoutEngine engineFor(int columns) {
+        // the engine scales the width it is given; the widget draws its node width / 15 columns
+        int scale = Math.max(1, new TopologyLayoutEngine().getNodeWidth() / TopologyLayoutEngine.DEFAULT_NODE_WIDTH);
+        return new TopologyLayoutEngine((columns * 15 + scale - 1) / scale);
+    }
+
+    /** The groups of the topology with their colours, shown at the bottom of its frame; null for none. */
+    void setGroupLegend(Line legend) {
+        this.groupLegend = legend;
+    }
+
+    /** Leaves routes out of the topology from its next load; empty shows all. */
+    void setHiddenRoutes(Set<String> routeIds) {
+        this.hiddenRouteIds = routeIds != null ? Set.copyOf(routeIds) : Set.of();
+    }
+
+    /**
+     * How wide the topology boxes should be: as wide as the longest label or group tag a box shows on one line, from
+     * the default up to {@link #MAX_BOX_COLUMNS}. A longer label wraps as before.
+     */
+    int wantedBoxColumns() {
+        int longest = 0;
+        if (showDescription) {
+            for (Map.Entry<String, String> e : aiDescriptions().entrySet()) {
+                if (!hiddenRouteIds.contains(e.getKey())) {
+                    longest = Math.max(longest, IntegrationSummary.AI_MARK.length() + 1 + e.getValue().length());
+                }
+            }
+            for (TopologyLayoutNode n : topologyNodes) {
+                if (n.description != null && n.routeId != null && !hiddenRouteIds.contains(n.routeId)) {
+                    longest = Math.max(longest, n.description.length());
+                }
+            }
+        }
+        for (Map.Entry<String, TopologyDiagramWidget.NodeLine> e : groupTags.entrySet()) {
+            if (!hiddenRouteIds.contains(e.getKey())) {
+                longest = Math.max(longest, e.getValue().text().length());
+            }
+        }
+        // two border columns and a space of padding each side
+        return Math.max(DEFAULT_BOX_COLUMNS, Math.min(MAX_BOX_COLUMNS, longest + 4));
+    }
+
+    /** Whether the topology was laid out for other hidden routes or another box width, and needs a new load. */
+    boolean isTopologyStale() {
+        return !hiddenRouteIds.equals(layoutHidden) || wantedBoxColumns() != layoutBoxColumns;
+    }
+
+    /** Leaves out the hidden routes, the links to and from them, and external systems only they used. */
+    static void removeRoutes(List<TopologyNodeInfo> nodes, List<TopologyEdgeInfo> edges, Set<String> hidden) {
+        if (hidden.isEmpty()) {
+            return;
+        }
+        nodes.removeIf(n -> n.routeId != null && hidden.contains(n.routeId));
+        edges.removeIf(e -> hidden.contains(e.fromRouteId) || hidden.contains(e.toRouteId));
+        Set<String> linked = new HashSet<>();
+        for (TopologyEdgeInfo e : edges) {
+            linked.add(e.fromRouteId);
+            linked.add(e.toRouteId);
+        }
+        nodes.removeIf(n -> n.nodeType != null && n.nodeType.startsWith("external") && !linked.contains(n.routeId));
+    }
+
+    /** Highlights routes in the topology (the routes of a capability); null clears it. */
+    void setFocus(Set<String> routeIds, String name) {
+        this.focusRouteIds = routeIds != null ? routeIds : Set.of();
+        this.focusName = routeIds != null ? name : null;
+    }
+
+    /** Shows each route's group in the topology; empty maps hide them. */
+    void setGroups(Map<String, TopologyDiagramWidget.NodeLine> tags, Map<String, Color> colors) {
+        this.groupTags = tags;
+        this.groupColors = colors;
+    }
+
+    String getFocusName() {
+        return focusName;
+    }
+
+    /** Where the AI-assisted route descriptions of the project come from (CAMEL-25143). */
+    void setAiSourceDirectory(Path dir) {
+        this.aiSourceDirectory = dir;
+    }
+
+    private Map<String, String> aiDescriptions() {
+        return showDescription ? IntegrationSummaryHints.descriptionsIfEnabled(aiSourceDirectory) : Map.of();
+    }
+
+    /** A route in words in the business view: its description, else its AI label (marked); null otherwise. */
+    String routeLabel(String routeId) {
+        if (!showDescription || routeId == null) {
+            return null;
+        }
+        String label = computeRouteDescriptions().get(routeId);
+        return label != null && !label.isBlank() ? label : null;
+    }
+
+    /** What the AI wrote about a decision point of a route shown, or null. */
+    IntegrationSummary.StepLabel stepLabel(String routeId, String nodeId) {
+        return routeId != null && nodeId != null ? stepLabels.get(RouteStepHints.key(routeId, nodeId)) : null;
+    }
+
+    /**
+     * The title with the AI-assisted mark when a box of the topology shows an AI description: a route without a
+     * description of its own that the AI project overview described.
+     */
+    private Line withAiMark(Line title) {
+        Map<String, String> ai = aiDescriptions();
+        if (ai.isEmpty() || topologyLayout == null) {
+            return title;
+        }
+        boolean shown = topologyLayout.nodes.stream().anyMatch(n -> n.routeId != null && ai.containsKey(n.routeId)
+                && (n.description == null || n.description.isBlank()));
+        if (!shown) {
+            return title;
+        }
+        List<Span> spans = new ArrayList<>(title.spans());
+        spans.add(Span.styled(" " + IntegrationSummary.AI_MARK + " ", Theme.aiAssisted()));
+        return Line.from(spans);
+    }
+
     void renderNativeDiagram(Frame frame, Rect area, Line title, boolean metrics) {
-        Block block = Block.builder()
+        Block.Builder builder = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(title))
-                .build();
+                .title(Title.from(withAiMark(title)));
+        if (groupLegend != null) {
+            builder.titleBottom(Title.from(groupLegend));
+        }
+        Block block = builder.build();
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);
 
         var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget(
-                topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY, metrics, showDescription);
+                topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY, metrics, showDescription,
+                focusRouteIds, false)
+                .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
+                .withNodeLines(nodeLines)
+                .withGroups(groupTags, groupColors);
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -827,7 +1011,11 @@ class DiagramSupport {
 
         // Re-create widget with clamped scroll
         var finalWidget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget(
-                topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY, metrics, showDescription);
+                topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY, metrics, showDescription,
+                focusRouteIds, false)
+                .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
+                .withNodeLines(nodeLines)
+                .withGroups(groupTags, groupColors);
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))
@@ -1001,19 +1189,29 @@ class DiagramSupport {
             }
         }
 
-        // Fallback: match uri against route "from" endpoints in routeLayouts
-        if (!"from".equals(type)) {
-            for (var entry : routeLayouts.entrySet()) {
-                if (currentRouteId.equals(entry.getKey())) {
-                    continue;
-                }
-                String fromBaseUri = findFromUri(entry.getValue());
-                if (baseUri.equals(fromBaseUri)) {
-                    return entry.getKey();
-                }
+        // Fallback: match uri against the routes in routeLayouts, which has the routes hidden in the topology too
+        // (utility routes turned off), whose edges are left out
+        for (var entry : routeLayouts.entrySet()) {
+            if (currentRouteId.equals(entry.getKey())) {
+                continue;
+            }
+            if ("from".equals(type) ? sendsTo(entry.getValue(), baseUri) : baseUri.equals(findFromUri(entry.getValue()))) {
+                return entry.getKey();
             }
         }
         return null;
+    }
+
+    /** Whether a route sends to the endpoint: a to, toD, wireTap or enrich of that base uri. */
+    private static boolean sendsTo(RouteDiagramLayoutEngine.LayoutRoute lr, String baseUri) {
+        for (var node : lr.nodes) {
+            if (node.treeNode != null && ("to".equals(node.type) || "toD".equals(node.type)
+                    || "wireTap".equals(node.type) || "enrich".equals(node.type))
+                    && baseUri.equals(getBaseUri(node.treeNode.info))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String resolveThrough(String nodeId, String excludeRouteId) {
@@ -1241,6 +1439,9 @@ class DiagramSupport {
                 }
             }
         }
+        // a route without a description of its own shows the AI's label, marked
+        IntegrationSummaryHints.descriptionsIfEnabled(aiSourceDirectory)
+                .forEach((id, d) -> descriptions.putIfAbsent(id, IntegrationSummaryHints.MARK + d));
         return descriptions;
     }
 
@@ -1435,6 +1636,10 @@ class DiagramSupport {
             }
         }
 
+        stepLabels = RouteStepHints.apply(routes, aiSourceDirectory, showDescription);
+        if (showDescription) {
+            BusinessEndpointLabels.apply(routes);
+        }
         RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
                 ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
                 : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
@@ -1720,7 +1925,7 @@ class DiagramSupport {
 
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(title))
+                .title(Title.from(withAiMark(title)))
                 .build();
         frame.renderWidget(block, area);
 
@@ -1728,7 +1933,10 @@ class DiagramSupport {
 
         var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget(
                 topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY,
-                false, showDescription, historyRouteIds, historyFailed);
+                false, showDescription, historyRouteIds, historyFailed)
+                .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
+                .withNodeLines(nodeLines)
+                .withGroups(groupTags, groupColors);
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -1744,7 +1952,10 @@ class DiagramSupport {
 
         var finalWidget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget(
                 topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY,
-                false, showDescription, historyRouteIds, historyFailed);
+                false, showDescription, historyRouteIds, historyFailed)
+                .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
+                .withNodeLines(nodeLines)
+                .withGroups(groupTags, groupColors);
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))
@@ -1916,6 +2127,8 @@ class DiagramSupport {
             MonitorContext ctx, String pid, boolean metrics, int externalMode) {
         // Single IPC call: topology + route structures
         boolean external = externalMode > 0;
+        Set<String> hidden = hiddenRouteIds;
+        int boxColumns = wantedBoxColumns();
         JsonObject topoJson = requestRouteTopology(ctx, pid, external, true);
 
         TopologyLayoutResult topoResult = null;
@@ -1932,8 +2145,9 @@ class DiagramSupport {
             if (externalMode == 2) {
                 TopologyHelper.expandExternalEdges(nodes, edges);
             }
+            removeRoutes(nodes, edges, hidden);
             if (!nodes.isEmpty()) {
-                TopologyLayoutEngine engine = new TopologyLayoutEngine();
+                TopologyLayoutEngine engine = engineFor(boxColumns);
                 topoResult = engine.layout(nodes, edges);
                 normalizeTopologyLayoutY(topoResult);
                 nodeW = engine.getNodeWidth();
@@ -1961,6 +2175,10 @@ class DiagramSupport {
                         }
                     }
                 }
+                stepLabels = RouteStepHints.apply(routes, aiSourceDirectory, showDescription);
+                if (showDescription) {
+                    BusinessEndpointLabels.apply(routes);
+                }
                 RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
                         ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
                         : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
@@ -1985,6 +2203,8 @@ class DiagramSupport {
             return;
         }
         ctx.runner.runOnRenderThread(() -> {
+            layoutHidden = hidden;
+            layoutBoxColumns = boxColumns;
             if (!showDiagram && !preloading) {
                 return;
             }

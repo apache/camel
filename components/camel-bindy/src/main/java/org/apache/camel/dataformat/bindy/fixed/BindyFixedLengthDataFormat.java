@@ -33,6 +33,7 @@ import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyFixedLengthFactory;
 import org.apache.camel.dataformat.bindy.FormatFactory;
+import org.apache.camel.dataformat.bindy.UnicodeHelper;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
@@ -297,16 +298,20 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         // Check if the record length corresponds to the parameter
         // provided in the @FixedLengthRecord
         if (factory.recordLength() > 0) {
-            if (isPaddingNeededAndEnable(factory, myLine)) {
+            // count the length the same way as the fields are read (code points, or graphemes with countGrapheme)
+            UnicodeHelper unicodeLine = new UnicodeHelper(myLine, factory.unicodeMethod());
+            int lineLength = unicodeLine.length();
+            if (isPaddingNeededAndEnable(factory, lineLength)) {
                 //myLine = rightPad(myLine, factory.recordLength());
             }
-            if (isTrimmingNeededAndEnabled(factory, myLine)) {
-                myLine = myLine.substring(0, factory.recordLength());
+            if (isTrimmingNeededAndEnabled(factory, lineLength)) {
+                myLine = unicodeLine.substring(0, factory.recordLength());
+                lineLength = factory.recordLength();
             }
-            if (myLine.length() < factory.recordLength()
-                    && !factory.isIgnoreMissingChars() || myLine.length() > factory.recordLength()) {
+            if (lineLength < factory.recordLength()
+                    && !factory.isIgnoreMissingChars() || lineLength > factory.recordLength()) {
                 throw new java.lang.IllegalArgumentException(
-                        "Size of the record: " + myLine.length()
+                        "Size of the record: " + lineLength
                                                              + " is not equal to the value provided in the model: "
                                                              + factory.recordLength());
             }
@@ -325,8 +330,8 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         return model;
     }
 
-    private boolean isTrimmingNeededAndEnabled(BindyFixedLengthFactory factory, String myLine) {
-        return factory.isIgnoreTrailingChars() && myLine.length() > factory.recordLength();
+    private boolean isTrimmingNeededAndEnabled(BindyFixedLengthFactory factory, int lineLength) {
+        return factory.isIgnoreTrailingChars() && lineLength > factory.recordLength();
     }
 
     @SuppressWarnings("unused")
@@ -334,8 +339,8 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         return String.format("%1$-" + length + "s", myLine);
     }
 
-    private boolean isPaddingNeededAndEnable(BindyFixedLengthFactory factory, String myLine) {
-        return myLine.length() < factory.recordLength() && factory.isIgnoreMissingChars();
+    private boolean isPaddingNeededAndEnable(BindyFixedLengthFactory factory, int lineLength) {
+        return lineLength < factory.recordLength() && factory.isIgnoreMissingChars();
     }
 
     @Override

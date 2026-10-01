@@ -68,6 +68,16 @@ camel.resource.http.read-timeout = 30000
 
 OAuth client credentials token caching now distinguishes profiles by client secret and requested scope, in addition to token endpoint and client ID. Profiles with different credentials or scopes request separate tokens instead of reusing the same cached token. Applications using such profiles may make additional token requests after upgrading.
 
+The post login url of the authorization code flow is now always built from the origin (`scheme://host[:port]`)
+of the configured `camel.oauth.redirect-uri`, plus the requested path. `OAuthCodeFlowProcessor` previously
+rebuilt that url from the `X-Forwarded-Proto` / `X-Forwarded-Host` / `X-Forwarded-Port` request headers, or
+from the `Host` header behind `CamelHttpUrl` when those were absent. All of those are set by the caller, so
+a request could point the post login redirect at any origin. A deployment behind an ingress or an OpenShift
+Route still redirects to its externally reachable address, because `camel.oauth.redirect-uri` is the address
+the identity provider sends the browser back to. Deployments whose external address differs from that
+property must set it to the address the browser actually reaches; a request announcing another origin is now
+redirected to the configured one and a warning is logged.
+
 === Simple language
 
 `${ }` may now hold a predicate, as the braces do in Jakarta EL, Groovy and a JavaScript template:
@@ -144,6 +154,21 @@ set or received as `content-type` was sent on as `Content-Type`. Looking up a he
 the first name a header is set with is the one that is kept. Code that iterates the headers and compares their names
 case-sensitively, such as `Exchange.CONTENT_TYPE.equals(key)` or `key.startsWith("Camel")`, no longer matches
 `content-type` or `camelfilename`, as before Camel 4.21.
+
+=== camel-core - stream caching deletes a spooled file after the other on completions
+
+When stream caching spools a message body to disk, the temporary file is deleted by an on completion
+(`Synchronization`) of the exchange. This on completion now has the order `Ordered.LOWEST`, instead of the default
+order `0`, so it runs after the other on completions of the exchange. The file is therefore deleted later than
+before, never earlier. On completions with the same order (such as the disconnect of the FTP and SMB consumers, and
+the close of a JPA `EntityManager`) still run in the reverse order in which they were added.
+
+The `onCompletion` EIP in the default mode (`modeAfterConsumer`) now uses the order `Ordered.LOWEST - 1`, so it runs
+just before the file is deleted, and its copy of the exchange holds its own reference to a spooled body. An
+onCompletion can therefore read a spooled body, also with `parallelProcessing`. Previously it failed with a
+`NoSuchFileException`, and a parallel onCompletion stopped at the first step that read the body. As a side effect,
+an on completion with the order `Ordered.LOWEST` that was added after the onCompletion EIP (for example the close
+of a JPA `EntityManager` used later in the route) used to run before the onCompletion, and now runs after it.
 
 === @PropertyInject - an invalid property value is an error (Breaking change)
 
@@ -243,6 +268,19 @@ files until the aggregator is shut down, such as when the route is removed or `C
 With optimistic locking, or a persistent aggregation repository, the spool file of an exchange is released when the
 exchange has been added to the repository (a persistent repository has read the body at that time), and only the
 spool file of the exchange that completes a group is kept until the aggregated exchange is done.
+
+=== camel-sql - JdbcAggregationRepository with optimistic locking
+
+With optimistic locking, `JdbcAggregationRepository` (and `ClusteredJdbcAggregationRepository`,
+`PostgresAggregationRepository` and `ClusteredPostgresAggregationRepository`) now fails with an
+`OptimisticLockingException`, so that the aggregator retries, when a message was aggregated on a group that another
+thread or Camel instance completed meanwhile. Prior to Camel 4.23 the completed group was stored again together with
+the new message, so its messages were sent a second time, or a new group of the same correlation key was overwritten
+and its messages were lost.
+
+A new group now starts with a random positive version instead of `1`, so that a version read from an earlier group of
+the same correlation key never matches it. The `version` column must therefore be a 64-bit integer, as in the
+documented `version BIGINT NOT NULL`. Groups stored before the upgrade keep their version.
 
 === Variable Receive
 
@@ -375,6 +413,25 @@ mode is only set with `restConfiguration()`, as it already did when it is set on
 With `clientRequestValidation` enabled, such a verb now rejects a request with another `Content-Type` (415) or
 `Accept` (406) header.
 
+=== Rest DSL - client validation, verb ids and inlined routes
+
+- `clientResponseValidation` now also validates the response when the binding mode is `off`, the response has no
+  body, or binding was skipped because of an error code (`skipBindingOnErrorCode`). Before, the response was only
+  validated after the body was marshalled.
+- The headers of a `responseMessage` are only required on the responses with that code (or on the responses of the
+  `default` response message when the code has none). Before, the headers of all the response messages were required
+  on every response.
+- A verb with `type` gets a body parameter that is required (unless the body parameter, whatever its name, is
+  declared with `required=false`).
+  With `clientRequestValidation` enabled, a request without a body is now rejected (400), as the body was already
+  marked as required in the OpenAPI specification.
+- Two verbs with the same `id` now fail with a duplicate route id error. Before, the second verb silently got a
+  generated route id. A verb with the same `id` as a route that is not a rest verb (such as the `direct` route it
+  calls) still gets a generated route id, as before.
+- A `direct` route that more than one rest service calls is no longer inlined (with `inlineRoutes` enabled, which is
+  the default). It stays a route of its own, and the rest services call it. Before, its outputs were inlined into all
+  the rest services, which then shared the same EIP definitions.
+
 === CamelEvent JSON serialization
 
 `CamelEvent` now provides `asJSon()` and `toJSon(int indent)` with default implementations that
@@ -389,11 +446,27 @@ The Event developer console now exposes the full structured JSON payload in the 
 each event entry, while keeping the existing flat `type`, `timestamp`, `exchangeId`, and
 `message` fields for backwards compatibility.
 
-=== Intercept Send To Endpoint - intercepted route
+=== Intercept Send To Endpoint EIP
 
-When an `interceptSendToEndpoint` applies to several routes (such as one defined in a `RouteBuilder` with several
-routes), the `CamelInterceptedRouteId` and `CamelInterceptedParentEndpointUri` exchange properties are now those of the route
-that sends to the endpoint. Before, they were always those of the first route of the `RouteBuilder`.
+The interceptors of `interceptSendToEndpoint` are now registered by each route while it is running, on an endpoint that
+is wrapped once:
+
+- Each route uses its own interceptor. Before, the endpoint was wrapped by the interceptor of one of the routes (which
+  one depended on the order of an unordered set), and all the routes used that one.
+- Removing a route no longer breaks the other routes that send to the intercepted endpoint (they failed with
+  `RejectedExecutionException` when the route whose interceptor wrapped the endpoint was removed).
+- The interception is kept when the `CamelContext` is restarted.
+- The interceptor of a stopped route is no longer used.
+- Interceptors from two `RouteBuilder`s for the same endpoint are both used, each by the routes of its own
+  `RouteBuilder`. Before, only the one that wrapped the endpoint first was used.
+- `mockEndpoints` together with an `interceptSendToEndpoint` on the same endpoint now both run, in a fixed order: the
+  interceptors of the route that is sending first, and then the mock. Before, only the one that wrapped the endpoint
+  first was used.
+- When an interceptor applies to several routes (such as one defined in a `RouteBuilder` with several routes), the
+  `CamelInterceptedRouteId` and `CamelInterceptedParentEndpointUri` exchange properties are those of the route that
+  sends to the endpoint. Before, they were always those of the first route of the `RouteBuilder`.
+
+The `org.apache.camel.processor.InterceptSendToEndpointCallback` class is deprecated, as it is no longer used.
 
 === Route templates
 
@@ -490,6 +563,14 @@ should be reviewed.
 
 `InflightRepository.InflightExchange` and `AsyncProcessorAwaitManager.AwaitThread` gained a `getNodeSource()` method
 for the same value. Both are `default` methods returning `null`, so existing implementations continue to compile.
+
+The `Redeliveries` statistic now also counts a redelivery attempt that succeeds, and it is only counted where the
+redelivery happened. For a processor it is the number of redelivery attempts of that processor. For a route it is the
+number of exchanges that were redelivered by a processor of that route, and for the CamelContext the number of
+exchanges that were redelivered. Before, only redelivery attempts that failed were counted (so a processor that
+succeeded on its second redelivery reported 1 instead of 2, and a route whose exchange was redelivered and then
+completed reported 0), and a processor or route that the exchange went through after a redelivery could count that
+redelivery as well.
 
 === camel-groovy
 
@@ -602,6 +683,38 @@ data format also writes the message with the charset of the exchange when it mar
 
 US-ASCII messages are parsed as before. A route that repaired the wrongly decoded text itself must stop
 doing so.
+
+=== camel-bindy - fixed-length records with characters outside the BMP
+
+Since Camel 3.1 a fixed-length record is read by counting code points (or graphemes with
+`@FixedLengthRecord(countGrapheme = true)`), but it was written by counting UTF-16 chars, so a field with a
+character outside the Basic Multilingual Plane (such as an emoji) was written one padding character short and the
+following fields were read shifted. Marshal now pads and clips each field with the same count as unmarshal, and the
+record `length` is checked with that count too. A field with such characters (or, with `countGrapheme = true`, with
+combining characters) is padded to its length in code points (or graphemes), so it gets one padding character more
+than before for each extra UTF-16 char (or code point). Text in the Basic Multilingual Plane without combining
+characters is written and read as before. A record with such characters written by an older Camel version is too
+short by that count, so it now fails the record `length` check (unless `ignoreMissingChars = true`) instead of being
+read with shifted fields. A system that reads these records by counting UTF-16 chars must count code points (or
+graphemes) instead.
+
+=== camel-hl7 - character sets from MSH-18
+
+The HL7 data format now maps the MSH-18 values `8859/6`, `8859/7`, `8859/8` and `8859/9` to ISO-8859-6 .. ISO-8859-9,
+`8859/15` to ISO-8859-15, and `GB 18030-2000` to GB18030, as in HL7 table 0211 (and as camel-mllp already does).
+Before, the first five fell back to the charset of the exchange (UTF-8 by default), and `GB 18030-2000` failed with
+`UnsupportedEncodingException`. Messages with these MSH-18 values are now read and written in the named charset, and
+unmarshal sets `CamelCharsetName` to it. A message whose MSH-18 names one of these charsets but that is actually
+encoded in another one (such as UTF-8) is now decoded in the charset it names.
+
+=== camel-platform-http-vertx - String response in the charset of the Content-Type
+
+A `String` response body was always written as UTF-8, even when the response `Content-Type` declared another
+charset (for example `text/plain; charset=ISO-8859-1`, set by the route or kept from the request). It is now written
+in the charset that the `Content-Type` declares, so the bytes match the header. Responses without a charset in the
+`Content-Type`, or with UTF-8, are written as before, and so are bodies that are not a `String`. A client that ignored
+the declared charset and read such a response as UTF-8 must now use the declared charset, and characters that the
+declared charset cannot represent are written as `?`.
 
 === Components and Language removal
 
@@ -1129,6 +1242,18 @@ The container images were removed from Docker Hub on September 2026.
 MinIO is S3-compatible, so existing deployments can migrate to the `camel-aws2-s3` component by pointing it at the MinIO server, for example:
 `aws2-s3://mybucket?overrideEndpoint=true&uriEndpointOverride=http://localhost:9000&forcePathStyle=true&accessKey=...&secretKey=...`
 
+=== camel-sjms - request/reply completes the exchange once when the send fails
+
+When the send of an InOut message fails, the pending reply is now cancelled, so the request timeout no longer
+completes the exchange a second time with an `ExchangeTimedOutException` after it has already failed with the send
+exception. When the send fails after the request timeout, or the reply, has already completed the exchange (for
+example a send that blocks longer than `requestTimeout` and then fails), the exchange keeps the outcome of the
+timeout or the reply, and the send failure is logged at WARN level.
+
+`org.apache.camel.component.sjms.reply.ReplyManager` has a new default method `boolean cancelCorrelationId(String)`,
+which `ReplyManagerSupport` implements. A custom `ReplyManager` implementation that does not override it keeps the
+previous behaviour.
+
 === camel-tika
 
 The Tika dependency has been upgraded from 3.x to 4.x. Tika 4 removed the `TikaConfig` class and XML
@@ -1488,6 +1613,13 @@ fetched at most once a day. Only a platform that carries exactly the requested C
 `-SNAPSHOT` Camel version is never cached. `--fresh` clears both caches. A registry with an explicit port in
 `--quarkus-ext-registry` (or `camel.jbang.quarkusExtensionRegistryBaseUri`) now has its own cache directory, so
 two registries on the same host no longer share their cached responses.
+`camel validate source`, and the `camel_validate_source` and `camel_write_file` MCP tools, now check the routes of
+Java and XML DSL files as they check YAML routes: the endpoint URIs against the catalog (also those built with the
+endpoint DSL or from a constant), simple expressions, and a `to` whose URI holds `+${...}+` and should be a `toD`.
+A Java file used to be checked only by the compiler and an XML file only for being well formed, so a file that
+validated before can now report errors, and `camel_write_file` refuses to write it until they are fixed. In the
+TUI Source tab an XML route file with such problems is not saved, as a YAML
+file; a Java file is saved and its problems are shown.
 
 === camel-jbang (MCP servers)
 
@@ -1756,6 +1888,11 @@ from("spring-redis://localhost:6379?command=SUBSCRIBE&channels=myChannel"
 
 Setting the `serializer` option to a custom `RedisSerializer` bypasses the filter entirely, since
 Camel then no longer controls how the payload is read.
+
+=== camel-spring-redis - SpringRedisIdempotentRepository.remove returns false for a missing key
+
+`SpringRedisIdempotentRepository.remove` now returns `false` when the key was not in the repository, as documented by
+`IdempotentRepository`. It previously returned `true` for any key. The Idempotent Consumer does not use the returned value.
 
 === camel-langchain4j
 
@@ -2935,6 +3072,23 @@ default, stop seeing in-progress aggregations re-delivered, and start seeing gen
 now also holds one entry per completed and not yet confirmed exchange; those entries are removed on
 confirmation.
 
+=== camel-caffeine, camel-ehcache - the aggregation repositories keep completed exchanges for recovery
+
+`CaffeineAggregationRepository` and `EhcacheAggregationRepository` implement `RecoverableAggregationRepository`,
+but like the Infinispan repository before 4.23 they had no recovery store: `remove` deleted the completed exchange,
+`confirm` removed the exchange id from a cache keyed by correlation key, and `scan` returned the correlation keys of
+the aggregations still in progress. The recovery task therefore sent aggregations that were still in progress
+(marked `CamelRedelivered`, and to the dead letter channel once `maximumRedeliveries` was reached), while exchanges
+that failed after completion could never be recovered.
+
+A completed exchange is now kept in the same cache under a `camel-recovery:<exchange id>` key until it is
+confirmed, which is what `scan` reports and `recover` reads. `getKeys` reports only the aggregations in progress.
+
+Routes that set `useRecovery=false` are unaffected. Routes that left recovery enabled, which is the default, no
+longer see aggregations in progress sent by the recovery task, and a completed exchange whose processing failed is
+now recovered. The cache now also holds one entry per completed and not yet confirmed exchange; those entries are
+removed on confirmation. A cache with a size limit or an expiry applies it to these entries as well.
+
 === camel-qdrant - the PayloadSelector header is now honoured
 
 `QdrantHeaders.PAYLOAD_SELECTOR` (`CamelQdrantPointsPayloadSelector`) was declared and advertised in
@@ -3892,6 +4046,31 @@ the required protocols (set the attribute to a comma-separated protocol list suc
 JAXP external-access model and remain resolvable. Stylesheet `xsl:include` / `xsl:import` references
 are resolved at compile time (they are part of the route definition, authored by the route author)
 and are unaffected by this change.
+
+=== camel-openapi-validator - repeated request headers are validated value by value
+
+A header that occurs more than once in a request used to be passed to the request validator as the
+text of the Java collection holding its values, such as `[a, b]`. The values are now passed as they
+were sent. As a result:
+
+* A header that the contract declares as a single value (not an array) and that occurs more than
+  once is now rejected with `400`, where it was accepted before.
+* A header that the contract declares as an array may be repeated. This is treated like one header
+  with the values joined by commas (RFC 9110, section 5.3), and each value is checked against the
+  item schema of the array. This applies to OpenAPI 3.0 contracts: for an OpenAPI 3.1 contract the
+  validator does not recognise a header parameter as an array, so a repeated header is rejected
+  like a single-value one.
+
+=== camel-jms - request/reply completes the exchange once when a send fails late
+
+An InOut exchange whose JMS send fails after the request timeout, or the reply, has already completed the exchange
+(for example a send that blocks longer than `requestTimeout` and then fails) is no longer completed a second time with
+the send exception. The send failure is logged at WARN level instead, and the exchange keeps the outcome of the timeout
+or the reply.
+
+The `cancelCorrelationId` method of `org.apache.camel.component.jms.reply.ReplyManager` (added in 4.22) now returns
+a `boolean`: `true` if the pending reply was cancelled, `false` if the request timeout or the reply had already taken
+it. A custom `ReplyManager` implementation has to change the return type.
 
 == ThrottlingExceptionRoutePolicy
 

@@ -50,6 +50,7 @@ public final class SensitiveUtils {
                     "apikey",
                     "apipassword",
                     "apisecret",
+                    "apitoken",
                     "apiuser",
                     "apiusername",
                     "authenticationtoken",
@@ -159,6 +160,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qapikey\\E"
                                                     + "|\\Qapipassword\\E"
                                                     + "|\\Qapisecret\\E"
+                                                    + "|\\Qapitoken\\E"
                                                     + "|\\Qapiuser\\E"
                                                     + "|\\Qapiusername\\E"
                                                     + "|\\Qauthenticationtoken\\E"

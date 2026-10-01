@@ -16,6 +16,9 @@
  */
 package org.apache.camel.java.out;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
@@ -23,27 +26,53 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.BeanFactoryDefinition;
+import org.apache.camel.model.ConvertBodyDefinition;
+import org.apache.camel.model.ConvertHeaderDefinition;
+import org.apache.camel.model.ConvertVariableDefinition;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ErrorHandlerDefinition;
+import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.ExpressionSubElementDefinition;
+import org.apache.camel.model.InputTypeDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.LoadBalancerDefinition;
+import org.apache.camel.model.LogDefinition;
+import org.apache.camel.model.LoopDefinition;
 import org.apache.camel.model.OnWhenDefinition;
+import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.OutputTypeDefinition;
+import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.PropertyExpressionDefinition;
+import org.apache.camel.model.RemoveHeadersDefinition;
+import org.apache.camel.model.RemovePropertiesDefinition;
+import org.apache.camel.model.RollbackDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
+import org.apache.camel.model.SamplingDefinition;
+import org.apache.camel.model.SetHeaderDefinition;
+import org.apache.camel.model.SetHeadersDefinition;
+import org.apache.camel.model.SetVariableDefinition;
+import org.apache.camel.model.SetVariablesDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRouteParameterDefinition;
+import org.apache.camel.model.ThrowExceptionDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.ValueDefinition;
 import org.apache.camel.model.config.BatchResequencerConfig;
+import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
 import org.apache.camel.model.language.ConstantExpression;
@@ -63,8 +92,10 @@ import org.apache.camel.model.language.WasmExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
+import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
 import org.apache.camel.model.rest.ResponseHeaderDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -77,6 +108,8 @@ import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.CustomValidatorDefinition;
 import org.apache.camel.model.validator.EndpointValidatorDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.support.builder.ValueBuilder;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * Base class for the generated {@link JavaDslModelWriter}. Provides helper methods for building Java DSL source code
@@ -87,6 +120,31 @@ import org.apache.camel.model.validator.ValidatorDefinition;
  */
 public abstract class JavaDslModelWriterSupport {
 
+    protected void writeSwitch(StringBuilder sb, SwitchDefinition definition) {
+        definition.preCreateProcessor();
+        handledAttributes.clear();
+        sb.append(NL).append(indent()).append(".doSwitch(")
+                .append(expressionDsl(definition.getSelector().getExpressionType())).append(")");
+        doWriteProcessorDefinitionAttributes(sb, definition);
+        for (SwitchCaseDefinition c : definition.getCases()) {
+            sb.append(NL).append(indent()).append(".doCase(");
+            sb.append(quote(c.getValue()));
+            sb.append(")");
+            handledAttributes.clear();
+            doWriteOptionalIdentifiedDefinitionAttributes(sb, c);
+            sb.append(".to(").append(quote(c.getUri())).append(")");
+        }
+        if (definition.getOtherwise() != null) {
+            sb.append(NL).append(indent()).append(".otherwise(").append(quote(definition.getOtherwise().getUri())).append(")");
+        }
+        sb.append(NL).append(indent()).append(".end()");
+    }
+
+    protected abstract void doWriteProcessorDefinitionAttributes(StringBuilder sb, ProcessorDefinition<?> definition);
+
+    protected abstract void doWriteOptionalIdentifiedDefinitionAttributes(
+            StringBuilder sb, OptionalIdentifiedDefinition<?> definition);
+
     private static final String NL = "\n";
 
     private static final Set<String> BLOCK_EIPS = Set.of(
@@ -94,12 +152,16 @@ public abstract class JavaDslModelWriterSupport {
             "doTry", "circuitBreaker", "step", "saga", "loop",
             "transacted", "aggregate", "resequence", "idempotentConsumer",
             "onCompletion", "loadBalance", "kamelet", "onException",
-            "intercept", "interceptFrom", "interceptSendToEndpoint");
+            "intercept", "interceptFrom", "interceptSendToEndpoint", "policy");
 
     private static final Set<String> BLOCK_CHILDREN = Set.of(
             "otherwise", "doFinally", "onFallback");
 
     private static final Set<String> PREDICATE_CHILDREN = Set.of("handled", "continued", "retryWhile");
+
+    /** Expression options whose fluent method has another name: aggregate's completionSize(Expression). */
+    private static final Map<String, String> CHILD_RENAMES = Map.of(
+            "completionSizeExpression", "completionSize", "completionTimeoutExpression", "completionTimeout");
 
     private static final Set<String> SKIP_ATTRIBUTES = Set.of("customId");
 
@@ -149,6 +211,12 @@ public abstract class JavaDslModelWriterSupport {
 
     private boolean inDataFormatBuilder;
     private boolean inSubBuilder;
+    /** The definition whose options are being written, whose fluent methods say how to write each one. */
+    private Object optionOwner;
+    /** Where the call of the step being written starts, for a step whose options must be its arguments. */
+    private int stepStart = -1;
+    /** The onFallback() of the circuit breaker being written, written last. */
+    private Runnable pendingFallback;
     private boolean inRestParam;
     private boolean generatedIds;
     private boolean sourceLocation;
@@ -175,9 +243,12 @@ public abstract class JavaDslModelWriterSupport {
         inDataFormatBuilder = false;
         inSubBuilder = false;
         inRestParam = false;
+        optionOwner = null;
+        pendingFallback = null;
     }
 
     protected void writeRoute(StringBuilder sb, RouteDefinition def) {
+        optionOwner = def;
         // extract intercepts from outputs — they are RouteBuilder-level in Java DSL
         if (def.getOutputs() != null) {
             for (ProcessorDefinition<?> output : def.getOutputs()) {
@@ -480,10 +551,26 @@ public abstract class JavaDslModelWriterSupport {
      */
     protected void beginStep(StringBuilder sb, String name, Object def) {
         handledAttributes.clear();
+        optionOwner = def;
+        stepStart = sb.length();
         if ("param".equals(name)) {
             inRestParam = true;
         }
         sb.append(NL).append(indent()).append(".").append(name).append("()");
+        // enrich().constant("uri"): the expression clause comes first, the options after it
+        if ((def instanceof EnrichDefinition || def instanceof PollEnrichDefinition)
+                && ((ExpressionNode) def).getExpression() != null) {
+            sb.append(NL).append(indent()).append("    .").append(expressionDsl(((ExpressionNode) def).getExpression()));
+            handledAttributes.add("expression");
+        }
+    }
+
+    /**
+     * A step the writer writes with its arguments inline ({@code .recipientList(header("to"))}): its options follow.
+     */
+    protected void beginInlineStep(StringBuilder sb, Object def) {
+        optionOwner = def;
+        stepStart = sb.length();
     }
 
     /**
@@ -494,10 +581,16 @@ public abstract class JavaDslModelWriterSupport {
         if ("param".equals(name)) {
             inRestParam = false;
         }
+        rewriteFromJavaForms(sb, def);
         String restEnd = REST_END_METHODS.get(name);
         if (restEnd != null) {
             sb.append(NL).append(indent()).append(".").append(restEnd).append("()");
         } else if (BLOCK_EIPS.contains(name)) {
+            if ("circuitBreaker".equals(name) && pendingFallback != null) {
+                Runnable fallback = pendingFallback;
+                pendingFallback = null;
+                fallback.run();
+            }
             sb.append(NL).append(indent()).append(".end()");
         }
     }
@@ -515,9 +608,14 @@ public abstract class JavaDslModelWriterSupport {
         if (defaultValue != null && defaultValue.equals(value)) {
             return;
         }
+        if (!inSubBuilder && !inDataFormatBuilder && !inRestParam && stepArgumentOption(sb, key)) {
+            return;
+        }
         String methodName = key;
         if (inDataFormatBuilder) {
             methodName = DATAFORMAT_ATTR_RENAMES.getOrDefault(key, key);
+        } else if (!inSubBuilder && !inRestParam) {
+            methodName = OPTION_RENAMES.getOrDefault(key, key);
         }
         if (CLASS_LITERAL_ATTRIBUTES.contains(key)) {
             sb.append(NL).append(indent()).append("    .").append(methodName).append("(").append(value).append(".class)");
@@ -533,7 +631,8 @@ public abstract class JavaDslModelWriterSupport {
             }
             return;
         }
-        if (BOOLEAN_ATTRIBUTES.contains(key)) {
+        if (BOOLEAN_ATTRIBUTES.contains(key) && ("true".equals(value) || "false".equals(value))) {
+            // a placeholder ({{enabled}}) is quoted below, for the String variant of the option
             sb.append(NL).append(indent()).append("    .").append(methodName).append("(").append(value).append(")");
             return;
         }
@@ -541,7 +640,313 @@ public abstract class JavaDslModelWriterSupport {
             sb.append(NL).append(indent()).append("    .").append(methodName).append("(").append(value).append(")");
             return;
         }
+        if (!inSubBuilder && !inDataFormatBuilder && !inRestParam && optionOwner != null) {
+            String call = typedOption(optionOwner.getClass(), methodName, value);
+            if (call != null) {
+                if (!call.isEmpty()) {
+                    sb.append(NL).append(indent()).append("    .").append(call);
+                }
+                return;
+            }
+        }
         sb.append(NL).append(indent()).append("    .").append(methodName).append("(").append(quote(value)).append(")");
+    }
+
+    /**
+     * Options the Java DSL takes as arguments of the step itself, not as calls after it: the step's call is written
+     * again from its definition, with them. {@code convertBodyTo(byte[].class, "UTF-8")}, {@code removeHeaders("*",
+     * "foo")}, {@code toV("direct:x", "send", null)}, {@code log(LoggingLevel.INFO, "my.log", "hi")},
+     * {@code sample(10)}, {@code loopDoWhile(...)}.
+     *
+     * @return whether the option was written as an argument
+     */
+    private boolean stepArgumentOption(StringBuilder sb, String key) {
+        Object d = optionOwner;
+        String call = null;
+        Set<String> keys = Set.of();
+        if (d instanceof ConvertBodyDefinition c && Set.of("charset", "mandatory").contains(key)) {
+            String type = classLiteral(c.getType());
+            call = c.getCharset() != null
+                    ? "convertBodyTo(" + type + ", " + quote(c.getCharset()) + ")"
+                    : "convertBodyTo(" + type + ", " + booleanLiteral(c.getMandatory()) + ")";
+            keys = Set.of("charset", "mandatory");
+        } else if (d instanceof ConvertHeaderDefinition c && Set.of("toName", "charset", "mandatory").contains(key)) {
+            call = convertTo("convertHeaderTo", c.getName(), c.getToName(), c.getType(), c.getCharset(), c.getMandatory());
+            keys = Set.of("toName", "charset", "mandatory");
+        } else if (d instanceof ConvertVariableDefinition c && Set.of("toName", "charset", "mandatory").contains(key)) {
+            call = convertTo("convertVariableTo", c.getName(), c.getToName(), c.getType(), c.getCharset(), c.getMandatory());
+            keys = Set.of("toName", "charset", "mandatory");
+        } else if (d instanceof RemoveHeadersDefinition r && "excludePattern".equals(key)) {
+            call = "removeHeaders(" + quote(r.getPattern()) + ", " + quote(r.getExcludePattern()) + ")";
+            keys = Set.of("excludePattern");
+        } else if (d instanceof ToDefinition t && !(d instanceof ToDynamicDefinition)
+                && Set.of("variableSend", "variableReceive").contains(key)) {
+            call = "toV(" + quote(t.getUri()) + ", " + quoteOrNull(t.getVariableSend()) + ", "
+                   + quoteOrNull(t.getVariableReceive()) + ")";
+            keys = Set.of("variableSend", "variableReceive");
+        } else if (d != null && d.getClass() == ToDynamicDefinition.class
+                && Set.of("variableSend", "variableReceive", "ignoreInvalidEndpoint", "cacheSize").contains(key)) {
+            // toD(uri) returns the parent: its options are arguments of toD(uri, ...), one of them at most
+            ToDynamicDefinition t = (ToDynamicDefinition) d;
+            if (t.getVariableSend() != null || t.getVariableReceive() != null) {
+                call = "toD(" + quote(t.getUri()) + ", " + quoteOrNull(t.getVariableSend()) + ", "
+                       + quoteOrNull(t.getVariableReceive()) + ")";
+            } else if (t.getIgnoreInvalidEndpoint() != null) {
+                call = "toD(" + quote(t.getUri()) + ", " + booleanLiteral(t.getIgnoreInvalidEndpoint()) + ")";
+            } else if (t.getCacheSize() != null && wholeNumber(t.getCacheSize()) != null) {
+                call = "toD(" + quote(t.getUri()) + ", " + t.getCacheSize() + ")";
+            }
+            keys = Set.of("variableSend", "variableReceive", "ignoreInvalidEndpoint", "cacheSize");
+        } else if (d instanceof RemovePropertiesDefinition r && "excludePattern".equals(key)) {
+            call = "removeProperties(" + quote(r.getPattern()) + ", " + quote(r.getExcludePattern()) + ")";
+            keys = Set.of("excludePattern");
+        } else if (d instanceof BeanDefinition b && "beanType".equals(key) && b.getRef() == null) {
+            call = "bean(" + classLiteral(b.getBeanType()) + (b.getMethod() != null ? ", " + quote(b.getMethod()) : "") + ")";
+            keys = Set.of("beanType", "method");
+        } else if (d instanceof LogDefinition l && Set.of("loggingLevel", "logName", "marker").contains(key)) {
+            // log(message) returns the parent: its options are arguments of log(level, logName, marker, message)
+            String level = "LoggingLevel." + (l.getLoggingLevel() != null ? l.getLoggingLevel() : "INFO");
+            if (l.getMarker() != null) {
+                call = "log(" + level + ", " + (l.getLogName() != null ? quote(l.getLogName()) : "(String) null") + ", "
+                       + quote(l.getMarker()) + ", " + quote(l.getMessage()) + ")";
+            } else if (l.getLogName() != null) {
+                call = "log(" + level + ", " + quote(l.getLogName()) + ", " + quote(l.getMessage()) + ")";
+            } else {
+                call = "log(" + level + ", " + quote(l.getMessage()) + ")";
+            }
+            keys = Set.of("loggingLevel", "logName", "marker");
+        } else if (d instanceof SamplingDefinition sd && Set.of("messageFrequency", "samplePeriod").contains(key)) {
+            call = sd.getMessageFrequency() != null
+                    ? "sample(" + sd.getMessageFrequency() + (isLongLiteral(sd.getMessageFrequency()) ? "L" : "") + ")"
+                    : "sample(" + quote(sd.getSamplePeriod()) + ")";
+            keys = Set.of("messageFrequency", "samplePeriod");
+        } else if (d instanceof RollbackDefinition rb && Set.of("markRollbackOnly", "markRollbackOnlyLast").contains(key)) {
+            // rollback() returns the parent: markRollbackOnly() is the step, not an option of it
+            if ("true".equals(rb.getMarkRollbackOnly())) {
+                call = "markRollbackOnly()";
+            } else if ("true".equals(rb.getMarkRollbackOnlyLast())) {
+                call = "markRollbackOnlyLast()";
+            }
+            keys = Set.of("markRollbackOnly", "markRollbackOnlyLast");
+        } else if (d instanceof LoopDefinition loop && "doWhile".equals(key)) {
+            if ("true".equals(loop.getDoWhile()) && loop.getExpression() != null) {
+                call = "loopDoWhile(" + expressionDsl(loop.getExpression()) + ")";
+            }
+            keys = Set.of("doWhile");
+        }
+        if (keys.isEmpty()) {
+            return false;
+        }
+        handledAttributes.addAll(keys);
+        if (call != null && stepStart >= 0 && stepStart < sb.length()) {
+            int end = sb.indexOf(NL, stepStart + 1);
+            if (end < 0) {
+                end = sb.length();
+            }
+            String line = sb.substring(stepStart, end);
+            int dot = line.indexOf('.');
+            if (dot > 0) {
+                sb.replace(stepStart, end, line.substring(0, dot + 1) + call);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * A route built in Java keeps some options in forms XML and YAML do not have (a Class, an array): the step's call
+     * is written again with them, without changing the model. {@code throwException(Foo.class, "msg")},
+     * {@code removeHeaders("*", "Keep*")}.
+     */
+    private void rewriteFromJavaForms(StringBuilder sb, Object def) {
+        String call = null;
+        if (def instanceof ThrowExceptionDefinition t && t.getExceptionType() == null && t.getExceptionClass() != null) {
+            call = "throwException(" + typeName(t.getExceptionClass()) + ".class, " + quote(t.getMessage()) + ")";
+        } else if (def instanceof RemoveHeadersDefinition r && r.getExcludePattern() == null
+                && r.getExcludePatterns() != null && r.getExcludePatterns().length > 0) {
+            call = "removeHeaders(" + quote(r.getPattern()) + ", " + quotedList(r.getExcludePatterns()) + ")";
+        } else if (def instanceof RemovePropertiesDefinition r && r.getExcludePattern() == null
+                && r.getExcludePatterns() != null && r.getExcludePatterns().length > 0) {
+            call = "removeProperties(" + quote(r.getPattern()) + ", " + quotedList(r.getExcludePatterns()) + ")";
+        }
+        if (call == null || stepStart < 0 || stepStart >= sb.length()) {
+            return;
+        }
+        int end = sb.indexOf(NL, stepStart + 1);
+        if (end < 0) {
+            end = sb.length();
+        }
+        String line = sb.substring(stepStart, end);
+        int dot = line.indexOf('.');
+        if (dot > 0) {
+            sb.replace(stepStart, end, line.substring(0, dot + 1) + call);
+        }
+    }
+
+    private String quotedList(String[] values) {
+        StringBuilder b = new StringBuilder();
+        for (String v : values) {
+            b.append(b.isEmpty() ? "" : ", ").append(quote(v));
+        }
+        return b.toString();
+    }
+
+    /** A class as Java names it in source: java.lang.String as String, byte[] as byte[], a nested one with a dot. */
+    private String typeName(Class<?> type) {
+        if (type.isArray()) {
+            return typeName(type.getComponentType()) + "[]";
+        }
+        String name = type.getName().replace('$', '.');
+        return name.startsWith("java.lang.") && name.indexOf('.', 10) < 0 ? name.substring(10) : name;
+    }
+
+    /** setHeaders("h1", expr1, "h2", expr2): the Java DSL takes the names and values as varargs of the step. */
+    private boolean writeNamesAndValues(StringBuilder sb, String key, List<?> list) {
+        StringBuilder args = new StringBuilder();
+        for (Object o : list) {
+            String name;
+            ExpressionDefinition expr;
+            if (o instanceof SetHeaderDefinition h) {
+                name = h.getName();
+                expr = h.getExpression();
+            } else if (o instanceof SetVariableDefinition v) {
+                name = v.getName();
+                expr = v.getExpression();
+            } else {
+                return false;
+            }
+            if (name == null || expr == null) {
+                return false;
+            }
+            args.append(args.isEmpty() ? "" : ", ").append(quote(name)).append(", ").append(expressionDsl(expr));
+        }
+        if (stepStart < 0 || stepStart >= sb.length()) {
+            return false;
+        }
+        int end = sb.indexOf(NL, stepStart + 1);
+        if (end < 0) {
+            end = sb.length();
+        }
+        String line = sb.substring(stepStart, end);
+        int dot = line.indexOf('.');
+        String method = "headers".equals(key) ? "setHeaders" : "setVariables";
+        sb.replace(stepStart, end, line.substring(0, dot + 1) + method + "(" + args + ")");
+        handledAttributes.add(key);
+        return true;
+    }
+
+    private String convertTo(String method, String name, String toName, String type, String charset, String mandatory) {
+        String cls = classLiteral(type);
+        if (toName != null) {
+            return method + "(" + quote(name) + ", " + quote(toName) + ", " + cls + ")";
+        }
+        if (charset != null) {
+            return method + "(" + quote(name) + ", " + cls + ", " + quote(charset) + ")";
+        }
+        return method + "(" + quote(name) + ", " + cls + ", " + booleanLiteral(mandatory) + ")";
+    }
+
+    private static String booleanLiteralOrFalse(String value) {
+        return "true".equalsIgnoreCase(value) ? "true" : "false";
+    }
+
+    private static String booleanLiteral(String value) {
+        return "false".equalsIgnoreCase(value) ? "false" : "true";
+    }
+
+    private String quoteOrNull(String value) {
+        return value != null ? quote(value) : "null";
+    }
+
+    /** Options whose fluent method in the Java DSL has another name than the option. */
+    private static final Map<String, String> OPTION_RENAMES = Map.of("errorHandlerRef", "errorHandler");
+
+    /**
+     * How an option is written when its fluent method does not take a String: {@code name()} for a toggle (nothing when
+     * false), {@code name(10)} for a number (a duration such as {@code 2s} in millis), {@code name(true)},
+     * {@code name(LoggingLevel.WARN)}. Null when a {@code name(String)} method exists (the value is quoted, as a
+     * placeholder must be) or no method fits; the empty string when nothing is to be written.
+     */
+    static String typedOption(Class<?> type, String name, String value) {
+        Method noArg = null;
+        List<Class<?>> params = new ArrayList<>();
+        for (Method m : type.getMethods()) {
+            if (!m.getName().equals(name) || m.isBridge() || Modifier.isStatic(m.getModifiers())) {
+                continue;
+            }
+            if (m.getParameterCount() == 0) {
+                noArg = m;
+            } else if (m.getParameterCount() == 1) {
+                params.add(m.getParameterTypes()[0]);
+            }
+        }
+        if (params.contains(String.class) || params.contains(Object.class)) {
+            return null;
+        }
+        String v = value.strip();
+        // a property placeholder can only go where a String does
+        if (v.startsWith("{{")) {
+            return null;
+        }
+        for (Class<?> p : params) {
+            if ((p == boolean.class || p == Boolean.class) && ("true".equals(v) || "false".equals(v))) {
+                return name + "(" + v + ")";
+            }
+            if (p == int.class || p == Integer.class || p == long.class || p == Long.class) {
+                String number = wholeNumber(v);
+                if (number != null) {
+                    return name + "(" + number + ((p == long.class || p == Long.class) && isLongLiteral(number) ? "L" : "")
+                           + ")";
+                }
+            }
+            if (p == double.class || p == Double.class || p == float.class || p == Float.class) {
+                try {
+                    Double.parseDouble(v);
+                    return name + "(" + v + (p == float.class || p == Float.class ? "f" : "") + ")";
+                } catch (NumberFormatException e) {
+                    // not a number
+                }
+            }
+            if (p.isEnum()) {
+                for (Object c : p.getEnumConstants()) {
+                    if (((Enum<?>) c).name().equalsIgnoreCase(v)) {
+                        return name + "(" + p.getSimpleName() + "." + ((Enum<?>) c).name() + ")";
+                    }
+                }
+            }
+        }
+        if (noArg != null && params.isEmpty()) {
+            return "true".equals(v) ? name + "()" : "";
+        }
+        // mode="BeforeConsumer" is modeBeforeConsumer()
+        if (params.isEmpty() && !v.isEmpty()) {
+            String combined = name + Character.toUpperCase(v.charAt(0)) + v.substring(1);
+            try {
+                if (type.getMethod(combined).getParameterCount() == 0) {
+                    return combined + "()";
+                }
+            } catch (NoSuchMethodException e) {
+                // not that either
+            }
+        }
+        return null;
+    }
+
+    /** A whole number, or a duration such as 2s or 1m30s in millis; null for anything else. */
+    private static String wholeNumber(String value) {
+        try {
+            return String.valueOf(Long.parseLong(value));
+        } catch (NumberFormatException e) {
+            try {
+                return String.valueOf(TimeUtils.toMilliSeconds(value));
+            } catch (RuntimeException ex) {
+                return null;
+            }
+        }
+    }
+
+    private static boolean isLongLiteral(String number) {
+        long l = Long.parseLong(number);
+        return l > Integer.MAX_VALUE || l < Integer.MIN_VALUE;
     }
 
     private static boolean isPrimitiveLiteral(String value) {
@@ -568,15 +973,25 @@ public abstract class JavaDslModelWriterSupport {
 
     protected <T> void doWriteChildElement(StringBuilder sb, String key, T value, BiConsumer<StringBuilder, T> writer) {
         if (value != null && !handledAttributes.contains(key)) {
-            if (BLOCK_CHILDREN.contains(key)) {
+            if ("onFallback".equals(key)) {
+                // onFallback() takes every step after it: it is written last, before the circuit breaker's end()
+                pendingFallback = () -> {
+                    indentLevel++;
+                    sb.append(NL).append(indent()).append(".onFallback()");
+                    writer.accept(sb, value);
+                    indentLevel--;
+                };
+            } else if (BLOCK_CHILDREN.contains(key)) {
                 indentLevel++;
                 sb.append(NL).append(indent()).append(".").append(key).append("()");
                 writer.accept(sb, value);
                 indentLevel--;
+            } else if (value instanceof StreamResequencerConfig src) {
+                writeStreamResequencerConfig(sb, src);
             } else if (value instanceof ExpressionSubElementDefinition esd) {
                 if (esd.getExpressionType() != null) {
                     boolean isPredicate = PREDICATE_CHILDREN.contains(key);
-                    sb.append(NL).append(indent()).append("    .").append(key).append("(");
+                    sb.append(NL).append(indent()).append("    .").append(CHILD_RENAMES.getOrDefault(key, key)).append("(");
                     if (isPredicate) {
                         sb.append("(Predicate) ");
                     }
@@ -618,6 +1033,19 @@ public abstract class JavaDslModelWriterSupport {
 
     protected <T> void doWriteElementRef(StringBuilder sb, String key, T value, BiConsumer<StringBuilder, T> writer) {
         if (value != null && !handledAttributes.contains(key)) {
+            // a route's input and output types are options of the route: .inputType("urn")
+            if (value instanceof InputTypeDefinition in && in.getUrn() != null) {
+                sb.append(NL).append(indent()).append(".inputType")
+                        .append("true".equals(in.getValidate()) ? "WithValidate" : "")
+                        .append("(").append(quote(in.getUrn())).append(")");
+                return;
+            }
+            if (value instanceof OutputTypeDefinition out && out.getUrn() != null) {
+                sb.append(NL).append(indent()).append(".outputType")
+                        .append("true".equals(out.getValidate()) ? "WithValidate" : "")
+                        .append("(").append(quote(out.getUrn())).append(")");
+                return;
+            }
             writer.accept(sb, value);
         }
     }
@@ -638,6 +1066,11 @@ public abstract class JavaDslModelWriterSupport {
     protected <T> void doWriteChildList(
             StringBuilder sb, String key, List<T> list, BiConsumer<StringBuilder, T> writer) {
         if (list != null && !list.isEmpty() && !handledAttributes.contains(key)) {
+            if (("headers".equals(key) && optionOwner instanceof SetHeadersDefinition
+                    || "variables".equals(key) && optionOwner instanceof SetVariablesDefinition)
+                    && writeNamesAndValues(sb, key, list)) {
+                return;
+            }
             if ("value".equals(key) && list.get(0) instanceof ValueDefinition) {
                 writeAllowableValues(sb, list);
                 return;
@@ -836,13 +1269,42 @@ public abstract class JavaDslModelWriterSupport {
                 || def instanceof InterceptSendToEndpointDefinition;
     }
 
+    /**
+     * resequence().stream() with its options: capacity(int), timeout(long) and deliveryAttemptInterval(long) in millis.
+     */
+    protected void writeStreamResequencerConfig(StringBuilder sb, StreamResequencerConfig src) {
+        sb.append(NL).append(indent()).append("    .stream()");
+        if (src.getCapacity() != null) {
+            sb.append(NL).append(indent()).append("    .capacity(").append(src.getCapacity()).append(")");
+        }
+        if (src.getTimeout() != null) {
+            String millis = wholeNumber(src.getTimeout());
+            sb.append(NL).append(indent()).append("    .timeout(").append(millis != null ? millis : src.getTimeout())
+                    .append(")");
+        }
+        if (src.getDeliveryAttemptInterval() != null) {
+            String millis = wholeNumber(src.getDeliveryAttemptInterval());
+            sb.append(NL).append(indent()).append("    .deliveryAttemptInterval(")
+                    .append(millis != null ? millis : src.getDeliveryAttemptInterval()).append(")");
+        }
+        if ("true".equals(src.getIgnoreInvalidExchanges())) {
+            sb.append(NL).append(indent()).append("    .ignoreInvalidExchanges()");
+        }
+        if ("true".equals(src.getRejectOld())) {
+            sb.append(NL).append(indent()).append("    .rejectOld()");
+        }
+    }
+
     protected void writeBatchResequencerConfig(StringBuilder sb, BatchResequencerConfig brc) {
         sb.append(NL).append(indent()).append("    .batch()");
         if (brc.getBatchSize() != null) {
             sb.append(NL).append(indent()).append("    .size(").append(brc.getBatchSize()).append(")");
         }
         if (brc.getBatchTimeout() != null) {
-            sb.append(NL).append(indent()).append("    .timeout(").append(brc.getBatchTimeout()).append(")");
+            // timeout(long): a duration (1s) as millis
+            String millis = wholeNumber(brc.getBatchTimeout());
+            sb.append(NL).append(indent()).append("    .timeout(")
+                    .append(millis != null ? millis : brc.getBatchTimeout()).append(")");
         }
     }
 
@@ -892,6 +1354,16 @@ public abstract class JavaDslModelWriterSupport {
                     first = false;
                     sb.append(classLiteral(ex));
                 }
+            } else if (failover.getExceptionTypes() != null && !failover.getExceptionTypes().isEmpty()) {
+                // built in Java: failover(IOException.class) keeps the classes
+                boolean first = true;
+                for (Class<?> ex : failover.getExceptionTypes()) {
+                    if (!first) {
+                        sb.append(", ");
+                    }
+                    first = false;
+                    sb.append(typeName(ex)).append(".class");
+                }
             }
             sb.append(")");
             handledAttributes.add("exception");
@@ -905,6 +1377,19 @@ public abstract class JavaDslModelWriterSupport {
             sb.append(")");
             handledAttributes.add("correlationExpression");
             handledAttributes.add("expression");
+        } else if (lb instanceof CustomLoadBalancerDefinition custom && custom.getRef() != null) {
+            sb.append(".custom(").append(quote(custom.getRef())).append(")");
+            handledAttributes.add("ref");
+        } else if (lb instanceof WeightedLoadBalancerDefinition w && w.getDistributionRatio() != null) {
+            sb.append(".weighted(").append(booleanLiteralOrFalse(w.getRoundRobin())).append(", ")
+                    .append(quote(w.getDistributionRatio()));
+            if (w.getDistributionRatioDelimiter() != null && !",".equals(w.getDistributionRatioDelimiter())) {
+                sb.append(", ").append(quote(w.getDistributionRatioDelimiter()));
+            }
+            sb.append(")");
+            handledAttributes.add("roundRobin");
+            handledAttributes.add("distributionRatio");
+            handledAttributes.add("distributionRatioDelimiter");
         } else {
             // Derive method name: strip "LoadBalancer" suffix, lowercase first char
             String className = lb.getClass().getSimpleName();
@@ -917,6 +1402,12 @@ public abstract class JavaDslModelWriterSupport {
     protected String expressionDsl(ExpressionDefinition expr) {
         if (expr == null) {
             return "";
+        }
+        // a route built in Java keeps setProperty("p").constant("v") or header("x") as a Java object wrapped in an
+        // ExpressionDefinition: the language inside it is written (the model is not changed)
+        ExpressionDefinition language = languageOf(expr);
+        if (language != expr) {
+            return expressionDsl(language);
         }
         String value = expr.getExpression();
         if (value == null) {
@@ -935,6 +1426,26 @@ public abstract class JavaDslModelWriterSupport {
 
         // compact form: langName("text") — no options
         return compactExpressionDsl(expr, value);
+    }
+
+    /** The language inside a wrapped expression clause or value builder; the expression itself when there is none. */
+    private static ExpressionDefinition languageOf(ExpressionDefinition expr) {
+        if (expr.getClass() != ExpressionDefinition.class) {
+            return expr;
+        }
+        Object v = expr.getExpressionValue() != null ? expr.getExpressionValue() : expr.getPredicate();
+        for (int i = 0; i < 5 && v != null; i++) {
+            if (v instanceof ExpressionDefinition d) {
+                return d;
+            } else if (v instanceof ExpressionClause<?> clause) {
+                v = clause.getExpressionType() instanceof ExpressionDefinition d ? d : clause.getExpressionValue();
+            } else if (v instanceof ValueBuilder vb) {
+                v = vb.getExpression();
+            } else {
+                break;
+            }
+        }
+        return expr;
     }
 
     private String compactExpressionDsl(ExpressionDefinition expr, String value) {
@@ -967,8 +1478,22 @@ public abstract class JavaDslModelWriterSupport {
         if (expr instanceof DatasonnetExpression) {
             return "datasonnet(" + quotedValue + ")";
         }
-        if (expr instanceof TokenizerExpression) {
-            return "tokenize(" + quotedValue + ")";
+        if (expr instanceof TokenizerExpression t) {
+            // the token is an option, not the expression text: the language builder keeps them all
+            StringBuilder b = new StringBuilder("expression().tokenize()");
+            appendOption(b, "token", t.getToken());
+            appendOption(b, "endToken", t.getEndToken());
+            appendOption(b, "inheritNamespaceTagName", t.getInheritNamespaceTagName());
+            appendOption(b, "regex", t.getRegex());
+            appendOption(b, "xml", t.getXml());
+            appendOption(b, "includeTokens", t.getIncludeTokens());
+            appendOption(b, "group", t.getGroup());
+            appendOption(b, "groupDelimiter", t.getGroupDelimiter());
+            appendOption(b, "skipFirst", t.getSkipFirst());
+            if (t.getSource() != null) {
+                appendOption(b, "source", t.getSource());
+            }
+            return b.append(".end()").toString();
         }
         if (expr instanceof XMLTokenizerExpression) {
             return "xtokenize(" + quotedValue + ")";

@@ -176,9 +176,15 @@ public class JsonPathEngine {
             LOG.trace("JSonPath: {} is read as generic file: {}", path, json);
             GenericFile<?> genericFile = (GenericFile<?>) json;
             if (genericFile.getCharset() != null) {
-                // special treatment for generic file with charset
-                InputStream inputStream = new FileInputStream((File) genericFile.getFile());
-                return JsonPath.using(configuration).parse(inputStream, genericFile.getCharset()).read(path);
+                // special treatment for generic file with charset: a remote file (such as from the ftp consumer) is
+                // not a java.io.File, and its content is the body of the generic file
+                InputStream inputStream = genericFile.getFile() instanceof File file
+                        ? new FileInputStream(file)
+                        : exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, genericFile);
+                if (inputStream != null) {
+                    // json-path closes the stream
+                    return JsonPath.using(configuration).parse(inputStream, genericFile.getCharset()).read(path);
+                }
             }
         }
 

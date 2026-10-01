@@ -287,6 +287,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.OnceEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.OpaEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.OpenAIEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.OpenFgaEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.OpenTelemetryEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.OpensearchEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.OpenshiftBuildConfigsEndpointBuilderFactory,

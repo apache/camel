@@ -59,6 +59,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -219,6 +220,38 @@ public class KafkaProducerTest {
         // begin failed, so the unit of work must be left untouched (no dangling transacted flag)
         Mockito.verify(uow, Mockito.never()).beginTransactedBy(any());
         Mockito.verify(uow, Mockito.never()).addSynchronization(any());
+    }
+
+    @Test
+    void transactionalProducerIsRecreatedAfterAFatalError() throws Exception {
+        // CAMEL-24782: a fatal transactional error closes the shared producer; the next transaction must rebuild it
+        // through the client factory instead of leaving the route wedged on a dead (closed) producer.
+        endpoint.getConfiguration().setTransactionalId("test-tx");
+        endpoint.getConfiguration().setTopic("sometopic");
+        producer.doStart();
+
+        Producer recreated = Mockito.mock(Producer.class);
+        KafkaClientFactory factory = Mockito.mock(KafkaClientFactory.class);
+        Mockito.when(factory.getProducer(any(Properties.class))).thenReturn(recreated);
+        endpoint.setKafkaClientFactory(factory);
+
+        // a previous transaction hit a fatal error and closed the shared producer
+        producer.markProducerClosedForRecreation();
+
+        UnitOfWork uow = Mockito.mock(UnitOfWork.class);
+        Mockito.when(uow.isTransactedBy(any())).thenReturn(false);
+        Mockito.when(exchange.getUnitOfWork()).thenReturn(uow);
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getMessage()).thenReturn(in);
+        in.setHeader(KafkaConstants.PARTITION_KEY, 4);
+
+        producer.process(exchange, callback);
+
+        // the shared producer was rebuilt via the factory, re-initialised for transactions, and used for this exchange
+        Mockito.verify(factory).getProducer(any(Properties.class));
+        Mockito.verify(recreated).initTransactions();
+        Mockito.verify(recreated).beginTransaction();
+        assertSame(recreated, producer.getKafkaProducer());
     }
 
     @Test

@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dsl.yaml.common.exception.InvalidEnumException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
@@ -43,6 +44,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -80,6 +82,35 @@ class SemanticQuestionTest extends YamlTestSupport {
                           billing: Invoices and refunds
                           technical: Bugs and outages
                 """.formatted(state);
+    }
+
+    @Test
+    void javaDeclarationsCoexistWithUnchangedYamlDeclarations() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                semanticQuestions(this).question("javaDepartment").type("choice").state("${header.selected}")
+                        .instructions("Which department?")
+                        .criterion("billing", "Invoices and refunds").criterion("technical", "Bugs and outages").register();
+            }
+        });
+        loadRoutes(declarations("${header.selected}") + route());
+        context.start();
+        SemanticQuestion java = SemanticQuestions.get(context).get("javaDepartment");
+        SemanticQuestion yaml = SemanticQuestions.get(context).get("department");
+        assertThat(java).usingRecursiveComparison().isEqualTo(yaml);
+        assertThat(calls).hasValue(0);
+        try (var template = context.createProducerTemplate()) {
+            var exchange = template.request("direct:tickets", e -> {
+                e.getMessage().setBody("original");
+                e.getMessage().setHeader("selected", "invoice");
+            });
+            assertThat(exchange.getException()).isNull();
+            assertThat(context.resolveLanguage("semantic").createExpression("refs:javaDepartment,department")
+                    .evaluate(exchange, Map.class)).containsEntry("javaDepartment", "billing")
+                    .containsEntry("department", "billing");
+        }
+        assertThat(selected).isEqualTo("invoice");
     }
 
     @Test
@@ -281,6 +312,21 @@ class SemanticQuestionTest extends YamlTestSupport {
         assertThat(SemanticQuestions.get(context).get("urgency").getLevels()).containsExactly("Routine", "Urgent");
         assertThatThrownBy(() -> loadRoutesNoValidate(declarations("${body}").replace("type: choice", "type: score")))
                 .hasStackTraceContaining("Node type map is invalid, expected array");
+    }
+
+    @Test
+    void numericPlaceholdersResolveBeforeValidation() throws Exception {
+        loadRoutesNoValidate("""
+                - semantic:
+                    question:
+                      urgent:
+                        type: boolean
+                        instructions: Urgent?
+                        threshold: "{{threshold:0.8}}"
+                        uncertainty: "{{uncertainty:0.1}}"
+                """);
+        assertThat(SemanticQuestions.get(context).get("urgent").getThreshold()).isEqualTo(0.8);
+        assertThat(SemanticQuestions.get(context).get("urgent").getUncertainty()).isEqualTo(0.1);
     }
 
     @ParameterizedTest

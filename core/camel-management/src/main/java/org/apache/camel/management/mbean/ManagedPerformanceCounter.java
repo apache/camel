@@ -36,6 +36,14 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
 
     public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
+    /**
+     * The route and processor id of the processor whose last attempt failed, so a redelivery is only counted by the
+     * processor (and route) that is redelivered, as the redelivered header stays on the exchange after a redelivery
+     * succeeds.
+     */
+    static final String FAILED_ROUTE_ID = "CamelManagementFailedRouteId";
+    static final String FAILED_PROCESSOR_ID = "CamelManagementFailedProcessorId";
+
     private static final int PERCENTILE_WINDOW_SIZE = 1024;
 
     private Statistic exchangesCompleted;
@@ -304,9 +312,22 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         thp.update(getExchangesTotal());
     }
 
+    /**
+     * Whether the exchange was redelivered by this counter, which is when the exchange is redelivered after a processor
+     * failed. A processor and a route override this to only count the redelivery of their own processor.
+     */
+    protected boolean isRedeliveredHere(Exchange exchange) {
+        return ExchangeHelper.isRedelivered(exchange) && exchange.getProperty(FAILED_PROCESSOR_ID) != null;
+    }
+
     @Override
     public void processExchange(Exchange exchange, String type) {
+        // the inflight count is kept also when statistics is disabled, so it stays correct when statistics
+        // is enabled or disabled while exchanges are inflight
         exchangesInflight.increment();
+        if (!statisticsEnabled) {
+            return;
+        }
         if ("route".equals(type)) {
             long now = System.currentTimeMillis();
             lastExchangeCreatedTimestamp.updateValue(now);
@@ -315,13 +336,20 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
 
     @Override
     public void completedExchange(Exchange exchange, long time) {
+        exchangesInflight.decrement();
+        if (!statisticsEnabled) {
+            return;
+        }
         increment();
         exchangesCompleted.increment();
-        exchangesInflight.decrement();
 
         if (ExchangeHelper.isFailureHandled(exchange)) {
             failuresHandled.increment();
             lastExchangeFailureHandledTimestamp.updateValue(System.currentTimeMillis());
+        }
+        // a redelivery attempt that succeeds is also a redelivery
+        if (isRedeliveredHere(exchange)) {
+            redeliveries.increment();
         }
         if (exchange.isExternalRedelivered()) {
             externalRedeliveries.increment();
@@ -363,11 +391,14 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
 
     @Override
     public void failedExchange(Exchange exchange) {
+        exchangesInflight.decrement();
+        if (!statisticsEnabled) {
+            return;
+        }
         increment();
         exchangesFailed.increment();
-        exchangesInflight.decrement();
 
-        if (ExchangeHelper.isRedelivered(exchange)) {
+        if (isRedeliveredHere(exchange)) {
             redeliveries.increment();
         }
         if (exchange.isExternalRedelivered()) {

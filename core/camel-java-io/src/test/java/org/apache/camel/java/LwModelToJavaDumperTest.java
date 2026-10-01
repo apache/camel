@@ -16,12 +16,15 @@
  */
 package org.apache.camel.java;
 
+import java.io.IOException;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.ThrowExceptionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.junit.jupiter.api.Test;
 
@@ -71,6 +74,36 @@ public class LwModelToJavaDumperTest {
             });
             String java = new LwModelToJavaDumper().dumpModelAsJava(context, context.getRouteDefinition("myRoute"));
             assertThat(java).contains("\"Hello\\n  ${body}\"");
+        }
+    }
+
+    /**
+     * A route built in Java keeps expression clauses, classes and arrays the XML DSL does not have: they are written as
+     * Java DSL, without changing the model (CAMEL-25157).
+     */
+    @Test
+    public void testDumpRouteBuiltInJava() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:start").routeId("javaBuilt")
+                            .setProperty("p").constant("v")
+                            .throwException(IllegalArgumentException.class, "Forced")
+                            .loadBalance().failover(IOException.class).to("mock:x").end()
+                            .removeHeaders("*", "Keep*")
+                            .to("mock:result");
+                }
+            });
+            String java = new LwModelToJavaDumper().dumpModelAsJava(context, context.getRouteDefinition("javaBuilt"));
+            assertThat(java).contains(
+                    ".setProperty(\"p\", constant(\"v\"))",
+                    ".throwException(IllegalArgumentException.class, \"Forced\")",
+                    ".failover(java.io.IOException.class)",
+                    ".removeHeaders(\"*\", \"Keep*\")");
+            // the model was not changed
+            assertThat(((ThrowExceptionDefinition) context.getRouteDefinition("javaBuilt").getOutputs().get(1))
+                    .getExceptionType()).isNull();
         }
     }
 }

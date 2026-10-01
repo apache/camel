@@ -21,13 +21,34 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.yaml.out.YamlModelWriter;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class YamlPrinterRoundTripTest {
+
+    @ParameterizedTest
+    @ValueSource(strings = { "001", "true", "null", "", "*", "otherwise", "1e3" })
+    public void testSwitchLiteralValue(String value) throws Exception {
+        RouteDefinition route = new RouteDefinition("direct:start");
+        SwitchDefinition sw = route.doSwitch().header("department");
+        sw.doCase(value, "direct:matched").otherwise("direct:review");
+        sw.preCreateProcessor();
+        YamlModelWriter writer = new YamlModelWriter();
+
+        String yaml = writer.printAsYaml(List.of(writer.writeRouteDefinition(route)));
+        JsonNode node = new YAMLMapper().readTree(yaml).get(0).path("route").path("from").path("steps").get(0).path("switch");
+        JsonNode literal = node.path("case").get(0).path("value");
+        assertThat(literal.isTextual()).as(yaml).isTrue();
+        assertThat(literal.asText()).isEqualTo(value);
+        assertThat(node.path("selector").path("header").path("expression").asText()).isEqualTo("department");
+        assertThat(node.path("otherwise").path("uri").asText()).isEqualTo("direct:review");
+    }
 
     @ParameterizedTest
     @ValueSource(strings = {

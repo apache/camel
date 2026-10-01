@@ -43,7 +43,11 @@ public final class SemanticQuestions {
         }
     }
 
-    /** Replace all definitions from one source; an empty map removes obsolete declarations. */
+    /**
+     * Replace all definitions from one source; an empty map removes obsolete declarations. The Java fluent helper
+     * reserves {@code java:} followed by the resource location (or a generated key for embedded builders). XML and YAML
+     * declarations use the resource location as their source key.
+     */
     public synchronized void replace(String source, Map<String, SemanticQuestion> definitions) {
         Map<String, SemanticQuestion> replacement = new HashMap<>();
         sources.forEach((location, entries) -> {
@@ -70,16 +74,31 @@ public final class SemanticQuestions {
 
     /** Track a route resource so deleted files can be discarded before development-mode reload. */
     public synchronized void replace(Resource source, Map<String, SemanticQuestion> definitions) {
+        replace(source.getLocation(), source, definitions);
+    }
+
+    synchronized void replace(String location, Resource source, Map<String, SemanticQuestion> definitions) {
         removeDeletedResources();
-        replace(source.getLocation(), definitions);
-        if (!definitions.isEmpty() && "file".equals(source.getScheme())) {
-            resources.put(source.getLocation(), source);
+        replace(location, definitions);
+        if (source != null && !definitions.isEmpty() && "file".equals(source.getScheme())) {
+            resources.put(location, source);
         }
     }
 
     synchronized void removeDeletedResources() {
-        resources.values().stream().filter(resource -> !resource.exists()).map(Resource::getLocation).toList()
+        resources.entrySet().stream().filter(entry -> !entry.getValue().exists()).map(Map.Entry::getKey).toList()
                 .forEach(location -> replace(location, Map.of()));
+    }
+
+    synchronized void remove(String source) {
+        if (sources.containsKey(source)) {
+            replace(source, Map.of());
+        }
+    }
+
+    /** Whether any named questions have been registered. */
+    public boolean isEmpty() {
+        return questions.isEmpty();
     }
 
     public SemanticQuestion get(String name) {

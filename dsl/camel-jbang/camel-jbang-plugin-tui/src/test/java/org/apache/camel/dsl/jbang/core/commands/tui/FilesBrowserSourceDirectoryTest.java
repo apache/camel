@@ -57,6 +57,17 @@ class FilesBrowserSourceDirectoryTest {
     }
 
     @Test
+    void relativeReloadDirectoryIsTheIntegrationsNotTheTuis(@TempDir Path dir) throws IOException {
+        // camel run *.yaml --dev in a folder sets the reload directory to "."; the TUI runs elsewhere
+        Path project = Files.createDirectory(dir.resolve("project"));
+        IntegrationInfo info = new IntegrationInfo();
+        info.directory = project.toString();
+        info.configProperties.add(prop("camel.main.routesReloadDirectory", "."));
+
+        assertEquals(project, FilesBrowser.resolveSourceDirectory(info));
+    }
+
+    @Test
     void temporaryDirectories() throws IOException {
         Path tmp = Files.createTempDirectory("camel-tui-test");
         try {

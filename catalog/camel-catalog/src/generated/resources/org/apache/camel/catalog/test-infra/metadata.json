@@ -285,6 +285,17 @@
   "serviceVersion" : "2026.5",
   "uiSupported" : false
 }, {
+  "service" : "org.apache.camel.test.infra.openfga.services.OpenFgaInfraService",
+  "description" : "OpenFGA, a relationship-based fine-grained authorization engine",
+  "implementation" : "org.apache.camel.test.infra.openfga.services.OpenFgaLocalContainerInfraService",
+  "alias" : [ "openfga" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-openfga",
+  "version" : "4.23.0-SNAPSHOT",
+  "serviceVersion" : "v1.21.0",
+  "uiSupported" : false
+}, {
   "service" : "org.apache.camel.test.infra.ibmmq.services.IbmMQInfraService",
   "description" : "IBM MQ is enterprise messaging middleware for reliable communication",
   "implementation" : "org.apache.camel.test.infra.ibmmq.services.IbmMQLocalContainerInfraService",
@@ -722,7 +733,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-clickhouse",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "26.8",
+  "serviceVersion" : "26.9",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.ollama.services.OllamaInfraService",

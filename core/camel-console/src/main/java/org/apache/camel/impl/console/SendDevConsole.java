@@ -19,6 +19,7 @@ package org.apache.camel.impl.console;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,11 @@ public class SendDevConsole extends AbstractDevConsole {
     @Metadata(label = "query", description = "The message body to send. Can refer to files using file: prefix",
               javaType = "java.lang.String")
     public static final String BODY = "body";
+
+    @Metadata(label = "query",
+              description = "Encoding of the body option. Use base64 to send binary content, which is decoded and sent as byte[].",
+              javaType = "java.lang.String", enums = "base64")
+    public static final String BODY_ENCODING = "bodyEncoding";
 
     @Metadata(label = "query", description = "Whether to poll message from the endpoint instead of sending",
               javaType = "java.lang.Boolean")
@@ -261,7 +267,7 @@ public class SendDevConsole extends AbstractDevConsole {
             throws Exception {
         Exchange out = null;
         if (target != null) {
-            final Object inputBody = prepareBody(body);
+            final Object inputBody = prepareBody(body, optionString(options, BODY_ENCODING));
             final Map<String, Object> inputHeaders = prepareHeaders(options);
             if (poll) {
                 out = consumer.receive(target, timeout);
@@ -324,7 +330,13 @@ public class SendDevConsole extends AbstractDevConsole {
         return target;
     }
 
-    private Object prepareBody(String body) throws Exception {
+    private Object prepareBody(String body, String bodyEncoding) throws Exception {
+        if (bodyEncoding != null) {
+            if (!"base64".equalsIgnoreCase(bodyEncoding)) {
+                throw new IllegalArgumentException("Unsupported bodyEncoding: " + bodyEncoding + " (supported: base64)");
+            }
+            return Base64.getDecoder().decode(body);
+        }
         Object b = body;
         if (body.startsWith("file:")) {
             File file = new File(body.substring(5));
@@ -344,7 +356,8 @@ public class SendDevConsole extends AbstractDevConsole {
     }
 
     private static boolean isCustomHeader(String key) {
-        return !BODY.equals(key) && !BODY_MAX_CHARS.equals(key) && !POLL.equals(key) && !POLL_TIMEOUT.equals(key)
+        return !BODY.equals(key) && !BODY_ENCODING.equals(key) && !BODY_MAX_CHARS.equals(key) && !POLL.equals(key)
+                && !POLL_TIMEOUT.equals(key)
                 && !EXCHANGE_PATTERN.equals(key) && !ENDPOINT.equals(key)
                 && !"CamelHttpPath".equals(key); // do not include ourself /q/dev/send
     }

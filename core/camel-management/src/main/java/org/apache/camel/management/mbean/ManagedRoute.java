@@ -43,6 +43,7 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
@@ -61,6 +62,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -1043,4 +1045,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
         return StringHelper.xmlEncode(text);
     }
 
+    @Override
+    protected boolean isRedeliveredHere(Exchange exchange) {
+        // only the route of the processor that failed is redelivered (the later routes see the redelivered header too)
+        return ExchangeHelper.isRedelivered(exchange)
+                && exchange.getProperty(FAILED_PROCESSOR_ID) != null
+                && route.getId().equals(exchange.getProperty(FAILED_ROUTE_ID));
+    }
 }

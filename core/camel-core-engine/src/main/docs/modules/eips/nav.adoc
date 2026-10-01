@@ -2,7 +2,6 @@
 // make edits in docs/*nav.adoc.template files instead
 
 * xref:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
-* xref:eips:ai-patterns.adoc[AI Patterns]
 ** xref:a2aSubTask-eip.adoc[A2A Sub Task]
 ** xref:aggregate-eip.adoc[Aggregate]
 ** xref:batchConfig-eip.adoc[BatchConfig]
@@ -106,6 +105,7 @@
 ** xref:stop-eip.adoc[Stop]
 ** xref:throwException-eip.adoc[Stop]
 ** xref:streamConfig-eip.adoc[StreamConfig]
+** xref:switch-eip.adoc[Switch]
 ** xref:threads-eip.adoc[Threads]
 ** xref:throttle-eip.adoc[Throttle]
 ** xref:to-eip.adoc[To]
@@ -118,3 +118,4 @@
 ** xref:validate-eip.adoc[Validate]
 ** xref:weightedLoadBalancer-eip.adoc[Weighted Load Balancer]
 ** xref:wireTap-eip.adoc[Wire Tap]
+* xref:eips:ai-patterns.adoc[AI Patterns]

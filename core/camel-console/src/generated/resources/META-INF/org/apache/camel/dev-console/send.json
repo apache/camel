@@ -27,8 +27,25 @@
       "secret": false,
       "description": "The message body to send. Can refer to files using file: prefix"
     },
-    "bodyMaxChars": {
+    "bodyEncoding": {
       "index": 1,
+      "kind": "option",
+      "displayName": "Body Encoding",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "enum": [
+        "base64"
+      ],
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Encoding of the body option. Use base64 to send binary content, which is decoded and sent as byte[]."
+    },
+    "bodyMaxChars": {
+      "index": 2,
       "kind": "option",
       "displayName": "Body Max Chars",
       "group": "query",
@@ -43,7 +60,7 @@
       "description": "Maximum size of the message body to include in the dump"
     },
     "endpoint": {
-      "index": 2,
+      "index": 3,
       "kind": "option",
       "displayName": "Endpoint",
       "group": "query",
@@ -57,7 +74,7 @@
       "description": "Endpoint for where to send messages (can also refer to a route id, endpoint pattern)"
     },
     "exchangePattern": {
-      "index": 3,
+      "index": 4,
       "kind": "option",
       "displayName": "Exchange Pattern",
       "group": "query",
@@ -75,7 +92,7 @@
       "description": "Exchange pattern when sending"
     },
     "poll": {
-      "index": 4,
+      "index": 5,
       "kind": "option",
       "displayName": "Poll",
       "group": "query",
@@ -89,7 +106,7 @@
       "description": "Whether to poll message from the endpoint instead of sending"
     },
     "pollTimeout": {
-      "index": 5,
+      "index": 6,
       "kind": "option",
       "displayName": "Poll Timeout",
       "group": "query",

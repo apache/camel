@@ -16,8 +16,6 @@
  */
 package org.apache.camel.reifier;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -26,10 +24,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
-import org.apache.camel.processor.InterceptSendToEndpointCallback;
+import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.InterceptSendToEndpointManager;
+import org.apache.camel.processor.InterceptSendToEndpointService;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.support.DefaultInterceptSendToEndpoint.Interceptor;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PluginHelper;
 
@@ -67,7 +67,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
 
         final Route registeringRoute = route;
         Processor p = exchange -> {
-            // the endpoint is decorated once (by the first route of the intercept), so use the route that is sending
+            // other routes may use this interceptor (such as when they have none), so use the route that is sending
             Route current = ExchangeHelper.getRoute(exchange);
             if (current == null) {
                 current = registeringRoute;
@@ -77,24 +77,17 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
             exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ENDPOINT_URI, current.getEndpoint().getEndpointUri());
         };
 
-        // register endpoint callback so we can proxy the endpoint
-        camelContext.getCamelContextExtension()
-                .registerEndpointCallback(
-                        new InterceptSendToEndpointCallback(
-                                camelContext,
-                                Pipeline.newInstance(camelContext, p, before),
-                                after,
-                                matchURI, skip, when));
+        // the interceptor of this route, which it registers when it starts and unregisters when it stops, so the
+        // endpoints are intercepted by the routes that are running (see InterceptSendToEndpointManager)
+        Predicate predicate = when != null ? when : exchange -> true;
+        Processor pipeline = new FilterProcessor(camelContext, predicate, Pipeline.newInstance(camelContext, p, before));
+        Interceptor interceptor = new Interceptor(route.getRouteId(), pipeline, after, skip);
+        // the matching endpoints must be wrapped now (before the route resolves its endpoints)
+        InterceptSendToEndpointManager.getOrCreate(camelContext).addPattern(matchURI);
+        route.addService(new InterceptSendToEndpointService(camelContext, matchURI, interceptor));
 
-        // remove the original intercepted route from the outputs as we do not
-        // intercept as the regular interceptor
-        // instead we use the proxy endpoints producer do the triggering. That
-        // is we trigger when someone sends
-        // an exchange to the endpoint, see InterceptSendToEndpoint for details.
-        RouteDefinition route = (RouteDefinition) this.route.getRoute();
-        List<ProcessorDefinition<?>> outputs = route.getOutputs();
-        outputs.remove(definition);
-
+        // the interceptor is not a processor in the route (the definition is abstract, and is kept in the route, so the
+        // interceptor is created again when the route is created again, such as when CamelContext is restarted)
         // and return no processor to invoke next from me
         return null;
     }

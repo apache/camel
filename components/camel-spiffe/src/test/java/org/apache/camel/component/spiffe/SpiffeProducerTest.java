@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.spiffe;
 
+import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.List;
 
 import io.spiffe.spiffeid.SpiffeId;
 import io.spiffe.svid.jwtsvid.JwtSvid;
@@ -43,20 +45,77 @@ class SpiffeProducerTest extends CamelTestSupport {
         return spiffeId;
     }
 
-    @Test
-    void fetchX509Svid() throws Exception {
-        SpiffeId id = spiffeId("spiffe://example.org/workload");
+    private final Date notAfter = new Date();
+    private final List<X509Certificate> chain = List.of(mock(X509Certificate.class));
+
+    private X509Svid mockX509Svid(String id) throws Exception {
+        // build the nested mocks first: stubbing one inside another when(...) call trips Mockito
+        SpiffeId sid = spiffeId(id);
+        X509Certificate leaf = mock(X509Certificate.class);
+        when(leaf.getNotAfter()).thenReturn(notAfter);
         X509Svid svid = mock(X509Svid.class);
-        when(svid.getSpiffeId()).thenReturn(id);
+        when(svid.getSpiffeId()).thenReturn(sid);
+        when(svid.getChain()).thenReturn(chain);
+        when(svid.getLeaf()).thenReturn(leaf);
         X509Context ctx = mock(X509Context.class);
         when(ctx.getDefaultSvid()).thenReturn(svid);
         when(client.fetchX509Context()).thenReturn(ctx);
+        return svid;
+    }
+
+    @Test
+    void fetchX509Svid() throws Exception {
+        mockX509Svid("spiffe://example.org/workload");
 
         Exchange out = template.request("spiffe:test?workloadApiClient=#client&operation=fetchX509Svid", e -> {
         });
 
+        // default response is the certificate chain: no private key on the body unless x509Response=svid is set
+        assertThat(out.getMessage().getBody()).isSameAs(chain);
+        assertThat(out.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isEqualTo("spiffe://example.org/workload");
+        assertThat(out.getMessage().getHeader(SpiffeConstants.EXPIRY)).isEqualTo(notAfter);
+    }
+
+    @Test
+    void fetchX509SvidSvidReturnsTheFullSvid() throws Exception {
+        X509Svid svid = mockX509Svid("spiffe://example.org/workload");
+
+        Exchange out = template.request(
+                "spiffe:test?workloadApiClient=#client&operation=fetchX509Svid&x509Response=svid", e -> {
+                });
+
+        // opt-in: the whole SVID, which carries the private key
         assertThat(out.getMessage().getBody()).isSameAs(svid);
         assertThat(out.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isEqualTo("spiffe://example.org/workload");
+        assertThat(out.getMessage().getHeader(SpiffeConstants.EXPIRY)).isEqualTo(notAfter);
+    }
+
+    @Test
+    void fetchX509SvidChainOmitsThePrivateKey() throws Exception {
+        mockX509Svid("spiffe://example.org/workload");
+
+        Exchange out = template.request(
+                "spiffe:test?workloadApiClient=#client&operation=fetchX509Svid&x509Response=chain", e -> {
+                });
+
+        // the certificate chain, not the SVID: no private key in the body
+        assertThat(out.getMessage().getBody()).isSameAs(chain);
+        assertThat(out.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isEqualTo("spiffe://example.org/workload");
+        assertThat(out.getMessage().getHeader(SpiffeConstants.EXPIRY)).isEqualTo(notAfter);
+    }
+
+    @Test
+    void fetchX509SvidIdLeavesTheBodyUntouched() throws Exception {
+        mockX509Svid("spiffe://example.org/workload");
+
+        Exchange out = template.request(
+                "spiffe:test?workloadApiClient=#client&operation=fetchX509Svid&x509Response=id",
+                e -> e.getIn().setBody("original-body"));
+
+        // body untouched: the identity is exposed only through the headers, so no key material is handled
+        assertThat(out.getMessage().getBody()).isEqualTo("original-body");
+        assertThat(out.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isEqualTo("spiffe://example.org/workload");
+        assertThat(out.getMessage().getHeader(SpiffeConstants.EXPIRY)).isEqualTo(notAfter);
     }
 
     @Test
@@ -145,5 +204,83 @@ class SpiffeProducerTest extends CamelTestSupport {
 
         assertThat(out.getMessage().getBody()).isSameAs(svid);
         assertThat(out.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isEqualTo("spiffe://example.org/client");
+    }
+
+    @Test
+    void validateJwtSvidTokenFromAuthorizationHeader() throws Exception {
+        SpiffeId id = spiffeId("spiffe://example.org/client");
+        JwtSvid svid = mock(JwtSvid.class);
+        when(svid.getSpiffeId()).thenReturn(id);
+        when(client.validateJwtSvid("auth-token", "my-audience")).thenReturn(svid);
+
+        // no CamelSpiffeToken header and no body -> the producer falls back to the Authorization: Bearer header
+        Exchange out = template.request(
+                "spiffe:test?workloadApiClient=#client&operation=validateJwtSvid&audience=my-audience",
+                e -> e.getIn().setHeader("Authorization", "Bearer auth-token"));
+
+        assertThat(out.getMessage().getBody()).isSameAs(svid);
+        assertThat(out.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isEqualTo("spiffe://example.org/client");
+    }
+
+    @Test
+    void validateJwtSvidBearerSchemeIsCaseInsensitive() throws Exception {
+        SpiffeId id = spiffeId("spiffe://example.org/client");
+        JwtSvid svid = mock(JwtSvid.class);
+        when(svid.getSpiffeId()).thenReturn(id);
+        when(client.validateJwtSvid("ci-token", "my-audience")).thenReturn(svid);
+
+        // scheme matched case-insensitively and the token trimmed
+        Exchange out = template.request(
+                "spiffe:test?workloadApiClient=#client&operation=validateJwtSvid&audience=my-audience",
+                e -> e.getIn().setHeader("Authorization", "bearer   ci-token"));
+
+        assertThat(out.getMessage().getBody()).isSameAs(svid);
+    }
+
+    @Test
+    void validateJwtSvidHeaderTokenWinsOverAuthorization() throws Exception {
+        SpiffeId id = spiffeId("spiffe://example.org/client");
+        JwtSvid svid = mock(JwtSvid.class);
+        when(svid.getSpiffeId()).thenReturn(id);
+        // only the CamelSpiffeToken value is stubbed; if the Authorization value were used the mock returns null
+        when(client.validateJwtSvid("explicit-token", "my-audience")).thenReturn(svid);
+
+        Exchange out = template.request(
+                "spiffe:test?workloadApiClient=#client&operation=validateJwtSvid&audience=my-audience",
+                e -> {
+                    e.getIn().setHeader(SpiffeConstants.TOKEN, "explicit-token");
+                    e.getIn().setHeader("Authorization", "Bearer ignored-token");
+                });
+
+        assertThat(out.getMessage().getBody()).isSameAs(svid);
+    }
+
+    @Test
+    void validateJwtSvidNonBearerAuthorizationFails() {
+        // a non-bearer Authorization value is not a token source; the request falls through to the token-required error
+        Exchange out = template.request(
+                "spiffe:test?workloadApiClient=#client&operation=validateJwtSvid&audience=my-audience",
+                e -> e.getIn().setHeader("Authorization", "Basic dXNlcjpwYXNz"));
+
+        assertThat(out.isFailed()).isTrue();
+        assertThat(out.getException()).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void validateJwtSvidAuthorizationWinsOverBody() throws Exception {
+        SpiffeId id = spiffeId("spiffe://example.org/client");
+        JwtSvid svid = mock(JwtSvid.class);
+        when(svid.getSpiffeId()).thenReturn(id);
+        // only the Authorization token is stubbed: a POST/PUT request payload in the body must not be taken as the token
+        when(client.validateJwtSvid("bearer-token", "my-audience")).thenReturn(svid);
+
+        Exchange out = template.request(
+                "spiffe:test?workloadApiClient=#client&operation=validateJwtSvid&audience=my-audience",
+                e -> {
+                    e.getIn().setBody("the-request-payload");
+                    e.getIn().setHeader("Authorization", "Bearer bearer-token");
+                });
+
+        assertThat(out.getMessage().getBody()).isSameAs(svid);
     }
 }

@@ -45,6 +45,12 @@ public class EhcacheAggregationRepository extends ServiceSupport implements Reco
 
     private static final Logger LOG = LoggerFactory.getLogger(EhcacheAggregationRepository.class);
 
+    /**
+     * Prefix of the keys under which completed exchanges are kept for recovery. Recovery entries are keyed by exchange
+     * id, aggregations in progress by correlation key, and the prefix keeps the two apart in the same cache.
+     */
+    private static final String RECOVERY_KEY_PREFIX = "camel-recovery:";
+
     private CamelContext camelContext;
     private CacheManager cacheManager;
     @Metadata(description = "Name of cache", required = true)
@@ -173,34 +179,72 @@ public class EhcacheAggregationRepository extends ServiceSupport implements Reco
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         LOG.trace("Removing an exchange with ID {} for key {}", exchange.getExchangeId(), key);
         cache.remove(key);
+
+        if (useRecovery) {
+            // the aggregation is complete but the exchange has not been processed yet, so keep a copy that recovery
+            // can pick up if the processing never confirms it (the given exchange, as the one in the cache may not
+            // contain the exchange that completed the aggregation)
+            LOG.trace("Putting an exchange with ID {} into the recovery store", exchange.getExchangeId());
+            cache.put(recoveryKey(exchange.getExchangeId()),
+                    DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders));
+        }
     }
 
     @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
         LOG.trace("Confirming an exchange with ID {}.", exchangeId);
-        cache.remove(exchangeId);
+        if (useRecovery) {
+            cache.remove(recoveryKey(exchangeId));
+        }
     }
 
     @Override
     public Set<String> getKeys() {
         Set<String> keys = new HashSet<>();
-        cache.forEach(e -> keys.add(e.getKey()));
+        cache.forEach(e -> {
+            if (!isRecoveryKey(e.getKey())) {
+                keys.add(e.getKey());
+            }
+        });
 
         return Collections.unmodifiableSet(keys);
     }
 
     @Override
     public Set<String> scan(CamelContext camelContext) {
+        if (!useRecovery) {
+            LOG.debug("Recovery is disabled on the repository of {} context, nothing to scan", camelContext.getName());
+            return Collections.emptySet();
+        }
+
         LOG.trace("Scanning for exchanges to recover in {} context", camelContext.getName());
-        Set<String> scanned = Collections.unmodifiableSet(getKeys());
-        LOG.trace("Found {} keys for exchanges to recover in {} context", scanned.size(), camelContext.getName());
+        Set<String> exchangeIds = new HashSet<>();
+        cache.forEach(e -> {
+            if (isRecoveryKey(e.getKey())) {
+                exchangeIds.add(exchangeIdOf(e.getKey()));
+            }
+        });
+        Set<String> scanned = Collections.unmodifiableSet(exchangeIds);
+        LOG.trace("Found {} exchanges to recover in {} context", scanned.size(), camelContext.getName());
         return scanned;
     }
 
     @Override
     public Exchange recover(CamelContext camelContext, String exchangeId) {
         LOG.trace("Recovering an Exchange with ID {}.", exchangeId);
-        return useRecovery ? unmarshallExchange(camelContext, cache.get(exchangeId)) : null;
+        return useRecovery ? unmarshallExchange(camelContext, cache.get(recoveryKey(exchangeId))) : null;
+    }
+
+    private static String recoveryKey(String exchangeId) {
+        return RECOVERY_KEY_PREFIX + exchangeId;
+    }
+
+    private static boolean isRecoveryKey(String key) {
+        return key.startsWith(RECOVERY_KEY_PREFIX);
+    }
+
+    private static String exchangeIdOf(String recoveryKey) {
+        return recoveryKey.substring(RECOVERY_KEY_PREFIX.length());
     }
 
     @Override

@@ -66,13 +66,35 @@ camel.component.typesafe-ai.max-concurrent-requests=64
 ----
 
 `apiKey` is a secret option. `baseUrl` defaults to `https://api.typesafe.ai`; the client
-appends `/v1/systemone`. A base path can address a proxy. HTTP redirects are not followed.
+appends `apiPath`, which defaults to `/v1/systemone`. A base path can address a proxy.
+HTTP redirects are not followed.
 Use HTTPS for the service; HTTP is useful for local testing.
 
 `model` defaults to `jev-latest`. Pin a version when tuning thresholds; aliases can change
 behavior without a route change. The request map may explicitly override the endpoint's
 model for that request. The response's `model` identifies the model that answered.
 See https://docs.typesafe.ai/models[available models].
+
+=== Custom API path
+
+Set `apiPath` when a service or gateway exposes the supported TypeSafe AI request and
+response schema at a different path:
+
+[source,properties]
+----
+camel.component.typesafe-ai.base-url=http://localhost:8100
+camel.component.typesafe-ai.api-path=/v1/decision
+----
+
+The resulting request URL is `http://localhost:8100/v1/decision`. A path prefix in `baseUrl`
+is preserved: `http://localhost:8100/gateway/` produces
+`http://localhost:8100/gateway/v1/decision`. The leading slash in `apiPath` is optional.
+The path must not be blank or include a scheme, authority, query or fragment.
+
+An endpoint can override the component setting with `typesafe-ai:refund?apiPath=/v1/decision`.
+The Semantic language's TypeSafe AI adapter inherits the component setting even when the
+route contains no `typesafe-ai` endpoint. Changing the path does not change the required
+request and response schema.
 
 === Concurrent requests
 

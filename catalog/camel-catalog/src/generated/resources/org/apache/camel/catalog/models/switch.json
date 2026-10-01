@@ -1,0 +1,25 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "switch",
+    "title": "Switch",
+    "description": "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar values",
+    "deprecated": false,
+    "firstVersion": "4.23.0",
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.SwitchDefinition",
+    "aliases": [ "decision-table", "dispatch-table", "lookup-table" ],
+    "abstract": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "note": { "index": 1, "kind": "attribute", "displayName": "Note", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The note for this node" },
+    "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The description for this node" },
+    "disabled": { "index": 3, "kind": "attribute", "displayName": "Disabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime." },
+    "selector": { "index": 4, "kind": "expression", "displayName": "Selector", "group": "common", "required": true, "type": "object", "javaType": "org.apache.camel.model.ExpressionSubElementDefinition", "oneOf": [ "constant", "datasonnet", "exchangeProperty", "groovy", "header", "hl7terser", "jactl", "java", "jq", "js", "jsonpath", "language", "method", "mvel", "ognl", "python", "python3", "quickjs", "ref", "simple", "spel", "tokenize", "variable", "wasm", "xpath", "xquery", "xtokenize" ], "deprecated": false, "autowired": false, "secret": false, "description": "Expression evaluated once per entry. Returns a scalar value to match against the literal cases." },
+    "case": { "index": 5, "kind": "element", "displayName": "Case", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.SwitchCaseDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Literal cases. Duplicate values are rejected at startup, ignoring case." },
+    "otherwise": { "index": 6, "kind": "element", "displayName": "Otherwise", "group": "common", "required": false, "type": "object", "javaType": "org.apache.camel.model.SwitchOtherwiseDefinition", "oneOf": [ "otherwise" ], "deprecated": false, "autowired": false, "secret": false, "description": "Fixed fallback URI for null or unmatched selector results. Without a fallback processing continues." }
+  }
+}

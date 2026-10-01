@@ -57,15 +57,22 @@ For advanced scenarios an already-configured `io.spiffe.workloadapi.WorkloadApiC
 
 The component supports the following producer operations:
 
-* `fetchX509Svid` — fetches the default X.509-SVID from the Workload API. The message body is set to the
-`io.spiffe.svid.x509svid.X509Svid` (certificate chain, private key and SPIFFE ID) and the `CamelSpiffeSpiffeId`
-header to its SPIFFE ID.
+* `fetchX509Svid` — fetches the default X.509-SVID from the Workload API. By default (`x509Response=chain`) the message
+body is set to the certificate chain only (a `List<java.security.cert.X509Certificate>`, without the private key), so a
+route never handles key material unless it asks for it. Set `x509Response=svid` to get the whole
+`io.spiffe.svid.x509svid.X509Svid` including the private key (needed for programmatic mTLS), or `x509Response=id` to
+leave the body untouched. In every case the `CamelSpiffeSpiffeId` and `CamelSpiffeExpiry` (the leaf certificate's
+expiry) headers carry the identity.
 * `fetchJwtSvid` — fetches a JWT-SVID for the configured `audience` (or the `CamelSpiffeAudience` header). The
 message body is set to the JWT token string, with the `CamelSpiffeSpiffeId` and `CamelSpiffeExpiry` headers.
-* `validateJwtSvid` — validates the JWT-SVID passed in the `CamelSpiffeToken` header (or the body) against the
-`audience`. When several audiences are configured the token is accepted if it matches *any* of them — the
-Workload API validates one audience at a time, so each is tried in turn. The message body is set to the validated
-`io.spiffe.svid.jwtsvid.JwtSvid`.
+* `validateJwtSvid` — validates a JWT-SVID against the `audience`. The token is taken from the first of:
+the `CamelSpiffeToken` header, an `Authorization: Bearer <token>` header (the scheme matched case-insensitively), or
+the message body. The `Authorization` header is tried *before* the body so a request payload on a `POST`/`PUT` is not
+mistaken for the token; this lets a `platform-http` route validate an incoming bearer token without a bean to strip
+the scheme. On success the message body is set to the validated `io.spiffe.svid.jwtsvid.JwtSvid`, so a route that
+needs the original request payload afterwards must keep a copy before validating (or validate a bodiless request).
+When several audiences are configured the token is accepted if it matches *any* of them — the Workload API validates
+one audience at a time, so each is tried in turn.
 
 [NOTE]
 ====
@@ -73,7 +80,8 @@ The `fetchX509Svid` and `fetchJwtSvid` operations place sensitive key material o
 carries the workload's private key, and the JWT-SVID is a bearer token. Route authors are trusted with Exchange
 contents, but you should avoid logging or tracing the message body for these operations — for example via the
 `log`/`trace` components or the message-history / breadcrumb EIPs — to prevent accidental disclosure of the key
-or token.
+or token. `fetchX509Svid` only puts the private key on the body when `x509Response=svid` is set explicitly; the
+default (`chain`) and `id` keep the key off the message entirely.
 ====
 
 == Example
@@ -87,6 +95,26 @@ from("direct:start")
     .setHeader("Authorization", simple("Bearer ${body}"))
     .to("http://backend.example.org/api");
 ------------------------------------------------------------
+
+Validate an incoming bearer token on a `platform-http` route, without a bean to strip the scheme:
+
+[source,yaml]
+------------------------------------------------------------
+- from:
+    uri: "platform-http:/api"
+    steps:
+      # the Authorization: Bearer <token> header is picked up automatically; validation replaces the body with the
+      # JwtSvid, so this fits a request whose payload is not needed afterwards
+      - to: "spiffe:auth?operation=validateJwtSvid&audience=spiffe://example.org/api"
+      # the token is a credential; drop it before the exchange goes further
+      - removeHeaders:
+          pattern: "Authorization"
+      - to: "direct:handleRequest"
+------------------------------------------------------------
+
+A missing token fails with `IllegalArgumentException`; a rejected one (invalid, expired, or a wrong audience) fails
+with `io.spiffe.exception.JwtSvidException`. Catch both — `onException(io.spiffe.exception.JwtSvidException.class,
+IllegalArgumentException.class)` — to answer `401`.
 
 == Mutual TLS with SPIFFE (SSLContextParameters)
 

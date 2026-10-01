@@ -75,6 +75,14 @@ Press `Enter` on a selected route to **drill down** into its
 internal EIP structure (the route diagram). Press `Esc` to
 return to the topology view.
 
+## AI-assisted descriptions
+
+With descriptions on (`n`), a route that has no description of its
+own shows the one the AI project overview (`/overview` in the AI
+panel) suggested, in italic and marked with `✦`. It was written by
+an AI, not taken from the route: review it, and `/overview apply`
+puts it into the route source once you agree.
+
 ## Route Diagram (drill-down)
 
 In the route diagram, each EIP node shows its type tag (colored)

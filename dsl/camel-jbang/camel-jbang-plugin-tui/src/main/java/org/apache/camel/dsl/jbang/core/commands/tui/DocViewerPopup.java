@@ -67,6 +67,8 @@ class DocViewerPopup {
     private boolean wantsOptions;
     private final TocPopup tocPopup = new TocPopup();
     private int lastContentWidth;
+    /** A heading to scroll to once the viewer knows its width, after the first render. */
+    private String pendingHeading;
     private int lastTotalHeight;
 
     private final ScrollbarState scrollbarState = new ScrollbarState();
@@ -144,6 +146,7 @@ class DocViewerPopup {
     }
 
     void openMarkdown(String title, String markdown) {
+        pendingHeading = null;
         docLines = null;
         docContent = markdown;
         docTitle = title;
@@ -151,6 +154,12 @@ class DocViewerPopup {
         lastTotalHeight = 0;
         showViewer = true;
         onCloseCallback = null;
+    }
+
+    /** Opens markdown scrolled to the first heading with the given text, when there is one. */
+    void openMarkdownAt(String title, String markdown, String heading) {
+        openMarkdown(title, markdown);
+        pendingHeading = heading;
     }
 
     void openMarkdown(String title, String markdown, Runnable onClose) {
@@ -622,6 +631,13 @@ class DocViewerPopup {
                     .syntaxTheme(Theme.syntaxTheme())
                     .build();
             frame.renderWidget(view, hChunks.get(0));
+            if (pendingHeading != null) {
+                String wanted = pendingHeading;
+                pendingHeading = null;
+                TocPopup.extractHeadings(docContent).stream()
+                        .filter(h -> h.title().strip().startsWith(wanted)).findFirst()
+                        .ifPresent(this::jumpToHeading);
+            }
             int totalHeight = view.computeHeight(lastContentWidth);
             lastTotalHeight = totalHeight;
             if (totalHeight > viewportHeight) {

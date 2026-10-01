@@ -1,0 +1,21 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "case",
+    "title": "Case",
+    "description": "A literal switch case with one fixed endpoint destination",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.SwitchCaseDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "note": { "index": 1, "kind": "attribute", "displayName": "Note", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The note for this node" },
+    "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The description for this node" },
+    "value": { "index": 3, "kind": "attribute", "displayName": "Value", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The case-insensitive literal value for a scalar selector." },
+    "uri": { "index": 4, "kind": "attribute", "displayName": "Uri", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The fixed destination URI. Supports property placeholders, but not Simple expressions." }
+  }
+}

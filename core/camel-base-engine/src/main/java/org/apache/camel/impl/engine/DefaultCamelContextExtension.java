@@ -851,6 +851,20 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         this.messageHistoryFactory = camelContext.getInternalServiceManager().addService(camelContext, messageHistoryFactory);
     }
 
+    /**
+     * Registers the internal services that were stopped when the CamelContext was stopped, so they are started again on
+     * a restart, and stopped when the CamelContext stops again. This includes the internal services of the
+     * CamelContext, the context plugins that are services, a custom debugger, and the services added with
+     * {@link org.apache.camel.CamelContext#addService(Object)}.
+     * <p/>
+     * The injector is not included as it is created again on restart (the type converters are not registered as
+     * internal services), and the services that are not stopped with the CamelContext (such as the executor service
+     * manager) are still registered.
+     */
+    void reRegisterServices() {
+        camelContext.getInternalServiceManager().restoreStoppedServices(camelContext, Injector.class::isInstance);
+    }
+
     StreamCachingStrategy getStreamCachingStrategy() {
         if (streamCachingStrategy == null) {
             lock.lock();

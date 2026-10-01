@@ -13,6 +13,29 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.1 to 4.22.2
 
+=== camel-zipfile, camel-tarfile - a maxDecompressedSize of 2 GiB or more is now enforced
+
+The `maxDecompressedSize` option of the Zip File and Tar File data formats (and of `ZipSplitter`) was not
+enforced when set to 2 GiB (`Integer.MAX_VALUE` bytes) or more, because the byte count behind the check
+wrapped around. The limit is now enforced for any value: unmarshalling an entry that decompresses to more
+than the configured `maxDecompressedSize` fails with an `IOException`, as documented. The default limit
+(1 GiB) is unchanged, and `-1` still disables the limit.
+
+`IOHelper.copy(InputStream, OutputStream, int, boolean, long)` now returns `Integer.MAX_VALUE`, instead of a
+negative number, when it copies more than `Integer.MAX_VALUE` bytes.
+
+=== camel-oauth - the post login url is confined to the configured redirect uri origin
+
+The post login url of the authorization code flow is now always built from the origin (`scheme://host[:port]`)
+of the configured `camel.oauth.redirect-uri`, plus the requested path. `OAuthCodeFlowProcessor` previously
+rebuilt that url from the `X-Forwarded-Proto` / `X-Forwarded-Host` / `X-Forwarded-Port` request headers, or
+from the `Host` header behind `CamelHttpUrl` when those were absent. All of those are set by the caller, so
+a request could point the post login redirect at any origin. A deployment behind an ingress or an OpenShift
+Route still redirects to its externally reachable address, because `camel.oauth.redirect-uri` is the address
+the identity provider sends the browser back to. Deployments whose external address differs from that
+property must set it to the address the browser actually reaches; a request announcing another origin is now
+redirected to the configured one and a warning is logged.
+
 === camel-core - masking of sensitive values in endpoint URIs
 
 `URISupport.sanitizeUri()`, which masks secrets in endpoint URIs shown in logs, events, JMX names and error

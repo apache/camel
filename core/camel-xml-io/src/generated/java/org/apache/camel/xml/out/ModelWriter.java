@@ -320,6 +320,15 @@ public class ModelWriter extends BaseWriter {
     public void writeStopDefinition(StopDefinition def) throws IOException {
         doWriteStopDefinition("stop", def);
     }
+    public void writeSwitchCaseDefinition(SwitchCaseDefinition def) throws IOException {
+        doWriteSwitchCaseDefinition("case", def);
+    }
+    public void writeSwitchDefinition(SwitchDefinition def) throws IOException {
+        doWriteSwitchDefinition("switch", def);
+    }
+    public void writeSwitchOtherwiseDefinition(SwitchOtherwiseDefinition def) throws IOException {
+        doWriteSwitchOtherwiseDefinition("switchOtherwise", def);
+    }
     public void writeTemplatedRouteDefinition(TemplatedRouteDefinition def) throws IOException {
         doWriteTemplatedRouteDefinition("templatedRoute", def);
     }
@@ -1818,6 +1827,26 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteStopDefinition(String name, StopDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
+        endElement(name);
+    }
+    protected void doWriteSwitchCaseDefinition(String name, SwitchCaseDefinition def) throws IOException {
+        startElement(name);
+        doWriteOptionalIdentifiedDefinitionAttributes(def);
+        doWriteAttribute("value", def.getValue(), null);
+        doWriteAttribute("uri", def.getUri(), null);
+        endElement(name);
+    }
+    protected void doWriteSwitchDefinition(String name, SwitchDefinition def) throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteElement("selector", def.getSelector(), this::doWriteExpressionSubElementDefinition);
+        doWriteList(null, "case", def.getCases(), this::doWriteSwitchCaseDefinition);
+        doWriteElement("otherwise", def.getOtherwise(), this::doWriteSwitchOtherwiseDefinition);
+        endElement(name);
+    }
+    protected void doWriteSwitchOtherwiseDefinition(String name, SwitchOtherwiseDefinition def) throws IOException {
+        startElement(name);
+        doWriteAttribute("uri", def.getUri(), null);
         endElement(name);
     }
     protected void doWriteTemplatedRouteDefinition(String name, TemplatedRouteDefinition def) throws IOException {
@@ -3725,6 +3754,8 @@ public class ModelWriter extends BaseWriter {
                 case "SplitDefinition" -> doWriteSplitDefinition("split", (SplitDefinition) v);
                 case "StepDefinition" -> doWriteStepDefinition("step", (StepDefinition) v);
                 case "StopDefinition" -> doWriteStopDefinition("stop", (StopDefinition) v);
+                case "SwitchCaseDefinition" -> doWriteSwitchCaseDefinition("case", (SwitchCaseDefinition) v);
+                case "SwitchDefinition" -> doWriteSwitchDefinition("switch", (SwitchDefinition) v);
                 case "TemplatedRoutesDefinition" -> doWriteTemplatedRoutesDefinition("templatedRoutes", (TemplatedRoutesDefinition) v);
                 case "ThreadPoolProfileDefinition" -> doWriteThreadPoolProfileDefinition("threadPoolProfile", (ThreadPoolProfileDefinition) v);
                 case "ThreadsDefinition" -> doWriteThreadsDefinition("threads", (ThreadsDefinition) v);
@@ -3823,6 +3854,7 @@ public class ModelWriter extends BaseWriter {
                 case "SplitDefinition" -> doWriteSplitDefinition("split", (SplitDefinition) v);
                 case "StepDefinition" -> doWriteStepDefinition("step", (StepDefinition) v);
                 case "StopDefinition" -> doWriteStopDefinition("stop", (StopDefinition) v);
+                case "SwitchDefinition" -> doWriteSwitchDefinition("switch", (SwitchDefinition) v);
                 case "ThreadsDefinition" -> doWriteThreadsDefinition("threads", (ThreadsDefinition) v);
                 case "ThrottleDefinition" -> doWriteThrottleDefinition("throttle", (ThrottleDefinition) v);
                 case "ThrowExceptionDefinition" -> doWriteThrowExceptionDefinition("throwException", (ThrowExceptionDefinition) v);

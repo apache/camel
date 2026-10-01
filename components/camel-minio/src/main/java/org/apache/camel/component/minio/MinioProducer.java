@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.minio;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -48,6 +46,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.PayloadHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -157,18 +156,19 @@ public class MinioProducer extends DefaultProducer {
                         contentLength = filePayload.length();
                     }
                 } else {
+                    if (contentLength <= 0) {
+                        // such as a java.nio.file.Path, byte[] or stream cache
+                        contentLength = PayloadHelper.getLength(object);
+                    }
                     inputStream = exchange.getMessage().getMandatoryBody(InputStream.class);
                     if (contentLength <= 0) {
-                        contentLength = determineLengthInputStream(inputStream);
+                        contentLength = PayloadHelper.getLength(inputStream);
                         if (contentLength == -1) {
-                            // fallback to read into memory to calculate length
-                            LOG.debug(
-                                    "The content length is not defined. It needs to be determined by reading the data into memory");
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            IOHelper.copyAndCloseInput(inputStream, baos);
-                            byte[] arr = baos.toByteArray();
-                            contentLength = arr.length;
-                            inputStream = new ByteArrayInputStream(arr);
+                            // fallback to copy the data to calculate the length, which uses stream caching
+                            // so big payloads are spooled to disk when spooling is enabled
+                            LOG.debug("The content length is not defined. It needs to be determined by copying the data");
+                            inputStream = PayloadHelper.cacheStream(exchange, inputStream);
+                            contentLength = PayloadHelper.getLength(inputStream);
                         }
                     }
                 }
@@ -517,28 +517,6 @@ public class MinioProducer extends DefaultProducer {
         }
 
         return storageClass;
-    }
-
-    private long determineLengthInputStream(InputStream is) throws IOException {
-        if (!is.markSupported()) {
-            return -1;
-        }
-        if (is instanceof ByteArrayInputStream) {
-            return is.available();
-        }
-        long size = 0;
-        try {
-            is.mark(MinioConstants.BYTE_ARRAY_LENGTH);
-            int i = is.available();
-            while (i > 0) {
-                long skip = is.skip(i);
-                size += skip;
-                i = is.available();
-            }
-        } finally {
-            is.reset();
-        }
-        return size;
     }
 
     protected MinioConfiguration getConfiguration() {

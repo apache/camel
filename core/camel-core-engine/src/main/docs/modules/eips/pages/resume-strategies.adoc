@@ -98,7 +98,7 @@ You can enable the intermittent mode to modify the route behavior so that missin
 [source,java]
 ----
 from("some:component")
-.resumable(new MyTestResumeStrategy()).intermittent(true)
+.resumable().resumeStrategy(new MyTestResumeStrategy()).intermittent(true)
 .process(this::process)
 ----
 

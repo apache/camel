@@ -24,6 +24,7 @@ import org.apache.camel.model.ErrorHandlerDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InputTypeDefinition;
 import org.apache.camel.model.OutputTypeDefinition;
+import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
@@ -67,6 +68,8 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                                 description = "To control how to shut down the route."),
                   @YamlProperty(name = "inputType", type = "object:org.apache.camel.model.InputTypeDefinition"),
                   @YamlProperty(name = "outputType", type = "object:org.apache.camel.model.OutputTypeDefinition"),
+                  @YamlProperty(name = "routeProperty", type = "array:org.apache.camel.model.PropertyDefinition",
+                                description = "To set metadata as properties on the route."),
                   @YamlProperty(name = "from", type = "object:org.apache.camel.model.FromDefinition", required = true)
           })
 public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefinition> {
@@ -161,6 +164,9 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     break;
                 case "outputType":
                     target.setOutputType(asType(val, OutputTypeDefinition.class));
+                    break;
+                case "routeProperty":
+                    target.setRouteProperties(asFlatList(val, PropertyDefinition.class));
                     break;
                 case "from":
                     val.setProperty(RouteDefinition.class.getName(), target);

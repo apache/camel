@@ -30,11 +30,14 @@ import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.ExpressionNode;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.xml.in.ModelParser;
 import org.apache.camel.yaml.out.YamlModelWriter;
@@ -96,8 +99,13 @@ public class TransformTools {
                 result.note = "Unsupported transformation: " + fromFormat + " to " + toFormat;
             }
         } catch (Throwable e) {
+            Throwable cause = ObjectHelper.createExceptionIterator(e).next();
+            String message = e.getMessage();
+            if (cause != e) {
+                message += ": " + cause.getMessage();
+            }
             throw new ToolCallException(
-                    "Failed to transform route (" + e.getClass().getName() + "): " + e.getMessage(), null);
+                    "Failed to transform route (" + e.getClass().getName() + "): " + message, null);
         }
 
         return result;
@@ -151,12 +159,27 @@ public class TransformTools {
 
             RoutesDefinition rd = new RoutesDefinition();
             rd.setRoutes(routeDefs);
+            requireSeparateDeclarations(ctx);
 
             StringWriter sw = new StringWriter();
             new org.apache.camel.xml.out.ModelWriter(sw).writeRoutesDefinition(rd);
             return sw.toString();
         } finally {
             ctx.stop();
+        }
+    }
+
+    private static void requireSeparateDeclarations(DefaultCamelContext context) throws ReflectiveOperationException {
+        // Semantic declarations are optional and live outside the model exported by this converter.
+        Class<?> type = context.getClassResolver().resolveClass("org.apache.camel.semantic.SemanticQuestions");
+        if (type == null) {
+            return;
+        }
+        Object questions = context.getCamelContextExtension().getContextPlugin(type);
+        if (questions != null && !(boolean) type.getMethod("isEmpty").invoke(questions)) {
+            throw new IllegalArgumentException(
+                    "Semantic declarations cannot be exported by the generic route converter. "
+                                               + "Keep them in a separate declaration resource and convert only the routes.");
         }
     }
 
@@ -176,9 +199,14 @@ public class TransformTools {
                         "Could not parse Java route. Ensure it contains a valid route definition.");
             }
 
+            // Java expression clauses are normally materialized when processors are created.
+            routeDefs.forEach(route -> ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ExpressionNode.class)
+                    .forEach(ExpressionNode::preCreateProcessor));
+
             if ("yaml".equals(targetFormat)) {
                 YamlModelWriter writer = new YamlModelWriter();
                 List<JsonObject> roots = new ArrayList<>();
+                requireSeparateDeclarations(ctx);
                 for (RouteDefinition route : routeDefs) {
                     roots.add(writer.writeRouteDefinition(route));
                 }
@@ -186,6 +214,7 @@ public class TransformTools {
             } else {
                 RoutesDefinition rd = new RoutesDefinition();
                 rd.setRoutes(routeDefs);
+                requireSeparateDeclarations(ctx);
 
                 StringWriter sw = new StringWriter();
                 new org.apache.camel.xml.out.ModelWriter(sw).writeRoutesDefinition(rd);

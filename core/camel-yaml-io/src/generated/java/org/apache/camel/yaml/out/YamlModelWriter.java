@@ -313,6 +313,15 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeStopDefinition(StopDefinition def) {
         return wrapNode("stop", doWriteStopDefinition(def));
     }
+    public JsonObject writeSwitchCaseDefinition(SwitchCaseDefinition def) {
+        return wrapNode("case", doWriteSwitchCaseDefinition(def));
+    }
+    public JsonObject writeSwitchDefinition(SwitchDefinition def) {
+        return wrapNode("switch", doWriteSwitchDefinition(def));
+    }
+    public JsonObject writeSwitchOtherwiseDefinition(SwitchOtherwiseDefinition def) {
+        return wrapNode("switchOtherwise", doWriteSwitchOtherwiseDefinition(def));
+    }
     public JsonObject writeTemplatedRouteDefinition(TemplatedRouteDefinition def) {
         return wrapNode("templatedRoute", doWriteTemplatedRouteDefinition(def));
     }
@@ -1814,6 +1823,30 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteStopDefinition(StopDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
+        return jo;
+    }
+    protected JsonObject doWriteSwitchCaseDefinition(SwitchCaseDefinition def) {
+        JsonObject jo = new JsonObject();
+        doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
+        doWriteAttribute(jo, "value", def.getValue(), null);
+        doWriteAttribute(jo, "uri", def.getUri(), null);
+        // Preserve literal strings such as "001" instead of converting them to numbers.
+        if (def.getValue() != null) {
+            jo.put("value", def.getValue());
+        }
+        return jo;
+    }
+    protected JsonObject doWriteSwitchDefinition(SwitchDefinition def) {
+        JsonObject jo = new JsonObject();
+        doWriteProcessorDefinitionAttributes(jo, def);
+        doWriteChildElement(jo, "selector", def.getSelector(), this::doWriteExpressionSubElementDefinition);
+        doWriteChildList(jo, null, "case", def.getCases(), this::doWriteSwitchCaseDefinition);
+        doWriteChildElement(jo, "otherwise", def.getOtherwise(), this::doWriteSwitchOtherwiseDefinition);
+        return jo;
+    }
+    protected JsonObject doWriteSwitchOtherwiseDefinition(SwitchOtherwiseDefinition def) {
+        JsonObject jo = new JsonObject();
+        doWriteAttribute(jo, "uri", def.getUri(), null);
         return jo;
     }
     protected JsonObject doWriteTemplatedRouteDefinition(TemplatedRouteDefinition def) {
@@ -3733,6 +3766,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "SplitDefinition" -> wrapNode("split", doWriteSplitDefinition((SplitDefinition) v));
                 case "StepDefinition" -> wrapNode("step", doWriteStepDefinition((StepDefinition) v));
                 case "StopDefinition" -> wrapNode("stop", doWriteStopDefinition((StopDefinition) v));
+                case "SwitchCaseDefinition" -> wrapNode("case", doWriteSwitchCaseDefinition((SwitchCaseDefinition) v));
+                case "SwitchDefinition" -> wrapNode("switch", doWriteSwitchDefinition((SwitchDefinition) v));
                 case "TemplatedRoutesDefinition" -> wrapNode("templatedRoutes", doWriteTemplatedRoutesDefinition((TemplatedRoutesDefinition) v));
                 case "ThreadPoolProfileDefinition" -> wrapNode("threadPoolProfile", doWriteThreadPoolProfileDefinition((ThreadPoolProfileDefinition) v));
                 case "ThreadsDefinition" -> wrapNode("threads", doWriteThreadsDefinition((ThreadsDefinition) v));
@@ -3835,6 +3870,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "SplitDefinition" -> wrapNode("split", doWriteSplitDefinition((SplitDefinition) v));
                 case "StepDefinition" -> wrapNode("step", doWriteStepDefinition((StepDefinition) v));
                 case "StopDefinition" -> wrapNode("stop", doWriteStopDefinition((StopDefinition) v));
+                case "SwitchDefinition" -> wrapNode("switch", doWriteSwitchDefinition((SwitchDefinition) v));
                 case "ThreadsDefinition" -> wrapNode("threads", doWriteThreadsDefinition((ThreadsDefinition) v));
                 case "ThrottleDefinition" -> wrapNode("throttle", doWriteThrottleDefinition((ThrottleDefinition) v));
                 case "ThrowExceptionDefinition" -> wrapNode("throwException", doWriteThrowExceptionDefinition((ThrowExceptionDefinition) v));

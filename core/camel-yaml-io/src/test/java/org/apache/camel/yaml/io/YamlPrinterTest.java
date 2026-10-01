@@ -142,6 +142,7 @@ class YamlPrinterTest {
         assertTrue(YamlPrinter.needsQuoting("null"), "null");
         assertTrue(YamlPrinter.needsQuoting("~"), "tilde");
         assertTrue(YamlPrinter.needsQuoting("123"), "integer");
+        assertTrue(YamlPrinter.needsQuoting("001"), "integer with leading zeros");
         assertTrue(YamlPrinter.needsQuoting("3.14"), "float");
         assertTrue(YamlPrinter.needsQuoting("-42"), "negative number");
         assertTrue(YamlPrinter.needsQuoting("foo: bar"), "contains colon-space");

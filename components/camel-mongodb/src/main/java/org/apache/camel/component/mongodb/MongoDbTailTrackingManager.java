@@ -21,8 +21,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.FindOneAndUpdateOptions;
-import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -76,8 +74,9 @@ public class MongoDbTailTrackingManager {
             }
 
             Bson updateObj = Updates.set(config.field, lastVal);
-            FindOneAndUpdateOptions options = new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER);
-            trackingObj = dbCol.findOneAndUpdate(trackingObj, updateObj, options);
+            // filter by the id only: storing the returned document back would make every later update
+            // also match on the previous value, and a filter that stops matching leaves trackingObj null
+            dbCol.updateOne(trackingObj, updateObj);
         } finally {
             lock.unlock();
         }
@@ -90,7 +89,13 @@ public class MongoDbTailTrackingManager {
                 return null;
             }
 
-            lastVal = dbCol.find(trackingObj).first().get(config.field);
+            Document tracked = dbCol.find(trackingObj).first();
+            if (tracked == null) {
+                LOG.warn("Tail tracking document {} is gone from collection {}, starting from the beginning",
+                        trackingObj, config.collection);
+                return null;
+            }
+            lastVal = tracked.get(config.field);
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Recovered lastVal={} from store, collection: {}", lastVal, config.collection);

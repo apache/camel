@@ -19,6 +19,7 @@ package org.apache.camel.http.base;
 import java.net.ProtocolException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -26,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.CollectionHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -259,6 +261,39 @@ public final class HttpHelper {
                 }
             }
         }
+    }
+
+    /**
+     * Whether an uploaded file is accepted according to a {@code fileNameExtWhitelist}.
+     * <p/>
+     * The file name extension is compared, case-insensitively, against each comma-separated entry of the whitelist
+     * exactly and not as a substring: a whitelist of {@code txt} must not accept an upload named {@code evil.x} just
+     * because {@code "txt".contains("x")}. A file is accepted when no whitelist is configured, when the whitelist is
+     * {@code *}, or when the file name has no extension. The configured whitelist value is not modified.
+     *
+     * @param  whitelist the configured {@code fileNameExtWhitelist} (may be {@code null})
+     * @param  fileName  the file name submitted by the client
+     * @return           true if the file is accepted
+     */
+    public static boolean isFileNameExtWhitelisted(String whitelist, String fileName) {
+        if (whitelist == null) {
+            return true;
+        }
+        String ext = FileUtil.onlyExt(fileName);
+        if (ext == null) {
+            return true;
+        }
+        ext = ext.toLowerCase(Locale.US);
+        String lcWhitelist = whitelist.toLowerCase(Locale.US);
+        if (lcWhitelist.equals("*")) {
+            return true;
+        }
+        for (String allowed : lcWhitelist.split(",")) {
+            if (allowed.trim().equals(ext)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

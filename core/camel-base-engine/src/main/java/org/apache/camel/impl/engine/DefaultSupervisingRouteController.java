@@ -964,6 +964,9 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             try {
                 routes.removeIf(
                         r -> ObjectHelper.equal(r.get(), route) || ObjectHelper.equal(r.getId(), route.getId()));
+                nonSupervisedRoutes.remove(route.getId());
+                // a removed route is no longer restarting or exhausted (and unhealthy)
+                routeManager.release(new RouteHolder(route, 0));
             } finally {
                 lock.unlock();
             }

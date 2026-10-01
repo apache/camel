@@ -319,8 +319,11 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
     }
 
     /**
-     * Whether to let the exchange proceed when the policy cannot be evaluated at all. Disabled by default so that an
-     * unreachable OPA server denies rather than grants access. Do not enable this in production.
+     * Whether to let the exchange proceed when the policy decision point is unavailable: the OPA server cannot be
+     * reached, times out, or a gateway in front of it answers 502, 503, 504 or 429, or in {@code wasm} mode no instance
+     * frees up within {@code borrowTimeout}. It never applies to an answer: an undefined decision, a rejected request
+     * and an error evaluating the policy fail closed even when this is set. Disabled by default so that an unavailable
+     * OPA server denies rather than grants access. Do not enable this in production.
      */
     public void setFailOpen(boolean failOpen) {
         this.failOpen = failOpen;
@@ -334,7 +337,7 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
      * How the policy is evaluated. {@code rest} (the default) asks a running OPA server; {@code wasm} evaluates a
      * WebAssembly bundle in-process, with no server involved - preferred for a hot path such as authorizing an AI tool
      * call. {@code serverUrl}, {@code bearerToken} and the readiness check do not apply in {@code wasm} mode;
-     * {@code failOpen} still governs an evaluation failure in both.
+     * {@code failOpen} still governs an unavailable decision point in both.
      */
     public void setEvaluationMode(String evaluationMode) {
         this.evaluationMode = evaluationMode;

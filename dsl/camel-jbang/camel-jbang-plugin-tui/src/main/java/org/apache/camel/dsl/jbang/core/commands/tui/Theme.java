@@ -365,6 +365,15 @@ public final class Theme {
                 isDark() ? SyntaxHighlighter.MONOKAI_TEXT : SyntaxHighlighter.LIGHT_TEXT);
     }
 
+    /**
+     * Text an AI wrote shown among facts from the sources and the runtime, such as a route description suggested by the
+     * AI project overview (CAMEL-25143): italic in the optional {@code ai-assisted} color, else the theme's notice
+     * color, so the user learns to tell it apart.
+     */
+    public static synchronized Style aiAssisted() {
+        return Style.EMPTY.fg(color("ai-assisted", color("notice", Color.rgb(0xC5, 0x86, 0xC0)))).italic();
+    }
+
     /** Diagram box-drawing border color. */
     public static synchronized Color diagramBorder() {
         return color("diagram-border", FALLBACK_DIAGRAM_BORDER);
@@ -398,6 +407,15 @@ public final class Theme {
     /** Diagram color for routing EIPs (split, aggregate, multicast, etc.). */
     public static synchronized Color diagramEip() {
         return color("diagram-eip", FALLBACK_DIAGRAM_EIP);
+    }
+
+    /**
+     * Diagram color for the edges of an integration: the endpoints of remote systems, where messages come in or leave
+     * (CAMEL-25161). Optional: a theme may define #diagram-external, else the info color is used, so the edges stand
+     * out from the steps.
+     */
+    public static synchronized Color diagramExternal() {
+        return color("diagram-external", info().fg().orElse(FALLBACK_DIAGRAM_TO));
     }
 
     /** Diagram fallback color for unknown EIP types. */

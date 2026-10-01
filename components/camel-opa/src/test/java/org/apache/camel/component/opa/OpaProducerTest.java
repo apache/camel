@@ -25,7 +25,19 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.apache.camel.component.opa.OpaSdkFailures.badRequest;
+import static org.apache.camel.component.opa.OpaSdkFailures.evaluationError;
+import static org.apache.camel.component.opa.OpaSdkFailures.interrupted;
+import static org.apache.camel.component.opa.OpaSdkFailures.rejectedBeforeSending;
+import static org.apache.camel.component.opa.OpaSdkFailures.status;
+import static org.apache.camel.component.opa.OpaSdkFailures.timedOut;
+import static org.apache.camel.component.opa.OpaSdkFailures.undefinedDecision;
+import static org.apache.camel.component.opa.OpaSdkFailures.unreachable;
+import static org.apache.camel.component.opa.OpaSdkFailures.unserializableInput;
+import static org.apache.camel.component.opa.OpaSdkFailures.unserializableInputUnchecked;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
@@ -159,7 +171,7 @@ class OpaProducerTest extends CamelTestSupport {
 
     @Test
     void marksAnExchangeThatOnlyProceededBecauseOfFailOpen() throws Exception {
-        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(new OPAException("connection refused"));
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(unreachable(PATH));
 
         Exchange out = template.request(ENDPOINT + "&failOpen=true", e -> {
         });
@@ -185,7 +197,7 @@ class OpaProducerTest extends CamelTestSupport {
     void doesNotLetAnInboundMessageClaimItDidNotFailOpen() throws Exception {
         // as settable by a sender as the verdict was: left in place, "FailedOpen=false" would disguise an
         // unauthorized exchange as one a policy allowed - which is the audit trail this header exists to give
-        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(new OPAException("connection refused"));
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(unreachable(PATH));
 
         Exchange out = template.request(ENDPOINT + "&failOpen=true",
                 e -> e.getMessage().setHeader(OpaConstants.DECISION_FAILED_OPEN, false));
@@ -205,7 +217,7 @@ class OpaProducerTest extends CamelTestSupport {
 
     @Test
     void failsClosedWhenThePolicyCannotBeEvaluated() throws Exception {
-        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(new OPAException("connection refused"));
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(unreachable(PATH));
 
         Exchange out = template.request(ENDPOINT, e -> {
         });
@@ -222,7 +234,7 @@ class OpaProducerTest extends CamelTestSupport {
         // the decision headers used to be written only on a path that reached a verdict, so a claim carried by
         // the message survived a failure. A route that handles the exception - doTry/doCatch, or
         // onException().handled(true) - then read the sender's own "allowed" as though a policy had said it
-        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(new OPAException("connection refused"));
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(unreachable(PATH));
 
         Exchange out = template.request(ENDPOINT, e -> {
             e.getMessage().setHeader(OpaConstants.DECISION_ALLOW, true);
@@ -265,7 +277,7 @@ class OpaProducerTest extends CamelTestSupport {
 
     @Test
     void failsOpenWhenExplicitlyConfiguredTo() throws Exception {
-        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(new OPAException("connection refused"));
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(unreachable(PATH));
 
         Exchange out = template.request(ENDPOINT + "&failOpen=true", e -> {
         });
@@ -297,11 +309,124 @@ class OpaProducerTest extends CamelTestSupport {
 
     @Test
     void alsoOverwritesAVerdictClaimedByTheInboundMessageWhenTheDecisionCannotBeRead() throws Exception {
-        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(new OPAException("connection refused"));
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(unreachable(PATH));
 
         Exchange out = template.request(ENDPOINT + "&failOpen=true",
                 e -> e.getMessage().setHeader(OpaConstants.DECISION, "forged"));
 
         assertThat(out.getMessage().getHeader(OpaConstants.DECISION)).isNull();
+    }
+
+    private void givenFailure(OPAException failure) throws OPAException {
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(failure);
+    }
+
+    private void assertFailedClosed(Exchange out) {
+        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
+    }
+
+    private void assertFailedOpen(Exchange out) {
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isEqualTo(true);
+    }
+
+    @Test
+    void failsOpenOnATimeout() throws Exception {
+        givenFailure(timedOut(PATH));
+
+        assertFailedOpen(template.request(ENDPOINT + "&failOpen=true", e -> {
+        }));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = { 429, 502, 503, 504 })
+    void failsOpenWhenAGatewayReportsTheServerUnavailable(int statusCode) throws Exception {
+        givenFailure(status(PATH, statusCode));
+
+        assertFailedOpen(template.request(ENDPOINT + "&failOpen=true", e -> {
+        }));
+    }
+
+    @Test
+    void failsClosedOnAnUndefinedDecisionEvenUnderFailOpen() throws Exception {
+        // a rule with no default is undefined for an input it does not match. That is the policy not saying yes,
+        // not the server being unavailable, and failOpen must not turn it into an allow
+        givenFailure(undefinedDecision(PATH));
+
+        assertFailedClosed(template.request(ENDPOINT + "&failOpen=true", e -> {
+        }));
+    }
+
+    @Test
+    void failsClosedOnABadRequestEvenUnderFailOpen() throws Exception {
+        givenFailure(badRequest(PATH));
+
+        assertFailedClosed(template.request(ENDPOINT + "&failOpen=true", e -> {
+        }));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = { 401, 403, 404, 413 })
+    void failsClosedOnARejectedRequestEvenUnderFailOpen(int statusCode) throws Exception {
+        // a wrong or expired bearer token, a wrong policy path or an oversized input: the server answered
+        givenFailure(status(PATH, statusCode));
+
+        assertFailedClosed(template.request(ENDPOINT + "&failOpen=true", e -> {
+        }));
+    }
+
+    @Test
+    void failsClosedOnAPolicyEvaluationErrorEvenUnderFailOpen() throws Exception {
+        // OPA answers 500 when the policy cannot be evaluated against this input, which the input can provoke
+        givenFailure(evaluationError(PATH));
+
+        assertFailedClosed(template.request(ENDPOINT + "&failOpen=true", e -> {
+        }));
+    }
+
+    @Test
+    void failsClosedOnAnInterruptedCallEvenUnderFailOpen() throws Exception {
+        // the SDK wraps the interrupt in its OPAException, so the dedicated InterruptedException catch never sees
+        // it: the classification is what keeps a shutdown from turning into an allow
+        givenFailure(interrupted(PATH));
+
+        Exchange out = template.request(ENDPOINT + "&failOpen=true", e -> {
+        });
+
+        // the SDK cleared the interrupt when it caught it; the evaluator must hand it back to the thread.
+        // Thread.interrupted() also clears it again, so it does not leak into the next test
+        assertThat(Thread.interrupted()).isTrue();
+        assertFailedClosed(out);
+    }
+
+    @Test
+    void failsClosedWhenTheSdkRefusesToSendTheRequestEvenUnderFailOpen() throws Exception {
+        // nothing reached the server, so it was not the server that was unavailable
+        givenFailure(rejectedBeforeSending(PATH));
+
+        assertFailedClosed(template.request(ENDPOINT + "&failOpen=true", e -> {
+        }));
+    }
+
+    @Test
+    void failsClosedOnAnInputTheSdkCannotSerializeEvenUnderFailOpen() throws Exception {
+        // Jackson reports this as an IOException, which must not pass for a transport failure
+        givenFailure(unserializableInput(PATH));
+
+        assertFailedClosed(template.request(ENDPOINT + "&failOpen=true", e -> {
+        }));
+    }
+
+    @Test
+    void failsClosedOnASerializationFailureWrappedInAnUncheckedIOExceptionEvenUnderFailOpen() throws Exception {
+        // UncheckedIOException is not an IOException, so the classification has to walk past it to the Jackson
+        // cause rather than stop at the first type it does not recognise
+        givenFailure(unserializableInputUnchecked(PATH));
+
+        assertFailedClosed(template.request(ENDPOINT + "&failOpen=true", e -> {
+        }));
     }
 }

@@ -381,11 +381,26 @@ final class EipDocSupport {
         return Math.max(0, fallback);
     }
 
+    /**
+     * The period that ends the first sentence: one followed by a space or the end of the text, and not the period of an
+     * abbreviation (e.g., i.e.) - not the dot of (i.e., a number such as 0.5, or a name such as file.txt.
+     */
+    static int sentenceEnd(String text) {
+        for (int i = text.indexOf('.'); i >= 0; i = text.indexOf('.', i + 1)) {
+            boolean end = i + 1 == text.length() || Character.isWhitespace(text.charAt(i + 1));
+            if (end && !text.regionMatches(true, Math.max(0, i - 3), "e.g", 0, 3)
+                    && !text.regionMatches(true, Math.max(0, i - 3), "i.e", 0, 3)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     static String truncateText(String text, int maxLen) {
         if (text == null) {
             return "";
         }
-        int dot = text.indexOf('.');
+        int dot = sentenceEnd(text);
         if (dot > 0 && dot < maxLen) {
             return text.substring(0, dot + 1);
         }

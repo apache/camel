@@ -46,6 +46,7 @@ class GotoRoutePopup {
     private List<RouteItem> allEntries;
     private List<RouteItem> filteredEntries;
     private RouteItem selectedEntry;
+    private String name = "Go to Route";
 
     record RouteItem(String routeId, String fromUri, String filePath, int fromLine) {
     }
@@ -55,10 +56,17 @@ class GotoRoutePopup {
     }
 
     void open(List<SourceTab.RouteEntry> routeIndex) {
-        allEntries = new ArrayList<>();
+        List<RouteItem> items = new ArrayList<>();
         for (SourceTab.RouteEntry re : routeIndex) {
-            allEntries.add(new RouteItem(re.routeId(), re.fromUri(), re.filePath(), re.fromLine()));
+            items.add(new RouteItem(re.routeId(), re.fromUri(), re.filePath(), re.fromLine()));
         }
+        openItems(items, "Go to Route");
+    }
+
+    /** Opens the popup with the given places, such as the usages of an endpoint, under the given name. */
+    void openItems(List<RouteItem> items, String name) {
+        this.name = name;
+        allEntries = new ArrayList<>(items);
         visible = true;
         filter.clearFilter();
         rebuildList();
@@ -157,7 +165,7 @@ class GotoRoutePopup {
         int maxUriW = 0;
         for (RouteItem entry : filteredEntries) {
             maxIdW = Math.max(maxIdW, entry.routeId().length());
-            maxUriW = Math.max(maxUriW, entry.fromUri().length());
+            maxUriW = Math.max(maxUriW, entry.fromUri().equals(entry.routeId()) ? 0 : entry.fromUri().length());
         }
 
         Style normalStyle = Style.EMPTY;
@@ -183,7 +191,8 @@ class GotoRoutePopup {
                 spans.add(Span.styled(padded, normalStyle));
             }
 
-            String uri = entry.fromUri();
+            // a route without an id is named by its endpoint: no need to show it twice
+            String uri = entry.fromUri().equals(entry.routeId()) ? "" : entry.fromUri();
             String paddedUri = uri + " ".repeat(Math.max(0, maxUriW - uri.length()));
             spans.add(Span.styled("  " + paddedUri, dimStyle));
 
@@ -205,8 +214,8 @@ class GotoRoutePopup {
         int total = allEntries != null ? allEntries.size() : 0;
         int shown = filteredEntries.size();
         String title = shown == total
-                ? " Go to Route (" + total + ") "
-                : " Go to Route (" + shown + "/" + total + ") ";
+                ? " " + name + " (" + total + ") "
+                : " " + name + " (" + shown + "/" + total + ") ";
 
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))

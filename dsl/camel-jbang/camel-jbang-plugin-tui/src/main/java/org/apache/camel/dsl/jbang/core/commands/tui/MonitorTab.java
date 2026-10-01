@@ -55,6 +55,13 @@ interface MonitorTab {
 
     void render(Frame frame, Rect area);
 
+    /**
+     * The view settings of the tab and their state, as key hints with {@code [state]}: shown in the tab itself (the
+     * Diagram tab's level bar) rather than the footer, and listed with the footer actions for MCP agents.
+     */
+    default void renderViewToggles(List<Span> spans) {
+    }
+
     default void renderFooter(List<Span> spans) {
     }
 

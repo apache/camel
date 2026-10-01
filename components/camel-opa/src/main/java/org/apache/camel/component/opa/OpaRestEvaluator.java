@@ -16,13 +16,19 @@
  */
 package org.apache.camel.component.opa;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 
+import com.fasterxml.jackson.core.JacksonException;
 import com.styra.opa.OPAClient;
 import com.styra.opa.OPAResult;
+import com.styra.opa.openapi.models.errors.AuthException;
+import com.styra.opa.openapi.models.errors.ClientError;
+import com.styra.opa.openapi.models.errors.SDKError;
+import com.styra.opa.openapi.models.errors.ServerError;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -79,6 +85,34 @@ public class OpaRestEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
         // the SDK reports an undefined decision as an exception, which the base turns into a fail-closed error;
         // the WASM engine is made to behave identically
         return client.evaluate(getPolicyPath(), input, Object.class);
+    }
+
+    /**
+     * The OPA server was unavailable when the call could not reach it or complete - an {@link IOException}, which
+     * includes a connect or request timeout - or when a gateway in front of it answered 502, 503 or 504, or rate
+     * limited it with 429. The SDK wraps each of these as the cause of an {@code OPAException}.
+     * <p/>
+     * Anything else is an answer: an undefined decision (a cause-less {@code OPAException}), a rejected request (400,
+     * or any other 4xx such as a missing or expired bearer token), and a 500, which is how OPA reports an error
+     * evaluating the policy against this input. So is an input document the SDK could not serialize, which Jackson
+     * reports as an {@code IOException} of its own.
+     */
+    @Override
+    protected boolean isDecisionPointUnavailable(Exception failure) {
+        for (Throwable cause = failure; cause != null; cause = cause.getCause()) {
+            if (cause instanceof SDKError sdkError) {
+                int status = sdkError.code();
+                return status == 429 || status == 502 || status == 503 || status == 504;
+            }
+            if (cause instanceof ServerError || cause instanceof ClientError || cause instanceof AuthException
+                    || cause instanceof JacksonException) {
+                return false;
+            }
+            if (cause instanceof IOException) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

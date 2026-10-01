@@ -89,6 +89,25 @@ public interface ReplyManager extends SessionMessageListener {
     void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout);
 
     /**
+     * Cancels a pending reply correlation, so the request timeout does not complete the exchange.
+     * <p/>
+     * This is used when the JMS send fails after the reply has been registered. Whoever removes the correlation owns
+     * the completion of the exchange. When this method returns <tt>false</tt>, the request timeout or the reply has
+     * already removed the correlation (for example while a slow send was still running), and it completes the exchange:
+     * the caller must then not complete the exchange as well.
+     * <p/>
+     * The default implementation does not cancel anything and returns <tt>true</tt>, which keeps the previous behaviour
+     * for a custom implementation. {@link ReplyManagerSupport} overrides it.
+     *
+     * @param  correlationId the correlation id to cancel
+     * @return               <tt>true</tt> if the correlation was pending and has been cancelled, <tt>false</tt> if it
+     *                       was not pending (anymore)
+     */
+    default boolean cancelCorrelationId(String correlationId) {
+        return true;
+    }
+
+    /**
      * Process the reply
      *
      * @param holder containing needed data to process the reply and continue routing

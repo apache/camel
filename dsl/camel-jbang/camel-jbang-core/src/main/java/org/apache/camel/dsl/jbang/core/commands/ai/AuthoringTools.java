@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -146,7 +147,7 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_validate_source",
-                "Validates Camel YAML DSL or .properties source without writing: schema (misspelled options such as "
+                "Validates Camel YAML/Java/XML DSL or .properties source without writing: schema (misspelled options such as "
                                                       + "logLevel instead of loggingLevel), endpoint URIs, simple expressions, "
                                                       + "camel.* options. Use on content before writing it, or on an existing "
                                                       + "file (no content) to explain a reload error.")
@@ -356,6 +357,127 @@ public final class AuthoringTools {
                     applyVersion(ctx, args);
                     return ErrorDiagnoser.diagnose(required(args, "error"), ctx.catalog()).toJson();
                 }));
+
+        registry.accept(tool("camel_project_overview",
+                "Overview of a project's integrations from its route sources, no running integration needed: "
+                                                       + "routes, entry points, links between routes, external systems, "
+                                                       + "findings, and the AI-assisted parts of its "
+                                                       + IntegrationSummary.FILE_NAME + " (fields starting with ai).")
+                .param("directory", "string", DIRECTORY_DESC, false)
+                .param("camelVersion", "string", VERSION_DESC, false)
+                .executor((ctx, args) -> {
+                    applyVersion(ctx, args);
+                    Path dir = ctx.resolveDirectory(args.get("directory"));
+                    ProjectOverview.Overview overview = ProjectOverview.analyze(dir, ctx.catalog());
+                    IntegrationSummary.Summary summary = IntegrationSummary.read(dir);
+                    JsonObject result = ProjectOverview.toJson(overview, summary);
+                    if (summary == null || !overview.fingerprint().equals(summary.fingerprint())) {
+                        result.put("hint", "To explain the project, write the overview, capabilities, the missing"
+                                           + " descriptions and labels for the decisions with camel_save_project_summary");
+                    }
+                    return result.toJson();
+                }));
+
+        registry.accept(tool("camel_save_project_summary",
+                "Saves your explanation of a project (call camel_project_overview first) into its "
+                                                           + IntegrationSummary.FILE_NAME
+                                                           + ", marked AI-assisted beside the facts. Omitted parts are kept.")
+                .param("directory", "string", DIRECTORY_DESC, false)
+                .param("overview", "string", "2-4 sentences on what the project does", false)
+                .param("capabilities", "string", "Lines of: name: route ids | one sentence", false)
+                .param("descriptions", "string", "Lines of: route id: short label | one sentence, for routes without them",
+                        false)
+                .param("utility", "string", "Route ids of plumbing (logging, dead letter, retries), comma separated",
+                        false)
+                .param("steps", "string", "Lines of: route id / decision path: short label | why, for the decisions of"
+                                          + " the routes",
+                        false)
+                .param("model", "string", "Your model name", false)
+                .param("camelVersion", "string", VERSION_DESC, false)
+                .readOnly(false)
+                .executor((ctx, args) -> {
+                    applyVersion(ctx, args);
+                    Path dir = ctx.resolveDirectory(args.get("directory"));
+                    SummaryUpdate update = summaryUpdate(dir, ctx, args);
+                    try {
+                        Files.writeString(dir.resolve(IntegrationSummary.FILE_NAME), update.content(),
+                                StandardCharsets.UTF_8);
+                    } catch (IOException e) {
+                        throw new ToolExecutionException(
+                                "Cannot write " + IntegrationSummary.FILE_NAME + ": " + e.getMessage());
+                    }
+                    return update.result().toJson();
+                }));
+    }
+
+    /** The new content of a summary file and what the tool answers about it. */
+    public record SummaryUpdate(String content, JsonObject result) {
+    }
+
+    /**
+     * What {@code camel_save_project_summary} writes: the AI content from the arguments merged over the file's, with
+     * the facts of the project as they are now. Shared with the TUI, which writes it through its confirm dialog.
+     */
+    public static SummaryUpdate summaryUpdate(Path dir, ToolContext ctx, Map<String, String> args) {
+        ProjectOverview.Overview overview = ProjectOverview.analyze(dir, ctx.catalog());
+        String answer = "OVERVIEW:\n" + nonNull(args.get("overview")) + "\nCAPABILITIES:\n"
+                        + bulleted(args.get("capabilities")) + "\nUTILITY:\n" + bulleted(commaLines(args.get("utility")))
+                        + "\nDESCRIPTIONS:\n" + bulleted(args.get("descriptions"))
+                        + "\nSTEPS:\n" + bulleted(args.get("steps"));
+        IntegrationSummary.AiContent fresh = IntegrationSummary.parseAnswer(answer, overview);
+        if (fresh.isEmpty()) {
+            throw new ToolExecutionException(
+                    "Nothing to save: give overview, capabilities, descriptions (of routes without one) or steps,"
+                                             + " by the route ids and decision paths camel_project_overview lists");
+        }
+        IntegrationSummary.Summary previous = IntegrationSummary.read(dir);
+        IntegrationSummary.AiContent merged
+                = IntegrationSummary.merge(overview, previous != null ? previous.ai() : null, fresh);
+        String model = args.get("model") != null && !args.get("model").isBlank() ? args.get("model")
+                : previous != null ? previous.model() : null;
+        String content = IntegrationSummary.render(overview, merged, overview.fingerprint(), model, null);
+        JsonObject result = new JsonObject();
+        result.put("file", IntegrationSummary.FILE_NAME);
+        result.put("directory", dir.toString());
+        result.put("overview", fresh.overview() != null);
+        result.put("capabilities", fresh.capabilities().size());
+        result.put("descriptions", fresh.descriptions().size());
+        result.put("notes", fresh.notes().size());
+        result.put("utility", fresh.utility().size());
+        result.put("steps", fresh.steps().size());
+        int given = countLines(args.get("descriptions"));
+        if (given > Math.max(fresh.descriptions().size(), fresh.notes().size())) {
+            result.put("message", "Some descriptions were dropped: only routes without a description or note in the"
+                                  + " source, by their ids, are kept");
+        }
+        return new SummaryUpdate(content, result);
+    }
+
+    private static String nonNull(String s) {
+        return s == null ? "" : s;
+    }
+
+    /** Lines as list items, so the answer parser reads them whether or not the model wrote the dashes. */
+    private static String bulleted(String lines) {
+        if (lines == null || lines.isBlank()) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String line : lines.split("\\R")) {
+            String t = line.strip();
+            if (!t.isEmpty()) {
+                sb.append(t.startsWith("-") || t.startsWith("*") ? t : "- " + t).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    private static String commaLines(String list) {
+        return list == null ? null : list.replace(',', '\n');
+    }
+
+    private static int countLines(String lines) {
+        return lines == null ? 0 : (int) lines.lines().filter(l -> !l.isBlank()).count();
     }
 
     // ---- shared logic, also used by the TUI over its own selection ----
@@ -376,10 +498,54 @@ public final class AuthoringTools {
         result.put("valid", errors.isEmpty());
         result.put("file", file);
         result.put("errors", new JsonArray(errors));
+        // the problems whose fix is certain, as edits an agent can apply (camel_edit_file find/replace)
+        JsonArray fixes = new JsonArray();
+        String[] lines = content.split("\n", -1);
+        for (String error : errors) {
+            int line = lineOf(error);
+            QuickFixes.Fix fix = line > 0 && line <= lines.length ? QuickFixes.fixFor(error, lines[line - 1]) : null;
+            if (fix != null) {
+                JsonObject jo = new JsonObject();
+                jo.put("line", line);
+                jo.put("find", fix.oldText());
+                jo.put("replace", fix.newText());
+                jo.put("fix", fix.label());
+                fixes.add(jo);
+            }
+        }
+        if (!fixes.isEmpty()) {
+            result.put("fixes", fixes);
+        }
+        if (RouteAssist.supports(file, content)) {
+            // the parts of a Java or XML route the parser could not read, so the checks did not see (CAMEL-25208)
+            JsonArray notChecked = new JsonArray();
+            for (RouteAssist.Diagnostic d : RouteAssist.diagnostics(file, content, ctx.catalog(), null,
+                    RouteAssist.javaSources(dir), false)) {
+                if (d.severity() == RouteAssist.Severity.INFO) {
+                    notChecked.add(d.format());
+                }
+            }
+            if (!notChecked.isEmpty()) {
+                result.put("notChecked", notChecked);
+            }
+        }
         result.put("message", errors.isEmpty()
                 ? "The source is valid"
                 : errors.size() + " problem(s) found; fix them before writing the file");
         return result;
+    }
+
+    /** The line of a validation message, "Line N: ...", or 0. */
+    private static int lineOf(String error) {
+        if (error == null || !error.startsWith("Line ")) {
+            return 0;
+        }
+        int colon = error.indexOf(':');
+        try {
+            return colon > 5 ? Integer.parseInt(error.substring(5, colon).trim()) : 0;
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     /** How long a write waits for the running integration's reload record before answering without it. */
@@ -695,6 +861,35 @@ public final class AuthoringTools {
         return n;
     }
 
+    /**
+     * The problems of the new content that the file did not have: a problem is the same when its message is, wherever
+     * its line moved to (as many times as it was there).
+     *
+     * @param stillThere gets the problems of the new content the file already had
+     */
+    public static List<String> newProblems(List<String> before, List<String> after, List<String> stillThere) {
+        Map<String, Integer> known = new HashMap<>();
+        for (String b : before) {
+            known.merge(withoutLine(b), 1, Integer::sum);
+        }
+        List<String> answer = new ArrayList<>();
+        for (String a : after) {
+            String key = withoutLine(a);
+            Integer n = known.get(key);
+            if (n != null && n > 0) {
+                known.put(key, n - 1);
+                stillThere.add(a);
+            } else {
+                answer.add(a);
+            }
+        }
+        return answer;
+    }
+
+    private static String withoutLine(String message) {
+        return message != null ? message.replaceFirst("^Line \\d+: ", "") : "";
+    }
+
     /** Writes a file after validating it, as {@code camel_write_file} does; no confirmation is asked here. */
     public static JsonObject writeFile(ToolContext ctx, Path dir, String file, String content, boolean validate) {
         Path path = resolveFile(dir, file);
@@ -702,10 +897,20 @@ public final class AuthoringTools {
         if (exists && !Files.isRegularFile(path)) {
             throw new ToolExecutionException(file + " is not a regular file");
         }
+        List<String> problemsBefore = List.of();
         if (validate && SourceValidator.isValidatableFile(file)) {
             // a missing consumer of a direct: endpoint does not refuse the write: it is often a file not written yet
             List<String> errors = SourceValidator.validate(file, content, ctx.catalog(), ctx.propertyLineValidator(), dir,
                     null, false);
+            if (!errors.isEmpty() && exists) {
+                // the problems the file already had do not refuse the write: an edit that fixes one problem would be
+                // refused for the others, and the agent made to fix them all; only the problems the write brings are
+                problemsBefore = SourceValidator.validate(file, read(path), ctx.catalog(), ctx.propertyLineValidator(),
+                        dir, null, false);
+                List<String> stillThere = new ArrayList<>();
+                errors = newProblems(problemsBefore, errors, stillThere);
+                problemsBefore = stillThere;
+            }
             if (!errors.isEmpty()) {
                 JsonObject result = new JsonObject();
                 result.put("status", "invalid");
@@ -738,6 +943,10 @@ public final class AuthoringTools {
         result.put("directory", dir.toString());
         result.put("lines", content.isEmpty() ? 0 : (int) content.lines().count());
         result.put("bytes", content.getBytes(StandardCharsets.UTF_8).length);
+        if (!problemsBefore.isEmpty()) {
+            // written with problems the file already had: said, so they are not taken for fixed
+            result.put("existingProblems", new JsonArray(problemsBefore));
+        }
         if (watch) {
             JsonObject reload = ReloadOutcome.await(ctx.pid(), processName, sinceKey, RELOAD_WAIT_MILLIS);
             result.put("reload", reload);
@@ -935,7 +1144,7 @@ public final class AuthoringTools {
     }
 
     /** The regular files under the directory, sorted by path, build and tooling directories skipped. */
-    private static List<Path> projectFiles(Path dir) {
+    static List<Path> projectFiles(Path dir) {
         List<Path> files = new ArrayList<>();
         try {
             Files.walkFileTree(dir, EnumSet.noneOf(FileVisitOption.class), MAX_DEPTH, new SimpleFileVisitor<>() {

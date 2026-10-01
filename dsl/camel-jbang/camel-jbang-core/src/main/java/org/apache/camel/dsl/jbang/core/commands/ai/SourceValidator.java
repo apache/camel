@@ -36,7 +36,9 @@ import com.networknt.schema.Error;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.yaml.validator.YamlPointerLines;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
+import org.snakeyaml.engine.v2.nodes.Node;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.JavaChecks.JAVA_CLASS_PATTERN;
 import static org.apache.camel.dsl.jbang.core.commands.ai.JavaChecks.JAVA_PACKAGE_PATTERN;
@@ -127,7 +129,7 @@ public final class SourceValidator {
                 msgs.addAll(GroovyImportChecks.validateYamlGroovyImports(content, null, declarations.javaClasses()));
                 if (checkConsumers) {
                     // a direct: or seda: endpoint no route of the application consumes (CAMEL-24955)
-                    msgs.addAll(EndpointConsumerChecks.validateYamlConsumers(content, directory, fileName));
+                    msgs.addAll(EndpointConsumerChecks.validateYamlConsumers(content, directory, fileName, catalog));
                 }
             }
             return msgs;
@@ -140,16 +142,48 @@ public final class SourceValidator {
             if (directory != null && !msgs.isEmpty()) {
                 msgs = withSiblingClassHints(msgs, BeanDeclarations.scan(directory, fileName));
             }
-            return msgs;
+            // what the compiler cannot see: the endpoint uris and simple expressions inside the strings (CAMEL-25208)
+            return withRouteChecks(msgs, fileName, content, catalog, directory, checkConsumers);
         }
         if (name.endsWith(".xsl") || name.endsWith(".xslt")) {
             return validateXslt(content);
         }
         if (name.endsWith(".xml")) {
-            return validateXml(content);
+            List<String> msgs = validateXml(content);
+            // a well formed file of the XML DSL: its routes against the XML DSL and the catalog (CAMEL-25208)
+            return msgs.isEmpty() ? withRouteChecks(msgs, fileName, content, catalog, directory, checkConsumers) : msgs;
         }
         return List.of();
     }
+
+    /**
+     * Adds the errors of the Camel checks of a Java or XML DSL source ({@link RouteAssist}) to the messages, leaving
+     * out one on a line that already has a message.
+     */
+    private static List<String> withRouteChecks(
+            List<String> msgs, String fileName, String content, CamelCatalog catalog, Path directory,
+            boolean checkConsumers) {
+        if (!RouteAssist.supports(fileName, content)) {
+            return msgs;
+        }
+        List<String> answer = new ArrayList<>(msgs);
+        Set<String> linesWithMessages = new HashSet<>();
+        for (String m : msgs) {
+            Matcher lm = MESSAGE_LINE.matcher(m);
+            if (lm.find()) {
+                linesWithMessages.add(lm.group(1));
+            }
+        }
+        for (RouteAssist.Diagnostic d : RouteAssist.diagnostics(fileName, content, catalog, directory,
+                RouteAssist.javaSources(directory), checkConsumers && directory != null)) {
+            if (d.severity() == RouteAssist.Severity.ERROR && !linesWithMessages.contains(Integer.toString(d.line()))) {
+                answer.add(d.format());
+            }
+        }
+        return answer;
+    }
+
+    private static final Pattern MESSAGE_LINE = Pattern.compile("^Line (\\d+)\\b");
 
     /**
      * Validates Camel YAML DSL source: the YAML DSL schema first, then endpoint URIs and simple expressions against the
@@ -217,7 +251,7 @@ public final class SourceValidator {
             return false;
         }
         try {
-            msgs.addAll(formatSchemaErrors(validator.validate(content, bodylessEndpoints)));
+            msgs.addAll(formatSchemaErrors(validator.validate(content, bodylessEndpoints), content));
             return true;
         } catch (Exception e) {
             msgs.add("Invalid YAML: " + e.getMessage());
@@ -365,12 +399,37 @@ public final class SourceValidator {
         }
     }
 
+    /**
+     * Whether the expression whose language key is on the given line of a YAML route is evaluated as a predicate by the
+     * EIP it belongs to (the expression of a filter or a when, the completionPredicate of an aggregate).
+     *
+     * @param catalog the catalog, for the EIP options that are predicates
+     * @param lines   the lines of the YAML route
+     * @param lineIdx the index of the line of the language key (simple:)
+     */
+    public static boolean isYamlPredicate(CamelCatalog catalog, String[] lines, int lineIdx) {
+        if (lineIdx < 0 || lineIdx >= lines.length) {
+            return false;
+        }
+        return SimpleChecks.isPredicate(catalog, lines, lineIdx, YamlLines.countLeadingSpaces(lines[lineIdx]));
+    }
+
     /** The YAML DSL schema errors in words: the node they are about and the message without parser noise. */
     public static List<String> formatSchemaErrors(List<Error> errors) {
+        return formatSchemaErrors(errors, null);
+    }
+
+    /**
+     * The schema errors of a YAML source as messages; with the content, each one the line of the YAML it points at can
+     * be found for starts with "Line N: ", as the other checks report, so an editor marks it on its line.
+     */
+    public static List<String> formatSchemaErrors(List<Error> errors, String content) {
         List<String> msgs = new ArrayList<>();
         if (errors == null) {
             return msgs;
         }
+        Node root = content != null && !errors.isEmpty()
+                ? YamlPointerLines.root(content) : null;
         for (Error error : errors) {
             String msg = error.getMessage();
             if (msg == null) {
@@ -379,7 +438,9 @@ public final class SourceValidator {
             String loc = error.getInstanceLocation() != null ? error.getInstanceLocation().toString() : null;
             String node = extractNodeName(loc);
             String clean = cleanValidationMessage(msg);
-            msgs.add(node != null ? node + ": " + clean : clean);
+            String text = node != null ? node + ": " + clean : clean;
+            int line = YamlPointerLines.line(root, loc, clean);
+            msgs.add(line > 0 && !text.startsWith("Line ") ? "Line " + line + ": " + text : text);
         }
         return msgs;
     }

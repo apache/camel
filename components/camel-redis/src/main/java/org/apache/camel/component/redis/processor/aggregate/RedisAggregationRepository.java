@@ -321,10 +321,12 @@ public class RedisAggregationRepository extends ServiceSupport
                     RMap<String, DefaultExchangeHolder> tCache = transaction.getMap(mapName);
                     RMap<String, DefaultExchangeHolder> tPersistentCache = transaction.getMap(persistenceMapName);
 
-                    DefaultExchangeHolder removedHolder = tCache.remove(key);
+                    tCache.remove(key);
                     LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
                             exchange.getExchangeId(), key);
-                    tPersistentCache.put(exchange.getExchangeId(), removedHolder);
+                    // store the given exchange and not the removed entry: when a group is completed by an incoming
+                    // exchange, the last aggregated exchange is not added to the repository before it is removed
+                    tPersistentCache.put(exchange.getExchangeId(), holder);
 
                     transaction.commit();
                     LOG.trace("Removed an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(),

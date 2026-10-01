@@ -17,6 +17,8 @@
 package org.apache.camel.component.rest.openapi.validator.client;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -33,6 +35,7 @@ import org.junit.jupiter.api.Test;
 public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
 
     static OpenAPI openAPI;
+    static OpenAPI headerArrayOpenAPI;
     static OpenApiRestClientRequestValidator validator;
 
     @BeforeAll
@@ -41,6 +44,26 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
         OpenAPIV3Parser parser = new OpenAPIV3Parser();
         SwaggerParseResult out = parser.readContents(data);
         openAPI = out.getOpenAPI();
+        headerArrayOpenAPI = parser.readContents("""
+                openapi: 3.0.3
+                info:
+                  title: header array
+                  version: 1.0.0
+                paths:
+                  /items:
+                    get:
+                      parameters:
+                        - name: X-Ids
+                          in: header
+                          required: true
+                          schema:
+                            type: array
+                            items:
+                              type: integer
+                      responses:
+                        '200':
+                          description: OK
+                """).getOpenAPI();
         validator = new OpenApiRestClientRequestValidator();
     }
 
@@ -122,5 +145,144 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
         error = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
                 "application/json", "application/json", true, null, null, null, null));
         Assertions.assertNull(error);
+    }
+
+    @Test
+    public void testValidateRepeatedScalarHeader() {
+        exchange.setProperty(Exchange.REST_OPENAPI, openAPI);
+        exchange.setProperty(Exchange.CONTENT_TYPE, "application/json");
+        exchange.getMessage().setHeader(Exchange.HTTP_METHOD, "DELETE");
+        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "pet/123");
+        exchange.getMessage().setHeader("Accept", "application/json");
+        exchange.getMessage().setBody("");
+
+        // A header sent more than once arrives as a List, exactly as CollectionHelper.appendEntry
+        // leaves it. api_key is declared "type": "string", so two values violate the contract.
+        exchange.getMessage().setHeader("api_key", List.of("key-one", "key-two"));
+
+        RestClientRequestValidator.ValidationError error
+                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", false, null, null, null, null));
+
+        Assertions.assertNotNull(error, "a repeated scalar header parameter must be reported");
+        Assertions.assertEquals(400, error.statusCode());
+        Assertions.assertFalse(error.body().contains("[key-one, key-two]"),
+                "the collection must not be stringified into the validated value");
+    }
+
+    @Test
+    public void testValidateSingleScalarHeaderStillPasses() {
+        exchange.setProperty(Exchange.REST_OPENAPI, openAPI);
+        exchange.setProperty(Exchange.CONTENT_TYPE, "application/json");
+        exchange.getMessage().setHeader(Exchange.HTTP_METHOD, "DELETE");
+        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "pet/123");
+        exchange.getMessage().setHeader("Accept", "application/json");
+        exchange.getMessage().setHeader("api_key", "key-one");
+        exchange.getMessage().setBody("");
+
+        RestClientRequestValidator.ValidationError error
+                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", false, null, null, null, null));
+
+        Assertions.assertNull(error);
+    }
+
+    @Test
+    public void testValidateRepeatedArrayHeaderIsAccepted() {
+        exchange.setProperty(Exchange.REST_OPENAPI, openAPI);
+        exchange.setProperty(Exchange.CONTENT_TYPE, "application/json");
+        exchange.getMessage().setHeader(Exchange.HTTP_METHOD, "GET");
+        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "pet/findByTags");
+        exchange.getMessage().setHeader("Accept", "application/json");
+        exchange.getMessage().setBody("");
+
+        // tags is "type": "array". Per RFC 9110 section 5.3 repeating a list-based header is
+        // equivalent to one header with the values joined by commas, so tags: dog + tags: cat
+        // means the same as tags: dog,cat
+        exchange.getMessage().setHeader("tags", List.of("dog", "cat"));
+
+        RestClientRequestValidator.ValidationError error
+                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", true, null, null, null, null));
+
+        Assertions.assertNull(error);
+    }
+
+    @Test
+    public void testValidateRepeatedArrayHeaderWithInvalidItemIsReported() {
+        exchange.setProperty(Exchange.REST_OPENAPI, headerArrayOpenAPI);
+        exchange.getMessage().setHeader(Exchange.HTTP_METHOD, "GET");
+        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "items");
+        exchange.getMessage().setBody("");
+
+        // the values are joined, not waved through: each one is still checked against the items schema
+        exchange.getMessage().setHeader("X-Ids", List.of("1", "abc"));
+
+        RestClientRequestValidator.ValidationError error
+                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", false, null, null, null, null));
+
+        Assertions.assertNotNull(error);
+        Assertions.assertTrue(error.body().contains("@header.X-Ids"), error.body());
+
+        exchange.getMessage().setHeader("X-Ids", List.of("1", "2"));
+        error = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                "application/json", "application/json", false, null, null, null, null));
+
+        Assertions.assertNull(error);
+    }
+
+    @Test
+    public void testValidateRepeatedArrayHeaderWithNullValueIsSkipped() {
+        exchange.setProperty(Exchange.REST_OPENAPI, headerArrayOpenAPI);
+        exchange.getMessage().setHeader(Exchange.HTTP_METHOD, "GET");
+        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "items");
+        exchange.getMessage().setBody("");
+
+        // a null element carries no value and must not be joined in as the text "null"
+        exchange.getMessage().setHeader("X-Ids", Arrays.asList("1", null, "2"));
+
+        RestClientRequestValidator.ValidationError error
+                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", false, null, null, null, null));
+
+        Assertions.assertNull(error);
+    }
+
+    @Test
+    public void testValidateArrayHeaderInSimpleStyleStillPasses() {
+        exchange.setProperty(Exchange.REST_OPENAPI, openAPI);
+        exchange.setProperty(Exchange.CONTENT_TYPE, "application/json");
+        exchange.getMessage().setHeader(Exchange.HTTP_METHOD, "GET");
+        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "pet/findByTags");
+        exchange.getMessage().setHeader("Accept", "application/json");
+        exchange.getMessage().setHeader("tags", "dog,cat");
+        exchange.getMessage().setBody("");
+
+        RestClientRequestValidator.ValidationError error
+                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", true, null, null, null, null));
+
+        Assertions.assertNull(error, "the form the contract does describe must stay valid");
+    }
+
+    @Test
+    public void testValidateRepeatedScalarHeaderInMixedCase() {
+        exchange.setProperty(Exchange.REST_OPENAPI, openAPI);
+        exchange.setProperty(Exchange.CONTENT_TYPE, "application/json");
+        exchange.getMessage().setHeader(Exchange.HTTP_METHOD, "DELETE");
+        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "pet/123");
+        exchange.getMessage().setHeader("Accept", "application/json");
+        exchange.getMessage().setBody("");
+
+        // HTTP header names are case-insensitive, and so is Camel's header map: a client repeating
+        // the header under a different spelling still produces one entry holding both values.
+        exchange.getMessage().setHeader("Api_Key", List.of("key-one", "key-two"));
+
+        RestClientRequestValidator.ValidationError error
+                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", false, null, null, null, null));
+
+        Assertions.assertNotNull(error, "the spelling on the wire must not decide whether it is checked");
     }
 }

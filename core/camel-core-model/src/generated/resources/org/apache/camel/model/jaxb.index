@@ -97,6 +97,9 @@ SortDefinition
 SplitDefinition
 StepDefinition
 StopDefinition
+SwitchCaseDefinition
+SwitchDefinition
+SwitchOtherwiseDefinition
 TemplatedRouteDefinition
 TemplatedRouteParameterDefinition
 TemplatedRoutesDefinition

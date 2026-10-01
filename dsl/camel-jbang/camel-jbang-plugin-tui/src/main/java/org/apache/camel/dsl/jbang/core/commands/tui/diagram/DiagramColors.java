@@ -44,7 +44,7 @@ public final class DiagramColors {
     }
 
     static Style dashedBorderStyle() {
-        return Style.EMPTY.fg(Theme.diagramTo());
+        return Style.EMPTY.fg(Theme.diagramExternal());
     }
 
     static Style selectionStyle() {
@@ -76,7 +76,7 @@ public final class DiagramColors {
     }
 
     static Color externalColor() {
-        return Theme.diagramTo();
+        return Theme.diagramExternal();
     }
 
     static Color highlightOkColor() {

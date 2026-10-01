@@ -255,7 +255,7 @@ Java::
 +
 [source,java]
 ----
-    rest().openApi("petstore-v3.json").missingOperation("ignore");
+    rest().openApi().specification("petstore-v3.json").missingOperation("ignore");
 ----
 
 XML::
@@ -291,7 +291,7 @@ Java::
 +
 [source,java]
 ----
-    rest().openApi("petstore-v3.json").missingOperation("mock");
+    rest().openApi().specification("petstore-v3.json").missingOperation("mock");
 ----
 
 XML::
@@ -346,7 +346,7 @@ Java::
 ----
 restConfiguration().clientRequestValidation(true);
 
-rest().openApi("petstore-v3.json").missingOperation("mock");
+rest().openApi().specification("petstore-v3.json").missingOperation("mock");
 ----
 
 XML::

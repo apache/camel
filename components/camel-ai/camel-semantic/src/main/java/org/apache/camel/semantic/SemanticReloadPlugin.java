@@ -17,17 +17,77 @@
 package org.apache.camel.semantic;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ContextServicePlugin;
+import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.RoutesBuilderLoader;
+import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.support.service.ServiceHelper;
 
-/** Removes definitions from deleted files before the route watcher loads their replacements. */
+/** Installs optional XML declaration support and removes definitions from deleted files before route reload. */
 public class SemanticReloadPlugin implements ContextServicePlugin {
+    private SemanticXmlLoader xmlLoader;
+    private LifecycleStrategy lifecycle;
+
     @Override
     public void load(CamelContext context) {
-        // Questions are registered by the route loader or the application.
+        installXmlLoader(context);
+        lifecycle = new LifecycleStrategySupport() {
+            @Override
+            public void onContextInitializing(CamelContext camelContext) {
+                // Applications can replace the registry after the context's eager build phase.
+                installXmlLoader(camelContext);
+                if (xmlLoader != null) {
+                    xmlLoader.resetLoaderDiscovery();
+                }
+            }
+        };
+        context.addLifecycleStrategy(lifecycle);
+    }
+
+    private void installXmlLoader(CamelContext context) {
+        // Keep the language usable without the optional XML/model dependencies, and preserve application overrides.
+        if (context.getClassResolver().resolveClass("org.apache.camel.xml.in.ModelParser") == null
+                || context.getRegistry().lookupByName(SemanticXmlLoader.REGISTRY_KEY) != null
+                || context.getRegistry().findByType(RoutesBuilderLoader.class).stream()
+                        .anyMatch(loader -> loader.isSupportedExtension("xml"))) {
+            return;
+        }
+        if (xmlLoader == null) {
+            xmlLoader = new SemanticXmlLoader();
+            xmlLoader.setCamelContext(context);
+        }
+        try {
+            ServiceHelper.startService(xmlLoader);
+            context.getRegistry().bind(SemanticXmlLoader.REGISTRY_KEY, xmlLoader);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
+    }
+
+    @Override
+    public void unload(CamelContext context) {
+        context.getLifecycleStrategies().remove(lifecycle);
+        lifecycle = null;
+        if (xmlLoader != null) {
+            if (context.getRegistry().lookupByName(SemanticXmlLoader.REGISTRY_KEY) == xmlLoader) {
+                context.getRegistry().unbind(SemanticXmlLoader.REGISTRY_KEY);
+            }
+            try {
+                ServiceHelper.stopAndShutdownService(xmlLoader);
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            } finally {
+                xmlLoader = null;
+            }
+        }
     }
 
     @Override
     public void onReload(CamelContext context) {
+        if (xmlLoader != null) {
+            xmlLoader.resetLoaderDiscovery();
+        }
         SemanticQuestions questions = context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class);
         if (questions != null) {
             questions.removeDeletedResources();

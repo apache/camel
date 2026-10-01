@@ -17,6 +17,7 @@
 package org.apache.camel.support.processor;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -82,6 +83,7 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
     private final Set<String> requiredHeaders;
     private final Map<String, String> responseCodes;
     private final Set<String> responseHeaders;
+    private Map<String, Set<String>> responseCodeHeaders;
 
     /**
      * Use {@link RestBindingAdviceFactory} to create.
@@ -338,6 +340,18 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
     }
 
     private void marshal(Exchange exchange, Map<String, Object> state) {
+        doMarshal(exchange, state);
+
+        // perform client response validation (also when the response body was not marshalled, such as when binding
+        // is off, the body is empty or binding was skipped for an error code)
+        RestClientResponseValidator.ValidationError error = doClientResponseValidation(exchange);
+        if (error != null) {
+            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, error.statusCode());
+            exchange.getMessage().setBody(error.body());
+        }
+    }
+
+    private void doMarshal(Exchange exchange, Map<String, Object> state) {
         // only marshal if there was no exception
         if (exchange.getException() != null) {
             return;
@@ -466,13 +480,6 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
                      + " This exception is set on the exchange to fail the response.",
                     exchange, e.getMessage(), e);
             exchange.setException(e);
-        }
-
-        // perform client response validation
-        RestClientResponseValidator.ValidationError error = doClientResponseValidation(exchange);
-        if (error != null) {
-            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, error.statusCode());
-            exchange.getMessage().setBody(error.body());
         }
     }
 
@@ -607,10 +614,48 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
     public RestClientResponseValidator.ValidationError doClientResponseValidation(Exchange exchange) {
         if (clientResponseValidation && clientResponseValidator != null && !exchange.isFailed()) {
             RestClientResponseValidator.ValidationContext vc = new RestClientResponseValidator.ValidationContext(
-                    consumes, produces, responseCodes, responseHeaders);
+                    consumes, produces, responseCodes, resolveResponseHeaders(exchange));
             return clientResponseValidator.validate(exchange, vc);
         }
         return null;
+    }
+
+    /**
+     * The response headers that are required on the response, which are the headers of the response message of the
+     * response code (or the default response message when the code has none)
+     */
+    private Set<String> resolveResponseHeaders(Exchange exchange) {
+        if (responseCodeHeaders == null) {
+            return responseHeaders;
+        }
+        String code = exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, "200", String.class);
+        Set<String> headers = responseCodeHeaders.get(code);
+        if (headers == null && (responseCodes == null || !responseCodes.containsKey(code))) {
+            headers = responseCodeHeaders.get("default");
+        }
+        if (responseHeaders == null || responseHeaders.isEmpty()) {
+            return headers;
+        }
+        if (headers == null) {
+            return responseHeaders;
+        }
+        Set<String> answer = new HashSet<>(responseHeaders);
+        answer.addAll(headers);
+        return answer;
+    }
+
+    /**
+     * The response headers that are required, per response code
+     */
+    public Map<String, Set<String>> getResponseCodeHeaders() {
+        return responseCodeHeaders;
+    }
+
+    /**
+     * Sets the response headers that are required, per response code
+     */
+    public void setResponseCodeHeaders(Map<String, Set<String>> responseCodeHeaders) {
+        this.responseCodeHeaders = responseCodeHeaders;
     }
 
     @Override
