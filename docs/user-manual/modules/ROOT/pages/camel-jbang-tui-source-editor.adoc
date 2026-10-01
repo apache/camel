@@ -203,6 +203,12 @@ outside edit mode the line lists the functions it uses.
 
 image::jbang/camel-tui-source-simple-quick-doc.png[The documentation of the date function the cursor is on]
 
+In an XML route the panel also follows the cursor: on an attribute name or in its value it shows that attribute (its
+documentation, default and values), on an element name the element and its required attributes. The `uri` attribute
+keeps the documentation of its endpoint.
+
+image::jbang/camel-tui-source-xml-quick-doc.png[The documentation of the loggingLevel attribute the cursor is on]
+
 == Navigation
 
 * *Jump links* -- a line that sends to another route, such as `to("seda:shipping")`, shows `↵ shipping`. Press *Enter*

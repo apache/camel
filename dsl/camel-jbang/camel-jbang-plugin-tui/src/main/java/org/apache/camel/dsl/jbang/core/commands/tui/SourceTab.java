@@ -848,8 +848,14 @@ class SourceTab extends AbstractTab {
         // simple expressions in every route file: YAML, Java and XML (CAMEL-25219)
         sourceViewer.setSimpleCompletion(
                 routeFile || isCamelSourceFile(filePath) ? assist::provideSimpleCompletions : null);
-        sourceViewer.setCursorQuickDocProvider(
-                routeFile || isCamelSourceFile(filePath) ? assist::provideSimpleQuickDoc : null);
+        boolean xmlRoute = routeFile && name.toLowerCase().endsWith(".xml");
+        sourceViewer.setCursorQuickDocProvider(!routeFile && !isCamelSourceFile(filePath) ? null
+                : xmlRoute ? (lines, row, col) -> {
+                    // the simple function the cursor is on, else the element or attribute (CAMEL-25244)
+                    List<SourceViewer.DocEntry> simple = assist.provideSimpleQuickDoc(lines, row, col);
+                    return !simple.isEmpty() ? simple : assist.provideXmlQuickDoc(lines, row, col);
+                }
+                : assist::provideSimpleQuickDoc);
         // the elements, attributes and values of an XML route (CAMEL-25240)
         // the route chain of a Java route (CAMEL-25241)
         sourceViewer.setJavaCompletion(routeFile && name.endsWith(".java") ? assist::provideJavaCompletions : null);

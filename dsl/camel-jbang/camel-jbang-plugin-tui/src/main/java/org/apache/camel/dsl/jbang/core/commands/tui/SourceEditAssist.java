@@ -1011,6 +1011,11 @@ final class SourceEditAssist {
         return items;
     }
 
+    /** The quick doc of the XML element or attribute at the cursor (CAMEL-25244). */
+    List<SourceViewer.DocEntry> provideXmlQuickDoc(List<String> lines, int row, int col) {
+        return XmlQuickDoc.at(validationCatalog(), lines, row, col);
+    }
+
     /** The quick doc of the simple function at the cursor (CAMEL-25219). */
     List<SourceViewer.DocEntry> provideSimpleQuickDoc(List<String> lines, int row, int col) {
         return SimpleQuickDoc.at(validationCatalog(), lines, row, col);

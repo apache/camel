@@ -52,7 +52,8 @@ a heat map of the route: where messages go, where they fail.
 - **Ctrl+Left / Ctrl+Right** — word navigation
 - **Home** — smart home (content indent, then column 0)
 - Quick documentation panel is shown at the bottom (shows doc for current line;
-  in a simple expression, the function, header or operator the cursor is on)
+  in a simple expression, the function, header or operator the cursor is on;
+  in XML, the element or attribute the cursor is on)
 - **F7** — show diff of unsaved changes
 - **F9** — jump to next validation error
 - **Shift+F8** — ask the AI to fix the problem on the cursor line: the file is
