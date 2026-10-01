@@ -39,10 +39,14 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CoderResult;
+import java.nio.charset.CodingErrorAction;
 import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -729,49 +733,87 @@ public final class IOHelper {
     }
 
     /**
-     * Encoding-aware input stream.
+     * An input stream that reads characters from a {@link Reader} and encodes them with the given charset, a chunk at a
+     * time, so the content is never held in memory as a whole.
      */
-    public static class EncodingInputStream extends InputStream {
+    public static class ReaderInputStream extends InputStream {
 
         private final Lock lock = new ReentrantLock();
-        private final Path file;
-        private final BufferedReader reader;
-        private final Charset defaultStreamCharset;
+        private final Reader reader;
+        // a single encoder for the whole stream, so a charset that writes a byte order mark (such as UTF-16) writes
+        // it only once, and a stateful charset keeps its state from one chunk to the next
+        private final CharsetEncoder encoder;
+        private final CharBuffer chars = CharBuffer.allocate(4096);
+        private final ByteBuffer bytes;
+        private boolean endOfInput;
+        private boolean encoded;
+        private boolean flushed;
 
-        private ByteBuffer bufferBytes;
-        private final CharBuffer bufferedChars = CharBuffer.allocate(4096);
-        // the first half of a surrogate pair that was read at the end of the buffer
-        private char pendingHighSurrogate;
-
-        public EncodingInputStream(Path file, String charset) throws IOException {
-            this.file = file;
-            reader = toReader(file, charset);
-            defaultStreamCharset = defaultCharset.get();
+        /**
+         * @param reader  the reader to read the characters from
+         * @param charset the charset to encode the characters with
+         */
+        public ReaderInputStream(Reader reader, Charset charset) {
+            this.reader = reader;
+            // replace malformed and unmappable characters, the same way as Charset.encode and String.getBytes
+            this.encoder = charset.newEncoder()
+                    .onMalformedInput(CodingErrorAction.REPLACE)
+                    .onUnmappableCharacter(CodingErrorAction.REPLACE);
+            this.bytes = ByteBuffer.allocate((int) Math.ceil(chars.capacity() * encoder.maxBytesPerChar()));
+            // nothing to read yet
+            bytes.limit(0);
         }
 
         @Override
         public int read() throws IOException {
-            while (bufferBytes == null || bufferBytes.remaining() <= 0) {
-                BufferCaster.cast(bufferedChars).clear();
-                if (pendingHighSurrogate != 0) {
-                    bufferedChars.put(pendingHighSurrogate);
-                    pendingHighSurrogate = 0;
-                }
-                int len = reader.read(bufferedChars);
-                bufferedChars.flip();
-                if (len == -1 && !bufferedChars.hasRemaining()) {
-                    return -1;
-                }
-                int limit = bufferedChars.limit();
-                if (len != -1 && limit > 0 && Character.isHighSurrogate(bufferedChars.get(limit - 1))) {
-                    // a surrogate pair (such as an emoji) is split at the end of the buffer, so encode the high
-                    // surrogate together with the low surrogate in the next read (alone it would be encoded as ?)
-                    pendingHighSurrogate = bufferedChars.get(limit - 1);
-                    bufferedChars.limit(limit - 1);
-                }
-                bufferBytes = defaultStreamCharset.encode(bufferedChars);
+            return fill() ? bytes.get() & 0xFF : -1;
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            Objects.checkFromIndexSize(off, len, b.length);
+            if (len == 0) {
+                return 0;
             }
-            return bufferBytes.get() & 0xFF;
+            if (!fill()) {
+                return -1;
+            }
+            int n = Math.min(len, bytes.remaining());
+            bytes.get(b, off, n);
+            return n;
+        }
+
+        /**
+         * Encodes the next chunk of characters if all the encoded bytes have been read.
+         *
+         * @return <tt>false</tt> if the end of the reader has been reached
+         */
+        private boolean fill() throws IOException {
+            while (!bytes.hasRemaining()) {
+                if (flushed) {
+                    return false;
+                }
+                bytes.clear();
+                if (encoded) {
+                    // write what the encoder may still hold
+                    flushed = encoder.flush(bytes).isUnderflow();
+                } else {
+                    if (!endOfInput && reader.read(chars) == -1) {
+                        endOfInput = true;
+                    }
+                    chars.flip();
+                    // characters that cannot be encoded yet (such as the first half of a surrogate pair at the end
+                    // of the buffer) are kept for the next chunk
+                    CoderResult result = encoder.encode(chars, bytes, endOfInput);
+                    chars.compact();
+                    if (endOfInput && result.isUnderflow()) {
+                        encoded = true;
+                        flushed = encoder.flush(bytes).isUnderflow();
+                    }
+                }
+                bytes.flip();
+            }
+            return true;
         }
 
         @Override
@@ -784,9 +826,29 @@ public final class IOHelper {
             lock.lock();
             try {
                 reader.reset();
+                encoder.reset();
+                chars.clear();
+                bytes.clear();
+                bytes.limit(0);
+                endOfInput = false;
+                encoded = false;
+                flushed = false;
             } finally {
                 lock.unlock();
             }
+        }
+    }
+
+    /**
+     * Encoding-aware input stream.
+     */
+    public static class EncodingInputStream extends ReaderInputStream {
+
+        private final Path file;
+
+        public EncodingInputStream(Path file, String charset) throws IOException {
+            super(toReader(file, charset), defaultCharset.get());
+            this.file = file;
         }
 
         public InputStream toOriginalInputStream() throws IOException {

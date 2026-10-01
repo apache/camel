@@ -24,7 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.support.PayloadHelper;
 
 public final class BlobStreamAndLength {
 
@@ -37,48 +39,42 @@ public final class BlobStreamAndLength {
         this.streamLength = streamLength;
     }
 
-    @SuppressWarnings("rawtypes")
     public static BlobStreamAndLength createBlobStreamAndLengthFromExchangeBody(final Exchange exchange) throws IOException {
-        Object body = exchange.getIn().getBody();
-        Long blobSize = exchange.getIn().getHeader(BlobConstants.BLOB_UPLOAD_SIZE, () -> null, Long.class);
-        exchange.getIn().removeHeader(BlobConstants.BLOB_UPLOAD_SIZE); // remove to avoid issues for further uploads
+        final Message message = exchange.getIn();
+        Object body = message.getBody();
+        Long blobSize = message.getHeader(BlobConstants.BLOB_UPLOAD_SIZE, () -> null, Long.class);
+        message.removeHeader(BlobConstants.BLOB_UPLOAD_SIZE); // remove to avoid issues for further uploads
 
-        if (body instanceof WrappedFile wf) {
-            // Get file length from WrappedFile before unwrapping (works for remote files like SFTP)
-            if (blobSize == null) {
-                blobSize = wf.getFileLength();
-            }
-            body = wf.getFile();
+        if (body instanceof WrappedFile<?> wf && wf.getFile() instanceof File file) {
+            body = file;
+        }
+        if (body instanceof File file) {
+            return new BlobStreamAndLength(new BufferedInputStream(new FileInputStream(file)), file.length());
+        }
+        if (body instanceof byte[] bytes) {
+            return new BlobStreamAndLength(new ByteArrayInputStream(bytes), bytes.length);
         }
 
-        if (body instanceof InputStream) {
-            InputStream is = (InputStream) body;
-            if (blobSize == null && !is.markSupported()) {
-                is = new BufferedInputStream(is);
-            }
-            return new BlobStreamAndLength(is, blobSize != null ? blobSize : BlobUtils.getInputStreamLength(is));
-        }
-        if (body instanceof File) {
-            return new BlobStreamAndLength(new BufferedInputStream(new FileInputStream((File) body)), ((File) body).length());
-        }
-        if (body instanceof byte[]) {
-            return new BlobStreamAndLength(new ByteArrayInputStream((byte[]) body), ((byte[]) body).length);
-        }
+        // the length of a wrapped file (such as a remote file from SFTP) is known without reading it
+        long length = blobSize != null ? blobSize : PayloadHelper.getBodyLength(message);
 
-        // try as input stream
-        final InputStream inputStream
-                = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
-
-        if (inputStream == null) {
-            // fallback to string based
+        InputStream is = body instanceof InputStream inputStream
+                ? inputStream
+                : exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
+        if (is == null) {
             throw new IllegalArgumentException("Unsupported blob type:" + body.getClass().getName());
         }
 
-        InputStream is = inputStream;
-        if (blobSize == null && !is.markSupported()) {
-            is = new BufferedInputStream(is);
+        if (length < 0) {
+            length = PayloadHelper.getLength(is);
         }
-        return new BlobStreamAndLength(is, blobSize != null ? blobSize : BlobUtils.getInputStreamLength(is));
+        if (length < 0) {
+            // copy the data to determine the length, which uses stream caching so big payloads
+            // are spooled to disk when spooling is enabled
+            is = PayloadHelper.cacheStream(exchange, is);
+            length = PayloadHelper.getLength(is);
+        }
+        return new BlobStreamAndLength(is, length);
     }
 
     public InputStream getInputStream() {

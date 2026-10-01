@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.google.storage;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -43,6 +41,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.PayloadHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -125,7 +124,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
             objectMetadata.put("Content-Length", String.valueOf(fileLength));
         }
         // Handle Content-Length if not already set
-        is = setContentLength(objectMetadata, is);
+        is = setContentLength(exchange, objectMetadata, obj, is);
 
         Blob createdBlob;
         BlobId blobId = BlobId.of(bucketName, objectName);
@@ -162,35 +161,35 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     }
 
     /**
-     * If no content-length header was found, calculate length by reading the content.
+     * If no content-length header was found, determine the length of the content.
      *
+     * @param  exchange       the exchange
      * @param  objectMetadata Metadata set from Exchange headers
+     * @param  body           the Exchange body
      * @param  is             InputStream to read the Exchange body content
-     * @return                the original InputStream if Content-Length is set or a ByteArrayInputStream if the
-     *                        original stream was read to determine the length.
+     * @return                the original InputStream, or a copy of it if the stream had to be copied to determine the
+     *                        length
      * @throws IOException    if the InputStream cannot be read.
      */
-    private InputStream setContentLength(Map<String, String> objectMetadata, InputStream is) throws IOException {
+    private InputStream setContentLength(Exchange exchange, Map<String, String> objectMetadata, Object body, InputStream is)
+            throws IOException {
         if (!objectMetadata.containsKey(Exchange.CONTENT_LENGTH) ||
                 objectMetadata.get(Exchange.CONTENT_LENGTH).equals("0")) {
-            LOG.debug(
-                    "The content length is not defined. It needs to be determined by reading the data into memory");
-            ByteArrayOutputStream baos = determineLengthInputStream(is);
-            objectMetadata.put("Content-Length", String.valueOf(baos.size()));
-            return new ByteArrayInputStream(baos.toByteArray());
-        } else {
-            return is;
+            // such as a java.nio.file.Path, byte[] or stream cache
+            long length = PayloadHelper.getLength(body);
+            if (length < 0) {
+                length = PayloadHelper.getLength(is);
+            }
+            if (length < 0) {
+                // copy the data to determine the length, which uses stream caching
+                // so big payloads are spooled to disk when spooling is enabled
+                LOG.debug("The content length is not defined. It needs to be determined by copying the data");
+                is = PayloadHelper.cacheStream(exchange, is);
+                length = PayloadHelper.getLength(is);
+            }
+            objectMetadata.put(Exchange.CONTENT_LENGTH, String.valueOf(length));
         }
-    }
-
-    private ByteArrayOutputStream determineLengthInputStream(InputStream is) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] bytes = new byte[1024];
-        int count;
-        while ((count = is.read(bytes)) > 0) {
-            out.write(bytes, 0, count);
-        }
-        return out;
+        return is;
     }
 
     private Map<String, String> determineMetadata(final Exchange exchange) {

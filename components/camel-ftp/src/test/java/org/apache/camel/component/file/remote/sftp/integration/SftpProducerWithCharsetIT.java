@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.file.remote.sftp.integration;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
 import org.apache.commons.io.FileUtils;
@@ -43,6 +45,22 @@ public class SftpProducerWithCharsetIT extends SftpServerTestSupport {
     @Test
     public void testProducerWithCharset() throws Exception {
         template.sendBodyAndHeader(getSftpUri(), SAMPLE_FILE_PAYLOAD, Exchange.FILE_NAME, SAMPLE_FILE_NAME);
+
+        File file = new File(service.getFtpRootDir() + "/" + SAMPLE_FILE_NAME);
+        assertTrue(file.exists(), "The uploaded file should exist");
+
+        String storedPayload = FileUtils.readFileToString(file, SAMPLE_FILE_CHARSET);
+        assertEquals(SAMPLE_FILE_PAYLOAD, storedPayload);
+    }
+
+    @Test
+    public void testProducerWithCharsetFromStream() throws Exception {
+        // a stream body (such as from another component) is encoded to the charset while it is uploaded
+        template.send(getSftpUri(), exchange -> {
+            exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.UTF_8.name());
+            exchange.getIn().setHeader(Exchange.FILE_NAME, SAMPLE_FILE_NAME);
+            exchange.getIn().setBody(new ByteArrayInputStream(SAMPLE_FILE_PAYLOAD.getBytes(StandardCharsets.UTF_8)));
+        });
 
         File file = new File(service.getFtpRootDir() + "/" + SAMPLE_FILE_NAME);
         assertTrue(file.exists(), "The uploaded file should exist");
