@@ -4101,5 +4101,5 @@ The same applies to a configured requestedPublishingInterval or data-change filt
 This restores the documented and pre-4.16 behaviour.
 
 The parameter dataChangeFilterDeadbandType changes type from UInteger to Integer.
-This changes the public MonitorFilterConfiguration getter/setter and the endpoint-DSL builder method, so Java code passing a UInteger
-will no longer compile.
+This changes the public MonitorFilterConfiguration getter/setter and the endpoint-DSL builder method, so Java code
+passing a UInteger will no longer compile.
