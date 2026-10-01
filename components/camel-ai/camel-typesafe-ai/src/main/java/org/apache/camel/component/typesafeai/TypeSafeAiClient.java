@@ -32,6 +32,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -52,8 +53,7 @@ final class TypeSafeAiClient implements AutoCloseable {
         maxConcurrentRequests = configuration.getMaxConcurrentRequests();
         apiKey = configuration.getApiKey();
         model = configuration.getModel();
-        String baseUrl = configuration.getBaseUrl();
-        uri = URI.create((baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl) + "/v1/systemone");
+        uri = URI.create(URISupport.joinPaths(configuration.getBaseUrl(), configuration.getApiPath()));
         http = HttpClient.newBuilder().connectTimeout(timeout).followRedirects(HttpClient.Redirect.NEVER).build();
     }
 

@@ -22,7 +22,9 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.URISupport;
 
 /** One literal value and one fixed destination. */
 @Metadata(label = "configuration", description = "A literal switch case with one fixed endpoint destination")
@@ -36,6 +38,8 @@ public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCas
     @XmlAttribute(required = true)
     @Metadata(description = "The fixed destination URI. Supports property placeholders, but not Simple expressions.")
     private String uri;
+    @XmlTransient
+    private EndpointProducerBuilder endpointProducerBuilder;
     @XmlTransient
     private SwitchDefinition parent;
     @XmlTransient
@@ -53,6 +57,7 @@ public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCas
         super(source);
         this.value = source.value;
         this.uri = source.uri;
+        this.endpointProducerBuilder = source.endpointProducerBuilder;
     }
 
     public SwitchCaseDefinition copyDefinition() {
@@ -68,10 +73,22 @@ public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCas
     }
 
     public String getUri() {
-        return uri;
+        return endpointProducerBuilder != null ? endpointProducerBuilder.getRawUri() : uri;
+    }
+
+    @XmlTransient
+    public EndpointProducerBuilder getEndpointProducerBuilder() {
+        return endpointProducerBuilder;
+    }
+
+    public void setEndpointProducerBuilder(EndpointProducerBuilder endpointProducerBuilder) {
+        this.endpointProducerBuilder = endpointProducerBuilder;
+        // JAXB reads this field; the dump helper refreshes it if the builder changes.
+        this.uri = endpointProducerBuilder != null ? endpointProducerBuilder.getRawUri() : null;
     }
 
     public void setUri(String uri) {
+        this.endpointProducerBuilder = null;
         this.uri = uri;
     }
 
@@ -86,7 +103,11 @@ public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCas
         if (toDefinition == null) {
             toDefinition = new ToDefinition();
         }
-        toDefinition.setUri(uri);
+        if (endpointProducerBuilder != null) {
+            toDefinition.setEndpointProducerBuilder(endpointProducerBuilder);
+        } else {
+            toDefinition.setUri(uri);
+        }
         toDefinition.setParent(parent);
         if (hasCustomIdAssigned()) {
             toDefinition.setId(getId());
@@ -101,7 +122,7 @@ public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCas
 
     @Override
     public String getEndpointUri() {
-        return uri;
+        return getUri();
     }
 
     @Override
@@ -120,11 +141,17 @@ public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCas
 
     @Override
     public String getLabel() {
-        return "case[" + value + "]";
+        String endpointUri = null;
+        try {
+            endpointUri = getEndpointUri();
+        } catch (RuntimeException e) {
+            // Keep diagnostic output available when the endpoint URI cannot be built.
+        }
+        return "case[" + value + " -> " + URISupport.sanitizeUri(endpointUri) + "]";
     }
 
     @Override
     public String toString() {
-        return getLabel() + " -> " + uri;
+        return getLabel();
     }
 }

@@ -292,6 +292,9 @@ public class SjmsProducer extends DefaultAsyncProducer {
             in.setHeader(SjmsConstants.JMS_CORRELATION_ID, GENERATED_CORRELATION_ID_PREFIX + getUuidGenerator().generateUuid());
         }
 
+        // the correlation id the reply handler is registered under, which is cancelled if the send fails
+        final String[] registeredCorrelationId = new String[1];
+
         MessageCreator messageCreator = new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 Message answer = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
@@ -310,7 +313,8 @@ public class SjmsProducer extends DefaultAsyncProducer {
                 JmsMessageHelper.setJMSReplyTo(answer, replyTo);
 
                 String correlationId = determineCorrelationId(answer);
-                replyManager.registerReply(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
+                registeredCorrelationId[0] = replyManager.registerReply(replyManager, exchange, callback,
+                        originalCorrelationId, correlationId, timeout);
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Using {}: {}, JMSReplyTo destination: {}, with request timeout: {} ms.",
@@ -325,6 +329,17 @@ public class SjmsProducer extends DefaultAsyncProducer {
         try {
             doSend(exchange, true, destinationName, messageCreator);
         } catch (Exception e) {
+            // the send failed after the reply was registered: cancel it, as otherwise the request timeout completes
+            // the exchange a second time
+            String registered = registeredCorrelationId[0];
+            if (registered != null && !replyManager.cancelCorrelationId(registered)) {
+                // the request timeout (or the reply) removed the correlation while the send was still running, and it
+                // completes the exchange, so the exchange must not be completed here a second time
+                LOG.warn("Sending JMS request with correlation id: {} failed after the request timeout or the reply"
+                         + " has already completed the exchange. The send failure is only logged: {}",
+                        registered, e.getMessage(), e);
+                return false;
+            }
             exchange.setException(e);
             callback.done(true);
             return true;

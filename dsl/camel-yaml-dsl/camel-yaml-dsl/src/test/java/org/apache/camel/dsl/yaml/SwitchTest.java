@@ -30,49 +30,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SwitchTest extends YamlTestSupport {
     @Test
-    void scalarValuesAndEndpointParametersRoundTrip() throws Exception {
-        loadRoutes("""
-                - route:
-                    id: decision
-                    from:
-                      uri: direct:start
-                      steps:
-                        - switch:
-                            selector:
-                              header:
-                                expression: decision
-                            case:
-                              - value: urgent
-                                uri: direct
-                                parameters:
-                                  name: urgent
-                              - value: billing
-                                uri: direct:billing
-                            otherwise:
-                              uri: direct
-                              parameters:
-                                name: review
-                - route:
-                    from:
-                      uri: direct:urgent
-                      steps:
-                        - setBody:
-                            constant: urgent
-                - route:
-                    from:
-                      uri: direct:billing
-                      steps:
-                        - setBody:
-                            constant: billing
-                - route:
-                    from:
-                      uri: direct:review
-                      steps:
-                        - setBody:
-                            constant: review
-                """);
+    void resourceWithScalarValuesAndEndpointParametersRoundTrips() throws Exception {
+        loadRoutes(ResourceHelper.resolveResource(context, "classpath:switch.camel.yaml"));
         SwitchDefinition sw = (SwitchDefinition) context.getRouteDefinition("decision").getOutputs().get(0);
         assertThat(sw.getCases().get(0).getUri()).isEqualTo("direct:urgent");
+        assertThat(sw.getCases().get(0).getId()).isEqualTo("urgentCase");
         assertThat(sw.getCases().get(0).getValue()).isEqualTo("urgent");
         assertThat(sw.getOtherwise().getUri()).isEqualTo("direct:review");
         try (var restored = new DefaultCamelContext()) {
@@ -80,6 +42,8 @@ class SwitchTest extends YamlTestSupport {
                 String yaml = new LwModelToYAMLDumper().dumpModelAsYaml(context, route);
                 PluginHelper.getRoutesLoader(restored).loadRoutes(ResourceHelper.fromString(route.getId() + ".yaml", yaml));
             }
+            SwitchDefinition restoredSwitch = (SwitchDefinition) restored.getRouteDefinition("decision").getOutputs().get(0);
+            assertThat(restoredSwitch.getCases().get(0).getId()).isEqualTo("urgentCase");
             restored.start();
             try (var template = restored.createProducerTemplate()) {
                 assertThat(template.requestBodyAndHeader("direct:start", "original", "decision",
@@ -88,6 +52,7 @@ class SwitchTest extends YamlTestSupport {
                         "BILLING")).isEqualTo("billing");
                 assertThat(template.requestBodyAndHeader("direct:start", "original", "decision",
                         "other")).isEqualTo("review");
+                assertThat(template.requestBody("direct:start", "original")).isEqualTo("review");
             }
         }
     }

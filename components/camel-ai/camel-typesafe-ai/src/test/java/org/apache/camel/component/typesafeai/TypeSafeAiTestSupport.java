@@ -87,7 +87,7 @@ abstract class TypeSafeAiTestSupport {
         }
     }
 
-    private void handle(HttpExchange exchange) throws IOException {
+    void handle(HttpExchange exchange) throws IOException {
         try {
             JsonObject request = (JsonObject) Jsoner.deserialize(
                     new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8));

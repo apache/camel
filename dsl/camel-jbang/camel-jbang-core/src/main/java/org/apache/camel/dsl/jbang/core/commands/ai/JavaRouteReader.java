@@ -23,8 +23,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.NamedNode;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes.Endpoint;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes.Route;
@@ -32,6 +35,7 @@ import org.apache.camel.java.in.ConstantResolver;
 import org.apache.camel.java.in.JavaParseResult;
 import org.apache.camel.java.in.LwJavaParser;
 import org.apache.camel.model.CatchDefinition;
+import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.FinallyDefinition;
@@ -46,6 +50,8 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
@@ -75,13 +81,7 @@ final class JavaRouteReader {
 
     /** The routes of the source, or an empty list when the parser finds none. */
     static List<Route> read(String file, String content, CamelCatalog catalog, ConstantResolver constants) {
-        LwJavaParser parser = new LwJavaParser();
-        if (catalog != null) {
-            parser.setEndpointDslResolver(new CatalogEndpointDslResolver(catalog));
-        }
-        parser.setConstantResolver(constants != null
-                ? constants : new ProjectConstantResolver(Map.of(), catalog));
-        JavaParseResult result = parser.parse(content);
+        JavaParseResult result = parse(content, catalog, constants);
         JavaRouteReader reader = new JavaRouteReader(file, catalog);
         List<Integer> starts = new ArrayList<>();
         result.routes().getRoutes().forEach(r -> starts.add(r.getLineNumber()));
@@ -98,6 +98,17 @@ final class JavaRouteReader {
         }
         reader.errorHandlers(result);
         return reader.routes;
+    }
+
+    /** The source read by the Java DSL parser, with the endpoint DSL and constants resolved through the catalog. */
+    static JavaParseResult parse(String content, CamelCatalog catalog, ConstantResolver constants) {
+        LwJavaParser parser = new LwJavaParser();
+        if (catalog != null) {
+            parser.setEndpointDslResolver(new CatalogEndpointDslResolver(catalog));
+        }
+        parser.setConstantResolver(constants != null
+                ? constants : new ProjectConstantResolver(Map.of(), catalog));
+        return parser.parse(content);
     }
 
     /** Whether something the parser did not work out lies between this route's line and the next route's. */
@@ -133,11 +144,69 @@ final class JavaRouteReader {
             consumes.add(ProjectRoutes.endpoint("kamelet:" + id, null, false, catalog));
         }
         int line = template != null && template.getLineNumber() > 0 ? template.getLineNumber() : r.getLineNumber();
+        List<RouteDecisions.DecisionPoint> decisions = new ArrayList<>();
+        Set<Object> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+        RouteDecisions.Scope scope = RouteDecisions.Scope.route();
+        for (ProcessorDefinition<?> p : r.getOutputs()) {
+            decisions(p, scope, decisions, visited, 0);
+        }
         routes.add(new Route(
                 id, template != null ? "routeTemplate" : "route", description, r.getGroup(), file, Math.max(1, line),
                 "java", partial, from, consumes, produces, r.getOutputs().size(), -1, 0, null, null,
-                logOnly(r, produces), note));
+                logOnly(r, produces), note, decisions));
     }
+
+    /** The decision points below a step, with their paths (see {@link RouteDecisions}). */
+    private static void decisions(
+            NamedNode node, RouteDecisions.Scope scope, List<RouteDecisions.DecisionPoint> found, Set<Object> visited,
+            int depth) {
+        if (node == null || depth > MAX_DEPTH || !visited.add(node)) {
+            return;
+        }
+        String type = node.getShortName();
+        RouteDecisions.Scope below = scope;
+        if (RouteDecisions.TYPES.contains(type)) {
+            below = scope.child(type);
+            int line = node.getLineNumber();
+            RouteDecisions.add(found, below, type, decisionText(node), line);
+        }
+        // the children as the running route tree has them: the when and otherwise of a choice, not their steps
+        List<NamedNode> children = new ArrayList<>();
+        if (node instanceof ChoiceDefinition choice) {
+            children.addAll(choice.getWhenClauses());
+            if (choice.getOtherwise() != null) {
+                children.add(choice.getOtherwise());
+            }
+        } else if (node.getChildren() != null) {
+            children.addAll(node.getChildren());
+        }
+        for (NamedNode c : children) {
+            decisions(c, below, found, visited, depth + 1);
+        }
+    }
+
+    /** What a decision point decides on: the part of its label in brackets, such as simple{${header.x} > 5}. */
+    private static String decisionText(NamedNode node) {
+        if (!RouteDecisions.hasExpression(node.getShortName())) {
+            // a choice's label lists its branches
+            return null;
+        }
+        String label = node.getLabel();
+        int start = label != null ? label.indexOf('[') : -1;
+        if (start < 0 || !label.endsWith("]")) {
+            return null;
+        }
+        String text = label.substring(start + 1, label.length() - 1);
+        // an expression the parser could not work out is marked, not text to show
+        if (text.contains(LwJavaParser.UNRESOLVED_PREFIX)) {
+            return null;
+        }
+        // simple{${body} > 5} as the YAML and XML readers give it: simple: ${body} > 5
+        Matcher m = LANGUAGE_TEXT.matcher(text);
+        return m.matches() ? m.group(1) + ": " + m.group(2) : text;
+    }
+
+    private static final Pattern LANGUAGE_TEXT = Pattern.compile("(\\w+)\\{(.*)\\}", Pattern.DOTALL);
 
     /** The endpoints below a step, whatever EIP nests them; those in doCatch or onException carry a failure. */
     private void walk(
@@ -160,6 +229,14 @@ final class JavaRouteReader {
             add(consumes, ProjectRoutes.endpoint(poll.getUri(), null, true, catalog));
         } else if (p instanceof KameletDefinition k && k.getName() != null) {
             add(produces, mark(ProjectRoutes.endpoint("kamelet:" + k.getName(), null, false, catalog), error));
+        } else if (p instanceof SwitchDefinition sw) {
+            // the fixed destinations of a switch: its cases and fallback, which are not outputs
+            for (SwitchCaseDefinition c : sw.getCases()) {
+                add(produces, mark(ProjectRoutes.endpoint(c.getUri(), null, false, catalog), error));
+            }
+            if (sw.getOtherwiseDefinition() != null) {
+                add(produces, mark(ProjectRoutes.endpoint(sw.getOtherwiseDefinition().getUri(), null, false, catalog), error));
+            }
         } else if (p instanceof RecipientListDefinition || p instanceof RoutingSlipDefinition
                 || p instanceof DynamicRouterDefinition) {
             String eip = p.getShortName();

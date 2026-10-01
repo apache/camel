@@ -783,7 +783,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 if (charset != null) {
                     // charset configured so we must convert to the desired
                     // charset so we can write with encoding
-                    is = new ByteArrayInputStream(exchange.getIn().getMandatoryBody(String.class).getBytes(charset));
+                    is = GenericFileHelper.toInputStream(exchange, charset);
                     log.trace("Using InputStream {} with charset {}.", is, charset);
                 } else {
                     is = exchange.getIn().getMandatoryBody(InputStream.class);

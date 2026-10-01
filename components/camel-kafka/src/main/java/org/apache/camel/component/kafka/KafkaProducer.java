@@ -76,6 +76,8 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     private ExecutorService workerPool;
     private boolean shutdownWorkerPool;
     private volatile boolean closeKafkaProducer;
+    // set when a fatal transactional error closed the shared producer, so the next transaction rebuilds it (CAMEL-24782)
+    private volatile boolean producerClosedForRecreation;
     private final String endpointTopic;
     private final Integer configPartitionKey;
     private final String configKey;
@@ -545,17 +547,50 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
         UnitOfWork uow = exchange.getUnitOfWork();
 
         if (!uow.isTransactedBy(transactionId)) {
+            // A prior transaction may have hit a fatal error that closed the shared producer; rebuild it before
+            // starting a new transaction so the route recovers instead of staying wedged on a dead producer
+            // (CAMEL-24782).
+            recreateProducerIfClosed();
             LOG.debug("Starting kafka transaction {} with exchange {}", transactionId, exchange.getExchangeId());
             // Begin the broker transaction first, then mark the unit of work and register the
             // synchronization. This way a failure in beginTransaction() does not leave the unit of work
             // flagged as transacted without a synchronization to commit or roll it back (CAMEL-24780).
             kafkaProducer.beginTransaction();
             uow.beginTransactedBy(transactionId);
-            uow.addSynchronization(new KafkaTransactionSynchronization(transactionId, kafkaProducer));
+            uow.addSynchronization(new KafkaTransactionSynchronization(transactionId, kafkaProducer, this));
         } else {
             LOG.debug("Using existing kafka transaction {} with exchange {}.",
                     transactionId, exchange.getExchangeId());
         }
+    }
+
+    /**
+     * Rebuilds the shared producer when a previous transaction hit a fatal error and closed it. Lazy (done here on the
+     * next transactional send rather than from the Kafka callback thread) and guarded so concurrent callers rebuild it
+     * once. Re-initialises transactions so the new producer is ready to use (CAMEL-24782).
+     */
+    private synchronized void recreateProducerIfClosed() {
+        if (producerClosedForRecreation) {
+            LOG.warn("Recreating kafka producer for transaction {} after a fatal error closed the previous one",
+                    transactionId);
+            Properties props = getProps();
+            // the transactional id may have been generated from the endpoint/route id in doStart and is not in the
+            // configuration, so set it explicitly so the rebuilt producer matches the one that was closed
+            if (transactionId != null) {
+                props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, transactionId);
+            }
+            createProducer(props);
+            kafkaProducer.initTransactions();
+            producerClosedForRecreation = false;
+        }
+    }
+
+    /**
+     * Signals that the shared producer was closed because a transaction hit a fatal error, so it must be rebuilt before
+     * the next transactional send. Called by {@link KafkaTransactionSynchronization} (CAMEL-24782).
+     */
+    void markProducerClosedForRecreation() {
+        producerClosedForRecreation = true;
     }
 
     @Override

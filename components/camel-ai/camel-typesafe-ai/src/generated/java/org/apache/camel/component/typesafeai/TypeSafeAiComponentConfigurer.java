@@ -32,6 +32,8 @@ public class TypeSafeAiComponentConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": getOrCreateConfiguration(target).setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "apipath":
+        case "apiPath": getOrCreateConfiguration(target).setApiPath(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "baseurl":
@@ -63,6 +65,8 @@ public class TypeSafeAiComponentConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
+        case "apipath":
+        case "apiPath": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "baseurl":
@@ -95,6 +99,8 @@ public class TypeSafeAiComponentConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": return getOrCreateConfiguration(target).getApiKey();
+        case "apipath":
+        case "apiPath": return getOrCreateConfiguration(target).getApiPath();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "baseurl":

@@ -84,7 +84,7 @@ Camel-AWS Translate component provides the following operation on the producer s
 from("direct:start")
   .setHeader(TranslateConstants.SOURCE_LANGUAGE, TranslateLanguageEnum.ITALIAN)
   .setHeader(TranslateConstants.TARGET_LANGUAGE, TranslateLanguageEnum.GERMAN)
-  .setBody("Ciao")
+  .setBody(constant("Ciao"))
   .to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText");
 ----
 

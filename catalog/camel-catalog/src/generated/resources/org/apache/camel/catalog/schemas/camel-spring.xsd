@@ -9327,7 +9327,8 @@ To use custom Jackson modules referred from the Camel registry. Multiple modules
             <xs:documentation xml:lang="en">
 <![CDATA[
 Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated
-by comma.
+by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g.
+SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9337,7 +9338,8 @@ by comma.
             <xs:documentation xml:lang="en">
 <![CDATA[
 Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be
-separated by comma.
+separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g.
+SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
 ]]>
             </xs:documentation>
           </xs:annotation>

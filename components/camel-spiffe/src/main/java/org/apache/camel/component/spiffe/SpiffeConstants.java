@@ -42,7 +42,10 @@ public final class SpiffeConstants {
     @Metadata(label = "producer", description = "The SPIFFE ID of the returned SVID.", javaType = "String")
     public static final String SPIFFE_ID = HEADER_PREFIX + "SpiffeId";
 
-    @Metadata(label = "producer", description = "The expiry of the returned JWT-SVID.", javaType = "java.util.Date")
+    @Metadata(label = "producer",
+              description = "The expiry of the returned SVID: the token expiry for fetchJwtSvid, or the leaf"
+                            + " certificate's notAfter for fetchX509Svid.",
+              javaType = "java.util.Date")
     public static final String EXPIRY = HEADER_PREFIX + "Expiry";
 
     private SpiffeConstants() {

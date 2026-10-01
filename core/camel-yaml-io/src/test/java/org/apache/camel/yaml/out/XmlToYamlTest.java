@@ -26,19 +26,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.xml.in.ModelParser;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class XmlToYamlTest {
 
@@ -63,6 +68,32 @@ class XmlToYamlTest {
             assertNotNull(out, "YAML output should not be null for " + xml);
             assertFalse(out.isEmpty(), "YAML output should not be empty for " + xml);
             LOG.info("xml={}\n{}\n", xml, out);
+        }
+    }
+
+    @Test
+    void switchPreservesSelectorNamespacesAndCaseDetails() throws Exception {
+        try (InputStream is = new FileInputStream("../camel-xml-io/src/test/resources/switch.xml")) {
+            RoutesDefinition routes = new ModelParser(is, NAMESPACE).parseRoutesDefinition().get();
+            YamlModelWriter writer = new YamlModelWriter();
+            List<JsonObject> roots = new ArrayList<>();
+            for (RouteDefinition route : routes.getRoutes()) {
+                roots.add(writer.writeRouteDefinition(route));
+            }
+            JsonNode yaml = new YAMLMapper().readTree(writer.printAsYaml(roots));
+            JsonNode sw = yaml.get(0).path("route").path("from").path("steps").get(0).path("switch");
+            assertEquals("department", sw.path("selector").path("header").path("expression").asText());
+            assertEquals("billingCase", sw.path("case").get(0).path("id").asText());
+            assertEquals("direct:billing", sw.path("case").get(0).path("uri").asText());
+            assertTrue(sw.path("case").get(2).path("value").isTextual());
+            assertEquals("001", sw.path("case").get(2).path("value").asText());
+            assertEquals("direct:review", sw.path("otherwise").path("uri").asText());
+            JsonNode xpath = yaml.get(1).path("route").path("from").path("steps").get(0)
+                    .path("switch").path("selector").path("xpath");
+            assertEquals("string(/t:ticket/t:department)", xpath.path("expression").asText());
+            assertEquals("java.lang.String", xpath.path("resultType").asText());
+            assertEquals("urn:tickets", xpath.path("namespace").get(0).path("value").asText());
+            assertEquals("t", xpath.path("namespace").get(0).path("key").asText());
         }
     }
 

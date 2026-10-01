@@ -18,14 +18,24 @@ package org.apache.camel.java.in;
 
 import java.util.List;
 
+import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.ChoiceDefinition;
+import org.apache.camel.model.CircuitBreakerDefinition;
+import org.apache.camel.model.DelayDefinition;
+import org.apache.camel.model.FilterDefinition;
+import org.apache.camel.model.MarshalDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
+import org.apache.camel.model.SetHeadersDefinition;
 import org.apache.camel.model.SplitDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TryDefinition;
+import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -141,6 +151,243 @@ class LwJavaParserTest {
                 """);
         assertThat(result.routes().getRoutes()).hasSize(1);
         assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
+    }
+
+    @Test
+    void everyStepHasTheLineOfItsCall() {
+        // CAMEL-25192: the TUI Source tab links a to(...) line to the route it sends to
+        JavaParseResult result = new LwJavaParser().parse("""
+                public class R extends RouteBuilder {
+                    public void configure() {
+                        from("direct:a")
+                            .setHeader("x").constant("y")
+                            .choice()
+                                .when(header("x").isEqualTo("y"))
+                                    .to("direct:b")
+                                .otherwise()
+                                    .toD("direct:${header.x}")
+                            .end()
+                            .wireTap("direct:tap");
+                        from("direct:b").to("log:b");
+                    }
+                }
+                """);
+        List<RouteDefinition> routes = result.routes().getRoutes();
+        RouteDefinition a = routes.get(0);
+        assertThat(a.getLineNumber()).isEqualTo(3);
+        assertThat(a.getInput().getLineNumber()).isEqualTo(3);
+        assertThat(a.getOutputs()).extracting(ProcessorDefinition::getLineNumber).containsExactly(4, 5, 11);
+        ChoiceDefinition choice = (ChoiceDefinition) a.getOutputs().get(1);
+        assertThat(choice.getWhenClauses().get(0).getLineNumber()).isEqualTo(6);
+        assertThat(choice.getWhenClauses().get(0).getOutputs().get(0).getLineNumber()).isEqualTo(7);
+        assertThat(choice.getOtherwise().getLineNumber()).isEqualTo(8);
+        assertThat(choice.getOtherwise().getOutputs().get(0).getLineNumber()).isEqualTo(9);
+        assertThat(routes.get(1).getOutputs().get(0).getLineNumber()).isEqualTo(12);
+    }
+
+    @Test
+    void switchCasesHaveTheLineOfTheirCall() {
+        JavaParseResult result = new LwJavaParser().parse("""
+                from("direct:tickets")
+                    .doSwitch(header("department"))
+                        .doCase("billing", "direct:billing")
+                        .doCase("technical").id("tech").to("direct:technical")
+                        .otherwise("direct:review")
+                    .end();
+                """);
+        assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
+        SwitchDefinition sw = (SwitchDefinition) result.routes().getRoutes().get(0).getOutputs().get(0);
+        assertThat(sw.getLineNumber()).isEqualTo(2);
+        assertThat(sw.getCases()).extracting(SwitchCaseDefinition::getUri)
+                .containsExactly("direct:billing", "direct:technical");
+        assertThat(sw.getCases()).extracting(SwitchCaseDefinition::getLineNumber).containsExactly(3, 4);
+        assertThat(sw.getOtherwiseDefinition().getUri()).isEqualTo("direct:review");
+        assertThat(sw.getOtherwiseDefinition().getLineNumber()).isEqualTo(5);
+    }
+
+    @Test
+    void charLiteralsCollectionsAndJdkConstants() {
+        // CAMEL-25182: shapes of the Java examples of the documentation
+        JavaParseResult result = new LwJavaParser().parse("""
+                from("direct:a")
+                    .split(body().tokenize(","))
+                    .setHeaders(Map.of("foo", constant("ABC"), "bar", "XYZ"))
+                    .marshal().zipDeflater(Deflater.BEST_COMPRESSION)
+                    .setHeader("unit").constant(TimeUnit.MILLISECONDS.toString())
+                    .delay(TimeUnit.SECONDS.toMillis(5))
+                    .to("mock:a");
+                """);
+        assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
+        RouteDefinition route = result.routes().getRoutes().get(0);
+        SplitDefinition split = (SplitDefinition) route.getOutputs().get(0);
+        SetHeadersDefinition headers = (SetHeadersDefinition) split.getOutputs().get(0);
+        assertThat(headers.getHeaders()).extracting(SetHeaderDefinition::getName).containsExactly("foo", "bar");
+        // a plain value is the constant language, which the dumpers write (it was a Java-only expression)
+        assertThat(RoundTripTest.dump(route)).contains(".setHeaders(\"foo\", constant(\"ABC\"), \"bar\", constant(\"XYZ\"))");
+        MarshalDefinition marshal = (MarshalDefinition) split.getOutputs().get(1);
+        assertThat(((ZipDeflaterDataFormat) marshal.getDataFormatType()).getCompressionLevel()).isEqualTo("9");
+        SetHeaderDefinition unit = (SetHeaderDefinition) split.getOutputs().get(2);
+        assertThat(unit.getExpression().getExpression()).isEqualTo("MILLISECONDS");
+        DelayDefinition delay = (DelayDefinition) split.getOutputs().get(3);
+        assertThat(delay.getExpression().getExpression()).isEqualTo("5000");
+    }
+
+    @Test
+    void anObjectOfAClassBuiltInTheMethod() {
+        // Namespaces ns = new Namespaces(...): null stands in, and the rest of the route is read
+        JavaParseResult result = new LwJavaParser().parse("""
+                from("direct:a")
+                    .filter(xpath("/c:number = 55", ns))
+                        .to("mock:result");
+                """);
+        assertThat(result.unresolved()).extracting(JavaParseResult.Unresolved::text).containsExactly("ns");
+        FilterDefinition filter = (FilterDefinition) result.routes().getRoutes().get(0).getOutputs().get(0);
+        assertThat(filter.getExpression().getExpression()).isEqualTo("/c:number = 55");
+        assertThat(filter.getOutputs()).hasSize(1);
+
+        // xtokenize(path, 'i', ns) is the DSL method with a char, which uses ns right away
+        result = new LwJavaParser().parse("""
+                from("direct:a").split().xtokenize("//order", 'i', ns).to("mock:order");
+                """);
+        assertThat(result.unresolved()).extracting(JavaParseResult.Unresolved::reason)
+                .contains("needs a value the parser cannot see");
+    }
+
+    @Test
+    void modelMethodsNamedLikeTheBuilderLifeCycle() {
+        // configuration(...) and configure(...) are only the builder's life cycle on the route builder
+        JavaParseResult result = new LwJavaParser().parse("""
+                from("direct:a")
+                    .circuitBreaker().configuration("myConfig")
+                        .to("mock:a")
+                    .end();
+                """);
+        assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
+        CircuitBreakerDefinition cb = (CircuitBreakerDefinition) result.routes().getRoutes().get(0).getOutputs().get(0);
+        assertThat(cb.getConfiguration()).isEqualTo("myConfig");
+    }
+
+    @Test
+    void anAnonymousRouteBuilderPassedToACall() {
+        // CAMEL-25199: camel.configure() is a call, the configure() of the anonymous RouteBuilder the declaration
+        JavaParseResult result = new LwJavaParser().parse("""
+                public final class Application {
+                    public static void main(String[] args) throws Exception {
+                        try (Main camel = new Main()) {
+                            camel.configure().addRoutesBuilder(new RouteBuilder() {
+                                @Override
+                                public void configure() throws Exception {
+                                    from("timer:foo?repeatCount=1").to("direct:aggregator");
+                                    from("direct:aggregator").to("log:out");
+                                }
+                            });
+                            camel.run();
+                        }
+                    }
+                }
+                """);
+        assertThat(result.routes().getRoutes()).extracting(r -> r.getInput().getUri())
+                .containsExactly("timer:foo?repeatCount=1", "direct:aggregator");
+    }
+
+    @Test
+    void aRouteKeptInALocalVariable() {
+        // a route built in steps: RouteDefinition route = from(...); route.to(...)
+        JavaParseResult result = new LwJavaParser().parse("""
+                public class R extends RouteBuilder {
+                    public void configure() {
+                        RouteDefinition route = from("direct:start").routeId("start");
+                        route.split().body();
+                        route.to("mock:split");
+
+                        AggregateDefinition agg = from("direct:joinBrothers").aggregate(header("type"), new MyStrategy());
+                        agg.completionSize(2);
+                        agg.to("mock:brothers");
+
+                        from("direct:other").to("mock:other");
+                    }
+                }
+                """);
+        List<RouteDefinition> routes = result.routes().getRoutes();
+        assertThat(routes).extracting(r -> r.getInput().getUri())
+                .containsExactly("direct:start", "direct:joinBrothers", "direct:other");
+        RouteDefinition start = routes.get(0);
+        assertThat(start.getRouteId()).isEqualTo("start");
+        assertThat(start.getOutputs()).extracting(ProcessorDefinition::getShortName).containsExactly("split", "to");
+        AggregateDefinition agg = (AggregateDefinition) routes.get(1).getOutputs().get(0);
+        assertThat(agg.getCompletionSize()).isEqualTo("2");
+        assertThat(agg.getOutputs()).extracting(ProcessorDefinition::getShortName).containsExactly("to");
+        // only the strategy object is unknown
+        assertThat(result.unresolved()).extracting(JavaParseResult.Unresolved::text).containsExactly("new MyStrategy()");
+    }
+
+    @Test
+    void theLocalsOfOneBuilderAreNotThoseOfTheNext() {
+        JavaParseResult result = new LwJavaParser().parse("""
+                public class Routes {
+                    static class A extends RouteBuilder {
+                        public void configure() {
+                            RouteDefinition route = from("direct:a");
+                            route.to("mock:a");
+                        }
+                    }
+                    static class B extends RouteBuilder {
+                        public void configure() {
+                            route.to("mock:b");
+                            from("direct:b").to("mock:b");
+                        }
+                    }
+                }
+                """);
+        List<RouteDefinition> routes = result.routes().getRoutes();
+        assertThat(routes).extracting(r -> r.getInput().getUri()).containsExactly("direct:a", "direct:b");
+        // route.to("mock:b") in B is not a continuation of A's route
+        assertThat(routes.get(0).getOutputs()).hasSize(1);
+    }
+
+    @Test
+    void aLocalThatIsNotARouteStaysAValue() {
+        // Predicate god = ...: a value, used where the route refers to it, not a route of its own
+        JavaParseResult result = new LwJavaParser().parse("""
+                Predicate god = header("type").isEqualTo("god");
+                from("direct:start").choice().when(god).to("mock:god").end();
+                """);
+        assertThat(result.routes().getRoutes()).hasSize(1);
+        assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
+    }
+
+    @Test
+    void theHeaderNamesOfTheEndpointDsl() {
+        // CAMEL-25204: headers().kafka().kafkaKey() is a header name, which a resolver with the catalog knows
+        String source = """
+                public class R extends EndpointRouteBuilder {
+                    public void configure() {
+                        from(direct("in"))
+                            .setHeader(headers().kafka().kafkaKey(), constant("myKey"))
+                            .to(kafka("orders"));
+                    }
+                }
+                """;
+        EndpointDslResolver withHeaders = new EndpointDslResolver() {
+            @Override
+            public Endpoint endpoint(String factory, List<String> args, List<Option> options) {
+                return EndpointDslResolver.NAMING.endpoint(factory, args, options);
+            }
+
+            @Override
+            public String headerName(String component, String method) {
+                return "kafka".equals(component) && "kafkaKey".equals(method) ? "CamelKafkaKey" : null;
+            }
+        };
+        JavaParseResult result = new LwJavaParser().setEndpointDslResolver(withHeaders).parse(source);
+        assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
+        SetHeaderDefinition header = (SetHeaderDefinition) result.routes().getRoutes().get(0).getOutputs().get(0);
+        assertThat(header.getName()).isEqualTo("CamelKafkaKey");
+
+        // without one it is unknown, and said so
+        result = new LwJavaParser().parse(source);
+        assertThat(result.unresolved()).extracting(JavaParseResult.Unresolved::reason)
+                .contains("a header of the endpoint DSL the parser does not know");
     }
 
     @Test
@@ -318,6 +565,35 @@ class LwJavaParserTest {
         assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
         String java = RoundTripTest.dump(result.routes().getRoutes().get(0));
         assertThat(java).contains("routingSlip(constant(\"mock://m2,direct://c\"))", "com.acme.Errors$Invalid");
+    }
+
+    @Test
+    void switchDestinationsAcceptEndpointDslSyntax() {
+        JavaParseResult result = new LwJavaParser().parse("""
+                import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+
+                public class Tickets extends EndpointRouteBuilder {
+                    public void configure() {
+                        from(direct("tickets")).routeId("tickets")
+                            .doSwitch(header("department"))
+                                .doCase("billing", direct("billing"))
+                                .doCase("technical").id("technicalCase").to(direct("technical"))
+                                .otherwise(direct("review"))
+                            .end()
+                            .to(mock("after"));
+                    }
+                }
+                """);
+        assertThat(result.isComplete()).as("%s", result.unresolved()).isTrue();
+        RouteDefinition route = result.routes().getRoutes().get(0);
+        assertThat(route.getInput().getUri()).isEqualTo("direct://tickets");
+        SwitchDefinition sw = (SwitchDefinition) route.getOutputs().get(0);
+        assertThat(sw.getCases()).extracting(SwitchCaseDefinition::getValue).containsExactly("billing", "technical");
+        assertThat(sw.getCases()).extracting(SwitchCaseDefinition::getUri)
+                .containsExactly("direct://billing", "direct://technical");
+        assertThat(sw.getCases().get(1).getId()).isEqualTo("technicalCase");
+        assertThat(sw.getOtherwise().getUri()).isEqualTo("direct://review");
+        assertThat(((ToDefinition) route.getOutputs().get(1)).getUri()).isEqualTo("mock://after");
     }
 
     @Test

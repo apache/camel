@@ -110,7 +110,7 @@ public class AuthoringTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Validates Camel YAML DSL or .properties source without writing: schema (misspelled options "
+          description = "Validates Camel YAML/Java/XML DSL or .properties source without writing: schema (misspelled options "
                         + "such as logLevel instead of loggingLevel), endpoint URIs, simple expressions, camel.* "
                         + "options, and how each bean under beans: is created (the properties a class built through "
                         + "its builder() accepts, the ways to create a class with no constructor). Use on content "
@@ -274,11 +274,15 @@ public class AuthoringTools {
             @ToolArg(description = "Route ids of plumbing with little business meaning (logging, dead letter, retries),"
                                    + " comma separated",
                      required = false) String utility,
+            @ToolArg(description = "One line per decision point of a route (the decisions camel_project_overview"
+                                   + " lists): route id / path: short label (two to five words) | one sentence on why"
+                                   + " the route decides there",
+                     required = false) String steps,
             @ToolArg(description = "The model writing this, recorded in the file", required = false) String model,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         return call("camel_save_project_summary", args("directory", directory, "overview", overview,
-                "capabilities", capabilities, "descriptions", descriptions, "utility", utility, "model", model,
-                "camelVersion", camelVersion));
+                "capabilities", capabilities, "descriptions", descriptions, "utility", utility, "steps", steps,
+                "model", model, "camelVersion", camelVersion));
     }
 
     /** Runs the registry tool of the same name and hands its JSON back; a tool error becomes an MCP tool error. */

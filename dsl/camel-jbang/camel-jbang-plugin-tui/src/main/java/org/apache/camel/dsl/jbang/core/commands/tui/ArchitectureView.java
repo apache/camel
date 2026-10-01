@@ -246,7 +246,7 @@ final class ArchitectureView {
         }
     }
 
-    private static CamelCatalog catalog() {
+    static CamelCatalog catalog() {
         CamelCatalog c = catalog;
         if (c == null) {
             c = new DefaultCamelCatalog();

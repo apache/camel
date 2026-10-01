@@ -48,7 +48,7 @@ See also the full xref:enterprise-integration-patterns.adoc[Enterprise Integrati
 |Discard messages that do not match a predicate.
 
 |Router / Dispatch
-|xref:choice-eip.adoc[Content-Based Router], xref:dynamicRouter-eip.adoc[Dynamic Router]
+|xref:choice-eip.adoc[Content-Based Router], xref:switch-eip.adoc[Switch], xref:dynamicRouter-eip.adoc[Dynamic Router]
 |Route messages to different destinations based on content or rules.
 |===
 
@@ -207,6 +207,10 @@ See also the full xref:enterprise-integration-patterns.adoc[Enterprise Integrati
 [width="100%",cols="20%,30%,50%"]
 |===
 |Term |Camel Component / EIP |Description
+
+|Classify / Intent routing
+|xref:languages:semantic-language.adoc[Semantic], xref:switch-eip.adoc[Switch]
+|Evaluate a Semantic choice question once and dispatch its category string through literal Switch cases.
 
 |Agent-to-Agent / A2A
 |xref:ROOT:a2a-component.adoc[A2A]

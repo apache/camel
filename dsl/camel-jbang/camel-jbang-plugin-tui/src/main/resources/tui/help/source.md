@@ -20,6 +20,8 @@ explorer on the left and a source viewer on the right.
 - **Ctrl+R** — open refactoring menu in edit mode (YAML files only; choose an action for the current line)
 - **Space** — cycle format (YAML/Java/XML) for Camel routes
 - Quick documentation panel is shown at the bottom for Camel source files
+  (YAML, XML and Java DSL routes: the component and options of an endpoint,
+  the EIP of a step, the language of an expression)
 - **/** — search in source
 - **h** — highlight text
 - **n/N** — next/previous match
@@ -38,6 +40,10 @@ explorer on the left and a source viewer on the right.
 - Quick documentation panel is shown at the bottom (shows doc for current line)
 - **F7** — show diff of unsaved changes
 - **F9** — jump to next validation error
+- Java and XML DSL routes are checked as you type, like YAML routes: endpoint
+  options, simple expressions, and a `to` with `${...}` that should be a `toD`.
+  The problems are marked on their lines; an XML file with problems is not saved
+  (as YAML), a Java file is saved and the problems are said.
 
 ## Edit Mode (Tab Completion)
 Press **F4** to enter edit mode, then **Tab** for context-aware completion:
@@ -66,18 +72,28 @@ Press **F4** to enter edit mode, then **Tab** for context-aware completion:
 - Value completion shows enum choices, boolean values, and `{{placeholder}}`
   suggestions from your `.properties` files
 
+**Java and XML DSL routes:**
+- In the endpoint uri of `from`, `to`, `toD`, `wireTap`, `enrich`, `pollEnrich`
+  and `poll` (the string given to them in Java, their `uri` attribute in XML),
+  Tab completes the component name before the `:`, the endpoint options after
+  `?` or `&` (`&amp;` in XML; filtered by consumer/producer role, already given
+  ones left out), and the value of an option after `=`
+
 Use **Up/Down** to navigate, **Enter** to accept, **Esc** to dismiss, and
-type to filter the completion list.
+type to filter the completion list (an exact or prefix match comes first).
 
 ## Route Jump Links
 Lines with `to:`, `toD:`, `wireTap:`, or similar endpoints that reference
 another route show a **↵ routeId** indicator. Press **Enter** on such a line
 to jump to the target route's definition (within the same file or across files).
 Reverse links are shown on `from:` lines, indicating which route calls this one.
-Jump indicators are hidden in plain mode.
+This works for YAML, XML and Java DSL routes, across all the folders of the
+project and files of different DSLs (build output and `src/test` are left out);
+Java routes are read without compiling them. The case and otherwise of a
+switch link like a `to`. Jump indicators are hidden in plain mode.
 
 ## Go to Route
-- **g** — open a filterable popup listing all routes found in the source files.
+- **g** — open a filterable popup listing all routes of the project's source files.
   Type to fuzzy-filter by route ID or endpoint URI, then press **Enter** to
   navigate to the selected route.
 

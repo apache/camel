@@ -41,6 +41,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.PayloadHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -144,16 +145,18 @@ public class IBMCOSProducer extends DefaultProducer {
         } else if (wrappedFileLength > 0) {
             // Use file length from WrappedFile (avoids reading stream into memory)
             metadata.setContentLength(wrappedFileLength);
-        } else if (inputStream.markSupported()) {
-            // For ByteArrayInputStream and similar streams that support mark/reset
-            inputStream.mark(Integer.MAX_VALUE);
-            long length = 0;
-            byte[] buffer = new byte[8192];
-            int read;
-            while ((read = inputStream.read(buffer)) != -1) {
-                length += read;
+        } else {
+            // such as a java.nio.file.Path, byte[] or stream cache
+            long length = PayloadHelper.getLength(body);
+            if (length < 0) {
+                length = PayloadHelper.getLength(inputStream);
             }
-            inputStream.reset();
+            if (length < 0) {
+                // copy the data to calculate the length, which uses stream caching
+                // so big payloads are spooled to disk when spooling is enabled
+                inputStream = PayloadHelper.cacheStream(exchange, inputStream);
+                length = PayloadHelper.getLength(inputStream);
+            }
             metadata.setContentLength(length);
         }
 

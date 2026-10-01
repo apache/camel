@@ -109,7 +109,7 @@ I.e. the following route will create tables and insert records sharded on a per-
 [source,java]
 ----
 from("direct:start")
-  .header(GoogleBigQueryConstants.TABLE_SUFFIX, "_${date:now:yyyyMMdd}")
+  .setHeader(GoogleBigQueryConstants.TABLE_SUFFIX, simple("_${date:now:yyyyMMdd}"))
   .to("google-bigquery:sampleDataset:sampleTable")
 ----
 Note it is recommended to use partitioning for this use case.

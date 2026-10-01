@@ -16,17 +16,15 @@
  */
 package org.apache.camel.component.aws2.s3.utils;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.StreamCache;
 import org.apache.camel.component.aws2.s3.AWS2S3Configuration;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.PayloadHelper;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.ServerSideEncryption;
@@ -95,35 +93,15 @@ public final class AWS2S3Utils {
         }
     }
 
+    /**
+     * Determines the length of the input stream, without reading it.
+     *
+     * @return     the length, or <tt>-1</tt> if the length cannot be determined without reading the stream
+     * @deprecated use {@link PayloadHelper#getLength(Object)}
+     */
+    @Deprecated(since = "4.23.0")
     public static long determineLengthInputStream(InputStream is) throws IOException {
-        if (is instanceof StreamCache streamCache) {
-            long len = streamCache.length();
-            if (len > 0) {
-                return len;
-            }
-        } else if (is instanceof FileInputStream fis) {
-            return fis.getChannel().size();
-        }
-
-        if (!is.markSupported()) {
-            return -1;
-        }
-        if (is instanceof ByteArrayInputStream) {
-            return is.available();
-        }
-        long size = 0;
-        try {
-            is.mark(1024);
-            int i = is.available();
-            while (i > 0) {
-                long skip = is.skip(i);
-                size += skip;
-                i = is.available();
-            }
-        } finally {
-            is.reset();
-        }
-        return size;
+        return PayloadHelper.getLength(is);
     }
 
     public static byte[] toByteArray(InputStream is, final int size) throws IOException {

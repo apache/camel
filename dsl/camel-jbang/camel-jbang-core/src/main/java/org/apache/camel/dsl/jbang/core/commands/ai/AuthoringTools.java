@@ -146,7 +146,7 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_validate_source",
-                "Validates Camel YAML DSL or .properties source without writing: schema (misspelled options such as "
+                "Validates Camel YAML/Java/XML DSL or .properties source without writing: schema (misspelled options such as "
                                                       + "logLevel instead of loggingLevel), endpoint URIs, simple expressions, "
                                                       + "camel.* options. Use on content before writing it, or on an existing "
                                                       + "file (no content) to explain a reload error.")
@@ -371,8 +371,8 @@ public final class AuthoringTools {
                     IntegrationSummary.Summary summary = IntegrationSummary.read(dir);
                     JsonObject result = ProjectOverview.toJson(overview, summary);
                     if (summary == null || !overview.fingerprint().equals(summary.fingerprint())) {
-                        result.put("hint", "To explain the project, write the overview, capabilities and the missing"
-                                           + " descriptions with camel_save_project_summary");
+                        result.put("hint", "To explain the project, write the overview, capabilities, the missing"
+                                           + " descriptions and labels for the decisions with camel_save_project_summary");
                     }
                     return result.toJson();
                 }));
@@ -387,6 +387,9 @@ public final class AuthoringTools {
                 .param("descriptions", "string", "Lines of: route id: short label | one sentence, for routes without them",
                         false)
                 .param("utility", "string", "Route ids of plumbing (logging, dead letter, retries), comma separated",
+                        false)
+                .param("steps", "string", "Lines of: route id / decision path: short label | why, for the decisions of"
+                                          + " the routes",
                         false)
                 .param("model", "string", "Your model name", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
@@ -418,12 +421,13 @@ public final class AuthoringTools {
         ProjectOverview.Overview overview = ProjectOverview.analyze(dir, ctx.catalog());
         String answer = "OVERVIEW:\n" + nonNull(args.get("overview")) + "\nCAPABILITIES:\n"
                         + bulleted(args.get("capabilities")) + "\nUTILITY:\n" + bulleted(commaLines(args.get("utility")))
-                        + "\nDESCRIPTIONS:\n" + bulleted(args.get("descriptions"));
+                        + "\nDESCRIPTIONS:\n" + bulleted(args.get("descriptions"))
+                        + "\nSTEPS:\n" + bulleted(args.get("steps"));
         IntegrationSummary.AiContent fresh = IntegrationSummary.parseAnswer(answer, overview);
         if (fresh.isEmpty()) {
             throw new ToolExecutionException(
-                    "Nothing to save: give overview, capabilities or descriptions (of routes without one, by the"
-                                             + " route ids camel_project_overview lists)");
+                    "Nothing to save: give overview, capabilities, descriptions (of routes without one) or steps,"
+                                             + " by the route ids and decision paths camel_project_overview lists");
         }
         IntegrationSummary.Summary previous = IntegrationSummary.read(dir);
         IntegrationSummary.AiContent merged
@@ -439,6 +443,7 @@ public final class AuthoringTools {
         result.put("descriptions", fresh.descriptions().size());
         result.put("notes", fresh.notes().size());
         result.put("utility", fresh.utility().size());
+        result.put("steps", fresh.steps().size());
         int given = countLines(args.get("descriptions"));
         if (given > Math.max(fresh.descriptions().size(), fresh.notes().size())) {
             result.put("message", "Some descriptions were dropped: only routes without a description or note in the"
@@ -492,6 +497,19 @@ public final class AuthoringTools {
         result.put("valid", errors.isEmpty());
         result.put("file", file);
         result.put("errors", new JsonArray(errors));
+        if (RouteAssist.supports(file, content)) {
+            // the parts of a Java or XML route the parser could not read, so the checks did not see (CAMEL-25208)
+            JsonArray notChecked = new JsonArray();
+            for (RouteAssist.Diagnostic d : RouteAssist.diagnostics(file, content, ctx.catalog(), null,
+                    RouteAssist.javaSources(dir), false)) {
+                if (d.severity() == RouteAssist.Severity.INFO) {
+                    notChecked.add(d.format());
+                }
+            }
+            if (!notChecked.isEmpty()) {
+                result.put("notChecked", notChecked);
+            }
+        }
         result.put("message", errors.isEmpty()
                 ? "The source is valid"
                 : errors.size() + " problem(s) found; fix them before writing the file");

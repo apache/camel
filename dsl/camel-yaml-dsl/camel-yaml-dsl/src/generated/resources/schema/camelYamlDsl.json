@@ -5408,6 +5408,13 @@
           "routePolicyRef" : {
             "type" : "string"
           },
+          "routeProperty" : {
+            "type" : "array",
+            "description" : "To set metadata as properties on the route.",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
+            }
+          },
           "shutdownRoute" : {
             "type" : "string",
             "description" : "To control how to shut down the route.",
@@ -10138,12 +10145,12 @@
           "disableFeatures" : {
             "type" : "string",
             "title" : "Disable Features",
-            "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated by comma."
+            "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name."
           },
           "enableFeatures" : {
             "type" : "string",
             "title" : "Enable Features",
-            "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated by comma."
+            "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name."
           },
           "id" : {
             "type" : "string",

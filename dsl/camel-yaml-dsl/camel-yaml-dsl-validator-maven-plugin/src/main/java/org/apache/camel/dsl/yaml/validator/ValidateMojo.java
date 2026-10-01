@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.yaml.validator;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -164,8 +166,9 @@ public class ValidateMojo extends AbstractMojo {
             var report = e.getValue();
             if (!report.isEmpty()) {
                 sb.append("\tFile: ").append(name).append("\n");
-                for (var r : report) {
-                    sb.append("\t\t").append(r.toString()).append("\n");
+                // the line of the file each error points at, not only its pointer
+                for (String r : YamlValidator.describeAll(readQuietly(e.getKey()), report)) {
+                    sb.append("\t\t").append(r).append("\n");
                 }
                 sb.append("\n");
             }
@@ -185,6 +188,14 @@ public class ValidateMojo extends AbstractMojo {
             }
         }
         return count;
+    }
+
+    private static String readQuietly(File file) {
+        try {
+            return Files.readString(file.toPath());
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     private List<Error> validateYamlRoute(File file) throws Exception {

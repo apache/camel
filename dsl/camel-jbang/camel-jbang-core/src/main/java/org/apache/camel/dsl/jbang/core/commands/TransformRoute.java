@@ -82,6 +82,11 @@ public class TransformRoute extends CamelCommand {
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
 
+    @CommandLine.Option(names = { "--compile" }, defaultValue = "false",
+                        description = "Compile and run Java routes to transform them. By default Java routes are read "
+                                      + "without compiling them, and compiled only when a route cannot be read that way")
+    boolean compile;
+
     @CommandLine.Mixin
     MavenResolverMixin mavenResolver;
 
@@ -107,6 +112,15 @@ public class TransformRoute extends CamelCommand {
         }
         Files.deleteIfExists(Path.of(dump));
         final String target = dump;
+
+        if (!compile && !resolvePlaceholders && TransformJavaRoutes.applies(files)) {
+            // Java routes read without compiling them: in milliseconds, and no code of the project runs
+            TransformJavaRoutes.Result result = TransformJavaRoutes.transform(files, format, target, uriAsParameters);
+            if (result.transformed()) {
+                return printDump(target);
+            }
+            // a route the parser cannot read completely (a lambda, a value known only at runtime): compile them all
+        }
 
         Run run = new Run(getMain()) {
             @Override
@@ -135,9 +149,13 @@ public class TransformRoute extends CamelCommand {
             return exit;
         }
 
+        return printDump(target);
+    }
+
+    private Integer printDump(String target) {
         if (output == null || "clipboard".equals(output)) {
             // load target file and print to console
-            dump = waitForDumpFile(Path.of(target));
+            String dump = waitForDumpFile(Path.of(target));
             if (dump != null) {
                 if ("clipboard".equals(output)) {
                     Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -155,14 +173,13 @@ public class TransformRoute extends CamelCommand {
         StopWatch watch = new StopWatch();
         while (watch.taken() < 5000) {
             try {
-                // give time for response to be ready
-                Thread.sleep(100);
-
                 if (Files.exists(dumpFile)) {
                     try (InputStream is = Files.newInputStream(dumpFile)) {
                         return IOHelper.loadText(is);
                     }
                 }
+                // give time for response to be ready
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (Exception e) {

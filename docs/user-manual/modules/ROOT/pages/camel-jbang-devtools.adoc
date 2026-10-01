@@ -425,9 +425,13 @@ Validation success (files:2)
 `camel validate yaml` checks the YAML DSL schema, then the endpoint URIs, Simple expressions and bean references
 against the Camel catalog (`--catalog=false` for the schema only); `--canonical` validates against the canonical
 schema and reports the deprecated compact notation. `camel validate source` validates any file `camel run` would
-load: YAML routes, `.properties` files (the `camel.*` keys), Java (compiles it), XSLT and XML.
+load: YAML routes, `.properties` files (the `camel.*` keys), Java (compiles it), XSLT and XML. The routes of a Java
+or XML DSL file are also read into the Camel model, without compiling or running them, and checked as YAML routes
+are: the endpoint URIs (with the endpoint DSL and constants resolved), Simple expressions, and a `to` whose URI
+holds `+${...}+` and should be a `toD` - what the compiler cannot see inside the strings. A part of a Java route the
+parser cannot work out (a value computed at runtime) is left unchecked, and `camel_validate_source` lists it.
 As the routes of an application are spread over the files of its directory, `camel validate source` also reports a
-`direct:` or `seda:` endpoint a YAML route sends to that no route consumes, in that file or in the YAML, Java and
+`direct:` or `seda:` endpoint a YAML, Java or XML route sends to that no route consumes, in that file or in the YAML, Java and
 XML route files of its directory and its subdirectories: with `direct:` the route would fail to start, with `seda:`
 the messages would be queued and never read. The check stays quiet when it cannot be certain: an endpoint only known
 at runtime (a property placeholder, an expression), route templates and Kamelets, and a directory that is only a part

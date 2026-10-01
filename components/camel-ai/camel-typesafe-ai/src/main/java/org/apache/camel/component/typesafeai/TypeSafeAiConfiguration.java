@@ -31,6 +31,8 @@ public class TypeSafeAiConfiguration implements Cloneable {
     private String apiKey;
     @UriParam(label = "common", defaultValue = "https://api.typesafe.ai")
     private String baseUrl = "https://api.typesafe.ai";
+    @UriParam(label = "common", defaultValue = "/v1/systemone")
+    private String apiPath = "/v1/systemone";
     @UriParam(label = "common", defaultValue = "jev-latest")
     private String model = "jev-latest";
     @UriParam(label = "common", defaultValue = "30000")
@@ -147,9 +149,21 @@ public class TypeSafeAiConfiguration implements Cloneable {
         return baseUrl;
     }
 
-    /** The API base URL. The client appends /v1/systemone. Redirects are not followed. */
+    /** The API base URL. The client appends apiPath, preserving any base path. Redirects are not followed. */
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    public String getApiPath() {
+        return apiPath;
+    }
+
+    /**
+     * The API path appended to baseUrl. A leading slash is optional. Must be a non-blank path without a scheme,
+     * authority, query or fragment. The service must implement the supported TypeSafe AI request and response schema.
+     */
+    public void setApiPath(String apiPath) {
+        this.apiPath = apiPath;
     }
 
     public String getModel() {
@@ -200,6 +214,7 @@ public class TypeSafeAiConfiguration implements Cloneable {
         ObjectHelper.notNull(apiKey, "apiKey");
         ObjectHelper.notNull(model, "model");
         ObjectHelper.notNull(baseUrl, "baseUrl");
+        ObjectHelper.notNull(apiPath, "apiPath");
         if (apiKey.isBlank() || model.isBlank()) {
             throw new IllegalArgumentException("apiKey and model must not be blank");
         }
@@ -210,6 +225,14 @@ public class TypeSafeAiConfiguration implements Cloneable {
         if (!("https".equals(uri.getScheme()) || "http".equals(uri.getScheme()))
                 || uri.getHost() == null || uri.getUserInfo() != null || uri.getFragment() != null || uri.getQuery() != null) {
             throw new IllegalArgumentException("baseUrl must be an HTTP(S) URL without user information, query or fragment");
+        }
+        if (apiPath.isBlank()) {
+            throw new IllegalArgumentException("apiPath must not be blank");
+        }
+        URI path = URI.create(apiPath);
+        if (path.getScheme() != null || path.getRawAuthority() != null || path.getQuery() != null
+                || path.getFragment() != null) {
+            throw new IllegalArgumentException("apiPath must be a path without a scheme, authority, query or fragment");
         }
         if (requestTimeout <= 0) {
             throw new IllegalArgumentException("requestTimeout must be positive");

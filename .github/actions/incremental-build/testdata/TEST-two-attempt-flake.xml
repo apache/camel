@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Shape produced when rerunFailingTestsCount=2 and the test fails twice
+     before passing on the third attempt. -->
+<testsuite name="org.apache.camel.component.probe.SlowTest" time="9.412" tests="1"
+           errors="0" skipped="0" failures="0" flakes="1">
+  <testcase name="connectsEventually" classname="org.apache.camel.component.probe.SlowTest" time="0.900">
+    <flakyFailure message="Connection refused" type="java.net.ConnectException">
+      <stackTrace>java.net.ConnectException: Connection refused
+	at org.apache.camel.component.probe.SlowTest.connectsEventually(SlowTest.java:44)
+</stackTrace>
+    </flakyFailure>
+    <flakyFailure message="Connection refused" type="java.net.ConnectException">
+      <stackTrace>java.net.ConnectException: Connection refused
+	at org.apache.camel.component.probe.SlowTest.connectsEventually(SlowTest.java:44)
+</stackTrace>
+    </flakyFailure>
+  </testcase>
+</testsuite>
