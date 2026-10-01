@@ -172,12 +172,8 @@ public class LocalCliConnector extends ServiceSupport
         consumer = camelContext.createConsumerTemplate();
 
         if (transport == null) {
-            String name = camelContext.getPropertiesComponent().resolveProperty("camel.cli.transport").orElse("file");
-            // tooling such as camel export and camel transform resolves every property to a placeholder
-            if (PropertyConfigurerSupport.MAGIC_VALUE.equals(name) || name.startsWith(PropertiesComponent.PREFIX_TOKEN)) {
-                name = "file";
-            }
-            transport = createTransport(name);
+            transport = createTransport(
+                    camelContext.getPropertiesComponent().resolveProperty("camel.cli.transport").orElse("file"));
             transport.configure(camelContext, this, this, this::sigterm);
         }
         ServiceHelper.startService(transport);
@@ -187,12 +183,16 @@ public class LocalCliConnector extends ServiceSupport
      * Creates the transport for the <tt>camel.cli.transport</tt> property.
      */
     protected CliConnectorTransport createTransport(String name) {
-        if ("file".equalsIgnoreCase(name)) {
-            return new FileCliConnectorTransport();
-        } else if ("websocket".equalsIgnoreCase(name)) {
+        if ("websocket".equalsIgnoreCase(name)) {
             return new WebSocketCliConnectorTransport();
         }
-        throw new IllegalArgumentException("Unknown camel.cli.transport: " + name + " (supported: file, websocket)");
+        // never fail: tooling (camel export, transform, kubernetes) runs Camel with properties resolved to placeholders
+        boolean placeholder = PropertyConfigurerSupport.MAGIC_VALUE.equals(name)
+                || name.startsWith(PropertiesComponent.PREFIX_TOKEN) || "camel.cli.transport".equals(name);
+        if (!"file".equalsIgnoreCase(name) && !placeholder) {
+            LOG.warn("Unknown camel.cli.transport: {} (supported: file, websocket). Using file.", name);
+        }
+        return new FileCliConnectorTransport();
     }
 
     @Override
