@@ -224,6 +224,8 @@ class SourceViewer {
     private BiFunction<SimpleCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> simpleCompletion;
     private SimpleCompletion pendingSimpleCompletion;
     private CursorQuickDocProvider cursorQuickDocProvider;
+    private BiFunction<XmlCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> xmlCompletion;
+    private XmlCompletion pendingXmlCompletion;
     private List<String> routeProblems = List.of();
     private List<String> validationErrors;
     private int validationErrorScroll;
@@ -438,6 +440,19 @@ class SourceViewer {
         this.cursorQuickDocProvider = provider;
     }
 
+    /**
+     * Tab completion of the XML DSL (CAMEL-25240): the elements that go inside the parent after &lt; or on an empty
+     * line, the attributes in a start tag, their values. Given the context at the cursor and the lines of the file;
+     * null for a file that is no XML route.
+     */
+    void setXmlCompletion(
+            BiFunction<XmlCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> provider) {
+        this.xmlCompletion = provider;
+    }
+
+    private record XmlCompletion(int row, int endCol, XmlCompletionContext context) {
+    }
+
     /** Opens the AI panel to fix the problem of the cursor line (Shift+F8); null when there is no AI panel. */
     void setAskAi(MonitorContext.AskAi askAi) {
         this.askAi = askAi;
@@ -458,6 +473,7 @@ class SourceViewer {
         uriCompletion = null;
         simpleCompletion = null;
         cursorQuickDocProvider = null;
+        xmlCompletion = null;
     }
 
     void reset() {
@@ -501,6 +517,7 @@ class SourceViewer {
         uriCompletion = null;
         simpleCompletion = null;
         cursorQuickDocProvider = null;
+        xmlCompletion = null;
     }
 
     boolean isMarkdownMode() {
@@ -1212,13 +1229,16 @@ class SourceViewer {
     private void openAutocomplete() {
         pendingUriCompletion = null;
         pendingSimpleCompletion = null;
+        pendingXmlCompletion = null;
         if (openSimpleAutocomplete()) {
             return;
         }
         if (isCamelYamlFile()) {
             openYamlAutocomplete();
         } else if (uriCompletion != null) {
-            openUriAutocomplete();
+            if (!openUriAutocomplete() && "xml".equals(uriCompletion)) {
+                openXmlAutocomplete();
+            }
         } else {
             openPropertiesAutocomplete();
         }
@@ -1228,14 +1248,14 @@ class SourceViewer {
      * The completion of the endpoint uri the cursor is in, in a Java or XML route: the component before the colon, an
      * option after ? or &, its value after =. Read from the line alone, so it works while the file does not parse.
      */
-    private void openUriAutocomplete() {
+    private boolean openUriAutocomplete() {
         int row = editState.cursorRow();
         int col = editState.cursorCol();
         String line = editState.getLine(row);
         EndpointUriContext c = "xml".equals(uriCompletion)
                 ? EndpointUriContext.inXml(line, col) : EndpointUriContext.inJava(line, col);
         if (c == null || !c.isEndpoint() || autocompleteProvider == null) {
-            return;
+            return false;
         }
         String before = c.before();
         int colon = before.indexOf(':');
@@ -1251,14 +1271,14 @@ class SourceViewer {
             int q = before.indexOf('?');
             if (q < 0) {
                 // the path of the uri: what goes there is the component's own
-                return;
+                return true;
             }
             int sep = Math.max(before.lastIndexOf('?'), before.lastIndexOf('&'));
             String segment = before.substring(sep + 1);
             int eq = segment.indexOf('=');
             if (eq >= 0) {
                 if (autocompleteValueProvider == null) {
-                    return;
+                    return true;
                 }
                 items = autocompleteValueProvider.provide("yaml:" + scheme + ":" + segment.substring(0, eq));
                 prefix = segment.substring(eq + 1);
@@ -1283,6 +1303,7 @@ class SourceViewer {
             }
             pendingUriCompletion = new UriCompletion(row, col, prefix, suffix);
         }
+        return true;
     }
 
     /**
@@ -1372,6 +1393,86 @@ class SourceViewer {
             return !Character.isWhitespace(c) && c != '$' && c != '\'' && c != '"';
         }
         return Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '.' || c == ':';
+    }
+
+    /**
+     * The completion of the XML DSL at the cursor, read from the text above it like the uris: the elements after &lt;
+     * or on an empty line, the attributes in a start tag, the values in an attribute.
+     */
+    private void openXmlAutocomplete() {
+        if (xmlCompletion == null) {
+            return;
+        }
+        int row = editState.cursorRow();
+        int col = editState.cursorCol();
+        List<String> all = new ArrayList<>(editState.lineCount());
+        for (int i = 0; i < editState.lineCount(); i++) {
+            all.add(editState.getLine(i));
+        }
+        XmlCompletionContext c = XmlCompletionContext.at(all, row, col);
+        if (c == null) {
+            return;
+        }
+        List<AutocompletePopup.CompletionItem> items = xmlCompletion.apply(c, all);
+        if (items != null && !items.isEmpty()) {
+            autocompletePopup = new AutocompletePopup(items, c.prefix(), c.prefix(), false);
+            autocompletePopup.setFullKeys(true);
+            autocompletePopup.setTitlePrefix(switch (c.kind()) {
+                case ELEMENT -> c.parent() != null ? "Inside " + c.parent() : "Elements";
+                case ATTRIBUTE -> c.element() + " attributes";
+                case VALUE -> c.attribute();
+            });
+            pendingXmlCompletion = new XmlCompletion(row, col, c);
+        }
+    }
+
+    /**
+     * Replaces the prefix the XML completion was opened on with the chosen element, attribute or value, and puts the
+     * cursor where the snippet says (in the first required attribute, inside the new element, in the quotes of the new
+     * attribute, whose values open right away).
+     */
+    private void insertXmlCompletion(AutocompletePopup.CompletionItem item) {
+        XmlCompletion xc = pendingXmlCompletion;
+        pendingXmlCompletion = null;
+        if (editState.cursorRow() != xc.row()) {
+            return;
+        }
+        XmlCompletionContext c = xc.context();
+        int col = editState.cursorCol();
+        for (; col < xc.endCol(); col++) {
+            editState.moveCursorRight();
+        }
+        for (; col > xc.endCol(); col--) {
+            editState.moveCursorLeft();
+        }
+        for (int i = 0; i < c.prefix().length(); i++) {
+            editState.deleteBackward();
+        }
+        // Tab in the middle of a name replaces all of it
+        String line = editState.getLine(xc.row());
+        int from = editState.cursorCol();
+        int end = from;
+        boolean value = c.kind() == XmlCompletionContext.Kind.VALUE;
+        while (end < line.length() && (value
+                ? line.charAt(end) != '"' && line.charAt(end) != '\''
+                : Character.isLetterOrDigit(line.charAt(end)) || line.charAt(end) == '-')) {
+            end++;
+        }
+        for (int i = from; i < end; i++) {
+            editState.deleteForward();
+        }
+        String text = item.insertText();
+        int caret = text.indexOf(XmlCompletions.CARET);
+        if (caret >= 0) {
+            text = text.substring(0, caret) + text.substring(caret + 1);
+        }
+        editState.insert(text);
+        for (int i = caret >= 0 ? text.length() - caret : 0; i > 0; i--) {
+            editState.moveCursorLeft();
+        }
+        if (c.kind() == XmlCompletionContext.Kind.ATTRIBUTE) {
+            openAutocomplete();
+        }
     }
 
     /** Replaces the prefix the completion was opened on with the chosen item and what follows it (: or =). */
@@ -1586,6 +1687,10 @@ class SourceViewer {
         }
         if (pendingSimpleCompletion != null) {
             insertSimpleCompletion(item);
+            return;
+        }
+        if (pendingXmlCompletion != null) {
+            insertXmlCompletion(item);
             return;
         }
         String currentLine = editState.getLine(editState.cursorRow());
