@@ -30,10 +30,11 @@ explorer on the left and a source viewer on the right.
 - **Esc/c** — close source viewer
 
 ## Live Run Data
-While the integration runs, the lines of its source show what the processors
-on them do: `● 79` exchanges, `✗ 10` failed (in red), and the mean time when
-it is 1 ms or more. The numbers follow the running integration, so the source
-reads as a heat map of the route: where messages go, where they fail.
+While the integration runs, a column after the line numbers shows what the
+processors on each line do: the exchanges they handled (`79`), how many failed
+(`✗10`, in red), and the mean time when it is 1 ms or more. The column keeps
+its width, so the code does not move as the numbers grow. The source reads as
+a heat map of the route: where messages go, where they fail.
 
 ## Edit Mode (Shortcuts)
 - **Ctrl+Z** — undo
