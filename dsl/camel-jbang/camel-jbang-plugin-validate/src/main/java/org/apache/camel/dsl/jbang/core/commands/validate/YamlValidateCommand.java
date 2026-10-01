@@ -112,10 +112,9 @@ public class YamlValidateCommand extends CamelCommand {
                 var report = e.getValue();
                 if (!report.isEmpty()) {
                     sb.append("\tFile: ").append(name).append("\n");
-                    String content = readQuietly(name);
-                    for (var r : report) {
-                        // the line of the file the error points at, not only its pointer
-                        sb.append("\t\t").append(YamlValidator.describe(content, r)).append("\n");
+                    // the line of the file each error points at, not only its pointer
+                    for (String r : YamlValidator.describeAll(readQuietly(name), report)) {
+                        sb.append("\t\t").append(r).append("\n");
                     }
                     sb.append("\n");
                 }

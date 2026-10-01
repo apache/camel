@@ -53,6 +53,16 @@ class YamlPointerLinesTest {
     }
 
     @Test
+    void theValidationErrorsAsReportsPrintThem() throws Exception {
+        var errors = new YamlValidator().validate(YAML);
+        assertThat(YamlValidator.describeAll(YAML, errors))
+                .anySatisfy(e -> assertThat(e).startsWith("Line 12: /0/route/from/steps/0/filter/steps/0/log: ")
+                        .contains("logLevel"));
+        // without the content, the errors as they are
+        assertThat(YamlValidator.describeAll(null, errors)).allSatisfy(e -> assertThat(e).doesNotStartWith("Line "));
+    }
+
+    @Test
     void theLineOfAValidationError() throws Exception {
         var errors = new YamlValidator().validate(YAML);
         assertThat(errors).anySatisfy(e -> {
