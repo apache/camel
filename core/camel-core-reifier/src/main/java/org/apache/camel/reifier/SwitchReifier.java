@@ -69,7 +69,9 @@ public class SwitchReifier extends ProcessorReifier<SwitchDefinition> {
             c.idOrCreate(ids);
             c.prepareToDefinition();
             ToDefinition send = c.getToDefinition();
-            send.setUri(uris.get(i));
+            if (c.getEndpointProducerBuilder() == null) {
+                send.setUri(uris.get(i));
+            }
             cases.put(caseKeys.get(i), createSend(send));
         }
         Processor otherwise = null;
@@ -77,7 +79,9 @@ public class SwitchReifier extends ProcessorReifier<SwitchDefinition> {
             definition.idOrCreate(ids);
             definition.prepareOtherwiseDefinition();
             ToDefinition send = definition.getOtherwiseDefinition();
-            send.setUri(otherwiseUri);
+            if (definition.getOtherwise().getEndpointProducerBuilder() == null) {
+                send.setUri(otherwiseUri);
+            }
             otherwise = createSend(send);
         }
         SwitchProcessor answer = new SwitchProcessor(camelContext, selector, cases, otherwise);

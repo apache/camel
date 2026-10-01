@@ -48,14 +48,6 @@ final class JavaRouteScanner {
 
     private static final int MAX_DEPTH = 50;
 
-    /** A route: its id (null when it has none), its from endpoint and the line of from, from 0. */
-    record Route(String id, String fromUri, int line, List<To> tos) {
-    }
-
-    /** An endpoint a route sends to, and the line of the step, from 0. */
-    record To(String uri, int line) {
-    }
-
     private JavaRouteScanner() {
     }
 
@@ -69,24 +61,24 @@ final class JavaRouteScanner {
      *
      * @param javaSources the Java sources of the project by path, for the constants of other classes
      */
-    static List<Route> scan(String content, Map<String, Supplier<String>> javaSources, CamelCatalog catalog) {
-        List<Route> answer = new ArrayList<>();
+    static List<ScannedRoute> scan(String content, Map<String, Supplier<String>> javaSources, CamelCatalog catalog) {
+        List<ScannedRoute> answer = new ArrayList<>();
         for (RouteDefinition r : ProjectRoutes.parseJava(content, javaSources, catalog).routes().getRoutes()) {
             if (r.getInput() == null || r.getInput().getUri() == null) {
                 continue;
             }
             int line = r.getInput().getLineNumber() > 0 ? r.getInput().getLineNumber() : r.getLineNumber();
-            List<To> tos = new ArrayList<>();
+            List<ScannedRoute.To> tos = new ArrayList<>();
             Set<Object> seen = Collections.newSetFromMap(new IdentityHashMap<>());
             for (ProcessorDefinition<?> p : r.getOutputs()) {
                 walk(p, tos, seen, 0);
             }
-            answer.add(new Route(r.getRouteId(), uri(r.getInput().getUri()), Math.max(0, line - 1), tos));
+            answer.add(new ScannedRoute(r.getRouteId(), uri(r.getInput().getUri()), Math.max(0, line - 1), tos));
         }
         return answer;
     }
 
-    private static void walk(ProcessorDefinition<?> p, List<To> tos, Set<Object> seen, int depth) {
+    private static void walk(ProcessorDefinition<?> p, List<ScannedRoute.To> tos, Set<Object> seen, int depth) {
         if (p == null || depth > MAX_DEPTH || !seen.add(p)) {
             return;
         }
@@ -101,7 +93,7 @@ final class JavaRouteScanner {
             uri = c.getExpression();
         }
         if (uri != null && p.getLineNumber() > 0) {
-            tos.add(new To(uri(uri), p.getLineNumber() - 1));
+            tos.add(new ScannedRoute.To(uri(uri), p.getLineNumber() - 1));
         }
         if (p instanceof SwitchDefinition sw) {
             // the destinations of a switch are its cases and fallback, not outputs
@@ -123,9 +115,9 @@ final class JavaRouteScanner {
         }
     }
 
-    private static void add(List<To> tos, String uri, int line) {
+    private static void add(List<ScannedRoute.To> tos, String uri, int line) {
         if (uri != null && line > 0) {
-            tos.add(new To(uri(uri), line - 1));
+            tos.add(new ScannedRoute.To(uri(uri), line - 1));
         }
     }
 

@@ -43,7 +43,7 @@ class SwitchValidationTest {
 
     @Test
     void rejectsMissingUri() {
-        rejects(s -> s.doCase("billing", null), "nonblank uri");
+        rejects(s -> s.doCase("billing", (String) null), "nonblank uri");
     }
 
     @Test

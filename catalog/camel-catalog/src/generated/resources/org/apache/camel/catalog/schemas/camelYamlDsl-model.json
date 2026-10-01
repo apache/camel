@@ -8369,6 +8369,7 @@
       "title" : "Switch",
       "description" : "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar values",
       "label" : "eip,routing",
+      "aliases" : [ "decision-table", "dispatch-table", "lookup-table" ],
       "input" : true,
       "isListItem" : true,
       "children" : [ {

@@ -750,7 +750,7 @@ public final class ToolRegistry {
                 }));
 
         register(tool("catalog_eips",
-                "Search EIPs (Enterprise Integration Patterns) like split, aggregate, filter, choice, multicast.")
+                "Search EIPs (Enterprise Integration Patterns) like split, aggregate, filter, choice, switch, multicast.")
                 .param("filter", "string",
                         "Filter by name, title, or description (case-insensitive substring)", false)
                 .executor((ctx, args) -> {
@@ -909,7 +909,7 @@ public final class ToolRegistry {
         register(tool("catalog_eip_doc",
                 "Get detailed documentation for a Camel EIP (Enterprise Integration Pattern).")
                 .param("eip", "string",
-                        "EIP name (e.g., split, aggregate, filter, choice)", true)
+                        "EIP name (e.g., split, aggregate, filter, choice, switch)", true)
                 .executor((ctx, args) -> {
                     String name = args.get("eip");
                     if (name == null || name.isBlank()) {

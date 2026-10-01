@@ -16,15 +16,23 @@
  */
 package org.apache.camel.impl.console;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.console.DevConsole;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -145,6 +153,63 @@ public class SendDevConsoleTest extends AbstractDevConsoleTest {
         callText(console, options);
         JsonObject jsonOut = callJson(console, options);
         assertNotNull(jsonOut.getString("status"));
+    }
+
+    @Test
+    public void testSendConsoleBase64Body() throws Exception {
+        DevConsole console = startedSendConsole();
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        byte[] data = new byte[] { 0, (byte) 0xC3, (byte) 0xA8, (byte) 0xFF };
+        Map<String, Object> options = createOptions("direct:start", Base64.getEncoder().encodeToString(data));
+        options.put(SendDevConsole.BODY_ENCODING, "base64");
+
+        JsonObject out = callJson(console, options);
+        assertEquals("success", out.getString("status"), out.toJson());
+        mock.assertIsSatisfied();
+        Message msg = mock.getReceivedExchanges().get(0).getMessage();
+        assertArrayEquals(data, msg.getBody(byte[].class));
+        assertFalse(msg.getHeaders().containsKey(SendDevConsole.BODY_ENCODING));
+    }
+
+    @Test
+    public void testSendConsoleBase64BodyIsNotAFileReference() throws Exception {
+        DevConsole console = startedSendConsole();
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("file:pom.xml");
+
+        Map<String, Object> options = createOptions("direct:start",
+                Base64.getEncoder().encodeToString("file:pom.xml".getBytes(StandardCharsets.UTF_8)));
+        options.put(SendDevConsole.BODY_ENCODING, "base64");
+
+        callJson(console, options);
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testSendConsoleInvalidBodyEncoding() {
+        DevConsole console = startedSendConsole();
+
+        Map<String, Object> options = createOptions("direct:start", "Hello");
+        options.put(SendDevConsole.BODY_ENCODING, "hex");
+        JsonObject out = callJson(console, options);
+        assertEquals("error", out.getString("status"));
+
+        options = createOptions("direct:start", "not base64!");
+        options.put(SendDevConsole.BODY_ENCODING, "base64");
+        out = callJson(console, options);
+        assertEquals("error", out.getString("status"));
+    }
+
+    /**
+     * The resolved console is not started, so it has no producer to send with.
+     */
+    private DevConsole startedSendConsole() {
+        DevConsole console = assertConsoleExists("send");
+        CamelContextAware.trySetCamelContext(console, context);
+        ServiceHelper.startService(console);
+        return console;
     }
 
     private Map<String, Object> createOptions(String endpoint, String body) {

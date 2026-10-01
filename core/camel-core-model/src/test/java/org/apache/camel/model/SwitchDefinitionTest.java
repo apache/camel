@@ -19,9 +19,11 @@ package org.apache.camel.model;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SwitchDefinitionTest {
     @Test
@@ -50,6 +52,16 @@ class SwitchDefinitionTest {
         assertEquals("prepared-billing", caseSend.getId());
         assertEquals("mock:review", fallbackSend.getUri());
         assertEquals("prepared-fallback", fallbackSend.getId());
+    }
+
+    @Test
+    void caseLabelIncludesTheDestinationAndMasksSecrets() {
+        SwitchCaseDefinition c = new SwitchCaseDefinition("billing", "https://example.com?password=secret");
+        assertTrue(c.getLabel().startsWith("case[billing -> https://example.com?password="));
+        assertFalse(c.getLabel().contains("secret"));
+        assertEquals(c.getLabel(), c.toString());
+        c.setUri("direct:updated");
+        assertEquals("case[billing -> direct:updated]", c.getLabel());
     }
 
     @Test
