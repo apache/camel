@@ -101,9 +101,6 @@ public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCas
 
     /** Prepare the destination node before processor creation and management instrumentation. */
     public void prepareToDefinition() {
-        if (toDefinition == null) {
-            toDefinition = new ToDefinition();
-        }
         if (endpointProducerBuilder != null) {
             toDefinition.setEndpointProducerBuilder(endpointProducerBuilder);
         } else {
