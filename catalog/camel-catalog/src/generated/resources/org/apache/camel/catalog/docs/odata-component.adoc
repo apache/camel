@@ -23,7 +23,7 @@ The component supports OData V4 services using JSON representations.
 Maven users will need to add the following dependency to their `pom.xml` for this component:
 
 [source,xml]
-
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-odata</artifactId>
@@ -41,10 +41,10 @@ Where `httpUri` is the base URL of the OData entity set or resource.
 For example:
 
 [source,text]
-
+----
 odata:http://localhost:8080/odata/Products
 odata:https://services.odata.org/V4/Northwind/Northwind.svc/Categories
-----------------------------------------------------------------------
+----
 
 The URI can also contain endpoint options as query parameters.
 
@@ -104,16 +104,17 @@ For `READ_ENTRY`, `UPDATE`, and `DELETE`, the key is appended to the configured 
 For example:
 
 [source,text]
-
+----
 CamelODataKey = 101
 odata:http://localhost:8080/odata/Products
-------------------------------------------
+----
 
 results in:
 
 [source,text]
-
+----
 http://localhost:8080/odata/Products(101)
+----
 
 The key is treated as an OData key expression. The component does not automatically add quotes or otherwise change the supplied key value.
 
@@ -193,11 +194,11 @@ If the upstream authorization credentials must not be forwarded, remove the head
 For example:
 
 [source,java]
-
+----
 from("platform-http:/products")
 .removeHeader("Authorization")
 .to("odata:http://my-odata-service/odata/Products");
-----------------------------------------------------
+----
 
 == Query Options
 
@@ -236,11 +237,14 @@ The component supports the following OData query options:
 | Controls the OData `$count` query option.
 |===
 
+Additional OData query options can be supplied as endpoint URI parameters. Because the component uses lenient endpoint properties, options that are not defined as explicit component options are passed through as OData query parameters. Ensure that endpoint option names are spelled correctly and that any additional options are valid OData query options.
+
 For example:
 
 [source,text]
-
+----
 odata:http://localhost:8080/odata/Products?filter=Name%20eq%20%27Laptop%27&select=Name,Price&top=10
+----
 
 Query options configured through message headers take precedence over the corresponding endpoint configuration.
 
@@ -251,19 +255,20 @@ The component supports Basic authentication and Bearer token authentication thro
 For example, Basic authentication can be configured using:
 
 [source,text]
-
+----
 odata:http://localhost:8080/odata/Products?authMethod=Basic&authUsername=user&authPassword=password
+----
 
 Bearer token authentication can be configured using the `authBearerToken` option.
 
 Authentication can also be supplied dynamically using the message-level `Authorization` header:
 
 [source,java]
-
+----
 from("direct:getProducts")
 .setHeader("Authorization", constant("Bearer my-token"))
 .to("odata:http://my-odata-service/odata/Products");
-----------------------------------------------------
+----
 
 When an `Authorization` header is present on the message, it takes precedence over endpoint authentication.
 
@@ -278,14 +283,14 @@ An ETag supplied in `CamelODataETag` is sent to the service using the HTTP `If-M
 For example:
 
 [source,java]
-
+----
 from("direct:updateProduct")
 .setHeader("CamelODataOperation", constant("UPDATE"))
 .setHeader("CamelODataKey", constant("101"))
 .setHeader("CamelODataETag", constant("W/\"etag-value\""))
 .setBody(constant(Map.of("Price", 249.99)))
 .to("odata:http://my-odata-service/odata/Products");
-----------------------------------------------------
+----
 
 When the service returns an HTTP `ETag` header, the value is exposed as `CamelODataETag`.
 
@@ -298,7 +303,7 @@ For responses containing OData metadata, the component exposes commonly used val
 For example, a response containing:
 
 [source,json]
-
+----
 {
 "@odata.count": 42,
 "@odata.nextLink": "https://my-odata-service/odata/Products?$skip=10",
@@ -309,15 +314,15 @@ For example, a response containing:
 }
 ]
 }
--
+----
 
 makes the count and next-link available through:
 
 [source,java]
-
+----
 exchange.getMessage().getHeader("CamelODataCount");
 exchange.getMessage().getHeader("CamelODataNextLink");
-------------------------------------------------------
+----
 
 The response body contains the parsed JSON response.
 
@@ -334,54 +339,55 @@ Refer to the generated endpoint options section for details about configuring SS
 === Fetching a Collection
 
 [source,java]
-
+----
 from("direct:getProducts")
 .to("odata:http://my-odata-service/odata/Products")
 .split(body())
 .to("log:product");
--------------------
+----
 
 The default operation is `READ_SET`, so no operation header is required.
 
 === Reading a Single Entity
 
 [source,java]
-
+----
 from("direct:getProductById")
 .setHeader("CamelODataOperation", constant("READ_ENTRY"))
 .setHeader("CamelODataKey", constant("101"))
 .to("odata:http://my-odata-service/odata/Products");
-----------------------------------------------------
+----
 
 This results in a request to:
 
 [source,text]
-
+----
 http://my-odata-service/odata/Products(101)
+----
 
 === Creating an Entity
 
 [source,java]
-
+----
 from("direct:createProduct")
 .setHeader("CamelODataOperation", constant("CREATE"))
 .setBody(constant(Map.of("Name", "Tablet", "Price", 299.99)))
 .to("odata:http://my-odata-service/odata/Products");
-----------------------------------------------------
+----
 
 The component serializes the message body as JSON and sends it using HTTP `POST`.
 
 === Updating an Entity
 
 [source,java]
-
+----
 from("direct:updateProduct")
 .setHeader("CamelODataOperation", constant("UPDATE"))
 .setHeader("CamelODataKey", constant("101"))
 .setHeader("CamelODataETag", constant("W/\"etag-value\""))
 .setBody(constant(Map.of("Price", 249.99)))
 .to("odata:http://my-odata-service/odata/Products");
-----------------------------------------------------
+----
 
 The component sends the update using HTTP `PATCH`.
 
@@ -390,12 +396,12 @@ When an ETag is supplied, it is sent using the HTTP `If-Match` header.
 === Deleting an Entity
 
 [source,java]
-
+----
 from("direct:deleteProduct")
 .setHeader("CamelODataOperation", constant("DELETE"))
 .setHeader("CamelODataKey", constant("101"))
 .to("odata:http://my-odata-service/odata/Products");
-----------------------------------------------------
+----
 
 The component sends an HTTP `DELETE` request for the specified entity.
 
