@@ -209,6 +209,7 @@ class SourceViewer {
     private int liveFailedWidth;
     private int liveMeanWidth;
     private String liveWidthsFile;
+    private MonitorContext.AskAi askAi;
     /** java or xml: Tab completes the endpoint uris of a Java or XML route file; null for neither. */
     private String uriCompletion;
     /** The completion being chosen in a uri: its row, the column its prefix ends at, the prefix and suffix. */
@@ -404,6 +405,11 @@ class SourceViewer {
     }
 
     private record UriCompletion(int row, int endCol, String prefix, String suffix) {
+    }
+
+    /** Opens the AI panel to fix the problem of the cursor line (Shift+F8); null when there is no AI panel. */
+    void setAskAi(MonitorContext.AskAi askAi) {
+        this.askAi = askAi;
     }
 
     void hide() {
@@ -868,6 +874,10 @@ class SourceViewer {
                 lineStatuses = null;
                 refreshEditFindMatches();
             }
+            return true;
+        }
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            askAiToFix();
             return true;
         }
         if (ke.isKey(KeyCode.F9) && ke.hasShift()) {
@@ -1656,6 +1666,34 @@ class SourceViewer {
         return error != null ? QuickFixes.fixFor(error, editState.getLine(row)) : null;
     }
 
+    /**
+     * Asks the AI to fix the problem of the cursor line (Shift+F8): the file is saved as it is in the editor, which the
+     * AI is about to change, edit mode left so the editor shows what the AI sees, and the AI panel opened with the
+     * question in its input, for the user to send with Enter or change first.
+     */
+    private void askAiToFix() {
+        int row = editState.cursorRow();
+        String problem = visibleInlineErrors().get(row);
+        if (askAi == null || editableFile == null || problem == null) {
+            return;
+        }
+        String lineText = editState.getLine(row);
+        Path file = editableFile;
+        if (dirty) {
+            try {
+                Files.writeString(file, editState.text(), StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                notifySave("Save failed: " + e.getMessage(), true);
+                return;
+            }
+            dirty = false;
+        }
+        exitEditMode();
+        loadFile(file);
+        goToLine(row);
+        askAi.fixProblem(file, row + 1, problem, lineText);
+    }
+
     /** Applies the fix of the problem on the line of the cursor (Shift+F9), and checks the content again right away. */
     private void applyQuickFix() {
         QuickFixes.Fix fix = cursorFix();
@@ -2313,10 +2351,17 @@ class SourceViewer {
                         Span.styled(suffix + "─".repeat(remaining), errorDim)));
                 docLines.add(Line.from(Span.styled(cursorError, errorDim)));
                 QuickFixes.Fix fix = cursorFix();
+                List<Span> actions = new ArrayList<>();
                 if (fix != null) {
-                    docLines.add(Line.from(
-                            Span.styled("Shift+F9", Style.EMPTY.bold()),
-                            Span.styled(" fix: " + fix.label(), Style.EMPTY.dim())));
+                    actions.add(Span.styled("Shift+F9", Style.EMPTY.bold()));
+                    actions.add(Span.styled(" fix: " + fix.label() + "   ", Style.EMPTY.dim()));
+                }
+                if (askAi != null) {
+                    actions.add(Span.styled("Shift+F8", Style.EMPTY.bold()));
+                    actions.add(Span.styled(" fix with AI", Style.EMPTY.dim()));
+                }
+                if (!actions.isEmpty()) {
+                    docLines.add(Line.from(actions));
                 }
             } else if (titleText != null) {
                 String prefix = "─── ";
@@ -2519,6 +2564,9 @@ class SourceViewer {
             }
             if (cursorFix() != null) {
                 TuiHelper.hint(spans, "Shift+F9", "fix");
+            }
+            if (askAi != null && visibleInlineErrors().containsKey(editState.cursorRow())) {
+                TuiHelper.hint(spans, "Shift+F8", "fix with AI");
             }
             if (isCamelYamlFile()) {
                 TuiHelper.hint(spans, "Ctrl+R", "refactor");

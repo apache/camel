@@ -603,6 +603,19 @@ class AiPanel {
         editQuestionHandler = handler;
     }
 
+    /**
+     * Opens the panel with a question in its input, for the user to send with Enter or change first: the fix of a
+     * problem of the Source editor (Shift+F8). Nothing is sent until the user says so.
+     */
+    void openWithQuestion(String question) {
+        if (!visible) {
+            open();
+        }
+        statsView = false;
+        scrollOffset = 0;
+        replaceInputBuffer(question);
+    }
+
     boolean isAskingAboutEdit() {
         return editQuestionHandler != null;
     }

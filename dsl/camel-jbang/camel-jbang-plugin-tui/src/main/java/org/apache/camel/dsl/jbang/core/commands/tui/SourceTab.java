@@ -842,6 +842,7 @@ class SourceTab extends AbstractTab {
         boolean routeFile = !SourceEditAssist.isYamlFile(filePath)
                 && (isJavaRouteFile(filePath) || isCamelSourceFile(filePath));
         sourceViewer.setRouteValidator(routeFile ? content -> assist.validateRoutes(filePath, content) : null);
+        sourceViewer.setAskAi(ctx.askAiCallback);
         String name = filePath.getFileName().toString();
         sourceViewer.setUriCompletion(!routeFile ? null : name.endsWith(".java") ? "java" : "xml");
         if (isCamelSourceFile(filePath)) {

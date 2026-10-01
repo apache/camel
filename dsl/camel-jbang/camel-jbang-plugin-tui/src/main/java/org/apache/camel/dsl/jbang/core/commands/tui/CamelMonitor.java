@@ -496,6 +496,13 @@ public class CamelMonitor extends CamelCommand {
         ctx.notificationCallback = (msg, error) -> setNotification(msg, error);
         ctx.openMarkdownCallback = actionsPopup::openMarkdown;
         ctx.openMarkdownAtCallback = actionsPopup::openMarkdownAt;
+        ctx.askAiCallback = (file, line, problem, lineText) -> {
+            if (shellPanel.isOpen()) {
+                shellPanel.close();
+            }
+            Path dir = mcpFacade != null ? mcpFacade.getSelectedSourceDirectory() : null;
+            aiPanel.openWithQuestion(AiFixPrompt.of(dir, file, line, problem, lineText));
+        };
         ctx.projectOverviewCallback = () -> {
             if (shellPanel.isOpen()) {
                 shellPanel.close();
@@ -1453,7 +1460,8 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
-        if (ke.isKey(KeyCode.F8)) {
+        if (ke.isKey(KeyCode.F8) && !ke.hasShift()) {
+            // Shift+F8 is the Source editor's: fix the problem of the line with AI
             if (aiPanel.isOpen()) {
                 aiPanel.close();
             } else {
