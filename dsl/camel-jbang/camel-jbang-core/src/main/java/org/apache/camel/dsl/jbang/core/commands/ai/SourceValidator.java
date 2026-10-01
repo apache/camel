@@ -36,6 +36,7 @@ import com.networknt.schema.Error;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.yaml.validator.YamlPointerLines;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.snakeyaml.engine.v2.nodes.Node;
 

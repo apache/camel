@@ -135,6 +135,27 @@ public class YamlValidator {
     }
 
     /**
+     * The 1-based line of the YAML content a validation error points at (the line of the key of a property that is not
+     * allowed), or 0 when it has no location or the content does not parse.
+     */
+    /**
+     * A validation error as reports print it, with the line of the YAML content it points at in front when that is
+     * known: "Line 12: /0/route/from/steps/0/log: property 'logLevel' is not defined in the schema...".
+     */
+    public static String describe(String content, Error error) {
+        int line = content != null ? lineOf(content, error) : 0;
+        return line > 0 ? "Line " + line + ": " + error : String.valueOf(error);
+    }
+
+    public static int lineOf(String content, Error error) {
+        if (error == null || error.getInstanceLocation() == null) {
+            return 0;
+        }
+        return YamlPointerLines.line(YamlPointerLines.root(content), error.getInstanceLocation().toString(),
+                error.getMessage());
+    }
+
+    /**
      * @param bodylessEndpoints endpoints the caller knows deliver no body, such as the {@code direct:} endpoint of a
      *                          GET operation of an OpenAPI specification the file binds to (CAMEL-24844)
      */

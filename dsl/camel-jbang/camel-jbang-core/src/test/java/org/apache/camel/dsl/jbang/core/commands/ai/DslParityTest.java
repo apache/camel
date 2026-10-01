@@ -268,6 +268,19 @@ class DslParityTest {
         throw new IllegalArgumentException(marker + " is not in\n" + content);
     }
 
+    /** A misspelled option of a YAML route: an error of the YAML DSL schema, reported on the line of the option. */
+    @Test
+    void aMisspelledYamlOptionIsReportedOnItsLine() {
+        String yaml = yaml("""
+                - log:
+                    message: "${body}"
+                    logLevel: WARN
+                """, "timer:tick");
+        List<String> errors = SourceValidator.validate("route.camel.yaml", yaml, catalog, null, null);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0)).startsWith("Line " + lineOf(yaml, "logLevel") + ": ").contains("logLevel");
+    }
+
     /** A direct: endpoint no route of the directory consumes, in the three DSLs. */
     @Test
     void aDirectEndpointNoRouteConsumes() throws Exception {

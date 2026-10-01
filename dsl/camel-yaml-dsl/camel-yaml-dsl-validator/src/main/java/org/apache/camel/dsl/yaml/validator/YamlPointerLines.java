@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.ai;
+package org.apache.camel.dsl.yaml.validator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,7 +33,7 @@ import org.snakeyaml.engine.v2.scanner.StreamReader;
  * The line of the YAML text a JSON pointer of a schema error points at (/0/route/from/steps/0/to/uri), so the error can
  * be reported on its line as the other checks are, and marked on that line in an editor.
  */
-final class YamlPointerLines {
+public final class YamlPointerLines {
 
     /** The property a schema error is about: "property 'logLevel' is not defined in the schema". */
     private static final Pattern PROPERTY = Pattern.compile("property '([^']+)'");
@@ -42,7 +42,7 @@ final class YamlPointerLines {
     }
 
     /** The root node of the YAML text, or null when it does not parse. */
-    static Node root(String content) {
+    public static Node root(String content) {
         if (content == null || content.isBlank()) {
             return null;
         }
@@ -59,7 +59,7 @@ final class YamlPointerLines {
      * The 1-based line the pointer points at, or the line of the property the message names when the pointer is the
      * mapping it is not allowed in; 0 when it cannot be found.
      */
-    static int line(Node root, String pointer, String message) {
+    public static int line(Node root, String pointer, String message) {
         if (root == null || pointer == null) {
             return 0;
         }

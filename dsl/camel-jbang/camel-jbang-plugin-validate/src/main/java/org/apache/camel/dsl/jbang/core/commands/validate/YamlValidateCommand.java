@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.validate;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -111,8 +112,10 @@ public class YamlValidateCommand extends CamelCommand {
                 var report = e.getValue();
                 if (!report.isEmpty()) {
                     sb.append("\tFile: ").append(name).append("\n");
+                    String content = readQuietly(name);
                     for (var r : report) {
-                        sb.append("\t\t").append(r.toString()).append("\n");
+                        // the line of the file the error points at, not only its pointer
+                        sb.append("\t\t").append(YamlValidator.describe(content, r)).append("\n");
                     }
                     sb.append("\n");
                 }
@@ -125,6 +128,14 @@ public class YamlValidateCommand extends CamelCommand {
         }
 
         return 0;
+    }
+
+    private static String readQuietly(String file) {
+        try {
+            return Files.readString(new File(file).toPath());
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     static Error catalogError(String message) {

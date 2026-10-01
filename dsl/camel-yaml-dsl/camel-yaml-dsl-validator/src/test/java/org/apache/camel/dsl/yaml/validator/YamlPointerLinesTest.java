@@ -14,17 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.ai;
+package org.apache.camel.dsl.yaml.validator;
 
-import java.util.List;
-
-import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * The schema errors of a YAML route are reported on their line, as the other checks are, so the TUI marks them on it.
+ * The schema errors of a YAML route are reported on their line, not only by their pointer.
  */
 class YamlPointerLinesTest {
 
@@ -56,8 +53,11 @@ class YamlPointerLinesTest {
     }
 
     @Test
-    void aMisspelledOptionIsReportedOnItsLine() {
-        List<String> errors = SourceValidator.validate("route.camel.yaml", YAML, new DefaultCamelCatalog(), null, null);
-        assertThat(errors).anySatisfy(e -> assertThat(e).startsWith("Line 12: ").contains("logLevel"));
+    void theLineOfAValidationError() throws Exception {
+        var errors = new YamlValidator().validate(YAML);
+        assertThat(errors).anySatisfy(e -> {
+            assertThat(e.getMessage()).contains("logLevel");
+            assertThat(YamlValidator.lineOf(YAML, e)).isEqualTo(12);
+        });
     }
 }
