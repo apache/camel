@@ -55,7 +55,6 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -360,25 +359,10 @@ public class DefaultHttpBinding implements HttpBinding {
      * @return          true if the file is accepted
      */
     protected boolean isFileNameAccepted(String fileName) {
-        String whitelist = getFileNameExtWhitelist();
-        if (whitelist == null) {
-            return true;
-        }
-        String ext = FileUtil.onlyExt(fileName);
-        if (ext == null) {
-            return true;
-        }
-        ext = ext.toLowerCase(Locale.US);
-        whitelist = whitelist.toLowerCase(Locale.US);
-        if (whitelist.equals("*")) {
-            return true;
-        }
-        for (String allowed : whitelist.split(",")) {
-            if (allowed.trim().equals(ext)) {
-                return true;
-            }
-        }
-        return false;
+        // one shared implementation of the whitelist check lives in camel-http-base's HttpHelper so the servlet and
+        // jetty bindings here and the camel-platform-http-vertx consumer cannot drift apart again (CAMEL-24652).
+        // Fully qualified because this package has its own HttpHelper with the same simple name.
+        return org.apache.camel.http.base.HttpHelper.isFileNameExtWhitelisted(getFileNameExtWhitelist(), fileName);
     }
 
     @Override
