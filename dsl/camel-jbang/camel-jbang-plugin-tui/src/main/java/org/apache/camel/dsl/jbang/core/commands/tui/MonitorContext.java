@@ -150,7 +150,14 @@ class MonitorContext {
         info.pid = "phantom-" + phantomCounter.incrementAndGet();
         info.state = 9;
         phantomIntegrations.add(info);
+        Runnable opened = onProjectOpened;
+        if (opened != null) {
+            opened.run();
+        }
     }
+
+    // called when a project is opened, so what was shown of an earlier run of it (its failure log) is put away
+    volatile Runnable onProjectOpened;
 
     void removePhantom(String pid) {
         phantomIntegrations.removeIf(i -> pid.equals(i.pid));
