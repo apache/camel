@@ -398,11 +398,11 @@ public final class SourceValidator {
         }
     }
 
-    /** The YAML DSL schema errors in words: the node they are about and the message without parser noise. */
     /**
      * Whether the expression whose language key is on the given line of a YAML route is evaluated as a predicate by the
      * EIP it belongs to (the expression of a filter or a when, the completionPredicate of an aggregate).
      *
+     * @param catalog the catalog, for the EIP options that are predicates
      * @param lines   the lines of the YAML route
      * @param lineIdx the index of the line of the language key (simple:)
      */
@@ -413,6 +413,7 @@ public final class SourceValidator {
         return SimpleChecks.isPredicate(catalog, lines, lineIdx, YamlLines.countLeadingSpaces(lines[lineIdx]));
     }
 
+    /** The YAML DSL schema errors in words: the node they are about and the message without parser noise. */
     public static List<String> formatSchemaErrors(List<Error> errors) {
         return formatSchemaErrors(errors, null);
     }
