@@ -215,8 +215,8 @@ public final class VertxPlatformHttpSupport {
     }
 
     /**
-     * The charset of the response Content-Type header (UTF-8 when it declares none), or null when there is no
-     * Content-Type header or its charset is not supported.
+     * The charset declared by the response Content-Type header, or null when there is no Content-Type header, it
+     * declares no charset, or the charset is not supported.
      */
     private static String responseCharset(RoutingContext ctx) {
         String contentType = ctx.response().headers().get("Content-Type");
