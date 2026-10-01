@@ -1100,6 +1100,22 @@ final class StatusParser {
         return entry;
     }
 
+    /**
+     * The body as the app sent it: Camel JSON-escapes the body value of a message dump (MessageHelper), so a JSON body
+     * arrives as {\"orderId\":...}. Unescaped once here, so every view and tool shows the real body.
+     */
+    static String bodyText(Object value) {
+        if (value == null) {
+            return null;
+        }
+        String text = value.toString();
+        try {
+            return Jsoner.unescape(text);
+        } catch (Exception e) {
+            return text;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     static MessageData parseMessage(JsonObject message) {
         Map<String, Object> headers = null;
@@ -1132,8 +1148,7 @@ final class StatusParser {
 
         Object bodyObj = message.get("body");
         if (bodyObj instanceof JsonObject bodyJson) {
-            Object val = bodyJson.get("value");
-            body = val != null ? val.toString() : null;
+            body = bodyText(bodyJson.get("value"));
             bodyType = TuiHelper.shortTypeName(bodyJson.getString("type"));
             if (bodyJson.get("size") instanceof Number n) {
                 bodySize = n.longValue();
@@ -1451,7 +1466,7 @@ final class StatusParser {
             if (msg != null) {
                 Object bodyObj = msg.get("body");
                 if (bodyObj instanceof JsonObject bodyJson) {
-                    ei.body = bodyJson.getString("value");
+                    ei.body = bodyText(bodyJson.get("value"));
                     ei.bodyType = TuiHelper.shortTypeName(bodyJson.getString("type"));
                     if (bodyJson.get("size") instanceof Number n) {
                         ei.bodySize = n.longValue();
