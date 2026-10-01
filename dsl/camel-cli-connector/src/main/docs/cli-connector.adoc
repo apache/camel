@@ -26,3 +26,89 @@ and Camel should auto-detect this on startup and log as follows:
 ----
 Local CLI Connector started
 ----
+
+== Transports
+
+The connector executes actions (start and stop routes, send messages, dump routes, trace, debug, ...) and
+collects snapshots (status, traces, received messages, ...). A transport moves them between the tool and the
+connector. Choose it with the `camel.cli.transport` property:
+
+[width="100%",cols="1,4",options="header"]
+|===
+| Transport | Description
+| `file` | (default) Exchanges files in `~/.camel` with the Camel CLI (`camel get`, `camel cmd`, `camel stop`, ...).
+| `websocket` | Dials out to a developer tool (for example an IDE) over a WebSocket.
+|===
+
+=== WebSocket transport
+
+The integration connects to the tool, so the tool does not need access to the filesystem of the integration
+(containers, remote development clusters), and snapshots are pushed as they are collected. The integration does not
+open any port. The JDK WebSocket client is used, so no extra dependency is needed.
+
+[source,bash]
+----
+java -Dcamel.cli.transport=websocket \
+     -Dcamel.cli.websocket.url=ws://127.0.0.1:8000/connect?executionId=run-1 \
+     -jar my-app.jar
+----
+
+[width="100%",cols="2,1,4",options="header"]
+|===
+| Property | Default | Description
+| `camel.cli.websocket.url` | | The `ws://` or `wss://` URL of the tool. Required.
+| `camel.cli.websocket.token` | | Sent as `Authorization: Bearer <token>` when connecting. Required unless the URL
+  is a loopback address. Can be set with the `CAMEL_CLI_WEBSOCKET_TOKEN` environment variable, which other users
+  on the machine cannot read from the process list.
+| `camel.cli.websocket.snapshot-interval` | `1000` | How often snapshots are sent, in millis. When Camel is
+  debugging, the `debug` snapshot is sent every 100 ms, so breakpoints show up quickly.
+| `camel.cli.websocket.heartbeat-interval` | `10000` | How often the connection is checked with a ping, in millis.
+  The connection is re-established when the tool does not answer for three intervals.
+| `camel.cli.websocket.reconnect-delay` | `1000` | Delay before reconnecting, in millis. It doubles after each
+  failed attempt (with some random jitter).
+| `camel.cli.websocket.reconnect-max-delay` | `30000` | Maximum delay before reconnecting, in millis.
+| `camel.cli.websocket.allow-insecure` | `false` | Allow `ws://` (unencrypted) to a host that is not a loopback
+  address. Prefer `wss://` or a tunnel.
+|===
+
+As with Camel Main options, the camelCase form of the keys is accepted too (for example
+`camel.cli.websocket.snapshotInterval`).
+
+Every frame is a JSON object with a protocol version `v` and a `type`. The `action` and the snapshot `data` are the
+same JSON the file transport reads and writes:
+
+[source,json]
+----
+// tool -> integration
+{"v":1,"type":"action","requestId":"42","action":{"action":"route","command":"stop","id":"route1"}}
+
+// integration -> tool
+{"v":1,"type":"hello","camelVersion":"...","name":"...","transport":"jdk","runtime":{"pid":1234,"platform":"...",...}}
+{"v":1,"type":"result","requestId":"42","ok":true,"result":{...}}
+{"v":1,"type":"result","requestId":"43","ok":false,"error":"No route matching: route9","result":{}}
+{"v":1,"type":"snapshot","kind":"status","data":{...}}
+----
+
+* `hello` is sent on every connection, once Camel has started. Actions sent before it are refused.
+* `result` answers each action, with the same `requestId`. `ok` is `false` when the action is unknown, fails, or
+  reports a failure in its result (for example a message sent to a route that throws an exception).
+* `snapshot` kinds are `status`, `trace`, `receive`, `debug`, `history`, `error` and `activity`. `trace` and
+  `receive` only hold the messages not sent yet on this connection, split over several frames of about 128 KB at most
+  (many WebSocket servers refuse messages over 256 KB by default); `debug`, `history`, `error` and `activity` are only
+  sent when they change. The `status` snapshot is sent whole: for integrations with many routes, make sure the tool
+  accepts messages of that size.
+* The extra `stop` action stops the integration.
+
+=== Security
+
+The WebSocket transport is a development tool: *the tool it connects to gets full control of the integration*,
+as the Camel CLI does through the file transport. It can stop the integration, send messages, evaluate expressions,
+load routes and read files the integration can read.
+
+* The transport refuses to start when the `prod` profile is active (`camel.main.profile=prod`).
+* The integration trusts the tool at `camel.cli.websocket.url`: over `ws://` anyone on the network path can pose as
+  the tool. Use a loopback address (for example through an SSH or `kubectl port-forward` tunnel), or `wss://`;
+  `ws://` to another host is refused unless `camel.cli.websocket.allow-insecure=true`.
+* The token lets the tool check that the integration connecting to it is one it launched. It does not protect the
+  integration.
+* Snapshots hold message bodies and headers when tracing, debugging or receiving is enabled.
