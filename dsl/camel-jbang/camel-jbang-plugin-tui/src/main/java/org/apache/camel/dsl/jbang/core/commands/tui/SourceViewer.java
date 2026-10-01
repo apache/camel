@@ -1462,7 +1462,7 @@ class SourceViewer {
         routeProblems = List.of();
         if (validateOnSave && isCamelYamlFile()) {
             List<String> msgs = new ArrayList<>();
-            msgs.addAll(SourceValidationSupport.formatSchemaErrors(validateYaml(content)));
+            msgs.addAll(SourceValidationSupport.formatSchemaErrors(validateYaml(content), content));
             if (endpointValidator != null) {
                 List<String> endpointErrors = endpointValidator.validate(content);
                 if (endpointErrors != null) {

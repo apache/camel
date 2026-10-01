@@ -37,6 +37,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
+import org.snakeyaml.engine.v2.nodes.Node;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.JavaChecks.JAVA_CLASS_PATTERN;
 import static org.apache.camel.dsl.jbang.core.commands.ai.JavaChecks.JAVA_PACKAGE_PATTERN;
@@ -249,7 +250,7 @@ public final class SourceValidator {
             return false;
         }
         try {
-            msgs.addAll(formatSchemaErrors(validator.validate(content, bodylessEndpoints)));
+            msgs.addAll(formatSchemaErrors(validator.validate(content, bodylessEndpoints), content));
             return true;
         } catch (Exception e) {
             msgs.add("Invalid YAML: " + e.getMessage());
@@ -398,11 +399,35 @@ public final class SourceValidator {
     }
 
     /** The YAML DSL schema errors in words: the node they are about and the message without parser noise. */
+    /**
+     * Whether the expression whose language key is on the given line of a YAML route is evaluated as a predicate by the
+     * EIP it belongs to (the expression of a filter or a when, the completionPredicate of an aggregate).
+     *
+     * @param lines   the lines of the YAML route
+     * @param lineIdx the index of the line of the language key (simple:)
+     */
+    public static boolean isYamlPredicate(CamelCatalog catalog, String[] lines, int lineIdx) {
+        if (lineIdx < 0 || lineIdx >= lines.length) {
+            return false;
+        }
+        return SimpleChecks.isPredicate(catalog, lines, lineIdx, YamlLines.countLeadingSpaces(lines[lineIdx]));
+    }
+
     public static List<String> formatSchemaErrors(List<Error> errors) {
+        return formatSchemaErrors(errors, null);
+    }
+
+    /**
+     * The schema errors of a YAML source as messages; with the content, each one the line of the YAML it points at can
+     * be found for starts with "Line N: ", as the other checks report, so an editor marks it on its line.
+     */
+    public static List<String> formatSchemaErrors(List<Error> errors, String content) {
         List<String> msgs = new ArrayList<>();
         if (errors == null) {
             return msgs;
         }
+        Node root = content != null && !errors.isEmpty()
+                ? YamlPointerLines.root(content) : null;
         for (Error error : errors) {
             String msg = error.getMessage();
             if (msg == null) {
@@ -411,7 +436,9 @@ public final class SourceValidator {
             String loc = error.getInstanceLocation() != null ? error.getInstanceLocation().toString() : null;
             String node = extractNodeName(loc);
             String clean = cleanValidationMessage(msg);
-            msgs.add(node != null ? node + ": " + clean : clean);
+            String text = node != null ? node + ": " + clean : clean;
+            int line = YamlPointerLines.line(root, loc, clean);
+            msgs.add(line > 0 && !text.startsWith("Line ") ? "Line " + line + ": " + text : text);
         }
         return msgs;
     }
