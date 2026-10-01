@@ -154,7 +154,7 @@ final class SourceEditAssist {
     }
 
     Map<Integer, List<SourceViewer.DocEntry>> provideCamelQuickDocs(List<JsonObject> codeData) {
-        CamelCatalog catalog = getCatalog();
+        CamelCatalog catalog = validationCatalog();
         if (catalog == null || codeData.isEmpty()) {
             return Map.of();
         }
@@ -188,7 +188,7 @@ final class SourceEditAssist {
     }
 
     List<SourceViewer.DocEntry> provideEditQuickDoc(List<String> lines, int cursorRow) {
-        CamelCatalog catalog = getCatalog();
+        CamelCatalog catalog = validationCatalog();
         if (catalog == null || lines == null || cursorRow < 0 || cursorRow >= lines.size()) {
             return List.of();
         }
@@ -207,6 +207,12 @@ final class SourceEditAssist {
                 String desc = model.getDescription() != null ? model.getDescription() : "";
                 return List.of(SourceViewer.DocEntry.of(title + " — " + desc));
             }
+        }
+
+        // the language of an expression, as the Java and XML routes have it (simple: or its expression:)
+        SourceViewer.DocEntry languageDoc = resolveLanguageDoc(catalog, lines, cursorRow);
+        if (languageDoc != null) {
+            return List.of(languageDoc);
         }
 
         // check if inside a parameters: block — look up component endpoint option doc
@@ -233,6 +239,66 @@ final class SourceEditAssist {
         }
 
         return List.of();
+    }
+
+    /**
+     * The language of the expression on the line: a language key (simple: "${body}" or simple: with expression: below
+     * it) or the expression: under one, as "Simple predicate: ${...}" where the EIP evaluates it as a predicate.
+     */
+    SourceViewer.DocEntry resolveLanguageDoc(CamelCatalog catalog, List<String> lines, int cursorRow) {
+        String key = yamlKey(lines.get(cursorRow));
+        if (key == null) {
+            return null;
+        }
+        int languageRow = -1;
+        String text = null;
+        if (catalog.languageModel(key) != null) {
+            languageRow = cursorRow;
+            text = yamlValue(lines.get(cursorRow));
+            if (text.isEmpty() && cursorRow + 1 < lines.size() && "expression".equals(yamlKey(lines.get(cursorRow + 1)))) {
+                text = yamlValue(lines.get(cursorRow + 1));
+            }
+        } else if ("expression".equals(key)) {
+            int indent = countLeadingSpaces(lines.get(cursorRow));
+            for (int i = cursorRow - 1; i >= 0; i--) {
+                String l = lines.get(i);
+                if (l.isBlank()) {
+                    continue;
+                }
+                if (countLeadingSpaces(l) < indent) {
+                    String parent = yamlKey(l);
+                    if (parent != null && catalog.languageModel(parent) != null) {
+                        languageRow = i;
+                        key = parent;
+                        text = yamlValue(lines.get(cursorRow));
+                    }
+                    break;
+                }
+            }
+        }
+        if (languageRow < 0 || text == null || text.isEmpty()) {
+            return null;
+        }
+        LanguageModel language = catalog.languageModel(key);
+        boolean predicate = SourceValidator.isYamlPredicate(catalog, lines.toArray(new String[0]), languageRow);
+        return SourceViewer.DocEntry.of((language.getTitle() != null ? language.getTitle() : key)
+                                        + (predicate ? " predicate: " : " expression: ") + text);
+    }
+
+    /** The key of a YAML line (simple of "- simple: x"), or null. */
+    private static String yamlKey(String line) {
+        Matcher m = YAML_KEY_PATTERN.matcher(line);
+        return m.find() ? m.group(1) : null;
+    }
+
+    /** The value of a YAML line after its key, unquoted; empty when it has none. */
+    private static String yamlValue(String line) {
+        int colon = line.indexOf(':');
+        String v = colon >= 0 ? line.substring(colon + 1).trim() : "";
+        if (v.length() >= 2 && (v.startsWith("\"") && v.endsWith("\"") || v.startsWith("'") && v.endsWith("'"))) {
+            v = v.substring(1, v.length() - 1);
+        }
+        return v;
     }
 
     SourceViewer.DocEntry resolveEipOptionDoc(CamelCatalog catalog, List<String> lines, int cursorRow) {
