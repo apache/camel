@@ -52,6 +52,20 @@ class ActionsPopupTest {
     }
 
     @Test
+    void aScreenshotKeepsTheMenuOpenSoItIsInThePicture() {
+        AtomicBoolean shot = new AtomicBoolean();
+        ActionsPopup popup = new ActionsPopup(
+                Set::of, List::of, List::of, null, () -> shot.set(true), () -> {
+                }, () -> false, () -> {
+                }, () -> false, () -> {
+                }, new HashSet<>());
+        popup.open();
+        assertTrue(popup.executeActionByName("screenshot"));
+        assertTrue(shot.get());
+        assertTrue(popup.isVisible(), "the menu stays, as it was on the screen");
+    }
+
+    @Test
     void quitIsTheLastMenuEntryAndRunsTheWiredAction() {
         ActionsPopup popup = new ActionsPopup(
                 Set::of, List::of, List::of, null, () -> {

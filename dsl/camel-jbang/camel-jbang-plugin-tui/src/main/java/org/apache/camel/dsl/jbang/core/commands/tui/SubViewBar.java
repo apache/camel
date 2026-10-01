@@ -61,6 +61,8 @@ final class SubViewBar {
      * @param cycleKey the key that moves through the views, or null
      * @param levels   whether the views are levels of one another (separated by ›) rather than peers (│)
      */
+    private static final String MORE = "\u2026 ";
+
     record Spec(String cycleKey, List<View> views, List<Toggle> toggles, boolean levels) {
     }
 
@@ -108,6 +110,7 @@ final class SubViewBar {
         List<int[]> rightBoxes = new ArrayList<>();
         List<String> rightKeys = new ArrayList<>();
         int rightWidth = 0;
+        boolean dropped = false;
         for (Toggle t : spec.toggles()) {
             // an on/off setting shows its state as a mark, a setting with modes names the mode
             boolean onOff = "on".equals(t.state()) || "off".equals(t.state());
@@ -116,6 +119,7 @@ final class SubViewBar {
             String mark = (onOff ? (t.on() ? "●" : "○") : "") + "  ";
             int w = CharWidth.of(chip) + CharWidth.of(label) + CharWidth.of(mark);
             if (used + rightWidth + w + 2 > area.width()) {
+                dropped = true;
                 break;
             }
             right.add(Span.styled(chip, Theme.hintKey()));
@@ -124,6 +128,19 @@ final class SubViewBar {
             rightBoxes.add(new int[] { rightWidth, rightWidth + w - 2 });
             rightKeys.add(t.key());
             rightWidth += w;
+        }
+        if (dropped) {
+            // a setting that does not fit is not dropped silently: a … says there is more (F1 lists them all)
+            while (!rightBoxes.isEmpty() && used + rightWidth + MORE.length() > area.width()) {
+                int[] last = rightBoxes.remove(rightBoxes.size() - 1);
+                rightKeys.remove(rightKeys.size() - 1);
+                right.subList(right.size() - 3, right.size()).clear();
+                rightWidth = last[0];
+            }
+            if (used + rightWidth + MORE.length() <= area.width()) {
+                right.add(Span.styled(MORE, Theme.muted()));
+                rightWidth += MORE.length();
+            }
         }
         if (!right.isEmpty()) {
             int start = area.x() + area.width() - rightWidth;

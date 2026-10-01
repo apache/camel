@@ -93,6 +93,9 @@ class LogTab extends AbstractTab {
     private long evictedSeen;
     private boolean followMode = true;
     private boolean wordWrap = true;
+    // time, level, logger and message only: the date, pid and thread take most of a row in a terminal
+    private boolean compact = true;
+    private boolean cachedCompact;
     private int hScroll;
     private boolean showLogLevelPopup;
 
@@ -175,6 +178,11 @@ class LogTab extends AbstractTab {
         }
         if (ke.isCharIgnoreCase('w')) {
             wordWrap = !wordWrap;
+            hScroll = 0;
+            return true;
+        }
+        if (ke.isCharIgnoreCase('c')) {
+            compact = !compact;
             hScroll = 0;
             return true;
         }
@@ -340,19 +348,29 @@ class LogTab extends AbstractTab {
         int hSkip = wordWrap ? 0 : hScroll;
 
         boolean entriesChanged = entries != cachedLogEntries;
-        if (entriesChanged || hSkip != cachedLogHSkip) {
+        if (entriesChanged || hSkip != cachedLogHSkip || compact != cachedCompact) {
             cachedLogEntries = entries;
             cachedLogHSkip = hSkip;
+            cachedCompact = compact;
             List<Line> built = new ArrayList<>(entries.size());
             int maxW = 0;
             for (int i = 0; i < entries.size(); i++) {
                 LogEntry entry = entries.get(i);
                 String raw = entry.raw != null ? entry.raw : "";
-                if (!wordWrap) {
-                    maxW = Math.max(maxW, CharWidth.of(TuiHelper.stripAnsi(raw)));
+                Line line;
+                if (compact && !entry.time.isEmpty()) {
+                    line = compactLine(entry);
+                    if (!wordWrap) {
+                        maxW = Math.max(maxW, line.width());
+                        line = hSkip > 0 ? TuiHelper.ansiToLine(lineText(line), hSkip) : line;
+                    }
+                } else {
+                    if (!wordWrap) {
+                        maxW = Math.max(maxW, CharWidth.of(TuiHelper.stripAnsi(raw)));
+                    }
+                    line = raw.indexOf('\u001B') >= 0
+                            ? TuiHelper.ansiToLine(raw, hSkip) : colorizePlainLog(raw, entry);
                 }
-                Line line = raw.indexOf('\u001B') >= 0
-                        ? TuiHelper.ansiToLine(raw, hSkip) : colorizePlainLog(raw, entry);
                 if (entry.repeat > 1) {
                     line = line.append(Span.styled("  (x" + entry.repeat + ")", Theme.warning().bold()));
                 }
@@ -430,6 +448,7 @@ class LogTab extends AbstractTab {
         }
         search.renderSearchHints(spans);
         hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
+        hint(spans, "c", "compact" + (compact ? " [on]" : " [off]"));
         if (!ctx.isInfraSelected()) {
             hint(spans, "l", "level");
         }
@@ -642,6 +661,42 @@ class LogTab extends AbstractTab {
                                                                + "(\\d+)\\s+---\\s+"
                                                                + "\\[([^]]*)]\\s+"
                                                                + "(\\S+)\\s*:\\s*(.*)$");
+
+    /** A log line in the compact view: 17:24:30.257 INFO VertxPlatformHttpServer Vert.x HttpServer started ... */
+    static Line compactLine(LogEntry entry) {
+        String time = entry.time.length() > 12 ? entry.time.substring(entry.time.length() - 12) : entry.time;
+        // the time of day: the date is the same for every line of a run
+        int space = time.indexOf(' ');
+        if (space >= 0) {
+            time = time.substring(space + 1);
+        }
+        String logger = entry.logger != null ? TuiHelper.truncate(entry.logger, 24) : "";
+        return Line.from(
+                Span.styled(time, DIM),
+                Span.raw(" "),
+                Span.styled(String.format("%5s", entry.level), levelStyle(entry.level)),
+                Span.raw(" "),
+                Span.styled(String.format("%-24s", logger), Style.EMPTY.fg(Theme.accent())),
+                Span.raw(" "),
+                Span.raw(entry.message != null ? entry.message : ""));
+    }
+
+    private static String lineText(Line line) {
+        StringBuilder sb = new StringBuilder();
+        line.spans().forEach(sp -> sb.append(sp.content()));
+        return sb.toString();
+    }
+
+    private static Style levelStyle(String level) {
+        return switch (level) {
+            case "ERROR", "FATAL" -> Theme.error();
+            case "WARN" -> Theme.warning();
+            case "INFO" -> Theme.success();
+            case "DEBUG" -> Style.EMPTY.fg(Theme.accent());
+            case "TRACE" -> Style.EMPTY.dim();
+            default -> Style.EMPTY;
+        };
+    }
 
     private static Line colorizePlainLog(String raw, LogEntry entry) {
         String plain = TuiHelper.stripAnsi(raw);

@@ -69,6 +69,21 @@ class SubViewBarTest {
     }
 
     @Test
+    void settingsThatDoNotFitEndInAnEllipsis() {
+        SubViewBar bar = new SubViewBar();
+        Rect area = new Rect(0, 0, 90, 1);
+        Buffer buffer = Buffer.empty(area);
+        bar.render(Frame.forTesting(buffer), area, levels());
+        String line = TuiTestHelper.bufferToString(buffer).split("\n")[0];
+
+        assertThat(line).contains(" b  view: business ").doesNotContain("metrics");
+        assertThat(line.stripTrailing()).endsWith("…");
+        assertThat(line.length()).isLessThanOrEqualTo(90);
+        // all fit on a wide bar: no ellipsis
+        assertThat(render(bar, levels(), 0)).doesNotContain("…");
+    }
+
+    @Test
     void aClickGoesToAViewOrPressesTheKeyOfASetting() {
         SubViewBar bar = new SubViewBar();
         String line = render(bar, levels(), 3);

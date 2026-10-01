@@ -1483,7 +1483,11 @@ class ActionsPopup {
                 Theme.toggle();
                 refreshTheme();
             }
-            case SCREENSHOT -> screenshotAction.run();
+            case SCREENSHOT -> {
+                // the screen as it is shown, with an open menu or popup (for docs): nothing is closed first
+                screenshotAction.run();
+                return true;
+            }
             case SHOW_KEYSTROKES -> toggleKeystrokes.run();
             case TAPE_RECORDING -> toggleTapeRecording.run();
             case DOCTOR -> doctorPopup.open();
