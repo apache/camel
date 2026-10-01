@@ -1078,7 +1078,7 @@ public class ODataProducerTest extends CamelTestSupport {
             boolean hasSslCause = false;
             Throwable current = thrown;
             while (current != null) {
-                if (current instanceof javax.net.ssl.SSLException) { // Use jakarta.net.ssl.SSLException if on Jakarta/Camel 4+
+                if (current instanceof javax.net.ssl.SSLException) {
                     hasSslCause = true;
                     break;
                 }
