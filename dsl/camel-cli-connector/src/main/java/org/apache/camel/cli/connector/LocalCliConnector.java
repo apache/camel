@@ -72,6 +72,7 @@ import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PeriodTaskScheduler;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.ResourceReloadStrategy;
@@ -84,6 +85,7 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
@@ -170,8 +172,12 @@ public class LocalCliConnector extends ServiceSupport
         consumer = camelContext.createConsumerTemplate();
 
         if (transport == null) {
-            transport = createTransport(
-                    camelContext.getPropertiesComponent().resolveProperty("camel.cli.transport").orElse("file"));
+            String name = camelContext.getPropertiesComponent().resolveProperty("camel.cli.transport").orElse("file");
+            // tooling such as camel export and camel transform resolves every property to a placeholder
+            if (PropertyConfigurerSupport.MAGIC_VALUE.equals(name) || name.startsWith(PropertiesComponent.PREFIX_TOKEN)) {
+                name = "file";
+            }
+            transport = createTransport(name);
             transport.configure(camelContext, this, this, this::sigterm);
         }
         ServiceHelper.startService(transport);
