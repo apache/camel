@@ -25,12 +25,8 @@ import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
-import com.hazelcast.transaction.TransactionContext;
-import com.hazelcast.transaction.TransactionOptions;
-import com.hazelcast.transaction.TransactionalMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.hazelcast.HazelcastSerializationFilterHelper;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
@@ -278,39 +274,18 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
         } else {
             if (useRecovery) {
                 LOG.trace("Removing an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
-                // The only considerable case for transaction usage is fault tolerance:
-                // the transaction will be rolled back automatically (default timeout is 2 minutes)
-                // if no commit occurs during the timeout. So we are still consistent whether local node crashes.
-                TransactionOptions tOpts = new TransactionOptions();
-
-                tOpts.setTransactionType(TransactionOptions.TransactionType.ONE_PHASE);
-                TransactionContext tCtx = hazelcastInstance.newTransactionContext(tOpts);
-
+                // a ReplicatedMap cannot take part in a Hazelcast transaction, so the completed exchange is stored for
+                // recovery before the group is removed, under the lock that add() uses for the key.
+                // The given exchange is stored and not the removed entry: when a group is completed by an incoming
+                // exchange, the last aggregated exchange is not added to the repository before it is removed
+                lockMap.lock(key);
                 try {
-                    tCtx.beginTransaction();
-
-                    TransactionalMap<String, DefaultExchangeHolder> tCache = tCtx.getMap(mapName);
-                    TransactionalMap<String, DefaultExchangeHolder> tPersistentCache = tCtx.getMap(persistenceMapName);
-
-                    DefaultExchangeHolder removedHolder = tCache.remove(key);
-                    LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
-                            exchange.getExchangeId(), key);
-                    tPersistentCache.put(exchange.getExchangeId(), removedHolder);
-
-                    tCtx.commitTransaction();
-                    LOG.trace("Removed an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(),
-                            key);
-                    LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
-                            exchange.getExchangeId(), key);
-                } catch (Exception throwable) {
-                    tCtx.rollbackTransaction();
-
-                    final String msg = String.format(
-                            "Transaction with ID %s was rolled back for remove operation with a key %s and an Exchange ID %s.",
-                            tCtx.getTxnId(), key, exchange.getExchangeId());
-                    LOG.warn(msg, throwable);
-                    throw new RuntimeCamelException(msg, throwable);
+                    replicatedPersistedCache.put(exchange.getExchangeId(), holder);
+                    replicatedCache.remove(key);
+                } finally {
+                    lockMap.unlock(key);
                 }
+                LOG.trace("Removed an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
             } else {
                 replicatedCache.remove(key);
             }

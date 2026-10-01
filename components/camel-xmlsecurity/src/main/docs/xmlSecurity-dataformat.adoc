@@ -89,7 +89,7 @@ Key key = keyGenerator.generateKey();
 
 from("direct:start")
     .marshal().xmlSecurity(key.getEncoded())
-    .unmarshal().xmlSecurity(key.getEncoded()
+    .unmarshal().xmlSecurity(key.getEncoded())
     .to("direct:end");
 ----
 
@@ -160,7 +160,7 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .marshal().xmlSecurity("//cheese:cheesesites/italy", true)
+    .marshal().xmlSecurity("//cheese:cheesesites/italy", true, "Just another 32 Byte key for AES")
     .to("...");
 ----
 
@@ -175,7 +175,8 @@ XML::
         <from uri="direct://start"/>
             <marshal>
                 <xmlSecurity secureTag="//cheese:cheesesites/italy"
-                           secureTagContents="true"/>
+                           secureTagContents="true"
+                           passPhrase="Just another 32 Byte key for AES"/>
             </marshal>
             ...
 ----
@@ -192,6 +193,7 @@ YAML::
             xmlSecurity:
               secureTag: "//cheese:cheesesites/italy"
               secureTagContents: true
+              passPhrase: "Just another 32 Byte key for AES"
 ----
 ====
 

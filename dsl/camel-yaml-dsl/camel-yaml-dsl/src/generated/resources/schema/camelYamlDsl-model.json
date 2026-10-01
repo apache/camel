@@ -7054,6 +7054,11 @@
         "type" : "object",
         "ref" : "from",
         "required" : true
+      }, {
+        "name" : "routeProperty",
+        "type" : "array",
+        "ref" : "property",
+        "description" : "To set metadata as properties on the route."
       } ]
     },
     "routeTemplate" : {
@@ -8369,6 +8374,7 @@
       "title" : "Switch",
       "description" : "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar values",
       "label" : "eip,routing",
+      "aliases" : [ "decision-table", "dispatch-table", "lookup-table" ],
       "input" : true,
       "isListItem" : true,
       "children" : [ {

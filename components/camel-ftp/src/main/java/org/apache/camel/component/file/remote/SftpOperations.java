@@ -23,7 +23,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.charset.Charset;
@@ -1226,7 +1225,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 if (charset != null) {
                     // charset configured so we must convert to the desired
                     // charset so we can write with encoding
-                    is = new ByteArrayInputStream(exchange.getIn().getMandatoryBody(String.class).getBytes(charset));
+                    is = GenericFileHelper.toInputStream(exchange, charset);
                     LOG.trace("Using InputStream {} with charset {}.", is, charset);
                 } else {
                     is = exchange.getIn().getMandatoryBody(InputStream.class);
@@ -1264,7 +1263,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         } catch (SftpException e) {
             createResultHeadersFromExchange(e, exchange);
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
-        } catch (UnsupportedEncodingException | InvalidPayloadException e) {
+        } catch (IOException | InvalidPayloadException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } finally {
             IOHelper.close(is, "store: " + name, LOG);

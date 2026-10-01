@@ -24,7 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.support.PayloadHelper;
 
 public final class FileStreamAndLength {
     private final InputStream inputStream;
@@ -35,42 +37,40 @@ public final class FileStreamAndLength {
         this.streamLength = streamLength;
     }
 
-    @SuppressWarnings("rawtypes")
     public static FileStreamAndLength createFileStreamAndLengthFromExchangeBody(final Exchange exchange) throws IOException {
-        Object body = exchange.getIn().getBody();
-        long fileLength = -1;
+        final Message message = exchange.getIn();
+        Object body = message.getBody();
 
-        if (body instanceof WrappedFile wf) {
-            // Get file length from WrappedFile before unwrapping (works for remote files like SFTP)
-            fileLength = wf.getFileLength();
-            body = wf.getFile();
+        if (body instanceof WrappedFile<?> wf && wf.getFile() instanceof File file) {
+            body = file;
+        }
+        if (body instanceof File file) {
+            return new FileStreamAndLength(new BufferedInputStream(new FileInputStream(file)), file.length());
+        }
+        if (body instanceof byte[] bytes) {
+            return new FileStreamAndLength(new ByteArrayInputStream(bytes), bytes.length);
         }
 
-        if (body instanceof InputStream) {
-            if (!((InputStream) body).markSupported()) {
-                throw new IllegalArgumentException("Inputstream does not support mark rest operations");
-            }
-            // Use cached file length if available, otherwise calculate from stream
-            long length = fileLength > 0 ? fileLength : DataLakeUtils.getInputStreamLength((InputStream) body);
-            return new FileStreamAndLength((InputStream) body, length);
-        }
+        // the length of a wrapped file (such as a remote file from SFTP) is known without reading it
+        long length = PayloadHelper.getBodyLength(message);
 
-        if (body instanceof File) {
-            return new FileStreamAndLength(new BufferedInputStream(new FileInputStream((File) body)), ((File) body).length());
-        }
-
-        if (body instanceof byte[]) {
-            return new FileStreamAndLength(new ByteArrayInputStream((byte[]) body), ((byte[]) body).length);
-        }
-
-        final InputStream inputStream
-                = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
-
-        if (inputStream == null) {
+        InputStream is = body instanceof InputStream inputStream
+                ? inputStream
+                : exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
+        if (is == null) {
             throw new IllegalArgumentException("Unsupported file type");
         }
 
-        return new FileStreamAndLength(inputStream, DataLakeUtils.getInputStreamLength(inputStream));
+        if (length < 0) {
+            length = PayloadHelper.getLength(is);
+        }
+        if (length < 0) {
+            // copy the data to determine the length, which uses stream caching so big payloads
+            // are spooled to disk when spooling is enabled
+            is = PayloadHelper.cacheStream(exchange, is);
+            length = PayloadHelper.getLength(is);
+        }
+        return new FileStreamAndLength(is, length);
     }
 
     public InputStream getInputStream() {

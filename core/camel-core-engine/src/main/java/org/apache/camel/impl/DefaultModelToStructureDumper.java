@@ -28,11 +28,14 @@ import org.apache.camel.model.EndpointRequiredDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.spi.ModelDumpLine;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 @JdkService(ModelToStructureDumper.FACTORY)
 public class DefaultModelToStructureDumper implements ModelToStructureDumper {
@@ -87,8 +90,16 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
                     remote = isRemoteUri(endpointUri, schemeRemoteMap);
                     if (brief) {
                         String uri = StringHelper.before(endpointUri, "?", endpointUri);
-                        code = output.getShortName() + "[" + uri + "]";
+                        if (output instanceof SwitchCaseDefinition c) {
+                            code = "case[" + c.getValue() + " -> " + URISupport.sanitizeUri(uri) + "]";
+                        } else {
+                            code = output.getShortName() + "[" + uri + "]";
+                        }
                     }
+                }
+                if (parent instanceof SwitchDefinition sw && output == sw.getOtherwiseDefinition()) {
+                    String uri = URISupport.sanitizeUri(endpointUri);
+                    code = "otherwise[" + (brief ? StringHelper.before(uri, "?", uri) : uri) + "]";
                 }
                 answer.add(new ModelDumpLine(loc, kind, id, level, code, output.getDescription(), endpointUri, remote));
             }

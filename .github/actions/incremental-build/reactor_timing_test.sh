@@ -115,6 +115,18 @@ append_reactor_timing_report "$empty_fixture" "$empty_report" "All tested module
 assert_eq "" "$(cat "$empty_report")" "empty log yields empty report"
 rm -f "$empty_fixture" "$empty_report"
 
+# A large reactor with SIGPIPE ignored, as incremental-build.sh runs it: limiting
+# the slowest modules must not fail the pipeline (CAMEL-24777)
+large_tsv="$(seq 1 50000 | awk '{ printf "module-%d\t%d\tSUCCESS\n", $1, $1 }')"
+if large_slowest="$(trap '' PIPE; render_top_slowest_modules "$large_tsv" 3 2>&1)"; then
+  pass=$((pass + 1))
+else
+  echo "FAIL: render_top_slowest_modules fails on a large reactor with SIGPIPE ignored"
+  fail=$((fail + 1))
+fi
+assert_eq "3" "$(echo "$large_slowest" | grep -c .)" "large reactor lists only the limit"
+assert_contains "$large_slowest" "\`module-50000\`" "large reactor lists the slowest module first"
+
 echo ""
 echo "reactor_timing_test.sh: ${pass} passed, ${fail} failed"
 if [[ "$fail" -ne 0 ]]; then

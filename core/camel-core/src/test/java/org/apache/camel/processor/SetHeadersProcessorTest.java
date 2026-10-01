@@ -24,8 +24,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.constant.ConstantLanguage;
+import org.apache.camel.model.SetHeaderDefinition;
+import org.apache.camel.model.SetHeadersDefinition;
+import org.apache.camel.model.language.ConstantExpression;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class SetHeadersProcessorTest extends ContextTestSupport {
 
@@ -100,6 +105,28 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
         expected.message(0).header("bar").isEqualTo("XYZ");
         template.sendBody("direct:startMap", body);
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPlainValuesKeepTheirTypeAndAreTheConstantLanguage() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:startValues").routeId("values")
+                        .setHeaders(Map.of("count", 5, "flag", true, "name", "ABC")).to("mock:result");
+            }
+        });
+        expected.message(0).header("count").isEqualTo(5);
+        expected.message(0).header("count").isInstanceOf(Integer.class);
+        expected.message(0).header("flag").isInstanceOf(Boolean.class);
+        expected.message(0).header("name").isEqualTo("ABC");
+        template.sendBody("direct:startValues", body);
+        assertMockEndpointsSatisfied();
+
+        // the model has the constant language, which every DSL can write (a Java-only expression before)
+        SetHeadersDefinition def = (SetHeadersDefinition) context.getRouteDefinition("values").getOutputs().get(0);
+        for (SetHeaderDefinition h : def.getHeaders()) {
+            assertInstanceOf(ConstantExpression.class, h.getExpression(), h.getName());
+        }
     }
 
     @Test

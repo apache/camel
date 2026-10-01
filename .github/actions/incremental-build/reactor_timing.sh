@@ -133,10 +133,13 @@ sum_elapsed_seconds_from_tsv() {
 render_top_slowest_modules() {
   local tsv="$1"
   local limit="${2:-${TOP_SLOWEST_LIMIT}}"
+  # Limit with awk, which reads all its input, not head: incremental-build.sh
+  # ignores SIGPIPE, so sort fails with a write error once head stops reading,
+  # and pipefail turns that into a failed build (CAMEL-24777).
   echo "$tsv" | awk -F '\t' '
     $2 != "" && $2 ~ /^[0-9]+(\.[0-9]+)?$/ {
       printf "%s\t%s\n", $2, $1
-    }' | sort -t $'\t' -k1,1nr | head -n "$limit" | while IFS=$'\t' read -r seconds module; do
+    }' | sort -t $'\t' -k1,1nr | awk -v n="$limit" 'NR <= n' | while IFS=$'\t' read -r seconds module; do
     local formatted
     formatted=$(format_elapsed_seconds "$seconds")
     echo "- \`${module}\` (${formatted})"

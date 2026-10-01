@@ -87,21 +87,38 @@ public final class IntegrationSummary {
      * by route key.
      */
     public record AiContent(String overview, List<Capability> capabilities, Map<String, String> descriptions,
-            List<String> utility, Map<String, String> notes) {
+            List<String> utility, Map<String, String> notes, List<StepLabel> steps) {
 
         public AiContent(String overview, List<Capability> capabilities, Map<String, String> descriptions) {
-            this(overview, capabilities, descriptions, List.of(), Map.of());
+            this(overview, capabilities, descriptions, List.of(), Map.of(), List.of());
         }
 
         public AiContent(String overview, List<Capability> capabilities, Map<String, String> descriptions,
                          List<String> utility) {
-            this(overview, capabilities, descriptions, utility, Map.of());
+            this(overview, capabilities, descriptions, utility, Map.of(), List.of());
+        }
+
+        public AiContent(String overview, List<Capability> capabilities, Map<String, String> descriptions,
+                         List<String> utility, Map<String, String> notes) {
+            this(overview, capabilities, descriptions, utility, notes, List.of());
         }
 
         public boolean isEmpty() {
             return (overview == null || overview.isBlank()) && capabilities.isEmpty() && descriptions.isEmpty()
-                    && utility.isEmpty() && notes.isEmpty();
+                    && utility.isEmpty() && notes.isEmpty() && steps.isEmpty();
         }
+    }
+
+    /**
+     * What an AI wrote about a decision point of a route (CAMEL-25161): a short label for a diagram box and why the
+     * route decides there.
+     *
+     * @param route the route key
+     * @param path  the decision point's path in the route, such as {@code choice[1]/when[2]} (see RouteDecisions)
+     * @param label two to five words, may be null
+     * @param why   one sentence, may be null
+     */
+    public record StepLabel(String route, String path, String label, String why) {
     }
 
     /**
@@ -111,15 +128,33 @@ public final class IntegrationSummary {
      */
     public record Summary(String fingerprint, String model, String date, String overview, List<Capability> capabilities,
             Map<String, String> descriptions, List<String> utility, Map<String, String> notes,
-            Map<String, String> sourceNotes) {
+            Map<String, String> sourceNotes, List<StepLabel> steps) {
 
         public Summary(String fingerprint, String model, String date, String overview, List<Capability> capabilities,
                        Map<String, String> descriptions) {
-            this(fingerprint, model, date, overview, capabilities, descriptions, List.of(), Map.of(), Map.of());
+            this(fingerprint, model, date, overview, capabilities, descriptions, List.of(), Map.of(), Map.of(),
+                 List.of());
+        }
+
+        public Summary(String fingerprint, String model, String date, String overview, List<Capability> capabilities,
+                       Map<String, String> descriptions, List<String> utility, Map<String, String> notes,
+                       Map<String, String> sourceNotes) {
+            this(fingerprint, model, date, overview, capabilities, descriptions, utility, notes, sourceNotes,
+                 List.of());
         }
 
         public AiContent ai() {
-            return new AiContent(overview, capabilities, descriptions, utility, notes);
+            return new AiContent(overview, capabilities, descriptions, utility, notes, steps);
+        }
+
+        /** What the AI wrote about a decision point of a route, or null. */
+        public StepLabel step(String route, String path) {
+            for (StepLabel s : steps) {
+                if (s.route().equals(route) && s.path().equals(path)) {
+                    return s;
+                }
+            }
+            return null;
         }
     }
 
@@ -157,6 +192,7 @@ public final class IntegrationSummary {
         Map<String, String> notes = new LinkedHashMap<>();
         Map<String, String> sourceNotes = new LinkedHashMap<>();
         List<String> utility = new ArrayList<>();
+        List<StepLabel> steps = new ArrayList<>();
         String section = null;
         boolean inAi = false;
         StringBuilder ai = new StringBuilder();
@@ -187,6 +223,14 @@ public final class IntegrationSummary {
                         String key = u.strip().replaceFirst("^[-*]\\s*", "").replace("`", "").strip();
                         if (!key.isEmpty()) {
                             utility.add(key);
+                        }
+                    }
+                } else if ("steps".equals(section)) {
+                    for (String l : ai.toString().split("\n")) {
+                        Matcher m = STEP_LINE.matcher(l.strip());
+                        if (m.matches()) {
+                            String[] parts = labelAndNote(m.group(3));
+                            steps.add(new StepLabel(unescapeCell(m.group(1)), m.group(2), parts[0], parts[1]));
                         }
                     }
                 }
@@ -221,8 +265,11 @@ public final class IntegrationSummary {
         return new Summary(
                 header.get("fingerprint"), header.get("model"), header.get("date"),
                 overview == null || overview.isBlank() ? null : overview, capabilities, descriptions, utility, notes,
-                sourceNotes);
+                sourceNotes, steps);
     }
+
+    /** A line of the Steps section: - `route` `path`: label | why. */
+    private static final Pattern STEP_LINE = Pattern.compile("^[-*]\\s*`([^`]+)`\\s*`([^`]+)`\\s*:\\s*(.*)$");
 
     private static Capability capability(String line) {
         Matcher m = CAPABILITY_LINE.matcher(line);
@@ -337,6 +384,20 @@ public final class IntegrationSummary {
             sb.append("## Utility routes ").append(AI_MARK).append("\n\n").append(AI_BEGIN).append('\n');
             for (String u : ai.utility()) {
                 sb.append("- `").append(u).append("`\n");
+            }
+            sb.append(AI_END).append("\n\n");
+        }
+
+        if (hasAi && !ai.steps().isEmpty()) {
+            // the decision points of the routes in plain words: what a diagram box of the step shows
+            sb.append("## Steps ").append(AI_MARK).append("\n\n").append(AI_BEGIN).append('\n');
+            for (StepLabel st : ai.steps()) {
+                sb.append("- `").append(st.route()).append("` `").append(st.path()).append("`: ")
+                        .append(st.label() != null ? st.label() : "");
+                if (st.why() != null) {
+                    sb.append(" | ").append(st.why());
+                }
+                sb.append('\n');
             }
             sb.append(AI_END).append("\n\n");
         }
@@ -529,7 +590,16 @@ public final class IntegrationSummary {
         Set<String> unnoted = new LinkedHashSet<>();
         overview.flows().stream().filter(r -> !r.hasNote()).forEach(r -> unnoted.add(r.key()));
         notes.keySet().retainAll(unnoted);
-        return new AiContent(text, caps, descriptions, utility, notes);
+        // step labels per route and path, newest first; only for decision points the routes still have
+        Map<String, StepLabel> steps = new LinkedHashMap<>();
+        if (previous != null) {
+            previous.steps().forEach(st -> steps.put(st.route() + " " + st.path(), st));
+        }
+        fresh.steps().forEach(st -> steps.put(st.route() + " " + st.path(), st));
+        Set<String> points = new LinkedHashSet<>();
+        overview.flows().forEach(r -> r.decisions().forEach(d -> points.add(r.key() + " " + d.path())));
+        steps.keySet().retainAll(points);
+        return new AiContent(text, caps, descriptions, utility, notes, new ArrayList<>(steps.values()));
     }
 
     /**
@@ -608,12 +678,18 @@ public final class IntegrationSummary {
                 DESCRIPTIONS:
                 - <route id>: <label: two to five words, a title and not a sentence> | <one sentence, at most 25 words, on what the route does and why>
 
+                STEPS:
+                - <route id> / <step path>: <label: two to five words> | <one sentence, at most 20 words, on what the route decides there and why>
+
                 Group the routes listed as needing grouping into two to six business capabilities, each route in one. \
                 A route that is plumbing with little business meaning (logging, dead letter, error handling, retries, \
-                housekeeping) goes under UTILITY instead of a capability. Routes already grouped by the source keep \
+                housekeeping) goes under UTILITY instead of a capability. A route that receives work from outside (an \
+                entry point) and passes it on is not utility: it belongs to the capability it feeds. Routes already grouped by the source keep \
                 their group: leave them out. Write a description only for the routes listed as needing one: the label is \
                 what a diagram box shows (such as "Order intake & validation"), the sentence explains it. Use the \
-                route ids exactly as given.""";
+                route ids exactly as given. Under STEPS, label each decision point listed, with its route id and step path \
+                exactly as given: say in business terms what the branch or step is for (such as "Widget orders" for a \
+                when on the product), not the expression.""";
     }
 
     /**
@@ -692,6 +768,19 @@ public final class IntegrationSummary {
         sb.append("\nRoutes needing a description: ");
         sb.append(undescribed.isEmpty() ? "none" : String.join(", ", undescribed.stream().map(Route::key).toList()))
                 .append('\n');
+        List<Route> deciding = overview.flows().stream().filter(r -> !r.decisions().isEmpty()).toList();
+        if (!deciding.isEmpty()) {
+            sb.append("\nDecision points (route id / step path: kind, what it decides on):\n");
+            for (Route r : deciding) {
+                for (RouteDecisions.DecisionPoint d : r.decisions()) {
+                    sb.append("- ").append(r.key()).append(" / ").append(d.path()).append(": ").append(d.type());
+                    if (d.expression() != null) {
+                        sb.append(", ").append(d.expression());
+                    }
+                    sb.append('\n');
+                }
+            }
+        }
 
         Map<String, String> files = sources != null ? sources : readSources(overview);
         if (!files.isEmpty()) {
@@ -776,7 +865,7 @@ public final class IntegrationSummary {
     }
 
     private static final Pattern SECTION = Pattern.compile(
-            "^\\s*(?:#+\\s*)?\\**\\s*(OVERVIEW|CAPABILITIES|UTILITY|DESCRIPTIONS)\\s*\\**\\s*(?::|$)\\s*\\**\\s*(.*)$",
+            "^\\s*(?:#+\\s*)?\\**\\s*(OVERVIEW|CAPABILITIES|UTILITY|DESCRIPTIONS|STEPS)\\s*\\**\\s*(?::|$)\\s*\\**\\s*(.*)$",
             Pattern.CASE_INSENSITIVE);
     private static final Pattern ITEM = Pattern.compile("^\\s*(?:[-*\u2022]|\\d+[.)])\\s+(.*)$");
 
@@ -803,6 +892,7 @@ public final class IntegrationSummary {
         Map<String, String> descriptions = new LinkedHashMap<>();
         Map<String, String> notes = new LinkedHashMap<>();
         List<String> utility = new ArrayList<>();
+        List<StepLabel> steps = new ArrayList<>();
         String section = null;
         for (String raw : answer.split("\\R")) {
             if (raw.strip().startsWith("```")) {
@@ -828,12 +918,22 @@ public final class IntegrationSummary {
                         capabilities.add(c);
                     }
                 }
+                case "STEPS" -> {
+                    Matcher item = ITEM.matcher(raw);
+                    StepLabel st = answerStep(item.matches() ? item.group(1) : raw.strip(), overview);
+                    if (st != null) {
+                        steps.add(st);
+                    }
+                }
                 case "UTILITY" -> {
                     Matcher item = ITEM.matcher(raw);
                     String body = item.matches() ? item.group(1) : raw.strip();
                     // "- id" or "- id: why"
                     String key = keyAndRest(body, keys)[0];
-                    if (ungrouped.contains(key) && !utility.contains(key)) {
+                    Route route = overview.route(key);
+                    // a route that starts a flow is intake, not plumbing
+                    if (ungrouped.contains(key) && !utility.contains(key)
+                            && (route == null || !ProjectCapabilities.startsAFlow(route, overview))) {
                         utility.add(key);
                     }
                 }
@@ -855,7 +955,43 @@ public final class IntegrationSummary {
             }
         }
         String overviewText = text.toString().strip();
-        return new AiContent(overviewText.isEmpty() ? null : overviewText, capabilities, descriptions, utility, notes);
+        return new AiContent(
+                overviewText.isEmpty() ? null : overviewText, capabilities, descriptions, utility, notes, steps);
+    }
+
+    /**
+     * A line of the STEPS section: {@code route / path: label | why}. A route key may have a slash or colon of its own
+     * ({@code src/main/java/Orders.java:12}), so the route is the longest key of the project the line starts with, and
+     * the path must be one of that route's decision points.
+     */
+    static StepLabel answerStep(String body, Overview overview) {
+        String line = body.strip().replace("`", "").replaceAll("^[*_\"']+", "");
+        List<Route> routes = new ArrayList<>(overview.flows());
+        routes.sort((a, b) -> b.key().length() - a.key().length());
+        for (Route r : routes) {
+            for (String form : List.of(r.key(), shortKey(r.key()))) {
+                if (!line.startsWith(form)) {
+                    continue;
+                }
+                String after = line.substring(form.length()).strip();
+                if (!after.startsWith("/")) {
+                    continue;
+                }
+                after = after.substring(1).strip();
+                int colon = after.indexOf(':');
+                if (colon <= 0) {
+                    continue;
+                }
+                String path = clean(after.substring(0, colon));
+                if (r.decisions().stream().anyMatch(d -> d.path().equals(path))) {
+                    String[] parts = labelAndNote(after.substring(colon + 1));
+                    if (parts[0] != null || parts[1] != null) {
+                        return new StepLabel(r.key(), path, parts[0], parts[1]);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /** The most words a description is taken as a label; a longer one without a label is taken as the note. */

@@ -18,8 +18,10 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -532,6 +534,11 @@ class SourceTab extends AbstractTab {
         if (dir == null || !Files.isDirectory(dir)) {
             return;
         }
+        showSourceDirectory(dir);
+    }
+
+    /** Shows the source directory of the integration: its files, and the routes of all its folders indexed. */
+    void showSourceDirectory(Path dir) {
         if (rootDir == null || !rootDir.equals(dir)) {
             rootDir = dir;
             assist.setRootDir(dir);
@@ -1024,51 +1031,152 @@ class SourceTab extends AbstractTab {
 
     // ---- Route jump links ----
 
+    /** At most this many files are indexed for the jump links, so a large folder does not stall the tab. */
+    static final int MAX_INDEXED_FILES = 2000;
+
+    /** Folders that hold no route sources of the project: build output and tooling; src/test is skipped too. */
+    private static final Set<String> SKIPPED_FOLDERS = Set.of("target", "build", "out", "bin", "node_modules");
+
+    /** What was indexed of a file, kept while the file is unchanged. */
+    private record Indexed(long modified, List<RouteEntry> routes, List<ToEntry> tos) {
+    }
+
+    private final Map<Path, Indexed> indexed = new HashMap<>();
+    private long indexedJavaStamp;
+
     private void buildRouteIndex() {
         List<RouteEntry> fromEntries = new ArrayList<>();
         List<ToEntry> toEntries = new ArrayList<>();
-        // the Java sources of the folder, for the constants a route takes from another class
+        List<Path> files = routeSources();
+        // the Java sources of the project, for the constants a route takes from another class
         Map<String, Supplier<String>> javaSources = new LinkedHashMap<>();
-        for (FilesBrowser.FileEntry entry : entries) {
-            if (!entry.directory() && entry.name().endsWith(".java")) {
-                Path path = Path.of(entry.path());
-                javaSources.put(entry.path(), () -> readQuietly(path));
+        long javaStamp = 0;
+        for (Path f : files) {
+            if (f.getFileName().toString().endsWith(".java")) {
+                javaSources.put(f.toString(), () -> readQuietly(f));
+                javaStamp = 31 * javaStamp + modified(f);
             }
         }
-        for (FilesBrowser.FileEntry entry : entries) {
-            if (entry.directory()) {
-                continue;
+        if (javaStamp != indexedJavaStamp) {
+            // a Java route may take a constant of any class of the project: read them again
+            indexed.keySet().removeIf(f -> f.getFileName().toString().endsWith(".java"));
+            indexedJavaStamp = javaStamp;
+        }
+        indexed.keySet().retainAll(files);
+        for (Path path : files) {
+            long modified = modified(path);
+            Indexed known = indexed.get(path);
+            if (known == null || known.modified() != modified) {
+                List<RouteEntry> routes = new ArrayList<>();
+                List<ToEntry> tos = new ArrayList<>();
+                indexFile(path, javaSources, routes, tos);
+                known = new Indexed(modified, routes, tos);
+                indexed.put(path, known);
             }
-            Path path = Path.of(entry.path());
-            if (isJavaRouteFile(path)) {
-                scanJavaRoutes(path, javaSources, fromEntries, toEntries);
-                continue;
-            }
-            if (!isCamelSourceFile(path)) {
-                continue;
-            }
-            if (SourceEditAssist.isYamlFile(path)) {
-                scanYamlRoutes(path, fromEntries, toEntries);
-            }
+            fromEntries.addAll(known.routes());
+            toEntries.addAll(known.tos());
         }
         routeIndex = fromEntries;
         toIndex = toEntries;
+    }
+
+    private void indexFile(
+            Path path, Map<String, Supplier<String>> javaSources, List<RouteEntry> fromEntries, List<ToEntry> toEntries) {
+        if (isJavaRouteFile(path)) {
+            scanJavaRoutes(path, javaSources, fromEntries, toEntries);
+            return;
+        }
+        if (!isCamelSourceFile(path)) {
+            return;
+        }
+        if (SourceEditAssist.isYamlFile(path)) {
+            scanYamlRoutes(path, fromEntries, toEntries);
+        } else if (path.getFileName().toString().toLowerCase().endsWith(".xml")) {
+            String content = readQuietly(path);
+            if (content != null) {
+                addRoutes(path, XmlRouteScanner.scan(content), fromEntries, toEntries);
+            }
+        }
+    }
+
+    /**
+     * The files whose routes are indexed: the YAML, XML and Java files under the source directory of the integration,
+     * not in build output or test folders; the files of the folder shown when there is no source directory.
+     */
+    List<Path> routeSources() {
+        List<Path> answer = new ArrayList<>();
+        if (rootDir == null || !Files.isDirectory(rootDir)) {
+            for (FilesBrowser.FileEntry entry : entries) {
+                if (!entry.directory() && isRouteSourceName(entry.name())) {
+                    answer.add(Path.of(entry.path()));
+                }
+            }
+            return answer;
+        }
+        try {
+            Files.walkFileTree(rootDir, Set.of(), 12, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    String name = dir.getFileName() != null ? dir.getFileName().toString() : "";
+                    boolean tests = "test".equals(name) && dir.getParent() != null
+                            && dir.getParent().getFileName() != null
+                            && "src".equals(dir.getParent().getFileName().toString());
+                    if (!dir.equals(rootDir) && (name.startsWith(".") || SKIPPED_FOLDERS.contains(name) || tests)) {
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    if (attrs.isRegularFile() && isRouteSourceName(file.getFileName().toString())) {
+                        answer.add(file);
+                    }
+                    return answer.size() >= MAX_INDEXED_FILES ? FileVisitResult.TERMINATE : FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException e) {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            // what was found so far
+        }
+        return answer;
+    }
+
+    private static boolean isRouteSourceName(String name) {
+        String lower = name.toLowerCase();
+        return lower.endsWith(".java") || lower.endsWith(".xml") || lower.endsWith(".yaml") || lower.endsWith(".yml");
+    }
+
+    private static long modified(Path file) {
+        try {
+            return Files.getLastModifiedTime(file).toMillis();
+        } catch (IOException e) {
+            return 0;
+        }
     }
 
     /** The routes of a Java source, read by the Java DSL parser without compiling or running it. */
     private void scanJavaRoutes(
             Path file, Map<String, Supplier<String>> javaSources, List<RouteEntry> fromEntries, List<ToEntry> toEntries) {
         String content = readQuietly(file);
-        if (content == null) {
-            return;
+        if (content != null) {
+            addRoutes(file, JavaRouteScanner.scan(content, javaSources, ArchitectureView.catalog()), fromEntries, toEntries);
         }
+    }
+
+    /** Adds the routes a scanner read from a file (Java or XML) to the index. */
+    private void addRoutes(Path file, List<ScannedRoute> routes, List<RouteEntry> fromEntries, List<ToEntry> toEntries) {
         String filePath = file.toString();
-        for (JavaRouteScanner.Route route : JavaRouteScanner.scan(content, javaSources, ArchitectureView.catalog())) {
+        for (ScannedRoute route : routes) {
             int before = fromEntries.size();
-            emitRouteEntry(fromEntries, route.id(), route.fromUri(), filePath, route.line());
+            emitRouteEntry(fromEntries, route.id(), JavaRouteScanner.uri(route.fromUri()), filePath, route.line());
             String routeId = fromEntries.size() > before ? fromEntries.get(before).routeId() : "";
-            for (JavaRouteScanner.To to : route.tos()) {
-                String toUri = stripQueryParams(to.uri());
+            for (ScannedRoute.To to : route.tos()) {
+                String toUri = stripQueryParams(JavaRouteScanner.uri(to.uri()));
                 if (toUri != null && !toUri.isEmpty()) {
                     toEntries.add(new ToEntry(routeId, toUri, filePath, to.line()));
                 }
@@ -1244,8 +1352,8 @@ class SourceTab extends AbstractTab {
             fromUriToRoute.put(re.fromUri(), re);
         }
 
-        if (currentFilePath.endsWith(".java")) {
-            // the steps of a Java route are in the index with their lines, as the parser read them
+        if (currentFilePath.endsWith(".java") || currentFilePath.toLowerCase().endsWith(".xml")) {
+            // the steps of a Java or XML route are in the index with their lines, as the parser read them
             for (ToEntry te : toIndex) {
                 if (currentFilePath.equals(te.filePath())) {
                     RouteEntry target = fromUriToRoute.get(te.toUri());
@@ -1361,6 +1469,12 @@ class SourceTab extends AbstractTab {
                 ctx.notificationCallback.accept("Save or discard edits before navigating to another file", false);
             }
             return;
+        }
+        Path target = Path.of(targetFilePath);
+        if (entries.stream().noneMatch(e -> !e.directory() && e.path().equals(targetFilePath))
+                && target.getParent() != null && Files.isDirectory(target.getParent())) {
+            // a route in another folder of the project: show that folder, with the file selected
+            loadDirectory(target.getParent(), target.getFileName().toString());
         }
         for (int idx = 0; idx < entries.size(); idx++) {
             FilesBrowser.FileEntry entry = entries.get(idx);

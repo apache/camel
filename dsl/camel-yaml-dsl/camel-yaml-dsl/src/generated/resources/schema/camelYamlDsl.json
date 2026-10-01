@@ -5408,6 +5408,13 @@
           "routePolicyRef" : {
             "type" : "string"
           },
+          "routeProperty" : {
+            "type" : "array",
+            "description" : "To set metadata as properties on the route.",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
+            }
+          },
           "shutdownRoute" : {
             "type" : "string",
             "description" : "To control how to shut down the route.",

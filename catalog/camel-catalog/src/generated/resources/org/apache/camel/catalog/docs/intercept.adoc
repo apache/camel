@@ -640,7 +640,7 @@ Java::
 [source,java]
 ----
 interceptSendToEndpoint("kafka*").skipSendToOriginalEndpoint()
-  .onWhen(simple("${header.biztype} == 'TEST'")
+  .onWhen(simple("${header.biztype} == 'TEST'"))
   .log("TEST message detected - is NOT send to kafka");
 
 from("jms:queue:order")

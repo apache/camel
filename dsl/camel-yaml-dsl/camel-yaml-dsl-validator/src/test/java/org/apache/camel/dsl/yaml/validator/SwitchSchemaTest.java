@@ -42,6 +42,15 @@ class SwitchSchemaTest {
                               uri: direct:review
                 """;
         assertThat(validator.validate(route)).isEmpty();
+        assertThat(validator.validate(route.replace("value: billing", "id: billingCase\n                value: \"001\"")))
+                .isEmpty();
+        assertThat(validator.validate(route.replace("uri: direct:billing",
+                "uri: direct\n                parameters:\n                  name: billing")
+                .replace("uri: direct:review", "uri: direct\n              parameters:\n                name: review")))
+                .isEmpty();
+        assertThat(validator.validate(route.replace("                uri: direct:billing\n", ""))).isNotEmpty();
+        assertThat(validator.validate(route.replace("uri: direct:billing", "steps: [{to: {uri: direct:billing}}]")))
+                .isNotEmpty();
         assertThat(validator.validate(route.replace("case:", "keys: [department, urgent]\n            case:")))
                 .isNotEmpty();
         assertThat(validator.validate(route.replace("value: billing", "values: [department: billing]")))

@@ -155,6 +155,21 @@ the first name a header is set with is the one that is kept. Code that iterates 
 case-sensitively, such as `Exchange.CONTENT_TYPE.equals(key)` or `key.startsWith("Camel")`, no longer matches
 `content-type` or `camelfilename`, as before Camel 4.21.
 
+=== camel-core - stream caching deletes a spooled file after the other on completions
+
+When stream caching spools a message body to disk, the temporary file is deleted by an on completion
+(`Synchronization`) of the exchange. This on completion now has the order `Ordered.LOWEST`, instead of the default
+order `0`, so it runs after the other on completions of the exchange. The file is therefore deleted later than
+before, never earlier. On completions with the same order (such as the disconnect of the FTP and SMB consumers, and
+the close of a JPA `EntityManager`) still run in the reverse order in which they were added.
+
+The `onCompletion` EIP in the default mode (`modeAfterConsumer`) now uses the order `Ordered.LOWEST - 1`, so it runs
+just before the file is deleted, and its copy of the exchange holds its own reference to a spooled body. An
+onCompletion can therefore read a spooled body, also with `parallelProcessing`. Previously it failed with a
+`NoSuchFileException`, and a parallel onCompletion stopped at the first step that read the body. As a side effect,
+an on completion with the order `Ordered.LOWEST` that was added after the onCompletion EIP (for example the close
+of a JPA `EntityManager` used later in the route) used to run before the onCompletion, and now runs after it.
+
 === @PropertyInject - an invalid property value is an error (Breaking change)
 
 When a property injected with `@PropertyInject` has a value that cannot be converted to the type of the field or
@@ -682,6 +697,15 @@ characters is written and read as before. A record with such characters written 
 short by that count, so it now fails the record `length` check (unless `ignoreMissingChars = true`) instead of being
 read with shifted fields. A system that reads these records by counting UTF-16 chars must count code points (or
 graphemes) instead.
+
+=== camel-hl7 - character sets from MSH-18
+
+The HL7 data format now maps the MSH-18 values `8859/6`, `8859/7`, `8859/8` and `8859/9` to ISO-8859-6 .. ISO-8859-9,
+`8859/15` to ISO-8859-15, and `GB 18030-2000` to GB18030, as in HL7 table 0211 (and as camel-mllp already does).
+Before, the first five fell back to the charset of the exchange (UTF-8 by default), and `GB 18030-2000` failed with
+`UnsupportedEncodingException`. Messages with these MSH-18 values are now read and written in the named charset, and
+unmarshal sets `CamelCharsetName` to it. A message whose MSH-18 names one of these charsets but that is actually
+encoded in another one (such as UTF-8) is now decoded in the charset it names.
 
 === Components and Language removal
 
@@ -4013,6 +4037,17 @@ were sent. As a result:
   item schema of the array. This applies to OpenAPI 3.0 contracts: for an OpenAPI 3.1 contract the
   validator does not recognise a header parameter as an array, so a repeated header is rejected
   like a single-value one.
+
+=== camel-jms - request/reply completes the exchange once when a send fails late
+
+An InOut exchange whose JMS send fails after the request timeout, or the reply, has already completed the exchange
+(for example a send that blocks longer than `requestTimeout` and then fails) is no longer completed a second time with
+the send exception. The send failure is logged at WARN level instead, and the exchange keeps the outcome of the timeout
+or the reply.
+
+The `cancelCorrelationId` method of `org.apache.camel.component.jms.reply.ReplyManager` (added in 4.22) now returns
+a `boolean`: `true` if the pending reply was cancelled, `false` if the request timeout or the reply had already taken
+it. A custom `ReplyManager` implementation has to change the return type.
 
 == ThrottlingExceptionRoutePolicy
 

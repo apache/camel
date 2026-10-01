@@ -17,6 +17,7 @@
 package org.apache.camel.java.in;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -43,6 +44,10 @@ final class JavaChainParser {
     }
 
     record Num(String text, int line) implements Node {
+    }
+
+    /** A char literal: {@code 'i'}. */
+    record Chr(char value, int line) implements Node {
     }
 
     record Bool(boolean value, int line) implements Node {
@@ -84,6 +89,13 @@ final class JavaChainParser {
 
     /** {@code new Foo(...)}, with or without a class body. */
     record New(String type, List<Node> args, boolean anonymous, String text, int line) implements Node {
+    }
+
+    /**
+     * A local variable holding what a route builder entry returns, continued by later statements:
+     * {@code RouteDefinition route = from("direct:a");} then {@code route.to("mock:a");}.
+     */
+    record Local(String name, Node value, int line) implements Node {
     }
 
     /** A lambda or method reference. */
@@ -170,6 +182,8 @@ final class JavaChainParser {
             for (int[] body : bodies) {
                 pos = body[0];
                 alias = body[2] >= 0 ? aliases.get(body[2]) : null;
+                // the locals of one configure() are not those of the next, as the replay has them
+                routeLocals.clear();
                 List<Node> statements = new ArrayList<>();
                 statements(body[1], statements, constants);
                 builders.add(statements);
@@ -237,7 +251,10 @@ final class JavaChainParser {
             } else if (t.is("}")) {
                 depth--;
                 pos++;
-            } else if ((t.isIdent("configure") || t.isIdent("configuration")) && at(1).is("(") && at(2).is(")")) {
+            } else if ((t.isIdent("configure") || t.isIdent("configuration")) && at(1).is("(") && at(2).is(")")
+                    && (at(3).is("{") || at(3).isIdent("throws"))) {
+                // the declaration of configure(), not a call such as camel.configure().addRoutesBuilder(...), whose
+                // anonymous RouteBuilder has a configure() of its own
                 int p = pos + 3;
                 // throws clause
                 while (tokens.get(p).kind() != Kind.EOF && !tokens.get(p).is("{") && !tokens.get(p).is(";")) {
@@ -322,6 +339,11 @@ final class JavaChainParser {
                 skipStatement(end);
                 continue;
             }
+            Local local = routeLocal();
+            if (local != null) {
+                out.add(local);
+                continue;
+            }
             if (t.isIdent("final") || t.isIdent("var") || isLocalDeclaration()) {
                 if (t.isIdent("final")) {
                     pos++;
@@ -333,7 +355,8 @@ final class JavaChainParser {
             if ((t.isIdent("this") || alias != null && t.isIdent(alias)) && at(1).is(".")) {
                 pos += 2;
             }
-            if (peek().kind() == Kind.IDENT && at(1).is("(")) {
+            if (peek().kind() == Kind.IDENT && (at(1).is("(") || routeLocals.contains(peek().text()) && at(1).is("."))) {
+                // a chain, or one continuing a route kept in a local variable: route.to("mock:a")
                 Node chain = chainFrom();
                 // an expression lambda ends without a semicolon
                 if (peek().is(";") || pos >= end) {
@@ -354,6 +377,41 @@ final class JavaChainParser {
                 out.add(new Opaque(text, line));
             }
         }
+    }
+
+    /** The local variables holding a route (or a part of one) in the builder being read. */
+    private final Set<String> routeLocals = new HashSet<>();
+
+    /**
+     * {@code [final] Type name = from(...)...;}: a route kept in a local variable, built where it is declared; null for
+     * any other statement.
+     */
+    private Local routeLocal() {
+        int p = pos;
+        if (tokens.get(p).isIdent("final")) {
+            p++;
+        }
+        Token type = tokens.get(p);
+        Token name = tokens.get(p + 1);
+        if (type.kind() != Kind.IDENT || name.kind() != Kind.IDENT || !tokens.get(p + 2).is("=")) {
+            return null;
+        }
+        Token entry = tokens.get(p + 3);
+        boolean fromLocal = routeLocals.contains(entry.text()) && tokens.get(p + 4).is(".");
+        if (entry.kind() != Kind.IDENT || !(BUILDER_ENTRIES.contains(entry.text()) && tokens.get(p + 4).is("(")
+                || fromLocal)) {
+            return null;
+        }
+        int start = pos;
+        pos = p + 3;
+        Node value = chainFrom();
+        if (!peek().is(";")) {
+            pos = start;
+            return null;
+        }
+        pos++;
+        routeLocals.add(name.text());
+        return new Local(name.text(), value, type.line());
     }
 
     /** Whether the statement is {@code Type name = ...;} with a simple type, a local variable. */
@@ -428,9 +486,13 @@ final class JavaChainParser {
         Token t = peek();
         int line = t.line();
         switch (t.kind()) {
-            case STRING, CHAR -> {
+            case STRING -> {
                 pos++;
                 return new Str(t.text(), line);
+            }
+            case CHAR -> {
+                pos++;
+                return t.text().length() == 1 ? new Chr(t.text().charAt(0), line) : new Str(t.text(), line);
             }
             case NUMBER -> {
                 pos++;

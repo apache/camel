@@ -196,7 +196,7 @@ something like:
 ._Java-only: incomplete route (thread pool example)_
 [source,java]
 ----
-from("disruptor:stageName").thread(5).process(...)
+from("disruptor:stageName").threads(5).process(...)
 ----
 
 Can wind up with adding a normal

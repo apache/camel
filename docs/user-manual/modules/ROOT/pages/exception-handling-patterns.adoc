@@ -96,7 +96,7 @@ Java::
 +
 [source,java]
 ----
-onException(ValidationException)
+onException(ValidationException.class)
     .handled(true);
 ----
 

@@ -7049,6 +7049,13 @@
 										"type": "string",
 										"description": "The message body to send. Can refer to files using file: prefix"
 									},
+									"bodyEncoding": {
+										"type": "string",
+										"enum": [
+											"base64"
+										],
+										"description": "Encoding of the body option. Use base64 to send binary content, which is decoded and sent as byte[]."
+									},
 									"bodyMaxChars": {
 										"type": "integer",
 										"default": 32768,

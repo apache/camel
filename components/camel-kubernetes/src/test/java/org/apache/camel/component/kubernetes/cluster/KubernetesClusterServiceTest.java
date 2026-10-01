@@ -249,6 +249,33 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
     }
 
     @Test
+    public void testLeaderKeepsLeadershipAfterFailedLeaseRenewal() {
+        LeaderRecorder mypod1 = addMember("mypod1", LeaseResourceType.Lease);
+        LeaderRecorder mypod2 = addMember("mypod2", LeaseResourceType.Lease);
+        context.start();
+
+        mypod1.waitForAnyLeader(5, TimeUnit.SECONDS);
+        mypod2.waitForAnyLeader(5, TimeUnit.SECONDS);
+
+        String leader = mypod1.getCurrentLeader();
+        assertNotNull(leader);
+        assertEquals(leader, mypod2.getCurrentLeader());
+
+        // the leader can read the lease but the renewal of the lease fails once
+        withLockServer(leader, server -> server.setRefuseUpdateRequests(true));
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> withLockServer(leader, server -> assertTrue(server.getRefusedUpdateRequests() > 0)));
+        withLockServer(leader, server -> server.setRefuseUpdateRequests(false));
+
+        // the leader keeps renewing the lease, so both pods keep seeing it as the leader
+        await().during(LEASE_TIME_MILLIS, TimeUnit.MILLISECONDS).atMost(3 * LEASE_TIME_MILLIS, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    assertEquals(leader, mypod1.getCurrentLeader());
+                    assertEquals(leader, mypod2.getCurrentLeader());
+                });
+    }
+
+    @Test
     public void testSharedConfigMap() {
         LeaderRecorder a1 = addMember("a1", LeaseResourceType.ConfigMap);
         LeaderRecorder a2 = addMember("a2", LeaseResourceType.ConfigMap);

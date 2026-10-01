@@ -65,24 +65,24 @@ class JavaRouteScannerTest {
     @Test
     void routesAndTheirStepsWithLines() {
         Map<String, Supplier<String>> sources = Map.of("/p/Orders.java", () -> ORDERS, "/p/Endpoints.java", () -> ENDPOINTS);
-        List<JavaRouteScanner.Route> routes = JavaRouteScanner.scan(ORDERS, sources, new DefaultCamelCatalog());
+        List<ScannedRoute> routes = JavaRouteScanner.scan(ORDERS, sources, new DefaultCamelCatalog());
 
-        assertThat(routes).extracting(JavaRouteScanner.Route::id).containsExactly("intake", null);
-        JavaRouteScanner.Route intake = routes.get(0);
+        assertThat(routes).extracting(ScannedRoute::id).containsExactly("intake", null);
+        ScannedRoute intake = routes.get(0);
         assertThat(intake.fromUri()).isEqualTo("platform-http:/orders");
         assertThat(intake.line()).isEqualTo(7);
         // lines from 0, as the Source tab counts them; the constant of the other class is resolved
         assertThat(intake.tos()).containsExactly(
-                new JavaRouteScanner.To("direct:vip", 10),
-                new JavaRouteScanner.To("direct:standard", 12),
-                new JavaRouteScanner.To("direct:audit?block=false", 14));
+                new ScannedRoute.To("direct:vip", 10),
+                new ScannedRoute.To("direct:standard", 12),
+                new ScannedRoute.To("direct:audit?block=false", 14));
 
-        JavaRouteScanner.Route vip = routes.get(1);
+        ScannedRoute vip = routes.get(1);
         assertThat(vip.fromUri()).isEqualTo("direct:vip");
         assertThat(vip.line()).isEqualTo(16);
         assertThat(vip.tos()).containsExactly(
-                new JavaRouteScanner.To("kafka:vip-${header.region}", 18),
-                new JavaRouteScanner.To("direct:audit", 20));
+                new ScannedRoute.To("kafka:vip-${header.region}", 18),
+                new ScannedRoute.To("direct:audit", 20));
     }
 
     @Test
@@ -94,10 +94,10 @@ class JavaRouteScannerTest {
                     }
                 }
                 """;
-        List<JavaRouteScanner.Route> routes = JavaRouteScanner.scan(source, Map.of(), new DefaultCamelCatalog());
+        List<ScannedRoute> routes = JavaRouteScanner.scan(source, Map.of(), new DefaultCamelCatalog());
         // direct://in as a route written as text has it, so it links to from("direct:in") in another file
         assertThat(routes.get(0).fromUri()).isEqualTo("direct:in");
-        assertThat(routes.get(0).tos()).containsExactly(new JavaRouteScanner.To("direct:out", 2));
+        assertThat(routes.get(0).tos()).containsExactly(new ScannedRoute.To("direct:out", 2));
     }
 
     @Test
@@ -114,11 +114,11 @@ class JavaRouteScannerTest {
                     }
                 }
                 """;
-        List<JavaRouteScanner.Route> routes = JavaRouteScanner.scan(source, Map.of(), new DefaultCamelCatalog());
+        List<ScannedRoute> routes = JavaRouteScanner.scan(source, Map.of(), new DefaultCamelCatalog());
         assertThat(routes.get(0).tos()).containsExactly(
-                new JavaRouteScanner.To("direct:billing", 4),
-                new JavaRouteScanner.To("direct:technical", 5),
-                new JavaRouteScanner.To("direct:review", 6));
+                new ScannedRoute.To("direct:billing", 4),
+                new ScannedRoute.To("direct:technical", 5),
+                new ScannedRoute.To("direct:review", 6));
     }
 
     @Test

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -77,19 +78,6 @@ public final class ProjectRoutes {
     /** The id given to an onException or error handler outside a route, followed by where it is written. */
     public static final String ERROR_HANDLER_PREFIX = "error-handler@";
 
-    private static final Pattern JAVA_FROM = Pattern.compile("(?<![.\\w])from\\s*\\(\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
-    private static final Pattern JAVA_CALL = Pattern.compile(
-            "\\.(to|toD|wireTap|enrich|pollEnrich|poll|routeId|routeDescription|routeNote|routeGroup|kamelet|recipientList|routingSlip"
-                                                             + "|dynamicRouter)\\s*\\(\\s*(\"((?:[^\"\\\\]|\\\\.)*)\")?");
-    private static final Pattern JAVA_STEP = Pattern.compile("\\.(\\w+)\\s*\\(");
-    private static final Pattern JAVA_ON_EXCEPTION = Pattern.compile("(?<![.\\w])onException\\s*\\(");
-    private static final Pattern JAVA_DEAD_LETTER = Pattern.compile(
-            "deadLetterChannel\\s*\\(\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
-    private static final Pattern JAVA_TO = Pattern.compile("\\.to\\s*\\(\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
-    /** Java DSL calls that do not change what a route does: naming and describing it. */
-    private static final Set<String> JAVA_NAMING
-            = Set.of("routeId", "routeDescription", "routeNote", "routeGroup", "id", "description", "note");
-
     private ProjectRoutes() {
     }
 
@@ -126,10 +114,20 @@ public final class ProjectRoutes {
      * @param restPath  the path of a REST operation
      * @param logOnly   whether every step of the route only logs: plumbing, not business logic
      * @param note      the route's note: a longer explanation beside the short description, may be null
+     * @param decisions the decision points of the route (choice, filter, split, ...), in route order
      */
     public record Route(String id, String kind, String description, String group, String file, int line, String format,
             boolean heuristic, Endpoint from, List<Endpoint> consumes, List<Endpoint> produces, int steps,
-            int insertAt, int indent, String restVerb, String restPath, boolean logOnly, String note) {
+            int insertAt, int indent, String restVerb, String restPath, boolean logOnly, String note,
+            List<RouteDecisions.DecisionPoint> decisions) {
+
+        /** A route without decision points. */
+        public Route(String id, String kind, String description, String group, String file, int line, String format,
+                     boolean heuristic, Endpoint from, List<Endpoint> consumes, List<Endpoint> produces, int steps,
+                     int insertAt, int indent, String restVerb, String restPath, boolean logOnly, String note) {
+            this(id, kind, description, group, file, line, format, heuristic, from, consumes, produces, steps, insertAt,
+                 indent, restVerb, restPath, logOnly, note, List.of());
+        }
 
         /** The route id, or where the route is written when it has none. */
         public String key() {
@@ -173,9 +171,8 @@ public final class ProjectRoutes {
                 return new XmlReader(file, content, catalog).read();
             }
             if (lower.endsWith(".java")) {
-                // the Java DSL parser gives the model of the routes; the patterns only when it finds none
-                List<Route> routes = JavaRouteReader.read(file, content, catalog, constants);
-                return !routes.isEmpty() ? routes : readJava(file, content, catalog);
+                // read into the model by the Java DSL parser, without compiling the source
+                return JavaRouteReader.read(file, content, catalog, constants);
             }
         } catch (RuntimeException e) {
             // an overview skips what it cannot read; the validator reports what is wrong with the file
@@ -298,6 +295,24 @@ public final class ProjectRoutes {
     }
 
     // ---- YAML ----
+
+    /** The names of the expression languages: those of the catalog, or the common ones without one. */
+    static Set<String> languages(CamelCatalog catalog) {
+        if (catalog == null) {
+            return COMMON_LANGUAGES;
+        }
+        Set<String> names = LANGUAGES.get();
+        if (names == null) {
+            names = Set.copyOf(catalog.findLanguageNames());
+            LANGUAGES.set(names);
+        }
+        return names;
+    }
+
+    private static final Set<String> COMMON_LANGUAGES = Set.of(
+            "simple", "constant", "header", "exchangeProperty", "variable", "jsonpath", "xpath", "jq", "groovy",
+            "tokenize", "method");
+    private static final AtomicReference<Set<String>> LANGUAGES = new AtomicReference<>();
 
     private static final class YamlReader {
         private final String file;
@@ -426,7 +441,7 @@ public final class ProjectRoutes {
             routes.set(i, new Route(
                     r.id(), r.kind(), description, r.group(), r.file(), r.line(), r.format(),
                     r.heuristic(), r.from(), r.consumes(), r.produces(), r.steps(), r.insertAt(), r.indent(), null,
-                    null, r.logOnly(), r.note()));
+                    null, r.logOnly(), r.note(), r.decisions()));
         }
 
         private Route route(String kind, MappingNode m, String idOverride, int line, int insertAt, int indent) {
@@ -456,13 +471,87 @@ public final class ProjectRoutes {
             if ("routeTemplate".equals(kind) && id != null) {
                 consumes.add(endpoint("kamelet:" + id, null, false, catalog));
             }
+            List<RouteDecisions.DecisionPoint> decisions = new ArrayList<>();
+            RouteDecisions.Scope scope = RouteDecisions.Scope.route();
+            if (fromNode instanceof MappingNode fm3) {
+                decisions(child(fm3, "steps"), scope, decisions, 0);
+            }
+            decisions(child(m, "steps"), scope, decisions, 0);
             Route r = new Route(
                     id, kind, str(value(m, "description")), str(value(m, "group")), file, line, "yaml",
                     false, from, consumes, produces, steps[0], insertAt, indent, null, null,
                     logOnly(fromNode instanceof MappingNode fm2 ? child(fm2, "steps") : child(m, "steps")),
-                    str(value(m, "note")));
+                    str(value(m, "note")), decisions);
             routes.add(r);
             return r;
+        }
+
+        /** The decision points below a node, with their paths (see {@link RouteDecisions}). */
+        private void decisions(
+                org.yaml.snakeyaml.nodes.Node node, RouteDecisions.Scope scope, List<RouteDecisions.DecisionPoint> found,
+                int depth) {
+            if (node == null || depth > MAX_DEPTH) {
+                return;
+            }
+            if (node instanceof SequenceNode seq) {
+                for (org.yaml.snakeyaml.nodes.Node item : seq.getValue()) {
+                    decisions(item, scope, found, depth + 1);
+                }
+            } else if (node instanceof MappingNode map) {
+                for (NodeTuple t : map.getValue()) {
+                    String key = scalar(t.getKeyNode());
+                    org.yaml.snakeyaml.nodes.Node value = t.getValueNode();
+                    if (key == null || "parameters".equals(key) || "switch".equals(key)) {
+                        // endpoint options, and a switch, whose otherwise is a destination, not a branch
+                        continue;
+                    }
+                    if (RouteDecisions.TYPES.contains(key)) {
+                        // when and doCatch are lists of branches, the others one mapping
+                        List<org.yaml.snakeyaml.nodes.Node> nodes = value instanceof SequenceNode s
+                                ? s.getValue() : List.of(value);
+                        for (org.yaml.snakeyaml.nodes.Node n : nodes) {
+                            RouteDecisions.Scope below = scope.child(key);
+                            MappingNode nm = n instanceof MappingNode x ? x : null;
+                            RouteDecisions.add(found, below, key, nm != null ? decisionText(key, nm) : scalar(n), line(n));
+                            decisions(n, below, found, depth + 1);
+                        }
+                    } else if (value instanceof MappingNode || value instanceof SequenceNode) {
+                        decisions(value, scope, found, depth + 1);
+                    }
+                }
+            }
+        }
+
+        /** What a decision point decides on, such as simple: ${header.x} > 5. */
+        private String decisionText(String type, MappingNode m) {
+            if ("doCatch".equals(type) && child(m, "exception") instanceof SequenceNode ex) {
+                List<String> names = new ArrayList<>();
+                ex.getValue().forEach(e -> names.add(scalar(e)));
+                return String.join(", ", names);
+            }
+            if ("aggregate".equals(type) && child(m, "correlationExpression") instanceof MappingNode ce) {
+                return languageText(ce);
+            }
+            return child(m, "expression") instanceof MappingNode e ? languageText(e) : languageText(m);
+        }
+
+        /** The language and text of an expression mapping: simple: ${body}, or the expression: form. */
+        private String languageText(MappingNode m) {
+            for (NodeTuple t : m.getValue()) {
+                String key = scalar(t.getKeyNode());
+                if (key == null || !isLanguage(key)) {
+                    continue;
+                }
+                org.yaml.snakeyaml.nodes.Node v = t.getValueNode();
+                String text = v instanceof ScalarNode sv ? sv.getValue()
+                        : v instanceof MappingNode vm ? str(value(vm, "expression")) : null;
+                return text != null ? key + ": " + text : null;
+            }
+            return null;
+        }
+
+        private boolean isLanguage(String name) {
+            return languages(catalog).contains(name);
         }
 
         /** Where an onException or error handler sends failed messages, as a route that only error handling uses. */
@@ -788,7 +877,60 @@ public final class ProjectRoutes {
             routes.add(new Route(
                     id, kind, description, attr(e, "group"), file, lineOf(template != null ? "routeTemplate" : "route", id),
                     "xml", false, from, consumes, produces, steps, -1, 0, null, null, logOnly(e),
-                    attr(template != null ? template : e, "note")));
+                    attr(template != null ? template : e, "note"), decisions(e)));
+        }
+
+        /** The decision points of a route, with their paths (see {@link RouteDecisions}). */
+        private List<RouteDecisions.DecisionPoint> decisions(Element route) {
+            List<RouteDecisions.DecisionPoint> found = new ArrayList<>();
+            decisions(route, RouteDecisions.Scope.route(), found, 0);
+            return found;
+        }
+
+        private void decisions(Element e, RouteDecisions.Scope scope, List<RouteDecisions.DecisionPoint> found, int depth) {
+            if (depth > MAX_DEPTH) {
+                return;
+            }
+            NodeList children = e.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                if (!(children.item(i) instanceof Element c)) {
+                    continue;
+                }
+                String name = localName(c);
+                if ("switch".equals(name)) {
+                    // its otherwise is a destination, not a branch
+                    continue;
+                }
+                RouteDecisions.Scope below = scope;
+                if (RouteDecisions.TYPES.contains(name)) {
+                    below = scope.child(name);
+                    RouteDecisions.add(found, below, name, decisionText(name, c), 0);
+                }
+                decisions(c, below, found, depth + 1);
+            }
+        }
+
+        /** What a decision point decides on, such as simple: ${header.x} > 5. */
+        private String decisionText(String type, Element e) {
+            if ("doCatch".equals(type)) {
+                List<String> names = new ArrayList<>();
+                NodeList ex = e.getElementsByTagNameNS("*", "exception");
+                for (int i = 0; i < ex.getLength(); i++) {
+                    names.add(ex.item(i).getTextContent().strip());
+                }
+                return names.isEmpty() ? null : String.join(", ", names);
+            }
+            Element holder = "aggregate".equals(type) ? firstChild(e, "correlationExpression") : e;
+            if (holder == null) {
+                return null;
+            }
+            NodeList children = holder.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                if (children.item(i) instanceof Element c && languages(catalog).contains(localName(c))) {
+                    return localName(c) + ": " + c.getTextContent().strip();
+                }
+            }
+            return null;
         }
 
         private void errorHandler(Element e) {
@@ -937,172 +1079,6 @@ public final class ProjectRoutes {
             }
         }
         return line;
-    }
-
-    // ---- Java ----
-
-    /**
-     * The routes of a Java RouteBuilder, one per {@code from("...")}: every string literal passed to an endpoint method
-     * until the next from belongs to it.
-     */
-    private static List<Route> readJava(String file, String content, CamelCatalog catalog) {
-        String code = stripComments(content);
-        List<Route> routes = new ArrayList<>();
-        Matcher from = JAVA_FROM.matcher(code);
-        List<int[]> starts = new ArrayList<>();
-        List<String> uris = new ArrayList<>();
-        while (from.find()) {
-            starts.add(new int[] { from.start(), from.end() });
-            uris.add(unescape(from.group(1)));
-        }
-        for (int i = 0; i < starts.size(); i++) {
-            int end = i + 1 < starts.size() ? starts.get(i + 1)[0] : code.length();
-            String body = code.substring(starts.get(i)[1], end);
-            // a statement ends the route: stop at the first semicolon outside a string
-            int stop = statementEnd(body);
-            body = body.substring(0, stop);
-            Endpoint fromEp = endpoint(uris.get(i), null, false, catalog);
-            List<Endpoint> consumes = new ArrayList<>();
-            List<Endpoint> produces = new ArrayList<>();
-            add(consumes, fromEp);
-            String id = null;
-            String description = null;
-            String note = null;
-            String group = null;
-            Matcher m = JAVA_CALL.matcher(body);
-            while (m.find()) {
-                String method = m.group(1);
-                String literal = m.group(3) != null ? unescape(m.group(3)) : null;
-                switch (method) {
-                    case "routeId" -> id = literal;
-                    case "routeDescription" -> description = literal;
-                    case "routeNote" -> note = literal;
-                    case "routeGroup" -> group = literal;
-                    case "kamelet" ->
-                        add(produces, literal != null ? endpoint("kamelet:" + literal, null, false, catalog) : null);
-                    case "poll", "pollEnrich" -> add(consumes,
-                            literal != null ? endpoint(literal, null, true, catalog) : dynamicEndpoint(method));
-                    case "recipientList", "routingSlip", "dynamicRouter" -> produces.add(dynamicEndpoint(method));
-                    default -> add(produces, literal != null
-                            ? endpoint(literal, null, !"to".equals(method), catalog) : dynamicEndpoint(method));
-                }
-            }
-            int steps = 0;
-            Matcher s = JAVA_STEP.matcher(body);
-            while (s.find()) {
-                steps++;
-            }
-            routes.add(new Route(
-                    id, "route", description, group, file, lineAt(content, starts.get(i)[0]),
-                    "java", true, fromEp, consumes, produces, steps, -1, 0, null, null,
-                    javaLogOnly(body, produces), note));
-        }
-        javaErrorHandlers(file, content, code, catalog, routes);
-        return routes;
-    }
-
-    /** onException statements and dead letter channels outside a route, as error handler routes. */
-    private static void javaErrorHandlers(
-            String file, String content, String code, CamelCatalog catalog, List<Route> routes) {
-        List<Endpoint> produces = new ArrayList<>();
-        int first = -1;
-        Matcher on = JAVA_ON_EXCEPTION.matcher(code);
-        while (on.find()) {
-            String statement = code.substring(on.start(), on.start() + statementEnd(code.substring(on.start())));
-            Matcher to = JAVA_TO.matcher(statement);
-            while (to.find()) {
-                add(produces, endpoint(unescape(to.group(1)), null, false, catalog));
-                first = first < 0 ? on.start() : first;
-            }
-        }
-        Matcher dlc = JAVA_DEAD_LETTER.matcher(code);
-        while (dlc.find()) {
-            add(produces, endpoint(unescape(dlc.group(1)), null, false, catalog));
-            first = first < 0 ? dlc.start() : Math.min(first, dlc.start());
-        }
-        if (!produces.isEmpty()) {
-            int line = lineAt(content, first);
-            routes.add(new Route(
-                    ERROR_HANDLER_PREFIX + file + ":" + line, "errorHandler", null, null, file, line, "java", true, null,
-                    List.of(), produces.stream().map(Endpoint::asOnError).toList(), 0, -1, 0, null, null, false, null));
-        }
-    }
-
-    /** Whether a Java route only logs: its calls are log, to a log endpoint, or naming the route. */
-    private static boolean javaLogOnly(String body, List<Endpoint> produces) {
-        boolean logs = false;
-        Matcher m = JAVA_STEP.matcher(body);
-        while (m.find()) {
-            String method = m.group(1);
-            if ("log".equals(method) || "to".equals(method)) {
-                logs = true;
-            } else if (!JAVA_NAMING.contains(method)) {
-                return false;
-            }
-        }
-        return logs && produces.stream().allMatch(e -> "log".equals(e.scheme()));
-    }
-
-    /** Comments are replaced by spaces so offsets in the code still match the file. */
-    private static String stripComments(String content) {
-        StringBuilder sb = new StringBuilder(content.length());
-        int i = 0;
-        boolean inString = false;
-        while (i < content.length()) {
-            char c = content.charAt(i);
-            if (inString) {
-                sb.append(c);
-                if (c == '\\' && i + 1 < content.length()) {
-                    sb.append(content.charAt(++i));
-                } else if (c == '"') {
-                    inString = false;
-                }
-                i++;
-            } else if (c == '"') {
-                inString = true;
-                sb.append(c);
-                i++;
-            } else if (c == '/' && i + 1 < content.length() && content.charAt(i + 1) == '/') {
-                while (i < content.length() && content.charAt(i) != '\n') {
-                    sb.append(' ');
-                    i++;
-                }
-            } else if (c == '/' && i + 1 < content.length() && content.charAt(i + 1) == '*') {
-                int end = content.indexOf("*/", i + 2);
-                end = end < 0 ? content.length() : end + 2;
-                while (i < end) {
-                    sb.append(content.charAt(i) == '\n' ? '\n' : ' ');
-                    i++;
-                }
-            } else {
-                sb.append(c);
-                i++;
-            }
-        }
-        return sb.toString();
-    }
-
-    private static int statementEnd(String body) {
-        boolean inString = false;
-        for (int i = 0; i < body.length(); i++) {
-            char c = body.charAt(i);
-            if (inString) {
-                if (c == '\\') {
-                    i++;
-                } else if (c == '"') {
-                    inString = false;
-                }
-            } else if (c == '"') {
-                inString = true;
-            } else if (c == ';') {
-                return i;
-            }
-        }
-        return body.length();
-    }
-
-    private static String unescape(String literal) {
-        return literal.replace("\\\"", "\"").replace("\\\\", "\\");
     }
 
     /**

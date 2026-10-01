@@ -32,7 +32,11 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.yaml.validator.EndpointConsumers;
+import org.apache.camel.java.in.JavaParseResult;
+import org.apache.camel.java.in.LwJavaParser;
+import org.apache.camel.model.RouteDefinition;
 
 /**
  * A {@code direct:} or {@code seda:} endpoint a YAML route sends to, and no route of the application consumes
@@ -41,13 +45,8 @@ import org.apache.camel.dsl.yaml.validator.EndpointConsumers;
  */
 public final class EndpointConsumerChecks {
 
-    /**
-     * A Java DSL route input: from( not called on something else, so not Instant.from( or List.from(; its endpoint is
-     * read only when a string literal is the whole argument, not the start of from("direct:" + NAME).
-     */
-    private static final Pattern JAVA_FROM = Pattern.compile("(?<![.\\w])from\\s*\\(\\s*(\"([^\"]*)\"\\s*(?=[),]))?");
-    /** Route inputs the scan cannot read: a route template's from( and fromF( with a format. */
-    private static final Pattern JAVA_UNREADABLE = Pattern.compile("\\b(routeTemplate|fromF)\\s*\\(");
+    /** A Java DSL route input: from( not called on something else, so not Instant.from( or List.from(. */
+    private static final Pattern JAVA_FROM = Pattern.compile("(?<![.\\w])from\\s*\\(");
     /** The build files of a project whose routes are spread over src/main/java and src/main/resources. */
     private static final List<String> BUILD_FILES = List.of("pom.xml", "build.gradle", "build.gradle.kts");
     private static final Pattern XML_FROM = Pattern.compile("<from\\s[^>]*?\\buri\\s*=\\s*[\"']([^\"']*)[\"']");
@@ -62,7 +61,15 @@ public final class EndpointConsumerChecks {
      * @return             the messages, one per endpoint no route consumes
      */
     public static List<String> validateYamlConsumers(String content, Path directory, String excludeFile) {
-        return EndpointConsumers.check(content, consumed(directory, excludeFile));
+        return validateYamlConsumers(content, directory, excludeFile, null);
+    }
+
+    /**
+     * @param catalog for the endpoint DSL of Java routes, may be null
+     */
+    public static List<String> validateYamlConsumers(
+            String content, Path directory, String excludeFile, CamelCatalog catalog) {
+        return EndpointConsumers.check(content, consumed(directory, excludeFile, catalog));
     }
 
     /**
@@ -71,7 +78,7 @@ public final class EndpointConsumerChecks {
      * Gradle project, more files than the scan looks at, or a route input the scan cannot read (a Java {@code from(}
      * with no literal, a placeholder, a route template), which could be any endpoint.
      */
-    static Set<String> consumed(Path directory, String excludeFile) {
+    static Set<String> consumed(Path directory, String excludeFile, CamelCatalog catalog) {
         if (directory == null || !Files.isDirectory(directory)) {
             return null;
         }
@@ -91,7 +98,7 @@ public final class EndpointConsumerChecks {
                 if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
                     found = EndpointConsumers.consumed(Files.readString(p));
                 } else if (lower.endsWith(".java")) {
-                    found = javaConsumed(Files.readString(p));
+                    found = javaConsumed(Files.readString(p), catalog);
                 } else {
                     found = xmlConsumed(Files.readString(p));
                 }
@@ -177,15 +184,25 @@ public final class EndpointConsumerChecks {
                 && (lower.endsWith(".yaml") || lower.endsWith(".yml") || lower.endsWith(".java") || lower.endsWith(".xml"));
     }
 
-    static Set<String> javaConsumed(String src) {
-        if (JAVA_UNREADABLE.matcher(src).find()) {
+    /**
+     * The endpoints the routes of a Java source consume, read into the model by the Java DSL parser (CAMEL-25199), so
+     * constants, String.format and the endpoint DSL are resolved; null when they cannot be known: a route template,
+     * whose input is a parameter, an input known only at runtime, or a from( the parser could not read.
+     */
+    static Set<String> javaConsumed(String src, CamelCatalog catalog) {
+        JavaParseResult result = JavaRouteReader.parse(src, catalog, null);
+        if (!result.routeTemplates().getRouteTemplates().isEmpty()) {
+            return null;
+        }
+        List<RouteDefinition> routes = result.routes().getRoutes();
+        if (routes.isEmpty() && JAVA_FROM.matcher(src).find()) {
+            // a from( the parser did not read as a route: what it consumes is not known
             return null;
         }
         Set<String> answer = new HashSet<>();
-        Matcher m = JAVA_FROM.matcher(src);
-        while (m.find()) {
-            // from(someConstant) or from(direct("x")): the endpoint is not in the source as a literal
-            if (m.group(2) == null || !add(m.group(2), answer)) {
+        for (RouteDefinition r : routes) {
+            String uri = r.getInput() != null ? r.getInput().getUri() : null;
+            if (uri == null || uri.contains(LwJavaParser.UNRESOLVED_PREFIX) || !add(uri, answer)) {
                 return null;
             }
         }

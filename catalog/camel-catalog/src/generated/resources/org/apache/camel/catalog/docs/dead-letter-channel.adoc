@@ -324,7 +324,7 @@ Java::
 ----
 errorHandler(deadLetterChannel("jms:queue:dead")
   .maximumRedeliveries(3)
-  .onRedeliver(new MyOnRedeliveryProcessor());
+  .onRedelivery(new MyOnRedeliveryProcessor()));
 ----
 
 Spring XML::

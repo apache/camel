@@ -91,6 +91,17 @@ the most specific; candidates are tried in a stable order.
   source files, and the catalog's component header constants (`KafkaConstants.KEY`) and enum values
   (`HazelcastOperation.PUT`).
 
+=== Where it is used
+
+camel-jbang reads Java routes with the parser only; the pattern matching on string literals it had before is gone
+(CAMEL-25199):
+
+* the project overview (`camel overview`, the `camel_project_overview` MCP tool, the TUI Architecture and Topology
+  views);
+* the consumer check of `camel validate`: which `direct:` and `seda:` endpoints the Java routes of an application
+  consume, with constants, formats and the endpoint DSL resolved;
+* the jump links between routes in the TUI Source tab.
+
 === Transforming Java routes
 
 `camel transform route` reads Java routes with the parser by default and writes them with the dump strategy of a

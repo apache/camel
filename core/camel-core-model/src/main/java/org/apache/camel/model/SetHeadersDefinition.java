@@ -29,7 +29,6 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -85,8 +84,8 @@ public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefiniti
             throw new IllegalArgumentException("Keys must be Strings");
         }
         if (!(value instanceof Expression)) {
-            // Assume it's a constant of some kind
-            value = ExpressionBuilder.constantExpression(value);
+            // a constant: as the constant language when it is a plain value, so every DSL can write it
+            value = ExpressionNodeHelper.toConstantExpression(value);
         }
         headers.add(new SetHeaderDefinition((String) key, (Expression) value));
     }

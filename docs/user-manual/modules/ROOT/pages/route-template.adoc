@@ -501,7 +501,7 @@ public class MyRouteTemplates extends RouteBuilder {
             .templateParameter("color")
             .from("direct:{{name}}")
                 .choice()
-                    .when(simple("'{{color}}' == 'red'") // <1>
+                    .when(simple("'{{color}}' == 'red'")) // <1>
                         .to("direct:red")
                     .otherwise()
                         .to("color:other")

@@ -13,6 +13,12 @@ on the contents of the message exchanges.
 
 image::eip/ContentBasedRouter.gif[image]
 
+TIP: For a decision table based on the literal value of one expression, use
+xref:switch-eip.adoc[Switch]. Each Switch case sends to one endpoint, with no inline
+processing steps. Branches can be separate routes linked through
+xref:ROOT:direct-component.adoc[Direct] or xref:ROOT:seda-component.adoc[SEDA].
+Choice supports predicates, ranges, and inline processing steps.
+
 == Choice options
 
 // eip options: START

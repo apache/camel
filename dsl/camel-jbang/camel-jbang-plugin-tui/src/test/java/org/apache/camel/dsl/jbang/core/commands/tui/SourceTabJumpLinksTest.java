@@ -128,6 +128,81 @@ class SourceTabJumpLinksTest {
         assertThat(back.routeId()).isEqualTo("file:inbox");
     }
 
+    @Test
+    void xmlRoutesLinkToAndFromTheOthers() throws Exception {
+        // CAMEL-25196: XML routes have the jump links of the YAML and Java ones
+        Path orders = Files.writeString(dir.resolve("orders.xml"), """
+                <routes xmlns="http://camel.apache.org/schema/xml-io">
+                  <route id="orders">
+                    <from uri="file:inbox"/>
+                    <to uri="direct:billing"/>
+                  </route>
+                </routes>
+                """);
+        Path billing = Files.writeString(dir.resolve("billing.camel.yaml"), """
+                - route:
+                    id: billing
+                    from:
+                      uri: direct:billing
+                      steps:
+                        - to:
+                            uri: log:billing
+                """);
+        SourceTab tab = newTab();
+        assertThat(tab.loadDirectory(dir)).isTrue();
+
+        SourceViewer.JumpLink link = tab.computeJumpLinks(orders).get(3);
+        assertThat(link.routeId()).isEqualTo("billing");
+        assertThat(link.filePath()).isEqualTo(billing.toString());
+        SourceViewer.JumpLink back = tab.computeJumpLinks(billing).get(2);
+        assertThat(back.routeId()).isEqualTo("orders");
+        assertThat(back.targetLine()).isEqualTo(3);
+    }
+
+    @Test
+    void routesOfEveryFolderOfTheProject() throws Exception {
+        // CAMEL-25198: a Java route links to a route of another package; tests and build output are left out
+        Path orders = dir.resolve("src/main/java/com/acme/orders/OrderRoute.java");
+        Path billing = dir.resolve("src/main/java/com/acme/billing/BillingRoute.java");
+        Path fake = dir.resolve("src/test/java/com/acme/FakeBilling.java");
+        Path copy = dir.resolve("target/classes/BillingRoute.java");
+        for (Path p : List.of(orders, billing, fake, copy)) {
+            Files.createDirectories(p.getParent());
+        }
+        Files.writeString(orders, """
+                package com.acme.orders;
+
+                public class OrderRoute extends RouteBuilder {
+                    public void configure() {
+                        from("file:inbox").routeId("orders")
+                            .to("direct:billing");
+                    }
+                }
+                """);
+        String billingRoute = """
+                package com.acme.billing;
+
+                public class BillingRoute extends RouteBuilder {
+                    public void configure() {
+                        from("direct:billing").routeId("billing")
+                            .to("log:billing");
+                    }
+                }
+                """;
+        Files.writeString(billing, billingRoute);
+        Files.writeString(copy, billingRoute);
+        Files.writeString(fake, billingRoute.replace("\"billing\")", "\"fake\")"));
+
+        SourceTab tab = newTab();
+        tab.showSourceDirectory(dir);
+        assertThat(tab.routeSources()).containsExactlyInAnyOrder(orders, billing);
+
+        SourceViewer.JumpLink link = tab.computeJumpLinks(orders).get(5);
+        assertThat(link.routeId()).isEqualTo("billing");
+        assertThat(link.filePath()).isEqualTo(billing.toString());
+        assertThat(tab.computeJumpLinks(billing).get(4).filePath()).isEqualTo(orders.toString());
+    }
+
     private static SourceTab newTab() {
         return new SourceTab(new MonitorContext(new AtomicReference<>(List.of()), new AtomicReference<>(List.of())));
     }
