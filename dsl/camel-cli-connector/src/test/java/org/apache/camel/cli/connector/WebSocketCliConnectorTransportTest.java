@@ -84,8 +84,9 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
         tool.start(0);
         property("camel.cli.transport", "websocket");
         property("camel.cli.websocket.url", "ws://127.0.0.1:" + tool.port + "/v1/worker/connect?executionId=it-1");
-        property("camel.cli.websocket.snapshotInterval", "200");
-        property("camel.cli.websocket.reconnectDelay", "100");
+        // kebab-case and camelCase keys are both accepted
+        property("camel.cli.websocket.snapshot-interval", "200");
+        property("camel.cli.websocket.reconnect-delay", "100");
         property("camel.cli.websocket.reconnectMaxDelay", "500");
     }
 

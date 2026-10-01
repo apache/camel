@@ -40,7 +40,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedStartupListener;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -134,12 +136,12 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
             throw new IllegalArgumentException(
                     "camel.cli.websocket.token must be set when camel.cli.websocket.url is not a loopback address");
         }
-        reconnectDelay = Long.parseLong(property("camel.cli.websocket.reconnectDelay", "1000"));
-        reconnectMaxDelay = Long.parseLong(property("camel.cli.websocket.reconnectMaxDelay", "30000"));
+        reconnectDelay = Long.parseLong(property("camel.cli.websocket.reconnect-delay", "1000"));
+        reconnectMaxDelay = Long.parseLong(property("camel.cli.websocket.reconnect-max-delay", "30000"));
         // as the file transport: faster when debugging
         snapshotInterval = Long.parseLong(
-                property("camel.cli.websocket.snapshotInterval", camelContext.isDebugging() ? "100" : "1000"));
-        heartbeatInterval = Long.parseLong(property("camel.cli.websocket.heartbeatInterval", "10000"));
+                property("camel.cli.websocket.snapshot-interval", camelContext.isDebugging() ? "100" : "1000"));
+        heartbeatInterval = Long.parseLong(property("camel.cli.websocket.heartbeat-interval", "10000"));
 
         LOG.warn("Camel CLI connector connects to {} which gets full control of this application (development use only)",
                 where());
@@ -604,8 +606,13 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         return frame;
     }
 
+    /**
+     * The key in kebab-case, or in camelCase, as camel-main accepts both (camel.cli.websocket.snapshot-interval or
+     * camel.cli.websocket.snapshotInterval).
+     */
     private String property(String key, String defaultValue) {
-        return camelContext.getPropertiesComponent().resolveProperty(key).orElse(defaultValue);
+        PropertiesComponent pc = camelContext.getPropertiesComponent();
+        return pc.resolveProperty(key).or(() -> pc.resolveProperty(StringHelper.dashToCamelCase(key))).orElse(defaultValue);
     }
 
     private String where() {

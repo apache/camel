@@ -60,13 +60,16 @@ java -Dcamel.cli.transport=websocket \
 | `camel.cli.websocket.token` | | Sent as `Authorization: Bearer <token>` when connecting. Required unless the URL
   is a loopback address. Can be set with the `CAMEL_CLI_WEBSOCKET_TOKEN` environment variable, which other users
   on the machine cannot read from the process list.
-| `camel.cli.websocket.snapshotInterval` | `1000` | How often snapshots are sent, in millis.
-| `camel.cli.websocket.heartbeatInterval` | `10000` | How often the connection is checked with a ping, in millis.
+| `camel.cli.websocket.snapshot-interval` | `1000` | How often snapshots are sent, in millis.
+| `camel.cli.websocket.heartbeat-interval` | `10000` | How often the connection is checked with a ping, in millis.
   The connection is re-established when the tool does not answer for three intervals.
-| `camel.cli.websocket.reconnectDelay` | `1000` | Delay before reconnecting, in millis. It doubles after each
+| `camel.cli.websocket.reconnect-delay` | `1000` | Delay before reconnecting, in millis. It doubles after each
   failed attempt (with some random jitter).
-| `camel.cli.websocket.reconnectMaxDelay` | `30000` | Maximum delay before reconnecting, in millis.
+| `camel.cli.websocket.reconnect-max-delay` | `30000` | Maximum delay before reconnecting, in millis.
 |===
+
+As with Camel Main options, the camelCase form of the keys is accepted too (for example
+`camel.cli.websocket.snapshotInterval`).
 
 Every frame is a JSON object with a protocol version `v` and a `type`. The `action` and the snapshot `data` are the
 same JSON the file transport reads and writes:
