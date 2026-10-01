@@ -84,6 +84,14 @@ class LogTabRenderTest {
     }
 
     @Test
+    void theTitleNamesTheIntegrationAndItsLogLevel() {
+        info.rootLogLevel = "INFO";
+        LogTab tab = new LogTab(ctx);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
+        assertTrue(rendered.contains("[test-app] Log level:INFO"), rendered);
+    }
+
+    @Test
     void renderShowsLoadingOrEmpty() {
         LogTab tab = new LogTab(ctx);
         String rendered = TuiTestHelper.renderToString(tab, 120, 20);
