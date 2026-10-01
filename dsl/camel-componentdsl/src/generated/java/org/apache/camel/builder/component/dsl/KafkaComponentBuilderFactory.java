@@ -306,10 +306,12 @@ public interface KafkaComponentBuilderFactory {
     
         
         /**
-         * What to do when there is no initial offset in ZooKeeper or if an
-         * offset is out of range: earliest : automatically reset the offset to
-         * the earliest offset latest: automatically reset the offset to the
-         * latest offset fail: throw exception to the consumer.
+         * Where a consumer group starts reading when it has no committed
+         * offset, or the committed offset is out of range. Valid values are:
+         * earliest (seek to the earliest available offset), latest (seek to the
+         * latest offset, the default), none (throw an exception if no previous
+         * offset is found), by_duration: followed by an ISO-8601 duration (e.g.
+         * by_duration:PT5M or by_duration:P1D; requires Kafka 4.0 or later).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
