@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -829,6 +830,35 @@ public final class AuthoringTools {
         return n;
     }
 
+    /**
+     * The problems of the new content that the file did not have: a problem is the same when its message is, wherever
+     * its line moved to (as many times as it was there).
+     *
+     * @param stillThere gets the problems of the new content the file already had
+     */
+    public static List<String> newProblems(List<String> before, List<String> after, List<String> stillThere) {
+        Map<String, Integer> known = new HashMap<>();
+        for (String b : before) {
+            known.merge(withoutLine(b), 1, Integer::sum);
+        }
+        List<String> answer = new ArrayList<>();
+        for (String a : after) {
+            String key = withoutLine(a);
+            Integer n = known.get(key);
+            if (n != null && n > 0) {
+                known.put(key, n - 1);
+                stillThere.add(a);
+            } else {
+                answer.add(a);
+            }
+        }
+        return answer;
+    }
+
+    private static String withoutLine(String message) {
+        return message != null ? message.replaceFirst("^Line \\d+: ", "") : "";
+    }
+
     /** Writes a file after validating it, as {@code camel_write_file} does; no confirmation is asked here. */
     public static JsonObject writeFile(ToolContext ctx, Path dir, String file, String content, boolean validate) {
         Path path = resolveFile(dir, file);
@@ -836,10 +866,20 @@ public final class AuthoringTools {
         if (exists && !Files.isRegularFile(path)) {
             throw new ToolExecutionException(file + " is not a regular file");
         }
+        List<String> problemsBefore = List.of();
         if (validate && SourceValidator.isValidatableFile(file)) {
             // a missing consumer of a direct: endpoint does not refuse the write: it is often a file not written yet
             List<String> errors = SourceValidator.validate(file, content, ctx.catalog(), ctx.propertyLineValidator(), dir,
                     null, false);
+            if (!errors.isEmpty() && exists) {
+                // the problems the file already had do not refuse the write: an edit that fixes one problem would be
+                // refused for the others, and the agent made to fix them all; only the problems the write brings are
+                problemsBefore = SourceValidator.validate(file, read(path), ctx.catalog(), ctx.propertyLineValidator(),
+                        dir, null, false);
+                List<String> stillThere = new ArrayList<>();
+                errors = newProblems(problemsBefore, errors, stillThere);
+                problemsBefore = stillThere;
+            }
             if (!errors.isEmpty()) {
                 JsonObject result = new JsonObject();
                 result.put("status", "invalid");
@@ -872,6 +912,10 @@ public final class AuthoringTools {
         result.put("directory", dir.toString());
         result.put("lines", content.isEmpty() ? 0 : (int) content.lines().count());
         result.put("bytes", content.getBytes(StandardCharsets.UTF_8).length);
+        if (!problemsBefore.isEmpty()) {
+            // written with problems the file already had: said, so they are not taken for fixed
+            result.put("existingProblems", new JsonArray(problemsBefore));
+        }
         if (watch) {
             JsonObject reload = ReloadOutcome.await(ctx.pid(), processName, sinceKey, RELOAD_WAIT_MILLIS);
             result.put("reload", reload);

@@ -1142,6 +1142,16 @@ class McpFacade {
         }
         if (sourceValidator != null && SourceValidator.isValidatableFile(file)) {
             List<String> errors = sourceValidator.apply(file, content);
+            if (!errors.isEmpty() && exists) {
+                // only the problems the write brings refuse it, not the ones the file already had: an edit that fixes
+                // one problem would be refused for the others
+                try {
+                    List<String> before = sourceValidator.apply(file, Files.readString(filePath, StandardCharsets.UTF_8));
+                    errors = AuthoringTools.newProblems(before, errors, new ArrayList<>());
+                } catch (IOException e) {
+                    // the file as it was is not known: every problem refuses the write
+                }
+            }
             if (!errors.isEmpty()) {
                 JsonObject result = new JsonObject();
                 result.put("status", "invalid");
