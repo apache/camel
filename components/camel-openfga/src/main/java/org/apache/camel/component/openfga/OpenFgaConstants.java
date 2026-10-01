@@ -76,6 +76,14 @@ public final class OpenFgaConstants {
               javaType = "String")
     public static final String STORE_ID = HEADER_PREFIX + "StoreId";
 
+    @Metadata(label = "producer",
+              description = "The continuation token the readTuples or readChanges page came back with, or absent when"
+                            + " there is no further page. Feed it back through the continuationToken option to read"
+                            + " the next one; for readChanges, keeping the last token is what lets a route resume"
+                            + " where it left off instead of replaying the whole log.",
+              javaType = "String")
+    public static final String CONTINUATION_TOKEN = HEADER_PREFIX + "ContinuationToken";
+
     @Metadata(label = "producer", description = "How many relationship tuples the writeTuples operation wrote.",
               javaType = "Integer")
     public static final String WRITTEN_TUPLES = HEADER_PREFIX + "WrittenTuples";

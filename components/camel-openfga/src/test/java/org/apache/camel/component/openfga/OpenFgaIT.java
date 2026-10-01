@@ -238,6 +238,57 @@ class OpenFgaIT extends CamelTestSupport {
     }
 
     @Test
+    void readsTheStoredTuplesInAShapeDeleteTuplesAccepts() {
+        Exchange read = template.request(openfga("readTuples", "object=document:&user=user:bob"), e -> {
+        });
+
+        assertThat(read.getException()).isNull();
+        assertThat(read.getMessage().getBody(List.class)).isNotEmpty();
+        // bob's only stored tuple is reader on the roadmap
+        assertThat(read.getMessage().getBody(List.class)).anySatisfy(entry -> {
+            Map<?, ?> tuple = (Map<?, ?>) entry;
+            assertThat(tuple.get("user")).isEqualTo("user:bob");
+            assertThat(tuple.get("relation")).isEqualTo("reader");
+            assertThat(tuple.get("object")).isEqualTo("document:roadmap");
+        });
+    }
+
+    @Test
+    void readsTheChangeLogAndPagesWithTheContinuationToken() {
+        Exchange firstPage = template.request(openfga("readChanges", "pageSize=1"), e -> {
+        });
+
+        assertThat(firstPage.getException()).isNull();
+        assertThat(firstPage.getMessage().getBody(List.class)).hasSize(1);
+        assertThat(((Map<?, ?>) firstPage.getMessage().getBody(List.class).get(0)).get("operation"))
+                .isEqualTo("WRITE");
+
+        String token = firstPage.getMessage().getHeader(OpenFgaConstants.CONTINUATION_TOKEN, String.class);
+        assertThat(token).isNotBlank();
+
+        Exchange secondPage = template.request(
+                openfga("readChanges", "pageSize=1&continuationToken=${header.resume}"),
+                e -> e.getMessage().setHeader("resume", token));
+
+        assertThat(secondPage.getException()).isNull();
+        assertThat(secondPage.getMessage().getBody(List.class)).hasSize(1);
+        // a different change than the first page, which is what paging is for
+        assertThat(secondPage.getMessage().getBody(List.class).get(0))
+                .isNotEqualTo(firstPage.getMessage().getBody(List.class).get(0));
+    }
+
+    @Test
+    void expandShowsHowARelationResolves() {
+        Exchange out = template.request(openfga("expand", "object=document:budget&relation=reader"), e -> {
+        });
+
+        assertThat(out.getException()).isNull();
+        // anne reads the budget through owner, so the tree must mention the relation rather than just listing her
+        assertThat(out.getMessage().getBody()).isNotNull();
+        assertThat(out.getMessage().getBody().toString()).contains("document:budget#reader");
+    }
+
+    @Test
     void listsTheObjectsASubjectCanRead() {
         Exchange out = template.request(
                 openfga("listObjects", "relation=reader&user=user:anne&type=document"), e -> {
