@@ -3614,6 +3614,18 @@ Ordinary document properties are unaffected and continue to be mapped as before.
 previous behaviour can supply a custom `headerFilterStrategy` on the `jcr` endpoint to opt out of, or narrow,
 the filtering.
 
+=== camel-spring-ws - internal Camel headers are now filtered when mapping SOAP response headers
+
+When `allowResponseHeaderOverride` is enabled, the `spring-ws` producer now applies the endpoint's
+`headerFilterStrategy` to the SOAP response header attributes and elements it maps onto the message, as the
+`spring-ws` consumer already does for inbound SOAP headers. With the default `SpringWebserviceHeaderFilterStrategy`,
+attribute and element names starting with `Camel` or `camel` (case-insensitively) are no longer copied onto the
+message.
+
+Other SOAP response header attributes and elements are mapped as before, and the raw SOAP header is still
+available in the `CamelSpringWebserviceSoapHeader` header. A route that relies on the previous behaviour can supply a
+custom `headerFilterStrategy` on the `spring-ws` endpoint.
+
 === camel-mustache, camel-chunk - potential breaking change
 
 The Exchange header constants in `MustacheConstants` and `ChunkConstants` have been renamed to

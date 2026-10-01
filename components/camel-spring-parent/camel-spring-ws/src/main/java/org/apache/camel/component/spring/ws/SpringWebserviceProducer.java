@@ -36,6 +36,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
@@ -109,10 +110,12 @@ public class SpringWebserviceProducer extends DefaultProducer {
                         SoapMessage soapMessage = (SoapMessage) responseMessage;
                         if (ExchangeHelper.isOutCapable(exchange)) {
                             exchange.getOut().copyFromWithNewBody(exchange.getIn(), soapMessage.getPayloadSource());
-                            populateHeaderAndAttachmentsFromResponse(exchange.getOut(AttachmentMessage.class), soapMessage);
+                            populateHeaderAndAttachmentsFromResponse(exchange, exchange.getOut(AttachmentMessage.class),
+                                    soapMessage);
                         } else {
                             exchange.getIn().setBody(soapMessage.getPayloadSource());
-                            populateHeaderAndAttachmentsFromResponse(exchange.getIn(AttachmentMessage.class), soapMessage);
+                            populateHeaderAndAttachmentsFromResponse(exchange, exchange.getIn(AttachmentMessage.class),
+                                    soapMessage);
                         }
 
                     }
@@ -122,9 +125,10 @@ public class SpringWebserviceProducer extends DefaultProducer {
     /**
      * Populates soap message headers and attachments from soap response
      */
-    private void populateHeaderAndAttachmentsFromResponse(AttachmentMessage inOrOut, SoapMessage soapMessage) {
+    private void populateHeaderAndAttachmentsFromResponse(
+            Exchange exchange, AttachmentMessage inOrOut, SoapMessage soapMessage) {
         if (soapMessage.getSoapHeader() != null && getEndpoint().getConfiguration().isAllowResponseHeaderOverride()) {
-            populateMessageHeaderFromResponse(inOrOut, soapMessage.getSoapHeader());
+            populateMessageHeaderFromResponse(exchange, inOrOut, soapMessage.getSoapHeader());
         }
         if (soapMessage.getAttachments() != null && getEndpoint().getConfiguration().isAllowResponseAttachmentOverride()) {
             populateMessageAttachmentsFromResponse(inOrOut, soapMessage.getAttachments());
@@ -132,15 +136,22 @@ public class SpringWebserviceProducer extends DefaultProducer {
     }
 
     /**
-     * Populates message headers from soapHeader response
+     * Populates message headers from soapHeader response, applying the endpoint's {@link HeaderFilterStrategy} to the
+     * soap header attribute and element names
      */
-    private void populateMessageHeaderFromResponse(Message message, SoapHeader soapHeader) {
+    private void populateMessageHeaderFromResponse(Exchange exchange, Message message, SoapHeader soapHeader) {
+        HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
+
         message.setHeader(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER, soapHeader.getSource());
         // Set header values for the soap header attributes
         Iterator<QName> attIter = soapHeader.getAllAttributes();
         while (attIter.hasNext()) {
             QName name = attIter.next();
-            message.getHeaders().put(name.getLocalPart(), soapHeader.getAttributeValue(name));
+            Object value = soapHeader.getAttributeValue(name);
+            if (headerFilterStrategy == null
+                    || !headerFilterStrategy.applyFilterToExternalHeaders(name.getLocalPart(), value, exchange)) {
+                message.getHeaders().put(name.getLocalPart(), value);
+            }
         }
 
         // Set header values for the soap header elements
@@ -148,8 +159,10 @@ public class SpringWebserviceProducer extends DefaultProducer {
         while (elementIter.hasNext()) {
             SoapHeaderElement element = elementIter.next();
             QName name = element.getName();
-            message.getHeaders().put(name.getLocalPart(), element);
-
+            if (headerFilterStrategy == null
+                    || !headerFilterStrategy.applyFilterToExternalHeaders(name.getLocalPart(), element, exchange)) {
+                message.getHeaders().put(name.getLocalPart(), element);
+            }
         }
     }
 

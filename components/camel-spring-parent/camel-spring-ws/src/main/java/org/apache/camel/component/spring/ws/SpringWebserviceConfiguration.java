@@ -444,7 +444,9 @@ public class SpringWebserviceConfiguration {
     /**
      * Option to override soap response header in in/out exchange with header info from the actual service layer. If the
      * invoked service appends or rewrites the soap header this option when set to true, allows the modified soap header
-     * to be overwritten in in/out message headers
+     * to be overwritten in in/out message headers. The names of the soap response header attributes and elements are
+     * filtered using the headerFilterStrategy, which by default filters out the internal {@code Camel} and
+     * {@code camel} header namespace (case-insensitive).
      */
     public void setAllowResponseHeaderOverride(boolean allowResponseHeaderOverride) {
         this.allowResponseHeaderOverride = allowResponseHeaderOverride;
