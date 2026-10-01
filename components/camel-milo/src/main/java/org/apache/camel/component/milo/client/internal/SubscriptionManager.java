@@ -201,9 +201,15 @@ public class SubscriptionManager {
                         item.setSamplingInterval(s.getSamplingInterval());
                     }
                     if (null != s.getQueueSize()) {
+                        if (s.getQueueSize() < 0) {
+                            throw new IllegalArgumentException("queueSize must be >= 0, got: " + s.getQueueSize());
+                        }
                         item.setQueueSize(UInteger.valueOf(s.getQueueSize()));
                     }
-                    item.setFilter(s.createMonitoringFilter());
+                    MonitoringFilter filter = s.createMonitoringFilter();
+                    if (filter != null) {
+                        item.setFilter(filter);
+                    }
                     items.add(item);
                     // Keep track of which subscription this item belongs to
                     itemToClientHandle.put(item, entry.getKey());

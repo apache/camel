@@ -4091,3 +4091,15 @@ scan for nothing. A route file inside a dot directory is therefore no longer wat
 2000 milliseconds, so on Linux and Windows a change is noticed within two seconds rather than immediately, and on macOS
 within two seconds rather than up to ten. A new `setStableTimeout` (default 200 milliseconds) leaves a file that was
 only just modified for the next scan, so a save still being written is not reloaded half-finished.
+
+=== camel-milo - potential breaking change
+
+Sampling interval behaviour changes for users who never set it.
+Since 4.16, the samplingInterval default of 0.0 was ignored and milo's own OpcUaMonitoredItem default of 1000 ms was used.
+Now 0.0 is sent again, which asks the server to sample as fast as it can.
+The same applies to a configured requestedPublishingInterval or data-change filter, which now take effect.
+This restores the documented and pre-4.16 behaviour.
+
+The parameter dataChangeFilterDeadbandType changes type from UInteger to Integer.
+This changes the public MonitorFilterConfiguration getter/setter and the endpoint-DSL builder method, so Java code passing a UInteger
+will no longer compile.

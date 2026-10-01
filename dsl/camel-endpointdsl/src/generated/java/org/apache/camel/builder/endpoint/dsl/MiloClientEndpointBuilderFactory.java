@@ -62,8 +62,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Deadband type for MonitorFilterType DataChangeFilter.
          * 
-         * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger</code> type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: common
@@ -71,15 +70,15 @@ public interface MiloClientEndpointBuilderFactory {
          * @param dataChangeFilterDeadbandType the value to set
          * @return the dsl builder
          */
-        default MiloClientEndpointConsumerBuilder dataChangeFilterDeadbandType(org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger dataChangeFilterDeadbandType) {
+        default MiloClientEndpointConsumerBuilder dataChangeFilterDeadbandType(Integer dataChangeFilterDeadbandType) {
             doSetProperty("dataChangeFilterDeadbandType", dataChangeFilterDeadbandType);
             return this;
         }
         /**
          * Deadband type for MonitorFilterType DataChangeFilter.
          * 
-         * The option will be converted to a
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger</code> type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: common
@@ -299,6 +298,37 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointConsumerBuilder omitNullValues(String omitNullValues) {
             doSetProperty("omitNullValues", omitNullValues);
+            return this;
+        }
+        /**
+         * Queue size for OPC UA subscriptions. If not set, the server default
+         * is used.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder queueSize(Integer queueSize) {
+            doSetProperty("queueSize", queueSize);
+            return this;
+        }
+        /**
+         * Queue size for OPC UA subscriptions. If not set, the server default
+         * is used.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder queueSize(String queueSize) {
+            doSetProperty("queueSize", queueSize);
             return this;
         }
         /**
@@ -899,8 +929,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Deadband type for MonitorFilterType DataChangeFilter.
          * 
-         * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger</code> type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: common
@@ -908,15 +937,15 @@ public interface MiloClientEndpointBuilderFactory {
          * @param dataChangeFilterDeadbandType the value to set
          * @return the dsl builder
          */
-        default MiloClientEndpointProducerBuilder dataChangeFilterDeadbandType(org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger dataChangeFilterDeadbandType) {
+        default MiloClientEndpointProducerBuilder dataChangeFilterDeadbandType(Integer dataChangeFilterDeadbandType) {
             doSetProperty("dataChangeFilterDeadbandType", dataChangeFilterDeadbandType);
             return this;
         }
         /**
          * Deadband type for MonitorFilterType DataChangeFilter.
          * 
-         * The option will be converted to a
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger</code> type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: common
@@ -1136,6 +1165,37 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointProducerBuilder omitNullValues(String omitNullValues) {
             doSetProperty("omitNullValues", omitNullValues);
+            return this;
+        }
+        /**
+         * Queue size for OPC UA subscriptions. If not set, the server default
+         * is used.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder queueSize(Integer queueSize) {
+            doSetProperty("queueSize", queueSize);
+            return this;
+        }
+        /**
+         * Queue size for OPC UA subscriptions. If not set, the server default
+         * is used.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder queueSize(String queueSize) {
+            doSetProperty("queueSize", queueSize);
             return this;
         }
         /**
@@ -1665,8 +1725,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Deadband type for MonitorFilterType DataChangeFilter.
          * 
-         * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger</code> type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: common
@@ -1674,15 +1733,15 @@ public interface MiloClientEndpointBuilderFactory {
          * @param dataChangeFilterDeadbandType the value to set
          * @return the dsl builder
          */
-        default MiloClientEndpointBuilder dataChangeFilterDeadbandType(org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger dataChangeFilterDeadbandType) {
+        default MiloClientEndpointBuilder dataChangeFilterDeadbandType(Integer dataChangeFilterDeadbandType) {
             doSetProperty("dataChangeFilterDeadbandType", dataChangeFilterDeadbandType);
             return this;
         }
         /**
          * Deadband type for MonitorFilterType DataChangeFilter.
          * 
-         * The option will be converted to a
-         * <code>org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger</code> type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: common
@@ -1902,6 +1961,37 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointBuilder omitNullValues(String omitNullValues) {
             doSetProperty("omitNullValues", omitNullValues);
+            return this;
+        }
+        /**
+         * Queue size for OPC UA subscriptions. If not set, the server default
+         * is used.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder queueSize(Integer queueSize) {
+            doSetProperty("queueSize", queueSize);
+            return this;
+        }
+        /**
+         * Queue size for OPC UA subscriptions. If not set, the server default
+         * is used.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder queueSize(String queueSize) {
+            doSetProperty("queueSize", queueSize);
             return this;
         }
         /**

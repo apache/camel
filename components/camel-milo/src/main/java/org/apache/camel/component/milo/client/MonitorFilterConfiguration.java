@@ -53,6 +53,9 @@ public class MonitorFilterConfiguration implements Cloneable {
     }
 
     public void setDataChangeFilterDeadbandType(Integer dataChangeFilterDeadbandType) {
+        if (dataChangeFilterDeadbandType == null) {
+            throw new IllegalArgumentException("dataChangeFilterDeadbandType must not be null");
+        }
         this.dataChangeFilterDeadbandType = dataChangeFilterDeadbandType;
     }
 
@@ -75,6 +78,9 @@ public class MonitorFilterConfiguration implements Cloneable {
     public MonitoringFilter createMonitoringFilter() {
         if (Objects.isNull(this.monitorFilterType)) {
             throw new IllegalStateException("No filter type configured.");
+        }
+        if (this.dataChangeFilterDeadbandType == null) {
+            throw new IllegalStateException("dataChangeFilterDeadbandType must not be null");
         }
 
         switch (monitorFilterType) {
