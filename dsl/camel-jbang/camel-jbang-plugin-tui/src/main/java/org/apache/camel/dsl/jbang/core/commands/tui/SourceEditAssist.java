@@ -1438,30 +1438,18 @@ final class SourceEditAssist {
         }
 
         List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
-        try (var stream = java.nio.file.Files.list(rootDir)) {
-            stream.filter(p -> p.getFileName().toString().endsWith(".properties"))
-                    .forEach(p -> {
-                        try {
-                            for (String line : java.nio.file.Files.readAllLines(p)) {
-                                String trimmed = line.trim();
-                                if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("!")) {
-                                    continue;
-                                }
-                                int eq = trimmed.indexOf('=');
-                                if (eq > 0) {
-                                    String key = trimmed.substring(0, eq).trim();
-                                    String value = trimmed.substring(eq + 1).trim();
-                                    items.add(new AutocompletePopup.CompletionItem(
-                                            "{{" + key + "}}", value, "placeholder",
-                                            null, false, null, p.getFileName().toString()));
-                                }
-                            }
-                        } catch (IOException e) {
-                            // skip unreadable files
-                        }
-                    });
-        } catch (IOException e) {
-            return List.of();
+        // a Maven or Gradle project keeps its properties in src/main/resources, a camel run folder next to the routes
+        for (Path dir : List.of(rootDir, rootDir.resolve("src/main/resources"))) {
+            if (!java.nio.file.Files.isDirectory(dir)) {
+                continue;
+            }
+            try (var stream = java.nio.file.Files.list(dir)) {
+                stream.filter(p -> p.getFileName().toString().endsWith(".properties"))
+                        .sorted()
+                        .forEach(p -> addPlaceholders(p, rootDir.relativize(p).toString(), items));
+            } catch (IOException e) {
+                // skip an unreadable folder
+            }
         }
 
         items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
@@ -1469,6 +1457,26 @@ final class SourceEditAssist {
         placeholderCacheTime = now;
         placeholderCacheDir = rootDir;
         return items;
+    }
+
+    private static void addPlaceholders(Path file, String source, List<AutocompletePopup.CompletionItem> items) {
+        try {
+            for (String line : java.nio.file.Files.readAllLines(file)) {
+                String trimmed = line.trim();
+                if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("!")) {
+                    continue;
+                }
+                int eq = trimmed.indexOf('=');
+                if (eq > 0) {
+                    String key = trimmed.substring(0, eq).trim();
+                    String value = trimmed.substring(eq + 1).trim();
+                    items.add(new AutocompletePopup.CompletionItem(
+                            "{{" + key + "}}", value, "placeholder", null, false, null, source));
+                }
+            }
+        } catch (IOException e) {
+            // skip unreadable files
+        }
     }
 
     private static final Pattern PLACEHOLDER
