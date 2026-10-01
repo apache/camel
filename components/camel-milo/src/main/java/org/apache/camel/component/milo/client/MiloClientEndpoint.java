@@ -70,6 +70,10 @@ public class MiloClientEndpoint extends DefaultEndpoint {
      * The queue size used for subscriptions
      */
     @UriParam(description = "queue size for subscription")
+    /**
+     * The queue size used for OPC UA subscriptions. If not set, the OPC UA server default is used.
+     */
+    @UriParam(description = "Queue size for OPC UA subscriptions. If not set, the server default is used.")
     private Integer queueSize;
 
     /**
