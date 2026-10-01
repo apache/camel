@@ -3664,6 +3664,19 @@ delay). Previously the routes were then started right away.
 
 The `acquireLockInterval` of the file lock cluster service must now be at least 1 millisecond.
 
+=== camel-infinispan - clustered routes stop when the Infinispan cluster view is stopped
+
+When an Infinispan cluster view (`camel-infinispan` or `camel-infinispan-embedded`) is stopped while this member is
+the leader, for example with the `stopView` JMX operation, the stop of the cluster service or the stop of the
+clustered route controller, the listeners are now told that the leadership is lost, before the leader key is removed
+from the cache. The clustered routes (`ClusteredRoutePolicy`) and the `master` consumers are then stopped. Previously
+they kept running while the leader key was removed, so another member could take the leadership and both members ran
+the routes.
+
+An error while refreshing the leader key no longer stops the periodic refresh of the leadership. The leadership is
+given up (so the clustered routes are stopped) until the next refresh succeeds, as this member can no longer be sure
+that it holds the leader key. An error while refreshing only the membership entry of this member keeps the leadership.
+
 === camel-pqc - FileBasedKeyLifecycleManager restricts keyId to a flat file name
 
 `FileBasedKeyLifecycleManager` now confines every key file to its configured key directory. A `keyId`

@@ -58,7 +58,8 @@ public abstract class InfinispanClusterView extends AbstractCamelClusterView {
 
                 CamelClusterMember newLeader = null;
                 try {
-                    newLeader = getLeader().orElse(null);
+                    // the leader key may still hold this member (it is removed after the leadership is given up on stop)
+                    newLeader = getLeader().filter(m -> !Objects.equals(id, m.getId())).orElse(null);
                 } catch (Exception e) {
                     // the event must be fired even if the current leader cannot be looked up
                     LOGGER.debug("Cannot look up the current leader", e);
