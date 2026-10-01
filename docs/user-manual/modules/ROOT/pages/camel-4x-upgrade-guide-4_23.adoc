@@ -737,6 +737,15 @@ in the charset that the `Content-Type` declares, so the bytes match the header. 
 the declared charset and read such a response as UTF-8 must now use the declared charset, and characters that the
 declared charset cannot represent are written as `?`.
 
+=== camel-undertow - String bodies in the charset of the Content-Type
+
+The Undertow consumer (response) and producer (request) always wrote a `String` body as UTF-8, even when the
+`Content-Type` declared another charset (for example `text/plain; charset=ISO-8859-1`). A `String` body is now
+written in the charset that the `Content-Type` declares. Bodies that are not a `String`, and messages whose
+`Content-Type` declares no charset, are sent as before (UTF-8 by default). A peer that ignored the declared charset and
+read such a message as UTF-8 must now use the declared charset, and characters that the declared charset cannot
+represent are written as `?`.
+
 === Components and Language removal
 
 ==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
