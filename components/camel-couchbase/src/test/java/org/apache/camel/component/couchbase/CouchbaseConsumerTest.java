@@ -21,6 +21,8 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Cluster;
+import com.couchbase.client.java.ClusterOptions;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.Scope;
 import org.apache.camel.Exchange;
@@ -30,11 +32,15 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 class CouchbaseConsumerTest {
@@ -42,6 +48,7 @@ class CouchbaseConsumerTest {
     private DefaultCamelContext context;
     private CouchbaseEndpoint endpoint;
     private CouchbaseConsumer consumer;
+    private MockedStatic<Cluster> clusters;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -50,7 +57,20 @@ class CouchbaseConsumerTest {
                 "couchbase:http://localhost:8091", "http://localhost:8091",
                 new CouchbaseComponent(context));
         endpoint.setBucket("bucket");
+        endpoint.setUsername("user");
+        endpoint.setPassword("secret");
         context.start();
+
+        // the consumer takes its handles from the endpoint on every start, so the endpoint has to hand out a
+        // bucket without a server behind it
+        Bucket bucket = mock(Bucket.class);
+        Scope scope = mock(Scope.class);
+        when(bucket.defaultScope()).thenReturn(scope);
+        when(bucket.defaultCollection()).thenReturn(mock(Collection.class));
+        Cluster cluster = mock(Cluster.class);
+        when(cluster.bucket(anyString())).thenReturn(bucket);
+        clusters = mockStatic(Cluster.class);
+        clusters.when(() -> Cluster.connect(anyString(), any(ClusterOptions.class))).thenReturn(cluster);
     }
 
     @AfterEach
@@ -59,6 +79,9 @@ class CouchbaseConsumerTest {
             consumer.stop();
         }
         context.stop();
+        if (clusters != null) {
+            clusters.close();
+        }
     }
 
     /**
@@ -66,12 +89,7 @@ class CouchbaseConsumerTest {
      * consumer to exercise anything at all. The initial delay keeps the scheduler from ever polling the mocked bucket.
      */
     private CouchbaseConsumer startedConsumer(Processor processor) throws Exception {
-        Bucket bucket = mock(Bucket.class);
-        Scope scope = mock(Scope.class);
-        when(bucket.defaultScope()).thenReturn(scope);
-        when(bucket.defaultCollection()).thenReturn(mock(Collection.class));
-
-        consumer = new CouchbaseConsumer(endpoint, bucket, processor);
+        consumer = new CouchbaseConsumer(endpoint, endpoint.createClient(), processor);
         consumer.setInitialDelay(Long.MAX_VALUE / 2);
         consumer.start();
         return consumer;

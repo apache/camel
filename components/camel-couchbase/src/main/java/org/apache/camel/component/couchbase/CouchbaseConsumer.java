@@ -75,19 +75,7 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
     protected void doInit() throws Exception {
         super.doInit();
 
-        if (endpoint.getScope() != null) {
-            this.scope = bucket.scope(endpoint.getScope());
-        } else {
-            this.scope = bucket.defaultScope();
-        }
-
-        if (endpoint.getCollection() != null) {
-            this.collection = scope.collection(endpoint.getCollection());
-        } else {
-            this.collection = bucket.defaultCollection();
-        }
-
-        // Determine query mode
+        // Determine query mode. This reads only endpoint options, so it does not need a connection
         if (endpoint.getStatement() != null) {
             // Explicit SQL++ statement provided
             useSqlQuery = true;
@@ -131,6 +119,23 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
 
     @Override
     protected void doStart() throws Exception {
+        // Take the bucket, scope and collection again on every start. The endpoint owns the cluster and
+        // disconnects it when it stops, so handles resolved once at init would point at a dead cluster after a
+        // restart in place. They used to survive only because the old close was a no-op
+        bucket = endpoint.createClient();
+
+        if (endpoint.getScope() != null) {
+            this.scope = bucket.scope(endpoint.getScope());
+        } else {
+            this.scope = bucket.defaultScope();
+        }
+
+        if (endpoint.getCollection() != null) {
+            this.collection = scope.collection(endpoint.getCollection());
+        } else {
+            this.collection = bucket.defaultCollection();
+        }
+
         super.doStart();
         ResumeStrategyHelper.resume(getEndpoint().getCamelContext(), this, resumeStrategy, COUCHBASE_RESUME_ACTION);
     }
@@ -291,9 +296,13 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
             processExchange(exchange);
         }
 
-        // anything still queued was never handed to the route - the batch was cut short because the consumer
-        // is stopping, or the poll returned more rows than maxMessagesPerPoll. Nothing else will release these,
-        // and a pooled exchange that is never released never returns to the pool
+        // Anything still queued was never handed to the route - the batch was cut short because the consumer is
+        // stopping, or the poll returned more rows than maxMessagesPerPoll. Nothing else will release these, and a
+        // pooled exchange that is never released never returns to the pool.
+        //
+        // Releasing them is not the same as handling them: with consumerProcessedStrategy=delete the document was
+        // already removed during the poll, above, so these rows are lost rather than redelivered. That predates
+        // this method and is not fixed here - see CAMEL-25221
         Exchange remaining;
         while ((remaining = (Exchange) exchanges.poll()) != null) {
             releaseExchange(remaining, false);
@@ -307,9 +316,13 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
      * <p/>
      * A failing route does not throw out of {@code process()} - the consumer processor is asynchronous, so the failure
      * is left on the exchange instead. That is why the exception is read back afterwards rather than only caught: a
-     * try/catch on its own never sees the common case, and the failure would go unreported. It matters here in
-     * particular because with {@code consumerProcessedStrategy=delete} the document has already been removed from
-     * Couchbase by the time the route runs, so a silent failure loses the message outright.
+     * try/catch on its own never sees the common case, and the consumer would go on to the next poll as though the
+     * exchange had been delivered.
+     * <p/>
+     * The route's own error handler has already logged the exhausted failure by this point, so this is not the only
+     * record of it; what it adds is that the consumer no longer treats a failed exchange as a delivered one. It matters
+     * most with {@code consumerProcessedStrategy=delete}, where the document is removed during the poll, before the
+     * route runs, so a failure means the document is gone.
      */
     private void processExchange(Exchange exchange) {
         try {

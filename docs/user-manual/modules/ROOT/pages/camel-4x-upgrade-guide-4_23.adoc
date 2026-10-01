@@ -466,9 +466,15 @@ setting the option should now set `connectTimeout=10000` explicitly.
 documented 2500 ms default is much shorter than the SDK's 75 seconds and applying it unconditionally would cut short
 queries that currently succeed.
 
-The consumer now reports a failed exchange to its exception handler, so `bridgeErrorHandler` works for this component.
-Previously the result of routing was discarded and a failing route produced no log line at all. Routes whose failures
-went unnoticed will now surface them.
+The consumer now reports a failed exchange through its exception handler, which logs a warning naming the endpoint,
+as `TimerConsumer` does. Previously the consumer discarded the outcome of routing entirely and went on to the next
+poll as if the exchange had been delivered.
+
+This is not a change to error handling. An exchange that failed while being routed has already passed through the
+route's error handler, which logs the exhausted failure, and `BridgeExceptionHandlerToErrorHandler` deliberately
+falls back to its logging handler for such an exchange rather than bridging it a second time. What changes is that
+the consumer itself no longer stays silent, and that with `consumerProcessedStrategy=delete` the loss is now visible:
+the document is removed during the poll, before the route runs.
 
 === camel-console
 

@@ -678,8 +678,13 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
         return uriArray;
     }
 
-    //create from couchbase-client
-    private Bucket createClient() throws Exception {
+    /**
+     * The bucket on this endpoint's cluster, creating the cluster on first use.
+     * <p/>
+     * Package-private because the consumer and the producer take their handles again on every start: this endpoint
+     * disconnects the cluster when it stops, so handles cached across a restart would point at a dead cluster.
+     */
+    Bucket createClient() throws Exception {
         if (bucket == null || bucket.isEmpty()) {
             throw new CamelException(COUCHBASE_URI_ERROR);
         }

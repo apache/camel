@@ -30,6 +30,7 @@ import com.couchbase.client.java.codec.JsonSerializer;
 import com.couchbase.client.java.env.ClusterEnvironment;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -41,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
@@ -362,6 +364,51 @@ public class CouchbaseEndpointTest {
 
             endpoint.stop();
             verify(cluster).disconnect();
+        }
+    }
+
+    /**
+     * The endpoint disconnects its cluster on stop, so a consumer or producer that kept a handle from before the
+     * restart would be talking to a dead cluster. Both take their handles again on start.
+     */
+    @Test
+    void aRestartedProducerTakesItsCollectionFromTheNewConnection() throws Exception {
+        Bucket first = mock(Bucket.class);
+        Bucket second = mock(Bucket.class);
+        when(first.defaultCollection()).thenReturn(mock(Collection.class));
+        when(second.defaultCollection()).thenReturn(mock(Collection.class));
+
+        Cluster one = mock(Cluster.class);
+        Cluster two = mock(Cluster.class);
+        when(one.bucket(anyString())).thenReturn(first);
+        when(two.bucket(anyString())).thenReturn(second);
+
+        try (MockedStatic<Cluster> clusters = mockStatic(Cluster.class)) {
+            clusters.when(() -> Cluster.connect(anyString(), any(ClusterOptions.class))).thenReturn(one, two);
+
+            CamelContext context = new DefaultCamelContext();
+            CouchbaseEndpoint endpoint = new CouchbaseEndpoint(
+                    "couchbase:http://localhost:8091",
+                    "http://localhost:8091", new CouchbaseComponent(context));
+            endpoint.setBucket("bucket");
+            endpoint.setUsername("user");
+            endpoint.setPassword("secret");
+
+            endpoint.start();
+            Producer producer = endpoint.createProducer();
+            producer.start();
+            // resolved twice against the first connection: once when constructed, once on start
+            verify(first, atLeastOnce()).defaultCollection();
+
+            endpoint.stop();
+            verify(one).disconnect();
+
+            // restart in place: the producer object survives, the connection behind it does not
+            endpoint.start();
+            producer.stop();
+            producer.start();
+
+            verify(second).defaultCollection();
         }
     }
 }

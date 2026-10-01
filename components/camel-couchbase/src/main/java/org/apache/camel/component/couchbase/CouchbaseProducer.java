@@ -47,7 +47,7 @@ public class CouchbaseProducer extends DefaultProducer {
 
     private final AtomicLong startId = new AtomicLong();
     private final CouchbaseEndpoint endpoint;
-    private final Collection collection;
+    private Collection collection;
     private final PersistTo persistTo;
     private final ReplicateTo replicateTo;
     private final int producerRetryPause;
@@ -57,19 +57,7 @@ public class CouchbaseProducer extends DefaultProducer {
     public CouchbaseProducer(CouchbaseEndpoint endpoint, Bucket client, int persistTo, int replicateTo) {
         super(endpoint);
         this.endpoint = endpoint;
-        Scope scope;
-
-        if (endpoint.getScope() != null) {
-            scope = client.scope(endpoint.getScope());
-        } else {
-            scope = client.defaultScope();
-        }
-
-        if (endpoint.getCollection() != null) {
-            this.collection = scope.collection(endpoint.getCollection());
-        } else {
-            this.collection = client.defaultCollection();
-        }
+        this.collection = resolveCollection(client);
 
         if (endpoint.isAutoStartIdForInserts()) {
             this.startId.set(endpoint.getStartingIdForInsertsFrom());
@@ -119,6 +107,28 @@ public class CouchbaseProducer extends DefaultProducer {
                         "Unsupported replicateTo parameter. Supported values are 0 to 3. Currently provided: " + replicateTo);
         }
 
+    }
+
+    private Collection resolveCollection(Bucket client) {
+        Scope scope;
+        if (endpoint.getScope() != null) {
+            scope = client.scope(endpoint.getScope());
+        } else {
+            scope = client.defaultScope();
+        }
+
+        if (endpoint.getCollection() != null) {
+            return scope.collection(endpoint.getCollection());
+        }
+        return client.defaultCollection();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        // Take the collection again on every start. The endpoint owns the cluster and disconnects it when it
+        // stops, so a handle kept from construction would point at a dead cluster after a restart in place
+        this.collection = resolveCollection(endpoint.createClient());
     }
 
     @Override
