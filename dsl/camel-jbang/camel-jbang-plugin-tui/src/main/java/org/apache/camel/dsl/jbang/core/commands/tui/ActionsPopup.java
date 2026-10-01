@@ -169,6 +169,7 @@ class ActionsPopup {
 
     void setContext(MonitorContext ctx) {
         this.ctx = ctx;
+        ctx.onProjectOpened = docViewerPopup::closeFailureLog;
         docViewerPopup.setContext(ctx);
         folderInputPopup.setContext(ctx);
     }
@@ -1321,7 +1322,8 @@ class ActionsPopup {
         List<String> extraArgs = runOptionsForm.buildArgs();
         runOptionsForm.close();
 
-        ctx.removePhantom(phantom.pid);
+        // the project stays listed (Starting) until its app shows up and stands in for it
+        phantom.startingSince = System.currentTimeMillis();
 
         if (phantom.projectType != null) {
             launchManager.launchMavenProject(phantom.sourceDir, phantom.projectType, displayName, extraArgs);
@@ -1391,6 +1393,14 @@ class ActionsPopup {
     }
 
     private void showFailureLog(String name, Path logFile) {
+        if (ctx != null) {
+            // an opened project whose run failed is Stopped again
+            for (IntegrationInfo project : ctx.phantomIntegrations) {
+                if (project.startingSince > 0 && name != null && name.equalsIgnoreCase(project.name)) {
+                    project.startingSince = 0;
+                }
+            }
+        }
         if (!docViewerPopup.hasFailureContent(logFile)) {
             setNotification("Failed: " + name + " (no output)", true);
             return;

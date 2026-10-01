@@ -101,6 +101,11 @@ them with the appropriate goal (`spring-boot:run`, `quarkus:dev`, or `camel:run`
 directories are run with `camel run`. Either way the application logs to `~/.camel` so the Log tab
 shows its logs.
 
+Until it runs, the project is listed as *Stopped*: the Overview says what it is (runtime, Maven or route files, its
+folder) and the Source pane lists the routes it found and where they are, so *g* opens one. While it runs, the app
+takes its place under the name it gives itself, with the project's name next to it; when the run ends, the project is
+back as Stopped and still selected.
+
 This is a quick way to explore and run any Camel project without starting it separately first.
 
 image::jbang/camel-tui-main-quarkus-source.png[A Quarkus project in the Source tab: its Java route and the bean of the line]

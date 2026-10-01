@@ -355,22 +355,38 @@ class DataRefreshService {
         }
     }
 
-    private void mergePhantoms(List<IntegrationInfo> infos) {
+    /**
+     * An opened project shows as Stopped until it runs; then its running app stands in for it (under the name the app
+     * gives itself), and when the run ends the project is back as Stopped, still selected.
+     */
+    static void mergePhantoms(List<IntegrationInfo> infos, List<IntegrationInfo> phantoms, MonitorContext ctx) {
+        // a run that is just ending (vanishing) still stands in for its project, so it is not shown twice
         Map<String, IntegrationInfo> liveDirs = infos.stream()
-                .filter(i -> !i.vanishing && !i.phantom && i.directory != null)
-                .collect(Collectors.toMap(i -> i.directory, i -> i, (a, b) -> a));
-        for (IntegrationInfo phantom : ctx.phantomIntegrations) {
+                .filter(i -> !i.phantom && i.directory != null)
+                .collect(Collectors.toMap(i -> i.directory, i -> i, (a, b) -> a.vanishing ? b : a));
+        for (IntegrationInfo phantom : phantoms) {
             IntegrationInfo live = phantom.sourceDir != null ? liveDirs.get(phantom.sourceDir) : null;
             if (live != null) {
-                // Phantom's project is now running — switch selection to the live integration
-                if (phantom.pid.equals(ctx.selectedPid)) {
+                if (phantom.pid.equals(ctx.selectedPid) && !live.vanishing) {
                     ctx.selectedPid = live.pid;
                 }
-                ctx.removePhantom(phantom.pid);
+                phantom.linkedPid = live.pid;
+                phantom.startingSince = 0;
+                live.openedAs = phantom.name;
             } else {
+                if (phantom.linkedPid != null
+                        && (ctx.selectedPid == null || ctx.selectedPid.equals(phantom.linkedPid))) {
+                    // the run of the selected project ended: select the project again
+                    ctx.selectedPid = phantom.pid;
+                }
+                phantom.linkedPid = null;
                 infos.add(phantom);
             }
         }
+    }
+
+    private void mergePhantoms(List<IntegrationInfo> infos) {
+        mergePhantoms(infos, ctx.phantomIntegrations, ctx);
     }
 
     private void handleAutoSelect(List<IntegrationInfo> infos, boolean fullScan) {
