@@ -22,10 +22,10 @@ import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpConstants;
-import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -55,28 +55,21 @@ public class ODataProducer extends DefaultProducer {
             httpUri += "?throwExceptionOnFailure=true";
         }
 
-        HttpEndpoint httpEndpoint = endpoint.getCamelContext().getEndpoint(httpUri, HttpEndpoint.class);
         ODataConfiguration config = endpoint.getConfiguration();
+        Map<String, Object> httpParameters = new LinkedHashMap<>();
 
         if (config != null) {
-            if (config.getAuthMethod() != null) {
-                httpEndpoint.setAuthMethod(config.getAuthMethod());
-            }
-            if (config.getAuthUsername() != null) {
-                httpEndpoint.setAuthUsername(config.getAuthUsername());
-            }
-            if (config.getAuthPassword() != null) {
-                httpEndpoint.setAuthPassword(config.getAuthPassword());
-            }
-
             SSLContextParameters sslParams = endpoint.getSslContextParameters();
             if (sslParams == null && endpoint.isUseGlobalSslContextParameters()) {
                 sslParams = endpoint.getCamelContext().getSSLContextParameters();
             }
             if (sslParams != null) {
-                httpEndpoint.setSslContextParameters(sslParams);
+                httpParameters.put("sslContextParameters", sslParams);
             }
         }
+
+        Endpoint httpEndpoint = endpoint.getCamelContext()
+                .getEndpoint(httpUri, httpParameters);
 
         httpProducer = httpEndpoint.createProducer();
         ServiceHelper.startService(httpProducer);
@@ -102,6 +95,15 @@ public class ODataProducer extends DefaultProducer {
         Exchange httpExchange = endpoint.createExchange();
 
         MessageHelper.copyHeaders(exchange.getMessage(), httpExchange.getMessage(), true);
+
+        // Remove HTTP routing headers inherited from the incoming exchange.
+        // The OData producer builds the target URI itself and must not allow
+        // upstream HTTP headers to override the configured OData endpoint.
+        httpExchange.getMessage().removeHeader(Exchange.HTTP_URI);
+        httpExchange.getMessage().removeHeader(Exchange.HTTP_PATH);
+        httpExchange.getMessage().removeHeader(Exchange.HTTP_QUERY);
+        httpExchange.getMessage().removeHeader(Exchange.HTTP_RAW_QUERY);
+        httpExchange.getMessage().removeHeader("CamelRestHttpUri");
 
         // Sanitize internal OData control headers before delegation
         httpExchange.getMessage().removeHeader(ODataConstants.OPERATION);

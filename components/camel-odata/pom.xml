@@ -36,7 +36,7 @@
     <description>Camel OData Component</description>
 
     <properties>
-        <firstVersion>4.23.0-SNAPSHOT</firstVersion>
+        <firstVersion>4.23.0</firstVersion>
     </properties>
 
     <dependencies>

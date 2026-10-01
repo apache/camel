@@ -42,7 +42,10 @@ public class ODataEndpointUriFactory extends org.apache.camel.support.component.
         props.add("top");
         props.add("useGlobalSslContextParameters");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("authBearerToken");
+        secretProps.add("authPassword");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }

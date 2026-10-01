@@ -28,9 +28,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import com.google.common.io.Resources;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.http.base.HttpOperationFailedException;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +64,13 @@ public class ODataProducerTest extends CamelTestSupport {
 
     @RegisterExtension
     static WireMockExtension wireMock = WireMockExtension.newInstance()
-            .options(wireMockConfig().dynamicPort())
+            .options(wireMockConfig()
+                    .dynamicPort()
+                    .dynamicHttpsPort()
+                    .keystorePath(Resources.getResource("localhost.p12").toString())
+                    .keystoreType("PKCS12")
+                    .keystorePassword("changeit")
+                    .keyManagerPassword("changeit"))
             .build();
 
     private ODataEndpoint endpoint;
@@ -214,6 +224,30 @@ public class ODataProducerTest extends CamelTestSupport {
         Map<?, ?> body = exchange.getMessage().getBody(Map.class);
         assertNotNull(body);
         assertEquals(new BigDecimal(103), body.get("ID"));
+    }
+
+    @Test
+    void testProcessIgnoresInboundHttpRoutingHeaders() throws Exception {
+        wireMock.stubFor(get(urlPathEqualTo("/odata/Products"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{\"value\":[]}")));
+
+        Exchange exchange = endpoint.createExchange();
+
+        // Simulate HTTP/REST headers inherited from an upstream consumer.
+        exchange.getMessage().setHeader(Exchange.HTTP_URI, "http://malicious.example/other");
+        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "/wrong/path");
+        exchange.getMessage().setHeader(Exchange.HTTP_QUERY, "unexpected=true");
+        exchange.getMessage().setHeader(Exchange.HTTP_RAW_QUERY, "rawUnexpected=true");
+        exchange.getMessage().setHeader("CamelRestHttpUri", "http://malicious.example/rest");
+
+        producer.process(exchange);
+
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+
+        wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products")));
     }
 
     @Test
@@ -991,5 +1025,92 @@ public class ODataProducerTest extends CamelTestSupport {
         } finally {
             producer.stop();
         }
+    }
+
+    @Test
+    void testProcessHttpsWithSslContextParameters() throws Exception {
+        wireMock.stubFor(get(urlPathEqualTo("/odata/Products"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{\"value\":[]}")));
+
+        KeyStoreParameters trustStore = new KeyStoreParameters();
+        trustStore.setResource("localhost.p12");
+        trustStore.setPassword("changeit");
+        trustStore.setType("PKCS12");
+
+        TrustManagersParameters trustManagers = new TrustManagersParameters();
+        trustManagers.setKeyStore(trustStore);
+
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setTrustManagers(trustManagers);
+
+        String uri = "odata:https://localhost:" + wireMock.getHttpsPort() + "/odata/Products";
+
+        ODataEndpoint httpsEndpoint = context.getEndpoint(uri, ODataEndpoint.class);
+        httpsEndpoint.setSslContextParameters(sslContextParameters);
+
+        Producer httpsProducer = httpsEndpoint.createProducer();
+        try {
+            httpsProducer.start();
+
+            Exchange exchange = httpsEndpoint.createExchange();
+            httpsProducer.process(exchange);
+
+            assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+            assertNotNull(exchange.getMessage().getBody());
+        } finally {
+            httpsProducer.stop();
+        }
+
+        wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products")));
+    }
+
+    @Test
+    void testAuthenticationIsIsolatedBetweenEndpoints() throws Exception {
+        wireMock.stubFor(get(urlPathEqualTo("/odata/Products"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{\"value\":[]}")));
+
+        ODataEndpoint endpoint1 = context.getEndpoint(
+                "odata:http://localhost:" + wireMock.getPort()
+                                                      + "/odata/Products?authMethod=Basic&authUsername=user1&authPassword=password1",
+                ODataEndpoint.class);
+
+        ODataEndpoint endpoint2 = context.getEndpoint(
+                "odata:http://localhost:" + wireMock.getPort()
+                                                      + "/odata/Products?authMethod=Basic&authUsername=user2&authPassword=password2",
+                ODataEndpoint.class);
+
+        Producer producer1 = endpoint1.createProducer();
+        Producer producer2 = endpoint2.createProducer();
+
+        try {
+            producer1.start();
+            producer2.start();
+
+            Exchange exchange1 = endpoint1.createExchange();
+            producer1.process(exchange1);
+
+            Exchange exchange2 = endpoint2.createExchange();
+            producer2.process(exchange2);
+        } finally {
+            producer1.stop();
+            producer2.stop();
+        }
+
+        String expected1 = "Basic " + Base64.getEncoder()
+                .encodeToString("user1:password1".getBytes(StandardCharsets.UTF_8));
+        String expected2 = "Basic " + Base64.getEncoder()
+                .encodeToString("user2:password2".getBytes(StandardCharsets.UTF_8));
+
+        wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products"))
+                .withHeader("Authorization", equalTo(expected1)));
+
+        wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products"))
+                .withHeader("Authorization", equalTo(expected2)));
     }
 }

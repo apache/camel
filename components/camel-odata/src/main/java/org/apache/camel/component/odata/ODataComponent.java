@@ -17,7 +17,6 @@
 package org.apache.camel.component.odata;
 
 import java.net.URI;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -34,9 +33,6 @@ public class ODataComponent extends DefaultComponent {
         ODataEndpoint endpoint = new ODataEndpoint(uri, this);
 
         endpoint.setHttpUri(new URI(remaining));
-
-        // Create a copy of parameters before setProperties consumes known properties
-        Map<String, Object> customParams = new LinkedHashMap<>(parameters);
 
         setProperties(endpoint, parameters);
 

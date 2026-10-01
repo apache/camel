@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.odata;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.util.json.DeserializationException;
@@ -52,16 +51,4 @@ public final class ODataHelper {
 
         return (Map<String, Object>) parsed;
     }
-
-    @SuppressWarnings("unchecked")
-    public static List<Map<String, Object>> extractValueList(Map<String, Object> response) {
-        Object value = response.get("value");
-
-        if (!(value instanceof List)) {
-            throw new IllegalArgumentException("OData response does not contain a value array");
-        }
-
-        return (List<Map<String, Object>>) value;
-    }
-
 }

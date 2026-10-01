@@ -53,10 +53,10 @@ public class ODataConfiguration {
     @UriParam(label = "security", description = "Username for Basic authentication")
     private String authUsername;
 
-    @UriParam(label = "security", description = "Password for Basic authentication")
+    @UriParam(label = "security", security = "secret", description = "Password for Basic authentication")
     private String authPassword;
 
-    @UriParam(label = "security", description = "Bearer token for Bearer authentication")
+    @UriParam(label = "security", security = "secret", description = "Bearer token for Bearer authentication")
     private String authBearerToken;
 
     @UriParam(label = "security", description = "To use a custom SSLContextParameters")

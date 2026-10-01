@@ -42,7 +42,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
              syntax = "odata:httpUri",
              producerOnly = true,
              lenientProperties = true,
-             category = { Category.HTTP, Category.CLOUD },
+             category = { Category.HTTP },
              headersClass = ODataConstants.class)
 public class ODataEndpoint extends DefaultEndpoint implements EndpointServiceLocation, SSLContextParametersAware {
 
