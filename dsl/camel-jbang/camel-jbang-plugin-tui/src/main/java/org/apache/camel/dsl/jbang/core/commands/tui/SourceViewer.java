@@ -57,6 +57,7 @@ import dev.tamboui.widgets.input.TextAreaState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
+import org.apache.camel.dsl.jbang.core.commands.ai.QuickFixes;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
@@ -869,6 +870,11 @@ class SourceViewer {
             }
             return true;
         }
+        if (ke.isKey(KeyCode.F9) && ke.hasShift()) {
+            // Shift+F9 fixes the problem F9 jumps to (F3, F6, F8 are global: switch integration, shell, AI panel)
+            applyQuickFix();
+            return true;
+        }
         if (ke.isKey(KeyCode.F9) && !inlineErrors.isEmpty()) {
             jumpToNextError();
             return true;
@@ -1643,6 +1649,43 @@ class SourceViewer {
         }
     }
 
+    /** The fix of the problem on the line of the cursor, when the problem says it; null otherwise. */
+    private QuickFixes.Fix cursorFix() {
+        int row = editState.cursorRow();
+        String error = visibleInlineErrors().get(row);
+        return error != null ? QuickFixes.fixFor(error, editState.getLine(row)) : null;
+    }
+
+    /** Applies the fix of the problem on the line of the cursor (Shift+F9), and checks the content again right away. */
+    private void applyQuickFix() {
+        QuickFixes.Fix fix = cursorFix();
+        if (fix == null) {
+            return;
+        }
+        int row = editState.cursorRow();
+        int col = editState.cursorCol();
+        String line = editState.getLine(row);
+        String fixed = fix.apply(line);
+        if (fixed == null) {
+            return;
+        }
+        recordEditChange();
+        editState.moveCursorToLineStart();
+        for (int i = 0; i < line.length(); i++) {
+            editState.deleteForward();
+        }
+        editState.insert(fixed);
+        editState.moveCursorToLineStart();
+        for (int i = 0; i < Math.min(col, fixed.length()); i++) {
+            editState.moveCursorRight();
+        }
+        dirty = true;
+        lineStatuses = null;
+        // the problem is gone: check again now, not at the next interval
+        lastBackgroundValidationTime = 0;
+        notifySave("Fixed: " + fix.label(), false);
+    }
+
     private void jumpToNextError() {
         goToNextProblem(inlineErrors, editState.cursorRow());
     }
@@ -2269,6 +2312,12 @@ class SourceViewer {
                         Span.styled(titleText, errorDim.bold()),
                         Span.styled(suffix + "─".repeat(remaining), errorDim)));
                 docLines.add(Line.from(Span.styled(cursorError, errorDim)));
+                QuickFixes.Fix fix = cursorFix();
+                if (fix != null) {
+                    docLines.add(Line.from(
+                            Span.styled("Shift+F9", Style.EMPTY.bold()),
+                            Span.styled(" fix: " + fix.label(), Style.EMPTY.dim())));
+                }
             } else if (titleText != null) {
                 String prefix = "─── ";
                 String suffix = " ";
@@ -2467,6 +2516,9 @@ class SourceViewer {
             TuiHelper.hint(spans, "Shift+Tab", "dedent");
             if (!inlineErrors.isEmpty()) {
                 TuiHelper.hint(spans, "F9", "next error");
+            }
+            if (cursorFix() != null) {
+                TuiHelper.hint(spans, "Shift+F9", "fix");
             }
             if (isCamelYamlFile()) {
                 TuiHelper.hint(spans, "Ctrl+R", "refactor");

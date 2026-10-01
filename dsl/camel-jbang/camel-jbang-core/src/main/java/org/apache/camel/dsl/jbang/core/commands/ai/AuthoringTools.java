@@ -498,6 +498,24 @@ public final class AuthoringTools {
         result.put("valid", errors.isEmpty());
         result.put("file", file);
         result.put("errors", new JsonArray(errors));
+        // the problems whose fix is certain, as edits an agent can apply (camel_edit_file find/replace)
+        JsonArray fixes = new JsonArray();
+        String[] lines = content.split("\n", -1);
+        for (String error : errors) {
+            int line = lineOf(error);
+            QuickFixes.Fix fix = line > 0 && line <= lines.length ? QuickFixes.fixFor(error, lines[line - 1]) : null;
+            if (fix != null) {
+                JsonObject jo = new JsonObject();
+                jo.put("line", line);
+                jo.put("find", fix.oldText());
+                jo.put("replace", fix.newText());
+                jo.put("fix", fix.label());
+                fixes.add(jo);
+            }
+        }
+        if (!fixes.isEmpty()) {
+            result.put("fixes", fixes);
+        }
         if (RouteAssist.supports(file, content)) {
             // the parts of a Java or XML route the parser could not read, so the checks did not see (CAMEL-25208)
             JsonArray notChecked = new JsonArray();
@@ -515,6 +533,19 @@ public final class AuthoringTools {
                 ? "The source is valid"
                 : errors.size() + " problem(s) found; fix them before writing the file");
         return result;
+    }
+
+    /** The line of a validation message, "Line N: ...", or 0. */
+    private static int lineOf(String error) {
+        if (error == null || !error.startsWith("Line ")) {
+            return 0;
+        }
+        int colon = error.indexOf(':');
+        try {
+            return colon > 5 ? Integer.parseInt(error.substring(5, colon).trim()) : 0;
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     /** How long a write waits for the running integration's reload record before answering without it. */

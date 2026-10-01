@@ -54,6 +54,9 @@ a heat map of the route: where messages go, where they fail.
 - Quick documentation panel is shown at the bottom (shows doc for current line)
 - **F7** — show diff of unsaved changes
 - **F9** — jump to next validation error
+- **Shift+F9** — apply the fix of the problem on the cursor line, when the problem
+  says it (an option typo, an enum value a letter off, `to` that should be
+  `toD`, `${key}` where `{{key}}` is meant); the Error panel shows the fix
 - Java and XML DSL routes are checked as you type, like YAML routes: endpoint
   options, simple expressions, and a `to` with `${...}` that should be a `toD`.
   The problems are marked on their lines; an XML file with problems is not saved

@@ -265,6 +265,11 @@ and the problem of the selected line in the panel at the bottom.
 An XML file with problems is not saved, as a YAML file; a Java file is saved and its problems are said, as it is
 the application's code, and a check that cannot know something (a value computed at runtime) must not stop you.
 
+When the problem on the line of the cursor says its fix (an option that is a typo of another, an enum value a letter
+off, a `to` that should be a `toD`, a Simple expression `+${key}+` where the property placeholder `+{{key}}+` is meant),
+the Error panel shows it and *Shift+F9* applies it; *Ctrl+Z* takes it back. `camel_validate_source` gives the same fixes to
+an agent, as `fixes` with the text to find and its replacement.
+
 Validation can be toggled off in the Settings (F2 > Settings).
 
 == Activity
