@@ -4029,6 +4029,17 @@ were sent. As a result:
   validator does not recognise a header parameter as an array, so a repeated header is rejected
   like a single-value one.
 
+=== camel-jms - request/reply completes the exchange once when a send fails late
+
+An InOut exchange whose JMS send fails after the request timeout, or the reply, has already completed the exchange
+(for example a send that blocks longer than `requestTimeout` and then fails) is no longer completed a second time with
+the send exception. The send failure is logged at WARN level instead, and the exchange keeps the outcome of the timeout
+or the reply.
+
+The `cancelCorrelationId` method of `org.apache.camel.component.jms.reply.ReplyManager` (added in 4.22) now returns
+a `boolean`: `true` if the pending reply was cancelled, `false` if the request timeout or the reply had already taken
+it. A custom `ReplyManager` implementation has to change the return type.
+
 == ThrottlingExceptionRoutePolicy
 
 `ThrottlingExceptionRoutePolicy.setKeepOpen(true)` now opens the circuit immediately and synchronously (the consumer

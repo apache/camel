@@ -137,13 +137,15 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     }
 
     @Override
-    public void cancelCorrelationId(String correlationId) {
+    public boolean cancelCorrelationId(String correlationId) {
         if (correlationId != null && correlation != null) {
             ReplyHandler handler = correlation.remove(correlationId);
             if (handler != null) {
                 log.debug("Cancelled reply correlation [{}]", correlationId);
+                return true;
             }
         }
+        return false;
     }
 
     protected abstract ReplyHandler createReplyHandler(
