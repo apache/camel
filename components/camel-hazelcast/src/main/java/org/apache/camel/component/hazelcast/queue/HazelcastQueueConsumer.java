@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.hazelcast.queue;
 
+import java.time.Duration;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -26,13 +28,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
 import org.apache.camel.component.hazelcast.listener.CamelItemListener;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 
 public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
 
     private final Processor processor;
     private ExecutorService executor;
-    private QueueConsumerTask queueConsumerTask;
     private HazelcastQueueConfiguration config;
+    private IQueue<Object> queue;
+    private UUID listener;
 
     public HazelcastQueueConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName,
                                   final HazelcastQueueConfiguration configuration) {
@@ -44,15 +49,24 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = ((HazelcastQueueEndpoint) getEndpoint()).createExecutor(this);
+        queue = hazelcastInstance.getQueue(cacheName);
 
-        CamelItemListener camelItemListener = new CamelItemListener(this, cacheName);
-        queueConsumerTask = new QueueConsumerTask(camelItemListener);
-        executor.submit(queueConsumerTask);
+        if (config.getQueueConsumerMode() == HazelcastQueueConsumerMode.LISTEN) {
+            // register the listener here, so that doStop can remove it (CAMEL-15899)
+            listener = queue.addItemListener(new CamelItemListener(this, cacheName), true);
+        } else if (config.getQueueConsumerMode() == HazelcastQueueConsumerMode.POLL) {
+            executor = ((HazelcastQueueEndpoint) getEndpoint()).createExecutor(this);
+            executor.submit(new QueueConsumerTask(queue));
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
+        if (listener != null) {
+            queue.removeItemListener(listener);
+            listener = null;
+        }
+
         super.doStop();
 
         if (executor != null) {
@@ -67,40 +81,53 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
 
     class QueueConsumerTask implements Runnable {
 
-        CamelItemListener camelItemListener;
+        private final IQueue<Object> queue;
 
-        public QueueConsumerTask(CamelItemListener camelItemListener) {
-            this.camelItemListener = camelItemListener;
+        QueueConsumerTask(IQueue<Object> queue) {
+            this.queue = queue;
         }
 
         @Override
         public void run() {
-            IQueue<Object> queue = hazelcastInstance.getQueue(cacheName);
-            if (config.getQueueConsumerMode() == HazelcastQueueConsumerMode.LISTEN) {
-                queue.addItemListener(camelItemListener, true);
-            }
-
-            if (config.getQueueConsumerMode() == HazelcastQueueConsumerMode.POLL) {
-                while (isRunAllowed()) {
+            while (isRunAllowed()) {
+                final Object body;
+                try {
+                    body = queue.poll(config.getPollingTimeout(), TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    continue;
+                } catch (Exception e) {
+                    // keep polling after an error (such as the client being disconnected from the cluster)
+                    if (isRunAllowed()) {
+                        getExceptionHandler().handleException("Error polling from the queue " + cacheName, e);
+                        waitBeforeNextPoll();
+                    }
+                    continue;
+                }
+                // CAMEL-16035 - If the polling timeout is exceeded with nothing to poll from the queue, the queue.poll() method return NULL
+                if (body != null) {
+                    Exchange exchange = createExchange(false);
+                    exchange.getIn().setBody(body);
                     try {
-                        final Object body = queue.poll(config.getPollingTimeout(), TimeUnit.MILLISECONDS);
-                        // CAMEL-16035 - If the polling timeout is exceeded with nothing to poll from the queue, the queue.poll() method return NULL
-                        if (body != null) {
-                            Exchange exchange = createExchange(false);
-                            exchange.getIn().setBody(body);
-                            try {
-                                processor.process(exchange);
-                            } catch (Exception e) {
-                                getExceptionHandler().handleException("Error during processing", exchange, e);
-                            } finally {
-                                releaseExchange(exchange, false);
-                            }
-                        }
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
+                        processor.process(exchange);
+                    } catch (Exception e) {
+                        getExceptionHandler().handleException("Error during processing", exchange, e);
+                    } finally {
+                        releaseExchange(exchange, false);
                     }
                 }
             }
+        }
+
+        private void waitBeforeNextPoll() {
+            Tasks.foregroundTask()
+                    .withBudget(Budgets.iterationBudget()
+                            .withMaxIterations(1)
+                            .withInitialDelay(Duration.ofMillis(config.getPollingTimeout()))
+                            .build())
+                    .withName("HazelcastQueuePollErrorDelay")
+                    .build()
+                    .run(getEndpoint().getCamelContext(), () -> true);
         }
     }
 
