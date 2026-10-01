@@ -51,6 +51,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.errors.ApiException;
+import org.apache.kafka.common.errors.SerializationException;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -201,12 +202,15 @@ public class KafkaProducerTest {
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getMessage()).thenReturn(in);
 
-        // the first record is accepted (its callback stays in flight), the second fails to dispatch mid-batch
+        // the first record is accepted (its callback stays in flight), the second fails to dispatch mid-batch.
+        // Kafka's send(record, callback) throws synchronously for a SerializationException (and a closed-producer
+        // IllegalStateException or an InterruptException), whereas an ApiException is reported through the callback
+        // instead - so a synchronously thrown SerializationException is what this path actually sees.
         Producer kp = producer.getKafkaProducer();
         Future future = Mockito.mock(Future.class);
         Mockito.when(kp.send(any(ProducerRecord.class), any(Callback.class)))
                 .thenReturn(future)
-                .thenThrow(new ApiException());
+                .thenThrow(new SerializationException("boom"));
 
         ArrayNode node = JsonNodeFactory.instance.arrayNode();
         node.add(1);
@@ -216,7 +220,7 @@ public class KafkaProducerTest {
         boolean sync = producer.process(exchange, callback);
 
         // the dispatch failure is recorded, but routing is deferred while the first send is still in flight
-        Mockito.verify(exchange).setException(isA(ApiException.class));
+        Mockito.verify(exchange).setException(isA(SerializationException.class));
         assertFalse(sync);
         Mockito.verify(callback, Mockito.never()).done(Mockito.anyBoolean());
 

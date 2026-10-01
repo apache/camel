@@ -522,11 +522,20 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 kafkaProducer.send(record, cb);
             }
         } catch (RuntimeException dispatchFailure) {
-            // send() threw synchronously (e.g. buffer exhaustion / max.block.ms timeout, a serialization error, or a
-            // closed producer), so no Kafka callback will ever fire for this record. Undo the increment above to keep
-            // the completion counter accurate; otherwise a mid-batch failure would leave it above zero and routing
-            // would never continue. The exception propagates to process(), which records it and arms completion for
-            // the records already in flight (CAMEL-24783).
+            // send() threw synchronously rather than reporting through the callback: a SerializationException (or other
+            // non-API KafkaException), an IllegalStateException from a closed producer, or an InterruptException. In
+            // those cases no Kafka callback fires for this record. (An ApiException - a max.block.ms/buffer-exhaustion
+            // TimeoutException, RecordTooLargeException, etc. - is NOT thrown here: Kafka reports it through the
+            // callback, which balances the count via onCompletion.) Undo the increment above to keep the completion
+            // counter accurate; otherwise a mid-batch failure would leave it above zero and routing would never
+            // continue. The exception propagates to process(), which records it and arms completion for the records
+            // already in flight.
+            //
+            // Narrow known exposure, left as-is: with a transactional producer whose transaction is already in an
+            // error state, transactionManager.maybeAddPartition() can throw *after* the record's callback has been
+            // registered, so that callback still fires later (on abort). Decrementing here then undercounts by one and
+            // routing can continue one callback early. This matches the pre-existing behaviour and only arises for an
+            // already-failed transaction (CAMEL-24783).
             cb.decrement();
             throw dispatchFailure;
         }
