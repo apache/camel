@@ -45,6 +45,7 @@ import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.SwitchDefinition;
+import org.apache.camel.model.ThrowExceptionDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -136,6 +137,25 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
                         writer.addAttribute(prefix, entry.getValue());
                     }
                 }
+            }
+
+            @Override
+            protected void doWriteThrowExceptionDefinition(String name, ThrowExceptionDefinition def) throws IOException {
+                Exception e = def.getException();
+                String type = def.getExceptionClass() != null
+                        ? def.getExceptionClass().getName() : e != null ? e.getClass().getName() : null;
+                if (type == null || def.getExceptionType() != null || def.getRef() != null) {
+                    super.doWriteThrowExceptionDefinition(name, def);
+                    return;
+                }
+                // an exception given as a class or an instance, as in throwException(new Exception("...")), is
+                // written as its type and message, as the class or instance itself cannot be
+                startElement(name);
+                doWriteProcessorDefinitionAttributes(def);
+                String message = def.getMessage() != null ? def.getMessage() : e != null ? e.getMessage() : null;
+                doWriteAttribute("message", message, null);
+                doWriteAttribute("exceptionType", type, null);
+                endElement(name);
             }
 
             @Override
