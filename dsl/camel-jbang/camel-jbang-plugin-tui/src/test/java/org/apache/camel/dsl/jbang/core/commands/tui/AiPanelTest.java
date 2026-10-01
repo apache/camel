@@ -69,6 +69,18 @@ class AiPanelTest {
     }
 
     @Test
+    void thePanelIsIdleOnlyWhenNothingIsTypedOrAsked() {
+        AiPanel panel = new AiPanel();
+        long now = System.currentTimeMillis();
+        assertTrue(panel.idleFor(AiPanel.OVERVIEW_IDLE_MS, now), "nothing typed yet");
+
+        type(panel, "why");
+        assertFalse(panel.idleFor(AiPanel.OVERVIEW_IDLE_MS, System.currentTimeMillis()), "typing a question");
+        // still typed, even long after the last key
+        assertFalse(panel.idleFor(AiPanel.OVERVIEW_IDLE_MS, System.currentTimeMillis() + 60_000));
+    }
+
+    @Test
     void normalTextStillGoesToLlm() throws Exception {
         AiPanel panel = new AiPanel();
         RecordingLlmClient client = new RecordingLlmClient("ok");
