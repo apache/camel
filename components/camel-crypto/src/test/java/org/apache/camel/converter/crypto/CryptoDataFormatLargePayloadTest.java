@@ -27,9 +27,9 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The HMAC (appended by default) is split off in a circular buffer on unmarshal. The buffer must wrap around for any
@@ -71,14 +71,15 @@ public class CryptoDataFormatLargePayloadTest extends CamelTestSupport {
         // drop the last cipher block (DES has 8 byte blocks)
         byte[] truncated = Arrays.copyOf(encrypted, encrypted.length - 8);
 
-        assertAuthenticationFailed(truncated);
+        // on this branch a truncated message fails on decryption (padding) before the mac is checked
+        assertThrows(CamelExecutionException.class, () -> template.requestBody("direct:unmarshal", truncated));
     }
 
     private void assertAuthenticationFailed(byte[] encrypted) {
         CamelExecutionException e
                 = assertThrows(CamelExecutionException.class, () -> template.requestBody("direct:unmarshal", encrypted));
         IllegalStateException cause = assertInstanceOf(IllegalStateException.class, e.getCause());
-        assertEquals(HMACAccumulator.AUTHENTICATION_FAILED, cause.getMessage());
+        assertTrue(cause.getMessage().startsWith("Expected mac did not match actual mac"), cause.getMessage());
     }
 
     private void doRoundTrip(int size) throws Exception {
