@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -206,5 +207,30 @@ class HistoryTabRenderTest {
         e.elapsed = elapsed;
         e.last = last;
         return e;
+    }
+
+    @Test
+    void theWaterfallBarsStandWhereTheStepsRan() {
+        // the exchange was created 2s before it was processed: the route row starts with its first step
+        // the last row of a route carries the creation time too: it stands where its route started
+        List<HistoryTab.WaterfallStep> steps = List.of(
+                step("from1", true, false, 17, 1_000),
+                step("unmarshal1", false, false, 0, 3_000),
+                step("to2", false, false, 16, 3_001),
+                step("from2", true, false, 12, 1_000),
+                step("log3", false, false, 0, 3_005),
+                step("from2", false, true, 12, 1_000),
+                step("from1", false, true, 17, 1_000));
+        long[] offsets = HistoryTab.waterfallOffsets(steps);
+        assertTrue(Arrays.equals(new long[] { 0, 0, 1, 5, 5, 5, 0 }, offsets), Arrays.toString(offsets));
+
+        // without the times of the steps, every bar starts at 0
+        long[] none = HistoryTab.waterfallOffsets(
+                List.of(step("from1", true, false, 5, 0), step("log1", false, false, 5, 0)));
+        assertTrue(Arrays.equals(new long[] { 0, 0 }, none));
+    }
+
+    private static HistoryTab.WaterfallStep step(String id, boolean first, boolean last, long elapsed, long start) {
+        return new HistoryTab.WaterfallStep(id, id, "-->", first, last, 0, elapsed, 0, start);
     }
 }

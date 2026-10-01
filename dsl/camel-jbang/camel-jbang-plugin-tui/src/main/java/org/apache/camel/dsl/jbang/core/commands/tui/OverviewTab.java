@@ -274,6 +274,10 @@ class OverviewTab extends AbstractTab {
             infraFocused = false;
         }
 
+        if (ctx.selectedPid == null && !infraFocused) {
+            // no integration selected: no row marked as if one were (the header and info panel say none is)
+            tableState.clearSelection();
+        }
         if (ctx.selectedPid != null) {
             for (int i = 0; i < infos.size(); i++) {
                 if (ctx.selectedPid.equals(infos.get(i).pid)) {
@@ -515,6 +519,9 @@ class OverviewTab extends AbstractTab {
         long maxFailed = infos.stream().mapToLong(i -> i.failed).max().orElse(0);
         int tw = Math.max(numWidth(maxTotal), 6);
         int fw = Math.max(numWidth(maxFailed), 6);
+        // TOTAL and FAIL are as wide as the longest "count (since last)", so the since part is not cut
+        int totalColWidth = 14;
+        int failColWidth = 14;
         for (IntegrationInfo info : infos) {
             boolean isEven = (rowIndex++ % 2 == 0);
             Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
@@ -620,6 +627,8 @@ class OverviewTab extends AbstractTab {
                         ? Line.from(Span.styled(String.format("%" + fw + "d", info.failed), failStyle),
                                 Span.styled(" (" + info.sinceLastFailed + ")", Theme.muted()))
                         : Line.from(Span.styled(String.format("%" + fw + "d", info.failed), failStyle));
+                totalColWidth = Math.max(totalColWidth, totalCell.width() + 1);
+                failColWidth = Math.max(failColWidth, failCell.width() + 1);
 
                 rows.add(Row.from(
                         Cell.from(info.pid),
@@ -658,8 +667,8 @@ class OverviewTab extends AbstractTab {
                 Constraint.length(10),
                 Constraint.length(7),
                 Constraint.length(8),
-                Constraint.length(14),
-                Constraint.length(14),
+                Constraint.length(totalColWidth),
+                Constraint.length(failColWidth),
                 Constraint.min(20),
                 Constraint.length(0)
         };
@@ -829,6 +838,44 @@ class OverviewTab extends AbstractTab {
         renderInfoPanel(frame, infoArea);
     }
 
+    /** The info panel when no integration is selected: how many run, and their messages and memory together. */
+    static List<Line> summaryLines(List<IntegrationInfo> infos) {
+        Style dim = Theme.muted();
+        int running = 0;
+        int projects = 0;
+        long total = 0;
+        long failed = 0;
+        long heap = 0;
+        for (IntegrationInfo info : infos) {
+            if (info.vanishing) {
+                continue;
+            }
+            if (info.phantom) {
+                projects++;
+                continue;
+            }
+            running++;
+            total += info.exchangesTotal;
+            failed += info.failed;
+            heap += Math.max(0, info.heapMemUsed);
+        }
+        List<Line> lines = new ArrayList<>();
+        lines.add(Line.from(Span.styled("Running:  ", dim), Span.raw(String.valueOf(running))));
+        if (projects > 0) {
+            lines.add(Line.from(Span.styled("Opened:   ", dim), Span.raw(projects + " not running")));
+        }
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled("Total:    ", dim), Span.raw(String.valueOf(total))));
+        lines.add(Line.from(Span.styled("Failed:   ", dim),
+                Span.styled(String.valueOf(failed), failed > 0 ? Theme.error() : Style.EMPTY)));
+        if (heap > 0) {
+            lines.add(Line.from(Span.styled("Heap:     ", dim), Span.raw(TuiHelper.formatBytes(heap))));
+        }
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled("\u2191\u2193", Theme.hintKey()), Span.styled(" select one", dim)));
+        return lines;
+    }
+
     /** How long an opened project shows as Starting when its app does not show up. */
     static final long PROJECT_START_MS = 5 * 60_000;
 
@@ -889,6 +936,15 @@ class OverviewTab extends AbstractTab {
             if (active.size() == 1) {
                 sel = active.get(0);
             }
+        }
+        if (sel == null) {
+            // nothing selected: what runs, in numbers, rather than an empty box
+            Block allBlock = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                    .title(Title.from(Line.from(Span.styled(" All ", Theme.title())))).build();
+            frame.renderWidget(allBlock, area);
+            frame.renderWidget(Paragraph.builder().text(Text.from(summaryLines(ctx.data.get()))).build(),
+                    allBlock.inner(area));
+            return;
         }
         Block infoBlock = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).build();
         frame.renderWidget(infoBlock, area);

@@ -83,6 +83,16 @@ class RunOptionsForm {
             TuiIcons.labeled(TuiIcons.JBANG, "JBang")
     };
     private static final String[] RUNTIME_VALUES = { "camel-main", "spring-boot", "quarkus", "jbang" };
+
+    /** Where each runtime serves the developer console: each keeps its own default path. */
+    static String consolePath(int runtime) {
+        return switch (runtime) {
+            case 1 -> "/actuator/camel";
+            case 2 -> "/q/camel/dev-console";
+            default -> "/q/dev";
+        };
+    }
+
     private static final String[] PROFILE_LABELS = {
             TuiIcons.labeled(TuiIcons.DEV_PROFILE, "dev"),
             TuiIcons.labeled(TuiIcons.PROD_PROFILE, "prod")
@@ -600,7 +610,8 @@ class RunOptionsForm {
         renderTextInput(frame, innerX + labelW, rowY, fieldW, maxInput, selectedRow == ROW_MAX);
         rowY++;
 
-        renderCheckbox(frame, innerX, rowY, innerW, "Web console (/q/dev)", webConsole, selectedRow == ROW_CONSOLE);
+        renderCheckbox(frame, innerX, rowY, innerW, "Web console (" + consolePath(runtimeMode) + ")", webConsole,
+                selectedRow == ROW_CONSOLE);
         rowY++;
 
         if (runtimeLocked) {

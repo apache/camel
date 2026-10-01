@@ -93,5 +93,6 @@ with the mouse.
 - `l` — change log level
 - `f` — toggle follow mode (`End` turns it on). Scrolling with the mouse wheel, `Up`, `PgUp` or `Home` turns it off; the title then shows `(paused, End follows)` when new lines arrive below the view
 - `w` — toggle word wrap
+- `c` — toggle the compact view (on by default): the time, level, logger and message of each line, without the date, pid and thread
 - `Ctrl+L` — pin/cycle/unpin log panel (works from any tab)
 - `Esc` — clear find / back
