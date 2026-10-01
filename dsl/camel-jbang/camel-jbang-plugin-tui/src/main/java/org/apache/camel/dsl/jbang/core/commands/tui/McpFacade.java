@@ -116,6 +116,13 @@ class McpFacade {
         default String parkedReplayFile() {
             return null;
         }
+
+        /**
+         * Tells that a tool wrote a file, so a view of the file shows what is in it now. Called on the calling (tool)
+         * thread.
+         */
+        default void fileWritten(Path file) {
+        }
     }
 
     /** How file writes requested by tools are handled; set by the user with /write in the AI panel. */
@@ -1218,6 +1225,9 @@ class McpFacade {
             Files.writeString(filePath, content, StandardCharsets.UTF_8);
         } catch (IOException e) {
             return writeError("Failed to write " + filePath + ": " + e.getMessage());
+        }
+        if (bridge != null) {
+            bridge.fileWritten(filePath);
         }
         JsonObject result = new JsonObject();
         result.put("status", exists ? "overwritten" : "created");

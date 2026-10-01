@@ -57,6 +57,7 @@ import dev.tamboui.widgets.input.TextAreaState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
+import org.apache.camel.dsl.jbang.core.commands.ai.QuickFixes;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
@@ -208,6 +209,7 @@ class SourceViewer {
     private int liveFailedWidth;
     private int liveMeanWidth;
     private String liveWidthsFile;
+    private MonitorContext.AskAi askAi;
     /** java or xml: Tab completes the endpoint uris of a Java or XML route file; null for neither. */
     private String uriCompletion;
     /** The completion being chosen in a uri: its row, the column its prefix ends at, the prefix and suffix. */
@@ -216,6 +218,10 @@ class SourceViewer {
     private List<String> validationErrors;
     private int validationErrorScroll;
     private Map<Integer, String> inlineErrors = Collections.emptyMap();
+    /**
+     * The problems of the file shown, found when it was loaded: marked in the view, and the editor starts with them.
+     */
+    private Map<Integer, String> viewErrors = Collections.emptyMap();
     private boolean editInitialScroll;
     private long lastBackgroundValidationTime;
     private String lastBackgroundValidationContent;
@@ -401,6 +407,11 @@ class SourceViewer {
     private record UriCompletion(int row, int endCol, String prefix, String suffix) {
     }
 
+    /** Opens the AI panel to fix the problem of the cursor line (Shift+F8); null when there is no AI panel. */
+    void setAskAi(MonitorContext.AskAi askAi) {
+        this.askAi = askAi;
+    }
+
     void hide() {
         exitEditMode();
         visible = false;
@@ -551,6 +562,20 @@ class SourceViewer {
         return selectedLine;
     }
 
+    /**
+     * Shows the file again, at the same line, when it is the file shown and it is not being edited: a file an AI tool
+     * wrote while the viewer showed the old content. An edit in progress is left alone, as it holds the user's work.
+     */
+    void reloadIfShowing(Path file) {
+        if (editMode || editableFile == null || file == null
+                || !editableFile.toAbsolutePath().normalize().equals(file.toAbsolutePath().normalize())) {
+            return;
+        }
+        int line = selectedLine;
+        loadFile(editableFile);
+        goToLine(Math.min(line, Math.max(0, getLineCount() - 1)));
+    }
+
     int getLineCount() {
         if (editMode) {
             return editState.lineCount();
@@ -641,6 +666,10 @@ class SourceViewer {
         }
         if (isEditable() && ke.isKey(KeyCode.F4)) {
             enterEditMode();
+            return true;
+        }
+        if (ke.isKey(KeyCode.F9) && !ke.hasShift() && !viewErrors.isEmpty()) {
+            goToNextProblem(viewErrors, selectedLine);
             return true;
         }
         if (isMarkdownFile && ke.isChar(' ')) {
@@ -861,6 +890,15 @@ class SourceViewer {
             }
             return true;
         }
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            askAiToFix();
+            return true;
+        }
+        if (ke.isKey(KeyCode.F9) && ke.hasShift()) {
+            // Shift+F9 fixes the problem F9 jumps to (F3, F6, F8 are global: switch integration, shell, AI panel)
+            applyQuickFix();
+            return true;
+        }
         if (ke.isKey(KeyCode.F9) && !inlineErrors.isEmpty()) {
             jumpToNextError();
             return true;
@@ -1037,6 +1075,9 @@ class SourceViewer {
         originalEditText = editState.text();
         lineStatuses = null;
         diffOverlay = false;
+        // the problems found when the file was loaded are marked at once, before the first change
+        inlineErrors = viewErrors;
+        lastBackgroundValidationContent = originalEditText;
         editMode = true;
         editHistory.seedInitial(editState);
         refreshEditFindMatches();
@@ -1632,10 +1673,79 @@ class SourceViewer {
         }
     }
 
+    /** The fix of the problem on the line of the cursor, when the problem says it; null otherwise. */
+    private QuickFixes.Fix cursorFix() {
+        int row = editState.cursorRow();
+        String error = visibleInlineErrors().get(row);
+        return error != null ? QuickFixes.fixFor(error, editState.getLine(row)) : null;
+    }
+
+    /**
+     * Asks the AI to fix the problem of the cursor line (Shift+F8): the file is saved as it is in the editor, which the
+     * AI is about to change, edit mode left so the editor shows what the AI sees, and the AI panel opened with the
+     * question in its input, for the user to send with Enter or change first.
+     */
+    private void askAiToFix() {
+        int row = editState.cursorRow();
+        String problem = visibleInlineErrors().get(row);
+        if (askAi == null || editableFile == null || problem == null) {
+            return;
+        }
+        String lineText = editState.getLine(row);
+        Path file = editableFile;
+        if (dirty) {
+            try {
+                Files.writeString(file, editState.text(), StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                notifySave("Save failed: " + e.getMessage(), true);
+                return;
+            }
+            dirty = false;
+        }
+        exitEditMode();
+        loadFile(file);
+        goToLine(row);
+        askAi.fixProblem(file, row + 1, problem, lineText);
+    }
+
+    /** Applies the fix of the problem on the line of the cursor (Shift+F9), and checks the content again right away. */
+    private void applyQuickFix() {
+        QuickFixes.Fix fix = cursorFix();
+        if (fix == null) {
+            return;
+        }
+        int row = editState.cursorRow();
+        int col = editState.cursorCol();
+        String line = editState.getLine(row);
+        String fixed = fix.apply(line);
+        if (fixed == null) {
+            return;
+        }
+        recordEditChange();
+        editState.moveCursorToLineStart();
+        for (int i = 0; i < line.length(); i++) {
+            editState.deleteForward();
+        }
+        editState.insert(fixed);
+        editState.moveCursorToLineStart();
+        for (int i = 0; i < Math.min(col, fixed.length()); i++) {
+            editState.moveCursorRight();
+        }
+        dirty = true;
+        lineStatuses = null;
+        // the problem is gone: check again now, not at the next interval
+        lastBackgroundValidationTime = 0;
+        notifySave("Fixed: " + fix.label(), false);
+    }
+
     private void jumpToNextError() {
-        List<Integer> errorLines = new ArrayList<>(inlineErrors.keySet());
+        goToNextProblem(inlineErrors, editState.cursorRow());
+    }
+
+    /** Goes to the first problem after the row, or wraps around to the first one. */
+    private void goToNextProblem(Map<Integer, String> problems, int cursorRow) {
+        List<Integer> errorLines = new ArrayList<>(problems.keySet());
         Collections.sort(errorLines);
-        int cursorRow = editState.cursorRow();
         // find the first error line after the cursor
         for (int line : errorLines) {
             if (line > cursorRow) {
@@ -1664,6 +1774,12 @@ class SourceViewer {
         lastBackgroundValidationTime = now;
         lastBackgroundValidationContent = content;
 
+        List<String> msgs = validateContent(content);
+        inlineErrors = msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
+    }
+
+    /** The problems the checks of the file type (Camel YAML, properties, Java or XML routes) find in the content. */
+    private List<String> validateContent(String content) {
         List<String> msgs = new ArrayList<>();
         if (isCamelYamlFile()) {
             if (endpointValidator != null) {
@@ -1686,7 +1802,25 @@ class SourceViewer {
                 msgs.addAll(routeErrors);
             }
         }
-        inlineErrors = msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
+        return msgs;
+    }
+
+    /** The problems of the file just loaded, by line; none when the checks fail or do not apply. */
+    private Map<Integer, String> problemsOnLoad(String content) {
+        if (isMarkdownFile) {
+            return Collections.emptyMap();
+        }
+        try {
+            List<String> msgs = validateContent(content);
+            return msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
+        } catch (RuntimeException e) {
+            return Collections.emptyMap();
+        }
+    }
+
+    /** Package-private for tests: the problems marked in the view, by line from 0. */
+    Map<Integer, String> viewErrors() {
+        return viewErrors;
     }
 
     /**
@@ -2009,7 +2143,17 @@ class SourceViewer {
             if (viewDocEntries != null && !viewDocEntries.isEmpty()) {
                 titleText = viewDocEntries.get(0).title();
             }
-            if (titleText != null) {
+            String problem = viewErrors.get(selectedLine);
+            if (problem != null) {
+                // the problem of the line goes before its documentation, as the Error panel of the editor shows it
+                int remaining = Math.max(0, viewDocArea.width() - " Error ".length() - 3);
+                docLines.add(Line.from(
+                        Span.styled("───", Theme.error()),
+                        Span.styled(" Error ", Theme.error().bold()),
+                        Span.styled("─".repeat(remaining), Theme.error())));
+                docLines.add(Line.from(Span.styled(problem, Theme.error())));
+                docLines.add(Line.from(Span.styled("F4 edit   F9 next problem", Style.EMPTY.dim())));
+            } else if (titleText != null) {
                 String prefix = "─── ";
                 String suffix = " ";
                 int remaining = Math.max(0, viewDocArea.width() - prefix.length() - titleText.length() - suffix.length());
@@ -2020,7 +2164,7 @@ class SourceViewer {
             } else {
                 docLines.add(Line.from(Span.styled("─".repeat(Math.max(1, viewDocArea.width())), Style.EMPTY.dim())));
             }
-            if (viewDocEntries != null && !viewDocEntries.isEmpty()) {
+            if (problem == null && viewDocEntries != null && !viewDocEntries.isEmpty()) {
                 for (int d = 0; d < viewDocEntries.size() && d < viewDocArea.height() - 1; d++) {
                     DocEntry entry = viewDocEntries.get(d);
                     Style docStyle = entry.deprecated() ? Style.EMPTY.dim().italic() : Style.EMPTY.dim();
@@ -2049,6 +2193,11 @@ class SourceViewer {
                 }
             }
         }
+        if (!diffOverlay && !visibleErrors.isEmpty()) {
+            // a block has one title at the top: the error count goes on the line of the file name, not instead of it
+            Style errorStyle = Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
+            titleSpans.add(Span.styled(" errors: " + visibleErrors.size() + " ", errorStyle));
+        }
         Title posTitle;
         if (diffOverlay) {
             posTitle = Title.from(
@@ -2068,11 +2217,6 @@ class SourceViewer {
             blockBuilder.borders(Borders.ALL)
                     .title(Title.from(Line.from(titleSpans)))
                     .titleBottom(posTitle);
-            if (!visibleErrors.isEmpty()) {
-                Style errorStyle = Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
-                blockBuilder.title(Title.from(Line.from(
-                        Span.styled(" errors: " + visibleErrors.size() + " ", errorStyle))).right());
-            }
         }
         if (borderStyle != null) {
             blockBuilder.borderStyle(borderStyle);
@@ -2220,6 +2364,19 @@ class SourceViewer {
                         Span.styled(titleText, errorDim.bold()),
                         Span.styled(suffix + "─".repeat(remaining), errorDim)));
                 docLines.add(Line.from(Span.styled(cursorError, errorDim)));
+                QuickFixes.Fix fix = cursorFix();
+                List<Span> actions = new ArrayList<>();
+                if (fix != null) {
+                    actions.add(Span.styled("Shift+F9", Style.EMPTY.bold()));
+                    actions.add(Span.styled(" fix: " + fix.label() + "   ", Style.EMPTY.dim()));
+                }
+                if (askAi != null) {
+                    actions.add(Span.styled("Shift+F8", Style.EMPTY.bold()));
+                    actions.add(Span.styled(" fix with AI", Style.EMPTY.dim()));
+                }
+                if (!actions.isEmpty()) {
+                    docLines.add(Line.from(actions));
+                }
             } else if (titleText != null) {
                 String prefix = "─── ";
                 String suffix = " ";
@@ -2419,6 +2576,12 @@ class SourceViewer {
             if (!inlineErrors.isEmpty()) {
                 TuiHelper.hint(spans, "F9", "next error");
             }
+            if (cursorFix() != null) {
+                TuiHelper.hint(spans, "Shift+F9", "fix");
+            }
+            if (askAi != null && visibleInlineErrors().containsKey(editState.cursorRow())) {
+                TuiHelper.hint(spans, "Shift+F8", "fix with AI");
+            }
             if (isCamelYamlFile()) {
                 TuiHelper.hint(spans, "Ctrl+R", "refactor");
             }
@@ -2444,6 +2607,9 @@ class SourceViewer {
         }
         if (isEditable()) {
             TuiHelper.hint(spans, "F4", "edit");
+        }
+        if (!viewErrors.isEmpty()) {
+            TuiHelper.hint(spans, "F9", "next problem");
         }
         if (isMarkdownFile || currentRouteId != null) {
             TuiHelper.hint(spans, "Space", "format");
@@ -2650,6 +2816,7 @@ class SourceViewer {
             }
             editableFile = Files.isWritable(filePath) ? filePath : null;
             scanDeprecatedLines();
+            viewErrors = problemsOnLoad(String.join("\n", rawLines));
             jumpLinks = Collections.emptyMap();
             if (onFileLoaded != null) {
                 onFileLoaded.accept(filePath);
@@ -2663,6 +2830,7 @@ class SourceViewer {
             markdownMode = false;
             rawMarkdownContent = null;
             editableFile = null;
+            viewErrors = Collections.emptyMap();
         }
     }
 
@@ -2676,6 +2844,7 @@ class SourceViewer {
     void loadSource(MonitorContext ctx, String routeId, int targetLine, String sourceLocationHint) {
         // Process-sourced views are never editable (may be remote / not a local file)
         editableFile = null;
+        viewErrors = Collections.emptyMap();
         editMode = false;
         editState.clear();
 
@@ -2890,6 +3059,11 @@ class SourceViewer {
             return Title.from(Line.from(spans));
         }
         if (currentRouteId == null) {
+            if (!viewErrors.isEmpty()) {
+                return Title.from(Line.from(
+                        Span.styled(" Source [" + info + "] ", ts),
+                        Span.styled(" errors: " + viewErrors.size() + " ", Theme.error())));
+            }
             return Title.from(Span.styled(" Source [" + info + "] ", ts));
         }
 
@@ -3088,16 +3262,22 @@ class SourceViewer {
         } else if (isSelected) {
             spans.add(Span.styled(">> ", focused ? Theme.label().bold() : Theme.label().dim()));
             if (!prefix.isEmpty()) {
-                spans.add(Span.styled(prefix, (focused ? Theme.label().bold() : Theme.label().dim()).patch(selBg)));
+                Style numberStyle = viewErrors.containsKey(lineIndex)
+                        ? Theme.error().bold() : focused ? Theme.label().bold() : Theme.label().dim();
+                spans.add(Span.styled(prefix, numberStyle.patch(selBg)));
             }
             addLiveColumn(spans, lineIndex, selBg);
             for (Span s : highlighted.spans()) {
                 spans.add(Span.styled(s.content(), s.style().patch(selBg)));
             }
         } else {
-            spans.add(isDeprecated
-                    ? Span.styled(" ⚠ ", Theme.warning())
-                    : Span.raw("   "));
+            if (viewErrors.containsKey(lineIndex)) {
+                spans.add(Span.styled(" ✗ ", Theme.error().bold()));
+            } else {
+                spans.add(isDeprecated
+                        ? Span.styled(" ⚠ ", Theme.warning())
+                        : Span.raw("   "));
+            }
             if (!prefix.isEmpty()) {
                 spans.add(Span.styled(prefix, Style.EMPTY.dim()));
             }

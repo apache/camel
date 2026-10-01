@@ -134,6 +134,9 @@ class SourceTab extends AbstractTab {
     }
 
     private List<RouteEntry> routeIndex = Collections.emptyList();
+    private ProjectBeans projectBeans = ProjectBeans.NONE;
+    private long projectBeansStamp;
+    private long projectBeansChecked;
     private List<ToEntry> toIndex = Collections.emptyList();
     final GotoRoutePopup gotoRoutePopup = new GotoRoutePopup();
     final GotoSourceNodePopup gotoSourceNodePopup = new GotoSourceNodePopup();
@@ -270,6 +273,11 @@ class SourceTab extends AbstractTab {
 
         if (!routeIndex.isEmpty() && ke.isChar('g')) {
             gotoRoutePopup.open(routeIndex);
+            return true;
+        }
+
+        if (focusOnViewer && sourceViewer.isVisible() && !sourceViewer.isEditMode() && ke.isChar('u')) {
+            openUsages();
             return true;
         }
 
@@ -442,6 +450,9 @@ class SourceTab extends AbstractTab {
                         TuiHelper.hint(spans, "g", "go to route");
                     }
                     TuiHelper.hint(spans, "Ctrl+G", "go to");
+                    if (endpointOnSelectedLine() != null) {
+                        TuiHelper.hint(spans, "u", "usages");
+                    }
                 }
             }
         } else {
@@ -831,6 +842,7 @@ class SourceTab extends AbstractTab {
         boolean routeFile = !SourceEditAssist.isYamlFile(filePath)
                 && (isJavaRouteFile(filePath) || isCamelSourceFile(filePath));
         sourceViewer.setRouteValidator(routeFile ? content -> assist.validateRoutes(filePath, content) : null);
+        sourceViewer.setAskAi(ctx.askAiCallback);
         String name = filePath.getFileName().toString();
         sourceViewer.setUriCompletion(!routeFile ? null : name.endsWith(".java") ? "java" : "xml");
         if (isCamelSourceFile(filePath)) {
@@ -842,14 +854,14 @@ class SourceTab extends AbstractTab {
                 sourceViewer.setEndpointValidator(assist::validateYamlEndpoints);
                 sourceViewer.setSimpleValidator(assist::validateYamlSimple);
                 sourceViewer.setListItemNodeChecker(assist::isListChildrenNode);
-                sourceViewer.setEditQuickDocProvider(assist::provideEditQuickDoc);
+                sourceViewer.setEditQuickDocProvider(withProjectDocs(assist::provideEditQuickDoc));
             } else {
                 // XML: the quick doc of the routes read into the model, Tab in the uri attributes (CAMEL-25208)
                 sourceViewer.setQuickDocProvider(cd -> assist.provideRouteQuickDocs(filePath, cd));
                 sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
                 sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
                 sourceViewer.setEditQuickDocProvider(
-                        (lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row));
+                        withProjectDocs((lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row)));
             }
         } else if (routeFile) {
             // Java: the quick doc of the routes read into the model by the Java DSL parser (CAMEL-25208)
@@ -858,14 +870,15 @@ class SourceTab extends AbstractTab {
             // Tab in the endpoint uri of from, to, toD...: component names, options and values, as YAML uris have
             sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
             sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
-            sourceViewer.setEditQuickDocProvider((lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row));
+            sourceViewer.setEditQuickDocProvider(
+                    withProjectDocs((lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row)));
         } else if (SourceEditAssist.isPropertiesFile(filePath)) {
             sourceViewer.setQuickDocProvider(assist::providePropertiesQuickDocs);
             sourceViewer.setDeprecatedLineScanner(assist::scanDeprecatedProperties);
             sourceViewer.setAutocompleteProvider(assist::providePropertyCompletions);
             sourceViewer.setAutocompleteValueProvider(assist::providePropertyValueCompletions);
             sourceViewer.setPropertiesValidator(assist::validatePropertyLine);
-            sourceViewer.setEditQuickDocProvider(assist::provideEditPropertyQuickDoc);
+            sourceViewer.setEditQuickDocProvider(withProjectDocs(assist::provideEditPropertyQuickDoc));
         } else {
             sourceViewer.setQuickDocProvider(null);
             sourceViewer.setDeprecatedLineScanner(null);
@@ -1168,6 +1181,17 @@ class SourceTab extends AbstractTab {
         return answer;
     }
 
+    /** The Java sources among the files by path, for the constants a Java route takes from another class. */
+    private static Map<String, Supplier<String>> javaSources(List<Path> files) {
+        Map<String, Supplier<String>> answer = new LinkedHashMap<>();
+        for (Path f : files) {
+            if (f.getFileName().toString().endsWith(".java")) {
+                answer.put(f.toString(), () -> readQuietly(f));
+            }
+        }
+        return answer;
+    }
+
     private static boolean isRouteSourceName(String name) {
         String lower = name.toLowerCase();
         return lower.endsWith(".java") || lower.endsWith(".xml") || lower.endsWith(".yaml") || lower.endsWith(".yml");
@@ -1214,17 +1238,33 @@ class SourceTab extends AbstractTab {
         }
     }
 
+    /** Shows a file again when the viewer shows it and it is not being edited: a file an AI tool wrote. */
+    void reloadIfShowing(Path file) {
+        sourceViewer.reloadIfShowing(file);
+    }
+
     private List<YamlRouteNodeScanner.NodeEntry> buildSourceNodeIndex() {
         List<YamlRouteNodeScanner.NodeEntry> nodes = new ArrayList<>();
+        Map<String, Supplier<String>> javaSources = null;
         for (FilesBrowser.FileEntry entry : entries) {
             if (entry.directory()) {
                 continue;
             }
             Path path = Path.of(entry.path());
-            if (!isCamelSourceFile(path) || !SourceEditAssist.isYamlFile(path)) {
-                continue;
+            if (isJavaRouteFile(path)
+                    || isCamelSourceFile(path) && path.getFileName().toString().toLowerCase().endsWith(".xml")) {
+                String content = readQuietly(path);
+                if (content != null) {
+                    if (javaSources == null) {
+                        javaSources = javaSources(routeSources());
+                    }
+                    nodes.addAll(ModelRouteNodeScanner.scan(
+                            path.toString(), path.getFileName().toString(), content, javaSources,
+                            ArchitectureView.catalog()));
+                }
+            } else if (isCamelSourceFile(path) && SourceEditAssist.isYamlFile(path)) {
+                nodes.addAll(YamlRouteNodeScanner.scanFile(path));
             }
-            nodes.addAll(YamlRouteNodeScanner.scanFile(path));
         }
         return nodes;
     }
@@ -1354,7 +1394,71 @@ class SourceTab extends AbstractTab {
         index.add(new RouteEntry(routeId, baseUri, filePath, fromLine));
     }
 
+    /** The jump links of a file: to the routes its steps send to or are called from, and to the beans it refers to. */
     Map<Integer, SourceViewer.JumpLink> computeJumpLinks(Path currentFile) {
+        Map<Integer, SourceViewer.JumpLink> result = new LinkedHashMap<>(computeRouteJumpLinks(currentFile));
+        ProjectBeans beans = projectBeans();
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(currentFile, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return result;
+        }
+        for (int i = 0; i < lines.size(); i++) {
+            ProjectBeans.Location bean = beans.refOn(lines.get(i));
+            if (bean != null && !(bean.filePath().equals(currentFile.toString()) && bean.line() == i)) {
+                result.putIfAbsent(i, new SourceViewer.JumpLink(bean.label(), bean.filePath(), bean.line()));
+            }
+        }
+        return result;
+    }
+
+    /** The beans and classes the project declares, read again when a file of the project changed. */
+    ProjectBeans projectBeans() {
+        long now = System.currentTimeMillis();
+        if (now - projectBeansChecked < 2000) {
+            // the quick doc asks on every frame: look at the files at most every 2 seconds
+            return projectBeans;
+        }
+        projectBeansChecked = now;
+        List<Path> files = routeSources();
+        long stamp = files.size();
+        for (Path f : files) {
+            stamp = 31 * stamp + modified(f) + f.hashCode();
+        }
+        if (stamp != projectBeansStamp) {
+            projectBeans = ProjectBeans.scan(files);
+            projectBeansStamp = stamp;
+        }
+        return projectBeans;
+    }
+
+    /**
+     * The quick doc of a line with what the project knows about it put first: the values of its property placeholders
+     * and where the bean it refers to is declared.
+     */
+    private SourceViewer.EditQuickDocProvider withProjectDocs(SourceViewer.EditQuickDocProvider provider) {
+        return (lines, row) -> {
+            List<SourceViewer.DocEntry> base = provider.provideForLine(lines, row);
+            if (row < 0 || row >= lines.size()) {
+                return base;
+            }
+            List<SourceViewer.DocEntry> extra = new ArrayList<>(assist.placeholderDocs(lines.get(row)));
+            ProjectBeans.Location bean = projectBeans().refOn(lines.get(row));
+            if (bean != null) {
+                extra.add(new SourceViewer.DocEntry(ProjectBeans.describe(bean), false, "Bean"));
+            }
+            if (extra.isEmpty()) {
+                return base;
+            }
+            if (base != null) {
+                extra.addAll(base);
+            }
+            return extra;
+        };
+    }
+
+    private Map<Integer, SourceViewer.JumpLink> computeRouteJumpLinks(Path currentFile) {
         if (routeIndex.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -1478,6 +1582,61 @@ class SourceTab extends AbstractTab {
                 }
             }
         }
+    }
+
+    /**
+     * The endpoint a route consumes from or sends to on the line selected in the viewer, as the route index has it
+     * (direct:billing, seda:orders); null when the line has none.
+     */
+    String endpointOnSelectedLine() {
+        String file = sourceViewer.getCurrentFilePath();
+        int line = sourceViewer.getSelectedLine();
+        if (file == null) {
+            return null;
+        }
+        for (RouteEntry re : routeIndex) {
+            if (file.equals(re.filePath()) && re.fromLine() == line) {
+                return re.fromUri();
+            }
+        }
+        for (ToEntry te : toIndex) {
+            if (file.equals(te.filePath()) && te.toLine() == line) {
+                return te.toUri();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Lists where the endpoint of the selected line is used: the routes that consume from it and those that send to it.
+     */
+    private void openUsages() {
+        buildRouteIndex();
+        String uri = endpointOnSelectedLine();
+        if (uri == null) {
+            if (ctx.notificationCallback != null) {
+                ctx.notificationCallback.accept("No endpoint of a route on this line", false);
+            }
+            return;
+        }
+        gotoRoutePopup.openItems(usagesOf(uri), "Usages of " + uri);
+    }
+
+    /** The routes that consume from the endpoint and the steps that send to it. */
+    List<GotoRoutePopup.RouteItem> usagesOf(String uri) {
+        List<GotoRoutePopup.RouteItem> items = new ArrayList<>();
+        for (RouteEntry re : routeIndex) {
+            if (uri.equals(re.fromUri())) {
+                items.add(new GotoRoutePopup.RouteItem(re.routeId(), "from " + uri, re.filePath(), re.fromLine()));
+            }
+        }
+        for (ToEntry te : toIndex) {
+            if (uri.equals(te.toUri())) {
+                String routeId = te.routeId().isEmpty() ? "route" : te.routeId();
+                items.add(new GotoRoutePopup.RouteItem(routeId, "to " + uri, te.filePath(), te.toLine()));
+            }
+        }
+        return items;
     }
 
     private void openFileAt(String targetFilePath, int targetLine) {

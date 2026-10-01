@@ -190,16 +190,24 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
 
             getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
 
-            if (cache != null) {
-                if (this.version != null) {
-                    cache.removeWithVersion(InfinispanClusterService.LEADER_KEY, this.version);
+            try {
+                // tell the listeners (such as clustered routes) that the local member is no longer the leader, before
+                // the leader key is removed and another member can take over the leadership
+                setLeader(false);
+            } finally {
+                try {
+                    if (cache != null) {
+                        if (this.version != null) {
+                            cache.removeWithVersion(InfinispanClusterService.LEADER_KEY, this.version);
+                        }
+
+                        LOGGER.info("Removing local member, key={}", getLocalMember().getId());
+                        cache.remove(getLocalMember().getId());
+                    }
+                } finally {
+                    this.version = null;
                 }
-
-                LOGGER.info("Removing local member, key={}", getLocalMember().getId());
-                cache.remove(getLocalMember().getId());
             }
-
-            this.version = null;
         }
 
         private boolean isLeader() {
@@ -217,6 +225,15 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
                     return;
                 }
 
+                refreshLeadership();
+                refreshMembership();
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        private void refreshLeadership() {
+            try {
                 final String leaderKey = InfinispanClusterService.LEADER_KEY;
                 final String localId = getLocalMember().getId();
 
@@ -265,12 +282,29 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
                         setLeader(false);
                     }
                 }
+            } catch (Exception e) {
+                // an exception must not end the periodic refresh of the leadership (as it would with an exception
+                // thrown out of this task), and as the leadership could not be refreshed, give it up until the next run
+                LOGGER.warn("Error while refreshing the leadership of id={} (will try again): {}",
+                        getLocalMember().getId(), e.getMessage());
+                LOGGER.debug("Error while refreshing the leadership", e);
+                try {
+                    setLeader(false);
+                } catch (Exception ex) {
+                    LOGGER.debug("Error while giving up the leadership", ex);
+                }
+            }
+        }
 
-                // refresh local membership
+        private void refreshMembership() {
+            try {
                 cache.put(getLocalMember().getId(), isLeader() ? "true" : "false", configuration.getLifespan(),
                         configuration.getLifespanTimeUnit());
-            } finally {
-                lock.unlock();
+            } catch (Exception e) {
+                // the membership entry does not hold the leadership, so keep it and try again on the next run
+                LOGGER.warn("Error while refreshing the membership of id={} (will try again): {}",
+                        getLocalMember().getId(), e.getMessage());
+                LOGGER.debug("Error while refreshing the membership", e);
             }
         }
 

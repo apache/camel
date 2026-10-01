@@ -248,8 +248,11 @@ class ErrorsTabRenderTest {
 
         assertTrue(footer.contains("Esc"), "Footer should contain Esc hint");
         assertTrue(footer.contains("sort"), "Footer should contain sort hint");
-        assertTrue(footer.contains("handled"), "Footer should contain handled filter hint");
-        assertTrue(footer.contains("wrap"), "Footer should contain wrap hint");
+        // the handled filter and wrap are view settings: in the view bar, with the Errors and Diagram views
+        SubViewBar.Spec bar = tab.subViewBar();
+        assertTrue(bar.toggles().stream().anyMatch(t -> t.key().equals("f") && t.label().equals("handled")),
+                "View bar should contain the handled filter");
+        assertTrue(bar.toggles().stream().anyMatch(t -> t.key().equals("w")), "View bar should contain wrap");
     }
 
     @Test

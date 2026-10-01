@@ -146,7 +146,10 @@ class MetricsTabRenderTest {
                 .reduce("", String::concat);
 
         assertTrue(footer.contains("Esc"), "Footer should contain Esc hint");
-        assertTrue(footer.contains("d"), "Footer should contain 'd' toggle hint");
+        // dashboard and table are views of the view bar, d moves between them
+        SubViewBar.Spec bar = tab.subViewBar();
+        assertTrue(bar != null && "d".equals(bar.cycleKey()), "View bar should be moved through with d");
+        assertTrue(bar.views().stream().anyMatch(v -> v.label().equals("Table")), "View bar should list Table");
     }
 
     @Test

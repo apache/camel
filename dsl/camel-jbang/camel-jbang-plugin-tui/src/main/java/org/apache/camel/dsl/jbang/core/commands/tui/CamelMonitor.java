@@ -193,6 +193,8 @@ public class CamelMonitor extends CamelCommand {
     private final EditReplay editReplay = new EditReplay();
     // a live write waiting to start on the UI thread, and the promise its tool thread waits on
     private volatile McpFacade.FileWrite pendingReplay;
+    /** The files AI tools wrote, for the source viewer to show again on the UI thread. */
+    private final Queue<Path> writtenFiles = new ConcurrentLinkedQueue<>();
     private volatile CompletableFuture<McpFacade.ReplayOutcome> pendingReplayOutcome;
     // both are read by the tool thread to decide whether a write can be replayed
     private volatile McpFacade.FileWrite activeReplay;
@@ -220,6 +222,8 @@ public class CamelMonitor extends CamelCommand {
     private String lastTabDivider;
     // Panel resize drag state
     private final DragSplit panelSplit = new DragSplit();
+    /** The views and view settings of the active tab, on the first row of its content. */
+    private final SubViewBar subViewBar = new SubViewBar();
     // Footer key-binding hit-testing: each clickable hint records its [startX, endX) column range on
     // the footer row and the KeyEvent to synthesize when clicked.
     private int footerRowY = -1;
@@ -496,6 +500,13 @@ public class CamelMonitor extends CamelCommand {
         ctx.notificationCallback = (msg, error) -> setNotification(msg, error);
         ctx.openMarkdownCallback = actionsPopup::openMarkdown;
         ctx.openMarkdownAtCallback = actionsPopup::openMarkdownAt;
+        ctx.askAiCallback = (file, line, problem, lineText) -> {
+            if (shellPanel.isOpen()) {
+                shellPanel.close();
+            }
+            Path dir = mcpFacade != null ? mcpFacade.getSelectedSourceDirectory() : null;
+            aiPanel.openWithQuestion(AiFixPrompt.of(dir, file, line, problem, lineText));
+        };
         ctx.projectOverviewCallback = () -> {
             if (shellPanel.isOpen()) {
                 shellPanel.close();
@@ -811,6 +822,11 @@ public class CamelMonitor extends CamelCommand {
                     public String parkedReplayFile() {
                         McpFacade.FileWrite parked = activeReplay;
                         return parked != null && activeReplayOutcome == null ? parked.file() : null;
+                    }
+
+                    @Override
+                    public void fileWritten(Path file) {
+                        writtenFiles.add(file);
                     }
 
                     @Override
@@ -1453,7 +1469,8 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
-        if (ke.isKey(KeyCode.F8)) {
+        if (ke.isKey(KeyCode.F8) && !ke.hasShift()) {
+            // Shift+F8 is the Source editor's: fix the problem of the line with AI
             if (aiPanel.isOpen()) {
                 aiPanel.close();
             } else {
@@ -1646,6 +1663,23 @@ public class CamelMonitor extends CamelCommand {
 
         // Footer key-binding clicks: a click on a hint fires the matching key
         if (me.isClick() && handleFooterClick(me, runner)) {
+            return true;
+        }
+
+        // The view bar of the tab: a click on a view goes there, a click on a view setting presses its key
+        if (subViewBar.isOnRow(me.y()) && TuiHelper.contains(lastContentArea, me.x(), me.y())
+                && !popupManager.isMorePopupVisible() && !popupManager.isSwitchPopupVisible()) {
+            if (me.isClick()) {
+                SubViewBar.View view = subViewBar.viewAt(me.x(), me.y());
+                if (view != null) {
+                    view.select().run();
+                    return true;
+                }
+                KeyEvent key = footerKeyEvent(subViewBar.keyAt(me.x(), me.y()));
+                if (key != null) {
+                    return handleEvent(key, runner);
+                }
+            }
             return true;
         }
 
@@ -1867,6 +1901,9 @@ public class CamelMonitor extends CamelCommand {
         drawOverlay.tick(now);
         captionOverlay.tick(now);
         tickEditReplay(now);
+        for (Path written = writtenFiles.poll(); written != null; written = writtenFiles.poll()) {
+            tabRegistry.sourceTab().reloadIfShowing(written);
+        }
         recordingManager.tickRecentKeys(now);
         boolean anyDiagramShowing = tabRegistry.routesTab().isShowDiagram()
                 || tabRegistry.diagramTab().isShowDiagram();
@@ -2265,6 +2302,14 @@ public class CamelMonitor extends CamelCommand {
         frame.buffer().clear(area);
         MonitorTab tab = tabRegistry.activeTab();
         if (tab != null) {
+            SubViewBar.Spec spec = tab.subViewBar();
+            if (spec != null && area.height() > 3) {
+                List<Rect> rows = Layout.vertical().constraints(Constraint.length(1), Constraint.fill()).split(area);
+                subViewBar.render(frame, rows.get(0), spec);
+                area = rows.get(1);
+            } else {
+                subViewBar.clear();
+            }
             tab.render(frame, area);
         }
     }

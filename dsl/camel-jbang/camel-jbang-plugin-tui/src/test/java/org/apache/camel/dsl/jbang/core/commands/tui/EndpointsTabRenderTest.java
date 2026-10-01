@@ -193,7 +193,11 @@ class EndpointsTabRenderTest {
 
         assertTrue(footer.contains("Esc"), "Footer should contain Esc hint");
         assertTrue(footer.contains("sort"), "Footer should contain sort hint");
-        assertTrue(footer.contains("filter"), "Footer should contain filter hint");
+        // the filter is a view setting: in the view bar, with the Chart and Detail views
+        SubViewBar.Spec bar = tab.subViewBar();
+        assertTrue(bar.toggles().stream().anyMatch(t -> t.key().equals("f") && t.state().equals("all")),
+                "View bar should contain the filter");
+        assertTrue(bar.views().stream().anyMatch(v -> v.label().equals("Detail")), "View bar should list Detail");
     }
 
     // ---- Helper methods ----

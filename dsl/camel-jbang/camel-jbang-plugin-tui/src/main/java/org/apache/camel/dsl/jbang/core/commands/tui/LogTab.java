@@ -296,12 +296,14 @@ class LogTab extends AbstractTab {
             titleSpans.add(Span.raw(" ["));
             titleSpans.add(Span.styled(infraSel.alias, Theme.label().bold()));
             titleSpans.add(Span.raw("] Log "));
-        } else if (ctx.logPinVisible && ctx.selectedPid != null) {
+        } else if (ctx.selectedPid != null) {
+            // the integration is named, as in the pinned log panel, so it is clear whose log this is
             titleSpans.add(Span.raw(" ["));
             titleSpans.add(Span.styled(ctx.selectedName(), Theme.label().bold()));
             titleSpans.add(Span.raw("] Log "));
-        } else if (info != null && info.rootLogLevel != null) {
-            titleSpans.add(Span.raw(" Log level:" + info.rootLogLevel + " "));
+            if (!ctx.logPinVisible && info != null && info.rootLogLevel != null) {
+                titleSpans.add(Span.raw("level:" + info.rootLogLevel + " "));
+            }
         } else {
             titleSpans.add(Span.raw(" Log "));
         }

@@ -22,8 +22,10 @@ import java.nio.file.Files;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.console.DevConsoleRegistry;
+import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
@@ -38,6 +40,17 @@ import static org.awaitility.Awaitility.await;
 class LocalCliConnectorJfrActionTest extends CamelTestSupport {
 
     private LocalCliConnector connector;
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // camel-cli-connector is on the classpath, so the context would start a second connector polling the same
+        // {pid} files as the connector under test
+        DefaultCliConnectorFactory disabled = new DefaultCliConnectorFactory();
+        disabled.setEnabled(false);
+        context.getCamelContextExtension().addContextPlugin(CliConnectorFactory.class, disabled);
+        return context;
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() {

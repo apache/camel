@@ -81,6 +81,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- plays the tool side of the websocket transport -->
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+            <version>${vertx-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
             <scope>test</scope>

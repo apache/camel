@@ -215,6 +215,32 @@ class JCacheKeyValueRepositoryTest extends CamelTestSupport {
     }
 
     @Test
+    void testPutIfAbsentAddsMissingKey() {
+        assertThat(repository.putIfAbsent("key1", "value1", null)).isNull();
+
+        assertThat(repository.get("key1")).isEqualTo("value1");
+    }
+
+    @Test
+    void testPutIfAbsentKeepsExistingValue() {
+        repository.put("key1", "value1", null);
+
+        assertThat(repository.putIfAbsent("key1", "value2", null)).isEqualTo("value1");
+        assertThat(repository.get("key1")).isEqualTo("value1");
+    }
+
+    @Test
+    void testPutIfAbsentReplacesExpiredValue() {
+        repository.put("key1", "value1", Duration.ofMillis(100));
+        // wait on the cache itself, as reading through the repository would remove the expired entry
+        await().atMost(2, TimeUnit.SECONDS)
+                .until(() -> cache.get("key1").isExpired());
+
+        assertThat(repository.putIfAbsent("key1", "value2", null)).isNull();
+        assertThat(repository.get("key1")).isEqualTo("value2");
+    }
+
+    @Test
     void testReplaceMatchingValue() {
         repository.put("key1", "value1", null);
 

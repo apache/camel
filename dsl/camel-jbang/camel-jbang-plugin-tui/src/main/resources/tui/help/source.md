@@ -21,7 +21,14 @@ explorer on the left and a source viewer on the right.
 - **Space** — cycle format (YAML/Java/XML) for Camel routes
 - Quick documentation panel is shown at the bottom for Camel source files
   (YAML, XML and Java DSL routes: the component and options of an endpoint,
-  the EIP of a step, the language of an expression)
+  the EIP of a step, the language of an expression). Before it: the values of
+  the `{{placeholders}}` of the line from the project's .properties files, and
+  where the bean the line refers to is declared
+- The problems of a Camel file are marked as soon as it opens: a red ✗ on
+  their lines and the count in the title; the panel at the bottom says the
+  problem of the selected line, and **F9** goes to the next one
+- **u** — usages: the routes that consume from the endpoint of the line and the
+  steps that send to it (direct:, seda:...), across the project; **Enter** goes there
 - **/** — search in source
 - **h** — highlight text
 - **n/N** — next/previous match
@@ -47,6 +54,13 @@ a heat map of the route: where messages go, where they fail.
 - Quick documentation panel is shown at the bottom (shows doc for current line)
 - **F7** — show diff of unsaved changes
 - **F9** — jump to next validation error
+- **Shift+F8** — ask the AI to fix the problem on the cursor line: the file is
+  saved as it is, and the AI panel opens with the question in its input (file,
+  line, problem); press Enter to send it, or change it first
+- **Shift+F9** — apply the fix of the problem on the cursor line, when the problem
+  says it (an option typo, an enum value a letter off, `to` that should be
+  `toD`, `${key}` where `{{key}}` is meant, a Simple function the error names
+  the right one of, such as `${bdy}` → `${body}`); the Error panel shows the fix
 - Java and XML DSL routes are checked as you type, like YAML routes: endpoint
   options, simple expressions, and a `to` with `${...}` that should be a `toD`.
   The problems are marked on their lines; an XML file with problems is not saved
@@ -98,6 +112,11 @@ This works for YAML, XML and Java DSL routes, across all the folders of the
 project and files of different DSLs (build output and `src/test` are left out);
 Java routes are read without compiling them. The case and otherwise of a
 switch link like a `to`. Jump indicators are hidden in plain mode.
+
+A line that refers to a bean (`bean:name`, `.bean(MyBean.class)`, `ref: name`,
+`#class:com.foo.MyBean`...) shows a **↵ name** indicator when the project
+declares it (`@BindToRegistry`, `@Named`, `@Component`, `@Bean`, or the beans of
+a YAML or XML file); **Enter** goes to its declaration.
 
 ## Go to Route
 - **g** — open a filterable popup listing all routes of the project's source files.

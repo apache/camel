@@ -344,6 +344,49 @@ exception with the message `KafkaConsumer is not safe for multi-threaded access`
 
 *Note 2: this is mostly useful with aggregation's completion timeout strategies.
 
+=== Where a new consumer group starts reading
+
+The `autoOffsetReset` option controls where a Kafka consumer group begins reading when it has *no previously committed offset* for the topic partition, or when the committed offset is no longer available on the broker (e.g. it has been deleted by retention).
+
+IMPORTANT: `autoOffsetReset` is *only consulted for new or reset consumer groups*. If the group already has a committed offset, Kafka resumes from that offset and ignores this option entirely. Setting `by_duration:PT5M` does *not* rewind an existing consumer group by 5 minutes — it only affects the very first read of a brand-new group, or a group whose offsets have expired.
+
+The available values are:
+
+`latest` (default):: The consumer starts at the end of the partition (the latest offset). Messages produced before the consumer first connected are skipped.
+`earliest`:: The consumer starts at the beginning of the partition. All retained messages are replayed from the oldest available offset.
+`none`:: An exception is thrown if no previous offset is found. Use this to detect accidental group-name changes or offset expiry.
+`by_duration:<ISO-8601 duration>`:: *(Kafka 4.0+)* The consumer starts at the first offset with a timestamp at or after `now - duration`. For example, `by_duration:PT1H` starts one hour back and `by_duration:P1D` starts one day back. Like the other values, this only takes effect when the group has no committed offset.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// New consumer group starting 1 hour back (only on first run)
+from("kafka:orders?brokers=localhost:9092&groupId=reporting&autoOffsetReset=by_duration:PT1H")
+    .log("Order received: ${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:orders
+      parameters:
+        brokers: "localhost:9092"
+        groupId: reporting
+        autoOffsetReset: "by_duration:PT1H"
+      steps:
+        - log:
+            message: "Order received: ${body}"
+----
+====
+
+NOTE: If you want to reposition an *existing* consumer group on every restart, use the `seekTo` option (`BEGINNING` or `END`) instead. Unlike `autoOffsetReset`, `seekTo` applies unconditionally on each consumer start, regardless of whether committed offsets exist.
+
 === Pausable Consumers
 
 The Kafka component supports pausable consumers. This type of consumer can pause consuming data based on
