@@ -154,6 +154,14 @@ project declares it (`@BindToRegistry`, `@Named`, `@Component`, `@Bean`, or the 
 
 image::jbang/camel-tui-source-bean-jump.png[Where the bean of a line is declared, with a jump link to it]
 
+In a xref:components:languages:simple-language.adoc[Simple] expression, the panel follows the cursor within the line: on
+a function it shows what the function is, an example and its parameters; on `+${header.priority}+` the header too (set
+in this file, or the description of a component header such as `CamelKafkaKey`); on an operator after a function, such
+as `contains`, the operator and its syntax. Elsewhere on the line it shows the documentation of the line as usual, and
+outside edit mode the line lists the functions it uses.
+
+image::jbang/camel-tui-source-simple-quick-doc.png[The documentation of the date function the cursor is on]
+
 == Navigation
 
 * *Jump links* -- a line that sends to another route, such as `to("seda:shipping")`, shows `↵ shipping`. Press *Enter*

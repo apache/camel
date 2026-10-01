@@ -1011,6 +1011,11 @@ final class SourceEditAssist {
         return items;
     }
 
+    /** The quick doc of the simple function at the cursor (CAMEL-25219). */
+    List<SourceViewer.DocEntry> provideSimpleQuickDoc(List<String> lines, int row, int col) {
+        return SimpleQuickDoc.at(validationCatalog(), lines, row, col);
+    }
+
     /** The completions of the simple expression at the cursor (CAMEL-25219). */
     List<AutocompletePopup.CompletionItem> provideSimpleCompletions(SimpleCompletionContext context, List<String> lines) {
         return SimpleCompletions.provide(validationCatalog(), context, lines);

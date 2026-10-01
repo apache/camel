@@ -103,6 +103,12 @@ class SourceViewer {
         List<DocEntry> provideForLine(List<String> lines, int cursorRow);
     }
 
+    /** The quick doc of what the cursor is on within the line; col is -1 in the view, which has no cursor. */
+    @FunctionalInterface
+    interface CursorQuickDocProvider {
+        List<DocEntry> provideAt(List<String> lines, int row, int col);
+    }
+
     @FunctionalInterface
     interface PropertiesValidator {
         String validate(String line);
@@ -217,6 +223,7 @@ class SourceViewer {
     private UriCompletion pendingUriCompletion;
     private BiFunction<SimpleCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> simpleCompletion;
     private SimpleCompletion pendingSimpleCompletion;
+    private CursorQuickDocProvider cursorQuickDocProvider;
     private List<String> routeProblems = List.of();
     private List<String> validationErrors;
     private int validationErrorScroll;
@@ -423,6 +430,14 @@ class SourceViewer {
     private record SimpleCompletion(int row, int endCol, SimpleCompletionContext context) {
     }
 
+    /**
+     * The quick doc of the simple function the cursor is on (CAMEL-25219), shown before the doc of the line in edit
+     * mode, and the functions of the selected line after it in the view; null for a file without routes.
+     */
+    void setCursorQuickDocProvider(CursorQuickDocProvider provider) {
+        this.cursorQuickDocProvider = provider;
+    }
+
     /** Opens the AI panel to fix the problem of the cursor line (Shift+F8); null when there is no AI panel. */
     void setAskAi(MonitorContext.AskAi askAi) {
         this.askAi = askAi;
@@ -442,6 +457,7 @@ class SourceViewer {
         routeValidator = null;
         uriCompletion = null;
         simpleCompletion = null;
+        cursorQuickDocProvider = null;
     }
 
     void reset() {
@@ -484,6 +500,7 @@ class SourceViewer {
         routeValidator = null;
         uriCompletion = null;
         simpleCompletion = null;
+        cursorQuickDocProvider = null;
     }
 
     boolean isMarkdownMode() {
@@ -2149,6 +2166,17 @@ class SourceViewer {
                     rawLines.add(jo.getString("code") != null ? jo.getString("code") : "");
                 }
                 viewDocEntries = editQuickDocProvider.provideForLine(rawLines, selectedLine);
+                if (cursorQuickDocProvider != null) {
+                    List<DocEntry> used = cursorQuickDocProvider.provideAt(rawLines, selectedLine, -1);
+                    if (used != null && !used.isEmpty()) {
+                        List<DocEntry> merged = new ArrayList<>();
+                        if (viewDocEntries != null) {
+                            merged.addAll(viewDocEntries);
+                        }
+                        merged.addAll(used);
+                        viewDocEntries = merged;
+                    }
+                }
             }
         }
 
@@ -2358,7 +2386,20 @@ class SourceViewer {
             editorArea = new Rect(inner.left(), inner.top(), inner.width(), inner.height() - docPanelHeight);
             docArea = new Rect(inner.left(), inner.top() + inner.height() - docPanelHeight, inner.width(), docPanelHeight);
             lastVisibleLines = Math.max(1, editorArea.height());
-            editDocEntries = editQuickDocProvider.provideForLine(editLines(), editState.cursorRow());
+            List<String> textLines = editLines();
+            editDocEntries = editQuickDocProvider.provideForLine(textLines, editState.cursorRow());
+            if (cursorQuickDocProvider != null) {
+                List<DocEntry> here = cursorQuickDocProvider.provideAt(textLines, editState.cursorRow(),
+                        editState.cursorCol());
+                if (here != null && !here.isEmpty()) {
+                    // the function the cursor is on is more to the point than the step of the line
+                    List<DocEntry> merged = new ArrayList<>(here);
+                    if (editDocEntries != null) {
+                        merged.addAll(editDocEntries);
+                    }
+                    editDocEntries = merged;
+                }
+            }
         }
 
         int prefixWidth = plainMode ? 0 : 3;

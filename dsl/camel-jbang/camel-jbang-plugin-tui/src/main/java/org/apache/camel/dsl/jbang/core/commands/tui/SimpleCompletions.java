@@ -224,9 +224,14 @@ final class SimpleCompletions {
                     continue;
                 }
                 for (ComponentModel.EndpointHeaderModel h : model.getEndpointHeaders()) {
-                    items.putIfAbsent(h.getName(), new AutocompletePopup.CompletionItem(
+                    AutocompletePopup.CompletionItem item = new AutocompletePopup.CompletionItem(
                             h.getName(), h.getDescription(), h.getJavaType(), h.getDefaultValue(),
-                            h.isDeprecated(), h.getDeprecationNote(), scheme, false));
+                            h.isDeprecated(), h.getDeprecationNote(), scheme, false);
+                    // one the file uses keeps its place first, with the documentation of the component
+                    AutocompletePopup.CompletionItem known = items.get(h.getName());
+                    if (known == null || known.group() == null) {
+                        items.put(h.getName(), item);
+                    }
                 }
             }
         }

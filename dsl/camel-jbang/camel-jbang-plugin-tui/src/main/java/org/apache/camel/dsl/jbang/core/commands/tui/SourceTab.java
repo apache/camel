@@ -848,6 +848,8 @@ class SourceTab extends AbstractTab {
         // simple expressions in every route file: YAML, Java and XML (CAMEL-25219)
         sourceViewer.setSimpleCompletion(
                 routeFile || isCamelSourceFile(filePath) ? assist::provideSimpleCompletions : null);
+        sourceViewer.setCursorQuickDocProvider(
+                routeFile || isCamelSourceFile(filePath) ? assist::provideSimpleQuickDoc : null);
         if (isCamelSourceFile(filePath)) {
             sourceViewer.setQuickDocProvider(assist::provideCamelQuickDocs);
             sourceViewer.setDeprecatedLineScanner(null);
