@@ -226,6 +226,9 @@ public class LocalCliConnector extends ServiceSupport
                 }
             }
         });
+        // the thread ends once the task is done: a non-daemon thread left waiting for more tasks keeps the JVM
+        // running (Spring Boot)
+        terminateExecutor.shutdown();
     }
 
     @Override
