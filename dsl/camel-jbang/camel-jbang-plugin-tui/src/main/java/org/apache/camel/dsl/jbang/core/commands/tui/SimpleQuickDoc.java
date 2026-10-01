@@ -166,7 +166,8 @@ final class SimpleQuickDoc {
 
     /** The header, exchange property or variable after header. exchangeProperty. variable. */
     private static SourceViewer.DocEntry nameDoc(CamelCatalog catalog, List<String> lines, String insert, String text) {
-        String name = text.strip().substring(Math.min(insert.length(), text.strip().length()));
+        String stripped = text.strip();
+        String name = stripped.substring(Math.min(insert.length(), stripped.length()));
         if (name.isEmpty()) {
             return null;
         }
