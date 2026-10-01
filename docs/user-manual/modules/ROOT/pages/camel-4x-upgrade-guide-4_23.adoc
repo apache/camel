@@ -698,6 +698,15 @@ short by that count, so it now fails the record `length` check (unless `ignoreMi
 read with shifted fields. A system that reads these records by counting UTF-16 chars must count code points (or
 graphemes) instead.
 
+=== camel-hl7 - character sets from MSH-18
+
+The HL7 data format now maps the MSH-18 values `8859/6`, `8859/7`, `8859/8` and `8859/9` to ISO-8859-6 .. ISO-8859-9,
+`8859/15` to ISO-8859-15, and `GB 18030-2000` to GB18030, as in HL7 table 0211 (and as camel-mllp already does).
+Before, the first five fell back to the charset of the exchange (UTF-8 by default), and `GB 18030-2000` failed with
+`UnsupportedEncodingException`. Messages with these MSH-18 values are now read and written in the named charset, and
+unmarshal sets `CamelCharsetName` to it. A message whose MSH-18 names one of these charsets but that is actually
+encoded in another one (such as UTF-8) is now decoded in the charset it names.
+
 === Components and Language removal
 
 ==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
