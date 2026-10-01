@@ -127,6 +127,28 @@ class GenerateDocSamplesMojoTest {
     }
 
     @Test
+    void aNameWithSamplesFromSeveralPagesTakesThemFromEachPageInTurn() throws Exception {
+        Path eips = Files.createDirectories(tempDir.resolve("eips"));
+        Path manual = Files.createDirectories(tempDir.resolve("manual"));
+        String path = "- rest:\n    path: /say\n    get:\n      - path: /hello\n        to: direct:hello\n";
+        Files.writeString(manual.resolve("rest-dsl.adoc"), block(path) + block(path) + block(path));
+        Path openApi = manual.resolve("rest-dsl-openapi.adoc");
+        String contract = "- rest:\n    openApi:\n      specification: petstore-v3.json\n";
+        Files.writeString(openApi, block("- restConfiguration:\n    contextPath: /api\n") + block(contract) + block(contract));
+
+        List<String> failures = new ArrayList<>();
+        Map<String, List<GenerateDocSamplesMojo.Sample>> samples = GenerateDocSamplesMojo.generate(
+                VALIDATOR, eips.toFile(), manual.toFile(), Map.of("rest-dsl", "rest"),
+                Map.of(openApi.toFile(), "rest"), null, failures);
+
+        assertTrue(failures.isEmpty(), failures.toString());
+        assertEquals(List.of("rest-dsl.adoc", "rest-dsl-openapi.adoc", "rest-dsl.adoc", "rest-dsl-openapi.adoc",
+                "rest-dsl.adoc"),
+                samples.get("rest").stream().map(GenerateDocSamplesMojo.Sample::source).toList());
+        assertEquals(contract, samples.get("rest").get(1).yaml());
+    }
+
+    @Test
     void anExampleThatDoesNotValidateIsAFailure() throws Exception {
         Path eips = Files.createDirectories(tempDir.resolve("eips"));
         Path manual = Files.createDirectories(tempDir.resolve("manual"));

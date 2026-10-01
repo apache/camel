@@ -146,6 +146,10 @@ public class CatalogSamplesTest {
         assertThat(((JsonObject) ((JsonArray) CatalogSamples.sample(catalog, "rest", 1).get("samples")).get(0))
                 .getString("source"))
                 .isEqualTo("rest-dsl.adoc");
+        // the default two show the path-based and the contract-first rest
+        JsonArray rest = (JsonArray) CatalogSamples.sample(catalog, "rest", 0).get("samples");
+        assertThat(((JsonObject) rest.get(1)).getString("source")).isEqualTo("rest-dsl-openapi.adoc");
+        assertThat(((JsonObject) rest.get(1)).getString("yaml")).contains("openApi:");
     }
 
     @Test
@@ -221,6 +225,14 @@ public class CatalogSamplesTest {
         assertThat(CatalogSamples.sample(catalog, "component", "Kafka", 1).getString("name")).isEqualTo("kafka");
         // without a catalog there is no component page to read
         assertThat(CatalogSamples.sample("kafka", 1).getString("error")).contains("kafka");
+    }
+
+    @Test
+    void restOpenApiShowsTheConsumerEndpointAndTheContractFirstRest() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        JsonObject o = CatalogSamples.sample(catalog, "component", "rest-openapi", 2);
+        assertThat(yaml(o, 0)).contains("rest-openapi:");
+        assertThat(yaml(o, 1)).contains("openApi:").contains("direct:getPetById");
     }
 
     @Test
