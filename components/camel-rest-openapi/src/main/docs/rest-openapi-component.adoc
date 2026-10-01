@@ -107,6 +107,56 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== Contract-first REST DSL
+
+To serve the operations of an OpenAPI contract, use the Rest DSL in _contract-first_ mode rather than a
+`rest-openapi` consumer endpoint. Camel loads the contract at startup and routes every operation to the
+route that starts from `direct:` and its _operation id_; see
+xref:manual::rest-dsl-openapi.adoc[REST DSL with contract-first OpenAPI].
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+rest().openApi("petstore-v3.json");
+
+from("direct:getPetById")
+    .setBody(simple("{\"id\": ${header.petId}, \"name\": \"Rex\"}"));
+----
+
+XML::
++
+[source,xml]
+----
+<rest>
+  <openApi specification="petstore-v3.json"/>
+</rest>
+<route>
+  <from uri="direct:getPetById"/>
+  <setBody>
+    <simple>{"id": ${header.petId}, "name": "Rex"}</simple>
+  </setBody>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- rest:
+    openApi:
+      specification: petstore-v3.json
+- route:
+    from:
+      uri: direct:getPetById
+      steps:
+        - setBody:
+            simple: '{"id": ${header.petId}, "name": "Rex"}'
+----
+====
+
 === Consumer OAuth Bearer token validation
 
 When `rest-openapi` is used as a consumer, HTTP requests are served by the selected

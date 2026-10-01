@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -54,8 +55,10 @@ import org.apache.maven.project.MavenProject;
  * ({@code yaml-dsl.adoc} is {@code beans})</li>
  * </ul>
  * A route example is a {@code [source,yaml]} block whose first line starts with {@code "- "}; other YAML blocks are
- * fragments and are neither validated nor sampled. The output is a JSON object keyed by the sample name, each value a
- * list of {@code {source, yaml}} objects, written only when its content changed.
+ * fragments and are neither validated nor sampled. A name with samples from several pages takes them from each page in
+ * turn, so the first few (what the AI tools return by default) show every page ({@code rest} is path-based from
+ * {@code rest-dsl.adoc} and contract-first from {@code rest-dsl-openapi.adoc}). The output is a JSON object keyed by
+ * the sample name, each value a list of {@code {source, yaml}} objects, written only when its content changed.
  */
 @Mojo(name = "generate-doc-samples", threadSafe = true)
 public class GenerateDocSamplesMojo extends AbstractMojo {
@@ -223,7 +226,28 @@ public class GenerateDocSamplesMojo extends AbstractMojo {
             }
         }
 
+        samples.replaceAll((key, list) -> interleave(list));
         return samples;
+    }
+
+    /** The samples taken from each page in turn, in page order, keeping the order of the samples of a page. */
+    static List<Sample> interleave(List<Sample> list) {
+        Map<String, List<Sample>> bySource = new LinkedHashMap<>();
+        for (Sample s : list) {
+            bySource.computeIfAbsent(s.source(), k -> new ArrayList<>()).add(s);
+        }
+        if (bySource.size() < 2) {
+            return list;
+        }
+        List<Sample> answer = new ArrayList<>(list.size());
+        for (int i = 0; answer.size() < list.size(); i++) {
+            for (List<Sample> page : bySource.values()) {
+                if (i < page.size()) {
+                    answer.add(page.get(i));
+                }
+            }
+        }
+        return answer;
     }
 
     private static List<File> pages(File dir) {
