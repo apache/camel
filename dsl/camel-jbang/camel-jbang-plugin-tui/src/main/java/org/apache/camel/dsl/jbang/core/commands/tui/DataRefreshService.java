@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -212,6 +213,8 @@ class DataRefreshService {
             conditionalRefresher.run();
         } catch (Exception e) {
             // ignore refresh errors
+        } finally {
+            freshData.set(true);
         }
     }
 
@@ -230,6 +233,44 @@ class DataRefreshService {
 
     // ---- Integration scanning ----
 
+    private static final long MEMBERSHIP_CHECK_MS = 1000;
+    private long lastMembershipCheck;
+    private Set<Long> lastCandidates = Set.of();
+
+    /**
+     * Whether an integration started or stopped since the last look: a status file appeared or went away in the camel
+     * directory, or an integration that was found has died. Checked about once a second.
+     */
+    boolean membershipChanged(long now) {
+        if (now - lastMembershipCheck < MEMBERSHIP_CHECK_MS) {
+            return false;
+        }
+        lastMembershipCheck = now;
+        Set<Long> candidates = new HashSet<>(TuiHelper.findCandidatePids());
+        boolean changed = !candidates.equals(lastCandidates);
+        lastCandidates = candidates;
+        if (changed) {
+            return true;
+        }
+        for (Long pid : cachedPids) {
+            if (!ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void setCachedPidsForTesting(List<Long> pids) {
+        cachedPids = pids;
+    }
+
+    /** Whether a refresh brought new data since the last time it was asked: the screen then redraws at once. */
+    boolean takeFreshData() {
+        return freshData.getAndSet(false);
+    }
+
+    private final AtomicBoolean freshData = new AtomicBoolean();
+
     private boolean scanIntegrations() {
         List<IntegrationInfo> infos = new ArrayList<>();
         long now = System.currentTimeMillis();
@@ -237,7 +278,9 @@ class DataRefreshService {
                 || cachedPids.isEmpty()
                 || forceFullScanUntil > now;
         long scanInterval = isBurstMode() ? 1000 : 2000;
-        boolean fullScan = wantFullScan && (now - lastFullScanTime >= scanInterval);
+        // on the other tabs an integration that starts or stops is noticed too: from the status files of the
+        // integrations, a directory listing, not the parsing of every status
+        boolean fullScan = (wantFullScan && (now - lastFullScanTime >= scanInterval)) || membershipChanged(now);
         List<Long> pids;
         if (fullScan) {
             pids = findPids(name);

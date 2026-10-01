@@ -740,11 +740,27 @@ class McpFacade {
     // ---- Diagram navigation ----
 
     String navigateDiagramToRoute(String routeId) {
+        return navigateDiagramToRoute(routeId, 0);
+    }
+
+    /**
+     * Selects a route in the Diagram tab, waiting up to {@code waitMs} for the diagram to load: right after the
+     * integration was selected (or the tab opened) its routes are not there yet. The tab is switched to once.
+     */
+    String navigateDiagramToRoute(String routeId, long waitMs) {
         navigateToTab("Diagram");
-        if (tabRegistry.diagramTab().selectRoute(routeId)) {
-            return routeId;
-        }
-        return null;
+        DiagramTab tab = tabRegistry.diagramTab();
+        return TuiToolRegistry.retryUntilFound(
+                () -> tab.selectRoute(routeId) ? routeId : null, tab::isDiagramShown, waitMs);
+    }
+
+    /** As {@link #navigateDiagramToNode(String, String)}, waiting up to {@code waitMs} for the diagram to load. */
+    String navigateDiagramToNode(String routeId, String nodeId, long waitMs) {
+        navigateToTab("Diagram");
+        DiagramTab tab = tabRegistry.diagramTab();
+        return TuiToolRegistry.retryUntilFound(
+                () -> tab.selectNode(routeId, nodeId) ? (nodeId != null ? nodeId : routeId) : null,
+                tab::isDiagramShown, waitMs);
     }
 
     String navigateDiagramToNode(String routeId, String nodeId) {
