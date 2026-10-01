@@ -149,7 +149,7 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
                     return;
                 }
                 // an exception given as a class or an instance, as in throwException(new Exception("...")), is
-                // written as its type and message, as the class or instance itself cannot be
+                // written as its type and message, as the class or instance itself cannot be serialized
                 startElement(name);
                 doWriteProcessorDefinitionAttributes(def);
                 String message = def.getMessage() != null ? def.getMessage() : e != null ? e.getMessage() : null;

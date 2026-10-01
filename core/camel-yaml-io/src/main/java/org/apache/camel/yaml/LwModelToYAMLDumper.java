@@ -146,7 +146,7 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
                         ? def.getExceptionClass().getName() : e != null ? e.getClass().getName() : null;
                 if (type != null && def.getExceptionType() == null && def.getRef() == null) {
                     // an exception given as a class or an instance, as in throwException(new Exception("...")), is
-                    // written as its type and message, as the class or instance itself cannot be
+                    // written as its type and message, as the class or instance itself cannot be serialized
                     if (def.getMessage() == null && e != null) {
                         doWriteAttribute(jo, "message", e.getMessage(), null);
                     }
