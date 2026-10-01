@@ -293,13 +293,19 @@ class OverviewTab extends AbstractTab {
                 && !throughputHistory.isEmpty() && ctx.shellPercent < 50;
         List<Constraint> constraints = new ArrayList<>();
         constraints.add(Constraint.fill());
+        int infraPanelHeight = 0;
         if (infraCount > 0) {
-            int infraPanelHeight = Math.max(6, Math.min(infraCount + 3, area.height() / 3));
+            infraPanelHeight = Math.max(6, Math.min(infraCount + 3, area.height() / 3));
             constraints.add(Constraint.length(infraPanelHeight));
+        }
+        // the integrations come first: the borders, the header and a few rows, before the chart takes its height
+        int tableRoom = Math.max(1, area.height() - infraPanelHeight - Math.min(integrationCount + 3, 7));
+        if (hasSparkline && tableRoom < 5) {
+            hasSparkline = false;
         }
         if (hasSparkline || showInfraDetail) {
             bottomPanelHeight = Math.max(5, Math.min(bottomPanelHeight, area.height() - 5));
-            constraints.add(Constraint.length(bottomPanelHeight));
+            constraints.add(Constraint.length(Math.max(Math.min(5, tableRoom), Math.min(bottomPanelHeight, tableRoom))));
         }
         List<Rect> chunks = Layout.vertical()
                 .constraints(constraints)

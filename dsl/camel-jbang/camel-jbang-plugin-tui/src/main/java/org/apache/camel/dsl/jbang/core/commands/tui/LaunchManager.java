@@ -24,7 +24,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -39,7 +41,8 @@ class LaunchManager {
     private static volatile Path secureTempDir;
 
     private final Supplier<List<InfraInfo>> infraServices;
-    private final List<PendingLaunch> pendingLaunches = new ArrayList<>();
+    // added from the UI thread and from tool threads (MCP, the example launcher), read on the UI thread
+    private final Queue<PendingLaunch> pendingLaunches = new ConcurrentLinkedQueue<>();
     private DeferredLaunch deferredLaunch;
     private volatile String pendingAutoSelect;
     private BiConsumer<String, Boolean> notificationCallback;
@@ -76,15 +79,83 @@ class LaunchManager {
      * file. Used by the AI panel's {@code /run} and {@code /infra run} slash commands.
      */
     void launchDetached(String displayName, List<String> extraArgs) throws IOException {
+        JsonObject example = exampleOf(extraArgs);
+        if (example == null) {
+            start(displayName, extraArgs, null);
+            return;
+        }
+        // the example runs in a directory of its own, with its files: its routes read relative to it (orders, inbox),
+        // where camel run --example would run in the directory of the TUI; a GitHub example is downloaded first
+        Thread t = new Thread(() -> {
+            try {
+                Path dir = ExampleHelper.isBundled(example)
+                        ? ExampleHelper.extractBundledExample(example) : ExampleHelper.downloadGithubExample(example);
+                start(displayName, exampleArgs(extraArgs, example), dir);
+            } catch (Exception e) {
+                notify("Failed to start: " + displayName + " - " + e.getMessage(), true);
+            }
+        }, "CamelTuiExampleLaunch");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    private void start(String displayName, List<String> args, Path dir) throws IOException {
         List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
-        cmd.addAll(extraArgs);
+        cmd.addAll(args);
         Path outputFile = createSecureTempFile("camel-launch-", ".log");
         outputFile.toFile().deleteOnExit();
         ProcessBuilder pb = new ProcessBuilder(cmd);
+        if (dir != null) {
+            pb.directory(dir.toFile());
+        }
         pb.redirectErrorStream(true);
         pb.redirectOutput(outputFile.toFile());
         Process process = pb.start();
         addPendingLaunch(displayName, process, outputFile);
+    }
+
+    /** The catalog entry of the example a camel run with --example=name runs, when it lists its files; else null. */
+    static JsonObject exampleOf(List<String> args) {
+        if (args.isEmpty() || !"run".equals(args.get(0))) {
+            return null;
+        }
+        String name = null;
+        for (String a : args) {
+            if (a.startsWith("--example=")) {
+                name = a.substring("--example=".length());
+            }
+        }
+        if (name == null || name.isBlank()) {
+            return null;
+        }
+        try {
+            List<JsonObject> catalog = ExampleHelper.loadCatalog();
+            JsonObject entry = ExampleHelper.findExample(catalog, name);
+            if (entry == null && !name.contains("/")) {
+                List<JsonObject> same = ExampleHelper.findExamplesByShortName(catalog, name);
+                entry = same.size() == 1 ? same.get(0) : null;
+            }
+            return entry != null && !ExampleHelper.getFiles(entry).isEmpty() ? entry : null;
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    /** The arguments with --example=name replaced by the files of the example, and its name unless one is given. */
+    static List<String> exampleArgs(List<String> args, JsonObject example) {
+        List<String> answer = new ArrayList<>();
+        boolean named = args.stream().anyMatch(a -> a.startsWith("--name"));
+        for (String a : args) {
+            if (a.startsWith("--example=")) {
+                answer.addAll(ExampleHelper.getFiles(example));
+                if (!named) {
+                    answer.add("--name=" + TuiHelper.stripCategory(example.getString("name")));
+                }
+            } else {
+                answer.add(a);
+            }
+        }
+        return answer;
     }
 
     void addPendingLaunch(String name, Process process, Path outputFile) {
