@@ -37,6 +37,10 @@ public final class EventHubsConstants {
                             "(consumer) It sets the partition id of the Event Hub.",
               javaType = "String")
     public static final String PARTITION_ID = HEADER_PREFIX + "PartitionId";
+    // exchange properties set by the consumer with the partition of the received event, so the producer can tell
+    // the headers above apart from a partition chosen by the route
+    static final String RECEIVED_PARTITION_KEY = HEADER_PREFIX + "ReceivedPartitionKey";
+    static final String RECEIVED_PARTITION_ID = HEADER_PREFIX + "ReceivedPartitionId";
     // headers set by the consumer only
     @Metadata(label = "consumer",
               description = "It sets the offset of the event when it was received from the associated Event Hub partition. This is only present on a received `EventData`.",

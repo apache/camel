@@ -138,10 +138,15 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
 
         // set body as byte[] and let camel typeConverters do the job to convert
         message.setBody(eventContext.getEventData().getBody());
-        // set headers
-        message.setHeader(EventHubsConstants.PARTITION_ID, eventContext.getPartitionContext().getPartitionId());
-        if (eventContext.getEventData().getPartitionKey() != null) {
-            message.setHeader(EventHubsConstants.PARTITION_KEY, eventContext.getEventData().getPartitionKey());
+        // set headers, and record the partition of the received event so an azure-eventhubs producer later in the
+        // route does not take these headers as a partition chosen by the route
+        final String partitionId = eventContext.getPartitionContext().getPartitionId();
+        final String partitionKey = eventContext.getEventData().getPartitionKey();
+        message.setHeader(EventHubsConstants.PARTITION_ID, partitionId);
+        exchange.setProperty(EventHubsConstants.RECEIVED_PARTITION_ID, partitionId);
+        if (partitionKey != null) {
+            message.setHeader(EventHubsConstants.PARTITION_KEY, partitionKey);
+            exchange.setProperty(EventHubsConstants.RECEIVED_PARTITION_KEY, partitionKey);
         }
         message.setHeader(EventHubsConstants.OFFSET, eventContext.getEventData().getOffset());
         message.setHeader(EventHubsConstants.ENQUEUED_TIME, eventContext.getEventData().getEnqueuedTime());
@@ -160,7 +165,9 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
         final Message message = exchange.getIn();
 
         // set headers
-        message.setHeader(EventHubsConstants.PARTITION_ID, errorContext.getPartitionContext().getPartitionId());
+        final String partitionId = errorContext.getPartitionContext().getPartitionId();
+        message.setHeader(EventHubsConstants.PARTITION_ID, partitionId);
+        exchange.setProperty(EventHubsConstants.RECEIVED_PARTITION_ID, partitionId);
 
         // set exception
         exchange.setException(errorContext.getThrowable());
