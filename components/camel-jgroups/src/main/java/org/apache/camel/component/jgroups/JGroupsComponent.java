@@ -46,6 +46,15 @@ public class JGroupsComponent extends DefaultComponent {
                             + " configured, a conservative default filter denying java.net.** and otherwise allowing"
                             + " java.**, javax.** and org.apache.camel.** is applied. Use * to accept any type.")
     private String deserializationFilter;
+    @Metadata(label = "consumer,security", defaultValue = "false",
+              description = "Whether to start the consumer and accept any object deserialized from the cluster even"
+                            + " when no pre-read deserialization control is configured. When false (the default) the"
+                            + " consumer fails to start on an unauthenticated default channel unless a JVM-wide"
+                            + " -Djdk.serialFilter, the JGroups jgroups.deserialization.filter system property, the"
+                            + " deserializationFilter option, or an authenticated/encrypted channel is configured. Set"
+                            + " to true to restore the previous behaviour of accepting any serialized type; this also"
+                            + " disables the post-read class check.")
+    private boolean acceptAllObjects;
 
     public JGroupsComponent() {
     }
@@ -54,6 +63,7 @@ public class JGroupsComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String clusterName, Map<String, Object> parameters) throws Exception {
         JGroupsEndpoint endpoint = new JGroupsEndpoint(uri, this, channel, clusterName, channelProperties, enableViewMessages);
         endpoint.setDeserializationFilter(deserializationFilter);
+        endpoint.setAcceptAllObjects(acceptAllObjects);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -108,6 +118,22 @@ public class JGroupsComponent extends DefaultComponent {
      */
     public void setDeserializationFilter(String deserializationFilter) {
         this.deserializationFilter = deserializationFilter;
+    }
+
+    public boolean isAcceptAllObjects() {
+        return acceptAllObjects;
+    }
+
+    /**
+     * Whether to start the consumer and accept any object deserialized from the cluster even when no pre-read
+     * deserialization control is configured. When {@code false} (the default) the consumer fails to start on an
+     * unauthenticated default channel unless a JVM-wide {@code -Djdk.serialFilter}, the JGroups
+     * {@code jgroups.deserialization.filter} system property, the {@code deserializationFilter} option, or an
+     * authenticated/encrypted channel is configured. Set to {@code true} to restore the previous behaviour of accepting
+     * any serialized type; this also disables the post-read class check.
+     */
+    public void setAcceptAllObjects(boolean acceptAllObjects) {
+        this.acceptAllObjects = acceptAllObjects;
     }
 
 }

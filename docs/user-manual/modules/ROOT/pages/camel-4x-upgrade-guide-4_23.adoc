@@ -1854,6 +1854,27 @@ Note that JGroups deserializes the payload inside its own receive path, so this 
 defense-in-depth allow-list on the resulting body type. The JVM-wide `jdk.serialFilter`, together
 with a channel secured with `AUTH` and encryption, remain the primary mitigations.
 
+=== camel-jgroups - the consumer refuses to start without a pre-read deserialization control
+
+Building on the deserialization filter above, the consumer now refuses to start when it would
+deserialize cluster messages on the default, unauthenticated channel and no pre-read protection is
+configured. The class check applied after `org.jgroups.Message.getObject()` is defense-in-depth only
+and cannot stop code that runs during deserialization, so a pre-read control is required. A pre-read
+control is any of: a JVM-wide `-Djdk.serialFilter`, the JGroups-native
+`-Djgroups.deserialization.filter` system property, an explicit `deserializationFilter` option, or a
+channel secured with `AUTH` and/or `SYM_ENCRYPT`/`ASYM_ENCRYPT` supplied through `channelProperties`.
+
+When none of these is configured, the consumer fails to start. To keep the previous behaviour of
+accepting any serialized type without a pre-read control, set `acceptAllObjects=true` on the consumer;
+this opts out of the guard and also disables the post-read class check:
+
+[source,java]
+----
+from("jgroups:clusterName?acceptAllObjects=true")
+----
+
+Producers are unaffected.
+
 === camel-oauth
 
 The OAuth processors now stop the route on the paths where they do not authenticate the caller, so

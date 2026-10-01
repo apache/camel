@@ -175,6 +175,31 @@ public interface JgroupsComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether to start the consumer and accept any object deserialized from
+         * the cluster even when no pre-read deserialization control is
+         * configured. When false (the default) the consumer fails to start on
+         * an unauthenticated default channel unless a JVM-wide
+         * -Djdk.serialFilter, the JGroups jgroups.deserialization.filter system
+         * property, the deserializationFilter option, or an
+         * authenticated/encrypted channel is configured. Set to true to restore
+         * the previous behaviour of accepting any serialized type; this also
+         * disables the post-read class check.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param acceptAllObjects the value to set
+         * @return the dsl builder
+         */
+        default JgroupsComponentBuilder acceptAllObjects(boolean acceptAllObjects) {
+            doSetProperty("acceptAllObjects", acceptAllObjects);
+            return this;
+        }
+    
         /**
          * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
          * as a defense-in-depth check on the class of the message body
@@ -220,6 +245,7 @@ public interface JgroupsComponentBuilderFactory {
             case "enableViewMessages": ((JGroupsComponent) component).setEnableViewMessages((boolean) value); return true;
             case "lazyStartProducer": ((JGroupsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((JGroupsComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "acceptAllObjects": ((JGroupsComponent) component).setAcceptAllObjects((boolean) value); return true;
             case "deserializationFilter": ((JGroupsComponent) component).setDeserializationFilter((java.lang.String) value); return true;
             default: return false;
             }

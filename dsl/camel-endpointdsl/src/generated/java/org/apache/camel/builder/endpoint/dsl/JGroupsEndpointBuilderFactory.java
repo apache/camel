@@ -93,6 +93,52 @@ public interface JGroupsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to start the consumer and accept any object deserialized from
+         * the cluster even when no pre-read deserialization control is
+         * configured. When false (the default) the consumer fails to start on
+         * an unauthenticated default channel unless a JVM-wide
+         * -Djdk.serialFilter, the JGroups jgroups.deserialization.filter system
+         * property, the deserializationFilter option, or an
+         * authenticated/encrypted channel is configured. Set to true to restore
+         * the previous behaviour of accepting any serialized type; this also
+         * disables the post-read class check.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param acceptAllObjects the value to set
+         * @return the dsl builder
+         */
+        default JGroupsEndpointConsumerBuilder acceptAllObjects(boolean acceptAllObjects) {
+            doSetProperty("acceptAllObjects", acceptAllObjects);
+            return this;
+        }
+        /**
+         * Whether to start the consumer and accept any object deserialized from
+         * the cluster even when no pre-read deserialization control is
+         * configured. When false (the default) the consumer fails to start on
+         * an unauthenticated default channel unless a JVM-wide
+         * -Djdk.serialFilter, the JGroups jgroups.deserialization.filter system
+         * property, the deserializationFilter option, or an
+         * authenticated/encrypted channel is configured. Set to true to restore
+         * the previous behaviour of accepting any serialized type; this also
+         * disables the post-read class check.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param acceptAllObjects the value to set
+         * @return the dsl builder
+         */
+        default JGroupsEndpointConsumerBuilder acceptAllObjects(String acceptAllObjects) {
+            doSetProperty("acceptAllObjects", acceptAllObjects);
+            return this;
+        }
+        /**
          * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
          * as a defense-in-depth check on the class of the message body
          * deserialized by org.jgroups.Message.getObject(). The pattern is
