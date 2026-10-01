@@ -21,7 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
@@ -179,6 +181,59 @@ class ProjectOverviewAssistTest {
     }
 
     @Test
+    void theSummaryWaitsUntilThePanelIsIdle() throws Exception {
+        TuiSettings settings = TuiSettings.load();
+        settings.setAiOverview("auto");
+        settings.save();
+        AnsweringClient client = new AnsweringClient(ANSWER);
+        ProjectOverviewAssist assist = new ProjectOverviewAssist();
+        AtomicBoolean idle = new AtomicBoolean();
+
+        // the user asks a question right after opening the panel: the summary must not go first
+        Thread check = new Thread(() -> assist.autoExplain(project, client, null, sink, idle::get));
+        check.start();
+        check.join(1000);
+        assertTrue(check.isAlive(), "waits while the panel is busy");
+        assertEquals(0, client.calls.get());
+        assertTrue(entries.isEmpty());
+
+        idle.set(true);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> client.calls.get() == 1 && !assist.isRunning());
+        assertTrue(entries.get(0).contains("(AI Overview: auto)"), entries.get(0));
+    }
+
+    @Test
+    void aStoppedSummaryLeavesNoError() {
+        TuiSettings settings = TuiSettings.load();
+        settings.setAiOverview("auto");
+        settings.save();
+        CountDownLatch asked = new CountDownLatch(1);
+        LlmClient slow = new AnsweringClient(ANSWER) {
+            @Override
+            public ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
+                asked.countDown();
+                try {
+                    // a local model writing a long summary
+                    new CountDownLatch(1).await();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException("interrupted", e);
+                }
+                return null;
+            }
+        };
+        ProjectOverviewAssist assist = new ProjectOverviewAssist();
+        assertFalse(assist.stop(), "nothing to stop");
+
+        assertTrue(assist.autoExplain(project, slow, null, sink));
+        await().atMost(10, TimeUnit.SECONDS).until(() -> asked.getCount() == 0);
+        assertTrue(assist.stop());
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !assist.isRunning());
+        assertEquals(1, entries.size(), "only the start was said: " + entries);
+        assertFalse(Files.exists(project.resolve(IntegrationSummary.FILE_NAME)));
+    }
+
+    @Test
     void applyNeedsTheSelectedIntegration() {
         ProjectOverviewAssist assist = new ProjectOverviewAssist();
         assertTrue(assist.command("apply", project, null, null, sink).startsWith("No suggested route descriptions"));
@@ -204,7 +259,7 @@ class ProjectOverviewAssistTest {
         }
     }
 
-    private static final class AnsweringClient extends LlmClient {
+    private static class AnsweringClient extends LlmClient {
 
         private final String answer;
         private final AtomicInteger calls = new AtomicInteger();

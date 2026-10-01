@@ -162,6 +162,7 @@ class AiPanel {
 
     // Input state
     private final StringBuilder inputBuffer = new StringBuilder();
+    private volatile long lastInputMs;
     private int cursorPos;
     private TuiPromptHistory promptHistory;
 
@@ -531,12 +532,22 @@ class AiPanel {
             // the project is kept off the UI thread
             LlmClient c = client;
             Path dir = projectDirectory();
+            // it waits until the panel is idle, so a question asked right away is answered first
             Thread t = new Thread(
-                    () -> projectOverview.autoExplain(dir, c, mcpFacade, this::addOverviewEntry),
+                    () -> projectOverview.autoExplain(dir, c, mcpFacade, this::addOverviewEntry,
+                            () -> idleFor(OVERVIEW_IDLE_MS, System.currentTimeMillis())),
                     "tui-ai-overview-check");
             t.setDaemon(true);
             t.start();
         }
+    }
+
+    /** How long the panel is left alone (nothing typed, no question running) before the summary starts. */
+    static final long OVERVIEW_IDLE_MS = 3000;
+
+    /** Whether the panel has been idle for a while: no question or command running, nothing typed. */
+    boolean idleFor(long ms, long now) {
+        return !thinking.get() && activeCliCommand == null && inputBuffer.isEmpty() && now - lastInputMs >= ms;
     }
 
     /** The project the AI overview is about: the selected integration's sources, else the folder the TUI runs in. */
@@ -811,6 +822,7 @@ class AiPanel {
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
+        lastInputMs = System.currentTimeMillis();
         if (permissionPopup.isVisible()) {
             if (ke.isCtrlC()) {
                 interruptBusyOperation();
@@ -1440,6 +1452,13 @@ class AiPanel {
     }
 
     private void interruptBusyOperation() {
+        if (thinking.get() && projectOverview.stop()) {
+            // the question waits behind the project summary: the first Esc stops the summary, so it goes first
+            conversation.add(new ConversationEntry(
+                    AiRole.SYSTEM,
+                    "(project summary stopped, your question goes first; /overview writes it later)"));
+            return;
+        }
         // A background CLI command and an LLM request can be in flight at the same time, so cancel each one
         // independently. Cancelling the CLI must not touch the LLM's thinking state (that belongs to the agent
         // thread, which clears it in its own finally block) and vice versa.
@@ -1504,6 +1523,13 @@ class AiPanel {
             return;
         }
         conversation.add(new ConversationEntry(AiRole.USER, question));
+        if (projectOverview.isRunning() && client.apiType() == LlmClient.ApiType.ollama) {
+            // Ollama answers one request at a time: say why the answer takes long, and how to go first
+            conversation.add(new ConversationEntry(
+                    AiRole.SYSTEM,
+                    "The project summary (/overview) is being written, and Ollama answers one request at a time:"
+                                   + " this question waits for it. Esc stops the summary."));
+        }
         questionCounter++;
         currentQuestion = question;
         noteQuestionStarted(question);
