@@ -1046,12 +1046,19 @@ public class ODataProducerTest extends CamelTestSupport {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setTrustManagers(trustManagers);
 
-        String uri = "odata:https://localhost:" + wireMock.getHttpsPort() + "/odata/Products";
+        String baseUri = "odata:https://localhost:" + wireMock.getHttpsPort() + "/odata/Products";
 
-        ODataEndpoint httpsEndpoint = context.getEndpoint(uri, ODataEndpoint.class);
+        // Use different OData endpoint URIs while keeping the underlying HTTP URI identical.
+        ODataEndpoint httpsEndpoint = context.getEndpoint(
+                baseUri + "?useGlobalSslContextParameters=true", ODataEndpoint.class);
         httpsEndpoint.setSslContextParameters(sslContextParameters);
 
+        ODataEndpoint endpointWithoutSsl = context.getEndpoint(
+                baseUri + "?useGlobalSslContextParameters=false", ODataEndpoint.class);
+
         Producer httpsProducer = httpsEndpoint.createProducer();
+        Producer endpointWithoutSslProducer = endpointWithoutSsl.createProducer();
+
         try {
             httpsProducer.start();
 
@@ -1060,7 +1067,14 @@ public class ODataProducerTest extends CamelTestSupport {
 
             assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
             assertNotNull(exchange.getMessage().getBody());
+
+            endpointWithoutSslProducer.start();
+
+            Exchange exchangeWithoutSsl = endpointWithoutSsl.createExchange();
+
+            assertThrows(Exception.class, () -> endpointWithoutSslProducer.process(exchangeWithoutSsl));
         } finally {
+            endpointWithoutSslProducer.stop();
             httpsProducer.stop();
         }
 

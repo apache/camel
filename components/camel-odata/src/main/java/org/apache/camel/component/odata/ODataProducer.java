@@ -22,6 +22,7 @@ import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
@@ -35,6 +36,7 @@ import org.apache.camel.util.URISupport;
 public class ODataProducer extends DefaultProducer {
 
     private final ODataEndpoint endpoint;
+    private Endpoint httpEndpoint;
     private Producer httpProducer;
 
     public ODataProducer(ODataEndpoint endpoint) {
@@ -68,8 +70,9 @@ public class ODataProducer extends DefaultProducer {
             }
         }
 
-        Endpoint httpEndpoint = endpoint.getCamelContext()
-                .getEndpoint(httpUri, httpParameters);
+        Component http = endpoint.getCamelContext().getComponent(uri.getScheme());
+        httpEndpoint = http.createEndpoint(httpUri, httpParameters);
+        ServiceHelper.startService(httpEndpoint);
 
         httpProducer = httpEndpoint.createProducer();
         ServiceHelper.startService(httpProducer);
@@ -79,6 +82,9 @@ public class ODataProducer extends DefaultProducer {
     protected void doStop() throws Exception {
         ServiceHelper.stopService(httpProducer);
         httpProducer = null;
+
+        ServiceHelper.stopService(httpEndpoint);
+        httpEndpoint = null;
 
         super.doStop();
     }

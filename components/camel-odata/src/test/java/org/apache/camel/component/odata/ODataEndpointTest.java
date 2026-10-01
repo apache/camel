@@ -20,6 +20,7 @@ import java.net.URI;
 
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,7 +75,7 @@ public class ODataEndpointTest extends CamelTestSupport {
         assertTrue(toString.contains("authPassword=xxxxxx") || toString.contains("authPassword=******"));
 
         // Check URISupport sanitization directly if testing Camel's URI masking utility
-        String sanitizedUri = org.apache.camel.util.URISupport.sanitizeUri(endpoint.getEndpointUri());
+        String sanitizedUri = URISupport.sanitizeUri(endpoint.getEndpointUri());
         assertFalse(sanitizedUri.contains("secretPassword"), "Sanitized URI should not contain authPassword");
         assertFalse(sanitizedUri.contains("myToken"), "Sanitized URI should not contain authBearerToken");
     }
