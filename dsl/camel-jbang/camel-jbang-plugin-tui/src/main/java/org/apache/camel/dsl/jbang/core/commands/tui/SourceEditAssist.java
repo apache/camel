@@ -1016,6 +1016,11 @@ final class SourceEditAssist {
         return SimpleQuickDoc.at(validationCatalog(), lines, row, col);
     }
 
+    /** The completions of the XML DSL at the cursor (CAMEL-25240). */
+    List<AutocompletePopup.CompletionItem> provideXmlCompletions(XmlCompletionContext context, List<String> lines) {
+        return XmlCompletions.provide(validationCatalog(), context, this::loadPropertyPlaceholders);
+    }
+
     /** The completions of the simple expression at the cursor (CAMEL-25219). */
     List<AutocompletePopup.CompletionItem> provideSimpleCompletions(SimpleCompletionContext context, List<String> lines) {
         return SimpleCompletions.provide(validationCatalog(), context, lines);

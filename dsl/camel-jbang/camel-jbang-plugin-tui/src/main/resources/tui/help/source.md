@@ -101,6 +101,16 @@ Press **F4** to enter edit mode, then **Tab** for context-aware completion:
   `?` or `&` (`&amp;` in XML; filtered by consumer/producer role, already given
   ones left out), and the value of an option after `=`
 
+**XML DSL routes:**
+- After `<`, or on an empty line, Tab lists the elements that go inside the
+  parent element (the EIPs of a route, `when` and `otherwise` in a `choice`,
+  the languages where an expression goes); the chosen one is inserted with its
+  required attributes and its end tag (`<to uri=""/>`, `<split></split>`)
+- In a start tag, Tab lists the element's attributes, the required ones first,
+  without the ones already given; in an attribute value, its values (enums,
+  `true`/`false`, `{{placeholders}}`)
+- The structure and documentation come from the XML schema of the catalog
+
 **Simple expressions (YAML, Java and XML routes):**
 - After `${`, Tab lists the functions of the simple language, with their
   parameters and examples; the chosen one is inserted as it is written

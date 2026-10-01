@@ -850,6 +850,8 @@ class SourceTab extends AbstractTab {
                 routeFile || isCamelSourceFile(filePath) ? assist::provideSimpleCompletions : null);
         sourceViewer.setCursorQuickDocProvider(
                 routeFile || isCamelSourceFile(filePath) ? assist::provideSimpleQuickDoc : null);
+        // the elements, attributes and values of an XML route (CAMEL-25240)
+        sourceViewer.setXmlCompletion(routeFile && name.toLowerCase().endsWith(".xml") ? assist::provideXmlCompletions : null);
         if (isCamelSourceFile(filePath)) {
             sourceViewer.setQuickDocProvider(assist::provideCamelQuickDocs);
             sourceViewer.setDeprecatedLineScanner(null);
