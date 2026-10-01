@@ -1011,6 +1011,11 @@ final class SourceEditAssist {
         return items;
     }
 
+    /** The completions of the simple expression at the cursor (CAMEL-25219). */
+    List<AutocompletePopup.CompletionItem> provideSimpleCompletions(SimpleCompletionContext context, List<String> lines) {
+        return SimpleCompletions.provide(validationCatalog(), context, lines);
+    }
+
     List<AutocompletePopup.CompletionItem> provideComponentNameCompletions(String role) {
         CamelCatalog catalog = validationCatalog();
         if (catalog == null) {

@@ -845,6 +845,9 @@ class SourceTab extends AbstractTab {
         sourceViewer.setAskAi(ctx.askAiCallback);
         String name = filePath.getFileName().toString();
         sourceViewer.setUriCompletion(!routeFile ? null : name.endsWith(".java") ? "java" : "xml");
+        // simple expressions in every route file: YAML, Java and XML (CAMEL-25219)
+        sourceViewer.setSimpleCompletion(
+                routeFile || isCamelSourceFile(filePath) ? assist::provideSimpleCompletions : null);
         if (isCamelSourceFile(filePath)) {
             sourceViewer.setQuickDocProvider(assist::provideCamelQuickDocs);
             sourceViewer.setDeprecatedLineScanner(null);

@@ -13,7 +13,7 @@ routes.
   as a file opens and while you type, in YAML, Java and XML routes; a YAML or XML file with problems is not saved.
 * <<_quick_fixes,*Quick fixes*>> -- *Shift+F9* applies the fix a problem names, such as an option typo.
 * <<_fix_with_ai,*Fix with AI*>> -- *Shift+F8* asks the AI to fix the problem of a line; you confirm every change.
-* <<_completion,*Completion*>> -- *Tab* completes components, endpoint options and their values.
+* <<_completion,*Completion*>> -- *Tab* completes components, endpoint options and their values, and simple expressions.
 * <<_quick_documentation,*Quick documentation*>> -- the documentation of the line the cursor is on, at the bottom, with
   the values of its property placeholders and where its bean is declared.
 * <<_navigation,*Navigation*>> -- jump between routes and to beans, see where an endpoint is used with *u*, find any node
@@ -122,9 +122,17 @@ What can be completed:
   given), and the value of an option after `=`.
 * *YAML routes* -- EIP names, component names (only the components that can consume on a `from`, and produce on a
   `to`), endpoint options in a `parameters:` block (the required ones first), EIP options, and option values.
+* *Simple expressions*, in YAML, Java and XML routes alike -- after `+${+` the functions of the
+  xref:components:languages:simple-language.adoc[Simple] language, with their parameters and examples in the details
+  panel, inserted the way they are written (`+${body}+`, `+${date:+`, `+${random(+`). After `+${header.+` (and
+  `exchangeProperty.`, `variable.`) the names the file sets or reads, then the headers of the components it uses. After a
+  function and a space the operators: comparisons, `&&` and `||` where the EIP takes a predicate (`when`, `filter`,
+  `validate`, `onWhen`, ...), chaining (`~>`) and a default value (`?:`) in other expressions.
 * *`application.properties`* -- Camel options (`+camel.main.*+`, `+camel.component.*+`, ...) and Spring Boot properties
   (`+server.*+`, `+spring.*+`, ...), with their values and `+{{placeholder}}+` suggestions. This works even when the
   project is not running.
+
+image::jbang/camel-tui-source-simple-completion.png[After ${header. Tab lists the headers the route sets, then the ones of the Kafka component]
 
 == Quick Documentation
 
