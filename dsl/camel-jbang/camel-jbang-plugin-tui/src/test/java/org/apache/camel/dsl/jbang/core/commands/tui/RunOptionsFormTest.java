@@ -16,8 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.layout.Rect;
+import dev.tamboui.terminal.Frame;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
@@ -101,5 +105,41 @@ class RunOptionsFormTest {
         List<String> args = form.buildArgs();
         assertThat(args).contains("--open-telemetry-agent");
         assertThat(args).doesNotContain("--jfr");
+    }
+
+    @Test
+    void optionsPageHasNoBlankRows() {
+        RunOptionsForm form = openForm();
+        // no app holds a port, so the form shows no port warning that would take a row of its own
+        form.setIntegrations(List::of);
+
+        List<String> inner = renderPopupRows(form);
+
+        // Name .. JFR: one row each, nothing left empty below the last checkbox
+        assertThat(inner).hasSize(14 + (form.portWarning(System.currentTimeMillis()) != null ? 1 : 0));
+        assertThat(inner).noneMatch(String::isBlank);
+    }
+
+    /** The rows inside the popup border (between the top and bottom edge), with the side borders cut off. */
+    private static List<String> renderPopupRows(RunOptionsForm form) {
+        Rect area = new Rect(0, 0, 100, 40);
+        Buffer buffer = Buffer.empty(area);
+        Theme.resetForTesting();
+        form.render(Frame.forTesting(buffer), area);
+        String[] lines = HealthTabRenderTest.bufferToString(buffer).split("\n");
+        List<String> inner = new ArrayList<>();
+        boolean in = false;
+        for (String line : lines) {
+            if (line.contains("╭")) {
+                in = true;
+            } else if (line.contains("╰")) {
+                break;
+            } else if (in) {
+                int left = line.indexOf('│');
+                int right = line.lastIndexOf('│');
+                inner.add(line.substring(left + 1, right));
+            }
+        }
+        return inner;
     }
 }

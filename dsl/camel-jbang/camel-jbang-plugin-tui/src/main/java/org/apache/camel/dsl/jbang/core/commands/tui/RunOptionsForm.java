@@ -42,8 +42,6 @@ class RunOptionsForm {
 
     private static final int PAGE_OPTIONS = 0;
     private static final int PAGE_PROPERTIES = 1;
-    /** Fixed height of the options page; the properties page is aligned to it. */
-    private static final int PAGE1_HEIGHT = 18;
 
     // Row indices for page 0
     private static final int ROW_NAME = 0;
@@ -61,6 +59,8 @@ class RunOptionsForm {
     private static final int ROW_OTEL_AGENT = 12;
     private static final int ROW_JFR = 13;
     private static final int ROW_COUNT = 14;
+    /** Height of the options page: a row per option plus the border; the properties page is aligned to it. */
+    private static final int PAGE1_HEIGHT = ROW_COUNT + 2;
 
     private boolean visible;
     private int page;
