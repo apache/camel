@@ -102,6 +102,25 @@ class ManagedSwitchTest extends ManagementTestSupport {
         assertNotNull(mcc.getManagedProcessor(sw.getId() + "-otherwise"));
     }
 
+    @Test
+    void listsTheOtherwiseAfterTheCases() {
+        // the dev consoles (camel get processor) list the processors by their index: the cases in their order, then
+        // the otherwise
+        SwitchDefinition sw = (SwitchDefinition) context.getCamelContextExtension()
+                .getContextPlugin(Model.class).getRouteDefinition("generatedRoute").getOutputs().get(0);
+        ManagedCamelContext mcc = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        int reservation = mcc.getManagedProcessor(sw.getCases().get(0).getId()).getIndex();
+        int weather = mcc.getManagedProcessor(sw.getCases().get(1).getId()).getIndex();
+        int otherwise = mcc.getManagedProcessor(sw.getId() + "-otherwise").getIndex();
+        assertTrue(mcc.getManagedProcessor(sw.getId()).getIndex() < reservation);
+        assertTrue(reservation < weather, reservation + " < " + weather);
+        assertTrue(weather < otherwise, weather + " < " + otherwise);
+
+        // and so does a copy (route templates)
+        SwitchDefinition copy = sw.copyDefinition();
+        assertTrue(copy.getCases().get(1).getToDefinition().getIndex() < copy.getOtherwiseDefinition().getIndex());
+    }
+
     @ParameterizedTest
     @NullSource
     @ValueSource(booleans = { true, false })
