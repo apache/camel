@@ -217,6 +217,27 @@ class OpenFgaIT extends CamelTestSupport {
     }
 
     @Test
+    void aContextualTupleGrantsAndIsNotStored() {
+        // dave holds nothing on the budget in the store
+        assertThat(check("dave", "budget", "reader").getMessage().getHeader(OpenFgaConstants.ALLOWED))
+                .isEqualTo(false);
+
+        // the same check with a contextual tuple asserting ownership answers true: a contextual tuple is read exactly
+        // like a stored one, which is precisely why the option is endpoint-only and never taken from the message
+        Exchange granted = template.request(
+                openfga("check", "relation=reader&user=user:dave&object=document:budget"
+                                 + "&contextualTuples=user:dave,owner,document:budget"),
+                e -> {
+                });
+        assertThat(granted.getException()).isNull();
+        assertThat(granted.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(true);
+
+        // and nothing was written: without the tuple the plain check denies again
+        assertThat(check("dave", "budget", "reader").getMessage().getHeader(OpenFgaConstants.ALLOWED))
+                .isEqualTo(false);
+    }
+
+    @Test
     void listsTheObjectsASubjectCanRead() {
         Exchange out = template.request(
                 openfga("listObjects", "relation=reader&user=user:anne&type=document"), e -> {

@@ -320,11 +320,51 @@ No check is registered for an injected `openFgaClient`, which can point anywhere
 about. Set `healthCheckProducerEnabled=false` on the component, or `healthCheckEnabled=false` on the policy, to
 turn them off.
 
+=== Contextual tuples and condition context
+
+`contextualTuples` hands OpenFGA relationships that are true for one request and never stored — a group membership
+that lives in the token rather than in the graph, or a fact about the request such as which network it arrived on.
+It takes semicolon-separated `user,relation,object` triples, each part a Simple expression:
+
+[source,java]
+------------------------------------------------------------
+to("openfga:check?storeId={{fga.store}}&relation=reader"
+   + "&user=user:${exchangeProperty.CamelKeycloakTokenSubject}"
+   + "&object=document:${header.documentId}"
+   + "&contextualTuples=user:${exchangeProperty.CamelKeycloakTokenSubject},member,team:${header.team}");
+------------------------------------------------------------
+
+It applies to `check`, `batchCheck`, `listObjects`, `listRelations` and `listUsers`.
+
+`conditionContext` supplies the values that any conditioned relation's CEL expression is evaluated with, as a map
+resolved from the registry — `conditionContext=#myContext`. A map rather than an expression on purpose: OpenFGA types
+every condition parameter in the authorization model (`int`, `bool`, `timestamp`, `ipaddress`), and a map lets you
+supply the right Java type instead of a string the server would reject.
+
+[IMPORTANT]
+.A contextual tuple grants
+====
+A contextual tuple is read exactly like a stored one. `user:anne,owner,document:secret` makes
+`check(user:anne, owner, document:secret)` answer **true** whatever the store contains — it is not a hint or a
+filter, it is an assertion that the relationship holds.
+
+That is why both options are endpoint-only and are never read from the message. A contextual tuple the caller could
+choose would let it assert the very relationship being checked, which is the whole decision. The same reasoning
+applies to a condition context, because a condition can decide a relation.
+
+It follows that an expression here which reads an inbound header hands the caller that power anyway. Keep these
+literal, or derive them from something the route established — the same rule as for `user`.
+
+A part that resolves to blank denies the exchange with `CamelOpenFgaDenyReason=invalid-contextual-tuple` rather than
+being dropped. Dropping it would be the safer direction arithmetically, since losing a tuple can only make the check
+stricter, but it would silently answer a different question than the endpoint was configured to ask.
+====
+
+Contextual tuples supplied by the *message* are deliberately not supported. If you need them, the tuple has to come
+from somewhere the caller cannot reach, which in practice means the endpoint.
+
 == What this component does not do yet
 
-* *Contextual tuples and condition context on a check.* A contextual tuple derived from a message is a
-  self-authorization primitive — `(user:me, owner, document:secret)` — so rather than ship a gate for it that has
-  not been reviewed, the first release leaves it out entirely.
 * The `expand`, `readTuples` and `readChanges` operations, and store or authorization-model management.
 
 == Examples
