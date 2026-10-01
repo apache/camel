@@ -325,6 +325,11 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
 
     @Override
     protected void doStop() throws Exception {
+        // stop polling first: a poll seeing the lock file deleted below would trigger a shutdown
+        terminating.set(true);
+        if (scheduledFuture != null) {
+            scheduledFuture.cancel(false);
+        }
         // cleanup
         if (lockFile != null) {
             FileUtil.deleteFile(lockFile);

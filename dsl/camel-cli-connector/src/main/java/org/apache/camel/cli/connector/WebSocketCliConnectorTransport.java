@@ -16,15 +16,14 @@
  */
 package org.apache.camel.cli.connector;
 
-import java.net.InetAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.net.http.WebSocketHandshakeException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +33,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -96,6 +96,9 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     private volatile Connection connection;
     private volatile boolean ready;
     private volatile boolean stopping;
+    private boolean listenerAdded;
+    // the snapshot task, only (re)scheduled from the scheduler thread or before it runs anything
+    private ScheduledFuture<?> snapshotFuture;
     private int failures;
     private long ticks;
 
@@ -133,7 +136,9 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         }
         reconnectDelay = Long.parseLong(property("camel.cli.websocket.reconnectDelay", "1000"));
         reconnectMaxDelay = Long.parseLong(property("camel.cli.websocket.reconnectMaxDelay", "30000"));
-        snapshotInterval = Long.parseLong(property("camel.cli.websocket.snapshotInterval", "1000"));
+        // as the file transport: faster when debugging
+        snapshotInterval = Long.parseLong(
+                property("camel.cli.websocket.snapshotInterval", camelContext.isDebugging() ? "100" : "1000"));
         heartbeatInterval = Long.parseLong(property("camel.cli.websocket.heartbeatInterval", "10000"));
 
         LOG.warn("Camel CLI connector connects to {} which gets full control of this application (development use only)",
@@ -154,25 +159,43 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
 
         stopping = false;
         ready = camelContext.isStarted();
-        camelContext.addStartupListener(new ExtendedStartupListener() {
-            @Override
-            public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) {
-                // wait until fully started
-            }
+        if (!listenerAdded) {
+            // Camel cannot remove a startup listener, so it is added once even if this transport is restarted
+            listenerAdded = true;
+            camelContext.addStartupListener(new ExtendedStartupListener() {
+                @Override
+                public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) {
+                    // wait until fully started
+                }
 
-            @Override
-            public void onCamelContextFullyStarted(CamelContext context, boolean alreadyStarted) {
-                ready = true;
-                execute(() -> sayHello(connection));
-            }
-        });
+                @Override
+                public void onCamelContextFullyStarted(CamelContext context, boolean alreadyStarted) {
+                    ready = true;
+                    execute(() -> sayHello(connection));
+                }
+            });
+        }
 
         // a periodic task that throws is never run again, hence safely()
-        scheduler.scheduleWithFixedDelay(() -> safely(this::snapshotTask), snapshotInterval, snapshotInterval,
-                TimeUnit.MILLISECONDS);
+        scheduleSnapshots();
         scheduler.scheduleWithFixedDelay(() -> safely(this::heartbeatTask), heartbeatInterval, heartbeatInterval,
                 TimeUnit.MILLISECONDS);
         scheduler.execute(this::connect);
+    }
+
+    @Override
+    public void updateDelay(int delay) {
+        // e.g. camel-cli-debug makes it faster so breakpoints show up quickly
+        snapshotInterval = delay;
+        execute(this::scheduleSnapshots);
+    }
+
+    private void scheduleSnapshots() {
+        if (snapshotFuture != null) {
+            snapshotFuture.cancel(false);
+        }
+        snapshotFuture = scheduler.scheduleWithFixedDelay(() -> safely(this::snapshotTask), snapshotInterval,
+                snapshotInterval, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -376,7 +399,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         List<JsonObject> batch = new ArrayList<>();
         int size = 0;
         for (JsonObject m : messages) {
-            int length = m.toJson().length();
+            // servers limit the size in bytes: non-ASCII characters are not escaped and take up to 3 bytes
+            int length = m.toJson().getBytes(StandardCharsets.UTF_8).length;
             if (!batch.isEmpty() && size + length > MAX_SNAPSHOT_SIZE) {
                 sendSnapshot(c, kind, withMessages(data, key, batch));
                 batch = new ArrayList<>();
@@ -589,15 +613,16 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         return url.getScheme() + "://" + url.getHost() + (url.getPort() != -1 ? ":" + url.getPort() : "") + url.getPath();
     }
 
+    /**
+     * Only literal loopback hosts: a DNS lookup could resolve differently later, and can block the startup.
+     */
     private static boolean isLoopback(String host) {
         if (host == null) {
             return false;
         }
-        try {
-            return Arrays.stream(InetAddress.getAllByName(host)).allMatch(InetAddress::isLoopbackAddress);
-        } catch (Exception e) {
-            return false;
-        }
+        String h = host.toLowerCase(Locale.ROOT);
+        return "localhost".equals(h) || h.startsWith("127.") && h.matches("[0-9.]+") || "[::1]".equals(h)
+                || "::1".equals(h);
     }
 
     /**
