@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
@@ -65,6 +66,11 @@ class RunOptionsForm {
     private int page;
     private int selectedRow;
     private String errorMessage;
+    // the running integrations, to say who holds the port; the check is cached as binding a socket is not free
+    private Supplier<List<IntegrationInfo>> integrations = List::of;
+    private String checkedPort;
+    private long checkedAt;
+    private String portWarning;
 
     private static final String[] MAX_MODES = { "Max seconds:", "Max messages:", "Max idle secs:" };
     private static final String[] MAX_FLAGS = { "--max-seconds=", "--max-messages=", "--max-idle-seconds=" };
@@ -168,6 +174,32 @@ class RunOptionsForm {
 
     void setError(String error) {
         this.errorMessage = error;
+    }
+
+    void setIntegrations(Supplier<List<IntegrationInfo>> integrations) {
+        this.integrations = integrations;
+    }
+
+    /**
+     * A warning when the port the app will listen on (the one given, else 8080) is taken already; null when it is free.
+     * Checked again every couple of seconds, or when the port changes.
+     */
+    String portWarning(long now) {
+        String text = portInput != null ? portInput.text().trim() : "";
+        if (text.equals(checkedPort) && now - checkedAt < 2000) {
+            return portWarning;
+        }
+        checkedPort = text;
+        checkedAt = now;
+        int port;
+        try {
+            port = text.isEmpty() ? PortCheck.DEFAULT_PORT : Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            portWarning = null;
+            return null;
+        }
+        portWarning = PortCheck.warning(port, integrations.get());
+        return portWarning;
     }
 
     boolean isJaegerExport() {
@@ -506,7 +538,8 @@ class RunOptionsForm {
     private void renderOptionsPage(Frame frame, Rect area) {
         // wide enough for the runtime cycler to show all runtimes (Camel Main, Spring Boot, Quarkus, JBang)
         int popupW = Math.min(80, area.width() - 4);
-        int popupH = errorMessage != null ? PAGE1_HEIGHT + 1 : PAGE1_HEIGHT;
+        String warning = portWarning(System.currentTimeMillis());
+        int popupH = PAGE1_HEIGHT + (errorMessage != null ? 1 : 0) + (warning != null ? 1 : 0);
         Rect popup = DialogHelper.centered(area, popupW, popupH);
 
         frame.renderWidget(Clear.INSTANCE, popup);
@@ -606,6 +639,12 @@ class RunOptionsForm {
 
         renderCheckbox(frame, innerX, rowY, innerW, "Java Flight Recorder (JFR)", jfrEnabled, selectedRow == ROW_JFR);
 
+        if (warning != null) {
+            rowY++;
+            frame.renderWidget(Paragraph.from(Line.from(
+                    Span.styled(TuiIcons.HEALTH_WARN + " " + warning, Theme.warning()))),
+                    new Rect(innerX, rowY, innerW, 1));
+        }
         if (errorMessage != null) {
             rowY++;
             Rect errorArea = new Rect(innerX, rowY, innerW, 1);

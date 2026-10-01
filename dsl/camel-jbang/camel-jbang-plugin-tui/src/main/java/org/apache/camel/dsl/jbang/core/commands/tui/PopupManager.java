@@ -90,6 +90,10 @@ class PopupManager {
     private String confirmMessage;
     private Runnable confirmCallback;
     private Runnable cancelCallback;
+    private String confirmDetail;
+    private char confirmExtraKey;
+    private String confirmExtraLabel;
+    private Runnable confirmExtraCallback;
 
     // Last rendered popup rects for mouse hit-testing
     private Rect lastMorePopupRect;
@@ -176,6 +180,11 @@ class PopupManager {
         return showKillConfirm;
     }
 
+    /** The second choice of the confirm dialog as "key label", or null when it has none. */
+    String confirmExtraHint() {
+        return confirmExtraCallback != null ? confirmExtraKey + " " + confirmExtraLabel : null;
+    }
+
     boolean isConfirmVisible() {
         return showConfirm;
     }
@@ -245,7 +254,24 @@ class PopupManager {
         this.confirmMessage = message;
         this.confirmCallback = onConfirm;
         this.cancelCallback = onCancel;
+        this.confirmDetail = null;
+        this.confirmExtraLabel = null;
+        this.confirmExtraCallback = null;
         this.showConfirm = true;
+    }
+
+    /**
+     * As {@link #showConfirm(String, String, Runnable)}, with a line that tells more, and a second choice on its own
+     * key (for example quit, or stop what was started and quit).
+     */
+    void showConfirm(
+            String title, String message, String detail, Runnable onConfirm, char extraKey, String extraLabel,
+            Runnable onExtra) {
+        showConfirm(title, message, onConfirm, null);
+        this.confirmDetail = detail;
+        this.confirmExtraKey = extraKey;
+        this.confirmExtraLabel = extraLabel;
+        this.confirmExtraCallback = onExtra;
     }
 
     /** Closes the generic confirm dialog without running either callback (for example on a timeout). */
@@ -437,7 +463,14 @@ class PopupManager {
     }
 
     private boolean handleConfirmKeys(KeyEvent ke) {
-        if (ke.isConfirm()) {
+        if (confirmExtraCallback != null && ke.isChar(confirmExtraKey)) {
+            showConfirm = false;
+            Runnable cb = confirmExtraCallback;
+            confirmCallback = null;
+            cancelCallback = null;
+            confirmExtraCallback = null;
+            cb.run();
+        } else if (ke.isConfirm()) {
             showConfirm = false;
             Runnable cb = confirmCallback;
             confirmCallback = null;
@@ -724,7 +757,12 @@ class PopupManager {
     void renderConfirm(Frame frame, Rect area) {
         String msg = confirmMessage != null ? confirmMessage : "";
         String title = confirmTitle != null ? confirmTitle : "Confirm";
-        DialogHelper.renderConfirm(frame, area, title, msg, false);
+        if (confirmDetail != null || confirmExtraCallback != null) {
+            DialogHelper.renderConfirm(frame, area, title, msg, confirmDetail,
+                    confirmExtraCallback != null ? String.valueOf(confirmExtraKey) : null, confirmExtraLabel);
+        } else {
+            DialogHelper.renderConfirm(frame, area, title, msg, false);
+        }
     }
 
     int[] morePopupShortcut(KeyEvent ke) {
