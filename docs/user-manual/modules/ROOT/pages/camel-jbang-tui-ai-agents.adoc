@@ -75,7 +75,8 @@ gives it the TUI's own MCP server, and shows the agent's answer, tool calls and 
 drives the TUI through the same `tui_*` tools that external MCP clients use, and can also read and edit your
 route sources with its own tools.
 
-Press *Ctrl+P* in the AI panel and pick one of the agents:
+Any agent that speaks ACP works. Press *Ctrl+P* in the AI panel and pick one of the agents known to work, or
+`acp:custom` to run any other ACP agent:
 
 [options="header"]
 |===

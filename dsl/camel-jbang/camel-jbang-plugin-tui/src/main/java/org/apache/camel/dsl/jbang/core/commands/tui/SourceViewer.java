@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.IntConsumer;
 
 import com.networknt.schema.Error;
@@ -226,6 +227,8 @@ class SourceViewer {
     private CursorQuickDocProvider cursorQuickDocProvider;
     private BiFunction<XmlCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> xmlCompletion;
     private XmlCompletion pendingXmlCompletion;
+    private Function<JavaChainContext, List<AutocompletePopup.CompletionItem>> javaCompletion;
+    private JavaCompletion pendingJavaCompletion;
     private List<String> routeProblems = List.of();
     private List<String> validationErrors;
     private int validationErrorScroll;
@@ -453,6 +456,17 @@ class SourceViewer {
     private record XmlCompletion(int row, int endCol, XmlCompletionContext context) {
     }
 
+    /**
+     * Tab completion of the Java DSL route chain (CAMEL-25241): after a dot, the options of the EIP the chain is on and
+     * the EIPs. Null for a file that is no Java route.
+     */
+    void setJavaCompletion(Function<JavaChainContext, List<AutocompletePopup.CompletionItem>> provider) {
+        this.javaCompletion = provider;
+    }
+
+    private record JavaCompletion(int row, int endCol, JavaChainContext context) {
+    }
+
     /** Opens the AI panel to fix the problem of the cursor line (Shift+F8); null when there is no AI panel. */
     void setAskAi(MonitorContext.AskAi askAi) {
         this.askAi = askAi;
@@ -474,6 +488,7 @@ class SourceViewer {
         simpleCompletion = null;
         cursorQuickDocProvider = null;
         xmlCompletion = null;
+        javaCompletion = null;
     }
 
     void reset() {
@@ -518,6 +533,7 @@ class SourceViewer {
         simpleCompletion = null;
         cursorQuickDocProvider = null;
         xmlCompletion = null;
+        javaCompletion = null;
     }
 
     boolean isMarkdownMode() {
@@ -1230,14 +1246,19 @@ class SourceViewer {
         pendingUriCompletion = null;
         pendingSimpleCompletion = null;
         pendingXmlCompletion = null;
+        pendingJavaCompletion = null;
         if (openSimpleAutocomplete()) {
             return;
         }
         if (isCamelYamlFile()) {
             openYamlAutocomplete();
         } else if (uriCompletion != null) {
-            if (!openUriAutocomplete() && "xml".equals(uriCompletion)) {
-                openXmlAutocomplete();
+            if (!openUriAutocomplete()) {
+                if ("xml".equals(uriCompletion)) {
+                    openXmlAutocomplete();
+                } else if ("java".equals(uriCompletion)) {
+                    openJavaAutocomplete();
+                }
             }
         } else {
             openPropertiesAutocomplete();
@@ -1475,6 +1496,75 @@ class SourceViewer {
         }
     }
 
+    /** The completion of the Java DSL route chain after a dot, read from the text above the cursor like the uris. */
+    private void openJavaAutocomplete() {
+        if (javaCompletion == null) {
+            return;
+        }
+        int row = editState.cursorRow();
+        int col = editState.cursorCol();
+        List<String> all = new ArrayList<>(editState.lineCount());
+        for (int i = 0; i < editState.lineCount(); i++) {
+            all.add(editState.getLine(i));
+        }
+        JavaChainContext c = JavaChainContext.at(all, row, col);
+        if (c == null) {
+            return;
+        }
+        List<AutocompletePopup.CompletionItem> items = javaCompletion.apply(c);
+        if (items != null && !items.isEmpty()) {
+            autocompletePopup = new AutocompletePopup(items, c.prefix(), c.prefix(), false);
+            autocompletePopup.setFullKeys(true);
+            autocompletePopup.setTitlePrefix("Java DSL");
+            pendingJavaCompletion = new JavaCompletion(row, col, c);
+        }
+    }
+
+    /**
+     * Replaces the name typed after the dot with the chosen method, with its parentheses (the cursor inside them when
+     * it takes arguments) unless they follow already.
+     */
+    private void insertJavaCompletion(AutocompletePopup.CompletionItem item) {
+        JavaCompletion jc = pendingJavaCompletion;
+        pendingJavaCompletion = null;
+        if (editState.cursorRow() != jc.row()) {
+            return;
+        }
+        int col = editState.cursorCol();
+        for (; col < jc.endCol(); col++) {
+            editState.moveCursorRight();
+        }
+        for (; col > jc.endCol(); col--) {
+            editState.moveCursorLeft();
+        }
+        for (int i = 0; i < jc.context().prefix().length(); i++) {
+            editState.deleteBackward();
+        }
+        String line = editState.getLine(jc.row());
+        int from = editState.cursorCol();
+        int end = from;
+        while (end < line.length() && Character.isJavaIdentifierPart(line.charAt(end))) {
+            end++;
+        }
+        for (int i = from; i < end; i++) {
+            editState.deleteForward();
+        }
+        String text = item.insertText();
+        int caret = text.indexOf(XmlCompletions.CARET);
+        if (caret >= 0) {
+            text = text.substring(0, caret) + text.substring(caret + 1);
+        }
+        if (end < line.length() && line.charAt(end) == '(') {
+            // the arguments are there already: only the name changes
+            text = item.key();
+            caret = -1;
+        }
+        editState.insert(text);
+        for (int i = caret >= 0 ? text.length() - caret : 0; i > 0; i--) {
+            editState.moveCursorLeft();
+        }
+    }
+
     /** Replaces the prefix the completion was opened on with the chosen item and what follows it (: or =). */
     private void insertUriCompletion(AutocompletePopup.CompletionItem item) {
         UriCompletion jc = pendingUriCompletion;
@@ -1691,6 +1781,10 @@ class SourceViewer {
         }
         if (pendingXmlCompletion != null) {
             insertXmlCompletion(item);
+            return;
+        }
+        if (pendingJavaCompletion != null) {
+            insertJavaCompletion(item);
             return;
         }
         String currentLine = editState.getLine(editState.cursorRow());

@@ -1016,6 +1016,11 @@ final class SourceEditAssist {
         return SimpleQuickDoc.at(validationCatalog(), lines, row, col);
     }
 
+    /** The completions of the Java DSL route chain at the cursor (CAMEL-25241). */
+    List<AutocompletePopup.CompletionItem> provideJavaCompletions(JavaChainContext context) {
+        return JavaDslCompletions.provide(validationCatalog(), context);
+    }
+
     /** The completions of the XML DSL at the cursor (CAMEL-25240). */
     List<AutocompletePopup.CompletionItem> provideXmlCompletions(XmlCompletionContext context, List<String> lines) {
         return XmlCompletions.provide(validationCatalog(), context, this::loadPropertyPlaceholders);
