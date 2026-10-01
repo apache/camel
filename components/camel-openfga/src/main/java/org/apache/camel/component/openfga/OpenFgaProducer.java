@@ -323,14 +323,16 @@ public class OpenFgaProducer extends DefaultProducer {
     /**
      * Reads the stored relationship tuples, filtered by whichever of user, relation and object the endpoint configured.
      * <p/>
-     * Unlike every other operation these three are optional here: an unset part means "do not filter on this", and
-     * leaving all three unset reads the whole store a page at a time. That is why the raw resolvers are used rather
-     * than the check-path ones, which treat a blank value as a missing identity and deny.
+     * Unlike every other operation these three are optional here: a part the endpoint never set means "do not filter on
+     * this", and leaving all three unset reads the whole store a page at a time. That is why the raw resolvers are used
+     * rather than the check-path ones, which treat a blank value as a missing identity and deny. A part that WAS set
+     * and resolves to nothing is a different thing entirely - see {@link #readFilterPart}.
      */
     private void readTuples(Exchange exchange, OpenFgaAuthorizer authorizer) throws Exception {
-        String filterUser = trimmedOrNull(authorizer.rawUser(exchange));
-        String filterRelation = trimmedOrNull(authorizer.rawRelation(exchange));
-        String filterObject = trimmedOrNull(authorizer.rawObject(exchange));
+        String filterUser = readFilterPart(authorizer.hasConfiguredUser(), authorizer.rawUser(exchange), "user");
+        String filterRelation
+                = readFilterPart(authorizer.hasConfiguredRelation(), authorizer.rawRelation(exchange), "relation");
+        String filterObject = readFilterPart(authorizer.hasConfiguredObject(), authorizer.rawObject(exchange), "object");
         validateReadFilter(filterUser, filterRelation, filterObject);
 
         ClientReadRequest request = new ClientReadRequest();
@@ -456,6 +458,29 @@ public class OpenFgaProducer extends DefaultProducer {
         exchange.getMessage().setBody(response.getTree());
     }
 
+    /**
+     * Resolves one part of a read filter, keeping "never configured" and "configured but resolved to nothing" apart.
+     * <p/>
+     * Only an option the endpoint never set means "do not filter on this". An option that IS set and evaluates to blank
+     * - {@code user=${header.who}} on an exchange carrying no such header - is a failure to resolve, and dropping it
+     * would make the read WIDER than the route asked for: a filter meant to select one subject's tuples would instead
+     * return every tuple on the object, and the documented {@code readTuples -> deleteTuples} route would then revoke
+     * all of them. Widening a filter on a value that went missing is the read-side form of failing open, so it is
+     * refused. Same reasoning as {@link OpenFgaAuthorizer#hasConfiguredTuple()} on the write path.
+     */
+    private static String readFilterPart(boolean configured, String value, String option) {
+        if (!configured) {
+            return null;
+        }
+        String trimmed = trimmedOrNull(value);
+        if (trimmed == null) {
+            throw new IllegalArgumentException(
+                    option + " is configured for the readTuples operation but resolved to nothing on this exchange:"
+                                               + " dropping it would read more than was asked for, so it is refused rather than widened");
+        }
+        return trimmed;
+    }
+
     private static String trimmedOrNull(String value) {
         if (ObjectHelper.isEmpty(value)) {
             return null;
@@ -510,8 +535,15 @@ public class OpenFgaProducer extends DefaultProducer {
     }
 
     /**
-     * Records the page token, and removes a token a previous exchange left behind when this page is the last one -
+     * Records the page token, and removes a token a previous exchange left behind when the server returned none -
      * otherwise a route looping on the header would read the same final page for ever.
+     * <p/>
+     * Which of the two happens is the server's choice, not this component's, and the two read operations differ
+     * (measured against OpenFGA 1.21.0): the Read API returns an empty token on its last page, so the header really
+     * does disappear once readTuples is done; readChanges echoes the request's token back with an empty page instead,
+     * because a change log is a tailing cursor rather than a finite list - that token is the bookmark the next poll
+     * resumes from, so it is deliberately left in place and an empty body is what signals "up to date". Removing it
+     * there would break incremental sync rather than improve it.
      */
     private static void setContinuationToken(Exchange exchange, String token) {
         if (ObjectHelper.isNotEmpty(token)) {

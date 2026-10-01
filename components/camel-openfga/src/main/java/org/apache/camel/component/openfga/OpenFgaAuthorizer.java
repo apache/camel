@@ -484,6 +484,24 @@ public class OpenFgaAuthorizer {
     }
 
     /**
+     * Whether the {@code user} option was configured at all, as opposed to having been configured and then resolving to
+     * nothing on this exchange. The read filter needs the two kept apart: only an option that was never set means "do
+     * not filter on this", for the same reason {@link #hasConfiguredTuple()} asks the compiled expressions rather than
+     * the evaluated values.
+     */
+    boolean hasConfiguredUser() {
+        return user != null;
+    }
+
+    boolean hasConfiguredRelation() {
+        return relation != null;
+    }
+
+    boolean hasConfiguredObject() {
+        return object != null;
+    }
+
+    /**
      * Evaluates the {@code user}, {@code relation} and {@code object} options without the check-path guards and without
      * touching the decision headers, for the operations that write relationship tuples. There the values are not a
      * subject being judged but a tuple the route has decided to write, so a typed wildcard is allowed and the
