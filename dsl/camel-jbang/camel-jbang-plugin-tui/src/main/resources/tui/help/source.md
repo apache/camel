@@ -74,12 +74,13 @@ Lines with `to:`, `toD:`, `wireTap:`, or similar endpoints that reference
 another route show a **↵ routeId** indicator. Press **Enter** on such a line
 to jump to the target route's definition (within the same file or across files).
 Reverse links are shown on `from:` lines, indicating which route calls this one.
-This works for YAML, XML and Java DSL routes, also across files of different
-DSLs; Java routes are read without compiling them. The case and otherwise of a
+This works for YAML, XML and Java DSL routes, across all the folders of the
+project and files of different DSLs (build output and `src/test` are left out);
+Java routes are read without compiling them. The case and otherwise of a
 switch link like a `to`. Jump indicators are hidden in plain mode.
 
 ## Go to Route
-- **g** — open a filterable popup listing all routes found in the source files.
+- **g** — open a filterable popup listing all routes of the project's source files.
   Type to fuzzy-filter by route ID or endpoint URI, then press **Enter** to
   navigate to the selected route.
 
