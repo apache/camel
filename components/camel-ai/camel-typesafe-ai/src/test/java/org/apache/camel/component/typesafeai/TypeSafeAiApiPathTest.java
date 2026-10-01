@@ -132,7 +132,7 @@ class TypeSafeAiApiPathTest extends TypeSafeAiTestSupport {
     void rejectsInvalidPathsBeforeSending(String apiPath) {
         context.getComponent("typesafe-ai", TypeSafeAiComponent.class).getConfiguration().setApiPath(apiPath);
 
-        assertThatThrownBy(() -> context.getEndpoint("typesafe-ai:invalid")).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> context.getEndpoint("typesafe-ai:invalid")).hasCauseInstanceOf(IllegalArgumentException.class);
         assertThat(paths).isEmpty();
     }
 }
