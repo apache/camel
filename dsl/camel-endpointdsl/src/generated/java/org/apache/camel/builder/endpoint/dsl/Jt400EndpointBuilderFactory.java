@@ -1182,63 +1182,33 @@ public interface Jt400EndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies which fields (program parameters) are output parameters.
-         * 
-         * The option is a: <code>java.lang.Integer[]</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param outputFieldsIdxArray the value to set
-         * @return the dsl builder
-         */
-        default Jt400EndpointProducerBuilder outputFieldsIdxArray(Integer[] outputFieldsIdxArray) {
-            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
-            return this;
-        }
-        /**
-         * Specifies which fields (program parameters) are output parameters.
-         * 
-         * The option will be converted to a <code>java.lang.Integer[]</code>
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param outputFieldsIdxArray the value to set
-         * @return the dsl builder
-         */
-        default Jt400EndpointProducerBuilder outputFieldsIdxArray(String outputFieldsIdxArray) {
-            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
-            return this;
-        }
-        /**
          * Specifies the fields (program parameters) length as in the IBM i
-         * program definition.
+         * program definition, as a comma-separated list.
          * 
-         * The option is a: <code>java.lang.Integer[]</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
-         * @param outputFieldsLengthArray the value to set
+         * @param fieldsLength the value to set
          * @return the dsl builder
          */
-        default Jt400EndpointProducerBuilder outputFieldsLengthArray(Integer[] outputFieldsLengthArray) {
-            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
+        default Jt400EndpointProducerBuilder fieldsLength(String fieldsLength) {
+            doSetProperty("fieldsLength", fieldsLength);
             return this;
         }
         /**
-         * Specifies the fields (program parameters) length as in the IBM i
-         * program definition.
+         * Specifies which fields (program parameters) are output parameters, as
+         * a comma-separated list of 0-based indexes.
          * 
-         * The option will be converted to a <code>java.lang.Integer[]</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
-         * @param outputFieldsLengthArray the value to set
+         * @param outputFieldsIdx the value to set
          * @return the dsl builder
          */
-        default Jt400EndpointProducerBuilder outputFieldsLengthArray(String outputFieldsLengthArray) {
-            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
+        default Jt400EndpointProducerBuilder outputFieldsIdx(String outputFieldsIdx) {
+            doSetProperty("outputFieldsIdx", outputFieldsIdx);
             return this;
         }
         /**

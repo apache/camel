@@ -50,15 +50,16 @@ public final class AWS2S3Utils {
     public static String determineBucketName(final Exchange exchange, AWS2S3Configuration configuration) {
         String bucketName = exchange.getIn().getHeader(AWS2S3Constants.OVERRIDE_BUCKET_NAME, String.class);
         if (ObjectHelper.isEmpty(bucketName)) {
+            // only the configured bucket name (supplied by the route) may be a dynamic simple expression;
+            // a bucket name provided through the header is used literally and never evaluated
             bucketName = configuration.getBucketName();
+            if (bucketName != null && hasSimpleFunction(bucketName)) {
+                Language simple = exchange.getContext().resolveLanguage("simple");
+                bucketName = simple.createExpression(bucketName).evaluate(exchange, String.class);
+            }
         }
         if (bucketName == null) {
-            throw new IllegalArgumentException("AWS S3 Bucket name header is missing or not configured.");
-        }
-        // dynamic keys using built-in simple language
-        if (hasSimpleFunction(bucketName)) {
-            Language simple = exchange.getContext().resolveLanguage("simple");
-            bucketName = simple.createExpression(bucketName).evaluate(exchange, String.class);
+            throw new IllegalArgumentException("AWS S3 Bucket name is not set, or resolved to null.");
         }
         return bucketName;
     }
@@ -137,15 +138,16 @@ public final class AWS2S3Utils {
     public static String determineKey(final Exchange exchange, AWS2S3Configuration configuration) {
         String key = exchange.getIn().getHeader(AWS2S3Constants.KEY, String.class);
         if (ObjectHelper.isEmpty(key)) {
+            // only the configured key (supplied by the route) may be a dynamic simple expression;
+            // a key provided through the header is used literally and never evaluated
             key = configuration.getKeyName();
+            if (key != null && hasSimpleFunction(key)) {
+                Language simple = exchange.getContext().resolveLanguage("simple");
+                key = simple.createExpression(key).evaluate(exchange, String.class);
+            }
         }
         if (key == null) {
-            throw new IllegalArgumentException("AWS S3 Key header missing.");
-        }
-        // dynamic keys using built-in simple language
-        if (hasSimpleFunction(key)) {
-            Language simple = exchange.getContext().resolveLanguage("simple");
-            key = simple.createExpression(key).evaluate(exchange, String.class);
+            throw new IllegalArgumentException("AWS S3 Key is not set, or resolved to null.");
         }
         return key;
     }

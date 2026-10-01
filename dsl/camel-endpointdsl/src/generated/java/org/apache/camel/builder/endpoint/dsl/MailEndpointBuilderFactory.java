@@ -1935,6 +1935,44 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum nesting depth of multipart MIME parts the consumer
+         * descends into when extracting attachments. A message nested deeper
+         * than this has its deeper parts skipped, so a crafted deeply nested
+         * multipart cannot exhaust the stack. Increase it only if a legitimate
+         * source produces unusually deep nesting.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxMultipartDepth the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointConsumerBuilder maxMultipartDepth(int maxMultipartDepth) {
+            doSetProperty("maxMultipartDepth", maxMultipartDepth);
+            return this;
+        }
+        /**
+         * The maximum nesting depth of multipart MIME parts the consumer
+         * descends into when extracting attachments. A message nested deeper
+         * than this has its deeper parts skipped, so a crafted deeply nested
+         * multipart cannot exhaust the stack. Increase it only if a legitimate
+         * source produces unusually deep nesting.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxMultipartDepth the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointConsumerBuilder maxMultipartDepth(String maxMultipartDepth) {
+            doSetProperty("maxMultipartDepth", maxMultipartDepth);
+            return this;
+        }
+        /**
          * Specifies the mail session that camel should use for all mail
          * interactions. Useful in scenarios where mail sessions are created and
          * managed by some other resource, such as a JavaEE container. When
@@ -2105,9 +2143,8 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Whether message headers From and Sender override the sender
-         * pre-configured in the endpoint URI. Defaults to true. Set to false to
-         * always use the endpoint URI sender, ignoring any From or Sender
-         * headers from the message.
+         * pre-configured in the endpoint URI. Defaults to false. Set to true to
+         * let message headers From and Sender override the endpoint URI sender.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2123,9 +2160,8 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Whether message headers From and Sender override the sender
-         * pre-configured in the endpoint URI. Defaults to true. Set to false to
-         * always use the endpoint URI sender, ignoring any From or Sender
-         * headers from the message.
+         * pre-configured in the endpoint URI. Defaults to false. Set to true to
+         * let message headers From and Sender override the endpoint URI sender.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2141,9 +2177,8 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Whether message headers To, CC, and BCC override the recipients
-         * pre-configured in the endpoint URI. Defaults to true. Set to false to
-         * always use the endpoint URI recipients, ignoring any recipient
-         * headers from the message.
+         * pre-configured in the endpoint URI. Defaults to false. Set to true to
+         * let message headers override the endpoint URI recipients.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2159,9 +2194,8 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Whether message headers To, CC, and BCC override the recipients
-         * pre-configured in the endpoint URI. Defaults to true. Set to false to
-         * always use the endpoint URI recipients, ignoring any recipient
-         * headers from the message.
+         * pre-configured in the endpoint URI. Defaults to false. Set to true to
+         * let message headers override the endpoint URI recipients.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2177,8 +2211,8 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Whether message header Reply-To overrides the replyTo pre-configured
-         * in the endpoint URI. Defaults to true. Set to false to always use the
-         * endpoint URI replyTo, ignoring any Reply-To header from the message.
+         * in the endpoint URI. Defaults to false. Set to true to let the
+         * message Reply-To header override the endpoint URI replyTo.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2194,8 +2228,8 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Whether message header Reply-To overrides the replyTo pre-configured
-         * in the endpoint URI. Defaults to true. Set to false to always use the
-         * endpoint URI replyTo, ignoring any Reply-To header from the message.
+         * in the endpoint URI. Defaults to false. Set to true to let the
+         * message Reply-To header override the endpoint URI replyTo.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2211,8 +2245,8 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Whether message header Subject overrides the subject pre-configured
-         * in the endpoint URI. Defaults to true. Set to false to always use the
-         * endpoint URI subject, ignoring any Subject header from the message.
+         * in the endpoint URI. Defaults to false. Set to true to let the
+         * message Subject header override the endpoint URI subject.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2228,8 +2262,8 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Whether message header Subject overrides the subject pre-configured
-         * in the endpoint URI. Defaults to true. Set to false to always use the
-         * endpoint URI subject, ignoring any Subject header from the message.
+         * in the endpoint URI. Defaults to false. Set to true to let the
+         * message Subject header override the endpoint URI subject.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2789,6 +2823,44 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder javaMailProperties(String javaMailProperties) {
             doSetProperty("javaMailProperties", javaMailProperties);
+            return this;
+        }
+        /**
+         * The maximum nesting depth of multipart MIME parts the consumer
+         * descends into when extracting attachments. A message nested deeper
+         * than this has its deeper parts skipped, so a crafted deeply nested
+         * multipart cannot exhaust the stack. Increase it only if a legitimate
+         * source produces unusually deep nesting.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxMultipartDepth the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointProducerBuilder maxMultipartDepth(int maxMultipartDepth) {
+            doSetProperty("maxMultipartDepth", maxMultipartDepth);
+            return this;
+        }
+        /**
+         * The maximum nesting depth of multipart MIME parts the consumer
+         * descends into when extracting attachments. A message nested deeper
+         * than this has its deeper parts skipped, so a crafted deeply nested
+         * multipart cannot exhaust the stack. Increase it only if a legitimate
+         * source produces unusually deep nesting.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxMultipartDepth the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointProducerBuilder maxMultipartDepth(String maxMultipartDepth) {
+            doSetProperty("maxMultipartDepth", maxMultipartDepth);
             return this;
         }
         /**
@@ -3388,6 +3460,44 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder javaMailProperties(String javaMailProperties) {
             doSetProperty("javaMailProperties", javaMailProperties);
+            return this;
+        }
+        /**
+         * The maximum nesting depth of multipart MIME parts the consumer
+         * descends into when extracting attachments. A message nested deeper
+         * than this has its deeper parts skipped, so a crafted deeply nested
+         * multipart cannot exhaust the stack. Increase it only if a legitimate
+         * source produces unusually deep nesting.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxMultipartDepth the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointBuilder maxMultipartDepth(int maxMultipartDepth) {
+            doSetProperty("maxMultipartDepth", maxMultipartDepth);
+            return this;
+        }
+        /**
+         * The maximum nesting depth of multipart MIME parts the consumer
+         * descends into when extracting attachments. A message nested deeper
+         * than this has its deeper parts skipped, so a crafted deeply nested
+         * multipart cannot exhaust the stack. Increase it only if a legitimate
+         * source produces unusually deep nesting.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxMultipartDepth the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointBuilder maxMultipartDepth(String maxMultipartDepth) {
+            doSetProperty("maxMultipartDepth", maxMultipartDepth);
             return this;
         }
         /**

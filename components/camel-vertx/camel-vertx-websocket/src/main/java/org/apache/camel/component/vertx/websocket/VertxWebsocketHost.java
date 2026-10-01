@@ -51,10 +51,11 @@ public class VertxWebsocketHost {
 
     private final VertxWebsocketHostConfiguration hostConfiguration;
     private final VertxWebsocketHostKey hostKey;
+    // guarded by this host's monitor, together with the server it decides the lifecycle of
     private final Map<String, Route> routeRegistry = new HashMap<>();
     private final List<VertxWebsocketPeer> connectedPeers = new CopyOnWriteArrayList<>(); // thread-safe
     private final CamelContext camelContext;
-    private HttpServer server;
+    private volatile HttpServer server;
     private int port = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT;
 
     public VertxWebsocketHost(CamelContext camelContext, VertxWebsocketHostConfiguration websocketHostConfiguration,
@@ -67,7 +68,7 @@ public class VertxWebsocketHost {
     /**
      * Sets up a Vert.x route and handler for the WebSocket path specified by the consumer configuration
      */
-    public void connect(VertxWebsocketConsumer consumer) {
+    public synchronized void connect(VertxWebsocketConsumer consumer) {
         VertxWebsocketEndpoint endpoint = consumer.getEndpoint();
         VertxWebsocketConfiguration configuration = endpoint.getConfiguration();
 
@@ -159,10 +160,12 @@ public class VertxWebsocketHost {
     /**
      * Removes the Vert.x route and handler for the WebSocket path specified by the consumer configuration
      */
-    public void disconnect(String path) {
+    public synchronized void disconnect(String path) {
         LOG.info("Disconnected consumer for path {}", path);
         Route route = routeRegistry.remove(path);
-        route.remove();
+        if (route != null) {
+            route.remove();
+        }
         if (routeRegistry.isEmpty()) {
             try {
                 stop();
@@ -175,7 +178,7 @@ public class VertxWebsocketHost {
     /**
      * Starts a Vert.x HTTP server to host the WebSocket router
      */
-    public void start() throws Exception {
+    public synchronized void start() throws Exception {
         if (server == null) {
             Vertx vertx = hostConfiguration.getVertx();
             Router router = hostConfiguration.getRouter();
@@ -213,7 +216,7 @@ public class VertxWebsocketHost {
     /**
      * Stops a previously started Vert.x HTTP server
      */
-    public void stop() throws ExecutionException, InterruptedException {
+    public synchronized void stop() throws ExecutionException, InterruptedException {
         if (server != null) {
             LOG.info("Stopping server");
             try {
@@ -234,6 +237,14 @@ public class VertxWebsocketHost {
         connectedPeers.clear();
         routeRegistry.clear();
         port = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT;
+    }
+
+    /**
+     * Whether this host still serves any consumer. Every consumer bound to the same host and port shares one instance,
+     * so the host outlives the first consumer that stops, and only once the last one goes is its server stopped.
+     */
+    public synchronized boolean isServingConsumers() {
+        return !routeRegistry.isEmpty();
     }
 
     /**

@@ -32,6 +32,7 @@ import org.w3c.dom.Document;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufUtil;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DeserializationFilterHelper;
@@ -48,18 +49,12 @@ public final class NettyConverter {
 
     @Converter
     public static byte[] toByteArray(ByteBuf buffer, Exchange exchange) {
-        if (buffer.hasArray()) {
-            return buffer.array();
-        }
-        byte[] bytes = new byte[buffer.readableBytes()];
-        int readerIndex = buffer.readerIndex();
-        buffer.retain();
-        try {
-            buffer.getBytes(readerIndex, bytes);
-        } finally {
-            buffer.release();
-        }
-        return bytes;
+        // Copy only the readable region of the buffer. Returning buffer.array() directly would hand back the
+        // whole backing array, ignoring arrayOffset()/readerIndex()/readableBytes(): for a shared or pooled
+        // backing array that can include bytes outside this buffer's own slice, and it also exposes a reference
+        // to a buffer that may later be reused. ByteBufUtil.getBytes() copies exactly the readable bytes for
+        // every buffer kind (heap or direct, pooled or unpooled).
+        return ByteBufUtil.getBytes(buffer);
     }
 
     @Converter

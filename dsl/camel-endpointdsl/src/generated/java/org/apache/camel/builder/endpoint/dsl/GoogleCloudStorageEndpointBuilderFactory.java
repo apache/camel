@@ -75,6 +75,20 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
+         * The Object name inside the bucket.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param objectName the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointConsumerBuilder objectName(String objectName) {
+            doSetProperty("objectName", objectName);
+            return this;
+        }
+        /**
          * The Service account key that can be used as credentials for the
          * Storage client. It can be loaded by default from classpath, but you
          * can prefix with classpath:, file:, or http: to load the resource from
@@ -1070,6 +1084,20 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
+         * The Object name inside the bucket.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param objectName the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointProducerBuilder objectName(String objectName) {
+            doSetProperty("objectName", objectName);
+            return this;
+        }
+        /**
          * The Service account key that can be used as credentials for the
          * Storage client. It can be loaded by default from classpath, but you
          * can prefix with classpath:, file:, or http: to load the resource from
@@ -1160,20 +1188,6 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          */
         default GoogleCloudStorageEndpointProducerBuilder storageLocation(String storageLocation) {
             doSetProperty("storageLocation", storageLocation);
-            return this;
-        }
-        /**
-         * The Object name inside the bucket.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param objectName the value to set
-         * @return the dsl builder
-         */
-        default GoogleCloudStorageEndpointProducerBuilder objectName(String objectName) {
-            doSetProperty("objectName", objectName);
             return this;
         }
         /**
@@ -1303,6 +1317,20 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          */
         default GoogleCloudStorageEndpointBuilder autoCreateBucket(String autoCreateBucket) {
             doSetProperty("autoCreateBucket", autoCreateBucket);
+            return this;
+        }
+        /**
+         * The Object name inside the bucket.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param objectName the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointBuilder objectName(String objectName) {
+            doSetProperty("objectName", objectName);
             return this;
         }
         /**

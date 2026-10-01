@@ -189,14 +189,18 @@ class OpensearchProducer extends DefaultAsyncProducer {
                 configIndexName = true;
             }
 
+            boolean configSize = false;
             Integer size = message.getHeader(OpensearchConstants.PARAM_SIZE, Integer.class);
             if (size == null) {
                 message.setHeader(OpensearchConstants.PARAM_SIZE, configuration.getSize());
+                configSize = true;
             }
 
+            boolean configFrom = false;
             Integer from = message.getHeader(OpensearchConstants.PARAM_FROM, Integer.class);
             if (from == null) {
                 message.setHeader(OpensearchConstants.PARAM_FROM, configuration.getFrom());
+                configFrom = true;
             }
 
             boolean configWaitForActiveShards = false;
@@ -211,7 +215,8 @@ class OpensearchProducer extends DefaultAsyncProducer {
                 documentClass = configuration.getDocumentClass();
             }
 
-            ActionContext ctx = new ActionContext(exchange, callback, transport, configIndexName, configWaitForActiveShards);
+            ActionContext ctx = new ActionContext(
+                    exchange, callback, transport, configIndexName, configWaitForActiveShards, configSize, configFrom);
 
             switch (operation) {
                 case Index -> processIndexAsync(ctx);
@@ -441,6 +446,12 @@ class OpensearchProducer extends DefaultAsyncProducer {
             if (ctx.configWaitForActiveShards()) {
                 message.removeHeader(OpensearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS);
             }
+            if (ctx.configSize()) {
+                message.removeHeader(OpensearchConstants.PARAM_SIZE);
+            }
+            if (ctx.configFrom()) {
+                message.removeHeader(OpensearchConstants.PARAM_FROM);
+            }
             if (configuration.isDisconnect() && openSearchClient == null) {
                 IOHelper.close(ctx.transport());
                 if (configuration.isEnableSniffer()) {
@@ -486,11 +497,14 @@ class OpensearchProducer extends DefaultAsyncProducer {
         final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
 
         builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder
-                .setConnectTimeout(Timeout.of(Duration.ofMillis(configuration.getConnectionTimeout()))));
+                .setConnectTimeout(Timeout.of(Duration.ofMillis(configuration.getConnectionTimeout())))
+                // apply the socket/read timeout for both plain-HTTP and SSL connections, not only when SSL is enabled
+                .setResponseTimeout(Timeout.of(Duration.ofMillis(configuration.getSocketTimeout()))));
         builder.setHttpClientConfigCallback(httpClientBuilder -> {
             if (ObjectHelper.isNotEmpty(configuration.getUser()) && ObjectHelper.isNotEmpty(configuration.getPassword())) {
                 final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-                credentialsProvider.setCredentials(new AuthScope(configuration.getHostAddressesList().get(0)),
+                // match-all AuthScope so basic auth is sent to every node, not only the first configured host
+                credentialsProvider.setCredentials(new AuthScope(null, null, -1, null, null),
                         new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword().toCharArray()));
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
@@ -601,7 +615,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
      * An inner class providing all the information that an asynchronous action could need.
      */
     private record ActionContext(Exchange exchange, AsyncCallback callback, OpenSearchTransport transport,
-            boolean configIndexName, boolean configWaitForActiveShards) {
+            boolean configIndexName, boolean configWaitForActiveShards, boolean configSize, boolean configFrom) {
 
         OpenSearchAsyncClient getClient() {
             return new OpenSearchAsyncClient(transport);

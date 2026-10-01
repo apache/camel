@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel</artifactId>
-        <version>4.22.1-SNAPSHOT</version>
+        <version>4.22.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-parent</artifactId>
@@ -266,7 +266,7 @@
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.2.0</java-grok-version>
         <java-util-version>4.110.0</java-util-version>
-        <jnats-version>2.26.0</jnats-version>
+        <jnats-version>2.26.3</jnats-version>
         <javacc-maven-plugin-version>3.2.0</javacc-maven-plugin-version>
         <javapoet-version>0.18.0</javapoet-version>
         <javassist-version>3.32.0-GA</javassist-version>
@@ -291,7 +291,7 @@
         <jcip-annotations-version>1.0-1</jcip-annotations-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>7.5.3</jedis-client-version>
-        <jetty-version>12.1.11</jetty-version>
+        <jetty-version>12.1.12</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.7</jettison-version>
@@ -538,7 +538,7 @@
         <yetus-audience-annotations-version>0.15.1</yetus-audience-annotations-version>
         <zeebe-version>8.9.13</zeebe-version>
         <zendesk-client-version>1.5.2</zendesk-client-version>
-        <zookeeper-version>3.9.5</zookeeper-version>
+        <zookeeper-version>3.9.6</zookeeper-version>
         <zxing-version>3.5.4</zxing-version>
     </properties>
 

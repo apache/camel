@@ -149,6 +149,21 @@ public interface Web3jEndpointBuilderFactory {
             return this;
         }
         /**
+         * Operation to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: transaction
+         * Group: common
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default Web3jEndpointConsumerBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * A comma separated transaction privateFor nodes with public keys in a
          * Quorum network.
          * 
@@ -510,6 +525,21 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointProducerBuilder gasLimit(String gasLimit) {
             doSetProperty("gasLimit", gasLimit);
+            return this;
+        }
+        /**
+         * Operation to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: transaction
+         * Group: common
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default Web3jEndpointProducerBuilder operation(String operation) {
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -879,21 +909,6 @@ public interface Web3jEndpointBuilderFactory {
             return this;
         }
         /**
-         * Operation to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: transaction
-         * Group: producer
-         * 
-         * @param operation the value to set
-         * @return the dsl builder
-         */
-        default Web3jEndpointProducerBuilder operation(String operation) {
-            doSetProperty("operation", operation);
-            return this;
-        }
-        /**
          * The transaction index position withing a block.
          * 
          * The option is a: <code>java.math.BigInteger</code> type.
@@ -1238,6 +1253,21 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointBuilder gasLimit(String gasLimit) {
             doSetProperty("gasLimit", gasLimit);
+            return this;
+        }
+        /**
+         * Operation to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: transaction
+         * Group: common
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default Web3jEndpointBuilder operation(String operation) {
+            doSetProperty("operation", operation);
             return this;
         }
         /**

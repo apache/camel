@@ -103,7 +103,7 @@ public class DataLakeConfiguration implements Cloneable {
     @Metadata(autowired = true)
     private AzureSasCredential sasCredential;
 
-    @UriParam(label = "producer", enums = "listFileSystem, listFiles", defaultValue = "listFileSystem",
+    @UriParam(label = "producer", defaultValue = "listFileSystem",
               description = "operation to be performed")
     private DataLakeOperationsDefinition operation = DataLakeOperationsDefinition.listFileSystem;
 

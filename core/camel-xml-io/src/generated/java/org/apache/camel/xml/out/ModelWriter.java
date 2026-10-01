@@ -2742,7 +2742,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("namespace", def.getNamespaceRef(), null);
-        doWriteAttribute("xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES-256-GCM");
+        doWriteAttribute("xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES_256_GCM");
         doWriteAttribute("passPhrase", def.getPassPhrase(), null);
         doWriteAttribute("passPhraseByte", toString(def.getPassPhraseByte()), null);
         doWriteAttribute("secureTag", def.getSecureTag(), null);

@@ -60,12 +60,19 @@ public class VertxWebsocketProducer extends DefaultAsyncProducer {
             }
 
             Map<String, WebSocketBase> connectedPeers = getConnectedPeers(exchange);
-            VertxWebsocketResultHandler vertxWebsocketResultHandler
-                    = new VertxWebsocketResultHandler(exchange, callback, connectedPeers.keySet());
 
             if (connectedPeers.isEmpty()) {
+                // nothing was sent, so the exchange is done here rather than from a write handler. Having nobody
+                // connected is an ordinary state for a broadcast, so it is only worth a debug line: a connection
+                // key that matches no peer is the misconfiguration, and getConnectedPeers warns about that one
+                LOG.debug("No WebSocket peer to send to for endpoint {}, the message is not delivered",
+                        getEndpoint().getEndpointUri());
                 callback.done(true);
+                return true;
             }
+
+            VertxWebsocketResultHandler vertxWebsocketResultHandler
+                    = new VertxWebsocketResultHandler(exchange, callback, connectedPeers.keySet());
 
             // Send message to each peer then record and process the results asynchronously
             connectedPeers.forEach((connectionKey, webSocket) -> {
@@ -121,8 +128,14 @@ public class VertxWebsocketProducer extends DefaultAsyncProducer {
             String connectionKey = message.getHeader(VertxWebsocketConstants.CONNECTION_KEY, String.class);
             if (connectionKey != null && ObjectHelper.isNotEmpty(peers)) {
                 Stream.of(connectionKey.split(","))
-                        .filter(peers::containsKey)
-                        .forEach(key -> connectedPeers.put(key, endpoint.findPeerForConnectionKey(key)));
+                        .forEach(key -> {
+                            if (peers.containsKey(key)) {
+                                connectedPeers.put(key, endpoint.findPeerForConnectionKey(key));
+                            } else {
+                                // a key that matches nothing would otherwise be dropped without a word
+                                LOG.warn("No WebSocket peer connection found for connection key {}", key);
+                            }
+                        });
             } else {
                 // The producer is invoking an external server not managed by camel
                 connectedPeers.put(UUID.randomUUID().toString(), endpoint.getWebSocket(exchange));

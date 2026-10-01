@@ -49,7 +49,6 @@ public class S3GetObjectDynamicKeyOperationIT extends Aws2S3Base {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(AWS2S3Constants.KEY, "${variable.global:myVar}.txt");
                 exchange.getIn().setHeader(AWS2S3Constants.CONTENT_TYPE, "application/text");
                 exchange.getIn().setBody("Camel rocks again!");
             }
@@ -60,7 +59,6 @@ public class S3GetObjectDynamicKeyOperationIT extends Aws2S3Base {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, name.get());
-                exchange.getIn().setHeader(AWS2S3Constants.KEY, "${variable.global:myVar}.txt");
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.getObject);
             }
         });
@@ -81,7 +79,9 @@ public class S3GetObjectDynamicKeyOperationIT extends Aws2S3Base {
             public void configure() {
                 context.setVariable("myVar", "myCamel");
 
-                String awsEndpoint = "aws2-s3://" + name.get() + "?autoCreateBucket=true";
+                // the dynamic key is a simple expression supplied through the endpoint configuration (keyName)
+                String awsEndpoint
+                        = "aws2-s3://" + name.get() + "?autoCreateBucket=true&keyName=RAW(${variable.global:myVar}.txt)";
 
                 from("direct:putObject").to(awsEndpoint);
 

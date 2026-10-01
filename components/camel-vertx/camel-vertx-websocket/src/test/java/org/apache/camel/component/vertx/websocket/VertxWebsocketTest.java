@@ -38,6 +38,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -105,8 +106,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
 
         VertxWebsocketEndpoint endpoint
                 = context.getEndpoint("vertx-websocket:localhost:" + port + "/test", VertxWebsocketEndpoint.class);
-        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
-        assertEquals(2, connectedPeers.size());
+        Map<String, ServerWebSocket> connectedPeers = awaitConnectedPeers(endpoint, 2);
 
         String connectionKey = connectedPeers.keySet().iterator().next();
 
@@ -116,6 +116,34 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         assertTrue(latch.await(10, TimeUnit.SECONDS));
         assertEquals(expectedResultCount, results.size());
         assertTrue(results.contains("Hello World"));
+    }
+
+    @Test
+    void sendWithAnUnmatchedConnectionKeyDeliversToNobody() throws Exception {
+        // the branch this covers needs peers to exist while the key matches none of them: a key that is simply
+        // absent from a populated registry is dropped, and before CAMEL-24789 it was dropped without a word
+        CountDownLatch connected = new CountDownLatch(1);
+        List<String> results = new ArrayList<>();
+        openWebSocketConnection("localhost", port.getPort(), "/test", message -> {
+            synchronized (results) {
+                results.add(message);
+                connected.countDown();
+            }
+        });
+
+        VertxWebsocketEndpoint endpoint
+                = context.getEndpoint("vertx-websocket:localhost:" + port + "/test", VertxWebsocketEndpoint.class);
+        awaitConnectedPeers(endpoint, 1);
+
+        template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test", "Hello World",
+                VertxWebsocketConstants.CONNECTION_KEY, "a-key-no-peer-ever-had");
+
+        // the send returns rather than hanging, and the connected peer is left untouched - the message went
+        // nowhere, which is the point: an unmatched key must not silently fan out to whoever happens to be there
+        assertFalse(connected.await(2, TimeUnit.SECONDS), "no peer should have received the message");
+        synchronized (results) {
+            assertEquals(List.of(), results);
+        }
     }
 
     @Test
@@ -136,8 +164,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         VertxWebsocketEndpoint endpoint
                 = context.getEndpoint("vertx-websocket:localhost:" + port + "/test/paramA/other/paramB",
                         VertxWebsocketEndpoint.class);
-        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
-        assertEquals(2, connectedPeers.size());
+        Map<String, ServerWebSocket> connectedPeers = awaitConnectedPeers(endpoint, 2);
 
         String connectionKey = connectedPeers.keySet().iterator().next();
 
@@ -168,8 +195,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         VertxWebsocketEndpoint endpoint
                 = context.getEndpoint("vertx-websocket:localhost:" + port + "/test/paramA/other/paramB",
                         VertxWebsocketEndpoint.class);
-        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
-        assertEquals(2, connectedPeers.size());
+        Map<String, ServerWebSocket> connectedPeers = awaitConnectedPeers(endpoint, 2);
 
         String connectionKey = connectedPeers.keySet().iterator().next();
 
@@ -207,8 +233,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         VertxWebsocketEndpoint endpoint
                 = context.getEndpoint("vertx-websocket:localhost:" + port + "/test/wildcarded/path",
                         VertxWebsocketEndpoint.class);
-        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
-        assertEquals(2, connectedPeers.size());
+        Map<String, ServerWebSocket> connectedPeers = awaitConnectedPeers(endpoint, 2);
 
         String connectionKey = connectedPeers.keySet().iterator().next();
 
@@ -245,8 +270,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         VertxWebsocketEndpoint endpoint
                 = context.getEndpoint("vertx-websocket:localhost:" + port + "/test/wildcarded/path",
                         VertxWebsocketEndpoint.class);
-        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
-        assertEquals(2, connectedPeers.size());
+        Map<String, ServerWebSocket> connectedPeers = awaitConnectedPeers(endpoint, 2);
 
         String connectionKey = connectedPeers.keySet().iterator().next();
 
@@ -287,8 +311,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
 
         VertxWebsocketEndpoint endpoint
                 = context.getEndpoint("vertx-websocket:localhost:" + port + "/test", VertxWebsocketEndpoint.class);
-        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
-        assertEquals(5, connectedPeers.size());
+        Map<String, ServerWebSocket> connectedPeers = awaitConnectedPeers(endpoint, 5);
 
         StringJoiner joiner = new StringJoiner(",");
         Iterator<String> iterator = connectedPeers.keySet().iterator();

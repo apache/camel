@@ -85,7 +85,12 @@ public final class ElasticsearchActionRequestConverter {
     @Converter
     public static IndexRequest.Builder<?> toIndexRequestBuilder(Object document, Exchange exchange) throws IOException {
         if (document instanceof IndexRequest.Builder<?> indexReqBuilder) {
-            return indexReqBuilder.id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
+            // only override the id when the header is present, otherwise a caller-supplied id would be cleared
+            String id = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class);
+            if (id != null) {
+                indexReqBuilder.id(id);
+            }
+            return indexReqBuilder;
         }
         IndexRequest.Builder<Object> builder = new IndexRequest.Builder<>();
         if (document instanceof byte[] byteArray) {
@@ -115,12 +120,17 @@ public final class ElasticsearchActionRequestConverter {
     @Converter
     public static UpdateRequest.Builder<?, ?> toUpdateRequestBuilder(Object document, Exchange exchange) throws IOException {
         if (document instanceof UpdateRequest.Builder<?, ?> updateReqBuilder) {
-            return updateReqBuilder.id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
+            // only override the id when the header is present, otherwise a caller-supplied id would be cleared
+            String id = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class);
+            if (id != null) {
+                updateReqBuilder.id(id);
+            }
+            return updateReqBuilder;
         }
         UpdateRequest.Builder<?, Object> builder = new UpdateRequest.Builder<>();
         Boolean enableDocumentOnlyMode
                 = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.FALSE, Boolean.class);
-        Mode mode = enableDocumentOnlyMode == Boolean.TRUE ? Mode.DOCUMENT_ONLY : Mode.DEFAULT;
+        Mode mode = Boolean.TRUE.equals(enableDocumentOnlyMode) ? Mode.DOCUMENT_ONLY : Mode.DEFAULT;
         if (document instanceof byte[] byteArray) {
             mode.addDocToUpdateRequestBuilder(builder, new ByteArrayInputStream(byteArray));
         } else if (document instanceof InputStream inputStream) {

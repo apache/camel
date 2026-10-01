@@ -34,6 +34,7 @@ public class Jt400EndpointUriFactory extends org.apache.camel.support.component.
         props.add("delay");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("fieldsLength");
         props.add("format");
         props.add("greedy");
         props.add("guiAvailable");
@@ -42,8 +43,7 @@ public class Jt400EndpointUriFactory extends org.apache.camel.support.component.
         props.add("lazyStartProducer");
         props.add("messageAction");
         props.add("objectPath");
-        props.add("outputFieldsIdxArray");
-        props.add("outputFieldsLengthArray");
+        props.add("outputFieldsIdx");
         props.add("password");
         props.add("pollStrategy");
         props.add("procedureName");

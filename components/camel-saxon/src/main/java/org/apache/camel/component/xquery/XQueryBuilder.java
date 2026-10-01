@@ -121,8 +121,21 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         LOG.debug("Initializing XQueryBuilder {}", this);
         if (configuration == null) {
             configuration = new Configuration();
-            configuration.setParseOptions(new ParseOptions().withSpaceStrippingRule(isStripsAllWhiteSpace()
-                    ? AllElementsSpaceStrippingRule.getInstance() : IgnorableSpaceStrippingRule.getInstance()));
+            // Harden the default Saxon Configuration against XML external entity (XXE) processing.
+            // A message body that already arrives as a javax.xml.transform.Source is handed straight to
+            // Saxon (see getSource and createDynamicContext) and therefore bypasses the hardened SAX/StAX
+            // type converters that plain String, byte[] and InputStream bodies go through. Disable DOCTYPE
+            // declarations and external entity/DTD resolution so that untrusted XML cannot pull in local
+            // files or remote resources. This mirrors the secure defaults already applied by Camel's
+            // XmlConverter and by camel-xslt-saxon.
+            ParseOptions parseOptions = new ParseOptions()
+                    .withSpaceStrippingRule(isStripsAllWhiteSpace()
+                            ? AllElementsSpaceStrippingRule.getInstance() : IgnorableSpaceStrippingRule.getInstance())
+                    .withParserFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+                    .withParserFeature("http://xml.org/sax/features/external-general-entities", false)
+                    .withParserFeature("http://xml.org/sax/features/external-parameter-entities", false)
+                    .withParserFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            configuration.setParseOptions(parseOptions);
             LOG.debug("Created new Configuration {}", configuration);
         } else {
             LOG.debug("Using existing Configuration {}", configuration);

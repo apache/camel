@@ -379,7 +379,7 @@ public class OBSEndpoint extends ScheduledPollEndpoint {
 
         // setup proxy information (if needed)
         if (ObjectHelper.isNotEmpty(getProxyHost())
-                && ObjectHelper.isNotEmpty(getProxyPort())) {
+                && getProxyPort() > 0) {
             HttpProxyConfiguration httpConfig = new HttpProxyConfiguration();
             httpConfig.setProxyAddr(getProxyHost());
             httpConfig.setProxyPort(getProxyPort());

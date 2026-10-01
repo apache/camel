@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -111,6 +113,14 @@ class KafkaRecordBatchingProcessorCommonHeadersTest {
 
         assertEquals("orders", batch.getHeader(KafkaConstants.TOPIC));
         assertNull(batch.getHeader(KafkaConstants.PARTITION));
+    }
+
+    @Test
+    void processorConstructsWithDefaultMaxPollRecords() {
+        // CAMEL-24778: with maxPollRecords left unset, the batch buffer was sized from a null Integer,
+        // throwing NullPointerException as the processor was constructed. The constructor only reads the
+        // configuration, so the processor and commit manager are irrelevant to this regression.
+        assertDoesNotThrow(() -> new KafkaRecordBatchingProcessor(new KafkaConfiguration(), null, null));
     }
 
     @Test

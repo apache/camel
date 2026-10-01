@@ -16,10 +16,14 @@
  */
 package org.apache.camel.component.huaweicloud.obs;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.obs.services.ObsClient;
 import com.obs.services.model.ObjectMetadata;
@@ -38,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GetObjectTest extends CamelTestSupport {
 
@@ -115,5 +120,34 @@ public class GetObjectTest extends CamelTestSupport {
         assertEquals(objectName, responseExchange.getIn().getHeader(OBSHeaders.OBJECT_KEY));
         assertEquals(objectName, responseExchange.getIn().getHeader(Exchange.FILE_NAME));
 
+    }
+
+    @Test
+    public void testGetObjectClosesContentStream() throws Exception {
+        ObsObject response = new ObsObject();
+        response.setBucketName(bucketName);
+        response.setObjectKey(objectName);
+
+        // the SDK content stream holds a pooled HTTP connection; the producer must close it after reading
+        AtomicBoolean closed = new AtomicBoolean(false);
+        InputStream trackedStream = new ByteArrayInputStream("hello".getBytes(StandardCharsets.UTF_8)) {
+            @Override
+            public void close() throws IOException {
+                closed.set(true);
+                super.close();
+            }
+        };
+        response.setObjectContent(trackedStream);
+        response.setMetadata(new ObjectMetadata());
+
+        Mockito.when(mockClient.getObject(bucketName, objectName)).thenReturn(response);
+
+        MockEndpoint mock = getMockEndpoint("mock:get_object_result");
+        mock.expectedMinimumMessageCount(1);
+        template.sendBody("direct:get_object", "dummy");
+        mock.assertIsSatisfied();
+
+        assertTrue(closed.get(),
+                "the OBS object content stream must be closed after download to release the pooled connection");
     }
 }

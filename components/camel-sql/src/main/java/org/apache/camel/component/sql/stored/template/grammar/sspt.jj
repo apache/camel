@@ -230,7 +230,7 @@ TOKEN: {
 }
 
 TOKEN : {
-    <SIMPLE_EXP_TOKEN: "${"(<LETTER>|<DIGIT> | <SPECIAL> | " ")+ "}">
+    <SIMPLE_EXP_TOKEN: "${"(<LETTER>|<DIGIT> | <SPECIAL> | "(" | ")" | " ")+ "}">
 }
 
 TOKEN : {

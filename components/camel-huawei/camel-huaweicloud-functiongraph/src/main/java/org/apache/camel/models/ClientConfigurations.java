@@ -40,20 +40,23 @@ public class ClientConfigurations {
 
     public ClientConfigurations(FunctionGraphEndpoint endpoint) {
 
-        // checking for required region
+        // checking for required region/endpoint (endpoint takes precedence for client initialization)
         if (ObjectHelper.isNotEmpty(endpoint.getEndpoint())) {
             this.setEndpoint(endpoint.getEndpoint());
-        } else if (ObjectHelper.isNotEmpty(endpoint.getRegion())) {
-            this.setRegion(endpoint.getRegion());
-        } else {
+        } else if (ObjectHelper.isEmpty(endpoint.getRegion())) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("No region/endpoint given. Cannot proceed with FunctionGraph operations.");
             }
             throw new IllegalArgumentException("Region/endpoint not found");
         }
+        // the invoke URN always needs the region, even when the client is initialized from 'endpoint',
+        // so copy it independently instead of only in the region branch above
+        if (ObjectHelper.isNotEmpty(endpoint.getRegion())) {
+            this.setRegion(endpoint.getRegion());
+        }
 
         // checking for optional proxy authentication
-        if (ObjectHelper.isNotEmpty(endpoint.getProxyHost()) && ObjectHelper.isNotEmpty(endpoint.getProxyPort())) {
+        if (ObjectHelper.isNotEmpty(endpoint.getProxyHost()) && endpoint.getProxyPort() > 0) {
             this.setProxyHost(endpoint.getProxyHost());
             this.setProxyPort(endpoint.getProxyPort());
         }

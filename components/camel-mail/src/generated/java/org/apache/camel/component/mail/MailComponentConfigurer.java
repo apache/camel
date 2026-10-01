@@ -91,6 +91,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "mapmailmessage":
         case "mapMailMessage": getOrCreateConfiguration(target).setMapMailMessage(property(camelContext, boolean.class, value)); return true;
+        case "maxmultipartdepth":
+        case "maxMultipartDepth": getOrCreateConfiguration(target).setMaxMultipartDepth(property(camelContext, int.class, value)); return true;
         case "mimedecodeheaders":
         case "mimeDecodeHeaders": getOrCreateConfiguration(target).setMimeDecodeHeaders(property(camelContext, boolean.class, value)); return true;
         case "moveto":
@@ -190,6 +192,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return boolean.class;
         case "mapmailmessage":
         case "mapMailMessage": return boolean.class;
+        case "maxmultipartdepth":
+        case "maxMultipartDepth": return int.class;
         case "mimedecodeheaders":
         case "mimeDecodeHeaders": return boolean.class;
         case "moveto":
@@ -290,6 +294,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "mapmailmessage":
         case "mapMailMessage": return getOrCreateConfiguration(target).isMapMailMessage();
+        case "maxmultipartdepth":
+        case "maxMultipartDepth": return getOrCreateConfiguration(target).getMaxMultipartDepth();
         case "mimedecodeheaders":
         case "mimeDecodeHeaders": return getOrCreateConfiguration(target).isMimeDecodeHeaders();
         case "moveto":

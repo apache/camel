@@ -42,12 +42,15 @@ public class ElasticsearchBulkRequestAggregationStrategy implements AggregationS
 
         BulkOperation[] newBody = (BulkOperation[]) objBody;
         BulkRequest.Builder builder = new BulkRequest.Builder();
-        builder.operations(List.of(newBody));
         if (oldExchange != null) {
+            // add the already-aggregated operations first so the merged request keeps insertion order
             BulkRequest request = oldExchange.getIn().getBody(BulkRequest.class);
             builder.operations(request.operations());
         }
+        builder.operations(List.of(newBody));
+        // the merged BulkRequest is stored on the new exchange, so the new exchange must be the one returned
+        // (returning oldExchange would return null on the first aggregation call, which is not allowed)
         newExchange.getIn().setBody(builder.build());
-        return oldExchange;
+        return newExchange;
     }
 }

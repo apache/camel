@@ -125,11 +125,14 @@ public class OpensearchScrollRequestIterator<TDocument> implements Iterator<Hit<
     public void close() {
         if (!closed) {
             try {
-                ClearScrollRequest clearScrollRequest = new ClearScrollRequest.Builder()
-                        .scrollId(List.of(scrollId))
-                        .build();
+                // scrollId can be null if the initial search returned no scroll id; List.of(null) would NPE
+                if (scrollId != null) {
+                    ClearScrollRequest clearScrollRequest = new ClearScrollRequest.Builder()
+                            .scrollId(List.of(scrollId))
+                            .build();
 
-                esClient.clearScroll(clearScrollRequest);
+                    esClient.clearScroll(clearScrollRequest);
+                }
                 closed = true;
                 exchange.setProperty(OpensearchConstants.PROPERTY_SCROLL_OPENSEARCH_QUERY_COUNT, requestCount);
             } catch (IOException e) {

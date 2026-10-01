@@ -104,6 +104,8 @@ public class MailConfiguration implements Cloneable {
     private boolean debugMode;
     @UriParam(defaultValue = "" + MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT, label = "advanced")
     private int connectionTimeout = MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT;
+    @UriParam(defaultValue = "" + MailConstants.MAIL_DEFAULT_MAX_MULTIPART_DEPTH, label = "advanced")
+    private int maxMultipartDepth = MailConstants.MAIL_DEFAULT_MAX_MULTIPART_DEPTH;
     @UriParam(defaultValue = "text/plain", label = "advanced")
     private String contentType = "text/plain";
     @UriParam(defaultValue = MailConstants.MAIL_ALTERNATIVE_BODY, label = "advanced")
@@ -672,6 +674,19 @@ public class MailConfiguration implements Cloneable {
         this.connectionTimeout = connectionTimeout;
     }
 
+    public int getMaxMultipartDepth() {
+        return maxMultipartDepth;
+    }
+
+    /**
+     * The maximum nesting depth of multipart MIME parts the consumer descends into when extracting attachments. A
+     * message nested deeper than this has its deeper parts skipped, so a crafted deeply nested multipart cannot exhaust
+     * the stack. Increase it only if a legitimate source produces unusually deep nesting.
+     */
+    public void setMaxMultipartDepth(int maxMultipartDepth) {
+        this.maxMultipartDepth = maxMultipartDepth;
+    }
+
     public String getContentType() {
         return contentType;
     }
@@ -730,7 +745,7 @@ public class MailConfiguration implements Cloneable {
 
     /**
      * Whether message headers To, CC, and BCC override the recipients pre-configured in the endpoint URI. Defaults to
-     * true. Set to false to always use the endpoint URI recipients, ignoring any recipient headers from the message.
+     * false. Set to true to let message headers override the endpoint URI recipients.
      */
     public void setUseHeaderRecipients(boolean useHeaderRecipients) {
         this.useHeaderRecipients = useHeaderRecipients;
@@ -741,8 +756,8 @@ public class MailConfiguration implements Cloneable {
     }
 
     /**
-     * Whether message headers From and Sender override the sender pre-configured in the endpoint URI. Defaults to true.
-     * Set to false to always use the endpoint URI sender, ignoring any From or Sender headers from the message.
+     * Whether message headers From and Sender override the sender pre-configured in the endpoint URI. Defaults to
+     * false. Set to true to let message headers From and Sender override the endpoint URI sender.
      */
     public void setUseHeaderFrom(boolean useHeaderFrom) {
         this.useHeaderFrom = useHeaderFrom;
@@ -753,8 +768,8 @@ public class MailConfiguration implements Cloneable {
     }
 
     /**
-     * Whether message header Subject overrides the subject pre-configured in the endpoint URI. Defaults to true. Set to
-     * false to always use the endpoint URI subject, ignoring any Subject header from the message.
+     * Whether message header Subject overrides the subject pre-configured in the endpoint URI. Defaults to false. Set
+     * to true to let the message Subject header override the endpoint URI subject.
      */
     public void setUseHeaderSubject(boolean useHeaderSubject) {
         this.useHeaderSubject = useHeaderSubject;
@@ -765,8 +780,8 @@ public class MailConfiguration implements Cloneable {
     }
 
     /**
-     * Whether message header Reply-To overrides the replyTo pre-configured in the endpoint URI. Defaults to true. Set
-     * to false to always use the endpoint URI replyTo, ignoring any Reply-To header from the message.
+     * Whether message header Reply-To overrides the replyTo pre-configured in the endpoint URI. Defaults to false. Set
+     * to true to let the message Reply-To header override the endpoint URI replyTo.
      */
     public void setUseHeaderReplyTo(boolean useHeaderReplyTo) {
         this.useHeaderReplyTo = useHeaderReplyTo;

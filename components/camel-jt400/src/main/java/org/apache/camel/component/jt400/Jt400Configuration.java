@@ -147,10 +147,16 @@ public class Jt400Configuration {
     @UriParam(label = "consumer", defaultValue = "EQ")
     private SearchType searchType = SearchType.EQ;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "Specifies which fields (program parameters) are output parameters, as a comma-separated list of 0-based indexes.")
+    private String outputFieldsIdx;
+
+    @UriParam(label = "producer",
+              description = "Specifies the fields (program parameters) length as in the IBM i program definition, as a comma-separated list.")
+    private String fieldsLength;
+
     private Integer[] outputFieldsIdxArray;
 
-    @UriParam(label = "producer")
     private Integer[] outputFieldsLengthArray;
 
     @UriParam(label = "consumer", defaultValue = "30000")
@@ -411,23 +417,33 @@ public class Jt400Configuration {
         this.sendingReply = sendingReply;
     }
 
+    public String getOutputFieldsIdx() {
+        return outputFieldsIdx;
+    }
+
     public void setOutputFieldsIdx(String outputFieldsIdx) {
+        this.outputFieldsIdx = outputFieldsIdx;
         if (outputFieldsIdx != null) {
             String[] outputArray = outputFieldsIdx.split(",");
             outputFieldsIdxArray = new Integer[outputArray.length];
             for (int i = 0; i < outputArray.length; i++) {
-                String str = outputArray[i];
+                String str = outputArray[i].trim();
                 outputFieldsIdxArray[i] = Integer.parseInt(str);
             }
         }
     }
 
+    public String getFieldsLength() {
+        return fieldsLength;
+    }
+
     public void setFieldsLength(String fieldsLength) {
+        this.fieldsLength = fieldsLength;
         if (fieldsLength != null) {
             String[] outputArray = fieldsLength.split(",");
             outputFieldsLengthArray = new Integer[outputArray.length];
             for (int i = 0; i < outputArray.length; i++) {
-                String str = outputArray[i];
+                String str = outputArray[i].trim();
                 outputFieldsLengthArray[i] = Integer.parseInt(str);
             }
         }

@@ -47,7 +47,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     private Map<String, String> namespaces;
 
     @XmlAttribute
-    @Metadata(defaultValue = "AES-256-GCM",
+    @Metadata(defaultValue = "AES_256_GCM",
               enums = "TRIPLEDES,AES_128,AES_128_GCM,AES_192,AES_192_GCM,AES_256,AES_256_GCM,SEED_128,CAMELLIA_128,CAMELLIA_192,CAMELLIA_256",
               description = "The cipher algorithm to be used for encryption/decryption of the XML message content.")
     private String xmlCipherAlgorithm;
