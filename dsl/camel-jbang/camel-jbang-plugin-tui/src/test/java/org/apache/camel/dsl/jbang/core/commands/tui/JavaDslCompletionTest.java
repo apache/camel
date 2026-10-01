@@ -89,8 +89,15 @@ class JavaDslCompletionTest {
         assertThat(c.calls()).extracting(JavaChainContext.Call::name).containsExactly("from", "process");
         assertThat(c.calls().get(1).arguments()).isEqualTo(1);
 
-        // in an argument, in a string, in a comment, not after a dot
-        assertThat(at("from(\"a\").split(body().")).isNull();
+        // in an argument: the chain of the argument, from its start
+        c = at("from(\"a\").split(body().");
+        assertThat(c.argument()).isTrue();
+        assertThat(c.calls()).extracting(JavaChainContext.Call::name).containsExactly("body");
+        c = at("from(\"a\").filter(header(\"x\"), header(\"y\").");
+        assertThat(c.calls().get(0).arguments()).isEqualTo(1);
+        assertThat(c.calls()).extracting(JavaChainContext.Call::name).containsExactly("header");
+
+        // in a string, in a comment, not after a dot
         assertThat(at("from(\"a.")).isNull();
         assertThat(at("from(\"a\") // .")).isNull();
         assertThat(at("from(\"a\") ")).isNull();
@@ -152,6 +159,33 @@ class JavaDslCompletionTest {
         // a configuration ended by end()
         assertThat(keys("from(\"a\").circuitBreaker().resilience4jConfiguration().")).contains("end",
                 "timeoutEnabled");
+    }
+
+    @Test
+    void theBuildersInArguments() {
+        assertThat(keys("from(\"a\").split(body().")).contains("tokenize", "convertTo", "regexReplaceAll");
+        assertThat(keys("from(\"a\").filter(header(\"x\").")).contains("isEqualTo", "isNotNull", "contains");
+        // a predicate ends the chain: nothing to offer after it
+        assertThat(keys("from(\"a\").filter(header(\"x\").isNotNull().")).isEmpty();
+        // the internals of the builders are no DSL
+        assertThat(keys("from(\"a\").split(body().")).doesNotContain("evaluate", "getExpression", "matches");
+    }
+
+    @Test
+    void theRestDsl() {
+        assertThat(keys("rest(\"/api\").")).contains("get", "post", "description", "consumes");
+        assertThat(keys("rest(\"/api\").get(\"/orders\").")).contains("to", "produces", "param", "get");
+        // param() is a sub-builder that endParam() leaves
+        assertThat(keys("rest(\"/api\").get(\"/orders\").param().")).contains("name", "type", "endParam");
+        assertThat(keys("rest(\"/api\").get(\"/orders\").param().name(\"id\").endParam().")).contains("to");
+        // and a configuration
+        assertThat(keys("restConfiguration().")).contains("component", "port", "bindingMode");
+    }
+
+    @Test
+    void aTemplateBeanGoesBackToItsTemplateOnEnd() {
+        assertThat(keys("routeTemplate(\"t\").templateBean(\"b\").typeClass(\"x\").end().")).contains(
+                "templateParameter", "from");
     }
 
     @Test

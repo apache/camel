@@ -31,6 +31,8 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.model.ChoiceDefinition;
@@ -57,7 +59,7 @@ final class JavaDslCompletions {
     /** Names that are no DSL, although public on the model classes. */
     private static final Set<String> NOT_DSL = Set.of(
             "copyDefinition", "toString", "equals", "hashCode", "getClass", "clone", "wait", "notify", "notifyAll",
-            "createChildProcessor", "preCreateProcessor", "configureChild", "addOutput", "clearOutput");
+            "createChildProcessor", "preCreateProcessor", "configureChild", "addOutput", "clearOutput", "evaluate");
 
     /** The methods that close blocks, with what they do: they have no EIP in the catalog. */
     private static final Map<String, String> END_DOCS = Map.of(
@@ -138,7 +140,8 @@ final class JavaDslCompletions {
         List<State> states = new ArrayList<>();
         for (Method m : candidates(RouteBuilder.class, calls.get(0))) {
             Class<?> start = raw(m.getGenericReturnType());
-            if (start != null && ProcessorDefinition.class.isAssignableFrom(start)) {
+            // a route (from, onException...), or a builder: body(), header(..) in an argument, rest(..), routeTemplate(..)
+            if (start != null && (ProcessorDefinition.class.isAssignableFrom(start) || isBuilder(start))) {
                 states.add(new State(List.of(start), start, null, null));
             }
         }
@@ -159,6 +162,9 @@ final class JavaDslCompletions {
     /** The states one call leads to from a state: none when the call does not compile there. */
     private static List<State> step(State s, JavaChainContext.Call call) {
         String name = call.name();
+        if (s.clause() == null && !ProcessorDefinition.class.isAssignableFrom(s.current())) {
+            return plainStep(s, call);
+        }
         if (s.clause() != null) {
             List<State> found = new ArrayList<>();
             for (Method m : candidates(s.clause(), call)) {
@@ -215,6 +221,49 @@ final class JavaDslCompletions {
     }
 
     /**
+     * A call on a builder or a definition that is no route EIP (ValueBuilder, RestDefinition, ParamDefinition...): it
+     * has no blocks, the chain goes on with what the method returns, a route when that is one (routeTemplate().from()).
+     */
+    private static List<State> plainStep(State s, JavaChainContext.Call call) {
+        List<State> found = new ArrayList<>();
+        for (Method m : candidates(s.current(), call)) {
+            Type ret = m.getGenericReturnType();
+            Class<?> raw = raw(ret);
+            State n = null;
+            if (ret instanceof TypeVariable<?> && (raw == null || !isBuilder(raw)) && s.after() != null) {
+                // end() of a sub-builder returning its parent as a type parameter (templateBean(..)...end())
+                n = new State(List.of(s.after()), s.after(), null, null);
+            } else if (raw != null && (ProcessorDefinition.class.isAssignableFrom(raw) || isBuilder(raw))) {
+                // remember where a sub-builder was entered from, to go back there on its end()
+                Class<?> parent = raw == s.current() ? s.after() : s.current();
+                n = new State(List.of(raw), raw, null, ProcessorDefinition.class.isAssignableFrom(raw) ? null : parent);
+            }
+            if (n != null && !found.contains(n)) {
+                found.add(n);
+            }
+        }
+        return found;
+    }
+
+    /** Whether a chain can start with the method of the route builder: from, rest, body, header... */
+    static boolean isBuilderStart(String name) {
+        for (Method m : methods(RouteBuilder.class, true).getOrDefault(name, List.of())) {
+            Class<?> raw = raw(m.getGenericReturnType());
+            if (raw != null && (ProcessorDefinition.class.isAssignableFrom(raw) || isBuilder(raw))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Whether the class is one of the DSL builders or definitions a chain can be on besides the route EIPs. */
+    static boolean isBuilder(Class<?> type) {
+        String name = type.getName();
+        return name.startsWith("org.apache.camel.model.") || name.startsWith("org.apache.camel.builder.")
+                || name.startsWith("org.apache.camel.support.builder.");
+    }
+
+    /**
      * Whether the call adds a new definition of the returned class: an EIP returning a definition class (also of the
      * class the chain is on: a choice in a choice) does, an option returning its own definition and a method returning
      * Type (to, log...) do not.
@@ -233,6 +282,18 @@ final class JavaDslCompletions {
         Map<String, AutocompletePopup.CompletionItem> ends = new TreeMap<>();
         Map<String, AutocompletePopup.CompletionItem> eips = new TreeMap<>();
         for (State state : states(context.calls())) {
+            if (state.clause() == null && !ProcessorDefinition.class.isAssignableFrom(state.current())) {
+                // a builder or a definition that is no route EIP: its methods, documented where the catalog has them
+                Map<String, BaseOptionModel> options = optionDocs(catalog, state.current());
+                for (Map.Entry<String, List<Method>> e : methods(state.current(), false).entrySet()) {
+                    String name = e.getKey();
+                    BaseOptionModel option = options.get(name);
+                    EipModel model = option == null && catalog != null ? catalog.eipModel(name) : null;
+                    String doc = option != null ? option.getDescription() : model != null ? model.getDescription() : null;
+                    own.putIfAbsent(name, item(name, doc, state.current().getSimpleName(), e.getValue()));
+                }
+                continue;
+            }
             boolean clause = state.clause() != null;
             Map<String, BaseOptionModel> options = clause ? Map.of() : optionDocs(catalog, state.current());
             for (Map.Entry<String, List<Method>> e : methods(clause ? state.clause() : state.current(), false)
@@ -398,11 +459,10 @@ final class JavaDslCompletions {
         if (Modifier.isStatic(m.getModifiers()) || m.isBridge() || m.isSynthetic() || NOT_DSL.contains(m.getName())) {
             return false;
         }
-        String pkg = m.getDeclaringClass().getName();
-        if (!pkg.startsWith("org.apache.camel.model.") && !pkg.startsWith("org.apache.camel.builder.")) {
+        if (!isBuilder(m.getDeclaringClass())) {
             return false;
         }
-        if (m.getParameterCount() == 0 && (m.getName().startsWith("get") || m.getName().startsWith("is"))) {
+        if (m.getParameterCount() == 0 && isGetterName(m.getName()) && !isFluent(type, m)) {
             return false;
         }
         for (Class<?> p : m.getParameterTypes()) {
@@ -416,12 +476,37 @@ final class JavaDslCompletions {
             return true;
         }
         Class<?> raw = raw(ret);
+        if (!ProcessorDefinition.class.isAssignableFrom(type) && !isClause(type)) {
+            // a builder or a definition that is no route EIP: the methods going on in the DSL, or ending it in a
+            // predicate or expression (header("x").isEqualTo(..))
+            return raw != null && (isBuilder(raw) || ProcessorDefinition.class.isAssignableFrom(raw)
+                    || raw == Predicate.class || raw == Expression.class);
+        }
         if (isClause(type)) {
             // a clause ends with the methods that return to its EIP (T, or end() of a configuration); its options
             // return the clause itself
             return raw == type || raw != null && ProcessorDefinition.class.isAssignableFrom(raw);
         }
         return raw != null && (ProcessorDefinition.class.isAssignableFrom(raw) || isClause(raw));
+    }
+
+    /** getPath, isStreaming: a getter, while get() of the REST DSL or isNull() of a builder may be DSL. */
+    private static boolean isGetterName(String name) {
+        int at = name.startsWith("get") ? 3 : name.startsWith("is") ? 2 : -1;
+        return at > 0 && name.length() > at && Character.isUpperCase(name.charAt(at));
+    }
+
+    /**
+     * Whether a getter-named method of a builder is DSL nonetheless: returning the builder itself, or an is... making a
+     * predicate (header("x").isNotNull()). On the route EIPs the getters stay out (getOutputs, getParent).
+     */
+    private static boolean isFluent(Class<?> type, Method m) {
+        if (ProcessorDefinition.class.isAssignableFrom(type) || isClause(type)) {
+            return false;
+        }
+        Class<?> ret = m.getReturnType();
+        // isNotNull() makes a predicate, while getExpression() is a getter
+        return m.getName().startsWith("is") && ret == Predicate.class || ret.isAssignableFrom(type) && isBuilder(ret);
     }
 
     private static Class<?> raw(Type type) {

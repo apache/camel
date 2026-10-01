@@ -108,9 +108,12 @@ Press **F4** to enter edit mode, then **Tab** for context-aware completion:
   `endChoice()` or `endDoTry()` that closes the block you are in
 - The method is inserted with its parentheses, the cursor inside them when it
   takes arguments; the documentation comes from the catalog
-- Light help for hand-written edits: routes in variables, the REST DSL and
-  expression builders inside arguments are not completed; an AI coding agent
-  helps with more: the F8 AI panel, or any agent that speaks ACP
+- In an argument, the chain of the argument (`.filter(header("x").` offers
+  `isEqualTo`, `isNotNull`...); also the REST DSL (`rest("/api").get(..).`),
+  `restConfiguration()` and route templates
+- Light help for hand-written edits: routes in variables and the code of
+  lambdas are not completed; an AI coding agent helps with more: the F8 AI
+  panel, or any agent that speaks ACP
 
 **XML DSL routes:**
 - After `<`, or on an empty line, Tab lists the elements that go inside the
