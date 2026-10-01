@@ -148,6 +148,11 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         LOG.warn("Camel CLI connector connects to {} which gets full control of this application (development use only)",
                 where());
         if ("ws".equals(scheme) && !loopback) {
+            if (!"true".equalsIgnoreCase(property("camel.cli.websocket.allow-insecure", "false"))) {
+                throw new IllegalArgumentException(
+                        "camel.cli.websocket.url must use wss:// for a remote host (or a tunnel to a loopback address),"
+                                                   + " or set camel.cli.websocket.allow-insecure=true");
+            }
             LOG.warn("Camel CLI connector uses an unencrypted connection to a remote host; use wss:// or a tunnel");
         }
 
@@ -421,6 +426,11 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         for (JsonObject m : messages) {
             // servers limit the size in bytes: non-ASCII characters are not escaped and take up to 3 bytes
             int length = m.toJson().getBytes(StandardCharsets.UTF_8).length;
+            if (length > MAX_SNAPSHOT_SIZE) {
+                // the tool would refuse it, and every reconnect would send it again
+                m = new JsonObject(Map.of("uid", m.get("uid"), "truncated", true, "size", length));
+                length = 64;
+            }
             if (!batch.isEmpty() && size + length > MAX_SNAPSHOT_SIZE) {
                 sendSnapshot(c, kind, withMessages(data, key, batch));
                 batch = new ArrayList<>();

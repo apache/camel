@@ -4003,3 +4003,9 @@ scan for nothing. A route file inside a dot directory is therefore no longer wat
 2000 milliseconds, so on Linux and Windows a change is noticed within two seconds rather than immediately, and on macOS
 within two seconds rather than up to ten. A new `setStableTimeout` (default 200 milliseconds) leaves a file that was
 only just modified for the next scan, so a save still being written is not reloaded half-finished.
+
+=== camel-cli-connector
+
+The ~/.camel file handling moved from `LocalCliConnector` to the new `FileCliConnectorTransport`, so the protected
+`task()`, `actionTask()`, `statusTask()` and `traceTask()` methods were removed from `LocalCliConnector`. Subclasses
+that only override `sigterm()` are not affected.

@@ -67,6 +67,8 @@ java -Dcamel.cli.transport=websocket \
 | `camel.cli.websocket.reconnect-delay` | `1000` | Delay before reconnecting, in millis. It doubles after each
   failed attempt (with some random jitter).
 | `camel.cli.websocket.reconnect-max-delay` | `30000` | Maximum delay before reconnecting, in millis.
+| `camel.cli.websocket.allow-insecure` | `false` | Allow `ws://` (unencrypted) to a host that is not a loopback
+  address. Prefer `wss://` or a tunnel.
 |===
 
 As with Camel Main options, the camelCase form of the keys is accepted too (for example
@@ -105,7 +107,8 @@ load routes and read files the integration can read.
 
 * The transport refuses to start when the `prod` profile is active (`camel.main.profile=prod`).
 * The integration trusts the tool at `camel.cli.websocket.url`: over `ws://` anyone on the network path can pose as
-  the tool. Use a loopback address (for example through an SSH or `kubectl port-forward` tunnel), or `wss://`.
+  the tool. Use a loopback address (for example through an SSH or `kubectl port-forward` tunnel), or `wss://`;
+  `ws://` to another host is refused unless `camel.cli.websocket.allow-insecure=true`.
 * The token lets the tool check that the integration connecting to it is one it launched. It does not protect the
   integration.
 * Snapshots hold message bodies and headers when tracing, debugging or receiving is enabled.

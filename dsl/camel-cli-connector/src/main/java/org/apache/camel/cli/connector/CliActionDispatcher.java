@@ -25,7 +25,7 @@ import org.apache.camel.util.json.JsonObject;
  * <tt>{"action":"route","command":"stop","id":"route1"}</tt>.
  * <p/>
  * Implementations are not thread-safe: a transport must call {@link #dispatch(JsonObject, CliActionOutput)} from one
- * thread at a time.
+ * thread at a time. Snapshots ({@link CliSnapshotProducer}) may be collected on another thread while an action runs.
  *
  * @since 4.23
  */

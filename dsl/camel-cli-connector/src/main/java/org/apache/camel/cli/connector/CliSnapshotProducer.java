@@ -24,6 +24,8 @@ import org.apache.camel.util.json.JsonObject;
  * Each method returns <tt>null</tt> when the snapshot is not available (the dev console is not on the classpath). The
  * trace and receive snapshots return every message still held by Camel; a transport that sends them incrementally keeps
  * track of the last <tt>uid</tt> it has sent.
+ * <p/>
+ * The methods may be called from another thread than {@link CliActionDispatcher}, while an action runs.
  *
  * @since 4.23
  */
