@@ -42,8 +42,9 @@ public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCas
     private EndpointProducerBuilder endpointProducerBuilder;
     @XmlTransient
     private SwitchDefinition parent;
+    // created with the case (as the otherwise node is), so the processor index follows the order of the cases
     @XmlTransient
-    private ToDefinition toDefinition;
+    private ToDefinition toDefinition = new ToDefinition();
 
     public SwitchCaseDefinition() {
     }
@@ -100,9 +101,6 @@ public class SwitchCaseDefinition extends OptionalIdentifiedDefinition<SwitchCas
 
     /** Prepare the destination node before processor creation and management instrumentation. */
     public void prepareToDefinition() {
-        if (toDefinition == null) {
-            toDefinition = new ToDefinition();
-        }
         if (endpointProducerBuilder != null) {
             toDefinition.setEndpointProducerBuilder(endpointProducerBuilder);
         } else {
