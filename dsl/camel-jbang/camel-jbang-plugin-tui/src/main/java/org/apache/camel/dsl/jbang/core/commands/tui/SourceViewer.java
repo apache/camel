@@ -196,6 +196,10 @@ class SourceViewer {
     private List<String> validationErrors;
     private int validationErrorScroll;
     private Map<Integer, String> inlineErrors = Collections.emptyMap();
+    /**
+     * The problems of the file shown, found when it was loaded: marked in the view, and the editor starts with them.
+     */
+    private Map<Integer, String> viewErrors = Collections.emptyMap();
     private boolean editInitialScroll;
     private long lastBackgroundValidationTime;
     private String lastBackgroundValidationContent;
@@ -526,6 +530,10 @@ class SourceViewer {
         }
         if (isEditable() && ke.isKey(KeyCode.F4)) {
             enterEditMode();
+            return true;
+        }
+        if (ke.isKey(KeyCode.F9) && !ke.hasShift() && !viewErrors.isEmpty()) {
+            goToNextProblem(viewErrors, selectedLine);
             return true;
         }
         if (isMarkdownFile && ke.isChar(' ')) {
@@ -922,6 +930,9 @@ class SourceViewer {
         originalEditText = editState.text();
         lineStatuses = null;
         diffOverlay = false;
+        // the problems found when the file was loaded are marked at once, before the first change
+        inlineErrors = viewErrors;
+        lastBackgroundValidationContent = originalEditText;
         editMode = true;
         editHistory.seedInitial(editState);
         refreshEditFindMatches();
@@ -1518,9 +1529,13 @@ class SourceViewer {
     }
 
     private void jumpToNextError() {
-        List<Integer> errorLines = new ArrayList<>(inlineErrors.keySet());
+        goToNextProblem(inlineErrors, editState.cursorRow());
+    }
+
+    /** Goes to the first problem after the row, or wraps around to the first one. */
+    private void goToNextProblem(Map<Integer, String> problems, int cursorRow) {
+        List<Integer> errorLines = new ArrayList<>(problems.keySet());
         Collections.sort(errorLines);
-        int cursorRow = editState.cursorRow();
         // find the first error line after the cursor
         for (int line : errorLines) {
             if (line > cursorRow) {
@@ -1549,6 +1564,12 @@ class SourceViewer {
         lastBackgroundValidationTime = now;
         lastBackgroundValidationContent = content;
 
+        List<String> msgs = validateContent(content);
+        inlineErrors = msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
+    }
+
+    /** The problems the checks of the file type (Camel YAML, properties, Java or XML routes) find in the content. */
+    private List<String> validateContent(String content) {
         List<String> msgs = new ArrayList<>();
         if (isCamelYamlFile()) {
             if (endpointValidator != null) {
@@ -1571,7 +1592,25 @@ class SourceViewer {
                 msgs.addAll(routeErrors);
             }
         }
-        inlineErrors = msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
+        return msgs;
+    }
+
+    /** The problems of the file just loaded, by line; none when the checks fail or do not apply. */
+    private Map<Integer, String> problemsOnLoad(String content) {
+        if (isMarkdownFile) {
+            return Collections.emptyMap();
+        }
+        try {
+            List<String> msgs = validateContent(content);
+            return msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
+        } catch (RuntimeException e) {
+            return Collections.emptyMap();
+        }
+    }
+
+    /** Package-private for tests: the problems marked in the view, by line from 0. */
+    Map<Integer, String> viewErrors() {
+        return viewErrors;
     }
 
     /**
@@ -1894,7 +1933,17 @@ class SourceViewer {
             if (viewDocEntries != null && !viewDocEntries.isEmpty()) {
                 titleText = viewDocEntries.get(0).title();
             }
-            if (titleText != null) {
+            String problem = viewErrors.get(selectedLine);
+            if (problem != null) {
+                // the problem of the line goes before its documentation, as the Error panel of the editor shows it
+                int remaining = Math.max(0, viewDocArea.width() - " Error ".length() - 3);
+                docLines.add(Line.from(
+                        Span.styled("───", Theme.error()),
+                        Span.styled(" Error ", Theme.error().bold()),
+                        Span.styled("─".repeat(remaining), Theme.error())));
+                docLines.add(Line.from(Span.styled(problem, Theme.error())));
+                docLines.add(Line.from(Span.styled("F4 edit   F9 next problem", Style.EMPTY.dim())));
+            } else if (titleText != null) {
                 String prefix = "─── ";
                 String suffix = " ";
                 int remaining = Math.max(0, viewDocArea.width() - prefix.length() - titleText.length() - suffix.length());
@@ -1905,7 +1954,7 @@ class SourceViewer {
             } else {
                 docLines.add(Line.from(Span.styled("─".repeat(Math.max(1, viewDocArea.width())), Style.EMPTY.dim())));
             }
-            if (viewDocEntries != null && !viewDocEntries.isEmpty()) {
+            if (problem == null && viewDocEntries != null && !viewDocEntries.isEmpty()) {
                 for (int d = 0; d < viewDocEntries.size() && d < viewDocArea.height() - 1; d++) {
                     DocEntry entry = viewDocEntries.get(d);
                     Style docStyle = entry.deprecated() ? Style.EMPTY.dim().italic() : Style.EMPTY.dim();
@@ -2330,6 +2379,9 @@ class SourceViewer {
         if (isEditable()) {
             TuiHelper.hint(spans, "F4", "edit");
         }
+        if (!viewErrors.isEmpty()) {
+            TuiHelper.hint(spans, "F9", "next problem");
+        }
         if (isMarkdownFile || currentRouteId != null) {
             TuiHelper.hint(spans, "Space", "format");
         }
@@ -2535,6 +2587,7 @@ class SourceViewer {
             }
             editableFile = Files.isWritable(filePath) ? filePath : null;
             scanDeprecatedLines();
+            viewErrors = problemsOnLoad(String.join("\n", rawLines));
             jumpLinks = Collections.emptyMap();
             if (onFileLoaded != null) {
                 onFileLoaded.accept(filePath);
@@ -2548,6 +2601,7 @@ class SourceViewer {
             markdownMode = false;
             rawMarkdownContent = null;
             editableFile = null;
+            viewErrors = Collections.emptyMap();
         }
     }
 
@@ -2561,6 +2615,7 @@ class SourceViewer {
     void loadSource(MonitorContext ctx, String routeId, int targetLine, String sourceLocationHint) {
         // Process-sourced views are never editable (may be remote / not a local file)
         editableFile = null;
+        viewErrors = Collections.emptyMap();
         editMode = false;
         editState.clear();
 
@@ -2775,6 +2830,11 @@ class SourceViewer {
             return Title.from(Line.from(spans));
         }
         if (currentRouteId == null) {
+            if (!viewErrors.isEmpty()) {
+                return Title.from(Line.from(
+                        Span.styled(" Source [" + info + "] ", ts),
+                        Span.styled(" errors: " + viewErrors.size() + " ", Theme.error())));
+            }
             return Title.from(Span.styled(" Source [" + info + "] ", ts));
         }
 
@@ -2973,15 +3033,21 @@ class SourceViewer {
         } else if (isSelected) {
             spans.add(Span.styled(">> ", focused ? Theme.label().bold() : Theme.label().dim()));
             if (!prefix.isEmpty()) {
-                spans.add(Span.styled(prefix, (focused ? Theme.label().bold() : Theme.label().dim()).patch(selBg)));
+                Style numberStyle = viewErrors.containsKey(lineIndex)
+                        ? Theme.error().bold() : focused ? Theme.label().bold() : Theme.label().dim();
+                spans.add(Span.styled(prefix, numberStyle.patch(selBg)));
             }
             for (Span s : highlighted.spans()) {
                 spans.add(Span.styled(s.content(), s.style().patch(selBg)));
             }
         } else {
-            spans.add(isDeprecated
-                    ? Span.styled(" ⚠ ", Theme.warning())
-                    : Span.raw("   "));
+            if (viewErrors.containsKey(lineIndex)) {
+                spans.add(Span.styled(" ✗ ", Theme.error().bold()));
+            } else {
+                spans.add(isDeprecated
+                        ? Span.styled(" ⚠ ", Theme.warning())
+                        : Span.raw("   "));
+            }
             if (!prefix.isEmpty()) {
                 spans.add(Span.styled(prefix, Style.EMPTY.dim()));
             }

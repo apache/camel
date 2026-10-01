@@ -1471,6 +1471,49 @@ final class SourceEditAssist {
         return items;
     }
 
+    private static final Pattern PLACEHOLDER
+            = Pattern.compile("\\{\\{([^}:]+?)(?::([^}]*))?\\}\\}");
+
+    /**
+     * The values of the property placeholders on a line, from the .properties files of the project: {{key}} = value
+     * (application.properties), or that it is not set and the default it falls back to. {{env:NAME}} and {{sys:NAME}}
+     * come from the environment and the JVM, so they are said as such.
+     */
+    List<SourceViewer.DocEntry> placeholderDocs(String line) {
+        if (line == null || !line.contains("{{")) {
+            return List.of();
+        }
+        List<SourceViewer.DocEntry> answer = new ArrayList<>();
+        Matcher m = PLACEHOLDER.matcher(line);
+        while (m.find() && answer.size() < 3) {
+            String key = m.group(1).trim();
+            String def = m.group(2);
+            String text;
+            if (key.equals("env") || key.equals("sys")) {
+                // {{env:HOME}}: the key is the function, the name is what follows the colon
+                text = "{{" + key + ":" + def + "}} is read from the " + (key.equals("env") ? "environment" : "JVM")
+                       + " when the route starts";
+            } else {
+                AutocompletePopup.CompletionItem item = null;
+                for (AutocompletePopup.CompletionItem ph : loadPropertyPlaceholders()) {
+                    if (ph.key().equals("{{" + key + "}}")) {
+                        item = ph;
+                        break;
+                    }
+                }
+                if (item != null) {
+                    text = "{{" + key + "}} = " + item.description() + "  (" + item.group() + ")";
+                } else if (def != null) {
+                    text = "{{" + key + "}} is not set in the project's properties: the default " + def + " is used";
+                } else {
+                    text = "{{" + key + "}} is not set in the project's .properties files";
+                }
+            }
+            answer.add(new SourceViewer.DocEntry(text, false, "Placeholder"));
+        }
+        return answer;
+    }
+
     Map<Integer, List<SourceViewer.DocEntry>> providePropertiesQuickDocs(List<JsonObject> codeData) {
         CamelCatalog catalog = getCatalog();
         if (catalog == null || codeData.isEmpty()) {
