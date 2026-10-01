@@ -46,6 +46,8 @@ class LaunchManager {
     private final Supplier<List<InfraInfo>> infraServices;
     // added from the UI thread and from tool threads (MCP, the example launcher), read on the UI thread
     private final Queue<PendingLaunch> pendingLaunches = new ConcurrentLinkedQueue<>();
+    // integrations started from the TUI (not infra services, which run in the background on their own)
+    private final Queue<Process> launched = new ConcurrentLinkedQueue<>();
     private DeferredLaunch deferredLaunch;
     private volatile String pendingAutoSelect;
     private BiConsumer<String, Boolean> notificationCallback;
@@ -164,6 +166,22 @@ class LaunchManager {
     void addPendingLaunch(String name, Process process, Path outputFile) {
         pendingLaunches.add(new PendingLaunch(name, process, outputFile, System.currentTimeMillis()));
         pendingAutoSelect = name;
+        launched.add(process);
+    }
+
+    /** The integrations started from this TUI that still run: they keep running when the TUI quits. */
+    long runningLaunchCount() {
+        launched.removeIf(p -> !p.isAlive());
+        return launched.size();
+    }
+
+    /** Stops the integrations started from this TUI (the camel launcher and the JVM it started). */
+    void stopLaunched() {
+        for (Process p : launched) {
+            p.descendants().forEach(ProcessHandle::destroy);
+            p.destroy();
+        }
+        launched.clear();
     }
 
     void addPendingLaunchNoAutoSelect(String name, Process process, Path outputFile) {

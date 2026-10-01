@@ -144,6 +144,7 @@ class ActionsPopup {
                  Runnable burstCallback, Set<String> stoppingPids) {
         this.runningNames = runningNames;
         this.integrations = integrations;
+        runOptionsForm.setIntegrations(integrations);
         this.infraServices = infraServices;
         this.captionOverlay = captionOverlay;
         this.screenshotAction = screenshotAction;
