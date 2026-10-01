@@ -495,3 +495,20 @@ Output:
 ----
 
 TIP: When all input files share the same extension (e.g., `.yaml`), the target format defaults to the other DSL (XML) and vice versa.
+
+=== Transforming Java routes
+
+Java DSL routes are transformed to YAML or XML the same way:
+
+[source,bash]
+----
+camel transform route --format=yaml src/main/java/com/acme/OrderRoute.java
+----
+
+The Java sources are read without compiling or running them: the routes are read into the model by the Java DSL
+parser, with the constants of the other classes in the same folder, `String.format` and the Endpoint DSL resolved, and
+written as a running Camel would dump them. This takes a fraction of a second, and no code of the project runs.
+
+When a route cannot be read completely that way, for example a processor written as a lambda or a value only known
+at runtime, the routes are compiled and started to dump them, which takes a few seconds and may download dependencies.
+The same happens with `--resolve-placeholders`. Use `--compile` to always compile and start the routes.

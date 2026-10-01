@@ -102,6 +102,12 @@ camel-jbang reads Java routes with the parser only; the pattern matching on stri
   consume, with constants, formats and the endpoint DSL resolved;
 * the jump links between routes in the TUI Source tab.
 
+=== Transforming Java routes
+
+`camel transform route` reads Java routes with the parser by default and writes them with the dump strategy of a
+running Camel, in a CamelContext that is never started (CAMEL-25202); it compiles the routes only when one cannot be
+read completely, or with `--compile`.
+
 == Security
 
 The parser reads sources nobody vetted: a cloned example opened in the TUI, documentation, a project an AI agent
@@ -145,7 +151,6 @@ points a tool at. What it guarantees, and how each is enforced:
 == Future Work
 
 * Checking the Java examples of the documentation in the build, as the YAML and XML ones are.
-* `camel transform` reading Java without compiling by default, compiling when a route is partial.
 * Plain-language labels for the decision points of routes in the AI project overview (CAMEL-25161).
 * A Java DSL for Camel 5 designed with what the parser found hard (end() scoping, expression clauses, a class or its
   name for the same option, varargs options), with this replay as the bridge from the current Java DSL: the findings
