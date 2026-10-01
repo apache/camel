@@ -634,7 +634,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ftp",
   "version" : "4.22.1-SNAPSHOT",
-  "serviceVersion" : "2.19.0",
+  "serviceVersion" : "2.20.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.jaeger.services.JaegerInfraService",
