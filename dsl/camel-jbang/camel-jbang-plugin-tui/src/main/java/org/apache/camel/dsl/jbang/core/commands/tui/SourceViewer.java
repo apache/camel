@@ -265,8 +265,8 @@ class SourceViewer {
 
     /**
      * The Camel checks of a Java or XML DSL route file (CAMEL-25208): its problems are marked on their lines while
-     * editing and said on save, which they do not block - a Java file is the application's code, and what the checks
-     * cannot know must never keep it from being saved.
+     * editing. An XML file with problems is not saved, as a YAML file; a Java file is saved and the problems are said,
+     * as a Java file is the application's code, and what the checks cannot know must never keep it from being saved.
      */
     void setRouteValidator(EndpointValidator routeValidator) {
         this.routeValidator = routeValidator;
@@ -1006,6 +1006,10 @@ class SourceViewer {
                 && editableFile.getFileName().toString().toLowerCase().endsWith(".properties");
     }
 
+    private boolean isXmlFile() {
+        return editableFile != null && editableFile.getFileName().toString().toLowerCase().endsWith(".xml");
+    }
+
     private boolean isCamelYamlFile() {
         if (editableFile == null) {
             return false;
@@ -1486,10 +1490,17 @@ class SourceViewer {
                 return;
             }
         } else if (validateOnSave && routeValidator != null) {
-            // marked, and said when saved, but not blocking the save
             List<String> msgs = routeValidator.validate(content);
-            routeProblems = msgs != null ? msgs : List.of();
-            inlineErrors = routeProblems.isEmpty() ? Collections.emptyMap() : buildInlineErrors(routeProblems, content);
+            msgs = msgs != null ? msgs : List.of();
+            inlineErrors = msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
+            if (isXmlFile() && !msgs.isEmpty()) {
+                // XML routes as YAML routes: the problems are shown and the file is not saved
+                validationErrors = msgs;
+                validationErrorScroll = 0;
+            } else {
+                // Java: marked, and said when saved, but not blocking the save
+                routeProblems = msgs;
+            }
             return;
         }
         inlineErrors = Collections.emptyMap();

@@ -236,9 +236,9 @@ file is not saved and errors are displayed in a popup. This catches mistakes ear
 
 Java and XML routes get the same Camel checks, on the Camel model the routes are read into: the endpoint URIs
 (also those built with the endpoint DSL, or from a constant), Simple expressions, and a `to` whose URI holds
-`+${...}+` and should be a `toD`. Their problems are marked on their lines while you type (*F9* jumps to the next)
-and said when saving, but they never keep a Java or XML file from being saved: a Java file is the application's
-code, and a check that cannot know something (a value computed at runtime) must not stop you.
+`+${...}+` and should be a `toD`. Their problems are marked on their lines while you type (*F9* jumps to the next).
+An XML file with problems is not saved, as a YAML file; a Java file is saved and its problems are said, as it is
+the application's code, and a check that cannot know something (a value computed at runtime) must not stop you.
 
 Validation can be toggled off in the Settings (F2 > Settings).
 

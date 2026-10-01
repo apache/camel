@@ -146,6 +146,43 @@ class SourceRouteValidationTest {
     }
 
     @Test
+    void anXmlFileWithAProblemIsNotSaved() throws Exception {
+        String xml = """
+                <routes xmlns="http://camel.apache.org/schema/xml-io">
+                    <route>
+                        <from uri="timer:tick?period=1000"/>
+                        <to uri="seda:out"/>
+                    </route>
+                </routes>
+                """;
+        Path file = tempDir.resolve("routes.xml");
+        Files.writeString(file, xml, StandardCharsets.UTF_8);
+        SourceViewer viewer = new SourceViewer();
+        SourceEditAssist assist = assist();
+        viewer.setRouteValidator(content -> assist.validateRoutes(file, content));
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+        // line 3: period=1000 becomes peroid=1000
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.HOME, KeyModifiers.NONE));
+        int col = viewer.editText().split("\n")[2].indexOf("period") + 3;
+        for (int i = 0; i < col; i++) {
+            viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.RIGHT, KeyModifiers.NONE));
+        }
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.DELETE, KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.RIGHT, KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofChar('i', KeyModifiers.NONE));
+        assertThat(viewer.editText()).contains("peroid=1000");
+
+        // as a YAML file: the problems are shown and the file is not saved
+        viewer.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.CTRL));
+        assertThat(Files.readString(file, StandardCharsets.UTF_8)).contains("period=1000");
+        assertThat(viewer.isEditMode()).isTrue();
+        assertThat(viewer.inlineErrors()).containsOnlyKeys(2);
+    }
+
+    @Test
     void aProblemIsMarkedAndSaidButTheFileIsSaved() throws Exception {
         Path file = tempDir.resolve("MyRoute.java");
         Files.writeString(file, JAVA.replace("peroid", "period"), StandardCharsets.UTF_8);
