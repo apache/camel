@@ -91,6 +91,20 @@ class SourceEditorProjectInfoTest {
     }
 
     @Test
+    void thePlaceholdersOfAMavenProjectComeFromItsResources() throws Exception {
+        Files.writeString(dir.resolve("pom.xml"), "<project/>\n");
+        Path resources = Files.createDirectories(dir.resolve("src/main/resources"));
+        Files.writeString(resources.resolve("application.properties"), "timer.period=1s\n");
+        SourceEditAssist assist = new SourceEditAssist(
+                new MonitorContext(new AtomicReference<>(List.of()), new AtomicReference<>(List.of())));
+        assist.setRootDir(dir);
+
+        assertThat(assist.placeholderDocs("from(\"timer:foo?period={{timer.period}}\")"))
+                .extracting(SourceViewer.DocEntry::text)
+                .containsExactly("{{timer.period}} = 1s  (src/main/resources/application.properties)");
+    }
+
+    @Test
     void theBeansARouteRefersToAreFound() throws Exception {
         Files.writeString(dir.resolve("OrderService.java"), """
                 package com.acme;
