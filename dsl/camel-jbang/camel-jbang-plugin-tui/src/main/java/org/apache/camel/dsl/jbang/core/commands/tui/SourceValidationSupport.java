@@ -71,6 +71,10 @@ final class SourceValidationSupport {
         return SourceValidator.formatSchemaErrors(errors);
     }
 
+    static List<String> formatSchemaErrors(List<com.networknt.schema.Error> errors, String content) {
+        return SourceValidator.formatSchemaErrors(errors, content);
+    }
+
     static String extractNodeName(String instanceLocation) {
         return SourceValidator.extractNodeName(instanceLocation);
     }
