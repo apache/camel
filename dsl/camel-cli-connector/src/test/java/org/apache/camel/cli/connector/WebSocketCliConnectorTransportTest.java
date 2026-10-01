@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -380,6 +381,21 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
         assertThat(client.connects).hasValue(2);
     }
 
+    @Test
+    void runsActionsReceivedBeforeTheClientReportsTheConnectionOpen() throws Exception {
+        // a tool that does not wait for the hello: its first action can arrive before the client completes connect()
+        RecordingClient client = new RecordingClient();
+        client.textFirstEarly = action("r1", "send", "endpoint", "direct:hello", "body", "Early", "exchangePattern", "InOut")
+                .toJson();
+        context.getRegistry().bind("myClient", client);
+        startConnector();
+
+        tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+        JsonObject result = tool.awaitResult("r1");
+        assertThat(result.getBoolean("ok")).isTrue();
+        assertThat(map(result, "result").toJson()).contains("Hello Early");
+    }
+
     private void startConnector() {
         connector = new LocalCliConnector(new DefaultCliConnectorFactory()) {
             @Override
@@ -421,6 +437,7 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
         final JdkCliWebSocketClient delegate = new JdkCliWebSocketClient();
         final AtomicInteger connects = new AtomicInteger();
         volatile boolean closeFirstEarly;
+        volatile String textFirstEarly;
 
         @Override
         public String getName() {
@@ -429,12 +446,18 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
 
         @Override
         public CompletionStage<Channel> connect(URI url, Map<String, String> headers, Listener listener) {
-            boolean early = connects.incrementAndGet() == 1 && closeFirstEarly;
-            return delegate.connect(url, headers, listener).thenApply(channel -> {
-                if (early) {
+            boolean first = connects.incrementAndGet() == 1;
+            return delegate.connect(url, headers, listener).thenCompose(channel -> {
+                if (first && closeFirstEarly) {
                     listener.onClose(1001, "gone early");
                 }
-                return channel;
+                if (first && textFirstEarly != null) {
+                    listener.onText(textFirstEarly);
+                    // and reports the connection open well after it
+                    return CompletableFuture.supplyAsync(() -> channel,
+                            CompletableFuture.delayedExecutor(500, TimeUnit.MILLISECONDS));
+                }
+                return CompletableFuture.completedFuture(channel);
             });
         }
     }

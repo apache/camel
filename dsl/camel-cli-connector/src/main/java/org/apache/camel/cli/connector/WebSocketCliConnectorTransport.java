@@ -327,6 +327,10 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         connection = c;
         LOG.info("Camel CLI connector connected to {}", where());
         sayHello(c);
+        // what the tool sent before the client reported the connection open, in order
+        List<String> early = new ArrayList<>(c.early);
+        c.early.clear();
+        early.forEach(text -> onFrame(c, text));
     }
 
     private void closed(Connection c, String reason) {
@@ -506,6 +510,14 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     // ---- incoming frames ----
 
     private void onFrame(Connection c, String text) {
+        if (c != connection) {
+            if (c.channel == null && !c.lost && c.early.size() < MAX_PENDING_ACTIONS) {
+                // the client has not reported the connection open yet: kept until it does (see opened)
+                c.early.add(text);
+            }
+            // otherwise the connection is gone, and the result could not be sent
+            return;
+        }
         String requestId = null;
         try {
             JsonObject frame = (JsonObject) Jsoner.deserialize(text);
@@ -707,6 +719,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         private long lastTraceUid;
         private long lastReceiveUid;
         private final Map<String, String> lastSent = new HashMap<>();
+        // frames received before the connection is reported open, only used on the scheduler thread
+        private final List<String> early = new ArrayList<>();
 
         @Override
         public void onText(String text) {
