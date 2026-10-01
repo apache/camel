@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
@@ -143,24 +144,34 @@ public class SnmpProducer extends DefaultProducer {
                     while (matched) {
                         ResponseEvent responseEvent = snmp.send(this.pdu, this.target);
                         if (responseEvent == null || responseEvent.getResponse() == null) {
-                            break;
+                            throw new TimeoutException("SNMP Producer Timeout");
                         }
                         PDU response = responseEvent.getResponse();
-                        String nextOid = null;
-                        List<? extends VariableBinding> variableBindings = response.getVariableBindings();
-                        for (int i = 0; i < variableBindings.size(); i++) {
-                            VariableBinding variableBinding = variableBindings.get(i);
-                            nextOid = variableBinding.getOid().toDottedString();
-                            if (!nextOid.startsWith(oid.toDottedString())) {
+                        if (response.getErrorStatus() == PDU.noSuchName) {
+                            // SNMPv1 signals the end of the MIB view with noSuchName
+                            break;
+                        }
+                        if (response.getErrorStatus() != PDU.noError) {
+                            throw new CamelExchangeException(
+                                    "SNMP walk of " + oid + " failed: " + response.getErrorStatusText(), exchange);
+                        }
+                        OID requestedOid = this.pdu.get(0).getOid();
+                        VariableBinding next = null;
+                        for (VariableBinding variableBinding : response.getVariableBindings()) {
+                            // compare the OIDs, not their strings: 1.3.6.1.4.1.20 is not in the subtree of 1.3.6.1.4.1.2
+                            if (!variableBinding.getOid().startsWith(oid)) {
                                 matched = false;
                                 break;
                             }
+                            next = variableBinding;
                         }
-                        if (!matched) {
+                        // endOfMibView (SNMPv2c/v3) ends the walk, and so does an OID that does not increase,
+                        // otherwise the same OID would be requested again forever
+                        if (!matched || next == null || next.isException() || next.getOid().compareTo(requestedOid) <= 0) {
                             break;
                         }
                         this.pdu.clear();
-                        pdu.add(new VariableBinding(new OID(nextOid)));
+                        pdu.add(new VariableBinding(next.getOid()));
                         smLst.add(new SnmpMessage(getEndpoint().getCamelContext(), response));
                     }
                 }

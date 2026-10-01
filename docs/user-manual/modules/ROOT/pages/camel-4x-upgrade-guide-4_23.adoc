@@ -746,6 +746,14 @@ written in the charset that the `Content-Type` declares. Bodies that are not a `
 read such a message as UTF-8 must now use the declared charset, and characters that the declared charset cannot
 represent are written as `?`.
 
+=== camel-snmp - GET_NEXT (walk)
+
+A `GET_NEXT` walk now ends at the end of the agent's MIB view (`endOfMibView`, or `noSuchName` for SNMPv1) and at
+the end of the requested subtree by comparing OIDs (`1.3.6.1.4.1.20...` is no longer taken as part of
+`1.3.6.1.4.1.2`). Before, a walk that reached the end of the MIB view requested the same OID again forever. A walk
+whose request times out now fails with a `TimeoutException`, like `GET`, instead of returning the entries read so far
+(an empty list for an agent that does not answer), and an agent error other than `noSuchName` fails the exchange.
+
 === Components and Language removal
 
 ==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
