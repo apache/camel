@@ -113,9 +113,10 @@ class HealthTab extends AbstractTableTab {
                     Cell.from("")));
         }
 
+        // KIND says what the check is for: R readiness (may take traffic), L liveness (is alive)
         String title = showOnlyDown
                 ? " Health [DOWN only] "
-                : " Health ";
+                : " Health ─ KIND: R readiness, L liveness ";
 
         Table table = Table.builder()
                 .rows(rows)
@@ -144,7 +145,7 @@ class HealthTab extends AbstractTableTab {
     @Override
     public void renderFooter(List<Span> spans) {
         super.renderFooter(spans);
-        hint(spans, "d", "toggle DOWN");
+        hint(spans, "d", showOnlyDown ? "show all" : "only DOWN");
     }
 
     boolean isShowOnlyDown() {

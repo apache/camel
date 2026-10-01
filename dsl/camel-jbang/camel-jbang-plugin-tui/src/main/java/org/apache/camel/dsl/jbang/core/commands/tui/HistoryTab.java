@@ -2134,7 +2134,7 @@ class HistoryTab extends AbstractTab {
         spans.add(Span.styled("status:" + (failed ? "failed" : "ok"),
                 failed ? Theme.error().bold() : Theme.success().bold()));
         if (last.elapsed >= 0) {
-            spans.add(Span.raw(" elapsed:" + TimeUtils.printDuration(last.elapsed, true)));
+            spans.add(Span.raw(" elapsed:" + TuiHelper.formatDurationMs(last.elapsed)));
         }
         if (first.epochMs > 0) {
             String ago = TimeUtils.printSince(first.epochMs);

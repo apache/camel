@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -362,10 +363,29 @@ final class StatusParser {
                             hc.message = details.getString("failure.error.message");
                         }
                     }
-                    info.healthChecks.add(hc);
+                    addHealthCheck(info.healthChecks, hc);
                 }
             }
         }
+    }
+
+    /**
+     * A check that runs for both readiness and liveness (context) is reported once per kind: one row for it, with the
+     * worse state.
+     */
+    static void addHealthCheck(List<HealthCheckInfo> checks, HealthCheckInfo hc) {
+        for (HealthCheckInfo known : checks) {
+            if (Objects.equals(known.group, hc.group) && Objects.equals(known.name, hc.name)) {
+                known.readiness |= hc.readiness;
+                known.liveness |= hc.liveness;
+                if (!"DOWN".equals(known.state) && hc.state != null && !"UP".equals(hc.state)) {
+                    known.state = hc.state;
+                    known.message = hc.message != null ? hc.message : known.message;
+                }
+                return;
+            }
+        }
+        checks.add(hc);
     }
 
     /**
