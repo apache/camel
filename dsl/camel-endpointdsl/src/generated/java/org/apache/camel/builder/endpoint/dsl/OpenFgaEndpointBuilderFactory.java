@@ -915,10 +915,12 @@ public interface OpenFgaEndpointBuilderFactory {
             return "CamelOpenFgaStoreId";
         }
         /**
-         * The continuation token the readTuples or readChanges page came back
-         * with, or absent when there is no further page. Feed it back through
-         * the continuationToken option to read the next one; for readChanges,
-         * keeping the last token is what lets a route resume where it left off
+         * The continuation token the page came back with. Feed it back through
+         * the continuationToken option to read on. The two operations end
+         * differently: readTuples returns no token on its last page, so the
+         * header is absent once the read is done, whereas readChanges always
+         * returns a token - an empty body is what says the log has been read up
+         * to date, and that last token is what lets the next poll resume
          * instead of replaying the whole log.
          * 
          * The option is a: {@code String} type.

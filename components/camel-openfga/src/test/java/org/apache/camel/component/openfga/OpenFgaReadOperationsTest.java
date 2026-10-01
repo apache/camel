@@ -48,6 +48,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -181,6 +182,37 @@ class OpenFgaReadOperationsTest extends CamelTestSupport {
     }
 
     @Test
+    void readTuplesRefusesAFilterPartThatWentMissing() throws Exception {
+        givenStoredTuples(null, storedTuple("user:bob", "reader", "document:budget"));
+
+        // object=document:budget on its own is a legal filter, so dropping an unresolved user would quietly read
+        // every tuple on that document - and the documented readTuples -> deleteTuples route would revoke them all
+        Exchange out = template.request("openfga:readTuples" + BASE + "&object=document:budget&user=${header.who}",
+                e -> {
+                });
+
+        assertThat(out.getException()).isInstanceOf(IllegalArgumentException.class);
+        assertThat(out.getException()).hasMessageContaining("user is configured for the readTuples operation");
+        verify(client, never()).read(any(ClientReadRequest.class), any());
+    }
+
+    @Test
+    void readTuplesWithNoFilterConfiguredStillReadsEverything() throws Exception {
+        givenStoredTuples(null, storedTuple("user:bob", "reader", "document:budget"));
+
+        Exchange out = template.request("openfga:readTuples" + BASE, e -> {
+        });
+
+        // an option that was never set is the only thing that means "do not filter on this"
+        assertThat(out.getException()).isNull();
+        ArgumentCaptor<ClientReadRequest> request = ArgumentCaptor.forClass(ClientReadRequest.class);
+        verify(client).read(request.capture(), any());
+        assertThat(request.getValue().getUser()).isNull();
+        assertThat(request.getValue().getRelation()).isNull();
+        assertThat(request.getValue().getObject()).isNull();
+    }
+
+    @Test
     void readChangesReportsTheOperationAsItsName() throws Exception {
         ClientReadChangesResponse response = mock(ClientReadChangesResponse.class);
         when(response.getChanges()).thenReturn(List.of(
@@ -212,6 +244,25 @@ class OpenFgaReadOperationsTest extends CamelTestSupport {
         assertThat(request.getValue().getType()).isEqualTo("document");
         assertThat(request.getValue().getStartTime()).isEqualTo(OffsetDateTime.parse("2026-10-01T00:00:00Z"));
         assertThat(options.getValue().getPageSize()).isEqualTo(50);
+    }
+
+    @Test
+    void readChangesKeepsTheTokenWhenNothingHasChanged() throws Exception {
+        ClientReadChangesResponse response = mock(ClientReadChangesResponse.class);
+        when(response.getChanges()).thenReturn(List.of());
+        when(response.getContinuationToken()).thenReturn("tok-9");
+        when(client.readChanges(any(ClientReadChangesRequest.class), any()))
+                .thenReturn(CompletableFuture.completedFuture(response));
+
+        Exchange out = template.request("openfga:readChanges" + BASE + "&continuationToken=tok-9", e -> {
+        });
+
+        // measured against OpenFGA 1.21.0: readChanges hands the token straight back with an empty page rather than
+        // dropping it, so an empty body - not an absent header - is what says the log has been read up to date. A
+        // route that looped until the header disappeared would never end, which is why the docs split the two
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getBody(List.class)).isEmpty();
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.CONTINUATION_TOKEN)).isEqualTo("tok-9");
     }
 
     @Test

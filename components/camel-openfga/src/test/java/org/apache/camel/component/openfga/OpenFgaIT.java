@@ -120,6 +120,15 @@ class OpenFgaIT extends CamelTestSupport {
                 from("direct:guarded")
                         .policy(policy)
                         .to("mock:allowed");
+
+                // the readChanges poller exactly as the component docs describe it: a global variable carries the
+                // token from one exchange to the next, which an exchange property cannot do
+                from("direct:syncChanges")
+                        .to(openfga("readChanges", "pageSize=1&continuationToken=${variable.global:fgaToken}"))
+                        .setVariable("global:fgaToken", header(OpenFgaConstants.CONTINUATION_TOKEN));
+
+                from("direct:resetSync")
+                        .removeVariable("global:fgaToken");
             }
         };
     }
@@ -254,6 +263,45 @@ class OpenFgaIT extends CamelTestSupport {
         // a different change than the first page, which is what paging is for
         assertThat(secondPage.getMessage().getBody(List.class).get(0))
                 .isNotEqualTo(firstPage.getMessage().getBody(List.class).get(0));
+    }
+
+    @Test
+    void aGlobalVariableCarriesThePagingTokenBetweenExchanges() {
+        template.sendBody("direct:resetSync", "");
+
+        Exchange firstPoll = template.request("direct:syncChanges", e -> {
+        });
+        Exchange secondPoll = template.request("direct:syncChanges", e -> {
+        });
+
+        assertThat(firstPoll.getException()).isNull();
+        assertThat(secondPoll.getException()).isNull();
+        assertThat(firstPoll.getMessage().getBody(List.class)).hasSize(1);
+        assertThat(secondPoll.getMessage().getBody(List.class)).hasSize(1);
+        // with an exchange property the second poll would have started over and returned the same change again
+        assertThat(secondPoll.getMessage().getBody(List.class).get(0))
+                .isNotEqualTo(firstPoll.getMessage().getBody(List.class).get(0));
+    }
+
+    @Test
+    void readChangesHandsTheTokenBackWhenTheLogIsExhausted() {
+        String[] token = { null };
+        List<?> changes;
+        int guard = 0;
+        do {
+            Exchange out = template.request(
+                    openfga("readChanges", "pageSize=50&continuationToken=${header.resume}"),
+                    e -> e.getMessage().setHeader("resume", token[0]));
+            assertThat(out.getException()).isNull();
+            changes = out.getMessage().getBody(List.class);
+            token[0] = out.getMessage().getHeader(OpenFgaConstants.CONTINUATION_TOKEN, String.class);
+            assertThat(token[0]).as("readChanges returns a token on every page, the empty one included").isNotBlank();
+        } while (!changes.isEmpty() && ++guard < 20);
+
+        // the asymmetry the docs spell out: readChanges never drops the token, so an EMPTY BODY - not an absent
+        // header - says the log has been read up to date. A route looping until the header disappeared would not end
+        assertThat(changes).isEmpty();
+        assertThat(token[0]).isNotBlank();
     }
 
     @Test
