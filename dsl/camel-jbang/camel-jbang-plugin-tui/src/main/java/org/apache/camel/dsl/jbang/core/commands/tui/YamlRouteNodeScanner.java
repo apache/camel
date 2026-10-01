@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Set;
 
@@ -78,6 +80,8 @@ class YamlRouteNodeScanner {
         int activeRouteIndent = -1;
         String pendingEndpointEip = null;
         int pendingEndpointIndent = -1;
+        // the when: lists being read (a choice can be nested in a when), each as its indent and that of its items
+        Deque<int[]> whens = new ArrayDeque<>();
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
@@ -162,6 +166,33 @@ class YamlRouteNodeScanner {
             }
 
             if (!routeHeaderEmitted || activeRouteFromLine < 0) {
+                continue;
+            }
+
+            // the when and otherwise of a choice are nodes of their own, as the diagram (and Java and XML) show them
+            while (!whens.isEmpty() && indent <= whens.peek()[0]) {
+                whens.pop();
+            }
+            if ("when:".equals(trimmed) || "otherwise:".equals(trimmed)) {
+                if (trimmed.startsWith("when")) {
+                    whens.push(new int[] { indent, -1 });
+                } else {
+                    String routeId = resolveRouteId(currentRouteId, currentFromUri);
+                    result.add(new NodeEntry(
+                            EntryKind.PROCESSOR, routeId, null, "otherwise", "", filePath, i,
+                            Math.max(1, (indent - activeRouteIndent) / 2), activeRouteFromLine));
+                }
+                continue;
+            }
+            int[] when = whens.peek();
+            if (when != null && trimmed.startsWith("- ") && (when[1] < 0 || indent == when[1])) {
+                // an item of the when list (- expression: or - simple: ...): a when, at the indent of when: so it is a
+                // sibling of the otherwise
+                when[1] = indent;
+                String routeId = resolveRouteId(currentRouteId, currentFromUri);
+                result.add(new NodeEntry(
+                        EntryKind.PROCESSOR, routeId, null, "when", expressionLabel(lines, i), filePath, i,
+                        Math.max(1, (when[0] - activeRouteIndent) / 2), activeRouteFromLine));
                 continue;
             }
 
@@ -327,6 +358,51 @@ class YamlRouteNodeScanner {
                     String val = nt.substring(prop.length()).trim();
                     return unquote(val);
                 }
+            }
+        }
+        return "";
+    }
+
+    /**
+     * The expression of a when item as language{text}, as the model labels it: from {@code - simple: "${body} > 6"}, or
+     * {@code - expression:} with the language and its expression on the lines under it. Empty when not found.
+     */
+    static String expressionLabel(List<String> lines, int itemLine) {
+        int base = lineIndent(lines.get(itemLine));
+        String language = null;
+        for (int j = itemLine; j < lines.size(); j++) {
+            String next = lines.get(j);
+            if (next.isBlank() || next.trim().startsWith("#")) {
+                continue;
+            }
+            if (j > itemLine && lineIndent(next) <= base) {
+                break;
+            }
+            String content = next.trim();
+            if (content.startsWith("- ")) {
+                content = content.substring(2).trim();
+            }
+            int colon = content.indexOf(':');
+            if (colon <= 0) {
+                continue;
+            }
+            String key = content.substring(0, colon).trim();
+            String value = unquote(content.substring(colon + 1).trim());
+            if ("steps".equals(key)) {
+                break;
+            }
+            if (BOILERPLATE_KEYS.contains(key)) {
+                continue;
+            }
+            if ("expression".equals(key)) {
+                if (!value.isEmpty()) {
+                    return language != null ? language + "{" + value + "}" : value;
+                }
+                continue;
+            }
+            language = key;
+            if (!value.isEmpty()) {
+                return language + "{" + value + "}";
             }
         }
         return "";
