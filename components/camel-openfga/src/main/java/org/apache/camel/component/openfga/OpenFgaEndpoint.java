@@ -90,31 +90,6 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
      * it - a missing {@code relation} on a check would otherwise surface as a deny, which looks exactly like a policy
      * decision and is a thoroughly misleading thing to debug.
      */
-    /**
-     * Parses {@code startTime} when the endpoint starts, so a malformed timestamp stops the route rather than failing
-     * the first exchange that happens to reach a readChanges.
-     */
-    private OffsetDateTime parseStartTime() {
-        if (ObjectHelper.isEmpty(configuration.getStartTime())) {
-            return null;
-        }
-        try {
-            return OffsetDateTime.parse(configuration.getStartTime());
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException(
-                    "startTime '" + configuration.getStartTime() + "' is not an ISO-8601 timestamp, for example"
-                                               + " 2026-10-01T00:00:00Z",
-                    e);
-        }
-    }
-
-    /**
-     * The parsed {@code startTime}, or null when none was configured.
-     */
-    OffsetDateTime getStartTime() {
-        return startTime;
-    }
-
     private void validateOperationOptions() {
         switch (operation) {
             case check, batchCheck -> {
@@ -155,6 +130,31 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException(
                     option + " is required for the " + operation + " operation: it " + purpose);
         }
+    }
+
+    /**
+     * Parses {@code startTime} when the endpoint starts, so a malformed timestamp stops the route rather than failing
+     * the first exchange that happens to reach a readChanges.
+     */
+    private OffsetDateTime parseStartTime() {
+        if (ObjectHelper.isEmpty(configuration.getStartTime())) {
+            return null;
+        }
+        try {
+            return OffsetDateTime.parse(configuration.getStartTime());
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(
+                    "startTime '" + configuration.getStartTime() + "' is not an ISO-8601 timestamp, for example"
+                                               + " 2026-10-01T00:00:00Z",
+                    e);
+        }
+    }
+
+    /**
+     * The parsed {@code startTime}, or null when none was configured.
+     */
+    OffsetDateTime getStartTime() {
+        return startTime;
     }
 
     /**
