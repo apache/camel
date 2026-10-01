@@ -1356,6 +1356,11 @@ class SourceViewer {
                 case PROPERTY -> "Exchange properties";
                 case VARIABLE -> "Variables";
                 case OPERATOR -> "Operators";
+                case DATE_COMMAND -> "Date commands";
+                case DATE_PATTERN -> "Date patterns";
+                case TIME_ZONE -> "Time zones";
+                case BEAN -> "Beans";
+                case PROPERTY_KEY -> "Properties";
             });
             pendingSimpleCompletion = new SimpleCompletion(row, col, c);
         }
@@ -1388,8 +1393,7 @@ class SourceViewer {
         String line = editState.getLine(sc.row());
         int from = editState.cursorCol();
         int end = from;
-        boolean operator = c.kind() == SimpleCompletionContext.Kind.OPERATOR;
-        while (end < line.length() && isSimpleWordChar(line.charAt(end), operator)) {
+        while (end < line.length() && isSimpleWordChar(line.charAt(end), c.kind())) {
             end++;
         }
         for (int i = from; i < end; i++) {
@@ -1403,17 +1407,26 @@ class SourceViewer {
         }
         boolean hasClosing = !closing.isEmpty() && line.startsWith(closing, end);
         editState.insert(text + (hasClosing ? "" : closing));
-        if (c.kind() == SimpleCompletionContext.Kind.FUNCTION && (text.endsWith(".") || text.endsWith("["))) {
-            openAutocomplete();
+        boolean stem = c.kind() == SimpleCompletionContext.Kind.FUNCTION
+                && (text.endsWith(".") || text.endsWith("[") || text.endsWith(":") || text.endsWith("("));
+        if (stem || c.kind() == SimpleCompletionContext.Kind.TIME_ZONE) {
+            // header. opens the header names, date: the date commands, bean: the beans, a time zone the patterns;
+            // only the simple completion, nothing else when the function has no values to offer
+            openSimpleAutocomplete();
         }
     }
 
     /** A character of the function, name or operator being completed. */
-    private static boolean isSimpleWordChar(char c, boolean operator) {
-        if (operator) {
-            return !Character.isWhitespace(c) && c != '$' && c != '\'' && c != '"';
-        }
-        return Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '.' || c == ':';
+    private static boolean isSimpleWordChar(char c, SimpleCompletionContext.Kind kind) {
+        return switch (kind) {
+            case OPERATOR -> !Character.isWhitespace(c) && c != '$' && c != '\'' && c != '"';
+            case FUNCTION, HEADER, PROPERTY, VARIABLE ->
+                Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '.' || c == ':';
+            // the argument only: the .method after a bean, the :pattern after a date command stay
+            case PROPERTY_KEY -> Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '.';
+            case DATE_PATTERN -> c != '}' && c != ')' && c != '"' && c != '\'';
+            default -> Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '/';
+        };
     }
 
     /**
