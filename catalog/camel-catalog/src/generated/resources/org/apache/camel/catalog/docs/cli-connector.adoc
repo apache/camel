@@ -44,7 +44,8 @@ connector. Choose it with the `camel.cli.transport` property:
 
 The integration connects to the tool, so the tool does not need access to the filesystem of the integration
 (containers, remote development clusters), and snapshots are pushed as they are collected. The integration does not
-open any port. The JDK WebSocket client is used, so no extra dependency is needed.
+open any port. The JDK WebSocket client is used by default, so no extra dependency is needed (see
+<<WebSocket client>>).
 
 [source,bash]
 ----
@@ -69,6 +70,8 @@ java -Dcamel.cli.transport=websocket \
 | `camel.cli.websocket.reconnect-max-delay` | `30000` | Maximum delay before reconnecting, in millis.
 | `camel.cli.websocket.allow-insecure` | `false` | Allow `ws://` (unencrypted) to a host that is not a loopback
   address. Prefer `wss://` or a tunnel.
+| `camel.cli.websocket.client` | `auto` | The WebSocket client: `auto` uses the `CliWebSocketClient` from the
+  registry if there is exactly one, otherwise the JDK client; `jdk` always uses the JDK client.
 |===
 
 As with Camel Main options, the camelCase form of the keys is accepted too (for example
@@ -98,6 +101,22 @@ same JSON the file transport reads and writes:
   sent when they change. The `status` snapshot is sent whole: for integrations with many routes, make sure the tool
   accepts messages of that size.
 * The extra `stop` action stops the integration.
+
+=== WebSocket client
+
+The transport does the protocol (frames, snapshots, heartbeat, reconnecting, the security checks below) and leaves
+the socket I/O to a `org.apache.camel.cli.connector.CliWebSocketClient`. A runtime can provide its own client, for
+example to reuse the WebSocket client and TLS configuration of the application, by putting a single bean of that type
+in the registry; the client in use is logged at startup and sent in the `transport` field of the `hello` frame.
+
+A client must:
+
+* pass whole text messages to the listener (reassemble messages sent in several frames), and accept messages of up
+  to 16 MB (`CliWebSocketClient.MAX_MESSAGE_SIZE`);
+* fail the connection with a `CliWebSocketHandshakeException` holding the HTTP status code when the tool rejects the
+  handshake;
+* never block in the listener callbacks, which may run on any thread (for example an event loop): the transport
+  parses the frames and sends on its own threads, one message at a time, and waits for the returned stages there.
 
 === Security
 
