@@ -17,7 +17,13 @@
 package org.apache.camel.support.processor.state;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.AbstractSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,13 +36,17 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.camel.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.support.processor.state.FileStateRepository.fileStateRepository;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class FileStateRepositoryTest extends TestSupport {
 
@@ -213,6 +223,57 @@ public class FileStateRepositoryTest extends TestSupport {
         for (int i = 0; i < 6; i++) {
             assertEquals("value" + i, newRepository.getState("key" + i));
         }
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    public void shouldKeepSymlinkedStoreWhenRewriting() throws Exception {
+        // Given a store which is a symbolic link to a file in another directory
+        Path realStore = testDirectory("real", true).resolve("file-state-repository.dat");
+        Files.writeString(realStore, "key1=value1\n");
+        Path link = repositoryStore.toPath();
+        try {
+            Files.createSymbolicLink(link, realStore);
+        } catch (UnsupportedOperationException | IOException e) {
+            assumeTrue(false, "Symbolic links are not supported: " + e.getMessage());
+        }
+
+        // When updating the state and stopping the repository (which rewrites the store)
+        FileStateRepository repository = createRepository();
+        repository.setState("key2", "value2");
+        repository.stop();
+
+        // Then the store is still the link, the real file has the state, and no temporary file is left
+        assertTrue(Files.isSymbolicLink(link));
+        assertEquals(realStore, Files.readSymbolicLink(link));
+        assertTrue(Files.readString(realStore).contains("key1=value1\n"));
+        assertTrue(Files.readString(realStore).contains("key2=value2\n"));
+        assertFalse(Files.exists(Path.of(realStore + ".tmp")));
+        assertFalse(Files.exists(Path.of(link + ".tmp"), LinkOption.NOFOLLOW_LINKS));
+        FileStateRepository newRepository = createRepository();
+        assertEquals("value1", newRepository.getState("key1"));
+        assertEquals("value2", newRepository.getState("key2"));
+    }
+
+    @Test
+    public void shouldKeepStorePermissionsWhenRewriting() throws Exception {
+        assumeTrue(FileSystems.getDefault().supportedFileAttributeViews().contains("posix"),
+                "POSIX file permissions are not supported");
+
+        // Given a store with specific permissions
+        Path store = repositoryStore.toPath();
+        Files.writeString(store, "key1=value1\n");
+        Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("rw-r-----");
+        Files.setPosixFilePermissions(store, permissions);
+
+        // When updating the state and stopping the repository (which rewrites the store)
+        FileStateRepository repository = createRepository();
+        repository.setState("key2", "value2");
+        repository.stop();
+
+        // Then the rewritten store has the same permissions
+        assertEquals(permissions, Files.getPosixFilePermissions(store));
+        assertEquals("value2", createRepository().getState("key2"));
     }
 
     private FileStateRepository createRepository() {

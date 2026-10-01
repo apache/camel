@@ -21,7 +21,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFileAttributeView;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -202,10 +204,17 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
         LOG.info("Trunking state filestore: {}", fileStore);
         // write the 1st level cache to a temporary file and then replace the file store with it, so the file store
         // is never left truncated or half written (such as if writing fails, or the JVM crashes while writing)
-        File tmp = new File(fileStore.getPath() + ".tmp");
+        Path target = fileStore.toPath();
+        File tmp = null;
         boolean written = false;
         FileOutputStream fos = null;
         try {
+            if (Files.exists(target)) {
+                // replace the real file of a symlinked store (so the link is kept, and the temporary file is on the
+                // same file system as the store)
+                target = target.toRealPath();
+            }
+            tmp = new File(target + ".tmp");
             fos = new FileOutputStream(tmp);
             for (Map.Entry<String, String> entry : cache.entrySet()) {
                 fos.write((entry.getKey() + KEY_VALUE_DELIMITER + entry.getValue() + STORE_DELIMITER).getBytes());
@@ -213,18 +222,21 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
             fos.getFD().sync();
             fos.close();
             fos = null;
+            // keep the permissions of the store
+            if (Files.exists(target) && Files.getFileAttributeView(target, PosixFileAttributeView.class) != null) {
+                Files.setPosixFilePermissions(tmp.toPath(), Files.getPosixFilePermissions(target));
+            }
             try {
-                Files.move(tmp.toPath(), fileStore.toPath(), StandardCopyOption.REPLACE_EXISTING,
-                        StandardCopyOption.ATOMIC_MOVE);
+                Files.move(tmp.toPath(), target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             } catch (AtomicMoveNotSupportedException e) {
-                Files.move(tmp.toPath(), fileStore.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.move(tmp.toPath(), target, StandardCopyOption.REPLACE_EXISTING);
             }
             written = true;
         } catch (IOException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } finally {
             IOHelper.close(fos, "Trunking file state repository", LOG);
-            if (!written) {
+            if (!written && tmp != null) {
                 FileUtil.deleteFile(tmp);
             }
         }
