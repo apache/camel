@@ -3800,6 +3800,19 @@ public interface ComponentsBuilderFactory {
         return OaipmhComponentBuilderFactory.oaipmh();
     }
     /**
+     * OData (camel-odata)
+     * Camel OData Component
+     * 
+     * Category: http,cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-odata
+     * 
+     * @return the dsl builder
+     */
+    static OdataComponentBuilderFactory.OdataComponentBuilder odata() {
+        return OdataComponentBuilderFactory.odata();
+    }
+    /**
      * Olingo2 (camel-olingo2)
      * Communicate with OData 2.0 services using Apache Olingo.
      * 

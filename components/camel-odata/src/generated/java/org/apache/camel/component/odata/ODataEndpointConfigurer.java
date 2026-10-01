@@ -111,3 +111,4 @@ public class ODataEndpointConfigurer extends PropertyConfigurerSupport implement
         }
     }
 }
+

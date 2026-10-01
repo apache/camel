@@ -12565,6 +12565,46 @@ public class StaticEndpointBuilders {
         return OAIPMHEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * OData (camel-odata)
+     * Camel OData Component
+     * 
+     * Category: http,cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-odata
+     * 
+     * Syntax: <code>odata:httpUri</code>
+     * 
+     * Path parameter: httpUri (required)
+     * The base OData service URI
+     * 
+     * @param path httpUri
+     * @return the dsl builder
+     */
+    public static ODataEndpointBuilderFactory.ODataEndpointBuilder odata(String path) {
+        return odata("odata", path);
+    }
+    /**
+     * OData (camel-odata)
+     * Camel OData Component
+     * 
+     * Category: http,cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-odata
+     * 
+     * Syntax: <code>odata:httpUri</code>
+     * 
+     * Path parameter: httpUri (required)
+     * The base OData service URI
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path httpUri
+     * @return the dsl builder
+     */
+    public static ODataEndpointBuilderFactory.ODataEndpointBuilder odata(String componentName, String path) {
+        return ODataEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Olingo2 (camel-olingo2)
      * Communicate with OData 2.0 services using Apache Olingo.
      * 

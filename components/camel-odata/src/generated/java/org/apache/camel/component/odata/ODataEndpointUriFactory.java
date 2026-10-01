@@ -89,3 +89,4 @@ public class ODataEndpointUriFactory extends org.apache.camel.support.component.
         return true;
     }
 }
+
