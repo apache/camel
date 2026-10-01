@@ -26,6 +26,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -40,6 +41,11 @@ import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 
 abstract class AbstractTab implements MonitorTab {
+
+    /** Presses a key of the tab, as a click on a view of the view bar does. */
+    protected void pressKey(char key) {
+        handleKeyEvent(KeyEvent.ofChar(key));
+    }
 
     protected final MonitorContext ctx;
 

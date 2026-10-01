@@ -222,6 +222,8 @@ public class CamelMonitor extends CamelCommand {
     private String lastTabDivider;
     // Panel resize drag state
     private final DragSplit panelSplit = new DragSplit();
+    /** The views and view settings of the active tab, on the first row of its content. */
+    private final SubViewBar subViewBar = new SubViewBar();
     // Footer key-binding hit-testing: each clickable hint records its [startX, endX) column range on
     // the footer row and the KeyEvent to synthesize when clicked.
     private int footerRowY = -1;
@@ -1664,6 +1666,23 @@ public class CamelMonitor extends CamelCommand {
             return true;
         }
 
+        // The view bar of the tab: a click on a view goes there, a click on a view setting presses its key
+        if (subViewBar.isOnRow(me.y()) && TuiHelper.contains(lastContentArea, me.x(), me.y())
+                && !popupManager.isMorePopupVisible() && !popupManager.isSwitchPopupVisible()) {
+            if (me.isClick()) {
+                SubViewBar.View view = subViewBar.viewAt(me.x(), me.y());
+                if (view != null) {
+                    view.select().run();
+                    return true;
+                }
+                KeyEvent key = footerKeyEvent(subViewBar.keyAt(me.x(), me.y()));
+                if (key != null) {
+                    return handleEvent(key, runner);
+                }
+            }
+            return true;
+        }
+
         // Mouse events in the content area: delegate to the active tab
         if (TuiHelper.contains(lastContentArea, me.x(), me.y())) {
             if (popupManager.isMorePopupVisible() || popupManager.isSwitchPopupVisible()) {
@@ -2283,6 +2302,14 @@ public class CamelMonitor extends CamelCommand {
         frame.buffer().clear(area);
         MonitorTab tab = tabRegistry.activeTab();
         if (tab != null) {
+            SubViewBar.Spec spec = tab.subViewBar();
+            if (spec != null && area.height() > 3) {
+                List<Rect> rows = Layout.vertical().constraints(Constraint.length(1), Constraint.fill()).split(area);
+                subViewBar.render(frame, rows.get(0), spec);
+                area = rows.get(1);
+            } else {
+                subViewBar.clear();
+            }
             tab.render(frame, area);
         }
     }
