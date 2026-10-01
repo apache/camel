@@ -36,6 +36,7 @@ import javax.crypto.CipherOutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.Ordered;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -257,6 +258,13 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                 exchangeCounter.incrementAndGet();
                 // add on completion so we can cleanup after the exchange is done such as deleting temporary files
                 Synchronization onCompletion = new SynchronizationAdapter() {
+                    @Override
+                    public int getOrder() {
+                        // delete the file after the other on completions (such as the onCompletion EIP), which may
+                        // still read the body
+                        return Ordered.LOWEST;
+                    }
+
                     @Override
                     public void onDone(Exchange exchange) {
                         int actualExchanges = exchangeCounter.decrementAndGet();
