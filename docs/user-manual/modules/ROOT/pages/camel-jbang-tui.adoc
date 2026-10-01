@@ -229,6 +229,13 @@ Camel routes:
 A quick documentation panel at the bottom shows the documentation of the line the cursor is on: for YAML, Java
 and XML routes the component and options of an endpoint, the EIP of a step and the language of its expression.
 Java routes are read by the Java DSL parser without compiling them, so constants and the endpoint DSL are resolved.
+What the project knows about the line comes first: the values of its property placeholders (`{{orders.period}} = 500
+(application.properties)`, or the default that is used when it is not set), and where the bean it refers to is declared.
+
+A line that refers to a bean (`bean:name`, `.bean(MyBean.class)`, `ref: name`, `#class:com.foo.MyBean`...) shows a
+`↵ name` jump link when the project declares the bean (`@BindToRegistry`, `@Named`, `@Component`, `@Bean`, or the beans
+of a YAML or XML file); *Enter* goes to its declaration, as it goes to the route a `to` sends to. Press *u* on a line
+with an endpoint to see its usages: the routes that consume from it and the steps that send to it, across the project.
 
 The editor shows *gutter change markers* -- a green background on line numbers that have been
 modified or added since the file was opened. This gives an at-a-glance view of what you've changed.
@@ -253,6 +260,8 @@ file is not saved and errors are displayed in a popup. This catches mistakes ear
 Java and XML routes get the same Camel checks, on the Camel model the routes are read into: the endpoint URIs
 (also those built with the endpoint DSL, or from a constant), Simple expressions, and a `to` whose URI holds
 `+${...}+` and should be a `toD`. Their problems are marked on their lines while you type (*F9* jumps to the next).
+The problems of a file are marked as soon as it opens, in the view too: a red `✗` on the line, the count in the title,
+and the problem of the selected line in the panel at the bottom.
 An XML file with problems is not saved, as a YAML file; a Java file is saved and its problems are said, as it is
 the application's code, and a check that cannot know something (a value computed at runtime) must not stop you.
 

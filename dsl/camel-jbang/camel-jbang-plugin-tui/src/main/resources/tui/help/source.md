@@ -21,7 +21,14 @@ explorer on the left and a source viewer on the right.
 - **Space** — cycle format (YAML/Java/XML) for Camel routes
 - Quick documentation panel is shown at the bottom for Camel source files
   (YAML, XML and Java DSL routes: the component and options of an endpoint,
-  the EIP of a step, the language of an expression)
+  the EIP of a step, the language of an expression). Before it: the values of
+  the `{{placeholders}}` of the line from the project's .properties files, and
+  where the bean the line refers to is declared
+- The problems of a Camel file are marked as soon as it opens: a red ✗ on
+  their lines and the count in the title; the panel at the bottom says the
+  problem of the selected line, and **F9** goes to the next one
+- **u** — usages: the routes that consume from the endpoint of the line and the
+  steps that send to it (direct:, seda:...), across the project; **Enter** goes there
 - **/** — search in source
 - **h** — highlight text
 - **n/N** — next/previous match
@@ -98,6 +105,11 @@ This works for YAML, XML and Java DSL routes, across all the folders of the
 project and files of different DSLs (build output and `src/test` are left out);
 Java routes are read without compiling them. The case and otherwise of a
 switch link like a `to`. Jump indicators are hidden in plain mode.
+
+A line that refers to a bean (`bean:name`, `.bean(MyBean.class)`, `ref: name`,
+`#class:com.foo.MyBean`...) shows a **↵ name** indicator when the project
+declares it (`@BindToRegistry`, `@Named`, `@Component`, `@Bean`, or the beans of
+a YAML or XML file); **Enter** goes to its declaration.
 
 ## Go to Route
 - **g** — open a filterable popup listing all routes of the project's source files.
