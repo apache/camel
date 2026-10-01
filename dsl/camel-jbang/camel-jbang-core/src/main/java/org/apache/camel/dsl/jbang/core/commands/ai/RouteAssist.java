@@ -112,7 +112,7 @@ public final class RouteAssist {
         }
         List<RouteNodes.Node> nodes = RouteNodes.withExpressionLines(RouteNodes.of(model, catalog), content);
         Set<String> consumed = checkConsumers && directory != null
-                ? EndpointConsumerChecks.consumed(directory, fileName) : null;
+                ? EndpointConsumerChecks.consumed(directory, fileName, catalog) : null;
         for (String msg : ModelChecks.check(model, nodes, content, catalog, consumed)) {
             answer.add(parse(msg, Severity.ERROR));
         }
