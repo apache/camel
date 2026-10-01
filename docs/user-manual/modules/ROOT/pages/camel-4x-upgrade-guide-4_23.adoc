@@ -3048,6 +3048,24 @@ A poll in which the download of every file failed now counts as an idle poll, th
 could be acquired. This affects `backoffIdleThreshold`, `sendEmptyMessageWhenIdle` (an empty message is sent) and
 `greedy` (the consumer does not poll again immediately).
 
+=== camel-cassandraql - the aggregation repository keeps completed exchanges for recovery
+
+`CassandraAggregationRepository` (and `NamedCassandraAggregationRepository`) implement
+`RecoverableAggregationRepository` with recovery enabled by default, but had no recovery store: `remove` deleted
+the completed exchange, `confirm` deleted the aggregation in progress that had the confirmed exchange id, and `scan`
+returned the exchange ids of the aggregations still in progress. The recovery task therefore sent aggregations
+that were still in progress (marked `CamelRedelivered`) and then deleted them, while exchanges that failed after
+completion could never be recovered.
+
+A completed exchange is now kept in the same table, under the aggregation key `camel-recovery:<exchange id>`, until
+it is confirmed, which is what `scan` reports and `recover` reads. `getKeys` reports only the aggregations in
+progress. No change of the table is needed.
+
+Routes that set `useRecovery=false` are unaffected. Routes that left recovery enabled, which is the default, no
+longer see aggregations in progress sent by the recovery task, and a completed exchange whose processing failed is
+now recovered. The table now also holds one row per completed and not yet confirmed exchange; those rows are deleted
+on confirmation. A time to live (`ttl`) applies to these rows as well.
+
 === camel-infinispan - the aggregation repository keeps completed exchanges for recovery
 
 `InfinispanAggregationRepository` implements `RecoverableAggregationRepository`, but it had no recovery

@@ -145,11 +145,16 @@ public class NamedCassandraAggregationRepositoryIT extends BaseCassandra {
             aggregationRepository.add(context, key, exchange);
             assertTrue(exists(key));
         }
+        Exchange completed = new DefaultExchange(context);
+        completed.setExchangeId("Exchange_2");
+        aggregationRepository.remove(context, "Confirm_2", completed);
+        assertFalse(exists("Confirm_2"));
+        assertTrue(exists("camel-recovery:Exchange_2"));
         // When
         aggregationRepository.confirm(context, "Exchange_2");
         // Then
+        assertFalse(exists("camel-recovery:Exchange_2"));
         assertTrue(exists("Confirm_1"));
-        assertFalse(exists("Confirm_2"));
         assertTrue(exists("Confirm_3"));
     }
 
@@ -172,6 +177,12 @@ public class NamedCassandraAggregationRepositoryIT extends BaseCassandra {
         }
     }
 
+    private void removeExchange(String key) {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setExchangeId("Exchange-" + key);
+        aggregationRepository.remove(context, key, exchange);
+    }
+
     private void addExchanges(String... keys) {
         for (String key : keys) {
             Exchange exchange = new DefaultExchange(context);
@@ -185,12 +196,16 @@ public class NamedCassandraAggregationRepositoryIT extends BaseCassandra {
         // Given
         String[] keys = { "Scan1", "Scan2" };
         addExchanges(keys);
+        // aggregations in progress are not to be recovered
+        assertFalse(aggregationRepository.scan(context).contains("Exchange-Scan1"));
+        assertFalse(aggregationRepository.scan(context).contains("Exchange-Scan2"));
         // When
+        removeExchange("Scan2");
         Set<String> exchangeIdSet = aggregationRepository.scan(context);
         // Then
-        for (String key : keys) {
-            assertTrue(exchangeIdSet.contains("Exchange-" + key));
-        }
+        assertTrue(exchangeIdSet.contains("Exchange-Scan2"));
+        assertFalse(exchangeIdSet.contains("Exchange-Scan1"));
+        assertFalse(aggregationRepository.getKeys().contains("camel-recovery:Exchange-Scan2"));
     }
 
     @Test
@@ -198,11 +213,15 @@ public class NamedCassandraAggregationRepositoryIT extends BaseCassandra {
         // Given
         String[] keys = { "Recover1", "Recover2" };
         addExchanges(keys);
+        removeExchange("Recover2");
         // When
+        Exchange exchange1 = aggregationRepository.recover(context, "Exchange-Recover1");
         Exchange exchange2 = aggregationRepository.recover(context, "Exchange-Recover2");
         Exchange exchange3 = aggregationRepository.recover(context, "Exchange-Recover3");
         // Then
+        assertNull(exchange1);
         assertNotNull(exchange2);
+        assertEquals("Exchange-Recover2", exchange2.getExchangeId());
         assertNull(exchange3);
     }
 
