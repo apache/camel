@@ -8,7 +8,9 @@ explorer on the left and a source viewer on the right.
 - **Up/Down** — navigate files
 - **Enter** — open file or directory
 - **F4** — open file directly in edit mode
-- **F12** — file actions menu (new file, new folder, rename, duplicate, delete, copy path)
+- **F12** — file actions menu (new file, new folder, rename, duplicate, delete, copy path,
+  and for a route file, convert to YAML, XML or Java: a new file next to it,
+  without running it, with what did not carry over noted at its top)
 - **Backspace** — go to parent directory
 
 ## Source Viewer (right panel)

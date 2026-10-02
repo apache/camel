@@ -253,6 +253,16 @@ image::jbang/camel-tui-source-format-cycling.png[A Java route shown in YAML]
 This is handy to see how a route reads in another DSL, or to copy it into a file of another DSL. Press *p* for plain
 mode, which hides the line numbers and borders for easy copying.
 
+To convert a whole file, select it in the file list, press *F12* and pick _Convert to YAML_, _Convert to XML_ or
+_Convert to Java_. This works on files at rest, without running them: the file is read into the model (the beans of a
+YAML file as definitions, not created), written in the other DSL into a new file next to it (`orders.camel.xml` becomes
+`orders.camel.yaml`, or the route builder class `Orders.java`), and read back to check it has the same routes. The new
+file opens; the original stays as it is, and an existing file is not overwritten. What does not carry over is said at
+the top of the new file, such as the comments or a part the other DSL's writer leaves out, and a file that would lose
+something it cannot say (a lambda processor, a predicate built in Java code) is not converted, with the reason why.
+
+image::jbang/camel-tui-source-convert.png[An XML route converted to YAML, with the note of what did not carry over]
+
 == Keyboard Shortcuts
 
 === Viewing
