@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class KnownDependenciesResolverTest {
 
@@ -82,6 +83,39 @@ public class KnownDependenciesResolverTest {
         assertGav(resolver, "freemarker.template.Configuration", "org.freemarker", "freemarker");
         // a shared parent package is deliberately not mapped
         assertEquals(null, resolver.mavenGavForClass("org.apache.commons.Anything"));
+    }
+
+    @Test
+    void anImportResolvesAnyClassOfAComponent() {
+        // CAMEL-25239: any class of a component a source imports, not only the component class itself, such as the
+        // constants of the headers of a component that a kamelet uses
+        KnownDependenciesResolver resolver = new KnownDependenciesResolver(new SimpleCamelContext(), null, null);
+        resolver.loadKnownDependencies();
+
+        assertImport(resolver, "org.apache.camel.component.aws2.s3.AWS2S3Component", "camel-aws2-s3");
+        assertImport(resolver, "org.apache.camel.component.aws2.s3.AWS2S3Constants", "camel-aws2-s3");
+        assertImport(resolver, "org.apache.camel.component.aws2.s3.utils.AWS2S3Utils", "camel-aws2-s3");
+        // a sibling package of another component is not mistaken for it
+        assertImport(resolver, "org.apache.camel.component.aws2.s3vectors.AWS2S3VectorsConstants", "camel-aws2-s3-vectors");
+        // a sub package of another component's package wins for its own classes
+        assertImport(resolver, "org.apache.camel.component.file.remote.SftpConstants", "camel-ftp");
+        assertImport(resolver, "org.apache.camel.component.file.GenericFile", "camel-file");
+        // the libraries still resolve as before
+        assertGav(resolver, "com.fasterxml.jackson.databind.ObjectMapper", "com.fasterxml.jackson.core", "jackson-databind");
+        // a component in a base package does not claim every class in it
+        assertNull(resolver.mavenGavForImport("org.apache.camel.Exchange"));
+        assertNull(resolver.mavenGavForImport("org.apache.camel.component.Anything"));
+        // a class looked up at runtime (often only probed for) still needs the component class itself
+        assertNull(resolver.mavenGavForClass("org.apache.camel.component.aws2.s3.AWS2S3Constants"));
+        assertGav(resolver, "org.apache.camel.component.aws2.s3.AWS2S3Component", "org.apache.camel", "camel-aws2-s3");
+    }
+
+    private static void assertImport(KnownDependenciesResolver resolver, String className, String artifactId) {
+        MavenGav gav = resolver.mavenGavForImport(className);
+        assertNotNull(gav, className);
+        assertEquals("org.apache.camel", gav.getGroupId(), className);
+        assertEquals(artifactId, gav.getArtifactId(), className);
+        assertNotNull(gav.getVersion(), className + " version is null");
     }
 
     private static void assertGav(KnownDependenciesResolver resolver, String className, String groupId, String artifactId) {
