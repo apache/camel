@@ -1,0 +1,73 @@
+# The shop's stock service: what the warehouse has on the shelf, per SKU.
+# GET /stock lists everything, GET /stock/{sku} answers for one SKU or 404.
+- rest:
+    path: /stock
+    get:
+      - to:
+          uri: direct:all-stock
+      - path: "/{sku}"
+        to:
+          uri: direct:one-sku
+
+- route:
+    id: all-stock
+    from:
+      uri: direct
+      parameters:
+        name: all-stock
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: resource:file:stock.json
+        - setHeader:
+            name: Content-Type
+            expression:
+              constant:
+                expression: application/json
+
+- route:
+    id: one-sku
+    from:
+      uri: direct
+      parameters:
+        name: one-sku
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: resource:file:stock.json
+        - setBody:
+            expression:
+              jsonpath:
+                expression: "$[?(@.sku == '${header.sku}')]"
+                resultType: java.util.List
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body.size()} == 0"
+                steps:
+                  - setHeader:
+                      name: CamelHttpResponseCode
+                      expression:
+                        constant:
+                          expression: "404"
+                  - setBody:
+                      expression:
+                        simple:
+                          expression: '{"error": "unknown sku ${header.sku}"}'
+            otherwise:
+              steps:
+                - setBody:
+                    expression:
+                      simple:
+                        expression: "${body[0]}"
+                - marshal:
+                    json:
+                      library: Jackson
+        - setHeader:
+            name: Content-Type
+            expression:
+              constant:
+                expression: application/json

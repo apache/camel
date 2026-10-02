@@ -1,0 +1,5 @@
+- beans:
+    - name: orderNumber
+      type: "camel.example.OrderNumber"
+      properties:
+        start: "{{order.first-number}}"

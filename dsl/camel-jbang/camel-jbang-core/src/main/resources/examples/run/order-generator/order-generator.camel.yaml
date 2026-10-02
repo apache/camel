@@ -1,0 +1,24 @@
+# The shop's order feed: a timer creates an order every few seconds. Every later example on the
+# ladder starts from this file and this order shape.
+- route:
+    id: order-generator
+    from:
+      uri: timer
+      parameters:
+        timerName: orders
+        period: "{{order.period}}"
+      steps:
+        - setHeader:
+            name: orderId
+            expression:
+              method:
+                ref: orderNumber
+                method: next
+        - setBody:
+            expression:
+              simple:
+                expression: |-
+                  {"orderId": "${header.orderId}", "customer": "C-${random(100,999)}", "country": "DK",
+                   "lines": [{"sku": "CAMEL-TSHIRT", "qty": ${random(1,3)}, "price": 19.95}], "status": "paid"}
+        - log:
+            message: "New order ${header.orderId}: ${body}"

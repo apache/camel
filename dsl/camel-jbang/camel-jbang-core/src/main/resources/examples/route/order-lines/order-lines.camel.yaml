@@ -1,0 +1,30 @@
+# An order is one message with several lines; the warehouse picks one line at a time. The splitter
+# turns the order into one message per line, and the split messages keep the order id in a header.
+- route:
+    id: order-lines
+    from:
+      uri: file
+      parameters:
+        directoryName: orders
+        noop: true
+        sortBy: "file:name"
+      steps:
+        - unmarshal:
+            json:
+              library: Jackson
+        - setHeader:
+            name: orderId
+            expression:
+              simple:
+                expression: "${body[orderId]}"
+        - log:
+            message: "Order ${header.orderId} with ${body[lines].size()} line(s)"
+        - split:
+            expression:
+              simple:
+                expression: "${body[lines]}"
+            steps:
+              - log:
+                  message: "  pick ${body[qty]} x ${body[sku]} for ${header.orderId}"
+        - log:
+            message: "Order ${header.orderId}: all ${body[lines].size()} line(s) sent to picking"
