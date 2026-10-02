@@ -89,11 +89,19 @@ public class PubNubEndpoint extends DefaultEndpoint {
     }
 
     private PubNub getInstance() throws PubNubException {
-        PNConfiguration config = PNConfiguration.builder(new UserId(configuration.getUuid()), configuration.getSubscribeKey())
-                .publishKey(configuration.getPublishKey())
-                .secretKey(configuration.getSecretKey())
-                .authKey(configuration.getAuthKey())
-                .secure(configuration.isSecure()).build();
-        return PubNub.create(config);
+        PNConfiguration.Builder builder
+                = PNConfiguration.builder(new UserId(configuration.getUuid()), configuration.getSubscribeKey())
+                        .secure(configuration.isSecure());
+        // the builder does not accept null for the keys that are not configured, its defaults apply then
+        if (configuration.getPublishKey() != null) {
+            builder.publishKey(configuration.getPublishKey());
+        }
+        if (configuration.getSecretKey() != null) {
+            builder.secretKey(configuration.getSecretKey());
+        }
+        if (configuration.getAuthKey() != null) {
+            builder.authKey(configuration.getAuthKey());
+        }
+        return PubNub.create(builder.build());
     }
 }
