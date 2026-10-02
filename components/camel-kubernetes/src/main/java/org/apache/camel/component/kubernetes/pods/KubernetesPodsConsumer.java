@@ -139,6 +139,8 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
                 public void onClose(WatcherException cause) {
                     if (cause != null) {
                         LOG.error(cause.getMessage(), cause);
+                        // the client gave up the watch (410 Gone): watch again
+                        KubernetesHelper.watchAgain(KubernetesPodsConsumer.this, executor, PodsConsumerTask.this);
                     }
 
                 }

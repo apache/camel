@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kubernetes;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.function.Supplier;
 
 import io.fabric8.kubernetes.client.Config;
@@ -25,6 +27,7 @@ import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import io.fabric8.kubernetes.client.Watch;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +89,27 @@ public final class KubernetesHelper {
             final Watch watch = watchGetter.get();
             if (watch != null) {
                 watch.close();
+            }
+        }
+    }
+
+    /**
+     * Watches again when the Kubernetes client closed the watch of a consumer with an error. The client reconnects a
+     * watch by itself after transient errors, and only closes it with an exception when it gives up: when the API
+     * server answers 410 Gone because the resource version of the watch is too old (which happens to long-running
+     * watches), or when the reconnect limit is reached. The consumer would then not receive any event anymore.
+     *
+     * @param consumer the consumer of the watch
+     * @param executor the executor of the consumer
+     * @param task     the task that creates the watch of the consumer
+     */
+    public static void watchAgain(ServiceSupport consumer, ExecutorService executor, Runnable task) {
+        if (consumer.isRunAllowed() && executor != null && !executor.isShutdown()) {
+            LOG.info("Watching again for {} after its watch was closed", consumer);
+            try {
+                executor.submit(task);
+            } catch (RejectedExecutionException e) {
+                LOG.debug("Cannot watch again for {} as it is stopping", consumer, e);
             }
         }
     }
