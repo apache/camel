@@ -25,12 +25,12 @@ import org.apache.camel.tooling.maven.MavenGav;
 
 public class CommandLineDependencyDownloader extends ServiceSupport {
 
-    private final CatalogDependencyResolver resolver;
+    private final CamelContext camelContext;
     private final DependencyDownloader downloader;
     private final String dependencies;
 
     public CommandLineDependencyDownloader(CamelContext camelContext, String dependencies) {
-        this.resolver = new CatalogDependencyResolver(camelContext);
+        this.camelContext = camelContext;
         this.dependencies = dependencies;
         this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
@@ -44,7 +44,7 @@ public class CommandLineDependencyDownloader extends ServiceSupport {
         final List<MavenGav> gavs = new ArrayList<>();
         for (String dep : dependencies.split(",")) {
             dep = dep.trim();
-            MavenGav gav = resolver.resolve(dep);
+            MavenGav gav = CatalogDependencyResolver.resolve(dep, camelContext.getVersion());
             if (isValidGav(gav)) {
                 gavs.add(gav);
             }

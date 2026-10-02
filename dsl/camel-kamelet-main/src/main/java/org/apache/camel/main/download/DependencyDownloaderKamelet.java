@@ -115,14 +115,14 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
     private static class KameletDependencyDownloader extends YamlRoutesBuilderLoaderSupport {
 
         private static final Logger LOG = LoggerFactory.getLogger(KameletDependencyDownloader.class);
-        private final CatalogDependencyResolver resolver;
+        private final CamelContext camelContext;
         private final DependencyDownloader downloader;
         private final Set<String> downloaded = new HashSet<>();
         private final String kameletsVersion;
 
         public KameletDependencyDownloader(CamelContext camelContext, String extension, String kameletsVersion) {
             super(extension);
-            this.resolver = new CatalogDependencyResolver(camelContext);
+            this.camelContext = camelContext;
             this.downloader = camelContext.hasService(DependencyDownloader.class);
             this.kameletsVersion = kameletsVersion;
         }
@@ -180,7 +180,7 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
             for (String dep : dependencies) {
                 String gav = dep;
                 if (CatalogDependencyResolver.isCamelShorthand(dep)) {
-                    MavenGav resolved = resolver.resolve(dep);
+                    MavenGav resolved = CatalogDependencyResolver.resolve(dep, camelContext.getVersion());
                     gav = resolved.getGroupId() + ":" + resolved.getArtifactId() + ":" + resolved.getVersion();
                 } else if (dep.startsWith("camel-kamelets:")) {
                     // it's a known camel kamelets dependency
@@ -194,7 +194,7 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
 
             if (!gavs.isEmpty()) {
                 for (String gav : gavs) {
-                    MavenGav mg = resolver.resolve(gav);
+                    MavenGav mg = CatalogDependencyResolver.resolve(gav, camelContext.getVersion());
                     downloader.downloadDependency(mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
                     downloaded.add(gav);
                 }
@@ -212,7 +212,7 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
                 return false;
             }
 
-            MavenGav mg = resolver.resolve(gav);
+            MavenGav mg = CatalogDependencyResolver.resolve(gav, camelContext.getVersion());
             boolean exists = downloader.alreadyOnClasspath(mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
             // valid if not already on classpath
             return !exists;

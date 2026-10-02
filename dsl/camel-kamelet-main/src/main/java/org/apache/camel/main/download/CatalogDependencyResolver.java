@@ -16,7 +16,10 @@
  */
 package org.apache.camel.main.download;
 
-import org.apache.camel.CamelContext;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.tooling.maven.MavenGav;
@@ -24,28 +27,36 @@ import org.apache.camel.tooling.model.ArtifactModel;
 
 final class CatalogDependencyResolver {
 
-    private final CamelContext camelContext;
-    private final CamelCatalog catalog = new DefaultCamelCatalog();
+    private static final CamelCatalog CATALOG = new DefaultCamelCatalog(true);
+    private static final ConcurrentMap<String, Optional<Coordinates>> COORDINATES = new ConcurrentHashMap<>();
 
-    CatalogDependencyResolver(CamelContext camelContext) {
-        this.camelContext = camelContext;
+    private CatalogDependencyResolver() {
     }
 
-    MavenGav resolve(String dependency) {
-        MavenGav gav = MavenGav.parseGav(dependency, camelContext.getVersion());
+    static MavenGav resolve(String dependency, String defaultVersion) {
+        MavenGav gav = MavenGav.parseGav(dependency, defaultVersion);
         if (isCamelShorthand(dependency)) {
-            ArtifactModel<?> model = catalog.modelFromMavenGAV(gav.getGroupId(), gav.getArtifactId(), null);
-            if (model != null) {
-                gav.setGroupId(model.getGroupId());
-                gav.setArtifactId(model.getArtifactId());
-                gav.setVersion(model.getVersion());
-            }
+            COORDINATES.computeIfAbsent(gav.getArtifactId(), CatalogDependencyResolver::lookup)
+                    .ifPresent(coordinates -> {
+                        gav.setGroupId(coordinates.groupId());
+                        gav.setArtifactId(coordinates.artifactId());
+                        gav.setVersion(coordinates.version());
+                    });
         }
         return gav;
+    }
+
+    private static Optional<Coordinates> lookup(String artifactId) {
+        ArtifactModel<?> model = CATALOG.modelFromMavenGAV("org.apache.camel", artifactId, null);
+        return Optional.ofNullable(model)
+                .map(m -> new Coordinates(m.getGroupId(), m.getArtifactId(), m.getVersion()));
     }
 
     static boolean isCamelShorthand(String dependency) {
         return dependency.startsWith("camel:")
                 || (dependency.startsWith("camel-") && !(dependency.contains(":") || dependency.contains("/")));
+    }
+
+    private record Coordinates(String groupId, String artifactId, String version) {
     }
 }

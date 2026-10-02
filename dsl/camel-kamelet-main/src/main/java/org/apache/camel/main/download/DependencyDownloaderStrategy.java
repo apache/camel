@@ -22,17 +22,17 @@ import org.apache.camel.tooling.maven.MavenGav;
 
 public class DependencyDownloaderStrategy implements DependencyStrategy {
 
-    private final CatalogDependencyResolver resolver;
+    private final CamelContext camelContext;
     private final DependencyDownloader downloader;
 
     public DependencyDownloaderStrategy(CamelContext camelContext) {
-        this.resolver = new CatalogDependencyResolver(camelContext);
+        this.camelContext = camelContext;
         this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
 
     @Override
     public void onDependency(String dependency) {
-        MavenGav gav = resolver.resolve(dependency);
+        MavenGav gav = CatalogDependencyResolver.resolve(dependency, camelContext.getVersion());
         if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(), gav.getVersion())) {
             downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(),
                     gav.getVersion());
