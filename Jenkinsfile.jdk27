@@ -29,8 +29,8 @@ def MAVEN_TEST_PARAMS_ALT_ARCHS = "-Djdk.xml.xpathExprGrpLimit=100 -Djdk.xml.xpa
 pipeline {
 
     triggers {
-        // monthly
-        cron('H H H * H')
+        // weekly
+        cron('H H * * H')
     }
 
     environment {
@@ -57,7 +57,7 @@ pipeline {
     parameters {
         booleanParam(name: 'VIRTUAL_THREAD', defaultValue: false, description: 'Perform the build using virtual threads')
         choice(name: 'PLATFORM_FILTER', choices: ['all', 'ppc64le', 's390x', 'ubuntu-avx'], description: 'Run on specific platform')
-        choice(name: 'JDK_FILTER', choices: ['jdk_26_latest'], description: 'Run on specific jdk')
+        choice(name: 'JDK_FILTER', choices: ['jdk_27_latest'], description: 'Run on specific jdk')
     }
     agent none
     stages {
@@ -82,7 +82,7 @@ pipeline {
                 axes {
                     axis {
                         name 'JDK_NAME'
-                        values 'jdk_26_latest'
+                        values 'jdk_27_latest'
                     }
                     axis {
                         name 'PLATFORM'
