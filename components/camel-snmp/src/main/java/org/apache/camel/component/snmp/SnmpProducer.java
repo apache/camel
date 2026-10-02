@@ -165,10 +165,17 @@ public class SnmpProducer extends DefaultProducer {
                             }
                             next = variableBinding;
                         }
-                        // endOfMibView (SNMPv2c/v3) ends the walk, and so does an OID that does not increase,
-                        // otherwise the same OID would be requested again forever
-                        if (!matched || next == null || next.isException() || next.getOid().compareTo(requestedOid) <= 0) {
+                        // endOfMibView (SNMPv2c/v3) ends the walk
+                        if (!matched || next == null || next.isException()) {
                             break;
+                        }
+                        if (next.getOid().compareTo(requestedOid) <= 0) {
+                            // a walk on an OID that does not increase would not end: fail like net-snmp's snmpwalk,
+                            // so that a misbehaving agent does not give a silently partial result
+                            throw new CamelExchangeException(
+                                    "SNMP walk of " + oid + " failed: OID not increasing: " + requestedOid + " >= "
+                                                             + next.getOid(),
+                                    exchange);
                         }
                         this.pdu.clear();
                         pdu.add(new VariableBinding(next.getOid()));

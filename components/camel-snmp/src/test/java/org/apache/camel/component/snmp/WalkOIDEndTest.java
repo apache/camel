@@ -47,6 +47,7 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A GET_NEXT walk must stop at the end of the MIB view and at the end of the subtree, and fail when the agent does not
@@ -66,7 +67,10 @@ public class WalkOIDEndTest extends SnmpTestSupport {
             "1.3.6.1.4.1.2", new VariableBinding(new OID("1.3.6.1.4.1.2.1.0"), new OctetString("ibm")),
             "1.3.6.1.4.1.2.1.0", new VariableBinding(new OID("1.3.6.1.4.1.2021.1.0"), new OctetString("ucd")),
             "1.3.6.1.4.1.2021.1.0", new VariableBinding(new OID("1.3.6.1.4.1.3.1.0"), new OctetString("other")),
-            "1.3.6.1.4.1.11", new VariableBinding(new OID("1.3.6.1.4.1.11.1.0"), new OctetString("hp")));
+            "1.3.6.1.4.1.11", new VariableBinding(new OID("1.3.6.1.4.1.11.1.0"), new OctetString("hp")),
+            "1.3.6.1.4.1.13", new VariableBinding(new OID("1.3.6.1.4.1.13.2.0"), new OctetString("first")),
+            // an OID inside the subtree that does not increase
+            "1.3.6.1.4.1.13.2.0", new VariableBinding(new OID("1.3.6.1.4.1.13.1.0"), new OctetString("back")));
 
     // the GETNEXT requests the agent answers with an error status and the requested variable binding:
     // noSuchName is how an SNMPv1 agent signals the end of the MIB view
@@ -161,6 +165,15 @@ public class WalkOIDEndTest extends SnmpTestSupport {
     }
 
     @Test
+    public void testWalkWithOidNotIncreasingFails() {
+        Exchange out = template.request("direct:notIncreasing", e -> e.getIn().setBody(""));
+
+        CamelExchangeException e = assertInstanceOf(CamelExchangeException.class, out.getException(),
+                "got " + out.getMessage().getBody());
+        assertTrue(e.getMessage().contains("OID not increasing: 1.3.6.1.4.1.13.2.0 >= 1.3.6.1.4.1.13.1.0"), e.getMessage());
+    }
+
+    @Test
     public void testWalkWithoutAnswerFails() {
         Exchange out = template.request("direct:noAgent", e -> e.getIn().setBody(""));
 
@@ -188,6 +201,9 @@ public class WalkOIDEndTest extends SnmpTestSupport {
 
                 from("direct:agentError")
                         .toF("snmp:%s?protocol=udp&snmpVersion=1&type=GET_NEXT&oids=1.3.6.1.4.1.12", agentAddress);
+
+                from("direct:notIncreasing")
+                        .toF("snmp:%s?protocol=udp&snmpVersion=1&type=GET_NEXT&oids=1.3.6.1.4.1.13", agentAddress);
 
                 from("direct:noAgent")
                         .toF("snmp:127.0.0.1:%d?protocol=udp&snmpVersion=1&type=GET_NEXT&oids=1.3.6.1.4.1.9"
