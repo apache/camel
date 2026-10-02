@@ -55,6 +55,36 @@ export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
 ----
 
 
+=== Application Default Credentials and GKE
+
+When `serviceAccountKey` is not configured, the component uses Google's
+https://cloud.google.com/docs/authentication/application-default-credentials[Application Default Credentials (ADC)].
+ADC discovers credentials from the environment, local application default credentials,
+or the metadata server of the Google Cloud environment. An explicitly configured
+`serviceAccountKey` takes precedence over ADC.
+
+On Google Kubernetes Engine (GKE), configure
+https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity[Workload Identity Federation for GKE]
+for the cluster and the node pool where the Camel pod runs. Configure the pod to use
+a Kubernetes ServiceAccount with the IAM permissions required for the Cloud Functions
+operations it performs, either through direct IAM access or by linking it to an IAM
+service account as described in the GKE documentation.
+
+The Google authentication library obtains credentials through the GKE metadata server.
+No service account key file or Camel-specific Workload Identity option is required.
+Leave `serviceAccountKey` unset and do not set `GOOGLE_APPLICATION_CREDENTIALS` to a
+credential file when using the pod's workload identity, since ADC checks that environment
+variable before the metadata server.
+
+For example, this route lists functions using the pod's identity:
+
+[source,java]
+----
+from("direct:listFunctions")
+    .to("google-functions://myCamelFunction?project=myProject&location=us-central1&operation=listFunctions");
+----
+
+
 == URI Format
 
 ----
