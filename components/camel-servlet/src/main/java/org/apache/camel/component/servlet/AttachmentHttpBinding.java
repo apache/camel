@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
-import java.util.Locale;
 
 import jakarta.activation.DataSource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,7 +33,6 @@ import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpHelper;
-import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,15 +57,7 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
                 // name and not against Part.getName(), which is the multipart field name
                 String fileName = part.getSubmittedFileName();
                 // is the file name accepted
-                boolean accepted = true;
-                if (getFileNameExtWhitelist() != null) {
-                    String ext = FileUtil.onlyExt(fileName);
-                    if (ext != null) {
-                        ext = ext.toLowerCase(Locale.US);
-                        String whiteList = getFileNameExtWhitelist().toLowerCase(Locale.US);
-                        accepted = whiteList.equals("*") || isExtWhitelisted(whiteList, ext);
-                    }
-                }
+                boolean accepted = isFileNameAccepted(fileName);
 
                 if (accepted) {
                     DataSource ds = new PartDataSource(part);
@@ -88,17 +78,6 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
         } catch (Exception e) {
             throw new RuntimeCamelException("Cannot populate attachments", e);
         }
-    }
-
-    // compare against each comma-separated extension exactly, not as a substring: a whitelist of "txt"
-    // must not accept an upload named "evil.x" just because "txt".contains("x")
-    private static boolean isExtWhitelisted(String whitelist, String ext) {
-        for (String allowed : whitelist.split(",")) {
-            if (allowed.trim().equals(ext)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public final class PartDataSource implements DataSource {
