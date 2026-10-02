@@ -20,12 +20,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.tooling.model.ArtifactModel;
 
 public class CommandLineDependencyDownloader extends ServiceSupport {
 
     private final CamelContext camelContext;
+    private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final DependencyDownloader downloader;
     private final String dependencies;
 
@@ -41,15 +45,17 @@ public class CommandLineDependencyDownloader extends ServiceSupport {
     }
 
     private void downloadDependencies() {
-        final List<String> gavs = new ArrayList<>();
+        final List<MavenGav> gavs = new ArrayList<>();
         for (String dep : dependencies.split(",")) {
-            // trim whitespace
             dep = dep.trim();
-            String gav = dep;
-            gav = gav.trim();
+            MavenGav gav = MavenGav.parseGav(dep, camelContext.getVersion());
             if (dep.startsWith("camel:") || dep.startsWith("camel-")) {
-                // it's a known camel component
-                gav = "org.apache.camel:camel-" + dep.substring(6) + ":" + camelContext.getVersion();
+                ArtifactModel<?> model = catalog.modelFromMavenGAV(gav.getGroupId(), gav.getArtifactId(), null);
+                if (model != null) {
+                    gav.setGroupId(model.getGroupId());
+                    gav.setArtifactId(model.getArtifactId());
+                    gav.setVersion(model.getVersion());
+                }
             }
             if (isValidGav(gav)) {
                 gavs.add(gav);
@@ -57,18 +63,15 @@ public class CommandLineDependencyDownloader extends ServiceSupport {
         }
 
         if (!gavs.isEmpty()) {
-            for (String gav : gavs) {
-                MavenGav mg = MavenGav.parseGav(gav, camelContext.getVersion());
-                downloader.downloadDependency(mg.getGroupId(), mg.getArtifactId(),
-                        mg.getVersion());
+            for (MavenGav gav : gavs) {
+                downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
             }
         }
     }
 
-    private boolean isValidGav(String gav) {
-        MavenGav mg = MavenGav.parseGav(gav, camelContext.getVersion());
+    private boolean isValidGav(MavenGav gav) {
         boolean exists
-                = downloader.alreadyOnClasspath(mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
+                = downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
         // valid if not already on classpath
         return !exists;
     }
