@@ -8,7 +8,9 @@ explorer on the left and a source viewer on the right.
 - **Up/Down** — navigate files
 - **Enter** — open file or directory
 - **F4** — open file directly in edit mode
-- **F12** — file actions menu (new file, new folder, rename, duplicate, delete, copy path)
+- **F12** — file actions menu (new file, new folder, rename, duplicate, delete, copy path,
+  and for a route file, convert to YAML, XML or Java: a new file next to it,
+  without running it, with what did not carry over noted at its top)
 - **Backspace** — go to parent directory
 
 ## Source Viewer (right panel)
@@ -17,15 +19,33 @@ explorer on the left and a source viewer on the right.
 - **Esc** — cancel edit (in edit mode) or close viewer
 - **Ctrl+S** — save file and continue editing (Camel dev mode auto-reloads)
 - **F5** — save file and close editor (in edit mode)
-- **Ctrl+R** — open refactoring menu in edit mode (YAML files only; choose an action for the current line)
+- **Ctrl+R** — open refactoring menu in edit mode, for the current line: replace
+  the endpoint URI, extract the value at the cursor to a property, extract a step
+  to a new route file (YAML and XML)
 - **Space** — cycle format (YAML/Java/XML) for Camel routes
 - Quick documentation panel is shown at the bottom for Camel source files
+  (YAML, XML and Java DSL routes: the component and options of an endpoint,
+  the EIP of a step, the language of an expression). Before it: the values of
+  the `{{placeholders}}` of the line from the project's .properties files, and
+  where the bean the line refers to is declared
+- The problems of a Camel file are marked as soon as it opens: a red ✗ on
+  their lines and the count in the title; the panel at the bottom says the
+  problem of the selected line, and **F9** goes to the next one
+- **u** — usages: the routes that consume from the endpoint of the line and the
+  steps that send to it (direct:, seda:...), across the project; **Enter** goes there
 - **/** — search in source
 - **h** — highlight text
 - **n/N** — next/previous match
 - **w** — toggle word wrap
 - **p** — toggle plain mode (hides line numbers, borders, and file panel for easy copy/paste)
 - **Esc/c** — close source viewer
+
+## Live Run Data
+While the integration runs, a column after the line numbers shows what the
+processors on each line do: the exchanges they handled (`79`), how many failed
+(`✗10`, in red), and the mean time when it is 1 ms or more. The column keeps
+its width, so the code does not move as the numbers grow. The source reads as
+a heat map of the route: where messages go, where they fail.
 
 ## Edit Mode (Shortcuts)
 - **Ctrl+Z** — undo
@@ -35,9 +55,22 @@ explorer on the left and a source viewer on the right.
 - **Ctrl+K** — delete current line
 - **Ctrl+Left / Ctrl+Right** — word navigation
 - **Home** — smart home (content indent, then column 0)
-- Quick documentation panel is shown at the bottom (shows doc for current line)
+- Quick documentation panel is shown at the bottom (shows doc for current line;
+  in a simple expression, the function, header or operator the cursor is on;
+  in XML, the element or attribute the cursor is on)
 - **F7** — show diff of unsaved changes
 - **F9** — jump to next validation error
+- **Shift+F8** — ask the AI to fix the problem on the cursor line: the file is
+  saved as it is, and the AI panel opens with the question in its input (file,
+  line, problem); press Enter to send it, or change it first
+- **Shift+F9** — apply the fix of the problem on the cursor line, when the problem
+  says it (an option typo, an enum value a letter off, `to` that should be
+  `toD`, `${key}` where `{{key}}` is meant, a Simple function the error names
+  the right one of, such as `${bdy}` → `${body}`); the Error panel shows the fix
+- Java and XML DSL routes are checked as you type, like YAML routes: endpoint
+  options, simple expressions, and a `to` with `${...}` that should be a `toD`.
+  The problems are marked on their lines; an XML file with problems is not saved
+  (as YAML), a Java file is saved and the problems are said.
 
 ## Edit Mode (Tab Completion)
 Press **F4** to enter edit mode, then **Tab** for context-aware completion:
@@ -66,8 +99,53 @@ Press **F4** to enter edit mode, then **Tab** for context-aware completion:
 - Value completion shows enum choices, boolean values, and `{{placeholder}}`
   suggestions from your `.properties` files
 
+**Java and XML DSL routes:**
+- In the endpoint uri of `from`, `to`, `toD`, `wireTap`, `enrich`, `pollEnrich`
+  and `poll` (the string given to them in Java, their `uri` attribute in XML),
+  Tab completes the component name before the `:`, the endpoint options after
+  `?` or `&` (`&amp;` in XML; filtered by consumer/producer role, already given
+  ones left out), and the value of an option after `=`
+
+**Java DSL routes:**
+- After a dot in a route chain, Tab lists the methods that compile there: the
+  options of the EIP the chain is on first (`.split(body()).` offers
+  `parallelProcessing`, `streaming`...), then the EIPs, and the `end()`,
+  `endChoice()` or `endDoTry()` that closes the block you are in
+- The method is inserted with its parentheses, the cursor inside them when it
+  takes arguments; the documentation comes from the catalog
+- In an argument, the chain of the argument (`.filter(header("x").` offers
+  `isEqualTo`, `isNotNull`...); also the REST DSL (`rest("/api").get(..).`),
+  `restConfiguration()` and route templates
+- Light help for hand-written edits: routes in variables and the code of
+  lambdas are not completed; an AI coding agent helps with more: the F8 AI
+  panel, or any agent that speaks ACP
+
+**XML DSL routes:**
+- After `<`, or on an empty line, Tab lists the elements that go inside the
+  parent element (the EIPs of a route, `when` and `otherwise` in a `choice`,
+  the languages where an expression goes); the chosen one is inserted with its
+  required attributes and its end tag (`<to uri=""/>`, `<split></split>`)
+- In a start tag, Tab lists the element's attributes, the required ones first,
+  without the ones already given; in an attribute value, its values (enums,
+  `true`/`false`, `{{placeholders}}`)
+- The structure and documentation come from the XML schema of the catalog
+
+**Simple expressions (YAML, Java and XML routes):**
+- After `${`, Tab lists the functions of the simple language, with their
+  parameters and examples; the chosen one is inserted as it is written
+  (`${body}`, `${date:`, `${random(`)
+- After `${header.` (also `exchangeProperty.` and `variable.`), Tab lists the
+  names the file sets or reads, then the headers of the components it uses
+- After a function and a space, Tab lists the operators: comparisons and
+  `&&` `||` where the EIP takes a predicate (`when`, `filter`, `validate`,
+  `onWhen`...), chaining (`~>`) and the default value (`?:`) elsewhere
+- In the arguments of a function: the commands after `${date:` (`now`,
+  `exchangeCreated`, `header.`...) and date patterns after the next `:`, the
+  time zones of `date-with-timezone`, the project's beans after `${bean:`, the
+  keys of its `.properties` files after `${properties:`
+
 Use **Up/Down** to navigate, **Enter** to accept, **Esc** to dismiss, and
-type to filter the completion list.
+type to filter the completion list (an exact or prefix match comes first).
 
 ## Route Jump Links
 Lines with `to:`, `toD:`, `wireTap:`, or similar endpoints that reference
@@ -78,6 +156,11 @@ This works for YAML, XML and Java DSL routes, across all the folders of the
 project and files of different DSLs (build output and `src/test` are left out);
 Java routes are read without compiling them. The case and otherwise of a
 switch link like a `to`. Jump indicators are hidden in plain mode.
+
+A line that refers to a bean (`bean:name`, `.bean(MyBean.class)`, `ref: name`,
+`#class:com.foo.MyBean`...) shows a **↵ name** indicator when the project
+declares it (`@BindToRegistry`, `@Named`, `@Component`, `@Bean`, or the beans of
+a YAML or XML file); **Enter** goes to its declaration.
 
 ## Go to Route
 - **g** — open a filterable popup listing all routes of the project's source files.
@@ -100,17 +183,20 @@ switch link like a `to`. Jump indicators are hidden in plain mode.
 
 With `/write live` in the AI panel (`F8`), a change the AI makes is replayed
 here instead of shown as a diff: the AI panel hides, the file opens in edit
-mode and the change is typed hunk by hunk so you can follow it in context.
+mode and the change is typed hunk by hunk so you can follow it in context
+(a large change is typed faster, a few seconds at most).
 
 - **Enter** — continue with the next change
 - **any other key** — finish the current change at once
 - **F4** — edit yourself; the remaining changes wait
 - **F9** — continue the AI changes after editing yourself (a change whose
   surrounding lines you edited is skipped and reported to the AI)
-- **F8** — ask the AI about the current change: the AI panel opens with the
-  question prefilled ("About edit 2 of 3: ..."), the answer comes back in the
+- **F8** — ask the AI about the current change: a compact AI panel opens with
+  the question prefilled ("About edit 2 of 3: ..."), the answer comes back in the
   same turn, and closing the panel (`F8` or `Esc`) returns to the pause; if
   the AI revises the change it continues in the editor from where it is
 - **Esc** — stop; what was typed stays in the editor
 - then **Ctrl+S** / **F5** saves (this is the confirmation, dev mode reloads),
   **F7** shows the diff, **Esc** discards; the AI panel comes back afterwards
+- after five minutes without saving or discarding, the AI stops waiting; the
+  edit stays here and the AI is told what you did with it next time you ask

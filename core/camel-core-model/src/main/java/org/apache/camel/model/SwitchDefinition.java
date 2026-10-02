@@ -63,12 +63,13 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
     protected SwitchDefinition(SwitchDefinition source) {
         super(source);
         this.selector = source.selector != null ? source.selector.copyDefinition() : null;
-        setOtherwise(source.otherwise != null ? source.otherwise.copyDefinition() : null);
         for (SwitchCaseDefinition c : source.cases) {
             SwitchCaseDefinition copy = c.copyDefinition();
             copy.setParent(this);
             cases.add(copy);
         }
+        // copied after the cases, so the otherwise node keeps coming last in the processor index
+        setOtherwise(source.otherwise != null ? source.otherwise.copyDefinition() : null);
     }
 
     @Override

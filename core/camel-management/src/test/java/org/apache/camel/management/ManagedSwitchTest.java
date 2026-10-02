@@ -16,10 +16,15 @@
  */
 package org.apache.camel.management;
 
+import java.util.Collection;
+
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 
+import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.Model;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.processor.SendProcessor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
@@ -60,6 +65,62 @@ class ManagedSwitchTest extends ManagementTestSupport {
         assertEquals(0L, getMBeanServer().getAttribute(name, "UnmatchedCount"));
     }
 
+    @Test
+    void countsEveryCaseWithAGeneratedId() throws Exception {
+        // a Switch as YAML routes write it: no ids on the cases, so they are generated (CAMEL-25237); the route is
+        // one of those the context starts with (createRouteBuilder)
+        template.sendBodyAndHeader("direct:generated", "a", "specialist", "weather");
+        template.sendBodyAndHeader("direct:generated", "b", "specialist", "weather");
+        template.sendBodyAndHeader("direct:generated", "c", "specialist", "reservation");
+        template.sendBodyAndHeader("direct:generated", "d", "specialist", "cost");
+
+        // the ids the cases got: generated, as the route structure and the diagrams show them
+        SwitchDefinition sw = (SwitchDefinition) context.getCamelContextExtension()
+                .getContextPlugin(Model.class).getRouteDefinition("generatedRoute").getOutputs().get(0);
+        String reservation = sw.getCases().get(0).getId();
+        String weather = sw.getCases().get(1).getId();
+        assertNotNull(reservation);
+        assertNotNull(weather);
+        String all = getMBeanServer().queryNames(new ObjectName("org.apache.camel:type=processors,*"), null).toString();
+        assertEquals(1L, getMBeanServer().getAttribute(getCamelObjectName(TYPE_PROCESSOR, reservation), "ExchangesTotal"),
+                all);
+        assertEquals(2L, getMBeanServer().getAttribute(getCamelObjectName(TYPE_PROCESSOR, weather), "ExchangesTotal"));
+        assertEquals(1L, getMBeanServer().getAttribute(
+                getCamelObjectName(TYPE_PROCESSOR, sw.getId() + "-otherwise"), "ExchangesTotal"));
+        // the route lists them among its processors, as camel get processor and the dev consoles show them
+        assertEquals("generatedRoute",
+                getMBeanServer().getAttribute(getCamelObjectName(TYPE_PROCESSOR, weather), "RouteId"));
+        @SuppressWarnings("unchecked")
+        Collection<String> ids = (Collection<String>) getMBeanServer().invoke(
+                getCamelObjectName(DefaultManagementObjectNameStrategy.TYPE_ROUTE, "generatedRoute"), "processorIds", null,
+                null);
+        assertTrue(ids.contains(reservation) && ids.contains(weather), ids.toString());
+        // and are found by their id, as the dev consoles (camel get processor, route structure) look them up
+        ManagedCamelContext mcc = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        assertNotNull(mcc.getManagedProcessor(reservation), "the reservation case is a managed processor");
+        assertEquals(2L, mcc.getManagedProcessor(weather).getExchangesTotal());
+        assertNotNull(mcc.getManagedProcessor(sw.getId() + "-otherwise"));
+    }
+
+    @Test
+    void listsTheOtherwiseAfterTheCases() {
+        // the dev consoles (camel get processor) list the processors by their index: the cases in their order, then
+        // the otherwise
+        SwitchDefinition sw = (SwitchDefinition) context.getCamelContextExtension()
+                .getContextPlugin(Model.class).getRouteDefinition("generatedRoute").getOutputs().get(0);
+        ManagedCamelContext mcc = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        int reservation = mcc.getManagedProcessor(sw.getCases().get(0).getId()).getIndex();
+        int weather = mcc.getManagedProcessor(sw.getCases().get(1).getId()).getIndex();
+        int otherwise = mcc.getManagedProcessor(sw.getId() + "-otherwise").getIndex();
+        assertTrue(mcc.getManagedProcessor(sw.getId()).getIndex() < reservation);
+        assertTrue(reservation < weather, reservation + " < " + weather);
+        assertTrue(weather < otherwise, weather + " < " + otherwise);
+
+        // and so does a copy (route templates)
+        SwitchDefinition copy = sw.copyDefinition();
+        assertTrue(copy.getCases().get(1).getToDefinition().getIndex() < copy.getOtherwiseDefinition().getIndex());
+    }
+
     @ParameterizedTest
     @NullSource
     @ValueSource(booleans = { true, false })
@@ -95,6 +156,11 @@ class ManagedSwitchTest extends ManagementTestSupport {
                         .doSwitch(header("decision")).id("dispatch")
                         .doCase("billing").id("urgentCase").to("mock:urgent")
                         .otherwise("mock:review");
+                from("direct:generated").routeId("generatedRoute")
+                        .doSwitch(header("specialist"))
+                        .doCase("reservation", "mock:reservation")
+                        .doCase("weather", "mock:weather")
+                        .otherwise("mock:other");
             }
         };
     }

@@ -536,31 +536,12 @@ public class Run extends CamelCommand {
     }
 
     private int runBundledExample(JsonObject entry) throws Exception {
-        String eName = entry.getString("name");
         Path tempDir = ExampleHelper.extractBundledExample(entry);
-        List<String> exampleFiles = ExampleHelper.getFiles(entry);
-
-        printer().println("Running example: " + eName);
-        for (String f : exampleFiles) {
-            files.add(tempDir.resolve(f).toString());
-        }
-        if ("CamelJBang".equals(name)) {
-            name = eName;
-        }
-
-        // use the temp dir as base so run() loads the example's application.properties
-        exportBaseDir = tempDir;
-
-        if (!exportRun) {
-            printConfigurationValues("Running integration with the following configuration:");
-        }
-        return run();
+        return runExampleIn(entry, tempDir);
     }
 
     private int runGithubExample(JsonObject entry) throws Exception {
         String eName = entry.getString("name");
-        List<String> exampleFiles = ExampleHelper.getFiles(entry);
-
         printer().println("Fetching example from GitHub: " + eName);
         if (ExampleHelper.requiresDocker(entry)) {
             printer().println("Note: this example requires Docker/Podman");
@@ -574,21 +555,56 @@ public class Run extends CamelCommand {
             printer().printErr("This example requires an internet connection.");
             return 1;
         }
-
-        for (String f : exampleFiles) {
-            files.add(tempDir.resolve(f).toString());
-        }
-        if ("CamelJBang".equals(name)) {
-            name = eName;
-        }
-
-        exportBaseDir = tempDir;
-
-        if (!exportRun) {
-            printConfigurationValues("Running integration with the following configuration:");
-        }
-        return run();
+        return runExampleIn(entry, tempDir);
     }
+
+    /**
+     * Runs the example in its folder. A JVM cannot change its working directory, so the example runs in a JVM of its
+     * own started in that folder: its routes read and write files relative to it (file:orders, out/), wherever camel
+     * run is started (CAMEL-25236). Exporting and transforming do not run the routes, and stay in this JVM.
+     */
+    private int runExampleIn(JsonObject entry, Path dir) throws Exception {
+        String eName = entry.getString("name");
+        printer().println("Running example: " + eName);
+        if (exportRun || transformRun || spec == null) {
+            for (String f : ExampleHelper.getFiles(entry)) {
+                files.add(dir.resolve(f).toString());
+            }
+            if ("CamelJBang".equals(name)) {
+                name = ExampleHelper.getShortName(entry);
+            }
+            // use the folder as base so run() loads the example's application.properties
+            exportBaseDir = dir;
+            return run();
+        }
+
+        printer().println("Example folder: " + dir + " (the files it reads and writes are there)");
+        List<String> cmds = ExampleHelper.runArgs(spec.commandLine().getParseResult().originalArgs(), entry);
+        RunHelper.addCamelCLICommand(cmds);
+        if (verbose) {
+            printer().println(String.join(" ", cmds));
+        }
+        ProcessBuilder pb = new ProcessBuilder(cmds);
+        pb.directory(dir.toFile());
+        pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        Process p = pb.start();
+        this.spawnPid = p.pid();
+        // the example stops with this JVM (Ctrl+C reaches both, a kill of this one only this one)
+        Thread hook = new Thread(p::destroy, "CamelExampleStop");
+        Runtime.getRuntime().addShutdownHook(hook);
+        try {
+            return p.waitFor();
+        } finally {
+            try {
+                Runtime.getRuntime().removeShutdownHook(hook);
+            } catch (IllegalStateException e) {
+                // shutting down already
+            }
+        }
+    }
+
+    // the logback configuration of an existing Spring Boot project run, in a temp file
+    private Path springBootLogback;
 
     public Integer runExport() throws Exception {
         return runExport(false);
@@ -2433,9 +2449,33 @@ public class Run extends CamelCommand {
      * The JVM arguments ({@code spring-boot.run.jvmArguments}) an existing Spring Boot project is run with: logging to
      * file, the profile, the port and properties, the flight recording and {@code --jvm-args}.
      */
+    /**
+     * The logback configuration an existing Spring Boot project runs with, logging to file so the TUI can read the log:
+     * a temp file, so the project is not changed and needs no src/main/resources. Null when it cannot be written.
+     */
+    Path springBootLogbackConfig() {
+        if (springBootLogback == null) {
+            try (InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml")) {
+                if (is == null) {
+                    return null;
+                }
+                Path file = Files.createTempFile("camel-jbang-logback-", ".xml");
+                file.toFile().deleteOnExit();
+                Files.copy(is, file, StandardCopyOption.REPLACE_EXISTING);
+                springBootLogback = file;
+            } catch (IOException e) {
+                return null;
+            }
+        }
+        return springBootLogback;
+    }
+
     List<String> buildExistingSpringBootJvmArgs() {
         List<String> args = new ArrayList<>();
-        args.add("-Dlogging.config=classpath:logback-camel-jbang.xml");
+        Path logback = springBootLogbackConfig();
+        if (logback != null) {
+            args.add("-Dlogging.config=" + logback.toUri());
+        }
         if (profile != null && !"prod".equals(profile)) {
             args.add("-Dcamel.main.profile=" + profile);
         }
@@ -2487,14 +2527,6 @@ public class Run extends CamelCommand {
             w.write(fos, model);
         }
 
-        // copy logback config for logging to file (so TUI can read logs)
-        Path logbackPath = projectDir.resolve("src/main/resources/logback-camel-jbang.xml");
-        try (InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml")) {
-            if (is != null) {
-                Files.copy(is, logbackPath, StandardCopyOption.REPLACE_EXISTING);
-            }
-        }
-
         // shutdown hook to clean up temp files
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
@@ -2513,7 +2545,9 @@ public class Run extends CamelCommand {
                     }
                 }
                 Files.deleteIfExists(tempPom);
-                Files.deleteIfExists(logbackPath);
+                if (springBootLogback != null) {
+                    Files.deleteIfExists(springBootLogback);
+                }
             } catch (Exception e) {
                 // ignore
             }

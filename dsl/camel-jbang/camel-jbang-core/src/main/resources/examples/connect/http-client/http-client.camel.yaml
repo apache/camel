@@ -1,0 +1,117 @@
+# Before an order goes to picking, every line is checked against the stock
+# service over HTTP. The stock service runs in this same example, so there
+# is nothing else to start.
+- rest:
+    path: /stock
+    get:
+      - path: "/{sku}"
+        to:
+          uri: direct:one-sku
+
+- route:
+    id: stock-service
+    from:
+      uri: direct
+      parameters:
+        name: one-sku
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: resource:file:stock.json
+        - setBody:
+            expression:
+              jsonpath:
+                expression: "$[?(@.sku == '${header.sku}')]"
+                resultType: java.util.List
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body.size()} == 0"
+                steps:
+                  - setHeader:
+                      name: CamelHttpResponseCode
+                      expression:
+                        constant:
+                          expression: "404"
+                  - setBody:
+                      expression:
+                        simple:
+                          expression: '{"error": "unknown sku ${header.sku}"}'
+            otherwise:
+              steps:
+                - setBody:
+                    expression:
+                      simple:
+                        expression: "${body[0]}"
+                - marshal:
+                    json:
+                      library: Jackson
+        - setHeader:
+            name: Content-Type
+            expression:
+              constant:
+                expression: application/json
+
+- route:
+    id: check-stock
+    from:
+      uri: file
+      parameters:
+        directoryName: orders
+        noop: true
+        sortBy: "file:name"
+      steps:
+        - unmarshal:
+            json:
+              library: Jackson
+        # exchange properties stay in the route; headers would travel on the HTTP request
+        - setProperty:
+            name: orderId
+            expression:
+              simple:
+                expression: "${body[orderId]}"
+        - split:
+            expression:
+              simple:
+                expression: "${body[lines]}"
+            steps:
+              - setProperty:
+                  name: sku
+                  expression:
+                    simple:
+                      expression: "${body[sku]}"
+              - setProperty:
+                  name: needed
+                  expression:
+                    simple:
+                      expression: "${body[qty]}"
+              # a GET has no body, and the response replaces whatever the body was
+              - setBody:
+                  expression:
+                    simple:
+                      expression: "${null}"
+              - toD:
+                  uri: "http://localhost:8080/stock/${exchangeProperty.sku}?throwExceptionOnFailure=false"
+              - unmarshal:
+                  json:
+                    library: Jackson
+              - choice:
+                  when:
+                    - expression:
+                        simple:
+                          expression: "${header.CamelHttpResponseCode} != 200"
+                      steps:
+                        - log:
+                            message: "${exchangeProperty.orderId}: ${body[error]} (HTTP ${header.CamelHttpResponseCode})"
+                    - expression:
+                        simple:
+                          expression: "${body[qty]} >= ${exchangeProperty.needed}"
+                      steps:
+                        - log:
+                            message: "${exchangeProperty.orderId}: ${exchangeProperty.sku} x ${exchangeProperty.needed}, ${body[qty]} in stock, ok"
+                  otherwise:
+                    steps:
+                      - log:
+                          message: "${exchangeProperty.orderId}: ${exchangeProperty.sku} x ${exchangeProperty.needed}, only ${body[qty]} in stock, back-order"

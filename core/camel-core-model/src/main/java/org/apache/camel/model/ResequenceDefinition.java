@@ -147,7 +147,8 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
      * @return         the builder
      */
     public ResequenceDefinition timeout(long timeout) {
-        return timeout(Duration.ofMillis(timeout));
+        // the millis as given (not 2s0ms for 2000), so the model reads as the route was written
+        return timeout(String.valueOf(timeout));
     }
 
     /**

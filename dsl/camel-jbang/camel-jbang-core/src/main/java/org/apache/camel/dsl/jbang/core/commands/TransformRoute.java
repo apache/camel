@@ -35,12 +35,13 @@ import org.apache.camel.util.StopWatch;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "route", description = "Transform Camel routes to XML or YAML format", sortOptions = false,
+@Command(name = "route", description = "Transform Camel routes to XML, YAML or Java format", sortOptions = false,
          showDefaultValues = true,
          footer = {
                  "%nExamples:",
                  "  camel transform route hello.java --format=yaml",
-                 "  camel transform route hello.xml --format=yaml" })
+                 "  camel transform route hello.xml --format=yaml",
+                 "  camel transform route hello.camel.yaml --format=java" })
 public class TransformRoute extends CamelCommand {
 
     public static class FormatCompletionCandidates implements Iterable<String> {
@@ -50,7 +51,7 @@ public class TransformRoute extends CamelCommand {
 
         @Override
         public Iterator<String> iterator() {
-            return List.of("xml", "yaml").iterator();
+            return List.of("xml", "yaml", "java").iterator();
         }
     }
 
@@ -67,7 +68,8 @@ public class TransformRoute extends CamelCommand {
 
     @CommandLine.Option(names = { "--format" },
                         completionCandidates = FormatCompletionCandidates.class,
-                        description = "Output format (${COMPLETION-CANDIDATES}), if only yaml files are provided, the format defaults to xml and vice versa")
+                        description = "Output format (${COMPLETION-CANDIDATES}), if only yaml files are provided, the format defaults to xml and vice versa."
+                                      + " Java is converted without running the routes, one route builder class per file")
     String format;
 
     @CommandLine.Option(names = { "--resolve-placeholders" }, defaultValue = "false",
@@ -81,6 +83,11 @@ public class TransformRoute extends CamelCommand {
     @CommandLine.Option(names = { "--ignore-loading-error" },
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
+
+    @CommandLine.Option(names = { "--compile" }, defaultValue = "false",
+                        description = "Compile and run Java routes to transform them. By default Java routes are read "
+                                      + "without compiling them, and compiled only when a route cannot be read that way")
+    boolean compile;
 
     @CommandLine.Mixin
     MavenResolverMixin mavenResolver;
@@ -100,6 +107,10 @@ public class TransformRoute extends CamelCommand {
             }
         }
 
+        if ("java".equals(format)) {
+            return transformToJava();
+        }
+
         String dump = output;
         // if no output then we want to print to console, so we need to write to a hidden file, and dump that file afterwards
         if (output == null || "clipboard".equals(output)) {
@@ -107,6 +118,15 @@ public class TransformRoute extends CamelCommand {
         }
         Files.deleteIfExists(Path.of(dump));
         final String target = dump;
+
+        if (!compile && !resolvePlaceholders && TransformJavaRoutes.applies(files)) {
+            // Java routes read without compiling them: in milliseconds, and no code of the project runs
+            TransformJavaRoutes.Result result = TransformJavaRoutes.transform(files, format, target, uriAsParameters);
+            if (result.transformed()) {
+                return printDump(target);
+            }
+            // a route the parser cannot read completely (a lambda, a value known only at runtime): compile them all
+        }
 
         Run run = new Run(getMain()) {
             @Override
@@ -135,9 +155,48 @@ public class TransformRoute extends CamelCommand {
             return exit;
         }
 
+        return printDump(target);
+    }
+
+    /**
+     * To Java, each file is converted without running it (CAMEL-25254): read into the model by the parser of its DSL
+     * and written as a route builder class, printed, or written into the output directory (or file, for one file).
+     */
+    private Integer transformToJava() throws Exception {
+        StringBuilder all = new StringBuilder();
+        Path out = output != null && !"clipboard".equals(output) ? Path.of(output) : null;
+        boolean toDirectory = out != null && (Files.isDirectory(out) || files.size() > 1);
+        for (String f : files) {
+            RouteDslConverter.Result r = RouteDslConverter.convert(Path.of(f), "java");
+            if (!r.converted()) {
+                printer().printErr(r.refused());
+                return 1;
+            }
+            // what did not carry over goes at the top of the class, as the TUI writes it
+            String java = RouteDslConverter.withNotes(r.content(), r.notes(), "java");
+            if (out == null) {
+                all.append(java).append('\n');
+            } else if (toDirectory) {
+                Files.createDirectories(out);
+                Files.writeString(out.resolve(r.fileName()), java);
+            } else {
+                Files.writeString(out, java);
+            }
+        }
+        if (out == null) {
+            if ("clipboard".equals(output)) {
+                StringSelection data = new StringSelection(all.toString());
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(data, data);
+            }
+            printer().println(all.toString().stripTrailing());
+        }
+        return 0;
+    }
+
+    private Integer printDump(String target) {
         if (output == null || "clipboard".equals(output)) {
             // load target file and print to console
-            dump = waitForDumpFile(Path.of(target));
+            String dump = waitForDumpFile(Path.of(target));
             if (dump != null) {
                 if ("clipboard".equals(output)) {
                     Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -155,14 +214,13 @@ public class TransformRoute extends CamelCommand {
         StopWatch watch = new StopWatch();
         while (watch.taken() < 5000) {
             try {
-                // give time for response to be ready
-                Thread.sleep(100);
-
                 if (Files.exists(dumpFile)) {
                     try (InputStream is = Files.newInputStream(dumpFile)) {
                         return IOHelper.loadText(is);
                     }
                 }
+                // give time for response to be ready
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (Exception e) {

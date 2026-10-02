@@ -152,8 +152,15 @@ public class UndertowProducer extends DefaultAsyncProducer {
                     camelExchange, callback, getEndpoint(),
                     request, (InputStream) body);
         } else {
-            final TypeConverter tc = endpoint.getCamelContext().getTypeConverter();
-            final ByteBuffer bodyAsByte = tc.tryConvertTo(ByteBuffer.class, body);
+            ByteBuffer bodyAsByte = null;
+            if (body instanceof String text) {
+                // write the text in the charset that the request Content-Type declares, if any
+                bodyAsByte = UndertowHelper.toByteBuffer(text, requestHeaders.getFirst(Headers.CONTENT_TYPE));
+            }
+            if (bodyAsByte == null) {
+                final TypeConverter tc = endpoint.getCamelContext().getTypeConverter();
+                bodyAsByte = tc.tryConvertTo(ByteBuffer.class, body);
+            }
 
             // As tryConvertTo is used to convert the body, we should do null check
             // or the call bodyAsByte.remaining() may throw an NPE

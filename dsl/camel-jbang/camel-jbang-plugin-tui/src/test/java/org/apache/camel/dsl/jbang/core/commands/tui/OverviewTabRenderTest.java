@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -302,6 +303,36 @@ class OverviewTabRenderTest {
         assertTrue(rendered.contains("Dev/Infra Services"), "Should show infra panel title");
         assertTrue(rendered.contains("kafka"), "Should show infra service alias");
         assertTrue(rendered.contains("SERVICE"), "Infra panel should have SERVICE header");
+    }
+
+    @Test
+    void theIntegrationsKeepTheirRowsWhenTheInfraAndChartPanelsDoNotFit() {
+        List<IntegrationInfo> infos = new ArrayList<>();
+        for (String name : List.of("orders", "billing", "shipping")) {
+            IntegrationInfo i = new IntegrationInfo();
+            i.pid = String.valueOf(1000 + infos.size());
+            i.name = name;
+            i.state = 5;
+            infos.add(i);
+        }
+        InfraInfo infra = new InfraInfo();
+        infra.pid = "9999";
+        infra.alias = "kafka";
+        infra.alive = true;
+        MonitorContext ctx2 = new MonitorContext(new AtomicReference<>(infos), new AtomicReference<>(List.of(infra)));
+        ctx2.selectedPid = "1000";
+        MetricsCollector metrics = new MetricsCollector();
+        metrics.getThroughputHistory().put("1000", new LinkedList<>(List.of(1L, 2L, 3L)));
+
+        OverviewTab tab = new OverviewTab(ctx2, metrics, new HashSet<>(), () -> {
+        });
+        // a short content area: what is left of a 34-row terminal with the log pinned
+        String rendered = TuiTestHelper.renderToString(tab, 150, 22);
+
+        assertTrue(rendered.contains("orders"), rendered);
+        assertTrue(rendered.contains("billing"), rendered);
+        assertTrue(rendered.contains("shipping"), rendered);
+        assertTrue(rendered.contains("kafka"), rendered);
     }
 
     @Test

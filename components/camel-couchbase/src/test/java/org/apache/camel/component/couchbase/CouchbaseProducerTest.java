@@ -140,4 +140,17 @@ public class CouchbaseProducerTest {
 
         verify(collection).upsert(anyString(), any(), options.capture());
     }
+
+    /**
+     * PersistTo.TWO exists in the SDK and 2 sits inside the range the failure message advertises, but it was the one
+     * value in 0..4 the switch did not map.
+     */
+    @Test
+    void everyPersistToValueInTheAdvertisedRangeIsAccepted() {
+        for (int persistTo = 0; persistTo <= 4; persistTo++) {
+            int value = persistTo;
+            assertDoesNotThrow(() -> new CouchbaseProducer(endpoint, client, value, 0),
+                    "persistTo=" + value + " is within the documented range and should be accepted");
+        }
+    }
 }

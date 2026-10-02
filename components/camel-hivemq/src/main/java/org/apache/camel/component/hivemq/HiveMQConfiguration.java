@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hivemq;
 
+import com.hivemq.client.mqtt.MqttVersion;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
@@ -30,6 +31,12 @@ public class HiveMQConfiguration implements Cloneable {
      */
     @UriParam(defaultValue = HiveMQConstants.DEFAULT_HOST)
     private String host = HiveMQConstants.DEFAULT_HOST;
+
+    /**
+     * The MQTT protocol version to use when connecting to the broker.
+     */
+    @UriParam(defaultValue = "MQTT_5_0")
+    private MqttVersion mqttVersion = MqttVersion.MQTT_5_0;
 
     /**
      * Port number of the HiveMQ MQTT broker.
@@ -56,7 +63,10 @@ public class HiveMQConfiguration implements Cloneable {
     private boolean retained;
 
     /**
-     * Whether to initiate a clean start (MQTT 5) upon connecting to the broker.
+     * Whether to initiate a clean session upon connecting to the broker (called "clean session" in MQTT 3.1.1 and
+     * "clean start" in MQTT 5). The two protocol versions behave differently when this is false: with MQTT 3.1.1 the
+     * broker keeps the session (subscriptions and queued QoS 1/2 messages) indefinitely, while with MQTT 5 the session
+     * still expires on disconnect, since this component does not set a session expiry interval.
      */
     @UriParam(defaultValue = "true")
     private boolean cleanStart = true;
@@ -87,6 +97,14 @@ public class HiveMQConfiguration implements Cloneable {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public MqttVersion getMqttVersion() {
+        return mqttVersion;
+    }
+
+    public void setMqttVersion(MqttVersion mqttVersion) {
+        this.mqttVersion = mqttVersion;
     }
 
     public int getPort() {

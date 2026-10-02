@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -295,6 +296,7 @@ final class StatusParser {
                         ProcessorInfo pi = new ProcessorInfo();
                         pi.id = pj.getString("id");
                         pi.processor = pj.getString("processor");
+                        pi.source = pj.getString("source");
                         pi.level = pj.getIntegerOrDefault("level", 0);
 
                         Map<String, ?> ps = pj.getMap("statistics");
@@ -361,10 +363,29 @@ final class StatusParser {
                             hc.message = details.getString("failure.error.message");
                         }
                     }
-                    info.healthChecks.add(hc);
+                    addHealthCheck(info.healthChecks, hc);
                 }
             }
         }
+    }
+
+    /**
+     * A check that runs for both readiness and liveness (context) is reported once per kind: one row for it, with the
+     * worse state.
+     */
+    static void addHealthCheck(List<HealthCheckInfo> checks, HealthCheckInfo hc) {
+        for (HealthCheckInfo known : checks) {
+            if (Objects.equals(known.group, hc.group) && Objects.equals(known.name, hc.name)) {
+                known.readiness |= hc.readiness;
+                known.liveness |= hc.liveness;
+                if (!"DOWN".equals(known.state) && hc.state != null && !"UP".equals(hc.state)) {
+                    known.state = hc.state;
+                    known.message = hc.message != null ? hc.message : known.message;
+                }
+                return;
+            }
+        }
+        checks.add(hc);
     }
 
     /**
@@ -1099,6 +1120,22 @@ final class StatusParser {
         return entry;
     }
 
+    /**
+     * The body as the app sent it: Camel JSON-escapes the body value of a message dump (MessageHelper), so a JSON body
+     * arrives as {\"orderId\":...}. Unescaped once here, so every view and tool shows the real body.
+     */
+    static String bodyText(Object value) {
+        if (value == null) {
+            return null;
+        }
+        String text = value.toString();
+        try {
+            return Jsoner.unescape(text);
+        } catch (Exception e) {
+            return text;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     static MessageData parseMessage(JsonObject message) {
         Map<String, Object> headers = null;
@@ -1131,8 +1168,7 @@ final class StatusParser {
 
         Object bodyObj = message.get("body");
         if (bodyObj instanceof JsonObject bodyJson) {
-            Object val = bodyJson.get("value");
-            body = val != null ? val.toString() : null;
+            body = bodyText(bodyJson.get("value"));
             bodyType = TuiHelper.shortTypeName(bodyJson.getString("type"));
             if (bodyJson.get("size") instanceof Number n) {
                 bodySize = n.longValue();
@@ -1450,7 +1486,7 @@ final class StatusParser {
             if (msg != null) {
                 Object bodyObj = msg.get("body");
                 if (bodyObj instanceof JsonObject bodyJson) {
-                    ei.body = bodyJson.getString("value");
+                    ei.body = bodyText(bodyJson.get("value"));
                     ei.bodyType = TuiHelper.shortTypeName(bodyJson.getString("type"));
                     if (bodyJson.get("size") instanceof Number n) {
                         ei.bodySize = n.longValue();

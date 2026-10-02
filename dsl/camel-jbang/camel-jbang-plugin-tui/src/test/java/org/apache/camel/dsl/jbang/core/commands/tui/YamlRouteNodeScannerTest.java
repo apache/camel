@@ -211,6 +211,91 @@ class YamlRouteNodeScannerTest {
                 .hasSize(2);
     }
 
+    /** Each processor as indent type[label] @line (from 1). */
+    private static List<String> describe(List<YamlRouteNodeScanner.NodeEntry> entries) {
+        return entries.stream()
+                .filter(e -> e.kind() == YamlRouteNodeScanner.EntryKind.PROCESSOR)
+                .map(e -> e.indent() + " " + e.type() + "[" + e.label() + "] @" + (e.lineIndex() + 1))
+                .toList();
+    }
+
+    @Test
+    void theWhenAndOtherwiseOfAChoiceAreNodes() {
+        String yaml = String.join("\n",
+                "- route:",
+                "    id: shipping",
+                "    from:",
+                "      uri: seda:shipping",
+                "      steps:",
+                "        - choice:",
+                "            when:",
+                "              - expression:",
+                "                  simple:",
+                "                    expression: \"${body} > 6\"",
+                "                steps:",
+                "                  - setHeader:",
+                "                      name: carrier",
+                "              - simple: \"${body} > 3\"",
+                "                steps:",
+                "                  - log:",
+                "                      message: medium",
+                "            otherwise:",
+                "              steps:",
+                "                - setHeader:",
+                "                    name: carrier",
+                "        - log:",
+                "            message: shipped",
+                "");
+
+        List<YamlRouteNodeScanner.NodeEntry> entries = YamlRouteNodeScanner.scanLines(List.of(yaml.split("\n")), "f");
+
+        // when and otherwise are siblings under the choice, with their steps under them
+        assertThat(describe(entries)).containsExactly(
+                "2 choice[] @6",
+                "4 when[simple{${body} > 6}] @8",
+                "7 setHeader[carrier] @12",
+                "4 when[simple{${body} > 3}] @14",
+                "7 log[medium] @16",
+                "4 otherwise[] @18",
+                "6 setHeader[carrier] @20",
+                "2 log[shipped] @22");
+    }
+
+    @Test
+    void aChoiceInAWhenKeepsTheOuterWhens() {
+        String yaml = String.join("\n",
+                "- route:",
+                "    from:",
+                "      uri: direct:start",
+                "      steps:",
+                "        - choice:",
+                "            when:",
+                "              - simple: \"${body} > 6\"",
+                "                steps:",
+                "                  - choice:",
+                "                      when:",
+                "                        - simple: \"${body} > 8\"",
+                "                          steps:",
+                "                            - to:",
+                "                                uri: direct:big",
+                "              - simple: \"${body} > 3\"",
+                "                steps:",
+                "                  - to:",
+                "                      uri: direct:medium",
+                "");
+
+        List<YamlRouteNodeScanner.NodeEntry> entries = YamlRouteNodeScanner.scanLines(List.of(yaml.split("\n")), "f");
+
+        assertThat(describe(entries)).containsExactly(
+                "2 choice[] @5",
+                "4 when[simple{${body} > 6}] @7",
+                "7 choice[] @9",
+                "9 when[simple{${body} > 8}] @11",
+                "12 to[direct:big] @14",
+                "4 when[simple{${body} > 3}] @15",
+                "7 to[direct:medium] @18");
+    }
+
     @Test
     void scanEmptyFileReturnsEmptyList() throws IOException {
         Path file = tempDir.resolve("empty.camel.yaml");

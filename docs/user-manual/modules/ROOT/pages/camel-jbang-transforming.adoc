@@ -427,7 +427,7 @@ Use `--predicate` to evaluate as a boolean predicate instead of a value expressi
 
 == Transforming route DSL format
 
-The `camel transform route` command converts between YAML and XML DSL formats —
+The `camel transform route` command converts between the YAML, XML and Java DSL formats —
 useful when working with graphical editors or code generators that target a specific DSL.
 
 For example, given this YAML route (`route.yaml`):
@@ -495,3 +495,37 @@ Output:
 ----
 
 TIP: When all input files share the same extension (e.g., `.yaml`), the target format defaults to the other DSL (XML) and vice versa.
+
+=== Transforming Java routes
+
+Java DSL routes are transformed to YAML or XML the same way:
+
+[source,bash]
+----
+camel transform route --format=yaml src/main/java/com/acme/OrderRoute.java
+----
+
+The Java sources are read without compiling or running them: the routes are read into the model by the Java DSL
+parser, with the constants of the other classes in the same folder, `String.format` and the Endpoint DSL resolved, and
+written as a running Camel would dump them. This takes a fraction of a second, and no code of the project runs.
+
+When a route cannot be read completely that way, for example a processor written as a lambda or a value only known
+at runtime, the routes are compiled and started to dump them, which takes a few seconds and may download dependencies.
+The same happens with `--resolve-placeholders`. Use `--compile` to always compile and start the routes.
+
+=== Transforming to Java
+
+YAML and XML routes are transformed to the Java DSL with `--format=java`, one route builder class per file, named
+after it (`orders.camel.yaml` becomes `Orders.java`):
+
+[source,bash]
+----
+camel transform route --format=java orders.camel.yaml
+----
+
+Nothing runs: the file is read into the model without running it (the beans of a YAML file are read as definitions
+and not created), written as Java, and read back to check the Java has the same routes. What does not carry over is
+printed as a note: the comments, the beans (which Java declares in code, such as with `@BindToRegistry`), and anything
+the Java DSL writer does not write, named by the first difference found. A file that cannot be converted without
+losing part of it is refused with the reason, for example a Java route with a processor written as a lambda, or a
+predicate built in Java (`header("x").isEqualTo("y")`) which YAML and XML cannot express.

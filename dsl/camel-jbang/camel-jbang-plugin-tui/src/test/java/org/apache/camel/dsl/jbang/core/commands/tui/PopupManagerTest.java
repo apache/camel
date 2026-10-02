@@ -179,6 +179,29 @@ class PopupManagerTest {
     }
 
     @Test
+    void confirmWithASecondChoice() {
+        // quitting while integrations started from the TUI run: quit, or stop them and quit
+        List<String> ran = new ArrayList<>();
+        popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", "1 integration started here keeps running",
+                () -> ran.add("quit"), 's', "stop it and quit", () -> ran.add("stop"));
+        assertEquals("s stop it and quit", popupManager.confirmExtraHint());
+
+        popupManager.handleKeyEvent(KeyEvent.ofChar('x'), 0, 2);
+        assertTrue(popupManager.isConfirmVisible());
+        popupManager.handleKeyEvent(KeyEvent.ofChar('s'), 0, 2);
+        assertEquals(List.of("stop"), ran);
+        assertFalse(popupManager.isConfirmVisible());
+
+        // a plain confirm after it has no second choice left over
+        popupManager.showConfirm("Confirm Quit", " Quit? ", () -> ran.add("plain"));
+        assertEquals(null, popupManager.confirmExtraHint());
+        popupManager.handleKeyEvent(KeyEvent.ofChar('s'), 0, 2);
+        assertEquals(List.of("stop"), ran);
+        popupManager.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE), 0, 2);
+        assertEquals(List.of("stop", "plain"), ran);
+    }
+
+    @Test
     void killConfirmIgnoresOtherKeysAndCancelsOnEscape() {
         popupManager.showKillConfirm();
 

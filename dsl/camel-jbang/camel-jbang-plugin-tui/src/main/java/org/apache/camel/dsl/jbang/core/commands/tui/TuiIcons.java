@@ -62,6 +62,7 @@ final class TuiIcons {
     // memo (📝) reads as "edit"; the letters glyph reads as changing the name
     static final String RENAME = "🔤";
     static final String DUPLICATE = "📑";
+    static final String CONVERT = "🔀";
     static final String DELETE = "🗑️";
 
     // ---- Actions menu ----

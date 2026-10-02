@@ -29,11 +29,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -193,12 +195,19 @@ public class CamelMonitor extends CamelCommand {
     private final EditReplay editReplay = new EditReplay();
     // a live write waiting to start on the UI thread, and the promise its tool thread waits on
     private volatile McpFacade.FileWrite pendingReplay;
+    /** The files AI tools wrote, for the source viewer to show again on the UI thread. */
+    private final Queue<Path> writtenFiles = new ConcurrentLinkedQueue<>();
     private volatile CompletableFuture<McpFacade.ReplayOutcome> pendingReplayOutcome;
     // both are read by the tool thread to decide whether a write can be replayed
     private volatile McpFacade.FileWrite activeReplay;
     private EditReplay.Editor activeReplayEditor;
     // null while the replay is parked: the tool call returned early with the user's question about the edit
     private volatile CompletableFuture<McpFacade.ReplayOutcome> activeReplayOutcome;
+    /**
+     * How long a live edit's tool call waits for the user to save or discard; after that the AI's turn goes on and the
+     * edit stays parked in the editor.
+     */
+    static final long REPLAY_WAIT_MINUTES = 5;
     private volatile String pendingEditQuestion;
     // the AI panel overlays the editor, so it is hidden while an edit is replayed and shown again afterwards
     private boolean replayHidAiPanel;
@@ -220,6 +229,8 @@ public class CamelMonitor extends CamelCommand {
     private String lastTabDivider;
     // Panel resize drag state
     private final DragSplit panelSplit = new DragSplit();
+    /** The views and view settings of the active tab, on the first row of its content. */
+    private final SubViewBar subViewBar = new SubViewBar();
     // Footer key-binding hit-testing: each clickable hint records its [startX, endX) column range on
     // the footer row and the KeyEvent to synthesize when clicked.
     private int footerRowY = -1;
@@ -496,6 +507,13 @@ public class CamelMonitor extends CamelCommand {
         ctx.notificationCallback = (msg, error) -> setNotification(msg, error);
         ctx.openMarkdownCallback = actionsPopup::openMarkdown;
         ctx.openMarkdownAtCallback = actionsPopup::openMarkdownAt;
+        ctx.askAiCallback = (file, line, problem, lineText) -> {
+            if (shellPanel.isOpen()) {
+                shellPanel.close();
+            }
+            Path dir = mcpFacade != null ? mcpFacade.getSelectedSourceDirectory() : null;
+            aiPanel.openWithQuestion(AiFixPrompt.of(dir, file, line, problem, lineText));
+        };
         ctx.projectOverviewCallback = () -> {
             if (shellPanel.isOpen()) {
                 shellPanel.close();
@@ -522,7 +540,21 @@ public class CamelMonitor extends CamelCommand {
      */
     void quitTui(boolean confirm) {
         if (confirm && ctx.confirmActions) {
-            popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", () -> runner.quit());
+            LaunchManager launches = actionsPopup.getLaunchManager();
+            long running = launches.runningLaunchCount();
+            if (running > 0) {
+                // what was started from here keeps running when the TUI quits: say so, and offer to stop it
+                String what = running == 1
+                        ? "1 integration started here keeps running"
+                        : running + " integrations started here keep running";
+                popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", what, () -> runner.quit(),
+                        's', running == 1 ? "stop it and quit" : "stop them and quit", () -> {
+                            launches.stopLaunched();
+                            runner.quit();
+                        });
+            } else {
+                popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", () -> runner.quit());
+            }
         } else {
             runner.quit();
         }
@@ -795,8 +827,20 @@ public class CamelMonitor extends CamelCommand {
                         pendingReplayOutcome = outcome;
                         pendingReplay = request;
                         try {
-                            // the user decides when this ends (save or discard); give up after a long while
-                            return outcome.get(30, TimeUnit.MINUTES);
+                            // the user decides when this ends (save or discard)
+                            return outcome.get(REPLAY_WAIT_MINUTES, TimeUnit.MINUTES);
+                        } catch (TimeoutException e) {
+                            if (pendingReplay == request) {
+                                // never started in the editor: nothing was replayed, nothing is pending
+                                pendingReplay = null;
+                                pendingReplayOutcome = null;
+                                return new McpFacade.ReplayOutcome(false, 0, List.of(), null);
+                            }
+                            // the user has not decided for a long while: the AI's turn goes on without it; the edit
+                            // stays parked in the editor and the AI is told what became of it with the next question.
+                            // complete() is atomic: a save at the same moment wins
+                            McpFacade.ReplayOutcome undecided = McpFacade.ReplayOutcome.undecidedOutcome();
+                            return outcome.complete(undecided) ? undecided : outcome.join();
                         } catch (Exception e) {
                             pendingReplay = null;
                             editReplay.abort();
@@ -811,6 +855,11 @@ public class CamelMonitor extends CamelCommand {
                     public String parkedReplayFile() {
                         McpFacade.FileWrite parked = activeReplay;
                         return parked != null && activeReplayOutcome == null ? parked.file() : null;
+                    }
+
+                    @Override
+                    public void fileWritten(Path file) {
+                        writtenFiles.add(file);
                     }
 
                     @Override
@@ -862,6 +911,10 @@ public class CamelMonitor extends CamelCommand {
         }
         if (activeReplay == null) {
             return;
+        }
+        if (activeReplayOutcome != null && activeReplayOutcome.isDone()) {
+            // the tool call stopped waiting (the user took long to decide): the replay is parked
+            activeReplayOutcome = null;
         }
         String question = pendingEditQuestion;
         if (question != null) {
@@ -1279,6 +1332,14 @@ public class CamelMonitor extends CamelCommand {
                 if (aiPanel.handleKeyEvent(ke)) {
                     return true;
                 }
+                if (editReplay.isAsking() && !ke.isCtrlC()) {
+                    // asking about a paused live edit: the keys the panel does not take stay away from the editor
+                    // beneath (its Esc would discard the edit); Esc and F8 go back to the edit
+                    if (ke.isCancel() || ke.isKey(KeyCode.F8)) {
+                        aiPanel.close();
+                    }
+                    return true;
+                }
             }
             if (handleGlobalKeys(ke, runner)) {
                 return true;
@@ -1453,7 +1514,8 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
-        if (ke.isKey(KeyCode.F8)) {
+        if (ke.isKey(KeyCode.F8) && !ke.hasShift()) {
+            // Shift+F8 is the Source editor's: fix the problem of the line with AI
             if (aiPanel.isOpen()) {
                 aiPanel.close();
             } else {
@@ -1646,6 +1708,23 @@ public class CamelMonitor extends CamelCommand {
 
         // Footer key-binding clicks: a click on a hint fires the matching key
         if (me.isClick() && handleFooterClick(me, runner)) {
+            return true;
+        }
+
+        // The view bar of the tab: a click on a view goes there, a click on a view setting presses its key
+        if (subViewBar.isOnRow(me.y()) && TuiHelper.contains(lastContentArea, me.x(), me.y())
+                && !popupManager.isMorePopupVisible() && !popupManager.isSwitchPopupVisible()) {
+            if (me.isClick()) {
+                SubViewBar.View view = subViewBar.viewAt(me.x(), me.y());
+                if (view != null) {
+                    view.select().run();
+                    return true;
+                }
+                KeyEvent key = footerKeyEvent(subViewBar.keyAt(me.x(), me.y()));
+                if (key != null) {
+                    return handleEvent(key, runner);
+                }
+            }
             return true;
         }
 
@@ -1867,11 +1946,21 @@ public class CamelMonitor extends CamelCommand {
         drawOverlay.tick(now);
         captionOverlay.tick(now);
         tickEditReplay(now);
+        for (Path written = writtenFiles.poll(); written != null; written = writtenFiles.poll()) {
+            tabRegistry.sourceTab().reloadIfShowing(written);
+        }
         recordingManager.tickRecentKeys(now);
         boolean anyDiagramShowing = tabRegistry.routesTab().isShowDiagram()
                 || tabRegistry.diagramTab().isShowDiagram();
         long interval = anyDiagramShowing ? Math.max(refreshInterval, 1000) : refreshInterval;
-        boolean dataRefreshed = false;
+        // the selection changed without a key or click (an integration started, stopped or was auto-selected):
+        // every tab is told, as it is when the user switches
+        boolean selectionChanged = !Objects.equals(ctx.selectedPid, notifiedSelectedPid);
+        if (selectionChanged) {
+            resetIntegrationTabState();
+        }
+        // the background refresh brought new data: draw it now, not at the next refresh
+        boolean dataRefreshed = dataService.takeFreshData() || selectionChanged;
         if (now - dataService.lastRefresh() >= interval) {
             dataService.refresh(runner, this::refreshLogData, this::refreshConditionalData);
             tabRegistry.routesTab().refreshDiagramIfNeeded();
@@ -1916,8 +2005,12 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void resetIntegrationTabState() {
+        notifiedSelectedPid = ctx.selectedPid;
         tabRegistry.resetIntegrationTabState(dataService, filesBrowser);
     }
+
+    // the selected integration the tabs were last told about
+    private String notifiedSelectedPid;
 
     // ---- Rendering ----
 
@@ -1972,7 +2065,7 @@ public class CamelMonitor extends CamelCommand {
             renderSidePanel(frame, contentArea, shellPanel.panelHeight(), shellPanel::render);
         } else if (aiPanel.isOpen()) {
             aiPanel.initHeight(contentArea.height());
-            renderSidePanel(frame, contentArea, aiPanel.panelHeight(), aiPanel::render);
+            renderSidePanel(frame, contentArea, aiPanel.panelHeight(contentArea.height()), aiPanel::render);
         } else if (logPinned && tabRegistry.selectedTabIndex() != TAB_LOG) {
             logPinAnim.initHeight(contentArea.height());
             int ph = logPinAnim.panelHeight();
@@ -2265,6 +2358,14 @@ public class CamelMonitor extends CamelCommand {
         frame.buffer().clear(area);
         MonitorTab tab = tabRegistry.activeTab();
         if (tab != null) {
+            SubViewBar.Spec spec = tab.subViewBar();
+            if (spec != null && area.height() > 3) {
+                List<Rect> rows = Layout.vertical().constraints(Constraint.length(1), Constraint.fill()).split(area);
+                subViewBar.render(frame, rows.get(0), spec);
+                area = rows.get(1);
+            } else {
+                subViewBar.clear();
+            }
             tab.render(frame, area);
         }
     }
@@ -2727,6 +2828,10 @@ public class CamelMonitor extends CamelCommand {
             filesBrowser.renderFooter(spans);
         } else if (popupManager.isKillConfirmVisible() || popupManager.isConfirmVisible()) {
             hint(spans, "Enter", "confirm");
+            String extra = popupManager.isConfirmVisible() ? popupManager.confirmExtraHint() : null;
+            if (extra != null) {
+                hint(spans, extra.substring(0, 1), extra.substring(2));
+            }
             hintLast(spans, "Esc", "cancel");
         } else if (popupManager.isSwitchPopupVisible()) {
             hint(spans, "Enter", "switch");

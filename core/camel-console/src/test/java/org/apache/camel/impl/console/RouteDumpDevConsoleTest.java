@@ -16,12 +16,16 @@
  */
 package org.apache.camel.impl.console;
 
+import java.io.StringReader;
+import java.util.List;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -62,5 +66,45 @@ public class RouteDumpDevConsoleTest extends ContextTestSupport {
 
         JsonArray routes = out.getCollection("routes");
         Assertions.assertNotNull(routes);
+    }
+
+    @Test
+    public void testYamlSourceLocationOfAListItem() {
+        // the source location of a when comes first in its list item: dropping it must keep the dash
+        String yaml = """
+                - route:
+                    from:
+                      sourceLineNumber: 7
+                      sourceLocation: OrderRoute.java
+                      uri: timer:orders
+                      steps:
+                        - choice:
+                            sourceLineNumber: 13
+                            sourceLocation: OrderRoute.java
+                            when:
+                              - sourceLineNumber: 14
+                                sourceLocation: OrderRoute.java
+                                expression:
+                                  simple:
+                                    expression: "${body} == 9"
+                                steps:
+                                  - throwException:
+                                      sourceLineNumber: 15
+                                      sourceLocation: OrderRoute.java
+                """;
+        List<RouteDumpDevConsole.CodeLine> code = RouteDumpDevConsole.javaOrYamlLoadSourceAsJson(new StringReader(yaml));
+        List<String> lines = code.stream().map(c -> c.line() + " " + Jsoner.unescape(c.code())).toList();
+        Assertions.assertEquals(List.of(
+                "-1 - route:",
+                "7     from:",
+                "-1       uri: timer:orders",
+                "-1       steps:",
+                "13         - choice:",
+                "-1             when:",
+                "14               - expression:",
+                "-1                   simple:",
+                "-1                     expression: \"${body} == 9\"",
+                "-1                 steps:",
+                "15                   - throwException:"), lines);
     }
 }

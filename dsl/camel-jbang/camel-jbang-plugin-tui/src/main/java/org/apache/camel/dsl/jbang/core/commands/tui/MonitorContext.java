@@ -77,6 +77,8 @@ class MonitorContext {
 
     /** Starts the AI project overview (CAMEL-25143) in the AI panel, which opens to show how it goes. */
     Runnable projectOverviewCallback;
+    /** Opens the AI panel with a question in its input (the fix of a problem of the Source editor, Shift+F8). */
+    AskAi askAiCallback;
     OpenOptionsCallback openOptionsCallback;
     OpenOptionsCallback openCatalogDocCallback;
 
@@ -148,7 +150,14 @@ class MonitorContext {
         info.pid = "phantom-" + phantomCounter.incrementAndGet();
         info.state = 9;
         phantomIntegrations.add(info);
+        Runnable opened = onProjectOpened;
+        if (opened != null) {
+            opened.run();
+        }
     }
+
+    // called when a project is opened, so what was shown of an earlier run of it (its failure log) is put away
+    volatile Runnable onProjectOpened;
 
     void removePhantom(String pid) {
         phantomIntegrations.removeIf(i -> pid.equals(i.pid));
@@ -200,4 +209,9 @@ class MonitorContext {
         return CommandLineHelper.getCamelDir().resolve(pid + "-trace.json");
     }
 
+    /** Asks the AI to fix a problem of a source file. */
+    @FunctionalInterface
+    interface AskAi {
+        void fixProblem(Path file, int line, String problem, String lineText);
+    }
 }

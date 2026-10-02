@@ -293,12 +293,12 @@
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - doTry:\n            steps:\n              - process:\n                  ref: processorFail\n              - to:\n                  uri: mock:result\n              - doCatch:\n                  exception:\n                    - java.io.IOException\n                    - java.lang.IllegalStateException\n                  steps:\n                    - to:\n                        uri: mock:catch\n              - doFinally:\n                  steps:\n                    - to:\n                        uri: mock:finally\n"
     },
     {
-      "source": "doTry-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - doTry:\n            steps:\n              - process:\n                  ref: processorFail\n              - to:\n                  uri: mock:result\n              - doCatch:\n                  exception:\n                    - java.io.IOException\n                    - java.lang.IllegalStateException\n                  onWhen:\n                    expression:\n                      simple:\n                        expression: \"${exception.message} contains 'Damn'\"\n                  steps:\n                    - to:\n                        uri: mock:catch\n              - doCatch:\n                  exception:\n                    - org.apache.camel.CamelExchangeException\n                  steps:\n                    - to:\n                        uri: mock:catchCamel\n              - doFinally:\n                  steps:\n                    - to:\n                        uri: mock:finally\n"
-    },
-    {
       "source": "try-catch-finally.adoc",
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - doTry:\n            steps:\n              - process:\n                  ref: processorFail\n              - to:\n                  uri: mock:result\n              - doCatch:\n                  exception:\n                    - java.io.IOException\n                    - java.lang.IllegalStateException\n                  steps:\n                    - to:\n                        uri: mock:catch\n              - doFinally:\n                  steps:\n                    - to:\n                        uri: mock:finally\n"
+    },
+    {
+      "source": "doTry-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - doTry:\n            steps:\n              - process:\n                  ref: processorFail\n              - to:\n                  uri: mock:result\n              - doCatch:\n                  exception:\n                    - java.io.IOException\n                    - java.lang.IllegalStateException\n                  onWhen:\n                    expression:\n                      simple:\n                        expression: \"${exception.message} contains 'Damn'\"\n                  steps:\n                    - to:\n                        uri: mock:catch\n              - doCatch:\n                  exception:\n                    - org.apache.camel.CamelExchangeException\n                  steps:\n                    - to:\n                        uri: mock:catchCamel\n              - doFinally:\n                  steps:\n                    - to:\n                        uri: mock:finally\n"
     },
     {
       "source": "try-catch-finally.adoc",
@@ -967,16 +967,32 @@
       "yaml": "- rest:\n    path: \"\/say\"\n    get:\n      - path: \"\/hello\"\n        to: \"direct:hello\"\n      - path: \"\/bye\"\n        consumes: \"application\/json\"\n        to: \"direct:bye\"\n    post:\n      - path: \"\/bye\"\n        to: \"direct:update\"\n- route:\n    from:\n      uri: direct:hello\n      steps:\n        - transform:\n            expression:\n              constant:\n                expression: Hello World\n- route:\n    from:\n      uri: direct:bye\n      steps:\n        - transform:\n            expression:\n              constant:\n                expression: Bye World\n"
     },
     {
+      "source": "rest-dsl-openapi.adoc",
+      "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n"
+    },
+    {
       "source": "rest-dsl.adoc",
       "yaml": "- rest:\n    path: \"\/customers\/\"\n    get:\n      - path: \"\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+    },
+    {
+      "source": "rest-dsl-openapi.adoc",
+      "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n- route:\n    from:\n      uri: direct:getUserByName\n      steps:\n        - log:\n            message: \"do something here\"\n"
     },
     {
       "source": "rest-dsl.adoc",
       "yaml": "- rest:\n    get:\n      - path: \"\/customers\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
     },
     {
+      "source": "rest-dsl-openapi.adoc",
+      "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n      missingOperation: ignore\n"
+    },
+    {
       "source": "rest-dsl.adoc",
       "yaml": "- rest:\n    path: \"items\/\"\n    get:\n      - path: \"{id}\/{filename}.{content-type}\"\n        to: \"direct:item\"\n"
+    },
+    {
+      "source": "rest-dsl-openapi.adoc",
+      "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n      missingOperation: mock\n"
     },
     {
       "source": "rest-dsl.adoc",

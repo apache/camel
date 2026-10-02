@@ -45,8 +45,26 @@ public interface TypeSafeAiEndpointBuilderFactory {
         }
 
         /**
-         * The API base URL. The client appends /v1/systemone. Redirects are not
-         * followed.
+         * The API path appended to baseUrl. A leading slash is optional. Must
+         * be a non-blank path without a scheme, authority, query or fragment.
+         * The service must implement the supported TypeSafe AI request and
+         * response schema.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: /v1/systemone
+         * Group: common
+         * 
+         * @param apiPath the value to set
+         * @return the dsl builder
+         */
+        default TypeSafeAiEndpointBuilder apiPath(String apiPath) {
+            doSetProperty("apiPath", apiPath);
+            return this;
+        }
+        /**
+         * The API base URL. The client appends apiPath, preserving any base
+         * path. Redirects are not followed.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

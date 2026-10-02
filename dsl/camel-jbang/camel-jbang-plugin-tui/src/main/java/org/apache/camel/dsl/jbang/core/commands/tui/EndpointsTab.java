@@ -106,6 +106,11 @@ class EndpointsTab extends AbstractTableTab {
     }
 
     @Override
+    protected boolean selectsFirstRow() {
+        return true;
+    }
+
+    @Override
     protected int getRowCount() {
         IntegrationInfo info = ctx.findSelectedIntegration();
         return info != null ? (int) info.endpoints.stream().filter(this::matchesFilter).count() : 0;
@@ -249,9 +254,9 @@ class EndpointsTab extends AbstractTableTab {
                 cells.add(rightCell(FlowHelper.sizeToString(ep.meanBodySize), 10));
                 cells.add(rightCell(FlowHelper.sizeToString(ep.meanHeadersSize), 10));
             }
-            cells.add(centerCell(ep.stub ? "x" : "", 6));
-            cells.add(centerCell(ep.remote ? "x" : "", 8));
-            cells.add(Cell.from(ep.uri != null ? ep.uri : ""));
+            cells.add(centerCell(ep.stub ? TuiIcons.CHECK : "", 6));
+            cells.add(centerCell(ep.remote ? TuiIcons.CHECK : "", 8));
+            cells.add(Cell.from(ep.uri != null ? TuiHelper.displayUri(ep.uri) : ""));
             rows.add(Row.from(cells));
         }
 
@@ -385,18 +390,30 @@ class EndpointsTab extends AbstractTableTab {
     }
 
     @Override
+    public SubViewBar.Spec subViewBar() {
+        if (ctx.findSelectedIntegration() == null) {
+            return null;
+        }
+        String[] filterLabels = { "all", "remote", "remote+stub" };
+        List<SubViewBar.View> views = List.of(
+                new SubViewBar.View("Chart", panelMode == PANEL_CHART, true, () -> pressKey('d')),
+                new SubViewBar.View("Detail", panelMode == PANEL_DETAIL, true, () -> pressKey('d')));
+        List<SubViewBar.Toggle> toggles = new ArrayList<>();
+        toggles.add(new SubViewBar.Toggle("f", "filter", filterLabels[filter]));
+        if (panelMode == PANEL_CHART) {
+            toggles.add(new SubViewBar.Toggle("a", "chart", switch (chartMode) {
+                case CHART_ALL -> "all";
+                case CHART_SINGLE -> "single";
+                default -> "off";
+            }));
+        }
+        return new SubViewBar.Spec("d", views, toggles, false);
+    }
+
+    @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
         hint(spans, "s", "sort");
-        String[] filterLabels = { "all", "remote", "remote+stub" };
-        hint(spans, "f", "filter [" + filterLabels[filter] + "]");
-        String chartLabel = switch (chartMode) {
-            case CHART_ALL -> "[all]";
-            case CHART_SINGLE -> "[single]";
-            default -> "[off]";
-        };
-        hint(spans, "a", "chart " + chartLabel);
-        hint(spans, "d", "detail " + (panelMode == PANEL_DETAIL ? "[on]" : "[off]"));
         if (panelMode == PANEL_DETAIL) {
             hint(spans, "Tab", detailFocused ? "table" : "detail");
         }

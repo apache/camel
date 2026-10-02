@@ -145,6 +145,57 @@ class SourceValidatorEndpointConsumersTest {
     }
 
     @Test
+    void theJavaRoutesAreReadByTheParser() throws Exception {
+        // CAMEL-25199: a constant, a format and the endpoint DSL are resolved, so the check knows what they consume
+        for (String configure : List.of(
+                "from(OTHER).log(\"found\");",
+                "fromF(\"direct:%s\", \"other\").log(\"found\");",
+                "from(direct(\"other\")).log(\"found\");")) {
+            Files.writeString(dir.resolve("Other.java"), """
+                    import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+
+                    public class Other extends EndpointRouteBuilder {
+                        static final String OTHER = "direct:other";
+
+                        @Override
+                        public void configure() {
+                            %s
+                        }
+                    }
+                    """.formatted(configure));
+            assertThat(SourceValidator.validate("r.camel.yaml", ROUTE, CATALOG, null, dir)).as(configure)
+                    .singleElement().asString().startsWith("route tick: sends to direct:lookup, and no route consumes it");
+        }
+        // the same with the endpoint DSL naming the endpoint the YAML route sends to: consumed
+        Files.writeString(dir.resolve("Other.java"), """
+                import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+
+                public class Other extends EndpointRouteBuilder {
+                    @Override
+                    public void configure() {
+                        from(direct("lookup")).log("found");
+                    }
+                }
+                """);
+        assertThat(SourceValidator.validate("r.camel.yaml", ROUTE, CATALOG, null, dir)).isEmpty();
+    }
+
+    @Test
+    void aJavaRouteInputKnownOnlyAtRuntimeKeepsTheCheckQuiet() throws Exception {
+        Files.writeString(dir.resolve("Lookup.java"), """
+                import org.apache.camel.builder.RouteBuilder;
+
+                public class Lookup extends RouteBuilder {
+                    @Override
+                    public void configure() {
+                        from(inputFromConfig()).log("found");
+                    }
+                }
+                """);
+        assertThat(SourceValidator.validate("r.camel.yaml", ROUTE, CATALOG, null, dir)).isEmpty();
+    }
+
+    @Test
     void aRouteFileInASubdirectoryConsumesIt() throws Exception {
         Files.createDirectories(dir.resolve("routes"));
         Files.writeString(dir.resolve("routes/lookup.camel.yaml"), """

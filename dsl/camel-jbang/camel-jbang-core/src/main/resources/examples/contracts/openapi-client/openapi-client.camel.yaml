@@ -1,0 +1,64 @@
+# The picking desk reserves the stock for every order line by calling the
+# stock API by contract: stock-api.json says which operations exist and how
+# to call them, and rest-openapi turns an operationId into the HTTP call.
+# The server is the openapi-server example, running in another terminal.
+- onException:
+    exception:
+      - org.apache.camel.http.base.HttpOperationFailedException
+    handled:
+      constant:
+        expression: "true"
+    steps:
+      - log:
+          loggingLevel: WARN
+          message: "${exchangeProperty.orderId}: ${exchangeProperty.sku} not reserved, the stock API answered ${exception.statusCode}: ${exception.responseBody}"
+
+- route:
+    id: reserve-order-lines
+    from:
+      uri: file
+      parameters:
+        directoryName: orders
+        noop: true
+        sortBy: "file:name"
+      steps:
+        - unmarshal:
+            json:
+              library: Jackson
+        - setProperty:
+            name: orderId
+            expression:
+              simple:
+                expression: "${body[orderId]}"
+        - split:
+            expression:
+              simple:
+                expression: "${body[lines]}"
+            steps:
+              - setProperty:
+                  name: sku
+                  expression:
+                    simple:
+                      expression: "${body[sku]}"
+              # the path parameter comes from the header of the same name
+              - setHeader:
+                  name: sku
+                  expression:
+                    simple:
+                      expression: "${body[sku]}"
+              - setBody:
+                  expression:
+                    simple:
+                      expression: '{"orderId": "${exchangeProperty.orderId}", "qty": ${body[qty]}}'
+              - to:
+                  uri: rest-openapi
+                  parameters:
+                    specificationUri: stock-api.json
+                    operationId: reserveStock
+                    host: "{{stock.api.url}}"
+                    componentName: http
+              - unmarshal:
+                  json:
+                    library: Jackson
+              - log:
+                  message: "${exchangeProperty.orderId}: reserved ${body[reserved]} x ${body[sku]}, ${body[remaining]} left on the shelf"

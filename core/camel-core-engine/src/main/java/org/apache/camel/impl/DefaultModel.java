@@ -51,6 +51,8 @@ import org.apache.camel.model.RouteFilters;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRouteParameterDefinition;
 import org.apache.camel.model.ToDefinition;
@@ -849,21 +851,31 @@ public class DefaultModel implements Model {
             Collection<ProcessorDefinition> col = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(),
                     ProcessorDefinition.class);
             for (ProcessorDefinition proc : col) {
-                String pid = proc.getId();
-                // match direct by ids
-                if (id.equals(pid)) {
+                if (matchesId(proc, id)) {
                     return proc;
                 }
-                // try to match via node prefix id
-                if (proc.getNodePrefixId() != null) {
-                    pid = proc.getNodePrefixId() + pid;
-                    if (id.equals(pid)) {
-                        return proc;
+                if (proc instanceof SwitchDefinition sw) {
+                    // a case of a Switch is not a processor in the tree: its send is, under the id of the case
+                    for (SwitchCaseDefinition c : sw.getCases()) {
+                        ToDefinition send = c.getToDefinition();
+                        if (send != null && matchesId(send, id)) {
+                            return send;
+                        }
                     }
                 }
             }
         }
         return null;
+    }
+
+    private static boolean matchesId(ProcessorDefinition<?> proc, String id) {
+        String pid = proc.getId();
+        // match direct by ids
+        if (id.equals(pid)) {
+            return true;
+        }
+        // try to match via node prefix id
+        return proc.getNodePrefixId() != null && id.equals(proc.getNodePrefixId() + pid);
     }
 
     @Override

@@ -83,6 +83,8 @@ class EndpointsTabRenderTest {
     @Test
     void renderComponentNameInCyan() {
         addEndpoint("http", "http://example.com/api", "out", "http-route", 5);
+        // a second row: the first is selected, and the selection highlight hides its colors
+        addEndpoint("http", "http://example.com/api2", "out", "http-route", 5);
 
         EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
 
@@ -98,6 +100,7 @@ class EndpointsTabRenderTest {
     @Test
     void renderInDirectionColor() {
         addEndpoint("timer", "timer://tick", "in", "route1", 10);
+        addEndpoint("timer", "timer://tock", "in", "route1", 10);
 
         EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
 
@@ -114,6 +117,7 @@ class EndpointsTabRenderTest {
     @Test
     void renderOutDirectionInCyan() {
         addEndpoint("log", "log://output", "out", "route1", 10);
+        addEndpoint("log", "log://output2", "out", "route1", 10);
 
         EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
 
@@ -193,7 +197,11 @@ class EndpointsTabRenderTest {
 
         assertTrue(footer.contains("Esc"), "Footer should contain Esc hint");
         assertTrue(footer.contains("sort"), "Footer should contain sort hint");
-        assertTrue(footer.contains("filter"), "Footer should contain filter hint");
+        // the filter is a view setting: in the view bar, with the Chart and Detail views
+        SubViewBar.Spec bar = tab.subViewBar();
+        assertTrue(bar.toggles().stream().anyMatch(t -> t.key().equals("f") && t.state().equals("all")),
+                "View bar should contain the filter");
+        assertTrue(bar.views().stream().anyMatch(v -> v.label().equals("Detail")), "View bar should list Detail");
     }
 
     // ---- Helper methods ----

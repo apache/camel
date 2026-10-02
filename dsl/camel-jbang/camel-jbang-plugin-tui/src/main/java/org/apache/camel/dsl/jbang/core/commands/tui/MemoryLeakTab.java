@@ -1176,6 +1176,23 @@ class MemoryLeakTab extends AbstractTab {
     }
 
     @Override
+    public SubViewBar.Spec subViewBar() {
+        if (state != State.HAS_RESULTS) {
+            return null;
+        }
+        String modeLabel = recordingMode == RecordingMode.DUAL ? "dual" : "single";
+        List<SubViewBar.View> views = List.of(
+                new SubViewBar.View("Samples", !dominatorView, true, () -> pressKey('v')),
+                new SubViewBar.View("Dominators", dominatorView, true, () -> pressKey('v')));
+        List<SubViewBar.Toggle> toggles = new ArrayList<>();
+        if (comparisons == null && !dominatorView) {
+            toggles.add(new SubViewBar.Toggle("m", "min-size", MIN_SIZE_LABELS[minSizeIndex]));
+        }
+        toggles.add(new SubViewBar.Toggle("d", "mode", modeLabel));
+        return new SubViewBar.Spec("v", views, toggles, false);
+    }
+
+    @Override
     public void renderFooter(List<Span> spans) {
         String modeLabel = recordingMode == RecordingMode.DUAL ? "dual" : "single";
         switch (state) {
@@ -1195,11 +1212,8 @@ class MemoryLeakTab extends AbstractTab {
                 hint(spans, "Esc", "back");
                 if (comparisons == null && !dominatorView) {
                     hint(spans, "s", "sort");
-                    hint(spans, "m", "min-size [" + MIN_SIZE_LABELS[minSizeIndex] + "]");
                 }
-                hint(spans, "v", dominatorView ? "samples" : "dominators");
                 hint(spans, "r", "new recording");
-                hint(spans, "d", "mode [" + modeLabel + "]");
                 hint(spans, "+/-", "duration [" + duration + "s]");
                 hint(spans, "h", "heap dump");
                 hintLast(spans, "PgUp/Dn", "detail");

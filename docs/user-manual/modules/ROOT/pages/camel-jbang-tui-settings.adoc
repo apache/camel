@@ -1,0 +1,224 @@
+= Camel TUI Actions, Settings and Themes
+
+The TUI is configured from inside: the actions menu (*F2*) holds what is not tied to one tab, the settings are kept in
+`~/.camel-cli.properties`, and the themes change the whole look. This page also covers the embedded shell, opening the
+TUI in a browser, and recording demos.
+
+See xref:camel-jbang-tui.adoc[Camel TUI] for getting started and the other pages.
+
+== Key Features
+
+* <<_actions_menu_f2,*Actions menu*>> -- F2: settings, themes, send a message, the doctor, MCP info
+* <<_embedded_shell_f6,*Embedded shell*>> -- F6: run camel commands without leaving the TUI
+* <<_theme,*Themes*>> -- dark and light themes
+* <<_settings,*Settings*>> -- start tab, rate units, validation, AI provider and more
+* <<_web_browser_access,*Web browser access*>> -- the TUI in a browser tab
+* <<_recording_demos,*Recording demos*>> -- record a session as a tape and convert it to a GIF
+
+== Actions Menu (F2)
+
+Press *F2* to open the actions menu with quick access to common operations:
+
+[cols="2,5",options="header"]
+|===
+| Action | Description
+
+| Send Message | Send a test message to any route with custom body, headers, and exchange pattern.
+| Run an example... | Browse and launch built-in Camel examples from the catalog.
+| Open Project... | Open a project directory in the Source tab for browsing and editing. Run with F10.
+| Run from folder... | Run routes from a local directory.
+| Run Dev/Infra Service... | Start infrastructure services (Kafka, databases, etc.) in Docker.
+| Browse Files | Browse the integration's source files with syntax highlighting.
+| Run Doctor | Check your environment: Java version, JBang, Maven, Docker, port conflicts, disk space.
+| Reset Stats | Reset all statistics and metrics for the selected integration.
+| Stop All | Stop running integrations and/or infrastructure services.
+| Settings... | Change the theme, the starting tab, and the default run-from-folder.
+| Take Screenshot | Export the current screen as SVG, text, or ANSI art.
+| Start/Stop Tape Recording | Record your session as a `.tape` file for demos.
+| Quit | Quit the TUI, with the same confirmation as pressing *q*. The last entry of the menu, so quitting is one menu away on tabs and in input fields where *q* is taken by something else. Integrations started from the TUI keep running after it quits (until the terminal closes); when some do, the confirmation says how many, and *s* stops them and quits.
+|===
+
+=== Sending Test Messages
+
+Select *Send Message* from the F2 menu (or press *F2* then choose it):
+
+image::jbang/camel-tui-send.png[Send Message view with body editor and response area]
+
+* *Choose the route* -- use left/right arrows to pick the target route
+* *Enter the body* -- type the message body, or use `file:path/to/file` to load from a file
+* *Add headers* -- press *+* to add headers as key=value pairs
+* *Set exchange pattern* -- toggle between InOnly (fire-and-forget) and InOut (request/reply)
+* Press *Enter* to send
+
+For InOut exchanges, the response is displayed below with status, elapsed time, response headers,
+and body. Press *P* to toggle pretty-printing for JSON/XML responses.
+
+=== Doctor
+
+The Doctor checks your development environment and reports issues:
+
+* Java version (17+ required, 21+ recommended)
+* Camel catalog availability
+* JBang installation
+* Maven repository connectivity
+* Docker/Podman availability
+* Common port conflicts (8080, 8443, 9090)
+* Disk space in temp directory
+
+== Embedded Shell (F6)
+
+Press *F6* to open an embedded Camel JBang shell at the bottom (or top) of the screen. Any `camel`
+command can be run there -- `camel run`, `camel infra run kafka`, `camel cmd send`, `camel get` and
+so on -- without leaving the dashboard, and the tabs keep updating while the command runs. Press
+*F6* again to close the panel, *Shift+F6* to cycle its height, *PgUp*/*PgDn* to scroll the output
+and *↑*/*↓* to recall earlier commands (see <<_input_history>>).
+
+The shell and the AI prompt panel (*F8*) share the same space: opening one closes the other. Both
+open at the bottom by default; see *Panel Position* in <<_settings>>.
+
+== Theme
+
+The TUI ships with 21 color themes defined as CSS stylesheets:
+
+* *Dark themes* -- Dark (default), Dracula, Nord, Solarized Dark, Gruvbox Dark,
+  Catppuccin Mocha, Catppuccin Frappé, Tokyo Night, Rosé Pine, Rosé Pine Moon, Kanagawa,
+  Everforest, Monochrome, CRT, Turbo Pascal
+* *Light themes* -- Light, Nord Light, Solarized Light, Gruvbox Light, Catppuccin Latte,
+  Everforest Light
+
+Open the *F2* actions menu and choose *Settings...* to switch themes, or pass
+`--theme=<name>` on the command line (e.g., `--theme=tokyo-night`). The CLI value
+overrides the persisted preference from `.camel-cli.properties`; runtime toggles and
+the config file still apply on later launches when `--theme` is omitted.
+
+The brand orange accent is consistent across most themes; status colors (success,
+warning, error) and borders adapt for readability on each palette. A few themes trade
+the brand accent for their own identity: Monochrome, CRT and Turbo Pascal. The Turbo
+Pascal theme recreates Borland's IDE (yellow text on the blue editor field, cyan window
+frames, grey menu bar) and also restyles source code the way that editor did: reserved
+words in white, code in yellow, comments in grey. Other themes highlight code with a
+fixed Monokai (dark) or GitHub-inspired (light) palette.
+
+Your choice is remembered: it is saved as `camel.tui.theme` in `.camel-cli.properties`
+and restored the next time you open the TUI.
+
+image::jbang/camel-tui-theme-latte.png[The Overview in the Catppuccin Latte theme]
+
+== Settings
+
+Open the *F2* actions menu and choose *Settings...* to change TUI preferences in one place:
+
+* *Theme* -- cycle through 21 available themes (applied immediately on save).
+* *Starting Tab* -- the tab shown when the TUI launches; any tab (primary or under *More*) can be
+  chosen. Defaults to *Overview*.
+* *Select Tab* -- the tab to switch to when selecting an integration from the Overview tab.
+  Defaults to *Log*.
+* *Confirm* -- whether destructive actions (quit, stop, restart, stop/start routes) show a
+  confirmation dialog before executing. Defaults to *on*. Kill (*X*) always confirms regardless
+  of this setting.
+* *Default Folder* -- the folder pre-filled in *Run from Folder*. The most recently used folder
+  still takes precedence; this default is used only when there is no remembered folder.
+* *Panel Position* -- where the shell (*F6*) and AI (*F8*) panels open: *bottom* (default) or
+  *top*.
+* *Panel Space* -- whether those panels push the tab content aside (*move*, default) or are drawn
+  on top of it (*overlay*), so the tab keeps its full height underneath.
+* *AI Overview* -- the xref:camel-jbang-tui-ai.adoc#_ai_project_overview[AI project overview]: *manual* (default, only with
+  `/overview`), *auto* (also when the AI panel opens and the project summary is missing or out of
+  date), or *off* (no `/overview`, and no AI-assisted descriptions in the tabs).
+
+Use *↑*/*↓* to move between rows, *Space* (or *←*/*→*) to cycle the theme and tab settings, type to
+edit the default folder, *Enter* to save, and *Esc* to cancel.
+
+Settings are stored under `camel.tui.*` keys (`camel.tui.theme`, `camel.tui.startTab`,
+`camel.tui.selectTab`, `camel.tui.confirmActions`, `camel.tui.defaultFolder`,
+`camel.tui.panelPosition`, `camel.tui.panelSpace`,
+`camel.tui.shell.history`, `camel.tui.ai.provider`, `camel.tui.ai.model`, `camel.tui.ai.url`,
+`camel.tui.ai.tools`, `camel.tui.ai.overview`, `camel.tui.ai.promptHistory`) in the Camel CLI configuration file. Each key is read from and
+written back to the file where it currently lives: a key present in the local
+`./camel-cli.properties` is treated as a project-level override and stays local, while every
+other key defaults to the global `~/.camel-cli.properties`. This means a project can
+deliberately pin a starting tab in its local config without redirecting your personal theme
+into the project file. See xref:camel-jbang-configuration.adoc[Configuration] for details
+on the global and local files.
+
+=== Input history
+
+The embedded shell (*F6*) and AI prompt (*F8*) keep a recall list for the command line and prompt
+respectively. Use *↑*/*↓* on the input line to walk previous entries. Limits are configured with
+`camel.tui.shell.history` and `camel.tui.ai.promptHistory` in `.camel-cli.properties` (default
+`100` each; set to `0` to disable recall and persistence). Shell history is stored in
+`~/.camel/tui-shell.history`; AI prompt history in `~/.camel/tui-ai-prompt.history`.
+
+=== Pasting
+
+Both panels accept text pasted from the terminal (for example a model name such as
+`qwen3.6:35b-a3b` after `/model`). In the AI prompt, line breaks in the pasted text are collapsed
+to spaces so the paste stays a single prompt you can review before pressing *Enter*. In the shell,
+line breaks are sent as *Enter*, so a multi-line paste runs line by line as in a regular terminal.
+
+== Web Browser Access
+
+The TUI can also be reached from a web browser on the same host, using the same dashboard you'd see in a
+local terminal -- useful when you prefer a browser session to a terminal window.
+
+[source,bash]
+----
+camel tui --web
+----
+
+This starts a web terminal server on `localhost:8090` (configurable with `--web-port`).
+Open `http://localhost:8090` in a browser to get a full xterm.js terminal driving the same
+TUI dashboard, with the same tabs, keyboard shortcuts, and F2 actions menu as a local session.
+
+Like the MCP server, the web server is bound to `127.0.0.1` only -- it never listens on
+external interfaces -- and there is no authentication beyond that. Each browser connection
+gets its own independent TUI session (its own process discovery and navigation state), the
+same as if you'd run `camel tui` again in a new terminal.
+
+== Recording Demos
+
+The TUI can record terminal sessions for demos and documentation.
+
+=== Live Recording
+
+Use the *F2* actions menu and select *Start Tape Recording* to start recording your session
+as a `.tape` file. Select *Stop Tape Recording* to stop. The tape captures your keystrokes
+with timing, producing a script that can be replayed or converted to an animated GIF.
+
+=== Scripted Recording
+
+Use the `--record` flag to replay a `.tape` file in headless mode and produce an
+https://asciinema.org/[Asciinema] `.cast` recording:
+
+[source,bash]
+----
+camel tui --record=demo.tape
+----
+
+The `.cast` file is written next to the tape, with the `.tape` suffix replaced by `.cast`.
+Recording is headless: the TUI is driven entirely by the tape rather than by your terminal,
+so no keyboard input is read and nothing is drawn on screen.
+
+The recorded terminal is 200x50 by default, which is wider than a documentation page can
+display. Use `--record-size` to record at a size that fits, and `--record-fps` or
+`--record-duration` to control the capture rate and the cut-off:
+
+[source,bash]
+----
+camel tui --record=demo.tape --record-size=160x44 --record-fps=15
+----
+
+`--record` cannot be combined with `--web`. Recording drives a headless TUI from the tape, and
+the recording configuration applies to the whole process, so every browser session would be
+recorded into the same `.cast` file. Camel rejects the combination with an error instead.
+
+=== Converting to GIF
+
+Convert recordings using https://github.com/asciinema/agg[agg] (for `.cast` files) or
+https://github.com/charmbracelet/vhs[VHS] (for `.tape` files):
+
+[source,bash]
+----
+agg recording.cast out.gif  # .cast -> .gif
+vhs demo.tape               # .tape -> .gif
+----

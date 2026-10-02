@@ -251,7 +251,10 @@ final class JavaChainParser {
             } else if (t.is("}")) {
                 depth--;
                 pos++;
-            } else if ((t.isIdent("configure") || t.isIdent("configuration")) && at(1).is("(") && at(2).is(")")) {
+            } else if ((t.isIdent("configure") || t.isIdent("configuration")) && at(1).is("(") && at(2).is(")")
+                    && (at(3).is("{") || at(3).isIdent("throws"))) {
+                // the declaration of configure(), not a call such as camel.configure().addRoutesBuilder(...), whose
+                // anonymous RouteBuilder has a configure() of its own
                 int p = pos + 3;
                 // throws clause
                 while (tokens.get(p).kind() != Kind.EOF && !tokens.get(p).is("{") && !tokens.get(p).is(";")) {

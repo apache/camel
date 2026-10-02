@@ -556,18 +556,10 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
 
             LOGGER.trace("HTTP attachment {} = {}", name, fileName);
 
-            // is the file name accepted
-            boolean accepted = true;
-
-            if (fileNameExtWhitelist != null) {
-                String ext = FileUtil.onlyExt(fileName);
-                if (ext != null) {
-                    ext = ext.toLowerCase(Locale.US);
-                    if (!fileNameExtWhitelist.equals("*") && !fileNameExtWhitelist.contains(ext)) {
-                        accepted = false;
-                    }
-                }
-            }
+            // is the file name accepted - shared with the http bindings so the whitelist matches whole
+            // comma-separated extension tokens, not a substring: a whitelist of "txt" must not accept an upload
+            // named "evil.x" just because "txt".contains("x") (CAMEL-24652)
+            boolean accepted = HttpHelper.isFileNameExtWhitelisted(fileNameExtWhitelist, fileName);
             if (accepted) {
                 final File localFile = new File(upload.uploadedFileName());
                 final AttachmentMessage attachmentMessage = message.getExchange().getMessage(AttachmentMessage.class);

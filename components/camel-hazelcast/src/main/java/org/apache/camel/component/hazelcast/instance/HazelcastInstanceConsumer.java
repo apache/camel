@@ -17,7 +17,9 @@
 package org.apache.camel.component.hazelcast.instance;
 
 import java.net.InetSocketAddress;
+import java.util.UUID;
 
+import com.hazelcast.cluster.Cluster;
 import com.hazelcast.cluster.MembershipEvent;
 import com.hazelcast.cluster.MembershipListener;
 import com.hazelcast.core.HazelcastInstance;
@@ -30,10 +32,32 @@ import org.apache.camel.support.DefaultEndpoint;
 
 public class HazelcastInstanceConsumer extends DefaultConsumer {
 
+    private final HazelcastInstance hazelcastInstance;
+    private Cluster cluster;
+    private UUID listener;
+
     public HazelcastInstanceConsumer(HazelcastInstance hazelcastInstance, DefaultEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+        this.hazelcastInstance = hazelcastInstance;
+    }
 
-        hazelcastInstance.getCluster().addMembershipListener(new HazelcastMembershipListener());
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // register the listener here, so that doStop can remove it (CAMEL-15899)
+        cluster = hazelcastInstance.getCluster();
+        listener = cluster.addMembershipListener(new HazelcastMembershipListener());
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (listener != null) {
+            cluster.removeMembershipListener(listener);
+            listener = null;
+        }
+
+        super.doStop();
     }
 
     class HazelcastMembershipListener implements MembershipListener {

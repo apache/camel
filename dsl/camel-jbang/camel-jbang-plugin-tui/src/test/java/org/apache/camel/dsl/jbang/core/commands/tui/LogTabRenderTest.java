@@ -68,6 +68,14 @@ class LogTabRenderTest {
     }
 
     @Test
+    void theCompactViewShowsTimeLevelLoggerAndMessage() {
+        LogEntry entry = LogTab.parseLogLine("2026-10-01 17:24:30.257  INFO 85013 --- [ntloop-thread-0]"
+                                             + " tform.http.vertx.VertxPlatformHttpServer : Vert.x HttpServer started on 0.0.0.0:8080");
+        String text = LogTab.compactLine(entry).spans().stream().map(Span::content).reduce("", String::concat);
+        assertEquals("17:24:30.257  INFO VertxPlatformHttpServer  Vert.x HttpServer started on 0.0.0.0:8080", text);
+    }
+
+    @Test
     void renderNoSelectionShowsPrompt() {
         ctx.selectedPid = null;
         LogTab tab = new LogTab(ctx);
@@ -81,6 +89,14 @@ class LogTabRenderTest {
         LogTab tab = new LogTab(ctx);
         String rendered = TuiTestHelper.renderToString(tab, 120, 20);
         assertTrue(rendered.contains("Log"), "Should show Log in the block title");
+    }
+
+    @Test
+    void theTitleNamesTheIntegrationAndItsLogLevel() {
+        info.rootLogLevel = "INFO";
+        LogTab tab = new LogTab(ctx);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
+        assertTrue(rendered.contains("[test-app] Log level:INFO"), rendered);
     }
 
     @Test

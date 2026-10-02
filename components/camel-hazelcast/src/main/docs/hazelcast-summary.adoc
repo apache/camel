@@ -136,4 +136,63 @@ In the example above we set up this for the hazelcast map component and setup ha
 </bean>
 ------------------------------------------------------------------------------
 
+== Java serialization filter
+
+Hazelcast stores objects that implement `Serializable` or `Externalizable` using Java serialization, and deserializes
+them when Camel reads them back from a map, queue, topic or any other data structure. A Hazelcast
+`JavaSerializationFilterConfig` limits which classes Hazelcast deserializes.
+
+When Camel creates the Hazelcast instance itself, it applies a default filter. The default allows class names that
+start with `java.`, `javax.` or `org.apache.camel.`, and rejects those that start with `java.net.`. Camel creates the
+instance itself when:
+
+* an endpoint sets none of `hazelcastInstance`, `hazelcastInstanceName`, `hazelcastConfig` or `hazelcastConfigUri`,
+and no instance is configured on the component;
+* a Hazelcast aggregation repository, idempotent repository, key-value repository or route policy starts its own
+instance because none was given to it.
+
+Camel uses a configuration you supply as it is: a `Config` or `ClientConfig` bean set with `hazelcastConfig`, a file
+set with `hazelcastConfigUri`, or an existing instance set with `hazelcastInstance` or found with
+`hazelcastInstanceName`. Hazelcast's own default configuration declares no serialization filter, so declare one in
+your configuration, and make it cover the classes your application stores in the cluster:
+
+[source,xml]
+----
+<hazelcast xmlns="http://www.hazelcast.com/schema/config">
+    <serialization>
+        <java-serialization-filter>
+            <whitelist>
+                <prefix>java.</prefix>
+                <prefix>javax.</prefix>
+                <prefix>org.apache.camel.</prefix>
+                <prefix>com.example.model.</prefix>
+            </whitelist>
+            <blacklist>
+                <prefix>java.net.</prefix>
+            </blacklist>
+        </java-serialization-filter>
+    </serialization>
+</hazelcast>
+----
+
+A `hazelcast-client` configuration takes the same `serialization` element. In Java, set the filter on the
+`SerializationConfig` of a `Config` or a `ClientConfig`:
+
+[source,java]
+----
+JavaSerializationFilterConfig filter = new JavaSerializationFilterConfig();
+filter.setWhitelist(new ClassFilter().addPrefixes("java.", "javax.", "org.apache.camel.", "com.example.model."));
+filter.setBlacklist(new ClassFilter().addPrefixes("java.net."));
+
+Config config = new Config();
+config.getSerializationConfig().setJavaSerializationFilterConfig(filter);
+----
+
+Alternatively, set a JVM-wide filter with the `jdk.serialFilter` system property, for example
+`+-Djdk.serialFilter='!java.net.**;java.**;javax.**;org.apache.camel.**;com.example.model.**;!*'+`. It applies to all
+Java deserialization in the JVM, not only to Hazelcast.
+
+When Camel starts a Hazelcast member or client from a `Config` or `ClientConfig` you supplied that declares no
+filter, and no JVM-wide filter is set, it logs a WARN.
+
 

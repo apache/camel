@@ -231,8 +231,11 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
         return code.isEmpty() ? null : code;
     }
 
-    private static List<CodeLine> javaOrYamlLoadSourceAsJson(Reader reader) {
+    static List<CodeLine> javaOrYamlLoadSourceAsJson(Reader reader) {
         List<CodeLine> code = new ArrayList<>();
+        // a dropped source location line that started a YAML list item: its dash and line number go to the next line
+        int dashIndent = -1;
+        int dashLine = -1;
         try {
             LineNumberReader lnr = new LineNumberReader(reader);
             String t;
@@ -240,21 +243,40 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                 t = lnr.readLine();
                 if (t != null) {
                     // extra source location from code line
-                    if (t.contains("sourceLocation: ")) {
-                        // skip this line
-                    } else if (t.contains("sourceLineNumber: ")) {
-                        String idx = StringHelper.after(t, "sourceLineNumber: ").trim();
-                        if (!code.isEmpty()) {
-                            // assign line number to previous code line
-                            CodeLine prev = code.get(code.size() - 1);
+                    boolean location = t.contains("sourceLocation: ");
+                    boolean lineNumber = !location && t.contains("sourceLineNumber: ");
+                    if (location || lineNumber) {
+                        int idx = -1;
+                        if (lineNumber) {
                             try {
-                                code.set(code.size() - 1, new CodeLine(Integer.parseInt(idx), prev.code()));
+                                idx = Integer.parseInt(StringHelper.after(t, "sourceLineNumber: ").trim());
                             } catch (NumberFormatException e) {
                                 // ignore
                             }
                         }
+                        int indent = t.length() - t.stripLeading().length();
+                        if (t.stripLeading().startsWith("- ")) {
+                            // the first key of a list item (such as a when of a choice): the next line takes the dash
+                            dashIndent = indent;
+                            dashLine = idx;
+                        } else if (dashIndent >= 0) {
+                            if (idx != -1) {
+                                dashLine = idx;
+                            }
+                        } else if (idx != -1 && !code.isEmpty()) {
+                            // assign line number to previous code line
+                            CodeLine prev = code.get(code.size() - 1);
+                            code.set(code.size() - 1, new CodeLine(idx, prev.code()));
+                        }
                     } else {
-                        code.add(new CodeLine(-1, Jsoner.escape(t)));
+                        if (dashIndent >= 0 && t.length() > dashIndent + 2 && t.startsWith(" ".repeat(dashIndent + 2))) {
+                            t = " ".repeat(dashIndent) + "- " + t.substring(dashIndent + 2);
+                            code.add(new CodeLine(dashLine, Jsoner.escape(t)));
+                        } else {
+                            code.add(new CodeLine(-1, Jsoner.escape(t)));
+                        }
+                        dashIndent = -1;
+                        dashLine = -1;
                     }
                 }
             } while (t != null);

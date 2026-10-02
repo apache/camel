@@ -56,10 +56,25 @@ interface MonitorTab {
     void render(Frame frame, Rect area);
 
     /**
-     * The view settings of the tab and their state, as key hints with {@code [state]}: shown in the tab itself (the
-     * Diagram tab's level bar) rather than the footer, and listed with the footer actions for MCP agents.
+     * The views of the tab and its view settings, shown as a bar on the first row of the tab (the levels of the Diagram
+     * tab, the views of the Inspect tab); null for a tab without views. The settings shown there are left out of the
+     * footer.
+     */
+    default SubViewBar.Spec subViewBar() {
+        return null;
+    }
+
+    /**
+     * The view settings of the tab and their state, as key hints with {@code [state]}: shown in the tab's view bar
+     * rather than the footer, and listed with the footer actions for MCP agents.
      */
     default void renderViewToggles(List<Span> spans) {
+        SubViewBar.Spec spec = subViewBar();
+        if (spec != null) {
+            for (SubViewBar.Toggle t : spec.toggles()) {
+                TuiHelper.hint(spans, t.key(), t.label() + " [" + t.state() + "]");
+            }
+        }
     }
 
     default void renderFooter(List<Span> spans) {

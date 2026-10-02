@@ -32,9 +32,13 @@ class SwitchDefinitionTest {
                 .doCase("billing", "{{case.uri}}").otherwise("{{fallback.uri}}");
         SwitchCaseDefinition c = sw.getCases().get(0);
         c.setId("billing");
-        assertNull(c.getToDefinition());
+        // the send node exists from the start (so its processor index follows the order of the cases), but reading
+        // the model does not prepare it: that happens when the route is reified
+        ToDefinition unprepared = c.getToDefinition();
         sw.getChildren();
-        assertNull(c.getToDefinition());
+        assertSame(unprepared, c.getToDefinition());
+        assertNull(unprepared.getUri());
+        assertNull(unprepared.getId());
 
         c.prepareToDefinition();
         sw.prepareOtherwiseDefinition();

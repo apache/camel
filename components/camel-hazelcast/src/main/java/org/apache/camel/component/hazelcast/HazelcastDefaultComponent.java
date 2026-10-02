@@ -17,6 +17,7 @@
 package org.apache.camel.component.hazelcast;
 
 import java.io.InputStream;
+import java.io.ObjectInputFilter;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +26,7 @@ import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.XmlClientConfigBuilder;
 import com.hazelcast.config.Config;
+import com.hazelcast.config.SerializationConfig;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
@@ -134,6 +136,7 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
     protected HazelcastInstance getOrCreateHzInstance(CamelContext context, Map<String, Object> parameters) throws Exception {
         HazelcastInstance hzInstance = null;
         Config config = null;
+        boolean userConfig = false;
 
         // Query param named 'hazelcastInstance' (if exists) overrides the instance that was set
         hzInstance = resolveAndRemoveReferenceParameter(parameters, HAZELCAST_INSTANCE_PARAM, HazelcastInstance.class);
@@ -167,6 +170,7 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
 
                 hzInstance = Hazelcast.newHazelcastInstance(config);
             } else if (config != null) {
+                userConfig = true;
                 if (ObjectHelper.isNotEmpty(config.getInstanceName())) {
                     hzInstance = Hazelcast.getOrCreateHazelcastInstance(config);
                 } else {
@@ -177,6 +181,9 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
             if (hzInstance != null) {
                 if (this.customHazelcastInstances.add(hzInstance)) {
                     LOGGER.debug("Add managed HZ instance {}", hzInstance.getName());
+                    if (userConfig) {
+                        warnIfNoSerializationFilter(config.getSerializationConfig(), hzInstance.getName());
+                    }
                 }
             }
         }
@@ -188,6 +195,7 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
             throws Exception {
         HazelcastInstance hzInstance = null;
         ClientConfig config = null;
+        boolean userConfig = false;
 
         // Query param named 'hazelcastInstance' (if exists) overrides the instance that was set
         hzInstance = resolveAndRemoveReferenceParameter(parameters, HAZELCAST_INSTANCE_PARAM, HazelcastInstance.class);
@@ -221,16 +229,35 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
 
                 hzInstance = HazelcastClient.newHazelcastClient(config);
             } else if (config != null) {
+                userConfig = true;
                 hzInstance = HazelcastClient.newHazelcastClient(config);
             }
 
             if (hzInstance != null) {
                 if (this.customHazelcastInstances.add(hzInstance)) {
                     LOGGER.debug("Add managed HZ instance {}", hzInstance.getName());
+                    if (userConfig) {
+                        warnIfNoSerializationFilter(config.getSerializationConfig(), hzInstance.getName());
+                    }
                 }
             }
         }
 
         return hzInstance == null ? hazelcastInstance : hzInstance;
+    }
+
+    /**
+     * Camel applies its default serialization filter only to the configurations it builds itself, and uses a
+     * user-supplied configuration unchanged, so tell the user when that configuration restricts nothing.
+     */
+    private static void warnIfNoSerializationFilter(SerializationConfig serializationConfig, String instanceName) {
+        if (serializationConfig.getJavaSerializationFilterConfig() == null
+                && ObjectInputFilter.Config.getSerialFilter() == null) {
+            LOGGER.warn("The user-supplied configuration of Hazelcast instance {} declares no Java serialization filter"
+                        + " (JavaSerializationFilterConfig) and no JVM-wide jdk.serialFilter is set, so Java deserialization"
+                        + " in this instance is not restricted. Declare a java-serialization-filter in the configuration,"
+                        + " see the camel-hazelcast documentation.",
+                    instanceName);
+        }
     }
 }

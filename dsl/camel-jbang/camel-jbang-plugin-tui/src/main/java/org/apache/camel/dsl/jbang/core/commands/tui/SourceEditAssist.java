@@ -29,13 +29,17 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.RouteAssist;
+import org.apache.camel.dsl.jbang.core.commands.ai.RouteNodes;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -75,6 +79,17 @@ final class SourceEditAssist {
     private final Map<String, Map<String, BaseOptionModel>> componentOptionsCache = new HashMap<>();
     private final Map<String, Map<String, BaseOptionModel>> languageOptionsCache = new HashMap<>();
     private final Map<String, Map<String, BaseOptionModel>> dataformatOptionsCache = new HashMap<>();
+
+    // Java sources of the project, for the constants of the Java route checks (read lazily, refreshed now and then)
+    private static final long JAVA_SOURCES_TTL_MS = 10_000;
+    private Map<String, Supplier<String>> javaSourcesCache;
+    private long javaSourcesCacheTime;
+    private Path javaSourcesCacheDir;
+
+    // the nodes of the route file last read for its quick doc
+    private List<RouteNodes.Node> routeNodesCache = List.of();
+    private String routeNodesContent;
+    private Path routeNodesFile;
 
     // Component name completion cache (keyed by catalog version)
     private String componentsCatalogVersion;
@@ -139,7 +154,7 @@ final class SourceEditAssist {
     }
 
     Map<Integer, List<SourceViewer.DocEntry>> provideCamelQuickDocs(List<JsonObject> codeData) {
-        CamelCatalog catalog = getCatalog();
+        CamelCatalog catalog = validationCatalog();
         if (catalog == null || codeData.isEmpty()) {
             return Map.of();
         }
@@ -173,7 +188,7 @@ final class SourceEditAssist {
     }
 
     List<SourceViewer.DocEntry> provideEditQuickDoc(List<String> lines, int cursorRow) {
-        CamelCatalog catalog = getCatalog();
+        CamelCatalog catalog = validationCatalog();
         if (catalog == null || lines == null || cursorRow < 0 || cursorRow >= lines.size()) {
             return List.of();
         }
@@ -192,6 +207,12 @@ final class SourceEditAssist {
                 String desc = model.getDescription() != null ? model.getDescription() : "";
                 return List.of(SourceViewer.DocEntry.of(title + " — " + desc));
             }
+        }
+
+        // the language of an expression, as the Java and XML routes have it (simple: or its expression:)
+        SourceViewer.DocEntry languageDoc = resolveLanguageDoc(catalog, lines, cursorRow);
+        if (languageDoc != null) {
+            return List.of(languageDoc);
         }
 
         // check if inside a parameters: block — look up component endpoint option doc
@@ -218,6 +239,66 @@ final class SourceEditAssist {
         }
 
         return List.of();
+    }
+
+    /**
+     * The language of the expression on the line: a language key (simple: "${body}" or simple: with expression: below
+     * it) or the expression: under one, as "Simple predicate: ${...}" where the EIP evaluates it as a predicate.
+     */
+    SourceViewer.DocEntry resolveLanguageDoc(CamelCatalog catalog, List<String> lines, int cursorRow) {
+        String key = yamlKey(lines.get(cursorRow));
+        if (key == null) {
+            return null;
+        }
+        int languageRow = -1;
+        String text = null;
+        if (catalog.languageModel(key) != null) {
+            languageRow = cursorRow;
+            text = yamlValue(lines.get(cursorRow));
+            if (text.isEmpty() && cursorRow + 1 < lines.size() && "expression".equals(yamlKey(lines.get(cursorRow + 1)))) {
+                text = yamlValue(lines.get(cursorRow + 1));
+            }
+        } else if ("expression".equals(key)) {
+            int indent = countLeadingSpaces(lines.get(cursorRow));
+            for (int i = cursorRow - 1; i >= 0; i--) {
+                String l = lines.get(i);
+                if (l.isBlank()) {
+                    continue;
+                }
+                if (countLeadingSpaces(l) < indent) {
+                    String parent = yamlKey(l);
+                    if (parent != null && catalog.languageModel(parent) != null) {
+                        languageRow = i;
+                        key = parent;
+                        text = yamlValue(lines.get(cursorRow));
+                    }
+                    break;
+                }
+            }
+        }
+        if (languageRow < 0 || text == null || text.isEmpty()) {
+            return null;
+        }
+        LanguageModel language = catalog.languageModel(key);
+        boolean predicate = SourceValidator.isYamlPredicate(catalog, lines.toArray(new String[0]), languageRow);
+        return SourceViewer.DocEntry.of((language.getTitle() != null ? language.getTitle() : key)
+                                        + (predicate ? " predicate: " : " expression: ") + text);
+    }
+
+    /** The key of a YAML line (simple of "- simple: x"), or null. */
+    private static String yamlKey(String line) {
+        Matcher m = YAML_KEY_PATTERN.matcher(line);
+        return m.find() ? m.group(1) : null;
+    }
+
+    /** The value of a YAML line after its key, unquoted; empty when it has none. */
+    private static String yamlValue(String line) {
+        int colon = line.indexOf(':');
+        String v = colon >= 0 ? line.substring(colon + 1).trim() : "";
+        if (v.length() >= 2 && (v.startsWith("\"") && v.endsWith("\"") || v.startsWith("'") && v.endsWith("'"))) {
+            v = v.substring(1, v.length() - 1);
+        }
+        return v;
     }
 
     SourceViewer.DocEntry resolveEipOptionDoc(CamelCatalog catalog, List<String> lines, int cursorRow) {
@@ -862,7 +943,7 @@ final class SourceEditAssist {
         if (!context.startsWith("yaml:")) {
             return List.of();
         }
-        CamelCatalog catalog = getCatalog();
+        CamelCatalog catalog = validationCatalog();
         if (catalog == null) {
             return List.of();
         }
@@ -930,8 +1011,56 @@ final class SourceEditAssist {
         return items;
     }
 
+    /** The quick doc of the XML element or attribute at the cursor (CAMEL-25244). */
+    List<SourceViewer.DocEntry> provideXmlQuickDoc(List<String> lines, int row, int col) {
+        return XmlQuickDoc.at(validationCatalog(), lines, row, col);
+    }
+
+    /** The quick doc of the simple function at the cursor (CAMEL-25219). */
+    List<SourceViewer.DocEntry> provideSimpleQuickDoc(List<String> lines, int row, int col) {
+        return SimpleQuickDoc.at(validationCatalog(), lines, row, col);
+    }
+
+    /** The completions of the Java DSL route chain at the cursor (CAMEL-25241). */
+    List<AutocompletePopup.CompletionItem> provideJavaCompletions(JavaChainContext context) {
+        return JavaDslCompletions.provide(validationCatalog(), context);
+    }
+
+    /** The completions of the XML DSL at the cursor (CAMEL-25240). */
+    List<AutocompletePopup.CompletionItem> provideXmlCompletions(XmlCompletionContext context, List<String> lines) {
+        return XmlCompletions.provide(validationCatalog(), context, this::loadPropertyPlaceholders);
+    }
+
+    /** The completions of the simple expression at the cursor (CAMEL-25219). */
+    List<AutocompletePopup.CompletionItem> provideSimpleCompletions(SimpleCompletionContext context, List<String> lines) {
+        return provideSimpleCompletions(context, lines, List::of);
+    }
+
+    /**
+     * The completions of the simple expression at the cursor, the arguments of ${bean:..} from the beans the project
+     * declares and of ${properties:..} from its .properties files (CAMEL-25242).
+     */
+    List<AutocompletePopup.CompletionItem> provideSimpleCompletions(
+            SimpleCompletionContext context, List<String> lines, Supplier<List<AutocompletePopup.CompletionItem>> beans) {
+        return SimpleCompletions.provide(validationCatalog(), context, lines,
+                new SimpleCompletions.Project(beans, this::propertyKeys));
+    }
+
+    /** The keys of the project's .properties files, with their values. */
+    private List<AutocompletePopup.CompletionItem> propertyKeys() {
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (AutocompletePopup.CompletionItem p : loadPropertyPlaceholders()) {
+            String key = p.key();
+            if (key.startsWith("{{") && key.endsWith("}}")) {
+                items.add(new AutocompletePopup.CompletionItem(
+                        key.substring(2, key.length() - 2), p.description(), "property", null, false, null, p.group()));
+            }
+        }
+        return items;
+    }
+
     List<AutocompletePopup.CompletionItem> provideComponentNameCompletions(String role) {
-        CamelCatalog catalog = getCatalog();
+        CamelCatalog catalog = validationCatalog();
         if (catalog == null) {
             return List.of();
         }
@@ -1216,7 +1345,7 @@ final class SourceEditAssist {
         if (!context.startsWith("yaml:")) {
             return List.of();
         }
-        CamelCatalog catalog = getCatalog();
+        CamelCatalog catalog = validationCatalog();
         if (catalog == null) {
             return List.of();
         }
@@ -1357,30 +1486,18 @@ final class SourceEditAssist {
         }
 
         List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
-        try (var stream = java.nio.file.Files.list(rootDir)) {
-            stream.filter(p -> p.getFileName().toString().endsWith(".properties"))
-                    .forEach(p -> {
-                        try {
-                            for (String line : java.nio.file.Files.readAllLines(p)) {
-                                String trimmed = line.trim();
-                                if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("!")) {
-                                    continue;
-                                }
-                                int eq = trimmed.indexOf('=');
-                                if (eq > 0) {
-                                    String key = trimmed.substring(0, eq).trim();
-                                    String value = trimmed.substring(eq + 1).trim();
-                                    items.add(new AutocompletePopup.CompletionItem(
-                                            "{{" + key + "}}", value, "placeholder",
-                                            null, false, null, p.getFileName().toString()));
-                                }
-                            }
-                        } catch (IOException e) {
-                            // skip unreadable files
-                        }
-                    });
-        } catch (IOException e) {
-            return List.of();
+        // a Maven or Gradle project keeps its properties in src/main/resources, a camel run folder next to the routes
+        for (Path dir : List.of(rootDir, rootDir.resolve("src/main/resources"))) {
+            if (!java.nio.file.Files.isDirectory(dir)) {
+                continue;
+            }
+            try (var stream = java.nio.file.Files.list(dir)) {
+                stream.filter(p -> p.getFileName().toString().endsWith(".properties"))
+                        .sorted()
+                        .forEach(p -> addPlaceholders(p, rootDir.relativize(p).toString(), items));
+            } catch (IOException e) {
+                // skip an unreadable folder
+            }
         }
 
         items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
@@ -1388,6 +1505,69 @@ final class SourceEditAssist {
         placeholderCacheTime = now;
         placeholderCacheDir = rootDir;
         return items;
+    }
+
+    private static void addPlaceholders(Path file, String source, List<AutocompletePopup.CompletionItem> items) {
+        try {
+            for (String line : java.nio.file.Files.readAllLines(file)) {
+                String trimmed = line.trim();
+                if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("!")) {
+                    continue;
+                }
+                int eq = trimmed.indexOf('=');
+                if (eq > 0) {
+                    String key = trimmed.substring(0, eq).trim();
+                    String value = trimmed.substring(eq + 1).trim();
+                    items.add(new AutocompletePopup.CompletionItem(
+                            "{{" + key + "}}", value, "placeholder", null, false, null, source));
+                }
+            }
+        } catch (IOException e) {
+            // skip unreadable files
+        }
+    }
+
+    private static final Pattern PLACEHOLDER
+            = Pattern.compile("\\{\\{([^}:]+?)(?::([^}]*))?\\}\\}");
+
+    /**
+     * The values of the property placeholders on a line, from the .properties files of the project: {{key}} = value
+     * (application.properties), or that it is not set and the default it falls back to. {{env:NAME}} and {{sys:NAME}}
+     * come from the environment and the JVM, so they are said as such.
+     */
+    List<SourceViewer.DocEntry> placeholderDocs(String line) {
+        if (line == null || !line.contains("{{")) {
+            return List.of();
+        }
+        List<SourceViewer.DocEntry> answer = new ArrayList<>();
+        Matcher m = PLACEHOLDER.matcher(line);
+        while (m.find() && answer.size() < 3) {
+            String key = m.group(1).trim();
+            String def = m.group(2);
+            String text;
+            if (key.equals("env") || key.equals("sys")) {
+                // {{env:HOME}}: the key is the function, the name is what follows the colon
+                text = "{{" + key + ":" + def + "}} is read from the " + (key.equals("env") ? "environment" : "JVM")
+                       + " when the route starts";
+            } else {
+                AutocompletePopup.CompletionItem item = null;
+                for (AutocompletePopup.CompletionItem ph : loadPropertyPlaceholders()) {
+                    if (ph.key().equals("{{" + key + "}}")) {
+                        item = ph;
+                        break;
+                    }
+                }
+                if (item != null) {
+                    text = "{{" + key + "}} = " + item.description() + "  (" + item.group() + ")";
+                } else if (def != null) {
+                    text = "{{" + key + "}} is not set in the project's properties: the default " + def + " is used";
+                } else {
+                    text = "{{" + key + "}} is not set in the project's .properties files";
+                }
+            }
+            answer.add(new SourceViewer.DocEntry(text, false, "Placeholder"));
+        }
+        return answer;
     }
 
     Map<Integer, List<SourceViewer.DocEntry>> providePropertiesQuickDocs(List<JsonObject> codeData) {
@@ -1550,6 +1730,146 @@ final class SourceEditAssist {
 
     List<String> validateYamlEndpoints(String content) {
         return SourceValidator.validateYamlEndpoints(content, validationCatalog());
+    }
+
+    /**
+     * The Camel checks of a Java or XML DSL route file (CAMEL-25208): the endpoint uris and simple expressions the
+     * compiler cannot see, as "Line N: message". The endpoints no route consumes are left to camel validate: the editor
+     * runs this while typing, and would read the whole project each time.
+     */
+    List<String> validateRoutes(Path file, String content) {
+        List<String> answer = new ArrayList<>();
+        for (RouteAssist.Diagnostic d : RouteAssist.diagnostics(file.getFileName().toString(), content,
+                validationCatalog(), null, javaSources(), false)) {
+            if (d.severity() == RouteAssist.Severity.ERROR) {
+                answer.add(d.format());
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The quick doc of each line of a Java or XML DSL route file (CAMEL-25208), read from its model: the component of
+     * an endpoint and the options it is given, the EIP of a step.
+     */
+    Map<Integer, List<SourceViewer.DocEntry>> provideRouteQuickDocs(Path file, List<JsonObject> codeData) {
+        CamelCatalog catalog = validationCatalog();
+        if (catalog == null || codeData.isEmpty()) {
+            return Map.of();
+        }
+        List<String> lines = new ArrayList<>(codeData.size());
+        for (JsonObject jo : codeData) {
+            lines.add(jo.getString("code") != null ? jo.getString("code") : "");
+        }
+        Map<Integer, List<SourceViewer.DocEntry>> result = new LinkedHashMap<>();
+        for (RouteNodes.Node n : routeNodes(file, lines)) {
+            int idx = n.line() - 1;
+            if (idx < 0 || idx >= codeData.size() || result.containsKey(idx)) {
+                continue;
+            }
+            if (n.kind() == RouteNodes.Kind.ENDPOINT) {
+                EipDocSupport.buildEndpointInlineDoc(result, codeData, catalog, n.uri(), idx);
+            } else if (n.kind() == RouteNodes.Kind.STEP && !hasEndpoint(file, lines, n.line())
+                    && catalog.eipModel(n.eip()) != null) {
+                EipDocSupport.buildEipInlineDoc(result, codeData, catalog, n.eip(), null, idx);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * The quick doc of the line the cursor is on in a Java or XML DSL route file (CAMEL-25208): the component of an
+     * endpoint with the options it is given, else the EIP of the step and the language of its expression.
+     */
+    List<SourceViewer.DocEntry> provideRouteEditQuickDoc(Path file, List<String> lines, int cursorRow) {
+        CamelCatalog catalog = validationCatalog();
+        if (catalog == null || lines == null || cursorRow < 0 || cursorRow >= lines.size()) {
+            return List.of();
+        }
+        List<RouteNodes.Node> here = RouteNodes.at(routeNodes(file, lines), cursorRow + 1);
+        List<SourceViewer.DocEntry> answer = new ArrayList<>();
+        for (RouteNodes.Node n : here) {
+            if (n.kind() == RouteNodes.Kind.ENDPOINT && n.uri() != null) {
+                endpointDoc(catalog, n.uri(), answer);
+                return answer;
+            }
+        }
+        for (RouteNodes.Node n : here) {
+            if (n.kind() == RouteNodes.Kind.STEP && answer.isEmpty()) {
+                EipModel eip = catalog.eipModel(n.eip());
+                if (eip != null) {
+                    answer.add(SourceViewer.DocEntry.of((eip.getTitle() != null ? eip.getTitle() : n.eip()) + " — "
+                                                        + (eip.getDescription() != null ? eip.getDescription() : "")));
+                }
+            } else if (n.kind() == RouteNodes.Kind.EXPRESSION && n.language() != null) {
+                LanguageModel language = catalog.languageModel(n.language());
+                if (language != null) {
+                    answer.add(SourceViewer.DocEntry.of((language.getTitle() != null ? language.getTitle() : n.language())
+                                                        + (n.predicate() ? " predicate" : " expression") + ": "
+                                                        + (n.text() != null ? n.text() : "")));
+                }
+            }
+        }
+        return answer;
+    }
+
+    /** The component of an endpoint, then each option it is given with its doc. */
+    private static void endpointDoc(CamelCatalog catalog, String uri, List<SourceViewer.DocEntry> answer) {
+        String component = uri.contains(":") ? uri.substring(0, uri.indexOf(':')) : uri;
+        ComponentModel model = catalog.componentModel(component);
+        if (model == null) {
+            return;
+        }
+        String title = model.getTitle() != null ? model.getTitle() : component;
+        answer.add(SourceViewer.DocEntry.of(title + " — " + (model.getDescription() != null ? model.getDescription() : "")));
+        Map<String, String> props;
+        try {
+            props = catalog.endpointProperties(uri);
+        } catch (Exception e) {
+            return;
+        }
+        int q = uri.indexOf('?');
+        String query = q >= 0 ? uri.substring(q + 1) : "";
+        for (ComponentModel.EndpointOptionModel opt : model.getEndpointOptions()) {
+            String value = props != null ? props.get(opt.getName()) : null;
+            // the options written in the uri's query, not the path parameters already in the title's line
+            if (value != null && (query.startsWith(opt.getName() + "=") || query.contains("&" + opt.getName() + "="))) {
+                String doc = EipDocSupport.formatOptionDoc(opt);
+                answer.add(SourceViewer.DocEntry.of(opt.getName() + "=" + value + (doc != null ? " — " + doc : "")));
+            }
+        }
+    }
+
+    private boolean hasEndpoint(Path file, List<String> lines, int line) {
+        for (RouteNodes.Node n : RouteNodes.at(routeNodes(file, lines), line)) {
+            if (n.kind() == RouteNodes.Kind.ENDPOINT) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** The nodes of a route file's content, read again only when the content changed. */
+    private List<RouteNodes.Node> routeNodes(Path file, List<String> lines) {
+        String content = String.join("\n", lines);
+        if (!content.equals(routeNodesContent) || !Objects.equals(file, routeNodesFile)) {
+            routeNodesCache = RouteAssist.nodes(file.getFileName().toString(), content, validationCatalog(), javaSources());
+            routeNodesContent = content;
+            routeNodesFile = file;
+        }
+        return routeNodesCache;
+    }
+
+    /** The Java sources of the project, for the constants a route refers to in another class; kept for a while. */
+    private Map<String, Supplier<String>> javaSources() {
+        long now = System.currentTimeMillis();
+        if (javaSourcesCache == null || now - javaSourcesCacheTime > JAVA_SOURCES_TTL_MS
+                || !Objects.equals(javaSourcesCacheDir, rootDir)) {
+            javaSourcesCache = RouteAssist.javaSources(rootDir);
+            javaSourcesCacheTime = now;
+            javaSourcesCacheDir = rootDir;
+        }
+        return javaSourcesCache;
     }
 
     List<String> validateYamlSimple(String content) {

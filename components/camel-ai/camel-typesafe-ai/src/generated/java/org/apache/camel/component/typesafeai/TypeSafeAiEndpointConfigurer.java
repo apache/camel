@@ -25,6 +25,8 @@ public class TypeSafeAiEndpointConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "apipath":
+        case "apiPath": target.getConfiguration().setApiPath(property(camelContext, java.lang.String.class, value)); return true;
         case "baseurl":
         case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -53,6 +55,8 @@ public class TypeSafeAiEndpointConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
+        case "apipath":
+        case "apiPath": return java.lang.String.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
         case "lazystartproducer":
@@ -82,6 +86,8 @@ public class TypeSafeAiEndpointConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": return target.getConfiguration().getApiKey();
+        case "apipath":
+        case "apiPath": return target.getConfiguration().getApiPath();
         case "baseurl":
         case "baseUrl": return target.getConfiguration().getBaseUrl();
         case "lazystartproducer":

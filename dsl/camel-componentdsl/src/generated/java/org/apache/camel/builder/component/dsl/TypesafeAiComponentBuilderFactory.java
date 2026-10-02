@@ -52,8 +52,28 @@ public interface TypesafeAiComponentBuilderFactory {
     
         
         /**
-         * The API base URL. The client appends /v1/systemone. Redirects are not
-         * followed.
+         * The API path appended to baseUrl. A leading slash is optional. Must
+         * be a non-blank path without a scheme, authority, query or fragment.
+         * The service must implement the supported TypeSafe AI request and
+         * response schema.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: /v1/systemone
+         * Group: common
+         * 
+         * @param apiPath the value to set
+         * @return the dsl builder
+         */
+        default TypesafeAiComponentBuilder apiPath(java.lang.String apiPath) {
+            doSetProperty("apiPath", apiPath);
+            return this;
+        }
+    
+        
+        /**
+         * The API base URL. The client appends apiPath, preserving any base
+         * path. Redirects are not followed.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -341,6 +361,7 @@ public interface TypesafeAiComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "apiPath": getOrCreateConfiguration((TypeSafeAiComponent) component).setApiPath((java.lang.String) value); return true;
             case "baseUrl": getOrCreateConfiguration((TypeSafeAiComponent) component).setBaseUrl((java.lang.String) value); return true;
             case "configuration": ((TypeSafeAiComponent) component).setConfiguration((org.apache.camel.component.typesafeai.TypeSafeAiConfiguration) value); return true;
             case "maxConcurrentRequests": getOrCreateConfiguration((TypeSafeAiComponent) component).setMaxConcurrentRequests((int) value); return true;

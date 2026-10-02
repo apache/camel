@@ -1,0 +1,52 @@
+# The reverse of order-lines: the warehouse reports each picked line on its own, and the aggregator
+# collects the lines of one order back into a shipment. Lines are correlated by the order id, and a
+# shipment completes when all the lines the order had are in.
+- route:
+    id: picked-lines
+    from:
+      uri: file
+      parameters:
+        directoryName: orders
+        noop: true
+        sortBy: "file:name"
+      steps:
+        - unmarshal:
+            json:
+              library: Jackson
+        - setHeader:
+            name: orderId
+            expression:
+              simple:
+                expression: "${body[orderId]}"
+        - split:
+            expression:
+              simple:
+                expression: "${body[lines]}"
+            steps:
+              - log:
+                  message: "Picked ${body[qty]} x ${body[sku]} for ${header.orderId}"
+              - to:
+                  uri: direct
+                  parameters:
+                    name: shipment
+- route:
+    id: aggregator
+    from:
+      uri: direct
+      parameters:
+        name: shipment
+      steps:
+        - aggregate:
+            aggregationStrategy: "#class:org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy"
+            correlationExpression:
+              simple:
+                expression: "${header.orderId}"
+            completionSizeExpression:
+              simple:
+                expression: "${header.CamelSplitSize}"
+            steps:
+              - marshal:
+                  json:
+                    library: Jackson
+              - log:
+                  message: "Shipment for ${header.orderId} complete: ${body}"
