@@ -67,9 +67,9 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     private Double samplingInterval = 0.0;
 
     /**
-     * The queue size used for OPC UA subscriptions. If not set, the OPC UA server default is used.
+     * The queue size used for OPC UA subscriptions. If not set, a queue size of 1 is requested.
      */
-    @UriParam(description = "Queue size for OPC UA subscriptions. If not set, the server default is used.")
+    @UriParam
     private Integer queueSize;
 
     /**

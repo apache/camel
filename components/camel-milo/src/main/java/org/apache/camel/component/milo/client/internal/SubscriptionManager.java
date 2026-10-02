@@ -201,9 +201,6 @@ public class SubscriptionManager {
                         item.setSamplingInterval(s.getSamplingInterval());
                     }
                     if (null != s.getQueueSize()) {
-                        if (s.getQueueSize() < 0) {
-                            throw new IllegalArgumentException("queueSize must be >= 0, got: " + s.getQueueSize());
-                        }
                         item.setQueueSize(UInteger.valueOf(s.getQueueSize()));
                     }
                     MonitoringFilter filter = s.createMonitoringFilter();

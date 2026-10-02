@@ -301,8 +301,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Queue size for OPC UA subscriptions. If not set, the server default
-         * is used.
+         * The queue size used for OPC UA subscriptions. If not set, a queue
+         * size of 1 is requested.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -316,8 +316,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Queue size for OPC UA subscriptions. If not set, the server default
-         * is used.
+         * The queue size used for OPC UA subscriptions. If not set, a queue
+         * size of 1 is requested.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -1168,8 +1168,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Queue size for OPC UA subscriptions. If not set, the server default
-         * is used.
+         * The queue size used for OPC UA subscriptions. If not set, a queue
+         * size of 1 is requested.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -1183,8 +1183,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Queue size for OPC UA subscriptions. If not set, the server default
-         * is used.
+         * The queue size used for OPC UA subscriptions. If not set, a queue
+         * size of 1 is requested.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -1964,8 +1964,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Queue size for OPC UA subscriptions. If not set, the server default
-         * is used.
+         * The queue size used for OPC UA subscriptions. If not set, a queue
+         * size of 1 is requested.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -1979,8 +1979,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Queue size for OPC UA subscriptions. If not set, the server default
-         * is used.
+         * The queue size used for OPC UA subscriptions. If not set, a queue
+         * size of 1 is requested.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.

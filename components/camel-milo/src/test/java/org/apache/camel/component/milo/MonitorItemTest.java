@@ -89,16 +89,18 @@ public class MonitorItemTest extends AbstractMiloServerTest {
     public void testMonitorItem1() throws Exception {
         /*
          * we will wait 2 * 100 milliseconds between server updates since the
-         * explicitly set update rate is 100 milliseconds (samplingInterval)
-         * With 2000ms requestedPublishingInterval and bigger queueSize of 4 we should get all updates,
+         * explicitly set update rate is 100 milliseconds (samplingInterval).
+         * With 2000ms requestedPublishingInterval and bigger queueSize of 4 we should get all updates.
+         * The test relies on milo's default discardOldest=true so the newest value ("Done") survives a queue overflow,
+         * there is currently no parameter to change this.
          */
         final var time = 2 * 100;
         final var timeout = 10 * 1_000; // 10 seconds timeout for assertions
 
         // item 1 ... only this one receives
         test1Endpoint.reset();
-        test1Endpoint.setMinimumExpectedMessageCount(5);    // the first 3, plus at least 4 more from rest (if they fall to 1 period)
-        test1Endpoint.setAssertPeriod(timeout);
+        test1Endpoint.setMinimumExpectedMessageCount(7);    // the first 3, plus at least 4 more from rest (if they fall to 1 period)
+        test1Endpoint.setAssertPeriod(3000);
 
         // Allow time for OPC UA client-server connection to establish
         await().pollDelay(1, TimeUnit.SECONDS).untilAsserted(() -> {
