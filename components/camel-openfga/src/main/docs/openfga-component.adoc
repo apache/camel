@@ -52,8 +52,8 @@ Maven users will need to add the following dependency to their `pom.xml`.
 openfga:operation[?options]
 ------------------------------------------------------------
 
-Where `operation` is one of `check`, `batchCheck`, `listObjects`, `listRelations`, `listUsers`, `writeTuples` or
-`deleteTuples`.
+Where `operation` is one of `check`, `batchCheck`, `listObjects`, `listRelations`, `listUsers`, `readTuples`,
+`readChanges`, `expand`, `writeTuples` or `deleteTuples`.
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -320,12 +320,93 @@ No check is registered for an injected `openFgaClient`, which can point anywhere
 about. Set `healthCheckProducerEnabled=false` on the component, or `healthCheckEnabled=false` on the policy, to
 turn them off.
 
+=== Reading the graph
+
+`readTuples` answers "what access exists", as opposed to `check`'s "may this subject do this". Here `user`, `relation`
+and `object` are a *filter* rather than a subject, and the body comes back as a list of maps keyed `user`, `relation`,
+`object` and `timestamp` — deliberately the keys `writeTuples` and `deleteTuples` accept, so a route can revoke what
+it just read without reshaping anything:
+
+[source,java]
+------------------------------------------------------------
+from("direct:revokeEverythingBobHas")
+        .to("openfga:readTuples?storeId={{fga.store}}&object=document:&user=user:bob")
+        .to("openfga:deleteTuples?storeId={{fga.store}}");
+------------------------------------------------------------
+
+[NOTE]
+.What OpenFGA accepts as a read filter
+====
+The filter is narrower than "every part is optional". Measured against OpenFGA 1.21.0:
+
+* no filter at all — reads the whole store, a page at a time;
+* `object=document:` *plus* a `user` — reads that user's tuples of that object type;
+* `object=document:budget` — reads that object's tuples, with or without a user or relation;
+* `user` alone, `relation` alone, or `object=document:` alone — **rejected**, because OpenFGA requires an object type
+  as soon as any filter is given and will not accept an empty object id and an empty user together.
+
+The component checks this before the call and names the option to change, rather than letting an opaque HTTP 400
+through. Note this is also why a type-only `document:` is accepted here but not as an `object` anywhere else: a read
+filter and an identifier have different rules.
+
+What "optional" does *not* mean is that a part may go missing at runtime. Only an option the endpoint never set counts
+as "do not filter on this"; an option that *is* set and evaluates to nothing — `user=${header.who}` on a message with
+no `who` header — is refused. Dropping it would make the read wider than the route asked for, and with the
+`readTuples` -> `deleteTuples` route above that turns "revoke Bob's access" into "revoke everyone's". A filter that
+silently widens when a value goes missing is the read-side form of failing open.
+====
+
+`readChanges` reads the change log, which is the building block for keeping a cache or a projection in step with the
+graph. Each entry adds an `operation` of `WRITE` or `DELETE`.
+
+Both are paged. `pageSize` bounds one request, and the token the page returns arrives on
+`CamelOpenFgaContinuationToken`; feed it back through `continuationToken` to read on.
+
+A `readChanges` poller has to carry that token from one exchange to the *next*, which an exchange property cannot do:
+every timer fire is a new exchange, so a property left on the previous one is gone and each poll would start from the
+beginning again. Use a global variable, which outlives the exchange:
+
+[source,java]
+------------------------------------------------------------
+from("timer:sync?period=30000")
+        .to("openfga:readChanges?storeId={{fga.store}}&type=document"
+            + "&continuationToken=${variable.global:fgaToken}")
+        .setVariable("global:fgaToken", header("CamelOpenFgaContinuationToken"))
+        .split(body()).to("direct:applyChange");
+------------------------------------------------------------
+
+A global variable lives in the `CamelContext`, so it does not survive a restart. A poller that must resume across one
+should keep the token wherever the deployment already persists state rather than rely on it.
+
+`startTime` bounds where a first read begins — without it a first `readChanges` on a busy store pages through the whole
+history before reaching anything current.
+
+[IMPORTANT]
+.The two read operations signal "done" differently
+====
+Measured against OpenFGA 1.21.0, not assumed:
+
+* `readTuples` returns no token on its last page, so `CamelOpenFgaContinuationToken` is **absent** once the read is
+  finished. Looping until the header is missing is the right way to drain it.
+* `readChanges` returns a token **every** time, including when nothing has happened — it hands the token you sent
+  straight back with an empty page. Looping until the header is missing would therefore never end. The signal there is
+  an **empty body**, and the token it keeps returning is the bookmark the next poll resumes from, which is why the
+  component leaves it in place instead of clearing it.
+====
+
+`expand` is the odd one out: it is the only operation that does not leave a `List` on the body, because its answer is
+a tree of usersets rather than a list. The `UsersetTree` goes on the body as the SDK returns it — flattening it is
+exactly what would destroy the information the operation exists to provide. Reach for it when a check answered
+something surprising and you need to see how it got there.
+
 == What this component does not do yet
 
 * *Contextual tuples and condition context on a check.* A contextual tuple derived from a message is a
   self-authorization primitive — `(user:me, owner, document:secret)` — so rather than ship a gate for it that has
   not been reviewed, the first release leaves it out entirely.
-* The `expand`, `readTuples` and `readChanges` operations, and store or authorization-model management.
+* Store and authorization-model management — `createStore`, `deleteStore`, `writeAuthorizationModel` and the rest.
+  These are administrative rather than integration operations, and a component that can delete the store it
+  authorizes against is a different proposition from one that can only ask it questions.
 
 == Examples
 

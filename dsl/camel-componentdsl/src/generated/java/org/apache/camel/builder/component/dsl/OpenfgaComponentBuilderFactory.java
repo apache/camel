@@ -129,6 +129,25 @@ public interface OpenfgaComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * The page to read from, for readTuples and readChanges. Evaluated as a
+         * Simple expression against the exchange, so a route can feed back the
+         * token the previous page returned -
+         * ${header.CamelOpenFgaContinuationToken} - and page through without
+         * the token being configured statically.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param continuationToken the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder continuationToken(java.lang.String continuationToken) {
+            doSetProperty("continuationToken", continuationToken);
+            return this;
+        }
+    
         
         /**
          * Whether the producer should be started lazy (on the first message).
@@ -175,6 +194,23 @@ public interface OpenfgaComponentBuilderFactory {
         }
     
         /**
+         * How many entries a readTuples or readChanges page returns. Left
+         * unset, OpenFGA's own default applies. A page is one request: this
+         * bounds the answer, not the number of requests a route makes.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder pageSize(java.lang.Integer pageSize) {
+            doSetProperty("pageSize", pageSize);
+            return this;
+        }
+    
+        /**
          * The relation to demand, such as reader or owner. Evaluated as a
          * Simple expression against each exchange, though a literal is what you
          * usually want. The relation is the permission being demanded, so
@@ -208,6 +244,26 @@ public interface OpenfgaComponentBuilderFactory {
          */
         default OpenfgaComponentBuilder relations(java.lang.String relations) {
             doSetProperty("relations", relations);
+            return this;
+        }
+    
+        /**
+         * The earliest change readChanges returns, as an ISO-8601 timestamp
+         * such as {code 2026-10-01T00:00:00Z}. Without it a first read starts
+         * at the beginning of the store's change log, which on a busy store is
+         * a lot of history to page through before reaching anything current.
+         * Parsed when the endpoint starts, so a malformed value fails there
+         * rather than on the first exchange.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param startTime the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder startTime(java.lang.String startTime) {
+            doSetProperty("startTime", startTime);
             return this;
         }
     
@@ -645,10 +701,13 @@ public interface OpenfgaComponentBuilderFactory {
             case "authorizationModelId": getOrCreateConfiguration((OpenFgaComponent) component).setAuthorizationModelId((java.lang.String) value); return true;
             case "configuration": ((OpenFgaComponent) component).setConfiguration((org.apache.camel.component.openfga.OpenFgaConfiguration) value); return true;
             case "consistency": getOrCreateConfiguration((OpenFgaComponent) component).setConsistency((java.lang.String) value); return true;
+            case "continuationToken": getOrCreateConfiguration((OpenFgaComponent) component).setContinuationToken((java.lang.String) value); return true;
             case "lazyStartProducer": ((OpenFgaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "object": getOrCreateConfiguration((OpenFgaComponent) component).setObject((java.lang.String) value); return true;
+            case "pageSize": getOrCreateConfiguration((OpenFgaComponent) component).setPageSize((java.lang.Integer) value); return true;
             case "relation": getOrCreateConfiguration((OpenFgaComponent) component).setRelation((java.lang.String) value); return true;
             case "relations": getOrCreateConfiguration((OpenFgaComponent) component).setRelations((java.lang.String) value); return true;
+            case "startTime": getOrCreateConfiguration((OpenFgaComponent) component).setStartTime((java.lang.String) value); return true;
             case "storeId": getOrCreateConfiguration((OpenFgaComponent) component).setStoreId((java.lang.String) value); return true;
             case "type": getOrCreateConfiguration((OpenFgaComponent) component).setType((java.lang.String) value); return true;
             case "user": getOrCreateConfiguration((OpenFgaComponent) component).setUser((java.lang.String) value); return true;

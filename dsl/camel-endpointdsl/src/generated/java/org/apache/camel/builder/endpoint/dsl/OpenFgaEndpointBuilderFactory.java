@@ -103,6 +103,24 @@ public interface OpenFgaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The page to read from, for readTuples and readChanges. Evaluated as a
+         * Simple expression against the exchange, so a route can feed back the
+         * token the previous page returned -
+         * ${header.CamelOpenFgaContinuationToken} - and page through without
+         * the token being configured statically.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param continuationToken the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder continuationToken(String continuationToken) {
+            doSetProperty("continuationToken", continuationToken);
+            return this;
+        }
+        /**
          * The object being accessed, as an OpenFGA object identifier such as
          * {code document:budget}. Evaluated as a Simple expression against each
          * exchange, so document:${header.documentId} names the resource the
@@ -119,6 +137,39 @@ public interface OpenFgaEndpointBuilderFactory {
          */
         default OpenFgaEndpointBuilder object(String object) {
             doSetProperty("object", object);
+            return this;
+        }
+        /**
+         * How many entries a readTuples or readChanges page returns. Left
+         * unset, OpenFGA's own default applies. A page is one request: this
+         * bounds the answer, not the number of requests a route makes.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder pageSize(Integer pageSize) {
+            doSetProperty("pageSize", pageSize);
+            return this;
+        }
+        /**
+         * How many entries a readTuples or readChanges page returns. Left
+         * unset, OpenFGA's own default applies. A page is one request: this
+         * bounds the answer, not the number of requests a route makes.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder pageSize(String pageSize) {
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -154,6 +205,25 @@ public interface OpenFgaEndpointBuilderFactory {
          */
         default OpenFgaEndpointBuilder relations(String relations) {
             doSetProperty("relations", relations);
+            return this;
+        }
+        /**
+         * The earliest change readChanges returns, as an ISO-8601 timestamp
+         * such as {code 2026-10-01T00:00:00Z}. Without it a first read starts
+         * at the beginning of the store's change log, which on a busy store is
+         * a lot of history to page through before reaching anything current.
+         * Parsed when the endpoint starts, so a malformed value fails there
+         * rather than on the first exchange.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param startTime the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder startTime(String startTime) {
+            doSetProperty("startTime", startTime);
             return this;
         }
         /**
@@ -694,8 +764,9 @@ public interface OpenFgaEndpointBuilderFactory {
          * only: it is deliberately not overridable by a message header, so that
          * an inbound message cannot turn a check into a tuple write, nor a
          * check for one relation into a check for a weaker one.
-         * There are 7 enums and the value can be one of: check, batchCheck,
-         * listObjects, listRelations, listUsers, writeTuples, deleteTuples
+         * There are 10 enums and the value can be one of: check, batchCheck,
+         * listObjects, listRelations, listUsers, readTuples, readChanges,
+         * expand, writeTuples, deleteTuples
          * 
          * @param path operation
          * @return the dsl builder
@@ -719,8 +790,9 @@ public interface OpenFgaEndpointBuilderFactory {
          * only: it is deliberately not overridable by a message header, so that
          * an inbound message cannot turn a check into a tuple write, nor a
          * check for one relation into a check for a weaker one.
-         * There are 7 enums and the value can be one of: check, batchCheck,
-         * listObjects, listRelations, listUsers, writeTuples, deleteTuples
+         * There are 10 enums and the value can be one of: check, batchCheck,
+         * listObjects, listRelations, listUsers, readTuples, readChanges,
+         * expand, writeTuples, deleteTuples
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -841,6 +913,24 @@ public interface OpenFgaEndpointBuilderFactory {
          */
         public String openFgaStoreId() {
             return "CamelOpenFgaStoreId";
+        }
+        /**
+         * The continuation token the page came back with. Feed it back through
+         * the continuationToken option to read on. The two operations end
+         * differently: readTuples returns no token on its last page, so the
+         * header is absent once the read is done, whereas readChanges always
+         * returns a token - an empty body is what says the log has been read up
+         * to date, and that last token is what lets the next poll resume
+         * instead of replaying the whole log.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenFgaContinuationToken}.
+         */
+        public String openFgaContinuationToken() {
+            return "CamelOpenFgaContinuationToken";
         }
         /**
          * How many relationship tuples the writeTuples operation wrote.

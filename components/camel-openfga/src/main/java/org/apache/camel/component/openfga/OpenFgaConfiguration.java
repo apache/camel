@@ -95,6 +95,15 @@ public class OpenFgaConfiguration implements Cloneable {
     @UriParam(label = "advanced", defaultValue = "10")
     private int maxParallelRequests = 10;
 
+    @UriParam
+    private Integer pageSize;
+
+    @UriParam
+    private String continuationToken;
+
+    @UriParam
+    private String startTime;
+
     @UriParam(label = "advanced",
               description = "An existing OpenFgaClient to use. When set, every option describing how to reach the"
                             + " server - apiUrl, storeId, the credentials, the timeouts and sslContextParameters - is"
@@ -408,6 +417,46 @@ public class OpenFgaConfiguration implements Cloneable {
 
     public void setMaxParallelRequests(int maxParallelRequests) {
         this.maxParallelRequests = maxParallelRequests;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    /**
+     * How many entries a {@code readTuples} or {@code readChanges} page returns. Left unset, OpenFGA's own default
+     * applies. A page is one request: this bounds the answer, not the number of requests a route makes.
+     */
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public String getContinuationToken() {
+        return continuationToken;
+    }
+
+    /**
+     * The page to read from, for {@code readTuples} and {@code readChanges}. Evaluated as a Simple expression against
+     * the exchange, so a route can feed back the token the previous page returned -
+     * <code>${header.CamelOpenFgaContinuationToken}</code> - and page through without the token being configured
+     * statically.
+     */
+    public void setContinuationToken(String continuationToken) {
+        this.continuationToken = continuationToken;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    /**
+     * The earliest change {@code readChanges} returns, as an ISO-8601 timestamp such as {@code 2026-10-01T00:00:00Z}.
+     * Without it a first read starts at the beginning of the store's change log, which on a busy store is a lot of
+     * history to page through before reaching anything current. Parsed when the endpoint starts, so a malformed value
+     * fails there rather than on the first exchange.
+     */
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 
     /**

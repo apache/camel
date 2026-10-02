@@ -74,6 +74,16 @@ public final class OpenFgaConstants {
               javaType = "String")
     public static final String STORE_ID = HEADER_PREFIX + "StoreId";
 
+    @Metadata(label = "producer",
+              description = "The continuation token the page came back with. Feed it back through the"
+                            + " continuationToken option to read on. The two operations end differently: readTuples"
+                            + " returns no token on its last page, so the header is absent once the read is done,"
+                            + " whereas readChanges always returns a token - an empty body is what says the log has"
+                            + " been read up to date, and that last token is what lets the next poll resume instead"
+                            + " of replaying the whole log.",
+              javaType = "String")
+    public static final String CONTINUATION_TOKEN = HEADER_PREFIX + "ContinuationToken";
+
     @Metadata(label = "producer", description = "How many relationship tuples the writeTuples operation wrote.",
               javaType = "Integer")
     public static final String WRITTEN_TUPLES = HEADER_PREFIX + "WrittenTuples";
