@@ -402,6 +402,22 @@ project `directory` as an argument, the runtime tools take the integration `name
   See xref:camel-jbang-ai.adoc#_project_overview[Project overview].
 |===
 
+==== Repeated calls
+
+The catalog lookups `camel_catalog_doc`, `camel_catalog_find`, `camel_catalog_sample` and `camel_error_diagnose`
+are deterministic: the same arguments always give the same answer. Both servers mark them in the tool listing
+with `"_meta": {"camel.apache.org/deterministic": true}`, so a client can notice repeats itself.
+
+An agent asking one of them the same question again and again gets nothing new, and a small local model can get
+stuck doing that until its tool call budget is spent. So the first two identical calls of a session are answered
+in full, and from the third the answer is a short note instead: that the call was already answered and how many
+times it was asked. The changed answer helps the agent break the loop, and the context is not filled with copies.
+Calls with other arguments, and the tools that read files, logs or the running integration, are always answered
+in full, so re-reading a file after an edit or polling a log keeps working.
+
+A session is an MCP connection of `camel mcp`, and for `camel tui --mcp` the time from one `initialize` of the
+client to the next.
+
 === Catalog Exploration
 
 [cols="1,3",options="header"]

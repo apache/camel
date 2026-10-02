@@ -100,6 +100,7 @@ public final class AuthoringTools {
                 .param("optionsFilter", "string", "Keyword to match in option names or descriptions", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
+                .deterministic(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogDocs.catalogDoc(ctx.catalog(), args.get("name"), args.get("endpoint"),
@@ -120,6 +121,7 @@ public final class AuthoringTools {
                 .param("limit", "integer", "Maximum matches per kind (default 10)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
+                .deterministic(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogDocs.find(ctx.catalog(), args.get("term"), args.get("kind"),
@@ -141,6 +143,7 @@ public final class AuthoringTools {
                 .param("limit", "integer", "Maximum samples to return (default 2, max 5)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
+                .deterministic(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogSamples.sample(ctx.catalog(), args.get("kind"), args.get("name"),
@@ -354,6 +357,7 @@ public final class AuthoringTools {
                 .param("error", "string", "The stack trace or error message", true)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
+                .deterministic(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return ErrorDiagnoser.diagnose(required(args, "error"), ctx.catalog()).toJson();
