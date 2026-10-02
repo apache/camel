@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.hazelcast.queue;
 
-import java.time.Duration;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -28,16 +28,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
 import org.apache.camel.component.hazelcast.listener.CamelItemListener;
-import org.apache.camel.support.task.Tasks;
-import org.apache.camel.support.task.budget.Budgets;
 
 public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
+
+    // the minimum delay before polling again after a poll error, so a pollingTimeout of 0 does not spin
+    private static final long MIN_POLL_ERROR_DELAY = 1000L;
 
     private final Processor processor;
     private ExecutorService executor;
     private HazelcastQueueConfiguration config;
     private IQueue<Object> queue;
     private UUID listener;
+    // counted down on stop, to end the delay after a poll error without waiting for it
+    private CountDownLatch stopLatch;
 
     public HazelcastQueueConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName,
                                   final HazelcastQueueConfiguration configuration) {
@@ -55,8 +58,9 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
             // register the listener here, so that doStop can remove it (CAMEL-15899)
             listener = queue.addItemListener(new CamelItemListener(this, cacheName), true);
         } else if (config.getQueueConsumerMode() == HazelcastQueueConsumerMode.POLL) {
+            stopLatch = new CountDownLatch(1);
             executor = ((HazelcastQueueEndpoint) getEndpoint()).createExecutor(this);
-            executor.submit(new QueueConsumerTask(queue));
+            executor.submit(new QueueConsumerTask(queue, stopLatch));
         }
     }
 
@@ -69,6 +73,9 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
 
         super.doStop();
 
+        if (stopLatch != null) {
+            stopLatch.countDown();
+        }
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
@@ -82,9 +89,11 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
     class QueueConsumerTask implements Runnable {
 
         private final IQueue<Object> queue;
+        private final CountDownLatch stopLatch;
 
-        QueueConsumerTask(IQueue<Object> queue) {
+        QueueConsumerTask(IQueue<Object> queue, CountDownLatch stopLatch) {
             this.queue = queue;
+            this.stopLatch = stopLatch;
         }
 
         @Override
@@ -94,13 +103,16 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
                 try {
                     body = queue.poll(config.getPollingTimeout(), TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
+                    // only doStop interrupts this thread
                     Thread.currentThread().interrupt();
-                    continue;
+                    return;
                 } catch (Exception e) {
                     // keep polling after an error (such as the client being disconnected from the cluster)
                     if (isRunAllowed()) {
                         getExceptionHandler().handleException("Error polling from the queue " + cacheName, e);
-                        waitBeforeNextPoll();
+                        if (!waitBeforeNextPoll()) {
+                            return;
+                        }
                     }
                     continue;
                 }
@@ -119,15 +131,19 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
             }
         }
 
-        private void waitBeforeNextPoll() {
-            Tasks.foregroundTask()
-                    .withBudget(Budgets.iterationBudget()
-                            .withMaxIterations(1)
-                            .withInitialDelay(Duration.ofMillis(config.getPollingTimeout()))
-                            .build())
-                    .withName("HazelcastQueuePollErrorDelay")
-                    .build()
-                    .run(getEndpoint().getCamelContext(), () -> true);
+        /**
+         * Waits before the next poll after a poll error, and ends early when the consumer stops.
+         *
+         * @return false if the thread was interrupted
+         */
+        private boolean waitBeforeNextPoll() {
+            try {
+                stopLatch.await(Math.max(config.getPollingTimeout(), MIN_POLL_ERROR_DELAY), TimeUnit.MILLISECONDS);
+                return true;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
         }
     }
 
