@@ -406,6 +406,102 @@ YAML::
 ----
 ====
 
+When the filter matches on a unique key, such as the SKU, you can let JsonPath return the element itself instead of a
+list: set `resultType` to `java.util.Map` (or another non-collection type). A single match is then returned as the
+element, and no match returns `null`, so a `null` check replaces the size check and the `${body[0]}`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:one-sku")
+    .setBody(constant("resource:file:stock.json"))
+    .setBody().jsonpath("$[?(@.sku == '${header.sku}')]", Map.class)
+    .choice()
+        .when(body().isNull())
+            .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(404))
+            .setBody(simple("unknown SKU ${header.sku}"))
+        .otherwise()
+            .marshal().json()
+    .end();
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:one-sku"/>
+  <setBody>
+    <constant>resource:file:stock.json</constant>
+  </setBody>
+  <setBody>
+    <jsonpath resultType="java.util.Map">$[?(@.sku == '${header.sku}')]</jsonpath>
+  </setBody>
+  <choice>
+    <when>
+      <simple>${body} == null</simple>
+      <setHeader name="CamelHttpResponseCode">
+        <constant>404</constant>
+      </setHeader>
+      <setBody>
+        <simple>unknown SKU ${header.sku}</simple>
+      </setBody>
+    </when>
+    <otherwise>
+      <marshal>
+        <json/>
+      </marshal>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:one-sku
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: resource:file:stock.json
+        - setBody:
+            expression:
+              jsonpath:
+                expression: "$[?(@.sku == '${header.sku}')]"
+                resultType: java.util.Map
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body} == null"
+                steps:
+                  - setHeader:
+                      name: CamelHttpResponseCode
+                      expression:
+                        constant:
+                          expression: "404"
+                  - setBody:
+                      expression:
+                        simple:
+                          expression: "unknown SKU ${header.sku}"
+            otherwise:
+              steps:
+                - marshal:
+                    json: {}
+----
+====
+
+NOTE: When the filter matches more than one element, a non-collection `resultType` also returns `null`, so use
+this form only when at most one element can match. The `unpackArray` option does not help here: it unpacks a
+single-element list, but leaves an empty list as an empty list.
+
 You can turn off support for inlined Simple expression by setting the option `allowSimple` to `false` as shown:
 
 [tabs]
