@@ -78,10 +78,12 @@ public class RocketMQConsumer extends DefaultConsumer implements Suspendable {
         } catch (Exception e) {
             exchange.setException(e);
         }
-        // a failed route sets the exception on the exchange: the message must then be consumed again,
-        // acknowledging it would lose it
-        if (exchange.getException() != null) {
-            getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+        // a failed route sets the exception on the exchange (or marks it rollback only): the message must then be
+        // consumed again, acknowledging it would lose it
+        if (exchange.getException() != null || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+            }
             return ConsumeConcurrentlyStatus.RECONSUME_LATER;
         }
         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;

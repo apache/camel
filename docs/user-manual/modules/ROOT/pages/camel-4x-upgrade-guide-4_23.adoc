@@ -787,7 +787,7 @@ sender no longer waits until its reply timeout (30 seconds by default).
 
 The consumer acknowledged a message (`CONSUME_SUCCESS`) whenever the processor returned, also when the route failed:
 a failed route sets the exception on the exchange instead of throwing it, so the message was lost. The consumer now
-answers `RECONSUME_LATER` for a failed exchange, and RocketMQ redelivers the message with an increasing delay (up to
+answers `RECONSUME_LATER` for a failed exchange (or one marked rollback only), and RocketMQ redelivers the message with an increasing delay (up to
 the maximum reconsume times of the consumer group, 16 by default, then it goes to the dead letter queue of the group).
 A route that fails for a message, and relied on the message being dropped, now receives it again; handle the
 exception in the route (for example with `onException(...).handled(true)`) to acknowledge the message anyway.

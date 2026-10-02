@@ -54,6 +54,13 @@ public class RocketMQConsumerFailureTest extends CamelTestSupport {
     }
 
     @Test
+    public void testRollbackOnlyExchangeIsConsumedLater() throws Exception {
+        RocketMQConsumer consumer = createConsumer("direct:rollback");
+
+        assertEquals(ConsumeConcurrentlyStatus.RECONSUME_LATER, consumer.consumeMessage(List.of(message()), null));
+    }
+
+    @Test
     public void testCompletedExchangeIsAcknowledged() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello");
@@ -84,6 +91,9 @@ public class RocketMQConsumerFailureTest extends CamelTestSupport {
             public void configure() {
                 from("direct:fail")
                         .throwException(new IllegalStateException("Forced"));
+
+                from("direct:rollback")
+                        .markRollbackOnly();
 
                 from("direct:ok")
                         .convertBodyTo(String.class)
