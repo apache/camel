@@ -1,0 +1,21 @@
+# The supplier sends orders as XML, the shop works in JSON. The Jackson XML data format reads the
+# XML into a map and the Jackson JSON data format writes the map out: no mapping code, the XML
+# elements and attributes become JSON fields.
+- route:
+    id: xml-to-json
+    from:
+      uri: file
+      parameters:
+        directoryName: inbox
+        noop: true
+        include: ".*\\.xml"
+      steps:
+        - log:
+            message: "Supplier order as XML: ${body}"
+        - unmarshal:
+            jacksonXml: {}
+        - marshal:
+            json:
+              library: Jackson
+        - log:
+            message: "The same order as JSON: ${body}"

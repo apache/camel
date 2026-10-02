@@ -1,0 +1,28 @@
+# The case every integration has: the shop's order mapped field by field to the courier's shipment
+# format, which has different names, a different structure, and values the order does not carry.
+# The order is parsed to a map, the Groovy script shipment-mapping.groovy builds the shipment map,
+# and it is written out as JSON.
+- route:
+    id: data-mapping
+    from:
+      uri: timer
+      parameters:
+        timerName: order
+        repeatCount: 1
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: "resource:file:order.json"
+        - unmarshal:
+            json:
+              library: Jackson
+        - setBody:
+            expression:
+              groovy:
+                expression: "resource:file:shipment-mapping.groovy"
+        - marshal:
+            json:
+              library: Jackson
+        - log:
+            message: "Shipment for the courier: ${body}"

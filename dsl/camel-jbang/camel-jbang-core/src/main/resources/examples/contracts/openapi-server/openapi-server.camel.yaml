@@ -1,0 +1,162 @@
+# The stock API, contract first: stock-api.json is the OpenAPI contract, the
+# REST DSL serves every operation in it, requests are validated against it,
+# and each operation is a direct route named after its operationId.
+- restConfiguration:
+    clientRequestValidation: true
+    apiContextPath: openapi
+
+# The contract check rejects a missing body or a wrong content type; the values are the route's job
+- onException:
+    exception:
+      - org.apache.camel.support.processor.PredicateValidationException
+    handled:
+      constant:
+        expression: "true"
+    steps:
+      - setHeader:
+          name: CamelHttpResponseCode
+          expression:
+            constant:
+              expression: "400"
+      - setBody:
+          expression:
+            simple:
+              expression: '{"error": "orderId and a positive qty are required"}'
+
+- rest:
+    openApi:
+      specification: stock-api.json
+
+- route:
+    id: listStock
+    from:
+      uri: direct
+      parameters:
+        name: listStock
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: resource:file:stock.json
+
+- route:
+    id: getStock
+    from:
+      uri: direct
+      parameters:
+        name: getStock
+      steps:
+        - to:
+            uri: direct:lookup
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body} == null"
+                steps:
+                  - setHeader:
+                      name: CamelHttpResponseCode
+                      expression:
+                        constant:
+                          expression: "404"
+                  - setBody:
+                      expression:
+                        simple:
+                          expression: '{"error": "unknown sku ${header.sku}"}'
+            otherwise:
+              steps:
+                - marshal:
+                    json:
+                      library: Jackson
+
+- route:
+    id: reserveStock
+    from:
+      uri: direct
+      parameters:
+        name: reserveStock
+      steps:
+        - unmarshal:
+            json:
+              library: Jackson
+        - validate:
+            expression:
+              simple:
+                expression: "${body[orderId]} != null && ${body[qty]} > 0"
+        - setProperty:
+            name: reservation
+            expression:
+              simple:
+                expression: "${body}"
+        - to:
+            uri: direct:lookup
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body} == null"
+                steps:
+                  - setHeader:
+                      name: CamelHttpResponseCode
+                      expression:
+                        constant:
+                          expression: "404"
+                  - setBody:
+                      expression:
+                        simple:
+                          expression: '{"error": "unknown sku ${header.sku}"}'
+              - expression:
+                  simple:
+                    expression: "${body[qty]} < ${exchangeProperty.reservation[qty]}"
+                steps:
+                  - setHeader:
+                      name: CamelHttpResponseCode
+                      expression:
+                        constant:
+                          expression: "409"
+                  - setBody:
+                      expression:
+                        simple:
+                          expression: '{"error": "only ${body[qty]} ${header.sku} in stock, ${exchangeProperty.reservation[qty]} wanted for ${exchangeProperty.reservation[orderId]}"}'
+            otherwise:
+              steps:
+                - log:
+                    message: "Reserved ${exchangeProperty.reservation[qty]} x ${header.sku} for ${exchangeProperty.reservation[orderId]}"
+                - setBody:
+                    expression:
+                      simple:
+                        expression: '{"sku": "${header.sku}", "reserved": ${exchangeProperty.reservation[qty]}, "remaining": ${body[qty]}}'
+
+# Finds one SKU in the stock file: the item as a map, or null
+- route:
+    id: lookup
+    from:
+      uri: direct
+      parameters:
+        name: lookup
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: resource:file:stock.json
+        - setBody:
+            expression:
+              jsonpath:
+                expression: "$[?(@.sku == '${header.sku}')]"
+                resultType: java.util.List
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body.size()} == 0"
+                steps:
+                  - setBody:
+                      expression:
+                        simple:
+                          expression: "${null}"
+            otherwise:
+              steps:
+                - setBody:
+                    expression:
+                      simple:
+                        expression: "${body[0]}"

@@ -1,0 +1,33 @@
+# Three orders from three countries. A choice routes each by its country: Danish orders go to the
+# local warehouse, EU orders ship without customs, everything else is an export with a customs
+# declaration. Each branch logs what it did.
+- route:
+    id: content-based-router
+    from:
+      uri: file
+      parameters:
+        directoryName: orders
+        noop: true
+        sortBy: "file:name"
+      steps:
+        - unmarshal:
+            json:
+              library: Jackson
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body[country]} == 'DK'"
+                steps:
+                  - log:
+                      message: "Order ${body[orderId]} from ${body[country]}: local delivery from the Copenhagen warehouse"
+              - expression:
+                  simple:
+                    expression: "${body[country]} in 'DE,SE,NL,FR'"
+                steps:
+                  - log:
+                      message: "Order ${body[orderId]} from ${body[country]}: EU shipping, no customs"
+            otherwise:
+              steps:
+                - log:
+                    message: "Order ${body[orderId]} from ${body[country]}: export, customs declaration needed"
