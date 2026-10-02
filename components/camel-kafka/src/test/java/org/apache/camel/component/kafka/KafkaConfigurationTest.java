@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.Map;
 import java.util.Properties;
 
+import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.catalog.impl.DefaultRuntimeCamelCatalog;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.util.SecurityUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -89,5 +94,17 @@ class KafkaConfigurationTest {
 
         Properties props = config.createConsumerProperties();
         assertEquals(131072, props.get(ConsumerConfig.SEND_BUFFER_CONFIG));
+    }
+
+    @Test
+    void byDurationAutoOffsetResetPassesCatalogValidation() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            RuntimeCamelCatalog catalog = new DefaultRuntimeCamelCatalog();
+            catalog.setCamelContext(context);
+            EndpointValidationResult result
+                    = catalog.validateProperties("kafka", Map.of("topic", "test", "autoOffsetReset", "by_duration:PT5M"));
+            assertTrue(result.isSuccess(),
+                    () -> "Expected by_duration:PT5M to pass catalog validation but got: " + result);
+        }
     }
 }
