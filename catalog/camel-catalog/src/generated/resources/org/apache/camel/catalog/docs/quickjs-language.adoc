@@ -75,12 +75,46 @@ with `camel.setHeader` is stored as a `String`, `Number`, `Boolean`, `List` or `
 |`camel.log(level, message)` |logs through the `org.apache.camel.language.quickjs.script` logger at `trace`, `debug`, `info`, `warn` or `error`
 |=======================================================================
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .setBody().quickjs("camel.setHeader('processed', true); body.toUpperCase()")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <quickjs>camel.setHeader('processed', true); body.toUpperCase()</quickjs>
+  </setBody>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            expression:
+              quickjs:
+                expression: 'camel.setHeader(''processed'', true); body.toUpperCase()'
+        - to:
+            uri: mock:result
+----
+====
 
 The `camel` API is only available while a route expression is evaluated; the generic
 `ScriptingLanguage.evaluate(script, bindings, resultType)` entry point has no current exchange.
@@ -168,6 +202,10 @@ dispatches to the functions listed above.
 
 == Usage
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 import static org.apache.camel.language.quickjs.QuickjsLanguage.quickjs;
@@ -183,14 +221,89 @@ public class MyRouteBuilder extends RouteBuilder {
 }
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <choice>
+    <when>
+      <quickjs>headers.MyHeader == 'foo'</quickjs>
+      <to uri="mock:foo"/>
+    </when>
+    <otherwise>
+      <to uri="mock:other"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - choice:
+            when:
+              - expression:
+                  quickjs:
+                    expression: 'headers.MyHeader == ''foo'''
+                steps:
+                  - to:
+                      uri: mock:foo
+            otherwise:
+              steps:
+                - to:
+                    uri: mock:other
+----
+====
+
 Transform the body with the expression result:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .transform().quickjs("body.toUpperCase()")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <transform>
+    <quickjs>body.toUpperCase()</quickjs>
+  </transform>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - transform:
+            expression:
+              quickjs:
+                expression: body.toUpperCase()
+        - to:
+            uri: mock:result
+----
+====
 
 You can load the script from an external resource with the
 `resource:scheme:location` syntax, for example `resource:classpath:myscript.js`

@@ -57,38 +57,57 @@ default `typesafe-ai:default` endpoint, use `camel.component.typesafe-ai.thresho
 Use Camel's generic language expression. The same condition works in Filter, Choice, Validate
 and other EIPs accepting a predicate. A non-match retains that EIP's normal behavior.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:filter")
     .filter().language("typesafe-ai", "Does this message request a refund?")
     .to("direct:refund-handler");
+----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:filter"/>
+  <filter>
+    <language language="typesafe-ai">Does this message request a refund?</language>
+    <to uri="direct:refund-handler"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:filter
+      steps:
+        - filter:
+            expression:
+              language:
+                language: typesafe-ai
+                expression: "Does this message request a refund?"
+            steps:
+              - to:
+                  uri: direct:refund-handler
+----
+====
+
+In a Choice it is a `when` like any other predicate:
+
+[source,java]
+----
 from("direct:route").choice()
     .when().language("typesafe-ai", "Does this message request a refund?")
         .to("direct:refund-handler")
     .otherwise().to("direct:general-handler");
-----
-
-[source,xml]
-----
-<filter>
-  <language language="typesafe-ai">Does this message request a refund?</language>
-  <to uri="direct:refund-handler"/>
-</filter>
-----
-
-[source,yaml]
-----
-- from:
-    uri: direct:filter
-    steps:
-      - filter:
-          expression:
-            language:
-              language: typesafe-ai
-              expression: "Does this message request a refund?"
-          steps:
-            - to: direct:refund-handler
 ----
 
 XML and YAML use the configured language defaults. Java callers needing per-use settings

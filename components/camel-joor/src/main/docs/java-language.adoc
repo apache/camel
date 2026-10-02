@@ -117,13 +117,46 @@ And this bean is registered with the name `myEcho` in the Camel registry.
 
 The Java code can then inject this bean directly in the script where the bean is in use:
 
-._Java-only: Java DSL route with bean injection syntax_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .transform().java("'Hello ' + #bean:myEcho.echo(bodyAs(String))")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <transform>
+    <java>'Hello ' + #bean:myEcho.echo(bodyAs(String))</java>
+  </transform>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - transform:
+            expression:
+              java:
+                expression: '''Hello '' + #bean:myEcho.echo(bodyAs(String))'
+        - to:
+            uri: mock:result
+----
+====
 
 Now this code may seem a bit magic, but what happens is that the `myEcho` bean is injected via a constructor, and then called directly in the script, so it is as fast as possible.
 
@@ -149,13 +182,46 @@ public class JoorScript1 implements org.apache.camel.language.joor.JoorMethod {
 
 You can also store a reference to the bean in a variable which would more resemble how you would code in Java
 
-._Java-only: Java DSL route with bean variable reference_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .transform().java("var bean = #bean:myEcho; return 'Hello ' + bean.echo(bodyAs(String))")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <transform>
+    <java>var bean = #bean:myEcho; return 'Hello ' + bean.echo(bodyAs(String))</java>
+  </transform>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - transform:
+            expression:
+              java:
+                expression: 'var bean = #bean:myEcho; return ''Hello '' + bean.echo(bodyAs(String))'
+        - to:
+            uri: mock:result
+----
+====
 
 Notice how we declare the bean as if it is a local variable via `var bean = #bean:myEcho`.
 When doing this we must use a different name as `myEcho` is the variable used by the dependency injection.
@@ -199,13 +265,46 @@ echo()=bodyAs(String) + bodyAs(String)
 
 Which allows using `echo()` in the jOOR language script such as:
 
-._Java-only: Java DSL route using alias function_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:hello")
-    .transform(java("'Hello ' + echo()"))
+    .transform().java("'Hello ' + echo()")
     .log("You said ${body}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:hello"/>
+  <transform>
+    <java>'Hello ' + echo()</java>
+  </transform>
+  <log message="You said ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:hello
+      steps:
+        - transform:
+            expression:
+              java:
+                expression: '''Hello '' + echo()'
+        - log:
+            message: 'You said ${body}'
+----
+====
 
 The `echo()` alias will be replaced with its value resulting in a script as:
 
@@ -284,23 +383,50 @@ It is possible to include multiple statements.
 The code below shows an example where the `user` header is retrieved in a first statement.
 And then, in a second statement we return a value whether the user is `null` or not.
 
-._Java-only: Java DSL route with multi-statement expression_
+In Java DSL the strings inside the script must be escaped (`\"`), so it is easier to write them in single quotes,
+which the Java language turns into double quotes (`singleQuotes`, on by default). In XML and YAML DSL single quotes
+work the same:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:orders")
-  .transform().java("var user = message.getHeader(\"user\"); return user != null ? \"User: \" + user : \"No user exists\";")
-  .to("seda:user");
+    .transform().java("var user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';")
+    .to("seda:user");
 ----
 
-Notice how we have to quote strings in strings, and that is annoying, so instead we can use single quotes:
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="seda:orders"/>
+  <transform>
+    <java>var user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';</java>
+  </transform>
+  <to uri="seda:user"/>
+</route>
+----
 
-._Java-only: Java DSL route using single-quote syntax_
-[source,java]
+YAML::
++
+[source,yaml]
 ----
-from("seda:orders")
-  .transform().java("var user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';")
-  .to("seda:user");
+- route:
+    from:
+      uri: seda:orders
+      steps:
+        - transform:
+            expression:
+              java:
+                expression: 'var user = message.getHeader(''user''); return user != null ? ''User: '' + user : ''No user exists'';'
+        - to:
+            uri: seda:user
 ----
+====
 
 === Hot re-load
 
@@ -308,32 +434,51 @@ You can turn off pre-compilation for the Java language and then Camel will recom
 (an inline script is still only compiled once, on first use, as its text cannot change).
 You can externalize the code into a resource file, which will be reloaded on each message as shown:
 
-._Java-only: programmatic hot-reload configuration with Java DSL_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-JavaLanguage java = (JavaLanguage) context.resolveLanguage("java");
-java.setPreCompile(false);
-
 from("jms:incoming")
-    .transform().java("resource:file:src/main/resources/orders.java")
+    .transform(expression().java("resource:file:src/main/resources/orders.java").preCompile(false).end())
     .to("jms:orders");
 ----
 
-Here the Java code is externalized into the file `src/main/resources/orders.java` which allows you to edit this source file while running the Camel application and try the changes with hot-reloading.
-
-In XML DSL it's easier because you can turn off pre-compilation in the `<java>` XML element:
-
-._XML-only:_
+XML::
++
 [source,xml]
 ----
 <route>
-    <from uri="jms:incoming"/>
-    <transform>
-      <java preCompile="false">resource:file:src/main/resources/orders.java</java>
-    </transform>
-    <to uri="jms:orders"/>
+  <from uri="jms:incoming"/>
+  <transform>
+    <java preCompile="false">resource:file:src/main/resources/orders.java</java>
+  </transform>
+  <to uri="jms:orders"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:incoming
+      steps:
+        - transform:
+            expression:
+              java:
+                expression: resource:file:src/main/resources/orders.java
+                preCompile: false
+        - to:
+            uri: jms:orders
+----
+====
+
+Here the Java code is externalized into the file `src/main/resources/orders.java` which allows you to edit this source
+file while running the Camel application and try the changes with hot-reloading. Pre-compilation can also be turned
+off for every script on the language, with `setPreCompile(false)` on the `JavaLanguage` (`context.resolveLanguage("java")`).
 
 === Lambda-based AggregationStrategy
 

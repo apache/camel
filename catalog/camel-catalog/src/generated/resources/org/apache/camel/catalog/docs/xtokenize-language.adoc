@@ -51,6 +51,18 @@ the `namespacesRef` option:
 
 [tabs]
 ====
+Java::
++
+[source,java]
+----
+@BindToRegistry("myNamespaces")
+Namespaces myNamespaces = new Namespaces("c", "http://acme.com/cheese");
+
+from("file:inbox")
+    .split(expression().xtokenize("//c:order").namespacesRef("myNamespaces").end())
+        .to("mock:result");
+----
+
 XML::
 +
 [source,xml]
