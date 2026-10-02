@@ -338,7 +338,23 @@ to("openfga:check?storeId={{fga.store}}&relation=reader"
    + "team:${exchangeProperty.tokenTeam}");
 ------------------------------------------------------------
 
-It applies to `check`, `batchCheck`, `listObjects`, `listRelations` and `listUsers`.
+It applies to `check`, `batchCheck`, `listObjects`, `listRelations` and `listUsers`. On `batchCheck` the batch fans
+out into one check per object and the context goes on *every* item, so each object is judged against the same facts.
+
+`OpenFgaSecurityPolicy` takes both options as well, through `setContextualTuples` and `setConditionContext`. They are
+no more dangerous on the policy than on an endpoint and no less: either way the value comes from whoever configured
+the route, never from the message.
+
+[NOTE]
+.A comma inside a Simple expression
+====
+The option is split on `,` into its three parts *before* those parts are compiled, so a Simple expression containing
+a comma — `${header.x.substring(0,3)}`, or a bean call with two arguments — breaks the triple. It cannot be
+misinterpreted silently: the split yields either the wrong number of parts, or a part that is not a parsable
+expression — `user:${bean:ids.pick(1,2)},member` splits into three and the first fails to compile with
+`missing } to close the function` — so the route fails before it carries a message rather than checking something
+other than what was written. Pre-compute such a value into an exchange property and reference that instead.
+====
 
 `conditionContext` supplies the values that any conditioned relation's CEL expression is evaluated with, as a map
 resolved from the registry — `conditionContext=#myContext`. A map rather than an expression on purpose: OpenFGA types
