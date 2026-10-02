@@ -95,13 +95,15 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
     private String moduleRefs;
     @XmlAttribute
     @Metadata(description = "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper."
-                            + " The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature."
-                            + " Multiple features can be separated by comma.")
+                            + " The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature."
+                            + " Multiple features can be separated by comma."
+                            + " When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.")
     private String enableFeatures;
     @XmlAttribute
     @Metadata(description = "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper."
-                            + " The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature."
-                            + " Multiple features can be separated by comma.")
+                            + " The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature."
+                            + " Multiple features can be separated by comma."
+                            + " When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.")
     private String disableFeatures;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
