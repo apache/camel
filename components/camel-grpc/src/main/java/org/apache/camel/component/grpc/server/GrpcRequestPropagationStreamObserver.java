@@ -69,7 +69,7 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             responseObserver.onError(e);
-
+            failed = true;
         }
     }
 

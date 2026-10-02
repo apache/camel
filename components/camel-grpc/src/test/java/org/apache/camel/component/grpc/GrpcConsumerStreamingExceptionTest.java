@@ -16,9 +16,14 @@
  */
 package org.apache.camel.component.grpc;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -27,8 +32,8 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.CamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,57 +48,103 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class GrpcConsumerStreamingExceptionTest extends GrpcTestSupport {
 
     private static final String ROUTE_EXCEPTION_MESSAGE = "GRPC Camel streaming exception message";
+    private static final String MUTED_EXCEPTION_MESSAGE = "Exchange processing failed";
 
-    private ManagedChannel aggregationChannel;
-    private ManagedChannel propagationChannel;
-
-    @BeforeEach
-    public void startGrpcChannels() {
-        aggregationChannel = ManagedChannelBuilder.forAddress("localhost", getRoutePort("grpc-aggregation"))
-                .usePlaintext().build();
-        propagationChannel = ManagedChannelBuilder.forAddress("localhost", getRoutePort("grpc-propagation"))
-                .usePlaintext().build();
-    }
+    private final Map<String, ManagedChannel> channels = new ConcurrentHashMap<>();
 
     @AfterEach
     public void stopGrpcChannels() {
-        if (aggregationChannel != null) {
-            aggregationChannel.shutdown().shutdownNow();
-        }
-        if (propagationChannel != null) {
-            propagationChannel.shutdown().shutdownNow();
-        }
+        channels.values().forEach(channel -> channel.shutdown().shutdownNow());
+        channels.clear();
     }
 
     @Test
     public void testAggregationFailureIsSentAsError() throws Exception {
-        PongResponseStreamObserver responseObserver = call(PingPongGrpc.newStub(aggregationChannel));
+        PongResponseStreamObserver responseObserver = callClientStreaming("grpc-aggregation");
 
-        assertNull(responseObserver.pongResponse, "no response must be sent for a failed exchange");
-        assertInternalError(responseObserver.error);
+        assertTrue(responseObserver.pongResponses.isEmpty(), "no response must be sent for a failed exchange");
+        assertInternalError(responseObserver, ROUTE_EXCEPTION_MESSAGE);
     }
 
     @Test
     public void testPropagationFailureIsSentAsError() throws Exception {
-        PongResponseStreamObserver responseObserver = call(PingPongGrpc.newStub(propagationChannel));
+        PongResponseStreamObserver responseObserver = callClientStreaming("grpc-propagation");
 
-        assertNull(responseObserver.pongResponse, "no response must be sent for a failed exchange");
-        assertInternalError(responseObserver.error);
+        assertTrue(responseObserver.pongResponses.isEmpty(), "no response must be sent for a failed exchange");
+        assertInternalError(responseObserver, ROUTE_EXCEPTION_MESSAGE);
     }
 
-    private static PongResponseStreamObserver call(PingPongGrpc.PingPongStub stub) throws InterruptedException {
+    @Test
+    public void testPropagationFailureEndsTheCall() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:propagation");
+        mock.expectedMessageCount(1);
+        // a message routed after the failure would arrive later than the error
+        mock.setAssertPeriod(500);
+
+        PongResponseStreamObserver responseObserver = callBidiStreaming("grpc-propagation", 2);
+
+        assertTrue(responseObserver.pongResponses.isEmpty(), "no response must be sent for a failed exchange");
+        assertInternalError(responseObserver, ROUTE_EXCEPTION_MESSAGE);
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testAggregationFailureIsMutedByDefault() throws Exception {
+        PongResponseStreamObserver responseObserver = callClientStreaming("grpc-aggregation-muted");
+
+        assertTrue(responseObserver.pongResponses.isEmpty(), "no response must be sent for a failed exchange");
+        assertInternalError(responseObserver, MUTED_EXCEPTION_MESSAGE);
+    }
+
+    @Test
+    public void testPropagationFailureIsMutedByDefault() throws Exception {
+        PongResponseStreamObserver responseObserver = callClientStreaming("grpc-propagation-muted");
+
+        assertTrue(responseObserver.pongResponses.isEmpty(), "no response must be sent for a failed exchange");
+        assertInternalError(responseObserver, MUTED_EXCEPTION_MESSAGE);
+    }
+
+    @Test
+    public void testPropagationHandledFailureKeepsTheStreamOpen() throws Exception {
+        PongResponseStreamObserver responseObserver = callBidiStreaming("grpc-propagation-handled", 2);
+
+        assertNull(responseObserver.error, "a handled exception must not end the call with an error");
+        assertEquals(1, responseObserver.completed.get());
+        List<Integer> pongIds = new ArrayList<>();
+        responseObserver.pongResponses.forEach(pong -> pongIds.add(pong.getPongId()));
+        assertEquals(List.of(1, 2), pongIds);
+    }
+
+    // client streaming call (one response) with a single message
+    private PongResponseStreamObserver callClientStreaming(String routeId) throws InterruptedException {
+        return call(routeId, 1, false);
+    }
+
+    // bidirectional streaming call, so that each message can be answered
+    private PongResponseStreamObserver callBidiStreaming(String routeId, int messages) throws InterruptedException {
+        return call(routeId, messages, true);
+    }
+
+    private PongResponseStreamObserver call(String routeId, int messages, boolean bidi) throws InterruptedException {
+        ManagedChannel channel = channels.computeIfAbsent(routeId,
+                id -> ManagedChannelBuilder.forAddress("localhost", getRoutePort(id)).usePlaintext().build());
+        PingPongGrpc.PingPongStub stub = PingPongGrpc.newStub(channel);
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver();
-        StreamObserver<PingRequest> requestObserver = stub.pingAsyncSync(responseObserver);
-        requestObserver.onNext(PingRequest.newBuilder().setPingName("PING").setPingId(1).build());
+        StreamObserver<PingRequest> requestObserver
+                = bidi ? stub.pingAsyncAsync(responseObserver) : stub.pingAsyncSync(responseObserver);
+        for (int i = 1; i <= messages; i++) {
+            requestObserver.onNext(PingRequest.newBuilder().setPingName("PING").setPingId(i).build());
+        }
         requestObserver.onCompleted();
         assertTrue(responseObserver.latch.await(5, TimeUnit.SECONDS));
         return responseObserver;
     }
 
-    private static void assertInternalError(Throwable error) {
-        StatusRuntimeException e = assertInstanceOf(StatusRuntimeException.class, error);
+    private static void assertInternalError(PongResponseStreamObserver responseObserver, String description) {
+        StatusRuntimeException e = assertInstanceOf(StatusRuntimeException.class, responseObserver.error);
         assertEquals(Status.Code.INTERNAL, e.getStatus().getCode());
-        assertEquals(ROUTE_EXCEPTION_MESSAGE, e.getStatus().getDescription());
+        assertEquals(description, e.getStatus().getDescription());
+        assertEquals(0, responseObserver.completed.get(), "a failed call must not also complete");
     }
 
     @Override
@@ -110,6 +161,26 @@ public class GrpcConsumerStreamingExceptionTest extends GrpcTestSupport {
                 from("grpc://localhost:0/org.apache.camel.component.grpc.PingPong?synchronous=true"
                      + "&consumerStrategy=PROPAGATION&muteException=false")
                         .routeId("grpc-propagation")
+                        .bean(new GrpcMessageBuilder(), "buildPongResponse")
+                        .to("mock:propagation")
+                        .throwException(CamelException.class, ROUTE_EXCEPTION_MESSAGE);
+
+                from("grpc://localhost:0/org.apache.camel.component.grpc.PingPong?synchronous=true"
+                     + "&consumerStrategy=AGGREGATION")
+                        .routeId("grpc-aggregation-muted")
+                        .bean(new GrpcMessageBuilder(), "buildAggregatedPongResponse")
+                        .throwException(CamelException.class, ROUTE_EXCEPTION_MESSAGE);
+
+                from("grpc://localhost:0/org.apache.camel.component.grpc.PingPong?synchronous=true"
+                     + "&consumerStrategy=PROPAGATION")
+                        .routeId("grpc-propagation-muted")
+                        .bean(new GrpcMessageBuilder(), "buildPongResponse")
+                        .throwException(CamelException.class, ROUTE_EXCEPTION_MESSAGE);
+
+                from("grpc://localhost:0/org.apache.camel.component.grpc.PingPong?synchronous=true"
+                     + "&consumerStrategy=PROPAGATION&muteException=true")
+                        .routeId("grpc-propagation-handled")
+                        .onException(CamelException.class).handled(true).end()
                         .bean(new GrpcMessageBuilder(), "buildPongResponse")
                         .throwException(CamelException.class, ROUTE_EXCEPTION_MESSAGE);
             }
@@ -129,12 +200,13 @@ public class GrpcConsumerStreamingExceptionTest extends GrpcTestSupport {
 
     static class PongResponseStreamObserver implements StreamObserver<PongResponse> {
         private final CountDownLatch latch = new CountDownLatch(1);
-        private volatile PongResponse pongResponse;
+        private final List<PongResponse> pongResponses = new CopyOnWriteArrayList<>();
+        private final AtomicInteger completed = new AtomicInteger();
         private volatile Throwable error;
 
         @Override
         public void onNext(PongResponse value) {
-            pongResponse = value;
+            pongResponses.add(value);
         }
 
         @Override
@@ -145,6 +217,7 @@ public class GrpcConsumerStreamingExceptionTest extends GrpcTestSupport {
 
         @Override
         public void onCompleted() {
+            completed.incrementAndGet();
             latch.countDown();
         }
     }

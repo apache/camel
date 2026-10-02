@@ -737,15 +737,6 @@ in the charset that the `Content-Type` declares, so the bytes match the header. 
 the declared charset and read such a response as UTF-8 must now use the declared charset, and characters that the
 declared charset cannot represent are written as `?`.
 
-=== camel-grpc - failed exchanges with the AGGREGATION and PROPAGATION consumer strategies
-
-With the `AGGREGATION` and `PROPAGATION` consumer strategies (client streaming and bidirectional streaming calls), a
-failed exchange now ends the call with an `INTERNAL` error, like unary and server streaming calls already did
-(the description follows the `muteException` option). Before, the message body of the failed exchange was sent to
-the client as a regular response. With `PROPAGATION` (the default strategy) the first failed exchange ends the whole
-call, so the messages that the client sends afterwards are no longer routed; a route that must keep the stream open
-can handle the exception (`onException(...).handled(true)`) and answer that message with a body.
-
 === Components and Language removal
 
 ==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
@@ -2259,6 +2250,15 @@ A route that relies on the exception message reaching the client must opt back i
 ----
 grpc://localhost:8080/org.example.MyService?muteException=false
 ----
+
+==== Failed exchanges with the AGGREGATION and PROPAGATION consumer strategies
+
+With the `AGGREGATION` and `PROPAGATION` consumer strategies (client streaming and bidirectional streaming calls), a
+failed exchange now ends the call with an `INTERNAL` error, like unary and server streaming calls already did
+(the description follows the `muteException` option). Before, the message body of the failed exchange was sent to
+the client as a regular response. With `PROPAGATION` (the default strategy) the first failed exchange ends the whole
+call, so the messages that the client sends afterwards are no longer routed; a route that must keep the stream open
+can handle the exception (`onException(...).handled(true)`) and answer that message with a body.
 
 === camel-keycloak
 
