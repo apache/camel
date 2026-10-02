@@ -64,12 +64,15 @@ public class JGroupsDeserializationFilterTest extends CamelTestSupport {
     @Override
     protected void doPreSetup() throws Exception {
         super.doPreSetup();
+        // satisfy the consumer start-up guard with a pre-read control so the post-read filter can be exercised
+        System.setProperty("jgroups.deserialization.filter", "*");
         channel = new JChannel();
         channel.connect(clusterName);
     }
 
     @Override
     public void doPostTearDown() {
+        System.clearProperty("jgroups.deserialization.filter");
         if (channel != null) {
             channel.close();
         }
