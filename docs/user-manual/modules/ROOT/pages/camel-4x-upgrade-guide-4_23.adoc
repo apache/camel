@@ -750,10 +750,10 @@ represent are written as `?`.
 
 The Thrift consumer now sends the exception of a failed exchange to the client as the result of the call: an
 exception declared by the Thrift method (such as `throws (1:InvalidOperation ouch)`) as that exception, any other
-exception as a `TApplicationException`. Before, the synchronous server (`synchronous=true`) ignored the failure (a
-`void` method returned normally, other methods failed with `Return type requires not empty body`), and the asynchronous
-server sent both the error and a regular response, so the error could be read as the answer to the next call on the
-same connection.
+exception as a `TApplicationException`. Before, with `synchronous=true` the failure was ignored (a `void` method
+returned normally, other methods returned the message body converted to the return type, or failed with
+`Return type requires not empty body`), and in the default asynchronous mode both the error and a regular response
+were sent, so the error could be read as the answer to the next call on the same connection.
 
 === Components and Language removal
 
