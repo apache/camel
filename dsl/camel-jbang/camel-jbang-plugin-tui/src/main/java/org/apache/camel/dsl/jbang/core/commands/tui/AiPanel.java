@@ -200,6 +200,9 @@ class AiPanel {
     // set while the user asks about a paused live edit (F8 at the pause): input is accepted although a tool call is
     // still running, and Enter hands the question to the waiting call (true) or sends it as a normal question (false)
     private volatile Predicate<String> editQuestionHandler;
+    // asking about a paused live edit: the panel stays compact, so the edit in the editor stays in view, until it
+    // closes or the user sizes it
+    private boolean editCompact;
     // what became of a parked live edit; told to the model with the next question
     private volatile String pendingNote;
     private String initError;
@@ -485,6 +488,17 @@ class AiPanel {
         return anim.panelHeight();
     }
 
+    /** The height to render at: compact while asking about a paused live edit, else the panel's own height. */
+    int panelHeight(int contentHeight) {
+        int h = anim.panelHeight();
+        return editCompact ? Math.min(h, editQuestionHeight(contentHeight)) : h;
+    }
+
+    /** A quarter of the content, at least 10 rows: the question, a short answer and the hints. */
+    static int editQuestionHeight(int contentHeight) {
+        return Math.min(contentHeight, Math.max(10, contentHeight / 4));
+    }
+
     boolean isAnimating() {
         return anim.isAnimating();
     }
@@ -514,10 +528,12 @@ class AiPanel {
     }
 
     void cycleHeight(int contentHeight) {
+        editCompact = false;
         anim.cycleHeight(contentHeight);
     }
 
     void setPanelHeight(int height) {
+        editCompact = false;
         anim.setPanelHeight(height);
     }
 
@@ -594,6 +610,7 @@ class AiPanel {
     void close() {
         visible = false;
         editQuestionHandler = null;
+        editCompact = false;
         providerSwitchPopup.close();
     }
 
@@ -612,6 +629,7 @@ class AiPanel {
         scrollOffset = 0;
         replaceInputBuffer(prefill);
         editQuestionHandler = handler;
+        editCompact = true;
     }
 
     /**

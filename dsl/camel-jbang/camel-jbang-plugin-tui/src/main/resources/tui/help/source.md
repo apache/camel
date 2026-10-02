@@ -183,17 +183,20 @@ a YAML or XML file); **Enter** goes to its declaration.
 
 With `/write live` in the AI panel (`F8`), a change the AI makes is replayed
 here instead of shown as a diff: the AI panel hides, the file opens in edit
-mode and the change is typed hunk by hunk so you can follow it in context.
+mode and the change is typed hunk by hunk so you can follow it in context
+(a large change is typed faster, a few seconds at most).
 
 - **Enter** — continue with the next change
 - **any other key** — finish the current change at once
 - **F4** — edit yourself; the remaining changes wait
 - **F9** — continue the AI changes after editing yourself (a change whose
   surrounding lines you edited is skipped and reported to the AI)
-- **F8** — ask the AI about the current change: the AI panel opens with the
-  question prefilled ("About edit 2 of 3: ..."), the answer comes back in the
+- **F8** — ask the AI about the current change: a compact AI panel opens with
+  the question prefilled ("About edit 2 of 3: ..."), the answer comes back in the
   same turn, and closing the panel (`F8` or `Esc`) returns to the pause; if
   the AI revises the change it continues in the editor from where it is
 - **Esc** — stop; what was typed stays in the editor
 - then **Ctrl+S** / **F5** saves (this is the confirmation, dev mode reloads),
   **F7** shows the diff, **Esc** discards; the AI panel comes back afterwards
+- after five minutes without saving or discarding, the AI stops waiting; the
+  edit stays here and the AI is told what you did with it next time you ask

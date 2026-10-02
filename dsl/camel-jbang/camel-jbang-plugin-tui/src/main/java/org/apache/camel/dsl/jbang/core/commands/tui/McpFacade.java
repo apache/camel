@@ -139,10 +139,23 @@ class McpFacade {
      * still holds the applied hunks ({@code content} is the buffer, not the file), {@code remaining} hunks wait.
      */
     record ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content, String question,
-            int remaining) {
+            int remaining, boolean undecided) {
+
+        ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content, String question,
+                      int remaining) {
+            this(saved, applied, skipped, content, question, remaining, false);
+        }
 
         ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content) {
-            this(saved, applied, skipped, content, null, 0);
+            this(saved, applied, skipped, content, null, 0, false);
+        }
+
+        /**
+         * The user has neither saved nor discarded the replayed edit for a long while: the tool call returns, the edit
+         * stays in the editor, and what the user does with it is told with the next question.
+         */
+        static ReplayOutcome undecidedOutcome() {
+            return new ReplayOutcome(false, 0, List.of(), null, null, 0, true);
         }
 
         boolean paused() {
@@ -1335,6 +1348,14 @@ class McpFacade {
         result.put("file", file);
         JsonArray skipped = new JsonArray();
         skipped.addAll(outcome.skipped());
+        if (outcome.undecided()) {
+            result.put("status", "pending");
+            result.put("message", "The change is in the user's editor, replayed as a live edit, but the user has not"
+                                  + " saved or discarded it yet; the file on disk is unchanged. End your turn now:"
+                                  + " do not write " + file + " again and do not say it is saved. Your next message"
+                                  + " tells you what the user did with it.");
+            return result;
+        }
         if (outcome.paused()) {
             result.put("status", "paused");
             result.put("appliedHunks", outcome.applied());
