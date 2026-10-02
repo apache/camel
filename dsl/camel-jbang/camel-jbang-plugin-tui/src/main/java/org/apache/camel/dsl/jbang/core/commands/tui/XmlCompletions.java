@@ -193,6 +193,11 @@ final class XmlCompletions {
         return found;
     }
 
+    /** The catalog option an attribute of an element sets, null when the catalog has none. */
+    static BaseOptionModel option(CamelCatalog catalog, String element, String attribute) {
+        return options(catalog, element).stream().filter(o -> o.getName().equals(attribute)).findFirst().orElse(null);
+    }
+
     /** The options of the EIP, else of the language, of an element. */
     private static List<? extends BaseOptionModel> options(CamelCatalog catalog, String element) {
         EipModel eip = catalog.eipModel(element);
