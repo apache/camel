@@ -85,7 +85,12 @@ Turbo Pascal theme does, but keep code readable.
 
 Themes ported from an editor color scheme (Dracula, Nord, Solarized, Gruvbox,
 Catppuccin, Tokyo Night, Rosé Pine, Kanagawa, Everforest) take the scheme's own
-code colors. Dark, Light, Monochrome and CRT keep the built-in palette.
+code colors. Dark and Light keep the built-in palette.
+
+A syntax token may also set `text-style` (`bold`, `italic`, `underline`), so a
+theme with few colors can tell code apart by weight: Monochrome uses bold
+keywords and italic comments, CRT bold keywords and types. Do not use `dim`:
+terminals blend dim text toward the background, which undoes the contrast check.
 
 A theme defines all 7 tokens or none. `ThemeSyntaxPaletteTest` checks every
 theme, including the built-in fallback, for:
@@ -96,6 +101,7 @@ theme, including the built-in fallback, for:
 - keywords, strings and comments in different colors, and none of them in the
   color of plain code text
 - `syntax-text` equal to `base-fg` (except Turbo Pascal and the fallback themes)
+- no `dim` or `hidden` text-style on a syntax token
 
 | Token | Type | Purpose |
 |-------|------|---------|

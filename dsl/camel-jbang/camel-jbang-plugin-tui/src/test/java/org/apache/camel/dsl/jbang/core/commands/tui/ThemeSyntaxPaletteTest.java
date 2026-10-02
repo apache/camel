@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Set;
 
 import dev.tamboui.style.Color;
+import dev.tamboui.style.Modifier;
+import dev.tamboui.style.Style;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.parallel.Isolated;
@@ -33,6 +35,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -52,8 +55,7 @@ class ThemeSyntaxPaletteTest {
             "syntax-constant", "syntax-text");
 
     /** Themes that keep the built-in Monokai (dark) or GitHub (light) code palette on purpose. */
-    private static final Set<ThemeMode> FALLBACK_PALETTE = EnumSet.of(
-            ThemeMode.DARK, ThemeMode.LIGHT, ThemeMode.MONOCHROME, ThemeMode.CRT);
+    private static final Set<ThemeMode> FALLBACK_PALETTE = EnumSet.of(ThemeMode.DARK, ThemeMode.LIGHT);
 
     @BeforeEach
     void setUp() {
@@ -120,6 +122,19 @@ class ThemeSyntaxPaletteTest {
         }
         Theme.setMode(mode.id());
         assertEquals(Theme.baseFg(), Theme.syntaxText(), mode.id() + ": code text should be the theme's text color");
+    }
+
+    @ParameterizedTest
+    @EnumSource(ThemeMode.class)
+    void codeStylesNeverDimOrHideText(ThemeMode mode) {
+        // Terminals draw dim text by blending toward the background, which undoes the contrast check above.
+        Theme.setMode(mode.id());
+        for (Style style : List.of(Theme.syntaxCommentStyle(), Theme.syntaxStringStyle(), Theme.syntaxKeywordStyle(),
+                Theme.syntaxFunctionStyle(), Theme.syntaxTypeStyle(), Theme.syntaxConstantStyle(),
+                Theme.syntaxTextStyle())) {
+            assertFalse(style.effectiveModifiers().contains(Modifier.DIM), mode.id() + ": " + style + " is dim");
+            assertFalse(style.effectiveModifiers().contains(Modifier.HIDDEN), mode.id() + ": " + style + " is hidden");
+        }
     }
 
     private static Map<String, Color> syntaxColors() {

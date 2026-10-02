@@ -52,3 +52,17 @@ $dark-fg: #33CC33;
 #diagram-action  { color: #119911; }
 #diagram-eip     { color: #33CC33; }
 #diagram-default { color: #1A661A; }
+
+/*
+ * Syntax tokens (optional): a green phosphor terminal of the 1980s had one color and two intensities, so code is
+ * told apart by brightness and weight. Keywords and types in bold high intensity, strings and constants in the
+ * bright glow, comments in the darker half intensity green, code in the normal phosphor green. Not text-style
+ * dim: terminals blend dim colors toward the background, which leaves comments too faint to read.
+ */
+#syntax-comment  { color: #22AA22; }
+#syntax-string   { color: #AAFFAA; }
+#syntax-keyword  { color: #66FF66; text-style: bold; }
+#syntax-function { color: #66FF66; }
+#syntax-type     { color: #66FF66; text-style: bold; }
+#syntax-constant { color: #AAFFAA; }
+#syntax-text     { color: $dark-fg; }
