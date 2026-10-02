@@ -4235,3 +4235,13 @@ as Java, the error handler of an XML or YAML route is now `.errorHandler(...)` o
 
 The `timeout(long)` of the Resequencer EIP in Java keeps the millis as given (`2000`), instead of a duration
 (`2s0ms`).
+
+=== camel-jbang-mcp - camel_transform_route
+
+The `camel_transform_route` tool now converts with the same route DSL converter as `camel transform route
+--format=java`. It reads the routes without running them, so a Java route is no longer compiled. Instead it is read
+by the Java DSL parser, and a route the parser cannot read (such as a processor lambda) is refused with the reason.
+Property placeholders are kept as written instead of being resolved.
+
+In return, Java is also a target format, and rests, route templates, route configurations and beans are converted
+instead of only routes. A new `notes` field of the result lists what differs or is not carried over.
