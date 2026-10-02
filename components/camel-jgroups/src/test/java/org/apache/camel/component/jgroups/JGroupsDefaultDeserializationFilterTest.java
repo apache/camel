@@ -27,21 +27,30 @@ import org.jgroups.JChannel;
 import org.jgroups.ObjectMessage;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Verifies that {@code deserializationFilter=*} opts out of the post-read class check: it accepts any type (here a
- * {@code java.net.URI}, which the shared Camel default allow-list would otherwise deny) and also satisfies the consumer
- * start-up guard, so the consumer starts without any other pre-read control.
+ * Verifies the post-read class check applied once the start-up guard is satisfied (here by the
+ * {@code jgroups.deserialization.filter} system property): the shared Camel default allow-list denies
+ * {@code java.net.**}, and {@code deserializationFilter=*} opts out of the check and accepts any type.
  */
 public class JGroupsDefaultDeserializationFilterTest extends CamelTestSupport {
 
+    String defaultFilterCluster = "defaultFilterCluster";
+
     String noFilterCluster = "noFilterCluster";
+
+    JChannel defaultFilterChannel;
 
     JChannel noFilterChannel;
 
     @BindToRegistry("filterExceptionHandler")
     CapturingExceptionHandler exceptionHandler = new CapturingExceptionHandler();
+
+    @EndpointInject("mock:default")
+    MockEndpoint defaultFilterMock;
 
     @EndpointInject("mock:nofilter")
     MockEndpoint noFilterMock;
@@ -51,9 +60,11 @@ public class JGroupsDefaultDeserializationFilterTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                // deserializationFilter=* opts out of the class check and accepts any type
-                from("jgroups:" + noFilterCluster + "?deserializationFilter=*&exceptionHandler=#filterExceptionHandler")
-                        .to(noFilterMock);
+                // no deserializationFilter configured, so the shared Camel default allow-list applies
+                from("jgroups:" + defaultFilterCluster + "?exceptionHandler=#filterExceptionHandler")
+                        .to(defaultFilterMock);
+                // deserializationFilter=* opts out of the post-read class check
+                from("jgroups:" + noFilterCluster + "?deserializationFilter=*").to(noFilterMock);
             }
         };
     }
@@ -61,15 +72,43 @@ public class JGroupsDefaultDeserializationFilterTest extends CamelTestSupport {
     @Override
     protected void doPreSetup() throws Exception {
         super.doPreSetup();
+        // a pre-read control is required for the consumer to start; use the JGroups-native filter property so the
+        // Camel post-read check is what is exercised here
+        System.setProperty("jgroups.deserialization.filter", "*");
+        defaultFilterChannel = new JChannel();
+        defaultFilterChannel.connect(defaultFilterCluster);
         noFilterChannel = new JChannel();
         noFilterChannel.connect(noFilterCluster);
     }
 
     @Override
     public void doPostTearDown() {
+        System.clearProperty("jgroups.deserialization.filter");
+        if (defaultFilterChannel != null) {
+            defaultFilterChannel.close();
+        }
         if (noFilterChannel != null) {
             noFilterChannel.close();
         }
+    }
+
+    @Test
+    public void shouldRejectDeniedTypeWithDefaultFilter() throws Exception {
+        // java.net.** is denied by the default filter; the String sentinel sent afterwards is allowed and, thanks to
+        // per-sender FIFO ordering, proves the URI was refused before reaching the route
+        defaultFilterMock.setExpectedMessageCount(1);
+        defaultFilterMock.expectedBodiesReceived("sentinel");
+
+        defaultFilterChannel.send(new ObjectMessage(null, URI.create("http://localhost")));
+        defaultFilterChannel.send(new ObjectMessage(null, "sentinel"));
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        assertEquals(1, exceptionHandler.getExceptions().size(), "The URI should have been refused");
+        Throwable refused = exceptionHandler.getExceptions().get(0);
+        assertInstanceOf(JGroupsException.class, refused);
+        assertTrue(refused.getMessage().contains(URI.class.getName()),
+                "Should report the refused type, but was: " + refused.getMessage());
     }
 
     @Test

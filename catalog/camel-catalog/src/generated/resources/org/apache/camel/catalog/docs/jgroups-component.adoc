@@ -116,10 +116,17 @@ messages on the default, unauthenticated channel without any pre-read protection
 in place. A pre-read protection is any of:
 
 * a JVM-wide `-Djdk.serialFilter` (or `ObjectInputFilter.Config.setSerialFilter`);
-* the JGroups-native `-Djgroups.deserialization.filter` system property;
-* an explicit `deserializationFilter` endpoint or component option; or
+* the JGroups-native `-Djgroups.deserialization.filter` system property; or
 * a channel secured with `AUTH` and/or `SYM_ENCRYPT`/`ASYM_ENCRYPT`, supplied
 through `channelProperties`.
+
+`AUTH` alone (without encryption) satisfies the guard, since it already restricts
+who may join the cluster and send messages. The `deserializationFilter` option is
+_not_ a pre-read control: it is a defense-in-depth class check applied _after_
+JGroups has already deserialized the payload, so it does not satisfy the guard. A
+filter installed only through a custom `jdk.serialFilterFactory` (rather than
+`jdk.serialFilter`) is not detected either; those deployments should set
+`jgroups.deserialization.filter` or `acceptAllObjects=true`.
 
 When none of these is configured, the consumer fails to start with a message
 pointing here. To keep the previous behaviour of accepting any serialized type

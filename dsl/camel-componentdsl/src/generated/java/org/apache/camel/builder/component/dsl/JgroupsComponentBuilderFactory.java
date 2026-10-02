@@ -182,10 +182,10 @@ public interface JgroupsComponentBuilderFactory {
          * configured. When false (the default) the consumer fails to start on
          * an unauthenticated default channel unless a JVM-wide
          * -Djdk.serialFilter, the JGroups jgroups.deserialization.filter system
-         * property, the deserializationFilter option, or an
-         * authenticated/encrypted channel is configured. Set to true to restore
-         * the previous behaviour of accepting any serialized type; this also
-         * disables the post-read class check.
+         * property, or an authenticated/encrypted channel is configured. Set to
+         * true to accept any serialized type and bypass the start-up guard;
+         * this also disables the post-read class check, so it is an insecure
+         * setting.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

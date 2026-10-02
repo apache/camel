@@ -1861,8 +1861,9 @@ deserialize cluster messages on the default, unauthenticated channel and no pre-
 configured. The class check applied after `org.jgroups.Message.getObject()` is defense-in-depth only
 and cannot stop code that runs during deserialization, so a pre-read control is required. A pre-read
 control is any of: a JVM-wide `-Djdk.serialFilter`, the JGroups-native
-`-Djgroups.deserialization.filter` system property, an explicit `deserializationFilter` option, or a
-channel secured with `AUTH` and/or `SYM_ENCRYPT`/`ASYM_ENCRYPT` supplied through `channelProperties`.
+`-Djgroups.deserialization.filter` system property, or a channel secured with
+`AUTH` and/or `SYM_ENCRYPT`/`ASYM_ENCRYPT` supplied through `channelProperties`. The `deserializationFilter`
+option is a post-read check and does not satisfy the guard.
 
 When none of these is configured, the consumer fails to start. To keep the previous behaviour of
 accepting any serialized type without a pre-read control, set `acceptAllObjects=true` on the consumer;
