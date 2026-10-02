@@ -83,6 +83,20 @@ built-in Monokai palette (dark themes) or GitHub-inspired palette (light
 themes). Define them when the theme calls for its own editor look, as the
 Turbo Pascal theme does, but keep code readable.
 
+Themes ported from an editor color scheme (Dracula, Nord, Solarized, Gruvbox,
+Catppuccin, Tokyo Night, Rosé Pine, Kanagawa, Everforest) take the scheme's own
+code colors. Dark, Light, Monochrome and CRT keep the built-in palette.
+
+A theme defines all 7 tokens or none. `ThemeSyntaxPaletteTest` checks every
+theme, including the built-in fallback, for:
+
+- a contrast of at least 3:1 between each code color and `base-bg`; lift a
+  scheme color that falls short (lighter on dark themes, darker on light ones)
+  and keep its hue, noting it in the stylesheet comment
+- keywords, strings and comments in different colors, and none of them in the
+  color of plain code text
+- `syntax-text` equal to `base-fg` (except Turbo Pascal and the fallback themes)
+
 | Token | Type | Purpose |
 |-------|------|---------|
 | `syntax-comment` | fg | Comments |

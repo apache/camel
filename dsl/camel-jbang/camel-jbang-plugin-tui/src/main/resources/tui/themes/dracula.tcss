@@ -52,3 +52,14 @@ $dracula-fg: #F8F8F2;
 #diagram-action  { color: #FF79C6; }
 #diagram-eip     { color: #BD93F9; }
 #diagram-default { color: #6272A4; }
+
+/*
+ * Syntax tokens (optional), after the Dracula spec: pink keywords, yellow strings, green functions, cyan types, purple constants.
+ */
+#syntax-comment  { color: #6272A4; }
+#syntax-string   { color: #F1FA8C; }
+#syntax-keyword  { color: #FF79C6; }
+#syntax-function { color: #50FA7B; }
+#syntax-type     { color: #8BE9FD; }
+#syntax-constant { color: #BD93F9; }
+#syntax-text     { color: $dracula-fg; }
