@@ -99,11 +99,17 @@ public final class CatalogSamples {
      * is here: a task (read file, call service), a wording of the outcome (retry, batch) or a technology (json, cron).
      * A protocol or a product (mqtt, s3) is what camel_catalog_find turns into a component, so it is not here.
      */
+    private static final String[] HTTP_CALL = {
+            "http", "a to: with the http component (toD: when the URI is built from the message, such as a path"
+                    + " parameter); the response becomes the message body" };
+    private static final String[] OPENAPI_CALL = {
+            "rest-openapi", "a to: with the rest-openapi component, its specificationUri and operationId; path and"
+                            + " query parameters come from headers of the same name, the body is the request body" };
+
     static final Map<String, String> INTENTS = Map.ofEntries(
             Map.entry("read file", "poll"), Map.entry("readfile", "poll"), Map.entry("load file", "poll"),
             Map.entry("read a file", "poll"), Map.entry("read", "poll"), Map.entry("fetch", "poll"),
             Map.entry("consume once", "poll"), Map.entry("poll once", "poll"),
-            Map.entry("call service", "enrich"), Map.entry("call", "enrich"), Map.entry("http call", "enrich"),
             Map.entry("lookup", "enrich"),
             Map.entry("batch", "aggregate"), Map.entry("collect", "aggregate"), Map.entry("group", "aggregate"),
             Map.entry("retry", "onException"), Map.entry("error handling", "onException"),
@@ -115,6 +121,17 @@ public final class CatalogSamples {
             Map.entry("rest api", "rest"), Map.entry("http server", "rest"), Map.entry("endpoint", "rest"),
             Map.entry("convert", "convertBodyTo"), Map.entry("json", "marshal"),
             Map.entry("schedule", "from"), Map.entry("cron", "from"));
+
+    /**
+     * What a request is about, to the component that does it, with how. Calling a service is a to: (or a toD: when the
+     * URI is built from the message) on the http component, not the enrich EIP, which also merges the answer into the
+     * message with an aggregation strategy.
+     */
+    static final Map<String, String[]> COMPONENT_INTENTS = Map.ofEntries(
+            Map.entry("call service", HTTP_CALL), Map.entry("call", HTTP_CALL), Map.entry("http call", HTTP_CALL),
+            Map.entry("call api", HTTP_CALL), Map.entry("http client", HTTP_CALL), Map.entry("call http", HTTP_CALL),
+            Map.entry("openapi client", OPENAPI_CALL), Map.entry("call by contract", OPENAPI_CALL),
+            Map.entry("call operation", OPENAPI_CALL));
 
     private static volatile Map<String, List<Map<String, String>>> samples;
 
@@ -408,6 +425,13 @@ public final class CatalogSamples {
         int max = Math.max(1, Math.min(MAX_LIMIT, limit <= 0 ? DEFAULT_LIMIT : limit));
         boolean eips = wanted == null || wanted.equals("eip");
 
+        // what to do that a component does (call service)
+        String[] componentIntent = COMPONENT_INTENTS.get(given.toLowerCase(Locale.ROOT));
+        if (componentIntent != null && catalog != null && (wanted == null || wanted.equals("component"))) {
+            JsonObject found = catalogAnswer(catalog, "component", componentIntent[0], max);
+            found.put("note", "'" + given + "' is done with " + componentIntent[1]);
+            return found;
+        }
         // an EIP or a file entry by its name, a part of it, or what to do
         if (eips) {
             String key = resolveExact(given);

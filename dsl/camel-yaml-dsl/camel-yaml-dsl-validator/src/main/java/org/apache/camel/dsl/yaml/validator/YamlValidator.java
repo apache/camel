@@ -809,7 +809,8 @@ public class YamlValidator {
             }
             String outsideQuotes
                     = text != null ? text.replaceAll("\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'", "\"\"") : null;
-            if (outsideQuotes != null && outsideQuotes.contains("${") && !name.equals("js") && !name.equals("quickjs")) {
+            if (outsideQuotes != null && outsideQuotes.contains("${") && !name.equals("js") && !name.equals("quickjs")
+                    && !jsonPathWithInlineSimple(name, value, outsideQuotes)) {
                 // "${x}" inside quotes is a groovy GString (or a JS template) and is fine; ${...} outside quotes is simple
                 String example;
                 if (name.equals("groovy") || name.equals("mvel") || name.equals("ognl") || name.equals("jactl")) {
@@ -833,6 +834,21 @@ public class YamlValidator {
             }
             checkSimpleSyntaxInScripts(value, path.append(name), errors);
         }
+    }
+
+    /**
+     * A JsonPath with Simple inlined, such as $.store.book[?(@.price < ${header.max})]: the jsonpath language evaluates
+     * the ${...} first (allowSimple, on by default), so it is valid when the expression has a JsonPath root of its own.
+     * A whole ${...} (jsonpath: ${body.x}) has none and is simple syntax.
+     */
+    private static boolean jsonPathWithInlineSimple(String name, JsonNode value, String outsideQuotes) {
+        if (!name.equals("jsonpath")) {
+            return false;
+        }
+        if (value.isObject() && value.has("allowSimple") && "false".equals(value.get("allowSimple").asText())) {
+            return false;
+        }
+        return outsideQuotes.replaceAll("\\$\\{[^}]*}", "").contains("$");
     }
 
     /**
