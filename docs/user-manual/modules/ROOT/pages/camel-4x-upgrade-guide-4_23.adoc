@@ -1864,6 +1864,15 @@ unparsable content type now fails fast with a `ParseException` at marshal time, 
 value was written into the `Content-Type` header as-is. Ensure a custom `ContentTypeResolver` returns a valid
 MIME type.
 
+=== camel-nats - no reply when the exchange failed
+
+A consumer with `exchangePattern=InOut` answered a request (a message with a reply subject) with the body of the
+exchange also when the exchange failed, so the requester got a successful reply, usually its own request. NATS has
+no error reply, so the consumer now sends no reply when the exchange failed or is marked rollback only, as camel-jms
+does without `transferException`: the requester times out (with the camel-nats producer, an
+`ExchangeTimedOutException` after `requestTimeout`). A failure that the route handles, for example with
+`onException(...).handled(true)`, is answered as before.
+
 === camel-netty - object codecs apply a deserialization filter by default
 
 The `ObjectDecoder` and `DatagramPacketObjectDecoder` codecs (used when a route configures Netty
