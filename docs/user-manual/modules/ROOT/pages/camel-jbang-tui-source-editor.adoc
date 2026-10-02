@@ -127,7 +127,9 @@ What can be completed:
   `end()`, `endChoice()` or `endDoTry()` that closes the block you are in. The chain is followed from its `from` through
   its blocks, so after `.end()` the options of the split are gone again, and after `.split().` the languages of the
   expression come. The method goes in with its parentheses, the cursor inside them when it takes arguments
-  (`.split(|)`). The documentation comes from the catalog.
+  (`.split(|)`). The documentation comes from the catalog. In an argument the chain of the argument is completed
+  (`.filter(header("priority").` offers `isEqualTo`, `isNotNull`, `contains`...), and so are the REST DSL
+  (`rest("/api").get("/orders").`, with `param()` ... `endParam()`), `restConfiguration()` and route templates.
 * *XML routes* -- after `<`, or on an empty line, the elements that go inside the parent element (the EIPs of a route,
   `when` and `otherwise` in a `choice`, the languages where an expression goes, and once it has one, no other). The
   chosen element is inserted with its required attributes and its end tag (`<to uri=""/>`, `<split></split>`), the
@@ -152,16 +154,18 @@ image::jbang/camel-tui-source-simple-completion.png[After ${header. Tab lists th
 
 image::jbang/camel-tui-source-java-completion.png[After a split in a Java route, Tab lists the options of the split first, then the EIPs]
 
+image::jbang/camel-tui-source-java-argument-completion.png[In the argument of a filter, Tab lists the methods of the header builder]
+
 === Known limitations
 
 *Tab* completion is light assistance for smaller, hand-written edits. It reads the line you are on and the text above
 the cursor, so it keeps working while the file is half typed, but it is no compiler and does not know the whole
 project:
 
-* *Java routes* -- the chain is followed from `from(...)`, `onException(...)`, `intercept...()` and `onCompletion()` in a
-  route builder. A route kept in a variable (`RouteDefinition route = from(...); route.`), the REST DSL (`rest()`),
-  the expression builders inside the arguments (`body().tokenize(",")`), lambdas, and your own builder methods get no
-  completion. The methods come from the Camel version of the TUI, their documentation from the catalog of your
+* *Java routes* -- the chain is followed from what a route builder starts it with (`from(...)`, `onException(...)`,
+  `rest(...)`, `routeTemplate(...)`, or `body()`, `header(..)`... in an argument). A route kept in a variable
+  (`RouteDefinition route = from(...); route.`), the code of lambdas and processors, the fluent language builders
+  (`expression().jsonpath()...`), and your own builder methods get no completion. The methods come from the Camel version of the TUI, their documentation from the catalog of your
   project. Deprecated methods are not offered.
 * *XML routes* -- the routes of the XML DSL (`camel-xml-io`); the wrapper elements of Spring XML are not completed.
   Values are completed for options with a fixed set of values (enums, `true`/`false`) and `+{{placeholders}}+`.

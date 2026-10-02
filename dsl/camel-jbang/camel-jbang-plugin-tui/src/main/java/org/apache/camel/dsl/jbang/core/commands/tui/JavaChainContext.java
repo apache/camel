@@ -24,10 +24,12 @@ import java.util.List;
  * parse (CAMEL-25241): the calls of the statement up to the cursor, from(...).split(...).to(...)., and the name being
  * typed after the last dot. Only the calls of the chain itself count; what is inside their arguments is skipped.
  *
- * @param calls  the calls of the chain before the cursor, the first one starting it (from, onException...)
- * @param prefix the name typed after the last dot, which the completion replaces
+ * @param calls    the calls of the chain before the cursor, the first one starting it (from, onException, rest, or
+ *                 body, header... in an argument)
+ * @param prefix   the name typed after the last dot, which the completion replaces
+ * @param argument whether the chain is in the argument of a call (.split(body().|)) rather than a statement
  */
-record JavaChainContext(List<Call> calls, String prefix) {
+record JavaChainContext(List<Call> calls, String prefix, boolean argument) {
 
     /**
      * A call of the chain.
@@ -57,23 +59,30 @@ record JavaChainContext(List<Call> calls, String prefix) {
             return null;
         }
         // the statement the cursor is in starts after the last ; { or } outside of any parentheses
-        int depth = 0;
+        // where the statement starts, and where each argument open at the cursor starts: after its ( or , or, in a
+        // lambda body inside the argument, after the last ; { or }
         int start = 0;
+        List<Integer> arguments = new ArrayList<>();
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c == '(') {
-                depth++;
+                arguments.add(i + 1);
             } else if (c == ')') {
-                depth = Math.max(0, depth - 1);
-            } else if (depth == 0 && (c == ';' || c == '{' || c == '}')) {
-                start = i + 1;
+                if (!arguments.isEmpty()) {
+                    arguments.remove(arguments.size() - 1);
+                }
+            } else if (c == ',' && !arguments.isEmpty()) {
+                arguments.set(arguments.size() - 1, i + 1);
+            } else if (c == ';' || c == '{' || c == '}') {
+                if (arguments.isEmpty()) {
+                    start = i + 1;
+                } else {
+                    arguments.set(arguments.size() - 1, i + 1);
+                }
             }
         }
-        if (depth > 0) {
-            // in the arguments of a call
-            return null;
-        }
-        String statement = text.substring(start);
+        boolean argument = !arguments.isEmpty();
+        String statement = text.substring(argument ? arguments.get(arguments.size() - 1) : start);
         int end = statement.length();
         int p = end;
         while (p > 0 && Character.isJavaIdentifierPart(statement.charAt(p - 1))) {
@@ -91,7 +100,7 @@ record JavaChainContext(List<Call> calls, String prefix) {
         if (calls == null || calls.isEmpty()) {
             return null;
         }
-        return new JavaChainContext(calls, prefix);
+        return new JavaChainContext(calls, prefix, argument);
     }
 
     /** The calls of a chain: name(args).name(args)..., null when the text is no such chain. */
