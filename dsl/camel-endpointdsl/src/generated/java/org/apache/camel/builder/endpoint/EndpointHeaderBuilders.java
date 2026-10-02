@@ -2965,6 +2965,19 @@ public class EndpointHeaderBuilders {
         return OAIPMHEndpointBuilderFactory.OAIPMHHeaderNameBuilder.INSTANCE;
     }
     /**
+     * OData (camel-odata)
+     * Camel OData Component
+     * 
+     * Category: http
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-odata
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static ODataEndpointBuilderFactory.ODataHeaderNameBuilder odata() {
+        return ODataEndpointBuilderFactory.ODataHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Olingo2 (camel-olingo2)
      * Communicate with OData 2.0 services using Apache Olingo.
      * 
