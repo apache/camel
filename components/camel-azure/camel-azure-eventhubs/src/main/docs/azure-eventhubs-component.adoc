@@ -150,6 +150,22 @@ from("direct:start")
     .to("azure-eventhubs:?connectionString=RAW({{connectionString}})"
 ----
 
+The producer sends the events to the partition chosen, in this order, by:
+
+. a `CamelAzureEventHubsPartitionKey` or `CamelAzureEventHubsPartitionId` header set by the route
+. the `partitionKey` or `partitionId` endpoint option
+. the partition key of the event received by an `azure-eventhubs` consumer earlier in the route, so that events with
+the same key stay together
+
+Otherwise, Event Hubs picks the partition. The consumer sets the same two headers on every event it receives. While
+they still hold the received values, the producer does not take them as a partition chosen by the route, and it never
+reuses the partition id of a received event, because partitions differ from one Event Hub to another.
+
+To keep the partition of the received event, for example when mirroring between Event Hubs that have the same
+partitions, remove the `CamelAzureEventHubsReceivedPartitionId` exchange property, or
+`CamelAzureEventHubsReceivedPartitionKey` for the partition key, before the producer, such as with
+`.removeProperty(EventHubsConstants.RECEIVED_PARTITION_ID)`. The header then counts as chosen by the route.
+
 === Azure-AD Authentication example
 
 The example below makes use of the Azure-AD authentication. See https://docs.microsoft.com/en-us/java/api/overview/azure/identity-readme?view=azure-java-stable#environment-variables[here]
