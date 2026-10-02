@@ -3074,7 +3074,8 @@ class SourceViewer {
                     Path props = RouteRefactorings.propertiesFile(editableFile);
                     try {
                         Files.createDirectories(props.getParent());
-                        Files.writeString(props, key + "=" + v.text() + "\n", StandardCharsets.UTF_8,
+                        Files.writeString(props, key + "=" + RouteRefactorings.propertiesValue(v.text()) + "\n",
+                                StandardCharsets.UTF_8,
                                 StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                     } catch (IOException e) {
                         notifySave("Warning: could not write " + props.getFileName() + ": " + e.getMessage(), true);

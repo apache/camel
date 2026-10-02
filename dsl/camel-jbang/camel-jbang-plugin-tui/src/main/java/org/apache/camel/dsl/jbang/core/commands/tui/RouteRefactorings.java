@@ -144,6 +144,9 @@ final class RouteRefactorings {
     record Block(int start, int end, String element, int indent) {
     }
 
+    private static final Pattern COMMENT = Pattern.compile("<!--.*?-->");
+    private static final Pattern PROCESSING_INSTRUCTION = Pattern.compile("<\\?.*?\\?>");
+    private static final Pattern TAG = Pattern.compile("<(/?)[\\w:-]+[^>]*?(/?)>");
     private static final Pattern START_TAG = Pattern.compile("^(\\s*)<(?:[\\w-]+:)?([\\w-]+)");
 
     /** The step block whose start tag is on the row; null when the row holds none, or no step to extract. */
@@ -161,8 +164,34 @@ final class RouteRefactorings {
             return null;
         }
         int depth = 0;
+        boolean inComment = false;
         for (int r = row; r < lines.size(); r++) {
-            depth += tagBalance(lines.get(r));
+            // a comment may span lines: its tags do not count
+            StringBuilder code = new StringBuilder();
+            String line = lines.get(r);
+            int i = 0;
+            while (i < line.length()) {
+                if (inComment) {
+                    int close = line.indexOf("-->", i);
+                    if (close < 0) {
+                        i = line.length();
+                    } else {
+                        inComment = false;
+                        i = close + 3;
+                    }
+                } else {
+                    int open = line.indexOf("<!--", i);
+                    if (open < 0) {
+                        code.append(line, i, line.length());
+                        i = line.length();
+                    } else {
+                        code.append(line, i, open);
+                        inComment = true;
+                        i = open + 4;
+                    }
+                }
+            }
+            depth += tagBalance(code.toString());
             if (depth <= 0) {
                 return new Block(row, r, m.group(2), m.group(1).length());
             }
@@ -175,8 +204,8 @@ final class RouteRefactorings {
      */
     static int tagBalance(String line) {
         int balance = 0;
-        String s = line.replaceAll("<!--.*?-->", "").replaceAll("<\\?.*?\\?>", "");
-        Matcher m = Pattern.compile("<(/?)[\\w:-]+[^>]*?(/?)>").matcher(s);
+        String s = PROCESSING_INSTRUCTION.matcher(COMMENT.matcher(line).replaceAll("")).replaceAll("");
+        Matcher m = TAG.matcher(s);
         while (m.find()) {
             if (!m.group(1).isEmpty()) {
                 balance--;
@@ -238,11 +267,75 @@ final class RouteRefactorings {
         return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");
     }
 
+    /** The value of the text of a Java string literal: its escapes (newline, tab, quote, unicode, octal...) undone. */
     static String javaUnescape(String s) {
-        return s.replace("\\\"", "\"").replace("\\\\", "\\");
+        StringBuilder sb = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c != '\\' || i + 1 >= s.length()) {
+                sb.append(c);
+                continue;
+            }
+            char n = s.charAt(++i);
+            switch (n) {
+                case 'n' -> sb.append('\n');
+                case 't' -> sb.append('\t');
+                case 'r' -> sb.append('\r');
+                case 'b' -> sb.append('\b');
+                case 'f' -> sb.append('\f');
+                case 's' -> sb.append(' ');
+                case 'u' -> {
+                    int j = i;
+                    while (j < s.length() && s.charAt(j) == 'u') {
+                        j++;
+                    }
+                    if (j + 4 <= s.length()) {
+                        sb.append((char) Integer.parseInt(s.substring(j, j + 4), 16));
+                        i = j + 3;
+                    } else {
+                        sb.append('\\').append(n);
+                    }
+                }
+                default -> {
+                    if (n >= '0' && n <= '7') {
+                        // octal: up to three digits, at most \377
+                        int j = i;
+                        int max = n <= '3' ? 3 : 2;
+                        while (j < s.length() && j - i < max && s.charAt(j) >= '0' && s.charAt(j) <= '7') {
+                            j++;
+                        }
+                        sb.append((char) Integer.parseInt(s.substring(i, j), 8));
+                        i = j - 1;
+                    } else {
+                        // \" \' \\
+                        sb.append(n);
+                    }
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    /** A value as a .properties file writes it: backslashes and line breaks escaped, a leading space kept. */
+    static String propertiesValue(String value) {
+        StringBuilder sb = new StringBuilder(value.length());
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            switch (c) {
+                case '\\' -> sb.append("\\\\");
+                case '\n' -> sb.append("\\n");
+                case '\r' -> sb.append("\\r");
+                case '\t' -> sb.append("\\t");
+                case '\f' -> sb.append("\\f");
+                case ' ' -> sb.append(i == 0 ? "\\ " : " ");
+                default -> sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
     static String javaEscape(String s) {
-        return s.replace("\\", "\\\\").replace("\"", "\\\"");
+        return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
 }

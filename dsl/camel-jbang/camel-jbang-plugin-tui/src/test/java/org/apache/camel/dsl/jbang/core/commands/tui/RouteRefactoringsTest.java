@@ -16,10 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Properties;
 
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
@@ -78,6 +80,38 @@ class RouteRefactoringsTest {
 
         assertThat(RouteRefactorings.isExtractable(new RouteRefactorings.Value(0, 0, "{{x}}"))).isFalse();
         assertThat(RouteRefactorings.isExtractable(new RouteRefactorings.Value(0, 0, " "))).isFalse();
+    }
+
+    @Test
+    void javaEscapesAreUndoneAndThePropertiesValueReadsBackTheSame() throws Exception {
+        String java = "            .log(\"Hello\\n\\tCamel \\u00e9 \\101 C:\\\\temp \\\"x\\\"\")";
+        RouteRefactorings.Value v = RouteRefactorings.valueAt("java", java, java.indexOf("Hello"));
+        assertThat(v.text()).isEqualTo("Hello\n\tCamel \u00e9 A C:\\temp \"x\"");
+
+        // written to application.properties and read back by java.util.Properties: the same value
+        for (String value : List.of(v.text(), "C:\\temp", " leading space", "a=b: c")) {
+            Properties props = new Properties();
+            props.load(new StringReader("key=" + RouteRefactorings.propertiesValue(value) + "\n"));
+            assertThat(props.getProperty("key")).isEqualTo(value);
+        }
+        assertThat(RouteRefactorings.javaEscape("a\"b\\c\nd")).isEqualTo("a\\\"b\\\\c\\nd");
+    }
+
+    @Test
+    void aCommentOverLinesDoesNotEndTheBlock() {
+        List<String> xml = List.of(
+                "<routes>",
+                "    <route>",
+                "        <from uri=\"timer:tick\"/>",
+                "        <split>",
+                "            <simple>${body}</simple>",
+                "            <!-- </split> written in a comment",
+                "                 <to uri=\"direct:x\"/> </split> -->",
+                "            <to uri=\"direct:item\"/>",
+                "        </split>",
+                "    </route>",
+                "</routes>");
+        assertThat(RouteRefactorings.xmlStep(xml, 3)).isEqualTo(new RouteRefactorings.Block(3, 8, "split", 8));
     }
 
     @Test
