@@ -4079,6 +4079,13 @@ coap://0.0.0.0:5683/my/resource?muteException=false
 
 For the Rest DSL, set it with `restConfiguration().endpointProperty("muteException", "false")`.
 
+==== Producer
+
+When the CoAP server does not answer a `GET`, `POST`, `PUT` or `DELETE` request (the request timed out or was
+rejected), the producer now fails the exchange with a `CamelExchangeException`. Before, the exchange continued as if
+the request had succeeded, with the request body as its body. The `CamelCoapMethod` header is now also accepted in
+lower case, and an unknown method fails the exchange with an `IllegalArgumentException` instead of sending nothing.
+
 === camel-quickfix - InOut replies are sent on the session the request arrived on
 
 With `exchangePattern=InOut`, the QuickFIX/J consumer now sends the reply on the session the request was received on.
