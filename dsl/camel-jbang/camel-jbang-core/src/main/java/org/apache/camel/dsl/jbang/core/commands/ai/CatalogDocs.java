@@ -19,10 +19,13 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -197,9 +200,21 @@ public final class CatalogDocs {
             ComponentModel cm = catalog.componentModel(name);
             if (cm != null) {
                 String adoc = catalog.asciiDoc(name + "-component");
+                List<JsonObject> pages = componentDocPages(cm.getScheme(), adoc);
+                if (page != null && !page.isEmpty()) {
+                    // a sub-page the component page links to, such as how to write a custom Kamelet
+                    String sub = pages.stream().anyMatch(p -> page.equals(p.getString("page")))
+                            ? catalog.asciiDoc(cm.getScheme() + "-" + page) : null;
+                    if (sub == null) {
+                        JsonObject err = error("No doc page '" + page + "' for component " + name);
+                        err.put("docPages", new JsonArray(pages));
+                        return err;
+                    }
+                    return componentDoc(cm, lowerFilter, OptionScope.NONE, false, sub, null, pages);
+                }
                 // the whole page when it was asked for, else its first section, which the options cannot say
                 return componentDoc(cm, lowerFilter, scope, includeHeaders, includeDoc ? adoc : null,
-                        includeDoc ? null : docExcerpt(adoc, DOC_EXCERPT_BUDGET));
+                        includeDoc ? null : docExcerpt(adoc, DOC_EXCERPT_BUDGET), pages);
             }
             JsonObject group = mainOptionsGroup(catalog, name);
             if (group != null) {
@@ -1032,7 +1047,7 @@ public final class CatalogDocs {
 
     private static JsonObject componentDoc(
             ComponentModel model, String filter, OptionScope scope, boolean includeHeaders, String doc,
-            String docExcerpt) {
+            String docExcerpt, List<JsonObject> docPages) {
         JsonObject result = new JsonObject();
         result.put("kind", "component");
         result.put("name", model.getScheme());
@@ -1114,7 +1129,36 @@ public final class CatalogDocs {
             result.put("documentation", docExcerpt);
             result.put("documentationHint", "the start of the component's documentation page; includeDoc=true for all of it");
         }
+        if (!docPages.isEmpty()) {
+            // named with their titles, so a model can tell which one answers its question
+            result.put("docPages", new JsonArray(docPages));
+            result.put("docPagesHint", "docPage=<page> returns that documentation page as text");
+        }
         return result;
+    }
+
+    /**
+     * The sub-pages of a component's documentation, found from the links of its page to them
+     * ({@code xref:others:kamelet-custom.adoc[Writing a custom Kamelet]}): the page name to ask for with
+     * {@code docPage}, and its title.
+     */
+    static List<JsonObject> componentDocPages(String scheme, String adoc) {
+        List<JsonObject> pages = new ArrayList<>();
+        if (adoc == null || scheme == null) {
+            return pages;
+        }
+        Matcher m = Pattern.compile("xref:others:" + Pattern.quote(scheme) + "-([a-z0-9][a-z0-9-]*)\\.adoc\\[([^\\]]+)]")
+                .matcher(adoc);
+        Set<String> seen = new HashSet<>();
+        while (m.find()) {
+            if (seen.add(m.group(1))) {
+                JsonObject jo = new JsonObject();
+                jo.put("page", m.group(1));
+                jo.put("title", m.group(2));
+                pages.add(jo);
+            }
+        }
+        return pages;
     }
 
     private static JsonObject dataFormatDoc(

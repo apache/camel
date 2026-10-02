@@ -533,6 +533,10 @@ public final class CatalogSamples {
             answer.put("note", "none of the examples of the documentation uses a " + name + " endpoint; they show the "
                                + "component in another way (a properties function, a policy, a converter)");
         }
+        if ("component".equals(kind) && "kamelet".equals(name)) {
+            // the samples show how a route uses a Kamelet; writing the .kamelet.yaml file is on its own page
+            answer.put("guide", AuthoringTools.KAMELET_GUIDE);
+        }
         return answer;
     }
 
