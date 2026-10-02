@@ -91,6 +91,38 @@ class SecurityScanToolsTest {
     }
 
     @Test
+    void detectsNestedSimpleExpression() {
+        // nested=true evaluates the result of the expression as another simple expression
+        SecurityScanTools.SecurityScanResult nested = tools.camel_security_scan("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - setBody:
+                            simple:
+                              expression: "${header.template}"
+                              nested: true
+                """, "yaml");
+        assertThat(nested.findings())
+                .anyMatch(f -> f.issue().contains("nested=true") && f.category().equals("insecure:dev"));
+
+        SecurityScanTools.SecurityScanResult notNested = tools.camel_security_scan("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - setBody:
+                            simple:
+                              expression: "${header.template}"
+                              nested: false
+                        - setHeader:
+                            name: isNested
+                            constant: "unnested: true"
+                """, "yaml");
+        assertThat(notNested.findings()).noneMatch(f -> f.issue().contains("nested="));
+    }
+
+    @Test
     void detectsAllowJavaSerializedObject() {
         String route = """
                 - route:

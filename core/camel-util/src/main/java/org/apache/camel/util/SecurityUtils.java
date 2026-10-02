@@ -294,7 +294,9 @@ public final class SecurityUtils {
      * <p>
      * A key that identifies a component, data format or language (such as {@code camel.component.netty.ssl}) only
      * matches a security option that this component, data format or language declares. Any other key (such as a
-     * camel-main option, or an option name without a prefix) matches by the option name.
+     * camel-main option, or an option name without a prefix) matches by the option name, except that a configuration
+     * key never matches an option that only languages declare (such as {@code camel.beans.foo.nested} for the
+     * {@code nested} option of the simple language).
      *
      * @param  text the configuration property key (e.g., "camel.component.aws2-s3.trustAllCertificates")
      * @return      the security option info, or null if the property has no security category
@@ -309,8 +311,27 @@ public final class SecurityUtils {
                 // the option has the same name as a security option of another component, data format or language
                 return null;
             }
+            if (owner == null && owners != null && text.indexOf('.') >= 0 && isDeclaredByLanguagesOnly(owners)) {
+                // a language option is set on an expression in a route, which is checked by its bare option name, or
+                // under camel.language.<name>. - any other configuration key (camel.beans.*, camel.main.*, ...) that
+                // merely ends with the same name is not this option. Component and data format options keep matching
+                // such keys by name, as camel.beans.* can configure a component or data format bean.
+                return null;
+            }
         }
         return answer;
+    }
+
+    private static boolean isDeclaredByLanguagesOnly(Set<String> owners) {
+        if (owners.isEmpty()) {
+            return false;
+        }
+        for (String owner : owners) {
+            if (!owner.startsWith("language:")) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
