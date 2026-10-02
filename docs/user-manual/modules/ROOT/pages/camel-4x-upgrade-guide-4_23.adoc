@@ -792,6 +792,14 @@ the maximum reconsume times of the consumer group, 16 by default, then it goes t
 A route that fails for a message, and relied on the message being dropped, now receives it again; handle the
 exception in the route (for example with `onException(...).handled(true)`) to acknowledge the message anyway.
 
+=== camel-dapr - pub/sub consumer acknowledges an event after the exchange
+
+The pub/sub consumer acknowledged every event with `SUCCESS` as soon as the exchange was handed to the route, also
+when the route then failed, so Dapr dropped events whose processing failed. The consumer now answers when the exchange
+is done: `SUCCESS` when it completed, and `RETRY` when it failed, so that Dapr redelivers the event. A route that
+fails for an event, and relied on the event being dropped, now receives it again; handle the exception in the route
+(for example with `onException(...).handled(true)`) to acknowledge the event anyway.
+
 === Components and Language removal
 
 ==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
