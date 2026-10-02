@@ -580,6 +580,12 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      */
     public RouteDefinition errorHandler(ErrorHandlerFactory errorHandlerBuilder) {
         setErrorHandlerFactory(errorHandlerBuilder);
+        // kept in the model as well (as the xml and yaml dsl have it), so dumping the route writes its error handler:
+        // as its definition (deadLetterChannel() gives a DeadLetterChannelBuilder, which the model writers do not know)
+        ErrorHandlerDefinition def = new ErrorHandlerDefinition();
+        def.setErrorHandlerType(errorHandlerBuilder instanceof CopyableDefinition<?> copyable
+                && copyable.copyDefinition() instanceof ErrorHandlerFactory copy ? copy : errorHandlerBuilder);
+        this.errorHandler = def;
         // we are now using a route scoped error handler
         contextScopedErrorHandler = false;
         return this;

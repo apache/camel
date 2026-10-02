@@ -4184,3 +4184,23 @@ WebSocket transport already were. Before, it kept the JVM alive when the applica
 Spring Boot application whose port was in use: Camel had not started, so it never stopped the connector. An application
 that only kept running because of this thread now exits; keep it running on purpose, for example with
 `camel.main.run-controller=true` for a Spring Boot application without a web server.
+
+=== Route dumps as YAML and Java
+
+Routes dumped as YAML (`camel.main.dumpRoutes=yaml`, `camel transform route --format=yaml`) are now written as the
+YAML DSL loads them:
+
+* the verbs of a rest are listed by their kind (`get`, `post`, ...) instead of under `verbs`, and their parameters and
+  response messages as `param` and `responseMessage`;
+* a route template has `parameters` and `beans` instead of `templateParameter` and `templateBean`;
+* the properties of a bean are a map, also when they are nested, instead of a `property` list.
+
+Before, such a dump did not load in the YAML DSL.
+
+A route built in Java with its own error handler (`from("...").errorHandler(deadLetterChannel("..."))`) now has the
+error handler in its model, so dumping the route (as XML, YAML or Java) writes it; it was left out before. When written
+as Java, the error handler of an XML or YAML route is now `.errorHandler(...)` on the route, instead of an
+`errorHandler(...)` that applies to every route of the route builder.
+
+The `timeout(long)` of the Resequencer EIP in Java keeps the millis as given (`2000`), instead of a duration
+(`2s0ms`).
