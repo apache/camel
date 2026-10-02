@@ -98,6 +98,10 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
         @Override
         public void onFailure(Throwable throwable) {
             onError(throwable);
+            // only an answer starts the next query: query again, or the events are not watched anymore
+            if (isRunAllowed()) {
+                watch();
+            }
         }
 
         private void onEvent(Event event) {
