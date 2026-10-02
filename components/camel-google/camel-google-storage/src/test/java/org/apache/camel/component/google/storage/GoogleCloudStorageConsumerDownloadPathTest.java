@@ -17,10 +17,20 @@
 package org.apache.camel.component.google.storage;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
 
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.google.storage.localstorage.LocalStorageHelper;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -212,6 +222,51 @@ class GoogleCloudStorageConsumerDownloadPathTest extends CamelTestSupport {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> consumer.evaluateFileExpression(exchange, expression, "./file.txt"))
                 .withMessageContaining("working directory");
+    }
+
+    @Test
+    void objectWithARejectedNameIsSkippedWithoutStoppingTheOthers() throws Exception {
+        // the rejected object is reported and skipped, while the other objects of the same poll are still consumed
+        // (the accepted objects are really downloaded, and the consumer does not create the download directory)
+        Files.createDirectories(Path.of(DOWNLOAD_DIR));
+        GoogleCloudStorageEndpoint endpoint = context.getEndpoint(
+                "google-storage://myRejectBucket?autoCreateBucket=true", GoogleCloudStorageEndpoint.class);
+        endpoint.getConfiguration().setDownloadFileName(DOWNLOAD_DIR + "/${exchangeId}.bin");
+        GoogleCloudStorageConsumer consumer = (GoogleCloudStorageConsumer) endpoint.createConsumer(exchange -> {
+        });
+        endpoint.start();
+        consumer.init();
+        List<String> reported = new ArrayList<>();
+        consumer.setExceptionHandler(new ExceptionHandler() {
+            @Override
+            public void handleException(Throwable exception) {
+                reported.add(exception.getMessage());
+            }
+
+            @Override
+            public void handleException(String message, Throwable exception) {
+                reported.add(message);
+            }
+
+            @Override
+            public void handleException(String message, Exchange exchange, Throwable exception) {
+                reported.add(message);
+            }
+        });
+        Storage storage = endpoint.getStorageClient();
+        List<Blob> blobs = new ArrayList<>();
+        for (String name : List.of("a.txt", "b/../c.txt", "d.txt")) {
+            blobs.add(storage.create(BlobInfo.newBuilder("myRejectBucket", name).build(),
+                    name.getBytes(StandardCharsets.UTF_8)));
+        }
+
+        Queue<Exchange> exchanges = consumer.createExchanges(blobs);
+
+        assertThat(exchanges)
+                .extracting(e -> e.getMessage().getHeader(GoogleCloudStorageConstants.OBJECT_NAME, String.class))
+                .containsExactly("a.txt", "d.txt");
+        assertThat(reported).hasSize(1);
+        assertThat(reported.get(0)).contains("b/../c.txt");
     }
 
     @Test

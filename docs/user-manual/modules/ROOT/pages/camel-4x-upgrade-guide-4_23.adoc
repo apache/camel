@@ -2977,7 +2977,9 @@ as a pseudo-directory separator continue to work.
 The remote object name is untrusted input, so the consumer now also checks it whatever `downloadFileName`
 looks like. An absolute object name (one starting with `/` or `\`, or with a drive letter such as `C:`) and
 an object name with a `..` path segment are rejected, even when the name would normalize back inside the
-download directory (for example `a/../b.txt`).
+download directory (for example `a/../b.txt`). A rejected object is skipped and reported to the consumer's
+exception handler, which logs a warning by default, and the other objects of the poll are consumed as usual.
+The rejected object stays in the bucket, so it is reported again on every poll until it is removed or renamed.
 
 The containment check is now also applied when `downloadFileName` is configured as a directory followed
 by an expression, such as `downloadFileName=/tmp/downloads/${file:name}`: the destination must stay within

@@ -154,8 +154,17 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         try {
             for (Blob blob : blobList) {
                 if (includeObject(blob)) {
-                    Exchange exchange = createExchange(blob, blob.getBlobId().getName());
-                    answer.add(exchange);
+                    String key = blob.getBlobId().getName();
+                    try {
+                        answer.add(createExchange(blob, key));
+                    } catch (IllegalArgumentException e) {
+                        // the object name is rejected as a local download path: skip this object only, so a single
+                        // object with such a name does not stop the rest of the bucket from being consumed
+                        getExceptionHandler().handleException(
+                                "Skipping object " + key + " in bucket " + getConfiguration().getBucketName()
+                                                              + " as it cannot be downloaded: " + e.getMessage(),
+                                e);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -306,7 +315,14 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
             // download as file
             if (getConfiguration().getDownloadFileName() != null) {
                 // create a dummy exchange as Exchange is needed for expression evaluation
-                String result = evaluateFileExpression(exchange, getConfiguration().getDownloadFileName(), blob.getName());
+                String result;
+                try {
+                    result = evaluateFileExpression(exchange, getConfiguration().getDownloadFileName(), blob.getName());
+                } catch (IllegalArgumentException e) {
+                    // the object is not consumed, so the exchange created for it is not routed either
+                    releaseExchange(exchange, false);
+                    throw e;
+                }
                 if (result != null) {
                     File file = new File(result);
                     blob.downloadTo(file.toPath());
