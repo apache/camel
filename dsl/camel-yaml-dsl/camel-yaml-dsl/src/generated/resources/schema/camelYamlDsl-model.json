@@ -16118,8 +16118,8 @@
         "displayName" : "Nested",
         "kind" : "attribute",
         "index" : 4,
-        "group" : "advanced",
-        "label" : "advanced"
+        "group" : "security",
+        "label" : "advanced,security"
       }, {
         "name" : "resultType",
         "type" : "string",
