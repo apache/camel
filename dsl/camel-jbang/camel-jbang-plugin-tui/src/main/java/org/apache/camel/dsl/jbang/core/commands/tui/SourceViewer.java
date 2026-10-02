@@ -988,7 +988,7 @@ class SourceViewer {
             applyBlockEdit(YamlBlockEditor.deleteLine(editLines(), editState.cursorRow()));
             return true;
         }
-        if (ke.hasCtrl() && ke.isCharIgnoreCase('r') && isCamelYamlFile()) {
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('r') && (isCamelYamlFile() || uriCompletion != null)) {
             openRefactorPopup();
             return true;
         }
@@ -2998,6 +2998,11 @@ class SourceViewer {
             return;
         }
         String rawLine = editState.getLine(row);
+        if (!isCamelYamlFile()) {
+            // Java and XML routes (CAMEL-25256)
+            openRouteRefactorPopup(row, rawLine);
+            return;
+        }
         List<RefactorPopup.Action> actions = new ArrayList<>();
         // Extract to new file: available on any EIP step block in a YAML route
         if (isCamelYamlFile()) {
@@ -3021,12 +3026,143 @@ class SourceViewer {
         refactorPopup.open(actions, currentUri);
     }
 
+    /**
+     * The refactorings of a Java or XML route: replace the endpoint URI of the line, extract the value at the cursor to
+     * a property, and in XML extract the step block of the line to a new route file.
+     */
+    private void openRouteRefactorPopup(int row, String rawLine) {
+        String dsl = uriCompletion;
+        List<RefactorPopup.Action> actions = new ArrayList<>();
+        if ("xml".equals(dsl) && RouteRefactorings.xmlStep(editLines(), row) != null) {
+            actions.add(RefactorPopup.Action.EXTRACT_TO_FILE);
+        }
+        RouteRefactorings.Value uri = RouteRefactorings.uri(dsl, rawLine);
+        if (uri != null) {
+            actions.add(RefactorPopup.Action.REPLACE_URI);
+        }
+        if (RouteRefactorings.isExtractable(RouteRefactorings.valueAt(dsl, rawLine, editState.cursorCol()))) {
+            actions.add(RefactorPopup.Action.EXTRACT_TO_PROPERTY);
+        }
+        if (actions.isEmpty()) {
+            notifySave("Nothing to refactor here: put the cursor on an endpoint URI, a value"
+                       + ("xml".equals(dsl) ? " or the start tag of a step" : ""),
+                    false);
+            return;
+        }
+        refactorPopup = new RefactorPopup();
+        refactorPopup.open(actions, uri != null ? uri.text() : null);
+    }
+
+    private void applyRouteRefactoring(RefactorPopup.Request req, int row, String rawLine) {
+        String dsl = uriCompletion;
+        switch (req.action()) {
+            case REPLACE_URI -> {
+                RouteRefactorings.Value uri = RouteRefactorings.uri(dsl, rawLine);
+                if (uri != null) {
+                    setLine(row, RouteRefactorings.replace(dsl, rawLine, uri, req.value()));
+                    notifySave("Replaced URI with: " + req.value(), false);
+                }
+            }
+            case EXTRACT_TO_PROPERTY -> {
+                RouteRefactorings.Value v = RouteRefactorings.valueAt(dsl, rawLine, editState.cursorCol());
+                if (!RouteRefactorings.isExtractable(v) || req.value() == null || req.value().isBlank()) {
+                    return;
+                }
+                String key = req.value().strip();
+                setLine(row, RouteRefactorings.replace(dsl, rawLine, v, "{{" + key + "}}"));
+                if (editableFile != null) {
+                    Path props = RouteRefactorings.propertiesFile(editableFile);
+                    try {
+                        Files.createDirectories(props.getParent());
+                        Files.writeString(props, key + "=" + RouteRefactorings.propertiesValue(v.text()) + "\n",
+                                StandardCharsets.UTF_8,
+                                StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                    } catch (IOException e) {
+                        notifySave("Warning: could not write " + props.getFileName() + ": " + e.getMessage(), true);
+                        return;
+                    }
+                }
+                notifySave("Extracted to property: " + key, false);
+            }
+            case EXTRACT_TO_FILE -> applyXmlExtractToFile(row, req.value());
+        }
+    }
+
+    /** The line replaced in the edited text, the cursor kept on it. */
+    private void setLine(int row, String newLine) {
+        recordEditChange();
+        List<String> lines = editLines();
+        lines.set(row, newLine);
+        editState.setText(YamlBlockEditor.fromLines(lines));
+        SourceEditorNavigation.positionCursor(editState, row, countLeadingSpaces(newLine));
+    }
+
+    /** The XML step block of the row moved to a new route (from direct:name) in name.camel.xml, a to in its place. */
+    private void applyXmlExtractToFile(int row, String name) {
+        if (editableFile == null) {
+            notifySave("Cannot extract: file is not writable", true);
+            return;
+        }
+        name = sanitizeFileName(name);
+        if (name.isEmpty()) {
+            notifySave("Cannot extract: invalid file name", true);
+            return;
+        }
+        List<String> lines = editLines();
+        RouteRefactorings.Block block = RouteRefactorings.xmlStep(lines, row);
+        if (block == null) {
+            return;
+        }
+        List<String> blockLines = new ArrayList<>(lines.subList(block.start(), block.end() + 1));
+        String newFileName = name + ".camel.xml";
+        Path newFile = editableFile.getParent().resolve(newFileName);
+        String route = RouteRefactorings.xmlRoute(name, blockLines, block.indent());
+        String newContent;
+        boolean existed = Files.exists(newFile);
+        try {
+            if (existed) {
+                newContent = RouteRefactorings.addXmlRoute(Files.readString(newFile, StandardCharsets.UTF_8), route);
+                if (newContent == null) {
+                    notifySave(newFileName + " exists and has no </routes> to add the route to", true);
+                    return;
+                }
+            } else {
+                newContent = RouteRefactorings.xmlRouteFile(name, blockLines, block.indent());
+            }
+        } catch (IOException e) {
+            notifySave("Failed to read " + newFileName + ": " + e.getMessage(), true);
+            return;
+        }
+        recordEditChange();
+        editState.setText(YamlBlockEditor.fromLines(RouteRefactorings.replaceWithTo(lines, block, name)));
+        SourceEditorNavigation.positionCursor(editState, block.start(), block.indent());
+        // saved at once, so the route index of the jump links sees both files (as the YAML extraction does)
+        try {
+            Files.writeString(editableFile, editState.text(), StandardCharsets.UTF_8);
+            dirty = false;
+            originalEditText = editState.text();
+            lineStatuses = null;
+            Files.writeString(newFile, newContent, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            notifySave("Failed to write " + newFileName + ": " + e.getMessage(), true);
+            return;
+        }
+        if (!existed && onFileCreated != null) {
+            onFileCreated.run();
+        }
+        notifySave(existed ? "Added route to " + newFileName : "Extracted to " + newFileName, false);
+    }
+
     private void applyRefactoring(RefactorPopup.Request req) {
         int row = editState.cursorRow();
         if (row < 0 || row >= editState.lineCount()) {
             return;
         }
         String rawLine = editState.getLine(row);
+        if (!isCamelYamlFile()) {
+            applyRouteRefactoring(req, row, rawLine);
+            return;
+        }
         switch (req.action()) {
             case EXTRACT_TO_FILE -> applyExtractToFile(row, req.value());
             case REPLACE_URI -> applyReplaceUri(row, rawLine, req.value());

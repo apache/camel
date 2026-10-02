@@ -17,7 +17,9 @@ explorer on the left and a source viewer on the right.
 - **Esc** — cancel edit (in edit mode) or close viewer
 - **Ctrl+S** — save file and continue editing (Camel dev mode auto-reloads)
 - **F5** — save file and close editor (in edit mode)
-- **Ctrl+R** — open refactoring menu in edit mode (YAML files only; choose an action for the current line)
+- **Ctrl+R** — open refactoring menu in edit mode, for the current line: replace
+  the endpoint URI, extract the value at the cursor to a property, extract a step
+  to a new route file (YAML and XML)
 - **Space** — cycle format (YAML/Java/XML) for Camel routes
 - Quick documentation panel is shown at the bottom for Camel source files
   (YAML, XML and Java DSL routes: the component and options of an endpoint,
