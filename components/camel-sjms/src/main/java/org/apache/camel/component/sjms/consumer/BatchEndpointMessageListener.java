@@ -57,9 +57,10 @@ public class BatchEndpointMessageListener {
 
             result = aggregationStrategy.aggregate(result, e);
         }
-        if (result != null) {
-            aggregationStrategy.onCompletion(result);
-        }
+            // Force eager materialization of JMS message headers and body into the
+            // Camel Exchange, before the session is committed/closed after dispatch.
+            e.getIn().getHeaders();
+            e.getIn().getBody();
         return result;
     }
 
