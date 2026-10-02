@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import io.quarkiverse.mcp.server.McpConnection;
+import io.quarkiverse.mcp.server.MetaField;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
@@ -40,6 +42,9 @@ public class DiagnoseTools {
     @Inject
     CatalogService catalogService;
 
+    @Inject
+    RepeatedCallSessions repeatedCalls;
+
     /**
      * Tool to diagnose Camel errors from stack traces or error messages: a thin wrapper over the shared
      * {@code camel_error_diagnose} tool of the {@link ToolRegistry} (CAMEL-24695), so the TUI answers the same.
@@ -50,7 +55,9 @@ public class DiagnoseTools {
                         + "links to relevant Camel documentation, and suggested fixes. "
                         + "Covers the most common Camel exceptions including NoSuchEndpointException, "
                         + "ResolveEndpointFailedException, FailedToCreateRouteException, and more.")
+    @MetaField(prefix = "camel.apache.org/", name = "deterministic", type = MetaField.Type.BOOLEAN, value = "true")
     public JsonObject camel_error_diagnose(
+            McpConnection connection,
             @ToolArg(description = "The Camel stack trace or error message to diagnose", required = true) String error,
             @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
             @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
@@ -58,6 +65,13 @@ public class DiagnoseTools {
 
         if (error == null || error.isBlank()) {
             throw new ToolCallException("Error message or stack trace is required", null);
+        }
+        JsonObject repeat = repeatedCalls != null
+                ? repeatedCalls.repeatOf(connection, "camel_error_diagnose", AuthoringTools.args("error", error,
+                        "runtime", runtime, "camelVersion", camelVersion, "platformBom", platformBom))
+                : null;
+        if (repeat != null) {
+            return repeat;
         }
         try {
             CamelCatalog catalog = catalogService.loadCatalog(runtime, camelVersion, platformBom);

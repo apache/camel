@@ -20,7 +20,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
+import io.quarkiverse.mcp.server.McpConnection;
+import io.quarkiverse.mcp.server.MetaField;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
@@ -46,6 +49,9 @@ public class AuthoringTools {
     private static final String VERSION_DESC = "Camel version to answer for (default: the CLI's own)";
     private static final String DIRECTORY_DESC = "Project directory with the source files (absolute path)";
 
+    @Inject
+    RepeatedCallSessions repeatedCalls;
+
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Camel catalog documentation of a component, data format, language, EIP, built-in bean or the "
                         + "Java API (description, options, Maven coordinates), with the URI rules of a component. For "
@@ -56,7 +62,9 @@ public class AuthoringTools {
                         + "invalid options, missing path. An EIP alias such as fan-out or dedup finds the EIP. "
                         + "includeHeaders=true adds the message headers of a component, includeDoc=true the AsciiDoc "
                         + "page.")
+    @MetaField(prefix = "camel.apache.org/", name = "deterministic", type = MetaField.Type.BOOLEAN, value = "true")
     public JsonObject camel_catalog_doc(
+            McpConnection connection,
             @ToolArg(description = "Name, e.g. kafka, json (a data format by its YAML name or artifact), simple, timer, choice, split, Exchange",
                      required = false) String name,
             @ToolArg(description = "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092",
@@ -72,7 +80,7 @@ public class AuthoringTools {
                      required = false) String docPage,
             @ToolArg(description = "Keyword to match in option names or descriptions", required = false) String optionsFilter,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
-        return call("camel_catalog_doc", args("name", name, "endpoint", endpoint, "kind", kind,
+        return callDeterministic(connection, "camel_catalog_doc", args("name", name, "endpoint", endpoint, "kind", kind,
                 "includeOptions", includeOptions, "includeHeaders", includeHeaders, "includeDoc", includeDoc,
                 "docPage", docPage,
                 "optionsFilter", optionsFilter, "camelVersion", camelVersion));
@@ -82,13 +90,15 @@ public class AuthoringTools {
           description = "Finds Camel components, data formats, languages and EIPs by a protocol, product, alias or "
                         + "other term that is not the exact name (mqtt, s3, snowflake, csv, fan-out, dedup): best "
                         + "match first with title and description. camel_catalog_doc then gives the options of one.")
+    @MetaField(prefix = "camel.apache.org/", name = "deterministic", type = MetaField.Type.BOOLEAN, value = "true")
     public JsonObject camel_catalog_find(
+            McpConnection connection,
             @ToolArg(description = "What to look for, e.g. mqtt, s3, database, csv, fan-out", required = true) String term,
             @ToolArg(description = "component, dataformat, language, eip or bean (default: all); bean with an interface name such as AggregationStrategy lists the built-in implementations",
                      required = false) String kind,
             @ToolArg(description = "Maximum matches per kind (default 10)", required = false) Integer limit,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
-        return call("camel_catalog_find", args("term", term, "kind", kind, "limit", limit,
+        return callDeterministic(connection, "camel_catalog_find", args("term", term, "kind", kind, "limit", limit,
                 "camelVersion", camelVersion));
     }
 
@@ -97,7 +107,9 @@ public class AuthoringTools {
                         + "a component (kafka, file), a data format (csv) or a language (jq) from the docs, with where "
                         + "it goes (a top-level entry, a step, an endpoint uri, a marshal step, an expression). Use "
                         + "before writing one the first time or after a 'not defined in the schema' error.")
+    @MetaField(prefix = "camel.apache.org/", name = "deterministic", type = MetaField.Type.BOOLEAN, value = "true")
     public JsonObject camel_catalog_sample(
+            McpConnection connection,
             @ToolArg(description = "EIP, component, data format or language name, or what to do (read file, call "
                                    + "service, retry, batch)",
                      required = true) String name,
@@ -106,7 +118,8 @@ public class AuthoringTools {
                      required = false) String kind,
             @ToolArg(description = "Maximum samples to return (default 2, max 5)", required = false) Integer limit,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
-        return call("camel_catalog_sample", args("name", name, "kind", kind, "limit", limit, "camelVersion", camelVersion));
+        return callDeterministic(connection, "camel_catalog_sample",
+                args("name", name, "kind", kind, "limit", limit, "camelVersion", camelVersion));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -283,6 +296,15 @@ public class AuthoringTools {
         return call("camel_save_project_summary", args("directory", directory, "overview", overview,
                 "capabilities", capabilities, "descriptions", descriptions, "utility", utility, "steps", steps,
                 "model", model, "camelVersion", camelVersion));
+    }
+
+    /**
+     * As {@link #call(String, Map)} for a deterministic tool: from the third identical call of the connection the
+     * answer is a short note that it was already answered (CAMEL-25075).
+     */
+    JsonObject callDeterministic(McpConnection connection, String tool, Map<String, String> args) {
+        JsonObject repeat = repeatedCalls != null ? repeatedCalls.repeatOf(connection, tool, args) : null;
+        return repeat != null ? repeat : call(tool, args);
     }
 
     /** Runs the registry tool of the same name and hands its JSON back; a tool error becomes an MCP tool error. */

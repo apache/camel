@@ -31,6 +31,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import org.apache.camel.dsl.jbang.core.commands.ai.RepeatedToolCalls;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -69,6 +72,8 @@ class TuiMcpServer {
     private final int port;
     private final McpFacade facade;
     private final TuiToolRegistry toolRegistry;
+    /** The calls of the connected client; a new {@code initialize} starts a new session. */
+    private final RepeatedToolCalls repeatedCalls = new RepeatedToolCalls();
     private HttpServer server;
     private volatile String clientName;
     private volatile long lastActivity;
@@ -252,6 +257,7 @@ class TuiMcpServer {
                 clientName = (String) clientInfo.get("name");
             }
         }
+        repeatedCalls.reset();
 
         JsonObject result = new JsonObject();
         result.put("protocolVersion", PROTOCOL_VERSION);
@@ -281,6 +287,12 @@ class TuiMcpServer {
             tool.put("name", td.name());
             tool.put("description", td.description());
             tool.put("inputSchema", td.inputSchema());
+            ToolDescriptor shared = ToolRegistry.findTool(td.name());
+            if (shared != null && shared.isDeterministic()) {
+                JsonObject meta = new JsonObject();
+                meta.put(RepeatedToolCalls.DETERMINISTIC_META_KEY, true);
+                tool.put("_meta", meta);
+            }
             toolList.add(tool);
         }
         JsonObject result = new JsonObject();
@@ -500,7 +512,9 @@ class TuiMcpServer {
         String text;
         boolean isError = false;
         try {
-            text = toolRegistry.execute(toolName, args);
+            JsonObject repeat = toolName != null
+                    ? repeatedCalls.repeatOf(ToolRegistry.findTool(toolName), args) : null;
+            text = repeat != null ? repeat.toJson() : toolRegistry.execute(toolName, args);
         } catch (IllegalArgumentException e) {
             text = "Unknown tool: " + toolName;
             isError = true;
