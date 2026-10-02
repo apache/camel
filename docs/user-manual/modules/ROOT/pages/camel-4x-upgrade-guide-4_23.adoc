@@ -2983,6 +2983,22 @@ path segments before checking that the destination remains inside that directory
 symbolic link that resolves outside the configured directory are rejected. Valid object names using `/`
 as a pseudo-directory separator continue to work.
 
+The remote object name is untrusted input, so the consumer now also checks it whatever `downloadFileName`
+looks like. An absolute object name (one starting with `/` or `\`, or with a drive letter such as `C:`) and
+an object name with a `..` path segment are rejected, even when the name would normalize back inside the
+download directory (for example `a/../b.txt`). When the consumer lists the bucket, a rejected object is skipped
+and reported to the consumer's exception handler, which logs a warning by default, and the other objects of the
+poll are consumed as usual. The rejected object stays in the bucket, so it is reported again on every poll until it
+is removed or renamed. With `objectName`, which consumes a single object, the poll fails instead, and the failure is
+reported on every poll.
+
+The containment check is now also applied when `downloadFileName` is configured as a directory followed
+by an expression, such as `downloadFileName=/tmp/downloads/${file:name}`: the destination must stay within
+the static directory prefix configured before the first expression token (`/tmp/downloads` in the example).
+When `downloadFileName` is fully dynamic and has no static directory prefix (for example
+`downloadFileName=${file:name}`), a relative destination must stay within the working directory. An absolute
+destination that comes from the route's own expression is not confined.
+
 === camel-jt400
 
 The endpoint syntax in the component metadata is now `jt400:userID:password@systemName/objectPath`, which is what the
