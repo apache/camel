@@ -29,9 +29,13 @@ The left panel lists the files of the integration's project, and the right panel
 highlighting. *Tab* switches between the two panels, and you can drag the border between them with the mouse.
 
 Press *Enter* to view a file, or *F4* to edit it. The editor is a plain-text editor with helpers for Camel routes:
-undo and redo, moving and duplicating YAML blocks, smart *Home*, and word navigation. In YAML routes, *Ctrl+R* opens a
-refactoring menu for the current line. *Ctrl+S* saves and keeps editing, *F5* saves and closes, and *Esc* cancels
+undo and redo, moving and duplicating YAML blocks, smart *Home*, and word navigation. *Ctrl+R* opens a refactoring menu
+for the current line: replace the endpoint URI of the line, extract the value at the cursor to a property (the value
+goes to `application.properties`, in `src/main/resources` for a Maven layout, and a `+{{key}}+` placeholder takes its
+place), and extract a step to a new route file, called with `direct:` (YAML and XML routes). *Ctrl+S* saves and keeps editing, *F5* saves and closes, and *Esc* cancels
 (and asks before it discards unsaved changes). A running integration in dev mode reloads the saved file.
+
+image::jbang/camel-tui-source-xml-refactor.png[Ctrl+R on a log step of an XML route: extract it to a new file or its message to a property]
 
 == Live Run Data
 
@@ -176,7 +180,8 @@ project:
   Values are completed for options with a fixed set of values (enums, `true`/`false`) and `+{{placeholders}}+`.
 * *Simple expressions* -- header, property and variable names are the ones the file sets or reads and the headers of
   the components it uses, not the ones other routes or your own code set at runtime.
-* Nothing is completed from your own Java classes and beans, and there are no refactorings (rename, extract) or imports.
+* Nothing is completed from your own Java classes and beans, and there are no imports or refactorings beyond the
+  *Ctrl+R* menu (no rename, and no extract to file in Java, whose steps are no block with clear edges).
 
 For more than that, an AI coding agent is the more powerful companion: working together with you in the TUI, it knows
 Camel, reads and writes the whole project, runs the routes and checks them, and explains what it does as it goes. See
@@ -299,7 +304,7 @@ mode, which hides the line numbers and borders for easy copying.
 | *Ctrl+K* | Delete current line
 | *Ctrl+Left/Right* | Word navigation
 | *Home* | Smart home (content indent / column 0)
-| *Ctrl+R* | Refactoring menu (YAML)
+| *Ctrl+R* | Refactoring menu: replace URI, extract to property, extract a step to a new file (YAML, XML)
 | *F9* | Next problem
 | *Shift+F9* | Apply the quick fix of the problem on the line
 | *Shift+F8* | Ask the AI to fix the problem on the line
