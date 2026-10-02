@@ -110,13 +110,18 @@ weight. Monochrome shows keywords in bold white and comments in italic grey. CRT
 like a green phosphor terminal of the 1980s: keywords in bold high intensity, strings in
 the bright glow, comments in the darker half intensity green.
 
-image::jbang/camel-tui-theme-nord-source.png[A YAML route in the Source tab with the Nord theme's code colors]
-
-image::jbang/camel-tui-theme-crt-source.png[A YAML route in the Source tab with the CRT theme]
-
 Your choice is remembered: it is saved as `camel.tui.theme` in `.camel-cli.properties`
 and restored the next time you open the TUI.
 
+=== Theme examples
+
+.Nord: a YAML route in the *Source* tab with the scheme's own code colors
+image::jbang/camel-tui-theme-nord-source.png[A YAML route in the Source tab with the Nord theme's code colors]
+
+.CRT: a green phosphor terminal of the 1980s, code told apart by brightness and bold
+image::jbang/camel-tui-theme-crt-source.png[A YAML route in the Source tab with the CRT theme]
+
+.Catppuccin Latte: a light theme on the *Overview* tab
 image::jbang/camel-tui-theme-latte.png[The Overview in the Catppuccin Latte theme]
 
 == Settings
