@@ -120,6 +120,67 @@ class GoogleCloudStorageFileNameHelperTest {
     }
 
     @Test
+    void staticDirectoryPrefixKeepsTheSeparatorOfAWindowsDriveRoot() {
+        // C: alone is drive-relative (the current directory on that drive), not the root
+        assertThat(GoogleCloudStorageFileNameHelper.staticDirectoryPrefix("C:\\${file:name}")).isEqualTo("C:\\");
+        assertThat(GoogleCloudStorageFileNameHelper.staticDirectoryPrefix("C:/${file:name}")).isEqualTo("C:/");
+        assertThat(GoogleCloudStorageFileNameHelper.staticDirectoryPrefix("C:/data/${file:name}")).isEqualTo("C:/data");
+    }
+
+    @Test
+    void relativeObjectNamesAreSafe() {
+        assertThatCode(() -> {
+            GoogleCloudStorageFileNameHelper.assertSafeObjectName("file.txt");
+            GoogleCloudStorageFileNameHelper.assertSafeObjectName("a/b/c.txt");
+            GoogleCloudStorageFileNameHelper.assertSafeObjectName("a/./b.txt");
+            // .. only matters as a whole path segment
+            GoogleCloudStorageFileNameHelper.assertSafeObjectName("..hidden");
+            GoogleCloudStorageFileNameHelper.assertSafeObjectName("a..b/c..");
+        }).doesNotThrowAnyException();
+    }
+
+    @Test
+    void objectNamesWithAParentSegmentAreNotSafe() {
+        for (String objectName : new String[] { "..", "../x", "a/../b.txt", "a/..", "a\\..\\b.txt" }) {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> GoogleCloudStorageFileNameHelper.assertSafeObjectName(objectName))
+                    .withMessageContaining(objectName)
+                    .withMessageContaining("'..' path segment");
+        }
+    }
+
+    @Test
+    void absoluteObjectNamesAreNotSafe() {
+        for (String objectName : new String[] { "/etc/passwd", "\\x", "\\\\server\\share\\x", "C:\\x", "C:x", "c:/x" }) {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> GoogleCloudStorageFileNameHelper.assertSafeObjectName(objectName))
+                    .withMessageContaining(objectName)
+                    .withMessageContaining("absolute path");
+        }
+    }
+
+    @Test
+    void relativePathInsideTheWorkingDirectoryIsAccepted() {
+        assertThatCode(() -> {
+            GoogleCloudStorageFileNameHelper.assertWithinWorkingDirectory("file.txt", "file.txt");
+            GoogleCloudStorageFileNameHelper.assertWithinWorkingDirectory("a/../b.txt", "b.txt");
+            GoogleCloudStorageFileNameHelper.assertWithinWorkingDirectory("/abs/dir/file.txt", "file.txt");
+        }).doesNotThrowAnyException();
+    }
+
+    @Test
+    void relativePathClimbingOutOfTheWorkingDirectoryIsRejected() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> GoogleCloudStorageFileNameHelper.assertWithinWorkingDirectory("../file.txt",
+                        "./file.txt"))
+                .withMessageContaining("./file.txt")
+                .withMessageContaining("working directory");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> GoogleCloudStorageFileNameHelper.assertWithinWorkingDirectory("a/../../file.txt",
+                        "file.txt"));
+    }
+
+    @Test
     void symbolicLinkResolvingOutsideDirectoryIsRejected(@TempDir Path parent) throws IOException {
         Path downloadDir = Files.createDirectory(parent.resolve("downloads"));
         Path outsideDir = Files.createDirectory(parent.resolve("outside"));

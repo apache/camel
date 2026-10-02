@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.google.storage;
 
+import java.io.File;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.google.storage.localstorage.LocalStorageHelper;
@@ -117,7 +119,20 @@ class GoogleCloudStorageConsumerDownloadPathTest extends CamelTestSupport {
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> consumer.evaluateFileExpression(exchange, expression, "../escape.txt"))
-                .withMessageContaining("../escape.txt")
+                .withMessageContaining("../escape.txt");
+    }
+
+    @Test
+    void objectNameJoiningTheExpressionOutOfTheStaticPrefixIsRejected() throws Exception {
+        // ./escape.txt has no .. segment of its own, but /.${file:name} turns it into a parent segment, so the static
+        // directory prefix still has to confine the result
+        String expression = DOWNLOAD_DIR + "/.${file:name}";
+        GoogleCloudStorageConsumer consumer = createConsumer(DOWNLOAD_DIR);
+        Exchange exchange = new DefaultExchange(context);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> consumer.evaluateFileExpression(exchange, expression, "./escape.txt"))
+                .withMessageContaining("./escape.txt")
                 .withMessageContaining(DOWNLOAD_DIR);
     }
 
@@ -132,14 +147,83 @@ class GoogleCloudStorageConsumerDownloadPathTest extends CamelTestSupport {
     }
 
     @Test
-    void fullyDynamicExpressionIsNotConfined() throws Exception {
-        // the route author configured no static directory at all, so there is nothing to confine the download to and
-        // the evaluated path is used as-is
+    void objectNameNormalizingBackInsideIsRejected() throws Exception {
+        // a .. segment is refused outright, even when it would normalize back inside the download directory
+        GoogleCloudStorageConsumer consumer = createConsumer(DOWNLOAD_DIR);
+        Exchange exchange = new DefaultExchange(context);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> consumer.evaluateFileExpression(exchange, DOWNLOAD_DIR, "nested/../file.txt"))
+                .withMessageContaining("nested/../file.txt");
+    }
+
+    @Test
+    void plainObjectNameOnAFullyDynamicExpressionIsAccepted() throws Exception {
         String expression = "${file:name}";
         GoogleCloudStorageConsumer consumer = createConsumer(DOWNLOAD_DIR);
         Exchange exchange = new DefaultExchange(context);
 
-        assertThat(consumer.evaluateFileExpression(exchange, expression, "../escape.txt"))
-                .isEqualTo("../escape.txt");
+        assertThat(consumer.evaluateFileExpression(exchange, expression, "nested/file.txt"))
+                .isEqualTo("nested/file.txt");
+    }
+
+    @Test
+    void objectNameWithParentSegmentIsRejectedOnAFullyDynamicExpression() throws Exception {
+        // the route author configured no directory, but the object name is still untrusted input
+        String expression = "${file:name}";
+        GoogleCloudStorageConsumer consumer = createConsumer(DOWNLOAD_DIR);
+        Exchange exchange = new DefaultExchange(context);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> consumer.evaluateFileExpression(exchange, expression,
+                        "../../home/app/.ssh/authorized_keys"))
+                .withMessageContaining("../../home/app/.ssh/authorized_keys");
+    }
+
+    @Test
+    void absoluteObjectNameIsRejectedOnAFullyDynamicExpression() throws Exception {
+        String expression = "${file:name}";
+        GoogleCloudStorageConsumer consumer = createConsumer(DOWNLOAD_DIR);
+        Exchange exchange = new DefaultExchange(context);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> consumer.evaluateFileExpression(exchange, expression, "/etc/cron.d/escape"))
+                .withMessageContaining("/etc/cron.d/escape");
+    }
+
+    @Test
+    void absoluteObjectNameAfterAFileNamePrefixIsRejected() throws Exception {
+        // prefix-/../../escape.txt would normalize to ../escape.txt
+        String expression = "prefix-${file:name}";
+        GoogleCloudStorageConsumer consumer = createConsumer(DOWNLOAD_DIR);
+        Exchange exchange = new DefaultExchange(context);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> consumer.evaluateFileExpression(exchange, expression, "/../../escape.txt"));
+    }
+
+    @Test
+    void objectNameJoiningTheExpressionIntoAParentSegmentIsRejected() throws Exception {
+        // ./file.txt has no .. segment of its own, but .${file:name} turns it into ../file.txt
+        String expression = ".${file:name}";
+        GoogleCloudStorageConsumer consumer = createConsumer(DOWNLOAD_DIR);
+        Exchange exchange = new DefaultExchange(context);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> consumer.evaluateFileExpression(exchange, expression, "./file.txt"))
+                .withMessageContaining("working directory");
+    }
+
+    @Test
+    void fullyDynamicExpressionResolvingToAnAbsoluteDirectoryKeepsWorking() throws Exception {
+        // the directory comes from the route author's own expression, so an absolute result is not confined
+        String directory = new File(DOWNLOAD_DIR).getAbsolutePath();
+        String expression = "${header.dir}/${file:name}";
+        GoogleCloudStorageConsumer consumer = createConsumer(DOWNLOAD_DIR);
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setHeader("dir", directory);
+
+        assertThat(consumer.evaluateFileExpression(exchange, expression, "nested/file.txt"))
+                .isEqualTo(directory + "/nested/file.txt");
     }
 }

@@ -31,6 +31,55 @@ final class GoogleCloudStorageFileNameHelper {
     }
 
     /**
+     * Rejects a remote object name that could steer a local download path out of the directory it is resolved in,
+     * whatever the configured {@code downloadFileName} looks like. That is an absolute object name (one starting with
+     * {@code /} or {@code \}, or with a drive letter such as {@code C:}) or an object name with a {@code ..} path
+     * segment, even one that would normalize back inside the directory. Both {@code /} and {@code \} are treated as
+     * separators so the check does not depend on the platform the consumer runs on.
+     * <p>
+     * This is what confines a fully dynamic {@code downloadFileName} such as {@code ${file:name}}, which has no
+     * configured directory to check the resolved path against.
+     *
+     * @param  objectName               the remote object name
+     * @throws IllegalArgumentException if the object name is absolute or has a {@code ..} path segment
+     */
+    static void assertSafeObjectName(String objectName) {
+        if (objectName.startsWith("/") || objectName.startsWith("\\") || hasDriveLetter(objectName)) {
+            throw new IllegalArgumentException(
+                    "Cannot download to file '" + objectName + "' as the object name is an absolute path");
+        }
+        for (String segment : objectName.split("[/\\\\]")) {
+            if ("..".equals(segment)) {
+                throw new IllegalArgumentException(
+                        "Cannot download to file '" + objectName + "' as the object name has a '..' path segment");
+            }
+        }
+    }
+
+    /**
+     * Verifies that a relative local download path does not climb out of the working directory. This applies to a fully
+     * dynamic {@code downloadFileName} such as {@code ${file:name}}, which has no configured directory to confine the
+     * download to. {@link #assertSafeObjectName(String)} already keeps the object name itself from climbing out; this
+     * catches an object name that joins with the configured text into a parent segment, for example
+     * {@code .${file:name}} with an object named {@code ./file.txt}, which resolves to {@code ../file.txt}.
+     * <p>
+     * The check is lexical on purpose: an absolute path comes from the route author's own configuration, and symbolic
+     * links inside the working directory belong to the deployment, not to the remote object name.
+     *
+     * @param  resolvedPath             the resolved local path
+     * @param  objectName               the remote object name used to build the local path, for error reporting
+     * @throws IllegalArgumentException if the relative path resolves outside the working directory
+     */
+    static void assertWithinWorkingDirectory(String resolvedPath, String objectName) {
+        final Path normalized = new File(resolvedPath).toPath().normalize();
+        if (!normalized.isAbsolute() && normalized.startsWith("..")) {
+            throw new IllegalArgumentException(
+                    "Cannot download to file '" + objectName + "' as it resolves outside the working directory: "
+                                               + resolvedPath);
+        }
+    }
+
+    /**
      * Verifies that a local download path built from a remote object name stays within the configured download
      * directory. A remote object name is influenced by whoever writes to the bucket and may contain path segments that
      * would otherwise resolve to a location outside the download directory.
@@ -88,7 +137,16 @@ final class GoogleCloudStorageFileNameHelper {
             // the prefix is the filesystem root itself
             return beforeExpression.substring(0, 1);
         }
+        if (lastSeparator == 2 && hasDriveLetter(beforeExpression)) {
+            // the prefix is a Windows drive root such as C:\ - keep the separator, as C: alone is drive-relative (the
+            // current directory on that drive) rather than the root
+            return beforeExpression.substring(0, 3);
+        }
         return beforeExpression.substring(0, lastSeparator);
+    }
+
+    private static boolean hasDriveLetter(String path) {
+        return path.length() >= 2 && path.charAt(1) == ':' && Character.isLetter(path.charAt(0));
     }
 
     private static Path resolveExistingPathSegments(Path path) throws IOException {

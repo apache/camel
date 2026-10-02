@@ -360,17 +360,21 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         // use blob as file name
         exchange.getMessage().setHeader(GoogleCloudStorageConstants.FILE_NAME, blogName);
 
-        String eval = downloadFileName;
         // the local path is resolved from GoogleCloudStorageConstants.FILE_NAME set above, which carries the remote
         // object name and is therefore untrusted input, no matter whether the token is appended here or already part
-        // of the configured downloadFileName. The resolved path is confined to the directory the route author
-        // configured:
+        // of the configured downloadFileName. An absolute object name, or one with a .. segment, is rejected whatever
+        // the configuration looks like, and the resolved path is then confined:
         // - plain directory (no expression): the object name is appended to it and the configured value itself is the
         //   directory the download must stay within
         // - directory followed by an expression (for example /tmp/downloads/${file:name}): the static directory
         //   prefix before the first expression token is the directory the download must stay within
         // - fully dynamic value with no static directory prefix (for example ${file:name}): the route author did not
-        //   configure any directory, so there is nothing to confine to and the evaluated path is used as-is
+        //   configure any directory, so a relative result must stay within the working directory
+        if (blogName != null) {
+            GoogleCloudStorageFileNameHelper.assertSafeObjectName(blogName);
+        }
+
+        String eval = downloadFileName;
         final String confinementDirectory;
         final boolean confineToDirectory;
         if (downloadFileName.contains("$")) {
@@ -388,8 +392,12 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         if (exchange.getException() != null) {
             throw RuntimeCamelException.wrapRuntimeCamelException(exchange.getException());
         }
-        if (confineToDirectory && result != null) {
-            GoogleCloudStorageFileNameHelper.assertWithinDirectory(confinementDirectory, result, blogName);
+        if (result != null) {
+            if (confineToDirectory) {
+                GoogleCloudStorageFileNameHelper.assertWithinDirectory(confinementDirectory, result, blogName);
+            } else {
+                GoogleCloudStorageFileNameHelper.assertWithinWorkingDirectory(result, blogName);
+            }
         }
         return result;
     }
