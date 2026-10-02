@@ -26,6 +26,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RouteTreePreviewTest {
@@ -173,7 +174,7 @@ class RouteTreePreviewTest {
 
         String tree = lineToPlainText(RouteTreePreview.buildTree(layout, 20, 60, null));
         assertTrue(tree.contains("otherwise[direct:normal]"), tree);
-        assertTrue(!tree.contains("to: otherwise"), tree);
+        assertFalse(tree.contains("to: otherwise"), tree);
         // an endpoint keeps its type
         assertTrue(tree.contains("to: kafka:out"), tree);
     }
