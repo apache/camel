@@ -25,6 +25,7 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -141,6 +142,37 @@ public abstract class YamlModelWriterSupport {
                 jo.put(key, arr);
             }
         }
+    }
+
+    /**
+     * The verbs of a rest as the YAML DSL has them: a list per kind (get, post, ...), not one list of all verbs.
+     */
+    protected <T extends VerbDefinition> void doWriteVerbs(JsonObject jo, List<T> verbs, Function<T, JsonObject> writer) {
+        if (verbs != null) {
+            for (T verb : verbs) {
+                JsonObject child = writer.apply(verb);
+                if (child != null) {
+                    JsonArray arr = (JsonArray) jo.computeIfAbsent(verb.asVerb(), k -> new JsonArray());
+                    arr.add(child);
+                }
+            }
+        }
+    }
+
+    /**
+     * The properties or constructor arguments of a bean as the YAML DSL has them: a map, with a nested map for nested
+     * properties.
+     */
+    protected void doWriteBeanMap(JsonObject jo, String key, Map<?, ?> map) {
+        if (map != null && !map.isEmpty()) {
+            jo.put(key, beanMap(map));
+        }
+    }
+
+    private static JsonObject beanMap(Map<?, ?> map) {
+        JsonObject answer = new JsonObject();
+        map.forEach((k, v) -> answer.put(String.valueOf(k), v instanceof Map<?, ?> m ? beanMap(m) : v));
+        return answer;
     }
 
     @SuppressWarnings("unchecked")

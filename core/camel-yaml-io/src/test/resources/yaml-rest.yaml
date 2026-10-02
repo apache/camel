@@ -17,10 +17,11 @@
 
 - rest:
     path: /api
-    verbs:
+    get:
       - path: /hello
         to:
           uri: direct:hello
+    post:
       - path: /bye
         consumes: application/json
         to:
