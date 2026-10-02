@@ -26,6 +26,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RouteTreePreviewTest {
@@ -152,6 +153,30 @@ class RouteTreePreviewTest {
         addLayoutNode(layout, log3);
 
         return layout;
+    }
+
+    @Test
+    void theOtherwiseOfASwitchIsLabelledAsItself() {
+        LayoutRoute layout = new LayoutRoute();
+        TreeNode root = node("from", "kafka:orders");
+        TreeNode sw = node("switch", null);
+        TreeNode case1 = node("case", "case[direct:gold]");
+        // the otherwise of a Switch is a node of type to whose code names it
+        TreeNode otherwise = node("to", "otherwise[direct:normal]");
+        TreeNode out = node("to", "kafka:out");
+        addChild(root, sw);
+        addChild(sw, case1);
+        addChild(sw, otherwise);
+        addChild(root, out);
+        for (TreeNode n : List.of(root, sw, case1, otherwise, out)) {
+            addLayoutNode(layout, n);
+        }
+
+        String tree = lineToPlainText(RouteTreePreview.buildTree(layout, 20, 60, null));
+        assertTrue(tree.contains("otherwise[direct:normal]"), tree);
+        assertFalse(tree.contains("to: otherwise"), tree);
+        // an endpoint keeps its type
+        assertTrue(tree.contains("to: kafka:out"), tree);
     }
 
     private TreeNode node(String type, String code) {
