@@ -27,7 +27,7 @@ import org.apache.camel.tooling.model.ArtifactModel;
 
 final class CatalogDependencyResolver {
 
-    private static final CamelCatalog CATALOG = new DefaultCamelCatalog(true);
+    private static final CamelCatalog CATALOG = new DefaultCamelCatalog();
     private static final ConcurrentMap<String, Optional<Coordinates>> COORDINATES = new ConcurrentHashMap<>();
 
     private CatalogDependencyResolver() {

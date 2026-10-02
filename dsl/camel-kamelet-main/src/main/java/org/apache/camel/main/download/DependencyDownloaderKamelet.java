@@ -178,6 +178,10 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
         private void downloadDependencies(List<String> dependencies) {
             final List<String> gavs = new ArrayList<>();
             for (String dep : dependencies) {
+                if ("camel:core".equals(dep) || "camel-core".equals(dep)
+                        || "camel:kamelet".equals(dep) || "camel-kamelet".equals(dep)) {
+                    continue;
+                }
                 String gav = dep;
                 if (CatalogDependencyResolver.isCamelShorthand(dep)) {
                     MavenGav resolved = CatalogDependencyResolver.resolve(dep, camelContext.getVersion());
