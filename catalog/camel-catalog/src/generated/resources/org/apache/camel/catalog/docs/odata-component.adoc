@@ -193,12 +193,42 @@ If the upstream authorization credentials must not be forwarded, remove the head
 
 For example:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("platform-http:/products")
-.removeHeader("Authorization")
-.to("odata:http://my-odata-service/odata/Products");
+    .removeHeader("Authorization")
+    .to("odata:http://my-odata-service/odata/Products");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="platform-http:/products"/>
+  <removeHeader name="Authorization"/>
+  <to uri="odata:http://my-odata-service/odata/Products"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: platform-http:/products
+      steps:
+        - removeHeader:
+            name: Authorization
+        - to:
+            uri: odata:http://my-odata-service/odata/Products
+----
+====
 
 == Query Options
 
@@ -263,12 +293,47 @@ Bearer token authentication can be configured using the `authBearerToken` option
 
 Authentication can also be supplied dynamically using the message-level `Authorization` header:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:getProducts")
-.setHeader("Authorization", constant("Bearer my-token"))
-.to("odata:http://my-odata-service/odata/Products");
+    .setHeader("Authorization", constant("Bearer my-token"))
+    .to("odata:http://my-odata-service/odata/Products");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:getProducts"/>
+  <setHeader name="Authorization">
+    <constant>Bearer my-token</constant>
+  </setHeader>
+  <to uri="odata:http://my-odata-service/odata/Products"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getProducts
+      steps:
+        - setHeader:
+            name: Authorization
+            expression:
+              constant:
+                expression: "Bearer my-token"
+        - to:
+            uri: odata:http://my-odata-service/odata/Products
+----
+====
 
 When an `Authorization` header is present on the message, it takes precedence over endpoint authentication.
 
@@ -282,15 +347,73 @@ An ETag supplied in `CamelODataETag` is sent to the service using the HTTP `If-M
 
 For example:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:updateProduct")
-.setHeader("CamelODataOperation", constant("UPDATE"))
-.setHeader("CamelODataKey", constant("101"))
-.setHeader("CamelODataETag", constant("W/\"etag-value\""))
-.setBody(constant(Map.of("Price", 249.99)))
-.to("odata:http://my-odata-service/odata/Products");
+    .setHeader("CamelODataOperation", constant("UPDATE"))
+    .setHeader("CamelODataKey", constant("101"))
+    .setHeader("CamelODataETag", constant("W/\"etag-value\""))
+    .setBody(constant("{\"Price\": 249.99}"))
+    .to("odata:http://my-odata-service/odata/Products");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:updateProduct"/>
+  <setHeader name="CamelODataOperation">
+    <constant>UPDATE</constant>
+  </setHeader>
+  <setHeader name="CamelODataKey">
+    <constant>101</constant>
+  </setHeader>
+  <setHeader name="CamelODataETag">
+    <constant>W/"etag-value"</constant>
+  </setHeader>
+  <setBody>
+    <constant>{"Price": 249.99}</constant>
+  </setBody>
+  <to uri="odata:http://my-odata-service/odata/Products"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:updateProduct
+      steps:
+        - setHeader:
+            name: CamelODataOperation
+            expression:
+              constant:
+                expression: UPDATE
+        - setHeader:
+            name: CamelODataKey
+            expression:
+              constant:
+                expression: "101"
+        - setHeader:
+            name: CamelODataETag
+            expression:
+              constant:
+                expression: 'W/"etag-value"'
+        - setBody:
+            expression:
+              constant:
+                expression: '{"Price": 249.99}'
+        - to:
+            uri: odata:http://my-odata-service/odata/Products
+----
+====
 
 When the service returns an HTTP `ETag` header, the value is exposed as `CamelODataETag`.
 
@@ -305,14 +428,14 @@ For example, a response containing:
 [source,json]
 ----
 {
-"@odata.count": 42,
-"@odata.nextLink": "https://my-odata-service/odata/Products?$skip=10",
-"value": [
-{
-"ID": 1,
-"Name": "Laptop"
-}
-]
+  "@odata.count": 42,
+  "@odata.nextLink": "https://my-odata-service/odata/Products?$skip=10",
+  "value": [
+    {
+      "ID": 1,
+      "Name": "Laptop"
+    }
+  ]
 }
 ----
 
@@ -338,25 +461,108 @@ Refer to the generated endpoint options section for details about configuring SS
 
 === Fetching a Collection
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:getProducts")
-.to("odata:http://my-odata-service/odata/Products")
-.split(body())
-.to("log:product");
+    .to("odata:http://my-odata-service/odata/Products")
+    .split(simple("${body[value]}"))
+        .to("log:product")
+    .end();
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:getProducts"/>
+  <to uri="odata:http://my-odata-service/odata/Products"/>
+  <split>
+    <simple>${body[value]}</simple>
+    <to uri="log:product"/>
+  </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getProducts
+      steps:
+        - to:
+            uri: odata:http://my-odata-service/odata/Products
+        - split:
+            expression:
+              simple:
+                expression: "${body[value]}"
+            steps:
+              - to:
+                  uri: log:product
+----
+====
+
 The default operation is `READ_SET`, so no operation header is required.
+The response body is the parsed JSON object as a `Map`, and the entities are in its `value` entry.
 
 === Reading a Single Entity
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:getProductById")
-.setHeader("CamelODataOperation", constant("READ_ENTRY"))
-.setHeader("CamelODataKey", constant("101"))
-.to("odata:http://my-odata-service/odata/Products");
+    .setHeader("CamelODataOperation", constant("READ_ENTRY"))
+    .setHeader("CamelODataKey", constant("101"))
+    .to("odata:http://my-odata-service/odata/Products");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:getProductById"/>
+  <setHeader name="CamelODataOperation">
+    <constant>READ_ENTRY</constant>
+  </setHeader>
+  <setHeader name="CamelODataKey">
+    <constant>101</constant>
+  </setHeader>
+  <to uri="odata:http://my-odata-service/odata/Products"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getProductById
+      steps:
+        - setHeader:
+            name: CamelODataOperation
+            expression:
+              constant:
+                expression: READ_ENTRY
+        - setHeader:
+            name: CamelODataKey
+            expression:
+              constant:
+                expression: "101"
+        - to:
+            uri: odata:http://my-odata-service/odata/Products
+----
+====
 
 This results in a request to:
 
@@ -367,27 +573,128 @@ http://my-odata-service/odata/Products(101)
 
 === Creating an Entity
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:createProduct")
-.setHeader("CamelODataOperation", constant("CREATE"))
-.setBody(constant(Map.of("Name", "Tablet", "Price", 299.99)))
-.to("odata:http://my-odata-service/odata/Products");
+    .setHeader("CamelODataOperation", constant("CREATE"))
+    .setBody(constant("{\"Name\": \"Tablet\", \"Price\": 299.99}"))
+    .to("odata:http://my-odata-service/odata/Products");
 ----
 
-The component serializes the message body as JSON and sends it using HTTP `POST`.
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:createProduct"/>
+  <setHeader name="CamelODataOperation">
+    <constant>CREATE</constant>
+  </setHeader>
+  <setBody>
+    <constant>{"Name": "Tablet", "Price": 299.99}</constant>
+  </setBody>
+  <to uri="odata:http://my-odata-service/odata/Products"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createProduct
+      steps:
+        - setHeader:
+            name: CamelODataOperation
+            expression:
+              constant:
+                expression: CREATE
+        - setBody:
+            expression:
+              constant:
+                expression: '{"Name": "Tablet", "Price": 299.99}'
+        - to:
+            uri: odata:http://my-odata-service/odata/Products
+----
+====
+
+The component sends the message body using HTTP `POST`. A `String` body is sent as is, so it must be JSON; any other body,
+such as a `Map`, is serialized to JSON.
 
 === Updating an Entity
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:updateProduct")
-.setHeader("CamelODataOperation", constant("UPDATE"))
-.setHeader("CamelODataKey", constant("101"))
-.setHeader("CamelODataETag", constant("W/\"etag-value\""))
-.setBody(constant(Map.of("Price", 249.99)))
-.to("odata:http://my-odata-service/odata/Products");
+    .setHeader("CamelODataOperation", constant("UPDATE"))
+    .setHeader("CamelODataKey", constant("101"))
+    .setHeader("CamelODataETag", constant("W/\"etag-value\""))
+    .setBody(constant("{\"Price\": 249.99}"))
+    .to("odata:http://my-odata-service/odata/Products");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:updateProduct"/>
+  <setHeader name="CamelODataOperation">
+    <constant>UPDATE</constant>
+  </setHeader>
+  <setHeader name="CamelODataKey">
+    <constant>101</constant>
+  </setHeader>
+  <setHeader name="CamelODataETag">
+    <constant>W/"etag-value"</constant>
+  </setHeader>
+  <setBody>
+    <constant>{"Price": 249.99}</constant>
+  </setBody>
+  <to uri="odata:http://my-odata-service/odata/Products"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:updateProduct
+      steps:
+        - setHeader:
+            name: CamelODataOperation
+            expression:
+              constant:
+                expression: UPDATE
+        - setHeader:
+            name: CamelODataKey
+            expression:
+              constant:
+                expression: "101"
+        - setHeader:
+            name: CamelODataETag
+            expression:
+              constant:
+                expression: 'W/"etag-value"'
+        - setBody:
+            expression:
+              constant:
+                expression: '{"Price": 249.99}'
+        - to:
+            uri: odata:http://my-odata-service/odata/Products
+----
+====
 
 The component sends the update using HTTP `PATCH`.
 
@@ -395,13 +702,56 @@ When an ETag is supplied, it is sent using the HTTP `If-Match` header.
 
 === Deleting an Entity
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:deleteProduct")
-.setHeader("CamelODataOperation", constant("DELETE"))
-.setHeader("CamelODataKey", constant("101"))
-.to("odata:http://my-odata-service/odata/Products");
+    .setHeader("CamelODataOperation", constant("DELETE"))
+    .setHeader("CamelODataKey", constant("101"))
+    .to("odata:http://my-odata-service/odata/Products");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:deleteProduct"/>
+  <setHeader name="CamelODataOperation">
+    <constant>DELETE</constant>
+  </setHeader>
+  <setHeader name="CamelODataKey">
+    <constant>101</constant>
+  </setHeader>
+  <to uri="odata:http://my-odata-service/odata/Products"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:deleteProduct
+      steps:
+        - setHeader:
+            name: CamelODataOperation
+            expression:
+              constant:
+                expression: DELETE
+        - setHeader:
+            name: CamelODataKey
+            expression:
+              constant:
+                expression: "101"
+        - to:
+            uri: odata:http://my-odata-service/odata/Products
+----
+====
 
 The component sends an HTTP `DELETE` request for the specified entity.
 
