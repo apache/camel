@@ -112,6 +112,33 @@ XML DSL::
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - choice:
+            when:
+              - expression:
+                  jsonpath:
+                    expression: "$.store.book[?(@.price < 10)]"
+                steps:
+                  - to:
+                      uri: mock:cheap
+              - expression:
+                  jsonpath:
+                    expression: "$.store.book[?(@.price < 30)]"
+                steps:
+                  - to:
+                      uri: mock:average
+            otherwise:
+              steps:
+                - to:
+                    uri: mock:expensive
+----
 ====
 
 ===  Supported message body types
@@ -227,6 +254,134 @@ XML DSL::
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - choice:
+            when:
+              - expression:
+                  jsonpath:
+                    expression: "$.store.book[?(@.price < ${header.cheap})]"
+                steps:
+                  - to:
+                      uri: mock:cheap
+              - expression:
+                  jsonpath:
+                    expression: "$.store.book[?(@.price < ${header.average})]"
+                steps:
+                  - to:
+                      uri: mock:average
+            otherwise:
+              steps:
+                - to:
+                    uri: mock:expensive
+----
+====
+
+The inlined Simple expressions also work when the result becomes the message body, for example to filter a JSON
+array down to the elements matching a header, such as the path parameter of a rest service. A filter returns a
+list (empty when nothing matches), so set `resultType` to `java.util.List` and check its size. The element found is
+a `Map`, which is marshalled back to JSON:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:one-sku")
+    .setBody(constant("resource:file:stock.json"))
+    .setBody().jsonpath("$[?(@.sku == '${header.sku}')]", List.class)
+    .choice()
+        .when(simple("${body.size()} == 0"))
+            .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(404))
+            .setBody(simple("unknown SKU ${header.sku}"))
+        .otherwise()
+            .setBody(simple("${body[0]}"))
+            .marshal().json()
+    .end();
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:one-sku"/>
+  <setBody>
+    <constant>resource:file:stock.json</constant>
+  </setBody>
+  <setBody>
+    <jsonpath resultType="java.util.List">$[?(@.sku == '${header.sku}')]</jsonpath>
+  </setBody>
+  <choice>
+    <when>
+      <simple>${body.size()} == 0</simple>
+      <setHeader name="CamelHttpResponseCode">
+        <constant>404</constant>
+      </setHeader>
+      <setBody>
+        <simple>unknown SKU ${header.sku}</simple>
+      </setBody>
+    </when>
+    <otherwise>
+      <setBody>
+        <simple>${body[0]}</simple>
+      </setBody>
+      <marshal>
+        <json/>
+      </marshal>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:one-sku
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: resource:file:stock.json
+        - setBody:
+            expression:
+              jsonpath:
+                expression: "$[?(@.sku == '${header.sku}')]"
+                resultType: java.util.List
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body.size()} == 0"
+                steps:
+                  - setHeader:
+                      name: CamelHttpResponseCode
+                      expression:
+                        constant:
+                          expression: "404"
+                  - setBody:
+                      expression:
+                        simple:
+                          expression: "unknown SKU ${header.sku}"
+            otherwise:
+              steps:
+                - setBody:
+                    expression:
+                      simple:
+                        expression: "${body[0]}"
+                - marshal:
+                    json: {}
+----
 ====
 
 You can turn off support for inlined Simple expression by setting the option `allowSimple` to `false` as shown:
