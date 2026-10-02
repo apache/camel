@@ -24,9 +24,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.function.BiConsumer;
 
 import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.builder.LanguageBuilderFactory;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.ConvertBodyDefinition;
@@ -81,7 +83,9 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
+import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
+import org.apache.camel.model.language.NamespaceAwareExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SingleInputTypedExpressionDefinition;
@@ -262,12 +266,6 @@ public abstract class JavaDslModelWriterSupport {
             }
         }
 
-        // extract inlined error handler — RouteBuilder-level in Java DSL
-        if (def.getErrorHandler() != null) {
-            writeErrorHandler(sb, def.getErrorHandler());
-            handledAttributes.add("errorHandler");
-        }
-
         if (def.getInput() != null) {
             sb.append("from(").append(quote(def.getInput().getUri())).append(")");
             if (sourceLocation) {
@@ -293,6 +291,12 @@ public abstract class JavaDslModelWriterSupport {
             handledAttributes.add("routeProperty");
             handledAttributes.add("routeProperties");
         }
+        // the error handler of the route only: errorHandler() of the route builder would apply to all its routes
+        if (def.getErrorHandler() != null) {
+            sb.append(NL).append(indent()).append(".errorHandler(").append(errorHandlerDsl(def.getErrorHandler()))
+                    .append(")");
+        }
+        handledAttributes.add("errorHandler");
         indentLevel--;
         doWriteRouteDefinition(sb, def);
         indentLevel++;
@@ -363,6 +367,10 @@ public abstract class JavaDslModelWriterSupport {
             }
             handledAttributes.add("routeProperty");
             handledAttributes.add("routeProperties");
+            if (route.getErrorHandler() != null) {
+                sb.append(NL).append(indent()).append(".errorHandler(")
+                        .append(errorHandlerDsl(route.getErrorHandler())).append(")");
+            }
             handledAttributes.add("errorHandler");
             indentLevel--;
             doWriteRouteDefinition(sb, route);
@@ -482,18 +490,7 @@ public abstract class JavaDslModelWriterSupport {
     }
 
     private void writeChainedErrorHandler(StringBuilder sb, ErrorHandlerDefinition errorHandler) {
-        if (errorHandler.getErrorHandlerType() instanceof DeadLetterChannelDefinition dlc) {
-            sb.append(NL).append(indent()).append("    .errorHandler(deadLetterChannel(")
-                    .append(quote(dlc.getDeadLetterUri())).append(")");
-            appendErrorHandlerOptions(sb, dlc);
-            sb.append(")");
-        } else if (errorHandler.getErrorHandlerType() instanceof DefaultErrorHandlerDefinition deh) {
-            sb.append(NL).append(indent()).append("    .errorHandler(defaultErrorHandler()");
-            appendErrorHandlerOptions(sb, deh);
-            sb.append(")");
-        } else {
-            sb.append(NL).append(indent()).append("    .errorHandler(noErrorHandler())");
-        }
+        sb.append(NL).append(indent()).append("    .errorHandler(").append(errorHandlerDsl(errorHandler)).append(")");
     }
 
     private void writeTemplateParameter(StringBuilder sb, RouteTemplateParameterDefinition param) {
@@ -1225,18 +1222,19 @@ public abstract class JavaDslModelWriterSupport {
         sb.append(";").append(NL).append(NL);
     }
 
-    private void writeErrorHandler(StringBuilder sb, ErrorHandlerDefinition errorHandler) {
+    /** deadLetterChannel("uri").maximumRedeliveries(3), defaultErrorHandler() or noErrorHandler(). */
+    private String errorHandlerDsl(ErrorHandlerDefinition errorHandler) {
+        StringBuilder sb = new StringBuilder();
         if (errorHandler.getErrorHandlerType() instanceof DeadLetterChannelDefinition dlc) {
-            sb.append("errorHandler(deadLetterChannel(").append(quote(dlc.getDeadLetterUri())).append(")");
+            sb.append("deadLetterChannel(").append(quote(dlc.getDeadLetterUri())).append(")");
             appendErrorHandlerOptions(sb, dlc);
-            sb.append(");").append(NL).append(NL);
         } else if (errorHandler.getErrorHandlerType() instanceof DefaultErrorHandlerDefinition deh) {
-            sb.append("errorHandler(defaultErrorHandler()");
+            sb.append("defaultErrorHandler()");
             appendErrorHandlerOptions(sb, deh);
-            sb.append(");").append(NL).append(NL);
         } else {
-            sb.append("errorHandler(noErrorHandler());").append(NL).append(NL);
+            sb.append("noErrorHandler()");
         }
+        return sb.toString();
     }
 
     private void appendErrorHandlerOptions(StringBuilder sb, DefaultErrorHandlerDefinition def) {
@@ -1507,6 +1505,11 @@ public abstract class JavaDslModelWriterSupport {
         if (expr instanceof RefExpression) {
             return "ref(" + quotedValue + ")";
         }
+        String factoryMethod = languageFactoryMethod(expr);
+        if (factoryMethod != null) {
+            // groovy, ognl, ...: as their own expression, not language("groovy", ...)
+            return "expression()." + factoryMethod + "(" + quotedValue + ").end()";
+        }
         String lang = expr.getLanguage();
         if (lang != null && !lang.isEmpty()) {
             return "language(" + quote(lang) + ", " + quotedValue + ")";
@@ -1557,11 +1560,32 @@ public abstract class JavaDslModelWriterSupport {
         if (expr instanceof WasmExpression) {
             return "wasm";
         }
+        String factoryMethod = languageFactoryMethod(expr);
+        if (factoryMethod != null) {
+            return factoryMethod;
+        }
         String lang = expr.getLanguage();
         if (lang != null && !lang.isEmpty()) {
             return "language";
         }
         return null;
+    }
+
+    /**
+     * The method of expression() that builds this kind of expression from its text (groovy("..."), ognl("...")), or
+     * null when there is none.
+     */
+    private static String languageFactoryMethod(ExpressionDefinition expr) {
+        String lang = expr.getLanguage();
+        if (lang == null || lang.isEmpty() || expr instanceof LanguageExpression) {
+            return null;
+        }
+        try {
+            Method m = LanguageBuilderFactory.class.getMethod(lang, String.class);
+            return m.getReturnType().getEnclosingClass() == expr.getClass() ? lang : null;
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
     }
 
     private String expressionBuilderOptions(ExpressionDefinition expr) {
@@ -1574,6 +1598,15 @@ public abstract class JavaDslModelWriterSupport {
         // common: source (on SingleInputTypedExpressionDefinition)
         if (expr instanceof SingleInputTypedExpressionDefinition single) {
             appendOption(opts, "source", single.getSource());
+        }
+
+        // the xml namespaces of xpath, xquery and xtokenize (those of the xml document the route was read from)
+        if (expr instanceof NamespaceAwareExpression nae && nae.getNamespaces() != null
+                && !nae.getNamespaces().isEmpty()) {
+            opts.append(".namespaces(Map.of(");
+            StringJoiner pairs = new StringJoiner(", ");
+            nae.getNamespaces().forEach((prefix, uri) -> pairs.add(quote(prefix) + ", " + quote(uri)));
+            opts.append(pairs).append("))");
         }
 
         // type-specific options
