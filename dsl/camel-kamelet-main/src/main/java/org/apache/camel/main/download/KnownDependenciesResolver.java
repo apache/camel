@@ -20,8 +20,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.tooling.maven.MavenGav;
@@ -29,6 +31,8 @@ import org.apache.camel.tooling.maven.MavenGav;
 public final class KnownDependenciesResolver {
 
     private final Map<String, String> mappings = new HashMap<>();
+    // the package of each component, only used for the imports of a source (see mavenGavForImport)
+    private final Map<String, String> componentPackages = new HashMap<>();
     private final CamelContext camelContext;
     private final String springBootVersion;
     private final String quarkusVersion;
@@ -40,15 +44,15 @@ public final class KnownDependenciesResolver {
     }
 
     public void loadKnownDependencies() {
-        doLoadKnownDependencies("camel-main-known-dependencies.properties");
-        doLoadKnownDependencies("camel-component-known-dependencies.properties");
+        doLoadKnownDependencies("camel-main-known-dependencies.properties", false);
+        doLoadKnownDependencies("camel-component-known-dependencies.properties", true);
     }
 
     public void loadKnownFactoryFinderDependencies() {
-        doLoadKnownDependencies("camel-factoryfinder-known-dependencies.properties");
+        doLoadKnownDependencies("camel-factoryfinder-known-dependencies.properties", false);
     }
 
-    private void doLoadKnownDependencies(String name) {
+    private void doLoadKnownDependencies(String name, boolean byPackage) {
         try {
             Enumeration<URL> resources = getClass().getClassLoader().getResources(name);
             while (resources.hasMoreElements()) {
@@ -61,6 +65,9 @@ public final class KnownDependenciesResolver {
                         String value = prop.getProperty(key);
                         map.put(key, value);
                     }
+                    if (byPackage) {
+                        addPackageMappings(map, componentPackages);
+                    }
                     addMappings(map);
                 }
             }
@@ -69,13 +76,55 @@ public final class KnownDependenciesResolver {
         }
     }
 
+    /**
+     * The package of each class, unless the package is shared by classes of different dependencies, or is a base
+     * package such as <tt>org.apache.camel</tt> that would match every Camel class.
+     */
+    private static void addPackageMappings(Map<String, String> classes, Map<String, String> packages) {
+        Set<String> shared = new HashSet<>();
+        for (Map.Entry<String, String> entry : classes.entrySet()) {
+            String key = entry.getKey();
+            int pos = key.lastIndexOf('.');
+            if (pos == -1) {
+                continue;
+            }
+            String pkg = key.substring(0, pos);
+            if (pkg.chars().filter(ch -> ch == '.').count() < 3) {
+                continue;
+            }
+            String existing = packages.putIfAbsent(pkg, entry.getValue());
+            if (existing != null && !existing.equals(entry.getValue())) {
+                shared.add(pkg);
+            }
+        }
+        shared.forEach(packages::remove);
+    }
+
     public void addMappings(Map<String, String> mappings) {
         this.mappings.putAll(mappings);
     }
 
     public MavenGav mavenGavForClass(String className) {
+        return toMavenGav(findGav(mappings, className));
+    }
+
+    /**
+     * The dependency of a class a source imports: as {@link #mavenGavForClass(String)}, and also any class of a Camel
+     * component (such as the constants of its headers), not only the component class itself.
+     * <p/>
+     * Only for imports: a class that is looked up at runtime is often only probed for, which must not download a
+     * component.
+     */
+    public MavenGav mavenGavForImport(String className) {
+        String gav = findGav(mappings, className);
+        if (gav == null) {
+            gav = findGav(componentPackages, className);
+        }
+        return toMavenGav(gav);
+    }
+
+    private MavenGav toMavenGav(String gav) {
         MavenGav answer = null;
-        String gav = findGav(className);
         if (gav != null) {
             answer = MavenGav.parseGav(gav, camelContext.getVersion());
         }
@@ -90,7 +139,7 @@ public final class KnownDependenciesResolver {
         return answer;
     }
 
-    private String findGav(String prefix) {
+    private static String findGav(Map<String, String> mappings, String prefix) {
         String gav = mappings.get(prefix);
         while (gav == null && prefix.lastIndexOf(".") != -1) {
             prefix = prefix.substring(0, prefix.lastIndexOf("."));
