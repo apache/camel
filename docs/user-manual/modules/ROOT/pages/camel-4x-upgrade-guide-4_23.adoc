@@ -2126,6 +2126,13 @@ Deployments that relied on the previous behaviour — a development cluster with
 certificate, for example — must either configure a truststore or set `camel.knative.client.ssl.trust.all`
 explicitly. `KnativeOidcClientOptions` extends this class and is affected the same way.
 
+==== A failed exchange without reply answers with its error status
+
+A consumer with `reply=false` answered `204 No Content` to every request, also when the route failed, so Knative
+took the event as delivered and did not send it again. A failed exchange now keeps its status (500, or the
+`CamelHttpResponseCode` header the route set) with an empty body, as with `reply=true`. Successful exchanges still get
+`204 No Content`.
+
 === camel-paho
 
 When `automaticReconnect=true` and the MQTT broker reconnects, the consumer now restarts the route
