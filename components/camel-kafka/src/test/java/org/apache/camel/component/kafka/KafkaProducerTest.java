@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -38,6 +39,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommit;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultHeadersMapFactory;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
@@ -45,11 +47,14 @@ import org.apache.camel.processor.aggregate.GroupedMessageAggregationStrategy;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
+import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.ApiException;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -219,6 +224,114 @@ public class KafkaProducerTest {
         // begin failed, so the unit of work must be left untouched (no dangling transacted flag)
         Mockito.verify(uow, Mockito.never()).beginTransactedBy(any());
         Mockito.verify(uow, Mockito.never()).addSynchronization(any());
+    }
+
+    @Test
+    public void processAsyncFailsFastWhenExactlyOnceHasNoConsumerOffsets() throws Exception {
+        // The exchange does not come from a Kafka consumer, so there are no offsets to commit inside the
+        // transaction. Producing anyway would silently break the guarantee exactlyOnce is enabled for, and the
+        // failure must happen before the broker transaction is opened, so that nothing is left dangling.
+        endpoint.getConfiguration().setTransactionalId("test-tx");
+        endpoint.getConfiguration().setExactlyOnce(true);
+        endpoint.getConfiguration().setTopic("sometopic");
+        producer.doStart();
+
+        Producer kp = producer.getKafkaProducer();
+        UnitOfWork uow = Mockito.mock(UnitOfWork.class);
+        Mockito.when(uow.isTransactedBy(any())).thenReturn(false);
+        Mockito.when(exchange.getUnitOfWork()).thenReturn(uow);
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getMessage()).thenReturn(in);
+
+        boolean sync = producer.process(exchange, callback);
+
+        assertTrue(sync);
+        Mockito.verify(exchange).setException(isA(IllegalStateException.class));
+        Mockito.verify(callback).done(eq(true));
+        Mockito.verify(kp, Mockito.never()).beginTransaction();
+        Mockito.verify(kp, Mockito.never()).send(any(ProducerRecord.class), any(Callback.class));
+        Mockito.verify(uow, Mockito.never()).beginTransactedBy(any());
+        Mockito.verify(uow, Mockito.never()).addSynchronization(any());
+    }
+
+    @Test
+    @SuppressWarnings({ "unchecked" })
+    public void processSendsConsumerOffsetsToTransactionWhenExactlyOnce() throws Exception {
+        endpoint.getConfiguration().setTransactionalId("test-tx");
+        endpoint.getConfiguration().setExactlyOnce(true);
+        endpoint.getConfiguration().setTopic("sometopic");
+        producer.doStart();
+
+        ConsumerGroupMetadata groupMetadata = new ConsumerGroupMetadata("my-group");
+        in.setHeader(KafkaConstants.MANUAL_COMMIT, manualCommit("fromtopic", 1, 41, groupMetadata));
+
+        KafkaTransactionSynchronization synchronization = processAndCaptureSynchronization();
+        synchronization.onDone(exchange);
+
+        // the offset to commit is the next offset to read, i.e. the processed record's offset + 1
+        Mockito.verify(producer.getKafkaProducer()).sendOffsetsToTransaction(
+                Map.of(new TopicPartition("fromtopic", 1), new OffsetAndMetadata(42)), groupMetadata);
+    }
+
+    @Test
+    @SuppressWarnings({ "unchecked" })
+    public void processSendsAllBatchedConsumerOffsetsToTransactionWhenExactlyOnce() throws Exception {
+        endpoint.getConfiguration().setTransactionalId("test-tx");
+        endpoint.getConfiguration().setExactlyOnce(true);
+        endpoint.getConfiguration().setTopic("sometopic");
+        // send the batch as a single record, as the point of this test is the offsets, not the records
+        endpoint.getConfiguration().setUseIterator(false);
+        producer.doStart();
+
+        // a batching consumer aggregates a whole poll into one exchange, and that poll can span partitions: the
+        // highest offset of every partition in the batch has to take part in the transaction
+        ConsumerGroupMetadata groupMetadata = new ConsumerGroupMetadata("my-group");
+        in.setBody(List.of(
+                batchedExchange(manualCommit("fromtopic", 0, 10, groupMetadata)),
+                batchedExchange(manualCommit("fromtopic", 1, 5, groupMetadata)),
+                batchedExchange(manualCommit("fromtopic", 0, 11, groupMetadata))));
+        in.setHeader(KafkaConstants.MANUAL_COMMIT, manualCommit("fromtopic", 0, 11, groupMetadata));
+
+        KafkaTransactionSynchronization synchronization = processAndCaptureSynchronization();
+        synchronization.onDone(exchange);
+
+        Mockito.verify(producer.getKafkaProducer()).sendOffsetsToTransaction(
+                Map.of(new TopicPartition("fromtopic", 0), new OffsetAndMetadata(12),
+                        new TopicPartition("fromtopic", 1), new OffsetAndMetadata(6)),
+                groupMetadata);
+    }
+
+    private KafkaTransactionSynchronization processAndCaptureSynchronization() {
+        UnitOfWork uow = Mockito.mock(UnitOfWork.class);
+        Mockito.when(uow.isTransactedBy(any())).thenReturn(false);
+        Mockito.when(exchange.getUnitOfWork()).thenReturn(uow);
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getMessage()).thenReturn(in);
+
+        producer.process(exchange, callback);
+
+        Mockito.verify(exchange, Mockito.never()).setException(any());
+        ArgumentCaptor<KafkaTransactionSynchronization> captor
+                = ArgumentCaptor.forClass(KafkaTransactionSynchronization.class);
+        Mockito.verify(uow).addSynchronization(captor.capture());
+        return captor.getValue();
+    }
+
+    private DefaultKafkaManualCommit manualCommit(
+            String topic, int partition, long offset, ConsumerGroupMetadata groupMetadata) {
+        DefaultKafkaManualCommit manual = Mockito.mock(DefaultKafkaManualCommit.class);
+        Mockito.when(manual.getPartition()).thenReturn(new TopicPartition(topic, partition));
+        Mockito.when(manual.getRecordOffset()).thenReturn(offset);
+        Mockito.when(manual.getConsumerGroupMetadata()).thenReturn(groupMetadata);
+        return manual;
+    }
+
+    private Exchange batchedExchange(DefaultKafkaManualCommit manual) {
+        Exchange batched = Mockito.mock(Exchange.class);
+        Message message = new DefaultMessage(context);
+        message.setHeader(KafkaConstants.MANUAL_COMMIT, manual);
+        Mockito.when(batched.getMessage()).thenReturn(message);
+        return batched;
     }
 
     @Test

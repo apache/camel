@@ -2314,7 +2314,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * inside the producer transaction via sendOffsetsToTransaction, so a consumed message and the records it produces
      * are committed atomically. This requires the source Kafka consumer to use allowManualCommit=true and
      * autoCommitEnable=false (so it does not commit offsets on its own), the produce step to run on the consumer poll
-     * thread, and downstream consumers to use isolation.level=read_committed.
+     * thread, and downstream consumers to use isolation.level=read_committed. Use breakOnFirstError=true on the source
+     * consumer so that a record whose transaction was aborted is reprocessed instead of being skipped.
      */
     public void setExactlyOnce(boolean exactlyOnce) {
         this.exactlyOnce = exactlyOnce;

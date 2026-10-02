@@ -25,6 +25,10 @@ import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.AuthorizationException;
+import org.apache.kafka.common.errors.OutOfOrderSequenceException;
+import org.apache.kafka.common.errors.ProducerFencedException;
+import org.apache.kafka.common.errors.UnsupportedVersionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,10 +73,11 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
                     try {
                         kafkaProducer.sendOffsetsToTransaction(offsetsToCommit, groupMetadata);
                     } catch (KafkaException e) {
-                        // A failed sendOffsetsToTransaction leaves the transaction open, so abort it explicitly
+                        // A failed sendOffsetsToTransaction leaves the transaction open, so discard it explicitly
                         // rather than falling through to the commit (and to the catch below which does not abort).
-                        LOG.warn("Aborting kafka transaction {} due to sendOffsetsToTransaction failure", transactionId, e);
-                        kafkaProducer.abortTransaction();
+                        LOG.warn("Discarding kafka transaction {} due to sendOffsetsToTransaction failure", transactionId,
+                                e);
+                        abortOrClose(e);
                         exchange.setException(e);
                         return;
                     }
@@ -90,5 +95,25 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
         } finally {
             exchange.getUnitOfWork().endTransactedBy(transactionId);
         }
+    }
+
+    /**
+     * Discards the open transaction. A fatal producer error must not be aborted: the Kafka client contract requires the
+     * producer to be closed, and calling abortTransaction() on it only throws again, masking the original failure.
+     */
+    private void abortOrClose(KafkaException e) {
+        if (isFatal(e)) {
+            LOG.warn("Closing kafka producer with transaction {} as it hit a fatal error", transactionId);
+            kafkaProducer.close();
+        } else {
+            kafkaProducer.abortTransaction();
+        }
+    }
+
+    private static boolean isFatal(KafkaException e) {
+        return e instanceof ProducerFencedException
+                || e instanceof OutOfOrderSequenceException
+                || e instanceof AuthorizationException
+                || e instanceof UnsupportedVersionException;
     }
 }

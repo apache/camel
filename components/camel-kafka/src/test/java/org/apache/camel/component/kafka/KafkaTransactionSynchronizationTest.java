@@ -25,6 +25,7 @@ import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.ProducerFencedException;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
@@ -93,5 +94,26 @@ class KafkaTransactionSynchronizationTest {
         verify(producer).abortTransaction();
         verify(producer, never()).commitTransaction();
         verify(exchange).setException(any(KafkaException.class));
+    }
+
+    @Test
+    void closesProducerWhenSendOffsetsFailsFatally() {
+        Producer<?, ?> producer = mock(Producer.class);
+        Map<TopicPartition, OffsetAndMetadata> offsets
+                = Map.of(new TopicPartition("orders", 0), new OffsetAndMetadata(43));
+        ConsumerGroupMetadata groupMetadata = new ConsumerGroupMetadata("orders-group");
+        doThrow(new ProducerFencedException("fenced")).when(producer).sendOffsetsToTransaction(offsets, groupMetadata);
+
+        Exchange exchange = successfulExchange();
+        KafkaTransactionSynchronization sync
+                = new KafkaTransactionSynchronization("tx-1", producer, offsets, groupMetadata);
+        sync.onDone(exchange);
+
+        // A fatal error leaves the producer unusable: the Kafka client contract requires it to be closed, and
+        // aborting it would only throw again and mask the original failure.
+        verify(producer).close();
+        verify(producer, never()).abortTransaction();
+        verify(producer, never()).commitTransaction();
+        verify(exchange).setException(any(ProducerFencedException.class));
     }
 }

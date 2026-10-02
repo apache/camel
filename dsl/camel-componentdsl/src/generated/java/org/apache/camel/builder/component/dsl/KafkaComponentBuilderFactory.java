@@ -1281,7 +1281,9 @@ public interface KafkaComponentBuilderFactory {
          * consumer to use allowManualCommit=true and autoCommitEnable=false (so
          * it does not commit offsets on its own), the produce step to run on
          * the consumer poll thread, and downstream consumers to use
-         * isolation.level=read_committed.
+         * isolation.level=read_committed. Use breakOnFirstError=true on the
+         * source consumer so that a record whose transaction was aborted is
+         * reprocessed instead of being skipped.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

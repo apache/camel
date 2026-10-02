@@ -508,6 +508,43 @@ When you use the `transacted=true` parameter, the `transactionalId` is made from
 
 If both `transacted=true` and `transactionalId` are present, the latter takes precedence.
 
+=== Exactly-Once (read-process-write)
+
+A transaction only covers the records the producer sends. On a Kafka-to-Kafka route, the offsets of the *source*
+consumer are committed separately, so a crash between the two commits either replays or loses the record. Adding
+`exactlyOnce=true` to the producer makes it commit those source offsets *inside* the producer transaction (using
+`sendOffsetsToTransaction`), so the consumed record and the records it produced are committed atomically.
+
+[source,java]
+----
+from("kafka:inbound?groupId=my-group&allowManualCommit=true&autoCommitEnable=false&breakOnFirstError=true")
+    .to("kafka:outbound?transacted=true&exactlyOnce=true");
+----
+
+`exactlyOnce=true` requires a transactional producer, so it must be combined with `transacted=true` or with an
+explicit `transactionalId`; the producer fails to start otherwise. The source consumer must be configured with
+`allowManualCommit=true` and `autoCommitEnable=false`, so that it does not commit the offsets on its own, outside
+of the transaction. Do not call `KafkaManualCommit.commit()` in the route: the producer transaction takes care of
+the commit.
+
+The exchange must reach the producer on the consumer poll thread, as the offsets are read from the Kafka consumer,
+which is not safe for multi-threaded access (see the note in <<_manual_commits_with_the_kafka_consumer,Manual
+commits with the Kafka consumer>> above). Avoid
+`threads()`, `seda:`, `wireTap` or any other asynchronous or concurrent step between the consumer and the producer.
+If the exchange does not originate from a Kafka consumer, the producer fails the exchange rather than silently
+producing without exactly-once guarantees.
+
+With a batching consumer (`batching=true`), the offsets of every record in the batch are committed in the
+transaction, which may span several partitions.
+
+Downstream consumers of the destination topic must use `isolation.level=read_committed` (via
+`additionalProperties[isolation.level]`), otherwise they also read the records of aborted transactions.
+
+IMPORTANT: when the exchange fails, the transaction is aborted so the produced records are discarded and the source
+offsets are not committed — but the consumer has already moved past the record in memory. Configure the source
+consumer with `breakOnFirstError=true` so that it reconnects and resumes from the last committed offset, which
+reprocesses the record. Without it, a failed record is skipped instead of being retried.
+
 === Setting Kerberos config file
 
 Configure the 'krb5.conf' file directly through the API:
