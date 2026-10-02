@@ -276,7 +276,7 @@ of reloading the model, and for a context window (`num_ctx`) chosen once per mod
 The tool-calling prompt alone is about 4.5k tokens, which is why 32k is the floor: Ollama's own default
 on machines with less than 24 GB is 4k and would truncate it. Keep all your Ollama clients on the same
 value; if you set `OLLAMA_CONTEXT_LENGTH` for the CLI, set it for `ollama serve` too. The TUI's Ollama
-tab shows the window in use, and xref:camel-jbang-tui-ai.adoc#_working_with_a_local_ollama_model[Working
+tab shows the window in use, and xref:camel-jbang-tui-local-models.adoc#_working_with_a_local_ollama_model[Working
 with a local Ollama model] explains how the AI panel manages its history inside it.
 
 === Using an OpenAI-compatible local server

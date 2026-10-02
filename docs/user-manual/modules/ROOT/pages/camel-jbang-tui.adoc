@@ -14,7 +14,7 @@ image::jbang/camel-tui-overview.png[TUI Overview showing multiple routes]
 == Key Features
 
 * *Run anything* -- your own routes, the built-in examples, or an existing Spring Boot or Quarkus project
-  (<<_getting_started,Getting started>>).
+  (xref:camel-jbang-tui-getting-started.adoc[Getting started]).
 * *Write routes with help* -- a xref:camel-jbang-tui-source-editor.adoc[source editor] that checks YAML, Java and XML
   routes as you type, completes endpoint options, fixes problems and shows the live run data of each line.
 * *See the integration* -- the xref:camel-jbang-tui-diagram.adoc[diagram] from the architecture down to one route,
@@ -28,125 +28,22 @@ image::jbang/camel-tui-overview.png[TUI Overview showing multiple routes]
 
 == Getting Started
 
-You can start using the TUI in two ways: with your own route, or by running one of the built-in examples.
-
-=== Option 1: Your Own Route
-
-Start a Camel integration in one terminal:
-
 [source,bash]
 ----
-camel run my-route.yaml
+camel run my-route.yaml   # in one terminal
+camel tui                 # in another: auto-discovers every running integration
+
+camel tui .               # or open a project directory and press F10 to run it
 ----
 
-Open the TUI in another terminal:
+No route yet? Press *F2* and pick _Run an example..._ to run one of the built-in examples on Camel Main,
+Spring Boot, Quarkus or JBang.
 
-[source,bash]
-----
-camel tui
-----
-
-The TUI auto-discovers every running Camel integration on your machine -- no configuration needed.
-
-=== Option 2: Built-in Examples
-
-Don't have a route yet? The TUI ships with a catalog of ready-to-run examples.
-Open the TUI and press *F2*, then select _Run an example_:
-
-[source,bash]
-----
-camel tui
-----
-
-. Press *F2* to open the actions menu
-. Select *Run an example...*
-. Browse the example catalog -- type to filter by name
-. Press *Enter* to launch the selected example
-
-Before launching, a run options form lets you choose the *runtime*: Camel Main (standalone),
-Spring Boot, Quarkus, or JBang. This makes it easy to try any example on all three runtimes without
-changing a single line of code. The first three run the example in a separate JVM that only
-contains the dependencies of the example (like a production deployment), while JBang runs it
-in-process in the Camel CLI JVM, which starts faster but has the CLI on the classpath as well. You can also set the integration name, toggle dev mode, and
-add extra dependencies. When the port the app will listen on (the one you set, else 8080) is taken already, the form
-says by whom, so a second app with an HTTP server does not fail to start.
-
-The example starts running in the background. The TUI auto-selects it as soon as it appears.
-From there you can explore tabs, watch messages flow, inspect the route diagram, and experiment.
-
-If an example requires infrastructure (like Kafka or a database), the TUI automatically starts the
-required Docker containers before launching the example. A notification in the footer shows the
-progress.
-
-The same runtime selector is available in *Run from folder...* (F2 menu), which lets you point
-the TUI at a local directory containing your routes. When a `pom.xml` is present, the runtime
-is auto-detected and locked to match your project.
+See xref:camel-jbang-tui-getting-started.adoc[Camel TUI Getting Started] for each way to start, and for
+connecting existing Spring Boot and Quarkus applications.
 
 TIP: Press *F1* or *?* on any screen for context-sensitive help.
 Keyboard shortcuts are always shown in the footer bar.
-
-=== Option 3: Open a Project Directory
-
-You can point the TUI directly at a project directory:
-
-[source,bash]
-----
-camel tui .
-camel tui /path/to/my-project
-----
-
-The TUI opens the directory in the Source tab so you can browse the project files immediately.
-When a `pom.xml` is present, the runtime is auto-detected (Spring Boot, Quarkus, or Camel Main).
-Press *F10* to run the project -- Maven projects are run with `camel run pom.xml`, which launches
-them with the appropriate goal (`spring-boot:run`, `quarkus:dev`, or `camel:run`), and plain
-directories are run with `camel run`. Either way the application logs to `~/.camel` so the Log tab
-shows its logs.
-
-Until it runs, the project is listed as *Stopped*: the Overview says what it is (runtime, Maven or route files, its
-folder) and the Source pane lists the routes it found and where they are, so *g* opens one. While it runs, the app
-takes its place under the name it gives itself, with the project's name next to it; when the run ends, the project is
-back as Stopped and still selected.
-
-This is a quick way to explore and run any Camel project without starting it separately first.
-
-image::jbang/camel-tui-main-quarkus-source.png[A Quarkus project in the Source tab: its Java route and the bean of the line]
-
-=== Connecting Existing Spring Boot and Quarkus Applications
-
-The TUI auto-discovers integrations started with `camel run`. To monitor and control
-existing Spring Boot or Quarkus applications, add the `camel-cli-connector` dependency
-to your project. This is a lightweight runtime adapter that lets the TUI (and the Camel CLI)
-communicate with your application -- all TUI features work the same way regardless of runtime.
-
-Spring Boot:
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.apache.camel.springboot</groupId>
-    <artifactId>camel-cli-connector-starter</artifactId>
-</dependency>
-----
-
-Quarkus:
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.apache.camel.quarkus</groupId>
-    <artifactId>camel-quarkus-cli-connector</artifactId>
-</dependency>
-----
-
-Once added, start your application normally and the TUI will discover it automatically.
-No additional configuration is needed -- the connector auto-detects on the classpath and
-registers the application with the local Camel CLI.
-
-TIP: When you open a Spring Boot, Quarkus or Camel Main project via *F2 > Open Project* and run
-it with *F10*, the CLI connector dependency is automatically injected if it's not already in your
-`pom.xml`. This means the TUI can monitor the application without modifying your project.
-
-See xref:camel-jbang-managing.adoc[Managing Integrations] for more details.
 
 == Tabs Overview
 
@@ -190,30 +87,22 @@ Two panels can be opened on top of any tab: *F6* opens an xref:camel-jbang-tui-s
 for running `camel` commands, and *F8* opens the xref:camel-jbang-tui-ai.adoc[AI panel] for asking
 questions about the running integrations.
 
-== Source Code Browser
-
-The Source tab (Tab 2) is a file explorer and editor for your project code that knows Camel. It checks your YAML,
-Java and XML routes as you type, completes endpoint options from the Camel catalog, explains the line the cursor is on,
-fixes problems for you (or asks the AI to), and shows the exchanges and failures of each line of the running
-integration next to the code.
-
-image::jbang/camel-tui-source-live-run-data.png[Live run data in the source editor]
-
-See xref:camel-jbang-tui-source-editor.adoc[Camel TUI Source Editor] for all its features and keys.
-
 == More about the TUI
 
 [cols="1,3",options="header"]
 |===
 | Page | What it covers
 
+| xref:camel-jbang-tui-getting-started.adoc[Getting Started] | Your own routes, the built-in examples, opening a project,
+connecting Spring Boot and Quarkus applications
 | xref:camel-jbang-tui-source-editor.adoc[Source Editor] | Reading and writing routes: checks as you type, quick fixes,
 fix with AI, completion, quick documentation, navigation, live run data
 | xref:camel-jbang-tui-diagram.adoc[Diagram] | The architecture, topology and route views, external endpoints, metrics
 | xref:camel-jbang-tui-observe.adoc[Observing Integrations] | Activity, message history, errors, spans, process, HTTP
 probe, CVE audit, Kafka, SQL, memory leaks, JFR, catalog
-| xref:camel-jbang-tui-ai.adoc[AI Panel] | AI providers and local models, slash commands, project overview, AI log, the
-Ollama tab
+| xref:camel-jbang-tui-ai.adoc[AI Panel] | AI providers, slash commands, project overview, AI log
+| xref:camel-jbang-tui-local-models.adoc[Local Models] | Ollama and OpenAI-compatible servers, the tool set for local
+models, what a question costs, the Ollama tab
 | xref:camel-jbang-tui-ai-agents.adoc[AI Agents] | MCP and ACP: what an AI agent can see and do, edits you confirm
 | xref:camel-jbang-tui-settings.adoc[Actions, Settings and Themes] | The actions menu, embedded shell, themes, settings,
 browser access, recording demos
@@ -276,7 +165,7 @@ See the xref:camel-jbang-tui-source-editor.adoc#_keyboard_shortcuts[keyboard sho
 | `100`
 
 | `--theme`
-| Color theme for this session (e.g., `dark`, `tokyo-night`, `dracula`). See <<Theme>> for the full list of 21 themes. Overrides the persisted `camel.tui.theme` preference when set.
+| Color theme for this session (e.g., `dark`, `tokyo-night`, `dracula`). See xref:camel-jbang-tui-settings.adoc#_theme[Theme] for the full list of 21 themes. Overrides the persisted `camel.tui.theme` preference when set.
 |
 
 | `--record`
