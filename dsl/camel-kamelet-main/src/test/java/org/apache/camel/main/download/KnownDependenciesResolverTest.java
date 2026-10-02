@@ -80,6 +80,8 @@ public class KnownDependenciesResolverTest {
         assertGav(resolver, "org.infinispan.client.hotrod.RemoteCacheManager", "org.infinispan", "infinispan-client-hotrod");
         assertGav(resolver, "org.infinispan.manager.DefaultCacheManager", "org.infinispan", "infinispan-core");
         assertGav(resolver, "freemarker.template.Configuration", "org.freemarker", "freemarker");
+        // the jolt-community fork that camel-jolt uses, not the old bazaarvoice library
+        assertGav(resolver, "io.joltcommunity.jolt.Chainr", "io.github.jolt-community.jolt", "jolt-community-core");
         // a shared parent package is deliberately not mapped
         assertEquals(null, resolver.mavenGavForClass("org.apache.commons.Anything"));
     }
