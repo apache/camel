@@ -178,6 +178,18 @@ class RouteDslConverterTest {
     }
 
     @Test
+    void theJavaClassImportsWhatItsRoutesUse() {
+        String routes = """
+                from("direct:a")
+                    .setBody(expression().xpath("/t:ticket").namespaces(Map.of("t", "urn:tickets")).end())
+                    .log(LoggingLevel.WARN, "${body}");
+                """;
+        assertThat(RouteDslConverter.javaClass("Tickets", routes)).contains("import java.util.Map;",
+                "import org.apache.camel.LoggingLevel;", "import org.apache.camel.builder.RouteBuilder;")
+                .doesNotContain("ExchangePattern");
+    }
+
+    @Test
     void namesOfTheConvertedFiles() {
         assertThat(RouteDslConverter.targetName("orders.camel.yaml", "xml")).isEqualTo("orders.camel.xml");
         assertThat(RouteDslConverter.targetName("my-routes.xml", "yaml")).isEqualTo("my-routes.camel.yaml");

@@ -283,6 +283,7 @@ public final class RouteDslConverter {
 
     /** The types a dumped Java route may use beside the route builder's own methods, imported when it does. */
     private static final Map<String, String> JAVA_TYPES = Map.of(
+            "Map", "java.util.Map",
             "LoggingLevel", "org.apache.camel.LoggingLevel",
             "ExchangePattern", "org.apache.camel.ExchangePattern",
             "WaitForTaskToComplete", "org.apache.camel.WaitForTaskToComplete",
