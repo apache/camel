@@ -443,7 +443,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 }
 
                 // Execute all tool calls in this batch
-                List<McpToolCallExecutor.ToolResult> batchResults = toolCallExecutor.execute(toolCalls);
+                List<McpToolCallExecutor.ToolResult> batchResults = toolCallExecutor.execute(toolCalls, exchange);
                 observability.recordIteration(
                         modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens, toolCalls,
                         batchResults);

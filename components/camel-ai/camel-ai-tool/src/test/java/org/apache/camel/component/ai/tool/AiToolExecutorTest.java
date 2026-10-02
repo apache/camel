@@ -457,6 +457,34 @@ public class AiToolExecutorTest extends CamelTestSupport {
         assertThat(((AiToolResult.ExecutionError) result).message()).contains("must not be null");
     }
 
+    @Test
+    void createToolExchangeCopiesCallerContextButGivesACleanMessage() {
+        // CAMEL-24832: the tool exchange carries the caller's context - an authenticated subject kept as an exchange
+        // property, and variables - so a tool route can be guarded on it; but the message is clean, so the route gets
+        // only its own arguments, not the caller's body or inbound headers, and changes do not leak back.
+        Exchange calling = new DefaultExchange(context);
+        calling.setProperty("CamelAuthenticatedSubject", "alice");
+        calling.setVariable("tenant", "acme");
+        calling.getIn().setHeader("origHeader", "h1");
+        calling.getIn().setBody("original-body");
+
+        Exchange toolExchange = AiToolExecutor.createToolExchange(calling);
+
+        // the caller's context reaches the tool route
+        assertThat(toolExchange.getProperty("CamelAuthenticatedSubject")).isEqualTo("alice");
+        assertThat(toolExchange.getVariable("tenant")).isEqualTo("acme");
+
+        // but the message is clean: no caller body, no caller inbound headers
+        assertThat(toolExchange.getMessage().getBody()).isNull();
+        assertThat(toolExchange.getMessage().getHeader("origHeader")).isNull();
+
+        // and changes on the tool exchange do not leak back into the caller
+        toolExchange.setProperty("CamelAuthenticatedSubject", "mallory");
+        toolExchange.getMessage().setBody("tool-body");
+        assertThat(calling.getProperty("CamelAuthenticatedSubject")).isEqualTo("alice");
+        assertThat(calling.getIn().getBody()).isEqualTo("original-body");
+    }
+
     private AiToolSpec findSpec(String toolName) {
         return AiToolRegistry.getOrCreate(context).getToolsByTag("test").stream()
                 .filter(s -> toolName.equals(s.getName()))

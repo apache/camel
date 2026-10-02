@@ -353,6 +353,25 @@ YAML::
 ----
 ====
 
+== The calling exchange
+
+Each tool invocation runs on a copy of the *calling exchange* — the exchange that drives the agent (the
+`langchain4j-agent`, `openai` or `spring-ai-chat` producer). The context the caller set before the agent ran is
+carried onto the tool route:
+
+* exchange *properties* — most importantly an authenticated caller's identity kept as a property, so a tool route
+  can be guarded on it (for example `exchangeProperty.subject`) and the model cannot forge it;
+* exchange *variables*.
+
+The message itself is *clean*: the tool route receives only its own arguments (supplied by the model and placed on
+the message as headers), not the caller's body or inbound headers, and a tool that sets no body returns `No result`
+rather than echoing the caller's body back to the model. Any change the tool makes — to its message, body or
+exception — is isolated to the copy and does not leak back into the calling exchange.
+
+All route-tool runtimes build the tool exchange the same way, so an authorization check on an exchange property
+behaves identically whether the agent loop is driven by `camel-langchain4j-agent`, `camel-openai` or
+`camel-spring-ai-chat`.
+
 == See Also
 
 * xref:langchain4j-agent-component.adoc[LangChain4j Agent Component] — discovers ai-tool tools via the `tags` option
