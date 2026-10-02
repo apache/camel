@@ -177,13 +177,22 @@ public class DynamicRouterFilterService {
         boolean filterExists = filters.stream().anyMatch(f -> filter.id().equals(f.id()));
         boolean okToAdd = update == filterExists;
         if (okToAdd) {
-            if (filterExists) {
-                // the set is ordered by priority and id: adding the updated filter would neither replace a filter with
-                // the same priority nor remove the one with the old priority, so remove the existing filter first
-                // (its statistics stay, as when a filter is removed: they represent actions that happened)
+            // the set is ordered by priority and id: adding the updated filter would neither replace a filter with
+            // the same priority nor remove the one with the old priority, so the existing filter must be removed
+            // (its statistics stay, as when a filter is removed: they represent actions that happened)
+            if (filterExists
+                    && filters.stream().anyMatch(f -> filter.id().equals(f.id()) && f.priority() == filter.priority())) {
+                // same priority: the set has no atomic replace, so remove the existing filter first
                 filters.removeIf(f -> filter.id().equals(f.id()));
+                filters.add(filter);
+            } else {
+                // add the new filter first and then remove the old instance, so that an exchange routed meanwhile
+                // still finds a filter for this subscription
+                filters.add(filter);
+                if (filterExists) {
+                    filters.removeIf(f -> f != filter && filter.id().equals(f.id()));
+                }
             }
-            filters.add(filter);
             filterStatistics.add(filter.statistics());
             LOG.debug("{} subscription: {}", filterExists ? "Updated" : "Added", filter);
             return filter.id();

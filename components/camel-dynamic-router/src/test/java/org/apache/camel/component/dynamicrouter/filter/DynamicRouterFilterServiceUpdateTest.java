@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * Updating a subscription replaces it, whatever its priority, with the filter instances the service creates.
@@ -62,6 +63,21 @@ class DynamicRouterFilterServiceUpdateTest {
         assertEquals("mock:new", filter.endpoint());
         // the statistics of the replaced filter stay, as when a filter is removed
         assertEquals(2, filterService.getStatisticsForChannel(CHANNEL).size());
+    }
+
+    @Test
+    void testUpdateWithOtherPriorityKeepsTheNewInstance() {
+        // a lower and then a higher priority than the existing filter
+        for (int priority : new int[] { 0, 5 }) {
+            PrioritizedFilter updated = filterService.createFilter("sub", priority, PredicateBuilder.constant(true),
+                    "mock:new" + priority, new PrioritizedFilterStatistics("sub"));
+
+            String result = filterService.addFilterForChannel(updated, CHANNEL, true);
+
+            assertEquals("sub", result);
+            assertEquals(1, filterService.getFiltersForChannel(CHANNEL).size());
+            assertSame(updated, filterService.getFilterById("sub", CHANNEL));
+        }
     }
 
     @Test
