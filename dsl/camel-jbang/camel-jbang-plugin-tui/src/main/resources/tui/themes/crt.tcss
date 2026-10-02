@@ -60,9 +60,9 @@ $dark-fg: #33CC33;
  * dim: terminals blend dim colors toward the background, which leaves comments too faint to read.
  */
 #syntax-comment  { color: #22AA22; }
-#syntax-string   { color: #AAFFAA; }
+#syntax-string   { color: #88FF88; }
 #syntax-keyword  { color: #66FF66; text-style: bold; }
 #syntax-function { color: #66FF66; }
 #syntax-type     { color: #66FF66; text-style: bold; }
-#syntax-constant { color: #AAFFAA; }
+#syntax-constant { color: #88FF88; }
 #syntax-text     { color: $dark-fg; }
