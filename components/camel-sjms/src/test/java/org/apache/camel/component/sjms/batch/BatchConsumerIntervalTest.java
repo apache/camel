@@ -31,7 +31,7 @@ import static org.apache.camel.component.sjms.batch.BatchTestSupport.assertBatch
 
 public class BatchConsumerIntervalTest extends JmsTestSupport {
 
-    private static final String SJMS_FROMF_URI = "%s?batching=true&batchingSize=100&batchingInterval=1500";
+    private static final String SJMS_FROMF_URI = "%s?batching=true&batchSize=100&batchInterval=1500";
     private static final String SJMS_QUEUE_NAME
             = "sjms:queue:batch.consumer.queue.BatchConsumerIntervalTest";
     private static final String MOCK_RESULT = "mock:result";

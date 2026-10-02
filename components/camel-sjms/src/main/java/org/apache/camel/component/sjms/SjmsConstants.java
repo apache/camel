@@ -38,5 +38,8 @@ public interface SjmsConstants {
               description = "Provides an explicit ReplyTo destination (overrides any incoming value of Message.getJMSReplyTo() in consumer)",
               javaType = "String")
     String JMS_REPLY_TO = JmsConstants.JMS_REPLY_TO;
-
+    @Metadata(label = "consumer, batch",
+            description = "The size of the batch when using the batching consumer option.",
+            javaType = "String")
+    String SJMS_BATCH_SIZE_HEADER = "CamelSjmsBatchSize";
 }

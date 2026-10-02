@@ -25,7 +25,7 @@ import static org.apache.camel.component.sjms.batch.BatchTestSupport.assertBatch
 
 public class BatchConsumerSizeTest extends JmsTestSupport {
 
-    private static final String SJMS_FROMF_URI = "%s?batching=true&batchingSize=5&batchingInterval=5000";
+    private static final String SJMS_FROMF_URI = "%s?batching=true&batchSize=5&batchInterval=5000";
     private static final String SJMS_QUEUE_NAME
             = "sjms:queue:batch.consumer.queue.BatchConsumerSizeTest";
     private static final String MOCK_RESULT = "mock:result";

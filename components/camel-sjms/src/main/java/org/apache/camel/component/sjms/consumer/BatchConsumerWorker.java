@@ -18,6 +18,7 @@ package org.apache.camel.component.sjms.consumer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import jakarta.jms.JMSException;
@@ -66,39 +67,30 @@ class BatchConsumerWorker implements Runnable {
 
     @Override
     public void run() {
-        int batchSize = endpoint.getBatchingSize();
-        long batchInterval = endpoint.getBatchingInterval();
-        long batchTimeout = endpoint.getBatchingTimeout();
+        int batchSize = endpoint.getBatchSize();
+        long batchInterval = endpoint.getBatchInterval();
         List<Message> buffer = new ArrayList<>();
         long batchStartTime = 0L;
-        long lastMessageTime = 0L;
-
-        if (batchInterval == 0 && batchTimeout == 0) {
-            batchInterval = SjmsEndpoint.DEFAULT_CONSUMER_BATCHING_INTERVAL_MILLIS;
-        }
 
         try {
             while (running.get()) {
                 long waitMillis
-                        = computeWaitMillis(buffer.isEmpty(), batchStartTime, lastMessageTime, batchInterval, batchTimeout);
+                        = computeWaitMillis(buffer.isEmpty(), batchStartTime, batchInterval);
 
                 Message msg = consumer.receive(waitMillis);
 
                 if (msg != null) {
                     if (buffer.isEmpty()) {
-                        batchStartTime = System.currentTimeMillis();
+                        batchStartTime = System.nanoTime();
                     }
-                    lastMessageTime = System.currentTimeMillis();
                     buffer.add(msg);
                 }
 
                 boolean sizeReached = batchSize > 0 && buffer.size() >= batchSize;
                 boolean intervalElapsed = batchInterval > 0 && !buffer.isEmpty()
-                        && System.currentTimeMillis() - batchStartTime >= batchInterval;
-                boolean idleTimedOut = batchTimeout > 0 && !buffer.isEmpty()
-                        && System.currentTimeMillis() - lastMessageTime >= batchTimeout;
+                        && TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - batchStartTime) >= batchInterval;
 
-                if (sizeReached || intervalElapsed || idleTimedOut) {
+                if (sizeReached || intervalElapsed) {
                     dispatch(buffer);
                     buffer = new ArrayList<>();
                 }
@@ -113,14 +105,16 @@ class BatchConsumerWorker implements Runnable {
                     LOG.error("Discarding {} buffered message(s) on {} after connection failure; "
                               + "unacknowledged/uncommitted, will be redelivered",
                             buffer.size(), endpoint.getEndpointUri());
+                    throw new BatchConsumerWorkerException(e);
                 } else {
                     dispatch(buffer);
-                    LOG.error("Connection failed on {} with {} already-acknowledged message(s) buffered; "
+                    LOG.warn("Connection failed on {} with {} already-acknowledged message(s) buffered; "
                               + "attempting best-effort dispatch since they cannot be redelivered",
                             endpoint.getEndpointUri(), buffer.size());
                 }
+            } else {
+                throw new BatchConsumerWorkerException(e);
             }
-            throw new BatchConsumerWorkerException(e);
         }
     }
 
@@ -134,22 +128,16 @@ class BatchConsumerWorker implements Runnable {
     }
 
     private long computeWaitMillis(
-            boolean isBufferEmpty, long batchStartTime, long lastMessageTime,
-            long batchInterval, long batchTimeout) {
-        long deadline;
-        if (isBufferEmpty) {
-            // neither clock is running yet; just wake periodically for shutdown responsiveness
-            return JMS_CONSUMER_RECEIVE_WAKE_INTERVAL_TIMEOUT;
-        } else if (batchInterval > 0) {
-            deadline = batchStartTime + batchInterval;
-        } else if (batchTimeout > 0) {
-            deadline = lastMessageTime + batchTimeout;
-        } else {
-            // buffer non-empty but both clocks disabled: only batchSize can complete this batch;
-            // keep waking periodically rather than blocking indefinitely
+            boolean isBufferEmpty, long batchStartNanos,
+            long batchIntervalMillis) {
+        if (isBufferEmpty || batchIntervalMillis <= 0) {
             return JMS_CONSUMER_RECEIVE_WAKE_INTERVAL_TIMEOUT;
         }
-        long remaining = deadline - System.currentTimeMillis();
-        return Math.max(JMS_CONSUMER_RECEIVE_MIN_TIMEOUT, Math.min(remaining, JMS_CONSUMER_RECEIVE_WAKE_INTERVAL_TIMEOUT));
+
+        long elapsedNanos = System.nanoTime() - batchStartNanos;
+        long remainingMillis = batchIntervalMillis - TimeUnit.NANOSECONDS.toMillis(elapsedNanos);
+
+        return Math.max(JMS_CONSUMER_RECEIVE_MIN_TIMEOUT,
+                Math.min(remainingMillis, JMS_CONSUMER_RECEIVE_WAKE_INTERVAL_TIMEOUT));
     }
 }

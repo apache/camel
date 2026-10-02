@@ -20,17 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.jms.JMSException;
 import jakarta.jms.MessageConsumer;
 import jakarta.jms.Session;
 
-import org.apache.camel.AggregationStrategy;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.component.sjms.SjmsEndpoint;
-import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,15 +36,13 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
 
     private final SjmsEndpoint endpoint;
     private BatchEndpointMessageListener batchListener;
-    private ExecutorService workerExecutor;
+    private ExecutorService workerExecutorService;
     private final ReentrantLock workersLock = new ReentrantLock();
     private final List<BatchConsumerWorker> workers = new ArrayList<>();
-    private final AggregationStrategy aggregationStrategy;
 
-    public BatchMessageListenerContainer(SjmsEndpoint endpoint, AggregationStrategy aggregationStrategy) {
+    public BatchMessageListenerContainer(SjmsEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.aggregationStrategy = aggregationStrategy;
     }
 
     public void setBatchListener(BatchEndpointMessageListener batchListener) {
@@ -57,15 +51,9 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
 
     @Override
     protected void doStart() throws Exception {
-        workerExecutor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(
+        workerExecutorService = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(
                 this, "SjmsBatchConsumer[" + endpoint.getDestinationName() + "]",
                 Math.max(1, this.getConcurrentConsumers()));
-
-        CamelContextAware.trySetCamelContext(
-                aggregationStrategy, endpoint.getCamelContext());
-
-        ServiceHelper.initService(aggregationStrategy);
-        ServiceHelper.startService(aggregationStrategy);
 
         // triggers connection + session/consumer creation, calling configureConsumer() below
         // for each session per concurrentConsumers, and re-invokes it again on reconnection
@@ -82,32 +70,20 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
         } finally {
             workersLock.unlock();
         }
-        CompletableFuture.runAsync(worker, workerExecutor)
+        CompletableFuture.runAsync(worker, workerExecutorService)
                 .whenComplete((v, ex) -> onWorkerExit(worker, ex));
     }
 
     @Override
     protected void doStop() throws Exception {
         invalidateBatchWorkers();
-        if (workerExecutor != null) {
-            workerExecutor.shutdown();
-            if (!workerExecutor.awaitTermination(30, TimeUnit.SECONDS)) {
-                LOG.warn("Batch consumer workers for {} did not stop within 30s; forcing shutdown",
-                        endpoint.getEndpointUri());
-                workerExecutor.shutdownNow();
-            }
+        // shutdown scheduled executor after all in-flight exchanges have completed
+        if (workerExecutorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(workerExecutorService);
+            workerExecutorService = null;
         }
 
         super.doStop();
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        try {
-            super.doShutdown();
-        } finally {
-            ServiceHelper.stopAndShutdownService(aggregationStrategy);
-        }
     }
 
     private void invalidateBatchWorkers() {

@@ -93,7 +93,7 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
 
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("batching", batching);
-        params.put("batchingSize", batchSize);
+        params.put("batchSize", batchSize);
         params.put("transacted", transacted);
         params.put("acknowledgementMode", acknowledgementMode);
         params.put("concurrentConsumers", concurrentConsumers);

@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.sjms.*;
 import org.apache.camel.component.sjms.consumer.BatchEndpointMessageListener;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,7 +56,7 @@ public final class BatchTestSupport {
         List<Exchange> batch = getBatch(batchExchange);
         assertEquals(expectedSize, batch.size(), "unexpected batch size");
         assertEquals(expectedSize,
-                batchExchange.getIn().getHeader(BatchEndpointMessageListener.SJMS_BATCH_SIZE_HEADER, Integer.class),
+                batchExchange.getIn().getHeader(SjmsConstants.SJMS_BATCH_SIZE_HEADER, Integer.class),
                 "CamelSjmsBatchSize header did not match actual batch size");
     }
 

@@ -16,15 +16,16 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.jms.Message;
 import jakarta.jms.Session;
 
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.sjms.SjmsConstants;
+import org.apache.camel.component.sjms.SjmsConsumer;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.SjmsHelper;
 import org.slf4j.Logger;
@@ -32,36 +33,36 @@ import org.slf4j.LoggerFactory;
 
 public class BatchEndpointMessageListener {
 
-    public static final String SJMS_BATCH_SIZE_HEADER = "CamelSjmsBatchSize";
-
     private static final Logger LOG = LoggerFactory.getLogger(BatchEndpointMessageListener.class);
 
+    private final SjmsConsumer consumer;
     private final SjmsEndpoint endpoint;
     private final Processor processor;
-    private final AggregationStrategy aggregationStrategy;
 
-    public BatchEndpointMessageListener(SjmsEndpoint endpoint, Processor processor, AggregationStrategy aggregationStrategy) {
+    public BatchEndpointMessageListener(SjmsConsumer consumer, SjmsEndpoint endpoint, Processor processor) {
+        this.consumer = consumer;
         this.endpoint = endpoint;
         this.processor = processor;
-
-        this.aggregationStrategy = aggregationStrategy;
     }
 
     private Exchange aggregate(List<Message> rawMessages, Session session) {
-        Exchange result = null;
+        List<Exchange> exchanges = new ArrayList<Exchange>(rawMessages.size());
         for (Message m : rawMessages) {
             Exchange e = endpoint.createExchange(m, session);
-            // Populate the headers and body of the Exchange in message
-            e.getIn().getHeaders();
-            e.getIn().getBody();
-
-            result = aggregationStrategy.aggregate(result, e);
-        }
             // Force eager materialization of JMS message headers and body into the
             // Camel Exchange, before the session is committed/closed after dispatch.
             e.getIn().getHeaders();
             e.getIn().getBody();
-        return result;
+
+            exchanges.add(e);
+        }
+
+        Exchange batchExchange = consumer.createExchange(false);
+        batchExchange.getIn().setBody(exchanges);
+        batchExchange.setProperty(SjmsConstants.JMS_SESSION, session);
+        batchExchange.getMessage().setHeader(SjmsConstants.SJMS_BATCH_SIZE_HEADER, rawMessages.size());
+
+        return batchExchange;
     }
 
     void onBatch(List<Message> rawMessages, Session session) throws Exception {
@@ -69,27 +70,14 @@ public class BatchEndpointMessageListener {
         Exception failure = null;
         try {
             batchExchange = aggregate(rawMessages, session);
-            if (batchExchange != null) {
-                batchExchange.setProperty(SjmsConstants.JMS_SESSION, session);
-                batchExchange.getMessage().setHeader(SJMS_BATCH_SIZE_HEADER, rawMessages.size());
-                processor.process(batchExchange);
-            }
+            processor.process(batchExchange);
         } catch (Exception e) {
             failure = e;
         }
 
-        boolean failed = failure != null
-                || (batchExchange != null && (batchExchange.isFailed() || batchExchange.isRollbackOnly()));
+        boolean failed = failure != null || batchExchange.isFailed() || batchExchange.isRollbackOnly();
         Message lastMessage = rawMessages.get(rawMessages.size() - 1);
 
-        if (!failed) {
-            SjmsHelper.commitIfNeeded(session, lastMessage);
-        } else {
-        if (rawMessages.isEmpty()) {
-            return;
-        }
-        Message lastMessage = rawMessages.get(rawMessages.size() - 1);
-            if (cause != null) {
         if (!failed) {
             SjmsHelper.commitIfNeeded(session, lastMessage);
         } else {
@@ -97,9 +85,8 @@ public class BatchEndpointMessageListener {
             if (cause != null) {
                 LOG.warn("Batch of {} message(s) failed processing on {}: {}", rawMessages.size(),
                         endpoint.getEndpointUri(), cause.getMessage(), cause);
-            } else {
-                LOG.warn("Batch of {} message(s) rolled back on {} (rollback-only or failed exchange)",
-                        rawMessages.size(), endpoint.getEndpointUri());
             }
             SjmsHelper.rollbackIfNeeded(session);
         }
+    }
+}

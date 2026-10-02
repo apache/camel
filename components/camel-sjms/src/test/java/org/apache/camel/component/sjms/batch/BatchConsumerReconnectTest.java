@@ -35,7 +35,7 @@ import static org.apache.camel.component.sjms.batch.BatchTestSupport.assertBatch
                           disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
 public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
 
-    private static final String SJMS_FROMF_URI = "%s?batching=true&batchingSize=5";
+    private static final String SJMS_FROMF_URI = "%s?batching=true&batchSize=5";
     private static final String SJMS_QUEUE_NAME = "sjms:batch.consumer.BatchConsumerReconnectTest";
     private static final String MOCK_RESULT = "mock:result";
 

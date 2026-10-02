@@ -24,7 +24,6 @@ import jakarta.jms.ExceptionListener;
 import jakarta.jms.Message;
 import jakarta.jms.Session;
 
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -35,7 +34,6 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.sjms.consumer.BatchDefaultExchangeListAggregationStrategy;
 import org.apache.camel.component.sjms.consumer.BatchEndpointMessageListener;
 import org.apache.camel.component.sjms.consumer.BatchMessageListenerContainer;
 import org.apache.camel.component.sjms.consumer.EndpointMessageListener;
@@ -61,6 +59,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Send and receive messages to/from a JMS Queue or Topic using plain JMS 1.x API.
@@ -72,7 +72,7 @@ import org.apache.camel.util.StringHelper;
 public class SjmsEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, MultipleConsumersSupport, HeaderFilterStrategyAware {
 
-    public static final long DEFAULT_CONSUMER_BATCHING_INTERVAL_MILLIS = 1000L;
+    private static final Logger LOG = LoggerFactory.getLogger(SjmsEndpoint.class);
 
     private boolean topic;
     private JmsBinding binding;
@@ -295,29 +295,14 @@ public class SjmsEndpoint extends DefaultEndpoint
               description = "Enable batch consuming. The route receives one Exchange per batch, whose body"
                             + " is a List<Exchange> of the individual JMS messages, instead of one Exchange per message.")
     private boolean batching;
-    @UriParam(label = "consumer,batch", defaultValue = "100",
-              description = "Maximum number of messages per batch. A value <= 0 means only batchTimeout"
-                            + " controls when a batch is emitted.")
-    private int batchingSize = 100;
-    @UriParam(label = "consumer,batch",
+    @UriParam(defaultValue = "100", label = "consumer,batch",
+              description = "Maximum number of messages per batch.")
+    private int batchSize = 100;
+    @UriParam(defaultValue = "1000", label = "consumer,batch", javaType = "java.time.Duration",
               description = "Time in millis, measured from the first message received into a new batch, after which "
                             + "the batch is dispatched even if batchSize has not been reached — comparable to the Aggregator "
-                            + "EIP's completionInterval. Mutually exclusive with batchTimeout: only one of the two may be "
-                            + "non-zero. If both are left at 0 (the default), an internal interval of 1000ms is used, matching "
-                            + "this component's original batching behavior.")
-    private long batchingInterval;
-    @UriParam(label = "consumer,batch",
-              description = "Idle time in millis, comparable to the Aggregator EIP's completionTimeout: if the batch "
-                            + "already contains one or more messages and no further message arrives within this time, the "
-                            + "partial batch is dispatched. Unlike batchInterval, the clock resets on every message received, "
-                            + "not just the first. Mutually exclusive with batchInterval.")
-    private long batchingTimeout;
-    @UriParam(label = "consumer,batch", javaType = "org.apache.camel.AggregationStrategy",
-              description = "A custom AggregationStrategy used to combine the messages of a batch into the single "
-                            + "Exchange routed by the consumer. Only used when batching=true. By default the "
-                            + "messages are grouped into a List<Exchange> in the message body. The strategy is "
-                            + "shared by all concurrent consumers, so it must be thread-safe.")
-    private AggregationStrategy batchingAggregationStrategy;
+                            + "EIP's completionInterval. Default is 1000 ms, that is 1 second. Interval should be a postive value. Set to 0 for unlimited (not recommended).")
+    private long batchInterval = 1000;
 
     private JmsObjectFactory jmsObjectFactory = new Jms11ObjectFactory();
 
@@ -402,20 +387,13 @@ public class SjmsEndpoint extends DefaultEndpoint
         return consumer;
     }
 
-    protected AggregationStrategy createBatchAggregationStrategy() {
-        AggregationStrategy strategy = getBatchingAggregationStrategy();
-        return strategy != null ? strategy : new BatchDefaultExchangeListAggregationStrategy();
-    }
-
     protected Consumer createBatchConsumer(Processor processor) throws Exception {
         validateBatchingOptions();
 
-        AggregationStrategy aggregationStrategy = createBatchAggregationStrategy();
-
-        BatchMessageListenerContainer container = createBatchMessageListenerContainer(this, aggregationStrategy);
+        BatchMessageListenerContainer container = createBatchMessageListenerContainer(this);
         SjmsConsumer consumer = new SjmsConsumer(this, processor, container);
 
-        BatchEndpointMessageListener listener = new BatchEndpointMessageListener(this, processor, aggregationStrategy);
+        BatchEndpointMessageListener listener = new BatchEndpointMessageListener(consumer, this, processor);
         container.setBatchListener(listener);
 
         configureConsumer(consumer);
@@ -511,20 +489,31 @@ public class SjmsEndpoint extends DefaultEndpoint
     }
 
     public BatchMessageListenerContainer createBatchMessageListenerContainer(
-            SjmsEndpoint endpoint, AggregationStrategy aggregationStrategy) {
-        BatchMessageListenerContainer answer = new BatchMessageListenerContainer(endpoint, aggregationStrategy);
+            SjmsEndpoint endpoint) {
+        BatchMessageListenerContainer answer = new BatchMessageListenerContainer(endpoint);
         answer.setConcurrentConsumers(concurrentConsumers);
         return answer;
     }
 
     private void validateBatchingOptions() {
-        if (batchingInterval > 0 && batchingTimeout > 0) {
-            throw new IllegalArgumentException(
-                    "batchingInterval and batchingTimeout cannot both be greater than 0");
-        }
-
         if (getExchangePattern().isOutCapable()) {
             throw new IllegalArgumentException("SjmsConsumer does not support exchangePattern=InOut in batching mode");
+        }
+
+        if (getBatchInterval() < 0) {
+            if (getExchangePattern().isOutCapable()) {
+                throw new IllegalArgumentException("batchInterval must be 0 or greater.");
+            }
+        }
+
+        if (isBatching() && !isTransacted()
+                && acknowledgementMode == SessionAcknowledgementType.AUTO_ACKNOWLEDGE) {
+            LOG.warn("Endpoint {} uses batching=true with acknowledgementMode=AUTO_ACKNOWLEDGE. "
+                            + "Messages are acknowledged on receipt, before the batch is processed, "
+                            + "so a failure or shutdown loses all buffered messages (at-most-once delivery). "
+                            + "Use acknowledgementMode=CLIENT_ACKNOWLEDGE or SESSION_TRANSACTED "
+                            + "(transacted=true) for at-least-once delivery.",
+                    getEndpointUri());
         }
     }
 
@@ -981,35 +970,19 @@ public class SjmsEndpoint extends DefaultEndpoint
         return this.batching;
     }
 
-    public void setBatchingSize(int batchingSize) {
-        this.batchingSize = batchingSize;
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
     }
 
-    public int getBatchingSize() {
-        return batchingSize;
+    public int getBatchSize() {
+        return batchSize;
     }
 
-    public void setBatchingInterval(long batchingInterval) {
-        this.batchingInterval = batchingInterval;
+    public void setBatchInterval(long batchInterval) {
+        this.batchInterval = batchInterval;
     }
 
-    public long getBatchingInterval() {
-        return this.batchingInterval;
-    }
-
-    public void setBatchingTimeout(long batchingTimeout) {
-        this.batchingTimeout = batchingTimeout;
-    }
-
-    public long getBatchingTimeout() {
-        return this.batchingTimeout;
-    }
-
-    public AggregationStrategy getBatchingAggregationStrategy() {
-        return batchingAggregationStrategy;
-    }
-
-    public void setBatchingAggregationStrategy(AggregationStrategy aggregationStrategy) {
-        this.batchingAggregationStrategy = aggregationStrategy;
+    public long getBatchInterval() {
+        return this.batchInterval;
     }
 }
