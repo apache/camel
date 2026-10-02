@@ -94,12 +94,15 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     private CliWebSocketClient client;
     private ThreadPoolExecutor actions;
     private ScheduledExecutorService scheduler;
+    // collects snapshots: the status of a large integration can take seconds, which must not hold up the scheduler
+    // (heartbeats, sends); snapshots are handed to the scheduler to be sent
+    private ScheduledExecutorService collector;
     // fields below are only used from the scheduler thread, except the volatile ones
     private volatile Connection connection;
     private volatile boolean ready;
     private volatile boolean stopping;
     private boolean listenerAdded;
-    // the snapshot task, only (re)scheduled from the scheduler thread or before it runs anything
+    // the snapshot rounds, only (re)scheduled from the collector thread or before it runs anything
     private ScheduledFuture<?> snapshotFuture;
     private long debugInterval;
     private ScheduledFuture<?> debugFuture;
@@ -166,6 +169,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
                 new CamelThreadFactory(threadNamePattern, "CliConnectorActions", true));
         scheduler = Executors.newSingleThreadScheduledExecutor(
                 new CamelThreadFactory(threadNamePattern, "CliConnectorWebSocket", true));
+        collector = Executors.newSingleThreadScheduledExecutor(
+                new CamelThreadFactory(threadNamePattern, "CliConnectorSnapshots", true));
 
         stopping = false;
         ready = camelContext.isStarted();
@@ -215,22 +220,43 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     public void updateDelay(int delay) {
         // camel-cli-debug makes it faster so breakpoints show up quickly: only the debug snapshot needs that
         debugInterval = delay;
-        execute(this::scheduleSnapshots);
+        ScheduledExecutorService c = collector;
+        if (c != null) {
+            // on the collector, which also reschedules the snapshot rounds
+            c.execute(this::scheduleSnapshots);
+        }
     }
 
     private void scheduleSnapshots() {
         if (snapshotFuture != null) {
             snapshotFuture.cancel(false);
         }
-        snapshotFuture = scheduler.scheduleWithFixedDelay(() -> safely(this::snapshotTask), snapshotInterval,
-                snapshotInterval, TimeUnit.MILLISECONDS);
+        snapshotFuture = collector.schedule(this::snapshotRound, snapshotInterval, TimeUnit.MILLISECONDS);
         if (debugFuture != null) {
             debugFuture.cancel(false);
             debugFuture = null;
         }
         if (debugInterval > 0) {
-            debugFuture = scheduler.scheduleWithFixedDelay(() -> safely(this::debugTask), debugInterval,
+            debugFuture = collector.scheduleWithFixedDelay(() -> safely(this::debugTask), debugInterval,
                     debugInterval, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    /**
+     * One round of snapshots, then the next one: at least the snapshot interval later, and at least as long as this
+     * round took, so collecting the snapshots of a large integration does not keep a CPU busy.
+     */
+    private void snapshotRound() {
+        long start = System.nanoTime();
+        safely(this::snapshotTask);
+        long took = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+        ScheduledExecutorService c = collector;
+        if (c != null && !c.isShutdown()) {
+            try {
+                snapshotFuture = c.schedule(this::snapshotRound, Math.max(snapshotInterval, took), TimeUnit.MILLISECONDS);
+            } catch (RejectedExecutionException e) {
+                // stopping
+            }
         }
     }
 
@@ -263,6 +289,10 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         if (actions != null) {
             actions.shutdownNow();
             actions = null;
+        }
+        if (collector != null) {
+            collector.shutdownNow();
+            collector = null;
         }
         client = null;
     }
@@ -391,15 +421,15 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         frame.put("name", camelContext.getName());
         frame.put("transport", client.getName());
         try {
-            JsonObject status = snapshots.status();
-            frame.put("runtime", status.get("runtime"));
+            frame.put("runtime", snapshots.runtime());
             c.helloSent = true;
             send(c, frame);
-            sendSnapshot(c, "status", status);
         } catch (Exception e) {
             LOG.debug("Error sending hello due to: {}. Will retry.", e.getMessage(), e);
         }
     }
+
+    // ---- snapshots (collector thread) ----
 
     private void snapshotTask() {
         Connection c = connection;
@@ -408,7 +438,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         }
         if (!c.helloSent) {
             // not started yet, or the hello failed
-            sayHello(c);
+            execute(() -> sayHello(c));
             return;
         }
         snapshot(c, "status", false);
@@ -491,7 +521,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         JsonObject frame = envelope("snapshot");
         frame.put("kind", kind);
         frame.put("data", data);
-        send(c, frame);
+        // only the scheduler sends, one frame at a time
+        execute(() -> send(c, frame));
     }
 
     private void send(Connection c, JsonObject frame) {
@@ -715,7 +746,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         private boolean lost;
         private long openedAt = System.currentTimeMillis();
         private volatile long lastSeen = openedAt;
-        private boolean helloSent;
+        private volatile boolean helloSent;
         private long lastTraceUid;
         private long lastReceiveUid;
         private final Map<String, String> lastSent = new HashMap<>();
