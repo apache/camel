@@ -132,7 +132,7 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
         return (EventHubsEndpoint) super.getEndpoint();
     }
 
-    private Exchange createAzureEventHubExchange(final EventContext eventContext) {
+    Exchange createAzureEventHubExchange(final EventContext eventContext) {
         final Exchange exchange = createExchange(true);
         final Message message = exchange.getIn();
 

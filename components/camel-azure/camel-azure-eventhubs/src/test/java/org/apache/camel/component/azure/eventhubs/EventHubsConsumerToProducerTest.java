@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.azure.eventhubs;
 
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
@@ -65,7 +64,7 @@ class EventHubsConsumerToProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void consumerRecordsThePartitionOfTheReceivedEvent() throws Exception {
+    void consumerRecordsThePartitionOfTheReceivedEvent() {
         Exchange exchange = received("3", "device-1");
 
         assertEquals("3", exchange.getMessage().getHeader(EventHubsConstants.PARTITION_ID));
@@ -75,7 +74,7 @@ class EventHubsConsumerToProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void receivedPartitionKeyIsKeptWhenNoPartitionIsChosen() throws Exception {
+    void receivedPartitionKeyIsKeptWhenNoPartitionIsChosen() {
         SendOptions options = send(PRODUCER, received("3", "device-1"));
 
         assertEquals("device-1", options.getPartitionKey());
@@ -83,13 +82,13 @@ class EventHubsConsumerToProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void receivedPartitionIdIsNotReused() throws Exception {
+    void receivedPartitionIdIsNotReused() {
         assertNull(send(PRODUCER, received("3", null)));
         verify(producerClient).send(anyIterable());
     }
 
     @Test
-    void configuredPartitionKeyIsUsed() throws Exception {
+    void configuredPartitionKeyIsUsed() {
         String producer = PRODUCER + "&partitionKey=configured";
 
         assertEquals("configured", send(producer, received("3", "device-1")).getPartitionKey());
@@ -97,7 +96,7 @@ class EventHubsConsumerToProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void configuredPartitionIdIsUsed() throws Exception {
+    void configuredPartitionIdIsUsed() {
         String producer = PRODUCER + "&partitionId=1";
 
         SendOptions keyed = send(producer, received("3", "device-1"));
@@ -110,7 +109,7 @@ class EventHubsConsumerToProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void partitionChosenByTheRouteIsUsed() throws Exception {
+    void partitionChosenByTheRouteIsUsed() {
         Exchange rekeyed = received("3", "device-1");
         rekeyed.getMessage().setHeader(EventHubsConstants.PARTITION_KEY, "tenant-7");
         SendOptions byKey = send(PRODUCER, rekeyed);
@@ -122,6 +121,21 @@ class EventHubsConsumerToProducerTest extends CamelTestSupport {
         SendOptions byId = send(PRODUCER, pinned);
         assertNull(byId.getPartitionKey());
         assertEquals("1", byId.getPartitionId());
+    }
+
+    @Test
+    void receivedPartitionIsKeptWhenTheRouteRemovesTheReceivedProperty() {
+        Exchange mirrored = received("3", null);
+        mirrored.removeProperty(EventHubsConstants.RECEIVED_PARTITION_ID);
+        SendOptions byId = send(PRODUCER, mirrored);
+        assertNull(byId.getPartitionKey());
+        assertEquals("3", byId.getPartitionId());
+
+        Exchange keyed = received("3", "device-1");
+        keyed.removeProperty(EventHubsConstants.RECEIVED_PARTITION_KEY);
+        SendOptions byKey = send(PRODUCER + "&partitionKey=configured", keyed);
+        assertEquals("device-1", byKey.getPartitionKey());
+        assertNull(byKey.getPartitionId());
     }
 
     @Test
@@ -142,7 +156,7 @@ class EventHubsConsumerToProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void camelHeadersAreNotSentAsEventProperties() throws Exception {
+    void camelHeadersAreNotSentAsEventProperties() {
         Exchange exchange = received("3", "device-1");
         exchange.getMessage().setHeader("tenant", "acme");
 
@@ -167,7 +181,7 @@ class EventHubsConsumerToProducerTest extends CamelTestSupport {
         return options.getAllValues().isEmpty() ? null : options.getValue();
     }
 
-    private Exchange received(String partitionId, String partitionKey) throws Exception {
+    private Exchange received(String partitionId, String partitionKey) {
         EventData eventData = mock(EventData.class);
         when(eventData.getBody()).thenReturn("event".getBytes(StandardCharsets.UTF_8));
         when(eventData.getPartitionKey()).thenReturn(partitionKey);
@@ -182,8 +196,6 @@ class EventHubsConsumerToProducerTest extends CamelTestSupport {
                 context.getEndpoint(CONSUMER, EventHubsEndpoint.class),
                 exchange -> {
                 });
-        Method createExchange = EventHubsConsumer.class.getDeclaredMethod("createAzureEventHubExchange", EventContext.class);
-        createExchange.setAccessible(true);
-        return (Exchange) createExchange.invoke(consumer, eventContext);
+        return consumer.createAzureEventHubExchange(eventContext);
     }
 }

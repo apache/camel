@@ -542,7 +542,9 @@ partition key, and for every event when `partitionKey` was configured, and a con
 the partition the event was received from. The producer now picks the partition from, in this order: a partition
 header set by the route, the `partitionKey` or `partitionId` endpoint option, and the partition key of the received
 event. It no longer reuses the partition id of the received event, so an event without a partition key is no longer
-sent to the partition with the same id in the target Event Hub.
+sent to the partition with the same id in the target Event Hub. To keep doing so, for example when mirroring between
+Event Hubs that have the same partitions, remove the `CamelAzureEventHubsReceivedPartitionId` exchange property before
+the producer.
 
 === camel-couchbase
 
