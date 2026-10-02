@@ -135,6 +135,10 @@ Press **F4** to enter edit mode, then **Tab** for context-aware completion:
 - After a function and a space, Tab lists the operators: comparisons and
   `&&` `||` where the EIP takes a predicate (`when`, `filter`, `validate`,
   `onWhen`...), chaining (`~>`) and the default value (`?:`) elsewhere
+- In the arguments of a function: the commands after `${date:` (`now`,
+  `exchangeCreated`, `header.`...) and date patterns after the next `:`, the
+  time zones of `date-with-timezone`, the project's beans after `${bean:`, the
+  keys of its `.properties` files after `${properties:`
 
 Use **Up/Down** to navigate, **Enter** to accept, **Esc** to dismiss, and
 type to filter the completion list (an exact or prefix match comes first).

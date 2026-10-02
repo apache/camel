@@ -846,8 +846,8 @@ class SourceTab extends AbstractTab {
         String name = filePath.getFileName().toString();
         sourceViewer.setUriCompletion(!routeFile ? null : name.endsWith(".java") ? "java" : "xml");
         // simple expressions in every route file: YAML, Java and XML (CAMEL-25219)
-        sourceViewer.setSimpleCompletion(
-                routeFile || isCamelSourceFile(filePath) ? assist::provideSimpleCompletions : null);
+        sourceViewer.setSimpleCompletion(routeFile || isCamelSourceFile(filePath)
+                ? (c, lines) -> assist.provideSimpleCompletions(c, lines, this::beanItems) : null);
         boolean xmlRoute = routeFile && name.toLowerCase().endsWith(".xml");
         sourceViewer.setCursorQuickDocProvider(!routeFile && !isCamelSourceFile(filePath) ? null
                 : xmlRoute ? (lines, row, col) -> {
@@ -856,9 +856,9 @@ class SourceTab extends AbstractTab {
                     return !simple.isEmpty() ? simple : assist.provideXmlQuickDoc(lines, row, col);
                 }
                 : assist::provideSimpleQuickDoc);
-        // the elements, attributes and values of an XML route (CAMEL-25240)
         // the route chain of a Java route (CAMEL-25241)
         sourceViewer.setJavaCompletion(routeFile && name.endsWith(".java") ? assist::provideJavaCompletions : null);
+        // the elements, attributes and values of an XML route (CAMEL-25240)
         sourceViewer.setXmlCompletion(routeFile && name.toLowerCase().endsWith(".xml") ? assist::provideXmlCompletions : null);
         if (isCamelSourceFile(filePath)) {
             sourceViewer.setQuickDocProvider(assist::provideCamelQuickDocs);
@@ -1473,6 +1473,18 @@ class SourceTab extends AbstractTab {
             }
         }
         return result;
+    }
+
+    /** The beans the project declares, for ${bean:..} in simple expressions (CAMEL-25242). */
+    private List<AutocompletePopup.CompletionItem> beanItems() {
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (ProjectBeans.Location bean : projectBeans().beans()) {
+            String where = "Declared in " + Path.of(bean.filePath()).getFileName() + ":" + (bean.line() + 1);
+            items.add(new AutocompletePopup.CompletionItem(
+                    bean.label(), bean.type() != null ? where + " as " + bean.type() : where, bean.type(), null, false,
+                    null, null, false));
+        }
+        return items;
     }
 
     /** The beans and classes the project declares, read again when a file of the project changed. */

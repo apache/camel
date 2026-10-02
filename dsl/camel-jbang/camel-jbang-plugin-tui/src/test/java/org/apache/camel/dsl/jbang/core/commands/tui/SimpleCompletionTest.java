@@ -97,6 +97,99 @@ class SimpleCompletionTest {
     }
 
     @Test
+    void theArgumentOfAFunction() {
+        SimpleCompletionContext c = at("${date:no");
+        assertThat(c.kind()).isEqualTo(SimpleCompletionContext.Kind.DATE_COMMAND);
+        assertThat(c.prefix()).isEqualTo("no");
+        c = at("${date:now:yyyy");
+        assertThat(c.kind()).isEqualTo(SimpleCompletionContext.Kind.DATE_PATTERN);
+        assertThat(c.prefix()).isEqualTo("yyyy");
+        assertThat(c.closing()).isEqualTo("}");
+
+        assertThat(at("${date-with-timezone(no").kind()).isEqualTo(SimpleCompletionContext.Kind.DATE_COMMAND);
+        c = at("${date-with-timezone(now:Eur");
+        assertThat(c.kind()).isEqualTo(SimpleCompletionContext.Kind.TIME_ZONE);
+        assertThat(c.closing()).isEqualTo(":");
+        c = at("${date-with-timezone(now:UTC:HH");
+        assertThat(c.kind()).isEqualTo(SimpleCompletionContext.Kind.DATE_PATTERN);
+        assertThat(c.closing()).isEqualTo(")}");
+
+        c = at("${bean:my");
+        assertThat(c.kind()).isEqualTo(SimpleCompletionContext.Kind.BEAN);
+        assertThat(c.closing()).isEmpty();
+        c = at("${properties:app.");
+        assertThat(c.kind()).isEqualTo(SimpleCompletionContext.Kind.PROPERTY_KEY);
+        assertThat(c.prefix()).isEqualTo("app.");
+        assertThat(at("${propertiesExist:x").kind()).isEqualTo(SimpleCompletionContext.Kind.PROPERTY_KEY);
+    }
+
+    @Test
+    void theValuesOfTheArguments() {
+        assertThat(keys(at("${date:"), SimpleCompletions.Project.NONE)).contains("now", "exchangeCreated", "header.");
+        assertThat(keys(at("${date:now:"), SimpleCompletions.Project.NONE)).contains("yyyy-MM-dd", "HH:mm:ss");
+        List<String> zones = keys(at("${date-with-timezone(now:"), SimpleCompletions.Project.NONE);
+        assertThat(zones.get(0)).isEqualTo("UTC");
+        assertThat(zones).contains("Europe/Paris");
+
+        SimpleCompletions.Project project = new SimpleCompletions.Project(
+                () -> List.of(new AutocompletePopup.CompletionItem("orderService", null, null, null, false, null, null)),
+                () -> List.of(new AutocompletePopup.CompletionItem("app.name", "Camel", null, null, false, null, null)));
+        assertThat(keys(at("${bean:"), project)).containsExactly("orderService");
+        assertThat(keys(at("${properties:"), project)).containsExactly("app.name");
+    }
+
+    private static List<String> keys(SimpleCompletionContext c, SimpleCompletions.Project project) {
+        return SimpleCompletions.provide(catalog, c, List.of(), project).stream()
+                .map(AutocompletePopup.CompletionItem::key).toList();
+    }
+
+    @Test
+    void anotherBeanKeepsTheMethod() throws Exception {
+        SourceViewer viewer = viewer("route.camel.yaml", """
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          simple: "${bean:orderService.total}"
+                """);
+        viewer.setSimpleCompletion((c, lines) -> SimpleCompletions.provide(catalog, c, lines,
+                new SimpleCompletions.Project(
+                        () -> List.of(
+                                new AutocompletePopup.CompletionItem("orderService", null, null, null, false, null, null),
+                                new AutocompletePopup.CompletionItem("priceCalculator", null, null, null, false, null, null)),
+                        List::of)));
+        cursorAt(viewer, 4, "orderService.total}\"");
+        tab(viewer);
+        type(viewer, "pri");
+        enter(viewer);
+        assertThat(line(viewer, 4)).isEqualTo("          simple: \"${bean:priceCalculator.total}\"");
+    }
+
+    @Test
+    void aDateFromItsFunctionToItsPattern() throws Exception {
+        SourceViewer viewer = viewer("route.camel.yaml", """
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          simple: "Created ${dat"
+                """);
+        cursorAt(viewer, 4, "\"");
+        tab(viewer);
+        type(viewer, "e:");
+        enter(viewer);
+        // date: opens the commands right away
+        type(viewer, "now");
+        enter(viewer);
+        assertThat(line(viewer, 4)).isEqualTo("          simple: \"Created ${date:now\"");
+        type(viewer, ":");
+        tab(viewer);
+        type(viewer, "yyyy-MM-dd");
+        enter(viewer);
+        assertThat(line(viewer, 4)).isEqualTo("          simple: \"Created ${date:now:yyyy-MM-dd}\"");
+    }
+
+    @Test
     void theOperatorAfterAFunction() {
         SimpleCompletionContext c = at("        .filter(simple(\"${header.foo} con");
         assertThat(c.kind()).isEqualTo(SimpleCompletionContext.Kind.OPERATOR);

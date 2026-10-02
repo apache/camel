@@ -40,7 +40,17 @@ record SimpleCompletionContext(Kind kind, String prefix, String closing, List<St
         HEADER,
         PROPERTY,
         VARIABLE,
-        OPERATOR
+        OPERATOR,
+        /** The command of ${date:..} or ${date-with-timezone(..)}: now, exchangeCreated, header.xxx... */
+        DATE_COMMAND,
+        /** The pattern after the command: yyyy-MM-dd... */
+        DATE_PATTERN,
+        /** The time zone of ${date-with-timezone(command:zone:pattern)} */
+        TIME_ZONE,
+        /** The bean of ${bean:name.method} */
+        BEAN,
+        /** The property key of ${properties:key} and ${propertiesExist:key} */
+        PROPERTY_KEY
     }
 
     /** How many lines above the cursor are looked at for the EIP the expression belongs to. */
@@ -49,6 +59,14 @@ record SimpleCompletionContext(Kind kind, String prefix, String closing, List<St
     private static final Pattern NAME = Pattern.compile(
             "(header|headers|in\\.header|in\\.headers|exchangeProperty|variable|variables)(\\.|\\[['\"]?)([\\w.\\-]*)");
     private static final Pattern FUNCTION = Pattern.compile("[\\w.:\\-]*");
+    // the arguments of the functions that take a name or command the editor knows the values of
+    private static final Pattern DATE_COMMAND = Pattern.compile("date:([^:}]*)");
+    private static final Pattern DATE_PATTERN = Pattern.compile("date:[^:}]+:(.*)");
+    private static final Pattern ZONED_COMMAND = Pattern.compile("date-with-timezone\\(([^:)]*)");
+    private static final Pattern ZONED_ZONE = Pattern.compile("date-with-timezone\\([^:)]+:([^:)]*)");
+    private static final Pattern ZONED_PATTERN = Pattern.compile("date-with-timezone\\([^:)]+:[^:)]+:([^)]*)");
+    private static final Pattern BEAN = Pattern.compile("bean:([\\w\\-]*)");
+    private static final Pattern PROPERTY_KEY = Pattern.compile("(?:properties|propertiesExist):([\\w.\\-]*)");
     private static final Pattern OPERATOR = Pattern.compile("\\s+([^\\s'\"$]*)");
     private static final Pattern WORD = Pattern.compile("[A-Za-z_][\\w-]*");
 
@@ -83,6 +101,10 @@ record SimpleCompletionContext(Kind kind, String prefix, String closing, List<St
         }
         if (!open.isEmpty()) {
             String inner = line.substring(open.get(open.size() - 1), col);
+            SimpleCompletionContext argument = argument(inner);
+            if (argument != null) {
+                return argument;
+            }
             Matcher m = NAME.matcher(inner);
             if (m.matches()) {
                 Kind kind = switch (m.group(1)) {
@@ -105,6 +127,34 @@ record SimpleCompletionContext(Kind kind, String prefix, String closing, List<St
             return null;
         }
         return new SimpleCompletionContext(Kind.OPERATOR, m.group(1), " ", owners(lines, row, firstOpen));
+    }
+
+    /** The argument of a function the cursor is in, when the editor knows its values: ${date:|, ${bean:|... */
+    private static SimpleCompletionContext argument(String inner) {
+        Matcher m;
+        if ((m = DATE_PATTERN.matcher(inner)).matches()) {
+            return new SimpleCompletionContext(Kind.DATE_PATTERN, m.group(1), "}", List.of());
+        }
+        if ((m = DATE_COMMAND.matcher(inner)).matches()) {
+            return new SimpleCompletionContext(Kind.DATE_COMMAND, m.group(1), "", List.of());
+        }
+        if ((m = ZONED_PATTERN.matcher(inner)).matches()) {
+            return new SimpleCompletionContext(Kind.DATE_PATTERN, m.group(1), ")}", List.of());
+        }
+        if ((m = ZONED_ZONE.matcher(inner)).matches()) {
+            return new SimpleCompletionContext(Kind.TIME_ZONE, m.group(1), ":", List.of());
+        }
+        if ((m = ZONED_COMMAND.matcher(inner)).matches()) {
+            return new SimpleCompletionContext(Kind.DATE_COMMAND, m.group(1), "", List.of());
+        }
+        if ((m = BEAN.matcher(inner)).matches()) {
+            // no } after the bean: a .method may follow
+            return new SimpleCompletionContext(Kind.BEAN, m.group(1), "", List.of());
+        }
+        if ((m = PROPERTY_KEY.matcher(inner)).matches()) {
+            return new SimpleCompletionContext(Kind.PROPERTY_KEY, m.group(1), "}", List.of());
+        }
+        return null;
     }
 
     /**

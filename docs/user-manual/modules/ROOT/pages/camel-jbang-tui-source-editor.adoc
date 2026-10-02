@@ -144,6 +144,9 @@ What can be completed:
   `exchangeProperty.`, `variable.`) the names the file sets or reads, then the headers of the components it uses. After a
   function and a space the operators: comparisons, `&&` and `||` where the EIP takes a predicate (`when`, `filter`,
   `validate`, `onWhen`, ...), chaining (`~>`) and a default value (`?:`) in other expressions.
+  In the arguments of a function: after `+${date:+` the commands (`now`, `exchangeCreated`, `header.`...), after the
+  next `:` common date patterns, and the time zones of `+${date-with-timezone(..)}+`; after `+${bean:+` the beans
+  your project declares; after `+${properties:+` the keys of its `.properties` files, with their values.
 * *`application.properties`* -- Camel options (`+camel.main.*+`, `+camel.component.*+`, ...) and Spring Boot properties
   (`+server.*+`, `+spring.*+`, ...), with their values and `+{{placeholder}}+` suggestions. This works even when the
   project is not running.
@@ -151,6 +154,8 @@ What can be completed:
 image::jbang/camel-tui-source-xml-completion.png[In the start tag of log, Tab lists its attributes with their documentation]
 
 image::jbang/camel-tui-source-simple-completion.png[After ${header. Tab lists the headers the route sets, then the ones of the Kafka component]
+
+image::jbang/camel-tui-source-simple-bean-completion.png[After ${bean: Tab lists the beans the project declares]
 
 image::jbang/camel-tui-source-java-completion.png[After a split in a Java route, Tab lists the options of the split first, then the EIPs]
 

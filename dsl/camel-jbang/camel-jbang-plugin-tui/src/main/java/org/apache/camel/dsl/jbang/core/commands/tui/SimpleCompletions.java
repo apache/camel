@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,12 +56,48 @@ final class SimpleCompletions {
     private record Words(CamelCatalog catalog, Set<String> predicate, Set<String> eip) {
     }
 
+    /** The commands of ${date:..}; an offset (now-24h, header.due+1h30m) may follow any of them. */
+    private static final Map<String, String> DATE_COMMANDS = dateCommands();
+    /** Patterns of java.text.SimpleDateFormat that dates are often formatted with. */
+    private static final List<String> DATE_PATTERNS = List.of(
+            "yyyy-MM-dd", "yyyyMMdd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+            "yyyyMMddHHmmss", "HH:mm:ss", "HH:mm", "dd-MM-yyyy", "MM/dd/yyyy", "EEE, dd MMM yyyy HH:mm:ss Z");
+
+    /**
+     * What the project knows that simple functions take: the beans it declares (${bean:..}) and the keys of its
+     * .properties files (${properties:..}).
+     */
+    record Project(
+            Supplier<List<AutocompletePopup.CompletionItem>> beans,
+            Supplier<List<AutocompletePopup.CompletionItem>> properties) {
+
+        static final Project NONE = new Project(List::of, List::of);
+    }
+
     private SimpleCompletions() {
+    }
+
+    private static Map<String, String> dateCommands() {
+        Map<String, String> commands = new LinkedHashMap<>();
+        commands.put("now", "The current date and time");
+        commands.put("millis", "The current time in milliseconds");
+        commands.put("exchangeCreated", "When the exchange was created");
+        commands.put("header.", "The date (Long or Date) in the header with the given name");
+        commands.put("variable.", "The date (Long or Date) in the variable with the given name");
+        commands.put("exchangeProperty.", "The date (Long or Date) in the exchange property with the given name");
+        commands.put("file", "The last modified time of the file (with a file consumer)");
+        return commands;
     }
 
     /** The completions at the context, given the lines of the file being edited. */
     static List<AutocompletePopup.CompletionItem> provide(
             CamelCatalog catalog, SimpleCompletionContext context, List<String> lines) {
+        return provide(catalog, context, lines, Project.NONE);
+    }
+
+    /** The completions at the context, given the lines of the file being edited and what the project declares. */
+    static List<AutocompletePopup.CompletionItem> provide(
+            CamelCatalog catalog, SimpleCompletionContext context, List<String> lines, Project project) {
         if (catalog == null || context == null) {
             return List.of();
         }
@@ -76,7 +114,37 @@ final class SimpleCompletions {
             case HEADER -> names(catalog, lines, "Header", "header", true);
             case PROPERTY -> names(catalog, lines, "Property", "exchangeProperty", false);
             case VARIABLE -> names(catalog, lines, "Variable", "variable", false);
+            case DATE_COMMAND -> dateCommandItems();
+            case DATE_PATTERN -> DATE_PATTERNS.stream()
+                    .map(p -> new AutocompletePopup.CompletionItem(
+                            p, "Formats the date with this java.text.SimpleDateFormat pattern", "pattern", null, false,
+                            null, null, false))
+                    .toList();
+            case TIME_ZONE -> timeZones();
+            case BEAN -> project.beans().get();
+            case PROPERTY_KEY -> project.properties().get();
         };
+    }
+
+    private static List<AutocompletePopup.CompletionItem> dateCommandItems() {
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        DATE_COMMANDS.forEach((command, doc) -> items.add(new AutocompletePopup.CompletionItem(
+                command, doc + ". An offset may follow, such as -24h or +1h30m.", "command", null, false, null, null,
+                false)));
+        return items;
+    }
+
+    /** The time zone ids of the JVM, UTC first. */
+    private static List<AutocompletePopup.CompletionItem> timeZones() {
+        List<String> zones = new ArrayList<>(ZoneId.getAvailableZoneIds());
+        zones.sort(String.CASE_INSENSITIVE_ORDER);
+        zones.remove("UTC");
+        zones.add(0, "UTC");
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (String zone : zones) {
+            items.add(new AutocompletePopup.CompletionItem(zone, "Time zone", "zone", null, false, null, null, false));
+        }
+        return items;
     }
 
     static List<AutocompletePopup.CompletionItem> functions(LanguageModel simple) {

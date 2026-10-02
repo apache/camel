@@ -1033,7 +1033,30 @@ final class SourceEditAssist {
 
     /** The completions of the simple expression at the cursor (CAMEL-25219). */
     List<AutocompletePopup.CompletionItem> provideSimpleCompletions(SimpleCompletionContext context, List<String> lines) {
-        return SimpleCompletions.provide(validationCatalog(), context, lines);
+        return provideSimpleCompletions(context, lines, List::of);
+    }
+
+    /**
+     * The completions of the simple expression at the cursor, the arguments of ${bean:..} from the beans the project
+     * declares and of ${properties:..} from its .properties files (CAMEL-25242).
+     */
+    List<AutocompletePopup.CompletionItem> provideSimpleCompletions(
+            SimpleCompletionContext context, List<String> lines, Supplier<List<AutocompletePopup.CompletionItem>> beans) {
+        return SimpleCompletions.provide(validationCatalog(), context, lines,
+                new SimpleCompletions.Project(beans, this::propertyKeys));
+    }
+
+    /** The keys of the project's .properties files, with their values. */
+    private List<AutocompletePopup.CompletionItem> propertyKeys() {
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (AutocompletePopup.CompletionItem p : loadPropertyPlaceholders()) {
+            String key = p.key();
+            if (key.startsWith("{{") && key.endsWith("}}")) {
+                items.add(new AutocompletePopup.CompletionItem(
+                        key.substring(2, key.length() - 2), p.description(), "property", null, false, null, p.group()));
+            }
+        }
+        return items;
     }
 
     List<AutocompletePopup.CompletionItem> provideComponentNameCompletions(String role) {
