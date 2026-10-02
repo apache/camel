@@ -56,7 +56,6 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -339,17 +338,7 @@ public class DefaultHttpBinding implements HttpBinding {
                     fileName = fileName.replaceAll("[\n\r\t]", "_");
                 }
                 // is the file name accepted
-                boolean accepted = true;
-                if (fileNameExtWhitelist != null) {
-                    String ext = FileUtil.onlyExt(fileName);
-                    if (ext != null) {
-                        ext = ext.toLowerCase(Locale.US);
-                        fileNameExtWhitelist = fileNameExtWhitelist.toLowerCase(Locale.US);
-                        if (!fileNameExtWhitelist.equals("*") && !fileNameExtWhitelist.contains(ext)) {
-                            accepted = false;
-                        }
-                    }
-                }
+                boolean accepted = isFileNameAccepted(fileName);
                 if (accepted) {
                     AttachmentMessage am = message.getExchange().getMessage(AttachmentMessage.class);
                     am.addAttachment(fileName, new DataHandler(new CamelFileDataSource(fileObject, fileName)));
@@ -360,6 +349,24 @@ public class DefaultHttpBinding implements HttpBinding {
                 }
             }
         }
+    }
+
+    /**
+     * Whether an uploaded file is accepted according to the configured {@link #getFileNameExtWhitelist()}.
+     * <p/>
+     * The file name extension is compared, case-insensitively, against each comma-separated entry of the whitelist
+     * exactly and not as a substring: a whitelist of "txt" must not accept an upload named "evil.x" just because
+     * "txt".contains("x"). A file is accepted when no whitelist is configured, when the whitelist is "*", or when the
+     * file name has no extension.
+     *
+     * @param  fileName the file name submitted by the client
+     * @return          true if the file is accepted
+     */
+    protected boolean isFileNameAccepted(String fileName) {
+        // one shared implementation of the whitelist check lives in camel-http-base's HttpHelper so the servlet and
+        // jetty bindings here and the camel-platform-http-vertx consumer cannot drift apart again (CAMEL-24652).
+        // Fully qualified because this package has its own HttpHelper with the same simple name.
+        return org.apache.camel.http.base.HttpHelper.isFileNameExtWhitelisted(getFileNameExtWhitelist(), fileName);
     }
 
     @Override
