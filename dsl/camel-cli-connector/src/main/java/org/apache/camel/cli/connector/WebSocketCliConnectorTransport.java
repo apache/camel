@@ -61,8 +61,9 @@ import org.slf4j.LoggerFactory;
  * client (<tt>camel.cli.websocket.client=jdk</tt> always uses the JDK client).
  * <p/>
  * Threads: actions run one at a time on their own thread (the dispatcher is not thread-safe, and an action can block
- * for a long time); connecting, parsing the incoming frames, snapshots, heartbeats and every write to the socket run on
- * a second thread, so the client never has two sends in flight, and its callbacks never wait.
+ * for a long time); snapshots are collected on a second thread (the status of a large integration can take seconds);
+ * connecting, parsing the incoming frames, heartbeats and every write to the socket run on a third thread (the
+ * scheduler), so the client never has two sends in flight, and its callbacks never wait.
  */
 public class WebSocketCliConnectorTransport extends ServiceSupport implements CliConnectorTransport {
 
@@ -97,17 +98,19 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     // collects snapshots: the status of a large integration can take seconds, which must not hold up the scheduler
     // (heartbeats, sends); snapshots are handed to the scheduler to be sent
     private ScheduledExecutorService collector;
-    // fields below are only used from the scheduler thread, except the volatile ones
+    // fields below are only used from the scheduler thread, except the volatile ones and the snapshot ones below
     private volatile Connection connection;
     private volatile boolean ready;
     private volatile boolean stopping;
     private boolean listenerAdded;
-    // the snapshot rounds, only (re)scheduled from the collector thread or before it runs anything
+    private int failures;
+    // snapshot fields, only used on the collector thread (or before it runs anything)
     private ScheduledFuture<?> snapshotFuture;
     private long debugInterval;
     private ScheduledFuture<?> debugFuture;
-    private int failures;
     private long ticks;
+    // bumped when the rounds are rescheduled, so a round that was already running does not start a second chain
+    private long rounds;
 
     @Override
     public void configure(
@@ -231,7 +234,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         if (snapshotFuture != null) {
             snapshotFuture.cancel(false);
         }
-        snapshotFuture = collector.schedule(this::snapshotRound, snapshotInterval, TimeUnit.MILLISECONDS);
+        long round = ++rounds;
+        snapshotFuture = collector.schedule(() -> snapshotRound(round), snapshotInterval, TimeUnit.MILLISECONDS);
         if (debugFuture != null) {
             debugFuture.cancel(false);
             debugFuture = null;
@@ -243,24 +247,36 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     }
 
     /**
-     * One round of snapshots, then the next one: at least the snapshot interval later, and at least as long as this
-     * round took, so collecting the snapshots of a large integration does not keep a CPU busy.
+     * One round of snapshots, then the next one: once the scheduler has sent the frames of this round (a slow link does
+     * not queue frames without end), at least the snapshot interval later, and at least as long as collecting took (a
+     * slow status does not keep a CPU busy).
      */
-    private void snapshotRound() {
+    private void snapshotRound(long round) {
+        if (round != rounds) {
+            return;
+        }
         long start = System.nanoTime();
         safely(this::snapshotTask);
-        long took = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
-        ScheduledExecutorService c = collector;
-        if (c != null && !c.isShutdown()) {
-            try {
-                snapshotFuture = c.schedule(this::snapshotRound, Math.max(snapshotInterval, took), TimeUnit.MILLISECONDS);
-            } catch (RejectedExecutionException e) {
-                // stopping
+        long delay = Math.max(snapshotInterval, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
+        // queued behind the frames of this round
+        execute(() -> {
+            ScheduledExecutorService c = collector;
+            if (c != null) {
+                try {
+                    c.execute(() -> {
+                        if (round == rounds) {
+                            snapshotFuture = c.schedule(() -> snapshotRound(round), delay, TimeUnit.MILLISECONDS);
+                        }
+                    });
+                } catch (RejectedExecutionException e) {
+                    // stopping
+                }
             }
-        }
+        });
     }
 
     private void debugTask() {
+        // note: shares the collector with the status, so a slow status delays it (as when both ran on the scheduler)
         Connection c = connection;
         if (c != null && c.helloSent) {
             // only sent when it changed, so the regular snapshot task does not send it again
@@ -747,6 +763,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         private long openedAt = System.currentTimeMillis();
         private volatile long lastSeen = openedAt;
         private volatile boolean helloSent;
+        // what was sent on this connection, only used on the collector thread
         private long lastTraceUid;
         private long lastReceiveUid;
         private final Map<String, String> lastSent = new HashMap<>();
