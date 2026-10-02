@@ -54,6 +54,7 @@ import org.apache.camel.component.platform.http.cookie.CookieHandler;
 import org.apache.camel.component.platform.http.spi.Method;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.component.platform.http.spi.PlatformHttpSecurityHandler;
+import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RestRegistry.RestService;
