@@ -16,6 +16,9 @@
  */
 package org.apache.camel.main.download;
 
+import java.util.Map;
+
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.junit.jupiter.api.Test;
@@ -25,6 +28,24 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KnownDependenciesResolverTest {
+
+    @Test
+    void camelShorthandMappingsUseCatalogCoordinates() {
+        SimpleCamelContext context = new SimpleCamelContext() {
+            @Override
+            public String getVersion() {
+                return "0.0.1";
+            }
+        };
+        KnownDependenciesResolver resolver = new KnownDependenciesResolver(context, null, null);
+        resolver.addMappings(Map.of(
+                "org.example.Cataloged", "camel:whatsapp",
+                "org.example.Uncataloged", "camel:uncataloged"));
+
+        assertEquals(new DefaultCamelCatalog().componentModel("whatsapp").getVersion(),
+                resolver.mavenGavForClass("org.example.Cataloged").getVersion());
+        assertEquals("0.0.1", resolver.mavenGavForClass("org.example.Uncataloged").getVersion());
+    }
 
     @Test
     void mavenGavForClass_returnsClassScopedDependency() {

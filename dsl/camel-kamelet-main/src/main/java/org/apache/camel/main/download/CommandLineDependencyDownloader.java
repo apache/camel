@@ -20,21 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.tooling.maven.MavenGav;
-import org.apache.camel.tooling.model.ArtifactModel;
 
 public class CommandLineDependencyDownloader extends ServiceSupport {
 
-    private final CamelContext camelContext;
-    private final CamelCatalog catalog = new DefaultCamelCatalog();
+    private final CatalogDependencyResolver resolver;
     private final DependencyDownloader downloader;
     private final String dependencies;
 
     public CommandLineDependencyDownloader(CamelContext camelContext, String dependencies) {
-        this.camelContext = camelContext;
+        this.resolver = new CatalogDependencyResolver(camelContext);
         this.dependencies = dependencies;
         this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
@@ -48,15 +44,7 @@ public class CommandLineDependencyDownloader extends ServiceSupport {
         final List<MavenGav> gavs = new ArrayList<>();
         for (String dep : dependencies.split(",")) {
             dep = dep.trim();
-            MavenGav gav = MavenGav.parseGav(dep, camelContext.getVersion());
-            if (dep.startsWith("camel:") || dep.startsWith("camel-")) {
-                ArtifactModel<?> model = catalog.modelFromMavenGAV(gav.getGroupId(), gav.getArtifactId(), null);
-                if (model != null) {
-                    gav.setGroupId(model.getGroupId());
-                    gav.setArtifactId(model.getArtifactId());
-                    gav.setVersion(model.getVersion());
-                }
-            }
+            MavenGav gav = resolver.resolve(dep);
             if (isValidGav(gav)) {
                 gavs.add(gav);
             }

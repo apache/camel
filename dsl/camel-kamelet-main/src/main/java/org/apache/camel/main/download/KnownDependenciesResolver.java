@@ -29,12 +29,12 @@ import org.apache.camel.tooling.maven.MavenGav;
 public final class KnownDependenciesResolver {
 
     private final Map<String, String> mappings = new HashMap<>();
-    private final CamelContext camelContext;
+    private final CatalogDependencyResolver resolver;
     private final String springBootVersion;
     private final String quarkusVersion;
 
     public KnownDependenciesResolver(CamelContext camelContext, String springBootVersion, String quarkusVersion) {
-        this.camelContext = camelContext;
+        this.resolver = new CatalogDependencyResolver(camelContext);
         this.springBootVersion = springBootVersion;
         this.quarkusVersion = quarkusVersion;
     }
@@ -79,7 +79,7 @@ public final class KnownDependenciesResolver {
         MavenGav answer = null;
         String gav = findGav(className);
         if (gav != null) {
-            answer = MavenGav.parseGav(gav, camelContext.getVersion());
+            answer = resolver.resolve(gav);
         }
         if (answer != null) {
             String v = answer.getVersion();
