@@ -1542,6 +1542,18 @@ such a configuration that declares no `JavaSerializationFilterConfig`, unless a 
 is set. To remove the warning, declare a `java-serialization-filter` in the configuration, as described in
 the xref:components::hazelcast-summary.adoc[Hazelcast component] documentation.
 
+=== camel-pubnub - consumers of a shared PubNub client
+
+A PubNub client hands every message it receives to all its listeners. When several endpoints use the same client
+(a `pubnub` bean that is autowired or referenced), each consumer received the messages of the channels of the other
+consumers too, and every stop and start of a route added one more listener, so its messages were then received once
+more. A consumer now only receives the messages and presence events of its own channel, and removes its listener
+when it stops.
+
+The endpoint now destroys the PubNub client only when it created it. A client from the registry is no longer
+destroyed when an endpoint stops, for example when a route that uses the client is removed while other routes still
+use it: the application that created the client is responsible for destroying it.
+
 === camel-netty - NettyConverter.toByteArray returns a copy of the buffer's readable bytes
 
 The `ByteBuf` to `byte[]` type converter (`NettyConverter.toByteArray`, also used when converting a Netty
