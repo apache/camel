@@ -85,7 +85,10 @@ public class BatchEndpointMessageListener {
         if (!failed) {
             SjmsHelper.commitIfNeeded(session, lastMessage);
         } else {
-            Exception cause = failure != null ? failure : batchExchange.getException();
+        if (rawMessages.isEmpty()) {
+            return;
+        }
+        Message lastMessage = rawMessages.get(rawMessages.size() - 1);
             if (cause != null) {
                 LOG.warn("Batch of {} message(s) failed processing on {}: {}", rawMessages.size(),
                         endpoint.getEndpointUri(), cause.getMessage(), cause);
