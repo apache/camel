@@ -1234,16 +1234,16 @@ class SourceViewer {
         }
     }
 
-    /**
-     * The view continues where the editor was: the cursor line is selected and the same line is at the top, so leaving
-     * the editor does not move the code on the screen.
-     */
     /** The top line the editor opens on: the top line of the view, moved only as far as the cursor must stay seen. */
     static int editorTopKeepingCursor(int viewTop, int cursorRow, int viewportHeight) {
         int top = Math.min(Math.max(0, viewTop), cursorRow);
         return Math.max(top, cursorRow - Math.max(1, viewportHeight) + 1);
     }
 
+    /**
+     * The view continues where the editor was: the cursor line is selected and the same line is at the top, so leaving
+     * the editor does not move the code on the screen.
+     */
     private void keepEditorPosition(int cursorRow, int top) {
         if (lines.isEmpty()) {
             return;
