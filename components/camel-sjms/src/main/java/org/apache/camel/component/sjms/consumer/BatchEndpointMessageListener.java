@@ -90,10 +90,16 @@ public class BatchEndpointMessageListener {
         }
         Message lastMessage = rawMessages.get(rawMessages.size() - 1);
             if (cause != null) {
+        if (!failed) {
+            SjmsHelper.commitIfNeeded(session, lastMessage);
+        } else {
+            Exception cause = failure != null ? failure : batchExchange.getException();
+            if (cause != null) {
                 LOG.warn("Batch of {} message(s) failed processing on {}: {}", rawMessages.size(),
                         endpoint.getEndpointUri(), cause.getMessage(), cause);
+            } else {
+                LOG.warn("Batch of {} message(s) rolled back on {} (rollback-only or failed exchange)",
+                        rawMessages.size(), endpoint.getEndpointUri());
             }
             SjmsHelper.rollbackIfNeeded(session);
         }
-    }
-}
