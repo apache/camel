@@ -238,6 +238,8 @@ class SourceViewer {
      */
     private Map<Integer, String> viewErrors = Collections.emptyMap();
     private boolean editInitialScroll;
+    /** The top line of the view when F4 was pressed, so the editor opens on the same screen; -1 when not known. */
+    private int editStartTop = -1;
     private long lastBackgroundValidationTime;
     private String lastBackgroundValidationContent;
     private static final long BACKGROUND_VALIDATION_INTERVAL_MS = 2000;
@@ -1134,6 +1136,7 @@ class SourceViewer {
         }
         editState.moveCursorToLineStart();
         editInitialScroll = true;
+        editStartTop = markdownMode ? -1 : scrollY;
         markdownModeBeforeEdit = markdownMode;
         markdownMode = false;
         quickDocEnabled = false;
@@ -1206,6 +1209,8 @@ class SourceViewer {
 
     private void exitEditMode() {
         boolean wasEditing = editMode;
+        int cursorRow = editState.cursorRow();
+        int top = editState.scrollRow();
         editMode = false;
         editState.clear();
         editHistory.clear();
@@ -1223,6 +1228,29 @@ class SourceViewer {
             markdownMode = markdownModeBeforeEdit;
         }
         markdownModeBeforeEdit = false;
+        editStartTop = -1;
+        if (wasEditing) {
+            keepEditorPosition(cursorRow, top);
+        }
+    }
+
+    /** The top line the editor opens on: the top line of the view, moved only as far as the cursor must stay seen. */
+    static int editorTopKeepingCursor(int viewTop, int cursorRow, int viewportHeight) {
+        int top = Math.min(Math.max(0, viewTop), cursorRow);
+        return Math.max(top, cursorRow - Math.max(1, viewportHeight) + 1);
+    }
+
+    /**
+     * The view continues where the editor was: the cursor line is selected and the same line is at the top, so leaving
+     * the editor does not move the code on the screen.
+     */
+    private void keepEditorPosition(int cursorRow, int top) {
+        if (lines.isEmpty()) {
+            return;
+        }
+        selectedLine = Math.min(Math.max(0, cursorRow), lines.size() - 1);
+        scrollY = Math.min(Math.max(0, top), selectedLine);
+        pendingScroll = false;
     }
 
     private boolean isPropertiesFile() {
@@ -1925,11 +1953,15 @@ class SourceViewer {
             dirty = false;
             Path path = editableFile;
             boolean restoreMarkdownMode = markdownModeBeforeEdit;
+            int cursorRow = editState.cursorRow();
+            int top = editState.scrollRow();
             notifySaved(editableFile);
             editMode = false;
             editState.clear();
             markdownModeBeforeEdit = false;
+            editStartTop = -1;
             loadFile(path);
+            keepEditorPosition(cursorRow, top);
             if (isMarkdownFile) {
                 markdownMode = restoreMarkdownMode;
             }
@@ -2626,14 +2658,19 @@ class SourceViewer {
                 .showLineNumbers(!plainMode)
                 .lineNumberStyle(Style.EMPTY.dim())
                 .build();
-        // on first render, position cursor at 2/3 of viewport before TextArea renders
+        // on first render, keep the top line of the view (F4), else position the cursor at 2/3 of the viewport
         if (editInitialScroll) {
             editInitialScroll = false;
             int viewportH = textAreaRect.height();
-            int twoThirds = viewportH * 2 / 3;
-            int targetScroll = Math.max(0, editState.cursorRow() - twoThirds);
-            if (targetScroll > 0) {
-                editState.scrollDown(targetScroll, viewportH);
+            int targetScroll = editStartTop >= 0
+                    ? editorTopKeepingCursor(editStartTop, editState.cursorRow(), viewportH)
+                    : Math.max(0, editState.cursorRow() - viewportH * 2 / 3);
+            editStartTop = -1;
+            int delta = targetScroll - editState.scrollRow();
+            if (delta > 0) {
+                editState.scrollDown(delta, viewportH);
+            } else if (delta < 0) {
+                editState.scrollUp(-delta);
             }
         }
 
