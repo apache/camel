@@ -19,11 +19,8 @@
     name: myBean
     type: com.example.MyBean
     properties:
-      property:
-        - key: greeting
-          value: Hello
-        - key: count
-          value: 5
+      greeting: Hello
+      count: "5"
 - beanFactory:
     name: myFactory
     type: com.example.MyFactory

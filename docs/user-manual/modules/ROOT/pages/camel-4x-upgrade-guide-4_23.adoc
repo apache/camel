@@ -737,6 +737,15 @@ in the charset that the `Content-Type` declares, so the bytes match the header. 
 the declared charset and read such a response as UTF-8 must now use the declared charset, and characters that the
 declared charset cannot represent are written as `?`.
 
+=== camel-undertow - String bodies in the charset of the Content-Type
+
+The Undertow consumer (response) and producer (request) always wrote a `String` body as UTF-8, even when the
+`Content-Type` declared another charset (for example `text/plain; charset=ISO-8859-1`). A `String` body is now
+written in the charset that the `Content-Type` declares. Bodies that are not a `String`, and messages whose
+`Content-Type` declares no charset, are sent as before (UTF-8 by default). A peer that ignored the declared charset and
+read such a message as UTF-8 must now use the declared charset, and characters that the declared charset cannot
+represent are written as `?`.
+
 === Components and Language removal
 
 ==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
@@ -1481,6 +1490,12 @@ without supplying their own `hazelcastInstance` must now provide a `Config` with
 The same default is now also applied to the `ClientConfig` that Camel builds for `hazelcastMode=client`
 endpoints, when neither a referenced `ClientConfig` nor `hazelcastConfigUri` is supplied. Client mode
 previously behaved differently from node mode for an otherwise identical endpoint configuration.
+
+Camel still uses a user-supplied `Config` or `ClientConfig` (a `hazelcastConfig` bean or a
+`hazelcastConfigUri` file) unchanged. It now logs a WARN when it starts a Hazelcast member or client from
+such a configuration that declares no `JavaSerializationFilterConfig`, unless a JVM-wide `jdk.serialFilter`
+is set. To remove the warning, declare a `java-serialization-filter` in the configuration, as described in
+the xref:components::hazelcast-summary.adoc[Hazelcast component] documentation.
 
 === camel-netty - NettyConverter.toByteArray returns a copy of the buffer's readable bytes
 
@@ -2250,6 +2265,15 @@ A route that relies on the exception message reaching the client must opt back i
 ----
 grpc://localhost:8080/org.example.MyService?muteException=false
 ----
+
+==== Failed exchanges with the AGGREGATION and PROPAGATION consumer strategies
+
+With the `AGGREGATION` and `PROPAGATION` consumer strategies (client streaming and bidirectional streaming calls), a
+failed exchange now ends the call with an `INTERNAL` error, like unary and server streaming calls already did
+(the description follows the `muteException` option). Before, the message body of the failed exchange was sent to
+the client as a regular response. With `PROPAGATION` (the default strategy) the first failed exchange ends the whole
+call, so the messages that the client sends afterwards are no longer routed; a route that must keep the stream open
+can handle the exception (`onException(...).handled(true)`) and answer that message with a body.
 
 === camel-keycloak
 
@@ -4064,6 +4088,13 @@ coap://0.0.0.0:5683/my/resource?muteException=false
 
 For the Rest DSL, set it with `restConfiguration().endpointProperty("muteException", "false")`.
 
+==== Producer
+
+When the CoAP server does not answer a `GET`, `POST`, `PUT` or `DELETE` request (the request timed out or was
+rejected), the producer now fails the exchange with a `CamelExchangeException`. Before, the exchange continued as if
+the request had succeeded, with the request body as its body. The `CamelCoapMethod` header is now also accepted in
+lower case, and an unknown method fails the exchange with an `IllegalArgumentException` instead of sending nothing.
+
 === camel-quickfix - InOut replies are sent on the session the request arrived on
 
 With `exchangePattern=InOut`, the QuickFIX/J consumer now sends the reply on the session the request was received on.
@@ -4159,12 +4190,6 @@ The parameter `dataChangeFilterDeadbandType` changes type from `UInteger` to `In
 This changes the public `MonitorFilterConfiguration` getter/setter and the endpoint-DSL builder method, so Java code
 passing a `UInteger` will no longer compile.
 
-=== camel-cli-connector
-
-The ~/.camel file handling moved from `LocalCliConnector` to the new `FileCliConnectorTransport`, so the protected
-`task()`, `actionTask()`, `statusTask()` and `traceTask()` methods were removed from `LocalCliConnector`. Subclasses
-that only override `sigterm()` are not affected.
-
 == ThrottlingExceptionRoutePolicy
 
 `ThrottlingExceptionRoutePolicy.setKeepOpen(true)` now opens the circuit immediately and synchronously (the consumer
@@ -4190,3 +4215,35 @@ scan for nothing. A route file inside a dot directory is therefore no longer wat
 2000 milliseconds, so on Linux and Windows a change is noticed within two seconds rather than immediately, and on macOS
 within two seconds rather than up to ten. A new `setStableTimeout` (default 200 milliseconds) leaves a file that was
 only just modified for the next scan, so a save still being written is not reloaded half-finished.
+
+=== camel-cli-connector
+
+The ~/.camel file handling moved from `LocalCliConnector` to the new `FileCliConnectorTransport`, so the protected
+`task()`, `actionTask()`, `statusTask()` and `traceTask()` methods were removed from `LocalCliConnector`. Subclasses
+that only override `sigterm()` are not affected.
+
+The thread of the file transport (`LocalCliConnector` in its name) is now a daemon thread, as the threads of the
+WebSocket transport already were. Before, it kept the JVM alive when the application failed to start, for example a
+Spring Boot application whose port was in use: Camel had not started, so it never stopped the connector. An application
+that only kept running because of this thread now exits; keep it running on purpose, for example with
+`camel.main.run-controller=true` for a Spring Boot application without a web server.
+
+=== Route dumps as YAML and Java
+
+Routes dumped as YAML (`camel.main.dumpRoutes=yaml`, `camel transform route --format=yaml`) are now written as the
+YAML DSL loads them:
+
+* the verbs of a rest are listed by their kind (`get`, `post`, ...) instead of under `verbs`, and their parameters and
+  response messages as `param` and `responseMessage`;
+* a route template has `parameters` and `beans` instead of `templateParameter` and `templateBean`;
+* the properties of a bean are a map, also when they are nested, instead of a `property` list.
+
+Before, such a dump did not load in the YAML DSL.
+
+A route built in Java with its own error handler (`from("...").errorHandler(deadLetterChannel("..."))`) now has the
+error handler in its model, so dumping the route (as XML, YAML or Java) writes it; it was left out before. When written
+as Java, the error handler of an XML or YAML route is now `.errorHandler(...)` on the route, instead of an
+`errorHandler(...)` that applies to every route of the route builder.
+
+The `timeout(long)` of the Resequencer EIP in Java keeps the millis as given (`2000`), instead of a duration
+(`2s0ms`).

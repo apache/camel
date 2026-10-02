@@ -299,7 +299,10 @@ into the route sources (`description` and `note` in YAML and XML, `.routeDescrip
 `/write` mode. From then on they are part of the routes and no longer marked.
 
 With *AI Overview* set to *auto* in *F2 -> Settings*, the panel explains the project by itself when
-it opens and the summary is missing or out of date, once per project state. External AI agents get the
+it opens and the summary is missing or out of date, once per project state. It starts once the panel has
+been idle for a few seconds, so a question asked right away is answered first. A local model answers one
+request at a time: a question asked while the summary is being written waits for it, and the panel says
+so; *Esc* then stops the summary so the question goes first (`/overview` writes it later). External AI agents get the
 same through the `camel_project_overview` and `camel_save_project_summary` tools; from the TUI's MCP
 server the summary they save goes through the confirm dialog too.
 

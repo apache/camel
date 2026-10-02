@@ -74,6 +74,11 @@ class ErrorsTab extends AbstractTableTab {
     }
 
     @Override
+    protected boolean selectsFirstRow() {
+        return true;
+    }
+
+    @Override
     protected int getRowCount() {
         return filteredSize();
     }

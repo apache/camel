@@ -444,6 +444,7 @@ public class JavaDslCompileTest {
     private static String wrapInRouteBuilder(String className, List<String> routeSnippets) {
         StringBuilder sb = new StringBuilder();
         sb.append("package test.generated;\n\n");
+        sb.append("import java.util.Map;\n\n");
         sb.append("import org.apache.camel.ExchangePattern;\n");
         sb.append("import org.apache.camel.LoggingLevel;\n");
         sb.append("import org.apache.camel.Predicate;\n");

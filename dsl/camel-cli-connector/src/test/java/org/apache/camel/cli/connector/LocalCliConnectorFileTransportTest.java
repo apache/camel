@@ -121,6 +121,21 @@ class LocalCliConnectorFileTransportTest extends CamelTestSupport {
     }
 
     @Test
+    void theConnectorDoesNotKeepTheJvmAlive() throws Exception {
+        // started before Camel, it is not stopped when the application fails to start (CAMEL-25230). Started from a
+        // non-daemon thread, as the main thread of Spring Boot: a new thread takes the daemon flag of its creator
+        Thread main = new Thread(this::startConnector, "main");
+        main.setDaemon(false);
+        main.start();
+        main.join(10_000);
+
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(Thread.getAllStackTraces().keySet())
+                .filteredOn(t -> t.getName().contains("LocalCliConnector"))
+                .isNotEmpty()
+                .allMatch(Thread::isDaemon));
+    }
+
+    @Test
     void writesStatusSnapshot() {
         startConnector();
 

@@ -42,6 +42,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.java.LwModelToJavaDumper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.xml.LwModelToXMLDumper;
 import org.apache.camel.xml.in.ModelParser;
 import org.junit.jupiter.api.Test;
 
@@ -122,6 +123,58 @@ class RoundTripTest {
                         && !KNOWN.containsKey(file.getFileName().toString())) {
                     failures.add(file.getFileName() + "\n" + java + "\n--- read back as ---\n" + back
                                  + "\n--- unresolved: " + parsed.unresolved());
+                }
+            }
+        }
+        assertThat(routes).isGreaterThan(100);
+        assertThat(failures).as("%d of %d routes do not read back:%n%s", failures.size(), routes,
+                String.join("\n\n", failures)).isEmpty();
+    }
+
+    /**
+     * Routes whose Java reads back to a model that differs from the XML one, and why: none of them loses what the route
+     * does.
+     */
+    private static final Map<String, String> KNOWN_XML = Map.of(
+            "barInterceptorRoute.xml", "Java has intercept() for all the routes of a route builder, not of one route",
+            "interceptFrom.xml", "Java has interceptFrom() for all the routes of a route builder, not of one route",
+            "interceptFromAndSendTo.xml",
+            "Java has interceptSendToEndpoint() for all the routes of a route builder, not of one route",
+            "routeInlinedErrorHandler.xml",
+            "the redelivery policy of deadLetterChannel() in Java says logExhausted=false, the default of a dead letter channel",
+            "circuitBreakerResilience4j.xml", "failureRateThreshold(float) keeps 30 as 30.0: the same value, written apart");
+
+    /**
+     * The routes of the XML corpus read back from the Java the dumper writes as the XML routes they were (CAMEL-25255):
+     * the Java writer leaves nothing of the route out, such as its error handler or the namespaces of an xpath.
+     */
+    @Test
+    void xmlCorpusReadsBackThroughJava() throws Exception {
+        assumeTrue(Files.isDirectory(CORPUS.get(0)), "the core test routes are next to this module");
+        List<Path> files = new ArrayList<>();
+        for (Path dir : CORPUS) {
+            try (Stream<Path> s = Files.list(dir)) {
+                files.addAll(s.filter(p -> p.toString().endsWith(".xml")).sorted().toList());
+            }
+        }
+        List<String> failures = new ArrayList<>();
+        int routes = 0;
+        for (Path file : files) {
+            if (KNOWN_XML.containsKey(file.getFileName().toString())) {
+                continue;
+            }
+            for (RouteDefinition route : routes(file)) {
+                routes++;
+                try (DefaultCamelContext context = new DefaultCamelContext()) {
+                    String xml = new LwModelToXMLDumper().dumpModelAsXml(context, route);
+                    String java = new LwModelToJavaDumper().dumpModelAsJava(context, route);
+                    JavaParseResult parsed = new LwJavaParser().parse(java + ";");
+                    String back = parsed.routes().getRoutes().isEmpty()
+                            ? "" : new LwModelToXMLDumper().dumpModelAsXml(context, parsed.routes().getRoutes().get(0));
+                    if (!back.equals(xml)) {
+                        failures.add(file.getFileName() + "\n" + java + "\n--- was ---\n" + xml + "\n--- read back as ---\n"
+                                     + back);
+                    }
                 }
             }
         }

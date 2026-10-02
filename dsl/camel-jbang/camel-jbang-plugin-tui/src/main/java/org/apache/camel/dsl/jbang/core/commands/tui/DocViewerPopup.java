@@ -561,6 +561,28 @@ class DocViewerPopup {
                 .map(line -> TuiHelper.ansiToLine(line.replace("\t", "        "), 0))
                 .collect(Collectors.toList());
         openLines("Failed: " + name, lines);
+        // open at why it failed, which comes after a long startup log
+        docScroll = failureLine(logLines);
+    }
+
+    /** The line to open a failure log at: a little above the last line that says why, else the top. */
+    static int failureLine(List<String> logLines) {
+        for (int i = logLines.size() - 1; i >= 0; i--) {
+            String line = logLines.get(i);
+            for (String marker : LaunchManager.START_FAILURES) {
+                if (line.contains(marker)) {
+                    return Math.max(0, i - 2);
+                }
+            }
+        }
+        return 0;
+    }
+
+    /** Closes the viewer when it shows the failure log of a run. */
+    void closeFailureLog() {
+        if (isVisible() && docTitle != null && docTitle.startsWith("Failed:")) {
+            close();
+        }
     }
 
     boolean hasFailureContent(Path logFile) {

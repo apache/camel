@@ -68,6 +68,14 @@ class LogTabRenderTest {
     }
 
     @Test
+    void theCompactViewShowsTimeLevelLoggerAndMessage() {
+        LogEntry entry = LogTab.parseLogLine("2026-10-01 17:24:30.257  INFO 85013 --- [ntloop-thread-0]"
+                                             + " tform.http.vertx.VertxPlatformHttpServer : Vert.x HttpServer started on 0.0.0.0:8080");
+        String text = LogTab.compactLine(entry).spans().stream().map(Span::content).reduce("", String::concat);
+        assertEquals("17:24:30.257  INFO VertxPlatformHttpServer  Vert.x HttpServer started on 0.0.0.0:8080", text);
+    }
+
+    @Test
     void renderNoSelectionShowsPrompt() {
         ctx.selectedPid = null;
         LogTab tab = new LogTab(ctx);

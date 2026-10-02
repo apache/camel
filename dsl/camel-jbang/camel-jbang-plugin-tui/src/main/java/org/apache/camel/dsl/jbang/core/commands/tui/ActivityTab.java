@@ -54,7 +54,8 @@ class ActivityTab extends AbstractTableTab {
     private static final long[] TIME_FILTER_MILLIS = { 0, 60_000, 300_000, 900_000, 1_800_000, 3_600_000 };
 
     ActivityTab(MonitorContext ctx) {
-        super(ctx, "exchange", "route", "elapsed", "since");
+        // newest first, as a live feed reads
+        super(ctx, "since", "exchange", "route", "elapsed");
     }
 
     @Override
@@ -144,13 +145,13 @@ class ActivityTab extends AbstractTableTab {
 
             rows.add(Row
                     .from(
-                            Cell.from(ae.exchangeId != null ? ae.exchangeId : ""),
+                            Cell.from(shortExchangeId(ae.exchangeId)),
                             Cell.from(Span.styled(ae.routeId != null ? ae.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                             Cell.from(Span.styled(status, statusStyle)),
                             Cell.from(elapsed),
                             Cell.from(sends),
                             Cell.from(ago),
-                            Cell.from(ae.fromEndpointUri != null ? ae.fromEndpointUri : "")));
+                            Cell.from(ae.fromEndpointUri != null ? TuiHelper.displayUri(ae.fromEndpointUri) : "")));
         }
 
         if (rows.isEmpty()) {
@@ -166,11 +167,12 @@ class ActivityTab extends AbstractTableTab {
 
         List<Constraint> constraints = new ArrayList<>();
         constraints.add(Constraint.length(4));
+        constraints.add(Constraint.fill());
+        List<Line> detailLines = showDetail ? detailLines(selectedEntry) : List.of();
         if (showDetail) {
-            constraints.add(Constraint.length(13));
-            constraints.add(Constraint.fill());
-        } else {
-            constraints.add(Constraint.fill());
+            // the detail is as tall as what it has to say, up to half of the tab; the table takes the rest
+            int detailHeight = Math.max(6, Math.min(detailLines.size() + 2, (area.height() - 4) / 2));
+            constraints.add(Constraint.length(detailHeight));
         }
         List<Rect> chunks = Layout.vertical()
                 .constraints(constraints)
@@ -189,7 +191,7 @@ class ActivityTab extends AbstractTableTab {
                         Cell.from(Span.styled(sortLabel("SINCE", "since"), sortStyle("since"))),
                         Cell.from(Span.styled("ENDPOINT", Style.EMPTY.bold()))))
                 .widths(
-                        Constraint.length(38),
+                        Constraint.length(16),
                         Constraint.length(20),
                         Constraint.length(8),
                         Constraint.length(10),
@@ -207,7 +209,7 @@ class ActivityTab extends AbstractTableTab {
         renderScrollbar(frame, table, sorted.size());
 
         if (showDetail) {
-            renderDetail(frame, chunks.get(2), selectedEntry);
+            renderDetail(frame, chunks.get(2), detailLines);
         }
     }
 
@@ -243,11 +245,11 @@ class ActivityTab extends AbstractTableTab {
         String errorRate = total > 0
                 ? String.format(Locale.US, "%.1f%%", (failed * 100.0) / total) : "0%";
         String rate = "";
-        if (oldestTs < Long.MAX_VALUE && newestTs > oldestTs) {
-            double minutes = (newestTs - oldestTs) / 60_000.0;
-            if (minutes > 0) {
-                rate = String.format(Locale.US, "%.1f/min", total / minutes);
-            }
+        if (oldestTs < Long.MAX_VALUE) {
+            // over the time up to now, at least a second: a burst of exchanges within one second is not thousands a
+            // minute
+            double minutes = Math.max(1000, System.currentTimeMillis() - oldestTs) / 60_000.0;
+            rate = String.format(Locale.US, "%.1f/min", total / minutes);
         }
 
         int sends = entries.stream().mapToInt(ae -> ae.endpointSends.size()).sum();
@@ -300,11 +302,19 @@ class ActivityTab extends AbstractTableTab {
         TuiHelper.hintLast(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
     }
 
-    private void renderDetail(Frame frame, Rect area, ActivityEntry ae) {
+    private void renderDetail(Frame frame, Rect area, List<Line> lines) {
+        int[] scroll = { detailScroll };
+        int[] hScroll = { detailHScroll };
+        HistoryTab.renderDetailPanel(frame, area, lines, wordWrap, hScroll, scroll, detailScrollState, " Detail ");
+        detailScroll = scroll[0];
+        detailHScroll = hScroll[0];
+    }
+
+    private static List<Line> detailLines(ActivityEntry ae) {
         List<Line> lines = new ArrayList<>();
 
         HistoryTab.addExchangeInfoLines(lines,
-                ae.exchangeId, ae.routeId, null, null, "Endpoint", ae.fromEndpointUri,
+                ae.exchangeId, ae.routeId, null, null, "Endpoint", TuiHelper.displayUri(ae.fromEndpointUri),
                 ae.elapsed, null, ae.failed);
 
         if (ae.exceptionMessage != null) {
@@ -316,16 +326,12 @@ class ActivityTab extends AbstractTableTab {
             for (ActivityEntry.EndpointSendEntry se : ae.endpointSends) {
                 lines.add(Line
                         .from(
-                        Span.styled("   " + (se.endpointUri != null ? se.endpointUri : ""), Style.EMPTY),
+                        Span.styled("   " + (se.endpointUri != null ? TuiHelper.displayUri(se.endpointUri) : ""),
+                                Style.EMPTY),
                         Span.styled("  " + se.elapsed + "ms", Theme.muted())));
             }
         }
-
-        int[] scroll = { detailScroll };
-        int[] hScroll = { detailHScroll };
-        HistoryTab.renderDetailPanel(frame, area, lines, wordWrap, hScroll, scroll, detailScrollState, " Detail ");
-        detailScroll = scroll[0];
-        detailHScroll = hScroll[0];
+        return lines;
     }
 
     private List<ActivityEntry> filteredActivity(IntegrationInfo info) {
@@ -338,6 +344,22 @@ class ActivityTab extends AbstractTableTab {
         }
         result.sort(this::sortActivity);
         return result;
+    }
+
+    /**
+     * The part of an exchange id that tells the exchanges apart: Camel ids are the context's prefix and a counter
+     * (AD50EEC2B14A8A3-0000000000000001), so the counter without its leading zeros (…-1). The detail shows the full id.
+     */
+    static String shortExchangeId(String id) {
+        if (id == null) {
+            return "";
+        }
+        int dash = id.lastIndexOf('-');
+        if (dash < 0 || dash == id.length() - 1) {
+            return id;
+        }
+        String counter = id.substring(dash + 1).replaceFirst("^0+(?=.)", "");
+        return id.substring(0, Math.min(dash, 6)) + "…-" + counter;
     }
 
     private int sortActivity(ActivityEntry a, ActivityEntry b) {

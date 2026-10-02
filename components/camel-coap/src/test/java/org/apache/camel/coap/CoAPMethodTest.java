@@ -16,11 +16,14 @@
  */
 package org.apache.camel.coap;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CoAPMethodTest extends CoAPTestSupport {
 
@@ -44,6 +47,24 @@ public class CoAPMethodTest extends CoAPTestSupport {
                 CoAPConstants.COAP_METHOD,
                 "DELETE", String.class);
         assertEquals("DELETE: /test/c", result);
+    }
+
+    @Test
+    void testCoAPMethodHeaderLowerCase() {
+        // the method header is accepted in lower case
+        String result = template.requestBodyAndHeader("coap://localhost:" + PORT.getPort() + "/test/c", null,
+                CoAPConstants.COAP_METHOD,
+                "delete", String.class);
+        assertEquals("DELETE: /test/c", result);
+    }
+
+    @Test
+    void testCoAPMethodHeaderUnknown() {
+        String uri = "coap://localhost:" + PORT.getPort() + "/test/c";
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBodyAndHeader(uri, null, CoAPConstants.COAP_METHOD, "FETCH", String.class));
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Unsupported CoAP method: FETCH", cause.getMessage());
     }
 
     @Override

@@ -68,7 +68,8 @@ Spring Boot, Quarkus, or JBang. This makes it easy to try any example on all thr
 changing a single line of code. The first three run the example in a separate JVM that only
 contains the dependencies of the example (like a production deployment), while JBang runs it
 in-process in the Camel CLI JVM, which starts faster but has the CLI on the classpath as well. You can also set the integration name, toggle dev mode, and
-add extra dependencies.
+add extra dependencies. When the port the app will listen on (the one you set, else 8080) is taken already, the form
+says by whom, so a second app with an HTTP server does not fail to start.
 
 The example starts running in the background. The TUI auto-selects it as soon as it appears.
 From there you can explore tabs, watch messages flow, inspect the route diagram, and experiment.
@@ -100,6 +101,11 @@ Press *F10* to run the project -- Maven projects are run with `camel run pom.xml
 them with the appropriate goal (`spring-boot:run`, `quarkus:dev`, or `camel:run`), and plain
 directories are run with `camel run`. Either way the application logs to `~/.camel` so the Log tab
 shows its logs.
+
+Until it runs, the project is listed as *Stopped*: the Overview says what it is (runtime, Maven or route files, its
+folder) and the Source pane lists the routes it found and where they are, so *g* opens one. While it runs, the app
+takes its place under the name it gives itself, with the project's name next to it; when the run ends, the project is
+back as Stopped and still selected.
 
 This is a quick way to explore and run any Camel project without starting it separately first.
 

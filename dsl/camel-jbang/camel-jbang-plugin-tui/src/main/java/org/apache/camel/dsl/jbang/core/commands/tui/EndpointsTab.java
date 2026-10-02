@@ -106,6 +106,11 @@ class EndpointsTab extends AbstractTableTab {
     }
 
     @Override
+    protected boolean selectsFirstRow() {
+        return true;
+    }
+
+    @Override
     protected int getRowCount() {
         IntegrationInfo info = ctx.findSelectedIntegration();
         return info != null ? (int) info.endpoints.stream().filter(this::matchesFilter).count() : 0;
@@ -249,9 +254,9 @@ class EndpointsTab extends AbstractTableTab {
                 cells.add(rightCell(FlowHelper.sizeToString(ep.meanBodySize), 10));
                 cells.add(rightCell(FlowHelper.sizeToString(ep.meanHeadersSize), 10));
             }
-            cells.add(centerCell(ep.stub ? "x" : "", 6));
-            cells.add(centerCell(ep.remote ? "x" : "", 8));
-            cells.add(Cell.from(ep.uri != null ? ep.uri : ""));
+            cells.add(centerCell(ep.stub ? TuiIcons.CHECK : "", 6));
+            cells.add(centerCell(ep.remote ? TuiIcons.CHECK : "", 8));
+            cells.add(Cell.from(ep.uri != null ? TuiHelper.displayUri(ep.uri) : ""));
             rows.add(Row.from(cells));
         }
 

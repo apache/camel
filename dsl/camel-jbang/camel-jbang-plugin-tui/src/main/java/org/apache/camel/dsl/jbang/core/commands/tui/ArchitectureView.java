@@ -596,8 +596,8 @@ final class ArchitectureView {
             section(lines, "Routes", names(g.routes()), Set.of());
             section(lines, "Endpoints", g.entryPoints(), Set.of());
             frame.renderWidget(Paragraph.builder()
-                    .text(Text.from(lines))
-                    .overflow(Overflow.WRAP_WORD)
+                    .text(Text.from(TuiHelper.hangingWrap(lines, Math.max(1, area.width() - 2))))
+                    .overflow(Overflow.CLIP)
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Info ").build())
                     .build(), area);
             return;
@@ -619,8 +619,8 @@ final class ArchitectureView {
                     Theme.warning())));
         }
         frame.renderWidget(Paragraph.builder()
-                .text(Text.from(lines))
-                .overflow(Overflow.WRAP_WORD)
+                .text(Text.from(TuiHelper.hangingWrap(lines, Math.max(1, area.width() - 2))))
+                .overflow(Overflow.CLIP)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Info ").build())
                 .build(), area);
     }

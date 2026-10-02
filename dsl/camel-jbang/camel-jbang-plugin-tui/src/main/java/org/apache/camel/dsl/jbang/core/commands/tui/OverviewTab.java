@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -272,6 +274,10 @@ class OverviewTab extends AbstractTab {
             infraFocused = false;
         }
 
+        if (ctx.selectedPid == null && !infraFocused) {
+            // no integration selected: no row marked as if one were (the header and info panel say none is)
+            tableState.clearSelection();
+        }
         if (ctx.selectedPid != null) {
             for (int i = 0; i < infos.size(); i++) {
                 if (ctx.selectedPid.equals(infos.get(i).pid)) {
@@ -289,7 +295,9 @@ class OverviewTab extends AbstractTab {
 
         InfraInfo infraSel = infraDetailVisible ? ctx.findSelectedInfra() : null;
         boolean showInfraDetail = infraSel != null;
-        boolean hasSparkline = !showInfraDetail && chartMode != CHART_OFF
+        // an opened project that does not run has no rates: what it is takes the place of the chart
+        IntegrationInfo projectSel = showInfraDetail ? null : selectedProject(infos);
+        boolean hasSparkline = !showInfraDetail && projectSel == null && chartMode != CHART_OFF
                 && !throughputHistory.isEmpty() && ctx.shellPercent < 50;
         List<Constraint> constraints = new ArrayList<>();
         constraints.add(Constraint.fill());
@@ -303,7 +311,7 @@ class OverviewTab extends AbstractTab {
         if (hasSparkline && tableRoom < 5) {
             hasSparkline = false;
         }
-        if (hasSparkline || showInfraDetail) {
+        if (hasSparkline || showInfraDetail || projectSel != null) {
             bottomPanelHeight = Math.max(5, Math.min(bottomPanelHeight, area.height() - 5));
             constraints.add(Constraint.length(Math.max(Math.min(5, tableRoom), Math.min(bottomPanelHeight, tableRoom))));
         }
@@ -351,7 +359,31 @@ class OverviewTab extends AbstractTab {
             renderThroughputChart(frame, chunks.get(chunks.size() - 1));
         } else if (showInfraDetail) {
             renderInfraInfoPanel(frame, chunks.get(chunks.size() - 1), infraSel);
+        } else if (projectSel != null && chunks.size() > 1) {
+            renderProjectPanel(frame, chunks.get(chunks.size() - 1), projectSel);
         }
+    }
+
+    private IntegrationInfo selectedProject(List<IntegrationInfo> infos) {
+        if (ctx.selectedPid == null) {
+            return null;
+        }
+        for (IntegrationInfo info : infos) {
+            if (info.phantom && ctx.selectedPid.equals(info.pid)) {
+                return info;
+            }
+        }
+        return null;
+    }
+
+    private void renderProjectPanel(Frame frame, Rect area, IntegrationInfo project) {
+        Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .borderStyle(Theme.muted())
+                .title(Title.from(Line.from(Span.styled(" Opened project ", Theme.title()))))
+                .build();
+        frame.renderWidget(block, area);
+        Rect inner = block.inner(area);
+        frame.renderWidget(Paragraph.builder().text(Text.from(projectLines(project, inner.width()))).build(), inner);
     }
 
     /**
@@ -396,6 +428,10 @@ class OverviewTab extends AbstractTab {
                 String nameText = platformIcon + " " + (info.name != null ? info.name : "");
                 List<Span> nameSpans = new ArrayList<>();
                 nameSpans.add(Span.styled(nameText, Theme.info()));
+                if (info.openedAs != null && !info.openedAs.equalsIgnoreCase(info.name)) {
+                    // the project it was opened as, as the app runs under a name of its own
+                    nameSpans.add(Span.styled(" (" + info.openedAs + ")", Theme.muted()));
+                }
                 if (info.devMode) {
                     nameSpans.add(Span.styled(" [dev]", Theme.label()));
                 }
@@ -483,6 +519,9 @@ class OverviewTab extends AbstractTab {
         long maxFailed = infos.stream().mapToLong(i -> i.failed).max().orElse(0);
         int tw = Math.max(numWidth(maxTotal), 6);
         int fw = Math.max(numWidth(maxFailed), 6);
+        // TOTAL and FAIL are as wide as the longest "count (since last)", so the since part is not cut
+        int totalColWidth = 14;
+        int failColWidth = 14;
         for (IntegrationInfo info : infos) {
             boolean isEven = (rowIndex++ % 2 == 0);
             Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
@@ -495,7 +534,7 @@ class OverviewTab extends AbstractTab {
                         Cell.from(Span.styled(nameText, Theme.info())),
                         Cell.from(Span.styled("", Theme.muted())),
                         Cell.from(Span.styled("", Theme.muted())),
-                        Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Theme.error())),
+                        Cell.from(projectStatus(info, System.currentTimeMillis())),
                         Cell.from(Span.styled("", Theme.muted())),
                         Cell.from(Span.styled("", Theme.muted())),
                         Cell.from(Span.styled("", Theme.muted())),
@@ -546,6 +585,10 @@ class OverviewTab extends AbstractTab {
                 String nameText = platformIcon + " " + (info.name != null ? info.name : "");
                 List<Span> nameSpans = new ArrayList<>();
                 nameSpans.add(Span.styled(nameText, Theme.info()));
+                if (info.openedAs != null && !info.openedAs.equalsIgnoreCase(info.name)) {
+                    // the project it was opened as, as the app runs under a name of its own
+                    nameSpans.add(Span.styled(" (" + info.openedAs + ")", Theme.muted()));
+                }
                 if (info.devMode) {
                     nameSpans.add(Span.styled(" [dev]", Theme.label()));
                 }
@@ -584,6 +627,8 @@ class OverviewTab extends AbstractTab {
                         ? Line.from(Span.styled(String.format("%" + fw + "d", info.failed), failStyle),
                                 Span.styled(" (" + info.sinceLastFailed + ")", Theme.muted()))
                         : Line.from(Span.styled(String.format("%" + fw + "d", info.failed), failStyle));
+                totalColWidth = Math.max(totalColWidth, totalCell.width() + 1);
+                failColWidth = Math.max(failColWidth, failCell.width() + 1);
 
                 rows.add(Row.from(
                         Cell.from(info.pid),
@@ -622,8 +667,8 @@ class OverviewTab extends AbstractTab {
                 Constraint.length(10),
                 Constraint.length(7),
                 Constraint.length(8),
-                Constraint.length(14),
-                Constraint.length(14),
+                Constraint.length(totalColWidth),
+                Constraint.length(failColWidth),
                 Constraint.min(20),
                 Constraint.length(0)
         };
@@ -793,6 +838,83 @@ class OverviewTab extends AbstractTab {
         renderInfoPanel(frame, infoArea);
     }
 
+    /** The info panel when no integration is selected: how many run, and their messages and memory together. */
+    static List<Line> summaryLines(List<IntegrationInfo> infos) {
+        Style dim = Theme.muted();
+        int running = 0;
+        int projects = 0;
+        long total = 0;
+        long failed = 0;
+        long heap = 0;
+        for (IntegrationInfo info : infos) {
+            if (info.vanishing) {
+                continue;
+            }
+            if (info.phantom) {
+                projects++;
+                continue;
+            }
+            running++;
+            total += info.exchangesTotal;
+            failed += info.failed;
+            heap += Math.max(0, info.heapMemUsed);
+        }
+        List<Line> lines = new ArrayList<>();
+        lines.add(Line.from(Span.styled("Running:  ", dim), Span.raw(String.valueOf(running))));
+        if (projects > 0) {
+            lines.add(Line.from(Span.styled("Opened:   ", dim), Span.raw(projects + " not running")));
+        }
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled("Total:    ", dim), Span.raw(String.valueOf(total))));
+        lines.add(Line.from(Span.styled("Failed:   ", dim),
+                Span.styled(String.valueOf(failed), failed > 0 ? Theme.error() : Style.EMPTY)));
+        if (heap > 0) {
+            lines.add(Line.from(Span.styled("Heap:     ", dim), Span.raw(TuiHelper.formatBytes(heap))));
+        }
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled("\u2191\u2193", Theme.hintKey()), Span.styled(" select one", dim)));
+        return lines;
+    }
+
+    /** How long an opened project shows as Starting when its app does not show up. */
+    static final long PROJECT_START_MS = 5 * 60_000;
+
+    /** The status of an opened project: Starting while it was asked to run and its app is not up yet, else Stopped. */
+    static Span projectStatus(IntegrationInfo project, long now) {
+        if (project.startingSince > 0 && now - project.startingSince < PROJECT_START_MS) {
+            return Span.styled(TuiIcons.GEAR + " Starting", Theme.warning());
+        }
+        return Span.styled(TuiIcons.STOPPED + " Stopped", Theme.error());
+    }
+
+    /** The info panel of an opened project that is not running. */
+    static List<Line> projectLines(IntegrationInfo project, int width) {
+        Style dim = Theme.muted();
+        List<Line> lines = new ArrayList<>();
+        lines.add(Line.from(Span.styled("Project: ", dim),
+                Span.raw(TuiHelper.truncate(project.name != null ? project.name : "", Math.max(1, width - 9)))));
+        if (project.platform != null) {
+            lines.add(Line.from(Span.styled("Runtime: ", dim),
+                    Span.raw(TuiIcons.platformIcon(project.platform) + project.platform)));
+        }
+        if (project.sourceDir != null) {
+            Path dir = Path.of(project.sourceDir);
+            boolean maven = Files.isRegularFile(dir.resolve("pom.xml"));
+            lines.add(Line.from(Span.styled("Build:   ", dim),
+                    Span.raw(maven ? "Maven (pom.xml)" : "camel run (route files)")));
+            lines.add(Line.from(Span.styled("Folder:  ", dim),
+                    Span.raw(TuiHelper.truncateStart(project.sourceDir, Math.max(1, width - 9)))));
+        }
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(projectStatus(project, System.currentTimeMillis())));
+        lines.add(Line.from(Span.raw("")));
+        if (project.startingSince == 0) {
+            lines.add(Line.from(Span.styled(" F10 ", Theme.hintKey()), Span.styled(" runs it", dim)));
+        }
+        lines.add(Line.from(Span.styled(" 2 ", Theme.hintKey()), Span.styled(" Source shows its routes", dim)));
+        return lines;
+    }
+
     private void renderInfoPanel(Frame frame, Rect area) {
         if (!infraFocused) {
             InfraInfo infra = ctx.findSelectedInfra();
@@ -815,6 +937,15 @@ class OverviewTab extends AbstractTab {
                 sel = active.get(0);
             }
         }
+        if (sel == null) {
+            // nothing selected: what runs, in numbers, rather than an empty box
+            Block allBlock = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                    .title(Title.from(Line.from(Span.styled(" All ", Theme.title())))).build();
+            frame.renderWidget(allBlock, area);
+            frame.renderWidget(Paragraph.builder().text(Text.from(summaryLines(ctx.data.get()))).build(),
+                    allBlock.inner(area));
+            return;
+        }
         Block infoBlock = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).build();
         frame.renderWidget(infoBlock, area);
         Rect inner = infoBlock.inner(area);
@@ -822,6 +953,11 @@ class OverviewTab extends AbstractTab {
         Style dim = Theme.muted();
         int jvmDetailStart = -1;
         int jvmDetailCount = 0;
+        if (sel != null && sel.phantom) {
+            // an opened project that does not run: what it is, and how to run it (no runtime facts to show)
+            frame.renderWidget(Paragraph.builder().text(Text.from(projectLines(sel, inner.width()))).build(), inner);
+            return;
+        }
         if (sel != null) {
             if (sel.platform != null) {
                 String platEmoji = TuiIcons.platformIcon(sel.platform);
@@ -1304,6 +1440,9 @@ class OverviewTab extends AbstractTab {
             JsonObject row = new JsonObject();
             row.put("pid", info.pid);
             row.put("name", info.name);
+            if (info.openedAs != null) {
+                row.put("openedAs", info.openedAs);
+            }
             row.put("camelVersion", info.camelVersion);
             row.put("platform", info.platform);
             row.put("state", info.state);

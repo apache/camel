@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
@@ -533,7 +534,21 @@ public class CamelMonitor extends CamelCommand {
      */
     void quitTui(boolean confirm) {
         if (confirm && ctx.confirmActions) {
-            popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", () -> runner.quit());
+            LaunchManager launches = actionsPopup.getLaunchManager();
+            long running = launches.runningLaunchCount();
+            if (running > 0) {
+                // what was started from here keeps running when the TUI quits: say so, and offer to stop it
+                String what = running == 1
+                        ? "1 integration started here keeps running"
+                        : running + " integrations started here keep running";
+                popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", what, () -> runner.quit(),
+                        's', running == 1 ? "stop it and quit" : "stop them and quit", () -> {
+                            launches.stopLaunched();
+                            runner.quit();
+                        });
+            } else {
+                popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", () -> runner.quit());
+            }
         } else {
             runner.quit();
         }
@@ -1908,7 +1923,14 @@ public class CamelMonitor extends CamelCommand {
         boolean anyDiagramShowing = tabRegistry.routesTab().isShowDiagram()
                 || tabRegistry.diagramTab().isShowDiagram();
         long interval = anyDiagramShowing ? Math.max(refreshInterval, 1000) : refreshInterval;
-        boolean dataRefreshed = false;
+        // the selection changed without a key or click (an integration started, stopped or was auto-selected):
+        // every tab is told, as it is when the user switches
+        boolean selectionChanged = !Objects.equals(ctx.selectedPid, notifiedSelectedPid);
+        if (selectionChanged) {
+            resetIntegrationTabState();
+        }
+        // the background refresh brought new data: draw it now, not at the next refresh
+        boolean dataRefreshed = dataService.takeFreshData() || selectionChanged;
         if (now - dataService.lastRefresh() >= interval) {
             dataService.refresh(runner, this::refreshLogData, this::refreshConditionalData);
             tabRegistry.routesTab().refreshDiagramIfNeeded();
@@ -1953,8 +1975,12 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void resetIntegrationTabState() {
+        notifiedSelectedPid = ctx.selectedPid;
         tabRegistry.resetIntegrationTabState(dataService, filesBrowser);
     }
+
+    // the selected integration the tabs were last told about
+    private String notifiedSelectedPid;
 
     // ---- Rendering ----
 
@@ -2772,6 +2798,10 @@ public class CamelMonitor extends CamelCommand {
             filesBrowser.renderFooter(spans);
         } else if (popupManager.isKillConfirmVisible() || popupManager.isConfirmVisible()) {
             hint(spans, "Enter", "confirm");
+            String extra = popupManager.isConfirmVisible() ? popupManager.confirmExtraHint() : null;
+            if (extra != null) {
+                hint(spans, extra.substring(0, 1), extra.substring(2));
+            }
             hintLast(spans, "Esc", "cancel");
         } else if (popupManager.isSwitchPopupVisible()) {
             hint(spans, "Enter", "switch");

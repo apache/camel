@@ -58,6 +58,7 @@ import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
+import org.apache.camel.dsl.jbang.core.commands.RouteDslConverter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -736,7 +737,9 @@ class SourceTab extends AbstractTab {
         }
         FilesBrowser.FileEntry entry = selectedEntry();
         boolean hasTarget = entry != null && !"..".equals(entry.name());
-        fileActionsPopup.open(hasTarget ? entry.name() : null, hasTarget);
+        boolean routeFile = hasTarget && !entry.directory()
+                && (isCamelSourceFile(Path.of(entry.path())) || isJavaRouteFile(Path.of(entry.path())));
+        fileActionsPopup.open(hasTarget ? entry.name() : null, hasTarget, routeFile);
     }
 
     private FilesBrowser.FileEntry selectedEntry() {
@@ -796,6 +799,9 @@ class SourceTab extends AbstractTab {
                     TuiHelper.copyToClipboard(entry.path());
                     notify("Copied path to clipboard", false);
                 }
+                case CONVERT_YAML -> convert(entry, "yaml");
+                case CONVERT_XML -> convert(entry, "xml");
+                case CONVERT_JAVA -> convert(entry, "java");
             }
         } catch (Exception e) {
             notify(e.getMessage() != null ? e.getMessage() : e.toString(), true);
@@ -806,6 +812,31 @@ class SourceTab extends AbstractTab {
         if (ctx.notificationCallback != null) {
             ctx.notificationCallback.accept(msg, error);
         }
+    }
+
+    /**
+     * Converts the route file to another DSL without running it (CAMEL-25254), into a new file next to it which opens;
+     * what does not carry over is said at the top of the new file. An existing file is not overwritten.
+     */
+    private void convert(FilesBrowser.FileEntry entry, String format) throws IOException {
+        if (entry == null) {
+            return;
+        }
+        RouteDslConverter.Result r = RouteDslConverter.convert(Path.of(entry.path()), format);
+        if (!r.converted()) {
+            notify(r.refused(), true);
+            return;
+        }
+        Path target = currentDir.resolve(r.fileName());
+        if (Files.exists(target)) {
+            notify(r.fileName() + " exists already: rename or delete it first", true);
+            return;
+        }
+        Files.writeString(target, RouteDslConverter.withNotes(r.content(), r.notes(), format), StandardCharsets.UTF_8);
+        if (loadDirectory(currentDir, r.fileName())) {
+            openSelectedEntry();
+        }
+        notify("Converted to " + r.fileName() + (r.notes().isEmpty() ? "" : ", see the notes at its top"), false);
     }
 
     private void openSelectedEntry() {
@@ -845,6 +876,21 @@ class SourceTab extends AbstractTab {
         sourceViewer.setAskAi(ctx.askAiCallback);
         String name = filePath.getFileName().toString();
         sourceViewer.setUriCompletion(!routeFile ? null : name.endsWith(".java") ? "java" : "xml");
+        // simple expressions in every route file: YAML, Java and XML (CAMEL-25219)
+        sourceViewer.setSimpleCompletion(routeFile || isCamelSourceFile(filePath)
+                ? (c, lines) -> assist.provideSimpleCompletions(c, lines, this::beanItems) : null);
+        boolean xmlRoute = routeFile && name.toLowerCase().endsWith(".xml");
+        sourceViewer.setCursorQuickDocProvider(!routeFile && !isCamelSourceFile(filePath) ? null
+                : xmlRoute ? (lines, row, col) -> {
+                    // the simple function the cursor is on, else the element or attribute (CAMEL-25244)
+                    List<SourceViewer.DocEntry> simple = assist.provideSimpleQuickDoc(lines, row, col);
+                    return !simple.isEmpty() ? simple : assist.provideXmlQuickDoc(lines, row, col);
+                }
+                : assist::provideSimpleQuickDoc);
+        // the route chain of a Java route (CAMEL-25241)
+        sourceViewer.setJavaCompletion(routeFile && name.endsWith(".java") ? assist::provideJavaCompletions : null);
+        // the elements, attributes and values of an XML route (CAMEL-25240)
+        sourceViewer.setXmlCompletion(routeFile && name.toLowerCase().endsWith(".xml") ? assist::provideXmlCompletions : null);
         if (isCamelSourceFile(filePath)) {
             sourceViewer.setQuickDocProvider(assist::provideCamelQuickDocs);
             sourceViewer.setDeprecatedLineScanner(null);
@@ -1037,6 +1083,55 @@ class SourceTab extends AbstractTab {
                 area);
     }
 
+    /**
+     * What the Source pane shows before a file is opened: the routes of the project and where they are, so a Maven
+     * project (whose routes are folders deep) shows what it holds and how to open one.
+     */
+    static List<Line> emptySourceLines(List<RouteEntry> routes, Path root) {
+        List<Line> lines = new ArrayList<>();
+        lines.add(Line.from(Span.raw("")));
+        if (routes.isEmpty()) {
+            lines.add(Line.from(Span.styled("   Select a file and press Enter to view source", Style.EMPTY.dim())));
+            return lines;
+        }
+        lines.add(Line.from(Span.styled("   " + routes.size() + (routes.size() == 1 ? " route" : " routes")
+                                        + " in this project",
+                Theme.label())));
+        lines.add(Line.from(Span.raw("")));
+        int idWidth = 4;
+        for (RouteEntry re : routes) {
+            idWidth = Math.max(idWidth, label(re).length());
+        }
+        idWidth = Math.min(idWidth, 30);
+        for (RouteEntry re : routes) {
+            String where = re.filePath();
+            if (root != null && where != null) {
+                try {
+                    where = root.relativize(Path.of(where)).toString();
+                } catch (IllegalArgumentException e) {
+                    // not under the project: keep the full path
+                }
+            }
+            lines.add(Line.from(
+                    Span.styled("   " + String.format("%-" + idWidth + "s", TuiHelper.truncate(label(re), idWidth)),
+                            Theme.info()),
+                    Span.styled("  " + where + ":" + re.fromLine(), Style.EMPTY.dim())));
+        }
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(
+                Span.styled("   ", Style.EMPTY),
+                Span.styled(" g ", Theme.hintKey()),
+                Span.styled(" opens a route, or select a file and press Enter", Style.EMPTY.dim())));
+        return lines;
+    }
+
+    private static String label(RouteEntry re) {
+        if (re.routeId() != null && !re.routeId().isBlank()) {
+            return re.routeId();
+        }
+        return re.fromUri() != null ? re.fromUri() : "";
+    }
+
     private void renderSourcePanel(Frame frame, Rect area) {
         Style sourceTitleStyle = focusOnViewer ? Theme.title() : Style.EMPTY.fg(Theme.accent());
         Style sourceBorderStyle = ctx.paneBorder(focusOnViewer);
@@ -1046,9 +1141,7 @@ class SourceTab extends AbstractTab {
             sourceViewer.setFocused(focusOnViewer);
             sourceViewer.render(frame, area);
         } else {
-            List<Line> lines = new ArrayList<>();
-            lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(Span.styled("   Select a file and press Enter to view source", Style.EMPTY.dim())));
+            List<Line> lines = emptySourceLines(routeIndex, rootDir);
 
             frame.renderWidget(
                     Paragraph.builder()
@@ -1411,6 +1504,18 @@ class SourceTab extends AbstractTab {
             }
         }
         return result;
+    }
+
+    /** The beans the project declares, for ${bean:..} in simple expressions (CAMEL-25242). */
+    private List<AutocompletePopup.CompletionItem> beanItems() {
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (ProjectBeans.Location bean : projectBeans().beans()) {
+            String where = "Declared in " + Path.of(bean.filePath()).getFileName() + ":" + (bean.line() + 1);
+            items.add(new AutocompletePopup.CompletionItem(
+                    bean.label(), bean.type() != null ? where + " as " + bean.type() : where, bean.type(), null, false,
+                    null, null, false));
+        }
+        return items;
     }
 
     /** The beans and classes the project declares, read again when a file of the project changed. */

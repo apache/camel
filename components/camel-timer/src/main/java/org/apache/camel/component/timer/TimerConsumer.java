@@ -48,6 +48,8 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
     private ExecutorService executorService;
     private final AtomicLong counter = new AtomicLong();
     private volatile boolean polling;
+    // whether this consumer holds a reference to the shared timer, which it must release when it is stopped
+    private volatile boolean timerTaken;
 
     public TimerConsumer(TimerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -183,6 +185,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
             // the StartupListener is configuring the task later
             if (task != null && !configured && endpoint.getCamelContext().getStatus().isStarted()) {
                 Timer timer = endpoint.getTimer(this);
+                timerTaken = true;
                 configureTask(task, timer);
             }
         } else {
@@ -213,8 +216,11 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
         task = null;
         configured = false;
 
-        // remove timer
-        endpoint.removeTimer(this);
+        // release the timer, but only if this consumer took it (a consumer with a negative delay does not use it)
+        if (timerTaken) {
+            timerTaken = false;
+            endpoint.removeTimer(this);
+        }
 
         // if executorService is instantiated then we shutdown it
         if (executorService != null) {
@@ -229,6 +235,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
     public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
         if (task != null && !configured) {
             Timer timer = endpoint.getTimer(this);
+            timerTaken = true;
             configureTask(task, timer);
         }
     }

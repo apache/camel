@@ -53,11 +53,13 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
 
     private ArgumentCaptor<MembershipListener> argument;
 
+    private final UUID listenerId = UUID.randomUUID();
+
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.getCluster()).thenReturn(cluster);
         argument = ArgumentCaptor.forClass(MembershipListener.class);
-        when(cluster.addMembershipListener(any())).thenReturn(UUID.randomUUID());
+        when(cluster.addMembershipListener(any())).thenReturn(listenerId);
     }
 
     @Override
@@ -106,12 +108,20 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
         this.checkHeaders(headers, HazelcastConstants.REMOVED);
     }
 
+    @Test
+    public void testStopRemovesListener() throws Exception {
+        context.getRouteController().stopRoute("instance");
+
+        verify(cluster).removeMembershipListener(listenerId);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast-%sfoo", HazelcastConstants.INSTANCE_PREFIX)).log("instance...").choice()
+                from(String.format("hazelcast-%sfoo", HazelcastConstants.INSTANCE_PREFIX)).routeId("instance")
+                        .log("instance...").choice()
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED)).log("...added")
                         .to("mock:added").otherwise().log("...removed").to("mock:removed");
             }

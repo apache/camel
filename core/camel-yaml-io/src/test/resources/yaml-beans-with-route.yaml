@@ -20,9 +20,7 @@
       - name: myService
         type: com.example.MyService
         properties:
-          property:
-            - key: url
-              value: http://localhost:8080
+          url: http://localhost:8080
     route:
       - customId: true
         id: myRoute

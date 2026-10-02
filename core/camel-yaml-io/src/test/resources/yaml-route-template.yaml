@@ -18,7 +18,7 @@
 - routeTemplate:
     customId: true
     id: myTemplate
-    templateParameter:
+    parameters:
       - description: the foo parameter
         name: foo
       - description: the bar parameter

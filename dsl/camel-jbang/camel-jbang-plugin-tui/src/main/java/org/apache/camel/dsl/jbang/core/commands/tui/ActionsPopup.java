@@ -144,6 +144,7 @@ class ActionsPopup {
                  Runnable burstCallback, Set<String> stoppingPids) {
         this.runningNames = runningNames;
         this.integrations = integrations;
+        runOptionsForm.setIntegrations(integrations);
         this.infraServices = infraServices;
         this.captionOverlay = captionOverlay;
         this.screenshotAction = screenshotAction;
@@ -169,6 +170,7 @@ class ActionsPopup {
 
     void setContext(MonitorContext ctx) {
         this.ctx = ctx;
+        ctx.onProjectOpened = docViewerPopup::closeFailureLog;
         docViewerPopup.setContext(ctx);
         folderInputPopup.setContext(ctx);
     }
@@ -1321,7 +1323,8 @@ class ActionsPopup {
         List<String> extraArgs = runOptionsForm.buildArgs();
         runOptionsForm.close();
 
-        ctx.removePhantom(phantom.pid);
+        // the project stays listed (Starting) until its app shows up and stands in for it
+        phantom.startingSince = System.currentTimeMillis();
 
         if (phantom.projectType != null) {
             launchManager.launchMavenProject(phantom.sourceDir, phantom.projectType, displayName, extraArgs);
@@ -1391,6 +1394,14 @@ class ActionsPopup {
     }
 
     private void showFailureLog(String name, Path logFile) {
+        if (ctx != null) {
+            // an opened project whose run failed is Stopped again
+            for (IntegrationInfo project : ctx.phantomIntegrations) {
+                if (project.startingSince > 0 && name != null && name.equalsIgnoreCase(project.name)) {
+                    project.startingSince = 0;
+                }
+            }
+        }
         if (!docViewerPopup.hasFailureContent(logFile)) {
             setNotification("Failed: " + name + " (no output)", true);
             return;
@@ -1472,7 +1483,11 @@ class ActionsPopup {
                 Theme.toggle();
                 refreshTheme();
             }
-            case SCREENSHOT -> screenshotAction.run();
+            case SCREENSHOT -> {
+                // the screen as it is shown, with an open menu or popup (for docs): nothing is closed first
+                screenshotAction.run();
+                return true;
+            }
             case SHOW_KEYSTROKES -> toggleKeystrokes.run();
             case TAPE_RECORDING -> toggleTapeRecording.run();
             case DOCTOR -> doctorPopup.open();

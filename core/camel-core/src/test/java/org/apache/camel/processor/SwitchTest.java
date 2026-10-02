@@ -27,12 +27,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.Model;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
+import org.apache.camel.model.SwitchDefinition;
+import org.apache.camel.model.ToDefinition;
 import org.apache.camel.support.ExpressionAdapter;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SwitchTest extends ContextTestSupport {
@@ -51,6 +57,20 @@ class SwitchTest extends ContextTestSupport {
         }
         template.sendBody("direct:scalar", "message");
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    void theSendOfACaseIsFoundByTheIdOfTheCase() {
+        // the management and the dev consoles look a processor up by its id: a case is found as its send
+        // (CAMEL-25237), as the otherwise is
+        Model model = context.getCamelContextExtension().getContextPlugin(Model.class);
+        SwitchDefinition sw = (SwitchDefinition) model.getRouteDefinitions().get(0).getOutputs().get(0);
+        for (SwitchCaseDefinition c : sw.getCases()) {
+            ProcessorDefinition<?> found = model.getProcessorDefinition(c.getId());
+            assertSame(c.getToDefinition(), found, c.getId());
+        }
+        assertSame(sw.getOtherwiseDefinition(), model.getProcessorDefinition(sw.getId() + "-otherwise"));
+        assertEquals("mock:billing", ((ToDefinition) model.getProcessorDefinition(sw.getCases().get(0).getId())).getUri());
     }
 
     @Test

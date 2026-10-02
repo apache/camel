@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -73,6 +75,13 @@ final class ProjectBeans {
     private ProjectBeans(Map<String, Location> byName, Map<String, Location> byClass) {
         this.byName = byName;
         this.byClass = byClass;
+    }
+
+    /** The beans the files declare by name, sorted by name. */
+    List<Location> beans() {
+        List<Location> found = new ArrayList<>(byName.values());
+        found.sort(Comparator.comparing(Location::label, String.CASE_INSENSITIVE_ORDER));
+        return found;
     }
 
     /** Reads the beans and classes the files declare. */
