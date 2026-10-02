@@ -17,6 +17,11 @@
 package org.apache.camel.component.sjms.consumer;
 
 public class BatchConsumerWorkerException
+/**
+ * Unchecked exception thrown when a {@link BatchConsumerWorker} encounters
+ * a JMS-level failure that terminates its polling loop.
+ */
+public class BatchConsumerWorkerException
         extends RuntimeException {
 
     public BatchConsumerWorkerException(Throwable err) {
