@@ -536,31 +536,12 @@ public class Run extends CamelCommand {
     }
 
     private int runBundledExample(JsonObject entry) throws Exception {
-        String eName = entry.getString("name");
         Path tempDir = ExampleHelper.extractBundledExample(entry);
-        List<String> exampleFiles = ExampleHelper.getFiles(entry);
-
-        printer().println("Running example: " + eName);
-        for (String f : exampleFiles) {
-            files.add(tempDir.resolve(f).toString());
-        }
-        if ("CamelJBang".equals(name)) {
-            name = eName;
-        }
-
-        // use the temp dir as base so run() loads the example's application.properties
-        exportBaseDir = tempDir;
-
-        if (!exportRun) {
-            printConfigurationValues("Running integration with the following configuration:");
-        }
-        return run();
+        return runExampleIn(entry, tempDir);
     }
 
     private int runGithubExample(JsonObject entry) throws Exception {
         String eName = entry.getString("name");
-        List<String> exampleFiles = ExampleHelper.getFiles(entry);
-
         printer().println("Fetching example from GitHub: " + eName);
         if (ExampleHelper.requiresDocker(entry)) {
             printer().println("Note: this example requires Docker/Podman");
@@ -574,20 +555,52 @@ public class Run extends CamelCommand {
             printer().printErr("This example requires an internet connection.");
             return 1;
         }
+        return runExampleIn(entry, tempDir);
+    }
 
-        for (String f : exampleFiles) {
-            files.add(tempDir.resolve(f).toString());
-        }
-        if ("CamelJBang".equals(name)) {
-            name = eName;
+    /**
+     * Runs the example in its folder. A JVM cannot change its working directory, so the example runs in a JVM of its
+     * own started in that folder: its routes read and write files relative to it (file:orders, out/), wherever camel
+     * run is started (CAMEL-25236). Exporting and transforming do not run the routes, and stay in this JVM.
+     */
+    private int runExampleIn(JsonObject entry, Path dir) throws Exception {
+        String eName = entry.getString("name");
+        printer().println("Running example: " + eName);
+        if (exportRun || transformRun || spec == null) {
+            for (String f : ExampleHelper.getFiles(entry)) {
+                files.add(dir.resolve(f).toString());
+            }
+            if ("CamelJBang".equals(name)) {
+                name = ExampleHelper.getShortName(entry);
+            }
+            // use the folder as base so run() loads the example's application.properties
+            exportBaseDir = dir;
+            return run();
         }
 
-        exportBaseDir = tempDir;
-
-        if (!exportRun) {
-            printConfigurationValues("Running integration with the following configuration:");
+        printer().println("Example folder: " + dir + " (the files it reads and writes are there)");
+        List<String> cmds = ExampleHelper.runArgs(spec.commandLine().getParseResult().originalArgs(), entry);
+        RunHelper.addCamelCLICommand(cmds);
+        if (verbose) {
+            printer().println(String.join(" ", cmds));
         }
-        return run();
+        ProcessBuilder pb = new ProcessBuilder(cmds);
+        pb.directory(dir.toFile());
+        pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        Process p = pb.start();
+        this.spawnPid = p.pid();
+        // the example stops with this JVM (Ctrl+C reaches both, a kill of this one only this one)
+        Thread hook = new Thread(p::destroy, "CamelExampleStop");
+        Runtime.getRuntime().addShutdownHook(hook);
+        try {
+            return p.waitFor();
+        } finally {
+            try {
+                Runtime.getRuntime().removeShutdownHook(hook);
+            } catch (IllegalStateException e) {
+                // shutting down already
+            }
+        }
     }
 
     // the logback configuration of an existing Spring Boot project run, in a temp file
