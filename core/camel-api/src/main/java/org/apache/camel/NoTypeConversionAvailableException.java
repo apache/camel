@@ -45,6 +45,18 @@ public class NoTypeConversionAvailableException extends CamelException {
     }
 
     /**
+     * @param message the message, for a caller that knows more about the failure than the conversion does (such as
+     *                unmarshal on a null message body)
+     * @param value   the value for which no type converter was found
+     * @param type    the expected target type
+     */
+    public NoTypeConversionAvailableException(String message, @Nullable Object value, Class<?> type) {
+        super(Objects.requireNonNull(message, "message"));
+        this.value = value;
+        this.type = Objects.requireNonNull(type, "type");
+    }
+
+    /**
      * @param value the value for which no type converter was found
      * @param type  the expected target type
      * @param cause the cause of the failure
@@ -85,9 +97,8 @@ public class NoTypeConversionAvailableException extends CamelException {
      */
     public static String createMessage(@Nullable Object value, Class<?> type) {
         Objects.requireNonNull(type, "type");
-        return "No type converter available to convert from type: "
-               + (value != null ? value.getClass().getCanonicalName() : null)
-               + " to the required type: " + type.getCanonicalName();
+        return "No type converter available to convert from type: " + typeName(value)
+               + " to the required type: " + type.getCanonicalName() + (value == null ? " (the value is null)" : "");
     }
 
     /**
@@ -96,8 +107,19 @@ public class NoTypeConversionAvailableException extends CamelException {
     public static String createMessage(@Nullable Object value, Class<?> type, Throwable cause) {
         Objects.requireNonNull(type, "type");
         Objects.requireNonNull(cause, "cause");
-        return "Converting Exception when converting from type: "
-               + (value != null ? value.getClass().getCanonicalName() : null) + " to the required type: "
+        return "Converting Exception when converting from type: " + typeName(value) + " to the required type: "
                + type.getCanonicalName() + ", which is caused by " + cause;
+    }
+
+    /**
+     * The type of the value: the canonical name, or the binary name for a class that has none (an anonymous class), so
+     * that "null" in the message means the value is null.
+     */
+    private static String typeName(@Nullable Object value) {
+        if (value == null) {
+            return "null";
+        }
+        String name = value.getClass().getCanonicalName();
+        return name != null ? name : value.getClass().getName();
     }
 }
