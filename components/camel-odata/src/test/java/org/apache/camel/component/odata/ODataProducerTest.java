@@ -17,7 +17,9 @@
 package org.apache.camel.component.odata;
 
 import java.math.BigDecimal;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +30,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.SSLException;
+
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
@@ -36,6 +40,7 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,7 +72,7 @@ public class ODataProducerTest extends CamelTestSupport {
             .options(wireMockConfig()
                     .dynamicPort()
                     .dynamicHttpsPort()
-                    .keystorePath(Objects.requireNonNull(ODataProducerTest.class.getResource("/localhost.p12")).getFile())
+                    .keystorePath(getResourcePath("/localhost.p12"))
                     .keystoreType("PKCS12")
                     .keystorePassword("changeit")
                     .keyManagerPassword("changeit"))
@@ -88,6 +93,15 @@ public class ODataProducerTest extends CamelTestSupport {
     public void tearDownProducer() throws Exception {
         if (producer != null) {
             producer.stop();
+        }
+    }
+
+    private static String getResourcePath(String resource) {
+        try {
+            return Paths.get(Objects.requireNonNull(
+                    ODataProducerTest.class.getResource(resource)).toURI()).toString();
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Unable to resolve resource: " + resource, e);
         }
     }
 
@@ -1073,19 +1087,8 @@ public class ODataProducerTest extends CamelTestSupport {
             Exchange exchangeWithoutSsl = endpointWithoutSsl.createExchange();
 
             Throwable thrown = assertThrows(Throwable.class, () -> endpointWithoutSslProducer.process(exchangeWithoutSsl));
-
-            // Check for SSLException / SSLHandshakeException in the cause chain
-            boolean hasSslCause = false;
-            Throwable current = thrown;
-            while (current != null) {
-                if (current instanceof javax.net.ssl.SSLException) {
-                    hasSslCause = true;
-                    break;
-                }
-                current = current.getCause();
-            }
-
-            assertTrue(hasSslCause, "Expected SSL failure cause, but received: " + thrown);
+            assertNotNull(ObjectHelper.getException(SSLException.class, thrown),
+                    "Expected SSL failure cause, but received: " + thrown);
         } finally {
             endpointWithoutSslProducer.stop();
             httpsProducer.stop();
