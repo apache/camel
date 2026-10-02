@@ -1491,6 +1491,12 @@ The same default is now also applied to the `ClientConfig` that Camel builds for
 endpoints, when neither a referenced `ClientConfig` nor `hazelcastConfigUri` is supplied. Client mode
 previously behaved differently from node mode for an otherwise identical endpoint configuration.
 
+Camel still uses a user-supplied `Config` or `ClientConfig` (a `hazelcastConfig` bean or a
+`hazelcastConfigUri` file) unchanged. It now logs a WARN when it starts a Hazelcast member or client from
+such a configuration that declares no `JavaSerializationFilterConfig`, unless a JVM-wide `jdk.serialFilter`
+is set. To remove the warning, declare a `java-serialization-filter` in the configuration, as described in
+the xref:components::hazelcast-summary.adoc[Hazelcast component] documentation.
+
 === camel-netty - NettyConverter.toByteArray returns a copy of the buffer's readable bytes
 
 The `ByteBuf` to `byte[]` type converter (`NettyConverter.toByteArray`, also used when converting a Netty
