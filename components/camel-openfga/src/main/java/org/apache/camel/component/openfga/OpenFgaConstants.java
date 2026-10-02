@@ -38,7 +38,9 @@ public final class OpenFgaConstants {
               description = "Why the exchange was denied, set only on a deny. `denied` when OpenFGA evaluated the"
                             + " relationship and answered no; `missing-user`, `missing-object`, `missing-relation`,"
                             + " `wildcard-subject` or `invalid-identifier` when the exchange never reached OpenFGA"
-                            + " because what it carried could not be used as a subject or an object.",
+                            + " because what it carried could not be used as a subject or an object;"
+                            + " `invalid-contextual-tuple` when a configured contextual tuple did not resolve, so the"
+                            + " check would have asked a different question than the endpoint was configured to ask.",
               javaType = "String")
     public static final String DENY_REASON = HEADER_PREFIX + "DenyReason";
 
