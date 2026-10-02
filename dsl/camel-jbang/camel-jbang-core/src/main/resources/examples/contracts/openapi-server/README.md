@@ -48,8 +48,8 @@ Stop it with `ctrl` + `c`.
   `apiContextPath: openapi` serves the contract.
 - Each operation is a `direct` route named after its `operationId`: `listStock`, `getStock`, `reserveStock`.
   Path parameters arrive as headers, `sku` here; the request body is the message body.
-- `lookup` is a helper route the two SKU operations share: it filters the stock file with `jsonpath` and
-  leaves the item, or null, as the body.
+- `lookup` is a helper route the two SKU operations share: it unmarshals the stock file and finds the SKU
+  with Groovy, `body.find { it.sku == headers.sku }`, which leaves the item, or null, as the body.
 - The contract check does not look at the values, so `reserveStock` runs `validate` on them and an
   `onException` turns the failed predicate into a 400 with an error body, the status the contract promises.
 - `CamelHttpResponseCode` sets 404 and 409; the bodies are the JSON the contract's `Error` schema describes.
