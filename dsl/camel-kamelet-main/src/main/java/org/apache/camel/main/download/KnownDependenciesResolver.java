@@ -128,7 +128,7 @@ public final class KnownDependenciesResolver {
     private MavenGav toMavenGav(String gav) {
         MavenGav answer = null;
         if (gav != null) {
-            answer = MavenGav.parseGav(gav, camelContext.getVersion());
+            answer = CatalogDependencyResolver.resolve(gav, camelContext.getVersion());
         }
         if (answer != null) {
             String v = answer.getVersion();

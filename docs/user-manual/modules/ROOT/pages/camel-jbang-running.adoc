@@ -158,6 +158,10 @@ For Camel dependencies, use the shorthand syntax:
 camel run foo.java --dep=camel-saxon
 ----
 
+The `camel:` and `camel-` shorthand forms use the dependency coordinates in the Camel catalog when available.
+For artifacts absent from the catalog, they use the running Camel version.
+An explicit Maven coordinate keeps the version you specify.
+
 Multiple dependencies can be separated by comma:
 
 [source,bash]
@@ -270,8 +274,8 @@ The lookup walks up from the class name:
 2. Each enclosing package in turn, `org.postgresql.ds`, then `org.postgresql`, until a key
    matches or no package is left. The deepest key wins, so `org.apache.activemq.artemis` is found
    before `org.apache.activemq`.
-3. The value is a Maven coordinate. A `camel:xxx` short form becomes `org.apache.camel:camel-xxx`
-   at the running Camel version; a `${...}` placeholder in the hand-written file is resolved
+3. The value is a Maven coordinate. A `camel:xxx` short form uses its Camel catalog coordinates
+   when available, or the running Camel version otherwise. A `${...}` placeholder in the hand-written file is resolved
    from the `camel-dependencies` POM of that version; the generated third-party file carries the
    versions already resolved.
 4. The dependency and its transitive dependencies are downloaded and added to the classpath,
