@@ -162,7 +162,7 @@ YAML::
 To call an API by its contract, send to a `rest-openapi` endpoint with the contract and the _operation id_. Camel
 builds the HTTP request from the contract:
 
-* a path or query parameter, such as `{petId}` in `/pet/{petId}`, is taken from the message header of the same name;
+* a path or query parameter, such as `+{petId}+` in `+/pet/{petId}+`, is taken from the message header of the same name;
 * the message body is the request body (a JSON string for a JSON API, with a `Content-Type` header);
 * the response body becomes the message body, as text: unmarshal it to read its fields.
 

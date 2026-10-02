@@ -147,7 +147,7 @@ define the services as shown below:
 A rest service answers with the HTTP status `200` by default (or `204` when there is no body). To answer with
 another status, such as a `404` for something that is not found or a `409` for a conflict, set the
 `CamelHttpResponseCode` header (`Exchange.HTTP_RESPONSE_CODE` in Java) in the route the service calls; the message
-body becomes the response body. A path parameter such as `{sku}` arrives as a header of the same name:
+body becomes the response body. A path parameter such as `+{sku}+` arrives as a header of the same name:
 
 [tabs]
 ====
