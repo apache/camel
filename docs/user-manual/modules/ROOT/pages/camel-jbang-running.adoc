@@ -277,6 +277,13 @@ The lookup walks up from the class name:
 4. The dependency and its transitive dependencies are downloaded and added to the classpath,
    and the class is loaded again.
 
+For an `import` in a Java or Groovy source, a Camel component is also found by its package, so
+importing any class of a component downloads it, not only the component class itself. For
+example, a route that imports `org.apache.camel.component.aws2.s3.AWS2S3Constants` for the
+headers of the `aws-s3-source` Kamelet gets `camel-aws2-s3` before the route is compiled. A class
+that is only looked up while running still needs the component class itself, so probing whether
+a class is present does not download a component.
+
 A dependency you declare yourself, with `--dep`, `camel.jbang.dependencies`, or in the project's
 POM, is on the classpath before any lookup, so it always takes precedence. Use that when a
 mapped library is not the one you want, for example the ActiveMQ 5 client where the mapping
