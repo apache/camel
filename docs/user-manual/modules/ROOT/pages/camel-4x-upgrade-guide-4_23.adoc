@@ -2362,6 +2362,15 @@ inherit values set on `defaultInstance`, and `defaultInstance` itself remains un
 Routes that compared unmarshalled bodies by identity, or that mutated one body expecting the change to
 be visible on another, must be updated.
 
+==== Consumer - failed exchanges
+
+The Thrift consumer now sends the exception of a failed exchange to the client as the result of the call: an
+exception declared by the Thrift method (such as `throws (1:InvalidOperation ouch)`) as that exception, any other
+exception as a `TApplicationException`. Before, with `synchronous=true` the failure was ignored (a `void` method
+returned normally, other methods returned the message body converted to the return type, or failed with
+`Return type requires not empty body`), and in the default asynchronous mode both the error and a regular response
+were sent, so the error could be read as the answer to the next call on the same connection.
+
 === camel-shiro
 
 `ShiroSecurityProcessor` used to skip the Shiro `login()` call — and therefore the credential check —
