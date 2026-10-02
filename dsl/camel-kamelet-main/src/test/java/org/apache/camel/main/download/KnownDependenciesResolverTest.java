@@ -74,6 +74,8 @@ public class KnownDependenciesResolverTest {
         assertGav(resolver, "org.apache.activemq.ActiveMQConnectionFactory", "org.apache.activemq", "activemq-client");
         assertGav(resolver, "org.apache.qpid.jms.JmsConnectionFactory", "org.apache.qpid", "qpid-jms-client");
         assertGav(resolver, "com.fasterxml.jackson.databind.ObjectMapper", "com.fasterxml.jackson.core", "jackson-databind");
+        assertGav(resolver, "com.fasterxml.jackson.annotation.JsonProperty", "com.fasterxml.jackson.core",
+                "jackson-annotations");
         assertGav(resolver, "com.fasterxml.jackson.dataformat.xml.XmlMapper", "com.fasterxml.jackson.dataformat",
                 "jackson-dataformat-xml");
         assertGav(resolver, "org.apache.commons.csv.CSVFormat", "org.apache.commons", "commons-csv");
