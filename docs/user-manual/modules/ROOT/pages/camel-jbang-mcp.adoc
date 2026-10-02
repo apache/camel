@@ -813,7 +813,7 @@ process is running).
 | OpenTelemetry spans with trace IDs, durations, route IDs and status (requires `--observe`).
 
 | `camel_runtime_startup_steps`
-| Startup recorder steps with duration, level and type (requires `camel.main.startup-recorder=true`).
+| Startup recorder steps with duration, level and type (requires `camel.main.startup-recorder=backlog`).
 
 | `camel_runtime_route_analysis`
 | Anti-pattern and structure analysis per route: error handling, complexity, component usage.

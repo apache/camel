@@ -46,6 +46,7 @@ public class JBangCommandModel {
         private String deprecationNote;
         private String sourceClass;
         private String examples;
+        private String plugin;
         private final List<JBangCommandOption> options = new ArrayList<>();
         private final List<JBangCommand> subcommands = new ArrayList<>();
 
@@ -111,6 +112,18 @@ public class JBangCommandModel {
 
         public void setExamples(String examples) {
             this.examples = examples;
+        }
+
+        /**
+         * The name of the plugin that provides this command (as used with {@code camel plugin add}), or null for a
+         * built-in command.
+         */
+        public String getPlugin() {
+            return plugin;
+        }
+
+        public void setPlugin(String plugin) {
+            this.plugin = plugin;
         }
 
         public boolean hasExamples() {

@@ -16,15 +16,9 @@ See xref:camel-jbang-tui.adoc[Camel TUI] for getting started and the other pages
 
 == Choosing an AI provider
 
-Press *F8* to open the built-in AI prompt panel. The panel auto-detects a provider in this order:
-
-1. `ANTHROPIC_API_KEY` → Anthropic Claude
-2. `CLOUD_ML_REGION` + `ANTHROPIC_VERTEX_PROJECT_ID` → Vertex AI
-3. `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` → Azure OpenAI
-4. `GEMINI_API_KEY` → Google Gemini
-5. `OPENAI_API_KEY` → OpenAI
-6. `LLM_API_KEY` + optional `LLM_BASE_URL` → any OpenAI-compatible server
-7. Ollama at `localhost:11434` → local Ollama (auto-detected, no key needed)
+Press *F8* to open the built-in AI prompt panel. The panel detects the provider from the environment
+(`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`, a local Ollama, and others) the same way as
+`camel ask`; the order is listed in xref:camel-jbang-ai-providers.adoc#_choosing_a_provider[AI Providers and Local Models].
 
 Press *Ctrl+P* inside the AI panel to switch provider or model at any time.
 

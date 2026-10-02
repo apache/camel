@@ -1,0 +1,141 @@
+= Camel CLI - Validation
+
+The `camel validate` commands check Camel source files for mistakes without running them:
+the YAML DSL schema, endpoint URIs, Simple expressions, bean references and `camel.*` configuration keys,
+against the Camel catalog. They are provided by the `validate` plugin:
+
+[source,bash]
+----
+camel plugin add validate
+----
+
+[cols="1m,3",options="header"]
+|===
+| Command | What it checks
+
+| camel validate yaml
+| YAML routes: the YAML DSL schema, and the endpoint URIs, Simple expressions and bean references against the catalog.
+
+| camel validate source
+| Any file `camel run` would load: YAML, Java and XML routes, `.properties` files, XSLT and XML.
+
+| camel validate properties
+| The `camel.*` keys of `.properties` files.
+
+| camel validate normalize
+| Not a check: rewrites YAML routes in the canonical (explicit) form.
+|===
+
+== Validating YAML routes
+
+[source,bash]
+----
+$ camel validate yaml cheese.yaml bad.yaml
+Validation error detected (errors:1)
+
+	File: bad.yaml
+		/0/from: required property 'steps' not found
+----
+
+When all files pass:
+
+[source,bash]
+----
+$ camel validate yaml cheese.yaml
+Validation success (files:1)
+----
+
+After the YAML DSL schema, the endpoint URIs, Simple expressions and bean references are checked against the
+Camel catalog; use `--catalog=false` to check the schema only. `--canonical` validates against the canonical
+schema and reports the deprecated compact notation (see <<_normalizing_yaml_routes>>).
+
+== Validating any source file
+
+`camel validate source` validates any file `camel run` would load: YAML routes, `.properties` files
+(the `camel.*` keys), Java (compiles it), XSLT and XML:
+
+[source,bash]
+----
+camel validate source orders.yaml OrderRoute.java application.properties
+----
+
+=== Java and XML routes
+
+The routes of a Java or XML DSL file are also read into the Camel model, without compiling or running them,
+and checked as YAML routes are:
+
+* the endpoint URIs, with the endpoint DSL and constants resolved;
+* Simple expressions;
+* a `to` whose URI holds `+${...}+` and should be a `toD`.
+
+These are what the Java compiler cannot see inside the strings.
+A part of a Java route the parser cannot work out (a value computed at runtime) is left unchecked.
+
+=== Endpoints no route consumes
+
+As the routes of an application are spread over the files of its directory, `camel validate source` also reports
+a `direct:` or `seda:` endpoint that a route sends to, but that no YAML, Java or XML route in the directory
+(and its subdirectories) consumes. With `direct:` sending a message to it fails; with `seda:` the messages
+would be queued and never read.
+
+The check stays quiet when it cannot be certain: an endpoint only known at runtime (a property placeholder,
+an expression), route templates and Kamelets, and a directory that is only a part of a Maven or Gradle project,
+such as `src/main/resources/camel`.
+
+== Validating configuration properties
+
+`camel validate properties` checks every `camel.*` key of `application.properties` (or any `.properties` file)
+against the Camel catalog. A wrong key, such as `camel.main.log-level` or `camel.main.streamCaching`,
+is reported before the application fails to start:
+
+[source,bash]
+----
+camel validate properties application.properties application-prod.properties
+----
+
+`camel validate source` runs the same check on the `.properties` files it is given.
+
+== Normalizing YAML routes
+
+The YAML DSL accepts compact shorthands, such as `from:` at the top level or an expression without its
+`expression:` wrapper. `camel validate normalize` rewrites YAML routes in the canonical, explicit form,
+which is what the documentation and the canonical schema use:
+
+[source,bash]
+----
+camel validate normalize orders.yaml
+camel validate normalize orders.yaml --output=orders-canonical.yaml
+----
+
+Without `--output` the result is printed. The routes are loaded (not run) to write them, so property
+placeholders are kept as they are. Use `camel validate yaml --canonical` to report the shorthands instead
+of rewriting them.
+
+== Validating against another Camel version or runtime
+
+Both commands validate against the CLI's own Camel version. A project that runs another version, or Camel
+Spring Boot or Camel Quarkus, is validated against the catalog and the YAML DSL schema of that version with
+`--camel-version` and `--runtime`, the same options `camel catalog` and `camel doc` take:
+
+[source,bash]
+----
+$ camel validate yaml --camel-version=4.18.0 orders.yaml
+$ camel validate source --runtime=quarkus --quarkus-version=3.30.1 orders.yaml application.properties
+Validation error detected (errors:1)
+
+	File: orders.yaml
+		line 4: atmosphere-websocket: Camel Quarkus has no extension for this component (no camel-quarkus-atmosphere-websocket); pick a component that has one, camel_catalog_find lists them
+----
+
+The catalog of that version is downloaded as for `camel catalog`, and the schema is read from the
+`camel-yaml-dsl` jar of that version (`--repos` and `--download=false` apply to both). With `--runtime=quarkus`
+the Quarkus platform is resolved from the Camel version through the Quarkus extension registry (cached for a
+day under `~/.camel`), or given with `--quarkus-version`; a component of the route that has no Camel Quarkus
+extension, or no Camel Spring Boot starter with `--runtime=spring-boot`, is an error. `--canonical` needs Camel
+4.22 or later, the first version with the canonical schema.
+
+The Simple expressions are parsed by the CLI's own Simple language (the catalog of the other version supplies
+its functions), and the Java, XSLT and XML checks of `camel validate source` use the CLI's classpath.
+
+The `camel_validate_source` tool of the MCP servers (xref:camel-jbang-mcp.adoc[]) does the same when it is
+given a `camelVersion`: the catalog and the schema of that version.
