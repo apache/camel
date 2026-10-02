@@ -422,7 +422,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
      *
      * @param  id    the processor id
      * @param  steps whether to get a step mbean, instead of a processor mbean
-     * @return       the managed object, or <tt>null</tt> if no such mbean is registered
+     * @return       the managed object, or {@code null} if no such mbean is registered
      */
     public ManagedProcessorMBean getProcessorMBean(String id, boolean steps) {
         return (steps ? stepsById : processorsById).get(id);
