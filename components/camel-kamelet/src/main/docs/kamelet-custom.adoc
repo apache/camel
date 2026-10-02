@@ -47,8 +47,8 @@ optional `default`.
 `mvn:<groupId>:<artifactId>:<version>`.
 `spec.template`:: the route itself, written as in the YAML DSL: a `from` with its `steps`, and optionally `beans`.
 
-In the template a parameter is written as a property placeholder: `{{customer}}`. A parameter that may be left out
-is written `{{?customer}}`, which removes the option it sets when no value is given, instead of failing.
+In the template a parameter is written as a property placeholder: `+{{customer}}+`. A parameter that may be left out
+is written `+{{?customer}}+`, which removes the option it sets when no value is given, instead of failing.
 
 == A source Kamelet
 
