@@ -737,13 +737,6 @@ in the charset that the `Content-Type` declares, so the bytes match the header. 
 the declared charset and read such a response as UTF-8 must now use the declared charset, and characters that the
 declared charset cannot represent are written as `?`.
 
-=== camel-coap - producer without a response
-
-When the CoAP server does not answer a `GET`, `POST`, `PUT` or `DELETE` request (the request timed out or was
-rejected), the producer now fails the exchange with a `CamelExchangeException`. Before, the exchange continued as if
-the request had succeeded, with the request body as its body. The `CamelCoapMethod` header is now also accepted in
-lower case, and an unknown method fails the exchange instead of sending nothing.
-
 === Components and Language removal
 
 ==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
@@ -4070,6 +4063,13 @@ coap://0.0.0.0:5683/my/resource?muteException=false
 ----
 
 For the Rest DSL, set it with `restConfiguration().endpointProperty("muteException", "false")`.
+
+==== Producer
+
+When the CoAP server does not answer a `GET`, `POST`, `PUT` or `DELETE` request (the request timed out or was
+rejected), the producer now fails the exchange with a `CamelExchangeException`. Before, the exchange continued as if
+the request had succeeded, with the request body as its body. The `CamelCoapMethod` header is now also accepted in
+lower case, and an unknown method fails the exchange with an `IllegalArgumentException` instead of sending nothing.
 
 === camel-quickfix - InOut replies are sent on the session the request arrived on
 

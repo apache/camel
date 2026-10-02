@@ -66,8 +66,6 @@ public class CoAPProducerNoResponseTest extends CoAPTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("coap://localhost:%d/TestResource", PORT.getPort()).to("log:exch");
-
                 from("direct:start")
                         .toF("coap://localhost:%d/TestResource?client=#noAnswerClient", unusedPort.getPort())
                         .to("mock:result");

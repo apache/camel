@@ -22,6 +22,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.URISupport;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
@@ -87,7 +88,9 @@ public class CoAPProducer extends DefaultProducer {
             CoAPHelper.convertCoapResponseToMessage(response, exchange.getOut());
         } else if (!method.equals(CoAPConstants.METHOD_PING)) {
             // the client returns null when no response was received (timeout, rejected or cancelled request)
-            throw new CamelExchangeException("No response received from CoAP server: " + client.getURI(), exchange);
+            throw new CamelExchangeException(
+                    "No response received from CoAP server for " + method + ": " + URISupport.sanitizeUri(client.getURI()),
+                    exchange);
         }
 
         if (method.equals(CoAPConstants.METHOD_PING)) {
