@@ -96,12 +96,32 @@ warning, error) and borders adapt for readability on each palette. A few themes 
 the brand accent for their own identity: Monochrome, CRT and Turbo Pascal. The Turbo
 Pascal theme recreates Borland's IDE (yellow text on the blue editor field, cyan window
 frames, grey menu bar) and also restyles source code the way that editor did: reserved
-words in white, code in yellow, comments in grey. Other themes highlight code with a
-fixed Monokai (dark) or GitHub-inspired (light) palette.
+words in white, code in yellow, comments in grey.
+
+Source code in the *Source* tab and in code blocks of AI answers is colored to match the
+theme. Themes based on an editor color scheme (Dracula, Nord, Solarized, Gruvbox,
+Catppuccin, Tokyo Night, Rosé Pine, Kanagawa and Everforest) use that scheme's own colors
+for keywords, strings, comments and so on. Where a scheme's color is too faint to read on
+the TUI background, it is made slightly lighter (or darker on light themes). Dark
+highlights code with the Monokai palette, and Light with a GitHub-inspired palette.
+
+Monochrome and CRT have no colors to spare, so they tell code apart by brightness and
+weight. Monochrome shows keywords in bold white and comments in italic grey. CRT looks
+like a green phosphor terminal of the 1980s: keywords in bold high intensity, strings in
+the bright glow, comments in the darker half intensity green.
 
 Your choice is remembered: it is saved as `camel.tui.theme` in `.camel-cli.properties`
 and restored the next time you open the TUI.
 
+=== Theme examples
+
+.Nord: a YAML route in the *Source* tab with the scheme's own code colors
+image::jbang/camel-tui-theme-nord-source.png[A YAML route in the Source tab with the Nord theme's code colors]
+
+.CRT: a green phosphor terminal of the 1980s, code told apart by brightness and bold
+image::jbang/camel-tui-theme-crt-source.png[A YAML route in the Source tab with the CRT theme]
+
+.Catppuccin Latte: a light theme on the *Overview* tab
 image::jbang/camel-tui-theme-latte.png[The Overview in the Catppuccin Latte theme]
 
 == Settings
