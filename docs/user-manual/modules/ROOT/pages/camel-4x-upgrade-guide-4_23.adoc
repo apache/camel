@@ -761,7 +761,8 @@ An agent that answers with an OID inside the subtree that does not increase now 
 When a `vertx` consumer receives a message that expects a reply and the route fails, the sender now gets a failure
 reply (a `ReplyException` with failure type `RECIPIENT_FAILURE`, failure code 500 and the message
 `Exchange processing failed`; the exception of the route is not sent to the sender). Before, the consumer replied with
-the message body as if the route had succeeded, which usually echoed the request back. A route that ends without a body now replies with an empty (`null`) body instead of not replying, so the
+the message body as if the route had succeeded, which usually echoed the request back. A route that ends without a
+body now replies with an empty (`null`) body instead of not replying, so the
 sender no longer waits until its reply timeout (30 seconds by default).
 
 === Components and Language removal
