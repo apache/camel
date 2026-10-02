@@ -41,6 +41,7 @@ import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -391,6 +392,30 @@ class ExportTest {
         File f = workingDir.toPath().resolve("src/main/resources/camel/counter.yaml").toFile();
         Assertions.assertTrue(f.isFile());
         Assertions.assertTrue(f.exists());
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportKameletUsedByJavaRouteWithKnownImport(RuntimeType rt) throws Exception {
+        // The known-import preprocessor must make the Java route compilable before the kamelet is loaded.
+        Assumptions.assumeTrue(rt != RuntimeType.springBoot || Runtime.version().feature() >= 21,
+                "Spring Boot 4 requires JDK 21+");
+        Export command = createCommand(rt,
+                new String[] { "src/test/resources/JacksonKameletRoute.java" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-jackson", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-jackson-starter", null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-jackson", null));
+        }
     }
 
     @ParameterizedTest
