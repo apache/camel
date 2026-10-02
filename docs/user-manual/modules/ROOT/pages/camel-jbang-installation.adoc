@@ -85,32 +85,5 @@ that runs without JBang entirely.
 
 == Container image
 
-The Camel CLI is also available as a container image on https://hub.docker.com/r/apache/camel-jbang/[Docker Hub].
-
-NOTE: All examples below use `docker`. Replace with `podman` if you prefer — the commands are identical.
-
-Pull the image:
-
-[source,bash]
-----
-docker pull apache/camel-jbang:4.21.0
-----
-
-Verify it works:
-
-[source,bash]
-----
-docker run apache/camel-jbang:4.21.0 version
-----
-
-[source]
-----
-Camel CLI version: 4.21.0
-----
-
-Run a route by mounting your local directory:
-
-[source,bash]
-----
-docker run -v .:/integrations apache/camel-jbang:4.21.0 run /integrations/example.yaml
-----
+The Camel CLI is also available as a container image (`apache/camel-jbang` on Docker Hub),
+see xref:camel-jbang-container.adoc[Container Image].

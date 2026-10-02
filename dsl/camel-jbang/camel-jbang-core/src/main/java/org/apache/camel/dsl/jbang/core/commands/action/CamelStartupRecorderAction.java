@@ -39,7 +39,7 @@ import picocli.CommandLine;
                      description = "Display startup recording", sortOptions = false, showDefaultValues = true,
                      footer = {
                              "%nExamples:",
-                             "  camel cmd startup-recorder" })
+                             "  camel get startup-recorder" })
 public class CamelStartupRecorderAction extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

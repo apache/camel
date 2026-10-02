@@ -67,7 +67,7 @@ The Doctor checks your development environment and reports issues:
 
 == Embedded Shell (F6)
 
-Press *F6* to open an embedded Camel JBang shell at the bottom (or top) of the screen. Any `camel`
+Press *F6* to open an embedded Camel CLI shell at the bottom (or top) of the screen. Any `camel`
 command can be run there -- `camel run`, `camel infra run kafka`, `camel cmd send`, `camel get` and
 so on -- without leaving the dashboard, and the tabs keep updating while the command runs. Press
 *F6* again to close the panel, *Shift+F6* to cycle its height, *PgUp*/*PgDn* to scroll the output

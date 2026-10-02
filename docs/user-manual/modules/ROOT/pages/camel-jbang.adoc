@@ -42,7 +42,15 @@ Your prototype code becomes your production code.
 
 == Quick Start
 
-Install the CLI (requires https://www.jbang.dev/download/[JBang]):
+Install the CLI with the installer script (Linux and macOS; see
+xref:camel-jbang-launcher-install.adoc[Installing the Camel CLI Launcher] for Windows):
+
+[source,bash]
+----
+curl -fsSL https://camel.apache.org/install.sh | sh
+----
+
+Or, if you use https://www.jbang.dev/download/[JBang]:
 
 [source,bash]
 ----
@@ -64,8 +72,6 @@ Run in dev mode with live reload:
 camel run hello.yaml --dev
 ----
 
-TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc[Camel CLI Launcher].
-
 == What Can You Do
 
 [cols="1,3",options="header"]
@@ -73,14 +79,14 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
 | Area | What it covers
 
 | xref:camel-jbang-getting-started.adoc[Getting Started]
-| Installation, shell completion, creating and running your first route.
+| Installation, shell completion, creating and running your first route, built-in examples.
 
 | xref:camel-jbang-installation.adoc[Installation Options]
-| Version-pinned installs, offline-safe setups, container images, installing without JBang.
+| Version-pinned installs, offline-safe setups, container images, the Camel CLI Launcher.
 
 | xref:camel-jbang-running.adoc[Running Camel]
-| Dev mode with hot reload, profiles, properties, dependency management,
-  Kamelets, platform-http, Spring Boot and Quarkus runtimes.
+| Dev mode with hot reload, profiles, properties, dependency management, Maven repositories and settings,
+  Kamelets, platform-http, Spring Boot and Quarkus runtimes, running a Maven project.
 
 | xref:camel-jbang-dev-services.adoc[Dev Services]
 | Start and manage local infrastructure services (databases, message brokers, etc.)
@@ -92,10 +98,16 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
 
 | xref:camel-jbang-devtools.adoc[Development Tools]
 | Sending and receiving messages, JDBC configuration,
-  terminal scripting, IDE editing, validate plugin.
+  terminal scripting, IDE editing, updating dependencies.
+
+| xref:camel-jbang-validation.adoc[Validation]
+| Checking routes, properties and other source files before running them, and normalizing YAML routes.
 
 | xref:camel-jbang-ai.adoc[AI Tools]
-| Ask questions about running integrations, explain routes, and get security hardening suggestions — powered by local or cloud LLMs.
+| Ask questions about running integrations, explain routes, a project overview, and security hardening suggestions.
+
+| xref:camel-jbang-ai-providers.adoc[AI Providers and Local Models]
+| How the LLM provider is chosen, and running a model locally with Ollama or an OpenAI-compatible server.
 
 | xref:camel-jbang-debugging.adoc[Debugging]
 | Camel route debugging from the CLI, IDE integration (VSCode, IDEA), Java-level debugging.
@@ -104,13 +116,16 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
 | Listing and stopping processes, route and group control, developer console, message history,
   log tailing, message tracing, health checks, metrics, circuit breaker status, Jolokia and Hawtio.
 
+| xref:camel-jbang-diagnostics.adoc[Diagnostics]
+| Errors and inflight messages, memory leaks, heap and thread dumps, startup, SQL and Kafka, vault secrets.
+
 | xref:camel-jbang-projects.adoc[Export to Maven]
 | Exporting to Spring Boot / Quarkus / Camel Main,
   SBOM generation, plugin management, version management, automated upgrades.
 
 | xref:camel-jbang-tips.adoc[Tips and Recipes]
 | Run from GitHub or clipboard, stub components, inline code, interactive prompts,
-  upload via HTTP, Maven configuration.
+  upload via HTTP.
 
 | xref:camel-jbang-beans.adoc[Java Beans]
 | Writing and wiring Java beans into routes using Camel, Spring Boot, or Quarkus annotations.
@@ -132,7 +147,7 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
 | Self-contained executable JAR -- run the CLI without JBang.
 
 | xref:camel-jbang-kubernetes.adoc[Kubernetes Plugin]
-| Build and deploy Camel integrations to Kubernetes.
+| Build and deploy Camel integrations to Kubernetes and OpenShift.
 
 | xref:camel-jbang-test.adoc[Testing Plugin]
 | Automated testing with the Citrus test framework.
@@ -146,9 +161,10 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
 
 == How It Works
 
-Camel CLI is powered by https://www.jbang.dev/[JBang] under the hood.
-When you run `camel run`, JBang resolves and caches the required Camel JARs, then launches a JVM
-with your route.
+The Camel CLI is a Java application. It is installed either as the self-contained
+xref:camel-jbang-launcher.adoc[Camel CLI Launcher] or through https://www.jbang.dev/[JBang].
+When you run `camel run`, the CLI resolves and caches the Camel JARs your routes need from Maven,
+and runs the routes in a JVM.
 The CLI communicates with running integrations through a local connector, enabling management
 commands (`camel ps`, `camel get`, `camel log`, `camel trace`) to inspect and control them
 from a separate terminal.
