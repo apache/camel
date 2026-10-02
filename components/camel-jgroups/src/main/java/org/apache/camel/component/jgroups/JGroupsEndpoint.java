@@ -173,9 +173,9 @@ public class JGroupsEndpoint extends DefaultEndpoint {
      * own receive path, before Camel can inspect the result, so the post-read {@link #deserializationFilter} check is
      * defense-in-depth only. A pre-read control is considered present when any of the following holds: a JVM-wide
      * serialization filter ({@code -Djdk.serialFilter}) is configured, the JGroups
-     * {@code jgroups.deserialization.filter} system property is set, the {@code deserializationFilter} option is
-     * configured, or the channel protocol stack includes authentication/encryption. Set {@link #acceptAllObjects} to
-     * {@code true} to start anyway and accept any type, restoring the previous behaviour.
+     * {@code jgroups.deserialization.filter} system property is set, or the channel protocol stack includes
+     * authentication/encryption. Set {@link #acceptAllObjects} to {@code true} to start anyway and accept any type,
+     * restoring the previous behaviour.
      *
      * @throws JGroupsException if none of the above is configured on the (unauthenticated) default channel
      */
