@@ -61,8 +61,9 @@ public final class AiToolExecutor {
      * {@code camel} or {@code org.apache.camel.} (case-insensitive) are rejected to prevent collision with internal
      * Camel headers (following the same pattern as the A2A component).
      * <p>
-     * The calling adapter owns the exchange lifecycle: it must create the exchange before calling this method and
-     * release it afterwards (via {@code consumer.releaseExchange()}) in a try-finally block.
+     * The calling adapter obtains the exchange from {@link #createToolExchange(Exchange)} and passes it in. That copy
+     * is not a pooled consumer exchange, so the adapter does not release it afterwards (there is no
+     * {@code releaseExchange()} to call).
      * <p>
      * All errors — validation failures and route execution errors — are caught and returned as typed
      * {@link AiToolResult} variants rather than propagated. Framework adapters inspect the result type and decide how
@@ -210,5 +211,39 @@ public final class AiToolExecutor {
             return new AiToolResult.ExecutionError(
                     String.format("Error executing tool '%s': %s", spec.getName(), e.getMessage()), e);
         }
+    }
+
+    /**
+     * Builds the exchange used to invoke a route tool from the calling (agent) exchange. The caller's <em>context</em>
+     * is carried over - exchange properties (most importantly the authenticated caller's identity, so a tool route can
+     * be guarded on {@code exchangeProperty.subject} and the model cannot forge it) and variables - but the tool route
+     * is given a <em>clean message</em>: it receives only its own tool arguments (set as headers by
+     * {@link #execute(AiToolSpec, Map, Exchange)}), not the caller's body or inbound headers, and a tool that sets no
+     * body returns {@code No result} rather than echoing the caller's body back to the model.
+     * <p>
+     * The tool exchange runs in its <em>own</em> unit of work and with its own exchange id - it does not share the
+     * caller's. This keeps each tool call independent: the tool route's own {@code onCompletion}, error handler and
+     * {@code useOriginalMessage()} apply to the tool call (not to the caller), parallel tool calls in one batch get
+     * distinct ids, and an error handler cannot restore the caller's message into the result. Changes the tool makes
+     * are isolated to this copy and do not leak back into the calling exchange. Every route-tool runtime
+     * (langchain4j-agent, openai, spring-ai-chat) builds the tool exchange this way, so an authorization check on an
+     * exchange property behaves identically across them (CAMEL-24832, CAMEL-23944).
+     *
+     * @param  callingExchange the exchange driving the agent
+     * @return                 an isolated copy with its own unit of work and id, carrying the caller's properties and
+     *                         variables but a clean message, to pass to {@link #execute(AiToolSpec, Map, Exchange)}
+     */
+    public static Exchange createToolExchange(Exchange callingExchange) {
+        // copy() carries the caller's context (properties and variables). The tool route must then run in its OWN unit
+        // of work and with its own exchange id, NOT the caller's: sharing the caller's UnitOfWork would stop the tool
+        // route's onCompletion from firing, give every parallel tool call the caller's exchange id, and -- through an
+        // error handler's useOriginalMessage() -- restore the caller's body and headers into the result, undoing the
+        // clean message. So detach the unit of work, then wipe the message so the tool route starts from its own
+        // arguments only.
+        Exchange toolExchange = callingExchange.copy();
+        toolExchange.getExchangeExtension().setUnitOfWork(null);
+        toolExchange.getMessage().setBody(null);
+        toolExchange.getMessage().getHeaders().clear();
+        return toolExchange;
     }
 }

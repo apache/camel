@@ -569,7 +569,7 @@ public class SpringAiChatProducer extends DefaultProducer {
         // Note: Augmented data is handled in the calling method for better control
 
         // Get tool callbacks first if tags are configured
-        List<ToolCallback> toolCallbacks = getToolCallbacksForTags(getEndpoint().getConfiguration().getTags());
+        List<ToolCallback> toolCallbacks = getToolCallbacksForTags(getEndpoint().getConfiguration().getTags(), exchange);
 
         // Apply chat options from configuration and headers using ToolCallingChatOptions
         // This ensures tool callbacks are properly included in the options
@@ -1002,14 +1002,14 @@ public class SpringAiChatProducer extends DefaultProducer {
      * Tools are registered via ChatOptions.toolCallbacks() which is the correct way to pass ToolCallback instances in
      * Spring AI. The tools() method expects objects with @Tool annotated methods, not ToolCallback instances.
      */
-    private List<ToolCallback> getToolCallbacksForTags(String tags) {
+    private List<ToolCallback> getToolCallbacksForTags(String tags, Exchange callingExchange) {
         if (tags == null || tags.trim().isEmpty()) {
             LOG.debug("No tags configured, skipping tool discovery");
             return List.of();
         }
 
         // Discover tools from the unified AiToolRegistry
-        List<ToolCallback> toolCallbacks = discoverAiRegistryTools(tags);
+        List<ToolCallback> toolCallbacks = discoverAiRegistryTools(tags, callingExchange);
 
         if (!toolCallbacks.isEmpty()) {
             // Collect tool names for enhanced logging
@@ -1079,7 +1079,7 @@ public class SpringAiChatProducer extends DefaultProducer {
      * Discover tools registered via {@code ai-tool:} consumer endpoints in the shared {@link AiToolRegistry}. Converts
      * each {@link AiToolSpec} to a Spring AI {@link ToolCallback} via {@link AiToolSpecToSpringAi}.
      */
-    private List<ToolCallback> discoverAiRegistryTools(String tags) {
+    private List<ToolCallback> discoverAiRegistryTools(String tags, Exchange callingExchange) {
         final AiToolRegistry registry = AiToolRegistry.getOrCreate(getEndpoint().getCamelContext());
         final String[] tagArray = AiToolParameterHelper.splitTags(tags);
 
@@ -1088,7 +1088,7 @@ public class SpringAiChatProducer extends DefaultProducer {
             uniqueSpecs.addAll(registry.getToolsByTag(tag));
         }
         final List<ToolCallback> toolCallbacks = uniqueSpecs.stream()
-                .map(AiToolSpecToSpringAi::toToolCallback)
+                .map(spec -> AiToolSpecToSpringAi.toToolCallback(spec, callingExchange))
                 .collect(Collectors.toList());
 
         LOG.debug("Discovered {} tools from AiToolRegistry for tags: {}", toolCallbacks.size(), tags);

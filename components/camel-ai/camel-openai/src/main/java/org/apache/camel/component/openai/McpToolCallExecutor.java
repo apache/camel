@@ -105,11 +105,13 @@ class McpToolCallExecutor extends ServiceSupport {
     /**
      * Executes every tool call in the batch and returns the results in the original order.
      *
-     * @param  toolCalls the tool calls requested by the model
-     * @return           one result per tool call, in the same order
-     * @throws Exception when a tool call fails and the configured strategy is to fail the exchange
+     * @param  toolCalls       the tool calls requested by the model
+     * @param  callingExchange the exchange driving the agent loop; copied into each route-tool invocation so the
+     *                         caller's context (properties, variables) reaches the tool route
+     * @return                 one result per tool call, in the same order
+     * @throws Exception       when a tool call fails and the configured strategy is to fail the exchange
      */
-    List<ToolResult> execute(List<ChatCompletionMessageToolCall> toolCalls) throws Exception {
+    List<ToolResult> execute(List<ChatCompletionMessageToolCall> toolCalls, Exchange callingExchange) throws Exception {
         if (toolCalls.isEmpty()) {
             return List.of();
         }
@@ -122,15 +124,16 @@ class McpToolCallExecutor extends ServiceSupport {
         if (executorService == null || toolCalls.size() == 1) {
             List<ToolResult> results = new ArrayList<>(toolCalls.size());
             for (ChatCompletionMessageToolCall toolCall : toolCalls) {
-                results.add(executeOne(toolCall, toolState));
+                results.add(executeOne(toolCall, toolState, callingExchange));
             }
             return results;
         }
 
-        return executeParallel(toolCalls, toolState);
+        return executeParallel(toolCalls, toolState, callingExchange);
     }
 
-    private List<ToolResult> executeParallel(List<ChatCompletionMessageToolCall> toolCalls, McpToolState toolState)
+    private List<ToolResult> executeParallel(
+            List<ChatCompletionMessageToolCall> toolCalls, McpToolState toolState, Exchange callingExchange)
             throws Exception {
         LOG.debug("Executing {} tool call(s) in parallel", toolCalls.size());
 
@@ -139,7 +142,7 @@ class McpToolCallExecutor extends ServiceSupport {
 
         List<Future<ToolResult>> futures = new ArrayList<>(toolCalls.size());
         for (ChatCompletionMessageToolCall toolCall : toolCalls) {
-            futures.add(executorService.submit(withMdc(mdc, () -> executeOne(toolCall, toolState))));
+            futures.add(executorService.submit(withMdc(mdc, () -> executeOne(toolCall, toolState, callingExchange))));
         }
 
         long timeout = endpoint.getConfiguration().getParallelToolTimeout();
@@ -211,7 +214,8 @@ class McpToolCallExecutor extends ServiceSupport {
         };
     }
 
-    private ToolResult executeOne(ChatCompletionMessageToolCall toolCall, McpToolState toolState) throws Exception {
+    private ToolResult executeOne(ChatCompletionMessageToolCall toolCall, McpToolState toolState, Exchange callingExchange)
+            throws Exception {
         long startNanos = System.nanoTime();
         OpenAIConfiguration config = endpoint.getConfiguration();
         String toolName = toolCall.asFunction().function().name();
@@ -219,7 +223,7 @@ class McpToolCallExecutor extends ServiceSupport {
 
         AiToolSpec routeSpec = toolState.routeTools().get(toolName);
         if (routeSpec != null) {
-            return timed(startNanos, executeRouteTool(toolCall, routeSpec, toolState, config));
+            return timed(startNanos, executeRouteTool(toolCall, routeSpec, toolState, config, callingExchange));
         }
 
         McpSyncClient mcpClient = toolState.toolClientMap().get(toolName);
@@ -270,7 +274,8 @@ class McpToolCallExecutor extends ServiceSupport {
             ChatCompletionMessageToolCall toolCall,
             AiToolSpec spec,
             McpToolState toolState,
-            OpenAIConfiguration config)
+            OpenAIConfiguration config,
+            Exchange callingExchange)
             throws Exception {
         String toolName = toolCall.asFunction().function().name();
         String argsJson = toolCall.asFunction().function().arguments();
@@ -279,34 +284,33 @@ class McpToolCallExecutor extends ServiceSupport {
 
         try {
             Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
-            Exchange toolExchange = spec.getConsumer().createExchange(false);
-            try {
-                AiToolResult result = AiToolExecutor.execute(spec, argsMap, toolExchange);
-                if (result instanceof AiToolResult.Success success) {
-                    LOG.debug("Route tool '{}' result: {}", toolName, success.value());
-                    return new ToolResult(
-                            toolCall.asFunction().id(), toolName, success.value(),
-                            toolState.returnDirectTools().contains(toolName), 0, true);
-                } else if (result instanceof AiToolResult.ArgumentError error) {
-                    LOG.warn("Route tool '{}' argument error: {}", toolName, error.message());
-                    return errorResult(toolCall, "Error: invalid tool arguments: " + error.message());
-                } else if (result instanceof AiToolResult.AuthorizationDenied denied) {
-                    // A denial is expected control flow: always relay the refusal to the model, never fail the exchange.
-                    LOG.warn("Route tool '{}' call denied by authorization policy", toolName);
-                    return errorResult(toolCall, denied.message());
-                } else {
-                    AiToolResult.ExecutionError error = (AiToolResult.ExecutionError) result;
-                    if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
-                        if (error.cause() != null) {
-                            throw error.cause();
-                        }
-                        throw new IllegalStateException(error.message());
+            // isolated copy of the calling exchange so the caller's context (e.g. an authenticated subject kept as an
+            // exchange property) reaches the tool route; this is not a pooled consumer exchange, so it is not released
+            // here (CAMEL-24832)
+            Exchange toolExchange = AiToolExecutor.createToolExchange(callingExchange);
+            AiToolResult result = AiToolExecutor.execute(spec, argsMap, toolExchange);
+            if (result instanceof AiToolResult.Success success) {
+                LOG.debug("Route tool '{}' result: {}", toolName, success.value());
+                return new ToolResult(
+                        toolCall.asFunction().id(), toolName, success.value(),
+                        toolState.returnDirectTools().contains(toolName), 0, true);
+            } else if (result instanceof AiToolResult.ArgumentError error) {
+                LOG.warn("Route tool '{}' argument error: {}", toolName, error.message());
+                return errorResult(toolCall, "Error: invalid tool arguments: " + error.message());
+            } else if (result instanceof AiToolResult.AuthorizationDenied denied) {
+                // A denial is expected control flow: always relay the refusal to the model, never fail the exchange.
+                LOG.warn("Route tool '{}' call denied by authorization policy", toolName);
+                return errorResult(toolCall, denied.message());
+            } else {
+                AiToolResult.ExecutionError error = (AiToolResult.ExecutionError) result;
+                if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                    if (error.cause() != null) {
+                        throw error.cause();
                     }
-                    LOG.warn("Route tool '{}' execution failed: {}", toolName, error.message(), error.cause());
-                    return errorResult(toolCall, "Error: Tool execution failed: " + error.message());
+                    throw new IllegalStateException(error.message());
                 }
-            } finally {
-                spec.getConsumer().releaseExchange(toolExchange, false);
+                LOG.warn("Route tool '{}' execution failed: {}", toolName, error.message(), error.cause());
+                return errorResult(toolCall, "Error: Tool execution failed: " + error.message());
             }
         } catch (JsonProcessingException e) {
             if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
