@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -48,8 +47,10 @@ public class Plc4XConsumer extends DefaultConsumer {
     private final String trigger;
     private final Plc4XEndpoint plc4XEndpoint;
 
-    private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledExecutorService executorService;
     private ScheduledFuture<?> future;
+    private TriggeredScraperImpl scraper;
+    private TriggerCollector collector;
 
     public Plc4XConsumer(Plc4XEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -105,6 +106,8 @@ public class Plc4XConsumer extends DefaultConsumer {
             return;
         }
 
+        executorService = getEndpoint().getCamelContext().getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(this, "Plc4XConsumer");
         future = executorService.schedule(() -> request.execute().thenAccept(response -> {
             try {
                 Exchange exchange = plc4XEndpoint.createExchange();
@@ -122,9 +125,9 @@ public class Plc4XConsumer extends DefaultConsumer {
 
     private void startTriggered() throws ScraperException {
         ScraperConfiguration configuration = getScraperConfig(tags);
-        TriggerCollector collector = new TriggerCollectorImpl(plc4XEndpoint.getPlcDriverManager());
+        collector = new TriggerCollectorImpl(plc4XEndpoint.getPlcDriverManager());
 
-        TriggeredScraperImpl scraper = new TriggeredScraperImpl(configuration, (job, alias, response) -> {
+        scraper = new TriggeredScraperImpl(configuration, (job, alias, response) -> {
             try {
                 plc4XEndpoint.reconnectIfNeeded();
 
@@ -158,6 +161,20 @@ public class Plc4XConsumer extends DefaultConsumer {
         // First stop the polling process
         if (future != null) {
             future.cancel(true);
+            future = null;
+        }
+        if (executorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            executorService = null;
+        }
+        // a scraper that is not stopped keeps reading the PLC and sending exchanges to the route
+        if (scraper != null) {
+            scraper.stop();
+            scraper = null;
+        }
+        if (collector != null) {
+            collector.stop();
+            collector = null;
         }
         super.doStop();
     }
