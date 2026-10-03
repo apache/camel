@@ -287,17 +287,18 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_get_log",
-                "Recent log records of a running integration, newest first, with optional filtering; a stack trace "
-                                              + "comes as one record with a detail block.")
+                "Recent log records of a running integration, newest first, with optional filtering; stack traces "
+                                              + "only with details.")
                 .param("name", "string", NAME_DESC, false)
                 .param("limit", "integer", "Maximum records to return (default 50)", false)
                 .param("filter", "string", "Case-insensitive substring filter on the message", false)
                 .param("level", "string", "Only this log level (INFO, WARN, ERROR, DEBUG, TRACE)", false)
+                .param("details", "boolean", "Include the stack traces (default false)", false)
                 .core(true)
                 .executor((ctx, args) -> {
                     RuntimeHelper.ProcessInfo p = selectProcess(ctx, args);
                     return LogFileReader.read(ctx.pid(), p != null ? p.name() : null, integer(args, "limit", 50),
-                            args.get("filter"), args.get("level")).toJson();
+                            args.get("filter"), args.get("level"), bool(args, "details", false)).toJson();
                 }));
 
         registry.accept(tool("camel_get_errors",
