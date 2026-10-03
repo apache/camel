@@ -344,6 +344,27 @@ class McpFacade {
         return info != null ? info.name : null;
     }
 
+    /** How often the selected integration has reloaded its routes, 0 when nothing is selected. */
+    int getSelectedReloadCount() {
+        if (ctx == null) {
+            return 0;
+        }
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.reloaded : 0;
+    }
+
+    /** The status document of the selected integration, null when nothing is selected or it has none yet. */
+    JsonObject readSelectedStatus() {
+        if (ctx == null || ctx.selectedPid == null) {
+            return null;
+        }
+        try {
+            return RuntimeHelper.readStatus(Long.parseLong(ctx.selectedPid));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     String getSelectedCamelVersion() {
         if (ctx == null) {
             return null;

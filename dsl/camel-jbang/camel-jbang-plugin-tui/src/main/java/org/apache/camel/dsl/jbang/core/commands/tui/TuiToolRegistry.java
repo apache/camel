@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -262,6 +263,16 @@ class TuiToolRegistry {
      */
     List<ToolDef> getCoreToolDefinitions() {
         return getToolDefinitions().stream().filter(t -> CORE_TOOLS.contains(t.name())).toList();
+    }
+
+    /**
+     * Returns the {@link #CORE_TOOLS} definitions plus the given ones (the tools of the integration's tool groups, see
+     * {@link TuiToolGroups}), in registry order.
+     */
+    List<ToolDef> getCoreToolDefinitions(Collection<String> extra) {
+        return getToolDefinitions().stream()
+                .filter(t -> CORE_TOOLS.contains(t.name()) || extra.contains(t.name()))
+                .toList();
     }
 
     /**
