@@ -163,6 +163,25 @@ class KubernetesRunCustomTest {
     @Test
     @SetEnvironmentVariable(key = "MINIKUBE_ACTIVE_DOCKERD", value = "foo")
     @SetEnvironmentVariable(key = "DOCKER_TLS_VERIFY", value = "foo")
+    public void explicitClusterTypeShouldNotBeOverriddenByAutoDetection() throws Exception {
+        // Minikube env is active (MINIKUBE_ACTIVE_DOCKERD + DOCKER_TLS_VERIFY set),
+        // but user explicitly passes --cluster-type=openshift: the explicit value must win.
+        KubernetesHelper.setKubernetesClient(client);
+        setupServerExpectsMinikube();
+        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
+                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
+                "--cluster-type=openshift");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit, printer.getOutput());
+        // The explicit --cluster-type must be preserved, not overridden by Minikube auto-detection.
+        Assertions.assertEquals(ClusterType.OPENSHIFT.name().toLowerCase(), command.clusterType.toLowerCase(),
+                printer.getOutput());
+    }
+
+    @Test
+    @SetEnvironmentVariable(key = "MINIKUBE_ACTIVE_DOCKERD", value = "foo")
+    @SetEnvironmentVariable(key = "DOCKER_TLS_VERIFY", value = "foo")
     public void detectMinikubeCluster() throws Exception {
         KubernetesHelper.setKubernetesClient(client);
         setupServerExpectsMinikube();

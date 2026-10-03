@@ -164,7 +164,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         completionCandidates = ClusterTypeCompletionCandidates.class,
                         converter = ClusterTypeConverter.class,
                         description = "The target cluster type (${COMPLETION-CANDIDATES}). Special configurations may be applied to different cluster types such as Kind or Minikube.")
-    String clusterType = "Kubernetes";
+    String clusterType;
 
     @CommandLine.Option(names = { "--image-build" }, defaultValue = "true",
                         description = "Whether to build container image as part of the run.")
@@ -807,7 +807,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private void detectCluster() {
-        if (!disableAuto) {
+        if (!disableAuto && clusterType == null) {
             if (verbose) {
                 printer().print("Automatic Kubernetes cluster detection... ");
             }
@@ -824,6 +824,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
             if (verbose) {
                 printer().println(this.clusterType);
             }
+        }
+        if (clusterType == null) {
+            this.clusterType = ClusterType.KUBERNETES.name();
         }
     }
 
