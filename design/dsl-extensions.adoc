@@ -1,0 +1,296 @@
+---
+title: DSL extensions - the mini DSLs features add to route files
+authors:
+  - "@davsclaus"
+reviewers: []
+approvers: []
+creation-date: 2026-10-02
+last-updated: 2026-10-02
+status: provisional
+see-also:
+  - "CAMEL-25259"
+  - "CAMEL-25257"
+  - "CAMEL-25138"
+  - "CAMEL-25254"
+  - "CAMEL-25258"
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+A feature can add declarations of its own to route files: a small DSL beside the routes, written in YAML, XML and Java
+alike. camel-semantic is the first; its questions are declared once and used by the `semantic` language in routes.
+
+This design makes such a mini DSL a first-class *DSL extension*:
+
+* the feature describes it once, as an annotated model in its own module;
+* the build generates its YAML schema, XSD and catalog entry from that model;
+* a runtime SPI lets tooling read and write it without running anything.
+
+camel-jbang, the MCP tools, the validator, the source editor and AI agents then learn about an extension from the
+catalog, with no code specific to the feature. A model or tool that has never heard of the feature can still write it
+correctly from the contract, a sample and validation feedback.
+
+== Motivation
+
+=== What camel-semantic has today
+
+[cols="1,2,3",options="header"]
+|===
+| | Contract | How
+
+| YAML
+| part of `camelYamlDsl.json`
+| hand-written `@YamlType` schema stubs on `SemanticDefinitionDeserializer`, apart from the code that parses it. The
+  YAML DSL schema includes them only because the camel-yaml-dsl build lists camel-semantic as a plugin dependency of the
+  schema generator: a hook for this one feature.
+
+| XML
+| none (no XSD)
+| a hand-written StAX parser in `SemanticXmlRoutesBuilderLoader`, namespace `http://camel.apache.org/schema/semantic`
+  (the xml-io namespace and no namespace are accepted too).
+
+| Java
+| none
+| the fluent `semanticQuestions(this).question("..")...register()` builder.
+
+| Catalog
+| only the `semantic` language
+| the declarations themselves are not described.
+|===
+
+There is no model class. The runtime type is the immutable `SemanticQuestion`, whose constructor holds the rules:
+
+* a choice needs criteria;
+* a score needs ordered levels;
+* a boolean accepts only `true` / `false` criteria;
+* the threshold and uncertainty band must lie within [0,1].
+
+=== What that costs
+
+* *Three hand-written descriptions* of one shape, kept in step by hand and by tests.
+* *Tooling does not know it exists.*
+** `camel run` / `camel export` cannot tell that a file needs camel-semantic. The declarations fail to load before the
+   `semantic` language would pull the dependency in.
+** The route DSL converter (`camel transform route`, the source editor, `camel_transform_route`) can only refuse them
+   (CAMEL-25258).
+** The MCP catalog tools, the validator's hints and the source editor's completion have nothing to offer.
+* *AI agents guess.* A hosted model may know the feature from its docs. A local model does not, and has no contract to
+  check against. For EIPs, Camel already closed that gap with the catalog: a closed, enumerable shape, a sample in the
+  DSL being written, and validation feedback in a loop. The same experience showed that small models write Simple
+  correctly once the tools hand them the contract and let them check their answer. A mini DSL deserves the same, or it
+  is out of reach of exactly the users who would need help the most.
+
+camel-semantic is the only DSL extension today, so now is the time to set the pattern, before a second one copies the
+hand-written approach.
+
+== Terms
+
+DSL extension::
+  A mini DSL a feature (a component or other module) adds to route files, beside routes, rests and the other root
+  kinds. It has a name (`semantic`), which is its YAML key and XML element.
+
+Declaration::
+  One occurrence of an extension in a route file (the `- semantic:` entry of a YAML file).
+
+== Goals
+
+* *One source of truth.* The feature writes an annotated model once. The YAML schema fragment, the XSD, the catalog
+  entry and (where possible) the readers and writers come from it.
+* *In the catalog.* A new catalog kind describes each extension:
+** its name and the Maven artifact (GAV) that provides it;
+** how it is written in each DSL;
+** its properties, with type, enum, default, required, and description;
+** samples, validated in the build like the documentation examples.
+* *Known to the tools, through the catalog only.*
+** dependency detection in camel-jbang;
+** validation with hints (`camel validate`, `camel_validate_source`);
+** `camel_catalog_find` / `doc` / `sample`;
+** completion and quick doc in the source editor;
+** the project overview;
+** conversion between DSLs.
+* *Safe to read.* Tooling that reads route sources reads declarations without loading a class of the project, running
+  its code, or resolving a property placeholder (see the security model and `design/java-dsl-parser.adoc`).
+* *Owned by the feature.* The model, its documentation and its SPI implementation live in the feature's module. Core
+  holds only the SPI and the generic tooling.
+
+== Non-goals
+
+* Changing what camel-semantic does at runtime, or its YAML and XML syntax.
+* Letting extensions change the route model, add EIPs, or hook into routing. An extension declares data beside the
+  routes; routes refer to it, as the `semantic` language does with `ref:<question>`.
+* Java DSL parsing of extensions in the first round (see <<Java DSL>>).
+
+== Design
+
+=== 1. The model, in the feature's module
+
+Plain model classes, annotated as the EIP definitions are (`@Metadata`, plus the JAXB-style annotations that the
+generators of camel-package-maven-plugin already read). For semantic:
+
+* `SemanticDefinition`: the root (`semantic`), a list of questions.
+* `SemanticQuestionDefinition`: name, type (`boolean`, `choice`, `score`), instructions, state, criteria, levels,
+  threshold, uncertainty, uncertaintyPolicy. Each has a description, an enum or type, a default, and whether it is
+  required.
+
+The model is data only: it has no `CamelContext` and no behaviour. Building the runtime type (`SemanticQuestion`) from
+it stays in the feature. That is where the cross-field rules live, and they are reused by validation (see 5).
+
+=== 2. Generated from the model
+
+camel-package-maven-plugin gains a goal (or extends the existing ones) for modules that declare DSL extensions:
+
+* *YAML schema fragment.* It is merged into `camelYamlDsl.json` the way component and EIP definitions are. This
+  replaces the `@YamlType` stubs and the camel-semantic plugin dependency of camel-yaml-dsl. Where the fragment is
+  merged (the yaml-dsl build pulling extension modules, or the catalog assembling them) is an open question.
+* *XSD* for the extension's own namespace, so XML tooling and editors can validate and complete it.
+* *Catalog JSON* (see 3).
+* Optionally, the YAML deserializer and the XML parser, as for the core model. The hand-written readers can stay until
+  this is worth doing.
+
+=== 3. The catalog kind
+
+`catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/dsl-extensions/<name>.json`, listed in
+`dsl-extensions.properties`. A sketch:
+
+[source,json]
+----
+{
+  "dslExtension": {
+    "kind": "dslExtension",
+    "name": "semantic",
+    "title": "Semantic Questions",
+    "description": "Questions the semantic language answers about a message ...",
+    "groupId": "org.apache.camel", "artifactId": "camel-semantic", "version": "4.24.0",
+    "yaml": { "key": "semantic" },
+    "xml": { "element": "semantic", "namespace": "http://camel.apache.org/schema/semantic" },
+    "java": { "entry": "org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions" },
+    "usedBy": [ { "kind": "language", "name": "semantic", "reference": "ref:<question>" } ]
+  },
+  "properties": { "question": { "kind": "element", "type": "object", "required": true, "...": "..." } },
+  "definitions": { "question": { "properties": { "type": { "enum": [ "boolean", "choice", "score" ] } } } },
+  "samples": { "yaml": "...", "xml": "...", "java": "..." }
+}
+----
+
+`CamelCatalog` gains `findDslExtensionNames()` and `dslExtensionJSonSchema(name)`. `usedBy` tells tools that a
+`semantic` language expression refers to a declared question, which lets them check and complete those references.
+
+=== 4. The runtime SPI (CAMEL-25257)
+
+An interface in camel-api, `org.apache.camel.spi` (`@since 4.24`). It is found with the factory finder under
+`META-INF/services/org/apache/camel/dsl-extension/<name>`. A feature implements it so tooling can, without running
+anything:
+
+* *detect* its declarations in a route source (YAML, XML, Java);
+* *take them out* as plain data (the model of 1), leaving the routes to the regular readers;
+* *write* them in a DSL.
+
+The factory finder key matters before the implementation is even loaded. The generated
+`camel-factoryfinder-known-dependencies.properties` of camel-kamelet-main maps `dsl-extension/semantic` to
+camel-semantic. So when camel-jbang meets an unknown YAML key or XML element `foo`, it looks up
+`dsl-extension/foo`, downloads the artifact and loads the extension. The catalog entry gives the same mapping to tools
+that work offline (export, the MCP server).
+
+=== 5. What each tool does with it
+
+[cols="1,3",options="header"]
+|===
+| Tool | Uses
+
+| `camel run` / `camel export`
+| Adds the artifact when a file declares the extension (YAML key, XML element, Java import), from the catalog or the
+  factory finder key.
+
+| `camel transform route`, the source editor, `camel_transform_route`
+| Carry the declarations over between DSLs through the SPI, instead of refusing them.
+
+| `camel validate`, `camel_validate_source`
+| Schema errors with hints, as for EIPs. The cross-field rules of the feature (a choice needs criteria) run on the model
+  of 1. References from routes (`ref:urgent`) are checked against the declared names (`usedBy`).
+
+| `camel_catalog_find` / `camel_catalog_doc` / `camel_catalog_sample`
+| `kind=dsl-extension`: the contract, the doc page, and a sample in the DSL the agent writes.
+
+| Source editor
+| Completion of keys and enum values, quick doc, and completion of `ref:` names from the declarations of the project.
+
+| Project overview, `camel_project_overview`
+| Lists the declarations of the project, and which routes use them.
+|===
+
+=== Java DSL
+
+A Java declaration is a chain of calls on the feature's builder (`semanticQuestions(this).question(..)..register()`).
+`LwJavaParser` replays only a vetted set of Camel builder methods (`replay-builder-methods.txt`, guarded by
+`LwJavaParserSecurityTest`). Reading an extension's builder would mean adding it to that surface, under the same rule:
+the methods build data only (no context, files, class loading or network).
+
+Two ways are open, and the first round does neither:
+
+* the extension exposes a data-only builder (for example, a variant that collects a `SemanticDefinition`, not one that
+  registers into a `CamelContext`) that the parser may replay, listed in the vetted surface;
+* the SPI reads the chain itself from the parsed call structure that `LwJavaParser` already has, never replaying it.
+
+Until then, a Java file with declarations is detected (for the dependency) but not converted.
+
+== Local models and agentic coding
+
+The point is that a model with no understanding of semantic or system-one reasoning can still write a declaration
+correctly. With this design, an agent gets:
+
+. *Discovery:* `camel_catalog_find semantic` lists the extension next to the `semantic` language.
+. *Contract:* `camel_catalog_doc` returns closed shapes, such as `type` with three enum values, the properties each
+  type requires, and ranges. These are small enough for a small context window.
+. *A sample in its DSL:* `camel_catalog_sample` returns one, so the model copies a correct shape rather than inventing
+  one.
+. *Feedback:* `camel_validate_source` returns errors that point at the property and say what is expected, which the
+  model fixes in a loop.
+. *Cross-checks:* a route's `ref:urgent` is checked against the declared questions.
+
+This is the loop that works for EIPs and Simple today. The TUI and its `tui_*` tools get the same through the catalog.
+
+== Security
+
+* Reading a declaration never loads a class of the project, runs its code or resolves a property placeholder. The SPI
+  works on text and the model of 1 only. This is the rule for tooling that reads route sources (see
+  `docs/user-manual/modules/ROOT/pages/security-model.adoc`).
+* An SPI implementation is Camel code from the feature's module, found by its factory finder key. Tooling loads only
+  implementations of extensions the catalog knows, at the version of the running Camel. Loading one never runs code of
+  the project being read.
+* Any Java builder joining the parser's replay surface goes through `LwJavaParserSecurityTest` (see <<Java DSL>>).
+
+== Plan
+
+. *Agree on this design* (CAMEL-25259), with the authors of camel-semantic.
+. *Model and catalog:* the semantic model classes, the catalog kind and `CamelCatalog` API, and generating the YAML
+  schema fragment from the model (dropping the stubs and the plugin dependency in camel-yaml-dsl).
+. *SPI and dependency detection* (CAMEL-25257): the camel-api interface, the factory finder key, and camel-jbang
+  dependency detection.
+. *Tools:* the converter carries declarations over, the validator checks them and their references, the MCP catalog
+  tools serve them, and the source editor completes them.
+. *XSD* for the semantic namespace; generated readers if worthwhile.
+. *Java:* one of the two ways in <<Java DSL>>, decided separately.
+
+== Alternatives considered
+
+* *Keep it per feature.* Each tool learns each extension by hand (as the converter refuses semantic by a pattern
+  today). This does not scale past one extension, and it puts feature code in camel-jbang.
+* *Put extensions in the core model.* This would make camel-core-model depend on optional features, and every
+  extension would ship with core. It does not suit experimental features like semantic.
+* *Describe extensions in the catalog only (hand-written JSON).* This is quicker, but it is a fourth description to
+  keep in step. Generating it from a model keeps one source of truth.
+
+== Open questions
+
+. *Naming:* "DSL extension", "declarations", or another term? It shows up in the catalog kind, the SPI and the docs.
+. *Where the YAML schema fragments are merged:* the camel-yaml-dsl build (pulling extension modules, as today but
+  generic), or the catalog?
+. *XML namespace:* should every extension have its own namespace (semantic has one), and should the xml-io namespace
+  still be accepted?
+. *Java:* a data-only builder in the vetted replay surface, or reading the chain without replaying it?
+. *Versioning:* an extension's schema changes with its feature. Is the catalog entry enough for tools to handle files
+  written for an older version?
+. *Which other mini DSLs would follow?* Candidates to check: the configuration that AI components declare beside
+  routes (tools, agents, guardrails), and resilience profiles.
