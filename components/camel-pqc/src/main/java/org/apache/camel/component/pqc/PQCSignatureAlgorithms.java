@@ -25,14 +25,14 @@ public enum PQCSignatureAlgorithms {
     HSS("LMS", "BC"),
     XMSS("XMSS", "BCPQC"),
     XMSSMT("XMSSMT", "BCPQC"),
-    DILITHIUM("DILITHIUM", "BCPQC"),
+    DILITHIUM("ML-DSA", "BC"),
 
     // Experimental and non-standardized
     FALCON("FALCON", "BCPQC"),
     PICNIC("PICNIC", "BCPQC"),
     SNOVA("Snova", "BCPQC"),
     MAYO("Mayo", "BCPQC"),
-    SPHINCSPLUS("SPHINCSPLUS", "BCPQC");
+    SPHINCSPLUS("SLH-DSA", "BC");
 
     private final String algorithm;
     private final String bcProvider;
