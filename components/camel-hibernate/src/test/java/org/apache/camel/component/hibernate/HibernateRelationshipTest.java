@@ -116,6 +116,8 @@ public class HibernateRelationshipTest extends CamelTestSupport {
             return;
         }
         executeInTransaction(em -> {
+            em.createNativeQuery("DELETE FROM product_tags").executeUpdate();
+            em.createQuery("DELETE FROM Tag").executeUpdate();
             em.createQuery("DELETE FROM Product").executeUpdate();
             em.createQuery("DELETE FROM Category").executeUpdate();
             em.createQuery("DELETE FROM Item").executeUpdate();
@@ -172,6 +174,32 @@ public class HibernateRelationshipTest extends CamelTestSupport {
 
             assertEquals(0L, productCount, "Product should be deleted by consumeDelete");
             assertEquals(1L, categoryCount, "Category should remain intact");
+        });
+    }
+
+    @Test
+    public void testConsumerConsumeDeleteClearsManyToManyAssociation() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:manyToManyDelete");
+        mock.expectedMinimumMessageCount(1);
+
+        Tag tag = new Tag("gadget");
+        Product product = new Product("TaggedLaptop", 999.0);
+        product.addTag(tag);
+
+        persistEntities(tag, product);
+
+        mock.assertIsSatisfied();
+
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            entityManagerFactory.getCache().evictAll();
+
+            Long productCount = countQuery("SELECT COUNT(p) FROM Product p WHERE p.name = :name",
+                    Map.of("name", "TaggedLaptop"));
+            Long tagCount = countQuery("SELECT COUNT(t) FROM Tag t WHERE t.name = :name",
+                    Map.of("name", "gadget"));
+
+            assertEquals(0L, productCount, "Product should be deleted by consumeDelete");
+            assertEquals(1L, tagCount, "Many-to-many Tag peer should remain intact");
         });
     }
 

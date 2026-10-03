@@ -17,6 +17,7 @@
 package org.apache.camel.component.hibernate;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import jakarta.persistence.Persistence;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -35,6 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HibernateComponentTest extends CamelTestSupport {
@@ -105,6 +108,24 @@ public class HibernateComponentTest extends CamelTestSupport {
                 from("direct:parameterizedQuery")
                         .to("hibernate:org.apache.camel.component.hibernate.Item"
                             + "?query=SELECT i FROM Item i WHERE i.name = :name");
+
+                from("direct:jpqlUpdate")
+                        .to("hibernate:org.apache.camel.component.hibernate.Item"
+                            + "?query=UPDATE Item i SET i.price = :price");
+
+                from("direct:nativeUpdate")
+                        .to("hibernate:org.apache.camel.component.hibernate.Item"
+                            + "?nativeQuery=UPDATE item SET price = :price");
+
+                from("direct:namedRemoveAll")
+                        .to("hibernate:org.apache.camel.component.hibernate.Item"
+                            + "?namedQuery=Item.removeAll&useExecuteUpdate=true");
+
+                from("direct:namedRemoveAllWithoutFlag")
+                        .to("hibernate:org.apache.camel.component.hibernate.Item?namedQuery=Item.removeAll");
+
+                from("direct:namedLooksLikeDelete")
+                        .to("hibernate:org.apache.camel.component.hibernate.Item?namedQuery=deleteItems");
 
                 // Base Polling Consumer (autoStartup=false to prevent background race conditions)
                 from("hibernate:org.apache.camel.component.hibernate.Item"
@@ -401,6 +422,109 @@ public class HibernateComponentTest extends CamelTestSupport {
             context.getRouteController().stopRoute(routeId);
             context.removeRoute(routeId);
         }
+    }
+
+    @Test
+    public void testProducerNullBodySetsOutboundBodyToNull() {
+        Object result = template.requestBody("direct:persist", null, Object.class);
+
+        assertNull(result);
+        assertEquals(0, queryAllItems().size());
+    }
+
+    @Test
+    public void testProducerJpqlUpdateViaHeaderUsesExecuteUpdate() {
+        template.sendBody("direct:persist", new Item("Laptop", 1200.00));
+
+        Integer updated = template.requestBodyAndHeaders(
+                "direct:query",
+                null,
+                Map.of(
+                        HibernateConstants.HIBERNATE_QUERY, "UPDATE Item i SET i.price = 1.0 WHERE i.name = :name",
+                        HibernateConstants.HIBERNATE_PARAMETERS, Map.of("name", "Laptop")),
+                Integer.class);
+
+        assertEquals(1, updated);
+
+        List<?> remaining = queryAllItems();
+        assertEquals(1, remaining.size());
+        assertEquals(1.0, ((Item) remaining.get(0)).getPrice());
+    }
+
+    @Test
+    public void testProducerJpqlUpdateViaQueryOptionUsesExecuteUpdate() {
+        template.sendBody("direct:persist", new Item("Laptop", 1200.00));
+
+        Integer updated = template.requestBodyAndHeader(
+                "direct:jpqlUpdate",
+                null,
+                HibernateConstants.HIBERNATE_PARAMETERS,
+                Map.of("price", 5.0),
+                Integer.class);
+
+        assertEquals(1, updated);
+        assertEquals(5.0, ((Item) queryAllItems().get(0)).getPrice());
+    }
+
+    @Test
+    public void testProducerNativeUpdateQueryUsesExecuteUpdate() {
+        template.sendBody("direct:persist", new Item("Laptop", 1200.00));
+
+        Integer updated = template.requestBodyAndHeader(
+                "direct:nativeUpdate",
+                null,
+                HibernateConstants.HIBERNATE_PARAMETERS,
+                Map.of("price", 9.0),
+                Integer.class);
+
+        assertEquals(1, updated);
+        assertEquals(9.0, ((Item) queryAllItems().get(0)).getPrice());
+    }
+
+    @Test
+    public void testProducerNamedMutationQueryRequiresUseExecuteUpdate() {
+        template.sendBody("direct:persist", new Item("Laptop", 1200.00));
+        template.sendBody("direct:persist", new Item("Phone", 800.00));
+
+        assertThrows(Exception.class, () -> template.requestBody("direct:namedRemoveAllWithoutFlag", null, Object.class));
+        assertEquals(2, queryAllItems().size());
+
+        Integer deleted = template.requestBody("direct:namedRemoveAll", null, Integer.class);
+        assertEquals(2, deleted);
+        assertEquals(0, queryAllItems().size());
+    }
+
+    @Test
+    public void testProducerNamedQueryNameIsNotTreatedAsQueryText() {
+        template.sendBody("direct:persist", new Item("Laptop", 1200.00));
+
+        List<?> results = template.requestBody("direct:namedLooksLikeDelete", null, List.class);
+
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        assertEquals("Laptop", ((Item) results.get(0)).getName());
+        assertEquals(1, queryAllItems().size());
+    }
+
+    @Test
+    public void testProcessBatchStopsWhenConsumerIsNotRunning() throws Exception {
+        HibernateEndpoint endpoint = context.getEndpoint(
+                "hibernate:org.apache.camel.component.hibernate.Item?consumeDelete=false",
+                HibernateEndpoint.class);
+        HibernateConsumer consumer = new HibernateConsumer(endpoint, exchange -> {
+        });
+
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setBody(new Item("Ignored", 1.00));
+
+        HibernateConsumer.DataHolder holder = new HibernateConsumer.DataHolder();
+        holder.exchange = exchange;
+        holder.entity = exchange.getIn().getBody();
+
+        int processed = consumer.processBatch(new LinkedList<>(List.of((Object) holder)));
+
+        assertEquals(0, processed);
+        assertEquals(0, queryAllItems().size());
     }
 
     private List<?> queryAllItems() {

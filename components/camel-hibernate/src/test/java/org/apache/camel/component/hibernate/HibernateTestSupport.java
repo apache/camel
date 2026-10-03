@@ -39,6 +39,14 @@ public final class HibernateTestSupport {
         // =========================================================================
 
         builder.from("hibernate:org.apache.camel.component.hibernate.Product"
+                     + "?query=SELECT p FROM Product p WHERE p.name = 'TaggedLaptop'"
+                     + "&consumeDelete=true"
+                     + "&initialDelay=10"
+                     + "&delay=100")
+                .routeId("consumer-many-to-many-delete")
+                .to("mock:manyToManyDelete");
+
+        builder.from("hibernate:org.apache.camel.component.hibernate.Product"
                      + "?query=" + FIND_ELECTRONICS
                      + "&consumeDelete=true"
                      + "&initialDelay=10"

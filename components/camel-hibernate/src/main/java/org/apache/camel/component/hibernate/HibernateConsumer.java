@@ -17,7 +17,7 @@
 package org.apache.camel.component.hibernate;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +25,9 @@ import java.util.Map;
 import java.util.Queue;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Query;
 
@@ -36,6 +38,7 @@ import org.apache.camel.component.jpa.JpaConstants;
 import org.apache.camel.component.jpa.JpaHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -101,6 +104,10 @@ public class HibernateConsumer extends ScheduledBatchPollingConsumer {
         } catch (Exception e) {
             LOG.error("JPA transaction processing failed: {}", e.getMessage(), e);
             throw e;
+        } finally {
+            if (entityManager.isOpen()) {
+                entityManager.close();
+            }
         }
 
         return messagePolled[0];
@@ -249,11 +256,16 @@ public class HibernateConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
-        int total = exchanges.size();
+        int processed = 0;
 
         for (Object exchangeObject : exchanges) {
             DataHolder holder = (DataHolder) exchangeObject;
             Exchange exchange = holder.exchange;
+
+            if (!isBatchAllowed()) {
+                releaseExchange(exchange, true);
+                continue;
+            }
 
             try {
                 getProcessor().process(exchange);
@@ -265,12 +277,13 @@ public class HibernateConsumer extends ScheduledBatchPollingConsumer {
                 if (endpoint.isConsumeDelete()) {
                     deleteEntity(holder);
                 }
+                processed++;
             } finally {
                 releaseExchange(exchange, false);
             }
         }
 
-        return total;
+        return processed;
     }
 
     private void deleteEntity(DataHolder holder) {
@@ -303,8 +316,10 @@ public class HibernateConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Inspects entity fields dynamically via reflection for standard JPA relationship annotations
-     * (@ManyToOne, @OneToOne) and detaches the entity from parent collections to prevent re-persisting during flush.
+     * Inspects entity fields dynamically via reflection for JPA relationship annotations ({@code @ManyToOne},
+     * {@code @OneToOne}, {@code @ManyToMany}) and detaches the entity from related collections to prevent re-persisting
+     * during flush. Uninitialized lazy associations are skipped. This reflection-based approach is best-effort and may
+     * not cover every mapping style.
      */
     private void detachRelationshipsGenerically(Object entity) {
         if (entity == null) {
@@ -314,18 +329,33 @@ public class HibernateConsumer extends ScheduledBatchPollingConsumer {
         Class<?> clazz = entity.getClass();
         while (clazz != null && clazz != Object.class) {
             for (Field field : clazz.getDeclaredFields()) {
-                if (field.isAnnotationPresent(ManyToOne.class) || field.isAnnotationPresent(OneToOne.class)) {
-                    try {
-                        field.setAccessible(true);
-                        Object parent = field.get(entity);
-                        if (parent != null) {
-                            removeFromParentCollections(parent, entity);
-                            field.set(entity, null);
-                        }
-                    } catch (Exception e) {
-                        LOG.debug("Could not automatically unbind relationship field '{}' on entity {}: {}",
-                                field.getName(), entity.getClass().getName(), e.getMessage());
+                boolean manyToOne = field.isAnnotationPresent(ManyToOne.class);
+                boolean oneToOne = field.isAnnotationPresent(OneToOne.class);
+                boolean manyToMany = field.isAnnotationPresent(ManyToMany.class);
+                if (!manyToOne && !oneToOne && !manyToMany) {
+                    continue;
+                }
+
+                try {
+                    field.setAccessible(true);
+                    Object related = field.get(entity);
+                    if (related == null || !Hibernate.isInitialized(related)) {
+                        continue;
                     }
+
+                    if (manyToMany && related instanceof Collection<?> collection) {
+                        List<Object> peers = new ArrayList<>(collection);
+                        for (Object peer : peers) {
+                            removeFromParentCollections(peer, entity);
+                        }
+                        collection.clear();
+                    } else if (manyToOne || oneToOne) {
+                        removeFromParentCollections(related, entity);
+                        field.set(entity, null);
+                    }
+                } catch (ReflectiveOperationException | SecurityException e) {
+                    LOG.debug("Could not automatically unbind relationship field '{}' on entity {}: {}",
+                            field.getName(), entity.getClass().getName(), e.getMessage());
                 }
             }
             clazz = clazz.getSuperclass();
@@ -333,43 +363,33 @@ public class HibernateConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Inspects fields and getter methods on the parent entity to find any collection holding the child entity and
-     * removes it.
+     * Inspects {@code @OneToMany} and {@code @ManyToMany} collection fields on the parent entity and removes the child
+     * entity from those collections.
      */
     private void removeFromParentCollections(Object parent, Object child) {
         Class<?> parentClazz = parent.getClass();
-
-        // 1. Check parent fields directly
         while (parentClazz != null && parentClazz != Object.class) {
             for (Field parentField : parentClazz.getDeclaredFields()) {
-                if (Collection.class.isAssignableFrom(parentField.getType())) {
-                    try {
-                        parentField.setAccessible(true);
-                        Collection<?> collection = (Collection<?>) parentField.get(parent);
-                        if (collection != null) {
-                            collection.remove(child);
-                        }
-                    } catch (Exception ignored) {
-                        // Ignore reflection accessibility restrictions
+                if (!Collection.class.isAssignableFrom(parentField.getType())) {
+                    continue;
+                }
+                if (!parentField.isAnnotationPresent(OneToMany.class)
+                        && !parentField.isAnnotationPresent(ManyToMany.class)) {
+                    continue;
+                }
+
+                try {
+                    parentField.setAccessible(true);
+                    Collection<?> collection = (Collection<?>) parentField.get(parent);
+                    if (collection != null && Hibernate.isInitialized(collection)) {
+                        collection.remove(child);
                     }
+                } catch (ReflectiveOperationException | SecurityException e) {
+                    LOG.debug("Could not remove entity from parent collection '{}': {}",
+                            parentField.getName(), e.getMessage());
                 }
             }
             parentClazz = parentClazz.getSuperclass();
-        }
-
-        // 2. Check getter methods on parent
-        for (Method method : parent.getClass().getMethods()) {
-            if (method.getName().startsWith("get") && method.getParameterCount() == 0
-                    && Collection.class.isAssignableFrom(method.getReturnType())) {
-                try {
-                    Collection<?> collection = (Collection<?>) method.invoke(parent);
-                    if (collection != null) {
-                        collection.remove(child);
-                    }
-                } catch (Exception ignored) {
-                    // Ignore invocation failures
-                }
-            }
         }
     }
 
@@ -384,10 +404,10 @@ public class HibernateConsumer extends ScheduledBatchPollingConsumer {
         return exchange;
     }
 
-    private static final class DataHolder {
-        private Exchange exchange;
-        private Object entity;
-        private EntityManager entityManager;
-        private Session session;
+    static final class DataHolder {
+        Exchange exchange;
+        Object entity;
+        EntityManager entityManager;
+        Session session;
     }
 }
