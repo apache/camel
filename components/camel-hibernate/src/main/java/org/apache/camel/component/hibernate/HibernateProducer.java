@@ -19,7 +19,6 @@ package org.apache.camel.component.hibernate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import jakarta.persistence.EntityManager;
@@ -31,8 +30,12 @@ import org.apache.camel.component.jpa.JpaHelper;
 import org.apache.camel.support.DefaultProducer;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HibernateProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HibernateProducer.class);
 
     private final HibernateEndpoint endpoint;
 
@@ -58,15 +61,21 @@ public class HibernateProducer extends DefaultProducer {
                 true,
                 false);
 
-        endpoint.getTransactionStrategy().executeInTransaction(() -> {
-            try {
-                doProcess(exchange, entityManager);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        try {
+            endpoint.getTransactionStrategy().executeInTransaction(() -> {
+                try {
+                    doProcess(exchange, entityManager);
+                } catch (RuntimeException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                }
+            });
+        } finally {
+            if (entityManager.isOpen()) {
+                entityManager.close();
             }
-        });
+        }
     }
 
     private void processWithHibernateTransaction(Exchange exchange) throws Exception {
@@ -98,20 +107,11 @@ public class HibernateProducer extends DefaultProducer {
         }
     }
 
-    private void doProcess(Exchange exchange, Session session) {
-        if (endpoint.getQuery() != null
-                || endpoint.getNamedQuery() != null
-                || endpoint.getNativeQuery() != null
-                || exchange.getIn().getHeader(HibernateConstants.HIBERNATE_QUERY) != null) {
-            executeQuery(exchange, session);
-        } else {
-            executeEntityOperation(exchange, session);
-        }
-    }
-
     private void executeEntityOperation(Exchange exchange, EntityManager entityManager) {
         Object body = exchange.getIn().getBody();
         if (body == null) {
+            LOG.warn("No entity body to persist or merge on endpoint {}", endpoint);
+            exchange.getMessage().setBody(null);
             return;
         }
 
@@ -140,46 +140,14 @@ public class HibernateProducer extends DefaultProducer {
         exchange.getMessage().setBody(result);
     }
 
-    private void executeEntityOperation(Exchange exchange, Session session) {
-        Object body = exchange.getIn().getBody();
-        if (body == null) {
-            return;
-        }
-
-        Object result;
-        if (body instanceof Collection<?> collection) {
-            List<Object> list = new ArrayList<>(collection.size());
-            for (Object item : collection) {
-                if (endpoint.isUsePersist()) {
-                    session.persist(item);
-                    list.add(item);
-                } else {
-                    list.add(session.merge(item));
-                }
-            }
-            result = list;
-        } else {
-            if (endpoint.isUsePersist()) {
-                session.persist(body);
-                result = body;
-            } else {
-                result = session.merge(body);
-            }
-        }
-
-        session.flush();
-        exchange.getMessage().setBody(result);
-    }
-
     private void executeQuery(Exchange exchange, EntityManager entityManager) {
-        String hql = exchange.getIn().getHeader(
+        String queryHeader = exchange.getIn().getHeader(
                 HibernateConstants.HIBERNATE_QUERY,
                 String.class);
 
         Query query;
-
-        if (hql != null) {
-            query = entityManager.createQuery(hql);
+        if (queryHeader != null) {
+            query = entityManager.createQuery(queryHeader);
         } else if (endpoint.getNamedQuery() != null) {
             query = entityManager.createNamedQuery(endpoint.getNamedQuery());
         } else if (endpoint.getNativeQuery() != null) {
@@ -190,7 +158,7 @@ public class HibernateProducer extends DefaultProducer {
 
         configureQuery(exchange, query);
 
-        if (isExecuteUpdateQuery(hql, endpoint.getQuery())) {
+        if (isExecuteUpdateQuery(queryHeader)) {
             int updated = query.executeUpdate();
             exchange.getMessage().setBody(updated);
         } else {
@@ -198,40 +166,32 @@ public class HibernateProducer extends DefaultProducer {
         }
     }
 
-    private void executeQuery(Exchange exchange, Session session) {
-        String hql = exchange.getIn().getHeader(
-                HibernateConstants.HIBERNATE_QUERY,
-                String.class);
-
-        org.hibernate.query.Query<?> query;
-
-        if (hql != null) {
-            query = session.createQuery(hql, Object.class);
-        } else if (endpoint.getNamedQuery() != null) {
-            query = session.createNamedQuery(endpoint.getNamedQuery(), Object.class);
-        } else if (endpoint.getNativeQuery() != null) {
-            query = session.createNativeQuery(endpoint.getNativeQuery(), Object.class);
-        } else {
-            query = session.createQuery(endpoint.getQuery(), Object.class);
+    /**
+     * Detects mutation queries from inspectable JPQL/SQL text only. Named query names are never treated as query text;
+     * named mutation queries require {@code useExecuteUpdate=true}.
+     */
+    private boolean isExecuteUpdateQuery(String queryHeader) {
+        Boolean configured = endpoint.getUseExecuteUpdate();
+        if (configured != null) {
+            return configured;
         }
-
-        configureQuery(exchange, query);
-
-        if (isExecuteUpdateQuery(hql, endpoint.getQuery())) {
-            int updated = query.executeUpdate();
-            exchange.getMessage().setBody(updated);
-        } else {
-            exchange.getMessage().setBody(query.getResultList());
+        if (queryHeader != null) {
+            return isUpdateQuery(queryHeader);
         }
+        if (endpoint.getQuery() != null) {
+            return isUpdateQuery(endpoint.getQuery());
+        }
+        if (endpoint.getNativeQuery() != null) {
+            return isUpdateQuery(endpoint.getNativeQuery());
+        }
+        return false;
     }
 
-    private boolean isExecuteUpdateQuery(String queryHeader, String endpointQuery) {
-        String q = queryHeader != null ? queryHeader : endpointQuery;
-        if (q == null) {
-            return false;
-        }
-        String normalized = q.trim().toUpperCase(Locale.ENGLISH);
-        return normalized.startsWith("DELETE") || normalized.startsWith("UPDATE");
+    private static boolean isUpdateQuery(String queryText) {
+        String trimmed = queryText.stripLeading();
+        return trimmed.regionMatches(true, 0, "insert", 0, 6)
+                || trimmed.regionMatches(true, 0, "update", 0, 6)
+                || trimmed.regionMatches(true, 0, "delete", 0, 6);
     }
 
     @SuppressWarnings("unchecked")

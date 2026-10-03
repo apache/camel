@@ -31,7 +31,9 @@ import jakarta.persistence.Version;
 @Table(name = "item")
 @NamedQueries({
         @NamedQuery(name = "Item.findAll", query = "SELECT i FROM Item i"),
-        @NamedQuery(name = "Item.findByName", query = "SELECT i FROM Item i WHERE i.name = :name")
+        @NamedQuery(name = "Item.findByName", query = "SELECT i FROM Item i WHERE i.name = :name"),
+        @NamedQuery(name = "Item.removeAll", query = "DELETE FROM Item i"),
+        @NamedQuery(name = "deleteItems", query = "SELECT i FROM Item i")
 })
 @NamedNativeQueries({
         @NamedNativeQuery(
