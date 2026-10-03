@@ -50,6 +50,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -146,6 +147,7 @@ public class DaprPubSubConsumerTest extends CamelTestSupport {
 
         consumer.doStop();
         verify(mockSubscription).close();
-        verify(mockClient).close();
+        // the client is configured, not created by the consumer: it is not closed
+        verify(mockClient, never()).close();
     }
 }
