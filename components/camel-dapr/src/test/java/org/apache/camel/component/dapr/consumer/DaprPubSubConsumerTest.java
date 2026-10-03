@@ -18,6 +18,7 @@ package org.apache.camel.component.dapr.consumer;
 
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
+import java.util.concurrent.CompletableFuture;
 
 import io.dapr.client.DaprClientBuilder;
 import io.dapr.client.DaprPreviewClient;
@@ -40,14 +41,17 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import reactor.core.publisher.Mono;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -125,7 +129,12 @@ public class DaprPubSubConsumerTest extends CamelTestSupport {
         when(cloudEvent.getTraceParent()).thenReturn(traceParent);
         when(cloudEvent.getTraceState()).thenReturn(traceState);
 
-        listenerCaptor.getValue().onEvent(cloudEvent).block();
+        doAnswer(inv -> {
+            inv.getArgument(1, AsyncCallback.class).done(true);
+            return true;
+        }).when(processor).process(any(Exchange.class), any(AsyncCallback.class));
+
+        assertEquals(SubscriptionListener.Status.SUCCESS, listenerCaptor.getValue().onEvent(cloudEvent).block());
 
         verify(processor).process(exchangeCaptor.capture(), callbackCaptor.capture());
 
@@ -147,5 +156,79 @@ public class DaprPubSubConsumerTest extends CamelTestSupport {
         consumer.doStop();
         verify(mockSubscription).close();
         verify(mockClient).close();
+    }
+
+    @Test
+    void testFailedExchangeIsRedelivered() throws Exception {
+        consumer.doStart();
+
+        doAnswer(inv -> {
+            inv.getArgument(0, Exchange.class).setException(new IllegalStateException("Forced"));
+            inv.getArgument(1, AsyncCallback.class).done(true);
+            return true;
+        }).when(processor).process(any(Exchange.class), any(AsyncCallback.class));
+
+        SubscriptionListener.Status status = listenerCaptor.getValue().onEvent(newCloudEvent()).block();
+
+        // a failed exchange must not acknowledge the event, Dapr would drop it
+        assertEquals(SubscriptionListener.Status.RETRY, status);
+    }
+
+    @Test
+    void testRollbackOnlyExchangeIsRedelivered() throws Exception {
+        consumer.doStart();
+
+        doAnswer(inv -> {
+            // a rollback without an exception, as markRollbackOnly() does
+            inv.getArgument(0, Exchange.class).setRollbackOnly(true);
+            inv.getArgument(1, AsyncCallback.class).done(true);
+            return true;
+        }).when(processor).process(any(Exchange.class), any(AsyncCallback.class));
+
+        SubscriptionListener.Status status = listenerCaptor.getValue().onEvent(newCloudEvent()).block();
+
+        assertEquals(SubscriptionListener.Status.RETRY, status);
+    }
+
+    @Test
+    void testRollbackOnlyLastExchangeIsRedelivered() throws Exception {
+        consumer.doStart();
+
+        doAnswer(inv -> {
+            // a rollback without an exception, as markRollbackOnlyLast() does
+            inv.getArgument(0, Exchange.class).setRollbackOnlyLast(true);
+            inv.getArgument(1, AsyncCallback.class).done(true);
+            return true;
+        }).when(processor).process(any(Exchange.class), any(AsyncCallback.class));
+
+        SubscriptionListener.Status status = listenerCaptor.getValue().onEvent(newCloudEvent()).block();
+
+        assertEquals(SubscriptionListener.Status.RETRY, status);
+    }
+
+    @Test
+    void testEventIsAcknowledgedWhenTheExchangeIsDone() throws Exception {
+        consumer.doStart();
+
+        // the route continues asynchronously: the callback is called later
+        doReturn(false).when(processor).process(any(Exchange.class), any(AsyncCallback.class));
+
+        Mono<SubscriptionListener.Status> result = listenerCaptor.getValue().onEvent(newCloudEvent());
+        CompletableFuture<SubscriptionListener.Status> status = result.toFuture();
+
+        verify(processor).process(exchangeCaptor.capture(), callbackCaptor.capture());
+        assertFalse(status.isDone(), "The event must not be acknowledged before the exchange is done");
+
+        exchangeCaptor.getValue().setException(new IllegalStateException("Forced"));
+        callbackCaptor.getValue().done(false);
+
+        assertEquals(SubscriptionListener.Status.RETRY, status.get());
+    }
+
+    private static CloudEvent<byte[]> newCloudEvent() {
+        CloudEvent<byte[]> cloudEvent = mock(CloudEvent.class);
+        when(cloudEvent.getData()).thenReturn("testBody".getBytes());
+        when(cloudEvent.getId()).thenReturn("myId");
+        return cloudEvent;
     }
 }
