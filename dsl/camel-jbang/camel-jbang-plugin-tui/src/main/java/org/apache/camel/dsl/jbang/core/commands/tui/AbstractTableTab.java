@@ -52,6 +52,11 @@ abstract class AbstractTableTab extends AbstractTab {
 
     protected abstract int getRowCount();
 
+    /** Whether the table selects its first row by itself: a table with a detail panel of the selected row does. */
+    protected boolean selectsFirstRow() {
+        return false;
+    }
+
     protected abstract void renderContent(Frame frame, Rect area, IntegrationInfo info);
 
     @Override
@@ -119,6 +124,11 @@ abstract class AbstractTableTab extends AbstractTab {
         if (info == null) {
             renderNoSelection(frame, area);
             return;
+        }
+        // a table with a detail panel has a row selected once it has rows, so the detail shows something
+        int rows = getRowCount();
+        if (selectsFirstRow() && rows > 0 && (tableState.selected() == null || tableState.selected() >= rows)) {
+            tableState.select(tableState.selected() == null ? 0 : rows - 1);
         }
         renderContent(frame, area, info);
     }

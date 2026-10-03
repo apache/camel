@@ -42,6 +42,8 @@ public class HiveMQComponentConfigurer extends PropertyConfigurerSupport impleme
         case "host": getOrCreateConfiguration(target).setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "mqttversion":
+        case "mqttVersion": getOrCreateConfiguration(target).setMqttVersion(property(camelContext, com.hivemq.client.mqtt.MqttVersion.class, value)); return true;
         case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "port": getOrCreateConfiguration(target).setPort(property(camelContext, int.class, value)); return true;
         case "qos": getOrCreateConfiguration(target).setQos(property(camelContext, com.hivemq.client.mqtt.datatypes.MqttQos.class, value)); return true;
@@ -67,6 +69,8 @@ public class HiveMQComponentConfigurer extends PropertyConfigurerSupport impleme
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "mqttversion":
+        case "mqttVersion": return com.hivemq.client.mqtt.MqttVersion.class;
         case "password": return java.lang.String.class;
         case "port": return int.class;
         case "qos": return com.hivemq.client.mqtt.datatypes.MqttQos.class;
@@ -93,6 +97,8 @@ public class HiveMQComponentConfigurer extends PropertyConfigurerSupport impleme
         case "host": return getOrCreateConfiguration(target).getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "mqttversion":
+        case "mqttVersion": return getOrCreateConfiguration(target).getMqttVersion();
         case "password": return getOrCreateConfiguration(target).getPassword();
         case "port": return getOrCreateConfiguration(target).getPort();
         case "qos": return getOrCreateConfiguration(target).getQos();

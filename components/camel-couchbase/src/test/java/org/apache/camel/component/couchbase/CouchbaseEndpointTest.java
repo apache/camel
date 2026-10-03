@@ -16,20 +16,39 @@
  */
 package org.apache.camel.component.couchbase;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Cluster;
+import com.couchbase.client.java.ClusterOptions;
+import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.Scope;
 import com.couchbase.client.java.codec.DefaultJsonSerializer;
 import com.couchbase.client.java.codec.JsonSerializer;
 import com.couchbase.client.java.env.ClusterEnvironment;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_COUCHBASE_PORT;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class CouchbaseEndpointTest {
 
@@ -269,6 +288,127 @@ public class CouchbaseEndpointTest {
                     "ClusterEnvironment should wrap DefaultJsonSerializer in JsonValueSerializerWrapper");
         } finally {
             env.shutdown();
+        }
+    }
+
+    /**
+     * connectTimeout used to sit inside a guard that tested queryTimeout, so setting it on its own did nothing and the
+     * documented 30s default never applied - the SDK's own 10s did.
+     */
+    @Test
+    void connectTimeoutIsAppliedOnItsOwn() {
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
+        endpoint.setConnectTimeout(1234);
+        ClusterEnvironment env = endpoint.createClusterEnvironment();
+        try {
+            assertEquals(Duration.ofMillis(1234), env.timeoutConfig().connectTimeout());
+        } finally {
+            env.shutdown();
+        }
+    }
+
+    @Test
+    void connectTimeoutDefaultIsApplied() {
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
+        ClusterEnvironment env = endpoint.createClusterEnvironment();
+        try {
+            assertEquals(Duration.ofMillis(CouchbaseConstants.DEFAULT_CONNECT_TIMEOUT),
+                    env.timeoutConfig().connectTimeout());
+        } finally {
+            env.shutdown();
+        }
+    }
+
+    @Test
+    void queryTimeoutIsAppliedWhenSet() {
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
+        endpoint.setQueryTimeout(9999);
+        ClusterEnvironment env = endpoint.createClusterEnvironment();
+        try {
+            assertEquals(Duration.ofMillis(9999), env.timeoutConfig().queryTimeout());
+        } finally {
+            env.shutdown();
+        }
+    }
+
+    /**
+     * The connection used to be opened once per producer and once per consumer and never closed at all: both sides
+     * called {@code bucket.core().shutdown()}, which returns a cold Mono nobody subscribed to.
+     */
+    @Test
+    void oneConnectionPerEndpointAndItIsClosedOnStop() throws Exception {
+        Cluster cluster = mock(Cluster.class);
+        Bucket bucket = mock(Bucket.class);
+        Scope scope = mock(Scope.class);
+        when(cluster.bucket(anyString())).thenReturn(bucket);
+        when(bucket.defaultScope()).thenReturn(scope);
+        when(bucket.defaultCollection()).thenReturn(mock(Collection.class));
+
+        try (MockedStatic<Cluster> clusters = mockStatic(Cluster.class)) {
+            clusters.when(() -> Cluster.connect(anyString(), any(ClusterOptions.class))).thenReturn(cluster);
+
+            CamelContext context = new DefaultCamelContext();
+            CouchbaseEndpoint endpoint = new CouchbaseEndpoint(
+                    "couchbase:http://localhost:8091",
+                    "http://localhost:8091", new CouchbaseComponent(context));
+            endpoint.setBucket("bucket");
+            endpoint.setUsername("user");
+            endpoint.setPassword("secret");
+            endpoint.start();
+
+            endpoint.createProducer();
+            endpoint.createProducer();
+
+            clusters.verify(() -> Cluster.connect(anyString(), any(ClusterOptions.class)), times(1));
+            verify(cluster, never()).disconnect();
+
+            endpoint.stop();
+            verify(cluster).disconnect();
+        }
+    }
+
+    /**
+     * The endpoint disconnects its cluster on stop, so a consumer or producer that kept a handle from before the
+     * restart would be talking to a dead cluster. Both take their handles again on start.
+     */
+    @Test
+    void aRestartedProducerTakesItsCollectionFromTheNewConnection() throws Exception {
+        Bucket first = mock(Bucket.class);
+        Bucket second = mock(Bucket.class);
+        when(first.defaultCollection()).thenReturn(mock(Collection.class));
+        when(second.defaultCollection()).thenReturn(mock(Collection.class));
+
+        Cluster one = mock(Cluster.class);
+        Cluster two = mock(Cluster.class);
+        when(one.bucket(anyString())).thenReturn(first);
+        when(two.bucket(anyString())).thenReturn(second);
+
+        try (MockedStatic<Cluster> clusters = mockStatic(Cluster.class)) {
+            clusters.when(() -> Cluster.connect(anyString(), any(ClusterOptions.class))).thenReturn(one, two);
+
+            CamelContext context = new DefaultCamelContext();
+            CouchbaseEndpoint endpoint = new CouchbaseEndpoint(
+                    "couchbase:http://localhost:8091",
+                    "http://localhost:8091", new CouchbaseComponent(context));
+            endpoint.setBucket("bucket");
+            endpoint.setUsername("user");
+            endpoint.setPassword("secret");
+
+            endpoint.start();
+            Producer producer = endpoint.createProducer();
+            producer.start();
+            // resolved twice against the first connection: once when constructed, once on start
+            verify(first, atLeastOnce()).defaultCollection();
+
+            endpoint.stop();
+            verify(one).disconnect();
+
+            // restart in place: the producer object survives, the connection behind it does not
+            endpoint.start();
+            producer.stop();
+            producer.start();
+
+            verify(second).defaultCollection();
         }
     }
 }

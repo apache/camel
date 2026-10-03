@@ -33,6 +33,12 @@ class IntegrationInfo {
     String profile;
     boolean devMode;
     boolean phantom;
+    // an opened project (phantom): the pid of its running app while it runs
+    String linkedPid;
+    // a running app: the name of the project it was opened as, when it differs from the app's own name
+    String openedAs;
+    // an opened project: when it was asked to run, until its app shows up (or the launch fails)
+    long startingSince;
     String projectType;
     String sourceDir;
     String ready;

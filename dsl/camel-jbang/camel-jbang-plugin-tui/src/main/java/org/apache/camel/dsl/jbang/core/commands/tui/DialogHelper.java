@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -124,6 +127,41 @@ final class DialogHelper {
                                 TuiHelper.hintLine(acceptKey, acceptLabel, "Esc", "cancel")))
                         .build(),
                 inner);
+        return popup;
+    }
+
+    /**
+     * Renders a confirm dialog with a line that tells more and, when {@code extraKey} is given, a second choice on its
+     * own key between Enter and Esc.
+     */
+    static Rect renderConfirm(
+            Frame frame, Rect area, String title, String message, String detail, String extraKey, String extraLabel) {
+        Style accent = Theme.warning();
+        String titleText = " " + title + " ";
+        String msg = message.trim();
+        Line hints = extraKey != null
+                ? TuiHelper.hintLine("Enter", "confirm", extraKey, extraLabel, "Esc", "cancel")
+                : TuiHelper.hintLine("Enter", "confirm", "Esc", "cancel");
+        int contentW = Math.max(msg.length(), Math.max(detail != null ? detail.length() : 0, hints.width()));
+        int popupW = clampWidth(area, CONFIRM_MIN_WIDTH, Math.max(contentW + 6, titleText.length() + 4));
+        Rect popup = centered(area, popupW, CONFIRM_HEIGHT + (detail != null ? 1 : 0));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .borderStyle(accent)
+                .title(Title.from(Line.from(Span.styled(titleText, accent.bold()))))
+                .build();
+        frame.renderWidget(block, popup);
+        List<Line> lines = new ArrayList<>();
+        lines.add(Line.empty());
+        lines.add(Line.from(Span.styled(msg, accent.bold())));
+        if (detail != null) {
+            lines.add(Line.from(Span.styled(detail, Theme.muted())));
+        }
+        lines.add(Line.empty());
+        lines.add(hints);
+        frame.renderWidget(Paragraph.builder().centered().text(Text.from(lines)).build(), block.inner(popup));
         return popup;
     }
 

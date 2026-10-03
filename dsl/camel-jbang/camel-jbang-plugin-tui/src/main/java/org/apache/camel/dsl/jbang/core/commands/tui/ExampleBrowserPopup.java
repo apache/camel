@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +40,6 @@ import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
-import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.util.json.JsonObject;
 
 class ExampleBrowserPopup {
@@ -286,21 +284,16 @@ class ExampleBrowserPopup {
 
     void doLaunch(String exampleName, String displayName, List<String> extraArgs) {
         try {
-            List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
-            cmd.add("run");
-            cmd.add("--example=" + exampleName);
-            cmd.add("--logging-color=true");
-            cmd.addAll(extraArgs);
+            List<String> args = new ArrayList<>();
+            args.add("run");
+            args.add("--example=" + exampleName);
+            args.add("--logging-color=true");
+            args.addAll(extraArgs);
             if (exampleName.contains("/") && extraArgs.stream().noneMatch(a -> a.startsWith("--name"))) {
-                cmd.add("--name=" + TuiHelper.stripCategory(exampleName));
+                args.add("--name=" + TuiHelper.stripCategory(exampleName));
             }
-            Path outputFile = LaunchManager.createSecureTempFile("camel-example-", ".log");
-            outputFile.toFile().deleteOnExit();
-            ProcessBuilder pb = new ProcessBuilder(cmd);
-            pb.redirectErrorStream(true);
-            pb.redirectOutput(outputFile.toFile());
-            Process process = pb.start();
-            launchManager.addPendingLaunch(displayName, process, outputFile);
+            // the launch manager runs it in a directory of its own, with the example's files
+            launchManager.launchDetached(displayName, args);
             if (burstCallback != null) {
                 burstCallback.run();
             }

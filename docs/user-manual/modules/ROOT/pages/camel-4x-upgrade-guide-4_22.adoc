@@ -13,6 +13,21 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.1 to 4.22.2
 
+=== camel-xslt and camel-xslt-saxon - implicit DOM sources
+
+When a non-`Source` input is implicitly converted to a `DOMSource` pointing at its owner document's
+root element, the Saxon-backed XSLT transformer now starts at the document node. This preserves
+document-root (`match="/"`) template behavior when, for example, a CXF payload is converted to a DOM
+source. The default JDK XSLT transformer already starts at the document node; the change also applies
+to `xslt:` when configured with Saxon as its transformer factory.
+The original DOM and source system ID are preserved. Nested and detached elements are unchanged.
+Explicit `Source` inputs, including a `Source` returned by the endpoint's `source` expression,
+retain their selected context node, and streaming sources are unchanged.
+
+Custom implicit converters that intentionally select the document element as the XSLT context
+may observe different template selection. To retain element-context semantics, provide an explicit
+`DOMSource(element)` as the body or through the endpoint's `source` expression.
+
 === camel-zipfile, camel-tarfile - a maxDecompressedSize of 2 GiB or more is now enforced
 
 The `maxDecompressedSize` option of the Zip File and Tar File data formats (and of `ZipSplitter`) was not
@@ -35,6 +50,29 @@ Route still redirects to its externally reachable address, because `camel.oauth.
 the identity provider sends the browser back to. Deployments whose external address differs from that
 property must set it to the address the browser actually reaches; a request announcing another origin is now
 redirected to the configured one and a warning is logged.
+
+=== camel-spring-ws - internal Camel headers are now filtered when mapping SOAP response headers
+
+When `allowResponseHeaderOverride` is enabled, the `spring-ws` producer now applies the endpoint's
+`headerFilterStrategy` to the SOAP response header attributes and elements it maps onto the message, as the
+`spring-ws` consumer already does for inbound SOAP headers. With the default `SpringWebserviceHeaderFilterStrategy`,
+attribute and element names starting with `Camel` or `camel` (case-insensitively) are no longer copied onto the
+message.
+
+Other SOAP response header attributes and elements are mapped as before, and the raw SOAP header is still
+available in the `CamelSpringWebserviceSoapHeader` header. A route that relies on the previous behaviour can supply a
+custom `headerFilterStrategy` on the `spring-ws` endpoint.
+
+=== camel-http-common, camel-platform-http-vertx - fileNameExtWhitelist entries are matched exactly
+
+`fileNameExtWhitelist` is now checked the same way everywhere, by one shared check in `camel-http-base`. Two
+places still matched each extension as a substring of the whitelist, so for example a whitelist of `txt`
+accepted an upload named `evil.x`: the `camel-platform-http-vertx` consumer, and `DefaultHttpBinding` in
+`camel-http-common` for uploads that arrive as request attributes, which also replaced the configured
+`fileNameExtWhitelist` with its lower-cased value. Both now compare each comma-separated entry exactly and
+case-insensitively. `*` still accepts every file, a file name without an extension is still accepted, and the
+configured value is left unchanged. An upload whose extension only matched as part of a longer entry is now
+rejected.
 
 === camel-core - masking of sensitive values in endpoint URIs
 

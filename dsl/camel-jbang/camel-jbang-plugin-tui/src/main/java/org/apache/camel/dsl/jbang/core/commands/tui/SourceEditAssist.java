@@ -1011,6 +1011,54 @@ final class SourceEditAssist {
         return items;
     }
 
+    /** The quick doc of the XML element or attribute at the cursor (CAMEL-25244). */
+    List<SourceViewer.DocEntry> provideXmlQuickDoc(List<String> lines, int row, int col) {
+        return XmlQuickDoc.at(validationCatalog(), lines, row, col);
+    }
+
+    /** The quick doc of the simple function at the cursor (CAMEL-25219). */
+    List<SourceViewer.DocEntry> provideSimpleQuickDoc(List<String> lines, int row, int col) {
+        return SimpleQuickDoc.at(validationCatalog(), lines, row, col);
+    }
+
+    /** The completions of the Java DSL route chain at the cursor (CAMEL-25241). */
+    List<AutocompletePopup.CompletionItem> provideJavaCompletions(JavaChainContext context) {
+        return JavaDslCompletions.provide(validationCatalog(), context);
+    }
+
+    /** The completions of the XML DSL at the cursor (CAMEL-25240). */
+    List<AutocompletePopup.CompletionItem> provideXmlCompletions(XmlCompletionContext context, List<String> lines) {
+        return XmlCompletions.provide(validationCatalog(), context, this::loadPropertyPlaceholders);
+    }
+
+    /** The completions of the simple expression at the cursor (CAMEL-25219). */
+    List<AutocompletePopup.CompletionItem> provideSimpleCompletions(SimpleCompletionContext context, List<String> lines) {
+        return provideSimpleCompletions(context, lines, List::of);
+    }
+
+    /**
+     * The completions of the simple expression at the cursor, the arguments of ${bean:..} from the beans the project
+     * declares and of ${properties:..} from its .properties files (CAMEL-25242).
+     */
+    List<AutocompletePopup.CompletionItem> provideSimpleCompletions(
+            SimpleCompletionContext context, List<String> lines, Supplier<List<AutocompletePopup.CompletionItem>> beans) {
+        return SimpleCompletions.provide(validationCatalog(), context, lines,
+                new SimpleCompletions.Project(beans, this::propertyKeys));
+    }
+
+    /** The keys of the project's .properties files, with their values. */
+    private List<AutocompletePopup.CompletionItem> propertyKeys() {
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (AutocompletePopup.CompletionItem p : loadPropertyPlaceholders()) {
+            String key = p.key();
+            if (key.startsWith("{{") && key.endsWith("}}")) {
+                items.add(new AutocompletePopup.CompletionItem(
+                        key.substring(2, key.length() - 2), p.description(), "property", null, false, null, p.group()));
+            }
+        }
+        return items;
+    }
+
     List<AutocompletePopup.CompletionItem> provideComponentNameCompletions(String role) {
         CamelCatalog catalog = validationCatalog();
         if (catalog == null) {
@@ -1438,30 +1486,18 @@ final class SourceEditAssist {
         }
 
         List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
-        try (var stream = java.nio.file.Files.list(rootDir)) {
-            stream.filter(p -> p.getFileName().toString().endsWith(".properties"))
-                    .forEach(p -> {
-                        try {
-                            for (String line : java.nio.file.Files.readAllLines(p)) {
-                                String trimmed = line.trim();
-                                if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("!")) {
-                                    continue;
-                                }
-                                int eq = trimmed.indexOf('=');
-                                if (eq > 0) {
-                                    String key = trimmed.substring(0, eq).trim();
-                                    String value = trimmed.substring(eq + 1).trim();
-                                    items.add(new AutocompletePopup.CompletionItem(
-                                            "{{" + key + "}}", value, "placeholder",
-                                            null, false, null, p.getFileName().toString()));
-                                }
-                            }
-                        } catch (IOException e) {
-                            // skip unreadable files
-                        }
-                    });
-        } catch (IOException e) {
-            return List.of();
+        // a Maven or Gradle project keeps its properties in src/main/resources, a camel run folder next to the routes
+        for (Path dir : List.of(rootDir, rootDir.resolve("src/main/resources"))) {
+            if (!java.nio.file.Files.isDirectory(dir)) {
+                continue;
+            }
+            try (var stream = java.nio.file.Files.list(dir)) {
+                stream.filter(p -> p.getFileName().toString().endsWith(".properties"))
+                        .sorted()
+                        .forEach(p -> addPlaceholders(p, rootDir.relativize(p).toString(), items));
+            } catch (IOException e) {
+                // skip an unreadable folder
+            }
         }
 
         items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
@@ -1469,6 +1505,26 @@ final class SourceEditAssist {
         placeholderCacheTime = now;
         placeholderCacheDir = rootDir;
         return items;
+    }
+
+    private static void addPlaceholders(Path file, String source, List<AutocompletePopup.CompletionItem> items) {
+        try {
+            for (String line : java.nio.file.Files.readAllLines(file)) {
+                String trimmed = line.trim();
+                if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("!")) {
+                    continue;
+                }
+                int eq = trimmed.indexOf('=');
+                if (eq > 0) {
+                    String key = trimmed.substring(0, eq).trim();
+                    String value = trimmed.substring(eq + 1).trim();
+                    items.add(new AutocompletePopup.CompletionItem(
+                            "{{" + key + "}}", value, "placeholder", null, false, null, source));
+                }
+            }
+        } catch (IOException e) {
+            // skip unreadable files
+        }
     }
 
     private static final Pattern PLACEHOLDER

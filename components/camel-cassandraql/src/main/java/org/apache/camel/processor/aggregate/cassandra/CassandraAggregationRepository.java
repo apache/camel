@@ -18,6 +18,7 @@ package org.apache.camel.processor.aggregate.cassandra;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,7 +43,6 @@ import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 import static org.apache.camel.utils.cassandra.CassandraUtils.append;
 import static org.apache.camel.utils.cassandra.CassandraUtils.applyConsistencyLevel;
 import static org.apache.camel.utils.cassandra.CassandraUtils.concat;
@@ -63,6 +63,11 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
 public class CassandraAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraAggregationRepository.class);
+
+    /**
+     * Prefix of the aggregation key under which a completed exchange is kept, by its exchange id, until it is confirmed
+     */
+    private static final String RECOVERY_KEY_PREFIX = "camel-recovery:";
 
     private final CassandraCamelCodec exchangeCodec = new CassandraCamelCodec();
 
@@ -97,10 +102,6 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
      * Prepared statement used to get exchangeIds and exchange ids
      */
     private PreparedStatement selectKeyIdStatement;
-    /**
-     * Prepared statement used to delete with key and exchange id
-     */
-    private PreparedStatement deleteIfIdStatement;
 
     @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     private long recoveryInterval = 5000;
@@ -167,7 +168,6 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         initSelectStatement();
         initDeleteStatement();
         initSelectKeyIdStatement();
-        initDeleteIfIdStatement();
     }
 
     @Override
@@ -190,13 +190,17 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
      */
     @Override
     public Exchange add(CamelContext camelContext, String key, Exchange exchange) {
+        insert(key, exchange);
+        return exchange;
+    }
+
+    private void insert(String key, Exchange exchange) {
         final Object[] idValues = getPKValues(key);
         LOGGER.debug("Inserting key {} exchange {}", idValues, exchange);
         try {
             ByteBuffer marshalledExchange = exchangeCodec.marshallExchange(exchange, allowSerializedHeaders);
             Object[] cqlParams = concat(idValues, new Object[] { exchange.getExchangeId(), marshalledExchange });
             getSession().execute(insertStatement.bind(cqlParams));
-            return exchange;
         } catch (IOException iOException) {
             throw new CassandraAggregationException("Failed to write exchange", exchange, iOException);
         }
@@ -236,29 +240,16 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
 
     // -------------------------------------------------------------------------
     // Confirm exchange in repository
-    private void initDeleteIfIdStatement() {
-        Delete delete = generateDelete(table, pkColumns, false);
-        Delete deleteIf = delete.ifColumn(exchangeIdColumn).isEqualTo(bindMarker());
-        SimpleStatement statement = applyConsistencyLevel(deleteIf.build(), writeConsistencyLevel);
-        LOGGER.debug("Generated Delete If Id {}", statement);
-        deleteIfIdStatement = getSession().prepare(statement);
-    }
 
     /**
-     * Remove exchange by Id from aggregation table.
+     * Remove the completed exchange kept for recovery.
      */
     @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
-        String keyColumn = getKeyColumn();
-        LOGGER.debug("Selecting Ids");
-        List<Row> rows = selectKeyIds();
-        for (Row row : rows) {
-            if (row.getString(exchangeIdColumn).equals(exchangeId)) {
-                String key = row.getString(keyColumn);
-                Object[] cqlParams = append(getPKValues(key), exchangeId);
-                LOGGER.debug("Deleting If Id {}", cqlParams);
-                getSession().execute(deleteIfIdStatement.bind(cqlParams));
-            }
+        if (useRecovery) {
+            Object[] idValues = getPKValues(recoveryKey(exchangeId));
+            LOGGER.debug("Deleting key {}", (Object) idValues);
+            getSession().execute(deleteStatement.bind(idValues));
         }
     }
 
@@ -277,6 +268,13 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
      */
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
+        if (useRecovery) {
+            // the aggregation is complete but the exchange has not been processed yet, so keep it under its exchange
+            // id until it is confirmed, so the recover task can pick it up. This is the given exchange, as the stored
+            // one does not contain the exchange that completed the aggregation. It is written before the aggregation
+            // is deleted, so a failure in between does not lose it.
+            insert(recoveryKey(exchange.getExchangeId()), exchange);
+        }
         Object[] idValues = getPKValues(key);
         LOGGER.debug("Deleting key {}", (Object) idValues);
         getSession().execute(deleteStatement.bind(idValues));
@@ -304,7 +302,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     }
 
     /**
-     * Get aggregation exchangeIds from aggregation table.
+     * Get the aggregation keys of the aggregations in progress from aggregation table.
      */
     @Override
     public Set<String> getKeys() {
@@ -312,7 +310,10 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         Set<String> keys = new HashSet<>(rows.size());
         String keyColumnName = getKeyColumn();
         for (Row row : rows) {
-            keys.add(row.getString(keyColumnName));
+            String key = row.getString(keyColumnName);
+            if (!isRecoveryKey(key)) {
+                keys.add(key);
+            }
         }
         return keys;
     }
@@ -324,30 +325,35 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
      */
     @Override
     public Set<String> scan(CamelContext camelContext) {
+        if (!useRecovery) {
+            return Collections.emptySet();
+        }
         List<Row> rows = selectKeyIds();
-        Set<String> exchangeIds = new HashSet<>(rows.size());
+        Set<String> exchangeIds = new HashSet<>();
+        String keyColumnName = getKeyColumn();
         for (Row row : rows) {
-            exchangeIds.add(row.getString(exchangeIdColumn));
+            String key = row.getString(keyColumnName);
+            if (isRecoveryKey(key)) {
+                exchangeIds.add(key.substring(RECOVERY_KEY_PREFIX.length()));
+            }
         }
         return exchangeIds;
     }
 
     /**
-     * Get exchange by exchange ID. This is far from optimal.
+     * Get the completed exchange kept for recovery by exchange ID.
      */
     @Override
     public Exchange recover(CamelContext camelContext, String exchangeId) {
-        List<Row> rows = selectKeyIds();
-        String keyColumnName = getKeyColumn();
-        String lKey = null;
-        for (Row row : rows) {
-            String lExchangeId = row.getString(exchangeIdColumn);
-            if (lExchangeId.equals(exchangeId)) {
-                lKey = row.getString(keyColumnName);
-                break;
-            }
-        }
-        return lKey == null ? null : get(camelContext, lKey);
+        return useRecovery ? get(camelContext, recoveryKey(exchangeId)) : null;
+    }
+
+    private static String recoveryKey(String exchangeId) {
+        return RECOVERY_KEY_PREFIX + exchangeId;
+    }
+
+    private static boolean isRecoveryKey(String key) {
+        return key != null && key.startsWith(RECOVERY_KEY_PREFIX);
     }
 
     // -------------------------------------------------------------------------

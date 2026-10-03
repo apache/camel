@@ -136,6 +136,14 @@ public class OpenFgaProducer extends DefaultProducer {
             return;
         }
 
+        List<ClientTupleKey> contextualTuples = authorizer.resolveContextualTuples(exchange);
+        if (contextualTuples == null) {
+            // a configured contextual tuple did not resolve, so no object is allowed; the reason is on the exchange
+            exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, false);
+            exchange.getMessage().setBody(List.of());
+            return;
+        }
+
         List<ClientCheckRequest> requests = new ArrayList<>(objects.size());
         for (String object : objects) {
             if (OpenFgaIdentifiers.validate(object) != null) {
@@ -144,7 +152,9 @@ public class OpenFgaProducer extends DefaultProducer {
                 LOG.debug("Skipping '{}' in a batchCheck: not usable as an object identifier", object);
                 continue;
             }
-            requests.add(new ClientCheckRequest().user(user).relation(relation)._object(object));
+            ClientCheckRequest item = new ClientCheckRequest().user(user).relation(relation)._object(object);
+            applyContext(item::contextualTuples, item::context, contextualTuples, authorizer);
+            requests.add(item);
         }
         if (requests.isEmpty()) {
             // nothing in the body could be an object of a check, so nothing is allowed. Say so on the header as
@@ -211,6 +221,12 @@ public class OpenFgaProducer extends DefaultProducer {
                 .user(user)
                 .relation(relation)
                 .type(type);
+        List<ClientTupleKey> contextualTuples = authorizer.resolveContextualTuples(exchange);
+        if (contextualTuples == null) {
+            exchange.getMessage().setBody(List.of());
+            return;
+        }
+        applyContext(request::contextualTupleKeys, request::context, contextualTuples, authorizer);
         ClientListObjectsOptions options = new ClientListObjectsOptions();
         applyModelAndConsistency(authorizer, options::authorizationModelId, options::consistency);
 
@@ -235,6 +251,12 @@ public class OpenFgaProducer extends DefaultProducer {
                 .user(user)
                 ._object(object)
                 .relations(splitToList(getEndpoint().getConfiguration().getRelations()));
+        List<ClientTupleKey> contextualTuples = authorizer.resolveContextualTuples(exchange);
+        if (contextualTuples == null) {
+            exchange.getMessage().setBody(List.of());
+            return;
+        }
+        applyContext(request::contextualTupleKeys, request::context, contextualTuples, authorizer);
         ClientListRelationsOptions options = new ClientListRelationsOptions();
         applyModelAndConsistency(authorizer, options::authorizationModelId, options::consistency);
 
@@ -259,6 +281,12 @@ public class OpenFgaProducer extends DefaultProducer {
                 ._object(toFgaObject(object))
                 .relation(relation)
                 .userFilters(userFilters());
+        List<ClientTupleKey> contextualTuples = authorizer.resolveContextualTuples(exchange);
+        if (contextualTuples == null) {
+            exchange.getMessage().setBody(List.of());
+            return;
+        }
+        applyContext(request::contextualTupleKeys, request::context, contextualTuples, authorizer);
         ClientListUsersOptions options = new ClientListUsersOptions();
         applyModelAndConsistency(authorizer, options::authorizationModelId, options::consistency);
 
@@ -470,6 +498,24 @@ public class OpenFgaProducer extends DefaultProducer {
             }
         }
         return values;
+    }
+
+    /**
+     * Applies the resolved contextual tuples and the condition context to a request.
+     * <p/>
+     * Each request type names these differently - {@code contextualTuples} on a check, {@code contextualTupleKeys} on
+     * the list operations - and they share no supertype, so the setters are passed in rather than the request.
+     */
+    private static void applyContext(
+            Consumer<List<ClientTupleKey>> contextualTuples, Consumer<Object> context,
+            List<ClientTupleKey> resolved, OpenFgaAuthorizer authorizer) {
+        if (!resolved.isEmpty()) {
+            contextualTuples.accept(resolved);
+        }
+        Map<String, Object> conditionContext = authorizer.getConditionContext();
+        if (conditionContext != null && !conditionContext.isEmpty()) {
+            context.accept(conditionContext);
+        }
     }
 
     /**

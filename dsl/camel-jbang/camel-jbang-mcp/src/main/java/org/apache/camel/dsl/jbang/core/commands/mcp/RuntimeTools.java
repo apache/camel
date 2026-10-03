@@ -346,7 +346,7 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the startup recorder steps of the running Camel application: each step with duration, level \
-                  and type, for diagnosing a slow startup. Requires camel.main.startup-recorder=true.""")
+                  and type, for diagnosing a slow startup. Requires camel.main.startup-recorder=backlog.""")
     public JsonObject camel_runtime_startup_steps(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_startup_steps", nameOrPid, Map.of());

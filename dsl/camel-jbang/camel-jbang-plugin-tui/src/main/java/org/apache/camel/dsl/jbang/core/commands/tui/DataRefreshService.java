@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,7 @@ class DataRefreshService {
 
     // Sparkline/chart history for all metric families
     private final MetricsCollector metrics = new MetricsCollector();
+    private final RateEstimator rates = new RateEstimator();
 
     // Cached PID list -- full process scan throttled to every 2 seconds (1 second in burst mode)
     private volatile List<Long> cachedPids = Collections.emptyList();
@@ -212,6 +214,8 @@ class DataRefreshService {
             conditionalRefresher.run();
         } catch (Exception e) {
             // ignore refresh errors
+        } finally {
+            freshData.set(true);
         }
     }
 
@@ -230,6 +234,44 @@ class DataRefreshService {
 
     // ---- Integration scanning ----
 
+    private static final long MEMBERSHIP_CHECK_MS = 1000;
+    private long lastMembershipCheck;
+    private Set<Long> lastCandidates = Set.of();
+
+    /**
+     * Whether an integration started or stopped since the last look: a status file appeared or went away in the camel
+     * directory, or an integration that was found has died. Checked about once a second.
+     */
+    boolean membershipChanged(long now) {
+        if (now - lastMembershipCheck < MEMBERSHIP_CHECK_MS) {
+            return false;
+        }
+        lastMembershipCheck = now;
+        Set<Long> candidates = new HashSet<>(TuiHelper.findCandidatePids());
+        boolean changed = !candidates.equals(lastCandidates);
+        lastCandidates = candidates;
+        if (changed) {
+            return true;
+        }
+        for (Long pid : cachedPids) {
+            if (!ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void setCachedPidsForTesting(List<Long> pids) {
+        cachedPids = pids;
+    }
+
+    /** Whether a refresh brought new data since the last time it was asked: the screen then redraws at once. */
+    boolean takeFreshData() {
+        return freshData.getAndSet(false);
+    }
+
+    private final AtomicBoolean freshData = new AtomicBoolean();
+
     private boolean scanIntegrations() {
         List<IntegrationInfo> infos = new ArrayList<>();
         long now = System.currentTimeMillis();
@@ -237,7 +279,9 @@ class DataRefreshService {
                 || cachedPids.isEmpty()
                 || forceFullScanUntil > now;
         long scanInterval = isBurstMode() ? 1000 : 2000;
-        boolean fullScan = wantFullScan && (now - lastFullScanTime >= scanInterval);
+        // on the other tabs an integration that starts or stops is noticed too: from the status files of the
+        // integrations, a directory listing, not the parsing of every status
+        boolean fullScan = (wantFullScan && (now - lastFullScanTime >= scanInterval)) || membershipChanged(now);
         List<Long> pids;
         if (fullScan) {
             pids = findPids(name);
@@ -274,6 +318,7 @@ class DataRefreshService {
                         info.activity = prev.activity;
                         info.errors = prev.errors;
                     }
+                    rates.fill(info, now);
                     infos.add(info);
                     metrics.updateThroughputHistory(info);
                     metrics.updateEndpointHistory(info);
@@ -314,6 +359,7 @@ class DataRefreshService {
 
         handleVanishing(infos, now);
         mergePhantoms(infos);
+        rates.retain(infos.stream().map(i -> i.pid).collect(Collectors.toSet()));
         data.set(infos);
         return fullScan;
     }
@@ -352,22 +398,38 @@ class DataRefreshService {
         }
     }
 
-    private void mergePhantoms(List<IntegrationInfo> infos) {
+    /**
+     * An opened project shows as Stopped until it runs; then its running app stands in for it (under the name the app
+     * gives itself), and when the run ends the project is back as Stopped, still selected.
+     */
+    static void mergePhantoms(List<IntegrationInfo> infos, List<IntegrationInfo> phantoms, MonitorContext ctx) {
+        // a run that is just ending (vanishing) still stands in for its project, so it is not shown twice
         Map<String, IntegrationInfo> liveDirs = infos.stream()
-                .filter(i -> !i.vanishing && !i.phantom && i.directory != null)
-                .collect(Collectors.toMap(i -> i.directory, i -> i, (a, b) -> a));
-        for (IntegrationInfo phantom : ctx.phantomIntegrations) {
+                .filter(i -> !i.phantom && i.directory != null)
+                .collect(Collectors.toMap(i -> i.directory, i -> i, (a, b) -> a.vanishing ? b : a));
+        for (IntegrationInfo phantom : phantoms) {
             IntegrationInfo live = phantom.sourceDir != null ? liveDirs.get(phantom.sourceDir) : null;
             if (live != null) {
-                // Phantom's project is now running — switch selection to the live integration
-                if (phantom.pid.equals(ctx.selectedPid)) {
+                if (phantom.pid.equals(ctx.selectedPid) && !live.vanishing) {
                     ctx.selectedPid = live.pid;
                 }
-                ctx.removePhantom(phantom.pid);
+                phantom.linkedPid = live.pid;
+                phantom.startingSince = 0;
+                live.openedAs = phantom.name;
             } else {
+                if (phantom.linkedPid != null
+                        && (ctx.selectedPid == null || ctx.selectedPid.equals(phantom.linkedPid))) {
+                    // the run of the selected project ended: select the project again
+                    ctx.selectedPid = phantom.pid;
+                }
+                phantom.linkedPid = null;
                 infos.add(phantom);
             }
         }
+    }
+
+    private void mergePhantoms(List<IntegrationInfo> infos) {
+        mergePhantoms(infos, ctx.phantomIntegrations, ctx);
     }
 
     private void handleAutoSelect(List<IntegrationInfo> infos, boolean fullScan) {

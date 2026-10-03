@@ -74,6 +74,11 @@ class ErrorsTab extends AbstractTableTab {
     }
 
     @Override
+    protected boolean selectsFirstRow() {
+        return true;
+    }
+
+    @Override
     protected int getRowCount() {
         return filteredSize();
     }
@@ -402,6 +407,29 @@ class ErrorsTab extends AbstractTableTab {
     }
 
     @Override
+    public SubViewBar.Spec subViewBar() {
+        if (ctx.findSelectedIntegration() == null) {
+            return null;
+        }
+        boolean diagramShown = diagram.isShowDiagram();
+        boolean historyDiagram = diagramShown && diagram.isHistoryMode() && diagram.hasHistoryData();
+        List<SubViewBar.View> views = List.of(
+                new SubViewBar.View("Errors", !diagramShown, true, () -> pressKey('d')),
+                new SubViewBar.View("Diagram", diagramShown, diagramShown || selectedErrorHasHistory(), () -> pressKey('d')));
+        List<SubViewBar.Toggle> toggles = new ArrayList<>();
+        if (!diagramShown) {
+            toggles.add(new SubViewBar.Toggle("f", "handled", handledFilter));
+        }
+        if (historyDiagram) {
+            toggles.add(new SubViewBar.Toggle("n", "description", diagram.isShowDescription() ? "on" : "off"));
+        }
+        if (!diagramShown || historyDiagram) {
+            toggles.add(new SubViewBar.Toggle("w", "wrap", wordWrap ? "on" : "off"));
+        }
+        return new SubViewBar.Spec("d", views, toggles, false);
+    }
+
+    @Override
     public void renderFooter(List<Span> spans) {
         if (diagram.isShowDiagram()) {
             if (diagram.isHistoryMode() && diagram.hasHistoryData()) {
@@ -415,9 +443,7 @@ class ErrorsTab extends AbstractTableTab {
                     hint(spans, TuiIcons.HINT_NAV, "navigate");
                     hint(spans, "Enter", "drill-down");
                     hint(spans, "i", infoLabel);
-                    hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : ""));
                     hintShowBhpv(spans, showBody, showHeaders, showProperties, showVariables);
-                    hintLast(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
                 } else {
                     hint(spans, "d", "close");
                     hint(spans, "Esc", "back");
@@ -425,9 +451,7 @@ class ErrorsTab extends AbstractTableTab {
                     hint(spans, TuiIcons.HINT_H, "h-scroll");
                     hint(spans, "t", "topology");
                     hint(spans, "i", infoLabel);
-                    hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : ""));
                     hintShowBhpv(spans, showBody, showHeaders, showProperties, showVariables);
-                    hintLast(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
                 }
                 return;
             }
@@ -441,10 +465,7 @@ class ErrorsTab extends AbstractTableTab {
         }
         hint(spans, "Home/End", "top/end");
         hint(spans, "s", "sort");
-        hint(spans, "d", "diagram");
-        hint(spans, "f", "handled [" + handledFilter + "]");
         hintShowBhpv(spans, showBody, showHeaders, showProperties, showVariables);
-        hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
     }
 
     /** How often this kind of error happened, and how long it has been going on (CAMEL-24911). */
@@ -749,6 +770,18 @@ class ErrorsTab extends AbstractTableTab {
     }
 
     // ---- Diagram ----
+
+    /** Whether the selected error has the message history its diagram is drawn from. */
+    private boolean selectedErrorHasHistory() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.errors.isEmpty()) {
+            return false;
+        }
+        List<ErrorInfo> sorted = applyFilter(info.errors);
+        Integer sel = tableState.selected();
+        ErrorInfo selected = sel != null && sel >= 0 && sel < sorted.size() ? sorted.get(sel) : null;
+        return selected != null && selected.messageHistory != null && selected.messageHistory.length > 0;
+    }
 
     private void loadDiagramForSelectedError() {
         if (ctx.selectedPid == null || ctx.runner == null) {

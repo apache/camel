@@ -23,6 +23,8 @@ public class JGroupsEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JGroupsEndpoint target = (JGroupsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acceptallobjects":
+        case "acceptAllObjects": target.setAcceptAllObjects(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "channelproperties":
@@ -44,6 +46,8 @@ public class JGroupsEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acceptallobjects":
+        case "acceptAllObjects": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "channelproperties":
@@ -66,6 +70,8 @@ public class JGroupsEndpointConfigurer extends PropertyConfigurerSupport impleme
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JGroupsEndpoint target = (JGroupsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acceptallobjects":
+        case "acceptAllObjects": return target.isAcceptAllObjects();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "channelproperties":

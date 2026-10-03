@@ -36,6 +36,8 @@ public class HiveMQEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "mqttversion":
+        case "mqttVersion": target.getConfiguration().setMqttVersion(property(camelContext, com.hivemq.client.mqtt.MqttVersion.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.getConfiguration().setPort(property(camelContext, int.class, value)); return true;
         case "qos": target.getConfiguration().setQos(property(camelContext, com.hivemq.client.mqtt.datatypes.MqttQos.class, value)); return true;
@@ -62,6 +64,8 @@ public class HiveMQEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "mqttversion":
+        case "mqttVersion": return com.hivemq.client.mqtt.MqttVersion.class;
         case "password": return java.lang.String.class;
         case "port": return int.class;
         case "qos": return com.hivemq.client.mqtt.datatypes.MqttQos.class;
@@ -89,6 +93,8 @@ public class HiveMQEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "host": return target.getConfiguration().getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "mqttversion":
+        case "mqttVersion": return target.getConfiguration().getMqttVersion();
         case "password": return target.getConfiguration().getPassword();
         case "port": return target.getConfiguration().getPort();
         case "qos": return target.getConfiguration().getQos();

@@ -94,7 +94,7 @@ public final class DiagramColors {
         return switch (type) {
             case "from" -> Theme.diagramFrom();
             case "to", "toD", "wireTap", "enrich", "pollEnrich" -> Theme.diagramTo();
-            case "choice", "when", "otherwise" -> Theme.diagramChoice();
+            case "choice", "when", "otherwise", "switch", "case" -> Theme.diagramChoice();
             case "marshal", "unmarshal", "transform", "setBody", "setHeader", "setProperty",
                     "convertBodyTo", "removeHeader", "removeHeaders", "removeProperty", "removeProperties" ->
                 Theme.diagramTo();

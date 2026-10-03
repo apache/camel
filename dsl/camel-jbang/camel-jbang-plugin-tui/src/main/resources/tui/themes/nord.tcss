@@ -52,3 +52,15 @@ $nord-fg: #D8DEE9;
 #diagram-action  { color: #B48EAD; }
 #diagram-eip     { color: #5E81AC; }
 #diagram-default { color: #4C566A; }
+
+/*
+ * Syntax tokens (optional), after Nord's own editor mapping (frost keywords and functions, green strings, purple numbers).
+ * Lifted to a 3:1 contrast on this background: comment.
+ */
+#syntax-comment  { color: #72809B; }
+#syntax-string   { color: #A3BE8C; }
+#syntax-keyword  { color: #81A1C1; }
+#syntax-function { color: #88C0D0; }
+#syntax-type     { color: #8FBCBB; }
+#syntax-constant { color: #B48EAD; }
+#syntax-text     { color: $nord-fg; }

@@ -4,9 +4,23 @@ Three commands. That is all it takes to go from zero to a running integration.
 
 == Install
 
-The Camel CLI runs on https://www.jbang.dev/[JBang].
-Install JBang first (see https://www.jbang.dev/download/[download instructions]),
-then install the Camel CLI:
+Install the Camel CLI with the installer script, which needs only Java 17 or later:
+
+[source,bash]
+----
+curl -fsSL https://camel.apache.org/install.sh | sh
+----
+
+On Windows (PowerShell):
+
+[source,powershell]
+----
+irm https://camel.apache.org/install.ps1 | iex
+----
+
+See xref:camel-jbang-launcher-install.adoc[Installing the Camel CLI Launcher] for upgrading and switching versions.
+
+If you use https://www.jbang.dev/[JBang], you can install the Camel CLI with it instead:
 
 [source,bash]
 ----
@@ -20,17 +34,13 @@ Verify that it works:
 camel version
 ----
 
-[source]
-----
-Camel CLI version: 4.21.0
-----
-
 That is it. No Maven project, no POM file, no IDE required.
 
 NOTE: The CLI requires internet access to download dependencies on first use.
-If you are behind a proxy, see https://www.jbang.dev/documentation/jbang/latest/configuration.html#proxy-configuration[JBang proxy configuration].
+Configure a proxy and mirrors in your Maven `settings.xml`, see
+xref:camel-jbang-running.adoc#_maven_configuration[Maven configuration].
 
-TIP: For version-pinned installs, offline-safe setups, container images, or installing without JBang,
+TIP: For version-pinned installs, offline-safe setups, or container images,
 see xref:camel-jbang-installation.adoc[Installation Options].
 
 == Create your first route
@@ -118,6 +128,9 @@ camel run --example=rest-api --dev
 ----
 
 TIP: Combine with `--dev` for live reload while exploring the example.
+
+An example runs in a folder of its own, with its files, wherever you start `camel run`. A route that reads `orders`
+or writes to `out/` uses the folder of the example, which `camel run` prints when it starts.
 
 === Running multiple files
 

@@ -25,8 +25,9 @@ import java.util.regex.Pattern;
 /**
  * The fix of a problem the validation reports, when the problem says it: an option that is a typo of another (Did you
  * mean: [period]), an enum value of the wrong case, a to that needs toD, a Simple expression where a property
- * placeholder is meant. The fix is a replacement of text on the line of the problem, which an editor applies with one
- * key and an agent applies as an edit, whatever the DSL (YAML, Java, XML) the line is written in.
+ * placeholder is meant, a Simple function the error names the right one of (did you mean ${body}?). The fix is a
+ * replacement of text on the line of the problem, which an editor applies with one key and an agent applies as an edit,
+ * whatever the DSL (YAML, Java, XML) the line is written in.
  * <p/>
  * A fix is only given when it is certain: one suggestion, a value that matches but for its case or a letter or two.
  */
@@ -58,6 +59,9 @@ public final class QuickFixes {
     private static final Pattern SIMPLE_AS_PLACEHOLDER = Pattern.compile(
             "([\\w.-]+)=(\\$\\{[^}]*\\}) is a Simple expression, which an endpoint option is not evaluated as.*\\{\\{([^}]+)\\}\\}");
     private static final Pattern DYNAMIC_TO = Pattern.compile("holds an expression \\(\\$\\{");
+    private static final Pattern UNKNOWN_FUNCTION = Pattern.compile("Unknown function: (.+?) \\((?:the argument goes in"
+                                                                    + " parentheses: )?(?:did you mean |function names are"
+                                                                    + " case sensitive: )(\\$\\{.+\\})\\??\\)");
 
     private QuickFixes() {
     }
@@ -104,6 +108,12 @@ public final class QuickFixes {
         if (m.find()) {
             String placeholder = "{{" + m.group(3) + "}}";
             return new Fix(m.group(2) + " → " + placeholder, m.group(2), placeholder);
+        }
+        m = UNKNOWN_FUNCTION.matcher(message);
+        if (m.find()) {
+            // ${bdy} (did you mean ${body}?): the function the hint names, in place of the one written
+            String written = "${" + m.group(1) + "}";
+            return new Fix(written + " → " + m.group(2), written, m.group(2));
         }
         if (DYNAMIC_TO.matcher(message).find() && message.contains("toD")) {
             // the step itself: .to( in Java, <to in XML, to: in YAML

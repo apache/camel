@@ -86,6 +86,56 @@ class CatalogDocExcerptTest {
     }
 
     @Test
+    public void testALanguageCarriesWhatItsOptionsCannotSay() throws Exception {
+        // CAMEL-25235: the semantic language is configured by named questions, which are not options at all, so its
+        // option list (id, language, expression) says nothing about how to use it
+        JsonObject answer = catalogDoc(Map.of("name", "semantic", "kind", "language"));
+        String documentation = answer.getString("documentation");
+        assertNotNull(documentation, "no documentation in: " + answer.toJson());
+        for (String needed : new String[] { "question", "instructions", "criteria", "threshold" }) {
+            assertTrue(documentation.contains(needed), needed + " is not in the excerpt:\n" + documentation);
+        }
+        assertNotNull(answer.getString("documentationHint"));
+    }
+
+    @Test
+    public void testADataFormatCarriesItToo() throws Exception {
+        String documentation = catalogDoc(Map.of("name", "csv", "kind", "dataformat")).getString("documentation");
+        assertNotNull(documentation);
+        assertFalse(documentation.contains("include::"), documentation);
+    }
+
+    @Test
+    public void testASubPageOrTheWholePageIsNotAlsoExcerpted() throws Exception {
+        // docPage returns one page as text, includeDoc the whole of it: neither wants the start of it again
+        assertNull(catalogDoc(Map.of("name", "simple", "kind", "language", "docPage", "functions"))
+                .getString("documentation"));
+        assertNull(catalogDoc(Map.of("name", "simple", "kind", "language", "includeDoc", "true"))
+                .getString("documentation"));
+    }
+
+    @Test
+    public void testAsciiDocLineCommentsAreNotCarried() {
+        String page = """
+                == Options
+
+                // language options: START
+                // language options: END
+
+                == Usage
+
+                Text that matters.
+                ----
+                // a comment inside a fence is code and stays
+                ----
+                """;
+        String excerpt = CatalogDocs.docExcerpt(page, CatalogDocs.DOC_EXCERPT_BUDGET_PROSE);
+        assertFalse(excerpt.contains("language options: START"), excerpt);
+        assertTrue(excerpt.contains("Text that matters."), excerpt);
+        assertTrue(excerpt.contains("a comment inside a fence is code"), excerpt);
+    }
+
+    @Test
     public void testAComponentWithNoPageIsStillAnswered() {
         // a page is not guaranteed; the answer must not depend on one
         assertNull(CatalogDocs.docExcerpt(null, CatalogDocs.DOC_EXCERPT_BUDGET));

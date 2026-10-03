@@ -231,4 +231,66 @@ class RouteDiagramLayoutEngineTest {
                 .as("maxY must equal the bottom of the deepest node")
                 .isEqualTo(l1.y + l1.height);
     }
+
+    // ─── Switch as a decision table (table layout) ──────────────────────────
+
+    private static RouteDiagramLayoutEngine.RouteInfo switchRoute(int cases) {
+        RouteDiagramLayoutEngine.RouteInfo r = route(
+                node("route", "r", 0),
+                node("from", "f", 1),
+                node("switch", "s", 2));
+        for (int i = 1; i <= cases; i++) {
+            r.nodes.add(node("case", "case" + i, 3));
+        }
+        r.nodes.add(node("to", "s-otherwise", 3));
+        r.nodes.add(node("log", "after", 2));
+        return r;
+    }
+
+    @Test
+    void withoutTheTableLayoutASwitchIsAChain() {
+        RouteDiagramLayoutEngine.LayoutRoute lr = ENGINE.layoutRoute(switchRoute(4), 0);
+        assertThat(findNode(lr, "case2").y).isGreaterThan(findNode(lr, "case1").y);
+        assertThat(findNode(lr, "case1").tableRow).isFalse();
+    }
+
+    @Test
+    void aSwitchIsOneWideTableWithARowPerCase() {
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        engine.setTableLayout(true);
+        RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(switchRoute(4), 0);
+
+        RouteDiagramLayoutEngine.LayoutNode table = findNode(lr, "s");
+        assertThat(table.width).isEqualTo(engine.getTableWidth());
+        assertThat(table.treeNode.table).isTrue();
+        // the rows: inside the table, in order, without arrows of their own
+        for (int i = 1; i <= 4; i++) {
+            RouteDiagramLayoutEngine.LayoutNode row = findNode(lr, "case" + i);
+            assertThat(row.tableRow).isTrue();
+            assertThat(row.tableRowIndex).isEqualTo(i - 1);
+            assertThat(row.parentNode).isNull();
+            assertThat(row.y).isEqualTo(table.y);
+        }
+        assertThat(findNode(lr, "s-otherwise").tableRowIndex).isEqualTo(4);
+        // the next step comes after the table, from the table
+        RouteDiagramLayoutEngine.LayoutNode after = findNode(lr, "after");
+        assertThat(after.parentNode).isSameAs(table);
+        assertThat(after.y).isGreaterThanOrEqualTo(table.y + table.height);
+        // centered where a common node is: the arrows stay straight
+        RouteDiagramLayoutEngine.LayoutNode from = findNode(lr, "f");
+        assertThat(table.x + table.width / 2).isEqualTo(from.x + NODE_W / 2);
+        assertThat(RouteDiagramLayoutEngine.hasScope(table.treeNode)).as("no scope box around a table").isFalse();
+    }
+
+    @Test
+    void aLongTableShowsTheFirstRowsAndSaysThereAreMore() {
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        engine.setTableLayout(true);
+        RouteDiagramLayoutEngine.LayoutNode small = findNode(engine.layoutRoute(switchRoute(4), 0), "s");
+        RouteDiagramLayoutEngine.LayoutNode big = findNode(engine.layoutRoute(switchRoute(30), 0), "s");
+        RouteDiagramLayoutEngine.LayoutNode bigger = findNode(engine.layoutRoute(switchRoute(60), 0), "s");
+        assertThat(big.height).isGreaterThan(small.height);
+        assertThat(bigger.height).as("as tall as " + RouteDiagramLayoutEngine.MAX_TABLE_ROWS + " rows and the more line")
+                .isEqualTo(big.height);
+    }
 }

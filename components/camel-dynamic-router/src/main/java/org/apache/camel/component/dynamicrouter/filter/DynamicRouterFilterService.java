@@ -170,17 +170,31 @@ public class DynamicRouterFilterService {
      * @return        the ID of the added filter
      */
     public String addFilterForChannel(final PrioritizedFilter filter, final String channel, final boolean update) {
-        boolean filterExists = !filterMap.isEmpty() &&
-                filterMap.get(channel).stream().anyMatch(f -> filter.id().equals(f.id()));
+        Set<PrioritizedFilter> filters = filterMap.computeIfAbsent(channel,
+                c -> new ConcurrentSkipListSet<>(DynamicRouterConstants.FILTER_COMPARATOR));
+        List<PrioritizedFilterStatistics> filterStatistics = filterStatisticsMap.computeIfAbsent(channel,
+                c -> Collections.synchronizedList(new ArrayList<>()));
+        boolean filterExists = filters.stream().anyMatch(f -> filter.id().equals(f.id()));
         boolean okToAdd = update == filterExists;
         if (okToAdd) {
-            Set<PrioritizedFilter> filters = filterMap.computeIfAbsent(channel,
-                    c -> new ConcurrentSkipListSet<>(DynamicRouterConstants.FILTER_COMPARATOR));
-            filters.add(filter);
-            List<PrioritizedFilterStatistics> filterStatistics = filterStatisticsMap.computeIfAbsent(channel,
-                    c -> Collections.synchronizedList(new ArrayList<>()));
+            // the set is ordered by priority and id: adding the updated filter would neither replace a filter with
+            // the same priority nor remove the one with the old priority, so the existing filter must be removed
+            // (its statistics stay, as when a filter is removed: they represent actions that happened)
+            if (filterExists
+                    && filters.stream().anyMatch(f -> filter.id().equals(f.id()) && f.priority() == filter.priority())) {
+                // same priority: the set has no atomic replace, so remove the existing filter first
+                filters.removeIf(f -> filter.id().equals(f.id()));
+                filters.add(filter);
+            } else {
+                // add the new filter first and then remove the old instance, so that an exchange routed meanwhile
+                // still finds a filter for this subscription
+                filters.add(filter);
+                if (filterExists) {
+                    filters.removeIf(f -> f != filter && filter.id().equals(f.id()));
+                }
+            }
             filterStatistics.add(filter.statistics());
-            LOG.debug("Added subscription: {}", filter);
+            LOG.debug("{} subscription: {}", filterExists ? "Updated" : "Added", filter);
             return filter.id();
         }
         return String.format("Error: Filter could not be %s -- existing filter found with matching ID: %b",

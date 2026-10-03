@@ -870,6 +870,38 @@ class RoutesTab extends AbstractTab {
     }
 
     @Override
+    public SubViewBar.Spec subViewBar() {
+        if (ctx.findSelectedIntegration() == null || sourceViewer.isVisible()) {
+            return null;
+        }
+        boolean diagramShown = diagram.isShowDiagram();
+        List<SubViewBar.View> views = List.of(
+                new SubViewBar.View("Routes", !diagramShown, true, () -> {
+                    // Esc goes back a level at a time: from a route's diagram to the topology, then to the table
+                    for (int i = 0; i < 3 && diagram.isShowDiagram(); i++) {
+                        handleEscape();
+                    }
+                }),
+                new SubViewBar.View("Diagram", diagramShown, true, () -> handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER))));
+        List<SubViewBar.Toggle> toggles = new ArrayList<>();
+        if (diagramShown) {
+            toggles.add(new SubViewBar.Toggle("m", "metrics", diagramMetrics ? "on" : "off"));
+            if (topologyMode) {
+                toggles.add(new SubViewBar.Toggle(
+                        "e", "external",
+                        EXTERNAL_LABELS[externalMode].trim().replace("[", "").replace("]", "")));
+            } else if (!diagram.getEipNodeBoxes().isEmpty()) {
+                toggles.add(new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"));
+            }
+            toggles.add(new SubViewBar.Toggle("n", "description", diagram.isShowDescription() ? "on" : "off"));
+        } else {
+            toggles.add(new SubViewBar.Toggle("n", "description", showDescription ? "on" : "off"));
+            toggles.add(new SubViewBar.Toggle("t", "top", routeTopMode ? "on" : "off"));
+        }
+        return new SubViewBar.Spec(null, views, toggles, false);
+    }
+
+    @Override
     public void renderFooter(List<Span> spans) {
         if (sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
@@ -878,7 +910,6 @@ class RoutesTab extends AbstractTab {
                 hint(spans, "Esc", "back");
                 hint(spans, "t", "topology");
                 hint(spans, TuiIcons.HINT_NAV, "navigate");
-                hint(spans, "d", "detail" + (detailMode ? " [on]" : " [off]"));
                 hint(spans, "g", "go to");
                 hint(spans, "PgUp/PgDn", detailMode ? "detail" : "page");
                 hint(spans, "c", "source");
@@ -896,17 +927,10 @@ class RoutesTab extends AbstractTab {
             } else {
                 diagram.renderFooterHints(spans);
             }
-            hint(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
-            if (topologyMode) {
-                hint(spans, "e", "external" + EXTERNAL_LABELS[externalMode]);
-            }
-            hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : " [off]"));
         } else {
             hint(spans, "Esc", "back");
             hint(spans, "Enter", "diagram");
             hint(spans, "s", "sort");
-            hint(spans, "n", "description" + (showDescription ? " [on]" : " [off]"));
-            hint(spans, "t", routeTopMode ? "top [on]" : "top [off]");
             if (!routeTopMode) {
                 hint(spans, "c", "source");
                 String routeState = selectedRouteState();
@@ -938,7 +962,7 @@ class RoutesTab extends AbstractTab {
         if (showDescription && route.description != null && !route.description.isBlank()) {
             return route.description;
         }
-        return route.from != null ? route.from : "";
+        return route.from != null ? TuiHelper.displayUri(route.from) : "";
     }
 
     /**
@@ -1116,7 +1140,8 @@ class RoutesTab extends AbstractTab {
             }
             rows.add(Row.from(
                     Cell.from("   route"),
-                    Cell.from(Span.styled(route.from != null ? route.from : route.routeId, routeStyle)),
+                    Cell.from(Span.styled(route.from != null ? TuiHelper.displayUri(route.from) : route.routeId,
+                            routeStyle)),
                     rightCell(formatThroughput(route.throughput), 8),
                     rightCell(String.valueOf(route.total), 8),
                     rightCell(String.valueOf(route.failed), 6,

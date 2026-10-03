@@ -1,0 +1,5 @@
+{
+  "commands": [
+    { "name": "edit", "fullName": "edit", "description": "Edit Camel with suggestions and diagnostics", "sourceClass": "org.apache.camel.dsl.jbang.core.commands.edit.EditCommand", "plugin": "edit", "options": [ { "names": "-h,--help", "description": "Display the help and sub-commands", "javaType": "boolean", "type": "boolean" } ] }
+  ]
+}

@@ -316,6 +316,7 @@ public final class ArtifactUtils {
             Map.entry("netty", "camel-netty"),
             Map.entry("netty-http", "camel-netty-http"),
             Map.entry("oaipmh", "camel-oaipmh"),
+            Map.entry("odata", "camel-odata"),
             Map.entry("olingo2", "camel-olingo2"),
             Map.entry("olingo4", "camel-olingo4"),
             Map.entry("once", "camel-once"),

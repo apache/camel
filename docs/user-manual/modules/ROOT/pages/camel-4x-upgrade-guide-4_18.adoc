@@ -36,6 +36,29 @@ the identity provider sends the browser back to. Deployments whose external addr
 property must set it to the address the browser actually reaches; a request announcing another origin is now
 redirected to the configured one and a warning is logged.
 
+=== camel-spring-ws - internal Camel headers are now filtered when mapping SOAP response headers
+
+When `allowResponseHeaderOverride` is enabled, the `spring-ws` producer now applies the endpoint's
+`headerFilterStrategy` to the SOAP response header attributes and elements it maps onto the message, as the
+`spring-ws` consumer already does for inbound SOAP headers. With the default `SpringWebserviceHeaderFilterStrategy`,
+attribute and element names starting with `Camel` or `camel` (case-insensitively) are no longer copied onto the
+message.
+
+Other SOAP response header attributes and elements are mapped as before, and the raw SOAP header is still
+available in the `CamelSpringWebserviceSoapHeader` header. A route that relies on the previous behaviour can supply a
+custom `headerFilterStrategy` on the `spring-ws` endpoint.
+
+=== camel-http-common, camel-platform-http-vertx - fileNameExtWhitelist entries are matched exactly
+
+`fileNameExtWhitelist` is now checked the same way everywhere, by one shared check in `camel-http-base`. Two
+places still matched each extension as a substring of the whitelist, so for example a whitelist of `txt`
+accepted an upload named `evil.x`: the `camel-platform-http-vertx` consumer, and `DefaultHttpBinding` in
+`camel-http-common` for uploads that arrive as request attributes, which also replaced the configured
+`fileNameExtWhitelist` with its lower-cased value. Both now compare each comma-separated entry exactly and
+case-insensitively. `*` still accepts every file, a file name without an extension is still accepted, and the
+configured value is left unchanged. An upload whose extension only matched as part of a longer entry is now
+rejected.
+
 === camel-core - masking of sensitive values in endpoint URIs
 
 `URISupport.sanitizeUri()`, which masks secrets in endpoint URIs shown in logs, events, JMX names and error

@@ -107,6 +107,158 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== Contract-first REST DSL
+
+To serve the operations of an OpenAPI contract, use the Rest DSL in _contract-first_ mode rather than a
+`rest-openapi` consumer endpoint. Camel loads the contract at startup and routes every operation to the
+route that starts from `direct:` and its _operation id_; see
+xref:manual::rest-dsl-openapi.adoc[REST DSL with contract-first OpenAPI].
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+rest().openApi("petstore-v3.json");
+
+from("direct:getPetById")
+    .setBody(simple("{\"id\": ${header.petId}, \"name\": \"Rex\"}"));
+----
+
+XML::
++
+[source,xml]
+----
+<rest>
+  <openApi specification="petstore-v3.json"/>
+</rest>
+<route>
+  <from uri="direct:getPetById"/>
+  <setBody>
+    <simple>{"id": ${header.petId}, "name": "Rex"}</simple>
+  </setBody>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- rest:
+    openApi:
+      specification: petstore-v3.json
+- route:
+    from:
+      uri: direct:getPetById
+      steps:
+        - setBody:
+            simple: '{"id": ${header.petId}, "name": "Rex"}'
+----
+====
+
+=== Calling an operation of an API
+
+To call an API by its contract, send to a `rest-openapi` endpoint with the contract and the _operation id_. Camel
+builds the HTTP request from the contract:
+
+* a path or query parameter, such as `+{petId}+` in `+/pet/{petId}+`, is taken from the message header of the same name;
+* the message body is the request body (a JSON string for a JSON API, with a `Content-Type` header);
+* the response body becomes the message body, as text: unmarshal it to read its fields.
+
+The server comes from the `servers` of the contract; set `host` to call another one (for example
+`http://localhost:8080` while developing). The HTTP call itself is done by an HTTP component on the classpath, such
+as `camel-http`; set `componentName` when there is more than one.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer:pets?repeatCount=1")
+    .setHeader("petId", constant(10))
+    .to("rest-openapi:petstore-v3.json#getPetById")
+    .unmarshal().json()
+    .log("Pet ${body[name]}")
+    .setBody(constant("{\"id\": 11, \"name\": \"Rex\"}"))
+    .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
+    .to("rest-openapi:petstore-v3.json#addPet?host={{petstore.url}}")
+    .log("Added ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="timer:pets?repeatCount=1"/>
+  <setHeader name="petId">
+    <constant>10</constant>
+  </setHeader>
+  <to uri="rest-openapi:petstore-v3.json#getPetById"/>
+  <unmarshal>
+    <json/>
+  </unmarshal>
+  <log message="Pet ${body[name]}"/>
+  <setBody>
+    <constant>{"id": 11, "name": "Rex"}</constant>
+  </setBody>
+  <setHeader name="Content-Type">
+    <constant>application/json</constant>
+  </setHeader>
+  <to uri="rest-openapi:petstore-v3.json#addPet?host={{petstore.url}}"/>
+  <log message="Added ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:pets
+      parameters:
+        repeatCount: 1
+      steps:
+        - setHeader:
+            name: petId
+            expression:
+              constant:
+                expression: "10"
+        - to:
+            uri: rest-openapi
+            parameters:
+              specificationUri: petstore-v3.json
+              operationId: getPetById
+        - unmarshal:
+            json: {}
+        - log:
+            message: "Pet ${body[name]}"
+        - setBody:
+            expression:
+              constant:
+                expression: '{"id": 11, "name": "Rex"}'
+        - setHeader:
+            name: Content-Type
+            expression:
+              constant:
+                expression: application/json
+        - to:
+            uri: rest-openapi
+            parameters:
+              specificationUri: petstore-v3.json
+              operationId: addPet
+              host: "{{petstore.url}}"
+        - log:
+            message: "Added ${body}"
+----
+====
+
+An answer with an error status (a `404` or a `409`) fails the exchange with an `HttpOperationFailedException`; handle
+it with `onException` to read `${exception.statusCode}` and `${exception.responseBody}`.
+
 === Consumer OAuth Bearer token validation
 
 When `rest-openapi` is used as a consumer, HTTP requests are served by the selected

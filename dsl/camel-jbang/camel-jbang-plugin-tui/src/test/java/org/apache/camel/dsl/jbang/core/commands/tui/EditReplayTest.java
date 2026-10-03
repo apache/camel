@@ -321,4 +321,52 @@ class EditReplayTest {
         assertEquals(third.locate(original, 0) + 2, third.locate(shifted, 0));
         assertEquals(-1, third.locate(List.of("nothing", "here"), 0));
     }
+
+    /** Ticks as the TUI does (every 40 ms) until the hunk is typed; the time it took. */
+    private static long typeAtUiTicks(EditReplay replay, FakeClock clock) {
+        long start = clock.now;
+        for (int i = 0; i < 100_000 && replay.phase() == EditReplay.Phase.TYPING; i++) {
+            clock.now += 40;
+            replay.tick(clock.now);
+        }
+        return clock.now - start;
+    }
+
+    @Test
+    void aSmallChangeIsTypedAtTheNaturalPaceAlthoughATickIsLongerThanACharacter() {
+        String before = "- route:\n    from:\n      uri: timer:tick\n";
+        String after = before + "      steps:\n        - log: \"Hello from the live edit\"\n";
+        List<EditDiff.Hunk> hunks = EditDiff.hunks(before.lines().toList(), after.lines().toList(), 3);
+        assertEquals(1.0, EditReplay.pace(hunks.get(0)));
+
+        FakeClock clock = new FakeClock();
+        EditReplay replay = replay(clock);
+        replay.start(new MemoryEditor(before), hunks);
+        long took = typeAtUiTicks(replay, clock);
+        // several characters in one tick: about the natural time, not one character per 40 ms tick
+        long natural = EditReplay.naturalTime(hunks.get(0));
+        assertTrue(took <= natural + 80, "took " + took + " ms, natural " + natural + " ms");
+        assertEquals(EditReplay.Phase.FINISHED, replay.phase());
+    }
+
+    @Test
+    void aLargeChangeIsTypedWithinTheBudget() {
+        String before = "- route:\n    from:\n      uri: timer:tick\n      steps:\n";
+        StringBuilder after = new StringBuilder(before);
+        for (int i = 0; i < 120; i++) {
+            after.append("        - log: \"line ").append(i).append(" of a long change the AI writes at once\"\n");
+        }
+        List<EditDiff.Hunk> hunks = EditDiff.hunks(before.lines().toList(), after.toString().lines().toList(), 3);
+        assertTrue(EditReplay.naturalTime(hunks.get(0)) > EditReplay.HUNK_BUDGET_MS * 10, "a change of minutes");
+        assertTrue(EditReplay.pace(hunks.get(0)) < 0.1);
+
+        FakeClock clock = new FakeClock();
+        EditReplay replay = replay(clock);
+        MemoryEditor editor = new MemoryEditor(before);
+        replay.start(editor, hunks);
+        long took = typeAtUiTicks(replay, clock);
+        assertTrue(took <= EditReplay.HUNK_BUDGET_MS + 200, "took " + took + " ms");
+        assertTrue(took >= EditReplay.HUNK_BUDGET_MS / 2, "still typed, not pasted: " + took + " ms");
+        assertEquals(after.toString().strip(), editor.text().strip());
+    }
 }

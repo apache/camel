@@ -25,6 +25,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import com.couchbase.client.java.Bucket;
@@ -163,6 +165,14 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     // Connection fine tuning parameters
     @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
     private long connectTimeout = DEFAULT_CONNECT_TIMEOUT;
+
+    /**
+     * Guards the lazily created {@link #cluster}, so that a producer and a consumer starting concurrently on the same
+     * endpoint share one connection instead of racing to open two.
+     */
+    private final Lock clusterLock = new ReentrantLock();
+    private Cluster cluster;
+    private ClusterEnvironment clusterEnvironment;
 
     public CouchbaseEndpoint() {
     }
@@ -668,30 +678,66 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
         return uriArray;
     }
 
-    //create from couchbase-client
-    private Bucket createClient() throws Exception {
+    /**
+     * The bucket on this endpoint's cluster, creating the cluster on first use.
+     * <p/>
+     * Package-private because the consumer and the producer take their handles again on every start: this endpoint
+     * disconnects the cluster when it stops, so handles cached across a restart would point at a dead cluster.
+     */
+    Bucket createClient() throws Exception {
         if (bucket == null || bucket.isEmpty()) {
             throw new CamelException(COUCHBASE_URI_ERROR);
         }
 
-        ClusterEnvironment env = createClusterEnvironment();
+        clusterLock.lock();
+        try {
+            if (cluster == null) {
+                clusterEnvironment = createClusterEnvironment();
 
-        String connStr;
-        if (connectionString != null && !connectionString.isEmpty()) {
-            connStr = connectionString;
-        } else {
-            List<URI> hosts = Arrays.asList(makeBootstrapURI());
-            String addHosts = hosts.stream()
-                    .map(URI::getHost)
-                    .collect(Collectors.joining(","));
-            connStr = !addHosts.isEmpty() ? addHosts : hostname;
+                String connStr;
+                if (connectionString != null && !connectionString.isEmpty()) {
+                    connStr = connectionString;
+                } else {
+                    List<URI> hosts = Arrays.asList(makeBootstrapURI());
+                    String addHosts = hosts.stream()
+                            .map(URI::getHost)
+                            .collect(Collectors.joining(","));
+                    connStr = !addHosts.isEmpty() ? addHosts : hostname;
+                }
+
+                cluster = Cluster.connect(connStr, ClusterOptions
+                        .clusterOptions(username, password)
+                        .environment(clusterEnvironment));
+            }
+            return cluster.bucket(bucket);
+        } finally {
+            clusterLock.unlock();
         }
+    }
 
-        Cluster cluster = Cluster.connect(connStr, ClusterOptions
-                .clusterOptions(username, password)
-                .environment(env));
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
 
-        return cluster.bucket(bucket);
+        clusterLock.lock();
+        try {
+            if (cluster != null) {
+                // disconnect() is the blocking close. The consumer and the producer used to call
+                // bucket.core().shutdown() instead, which returns a cold Mono nobody subscribed to and so
+                // closed nothing at all
+                cluster.disconnect();
+                cluster = null;
+            }
+            if (clusterEnvironment != null) {
+                // the environment is built here and handed to the SDK, which records it as *external* and
+                // therefore never shuts it down on disconnect - its event loops and schedulers outlive the
+                // cluster unless they are stopped explicitly
+                clusterEnvironment.shutdown();
+                clusterEnvironment = null;
+            }
+        } finally {
+            clusterLock.unlock();
+        }
     }
 
     /**
@@ -709,10 +755,12 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     ClusterEnvironment createClusterEnvironment() {
         ClusterEnvironment.Builder cfb = ClusterEnvironment.builder();
         cfb.jsonSerializer(DefaultJsonSerializer.create());
+        // connectTimeout is always applied, so that the documented default of 30s holds rather than the SDK's
+        // own 10s. queryTimeout keeps its guard on purpose: the documented 2500ms default is far shorter than
+        // the SDK's 75s, and applying it unconditionally would cut short every query that is slower than that
+        cfb.timeoutConfig().connectTimeout(Duration.ofMillis(connectTimeout));
         if (queryTimeout != DEFAULT_QUERY_TIMEOUT) {
-            cfb.timeoutConfig()
-                    .connectTimeout(Duration.ofMillis(connectTimeout))
-                    .queryTimeout(Duration.ofMillis(queryTimeout));
+            cfb.timeoutConfig().queryTimeout(Duration.ofMillis(queryTimeout));
         }
         return cfb.build();
     }

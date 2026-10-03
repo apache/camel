@@ -1153,7 +1153,7 @@ class DiagramSupport {
             return null;
         }
         // Only "to"-style nodes can link to other routes
-        if (!"to".equals(type) && !"toD".equals(type) && !"wireTap".equals(type)
+        if (!"to".equals(type) && !"toD".equals(type) && !"case".equals(type) && !"wireTap".equals(type)
                 && !"enrich".equals(type) && !"pollEnrich".equals(type)
                 && !"from".equals(type)) {
             return null;
@@ -1206,7 +1206,7 @@ class DiagramSupport {
     private static boolean sendsTo(RouteDiagramLayoutEngine.LayoutRoute lr, String baseUri) {
         for (var node : lr.nodes) {
             if (node.treeNode != null && ("to".equals(node.type) || "toD".equals(node.type)
-                    || "wireTap".equals(node.type) || "enrich".equals(node.type))
+                    || "case".equals(node.type) || "wireTap".equals(node.type) || "enrich".equals(node.type))
                     && baseUri.equals(getBaseUri(node.treeNode.info))) {
                 return true;
             }
@@ -1412,7 +1412,7 @@ class DiagramSupport {
             if (currentFromUri != null) {
                 for (var node : lr.nodes) {
                     String type = node.type;
-                    if (("to".equals(type) || "toD".equals(type) || "wireTap".equals(type))
+                    if (("to".equals(type) || "toD".equals(type) || "case".equals(type) || "wireTap".equals(type))
                             && node.treeNode != null) {
                         String uri = getBaseUri(node.treeNode.info);
                         if (currentFromUri.equals(uri)) {
@@ -1646,6 +1646,8 @@ class DiagramSupport {
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
                 RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
                 labelMode);
+        // a Switch is drawn as a decision table, a row per case
+        engine.setTableLayout(true);
 
         Map<String, RouteDiagramLayoutEngine.LayoutRoute> routeMap = new LinkedHashMap<>();
         for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
@@ -2185,6 +2187,7 @@ class DiagramSupport {
                 RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
                         RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
                         labelMode);
+                engine.setTableLayout(true);
                 for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
                     RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, 0);
                     normalizeRouteLayoutY(lr);

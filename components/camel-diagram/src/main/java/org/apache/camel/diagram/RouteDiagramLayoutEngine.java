@@ -53,6 +53,7 @@ public class RouteDiagramLayoutEngine {
     private final int baseNodeHeight;
     private final FontMetrics fontMetrics;
     private final NodeLabelMode nodeLabelMode;
+    private boolean tableLayout;
 
     static final Set<String> BRANCHING_EIPS = Set.of(
             "choice", "multicast", "doTry", "loadBalance", "recipientList", "circuitBreaker");
@@ -62,6 +63,15 @@ public class RouteDiagramLayoutEngine {
 
     static final Set<String> STRUCTURAL_TYPES = Set.of(
             "route", "from");
+
+    /**
+     * The EIPs drawn as a table, one row per child, with the table layout on: a Switch is a decision table of value and
+     * endpoint, its cases are alternatives (not steps after each other) and can be many.
+     */
+    public static final Set<String> TABLE_EIPS = Set.of("switch");
+
+    /** The rows of a table shown at once; the rest are reached by scrolling the table. */
+    public static final int MAX_TABLE_ROWS = 8;
 
     public static class Bounds {
         public int minX, minY, maxX, maxY;
@@ -117,6 +127,19 @@ public class RouteDiagramLayoutEngine {
 
     public int getNodeWidth() {
         return nodeWidth;
+    }
+
+    /**
+     * Draws the {@link #TABLE_EIPS} as one wide node with a row per child instead of a chain of boxes. Off by default:
+     * a renderer turns it on when it draws the rows ({@link LayoutNode#tableRow}).
+     */
+    public void setTableLayout(boolean tableLayout) {
+        this.tableLayout = tableLayout;
+    }
+
+    /** The width of a table node: two common nodes and the gap between them. */
+    public int getTableWidth() {
+        return nodeWidth * 2 + hGap;
     }
 
     public int getBaseNodeHeight() {
@@ -178,6 +201,8 @@ public class RouteDiagramLayoutEngine {
         public final List<TreeNode> children = new ArrayList<>();
         public int subtreeWidth;
         public LayoutNode layoutNode;
+        /** Drawn as a table of its children (the table layout is on and it is one of {@link #TABLE_EIPS}). */
+        public boolean table;
 
         public TreeNode(NodeInfo info) {
             this.info = info;
@@ -196,6 +221,11 @@ public class RouteDiagramLayoutEngine {
         public boolean connectFromMerge;
         public int mergeY;
         public int mergeCx;
+        /** The width of the node when it is wider than the others (a table); 0 for the common width. */
+        public int width;
+        /** A row of a table node: drawn inside its parent's box, at its index among the rows. */
+        public boolean tableRow;
+        public int tableRowIndex;
     }
 
     public static class LayoutRoute {
@@ -349,6 +379,9 @@ public class RouteDiagramLayoutEngine {
         lr.labelY = startY;
 
         TreeNode tree = buildTree(route.nodes);
+        if (tree != null && tableLayout) {
+            markTables(tree);
+        }
         if (tree == null) {
             lr.maxX = PADDING + nodeWidth;
             lr.maxY = startY + LABEL_OFFSET;
@@ -382,7 +415,18 @@ public class RouteDiagramLayoutEngine {
         return lr;
     }
 
+    private static void markTables(TreeNode node) {
+        node.table = TABLE_EIPS.contains(node.info.type) && !node.children.isEmpty();
+        for (TreeNode child : node.children) {
+            markTables(child);
+        }
+    }
+
     private int computeSubtreeWidth(TreeNode node) {
+        if (node.table) {
+            node.subtreeWidth = getTableWidth();
+            return node.subtreeWidth;
+        }
         if (node.children.isEmpty()) {
             node.subtreeWidth = nodeWidth;
             return node.subtreeWidth;
@@ -409,7 +453,9 @@ public class RouteDiagramLayoutEngine {
 
     private void assignPositions(TreeNode node, int x, int y, int parentWidth, LayoutRoute lr) {
         int availableWidth = Math.max(node.subtreeWidth, parentWidth);
-        int nodeX = x + (availableWidth - nodeWidth) / 2;
+        int ownWidth = node.table ? getTableWidth() : nodeWidth;
+        // a table stands centered where a common node would, so the arrows in and out stay straight
+        int nodeX = x + (availableWidth - nodeWidth) / 2 - (ownWidth - nodeWidth) / 2;
 
         LayoutNode ln = new LayoutNode();
         ln.type = node.info.type;
@@ -452,9 +498,30 @@ public class RouteDiagramLayoutEngine {
             }
         }
 
+        if (node.table) {
+            ln.width = ownWidth;
+            int rows = Math.min(node.children.size(), MAX_TABLE_ROWS)
+                       + (node.children.size() > MAX_TABLE_ROWS ? 1 : 0);
+            ln.height = Math.max(ln.height, baseNodeHeight + (rows - 1) * fontMetrics.getHeight());
+            for (int i = 0; i < node.children.size(); i++) {
+                TreeNode child = node.children.get(i);
+                LayoutNode row = new LayoutNode();
+                row.type = child.info.type;
+                row.id = child.info.id;
+                row.x = nodeX;
+                row.y = y;
+                row.wrappedLines = resolveLabel(child.info, nodeLabelMode);
+                row.treeNode = child;
+                row.tableRow = true;
+                row.tableRowIndex = i;
+                child.layoutNode = row;
+                lr.nodes.add(row);
+            }
+        }
+
         lr.maxY = Math.max(lr.maxY, y + ln.height);
 
-        if (node.children.isEmpty()) {
+        if (node.children.isEmpty() || node.table) {
             return;
         }
 
@@ -492,7 +559,7 @@ public class RouteDiagramLayoutEngine {
     }
 
     private static LayoutNode findLastLayoutNode(TreeNode node) {
-        if (node.children.isEmpty()) {
+        if (node.children.isEmpty() || node.table) {
             return node.layoutNode;
         }
         if (isBranchingEip(node.info.type)) {
@@ -503,6 +570,9 @@ public class RouteDiagramLayoutEngine {
 
     private static int findMaxY(TreeNode node) {
         int maxY = node.layoutNode != null ? node.layoutNode.y + node.layoutNode.height : 0;
+        if (node.table) {
+            return maxY;
+        }
         for (TreeNode child : node.children) {
             maxY = Math.max(maxY, findMaxY(child));
         }
@@ -516,6 +586,7 @@ public class RouteDiagramLayoutEngine {
     public static boolean hasScope(TreeNode node) {
         return node.parent != null
                 && !node.children.isEmpty()
+                && !node.table
                 && !BRANCH_CHILD_TYPES.contains(node.info.type)
                 && !STRUCTURAL_TYPES.contains(node.info.type);
     }
@@ -536,10 +607,15 @@ public class RouteDiagramLayoutEngine {
             bounds.maxY = Math.max(bounds.maxY, inner.maxY + SCOPE_BOX_PAD);
         } else {
             if (node.layoutNode != null) {
+                int w = node.layoutNode.width > 0 ? node.layoutNode.width : nodeWidth;
                 bounds.minX = Math.min(bounds.minX, node.layoutNode.x);
                 bounds.minY = Math.min(bounds.minY, node.layoutNode.y);
-                bounds.maxX = Math.max(bounds.maxX, node.layoutNode.x + nodeWidth);
+                bounds.maxX = Math.max(bounds.maxX, node.layoutNode.x + w);
                 bounds.maxY = Math.max(bounds.maxY, node.layoutNode.y + node.layoutNode.height);
+            }
+            if (node.table) {
+                // the rows are inside the table's box
+                return;
             }
             for (TreeNode child : node.children) {
                 expandBoundsForBox(child, bounds, nodeWidth);

@@ -36,6 +36,7 @@ import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
+import org.apache.camel.dsl.jbang.core.commands.RouteDslConverter;
 
 /**
  * File-actions menu for the Source tab file list (opened with F12). Presents basic file management (new file, new
@@ -50,7 +51,10 @@ class FileActionsPopup {
         RENAME,
         DUPLICATE,
         DELETE,
-        COPY_PATH
+        COPY_PATH,
+        CONVERT_YAML,
+        CONVERT_XML,
+        CONVERT_JAVA
     }
 
     /** A completed, ready-to-execute request. {@code name} is null for DELETE and COPY_PATH. */
@@ -71,6 +75,7 @@ class FileActionsPopup {
 
     private String targetName;
     private boolean hasTarget;
+    private boolean routeFile;
 
     private final ListState menuState = new ListState();
     private List<MenuItem> items = List.of();
@@ -83,6 +88,14 @@ class FileActionsPopup {
     private Request result;
 
     void open(String selectedName, boolean hasTarget) {
+        open(selectedName, hasTarget, false);
+    }
+
+    /**
+     * Opens the menu for the selected entry; a route file can also be converted to the other DSLs (CAMEL-25254).
+     */
+    void open(String selectedName, boolean hasTarget, boolean routeFile) {
+        this.routeFile = routeFile;
         this.visible = true;
         this.phase = Phase.MENU;
         this.targetName = selectedName;
@@ -118,6 +131,19 @@ class FileActionsPopup {
             list.add(new MenuItem(Action.DUPLICATE, TuiIcons.DUPLICATE, "Duplicate…"));
             list.add(new MenuItem(Action.DELETE, TuiIcons.DELETE, "Delete"));
             list.add(new MenuItem(Action.COPY_PATH, TuiIcons.CLIPBOARD, "Copy path to clipboard"));
+            String format = routeFile ? RouteDslConverter.formatOf(targetName) : null;
+            if (format != null) {
+                // to the other two DSLs, written next to the file
+                if (!"yaml".equals(format)) {
+                    list.add(new MenuItem(Action.CONVERT_YAML, TuiIcons.CONVERT, "Convert to YAML…"));
+                }
+                if (!"xml".equals(format)) {
+                    list.add(new MenuItem(Action.CONVERT_XML, TuiIcons.CONVERT, "Convert to XML…"));
+                }
+                if (!"java".equals(format)) {
+                    list.add(new MenuItem(Action.CONVERT_JAVA, TuiIcons.CONVERT, "Convert to Java…"));
+                }
+            }
         }
         this.items = list;
     }
@@ -166,8 +192,8 @@ class FileActionsPopup {
             case RENAME -> startInput(action, "Rename", targetName);
             case DUPLICATE -> startInput(action, "Duplicate", SourceFileOps.suggestDuplicateName(targetName));
             case DELETE -> phase = Phase.CONFIRM;
-            case COPY_PATH -> {
-                result = new Request(Action.COPY_PATH, null);
+            case COPY_PATH, CONVERT_YAML, CONVERT_XML, CONVERT_JAVA -> {
+                result = new Request(action, null);
                 close();
             }
         }

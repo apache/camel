@@ -1,0 +1,5 @@
+{
+  "commands": [
+    { "name": "mcp", "fullName": "mcp", "description": "MCP server for AI coding assistants", "sourceClass": "org.apache.camel.dsl.jbang.core.commands.mcp.McpCommand", "plugin": "mcp", "options": [ { "names": "--http", "description": "Enable HTTP transport (Streamable HTTP and SSE). Default uses STDIO transport.", "defaultValue": "false", "javaType": "boolean", "type": "boolean" }, { "names": "--log-level", "description": "Log level (ERROR, WARN, INFO, DEBUG, TRACE)", "defaultValue": "WARN", "javaType": "java.lang.String", "type": "string" }, { "names": "--port", "description": "HTTP server port (only used with --http)", "defaultValue": "8080", "javaType": "int", "type": "integer" }, { "names": "--version", "description": "Camel MCP server version to use (default: current Camel version)", "javaType": "java.lang.String", "type": "string" }, { "names": "-h,--help", "description": "Display the help and sub-commands", "javaType": "boolean", "type": "boolean" } ] }
+  ]
+}

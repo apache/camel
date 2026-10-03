@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -62,6 +63,8 @@ final class ProjectOverviewAssist {
     private static volatile CamelCatalog catalog;
 
     private final AtomicBoolean running = new AtomicBoolean();
+    private volatile Thread worker;
+    private volatile boolean stopRequested;
     /** The projects auto mode already explained in this session, by directory and fingerprint. */
     private final Set<String> autoDone = ConcurrentHashMap.newKeySet();
 
@@ -143,6 +146,15 @@ final class ProjectOverviewAssist {
      * @return true when it started
      */
     boolean autoExplain(Path dir, LlmClient client, McpFacade facade, Sink sink) {
+        return autoExplain(dir, client, facade, sink, () -> true);
+    }
+
+    /**
+     * As {@link #autoExplain(Path, LlmClient, McpFacade, Sink)}, but starts only once the panel is idle: a local model
+     * answers one request at a time, so a question asked right after the panel opens would otherwise wait for the whole
+     * summary. Blocks the calling (background) thread until then.
+     */
+    boolean autoExplain(Path dir, LlmClient client, McpFacade facade, Sink sink, BooleanSupplier idle) {
         if (!MODE_AUTO.equals(mode()) || dir == null || client == null || running.get()) {
             return false;
         }
@@ -154,10 +166,48 @@ final class ProjectOverviewAssist {
         if (summary != null && !summary.ai().isEmpty() && overview.fingerprint().equals(summary.fingerprint())) {
             return false;
         }
+        if (!awaitIdle(idle, IDLE_WAIT_MS) || running.get()) {
+            return false;
+        }
         sink.add(AiRole.SYSTEM, "The project summary is " + (summary == null ? "missing" : "out of date")
                                 + ": explaining " + overview.flows().size() + " routes with " + client.model()
                                 + " in the background (AI Overview: auto).");
         explain(dir, overview, summary, client, sink);
+        return true;
+    }
+
+    /** How long the summary waits for the panel to become idle before it gives up for this session. */
+    static final long IDLE_WAIT_MS = 10 * 60_000;
+
+    /** Waits until {@code idle} holds, checking a few times a second; false when it never did in time. */
+    static boolean awaitIdle(BooleanSupplier idle, long maxWaitMs) {
+        long until = System.currentTimeMillis() + maxWaitMs;
+        while (!idle.getAsBoolean()) {
+            if (System.currentTimeMillis() >= until) {
+                return false;
+            }
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Stops the summary being written, so a question waiting behind it on a local model goes first.
+     *
+     * @return true when one was running
+     */
+    boolean stop() {
+        Thread w = worker;
+        if (!running.get() || w == null) {
+            return false;
+        }
+        stopRequested = true;
+        w.interrupt();
         return true;
     }
 
@@ -166,6 +216,7 @@ final class ProjectOverviewAssist {
         if (!running.compareAndSet(false, true)) {
             return;
         }
+        stopRequested = false;
         Thread t = new Thread(() -> {
             try {
                 String answer = ask(client, IntegrationSummary.systemPrompt(),
@@ -187,12 +238,16 @@ final class ProjectOverviewAssist {
                                 overview.fingerprint(), client.model(), null, merged.overview(),
                                 merged.capabilities(), merged.descriptions())));
             } catch (Exception e) {
-                sink.add(AiRole.ERROR, "Explaining the project failed: " + e.getMessage());
+                if (!stopRequested) {
+                    sink.add(AiRole.ERROR, "Explaining the project failed: " + e.getMessage());
+                }
             } finally {
+                worker = null;
                 running.set(false);
             }
         }, "tui-ai-overview");
         t.setDaemon(true);
+        worker = t;
         t.start();
     }
 

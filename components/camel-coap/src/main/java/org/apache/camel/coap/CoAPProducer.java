@@ -16,9 +16,13 @@
  */
 package org.apache.camel.coap;
 
+import java.util.Locale;
+
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.URISupport;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
@@ -53,7 +57,8 @@ public class CoAPProducer extends DefaultProducer {
             // ?default?
             ct = "application/octet-stream";
         }
-        String method = CoAPHelper.getDefaultMethod(exchange, client);
+        // the method header may be given in lower case
+        String method = CoAPHelper.getDefaultMethod(exchange, client).toUpperCase(Locale.ROOT);
         int mediaType = MediaTypeRegistry.parse(ct);
         CoapResponse response = null;
         boolean pingResponse = false;
@@ -76,14 +81,19 @@ public class CoAPProducer extends DefaultProducer {
                 pingResponse = client.ping();
                 break;
             default:
-                break;
+                throw new IllegalArgumentException("Unsupported CoAP method: " + method);
         }
 
         if (response != null) {
             CoAPHelper.convertCoapResponseToMessage(response, exchange.getOut());
+        } else if (!method.equals(CoAPConstants.METHOD_PING)) {
+            // the client returns null when no response was received (timeout, rejected or cancelled request)
+            throw new CamelExchangeException(
+                    "No response received from CoAP server for " + method + ": " + URISupport.sanitizeUri(client.getURI()),
+                    exchange);
         }
 
-        if (method.equalsIgnoreCase(CoAPConstants.METHOD_PING)) {
+        if (method.equals(CoAPConstants.METHOD_PING)) {
             Message resp = exchange.getOut();
             resp.setBody(pingResponse);
         }

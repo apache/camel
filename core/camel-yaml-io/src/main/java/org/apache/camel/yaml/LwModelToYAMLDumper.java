@@ -24,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
@@ -46,6 +45,7 @@ import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.SwitchDefinition;
+import org.apache.camel.model.ThrowExceptionDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -135,6 +135,23 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
                     return;
                 }
                 super.doWriteAttribute(jo, key, value, defaultValue);
+            }
+
+            @Override
+            protected JsonObject doWriteThrowExceptionDefinition(ThrowExceptionDefinition def) {
+                JsonObject jo = super.doWriteThrowExceptionDefinition(def);
+                Exception e = def.getException();
+                String type = def.getExceptionClass() != null
+                        ? def.getExceptionClass().getName() : e != null ? e.getClass().getName() : null;
+                if (type != null && def.getExceptionType() == null && def.getRef() == null) {
+                    // an exception given as a class or an instance, as in throwException(new Exception("...")), is
+                    // written as its type and message, as the class or instance itself cannot be serialized
+                    if (def.getMessage() == null && e != null) {
+                        doWriteAttribute(jo, "message", e.getMessage(), null);
+                    }
+                    doWriteAttribute(jo, "exceptionType", type, null);
+                }
+                return jo;
             }
 
             @Override
@@ -389,63 +406,25 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             if (beans.isEmpty()) {
                 return;
             }
-            buffer.write("- beans:\n");
+            // written by the model writer, so nested properties come out as nested maps, as the yaml dsl loads them
+            var writer = new YamlModelWriter() {
+                @Override
+                public JsonObject doWriteBeanFactoryDefinition(BeanFactoryDefinition<?> def) {
+                    return super.doWriteBeanFactoryDefinition(def);
+                }
+            };
+            writer.setCamelContext(camelContext);
+            JsonArray list = new JsonArray();
             for (BeanFactoryDefinition<?> b : beans) {
-                doWriteBeanFactoryDefinition(b);
+                JsonObject bean = writer.doWriteBeanFactoryDefinition(b);
+                if (bean.get("type") instanceof String type && type.startsWith("#class:")) {
+                    bean.put("type", type.substring(7));
+                }
+                list.add(bean);
             }
-        }
-
-        private void doWriteBeanFactoryDefinition(BeanFactoryDefinition<?> b) {
-            String type = b.getType();
-            if (type.startsWith("#class:")) {
-                type = type.substring(7);
-            }
-            buffer.write(String.format("    - name: %s%n", b.getName()));
-            buffer.write(String.format("      type: \"%s\"%n", type));
-            if (b.getFactoryBean() != null) {
-                buffer.write(String.format("      factoryBean: \"%s\"%n", b.getFactoryBean()));
-            }
-            if (b.getFactoryMethod() != null) {
-                buffer.write(String.format("      factoryMethod: \"%s\"%n", b.getFactoryMethod()));
-            }
-            if (b.getBuilderClass() != null) {
-                buffer.write(String.format("      builderClass: \"%s\"%n", b.getBuilderClass()));
-            }
-            if (b.getBuilderMethod() != null) {
-                buffer.write(String.format("      builderMethod: \"%s\"%n", b.getBuilderMethod()));
-            }
-            if (b.getInitMethod() != null) {
-                buffer.write(String.format("      initMethod: \"%s\"%n", b.getInitMethod()));
-            }
-            if (b.getDestroyMethod() != null) {
-                buffer.write(String.format("      destroyMethod: \"%s\"%n", b.getDestroyMethod()));
-            }
-            if (b.getScriptLanguage() != null) {
-                buffer.write(String.format("      scriptLanguage: \"%s\"%n", b.getScriptLanguage()));
-            }
-            if (b.getScript() != null) {
-                buffer.write(String.format("      script: \"%s\"%n", b.getScript()));
-            }
-            if (b.getConstructors() != null && !b.getConstructors().isEmpty()) {
-                buffer.write(String.format("      constructors:%n"));
-                final AtomicInteger counter = new AtomicInteger();
-                b.getConstructors().forEach((key, value) -> {
-                    if (key == null) {
-                        key = counter.getAndIncrement();
-                    }
-                    buffer.write(String.format("        %d: \"%s\"%n", key, value));
-                });
-            }
-            if (b.getProperties() != null && !b.getProperties().isEmpty()) {
-                buffer.write(String.format("      properties:%n"));
-                b.getProperties().forEach((key, value) -> {
-                    if (value instanceof String) {
-                        buffer.write(String.format("        %s: \"%s\"%n", key, value));
-                    } else {
-                        buffer.write(String.format("        %s: %s%n", key, value));
-                    }
-                });
-            }
+            JsonObject root = new JsonObject();
+            root.put("beans", list);
+            buffer.write(writer.printAsYaml(List.of(root)));
         }
     }
 

@@ -377,6 +377,30 @@ public final class ExampleHelper {
         return slash > 0 ? name.substring(slash + 1) : name != null ? name : "";
     }
 
+    /**
+     * The arguments of a camel run of an example, for a process started in the folder of the example: --example=name
+     * (or --example name) replaced by the files of the example, and its name unless one is given (CAMEL-25236).
+     */
+    public static List<String> runArgs(List<String> args, JsonObject example) {
+        List<String> answer = new ArrayList<>();
+        boolean named = args.stream().anyMatch(a -> a.equals("--name") || a.startsWith("--name="));
+        for (int i = 0; i < args.size(); i++) {
+            String a = args.get(i);
+            if (a.equals("--example") || a.startsWith("--example=")) {
+                if (a.equals("--example") && i + 1 < args.size()) {
+                    i++; // its value
+                }
+                answer.addAll(getFiles(example));
+                if (!named) {
+                    answer.add("--name=" + getShortName(example));
+                }
+            } else {
+                answer.add(a);
+            }
+        }
+        return answer;
+    }
+
     public static boolean isBundled(JsonObject entry) {
         Boolean bundled = entry.getBoolean("bundled");
         return bundled != null && bundled;

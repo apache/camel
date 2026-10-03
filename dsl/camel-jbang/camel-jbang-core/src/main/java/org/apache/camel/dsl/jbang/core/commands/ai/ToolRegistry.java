@@ -503,7 +503,7 @@ public final class ToolRegistry {
                 "Get startup recorder steps showing component initialization timing. "
                                            + "Shows each startup step with duration, level, and type. "
                                            + "Useful for diagnosing slow application startup. "
-                                           + "Requires startup recording to be enabled (camel.main.startup-recorder=true).")
+                                           + "Requires startup recording to be enabled (camel.main.startup-recorder=backlog).")
                 .executor((ctx, args) -> ctx.executeAction("startup-recorder", null)));
 
         register(tool("get_datasources",

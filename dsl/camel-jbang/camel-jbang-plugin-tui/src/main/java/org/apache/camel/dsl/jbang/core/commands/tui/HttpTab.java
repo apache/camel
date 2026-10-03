@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -71,6 +72,11 @@ class HttpTab extends AbstractTableTab {
     HttpTab(MonitorContext ctx) {
         super(ctx, "method", "path", "total", "consumes", "produces", "source");
         this.probe = new HttpProbe(ctx);
+    }
+
+    @Override
+    protected boolean selectsFirstRow() {
+        return true;
     }
 
     @Override
@@ -227,6 +233,31 @@ class HttpTab extends AbstractTableTab {
     }
 
     @Override
+    public SubViewBar.Spec subViewBar() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        List<HttpEndpointInfo> visible = sortedVisibleEndpoints(info);
+        Integer sel = tableState.selected();
+        HttpEndpointInfo selected = sel != null && sel >= 0 && sel < visible.size() ? visible.get(sel) : null;
+        boolean table = !probe.isActive() && !showSpec;
+        List<SubViewBar.View> views = List.of(
+                new SubViewBar.View("Endpoints", table, true, this::handleEscape),
+                new SubViewBar.View("Probe", probe.isActive(), table && selected != null, this::enterProbeModeFromTable),
+                new SubViewBar.View(
+                        "Spec", showSpec, table && selected != null && selected.specificationUri != null,
+                        this::loadSpecForSelectedEndpoint));
+        List<SubViewBar.Toggle> toggles = new ArrayList<>();
+        if (table) {
+            String[] filterLabels = { "all", "rest", "http" };
+            toggles.add(new SubViewBar.Toggle("f", "filter", filterLabels[filter]));
+            toggles.add(new SubViewBar.Toggle("m", "management", showManagement ? "on" : "off"));
+        }
+        return new SubViewBar.Spec(null, views, toggles, false);
+    }
+
+    @Override
     public void renderFooter(List<Span> spans) {
         if (probe.isActive()) {
             probe.renderFooter(spans);
@@ -240,9 +271,6 @@ class HttpTab extends AbstractTableTab {
         hint(spans, "Esc", "back");
         hint(spans, "Enter", "probe");
         hint(spans, "s", "sort");
-        String[] filterLabels = { "all", "rest", "http" };
-        hint(spans, "f", "filter [" + filterLabels[filter] + "]");
-        hint(spans, "m", "management" + (showManagement ? " [on]" : " [off]"));
         List<HttpEndpointInfo> hVisible = sortedVisibleEndpoints(ctx.findSelectedIntegration());
         Integer hSel = tableState.selected();
         if (hSel != null && hSel >= 0 && hSel < hVisible.size() && hVisible.get(hSel).specificationUri != null) {
@@ -292,6 +320,14 @@ class HttpTab extends AbstractTableTab {
             if (ep.management && !showManagement) {
                 continue;
             }
+            if (filter == 0 && !ep.fromRest) {
+                // a REST service is served by a platform-http consumer of its own: one row for both
+                HttpEndpointInfo rest = restFor(info, ep);
+                if (rest != null) {
+                    rest.hits = Math.max(rest.hits, ep.hits);
+                    continue;
+                }
+            }
             if (filter == 1 && !ep.fromRest) {
                 continue;
             }
@@ -301,6 +337,21 @@ class HttpTab extends AbstractTableTab {
             result.add(ep);
         }
         return result;
+    }
+
+    /** The REST service with the same method and path as a plain HTTP endpoint, or null. */
+    static HttpEndpointInfo restFor(IntegrationInfo info, HttpEndpointInfo http) {
+        for (HttpEndpointInfo ep : info.httpEndpoints) {
+            if (ep.fromRest && !ep.specification && Objects.equals(ep.path, http.path)
+                    && Objects.equals(normalizeMethod(ep.method), normalizeMethod(http.method))) {
+                return ep;
+            }
+        }
+        return null;
+    }
+
+    private static String normalizeMethod(String method) {
+        return method != null ? method.trim().toUpperCase(Locale.ENGLISH) : "";
     }
 
     static Style methodStyle(String method) {
@@ -328,7 +379,8 @@ class HttpTab extends AbstractTableTab {
         }
         long restCount = info.httpEndpoints.stream().filter(e -> e.fromRest && !e.specification).count();
         long specCount = info.httpEndpoints.stream().filter(e -> e.specification).count();
-        long httpCount = info.httpEndpoints.stream().filter(e -> !e.fromRest && !e.management).count();
+        long httpCount = info.httpEndpoints.stream()
+                .filter(e -> !e.fromRest && !e.management && restFor(info, e) == null).count();
         long mgmtCount = info.httpEndpoints.stream().filter(e -> e.management).count();
         if (restCount > 0) {
             spans.add(Span.raw("  "));

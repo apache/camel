@@ -30,6 +30,7 @@ import dev.tamboui.tui.event.KeyModifiers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -93,6 +94,8 @@ class ErrorsTabRenderTest {
     @Test
     void renderErrorRouteIdInCyan() {
         addError("ID-001", "my-route", "to1", "Exception", "fail", false);
+        // a second row: the first is selected, and the selection highlight hides its colors
+        addError("ID-002", "my-route", "to1", "Exception", "fail", false);
 
         ErrorsTab tab = new ErrorsTab(ctx);
 
@@ -108,6 +111,7 @@ class ErrorsTabRenderTest {
     @Test
     void renderHandledTrueUsesGreenColor() {
         addError("ID-001", "route1", "to1", "Exception", "handled", true);
+        addError("ID-002", "route1", "to1", "Exception", "handled", true);
 
         ErrorsTab tab = new ErrorsTab(ctx);
 
@@ -123,6 +127,7 @@ class ErrorsTabRenderTest {
     @Test
     void renderHandledFalseUsesRedColor() {
         addError("ID-001", "route1", "to1", "Exception", "unhandled", false);
+        addError("ID-002", "route1", "to1", "Exception", "unhandled", false);
 
         ErrorsTab tab = new ErrorsTab(ctx);
 
@@ -133,6 +138,15 @@ class ErrorsTabRenderTest {
 
         boolean foundRed = findCellWithColor(buffer, "f", Theme.error().fg().orElse(Color.LIGHT_RED));
         assertTrue(foundRed, "handled=false should be rendered in LIGHT_RED");
+    }
+
+    @Test
+    void theFirstErrorIsSelectedSoItsDetailShows() {
+        addError("ID-001", "route1", "to1", "Exception", "fail", false);
+        ErrorsTab tab = new ErrorsTab(ctx);
+        String rendered = renderToString(tab, 160, 30);
+        assertEquals(0, tab.tableState.selected());
+        assertTrue(rendered.contains("ID-001"), rendered);
     }
 
     @Test
@@ -248,8 +262,11 @@ class ErrorsTabRenderTest {
 
         assertTrue(footer.contains("Esc"), "Footer should contain Esc hint");
         assertTrue(footer.contains("sort"), "Footer should contain sort hint");
-        assertTrue(footer.contains("handled"), "Footer should contain handled filter hint");
-        assertTrue(footer.contains("wrap"), "Footer should contain wrap hint");
+        // the handled filter and wrap are view settings: in the view bar, with the Errors and Diagram views
+        SubViewBar.Spec bar = tab.subViewBar();
+        assertTrue(bar.toggles().stream().anyMatch(t -> t.key().equals("f") && t.label().equals("handled")),
+                "View bar should contain the handled filter");
+        assertTrue(bar.toggles().stream().anyMatch(t -> t.key().equals("w")), "View bar should contain wrap");
     }
 
     @Test

@@ -37,6 +37,7 @@ public class ToolDescriptor {
     private boolean readOnly = true;
     private boolean destructive = false;
     private boolean core = false;
+    private boolean deterministic = false;
 
     public record Param(String name, String type, String description, boolean required) {
     }
@@ -82,6 +83,16 @@ public class ToolDescriptor {
         return this;
     }
 
+    /**
+     * Marks the tool as deterministic: the same arguments always give the same answer, as a catalog lookup does. A tool
+     * that reads the running integration, the files or the clock is not. Repeating such a call cannot tell an agent
+     * anything new, see {@link RepeatedToolCalls}.
+     */
+    public ToolDescriptor deterministic(boolean v) {
+        deterministic = v;
+        return this;
+    }
+
     public ToolDescriptor executor(ToolExecutor exec) {
         this.executor = exec;
         return this;
@@ -111,6 +122,10 @@ public class ToolDescriptor {
 
     public boolean isCore() {
         return core;
+    }
+
+    public boolean isDeterministic() {
+        return deterministic;
     }
 
     /**

@@ -288,8 +288,16 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
                 IOHelper.copy(input, output, IOHelper.DEFAULT_BUFFER_SIZE, true);
             }
         } else {
-            TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
-            ByteBuffer bodyAsByteBuffer = tc.mandatoryConvertTo(ByteBuffer.class, body);
+            ByteBuffer bodyAsByteBuffer = null;
+            if (body instanceof String text) {
+                // write the text in the charset that the response Content-Type declares, if any
+                bodyAsByteBuffer = UndertowHelper.toByteBuffer(text,
+                        httpExchange.getResponseHeaders().getFirst(Headers.CONTENT_TYPE));
+            }
+            if (bodyAsByteBuffer == null) {
+                TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
+                bodyAsByteBuffer = tc.mandatoryConvertTo(ByteBuffer.class, body);
+            }
             httpExchange.getResponseSender().send(bodyAsByteBuffer);
         }
     }

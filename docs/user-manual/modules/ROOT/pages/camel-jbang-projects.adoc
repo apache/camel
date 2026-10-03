@@ -228,6 +228,24 @@ Plugins extend the CLI with additional commands. List available plugins (ASF and
 camel plugin get --all
 ----
 
+The plugins of the Apache Camel project:
+
+[cols="1m,3",options="header"]
+|===
+| Plugin | Commands
+
+| kubernetes | `camel kubernetes`: deploy to Kubernetes, see xref:camel-jbang-kubernetes.adoc[Kubernetes Plugin]
+| test | `camel test`: Citrus tests, see xref:camel-jbang-test.adoc[Testing Plugin]
+| validate | `camel validate`: check source files, see xref:camel-jbang-validation.adoc[Validation]
+| generate | `camel generate`: REST DSL and DTOs from OpenAPI, JSON schemas (see below)
+| tui | `camel tui`: the xref:camel-jbang-tui.adoc[Camel TUI]
+| mcp | `camel mcp`: the xref:camel-jbang-mcp.adoc[Camel MCP Server]
+| edit | `camel edit`: edit a Camel file in the terminal with suggestions and diagnostics
+| route-parser | `camel route-parser`: parse Java routes and dump their structure
+|===
+
+Plugins bundled with the CLI, such as `tui`, are installed on first use.
+
 Add, list installed, and remove plugins:
 
 [source,bash]
@@ -246,7 +264,23 @@ to see how that is done.
 IMPORTANT: The name of the plugin Maven **artifactId** must start with `camel-jbang-plugin-`. For example if the plugin is named `cheese`, then
 the maven artifact must be named `camel-jbang-plugin-cheese`.
 
-== Generate JSON schema plugin
+== Generate plugin
+
+=== REST DSL from OpenAPI
+
+Generate the REST DSL (YAML or XML) from an OpenAPI specification, for contract-first REST development:
+
+[source,bash]
+----
+camel generate rest --input=petstore.yaml --output=petstore-rest.yaml
+camel generate rest --input=petstore.yaml --output=petstore-rest.yaml --routes
+camel generate rest --input=petstore.yaml --dto --runtime=quarkus --package=com.acme.model
+----
+
+`--routes` also generates a route for each operation (YAML only), and `--dto` generates Java data objects
+for the schemas of the specification.
+
+=== JSON schema
 
 Generate JSON Schema definitions from Java objects for use with visual development tools (Kaoto, Karavan):
 

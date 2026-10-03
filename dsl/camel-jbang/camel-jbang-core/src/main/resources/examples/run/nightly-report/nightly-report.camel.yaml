@@ -1,0 +1,16 @@
+# The shop's inventory report on a schedule. A cron expression instead of a timer: the demo schedule
+# runs every ten seconds so there is something to see; a real nightly run is a one-line change.
+- route:
+    id: nightly-report
+    from:
+      uri: cron
+      parameters:
+        name: report
+        schedule: "{{report.schedule}}"
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "Inventory report ${date:now:yyyy-MM-dd HH:mm:ss}: {{inventory.tshirt}} T-shirts and {{inventory.mug}} mugs in stock"
+        - log:
+            message: "${body}"

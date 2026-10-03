@@ -15,6 +15,8 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 #set( $default = "#[[##default]]#" )
+## the YAML DSL names some lists other than the XML DSL does (keyed by class.member)
+#set( $yamlKeys = { "VerbDefinition.params": "param", "VerbDefinition.responseMsgs": "responseMessage", "RouteTemplateDefinition.templateParameters": "parameters", "RouteTemplateDefinition.templateBeans": "beans" } )
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -141,8 +143,13 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                     #elseif( $member.xmlElementRef )
                         #set( $foo = $elementRefs.add($root) )
                         #if( $list )
+                            #set( $yamlKey = $yamlKeys.get("${clazz.simpleName}.${member.name}") )
                             #if( $member.name == "outputs" )
         doWriteOutputs(jo, def.${member.getter}(), this::doWrite${root.simpleName}Ref);
+                            #elseif( $clazz.simpleName == "RestDefinition" && $member.name == "verbs" )
+        doWriteVerbs(jo, def.${member.getter}(), this::doWrite${root.simpleName});
+                            #elseif( $yamlKey )
+        doWriteChildList(jo, null, "${yamlKey}", def.${member.getter}(), this::doWrite${root.simpleName});
                             #else
                                 #set( $refName = $member.xmlElementRef.name() )
                                 #if( $refName && $refName != $default && $refName != "" )
@@ -186,6 +193,10 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                         #if( $n == $default )
                             #set( $n = ${member.name} )
                         #end
+                        #set( $yamlKey = $yamlKeys.get("${clazz.simpleName}.${member.name}") )
+                        #if( $yamlKey )
+                            #set( $n = $yamlKey )
+                        #end
                         #if( $list )
                             #set( $w = false )
                             #if( $member.xmlElementWrapper )
@@ -198,7 +209,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                             #end
                         #else
                             #set( $adapter = $member.xmlJavaTypeAdapter )
-                            #if( $adapter )
+                            #if( $adapter && $clazz.simpleName == "BeanFactoryDefinition" )
+        doWriteBeanMap(jo, "${n}", def.${member.getter}());
+                            #elseif( $adapter )
                                 #set( $cl = $adapter.value() )
                                 #set( $actualType = false )
                                 #foreach( $m in $cl.declaredMethods )
@@ -268,7 +281,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 #writeYamlAttrs
             #end
             #set( $value = $mojo.getValues($mojo.getClassAndSuper($clazz)).findFirst() )
-            #if( $value.isPresent() )
+            #if( $value.isPresent() && $name == "ValueDefinition" )
+        doWriteAttribute(jo, "value", def.${value.get().getter}(), null);
+            #elseif( $value.isPresent() )
         doWriteValue(jo, def.${value.get().getter}());
             #end
             #if( $hasDerived && !$thisElements.isEmpty() )

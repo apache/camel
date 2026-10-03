@@ -549,7 +549,10 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * header info from the actual service layer. If the invoked service
          * appends or rewrites the soap header this option when set to true,
          * allows the modified soap header to be overwritten in in/out message
-         * headers.
+         * headers. The names of the soap response header attributes and
+         * elements are filtered using the headerFilterStrategy, which by
+         * default filters out the internal Camel and camel header namespace
+         * (case-insensitive).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -568,7 +571,10 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * header info from the actual service layer. If the invoked service
          * appends or rewrites the soap header this option when set to true,
          * allows the modified soap header to be overwritten in in/out message
-         * headers.
+         * headers. The names of the soap response header attributes and
+         * elements are filtered using the headerFilterStrategy, which by
+         * default filters out the internal Camel and camel header namespace
+         * (case-insensitive).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

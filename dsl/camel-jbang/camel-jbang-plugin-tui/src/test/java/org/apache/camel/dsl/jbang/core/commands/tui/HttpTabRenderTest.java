@@ -30,6 +30,7 @@ import dev.tamboui.tui.event.KeyModifiers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -194,6 +195,23 @@ class HttpTabRenderTest {
     }
 
     // ---- Helper methods ----
+
+    @Test
+    void aRestServiceAndItsHttpConsumerAreOneRow() {
+        HttpEndpointInfo rest = addHttpEndpoint("GET", "/stock/{sku}", "http://0.0.0.0:8080/stock/{sku}");
+        rest.fromRest = true;
+        HttpEndpointInfo http = addHttpEndpoint("GET", "/stock/{sku}", "http://0.0.0.0:8080/stock/{sku}");
+        http.hits = 6;
+        addHttpEndpoint("POST", "/orders", "http://0.0.0.0:8080/orders");
+
+        HttpTab tab = new HttpTab(ctx);
+        List<HttpEndpointInfo> rows = tab.sortedVisibleEndpoints(info);
+        assertEquals(2, rows.size(), "the REST service and the plain POST");
+        assertTrue(rows.contains(rest));
+        assertEquals(6, rest.hits, "the hits of its consumer");
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
+        assertTrue(rendered.contains("REST: 1  HTTP: 1"), rendered);
+    }
 
     private HttpEndpointInfo addHttpEndpoint(String method, String path, String url) {
         HttpEndpointInfo ep = new HttpEndpointInfo();

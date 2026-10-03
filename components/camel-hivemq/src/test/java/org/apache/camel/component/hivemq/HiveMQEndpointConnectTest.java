@@ -18,14 +18,14 @@ package org.apache.camel.component.hivemq;
 
 import java.util.concurrent.TimeUnit;
 
-import com.hivemq.client.mqtt.MqttClientState;
-import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
+import com.hivemq.client.mqtt.MqttVersion;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -48,15 +48,17 @@ class HiveMQEndpointConnectTest {
         camelContext.stop();
     }
 
-    @Test
+    @ParameterizedTest(name = "{0}")
+    @EnumSource(MqttVersion.class)
     @DisplayName("Unreachable broker fails connect() within a bounded time instead of hanging")
-    void connectToUnreachableBrokerFailsBounded() {
+    void connectToUnreachableBrokerFailsBounded(MqttVersion mqttVersion) {
         HiveMQConfiguration configuration = new HiveMQConfiguration();
+        configuration.setMqttVersion(mqttVersion);
         configuration.setHost("127.0.0.1");
         configuration.setPort(1);
 
         HiveMQEndpoint endpoint = new HiveMQEndpoint("hivemq:test", component, configuration, "test");
-        Mqtt5AsyncClient client = endpoint.createClient();
+        HiveMQClientAdapter client = endpoint.createClient();
 
         long started = System.nanoTime();
         assertThatThrownBy(() -> endpoint.connect(client)).isInstanceOf(RuntimeCamelException.class);
@@ -64,27 +66,25 @@ class HiveMQEndpointConnectTest {
 
         assertThat(elapsedMs).isLessThan(TimeUnit.SECONDS.toMillis(HiveMQConstants.DEFAULT_CONNECT_TIMEOUT_SECONDS));
         await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertThat(client.getState().isConnectedOrReconnect()).isFalse());
-        assertThat(client.getState()).isEqualTo(MqttClientState.DISCONNECTED);
+                .untilAsserted(() -> assertThat(client.isConnectedOrReconnecting()).isFalse());
     }
 
-    @Test
-    @DisplayName("stopClient cancels automatic reconnect when the client is not CONNECTED")
-    void stopClientCancelsReconnect() {
+    @ParameterizedTest(name = "{0}")
+    @EnumSource(MqttVersion.class)
+    @DisplayName("stop() cancels automatic reconnect when the client is not CONNECTED")
+    void stopClientCancelsReconnect(MqttVersion mqttVersion) {
         HiveMQConfiguration configuration = new HiveMQConfiguration();
+        configuration.setMqttVersion(mqttVersion);
         configuration.setHost("127.0.0.1");
         configuration.setPort(1);
 
         HiveMQEndpoint endpoint = new HiveMQEndpoint("hivemq:test", component, configuration, "test");
-        Mqtt5AsyncClient client = endpoint.createClient();
+        HiveMQClientAdapter client = endpoint.createClient();
 
-        client.connectWith().cleanStart(true).send();
-        endpoint.stopClient(client);
+        client.connect(true);
+        client.stop();
 
         await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    assertThat(client.getState().isConnectedOrReconnect()).isFalse();
-                    assertThat(client.getState()).isEqualTo(MqttClientState.DISCONNECTED);
-                });
+                .untilAsserted(() -> assertThat(client.isConnectedOrReconnecting()).isFalse());
     }
 }

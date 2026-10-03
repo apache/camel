@@ -16,57 +16,12 @@
  */
 package org.apache.camel.component.hivemq;
 
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.hivemq.services.HiveMQService;
-import org.apache.camel.test.infra.hivemq.services.HiveMQServiceFactory;
-import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import com.hivemq.client.mqtt.MqttVersion;
 
-public class HiveMQOverrideTopicIT extends CamelTestSupport {
-
-    @RegisterExtension
-    public static HiveMQService HIVEMQ_SERVICE = HiveMQServiceFactory.createService();
-
-    @EndpointInject("mock:overrideResult")
-    private MockEndpoint mockOverrideResult;
-
-    @Produce
-    private ProducerTemplate template;
-
-    @Test
-    @DisplayName("Publish to default endpoint topic but route to override topic via header")
-    public void testTopicOverride() throws Exception {
-        mockOverrideResult.expectedBodiesReceived("Routed to custom topic");
-        mockOverrideResult.expectedHeaderReceived(HiveMQConstants.MQTT_TOPIC, "orders/processed");
-
-        template.sendBodyAndHeader("direct:startOverride", "Routed to custom topic",
-                HiveMQConstants.OVERRIDE_TOPIC, "orders/processed");
-
-        mockOverrideResult.assertIsSatisfied();
-    }
+public class HiveMQOverrideTopicIT extends AbstractHiveMQOverrideTopicIT {
 
     @Override
-    @SuppressWarnings("deprecation")
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                String host = HIVEMQ_SERVICE.getMqttHost();
-                int port = HIVEMQ_SERVICE.getMqttPort();
-
-                // Endpoint points to "orders/default", but producer will override to "orders/processed"
-                from("direct:startOverride")
-                        .toF("hivemq:orders/default?host=%s&port=%d", host, port);
-
-                fromF("hivemq:orders/processed?host=%s&port=%d", host, port)
-                        .to("mock:overrideResult");
-            }
-        };
+    protected MqttVersion mqttVersion() {
+        return MqttVersion.MQTT_5_0;
     }
 }

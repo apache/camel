@@ -162,6 +162,7 @@ class AiPanel {
 
     // Input state
     private final StringBuilder inputBuffer = new StringBuilder();
+    private volatile long lastInputMs;
     private int cursorPos;
     private TuiPromptHistory promptHistory;
 
@@ -199,6 +200,9 @@ class AiPanel {
     // set while the user asks about a paused live edit (F8 at the pause): input is accepted although a tool call is
     // still running, and Enter hands the question to the waiting call (true) or sends it as a normal question (false)
     private volatile Predicate<String> editQuestionHandler;
+    // asking about a paused live edit: the panel stays compact, so the edit in the editor stays in view, until it
+    // closes or the user sizes it
+    private boolean editCompact;
     // what became of a parked live edit; told to the model with the next question
     private volatile String pendingNote;
     private String initError;
@@ -484,6 +488,17 @@ class AiPanel {
         return anim.panelHeight();
     }
 
+    /** The height to render at: compact while asking about a paused live edit, else the panel's own height. */
+    int panelHeight(int contentHeight) {
+        int h = anim.panelHeight();
+        return editCompact ? Math.min(h, editQuestionHeight(contentHeight)) : h;
+    }
+
+    /** A quarter of the content, at least 10 rows: the question, a short answer and the hints. */
+    static int editQuestionHeight(int contentHeight) {
+        return Math.min(contentHeight, Math.max(10, contentHeight / 4));
+    }
+
     boolean isAnimating() {
         return anim.isAnimating();
     }
@@ -513,10 +528,12 @@ class AiPanel {
     }
 
     void cycleHeight(int contentHeight) {
+        editCompact = false;
         anim.cycleHeight(contentHeight);
     }
 
     void setPanelHeight(int height) {
+        editCompact = false;
         anim.setPanelHeight(height);
     }
 
@@ -531,12 +548,22 @@ class AiPanel {
             // the project is kept off the UI thread
             LlmClient c = client;
             Path dir = projectDirectory();
+            // it waits until the panel is idle, so a question asked right away is answered first
             Thread t = new Thread(
-                    () -> projectOverview.autoExplain(dir, c, mcpFacade, this::addOverviewEntry),
+                    () -> projectOverview.autoExplain(dir, c, mcpFacade, this::addOverviewEntry,
+                            () -> idleFor(OVERVIEW_IDLE_MS, System.currentTimeMillis())),
                     "tui-ai-overview-check");
             t.setDaemon(true);
             t.start();
         }
+    }
+
+    /** How long the panel is left alone (nothing typed, no question running) before the summary starts. */
+    static final long OVERVIEW_IDLE_MS = 3000;
+
+    /** Whether the panel has been idle for a while: no question or command running, nothing typed. */
+    boolean idleFor(long ms, long now) {
+        return !thinking.get() && activeCliCommand == null && inputBuffer.isEmpty() && now - lastInputMs >= ms;
     }
 
     /** The project the AI overview is about: the selected integration's sources, else the folder the TUI runs in. */
@@ -583,6 +610,7 @@ class AiPanel {
     void close() {
         visible = false;
         editQuestionHandler = null;
+        editCompact = false;
         providerSwitchPopup.close();
     }
 
@@ -601,6 +629,20 @@ class AiPanel {
         scrollOffset = 0;
         replaceInputBuffer(prefill);
         editQuestionHandler = handler;
+        editCompact = true;
+    }
+
+    /**
+     * Opens the panel with a question in its input, for the user to send with Enter or change first: the fix of a
+     * problem of the Source editor (Shift+F8). Nothing is sent until the user says so.
+     */
+    void openWithQuestion(String question) {
+        if (!visible) {
+            open();
+        }
+        statsView = false;
+        scrollOffset = 0;
+        replaceInputBuffer(question);
     }
 
     boolean isAskingAboutEdit() {
@@ -798,6 +840,7 @@ class AiPanel {
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
+        lastInputMs = System.currentTimeMillis();
         if (permissionPopup.isVisible()) {
             if (ke.isCtrlC()) {
                 interruptBusyOperation();
@@ -1427,6 +1470,13 @@ class AiPanel {
     }
 
     private void interruptBusyOperation() {
+        if (thinking.get() && projectOverview.stop()) {
+            // the question waits behind the project summary: the first Esc stops the summary, so it goes first
+            conversation.add(new ConversationEntry(
+                    AiRole.SYSTEM,
+                    "(project summary stopped, your question goes first; /overview writes it later)"));
+            return;
+        }
         // A background CLI command and an LLM request can be in flight at the same time, so cancel each one
         // independently. Cancelling the CLI must not touch the LLM's thinking state (that belongs to the agent
         // thread, which clears it in its own finally block) and vice versa.
@@ -1491,6 +1541,13 @@ class AiPanel {
             return;
         }
         conversation.add(new ConversationEntry(AiRole.USER, question));
+        if (projectOverview.isRunning() && client.apiType() == LlmClient.ApiType.ollama) {
+            // Ollama answers one request at a time: say why the answer takes long, and how to go first
+            conversation.add(new ConversationEntry(
+                    AiRole.SYSTEM,
+                    "The project summary (/overview) is being written, and Ollama answers one request at a time:"
+                                   + " this question waits for it. Esc stops the summary."));
+        }
         questionCounter++;
         currentQuestion = question;
         noteQuestionStarted(question);

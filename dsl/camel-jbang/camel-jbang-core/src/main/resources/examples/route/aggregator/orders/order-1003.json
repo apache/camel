@@ -1,0 +1,2 @@
+{"orderId": "ORD-1003", "customer": "C-134", "country": "US", "status": "pending",
+ "lines": [{"sku": "CAMEL-TSHIRT", "qty": 1, "price": 19.95}, {"sku": "CAMEL-CAP", "qty": 1, "price": 14.00}, {"sku": "CAMEL-MUG", "qty": 2, "price": 9.50}]}

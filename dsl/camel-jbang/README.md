@@ -1,6 +1,6 @@
 ## Install Camel-JBang
 
-The general process to install Camel-JBang is described [here](https://camel.apache.org/manual/camel-jbang.html#_installation)
+The general process to install the Camel CLI is described [here](https://camel.apache.org/manual/camel-jbang-getting-started.html#_install)
 
 ```shell
 jbang app install camel@apache/camel

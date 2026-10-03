@@ -52,3 +52,14 @@ $kanagawa-fg: #DCD7BA;
 #diagram-action  { color: #D27E99; }
 #diagram-eip     { color: #957FB8; }
 #diagram-default { color: #727169; }
+
+/*
+ * Syntax tokens (optional), after Kanagawa: oniViolet keywords, springGreen strings, crystalBlue functions, waveAqua types, surimiOrange constants, fujiGray comments.
+ */
+#syntax-comment  { color: #727169; }
+#syntax-string   { color: #98BB6C; }
+#syntax-keyword  { color: #957FB8; }
+#syntax-function { color: #7E9CD8; }
+#syntax-type     { color: #7AA89F; }
+#syntax-constant { color: #FFA066; }
+#syntax-text     { color: $kanagawa-fg; }

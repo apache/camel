@@ -870,8 +870,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "builderMethod", def.getBuilderMethod(), "build");
         doWriteAttribute(jo, "scriptLanguage", def.getScriptLanguage(), null);
         doWriteAttribute(jo, "scriptPropertyPlaceholders", def.getScriptPropertyPlaceholders(), "true");
-        doWriteChildElement(jo, "constructors", new BeanConstructorsAdapter().marshal(def.getConstructors()), this::doWriteBeanConstructorsDefinition);
-        doWriteChildElement(jo, "properties", new BeanPropertiesAdapter().marshal(def.getProperties()), this::doWriteBeanPropertiesDefinition);
+        doWriteBeanMap(jo, "constructors", def.getConstructors());
+        doWriteBeanMap(jo, "properties", def.getProperties());
         if (def.getScript() != null) {
             jo.put("script", def.getScript());
         }
@@ -1667,8 +1667,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteRouteTemplateDefinition(RouteTemplateDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
-        doWriteChildList(jo, null, "templateParameter", def.getTemplateParameters(), this::doWriteRouteTemplateParameterDefinition);
-        doWriteChildList(jo, null, "templateBean", def.getTemplateBeans(), this::doWriteBeanFactoryDefinition);
+        doWriteChildList(jo, null, "parameters", def.getTemplateParameters(), this::doWriteRouteTemplateParameterDefinition);
+        doWriteChildList(jo, null, "beans", def.getTemplateBeans(), this::doWriteBeanFactoryDefinition);
         doWriteChildElement(jo, "route", def.getRoute(), this::doWriteRouteDefinition);
         return jo;
     }
@@ -2061,7 +2061,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     }
     protected JsonObject doWriteValueDefinition(ValueDefinition def) {
         JsonObject jo = new JsonObject();
-        doWriteValue(jo, def.getValue());
+        doWriteAttribute(jo, "value", def.getValue(), null);
         return jo;
     }
     protected JsonObject doWriteWhenDefinition(WhenDefinition def) {
@@ -3411,7 +3411,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "enableNoContentResponse", def.getEnableNoContentResponse(), "false");
         doWriteAttribute(jo, "apiDocs", def.getApiDocs(), "true");
         doWriteAttribute(jo, "tag", def.getTag(), null);
-        doWriteChildList(jo, "verbs", "verbs", def.getVerbs(), this::doWriteVerbDefinition);
+        doWriteVerbs(jo, def.getVerbs(), this::doWriteVerbDefinition);
         doWriteChildElement(jo, "openApi", def.getOpenApi(), this::doWriteOpenApiDefinition);
         doWriteChildElement(jo, "securityDefinitions", def.getSecurityDefinitions(), this::doWriteRestSecuritiesDefinition);
         doWriteChildList(jo, null, "securityRequirements", def.getSecurityRequirements(), this::doWriteSecurityDefinition);
@@ -3480,9 +3480,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "consumes", def.getConsumes(), null);
     }
     protected void doWriteVerbDefinitionElements(JsonObject jo, VerbDefinition def) {
-        doWriteChildList(jo, "params", "params", def.getParams(), this::doWriteParamDefinition);
+        doWriteChildList(jo, null, "param", def.getParams(), this::doWriteParamDefinition);
         doWriteChildList(jo, "security", "security", def.getSecurity(), this::doWriteSecurityDefinition);
-        doWriteChildList(jo, "responseMsgs", "responseMsgs", def.getResponseMsgs(), this::doWriteResponseMessageDefinition);
+        doWriteChildList(jo, null, "responseMessage", def.getResponseMsgs(), this::doWriteResponseMessageDefinition);
         doWriteChildElement(jo, "to", def.getTo(), this::doWriteToDefinition);
     }
     protected JsonObject doWriteVerbDefinition(VerbDefinition def) {
