@@ -20,6 +20,7 @@ package org.apache.camel.telemetry.mock;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
@@ -49,8 +50,11 @@ public class MockTracer extends Tracer {
 
     private class MockSpanLifecycleManager implements SpanLifecycleManager {
 
-        // Used to collect the traces for later evaluation as traces
-        Map<String, Span> inMemoryStorageMap = new HashMap<>();
+        // Used to collect the traces for later evaluation as traces.
+        // ConcurrentHashMap is required because wiretap creates async exchanges processed on
+        // different threads: activate() and close() are called from exchange threads while
+        // traces() is called from the test thread.
+        Map<String, Span> inMemoryStorageMap = new ConcurrentHashMap<>();
 
         @Override
         public Span create(String spanName, String spanKind, Span parentSpan, SpanContextPropagationExtractor extractor) {
