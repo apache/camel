@@ -336,3 +336,29 @@ from("timer://MoveNewCustomersEveryHour?period=3600000")
         .setBody(simple("insert into processed_customer values('${body[ID]}','${body[NAME]}')"))
         .to("jdbc:testdb");
 ----
+
+== Secret Rotation
+
+The JDBC component implements `SecretRotationAware`. When a secret rotation event is triggered
+(e.g. by a vault provider), the component evicts stale connections from its connection pools.
+This covers the component-level DataSource as well as any DataSources resolved by active endpoints
+(e.g. `jdbc:myDs`), with identity-based deduplication so each pool is evicted at most once.
+
+Currently HikariCP and Agroal (Quarkus default) pools are supported for active eviction.
+HikariCP pools are evicted via `softEvictConnections()` called through `getHikariPoolMXBean()`
+via reflection — JMX registration (`registerMbeans=true`) is *not* required.
+Agroal pools are evicted via `flush(GRACEFUL)` called on `AgroalDataSource` via reflection.
+Other pool implementations are not actively evicted — existing connections
+will be replaced as they expire or are validated by the pool.
+
+NOTE: The pool eviction uses reflection to avoid compile-time dependencies on pool libraries.
+In GraalVM native mode (e.g. Quarkus native), the reflected classes and methods need to be registered
+for reflection: `HikariDataSource.getHikariPoolMXBean()`, `HikariPoolMXBean.softEvictConnections()`
+for HikariCP, and `AgroalDataSource.flush(FlushMode)` for Agroal.
+
+IMPORTANT: The eviction only closes existing connections — it does *not* update the pool's credentials.
+For pools configured with a static password (e.g. Spring Boot `spring.datasource.password`),
+the pool will re-open connections using the _old_ credentials.
+This feature works out of the box only with pools that resolve credentials dynamically,
+such as `HikariCredentialsProvider`, the AWS JDBC wrapper secrets plugin,
+or a custom `DataSource` that fetches credentials from a vault at connect time.
