@@ -99,18 +99,25 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             client = configuration.createConsulClient(getCamelContext());
             sessionClient = client.sessionClient();
             keyValueClient = client.keyValueClient();
-            // to watch again after a failed query
-            executorService = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                    "ConsulClusterView");
 
             sessionId.set(createSession());
-
             LOGGER.debug("Acquired session with id '{}'", sessionId.get());
-            boolean lock = acquireLock();
-            LOGGER.debug("Acquire lock on path '{}' with id '{}' result '{}'", path, sessionId.get(), lock);
 
-            localMember.setMaster(lock);
-            watcher.watch();
+            // to watch again after a failed query. Created once the session exists, as a view that fails to start is
+            // not stopped
+            executorService = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
+                    "ConsulClusterView");
+            try {
+                boolean lock = acquireLock();
+                LOGGER.debug("Acquire lock on path '{}' with id '{}' result '{}'", path, sessionId.get(), lock);
+
+                localMember.setMaster(lock);
+                watcher.watch();
+            } catch (Exception e) {
+                getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+                executorService = null;
+                throw e;
+            }
         }
     }
 
@@ -329,17 +336,11 @@ final class ConsulClusterView extends AbstractCamelClusterView {
         public void onFailure(Throwable throwable) {
             LOGGER.debug("{}", throwable.getMessage(), throwable);
 
-            // the leadership cannot be confirmed: give it up, and release the lock if Consul can still be reached
+            // the leadership cannot be confirmed: give it up locally, which can only lead to no leader, never to two.
+            // The lock is kept: releasing it explicitly skips the lock-delay of Consul, so another node could take the
+            // leadership while the clustered routes of this node are still stopping. If this node really is cut off
+            // from Consul, its session expires and Consul releases the lock and applies the lock-delay
             localMember.setMaster(false);
-
-            String sid = sessionId.get();
-            if (sid != null) {
-                try {
-                    keyValueClient.releaseLock(path, sid);
-                } catch (Exception e) {
-                    LOGGER.debug("Failed to release lock on path '{}' with id '{}': {}", path, sid, e.getMessage(), e);
-                }
-            }
 
             // keep watching, the leadership is taken again when Consul answers. Wait, so that a Consul agent that
             // cannot be reached is not queried in a loop

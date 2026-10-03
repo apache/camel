@@ -30,6 +30,7 @@ import okhttp3.ResponseBody;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,12 +51,15 @@ import retrofit2.Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -81,6 +85,7 @@ class ConsulClusterViewRecoveryTest {
     private volatile boolean keyExists;
     private volatile String lockHolder;
 
+    private ConsulClusterConfiguration configuration;
     private CamelContext context;
     private CamelClusterView view;
 
@@ -91,7 +96,7 @@ class ConsulClusterViewRecoveryTest {
         when(consul.keyValueClient()).thenReturn(keyValueClient);
         simulateConsul();
 
-        ConsulClusterConfiguration configuration = new ConsulClusterConfiguration() {
+        configuration = new ConsulClusterConfiguration() {
             @Override
             public Consul createConsulClient(CamelContext camelContext) {
                 return consul;
@@ -119,7 +124,7 @@ class ConsulClusterViewRecoveryTest {
 
     @Test
     void keepsWatchingAfterConsulCouldNotBeReached() {
-        // the agent cannot be reached: the pending query fails, and releasing the lock fails as well
+        // the agent cannot be reached: the pending query fails
         reachable = false;
         deliver(() -> lastQuery().onFailure(notReachable()));
 
@@ -136,13 +141,44 @@ class ConsulClusterViewRecoveryTest {
     }
 
     @Test
-    void releasesTheLockOfItsPathAfterAFailedQuery() {
+    void keepsTheLockAfterAFailedQuery() {
         String session = lockHolder;
 
         deliver(() -> lastQuery().onFailure(notReachable()));
 
+        // the node steps down locally, but keeps the lock: an explicit release would skip the lock-delay of Consul and
+        // let another node take the leadership while this node is still stopping its clustered routes
         assertFalse(view.getLocalMember().isLeader());
-        verify(keyValueClient).releaseLock(PATH, session);
+        verify(keyValueClient, never()).releaseLock(anyString(), anyString());
+        assertEquals(session, lockHolder);
+        assertFalse(keyValueClient.acquireLock(PATH, "session-of-another-node"));
+
+        // the next answer confirms that the session still holds the lock: the node is leader again
+        verify(keyValueClient, timeout(5000).times(2)).getValue(eq(PATH), any(QueryOptions.class), any());
+        deliver(() -> lastQuery().onComplete(keyValue()));
+        assertTrue(view.getLocalMember().isLeader());
+    }
+
+    @Test
+    void doesNotLeaveAnExecutorBehindWhenTheSessionCannotBeCreated() throws Exception {
+        CamelContext otherContext = new DefaultCamelContext();
+        ExecutorServiceManager executorServiceManager = spy(otherContext.getExecutorServiceManager());
+        otherContext.setExecutorServiceManager(executorServiceManager);
+        try {
+            ConsulClusterService service = new ConsulClusterService(configuration);
+            service.setId("node-2");
+            otherContext.addService(service);
+            otherContext.start();
+
+            // the session cannot be created: the view fails to start, and a failed view is not stopped
+            reachable = false;
+            assertThrows(Exception.class, () -> service.getView(NAMESPACE));
+
+            verify(executorServiceManager, never()).newSingleThreadScheduledExecutor(any(), anyString());
+        } finally {
+            reachable = true;
+            otherContext.stop();
+        }
     }
 
     @Test
