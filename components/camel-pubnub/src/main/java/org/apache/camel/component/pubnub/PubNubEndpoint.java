@@ -43,6 +43,9 @@ public class PubNubEndpoint extends DefaultEndpoint {
     @UriParam
     private PubNubConfiguration configuration;
 
+    // whether the endpoint created the client (a client from the registry may be shared, and is not ours to destroy)
+    private boolean createdClient;
+
     public PubNubEndpoint(String uri, PubNubComponent component, PubNubConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
@@ -76,15 +79,19 @@ public class PubNubEndpoint extends DefaultEndpoint {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (pubnub != null) {
+        if (pubnub != null && createdClient) {
             pubnub.destroy();
             pubnub = null;
+            createdClient = false;
         }
     }
 
     @Override
     protected void doStart() throws Exception {
-        this.pubnub = getPubnub() != null ? getPubnub() : getInstance();
+        if (pubnub == null) {
+            pubnub = getInstance();
+            createdClient = true;
+        }
         super.doStart();
     }
 
