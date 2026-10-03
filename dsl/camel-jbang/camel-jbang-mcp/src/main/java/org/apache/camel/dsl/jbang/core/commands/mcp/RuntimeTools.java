@@ -26,6 +26,7 @@ import jakarta.inject.Inject;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.dsl.jbang.core.commands.ai.SqlReadOnlyGuard;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
@@ -284,6 +285,49 @@ public class RuntimeTools {
         putIfNotBlank(args, "datasource", datasource);
         putIfNotBlank(args, "maxRows", maxRows);
         return delegateToRegistry("execute_sql", nameOrPid, args);
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Run a read-only SQL query against a DataSource of the running Camel application: \
+                  SELECT, WITH, VALUES, SHOW, EXPLAIN or DESCRIBE, one statement. Returns columns, rows and metadata; \
+                  a statement that writes is refused. Take the table names from camel_runtime_sql_trace.""")
+    public JsonObject camel_runtime_sql_query(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The SQL query to run") String query,
+            @ToolArg(description = "Name of the DataSource bean (auto-detected if only one exists)",
+                     required = false) String datasource,
+            @ToolArg(description = "Maximum number of rows to return (default 100)", required = false) String maxRows) {
+        if (query == null || query.isBlank()) {
+            throw new ToolCallException("query is required", null);
+        }
+        // refuse before looking for a process, so a write never depends on what runs
+        String refused = SqlReadOnlyGuard.check(query);
+        if (refused != null) {
+            throw new ToolCallException(refused, null);
+        }
+        Map<String, String> args = new HashMap<>();
+        args.put("query", query);
+        putIfNotBlank(args, "datasource", datasource);
+        putIfNotBlank(args, "maxRows", maxRows);
+        return delegateToRegistry("query_sql", nameOrPid, args);
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Which runtime tool groups the Camel application needs, from what it has: sql (datasources, \
+                  SQL endpoints), tracing (OpenTelemetry, message tracing, Micrometer) and resilience (circuit \
+                  breakers). Returns the core tools, each group's tools with one line of guidance, and a fingerprint \
+                  that changes only when the groups do. A client for a small model offers the core tools plus these.""")
+    public JsonObject camel_runtime_tool_groups(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "Also offer camel_runtime_sql, which writes (default false: read-only SQL)",
+                     required = false) Boolean sqlWrites) {
+        Map<String, String> args = new HashMap<>();
+        if (sqlWrites != null && sqlWrites) {
+            args.put("sqlWrites", "true");
+        }
+        return delegateToRegistry("get_tool_groups", nameOrPid, args);
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),

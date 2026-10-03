@@ -153,13 +153,22 @@ Settings are stored under `camel.tui.*` keys (`camel.tui.theme`, `camel.tui.star
 `camel.tui.selectTab`, `camel.tui.confirmActions`, `camel.tui.defaultFolder`,
 `camel.tui.panelPosition`, `camel.tui.panelSpace`,
 `camel.tui.shell.history`, `camel.tui.ai.provider`, `camel.tui.ai.model`, `camel.tui.ai.url`,
-`camel.tui.ai.tools`, `camel.tui.ai.overview`, `camel.tui.ai.promptHistory`) in the Camel CLI configuration file. Each key is read from and
+`camel.tui.ai.tools`, `camel.tui.ai.overview`, `camel.tui.ai.promptHistory`, `camel.tui.ai.sqlWrites`) in the Camel CLI configuration file. Each key is read from and
 written back to the file where it currently lives: a key present in the local
 `./camel-cli.properties` is treated as a project-level override and stays local, while every
 other key defaults to the global `~/.camel-cli.properties`. This means a project can
 deliberately pin a starting tab in its local config without redirecting your personal theme
 into the project file. See xref:camel-jbang-configuration.adoc[Configuration] for details
 on the global and local files.
+
+=== SQL writes from the AI panel
+
+`camel.tui.ai.sqlWrites` has no row in the dialog; set it in `.camel-cli.properties` (or with
+`camel config set camel.tui.ai.sqlWrites=true`). With the core tool set, which local models get, the AI panel
+only reads the integration's database: `tui_execute_sql` refuses a statement that writes and `tui_update_row`
+is not offered. Set the key to `true` to let a local model write as well. The default is `false`; the full tool
+set is not limited. See
+xref:camel-jbang-tui-local-models.adoc#_tool_groups_from_the_selected_integration[Tool groups from the selected integration].
 
 === Input history
 
