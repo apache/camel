@@ -803,6 +803,16 @@ The `charset` parameter of a `Content-Type` was only recognized in lower case. A
 `String` body with such a `Content-Type` was written as UTF-8. The parameter name is now matched case-insensitively
 (RFC 9110), as in the other HTTP components, on the consumer (request and response) and on the producer.
 
+=== camel-netty-http - String bodies in the charset of the Content-Type
+
+The Netty HTTP consumer (response) and producer (request) wrote a `String` body in the charset of the exchange
+(`CamelCharsetName`, UTF-8 by default), even when the `Content-Type` declared another charset (for example
+`text/plain; charset=ISO-8859-1` set by the route). A `String` body is now written in the charset that the
+`Content-Type` declares. Bodies that are not a `String`, and messages whose `Content-Type` declares no charset, are
+sent as before. Also, the `charset` parameter of a received `Content-Type` (a request on the consumer) is now
+recognized whatever its case (`Charset=ISO-8859-1`). A peer that ignored the declared charset and read such a message as UTF-8 must now use the
+declared charset, and characters that the declared charset cannot represent are written as `?`.
+
 === camel-snmp - GET_NEXT (walk)
 
 A `GET_NEXT` walk now ends at the end of the agent's MIB view (`endOfMibView`, or `noSuchName` for SNMPv1) and at
