@@ -78,6 +78,10 @@ jobs:
             # JDK 17 is kept for runtime compatibility testing.
             # Skip the enforcer which requires JDK 21+ (needed to compile JDK 21-specific classes).
             maven_extra_args: '-Denforcer.phase=none'
+          - java: '27'
+            # JDK 27 GA: Oracle JDK from jdk.java.net (Temurin does not yet publish JDK 27 builds).
+            # Experimental — failures do not block PR merges while the JDK 27 ecosystem stabilises.
+            experimental: true
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -110,12 +114,26 @@ jobs:
         uses: ./.github/actions/install-packages
       - id: install-mvnd
         uses: ./.github/actions/install-mvnd
-      - name: Set up JDK ${{ matrix.java }}
+      - name: Set up JDK ${{ matrix.java }} (Temurin)
+        if: matrix.java != '27'
         uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
+      - name: Set up JDK ${{ matrix.java }} (Oracle GA)
+        if: matrix.java == '27'
+        uses: oracle-actions/setup-java@859c464e2ce71173edd0a77727859bf51e32887f # JDK 27 GA
+        with:
+          website: jdk.java.net
+          release: '27'
+      - name: Cache Maven repository (JDK 27)
+        if: matrix.java == '27'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-jdk27-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-jdk27-
       - name: Get Atlassian dependency version
         id: atlassian-version
         run: |
