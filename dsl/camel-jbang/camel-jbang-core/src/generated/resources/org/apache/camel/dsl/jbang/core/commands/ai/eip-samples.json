@@ -992,11 +992,15 @@
     },
     {
       "source": "rest-dsl-openapi.adoc",
-      "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n      missingOperation: mock\n"
+      "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n      missingOperation: ignore\n      unmatchedRequestHandling: camel\n"
     },
     {
       "source": "rest-dsl.adoc",
       "yaml": "- rest:\n    path: \"items\/\"\n    get:\n      - path: \"{id}\/{filename}.{content-type}\"\n        to: \"direct:item\"\n"
+    },
+    {
+      "source": "rest-dsl-openapi.adoc",
+      "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n      missingOperation: mock\n"
     },
     {
       "source": "rest-dsl.adoc",
