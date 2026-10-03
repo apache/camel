@@ -2319,6 +2319,20 @@ public interface ComponentsBuilderFactory {
         return HazelcastTopicComponentBuilderFactory.hazelcastTopic();
     }
     /**
+     * Hibernate (camel-hibernate)
+     * Perform database operations using Hibernate ORM supporting both
+     * JPA-backed and Native Hibernate modes.
+     * 
+     * Category: database
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * @return the dsl builder
+     */
+    static HibernateComponentBuilderFactory.HibernateComponentBuilder hibernate() {
+        return HibernateComponentBuilderFactory.hibernate();
+    }
+    /**
      * HiveMQ (camel-hivemq)
      * Camel HiveMQ MQTT Client support
      * 
