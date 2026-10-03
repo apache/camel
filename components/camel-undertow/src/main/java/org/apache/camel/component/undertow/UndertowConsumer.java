@@ -407,9 +407,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         // By not setting the property when charset is absent, Camel's type conversion
         // system will use its own default (UTF-8), matching the behavior of DefaultHttpBinding.
         String contentType = httpExchange.getRequestHeaders().getFirst(Headers.CONTENT_TYPE);
-        String charset = contentType != null
-                ? Headers.extractQuotedValueFromHeader(contentType, "charset")
-                : null;
+        String charset = UndertowHelper.getCharsetFromContentType(contentType);
         if (charset != null) {
             exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
             in.setHeader(UndertowConstants.HTTP_CHARACTER_ENCODING, charset);
