@@ -774,6 +774,20 @@ whose request times out now fails with a `TimeoutException`, like `GET`, instead
 An agent that answers with an OID inside the subtree that does not increase now also fails the exchange with a
 `CamelExchangeException` ("OID not increasing", like net-snmp's `snmpwalk`), instead of repeating the request.
 
+=== camel-plc4x - failed writes and reads
+
+A `plc4x` producer with `autoReconnect=true` whose reconnect fails now fails the exchange with the
+`PlcConnectionException`. Before, it logged "Unable to reconnect, skipping request" and the exchange completed as if the
+values had been written. A failed write also keeps the message of the exchange (it was removed before), so that a
+redelivery writes the same values again.
+
+The `plc4x` polling consumer (for example `pollEnrich`) now returns an exchange that has the exception when the
+connection or the read fails, instead of an exchange with an empty `Map` body, and it returns `null` when the PLC does
+not answer within the timeout of `receive(timeout)` or `receiveNoWait()`, as other polling consumers do. With
+`pollEnrich` the exception fails the exchange (unless `aggregateOnException` is enabled). A route that polls a PLC
+periodically and should go on while the PLC is unreachable can handle the exception, for example with `onException`
+or `doTry`/`doCatch`.
+
 === camel-vertx - request/reply over the event bus
 
 When a `vertx` consumer receives a message that expects a reply and the route fails, the sender now gets a failure
