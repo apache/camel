@@ -58,8 +58,20 @@ public class IggyProducer extends DefaultAsyncProducer {
                 endpoint.getConfiguration().getSslContextParameters());
 
         IggyBaseClient client = iggyClientConnectionPool.borrowObject();
-        endpoint.initializeTopic(client);
-        iggyClientConnectionPool.returnClient(client);
+        try {
+            endpoint.initializeTopic(client);
+        } finally {
+            iggyClientConnectionPool.returnClient(client);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (iggyClientConnectionPool != null) {
+            iggyClientConnectionPool.close();
+            iggyClientConnectionPool = null;
+        }
+        super.doStop();
     }
 
     @Override
@@ -99,8 +111,6 @@ public class IggyProducer extends DefaultAsyncProducer {
                 .unwrap();
              */
 
-            IggyBaseClient client = iggyClientConnectionPool.borrowObject();
-
             Optional<String> topicOverride
                     = Optional.ofNullable(exchange.getMessage().getHeader(IggyConstants.TOPIC_OVERRIDE, String.class));
             Optional<String> streamOverride
@@ -108,24 +118,39 @@ public class IggyProducer extends DefaultAsyncProducer {
 
             String topic = topicOverride.orElse(endpoint.getTopicName());
             String stream = streamOverride.orElse(iggyConfiguration.getStreamName());
-            if (topicOverride.isPresent() || streamOverride.isPresent()) {
-                endpoint.initializeTopic(client,
-                        topic,
-                        stream);
+
+            IggyBaseClient client = iggyClientConnectionPool.borrowObject();
+            boolean sent = false;
+            try {
+                if (topicOverride.isPresent() || streamOverride.isPresent()) {
+                    endpoint.initializeTopic(client,
+                            topic,
+                            stream);
+                }
+
+                client.messages().sendMessages(
+                        StreamId.of(stream),
+                        TopicId.of(topic),
+                        iggyConfiguration.getPartitioning(),
+                        messages);
+                sent = true;
+            } finally {
+                releaseClient(client, sent);
             }
-
-            client.messages().sendMessages(
-                    StreamId.of(stream),
-                    TopicId.of(topic),
-                    iggyConfiguration.getPartitioning(),
-                    messages);
-
-            iggyClientConnectionPool.returnClient(client);
         } catch (Exception e) {
             exchange.setException(e);
         }
         callback.done(true);
         return true;
+    }
+
+    private void releaseClient(IggyBaseClient client, boolean success) {
+        if (success) {
+            iggyClientConnectionPool.returnClient(client);
+        } else {
+            // the client of a failed request may be broken (connection lost): do not hand it out again
+            iggyClientConnectionPool.invalidateClient(client);
+        }
     }
 
     private boolean isListOfStrings(List<?> list) {
