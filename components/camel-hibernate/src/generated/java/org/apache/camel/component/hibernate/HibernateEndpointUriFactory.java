@@ -107,3 +107,4 @@ public class HibernateEndpointUriFactory extends org.apache.camel.support.compon
         return false;
     }
 }
+

@@ -78,3 +78,4 @@ public class HibernateComponentConfigurer extends PropertyConfigurerSupport impl
         }
     }
 }
+
