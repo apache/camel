@@ -1233,6 +1233,43 @@ public interface HibernateEndpointBuilderFactory {
             doSetProperty("usePersist", usePersist);
             return this;
         }
+        /**
+         * To configure whether to use executeUpdate() when the producer
+         * executes a query. When you use INSERT, UPDATE or DELETE as a named
+         * query, you need to specify this option to true because Camel does not
+         * look into the named query unlike query and nativeQuery.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useExecuteUpdate the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointProducerBuilder useExecuteUpdate(Boolean useExecuteUpdate) {
+            doSetProperty("useExecuteUpdate", useExecuteUpdate);
+            return this;
+        }
+        /**
+         * To configure whether to use executeUpdate() when the producer
+         * executes a query. When you use INSERT, UPDATE or DELETE as a named
+         * query, you need to specify this option to true because Camel does not
+         * look into the named query unlike query and nativeQuery.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useExecuteUpdate the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointProducerBuilder useExecuteUpdate(String useExecuteUpdate) {
+            doSetProperty("useExecuteUpdate", useExecuteUpdate);
+            return this;
+        }
     }
 
     /**
