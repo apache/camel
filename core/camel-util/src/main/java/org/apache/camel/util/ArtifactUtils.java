@@ -206,6 +206,7 @@ public final class ArtifactUtils {
             Map.<String, String> entry("hazelcast-seda", "camel-hazelcast"),
             Map.<String, String> entry("hazelcast-set", "camel-hazelcast"),
             Map.<String, String> entry("hazelcast-topic", "camel-hazelcast"),
+            Map.<String, String> entry("hibernate", "camel-hibernate"),
             Map.<String, String> entry("hivemq", "camel-hivemq"),
             Map.<String, String> entry("http", "camel-http"),
             Map.<String, String> entry("https", "camel-http"),
