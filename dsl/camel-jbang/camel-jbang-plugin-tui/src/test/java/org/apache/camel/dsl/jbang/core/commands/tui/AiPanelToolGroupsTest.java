@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolGroup;
-import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -69,12 +68,11 @@ class AiPanelToolGroupsTest {
         }
     }
 
-    static AiPanel panel(String mode, FakeApp app, boolean sqlWrites) {
+    static AiPanel panel(String mode, FakeApp app) {
         AiPanel panel = new AiPanel();
         panel.setToolRegistryForTesting(new TuiToolRegistry(null));
         panel.setToolModeForTesting(mode);
         panel.setAppStatusSourceForTesting(app);
-        panel.setSqlWritesForTesting(sqlWrites);
         return panel;
     }
 
@@ -83,29 +81,24 @@ class AiPanelToolGroupsTest {
     }
 
     @Test
-    void theSqlGroupAddsTheQueryToolOnly() {
-        AiPanel panel = panel(AiPanel.TOOL_MODE_CORE, new FakeApp(), false);
+    void theSqlGroupAddsTheSqlTools() {
+        AiPanel panel = panel(AiPanel.TOOL_MODE_CORE, new FakeApp());
         assertFalse(toolNames(panel).contains("tui_execute_sql"), "no group before the first question");
 
         panel.refreshToolGroupsForTesting();
         assertEquals(List.of(ToolGroup.SQL), panel.toolGroupsForTesting().groups());
-        assertTrue(toolNames(panel).contains("tui_execute_sql"));
-        assertFalse(toolNames(panel).contains("tui_update_row"), "writes are off");
-        assertTrue(panel.systemPromptForTesting().contains("Read-only: tui_execute_sql runs SELECT only"));
+        assertTrue(toolNames(panel).containsAll(List.of("tui_execute_sql", "tui_update_row")));
+        assertTrue(panel.systemPromptForTesting().contains(
+                "- SQL: datasource(s) orders (HikariCP), used by sql endpoints. Table names come from the SQL trace"
+                                                           + " (tui_get_table tab 'SQL Trace'); don't guess a schema.\n"));
         assertTrue(panel.describeToolModeForTesting().contains("groups: sql (from the selected integration)"),
                 panel.describeToolModeForTesting());
-        assertTrue(panel.describeToolModeForTesting().contains("SQL read-only"));
-
-        AiPanel writes = panel(AiPanel.TOOL_MODE_CORE, new FakeApp(), true);
-        writes.refreshToolGroupsForTesting();
-        assertTrue(toolNames(writes).containsAll(List.of("tui_execute_sql", "tui_update_row")));
-        assertFalse(writes.describeToolModeForTesting().contains("SQL read-only"));
     }
 
     @Test
     void anotherIntegrationGetsItsOwnGroups() {
         FakeApp app = new FakeApp();
-        AiPanel panel = panel(AiPanel.TOOL_MODE_CORE, app, false);
+        AiPanel panel = panel(AiPanel.TOOL_MODE_CORE, app);
         panel.refreshToolGroupsForTesting();
         assertEquals(List.of(ToolGroup.SQL), panel.toolGroupsForTesting().groups());
 
@@ -121,7 +114,7 @@ class AiPanelToolGroupsTest {
     @Test
     void aReloadAddsToTheGroups() {
         FakeApp app = new FakeApp();
-        AiPanel panel = panel(AiPanel.TOOL_MODE_CORE, app, false);
+        AiPanel panel = panel(AiPanel.TOOL_MODE_CORE, app);
         panel.refreshToolGroupsForTesting();
 
         app.reloads = 1;
@@ -136,7 +129,7 @@ class AiPanelToolGroupsTest {
     @Test
     void theGroupsAreCachedOtherwise() {
         FakeApp app = new FakeApp();
-        AiPanel panel = panel(AiPanel.TOOL_MODE_CORE, app, false);
+        AiPanel panel = panel(AiPanel.TOOL_MODE_CORE, app);
         panel.refreshToolGroupsForTesting();
         String prompt = panel.systemPromptForTesting();
         List<LlmClient.ToolDef> tools = panel.toolDefinitionsForTesting();
@@ -148,12 +141,6 @@ class AiPanelToolGroupsTest {
         assertEquals(1, app.reads, "same integration, no reload: the status is not read again");
         assertEquals(prompt, panel.systemPromptForTesting(), "the prompt stays byte-identical");
         assertEquals(tools, panel.toolDefinitionsForTesting());
-
-        // turning SQL writes on changes the tools without reading the status
-        panel.setSqlWritesForTesting(true);
-        panel.refreshToolGroupsForTesting();
-        assertEquals(1, app.reads);
-        assertTrue(toolNames(panel).contains("tui_update_row"));
     }
 
     @Test
@@ -161,7 +148,7 @@ class AiPanelToolGroupsTest {
         // one that just started may not have written its status completely yet
         FakeApp app = new FakeApp();
         app.features = AppFeatures.none();
-        AiPanel panel = panel(AiPanel.TOOL_MODE_CORE, app, false);
+        AiPanel panel = panel(AiPanel.TOOL_MODE_CORE, app);
         panel.refreshToolGroupsForTesting();
         assertTrue(panel.toolGroupsForTesting().groups().isEmpty());
         assertTrue(panel.describeToolModeForTesting().contains("groups: none loaded"));
@@ -175,8 +162,8 @@ class AiPanelToolGroupsTest {
     void theFullSetIsUnchanged() {
         FakeApp app = new FakeApp();
         app.features = EVERYTHING;
-        AiPanel plain = panel(AiPanel.TOOL_MODE_FULL, new FakeApp(), false);
-        AiPanel panel = panel(AiPanel.TOOL_MODE_FULL, app, false);
+        AiPanel plain = panel(AiPanel.TOOL_MODE_FULL, new FakeApp());
+        AiPanel panel = panel(AiPanel.TOOL_MODE_FULL, app);
         String before = panel.systemPromptForTesting();
         panel.refreshToolGroupsForTesting();
 
@@ -185,34 +172,5 @@ class AiPanelToolGroupsTest {
         assertFalse(panel.systemPromptForTesting().contains("The selected integration"));
         assertEquals(toolNames(plain), toolNames(panel));
         assertTrue(toolNames(panel).contains("tui_update_row"));
-        // and writing is not limited there
-        String answer = panel.executeTuiToolForTesting("tui_execute_sql", query("DELETE FROM orders"));
-        assertFalse(answer.contains("read-only"), answer);
-    }
-
-    @Test
-    void theCoreSetRefusesSqlThatWrites() {
-        AiPanel panel = panel(AiPanel.TOOL_MODE_CORE, new FakeApp(), false);
-        panel.refreshToolGroupsForTesting();
-
-        String answer = panel.executeTuiToolForTesting("tui_execute_sql", query("INSERT INTO orders VALUES (1)"));
-        assertTrue(answer.startsWith("Error: read-only: "), answer);
-        assertTrue(answer.contains("camel.tui.ai.sqlWrites=true"), answer);
-        answer = panel.executeTuiToolForTesting("tui_update_row", new JsonObject());
-        assertTrue(answer.startsWith("Error: read-only: tui_update_row"), answer);
-        // a read goes on to the tool (which has no integration here)
-        answer = panel.executeTuiToolForTesting("tui_execute_sql", query("SELECT * FROM orders"));
-        assertFalse(answer.contains("read-only"), answer);
-
-        AiPanel writes = panel(AiPanel.TOOL_MODE_CORE, new FakeApp(), true);
-        writes.refreshToolGroupsForTesting();
-        answer = writes.executeTuiToolForTesting("tui_execute_sql", query("INSERT INTO orders VALUES (1)"));
-        assertFalse(answer.contains("read-only"), answer);
-    }
-
-    private static JsonObject query(String sql) {
-        JsonObject args = new JsonObject();
-        args.put("query", sql);
-        return args;
     }
 }

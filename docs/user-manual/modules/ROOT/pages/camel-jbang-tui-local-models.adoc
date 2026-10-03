@@ -66,8 +66,8 @@ it writes while it runs:
 |===
 | Group | Loads when the integration has | What the model gets
 | `sql` | a datasource, a `sql`, `sql-stored`, `jdbc`, `spring-jdbc` or `jpa` endpoint, or traced SQL statements
-| `tui_execute_sql` (read-only), and a line naming the datasources and their pool; the table names come from the
-*SQL Trace* tab
+| `tui_execute_sql` and `tui_update_row`, and a line naming the datasources and their pool; the table names come
+from the *SQL Trace* tab
 | `tracing` | OpenTelemetry, enabled message tracing, or Micrometer
 | a line pointing at `tui_get_spans`, `tui_get_history` and the *Metrics* tab, which are core tools already
 | `resilience` | a circuit breaker in a route, or circuit breakers in the Resilience4j or Fault Tolerance status
@@ -78,12 +78,9 @@ Each loaded group adds one line at the end of the system prompt. The groups are 
 select another integration or the selected one reloads its routes (after a reload the groups only grow), so
 the tools and the prompt stay the same from question to question and Ollama keeps reusing the cached prompt.
 An integration without any group yet is read again on each question, since one that just started may not
-have written its status completely. With all three groups the static prefix grows by about 330 tokens.
+have written its status completely. With all three groups the static prefix grows by about 520 tokens.
 
-SQL is read-only for a local model: `tui_execute_sql` runs a SELECT (or WITH, SHOW, EXPLAIN, DESCRIBE)
-statement and refuses anything that writes, and `tui_update_row` is not offered. Set `camel.tui.ai.sqlWrites`
-to `true` to allow writes (see xref:camel-jbang-tui-settings.adoc[Settings]). The full tool set (`/tools full`
-and hosted providers) is not affected by the groups and is not limited to reading. `/tools` and `/context`
+The full tool set (`/tools full` and hosted providers) is not affected by the groups. `/tools` and `/context`
 show the loaded groups.
 
 == Working with a local Ollama model

@@ -59,10 +59,11 @@ class AiPanelPromptBudgetTest {
     // raised from 9450 for camel_project_overview and camel_save_project_summary (CAMEL-25143), measured ~9750:
     // full mode only (hosted models), and the panel's own /overview sends no tools at all
     static final int FULL_BUDGET_TOKENS = 9_850;
-    /** Measured ~5.0k tokens for 25 tools: the core set (~4.7k) plus every tool group (CAMEL-24834). */
-    // the SQL group adds tui_execute_sql (~190 tokens), each group one guidance line in the prompt (~140 for all
-    // three); an integration rarely has all three, and the groups only load for the integration that needs them
-    static final int CORE_WITH_GROUPS_BUDGET_TOKENS = 5_300;
+    /** Measured ~5.2k tokens for 26 tools: the core set (~4.7k) plus every tool group (CAMEL-24834). */
+    // the SQL group adds tui_execute_sql and tui_update_row (~385 tokens), each group one guidance line in the prompt
+    // (~130 for all three); an integration rarely has all three, and the groups only load for the integration that
+    // needs them
+    static final int CORE_WITH_GROUPS_BUDGET_TOKENS = 5_500;
 
     record Prefix(String mode, int tools, long promptChars, long toolChars) {
 
@@ -116,10 +117,10 @@ class AiPanelPromptBudgetTest {
     }
 
     /** A core panel with every tool group loaded: datasources, OpenTelemetry, tracing, Micrometer, circuit breakers. */
-    static AiPanel coreWithAllGroups(boolean sqlWrites) {
+    static AiPanel coreWithAllGroups() {
         AiPanelToolGroupsTest.FakeApp app = new AiPanelToolGroupsTest.FakeApp();
         app.features = AiPanelToolGroupsTest.EVERYTHING;
-        AiPanel panel = AiPanelToolGroupsTest.panel(AiPanel.TOOL_MODE_CORE, app, sqlWrites);
+        AiPanel panel = AiPanelToolGroupsTest.panel(AiPanel.TOOL_MODE_CORE, app);
         panel.refreshToolGroupsForTesting();
         return panel;
     }
@@ -135,7 +136,7 @@ class AiPanelPromptBudgetTest {
 
     @Test
     void coreWithAllGroupsPrefixStaysWithinBudget() {
-        Prefix groups = measure("core+groups", coreWithAllGroups(false));
+        Prefix groups = measure("core+groups", coreWithAllGroups());
         System.out.println("AI panel static prefix: " + groups);
 
         assertTrue(groups.totalTokens() <= CORE_WITH_GROUPS_BUDGET_TOKENS,
@@ -187,22 +188,19 @@ class AiPanelPromptBudgetTest {
             assertTrue(prompt.contains("camel_write_file"), "write files with the tool");
         }
 
-        // CAMEL-24834: the guidance of the tool groups only names tools the model is given, with SQL writes or not
-        for (boolean sqlWrites : List.of(false, true)) {
-            AiPanel groups = coreWithAllGroups(sqlWrites);
-            String prompt = groups.systemPromptForTesting();
-            int start = prompt.indexOf("The selected integration:");
-            assertTrue(start > 0, "the guidance is appended at the end");
-            Set<String> tools = groups.toolDefinitionsForTesting().stream().map(LlmClient.ToolDef::name)
-                    .collect(Collectors.toSet());
-            Matcher m = Pattern.compile("\\b(?:tui|camel)_[a-z_]+").matcher(prompt.substring(start));
-            int named = 0;
-            while (m.find()) {
-                named++;
-                assertTrue(tools.contains(m.group()), m.group() + " is named in the guidance but not in the set");
-            }
-            assertTrue(named >= 4, "the guidance names the tools to use");
-            assertTrue(prompt.contains("tui_update_row") == sqlWrites, "tui_update_row only with SQL writes");
+        // CAMEL-24834: the guidance of the tool groups only names tools the model is given
+        AiPanel groups = coreWithAllGroups();
+        String prompt = groups.systemPromptForTesting();
+        int start = prompt.indexOf("The selected integration:");
+        assertTrue(start > 0, "the guidance is appended at the end");
+        Set<String> tools = groups.toolDefinitionsForTesting().stream().map(LlmClient.ToolDef::name)
+                .collect(Collectors.toSet());
+        Matcher m = Pattern.compile("\\b(?:tui|camel)_[a-z_]+").matcher(prompt.substring(start));
+        int named = 0;
+        while (m.find()) {
+            named++;
+            assertTrue(tools.contains(m.group()), m.group() + " is named in the guidance but not in the set");
         }
+        assertTrue(named >= 4, "the guidance names the tools to use");
     }
 }

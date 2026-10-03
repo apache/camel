@@ -422,27 +422,23 @@ public final class ToolRegistry {
                         "Name of the DataSource bean (auto-detected if only one exists)", false)
                 .param("maxRows", "string", "Maximum number of rows to return (default: 100)", false)
                 .readOnly(false).destructive(true)
-                .executor(ToolRegistry::executeSql));
-
-        // CAMEL-24834: the SQL a small local model gets, which cannot change the database
-        register(tool("query_sql",
-                "Run a read-only SQL query (SELECT, WITH, SHOW, EXPLAIN, DESCRIBE) against a DataSource in the running "
-                                   + "Camel application. Returns structured JSON with columns, rows, and metadata. "
-                                   + "Any statement that writes is refused.")
-                .param("query", "string", "The SQL query to run", true)
-                .param("datasource", "string",
-                        "Name of the DataSource bean (auto-detected if only one exists)", false)
-                .param("maxRows", "string", "Maximum number of rows to return (default: 100)", false)
-                .readOnly(true).destructive(false)
                 .executor((ctx, args) -> {
                     String sql = args.get("query");
-                    if (sql != null && !sql.isBlank()) {
-                        String refused = SqlReadOnlyGuard.check(sql);
-                        if (refused != null) {
-                            throw new ToolExecutionException(refused);
+                    if (sql == null || sql.isBlank()) {
+                        throw new ToolExecutionException("'query' parameter is required");
+                    }
+                    String datasource = args.get("datasource");
+                    int maxRows = 100;
+                    String maxRowsStr = args.get("maxRows");
+                    if (maxRowsStr != null && !maxRowsStr.isBlank()) {
+                        try {
+                            maxRows = Integer.parseInt(maxRowsStr);
+                        } catch (NumberFormatException e) {
+                            // use default
                         }
                     }
-                    return executeSql(ctx, args);
+                    JsonObject result = ctx.executeSqlQuery(sql, datasource, maxRows, 30);
+                    return result.toJson();
                 }));
 
         register(tool("get_tool_groups",
@@ -451,8 +447,6 @@ public final class ToolRegistry {
                                          + "circuit breakers. Returns the tools of each group with one line of guidance, "
                                          + "and a fingerprint that changes only when the groups do.")
                 .param("name", "string", "Name or PID of the integration (default: the selected or only one)", false)
-                .param("sqlWrites", "boolean", "Offer the SQL tool that writes too (default false: read-only SQL)",
-                        false)
                 .executor((ctx, args) -> {
                     String name = args.get("name");
                     if (name != null && !name.isBlank()) {
@@ -460,9 +454,7 @@ public final class ToolRegistry {
                     } else {
                         ctx.selectSingleProcessIfNone();
                     }
-                    JsonObject status = ctx.readFullStatus();
-                    boolean sqlWrites = "true".equalsIgnoreCase(args.get("sqlWrites"));
-                    return toolGroups(ctx, status, sqlWrites).toJson();
+                    return toolGroups(ctx, ctx.readFullStatus()).toJson();
                 }));
 
         // Route control
@@ -479,32 +471,13 @@ public final class ToolRegistry {
                 .executor((ctx, args) -> ctx.stopApplication()));
     }
 
-    private static String executeSql(ToolContext ctx, Map<String, String> args) {
-        String sql = args.get("query");
-        if (sql == null || sql.isBlank()) {
-            throw new ToolExecutionException("'query' parameter is required");
-        }
-        String datasource = args.get("datasource");
-        int maxRows = 100;
-        String maxRowsStr = args.get("maxRows");
-        if (maxRowsStr != null && !maxRowsStr.isBlank()) {
-            try {
-                maxRows = Integer.parseInt(maxRowsStr);
-            } catch (NumberFormatException e) {
-                // use default
-            }
-        }
-        JsonObject result = ctx.executeSqlQuery(sql, datasource, maxRows, 30);
-        return result.toJson();
-    }
-
     /**
      * The answer of get_tool_groups: the integration, the core tools every client has, the groups its status calls for
      * and the status keys that called for them.
      */
-    static JsonObject toolGroups(ToolContext ctx, JsonObject status, boolean sqlWrites) {
+    static JsonObject toolGroups(ToolContext ctx, JsonObject status) {
         AppFeatures features = AppFeatures.fromStatus(status);
-        ToolGroups.Selection selection = ToolGroups.select(features, sqlWrites);
+        ToolGroups.Selection selection = ToolGroups.select(features);
         JsonObject answer = new JsonObject();
         String app = null;
         for (RuntimeHelper.ProcessInfo p : ctx.discoverProcesses()) {
@@ -519,7 +492,6 @@ public final class ToolRegistry {
         answer.put("app", app);
         answer.put("pid", ctx.pid());
         answer.put("fingerprint", selection.fingerprint());
-        answer.put("sqlReadOnly", selection.sqlReadOnly());
         JsonArray core = new JsonArray();
         authoringTools().stream().filter(ToolDescriptor::isCore).map(ToolDescriptor::name).forEach(core::add);
         answer.put("core", core);

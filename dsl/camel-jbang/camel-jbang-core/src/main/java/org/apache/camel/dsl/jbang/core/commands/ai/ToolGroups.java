@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
  */
 public final class ToolGroups {
 
-    public static final String SQL_QUERY_TOOL = "camel_runtime_sql_query";
     public static final String SQL_TOOL = "camel_runtime_sql";
     public static final String DATASOURCES_TOOL = "camel_runtime_datasources";
     public static final String SQL_TRACE_TOOL = "camel_runtime_sql_trace";
@@ -56,11 +55,10 @@ public final class ToolGroups {
      * The groups for an integration.
      *
      * @param groups      the loaded groups, in {@link ToolGroup} order
-     * @param sqlReadOnly whether SQL is limited to reading (only meaningful when the SQL group is loaded)
-     * @param fingerprint stable for the same groups, datasources and SQL mode: a client rebuilds its tool list only
-     *                    when it changes
+     * @param fingerprint stable for the same groups and datasources: a client rebuilds its tool list only when it
+     *                    changes
      */
-    public record Selection(List<Group> groups, boolean sqlReadOnly, String fingerprint) {
+    public record Selection(List<Group> groups, String fingerprint) {
 
         public Selection {
             groups = List.copyOf(groups);
@@ -88,18 +86,17 @@ public final class ToolGroups {
     private ToolGroups() {
     }
 
-    /** The groups an integration needs; with {@code sqlWrites} the SQL group also offers the tool that writes. */
-    public static Selection select(AppFeatures features, boolean sqlWrites) {
+    /** The groups an integration needs. */
+    public static Selection select(AppFeatures features) {
         AppFeatures f = features != null ? features : AppFeatures.none();
         List<Group> groups = new ArrayList<>();
         for (ToolGroup group : groups(f)) {
             switch (group) {
                 case SQL -> groups.add(new Group(
                         group,
-                        sqlWrites
-                                ? List.of(SQL_QUERY_TOOL, SQL_TOOL, DATASOURCES_TOOL, SQL_TRACE_TOOL)
-                                : List.of(SQL_QUERY_TOOL, DATASOURCES_TOOL, SQL_TRACE_TOOL),
-                        sqlGuidance(f, sqlWrites)));
+                        List.of(SQL_TOOL, DATASOURCES_TOOL, SQL_TRACE_TOOL),
+                        "SQL: " + describeSql(f) + ". Table names come from the SQL trace (" + SQL_TRACE_TOOL
+                                                                             + "); don't guess a schema."));
                 case TRACING -> {
                     List<String> tools = new ArrayList<>();
                     List<String> parts = new ArrayList<>();
@@ -124,15 +121,7 @@ public final class ToolGroups {
                                                                + " OPEN means the fallback runs."));
             }
         }
-        return new Selection(groups, !sqlWrites, fingerprint(groups(f), f, sqlWrites));
-    }
-
-    private static String sqlGuidance(AppFeatures f, boolean sqlWrites) {
-        String mode = sqlWrites
-                ? SQL_QUERY_TOOL + " reads, " + SQL_TOOL + " also writes."
-                : "Read-only: SELECT only (" + SQL_QUERY_TOOL + ").";
-        return "SQL: " + describeSql(f) + ". " + mode + " Table names come from the SQL trace (" + SQL_TRACE_TOOL
-               + "); don't guess a schema.";
+        return new Selection(groups, fingerprint(groups(f), f));
     }
 
     /** The groups the features call for, in {@link ToolGroup} order. */
@@ -151,14 +140,13 @@ public final class ToolGroups {
     }
 
     /**
-     * Sorted group ids and datasource names, and the SQL mode when the SQL group is loaded: the same integration gives
-     * the same fingerprint, whatever order its status lists things in.
+     * Sorted group ids and datasource names: the same integration gives the same fingerprint, whatever order its status
+     * lists things in.
      */
-    static String fingerprint(List<ToolGroup> groups, AppFeatures features, boolean sqlWrites) {
+    static String fingerprint(List<ToolGroup> groups, AppFeatures features) {
         String ids = groups.stream().map(ToolGroup::id).sorted().collect(Collectors.joining(","));
         String ds = features.dataSourceNames().stream().sorted().collect(Collectors.joining(","));
-        String mode = groups.contains(ToolGroup.SQL) ? (sqlWrites ? "rw" : "ro") : "";
-        return ids + "|" + ds + "|" + mode;
+        return ids + "|" + ds;
     }
 
     /**

@@ -36,51 +36,40 @@ class ToolGroupsTest {
 
     @Test
     void nothingLoadsNoGroup() {
-        ToolGroups.Selection s = ToolGroups.select(AppFeatures.none(), false);
+        ToolGroups.Selection s = ToolGroups.select(AppFeatures.none());
         assertTrue(s.groups().isEmpty());
         assertTrue(s.mcpTools().isEmpty());
         assertTrue(s.guidance().isEmpty());
-        assertEquals("||", s.fingerprint());
+        assertEquals("|", s.fingerprint());
     }
 
     @Test
     void eachGroupHasItsTools() {
-        ToolGroups.Selection s = ToolGroups.select(everything(), false);
+        ToolGroups.Selection s = ToolGroups.select(everything());
         assertEquals(List.of(ToolGroup.SQL, ToolGroup.TRACING, ToolGroup.RESILIENCE), s.toolGroups());
-        assertEquals(List.of("camel_runtime_sql_query", "camel_runtime_datasources", "camel_runtime_sql_trace"),
+        assertEquals(List.of("camel_runtime_sql", "camel_runtime_datasources", "camel_runtime_sql_trace"),
                 s.groups().get(0).tools());
         assertEquals(List.of("camel_runtime_spans", "camel_runtime_trace", "camel_runtime_metrics"),
                 s.groups().get(1).tools());
         assertEquals(List.of("camel_runtime_circuit_breakers"), s.groups().get(2).tools());
-        assertTrue(s.sqlReadOnly());
-        assertFalse(s.mcpTools().contains("camel_runtime_sql"), "read-only SQL has no tool that writes");
-    }
-
-    @Test
-    void sqlWritesAddTheToolThatWrites() {
-        ToolGroups.Selection s = ToolGroups.select(everything(), true);
-        assertFalse(s.sqlReadOnly());
-        assertTrue(s.mcpTools().containsAll(List.of("camel_runtime_sql_query", "camel_runtime_sql")));
-        assertTrue(s.guidance().get(0).contains("camel_runtime_sql also writes"), s.guidance().get(0));
     }
 
     @Test
     void tracingOffersOnlyWhatIsOn() {
         AppFeatures messageTracing = new AppFeatures(
                 List.of(), List.of(), false, false, List.of(), false, true, false, Map.of());
-        ToolGroups.Selection s = ToolGroups.select(messageTracing, false);
+        ToolGroups.Selection s = ToolGroups.select(messageTracing);
         assertEquals(List.of("camel_runtime_trace"), s.mcpTools());
         assertTrue(s.guidance().get(0).contains("message tracing is on"), s.guidance().get(0));
     }
 
     @Test
     void theGuidanceNamesWhatTheIntegrationHas() {
-        List<String> guidance = ToolGroups.select(everything(), false).guidance();
+        List<String> guidance = ToolGroups.select(everything()).guidance();
         assertEquals(3, guidance.size());
-        assertTrue(guidance.get(0).startsWith("SQL: datasource(s) orders (HikariCP), audit, used by sql endpoints."),
+        assertEquals("SQL: datasource(s) orders (HikariCP), audit, used by sql endpoints. Table names come from the"
+                     + " SQL trace (camel_runtime_sql_trace); don't guess a schema.",
                 guidance.get(0));
-        assertTrue(guidance.get(0).contains("Read-only: SELECT only"), guidance.get(0));
-        assertTrue(guidance.get(0).contains("don't guess a schema"), guidance.get(0));
         assertTrue(guidance.get(1).contains("OpenTelemetry"), guidance.get(1));
         assertTrue(guidance.get(2).startsWith("Circuit breakers in routes pay, ship: camel_runtime_circuit_breakers"),
                 guidance.get(2));
@@ -94,9 +83,9 @@ class ToolGroupsTest {
         AppFeatures reordered = new AppFeatures(
                 List.of(new AppFeatures.DataSource("audit", null), new AppFeatures.DataSource("orders", "HikariCP")),
                 List.of("sql"), true, true, List.of("ship", "pay"), true, true, true, Map.of("x", "y"));
-        String fp = ToolGroups.select(everything(), false).fingerprint();
-        assertEquals("resilience,sql,tracing|audit,orders|ro", fp);
-        assertEquals(fp, ToolGroups.select(reordered, false).fingerprint());
-        assertNotEquals(fp, ToolGroups.select(everything(), true).fingerprint(), "the SQL mode changes the tools");
+        String fp = ToolGroups.select(everything()).fingerprint();
+        assertEquals("resilience,sql,tracing|audit,orders", fp);
+        assertEquals(fp, ToolGroups.select(reordered).fingerprint());
+        assertNotEquals(fp, ToolGroups.select(AppFeatures.none()).fingerprint());
     }
 }

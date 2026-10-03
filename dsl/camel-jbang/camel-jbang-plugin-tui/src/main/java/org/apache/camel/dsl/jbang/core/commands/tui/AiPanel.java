@@ -77,7 +77,6 @@ import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
 import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
-import org.apache.camel.dsl.jbang.core.commands.ai.SqlReadOnlyGuard;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.util.json.JsonObject;
@@ -323,14 +322,12 @@ class AiPanel {
     private McpFacade.WriteMode writeMode = McpFacade.WriteMode.CONFIRM;
     private TuiToolRegistry toolRegistry;
     // CAMEL-24834: the tool groups (SQL, tracing, resilience) of the selected integration that the core set gets, see
-    // refreshToolGroups(); camel.tui.ai.sqlWrites decides whether SQL may write
+    // refreshToolGroups()
     private AppStatusSource appStatusSource;
     private String toolGroupsPid;
     private int toolGroupsReloads = -1;
     private AppFeatures toolGroupsFeatures = AppFeatures.none();
     private volatile TuiToolGroups.Selection toolGroups = TuiToolGroups.Selection.none();
-    private volatile boolean sqlWrites;
-    private Boolean sqlWritesForTesting;
     private boolean mcpServerActive;
     private int mcpServerPort;
 
@@ -3364,33 +3361,27 @@ class AiPanel {
     /**
      * Loads the tool groups of the selected integration for the core set (CAMEL-24834): the SQL tools when it has a
      * database, the guidance for its tracing and circuit breakers. Read again only when another integration is selected
-     * or the selected one reloaded (the groups then only grow: what it had before still counts), or the SQL mode
-     * changed, so the tools and the prompt stay the same from question to question and a local model's prompt cache
-     * keeps working. While an integration has no groups yet its status is read again, since one that just started may
-     * not have written it completely. The full set is not affected.
+     * or the selected one reloaded (the groups then only grow: what it had before still counts), so the tools and the
+     * prompt stay the same from question to question and a local model's prompt cache keeps working. While an
+     * integration has no groups yet its status is read again, since one that just started may not have written it
+     * completely. The full set is not affected.
      */
     private void refreshToolGroups() {
-        boolean writes = sqlWritesForTesting != null ? sqlWritesForTesting : TuiSettings.load().isAiSqlWrites();
         if (!useCoreTools()) {
-            sqlWrites = writes;
             return;
         }
         AppStatusSource source = appStatusSource != null ? appStatusSource : facadeStatusSource();
         String pid = source != null ? source.selectedPid() : null;
         int reloads = source != null ? source.reloadCount() : 0;
         boolean samePid = Objects.equals(pid, toolGroupsPid);
-        boolean reread = !samePid || reloads != toolGroupsReloads || toolGroups.groups().isEmpty();
-        if (!reread && writes == toolGroups.sqlWrites()) {
+        if (samePid && reloads == toolGroupsReloads && !toolGroups.groups().isEmpty()) {
             return;
         }
-        if (reread) {
-            AppFeatures read = pid != null ? source.features() : AppFeatures.none();
-            toolGroupsFeatures = samePid ? toolGroupsFeatures.merge(read) : read;
-            toolGroupsPid = pid;
-            toolGroupsReloads = reloads;
-        }
-        toolGroups = TuiToolGroups.select(toolGroupsFeatures, writes);
-        sqlWrites = writes;
+        AppFeatures read = pid != null ? source.features() : AppFeatures.none();
+        toolGroupsFeatures = samePid ? toolGroupsFeatures.merge(read) : read;
+        toolGroupsPid = pid;
+        toolGroupsReloads = reloads;
+        toolGroups = TuiToolGroups.select(toolGroupsFeatures);
     }
 
     private AppStatusSource facadeStatusSource() {
@@ -3462,9 +3453,6 @@ class AiPanel {
             groups = toolGroups.groups().isEmpty()
                     ? "; groups: none loaded"
                     : "; groups: " + toolGroups.groupIds() + " (from the selected integration)";
-            if (!sqlWrites) {
-                groups += "; SQL read-only";
-            }
         }
         return (useCoreTools() ? "core" : "full") + " (" + active + " of " + total + " tools), mode " + mode + detail
                + groups;
@@ -3893,10 +3881,6 @@ class AiPanel {
         if (toolRegistry == null) {
             return "Error: TUI tools not available";
         }
-        String refused = refuseSqlWrite(name, args);
-        if (refused != null) {
-            return "Error: " + refused;
-        }
         try {
             return toolRegistry.execute(name, args);
         } catch (IllegalArgumentException e) {
@@ -3904,26 +3888,6 @@ class AiPanel {
         } catch (Exception e) {
             return "Error executing " + name + ": " + e.getMessage();
         }
-    }
-
-    /**
-     * Keeps a local model (the core set) from writing to the database unless camel.tui.ai.sqlWrites is true: SQL that
-     * writes is refused, and so is tui_update_row, which the core set then does not even offer.
-     */
-    private String refuseSqlWrite(String name, JsonObject args) {
-        if (sqlWrites || !useCoreTools()) {
-            return null;
-        }
-        if (TuiToolGroups.SQL_TOOL.equals(name)) {
-            String query = args != null && args.get("query") instanceof String q ? q : null;
-            String refused = query != null ? SqlReadOnlyGuard.check(query) : null;
-            return refused != null ? refused + " (" + TuiSettings.PROP_AI_SQL_WRITES + "=true)" : null;
-        }
-        if (TuiToolGroups.UPDATE_ROW_TOOL.equals(name)) {
-            return "read-only: " + name + " changes the database; ask the user to enable SQL writes ("
-                   + TuiSettings.PROP_AI_SQL_WRITES + "=true)";
-        }
-        return null;
     }
 
     // F8 intentionally excluded — it closes the panel and is handled above
@@ -4098,20 +4062,12 @@ class AiPanel {
         this.appStatusSource = source;
     }
 
-    void setSqlWritesForTesting(Boolean writes) {
-        this.sqlWritesForTesting = writes;
-    }
-
     void refreshToolGroupsForTesting() {
         refreshToolGroups();
     }
 
     TuiToolGroups.Selection toolGroupsForTesting() {
         return toolGroups;
-    }
-
-    String executeTuiToolForTesting(String name, JsonObject args) {
-        return executeTuiTool(name, args);
     }
 
     List<LlmClient.ToolDef> toolDefinitionsForTesting() {
