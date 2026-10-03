@@ -107,6 +107,7 @@ public final class TahuEdgeClient extends EdgeClient {
             } catch (TimeoutException te) {
                 clientSubmittedFuture.cancel(true);
             } catch (CancellationException | ExecutionException | InterruptedException e) {
+                Thread.currentThread().interrupt();
                 LOG.warn(loggingMarker, "Caught exception waiting for client shutdown", e);
             }
             this.clientSubmittedFuture = null;

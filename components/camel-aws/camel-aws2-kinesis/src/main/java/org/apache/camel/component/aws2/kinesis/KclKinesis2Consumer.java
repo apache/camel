@@ -160,6 +160,7 @@ public class KclKinesis2Consumer extends DefaultConsumer {
             try {
                 gracefulShutdownFuture.get(20, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 LOG.debug("Interrupted while waiting for graceful shutdown. Continuing.");
             } catch (ExecutionException e) {
                 LOG.debug("Exception while executing graceful shutdown.", e);
