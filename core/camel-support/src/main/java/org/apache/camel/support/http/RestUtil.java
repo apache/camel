@@ -53,8 +53,8 @@ public final class RestUtil {
     }
 
     /**
-     * Whether the part is a media range (such as application/*) that accepts one of the valid media types, which is
-     * any media type of the same type.
+     * Whether the part is a media range (such as application/*) that accepts one of the valid media types, which is any
+     * media type of the same type.
      */
     private static boolean isAcceptedByMediaRange(String valid, String part) {
         if (!part.endsWith("/*")) {
