@@ -657,6 +657,52 @@ public class StaticEndpointBuilders {
         return AMQPEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Apicurio Registry (camel-apicurio-registry)
+     * Manage artifacts, versions, and groups in Apicurio Registry v3.
+     * 
+     * Category: cloud,api
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-apicurio-registry
+     * 
+     * Syntax: <code>apicurio-registry:groupId/artifactId</code>
+     * 
+     * Path parameter: groupId
+     * The artifact group ID
+     * 
+     * Path parameter: artifactId
+     * The artifact ID
+     * 
+     * @param path groupId/artifactId
+     * @return the dsl builder
+     */
+    public static ApicurioRegistryEndpointBuilderFactory.ApicurioRegistryEndpointBuilder apicurioRegistry(String path) {
+        return apicurioRegistry("apicurio-registry", path);
+    }
+    /**
+     * Apicurio Registry (camel-apicurio-registry)
+     * Manage artifacts, versions, and groups in Apicurio Registry v3.
+     * 
+     * Category: cloud,api
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-apicurio-registry
+     * 
+     * Syntax: <code>apicurio-registry:groupId/artifactId</code>
+     * 
+     * Path parameter: groupId
+     * The artifact group ID
+     * 
+     * Path parameter: artifactId
+     * The artifact ID
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path groupId/artifactId
+     * @return the dsl builder
+     */
+    public static ApicurioRegistryEndpointBuilderFactory.ApicurioRegistryEndpointBuilder apicurioRegistry(String componentName, String path) {
+        return ApicurioRegistryEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * ArangoDb (camel-arangodb)
      * Perform operations on ArangoDb when used as a Document Database, or as a
      * Graph Database
