@@ -28,6 +28,8 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerKey;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -128,6 +130,72 @@ class CloudEventJsonDataTypeTransformerTest {
         assertTrue(exchange.getMessage().getBody(String.class).contains(String.format("\"%s\":\"application/json\"",
                 cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).json())));
         assertTrue(exchange.getMessage().getBody(String.class).contains("\"data\":\"Test\""));
+    }
+
+    @Test
+    void shouldEscapeTextData() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        String text = "He said \"hi\"\nC:\\temp\\new\tdone\u0001";
+        exchange.getMessage().setHeader(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, "text/plain");
+        exchange.getMessage().setBody(text);
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        String json = exchange.getMessage().getBody(String.class);
+        // JSON strings must not contain raw control characters (Jsoner would accept them)
+        assertTrue(json.chars().noneMatch(ch -> ch < 0x20), json);
+        assertTrue(json.contains("\\n") && json.contains("\\t") && json.contains("\\u0001"), json);
+        JsonObject event = (JsonObject) Jsoner.deserialize(json);
+        assertEquals(text, event.getString("data"));
+        assertEquals("text/plain", event.getString(
+                CloudEvents.v1_0.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).json()));
+    }
+
+    @Test
+    void shouldKeepTextDataThatOnlyLooksLikeJson() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        String text = "[INFO] order 42 received";
+        exchange.getMessage().setHeader(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, "text/plain");
+        exchange.getMessage().setBody(text);
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        JsonObject event = (JsonObject) Jsoner.deserialize(exchange.getMessage().getBody(String.class));
+        assertEquals(text, event.getString("data"));
+    }
+
+    @Test
+    void shouldEscapeAttributeValues() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        String subject = "reports\\2026 \"Q3\".csv";
+        exchange.getMessage().setHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, subject);
+        exchange.getMessage().setHeader(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, "text/plain");
+        exchange.getMessage().setBody("Test");
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        JsonObject event = (JsonObject) Jsoner.deserialize(exchange.getMessage().getBody(String.class));
+        assertEquals(subject,
+                event.getString(CloudEvents.v1_0.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT).json()));
+        assertEquals("Test", event.getString("data"));
+    }
+
+    @Test
+    void shouldNestJsonData() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.getMessage().setHeader(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, "application/json");
+        exchange.getMessage().setBody("{\"message\": \"He said \\\"hi\\\"\", \"items\": [1, 2]}");
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        JsonObject event = (JsonObject) Jsoner.deserialize(exchange.getMessage().getBody(String.class));
+        JsonObject data = (JsonObject) event.get("data");
+        assertEquals("He said \"hi\"", data.getString("message"));
+        assertEquals(2, data.getCollection("items").size());
     }
 
     @Test

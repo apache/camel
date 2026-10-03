@@ -28,6 +28,8 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.util.json.DeserializationException;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * Data type represents a default Camel CloudEvent V1 Json format binding. The data type reads Camel specific CloudEvent
@@ -84,19 +86,16 @@ public class CloudEventJsonDataTypeTransformer extends Transformer {
         StringBuilder builder = new StringBuilder("{");
 
         cloudEventAttributes.forEach((key, value) -> {
-            if ("data".equals(key) && value instanceof String data) {
-                if (isJson(data)) {
-                    // set Json data as nested object in the data field
-                    builder.append(" ").append("\"").append(key).append("\"").append(":").append(data)
-                            .append(",");
-                } else {
-                    builder.append(" ").append("\"").append(key).append("\"").append(":").append("\"").append(data).append("\"")
-                            .append(",");
-                }
+            builder.append(" ");
+            appendJsonString(builder, key);
+            builder.append(":");
+            if ("data".equals(key) && value instanceof String data && isJson(data)) {
+                // set Json data as nested object in the data field
+                builder.append(data);
             } else {
-                builder.append(" ").append("\"").append(key).append("\"").append(":").append("\"").append(value).append("\"")
-                        .append(",");
+                appendJsonString(builder, String.valueOf(value));
             }
+            builder.append(",");
         });
 
         if (!cloudEventAttributes.isEmpty()) {
@@ -106,11 +105,52 @@ public class CloudEventJsonDataTypeTransformer extends Transformer {
         return builder.append("}").toString();
     }
 
-    private boolean isJson(String data) {
-        if (data == null || data.isEmpty()) {
+    /**
+     * Appends the value as a Json string, escaping the quote, the backslash and the control characters (RFC 8259,
+     * section 7).
+     */
+    private static void appendJsonString(StringBuilder builder, String value) {
+        builder.append('"');
+        for (int i = 0; i < value.length(); i++) {
+            char ch = value.charAt(i);
+            switch (ch) {
+                case '"' -> builder.append("\\\"");
+                case '\\' -> builder.append("\\\\");
+                case '\n' -> builder.append("\\n");
+                case '\r' -> builder.append("\\r");
+                case '\t' -> builder.append("\\t");
+                case '\b' -> builder.append("\\b");
+                case '\f' -> builder.append("\\f");
+                default -> {
+                    if (ch < 0x20) {
+                        builder.append(String.format("\\u%04x", (int) ch));
+                    } else {
+                        builder.append(ch);
+                    }
+                }
+            }
+        }
+        builder.append('"');
+    }
+
+    /**
+     * Whether the data is a Json object or array, which is then set as nested Json value. Text that only starts like
+     * Json (such as a log line "[INFO] ...") is set as a Json string.
+     */
+    private static boolean isJson(String data) {
+        if (data == null || data.isBlank()) {
             return false;
         }
 
-        return data.trim().startsWith("{") || data.trim().startsWith("[");
+        String trimmed = data.trim();
+        if (!trimmed.startsWith("{") && !trimmed.startsWith("[")) {
+            return false;
+        }
+        try {
+            Jsoner.deserialize(trimmed);
+            return true;
+        } catch (DeserializationException e) {
+            return false;
+        }
     }
 }
