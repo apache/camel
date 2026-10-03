@@ -30,6 +30,8 @@ import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * The Kubernetes client reconnects a watch after transient errors by itself, but closes it for good, with an exception,
  * when the API server answers 410 Gone (the resource version of the watch is too old, which happens to long-running
@@ -91,5 +93,52 @@ public class KubernetesPodsConsumerWatchClosedTest extends KubernetesTestSupport
         context.start();
 
         mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testWatchAgainAfterAFailedAttemptToWatchAgain() throws Exception {
+        server.expect().withPath(WATCH_PATH)
+                .andUpgradeToWebSocket()
+                .open()
+                .waitFor(10)
+                .andEmit(new WatchEvent(
+                        new StatusBuilder().withCode(410).withReason("Expired").withMessage("too old resource version")
+                                .build(),
+                        "ERROR"))
+                .done()
+                .once();
+        // the first attempt to watch again fails
+        server.expect().withPath(WATCH_PATH)
+                .andReturn(403, new StatusBuilder().withCode(403).withReason("Forbidden").withMessage("forbidden").build())
+                .once();
+        server.expect().withPath(WATCH_PATH)
+                .andUpgradeToWebSocket()
+                .open()
+                .waitFor(10)
+                .andEmit(new WatchEvent(
+                        new PodBuilder().withNewMetadata().withName("pod1").withNamespace("test")
+                                .withResourceVersion("2").endMetadata().build(),
+                        "ADDED"))
+                .done()
+                .once();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedMessagesMatches(e -> "pod1".equals(
+                e.getMessage().getBody(Pod.class).getMetadata().getName()));
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("kubernetes-pods://kubernetes?kubernetesClient=#kubernetesClient&namespace=test")
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        // watched again after 1 second, failed, and watched again after 2 more seconds
+        mock.setResultWaitTime(20000);
+        mock.assertIsSatisfied();
+        assertEquals(3, server.getRequestCount());
     }
 }

@@ -82,7 +82,7 @@ public class KubernetesHPAConsumer extends DefaultConsumer {
 
     class HpaConsumerTask implements Runnable {
 
-        private Watch watch;
+        private volatile Watch watch;
 
         @Override
         public void run() {
@@ -147,6 +147,10 @@ public class KubernetesHPAConsumer extends DefaultConsumer {
 
                 }
             });
+            if (!isRunAllowed()) {
+                // the consumer was stopped while the watch was being created, so stopping could not close it
+                watch.close();
+            }
         }
 
         public Watch getWatch() {

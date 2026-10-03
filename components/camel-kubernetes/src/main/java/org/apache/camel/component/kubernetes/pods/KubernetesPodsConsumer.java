@@ -82,7 +82,7 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
 
     class PodsConsumerTask implements Runnable {
 
-        private Watch watch;
+        private volatile Watch watch;
 
         @Override
         public void run() {
@@ -145,6 +145,10 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
 
                 }
             });
+            if (!isRunAllowed()) {
+                // the consumer was stopped while the watch was being created, so stopping could not close it
+                watch.close();
+            }
         }
 
         public Watch getWatch() {

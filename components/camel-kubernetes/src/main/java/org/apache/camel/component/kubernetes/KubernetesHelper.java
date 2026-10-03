@@ -99,36 +99,62 @@ public final class KubernetesHelper {
     static final long WATCH_AGAIN_DELAY_MILLIS = 1000;
 
     /**
+     * The maximum delay between two attempts to watch again, when watching again keeps failing (for example while the
+     * API server cannot be reached).
+     */
+    static final long WATCH_AGAIN_MAX_DELAY_MILLIS = 30000;
+
+    /**
      * Watches again when the Kubernetes client closed the watch of a consumer with an error. The client reconnects a
      * watch by itself after transient errors, and only closes it with an exception when it gives up: when the API
      * server answers 410 Gone because the resource version of the watch is too old (which happens to long-running
      * watches), or when the reconnect limit is reached. The consumer would then not receive any event anymore.
+     * <p>
+     * If watching again fails (the API server cannot be reached, answers 403, ...), it is tried again with a delay that
+     * doubles up to {@link #WATCH_AGAIN_MAX_DELAY_MILLIS}, until it succeeds or the consumer is stopped.
      *
      * @param consumer the consumer of the watch
      * @param executor the executor of the consumer
      * @param task     the task that creates the watch of the consumer
      */
     public static void watchAgain(ServiceSupport consumer, ExecutorService executor, Runnable task) {
-        if (consumer.isRunAllowed() && executor != null && !executor.isShutdown()) {
-            LOG.info("Watching again for {} in {} ms after its watch was closed", consumer, WATCH_AGAIN_DELAY_MILLIS);
-            try {
-                executor.submit(() -> {
-                    // wait a little before watching again, so that an API server that keeps closing the watch with an
-                    // error is not called in a tight loop (the client already retried with a backoff before it gave up)
-                    try {
-                        Thread.sleep(WATCH_AGAIN_DELAY_MILLIS);
-                    } catch (InterruptedException e) {
-                        // the consumer is stopping (its executor is shut down)
-                        Thread.currentThread().interrupt();
+        watchAgain(consumer, executor, task, WATCH_AGAIN_DELAY_MILLIS);
+    }
+
+    private static void watchAgain(ServiceSupport consumer, ExecutorService executor, Runnable task, long delayMillis) {
+        if (!consumer.isRunAllowed() || executor == null || executor.isShutdown()) {
+            return;
+        }
+        LOG.info("Watching again for {} in {} ms", consumer, delayMillis);
+        try {
+            executor.submit(() -> {
+                // wait before watching again, so that an API server that keeps closing the watch with an error or
+                // cannot be reached is not called in a tight loop
+                try {
+                    Thread.sleep(delayMillis);
+                } catch (InterruptedException e) {
+                    // the consumer is stopping (its executor is shut down)
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+                if (!consumer.isRunAllowed()) {
+                    return;
+                }
+                try {
+                    task.run();
+                } catch (Exception e) {
+                    if (Thread.currentThread().isInterrupted() || !consumer.isRunAllowed()) {
+                        LOG.debug("Failed to watch again for {} as it is stopping", consumer, e);
                         return;
                     }
-                    if (consumer.isRunAllowed()) {
-                        task.run();
-                    }
-                });
-            } catch (RejectedExecutionException e) {
-                LOG.debug("Cannot watch again for {} as it is stopping", consumer, e);
-            }
+                    long nextDelayMillis = Math.min(delayMillis * 2, WATCH_AGAIN_MAX_DELAY_MILLIS);
+                    LOG.warn("Failed to watch again for {}, trying again in {} ms: {}", consumer, nextDelayMillis,
+                            e.getMessage(), e);
+                    watchAgain(consumer, executor, task, nextDelayMillis);
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            LOG.debug("Cannot watch again for {} as it is stopping", consumer, e);
         }
     }
 
