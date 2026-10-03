@@ -58,4 +58,23 @@ public class RestUtilTest {
         // an empty part does not match
         Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "application/xml,"));
     }
+
+    @Test
+    public void testRestUtilWithMediaRange() {
+        // a media range such as application/* accepts any subtype of its type
+        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/*"));
+        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "Application/*"));
+        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/*;q=0.8"));
+        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "text/html, application/*;q=0.8"));
+        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json,application/xml", "application/*"));
+        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("text/plain,application/xml", "application/*"));
+        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("text/plain, application/xml", "application/*"));
+
+        // the type of the media range must be the same type, not only start or end the same
+        Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "text/*"));
+        Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "text/*, image/*"));
+        Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "app/*"));
+        Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("xapplication/json", "application/*"));
+        Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "/*"));
+    }
 }
