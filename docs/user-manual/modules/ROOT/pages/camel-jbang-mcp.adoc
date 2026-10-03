@@ -360,8 +360,13 @@ project `directory` as an argument, the runtime tools take the integration `name
   `stop-routes`, `start-routes`, `reset-stats`.
 
 | `camel_get_log`
-| Recent log records of a running integration, newest first, filtered by level or text; a stack trace comes
-  as one record with a `detail` block.
+| Recent log records of a running integration, newest first, filtered by level or text. An error keeps its
+  first line, which names the route, the source line and the exception; its stack trace is left out, with the
+  number of lines left out in `detailLines`, the exception as `cause` when the first line does not name it, and
+  as `at` the first frame of the user's own code, looked for from the root cause up (a bean, a processor, a
+  script), so a `NullPointerException` without a message still says where it happened.
+  `details=true` returns the stack traces; `camel_get_errors` has them for every failed exchange. Other
+  multi-line text, such as a pretty-printed body, stays as a `detail` block.
 
 | `camel_get_errors`
 | The failed exchanges of a running integration: route, exchange, exception with stack trace, body and headers.
