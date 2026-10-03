@@ -19,6 +19,7 @@ package org.apache.camel.component.consul;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,6 +35,7 @@ import org.kiwiproject.consul.model.ImmutableEventResponse;
 import org.kiwiproject.consul.model.event.ImmutableEvent;
 import org.kiwiproject.consul.option.QueryOptions;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -48,14 +50,24 @@ import static org.mockito.Mockito.when;
 public class ConsulEventWatchTest extends CamelTestSupport {
 
     private static final String EVENT = "camel-watch";
+    private static final String NO_BLOCK_EVENT = "camel-watch-no-block";
 
     private final EventClient eventClient = mock(EventClient.class);
     private final List<EventResponseCallback> queries = new CopyOnWriteArrayList<>();
+    private final List<Long> noBlockQueryTimes = new CopyOnWriteArrayList<>();
 
     @BindToRegistry("consul")
     public Consul consul() {
         Consul consul = mock(Consul.class);
         when(consul.eventClient()).thenReturn(eventClient);
+        // the consumer with blockSeconds=0 queries as soon as it starts: the first query fails, the next is pending
+        doAnswer(inv -> {
+            noBlockQueryTimes.add(System.nanoTime());
+            if (noBlockQueryTimes.size() == 1) {
+                inv.getArgument(2, EventResponseCallback.class).onFailure(new ConsulException("Consul is not available"));
+            }
+            return null;
+        }).when(eventClient).listEvents(eq(NO_BLOCK_EVENT), any(QueryOptions.class), any(EventResponseCallback.class));
         return consul;
     }
 
@@ -81,6 +93,16 @@ public class ConsulEventWatchTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
+    public void testFailedQueryIsRetriedAfterOneSecondWithoutBlockSeconds() {
+        verify(eventClient, timeout(5000).times(2)).listEvents(eq(NO_BLOCK_EVENT), any(QueryOptions.class),
+                any(EventResponseCallback.class));
+
+        // blockSeconds=0 must not query a Consul agent that is down in a loop
+        long delay = TimeUnit.NANOSECONDS.toMillis(noBlockQueryTimes.get(1) - noBlockQueryTimes.get(0));
+        assertTrue(delay >= 900, "The failed query was retried after " + delay + " ms");
+    }
+
     private static EventResponse response(String payload) {
         return ImmutableEventResponse.builder()
                 .addEvents(ImmutableEvent.builder()
@@ -101,6 +123,9 @@ public class ConsulEventWatchTest extends CamelTestSupport {
             public void configure() {
                 fromF("consul:event?key=%s&blockSeconds=1&consulClient=#consul", EVENT)
                         .to("mock:event");
+
+                fromF("consul:event?key=%s&blockSeconds=0&consulClient=#consul", NO_BLOCK_EVENT)
+                        .to("mock:noBlockEvent");
             }
         };
     }
