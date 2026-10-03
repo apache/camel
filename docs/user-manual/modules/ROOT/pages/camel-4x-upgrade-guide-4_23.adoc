@@ -4373,3 +4373,18 @@ Property placeholders are kept as written instead of being resolved.
 
 In return, Java is also a target format, and rests, route templates, route configurations and beans are converted
 instead of only routes. A new `notes` field of the result lists what differs or is not carried over.
+
+=== camel-ai-tool - route tools receive the caller's context but a clean message
+
+Route tools invoked by an agent (`camel-langchain4j-agent`, `camel-openai`, `camel-spring-ai-chat`) now run on an
+exchange that carries the calling exchange's *properties* and *variables* — so a tool route can be guarded on the
+caller's identity, for example `exchangeProperty.subject` — but with a *clean message*: the tool route receives only
+its own arguments (as headers), not the caller's body or inbound headers.
+
+`camel-langchain4j-agent` previously copied the whole calling exchange, so its tool routes also saw the caller's body
+and inbound headers, and a tool that set no body returned the caller's body to the model. A tool route that read the
+caller's body or a caller header must now obtain that data another way (for example an exchange variable or property).
+
+`camel-openai` and `camel-spring-ai-chat` previously created a fresh exchange and did not propagate the caller's
+context at all; they now do, which is what makes a tool route guarded on `exchangeProperty.subject` work under those
+runtimes.

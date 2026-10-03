@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -174,5 +175,29 @@ public final class AiToolExecutor {
             return new AiToolResult.ExecutionError(
                     String.format("Error executing tool '%s': %s", spec.getName(), e.getMessage()), e);
         }
+    }
+
+    /**
+     * Builds the exchange used to invoke a route tool from the calling (agent) exchange. The caller's <em>context</em>
+     * is carried over - exchange properties (most importantly the authenticated caller's identity, so a tool route can
+     * be guarded on {@code exchangeProperty.subject} and the model cannot forge it) and variables - but the tool route
+     * is given a <em>clean message</em>: it receives only its own tool arguments (set as headers by
+     * {@link #execute(AiToolSpec, Map, Exchange)}), not the caller's body or inbound headers, and a tool that sets no
+     * body returns {@code No result} rather than echoing the caller's body back to the model. Changes the tool makes
+     * are isolated to this copy and do not leak back into the calling exchange. Every route-tool runtime
+     * (langchain4j-agent, openai, spring-ai-chat) builds the tool exchange this way, so an authorization check on an
+     * exchange property behaves identically across them (CAMEL-24832, CAMEL-23944).
+     *
+     * @param  callingExchange the exchange driving the agent
+     * @return                 an isolated copy, carrying the caller's properties and variables but a clean message, to
+     *                         pass to {@link #execute(AiToolSpec, Map, Exchange)}
+     */
+    public static Exchange createToolExchange(Exchange callingExchange) {
+        // copy carries properties and variables; then wipe the message so the tool route starts from its arguments
+        // only, not the caller's body/headers
+        Exchange toolExchange = ExchangeHelper.createCopy(callingExchange, true);
+        toolExchange.getMessage().setBody(null);
+        toolExchange.getMessage().getHeaders().clear();
+        return toolExchange;
     }
 }
