@@ -94,6 +94,11 @@ public final class KubernetesHelper {
     }
 
     /**
+     * The delay before a consumer watches again after the Kubernetes client closed its watch with an error.
+     */
+    static final long WATCH_AGAIN_DELAY_MILLIS = 1000;
+
+    /**
      * Watches again when the Kubernetes client closed the watch of a consumer with an error. The client reconnects a
      * watch by itself after transient errors, and only closes it with an exception when it gives up: when the API
      * server answers 410 Gone because the resource version of the watch is too old (which happens to long-running
@@ -105,9 +110,22 @@ public final class KubernetesHelper {
      */
     public static void watchAgain(ServiceSupport consumer, ExecutorService executor, Runnable task) {
         if (consumer.isRunAllowed() && executor != null && !executor.isShutdown()) {
-            LOG.info("Watching again for {} after its watch was closed", consumer);
+            LOG.info("Watching again for {} in {} ms after its watch was closed", consumer, WATCH_AGAIN_DELAY_MILLIS);
             try {
-                executor.submit(task);
+                executor.submit(() -> {
+                    // wait a little before watching again, so that an API server that keeps closing the watch with an
+                    // error is not called in a tight loop (the client already retried with a backoff before it gave up)
+                    try {
+                        Thread.sleep(WATCH_AGAIN_DELAY_MILLIS);
+                    } catch (InterruptedException e) {
+                        // the consumer is stopping (its executor is shut down)
+                        Thread.currentThread().interrupt();
+                        return;
+                    }
+                    if (consumer.isRunAllowed()) {
+                        task.run();
+                    }
+                });
             } catch (RejectedExecutionException e) {
                 LOG.debug("Cannot watch again for {} as it is stopping", consumer, e);
             }
