@@ -74,6 +74,8 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "transactionmanager":
         case "transactionManager": target.setTransactionManager(property(camelContext, org.springframework.transaction.PlatformTransactionManager.class, value)); return true;
+        case "useexecuteupdate":
+        case "useExecuteUpdate": target.setUseExecuteUpdate(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "usepersist":
@@ -136,6 +138,8 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "transactionmanager":
         case "transactionManager": return org.springframework.transaction.PlatformTransactionManager.class;
+        case "useexecuteupdate":
+        case "useExecuteUpdate": return java.lang.Boolean.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
         case "usepersist":
@@ -199,6 +203,8 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "timeUnit": return target.getTimeUnit();
         case "transactionmanager":
         case "transactionManager": return target.getTransactionManager();
+        case "useexecuteupdate":
+        case "useExecuteUpdate": return target.getUseExecuteUpdate();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
         case "usepersist":

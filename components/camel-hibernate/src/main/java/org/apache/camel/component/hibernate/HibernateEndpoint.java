@@ -56,7 +56,7 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
     @UriParam(description = "The PlatformTransactionManager to use")
     private PlatformTransactionManager transactionManager;
 
-    private TransactionStrategy transactionStrategy;
+    private volatile TransactionStrategy transactionStrategy;
 
     @UriParam(description = "HQL query to execute")
     private String query;
@@ -76,6 +76,10 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
     @UriParam(defaultValue = "false",
               description = "Indicates to use entityManager.persist(entity) or session.persist(entity) instead of merge")
     private boolean usePersist;
+
+    @UriParam(label = "producer",
+              description = "To configure whether to use executeUpdate() when the producer executes a query. When you use INSERT, UPDATE or DELETE as a named query, you need to specify this option to true because Camel does not look into the named query unlike query and nativeQuery.")
+    private Boolean useExecuteUpdate;
 
     @UriParam(description = "Parameters to pass to the query in key-value map format", multiValue = true,
               prefix = "parameters.")
@@ -127,11 +131,17 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
                     "A TransactionStrategy is only available when an EntityManagerFactory is configured");
         }
 
-        if (transactionStrategy == null) {
-            transactionStrategy = createTransactionStrategy();
+        TransactionStrategy strategy = transactionStrategy;
+        if (strategy == null) {
+            synchronized (this) {
+                strategy = transactionStrategy;
+                if (strategy == null) {
+                    transactionStrategy = strategy = createTransactionStrategy();
+                }
+            }
         }
 
-        return transactionStrategy;
+        return strategy;
     }
 
     public void setTransactionStrategy(TransactionStrategy transactionStrategy) {
@@ -157,6 +167,9 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
     protected void doStart() throws Exception {
         validateConfiguration();
         resolveEntityType();
+        if (isJpaBacked() && transactionStrategy == null) {
+            transactionStrategy = createTransactionStrategy();
+        }
         super.doStart();
     }
 
@@ -281,6 +294,14 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
 
     public void setUsePersist(boolean usePersist) {
         this.usePersist = usePersist;
+    }
+
+    public Boolean getUseExecuteUpdate() {
+        return useExecuteUpdate;
+    }
+
+    public void setUseExecuteUpdate(Boolean useExecuteUpdate) {
+        this.useExecuteUpdate = useExecuteUpdate;
     }
 
     public Map<String, Object> getParameters() {
