@@ -21,11 +21,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.sjms.batch.BatchTestSupport.assertBatchSizesInOrder;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.assertBatchSizesInOrder;
 
 public class BatchConsumerSizeTest extends JmsTestSupport {
 
-    private static final String SJMS_FROMF_URI = "%s?batching=true&batchSize=5&batchInterval=5000";
+    private static final String SJMS_FROMF_URI = "%s?batching=true&batchSize=5&batchInterval=10000";
     private static final String SJMS_QUEUE_NAME
             = "sjms:queue:batch.consumer.queue.BatchConsumerSizeTest";
     private static final String MOCK_RESULT = "mock:result";
@@ -34,8 +34,9 @@ public class BatchConsumerSizeTest extends JmsTestSupport {
     public void testBatchConsumerSize() throws Exception {
         MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
         mock.expectedMessageCount(2);
+        mock.setAssertPeriod(20000);
 
-        BatchTestSupport.sendMessages(template, SJMS_QUEUE_NAME, 7);
+        BatchTestHelper.sendMessages(template, SJMS_QUEUE_NAME, 7);
 
         mock.assertIsSatisfied();
         assertBatchSizesInOrder(mock, 5, 2);

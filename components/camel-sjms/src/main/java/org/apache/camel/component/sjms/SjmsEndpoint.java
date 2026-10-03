@@ -501,9 +501,11 @@ public class SjmsEndpoint extends DefaultEndpoint
         }
 
         if (getBatchInterval() < 0) {
-            if (getExchangePattern().isOutCapable()) {
-                throw new IllegalArgumentException("batchInterval must be 0 or greater.");
-            }
+            throw new IllegalArgumentException("batchInterval must be 0 or greater.");
+        }
+
+        if (getBatchSize() <= 0) {
+            throw new IllegalArgumentException("batchSize must greater than 0");
         }
 
         if (isBatching() && !isTransacted()

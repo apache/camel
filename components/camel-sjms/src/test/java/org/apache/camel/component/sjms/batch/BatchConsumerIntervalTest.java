@@ -27,7 +27,7 @@ import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.sjms.batch.BatchTestSupport.assertBatchSizesInOrder;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.assertBatchSizesInOrder;
 
 public class BatchConsumerIntervalTest extends JmsTestSupport {
 
@@ -58,7 +58,7 @@ public class BatchConsumerIntervalTest extends JmsTestSupport {
                     }
                 },
                 0,
-                400,
+                50,
                 TimeUnit.MILLISECONDS);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -66,9 +66,9 @@ public class BatchConsumerIntervalTest extends JmsTestSupport {
     }
 
     @Test
-    public void testBatchConsumerIntervalTwoBatch() throws Exception {
+    public void testBatchConsumerIntervalMultipleBatches() throws Exception {
         MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
-        mock.expectedMessageCount(2);
+        mock.expectedMessageCount(3);
 
         AtomicInteger counter = new AtomicInteger();
         executor.scheduleAtFixedRate(
@@ -80,11 +80,11 @@ public class BatchConsumerIntervalTest extends JmsTestSupport {
                     }
                 },
                 0,
-                800,
+                2000,
                 TimeUnit.MILLISECONDS);
 
         MockEndpoint.assertIsSatisfied(context);
-        assertBatchSizesInOrder(mock, 2, 1);
+        assertBatchSizesInOrder(mock, 1, 1, 1);
     }
 
     @Override

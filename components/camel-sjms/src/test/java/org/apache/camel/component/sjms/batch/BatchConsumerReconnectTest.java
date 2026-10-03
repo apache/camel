@@ -16,31 +16,43 @@
  */
 package org.apache.camel.component.sjms.batch;
 
-import org.apache.camel.builder.RouteBuilder;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.apache.camel.CamelContext;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.JmsExclusiveTestSupport;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.sjms.batch.BatchTestSupport.assertBatchSizesInOrder;
+import static java.lang.String.format;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.BATCH_ROUTEBUILDER_MOCK_FINISH;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.batchBodiesAsList;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.createRoute;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.getBatch;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessagesWithText;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.triggerConnectionFailure;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Isolated("Seems to have problem running along with other tests")
-@DisabledIfSystemProperty(named = "activemq.instance.type", matches = "remote",
-                          disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
 public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
 
-    private static final String SJMS_FROMF_URI = "%s?batching=true&batchSize=5";
-    private static final String SJMS_QUEUE_NAME = "sjms:batch.consumer.BatchConsumerReconnectTest";
-    private static final String MOCK_RESULT = "mock:result";
+    private static final String SJMS_QUEUE_NAME_TEMPLATE = "batch.consumer.%s.BatchConsumerReconnectTest";
+    private static final String ROUTE_ID_SESSION_TX = "tx";
+    private static final String ROUTE_ID_CLIENT_ACK_NO_TX = "no-tx-client-ack";
+    private static final String ROUTE_ID_AUTO_ACK_NO_TX = "no-tx-auto";
 
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createVMService();
+
+    private BatchTestHelper.CountingConnectionFactory countingFactory;
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -49,28 +61,126 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
         return service;
     }
 
-    @Test
-    public void testBatchConsumerReconnect() throws Exception {
-        MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
-        mock.expectedMessageCount(2);
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        addSjmsComponent = false;
+        CamelContext camelContext = super.createCamelContext();
 
-        BatchTestSupport.sendMessages(template, SJMS_QUEUE_NAME, 5);
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
+        connectionFactory.setReconnectAttempts(0);
 
-        reconnect();
+        countingFactory = new BatchTestHelper.CountingConnectionFactory(connectionFactory);
 
-        BatchTestSupport.sendMessages(template, SJMS_QUEUE_NAME, 5);
+        SjmsComponent sjms = new SjmsComponent();
+        sjms.setConnectionFactory(countingFactory);
+        camelContext.addComponent("sjms", sjms);
 
-        mock.assertIsSatisfied();
-        assertBatchSizesInOrder(mock, 5, 5);
+        return camelContext;
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                fromF(SJMS_FROMF_URI, SJMS_QUEUE_NAME).to(MOCK_RESULT);
-            }
+    @Test
+    public void testReconnectAutoAcknowledgedNotTransacted() throws Exception {
+        final String queueName = format(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK_NO_TX);
+        final String endpointUri = "sjms:queue:" + queueName;
+
+        MockEndpoint mock = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_AUTO_ACK_NO_TX));
+        mock.expectedMessageCount(1);
+
+        sendMessagesWithText(template, endpointUri, 2, "Before!");
+
+        int connectionsBefore = countingFactory.getCreateCount();
+        triggerConnectionFailure(context, ROUTE_ID_AUTO_ACK_NO_TX);
+        await().atMost(30, TimeUnit.SECONDS)
+                .until(() -> countingFactory.getCreateCount() > connectionsBefore);
+
+        mock.assertIsSatisfied();
+        assertEquals(2, getBatch(mock.getExchanges().get(0)).size());
+        assertEquals(List.of("Before!", "Before!"), batchBodiesAsList(mock.getExchanges().get(0)));
+
+        mock.reset();
+
+        // test with an incomplete batch - to check timing
+        mock.expectedMessageCount(1);
+        mock.setResultWaitTime(15000);
+        sendMessagesWithText(template, endpointUri, 3, "After!");
+
+        mock.assertIsSatisfied();
+        assertEquals(3, getBatch(mock.getExchanges().get(0)).size());
+        assertEquals(List.of("After!", "After!", "After!"), batchBodiesAsList(mock.getExchanges().get(0)));
+    }
+
+    @Test
+    public void testSessionTransacted() throws Exception {
+        final String queueName = format(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX);
+        final String endpointUri = "sjms:queue:" + queueName;
+
+        MockEndpoint mock = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_SESSION_TX));
+        mock.expectedMessageCount(0);
+
+        sendMessagesWithText(template, endpointUri, 2, "Before!");
+
+        int connectionsBefore = countingFactory.getCreateCount();
+        triggerConnectionFailure(context, ROUTE_ID_AUTO_ACK_NO_TX);
+        await().atMost(30, TimeUnit.SECONDS)
+                .until(() -> countingFactory.getCreateCount() > connectionsBefore);
+
+        mock.assertIsSatisfied();
+        mock.reset();
+
+        // we want to test with 1 complete (incl. the messages prior to reconnect) and 1 incomplete batch
+        mock.expectedMessageCount(2);
+        mock.setResultWaitTime(15000);
+        sendMessagesWithText(template, endpointUri, 7, "After!");
+
+        mock.assertIsSatisfied();
+        // fist batch
+        assertEquals(5, getBatch(mock.getExchanges().get(0)).size());
+        assertEquals(List.of("Before!", "Before!", "After!", "After!", "After!"),
+                batchBodiesAsList(mock.getExchanges().get(0)));
+        // second batch
+        assertEquals(4, getBatch(mock.getExchanges().get(1)).size());
+        assertEquals(List.of("After!", "After!", "After!", "After!"), batchBodiesAsList(mock.getExchanges().get(1)));
+    }
+
+    @Test
+    public void testClientAcknowledge() throws Exception {
+        final String queueName = format(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX);
+        final String endpointUri = "sjms:queue:" + queueName;
+
+        MockEndpoint mock = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_CLIENT_ACK_NO_TX));
+        mock.expectedMessageCount(0);
+
+        sendMessagesWithText(template, endpointUri, 2, "Before!");
+
+        int connectionsBefore = countingFactory.getCreateCount();
+        triggerConnectionFailure(context, ROUTE_ID_AUTO_ACK_NO_TX);
+        await().atMost(30, TimeUnit.SECONDS)
+                .until(() -> countingFactory.getCreateCount() > connectionsBefore);
+
+        mock.assertIsSatisfied();
+        mock.reset();
+
+        mock.expectedMessageCount(1);
+        mock.setResultWaitTime(15000);
+        sendMessagesWithText(template, endpointUri, 3, "After!");
+
+        mock.assertIsSatisfied();
+        assertEquals(5, getBatch(mock.getExchanges().get(0)).size());
+        assertEquals(List.of("Before!", "Before!", "After!", "After!", "After!"),
+                batchBodiesAsList(mock.getExchanges().get(0)));
+    }
+
+    protected RoutesBuilder[] createRouteBuilders() {
+        return new RoutesBuilder[] {
+                createRoute(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, true, 5,
+                        10000,
+                        true, null, 1, new BatchTestHelper.DoNothingProcessor()),
+                createRoute(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX,
+                        true,
+                        5, 10000, false, "CLIENT_ACKNOWLEDGE", 1, new BatchTestHelper.DoNothingProcessor()),
+                createRoute(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK_NO_TX,
+                        true, 5, 10000, false,
+                        "AUTO_ACKNOWLEDGE", 1, new BatchTestHelper.DoNothingProcessor())
         };
     }
 }

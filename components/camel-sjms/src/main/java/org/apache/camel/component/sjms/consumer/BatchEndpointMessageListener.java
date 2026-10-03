@@ -45,7 +45,7 @@ public class BatchEndpointMessageListener {
     }
 
     private Exchange aggregate(List<Message> rawMessages, Session session) {
-        List<Exchange> exchanges = new ArrayList<Exchange>(rawMessages.size());
+        List<Exchange> exchanges = new ArrayList<>(rawMessages.size());
         for (Message m : rawMessages) {
             Exchange e = endpoint.createExchange(m, session);
             // Force eager materialization of JMS message headers and body into the
@@ -72,6 +72,7 @@ public class BatchEndpointMessageListener {
         try {
             batchExchange = aggregate(rawMessages, session);
             processor.process(batchExchange);
+            consumer.releaseExchange(batchExchange, false);
         } catch (Exception e) {
             batchExchange.setException(e);
         }

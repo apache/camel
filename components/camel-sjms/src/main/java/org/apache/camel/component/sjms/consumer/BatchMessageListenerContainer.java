@@ -62,16 +62,29 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
         super.doStart();
     }
 
-    @Override
-    protected void configureConsumer(MessageConsumer consumer, Session session) {
-        BatchConsumerWorker worker = new BatchConsumerWorker(
-                endpoint, batchListener, consumer, session);
+    private void addWorker(BatchConsumerWorker worker) {
         workersLock.lock();
         try {
             workers.add(worker);
         } finally {
             workersLock.unlock();
         }
+    }
+
+    private boolean removeWorker(BatchConsumerWorker worker) {
+        workersLock.lock();
+        try {
+            return workers.remove(worker);
+        } finally {
+            workersLock.unlock();
+        }
+    }
+
+    @Override
+    protected void configureConsumer(MessageConsumer consumer, Session session) {
+        BatchConsumerWorker worker = new BatchConsumerWorker(
+                endpoint, batchListener, consumer, session);
+        addWorker(worker);
         CompletableFuture.runAsync(worker, workerExecutorService)
                 .whenComplete((v, ex) -> onWorkerExit(worker, ex));
     }
@@ -79,21 +92,22 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
     @Override
     protected void doStop() throws Exception {
         this.stopping = true;
-        invalidateBatchWorkers();
+        shutdownWorkers();
         // shutdown scheduled executor after all in-flight exchanges have completed
         if (workerExecutorService != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(workerExecutorService);
+            LOG.debug("BatchConsumerWorker excecutor service shutdown");
             workerExecutorService = null;
         }
 
         super.doStop();
     }
 
-    private void invalidateBatchWorkers() {
+    private void invalidateWorkers() {
         workersLock.lock();
         try {
             for (BatchConsumerWorker worker : workers) {
-                worker.shutdown();
+                worker.invalidate();
             }
             workers.clear();
         } finally {
@@ -101,31 +115,42 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
         }
     }
 
-    private void onWorkerExit(BatchConsumerWorker worker, Throwable ex) {
-
+    private void shutdownWorkers() {
         workersLock.lock();
         try {
-            workers.remove(worker);
+            for (BatchConsumerWorker worker : workers) {
+                worker.shutdown();
+            }
         } finally {
             workersLock.unlock();
         }
+    }
 
-        Throwable cause = ex != null && ex.getCause() != null ? ex.getCause() : ex;
-        LOG.warn("Batch consumer worker for {} exited unexpectedly, triggering recovery",
-                endpoint.getEndpointUri(), cause);
+    private void onWorkerExit(BatchConsumerWorker worker, Throwable ex) {
+
+        if (!removeWorker(worker)) {
+            // already removed: a stop or a recovery is already in charge of this worker
+            return;
+        }
 
         if (stopping || worker.isShutdownRequested()) {
             return;
         }
 
-        invalidateBatchWorkers();
+        if (ex != null) {
+            Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+            LOG.warn("Batch consumer worker for {} exited unexpectedly, triggering recovery",
+                    endpoint.getEndpointUri(), cause);
+        }
+
+        invalidateWorkers();
         invalidateConsumers();
         scheduleConnectionRecovery();
     }
 
     @Override
     public void onException(JMSException exception) {
-        invalidateBatchWorkers();
+        invalidateWorkers();
         super.onException(exception);
     }
 }

@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.sjms.SjmsHelper.commitIfNeeded;
 import static org.apache.camel.component.sjms.SjmsHelper.rollbackIfNeeded;
 
-class BatchConsumerWorker implements Runnable {
+public class BatchConsumerWorker implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(BatchConsumerWorker.class);
 
@@ -46,6 +46,7 @@ class BatchConsumerWorker implements Runnable {
     private final MessageConsumer consumer;
     private final Session session;
     private final AtomicBoolean running = new AtomicBoolean(true);
+    private volatile boolean jmsUnhealthy;
 
     BatchConsumerWorker(SjmsEndpoint endpoint, BatchEndpointMessageListener batchListener,
                         MessageConsumer consumer, Session session) {
@@ -56,11 +57,17 @@ class BatchConsumerWorker implements Runnable {
     }
 
     void shutdown() {
+        LOG.debug("Shutdown requested");
         running.set(false);
     }
 
     boolean isShutdownRequested() {
         return !running.get();
+    }
+
+    void invalidate() {
+        jmsUnhealthy = true;
+        shutdown();
     }
 
     private boolean isRedeliverable() {
@@ -70,6 +77,7 @@ class BatchConsumerWorker implements Runnable {
 
     @Override
     public void run() {
+        LOG.debug("run START");
         int batchSize = endpoint.getBatchSize();
         long batchInterval = endpoint.getBatchInterval();
         List<Message> buffer = new ArrayList<>();
@@ -94,29 +102,37 @@ class BatchConsumerWorker implements Runnable {
                         && TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - batchStartTime) >= batchInterval;
 
                 if (sizeReached || intervalElapsed) {
-                    onBatch(buffer);
+                    dispatchOrDiscard(buffer);
                     buffer = new ArrayList<>();
                 }
             }
 
             if (!buffer.isEmpty()) {
-                onBatch(buffer); // graceful-stop drain
+                dispatchOrDiscard(buffer); // graceful-stop drain
             }
         } catch (JMSException e) {
+            jmsUnhealthy = true;
             if (!buffer.isEmpty()) {
-                if (isRedeliverable()) {
-                    LOG.error("Discarding {} buffered message(s) on {} after connection failure; "
-                              + "unacknowledged/uncommitted, will be redelivered",
-                            buffer.size(), endpoint.getEndpointUri());
-                } else {
-                    onBatch(buffer);
-                    LOG.warn("Connection failed on {} with {} already-acknowledged message(s) buffered; "
-                             + "attempting best-effort dispatch since they cannot be redelivered",
-                            endpoint.getEndpointUri(), buffer.size());
-                }
+                dispatchOrDiscard(buffer);
             }
             throw new BatchConsumerWorkerException(e);
         }
+        LOG.info("run STOP");
+    }
+
+    private void dispatchOrDiscard(List<Message> batch) {
+        if (jmsUnhealthy) {
+            if (isRedeliverable()) {
+                LOG.warn("JMS is unhealthy on {}: discarding {} buffered message(s); "
+                         + "unacknowledged/uncommitted, will be redelivered",
+                        endpoint.getEndpointUri(), batch.size());
+                return;
+            }
+            LOG.warn("JMS is unhealthy on {}: attempting best-effort dispatch of {} already-acknowledged "
+                     + "message(s) since they cannot be redelivered",
+                    endpoint.getEndpointUri(), batch.size());
+        }
+        onBatch(batch);
     }
 
     private void onBatch(List<Message> batch) {
