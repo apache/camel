@@ -288,6 +288,17 @@ public class RuntimeTools {
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
+                  Which runtime tool groups the Camel application needs, from what it has: sql (datasources, \
+                  SQL endpoints), tracing (OpenTelemetry, message tracing, Micrometer) and resilience (circuit \
+                  breakers). Returns the core tools, each group's tools with one line of guidance, and a fingerprint \
+                  that changes only when the groups do. A client for a small model offers the core tools plus these.""")
+    public JsonObject camel_runtime_tool_groups(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
+        return delegateToRegistry("get_tool_groups", nameOrPid, Map.of());
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
                   Get the datasources of the running Camel application with their connection pool status: \
                   active, idle and total connections, max pool size and waiting threads (HikariCP and Agroal).""")
     public JsonObject camel_runtime_datasources(

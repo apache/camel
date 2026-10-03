@@ -441,6 +441,22 @@ public final class ToolRegistry {
                     return result.toJson();
                 }));
 
+        register(tool("get_tool_groups",
+                "Which runtime tool groups (sql, tracing, resilience) the integration needs, from what it has: "
+                                         + "datasources and SQL endpoints, OpenTelemetry, message tracing, Micrometer, "
+                                         + "circuit breakers. Returns the tools of each group with one line of guidance, "
+                                         + "and a fingerprint that changes only when the groups do.")
+                .param("name", "string", "Name or PID of the integration (default: the selected or only one)", false)
+                .executor((ctx, args) -> {
+                    String name = args.get("name");
+                    if (name != null && !name.isBlank()) {
+                        ctx.selectProcess(name);
+                    } else {
+                        ctx.selectSingleProcessIfNone();
+                    }
+                    return toolGroups(ctx, ctx.readFullStatus()).toJson();
+                }));
+
         // Route control
         registerRouteControlTool("stop_route", "stop",
                 "Gracefully stop a route. The route will finish processing in-flight exchanges before stopping.");
@@ -453,6 +469,43 @@ public final class ToolRegistry {
                 "Gracefully stop the Camel application. Finishes in-flight exchanges then shuts down cleanly.")
                 .readOnly(false).destructive(true)
                 .executor((ctx, args) -> ctx.stopApplication()));
+    }
+
+    /**
+     * The answer of get_tool_groups: the integration, the core tools every client has, the groups its status calls for
+     * and the status keys that called for them.
+     */
+    static JsonObject toolGroups(ToolContext ctx, JsonObject status) {
+        AppFeatures features = AppFeatures.fromStatus(status);
+        ToolGroups.Selection selection = ToolGroups.select(features);
+        JsonObject answer = new JsonObject();
+        String app = null;
+        for (RuntimeHelper.ProcessInfo p : ctx.discoverProcesses()) {
+            if (p.pid() == ctx.pid()) {
+                app = p.name();
+            }
+        }
+        if (app == null && status != null && status.get("context") instanceof Map<?, ?> context
+                && context.get("name") != null) {
+            app = context.get("name").toString();
+        }
+        answer.put("app", app);
+        answer.put("pid", ctx.pid());
+        answer.put("fingerprint", selection.fingerprint());
+        JsonArray core = new JsonArray();
+        authoringTools().stream().filter(ToolDescriptor::isCore).map(ToolDescriptor::name).forEach(core::add);
+        answer.put("core", core);
+        JsonArray groups = new JsonArray();
+        for (ToolGroups.Group g : selection.groups()) {
+            JsonObject group = new JsonObject();
+            group.put("id", g.group().id());
+            group.put("tools", new JsonArray(g.tools()));
+            group.put("guidance", g.guidance());
+            groups.add(group);
+        }
+        answer.put("groups", groups);
+        answer.put("signals", new JsonObject(features.signals()));
+        return answer;
     }
 
     private static void registerRouteControlTool(String name, String command, String description) {
