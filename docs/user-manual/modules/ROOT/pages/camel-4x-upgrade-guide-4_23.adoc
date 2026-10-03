@@ -1613,6 +1613,7 @@ fetched at most once a day. Only a platform that carries exactly the requested C
 `-SNAPSHOT` Camel version is never cached. `--fresh` clears both caches. A registry with an explicit port in
 `--quarkus-ext-registry` (or `camel.jbang.quarkusExtensionRegistryBaseUri`) now has its own cache directory, so
 two registries on the same host no longer share their cached responses.
+
 `camel validate source`, and the `camel_validate_source` and `camel_write_file` MCP tools, now check the routes of
 Java and XML DSL files as they check YAML routes: the endpoint URIs against the catalog (also those built with the
 endpoint DSL or from a constant), simple expressions, and a `to` whose URI holds `+${...}+` and should be a `toD`.
