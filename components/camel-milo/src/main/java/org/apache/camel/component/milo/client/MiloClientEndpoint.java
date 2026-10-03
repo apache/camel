@@ -67,6 +67,12 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     private Double samplingInterval = 0.0;
 
     /**
+     * The queue size used for OPC UA subscriptions. If not set, a queue size of 1 is requested.
+     */
+    @UriParam
+    private Integer queueSize;
+
+    /**
      * The client configuration
      */
     @UriParam
@@ -178,6 +184,17 @@ public class MiloClientEndpoint extends DefaultEndpoint {
 
     public void setSamplingInterval(final Double samplingInterval) {
         this.samplingInterval = samplingInterval;
+    }
+
+    public Integer getQueueSize() {
+        return this.queueSize;
+    }
+
+    public void setQueueSize(final Integer queueSize) {
+        if (queueSize != null && queueSize < 0) {
+            throw new IllegalArgumentException("queueSize must be >= 0, got: " + queueSize);
+        }
+        this.queueSize = queueSize;
     }
 
     public boolean isDefaultAwaitWrites() {

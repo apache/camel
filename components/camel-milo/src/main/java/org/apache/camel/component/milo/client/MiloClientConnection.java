@@ -118,7 +118,7 @@ public class MiloClientConnection implements AutoCloseable {
     }
 
     public MonitorHandle monitorValue(
-            final ExpandedNodeId nodeId, Double samplingInterval, final Consumer<DataValue> valueConsumer) {
+            final ExpandedNodeId nodeId, Double samplingInterval, Integer queueSize, final Consumer<DataValue> valueConsumer) {
 
         requireNonNull(configuration);
         requireNonNull(valueConsumer);
@@ -126,7 +126,8 @@ public class MiloClientConnection implements AutoCloseable {
         checkInit();
 
         final UInteger handle
-                = this.manager.registerItem(nodeId, samplingInterval, valueConsumer, this.monitorFilterConfiguration);
+                = this.manager.registerItem(nodeId, samplingInterval, queueSize, valueConsumer,
+                        this.monitorFilterConfiguration);
 
         return () -> MiloClientConnection.this.manager.unregisterItem(handle);
     }

@@ -60,7 +60,6 @@ import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ByteString;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
-import org.eclipse.milo.opcua.stack.core.types.builtin.ExtensionObject;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
@@ -123,11 +122,14 @@ public class SubscriptionManager {
 
         private final Consumer<DataValue> valueConsumer;
         private MonitorFilterConfiguration monitorFilterConfiguration;
+        private final Integer queueSize;
 
-        Subscription(ExpandedNodeId nodeId, final Double samplingInterval, final Consumer<DataValue> valueConsumer,
+        Subscription(ExpandedNodeId nodeId, final Double samplingInterval, Integer queueSize,
+                     final Consumer<DataValue> valueConsumer,
                      final MonitorFilterConfiguration monitorFilterConfiguration) {
             this.nodeId = nodeId;
             this.samplingInterval = samplingInterval;
+            this.queueSize = queueSize;
             this.valueConsumer = valueConsumer;
             this.monitorFilterConfiguration = monitorFilterConfiguration;
         }
@@ -140,17 +142,21 @@ public class SubscriptionManager {
             return this.samplingInterval;
         }
 
+        public Integer getQueueSize() {
+            return this.queueSize;
+        }
+
         public Consumer<DataValue> getValueConsumer() {
             return this.valueConsumer;
         }
 
-        public ExtensionObject createMonitoringFilter(OpcUaClient client) {
+        public MonitoringFilter createMonitoringFilter() {
             if (Objects.isNull(this.monitorFilterConfiguration)
                     || Objects.isNull(this.monitorFilterConfiguration.getMonitorFilterType())) {
                 return null;
             }
             final MonitoringFilter monitorFilter = this.monitorFilterConfiguration.createMonitoringFilter();
-            return ExtensionObject.encode(client.getStaticEncodingContext(), monitorFilter);
+            return monitorFilter;
         }
     }
 
@@ -191,6 +197,16 @@ public class SubscriptionManager {
                 } else {
                     final ReadValueId itemId = new ReadValueId(node, AttributeId.Value.uid(), null, QualifiedName.NULL_VALUE);
                     final OpcUaMonitoredItem item = new OpcUaMonitoredItem(itemId, MonitoringMode.Reporting);
+                    if (null != s.getSamplingInterval()) {
+                        item.setSamplingInterval(s.getSamplingInterval());
+                    }
+                    if (null != s.getQueueSize()) {
+                        item.setQueueSize(UInteger.valueOf(s.getQueueSize()));
+                    }
+                    MonitoringFilter filter = s.createMonitoringFilter();
+                    if (filter != null) {
+                        item.setFilter(filter);
+                    }
                     items.add(item);
                     // Keep track of which subscription this item belongs to
                     itemToClientHandle.put(item, entry.getKey());
@@ -768,6 +784,7 @@ public class SubscriptionManager {
 
             // Create subscription synchronously - the create() method blocks until complete
             OpcUaSubscription subscription = new OpcUaSubscription(client);
+            subscription.setPublishingInterval(this.configuration.getRequestedPublishingInterval());
             subscription.setSubscriptionListener(new SubscriptionListenerImpl());
             subscription.create();
 
@@ -939,11 +956,13 @@ public class SubscriptionManager {
     }
 
     public UInteger registerItem(
-            final ExpandedNodeId nodeId, final Double samplingInterval, final Consumer<DataValue> valueConsumer,
+            final ExpandedNodeId nodeId, final Double samplingInterval, Integer queueSize,
+            final Consumer<DataValue> valueConsumer,
             final MonitorFilterConfiguration monitorFilterConfiguration) {
 
         final UInteger clientHandle = Unsigned.uint(this.clientHandleCounter.incrementAndGet());
-        final Subscription subscription = new Subscription(nodeId, samplingInterval, valueConsumer, monitorFilterConfiguration);
+        final Subscription subscription
+                = new Subscription(nodeId, samplingInterval, queueSize, valueConsumer, monitorFilterConfiguration);
 
         lock.lock();
         try {

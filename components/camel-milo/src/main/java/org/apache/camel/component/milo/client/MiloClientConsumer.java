@@ -35,12 +35,14 @@ public class MiloClientConsumer extends DefaultConsumer {
     private MonitorHandle handle;
     private ExpandedNodeId node;
     private Double samplingInterval;
+    private Integer queueSize;
     private boolean omitNullValues;
 
     public MiloClientConsumer(final MiloClientEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
         this.node = endpoint.getNodeId();
         this.samplingInterval = endpoint.getSamplingInterval();
+        this.queueSize = endpoint.getQueueSize();
         this.omitNullValues = endpoint.isOmitNullValues();
     }
 
@@ -53,7 +55,7 @@ public class MiloClientConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         this.connection = getEndpoint().createConnection();
-        this.handle = this.connection.monitorValue(this.node, this.samplingInterval, this::handleValueUpdate);
+        this.handle = this.connection.monitorValue(this.node, this.samplingInterval, this.queueSize, this::handleValueUpdate);
     }
 
     @Override
