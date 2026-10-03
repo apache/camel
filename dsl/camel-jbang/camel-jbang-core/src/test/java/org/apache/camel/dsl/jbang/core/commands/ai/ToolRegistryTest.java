@@ -170,23 +170,6 @@ class ToolRegistryTest {
     }
 
     @Test
-    void querySqlRefusesWritesBeforeLookingForAProcess() {
-        // CAMEL-24834: no process selected, so a statement that got past the guard would fail with "No running Camel
-        // process" instead
-        ToolDescriptor tool = ToolRegistry.findTool("query_sql");
-        assertNotNull(tool);
-        assertTrue(tool.isReadOnly());
-        assertFalse(tool.isDestructive());
-        ToolContext ctx = new ToolContext();
-        ToolExecutionException e = assertThrows(ToolExecutionException.class,
-                () -> ToolRegistry.execute("query_sql", ctx, Map.of("query", "INSERT INTO orders VALUES (1)")));
-        assertTrue(e.getMessage().startsWith("read-only: "), e.getMessage());
-        e = assertThrows(ToolExecutionException.class,
-                () -> ToolRegistry.execute("query_sql", ctx, Map.of("query", "SELECT 1")));
-        assertFalse(e.getMessage().startsWith("read-only: "), "a read goes on to the process: " + e.getMessage());
-    }
-
-    @Test
     void theToolGroupsToolIsInternal() {
         // the MCP servers export every camel_* tool by name; get_tool_groups is reached through
         // camel_runtime_tool_groups only
@@ -195,7 +178,6 @@ class ToolRegistryTest {
         assertTrue(tool.isReadOnly());
         assertFalse(tool.isDeterministic());
         assertFalse(ToolRegistry.authoringTools().contains(tool));
-        assertFalse(ToolRegistry.authoringTools().contains(ToolRegistry.findTool("query_sql")));
     }
 
     @Test
@@ -205,16 +187,15 @@ class ToolRegistryTest {
         String json = "{'context': {'name': 'shop'}, 'dataSources': {'dataSources': [{'name': 'orders',"
                       + " 'poolType': 'HikariCP'}]}}";
         JsonObject status = (JsonObject) Jsoner.deserialize(json.replace('\'', '"'));
-        JsonObject answer = ToolRegistry.toolGroups(ctx, status, false);
+        JsonObject answer = ToolRegistry.toolGroups(ctx, status);
         assertEquals("shop", answer.get("app"));
         assertEquals(99999L, answer.get("pid"));
-        assertEquals(Boolean.TRUE, answer.get("sqlReadOnly"));
-        assertEquals("sql|orders|ro", answer.get("fingerprint"));
+        assertEquals("sql|orders", answer.get("fingerprint"));
         JsonArray groups = (JsonArray) answer.get("groups");
         assertEquals(1, groups.size());
         JsonObject sql = (JsonObject) groups.get(0);
         assertEquals("sql", sql.get("id"));
-        assertTrue(((JsonArray) sql.get("tools")).contains("camel_runtime_sql_query"));
+        assertTrue(((JsonArray) sql.get("tools")).contains("camel_runtime_sql"));
         assertTrue(sql.get("guidance").toString().contains("orders (HikariCP)"));
         assertTrue(((JsonArray) answer.get("core")).contains("camel_get_errors"));
         assertEquals("orders", ((JsonObject) answer.get("signals")).get("dataSources"));

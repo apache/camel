@@ -38,12 +38,11 @@ final class TuiToolGroups {
     /**
      * The groups of an integration as the panel uses them.
      *
-     * @param groups    the loaded groups
-     * @param tools     the tools the groups add to the core set
-     * @param guidance  one line per group, appended to the system prompt
-     * @param sqlWrites whether SQL may write
+     * @param groups   the loaded groups
+     * @param tools    the tools the groups add to the core set
+     * @param guidance one line per group, appended to the system prompt
      */
-    record Selection(List<ToolGroup> groups, List<String> tools, List<String> guidance, boolean sqlWrites) {
+    record Selection(List<ToolGroup> groups, List<String> tools, List<String> guidance) {
 
         Selection {
             groups = List.copyOf(groups);
@@ -52,7 +51,7 @@ final class TuiToolGroups {
         }
 
         static Selection none() {
-            return new Selection(List.of(), List.of(), List.of(), false);
+            return new Selection(List.of(), List.of(), List.of());
         }
 
         String groupIds() {
@@ -63,32 +62,29 @@ final class TuiToolGroups {
     private TuiToolGroups() {
     }
 
-    static Selection select(AppFeatures features, boolean sqlWrites) {
+    static Selection select(AppFeatures features) {
         AppFeatures f = features != null ? features : AppFeatures.none();
         List<ToolGroup> groups = ToolGroups.groups(f);
         List<String> tools = new ArrayList<>();
         List<String> guidance = new ArrayList<>();
         for (ToolGroup group : groups) {
-            tools.addAll(tools(group, sqlWrites));
-            guidance.add(guidance(group, f, sqlWrites));
+            tools.addAll(tools(group));
+            guidance.add(guidance(group, f));
         }
-        return new Selection(groups, tools, guidance, sqlWrites);
+        return new Selection(groups, tools, guidance);
     }
 
-    static List<String> tools(ToolGroup group, boolean sqlWrites) {
+    static List<String> tools(ToolGroup group) {
         if (group == ToolGroup.SQL) {
-            return sqlWrites ? List.of(SQL_TOOL, UPDATE_ROW_TOOL) : List.of(SQL_TOOL);
+            return List.of(SQL_TOOL, UPDATE_ROW_TOOL);
         }
         return List.of();
     }
 
-    static String guidance(ToolGroup group, AppFeatures f, boolean sqlWrites) {
+    static String guidance(ToolGroup group, AppFeatures f) {
         return switch (group) {
-            case SQL -> "SQL: " + ToolGroups.describeSql(f) + ". "
-                        + (sqlWrites
-                                ? SQL_TOOL + " runs any statement, " + UPDATE_ROW_TOOL + " changes one row."
-                                : "Read-only: " + SQL_TOOL + " runs SELECT only.")
-                        + " Table names come from the SQL trace (tui_get_table tab 'SQL Trace'); don't guess a schema.";
+            case SQL -> "SQL: " + ToolGroups.describeSql(f)
+                        + ". Table names come from the SQL trace (tui_get_table tab 'SQL Trace'); don't guess a schema.";
             case TRACING -> {
                 List<String> parts = new ArrayList<>();
                 if (f.openTelemetry()) {

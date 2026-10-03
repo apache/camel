@@ -42,7 +42,6 @@ final class TuiSettings {
     static final String PROP_AI_TOOLS = "camel.tui.ai.tools";
     static final String PROP_AI_OVERVIEW = "camel.tui.ai.overview";
     static final String PROP_AI_ACP_COMMAND = "camel.tui.ai.acp.command";
-    static final String PROP_AI_SQL_WRITES = "camel.tui.ai.sqlWrites";
     static final String PROP_PROXY_HOST = "camel.tui.proxyHost";
     static final String PROP_PROXY_PORT = "camel.tui.proxyPort";
     static final String PROP_SHELL_HISTORY = "camel.tui.shell.history";
@@ -66,7 +65,6 @@ final class TuiSettings {
     private String aiTools;
     private String aiOverview;
     private String aiAcpCommand;
-    private String aiSqlWrites;
     private String shellHistory;
     private String aiPromptHistory;
     private String confirmActions;
@@ -195,23 +193,6 @@ final class TuiSettings {
         this.aiAcpCommand = aiAcpCommand;
     }
 
-    /**
-     * Whether the AI panel lets a local model (the core tool set) write to the integration's database (CAMEL-24834):
-     * {@code false} (default) limits tui_execute_sql to reading and leaves tui_update_row out, {@code true} allows
-     * both. The full tool set is not limited.
-     */
-    String getAiSqlWrites() {
-        return aiSqlWrites;
-    }
-
-    void setAiSqlWrites(String aiSqlWrites) {
-        this.aiSqlWrites = aiSqlWrites;
-    }
-
-    boolean isAiSqlWrites() {
-        return "true".equalsIgnoreCase(aiSqlWrites);
-    }
-
     String getShellHistory() {
         return shellHistory;
     }
@@ -308,7 +289,6 @@ final class TuiSettings {
             settings.aiTools = trimToNull(TuiUserConfig.read(PROP_AI_TOOLS));
             settings.aiOverview = trimToNull(TuiUserConfig.read(PROP_AI_OVERVIEW));
             settings.aiAcpCommand = trimToNull(TuiUserConfig.read(PROP_AI_ACP_COMMAND));
-            settings.aiSqlWrites = trimToNull(TuiUserConfig.read(PROP_AI_SQL_WRITES));
             settings.shellHistory = trimToNull(TuiUserConfig.read(PROP_SHELL_HISTORY));
             settings.aiPromptHistory = trimToNull(TuiUserConfig.read(PROP_AI_PROMPT_HISTORY));
             settings.confirmActions = trimToNull(TuiUserConfig.read(PROP_CONFIRM_ACTIONS));
@@ -342,7 +322,6 @@ final class TuiSettings {
             TuiUserConfig.write(PROP_AI_TOOLS, aiTools);
             TuiUserConfig.write(PROP_AI_OVERVIEW, aiOverview);
             TuiUserConfig.write(PROP_AI_ACP_COMMAND, aiAcpCommand);
-            TuiUserConfig.write(PROP_AI_SQL_WRITES, aiSqlWrites);
             TuiUserConfig.write(PROP_SHELL_HISTORY, shellHistory);
             TuiUserConfig.write(PROP_AI_PROMPT_HISTORY, aiPromptHistory);
             TuiUserConfig.write(PROP_CONFIRM_ACTIONS, confirmActions);
