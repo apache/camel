@@ -199,6 +199,12 @@ public class PubNubConsumerListenerTest extends PubNubTestBase {
 
     /**
      * A real PubNub client that counts how often it is destroyed and lets the test hand a message to its listeners.
+     * <p>
+     * It subclasses {@code PubNubForJavaImpl}, which is internal to the PubNub SDK ({@code com.pubnub.internal}),
+     * because that is the class {@code PubNub.create(...)} instantiates, and only the implementation exposes
+     * {@code getListenerManager()}: the public {@code PubNub} interface offers no way to hand an event to the listeners
+     * without a subscribe response from the server. {@code PubNubTestBase} subclasses it for the same reason. If a
+     * PubNub upgrade renames or moves this class, follow the class that {@code PubNub.create(...)} instantiates.
      */
     static class SharedPubNub extends PubNubForJavaImpl {
 
