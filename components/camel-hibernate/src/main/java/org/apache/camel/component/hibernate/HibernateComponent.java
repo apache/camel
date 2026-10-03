@@ -97,7 +97,6 @@ public class HibernateComponent extends DefaultComponent {
     /**
      * To use the SessionFactory as the factory for creating Hibernate sessions.
      */
-    @Metadata(description = "To use the SessionFactory as the factory for creating Hibernate sessions.")
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
@@ -109,7 +108,6 @@ public class HibernateComponent extends DefaultComponent {
     /**
      * To use the EntityManagerFactory as the factory for creating Hibernate sessions.
      */
-    @Metadata(description = "To use the EntityManagerFactory as the factory for creating Hibernate sessions.")
     public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
@@ -121,7 +119,6 @@ public class HibernateComponent extends DefaultComponent {
     /**
      * To use the Spring PlatformTransactionManager for managing transactions.
      */
-    @Metadata(description = "To use the Spring PlatformTransactionManager for managing transactions.")
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }

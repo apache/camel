@@ -34,7 +34,7 @@
     <description>Camel Hibernate Component</description>
 
     <properties>
-        <firstVersion>4.11.0</firstVersion>
+        <firstVersion>4.23.0</firstVersion>
         <label>database</label>
     </properties>
 
@@ -48,20 +48,17 @@
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
-            <version>${jakarta-persistence-api-version}</version>
         </dependency>
 
         <!-- Hibernate Core 7.x (Managed by Camel parent) -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>${hibernate-version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <version>${spring-version}</version>
             <optional>true</optional>
         </dependency>
 
@@ -79,7 +76,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>${h2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

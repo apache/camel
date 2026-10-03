@@ -27,6 +27,7 @@
                     <class>org.apache.camel.component.hibernate.Item</class>
                     <class>org.apache.camel.component.hibernate.Category</class>
                     <class>org.apache.camel.component.hibernate.Product</class>
+                    <class>org.apache.camel.component.hibernate.Tag</class>
 
                     <properties>
                         <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
