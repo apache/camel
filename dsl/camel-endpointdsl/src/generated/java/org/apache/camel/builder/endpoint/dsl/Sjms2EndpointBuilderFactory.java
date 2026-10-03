@@ -463,6 +463,108 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable batch consuming. The route receives one Exchange per batch,
+         * whose body is a List of the individual JMS messages, instead of one
+         * Exchange per message.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: batch
+         * 
+         * @param batching the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointConsumerBuilder batching(boolean batching) {
+            doSetProperty("batching", batching);
+            return this;
+        }
+        /**
+         * Enable batch consuming. The route receives one Exchange per batch,
+         * whose body is a List of the individual JMS messages, instead of one
+         * Exchange per message.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: batch
+         * 
+         * @param batching the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointConsumerBuilder batching(String batching) {
+            doSetProperty("batching", batching);
+            return this;
+        }
+        /**
+         * Time in millis, measured from the first message received into a new
+         * batch, after which the batch is dispatched even if batchSize has not
+         * been reached comparable to the Aggregator EIP's completionInterval.
+         * Default is 1000 ms, that is 1 second. Interval should be a postive
+         * value. Set to 0 for unlimited (not recommended).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: batch
+         * 
+         * @param batchInterval the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointConsumerBuilder batchInterval(long batchInterval) {
+            doSetProperty("batchInterval", batchInterval);
+            return this;
+        }
+        /**
+         * Time in millis, measured from the first message received into a new
+         * batch, after which the batch is dispatched even if batchSize has not
+         * been reached comparable to the Aggregator EIP's completionInterval.
+         * Default is 1000 ms, that is 1 second. Interval should be a postive
+         * value. Set to 0 for unlimited (not recommended).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: batch
+         * 
+         * @param batchInterval the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointConsumerBuilder batchInterval(String batchInterval) {
+            doSetProperty("batchInterval", batchInterval);
+            return this;
+        }
+        /**
+         * Maximum number of messages per batch.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: batch
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointConsumerBuilder batchSize(int batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
+         * Maximum number of messages per batch.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: batch
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointConsumerBuilder batchSize(String batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
          * Specifies whether to use transacted mode.
          * 
          * The option is a: <code>boolean</code> type.
@@ -3413,6 +3515,18 @@ public interface Sjms2EndpointBuilderFactory {
          */
         public String jMSReplyTo() {
             return "JMSReplyTo";
+        }
+        /**
+         * The size of the batch when using the batching consumer option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group:  batch
+         * 
+         * @return the name of the header {@code SjmsBatchSize}.
+         */
+        public String sjmsBatchSize() {
+            return "CamelSjmsBatchSize";
         }
     }
     static Sjms2EndpointBuilder endpointBuilder(String componentName, String path) {

@@ -34,6 +34,8 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.sjms.consumer.BatchEndpointMessageListener;
+import org.apache.camel.component.sjms.consumer.BatchMessageListenerContainer;
 import org.apache.camel.component.sjms.consumer.EndpointMessageListener;
 import org.apache.camel.component.sjms.consumer.SimpleMessageListenerContainer;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
@@ -57,6 +59,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Send and receive messages to/from a JMS Queue or Topic using plain JMS 1.x API.
@@ -67,6 +71,8 @@ import org.apache.camel.util.StringHelper;
              category = { Category.MESSAGING }, headersClass = SjmsConstants.class)
 public class SjmsEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, MultipleConsumersSupport, HeaderFilterStrategyAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SjmsEndpoint.class);
 
     private boolean topic;
     private JmsBinding binding;
@@ -285,6 +291,18 @@ public class SjmsEndpoint extends DefaultEndpoint
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
+    @UriParam(label = "consumer,batch", defaultValue = "false",
+              description = "Enable batch consuming. The route receives one Exchange per batch, whose body"
+                            + " is a List<Exchange> of the individual JMS messages, instead of one Exchange per message.")
+    private boolean batching;
+    @UriParam(defaultValue = "100", label = "consumer,batch",
+              description = "Maximum number of messages per batch.")
+    private int batchSize = 100;
+    @UriParam(defaultValue = "1000", label = "consumer,batch", javaType = "java.time.Duration",
+              description = "Time in millis, measured from the first message received into a new batch, after which "
+                            + "the batch is dispatched even if batchSize has not been reached — comparable to the Aggregator "
+                            + "EIP's completionInterval. Default is 1000 ms, that is 1 second. Interval should be a postive value. Set to 0 for unlimited (not recommended).")
+    private long batchInterval = 1000;
 
     private JmsObjectFactory jmsObjectFactory = new Jms11ObjectFactory();
 
@@ -350,12 +368,33 @@ public class SjmsEndpoint extends DefaultEndpoint
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        if (isBatching()) {
+            return createBatchConsumer(processor);
+        } else {
+            return createSimpleConsumer(processor);
+        }
+    }
+
+    protected Consumer createSimpleConsumer(Processor processor) throws Exception {
         MessageListenerContainer container = createMessageListenerContainer(this);
         SjmsConsumer consumer = new SjmsConsumer(this, processor, container);
 
         EndpointMessageListener listener = new EndpointMessageListener(consumer, this, processor);
         configureMessageListener(listener);
         container.setMessageListener(listener);
+
+        configureConsumer(consumer);
+        return consumer;
+    }
+
+    protected Consumer createBatchConsumer(Processor processor) throws Exception {
+        validateBatchingOptions();
+
+        BatchMessageListenerContainer container = createBatchMessageListenerContainer(this);
+        SjmsConsumer consumer = new SjmsConsumer(this, processor, container);
+
+        BatchEndpointMessageListener listener = new BatchEndpointMessageListener(consumer, this, processor);
+        container.setBatchListener(listener);
 
         configureConsumer(consumer);
         return consumer;
@@ -447,6 +486,35 @@ public class SjmsEndpoint extends DefaultEndpoint
         SimpleMessageListenerContainer answer = new SimpleMessageListenerContainer(endpoint);
         answer.setConcurrentConsumers(concurrentConsumers);
         return answer;
+    }
+
+    public BatchMessageListenerContainer createBatchMessageListenerContainer(
+            SjmsEndpoint endpoint) {
+        BatchMessageListenerContainer answer = new BatchMessageListenerContainer(endpoint);
+        answer.setConcurrentConsumers(concurrentConsumers);
+        return answer;
+    }
+
+    private void validateBatchingOptions() {
+        if (getExchangePattern().isOutCapable()) {
+            throw new IllegalArgumentException("SjmsConsumer does not support exchangePattern=InOut in batching mode");
+        }
+
+        if (getBatchInterval() < 0) {
+            if (getExchangePattern().isOutCapable()) {
+                throw new IllegalArgumentException("batchInterval must be 0 or greater.");
+            }
+        }
+
+        if (isBatching() && !isTransacted()
+                && acknowledgementMode == SessionAcknowledgementType.AUTO_ACKNOWLEDGE) {
+            LOG.warn("Endpoint {} uses batching=true with acknowledgementMode=AUTO_ACKNOWLEDGE. "
+                     + "Messages are acknowledged on receipt, before the batch is processed, "
+                     + "so a failure or shutdown loses all buffered messages (at-most-once delivery). "
+                     + "Use acknowledgementMode=CLIENT_ACKNOWLEDGE or SESSION_TRANSACTED "
+                     + "(transacted=true) for at-least-once delivery.",
+                    getEndpointUri());
+        }
     }
 
     /**
@@ -892,5 +960,29 @@ public class SjmsEndpoint extends DefaultEndpoint
             throw new IllegalArgumentException("BlobMessage is not supported by this implementation");
         }
         this.jmsMessageType = jmsMessageType;
+    }
+
+    public void setBatching(boolean batching) {
+        this.batching = batching;
+    }
+
+    public boolean isBatching() {
+        return this.batching;
+    }
+
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    public void setBatchInterval(long batchInterval) {
+        this.batchInterval = batchInterval;
+    }
+
+    public long getBatchInterval() {
+        return this.batchInterval;
     }
 }

@@ -173,6 +173,16 @@ public class SimpleMessageListenerContainer extends ServiceSupport
 
     }
 
+    protected void invalidateConsumers() {
+        connectionLock.lock();
+        try {
+            this.sessions = null;
+            this.consumers = null;
+        } finally {
+            connectionLock.unlock();
+        }
+    }
+
     @Override
     public void onException(JMSException exception) {
         if (exceptionListener != null) {
@@ -190,13 +200,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             }
         }
 
-        connectionLock.lock();
-        try {
-            this.sessions = null;
-            this.consumers = null;
-        } finally {
-            connectionLock.unlock();
-        }
+        invalidateConsumers();
         scheduleConnectionRecovery();
     }
 
