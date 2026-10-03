@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dataformat.barcode;
 
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.EnumMap;
@@ -205,10 +204,10 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     private String readImage(final Exchange exchange, final InputStream stream) throws Exception {
         final MultiFormatReader reader = new MultiFormatReader();
-        final BufferedInputStream in = exchange.getContext()
-                .getTypeConverter()
-                .mandatoryConvertTo(BufferedInputStream.class, stream);
-        final BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(in))));
+        // ImageIO reads any input stream (there is no type converter to a BufferedInputStream from a byte array
+        // or a stream cache)
+        final BinaryBitmap bitmap
+                = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(stream))));
         final Result result = reader.decode(bitmap, readerHintMap);
 
         // write the found barcode format into the header
