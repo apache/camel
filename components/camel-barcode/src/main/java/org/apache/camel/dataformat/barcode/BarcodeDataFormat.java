@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.barcode;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -77,6 +78,12 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      * The decoding hint map, used for reading a barcode.
      */
     private final Map<DecodeHintType, Object> readerHintMap = new EnumMap<>(DecodeHintType.class);
+
+    /**
+     * The hints added by the user, which are applied on top of the optimized hints.
+     */
+    private final Map<EncodeHintType, Object> userWriterHintMap = new EnumMap<>(EncodeHintType.class);
+    private final Map<DecodeHintType, Object> userReaderHintMap = new EnumMap<>(DecodeHintType.class);
 
     /**
      * Create instance with default parameters.
@@ -171,6 +178,10 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
 
         // reader hints
         this.readerHintMap.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+
+        // the hints added by the user
+        this.writerHintMap.putAll(this.userWriterHintMap);
+        this.readerHintMap.putAll(this.userReaderHintMap);
     }
 
     /**
@@ -188,13 +199,21 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
         // set values
         final String type = this.params.getType().toString();
 
+        // ZXing writes the text in ISO-8859-1 unless a character set is given, so use UTF-8 for a text that
+        // ISO-8859-1 cannot represent (ZXing then writes an ECI that tells the reader the character set)
+        Map<EncodeHintType, Object> hints = writerHintMap;
+        if (!hints.containsKey(EncodeHintType.CHARACTER_SET) && !StandardCharsets.ISO_8859_1.newEncoder().canEncode(payload)) {
+            hints = new EnumMap<>(writerHintMap);
+            hints.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.name());
+        }
+
         // create code image
         final BitMatrix matrix = writer.encode(
                 payload,
                 this.params.getFormat(),
                 this.params.getWidth(),
                 this.params.getHeight(),
-                writerHintMap);
+                hints);
 
         // write image back to stream
         MatrixToImageWriter.writeToStream(matrix, type, stream);
@@ -228,6 +247,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     public final void addToHintMap(final EncodeHintType hintType, final Object value) {
         this.writerHintMap.put(hintType, value);
+        this.userWriterHintMap.put(hintType, value);
         LOG.info("Added '{}' with value '{}' to writer hint map.", hintType, value);
     }
 
@@ -236,12 +256,14 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     public final void addToHintMap(final DecodeHintType hintType, final Object value) {
         this.readerHintMap.put(hintType, value);
+        this.userReaderHintMap.put(hintType, value);
     }
 
     /**
      * Removes a hint from writer (encode) hint map.
      */
     public final void removeFromHintMap(final EncodeHintType hintType) {
+        this.userWriterHintMap.remove(hintType);
         if (this.writerHintMap.containsKey(hintType)) {
             this.writerHintMap.remove(hintType);
             LOG.info("Removed '{}' from writer hint map.", hintType);
@@ -254,6 +276,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      * Removes a hint from reader (decode) hint map.
      */
     public final void removeFromHintMap(final DecodeHintType hintType) {
+        this.userReaderHintMap.remove(hintType);
         if (this.readerHintMap.containsKey(hintType)) {
             this.readerHintMap.remove(hintType);
             LOG.info("Removed '{}' from reader hint map.", hintType);

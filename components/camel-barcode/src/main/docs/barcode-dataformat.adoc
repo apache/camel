@@ -54,7 +54,7 @@ The default values are:
 
 |height |100 px
 
-|encoding |UTF-8
+|encoding |ISO-8859-1 (the ZXing default), or UTF-8 when the text has characters that ISO-8859-1 cannot represent. A `CHARACTER_SET` hint overrides it. ZXing uses the encoding for QR-Code, Aztec and PDF417 (and for Data Matrix only with the `DATA_MATRIX_COMPACT` hint).
 
 |barcode format (BarcodeFormat) |QR-Code
 |=======================================================================
@@ -75,6 +75,7 @@ your BarcodeDataFormat instance:
 code.addToHintMap(DecodeHintType.TRY_HARDER, Boolean.true);
 ----
 
+The hints can be added before the data format is started (for example when the route is configured).
 For possible hints, please consult the xzing documentation.
 
 === Marshalling
