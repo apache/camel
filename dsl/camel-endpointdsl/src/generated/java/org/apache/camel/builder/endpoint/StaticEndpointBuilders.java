@@ -18715,4 +18715,48 @@ public class StaticEndpointBuilders {
     public static ZooKeeperMasterEndpointBuilderFactory.ZooKeeperMasterEndpointBuilder zookeeperMaster(String componentName, String path) {
         return ZooKeeperMasterEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
+    /**
+     * Hibernate (camel-hibernate)
+     * Perform database operations using Hibernate ORM supporting both
+     * JPA-backed and Native Hibernate modes.
+     *
+     * Category: database
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     *
+     * Syntax: <code>hibernate:entityClassName</code>
+     *
+     * Path parameter: entityClassName (required)
+     * Target entity class name or entity type name
+     *
+     * @param path entityClassName
+     * @return the dsl builder
+     */
+    public static HibernateEndpointBuilderFactory.HibernateEndpointBuilder hibernate(String path) {
+        return hibernate("hibernate", path);
+    }
+
+    /**
+     * Hibernate (camel-hibernate)
+     * Perform database operations using Hibernate ORM supporting both
+     * JPA-backed and Native Hibernate modes.
+     *
+     * Category: database
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     *
+     * Syntax: <code>hibernate:entityClassName</code>
+     *
+     * Path parameter: entityClassName (required)
+     * Target entity class name or entity type name
+     *
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path entityClassName
+     * @return the dsl builder
+     */
+    public static HibernateEndpointBuilderFactory.HibernateEndpointBuilder hibernate(String componentName, String path) {
+        return HibernateEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+
 }
