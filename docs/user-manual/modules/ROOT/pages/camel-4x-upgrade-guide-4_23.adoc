@@ -783,6 +783,15 @@ the message body as if the route had succeeded, which usually echoed the request
 body now replies with an empty (`null`) body instead of not replying, so the
 sender no longer waits until its reply timeout (30 seconds by default).
 
+=== camel-rocketmq - a message whose route failed is consumed again
+
+The consumer acknowledged a message (`CONSUME_SUCCESS`) whenever the processor returned, also when the route failed:
+a failed route sets the exception on the exchange instead of throwing it, so the message was lost. The consumer now
+answers `RECONSUME_LATER` for a failed exchange (or one marked rollback only), and RocketMQ redelivers the message with an increasing delay (up to
+the maximum reconsume times of the consumer group, 16 by default, then it goes to the dead letter queue of the group).
+A route that fails for a message, and relied on the message being dropped, now receives it again; handle the
+exception in the route (for example with `onException(...).handled(true)`) to acknowledge the message anyway.
+
 === Components and Language removal
 
 ==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
