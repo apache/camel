@@ -31,6 +31,9 @@ import org.apache.camel.component.sjms.jms.SessionAcknowledgementType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.sjms.SjmsHelper.commitIfNeeded;
+import static org.apache.camel.component.sjms.SjmsHelper.rollbackIfNeeded;
+
 class BatchConsumerWorker implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(BatchConsumerWorker.class);
@@ -91,13 +94,13 @@ class BatchConsumerWorker implements Runnable {
                         && TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - batchStartTime) >= batchInterval;
 
                 if (sizeReached || intervalElapsed) {
-                    dispatch(buffer);
+                    onBatch(buffer);
                     buffer = new ArrayList<>();
                 }
             }
 
             if (!buffer.isEmpty()) {
-                dispatch(buffer); // graceful-stop drain
+                onBatch(buffer); // graceful-stop drain
             }
         } catch (JMSException e) {
             if (!buffer.isEmpty()) {
@@ -105,26 +108,42 @@ class BatchConsumerWorker implements Runnable {
                     LOG.error("Discarding {} buffered message(s) on {} after connection failure; "
                               + "unacknowledged/uncommitted, will be redelivered",
                             buffer.size(), endpoint.getEndpointUri());
-                    throw new BatchConsumerWorkerException(e);
                 } else {
-                    dispatch(buffer);
+                    onBatch(buffer);
                     LOG.warn("Connection failed on {} with {} already-acknowledged message(s) buffered; "
                              + "attempting best-effort dispatch since they cannot be redelivered",
                             endpoint.getEndpointUri(), buffer.size());
                 }
+            }
+            throw new BatchConsumerWorkerException(e);
+        }
+    }
+
+    private void onBatch(List<Message> batch) {
+        try {
+            doOnBatch(batch);
+        } catch (Exception e) {
+            if (e instanceof JMSException jmsException) {
+                if (endpoint.getExceptionListener() != null) {
+                    endpoint.getExceptionListener().onException(jmsException);
+                }
             } else {
-                throw new BatchConsumerWorkerException(e);
+                LOG.warn("Execution of JMS message listener failed. This exception is ignored.", e);
             }
         }
     }
 
-    private void dispatch(List<Message> buffer) {
+    private void doOnBatch(List<Message> batch) throws Exception {
         try {
-            batchListener.onBatch(buffer, session);
+            batchListener.onBatch(batch, session);
         } catch (Exception e) {
-            LOG.warn("Error dispatching batch of {} message(s) on {}", buffer.size(),
-                    endpoint.getEndpointUri(), e);
+            // unexpected error so rollback
+            rollbackIfNeeded(session);
+            throw e;
         }
+        // success then commit if we need to
+        Message lastMessage = batch.get(batch.size() - 1);
+        commitIfNeeded(session, lastMessage);
     }
 
     private long computeWaitMillis(

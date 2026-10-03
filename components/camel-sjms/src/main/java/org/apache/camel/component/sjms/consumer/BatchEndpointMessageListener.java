@@ -27,7 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.sjms.SjmsConstants;
 import org.apache.camel.component.sjms.SjmsConsumer;
 import org.apache.camel.component.sjms.SjmsEndpoint;
-import org.apache.camel.component.sjms.SjmsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,27 +65,22 @@ public class BatchEndpointMessageListener {
     }
 
     void onBatch(List<Message> rawMessages, Session session) throws Exception {
+        LOG.trace("onBatch START");
+
+        LOG.debug("{} consumer received batch message: {}", endpoint, rawMessages);
         Exchange batchExchange = null;
-        Exception failure = null;
         try {
             batchExchange = aggregate(rawMessages, session);
             processor.process(batchExchange);
         } catch (Exception e) {
-            failure = e;
+            batchExchange.setException(e);
         }
 
-        boolean failed = failure != null || batchExchange.isFailed() || batchExchange.isRollbackOnly();
-        Message lastMessage = rawMessages.get(rawMessages.size() - 1);
+        Exception exception = batchExchange.getException();
 
-        if (!failed) {
-            SjmsHelper.commitIfNeeded(session, lastMessage);
-        } else {
-            Exception cause = failure != null ? failure : batchExchange.getException();
-            if (cause != null) {
-                LOG.warn("Batch of {} message(s) failed processing on {}: {}", rawMessages.size(),
-                        endpoint.getEndpointUri(), cause.getMessage(), cause);
-            }
-            SjmsHelper.rollbackIfNeeded(session);
+        if (exception != null) {
+            LOG.trace("onBatch END throwing exception: {}", exception.getMessage());
+            throw exception;
         }
     }
 }

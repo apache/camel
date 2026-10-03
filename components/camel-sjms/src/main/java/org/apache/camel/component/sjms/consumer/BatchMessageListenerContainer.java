@@ -39,10 +39,12 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
     private ExecutorService workerExecutorService;
     private final ReentrantLock workersLock = new ReentrantLock();
     private final List<BatchConsumerWorker> workers = new ArrayList<>();
+    private volatile boolean stopping;
 
     public BatchMessageListenerContainer(SjmsEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
+        this.stopping = false;
     }
 
     public void setBatchListener(BatchEndpointMessageListener batchListener) {
@@ -76,6 +78,7 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
 
     @Override
     protected void doStop() throws Exception {
+        this.stopping = true;
         invalidateBatchWorkers();
         // shutdown scheduled executor after all in-flight exchanges have completed
         if (workerExecutorService != null) {
@@ -107,13 +110,13 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
             workersLock.unlock();
         }
 
-        if (worker.isShutdownRequested()) {
-            return;
-        }
-
         Throwable cause = ex != null && ex.getCause() != null ? ex.getCause() : ex;
         LOG.warn("Batch consumer worker for {} exited unexpectedly, triggering recovery",
                 endpoint.getEndpointUri(), cause);
+
+        if (stopping || worker.isShutdownRequested()) {
+            return;
+        }
 
         invalidateBatchWorkers();
         invalidateConsumers();
