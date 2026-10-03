@@ -175,6 +175,38 @@ public class DaprPubSubConsumerTest extends CamelTestSupport {
     }
 
     @Test
+    void testRollbackOnlyExchangeIsRedelivered() throws Exception {
+        consumer.doStart();
+
+        doAnswer(inv -> {
+            // a rollback without an exception, as markRollbackOnly() does
+            inv.getArgument(0, Exchange.class).setRollbackOnly(true);
+            inv.getArgument(1, AsyncCallback.class).done(true);
+            return true;
+        }).when(processor).process(any(Exchange.class), any(AsyncCallback.class));
+
+        SubscriptionListener.Status status = listenerCaptor.getValue().onEvent(newCloudEvent()).block();
+
+        assertEquals(SubscriptionListener.Status.RETRY, status);
+    }
+
+    @Test
+    void testRollbackOnlyLastExchangeIsRedelivered() throws Exception {
+        consumer.doStart();
+
+        doAnswer(inv -> {
+            // a rollback without an exception, as markRollbackOnlyLast() does
+            inv.getArgument(0, Exchange.class).setRollbackOnlyLast(true);
+            inv.getArgument(1, AsyncCallback.class).done(true);
+            return true;
+        }).when(processor).process(any(Exchange.class), any(AsyncCallback.class));
+
+        SubscriptionListener.Status status = listenerCaptor.getValue().onEvent(newCloudEvent()).block();
+
+        assertEquals(SubscriptionListener.Status.RETRY, status);
+    }
+
+    @Test
     void testEventIsAcknowledgedWhenTheExchangeIsDone() throws Exception {
         consumer.doStart();
 

@@ -796,9 +796,11 @@ exception in the route (for example with `onException(...).handled(true)`) to ac
 
 The pub/sub consumer acknowledged every event with `SUCCESS` as soon as the exchange was handed to the route, also
 when the route then failed, so Dapr dropped events whose processing failed. The consumer now answers when the exchange
-is done: `SUCCESS` when it completed, and `RETRY` when it failed, so that Dapr redelivers the event. A route that
-fails for an event, and relied on the event being dropped, now receives it again; handle the exception in the route
-(for example with `onException(...).handled(true)`) to acknowledge the event anyway.
+is done: `SUCCESS` when it completed, and `RETRY` when it failed (or was marked rollback only), so that Dapr redelivers
+the event. A route that fails for an event, and relied on the event being dropped, now receives it again; handle the
+exception in the route (for example with `onException(...).handled(true)`) to acknowledge the event anyway. A poison
+event that always fails now gets `RETRY` every time, until a Dapr resiliency policy for the pub/sub component or a
+dead-letter topic on the subscription limits the redeliveries.
 
 === Components and Language removal
 

@@ -120,14 +120,16 @@ public class DaprPubSubConsumer extends DefaultConsumer {
         @Override
         public Mono<Status> onEvent(CloudEvent<byte[]> cloudEvent) {
             // the status is the acknowledgement of the event: answer it when the exchange is done, and
-            // ask Dapr to redeliver the event when the exchange failed instead of dropping it
+            // ask Dapr to redeliver the event when the exchange failed (or was marked rollback only) instead of
+            // dropping it
             return Mono.create(sink -> {
                 final Exchange exchange = createServiceBusExchange(cloudEvent);
 
                 // use default consumer callback
                 AsyncCallback cb = defaultConsumerCallback(exchange, true);
                 getAsyncProcessor().process(exchange, doneSync -> {
-                    Status status = exchange.isFailed() ? Status.RETRY : Status.SUCCESS;
+                    Status status = exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()
+                            ? Status.RETRY : Status.SUCCESS;
                     try {
                         cb.done(doneSync);
                     } finally {
