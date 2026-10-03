@@ -509,10 +509,10 @@ public class SjmsEndpoint extends DefaultEndpoint
         if (isBatching() && !isTransacted()
                 && acknowledgementMode == SessionAcknowledgementType.AUTO_ACKNOWLEDGE) {
             LOG.warn("Endpoint {} uses batching=true with acknowledgementMode=AUTO_ACKNOWLEDGE. "
-                            + "Messages are acknowledged on receipt, before the batch is processed, "
-                            + "so a failure or shutdown loses all buffered messages (at-most-once delivery). "
-                            + "Use acknowledgementMode=CLIENT_ACKNOWLEDGE or SESSION_TRANSACTED "
-                            + "(transacted=true) for at-least-once delivery.",
+                     + "Messages are acknowledged on receipt, before the batch is processed, "
+                     + "so a failure or shutdown loses all buffered messages (at-most-once delivery). "
+                     + "Use acknowledgementMode=CLIENT_ACKNOWLEDGE or SESSION_TRANSACTED "
+                     + "(transacted=true) for at-least-once delivery.",
                     getEndpointUri());
         }
     }

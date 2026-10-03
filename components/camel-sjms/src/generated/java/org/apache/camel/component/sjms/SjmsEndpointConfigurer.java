@@ -36,7 +36,7 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "autostartup":
         case "autoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
         case "batchinterval":
-        case "batchInterval": target.setBatchInterval(property(camelContext, long.class, value)); return true;
+        case "batchInterval": target.setBatchInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "batchsize":
         case "batchSize": target.setBatchSize(property(camelContext, int.class, value)); return true;
         case "batching": target.setBatching(property(camelContext, boolean.class, value)); return true;

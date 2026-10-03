@@ -497,149 +497,71 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
-         * A custom AggregationStrategy used to combine the messages of a batch
-         * into the single Exchange routed by the consumer. Only used when
-         * batching=true. By default the messages are grouped into a List in the
-         * message body. The strategy is shared by all concurrent consumers, so
-         * it must be thread-safe.
-         * 
-         * The option is a: <code>org.apache.camel.AggregationStrategy</code>
-         * type.
-         * 
-         * Group: batch
-         * 
-         * @param batchingAggregationStrategy the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder batchingAggregationStrategy(org.apache.camel.AggregationStrategy batchingAggregationStrategy) {
-            doSetProperty("batchingAggregationStrategy", batchingAggregationStrategy);
-            return this;
-        }
-        /**
-         * A custom AggregationStrategy used to combine the messages of a batch
-         * into the single Exchange routed by the consumer. Only used when
-         * batching=true. By default the messages are grouped into a List in the
-         * message body. The strategy is shared by all concurrent consumers, so
-         * it must be thread-safe.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.AggregationStrategy</code> type.
-         * 
-         * Group: batch
-         * 
-         * @param batchingAggregationStrategy the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder batchingAggregationStrategy(String batchingAggregationStrategy) {
-            doSetProperty("batchingAggregationStrategy", batchingAggregationStrategy);
-            return this;
-        }
-        /**
          * Time in millis, measured from the first message received into a new
          * batch, after which the batch is dispatched even if batchSize has not
          * been reached comparable to the Aggregator EIP's completionInterval.
-         * Mutually exclusive with batchTimeout: only one of the two may be
-         * non-zero. If both are left at 0 (the default), an internal interval
-         * of 1000ms is used, matching this component's original batching
-         * behavior.
+         * Default is 1000 ms, that is 1 second. Interval should be a postive
+         * value. Set to 0 for unlimited (not recommended).
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: batch
          * 
-         * @param batchingInterval the value to set
+         * @param batchInterval the value to set
          * @return the dsl builder
          */
-        default Sjms2EndpointConsumerBuilder batchingInterval(long batchingInterval) {
-            doSetProperty("batchingInterval", batchingInterval);
+        default Sjms2EndpointConsumerBuilder batchInterval(long batchInterval) {
+            doSetProperty("batchInterval", batchInterval);
             return this;
         }
         /**
          * Time in millis, measured from the first message received into a new
          * batch, after which the batch is dispatched even if batchSize has not
          * been reached comparable to the Aggregator EIP's completionInterval.
-         * Mutually exclusive with batchTimeout: only one of the two may be
-         * non-zero. If both are left at 0 (the default), an internal interval
-         * of 1000ms is used, matching this component's original batching
-         * behavior.
+         * Default is 1000 ms, that is 1 second. Interval should be a postive
+         * value. Set to 0 for unlimited (not recommended).
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: batch
          * 
-         * @param batchingInterval the value to set
+         * @param batchInterval the value to set
          * @return the dsl builder
          */
-        default Sjms2EndpointConsumerBuilder batchingInterval(String batchingInterval) {
-            doSetProperty("batchingInterval", batchingInterval);
+        default Sjms2EndpointConsumerBuilder batchInterval(String batchInterval) {
+            doSetProperty("batchInterval", batchInterval);
             return this;
         }
         /**
-         * Maximum number of messages per batch. A value = 0 means only
-         * batchTimeout controls when a batch is emitted.
+         * Maximum number of messages per batch.
          * 
          * The option is a: <code>int</code> type.
          * 
          * Default: 100
          * Group: batch
          * 
-         * @param batchingSize the value to set
+         * @param batchSize the value to set
          * @return the dsl builder
          */
-        default Sjms2EndpointConsumerBuilder batchingSize(int batchingSize) {
-            doSetProperty("batchingSize", batchingSize);
+        default Sjms2EndpointConsumerBuilder batchSize(int batchSize) {
+            doSetProperty("batchSize", batchSize);
             return this;
         }
         /**
-         * Maximum number of messages per batch. A value = 0 means only
-         * batchTimeout controls when a batch is emitted.
+         * Maximum number of messages per batch.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
          * Default: 100
          * Group: batch
          * 
-         * @param batchingSize the value to set
+         * @param batchSize the value to set
          * @return the dsl builder
          */
-        default Sjms2EndpointConsumerBuilder batchingSize(String batchingSize) {
-            doSetProperty("batchingSize", batchingSize);
-            return this;
-        }
-        /**
-         * Idle time in millis, comparable to the Aggregator EIP's
-         * completionTimeout: if the batch already contains one or more messages
-         * and no further message arrives within this time, the partial batch is
-         * dispatched. Unlike batchInterval, the clock resets on every message
-         * received, not just the first. Mutually exclusive with batchInterval.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: batch
-         * 
-         * @param batchingTimeout the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder batchingTimeout(long batchingTimeout) {
-            doSetProperty("batchingTimeout", batchingTimeout);
-            return this;
-        }
-        /**
-         * Idle time in millis, comparable to the Aggregator EIP's
-         * completionTimeout: if the batch already contains one or more messages
-         * and no further message arrives within this time, the partial batch is
-         * dispatched. Unlike batchInterval, the clock resets on every message
-         * received, not just the first. Mutually exclusive with batchInterval.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Group: batch
-         * 
-         * @param batchingTimeout the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder batchingTimeout(String batchingTimeout) {
-            doSetProperty("batchingTimeout", batchingTimeout);
+        default Sjms2EndpointConsumerBuilder batchSize(String batchSize) {
+            doSetProperty("batchSize", batchSize);
             return this;
         }
         /**
@@ -3593,6 +3515,18 @@ public interface Sjms2EndpointBuilderFactory {
          */
         public String jMSReplyTo() {
             return "JMSReplyTo";
+        }
+        /**
+         * The size of the batch when using the batching consumer option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group:  batch
+         * 
+         * @return the name of the header {@code SjmsBatchSize}.
+         */
+        public String sjmsBatchSize() {
+            return "CamelSjmsBatchSize";
         }
     }
     static Sjms2EndpointBuilder endpointBuilder(String componentName, String path) {

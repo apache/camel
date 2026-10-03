@@ -109,7 +109,7 @@ class BatchConsumerWorker implements Runnable {
                 } else {
                     dispatch(buffer);
                     LOG.warn("Connection failed on {} with {} already-acknowledged message(s) buffered; "
-                              + "attempting best-effort dispatch since they cannot be redelivered",
+                             + "attempting best-effort dispatch since they cannot be redelivered",
                             endpoint.getEndpointUri(), buffer.size());
                 }
             } else {
