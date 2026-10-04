@@ -38,6 +38,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.resume.ResumeStrategyHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,11 +192,7 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
             exchange.getIn().setHeader(HEADER_ID, id);
 
             if ("delete".equalsIgnoreCase(consumerProcessedStrategy)) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Deleting doc with ID {}", id);
-                }
-                CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
-                        endpoint.getConsumerRetryPause());
+                removeDocumentOnCompletion(exchange, id);
             } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Filtering out ID {}", id);
@@ -256,11 +253,7 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
             exchange.getIn().setHeader(HEADER_VIEWNAME, viewName);
 
             if ("delete".equalsIgnoreCase(consumerProcessedStrategy)) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Deleting doc with ID {}", id);
-                }
-                CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
-                        endpoint.getConsumerRetryPause());
+                removeDocumentOnCompletion(exchange, id);
             } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Filtering out ID {}", id);
@@ -275,6 +268,31 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
         }
 
         return processBatch(exchanges);
+    }
+
+    /**
+     * Removes the document once its exchange has been processed successfully.
+     * <p/>
+     * Removing it while the exchanges are built, before any of them is handed to the route, loses the document when its
+     * exchange fails, or when it is never delivered at all because the batch is cut short by {@code maxMessagesPerPoll}
+     * or by the consumer stopping. The on-completion runs only for an exchange that went through the route and
+     * completed: a failed exchange keeps its document for the next poll, and an undelivered one is not touched.
+     */
+    private void removeDocumentOnCompletion(Exchange exchange, String id) {
+        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+            @Override
+            public void onComplete(Exchange exchange) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Deleting doc with ID {}", id);
+                }
+                try {
+                    CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
+                            endpoint.getConsumerRetryPause());
+                } catch (Exception e) {
+                    getExceptionHandler().handleException("Error removing document with ID " + id, exchange, e);
+                }
+            }
+        });
     }
 
     @Override
@@ -298,11 +316,8 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
 
         // Anything still queued was never handed to the route - the batch was cut short because the consumer is
         // stopping, or the poll returned more rows than maxMessagesPerPoll. Nothing else will release these, and a
-        // pooled exchange that is never released never returns to the pool.
-        //
-        // Releasing them is not the same as handling them: with consumerProcessedStrategy=delete the document was
-        // already removed during the poll, above, so these rows are lost rather than redelivered. That predates
-        // this method and is not fixed here - see CAMEL-25221
+        // pooled exchange that is never released never returns to the pool. With consumerProcessedStrategy=delete
+        // their documents are left in place, as the removal only runs on completion, so a later poll picks them up
         Exchange remaining;
         while ((remaining = (Exchange) exchanges.poll()) != null) {
             releaseExchange(remaining, false);
@@ -320,9 +335,7 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
      * exchange had been delivered.
      * <p/>
      * The route's own error handler has already logged the exhausted failure by this point, so this is not the only
-     * record of it; what it adds is that the consumer no longer treats a failed exchange as a delivered one. It matters
-     * most with {@code consumerProcessedStrategy=delete}, where the document is removed during the poll, before the
-     * route runs, so a failure means the document is gone.
+     * record of it; what it adds is that the consumer no longer treats a failed exchange as a delivered one.
      */
     private void processExchange(Exchange exchange) {
         try {
