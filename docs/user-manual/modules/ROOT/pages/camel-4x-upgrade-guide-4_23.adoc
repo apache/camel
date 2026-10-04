@@ -755,6 +755,17 @@ Before, the first five fell back to the charset of the exchange (UTF-8 by defaul
 unmarshal sets `CamelCharsetName` to it. A message whose MSH-18 names one of these charsets but that is actually
 encoded in another one (such as UTF-8) is now decoded in the charset it names.
 
+=== camel-servlet and camel-jetty - String response in the charset of the Content-Type
+
+The servlet and Jetty consumers converted a `String` response body with the charset of the exchange (UTF-8 by
+default) when the response is chunked (the default), and also when it is not chunked and its `Content-Type` is not
+text (for example `application/json`), even when the `Content-Type` declared another charset (for example
+`text/plain; charset=ISO-8859-1`). Such a body is now written in the charset that the `Content-Type` declares, so the
+bytes match the header. Responses without a charset in the `Content-Type`, bodies that are not a `String`, and
+gzip-encoded responses (`Content-Encoding: gzip`) are written as before. A client that ignored the declared charset
+and read such a response as UTF-8 must now use the declared charset, and characters that the declared charset cannot
+represent are written as `?`.
+
 === camel-platform-http-vertx - String response in the charset of the Content-Type
 
 A `String` response body was always written as UTF-8, even when the response `Content-Type` declared another
