@@ -59,9 +59,12 @@ public class IggyConsumer extends DefaultConsumer {
                 endpoint.getConfiguration().getSslContextParameters());
 
         IggyBaseClient client = iggyClientConnectionPool.borrowObject();
-        endpoint.initializeTopic(client);
-        endpoint.initializeConsumerGroup(client);
-        iggyClientConnectionPool.returnClient(client);
+        try {
+            endpoint.initializeTopic(client);
+            endpoint.initializeConsumerGroup(client);
+        } finally {
+            iggyClientConnectionPool.returnClient(client);
+        }
 
         executor = endpoint.createExecutor();
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
@@ -110,6 +113,10 @@ public class IggyConsumer extends DefaultConsumer {
         }
         tasks.clear();
         executor = null;
+        if (iggyClientConnectionPool != null) {
+            iggyClientConnectionPool.close();
+            iggyClientConnectionPool = null;
+        }
 
         super.doStop();
     }
