@@ -232,6 +232,19 @@ On an exact match (e.g. `GET /reverse-proxy`) the path is stripped to `/`.
 `CamelHttpUri`/`CamelHttpUrl` still hold the full original request, only `CamelHttpPath` is rewritten. This option is
 currently implemented in `camel-platform-http-vertx`.
 
+=== Contract-first REST and unmatched requests
+
+When the consumer is used by the xref:rest-openapi-component.adoc[rest-openapi] component
+(rest-dsl contract-first), requests that do not match any operation of the OpenAPI specification are answered
+by the HTTP layer itself (status `404`/`405`).
+
+Set the `unmatchedRequestHandling` endpoint option to `camel` to instead route such requests to Camel, where they
+are answered by the unmatched request handler (see the rest-openapi component documentation). On Camel Main and
+Quarkus, `camel-platform-http-vertx` registers a catch-all route per API base path; on Spring Boot, the
+catch-all is registered on this component and served by the platform-http starter. The catch-all is evaluated
+last, so it never shadows the operations of other APIs served by the same server, even when their base paths
+are nested under this API.
+
 === File Attachments handling
 
 Since Apache Camel 4.10, multipart file uploads are easier and harmonized across all runtimes. When a single file is uploaded, the Apache Camel framework provides the following:

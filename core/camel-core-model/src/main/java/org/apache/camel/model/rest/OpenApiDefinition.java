@@ -55,6 +55,10 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
               enums = "fail,ignore,mock", defaultValue = "fail")
     private String missingOperation;
     @XmlAttribute
+    @Metadata(description = "Who answers requests that match no operation in the OpenAPI specification: the HTTP layer (platform) or Camel via the unmatched request handler (camel).",
+              enums = "platform,camel", defaultValue = "platform")
+    private String unmatchedRequestHandling;
+    @XmlAttribute
     @Metadata(description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.",
               label = "advanced", defaultValue = "classpath:camel-mock/**")
     private String mockIncludePattern;
@@ -103,6 +107,14 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
 
     public void setMissingOperation(String missingOperation) {
         this.missingOperation = missingOperation;
+    }
+
+    public String getUnmatchedRequestHandling() {
+        return unmatchedRequestHandling;
+    }
+
+    public void setUnmatchedRequestHandling(String unmatchedRequestHandling) {
+        this.unmatchedRequestHandling = unmatchedRequestHandling;
     }
 
     public String getMockIncludePattern() {
@@ -173,6 +185,15 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
      */
     public OpenApiDefinition missingOperation(String missingOperation) {
         this.missingOperation = missingOperation;
+        return this;
+    }
+
+    /**
+     * Who answers requests that match no operation in the OpenAPI specification: the HTTP layer (platform) or Camel via
+     * the unmatched request handler (camel).
+     */
+    public OpenApiDefinition unmatchedRequestHandling(String unmatchedRequestHandling) {
+        this.unmatchedRequestHandling = unmatchedRequestHandling;
         return this;
     }
 

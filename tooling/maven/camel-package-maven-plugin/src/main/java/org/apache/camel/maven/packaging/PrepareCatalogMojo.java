@@ -1687,7 +1687,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
      */
     private Set<Path> filterJackson3Duplicates(Set<Path> jsonFiles) {
         return jsonFiles.stream()
-                .filter(p -> !p.toString().contains("/components/camel-jackson3"))
+                // use forward slashes so the check also works with Windows paths
+                .filter(p -> !p.toString().replace('\\', '/').contains("/components/camel-jackson3"))
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 

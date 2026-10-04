@@ -79,6 +79,14 @@ from("rocketmq:START_TOPIC?consumerGroup=c1")
 .to("log:InOutRoute?showAll=true")
 ----
 
+=== Error handling
+
+The consumer acknowledges a message to RocketMQ (`CONSUME_SUCCESS`) when the exchange completes. When the exchange
+fails, or is marked rollback only, the consumer answers `RECONSUME_LATER`, and RocketMQ delivers the message again with
+an increasing delay, up to the maximum reconsume times of the consumer group (16 by default); after that the message
+goes to the dead letter queue of the consumer group. To acknowledge a message whose processing failed, handle the
+exception in the route, for example with `onException(...).handled(true)`.
+
 == Examples
 
 Receive messages from a topic named `from_topic`, route to `to_topic`.

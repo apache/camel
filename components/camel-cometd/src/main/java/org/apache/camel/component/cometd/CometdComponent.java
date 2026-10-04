@@ -144,26 +144,28 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
                 server.start();
 
                 connectors.put(connectorKey, connectorRef);
+
+                // the server is shared by the producers and consumers of this host and port: configure it once,
+                // or the extensions and listeners are called once per producer and consumer
+                BayeuxServerImpl bayeux = (BayeuxServerImpl) connectorRef.servlet.getBayeuxServer();
+                if (securityPolicy != null) {
+                    bayeux.setSecurityPolicy(securityPolicy);
+                }
+                if (extensions != null) {
+                    for (BayeuxServer.Extension extension : extensions) {
+                        bayeux.addExtension(extension);
+                    }
+                }
+                if (serverListeners != null) {
+                    for (BayeuxServer.BayeuxServerListener serverListener : serverListeners) {
+                        bayeux.addListener(serverListener);
+                    }
+                }
             } else {
                 connectorRef.increment();
             }
 
-            BayeuxServerImpl bayeux = (BayeuxServerImpl) connectorRef.servlet.getBayeuxServer();
-
-            if (securityPolicy != null) {
-                bayeux.setSecurityPolicy(securityPolicy);
-            }
-            if (extensions != null) {
-                for (BayeuxServer.Extension extension : extensions) {
-                    bayeux.addExtension(extension);
-                }
-            }
-            if (serverListeners != null) {
-                for (BayeuxServer.BayeuxServerListener serverListener : serverListeners) {
-                    bayeux.addListener(serverListener);
-                }
-            }
-            prodcon.setBayeux(bayeux);
+            prodcon.setBayeux((BayeuxServerImpl) connectorRef.servlet.getBayeuxServer());
         } finally {
             connectorsLock.unlock();
         }
