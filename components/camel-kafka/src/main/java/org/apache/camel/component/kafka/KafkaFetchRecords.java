@@ -126,7 +126,8 @@ public class KafkaFetchRecords implements Runnable {
 
     @Override
     public void run() {
-        if (!isKafkaConsumerRunnable()) {
+        // a suspended consumer keeps its thread, which polls with the consumer paused, so it can be resumed
+        if (!isKafkaConsumerRunnableAndNotStopped()) {
             return;
         }
 
@@ -171,6 +172,8 @@ public class KafkaFetchRecords implements Runnable {
                     }
 
                     setConnected(true);
+                    // a new Kafka consumer is not paused: pause it again if the consumer is suspended
+                    state.compareAndSet(State.PAUSED, State.PAUSE_REQUESTED);
                 }
 
                 if (isConnected()) {
@@ -179,7 +182,7 @@ public class KafkaFetchRecords implements Runnable {
 
                 setLastError(null);
                 startPolling();
-            } while ((pollExceptionStrategy.canContinue() || isReconnect()) && isKafkaConsumerRunnable());
+            } while ((pollExceptionStrategy.canContinue() || isReconnect()) && isKafkaConsumerRunnableAndNotStopped());
 
             if (LOG.isInfoEnabled()) {
                 LOG.info("Terminating KafkaConsumer thread {} receiving from {}", threadId, getPrintableTopic());
@@ -424,11 +427,13 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     private void updateTaskState() {
+        // pause() and resume() are called from other threads: only move to PAUSED or RUNNING when no other request
+        // was made in the meantime, otherwise that request is handled on the next iteration
         switch (state.get()) {
             case PAUSE_REQUESTED:
                 LOG.info("Pausing the consumer as a response to a pause request");
                 consumer.pause(consumer.assignment());
-                state.set(State.PAUSED);
+                state.compareAndSet(State.PAUSE_REQUESTED, State.PAUSED);
                 break;
             case RESUME_REQUESTED:
                 LOG.info("Resuming the consumer as a response to a resume request");
@@ -443,7 +448,7 @@ public class KafkaFetchRecords implements Runnable {
                     });
                 }
                 consumer.resume(consumer.assignment());
-                state.set(State.RUNNING);
+                state.compareAndSet(State.RESUME_REQUESTED, State.RUNNING);
                 break;
             default:
                 break;
@@ -643,6 +648,13 @@ public class KafkaFetchRecords implements Runnable {
 
         @Override
         public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+            State current = state.get();
+            if (current == State.PAUSED || current == State.PAUSE_REQUESTED) {
+                // the consumer is suspended: pause the assigned partitions now (this runs on the fetcher thread, inside
+                // poll), so that the poll does not return their records, e.g. the first poll of a consumer that starts
+                // or reconnects while suspended
+                consumer.pause(partitions);
+            }
             if (state.compareAndSet(State.PAUSED, State.PAUSE_REQUESTED)) {
                 LOG.debug("Partitions were assigned while paused, the consumer will be re-paused");
             }
