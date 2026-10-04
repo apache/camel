@@ -99,7 +99,8 @@ public record AppFeatures(
 
     /**
      * Both feature sets together: what an integration had before a reload still counts after it, so the tools a model
-     * was given do not come and go while it works.
+     * was given do not come and go while it works. Where both know the same datasource or signal, the other (newer) one
+     * wins: a pool type known only after the pool started is the one the guidance names.
      */
     public AppFeatures merge(AppFeatures other) {
         if (other == null) {
@@ -110,14 +111,14 @@ public record AppFeatures(
             ds.put(d.name(), d);
         }
         for (DataSource d : other.dataSources) {
-            ds.putIfAbsent(d.name(), d);
+            ds.put(d.name(), d);
         }
         Set<String> components = new TreeSet<>(sqlComponents);
         components.addAll(other.sqlComponents);
         Set<String> routes = new TreeSet<>(circuitBreakerRoutes);
         routes.addAll(other.circuitBreakerRoutes);
         Map<String, String> sig = new LinkedHashMap<>(signals);
-        other.signals.forEach(sig::putIfAbsent);
+        other.signals.forEach(sig::put);
         return new AppFeatures(
                 new ArrayList<>(ds.values()), new ArrayList<>(components), sqlTraced || other.sqlTraced,
                 circuitBreaker || other.circuitBreaker, new ArrayList<>(routes),

@@ -360,7 +360,8 @@ class McpFacade {
         }
         try {
             return RuntimeHelper.readStatus(Long.parseLong(ctx.selectedPid));
-        } catch (NumberFormatException e) {
+        } catch (RuntimeException e) {
+            // not a pid, or a status that cannot be read: no tool groups, the core set is still offered
             return null;
         }
     }

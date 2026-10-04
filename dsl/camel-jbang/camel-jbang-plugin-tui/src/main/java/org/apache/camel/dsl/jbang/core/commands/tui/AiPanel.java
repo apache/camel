@@ -323,10 +323,10 @@ class AiPanel {
     private TuiToolRegistry toolRegistry;
     // CAMEL-24834: the tool groups (SQL, tracing, resilience) of the selected integration that the core set gets, see
     // refreshToolGroups()
-    private AppStatusSource appStatusSource;
-    private String toolGroupsPid;
-    private int toolGroupsReloads = -1;
-    private AppFeatures toolGroupsFeatures = AppFeatures.none();
+    private volatile AppStatusSource appStatusSource;
+    private volatile String toolGroupsPid;
+    private volatile int toolGroupsReloads = -1;
+    private volatile AppFeatures toolGroupsFeatures = AppFeatures.none();
     private volatile TuiToolGroups.Selection toolGroups = TuiToolGroups.Selection.none();
     private boolean mcpServerActive;
     private int mcpServerPort;

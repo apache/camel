@@ -55,6 +55,29 @@ class ToolGroupsTest {
     }
 
     @Test
+    void micrometerAloneLoadsTheTracingGroupWithTheMetrics() {
+        AppFeatures micrometer = new AppFeatures(
+                List.of(), List.of(), false, false, List.of(), false, false, true, Map.of());
+        ToolGroups.Selection s = ToolGroups.select(micrometer);
+        assertEquals(List.of(ToolGroup.TRACING), s.toolGroups());
+        assertEquals(List.of("camel_runtime_trace", "camel_runtime_metrics"), s.groups().get(0).tools());
+        assertTrue(s.groups().get(0).guidance().contains("camel_runtime_metrics has the Micrometer metrics"));
+    }
+
+    @Test
+    void theNewerFeaturesWinWhenMerged() {
+        AppFeatures before = new AppFeatures(
+                List.of(new AppFeatures.DataSource("orders", null)), List.of(), false, false, List.of(), false, false,
+                false, Map.of("dataSources", "orders"));
+        AppFeatures after = new AppFeatures(
+                List.of(new AppFeatures.DataSource("orders", "HikariCP")), List.of(), false, false, List.of(), false, false,
+                false, Map.of("dataSources", "orders (HikariCP)"));
+        AppFeatures merged = before.merge(after);
+        assertEquals("HikariCP", merged.dataSources().get(0).poolType(), "the pool type known after the pool started");
+        assertEquals("orders (HikariCP)", merged.signals().get("dataSources"));
+    }
+
+    @Test
     void tracingOffersOnlyWhatIsOn() {
         AppFeatures messageTracing = new AppFeatures(
                 List.of(), List.of(), false, false, List.of(), false, true, false, Map.of());
