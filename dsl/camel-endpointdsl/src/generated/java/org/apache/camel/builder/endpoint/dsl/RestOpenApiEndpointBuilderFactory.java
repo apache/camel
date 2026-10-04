@@ -385,6 +385,23 @@ public interface RestOpenApiEndpointBuilderFactory {
             doSetProperty("restOpenapiProcessorStrategy", restOpenapiProcessorStrategy);
             return this;
         }
+        /**
+         * Who answers requests that match no operation in the OpenAPI
+         * specification: the HTTP layer (platform) or Camel via the unmatched
+         * request handler (camel).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: platform
+         * Group: consumer (advanced)
+         * 
+         * @param unmatchedRequestHandling the value to set
+         * @return the dsl builder
+         */
+        default AdvancedRestOpenApiEndpointConsumerBuilder unmatchedRequestHandling(String unmatchedRequestHandling) {
+            doSetProperty("unmatchedRequestHandling", unmatchedRequestHandling);
+            return this;
+        }
     }
 
     /**

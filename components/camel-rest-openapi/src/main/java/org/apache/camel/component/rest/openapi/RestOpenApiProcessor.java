@@ -19,23 +19,34 @@ package org.apache.camel.component.rest.openapi;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import org.apache.camel.*;
+import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.spi.RestUnmatchedRequestHandler;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.support.processor.RestBindingAdvice;
 import org.apache.camel.support.processor.RestBindingAdviceFactory;
 import org.apache.camel.support.processor.RestBindingConfiguration;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RestOpenApiProcessor extends AsyncProcessorSupport implements CamelContextAware, AfterPropertiesConfigured {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestOpenApiProcessor.class);
 
     // just use the most common verbs
     private static final List<String> METHODS = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "PATCH");
@@ -47,10 +58,14 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
     private final String apiContextPath;
     private final List<RestConsumerContextPathMatcher.ConsumerPath<Operation>> paths = new ArrayList<>();
     private final RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
+    private RestUnmatchedRequestHandler unmatchedRequestHandler = new DefaultRestUnmatchedRequestHandler();
     private PlatformHttpConsumerAware platformHttpConsumer;
     private Consumer consumer;
     private OpenApiUtils openApiUtils;
     private RestRegistry restRegistry;
+    private boolean unmatchedRequestCatchAllRegistered;
+    private String unmatchedRequestCatchAllPath;
+    private boolean serverRequestValidation;
 
     public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, String apiContextPath,
                                 RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
@@ -100,6 +115,22 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
         RestConsumerContextPathMatcher.ConsumerPath<Operation> m
                 = RestConsumerContextPathMatcher.matchBestPath(verb, path, paths);
         if (m instanceof RestOpenApiConsumerPath rcp) {
+            // when Camel answers unmatched requests (unmatchedRequestHandling=camel), an unconstrained
+            // catch-all is registered on the HTTP layer, so requests whose Content-Type or Accept header
+            // does not match the consumes/produces of the operation (which the HTTP layer would otherwise
+            // have rejected with 415/406 when server request validation is enabled) may fall through to
+            // Camel and must be answered here instead of being processed as if they were valid
+            if (serverRequestValidation && unmatchedRequestCatchAllRegistered) {
+                String contentType = exchange.getMessage().getHeader(Exchange.CONTENT_TYPE, String.class);
+                if (!isValidOrAcceptedContentType(rcp.getConsumes(), contentType)) {
+                    return answerUnmatchedRequest(exchange, callback, 415, List.of());
+                }
+                String accept = exchange.getMessage().getHeader("Accept", String.class);
+                if (!isValidOrAcceptedContentType(rcp.getProduces(), accept)) {
+                    return answerUnmatchedRequest(exchange, callback, 406, List.of());
+                }
+            }
+
             Operation o = rcp.getConsumer();
 
             String consumerPath = rcp.getConsumerPath();
@@ -130,16 +161,58 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
         final String contextPath = path;
         List<String> allow = METHODS.stream()
                 .filter(v -> RestConsumerContextPathMatcher.matchBestPath(v, contextPath, paths) != null).toList();
-        if (allow.isEmpty()) {
-            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
-        } else {
-            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 405);
-            // include list of allowed VERBs
-            exchange.getMessage().setHeader("Allow", String.join(", ", allow));
-        }
+        return answerUnmatchedRequest(exchange, callback, allow.isEmpty() ? 404 : 405, allow);
+    }
+
+    /**
+     * Lets the resolved (default or custom) {@link RestUnmatchedRequestHandler} answer a request that Camel must not
+     * process, such as requests that match no operation of the OpenAPI specification or requests failing
+     * Content-Type/Accept negotiation when server request validation is enabled.
+     */
+    private boolean answerUnmatchedRequest(
+            Exchange exchange, AsyncCallback callback, int statusCode,
+            List<String> allowedMethods) {
+        unmatchedRequestHandler.handle(exchange, statusCode, allowedMethods);
         exchange.setRouteStop(true);
         callback.done(true);
         return true;
+    }
+
+    /**
+     * Whether the given Content-Type or Accept header value matches the consumes/produces of the operation. Unlike
+     * RestUtil#isValidOrAcceptedContentType, the parameters of each part are stripped and subtype wildcards are
+     * supported.
+     */
+    static boolean isValidOrAcceptedContentType(String valid, String target) {
+        if (valid == null || target == null) {
+            return true;
+        }
+
+        // Any MIME type
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept#Directives
+        if (target.contains("*/*")) {
+            return true;
+        }
+
+        valid = valid.toLowerCase(Locale.ENGLISH);
+        target = target.toLowerCase(Locale.ENGLISH);
+
+        // try each part of the target without its parameters
+        for (String part : target.split(",")) {
+            part = StringHelper.before(part, ";", part).trim();
+            if (part.isEmpty()) {
+                continue;
+            }
+            if (valid.contains(part)) {
+                return true;
+            }
+            // subtype wildcard such as application/* matches any subtype of that type
+            if (part.endsWith("/*") && valid.contains(part.substring(0, part.length() - 1))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
@@ -156,6 +229,7 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
 
         this.openApiUtils = new OpenApiUtils(camelContext, endpoint.getBindingPackageScan(), openAPI.getComponents());
         this.restRegistry = PluginHelper.getRestRegistry(camelContext);
+        this.unmatchedRequestHandler = lookupUnmatchedRequestHandler(camelContext);
         // register all openapi paths
         for (var e : openAPI.getPaths().entrySet()) {
             String path = e.getKey(); // path
@@ -186,7 +260,9 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
                 try {
                     RestBindingAdvice binding = RestBindingAdviceFactory.build(camelContext, bc);
                     ServiceHelper.buildService(binding);
-                    paths.add(new RestOpenApiConsumerPath(v, path, o.getValue(), binding));
+                    paths.add(new RestOpenApiConsumerPath(
+                            v, path, o.getValue(), binding, bc.getConsumes(),
+                            bc.getProduces()));
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -227,6 +303,60 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
         }
 
         ServiceHelper.startService(restOpenapiProcessorStrategy);
+
+        // the platform-http component (if used) decides whether the HTTP layer performs preliminary
+        // request validation of the Content-Type/Accept headers against the consumes/produces of the
+        // OpenAPI operations, in which case Camel must reject such requests with 415/406 itself because
+        // the HTTP layer may let them fall through to the catch-all route (see below) or to a
+        // matchOnUriPrefix endpoint
+        PlatformHttpComponent platformHttp = camelContext.hasComponent("platform-http") != null
+                ? camelContext.getComponent("platform-http", PlatformHttpComponent.class)
+                : null;
+        if (platformHttp != null) {
+            this.serverRequestValidation = platformHttp.isServerRequestValidation();
+        }
+
+        // when Camel should answer requests that do not match any operation in the OpenAPI specification,
+        // then register a catch-all for this API on the platform-http component, so the runtime (such as
+        // Spring Boot or camel-platform-http-vertx) routes these requests to Camel where they are
+        // answered by the unmatched request handler.
+        if ("camel".equalsIgnoreCase(endpoint.getUnmatchedRequestHandling())) {
+            if (platformHttpConsumer == null) {
+                LOG.warn("unmatchedRequestHandling=camel is enabled, however the OpenAPI specification is not bound to"
+                         + " platform-http, so requests matching no operation of the OpenAPI specification cannot be"
+                         + " routed to Camel");
+            } else {
+                if (platformHttp != null) {
+                    String path = basePath;
+                    if (path == null || path.isEmpty() || path.equals("/")) {
+                        path = "";
+                    }
+                    platformHttp.addHttpEndpoint(path, null, null, null, platformHttpConsumer.getPlatformHttpConsumer());
+                    unmatchedRequestCatchAllPath = path;
+                    unmatchedRequestCatchAllRegistered = true;
+                } else {
+                    LOG.warn("unmatchedRequestHandling=camel is enabled, however there is no platform-http component,"
+                             + " so requests matching no operation of the OpenAPI specification cannot be routed to"
+                             + " Camel");
+                }
+            }
+        }
+    }
+
+    private static RestUnmatchedRequestHandler lookupUnmatchedRequestHandler(CamelContext camelContext) {
+        RestUnmatchedRequestHandler answer
+                = CamelContextHelper.findSingleByType(camelContext, RestUnmatchedRequestHandler.class);
+        if (answer == null) {
+            // lookup via classpath to find custom factory
+            Optional<RestUnmatchedRequestHandler> result = ResolverHelper.resolveService(
+                    camelContext,
+                    camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                    RestUnmatchedRequestHandler.FACTORY,
+                    RestUnmatchedRequestHandler.class);
+            // else use a default implementation
+            answer = result.orElseGet(DefaultRestUnmatchedRequestHandler::new);
+        }
+        return answer;
     }
 
     private RestBindingConfiguration createRestBindingConfiguration(Operation o) {
@@ -265,5 +395,18 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
             }
         }
         paths.clear();
+
+        if (unmatchedRequestCatchAllRegistered) {
+            try {
+                PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
+                if (phc != null && platformHttpConsumer != null) {
+                    phc.removeHttpEndpoint(unmatchedRequestCatchAllPath,
+                            platformHttpConsumer.getPlatformHttpConsumer());
+                }
+            } finally {
+                unmatchedRequestCatchAllRegistered = false;
+                unmatchedRequestCatchAllPath = null;
+            }
+        }
     }
 }
