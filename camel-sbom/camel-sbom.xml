@@ -20122,11 +20122,11 @@ Guava (https://github.com/google/guava) types (currently mostly just collection 
         </reference>
       </externalReferences>
     </component>
-    <component type="library" bom-ref="pkg:maven/org.apache.sshd/sshd-sftp@2.19.0?type=jar">
+    <component type="library" bom-ref="pkg:maven/org.apache.sshd/sshd-sftp@2.20.0?type=jar">
       <publisher>The Apache Software Foundation</publisher>
       <group>org.apache.sshd</group>
       <name>sshd-sftp</name>
-      <version>2.19.0</version>
+      <version>2.20.0</version>
       <description>The Apache Software Foundation provides support for the Apache community of open-source software projects.
     The Apache projects are characterized by a collaborative, consensus based development process, an open and
     pragmatic software license, and a desire to create high quality software that leads the way in its field.
@@ -20134,14 +20134,14 @@ Guava (https://github.com/google/guava) types (currently mostly just collection 
     and users.</description>
       <scope>required</scope>
       <hashes>
-        <hash alg="MD5">5be4ee8f71f229fbebe221b448d2ae9d</hash>
-        <hash alg="SHA-1">4f817b2d8c34e5bc33e968932ff177be8602eac5</hash>
-        <hash alg="SHA-256">a3ad30d2feba9fad589c7ad9117fcd9d332823697d59eb424fe2902f4d805575</hash>
-        <hash alg="SHA-512">670dc514b7dab3cb07ac0b58cec9eef3aba645569bdc31b6ea74f1e756059edd9b1dcd9a8b07e1c2cfde9403781cc841f6027ca3baf7e5a19997ac5bcc078b7f</hash>
-        <hash alg="SHA-384">8796b79dd016ee959092d132f1856447c68748161809e6e6d4124fb206fd9f16aace78cc59a7fc0be59d61cf41791baa</hash>
-        <hash alg="SHA3-384">e87b6fc45f91c545eba98746e39cc385a5228375b0fb239a24e8473c4e55e449b4133794c1a21cc2a9883ce7a049e952</hash>
-        <hash alg="SHA3-256">797cd0ceb1b93aec2eb97b16f20aeaae6a5f1cbf921f10854f90dfaa2703887a</hash>
-        <hash alg="SHA3-512">205b5bb8c934d1ee60f9b01395ffdede6ce135bf8d8f8724a35b93a8db97a3020efdd46fe7e10ecbc90cca7bd6ccecde5dfc1402238ea176b06695d21360481d</hash>
+        <hash alg="MD5">997cbfba037d2894bbb682955538f756</hash>
+        <hash alg="SHA-1">640163a12584c3eedd8e23ecd0f2b5d29143670d</hash>
+        <hash alg="SHA-256">70ce2e0e35b1106c4371471fb93313e67e0ceab8f127bc09432e115f67a5089e</hash>
+        <hash alg="SHA-512">3759d02c205d01aba51d5e7eff65235888654a02c8117ed0807e33599a9fe6275d24f1f3fb4ab58e5dcd0fd809283625696c1ceed680d07e4da6269f23ef9dd0</hash>
+        <hash alg="SHA-384">cc9b415a4d7a76a937711153d21a31c6c9f3bbb22ff419fca41cad454f273d03002c6bde524b898445609ac8a20b9348</hash>
+        <hash alg="SHA3-384">244c2b8057c662ba18696c3626be4eed06f367ef49c404028d47528dbaea33367e6c1713292dfa2bcc35b1a28a399876</hash>
+        <hash alg="SHA3-256">7e1bd98470727feb47b22696561c16dcaaeca68d962846037ceeefd6dbd67b76</hash>
+        <hash alg="SHA3-512">7df9021979896c3ed21e5447b31c475f28d9d700b95dcf99172a69357b4c3f29a32ebdefbec18392d090fe2497f8678b795ffe2bbed791c217911b6e0c7e6915</hash>
       </hashes>
       <licenses>
         <license>
@@ -20149,7 +20149,7 @@ Guava (https://github.com/google/guava) types (currently mostly just collection 
           <url>https://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
       </licenses>
-      <purl>pkg:maven/org.apache.sshd/sshd-sftp@2.19.0?type=jar</purl>
+      <purl>pkg:maven/org.apache.sshd/sshd-sftp@2.20.0?type=jar</purl>
       <externalReferences>
         <reference type="website">
           <url>https://www.apache.org/sshd/sshd-sftp/</url>
@@ -20161,15 +20161,15 @@ Guava (https://github.com/google/guava) types (currently mostly just collection 
           <url>https://mail-archives.apache.org/mod_mbox/mina-users/</url>
         </reference>
         <reference type="vcs">
-          <url>https://github.com/apache/mina-sshd/tree/sshd-2.19.0/sshd-sftp</url>
+          <url>https://github.com/apache/mina-sshd/tree/sshd-2.20.0/sshd-sftp</url>
         </reference>
       </externalReferences>
     </component>
-    <component type="library" bom-ref="pkg:maven/org.apache.sshd/sshd-core@2.19.0?type=jar">
+    <component type="library" bom-ref="pkg:maven/org.apache.sshd/sshd-core@2.20.0?type=jar">
       <publisher>The Apache Software Foundation</publisher>
       <group>org.apache.sshd</group>
       <name>sshd-core</name>
-      <version>2.19.0</version>
+      <version>2.20.0</version>
       <description>The Apache Software Foundation provides support for the Apache community of open-source software projects.
     The Apache projects are characterized by a collaborative, consensus based development process, an open and
     pragmatic software license, and a desire to create high quality software that leads the way in its field.
@@ -20177,14 +20177,14 @@ Guava (https://github.com/google/guava) types (currently mostly just collection 
     and users.</description>
       <scope>required</scope>
       <hashes>
-        <hash alg="MD5">cee9fbdd10183ca2be22e95ab5707087</hash>
-        <hash alg="SHA-1">e1524d99feece8d50db0a75f43f99818c649dd97</hash>
-        <hash alg="SHA-256">7215350bf71d95a34494f823a7451f966a2995b59e99fdf8ee9cbd63ef78cdb3</hash>
-        <hash alg="SHA-512">ebb6bd75ee130340b459f003e3a93ab43706eddb6477913c2626da7a8d815b782e2f38bb487e1dcaaf4632814e6f20b43f95519c14550d1c0c085fa864e2b370</hash>
-        <hash alg="SHA-384">e7899daaba50cb13010fb200b10fc9d3a5a5bcad527a2ea838ce7495a15e4e99135c3df8183e66762d1bbbea4bbd47f0</hash>
-        <hash alg="SHA3-384">a0b6f163a598929cbfde4fd7fa3a60270d3fe41c03b70f8518386fdf3568968581169f7633812fe3cb9be3b79e7e794a</hash>
-        <hash alg="SHA3-256">ce02fb2f1e1bd9e7d29343e6f34485af02dd8a67b301af80bac4d4f5250648f1</hash>
-        <hash alg="SHA3-512">8e1ca1b71bbb56184adc1d50e74dafda3e313d4041899af5dc7436c2f0af00086b6a3c03397646f180f853a931cf434cbfd11a33a32ea24f78e522f3d5c2ac77</hash>
+        <hash alg="MD5">f47ea560908bfe2273ccc5affc276830</hash>
+        <hash alg="SHA-1">e7de1ae88f20ca16af1360b6a2f3398425d2d501</hash>
+        <hash alg="SHA-256">0f2fd957d1c7162b7fa682942e30de21be3377b98d698b6b5b729657df74e576</hash>
+        <hash alg="SHA-512">ffcdf18528665b31774bcf9f7057ca0fba3aa6ecba1f61d70ae5910a3475bdf1837609349938ad0b756a3c0ed3c234b3d7a6c479f3a628af9cef5a01723c5aac</hash>
+        <hash alg="SHA-384">774be305e5bf8d6e473c5e984cc6266e38d0b267ff7281cefee47fd6c7f4c7e2754105c36b868f9ac8de6ea9f809d308</hash>
+        <hash alg="SHA3-384">90091f539ded1c3a03860ffd6cccced8e4df1a13f47d807a604a2778469811a6e244bf74cb0a16d9a96163e2421c490a</hash>
+        <hash alg="SHA3-256">16703327fd160da65cbcb69e78771b4559b1eb31dfa9411189925d28812748f9</hash>
+        <hash alg="SHA3-512">be71178f928a4468561ded7ac9e530ece582bbac4a76acc11e95e32568367a7356e80c85947f49279071d6e238c7c3b775a056e6f30eabd191735f1a46fd506f</hash>
       </hashes>
       <licenses>
         <license>
@@ -20192,7 +20192,7 @@ Guava (https://github.com/google/guava) types (currently mostly just collection 
           <url>https://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
       </licenses>
-      <purl>pkg:maven/org.apache.sshd/sshd-core@2.19.0?type=jar</purl>
+      <purl>pkg:maven/org.apache.sshd/sshd-core@2.20.0?type=jar</purl>
       <externalReferences>
         <reference type="website">
           <url>https://www.apache.org/sshd/sshd-core/</url>
@@ -20204,15 +20204,15 @@ Guava (https://github.com/google/guava) types (currently mostly just collection 
           <url>https://mail-archives.apache.org/mod_mbox/mina-users/</url>
         </reference>
         <reference type="vcs">
-          <url>https://github.com/apache/mina-sshd/tree/sshd-2.19.0/sshd-core</url>
+          <url>https://github.com/apache/mina-sshd/tree/sshd-2.20.0/sshd-core</url>
         </reference>
       </externalReferences>
     </component>
-    <component type="library" bom-ref="pkg:maven/org.apache.sshd/sshd-common@2.19.0?type=jar">
+    <component type="library" bom-ref="pkg:maven/org.apache.sshd/sshd-common@2.20.0?type=jar">
       <publisher>The Apache Software Foundation</publisher>
       <group>org.apache.sshd</group>
       <name>sshd-common</name>
-      <version>2.19.0</version>
+      <version>2.20.0</version>
       <description>The Apache Software Foundation provides support for the Apache community of open-source software projects.
     The Apache projects are characterized by a collaborative, consensus based development process, an open and
     pragmatic software license, and a desire to create high quality software that leads the way in its field.
@@ -20220,14 +20220,14 @@ Guava (https://github.com/google/guava) types (currently mostly just collection 
     and users.</description>
       <scope>required</scope>
       <hashes>
-        <hash alg="MD5">07048b50c2d8909bf92347e0e10f082a</hash>
-        <hash alg="SHA-1">5f871c9c88ba810d6ac21b14a1279c1fce21d5b2</hash>
-        <hash alg="SHA-256">41cef234f894e435ae2141e24baa25baf238a273cd28c6bbadcf830b1b2d68cb</hash>
-        <hash alg="SHA-512">c6c2e650bebc246fb51c6cc15ef292688c7e38c19763be01659b308b714e7e59bae57c672bdaa0e5d78bb1902db7a479df7521c58de43fc0cdef9307efe9c4aa</hash>
-        <hash alg="SHA-384">bf1bb8031ba75ab32e512c9e0c09eb353e75f56fcd4fbf13fa9103a6cd09eb5eef1b710e83a3336b27251015c0fc0a50</hash>
-        <hash alg="SHA3-384">b2cc9573c164e9b38680a0ab829d626887ea08c7b57e7124ae6fb65348e1846dde979288b0db6b8cf8170d28e36abfe1</hash>
-        <hash alg="SHA3-256">afb24e7b8060838ba947aa2944d6b9a2e79f9843c49cb188a8712185cbb2a447</hash>
-        <hash alg="SHA3-512">c2d9b0f3db23f844217615854f159e3a5c464ab28ea496d1627bb1e900f4e024f2b5bafb977eff5428702ea1ad2c132d3945e08742e374136c3582dd35f2d74e</hash>
+        <hash alg="MD5">4d0a4d5ae62af601f9a26994e57982fa</hash>
+        <hash alg="SHA-1">8a7c2c39150ed4ba3a75671c5a2314b9406d08d2</hash>
+        <hash alg="SHA-256">55612c7c6a03302940c047d8b8b80761e963f4c529a032f47acda99a1a064334</hash>
+        <hash alg="SHA-512">9c73ce1ff9a953c4d52ca4b264c38bbe5dd67b945a68ce06a22c9186c35b8563296f2f43fe1250c8200fba7e70a1ccc825f6f9aae05f81d476dc1dd151801eb0</hash>
+        <hash alg="SHA-384">0f7c1d522d6a9bed3eb80304be4595b24f74ebc5e642ad2e011e803484ca1fcd797b2956fcd7638be9b31cf82a4396f1</hash>
+        <hash alg="SHA3-384">c3b62dc367ddba0e103ba24a12c0a9d897f76204fb8f4c969241a81bb2f56d0a87da86cc6a62650869a035ec4c936d35</hash>
+        <hash alg="SHA3-256">75f90fdaaa6c8e3d29e2f1ff82b6a76418e0c4bf4e626e2ce80b49a2398c7c68</hash>
+        <hash alg="SHA3-512">2ee7433d5750c28998d445a87fb9ccf3bc9896dbb06b656976babe5b5dd0a2b0aef1f5c295c7a6c44550f47e1374f65247a00b993d19f339de59a20f6c532dea</hash>
       </hashes>
       <licenses>
         <license>
@@ -20235,7 +20235,7 @@ Guava (https://github.com/google/guava) types (currently mostly just collection 
           <url>https://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
       </licenses>
-      <purl>pkg:maven/org.apache.sshd/sshd-common@2.19.0?type=jar</purl>
+      <purl>pkg:maven/org.apache.sshd/sshd-common@2.20.0?type=jar</purl>
       <externalReferences>
         <reference type="website">
           <url>https://www.apache.org/sshd/sshd-common/</url>
@@ -20247,15 +20247,15 @@ Guava (https://github.com/google/guava) types (currently mostly just collection 
           <url>https://mail-archives.apache.org/mod_mbox/mina-users/</url>
         </reference>
         <reference type="vcs">
-          <url>https://github.com/apache/mina-sshd/tree/sshd-2.19.0/sshd-common</url>
+          <url>https://github.com/apache/mina-sshd/tree/sshd-2.20.0/sshd-common</url>
         </reference>
       </externalReferences>
     </component>
-    <component type="library" bom-ref="pkg:maven/org.apache.sshd/sshd-scp@2.19.0?type=jar">
+    <component type="library" bom-ref="pkg:maven/org.apache.sshd/sshd-scp@2.20.0?type=jar">
       <publisher>The Apache Software Foundation</publisher>
       <group>org.apache.sshd</group>
       <name>sshd-scp</name>
-      <version>2.19.0</version>
+      <version>2.20.0</version>
       <description>The Apache Software Foundation provides support for the Apache community of open-source software projects.
     The Apache projects are characterized by a collaborative, consensus based development process, an open and
     pragmatic software license, and a desire to create high quality software that leads the way in its field.
@@ -20263,14 +20263,14 @@ Guava (https://github.com/google/guava) types (currently mostly just collection 
     and users.</description>
       <scope>required</scope>
       <hashes>
-        <hash alg="MD5">4d7db9dc6bd19b44893f670176cebf8a</hash>
-        <hash alg="SHA-1">1a3386fd17a39b01d735de7ded76e9e5919f5ea6</hash>
-        <hash alg="SHA-256">5fc83628e2c6984e39eb160e08da6ed592a7f99d65e3c926f7b905500153284f</hash>
-        <hash alg="SHA-512">efefb67d5d68b476f6b6921e766418d936a69bc77138514e79a7eeb0ca4f1d9408cc2edb944390f4d0d15c426b1a8be6b95ae87ec4ff8e1ec699a61ff5c63c0a</hash>
-        <hash alg="SHA-384">289f44a3cb92bab286b2564867719c3744d90db9ade6f39a86b42494d70a016fa0d5e1874c8b417fe725a95c8e271a7b</hash>
-        <hash alg="SHA3-384">c27e67c0bbaa441cc71ee230f579667dacb4377d61fbdf8adafb220bb28a592203970c392b4de96c458adc6a87420064</hash>
-        <hash alg="SHA3-256">5e746f15d761254e9eb4432a10a632adbbb370f225bdd7c0549e0710329fdf3e</hash>
-        <hash alg="SHA3-512">5edce8c54348c144d83d1632fee3fd46524eee63fa63845a6bcac1bb18f0b462a4999e560ca2eb02cf7564a44c7106f05d368f4bb47968e4bd2cbc657c1b7e57</hash>
+        <hash alg="MD5">410150c05984acf8331560b2a31d807e</hash>
+        <hash alg="SHA-1">92aa56bc0f8f9898520f2caa3504becb195d0696</hash>
+        <hash alg="SHA-256">efb1f2c004ef847ec0bf25d8de223da2d7b162857c5b0e1f3fe1d04aa08d7e29</hash>
+        <hash alg="SHA-512">bc6baf9126e5af942ad1b1c6adc968b66237f83710309e0016183c05d2b0bb64051f9e26225332327fe5b92f36fef1a3f3b40f87dc5ad77f3ac1342c2a6fff81</hash>
+        <hash alg="SHA-384">78bd19beda361ac08bc33f0812ab1ca38cd5988f55d12185d60abe9cb1807ad81e8e4f7dbcd971ca2f784cd67f8753f4</hash>
+        <hash alg="SHA3-384">8ea726bed3af1ca885129c4b131fa17d6f655cd643e329b632471e68cb9e581354d04fc1859d228e79a366e205136e10</hash>
+        <hash alg="SHA3-256">bb69d60e32b74c98af0c5972d40bbd788cf19078b37f2b8b3fb54ceb8fa9a0cd</hash>
+        <hash alg="SHA3-512">ca2d46a4bd7443ddd59c54f306e94c981fe272a029a505de3e5a71d1bfe8c3e91a29fb69b1ef6bdbc895c1167310c83e35e05eb3acf118bd080c3d2707b08f6c</hash>
       </hashes>
       <licenses>
         <license>
@@ -20278,7 +20278,7 @@ Guava (https://github.com/google/guava) types (currently mostly just collection 
           <url>https://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
       </licenses>
-      <purl>pkg:maven/org.apache.sshd/sshd-scp@2.19.0?type=jar</purl>
+      <purl>pkg:maven/org.apache.sshd/sshd-scp@2.20.0?type=jar</purl>
       <externalReferences>
         <reference type="website">
           <url>https://www.apache.org/sshd/sshd-scp/</url>
@@ -20290,7 +20290,7 @@ Guava (https://github.com/google/guava) types (currently mostly just collection 
           <url>https://mail-archives.apache.org/mod_mbox/mina-users/</url>
         </reference>
         <reference type="vcs">
-          <url>https://github.com/apache/mina-sshd/tree/sshd-2.19.0/sshd-scp</url>
+          <url>https://github.com/apache/mina-sshd/tree/sshd-2.20.0/sshd-scp</url>
         </reference>
       </externalReferences>
     </component>
@@ -96021,28 +96021,28 @@ that achieves high performance when combined with Graal.</description>
         </reference>
       </externalReferences>
     </component>
-    <component type="library" bom-ref="pkg:maven/io.nats/jnats@2.26.0?type=jar">
+    <component type="library" bom-ref="pkg:maven/io.nats/jnats@2.26.3?type=jar">
       <group>io.nats</group>
       <name>jnats</name>
-      <version>2.26.0</version>
+      <version>2.26.3</version>
       <description>Client library for working with the NATS messaging system.</description>
       <scope>required</scope>
       <hashes>
-        <hash alg="MD5">e55812fa05d213df769afebc3432d3c0</hash>
-        <hash alg="SHA-1">558b06a978c672d88617915d38f9e7dbf3852b48</hash>
-        <hash alg="SHA-256">2c44aa0e1307dca7bfc6f1e544d1f57ef74be184604411638f0d951a850a1102</hash>
-        <hash alg="SHA-512">b5ce0706a0f50f824dc1ad0921503f159c162af99d5965dd0d419cf8c65c9b8e1449bce4a4022479e2ebd0d4c4eaa1cdd04e7e9e160a37e177a9bb7c6a1b7013</hash>
-        <hash alg="SHA-384">5d98d986323ade67032543d61d9b452837cbf5bb6ce45ce33ca8e13c3ae83943cb77b97518571808ab8018cf20422168</hash>
-        <hash alg="SHA3-384">55abca70ab0127987597b539481511bbcc5be42a4986c781ff398e6a46b0f1b039e460f4548a893e6a6d14dad43d06ae</hash>
-        <hash alg="SHA3-256">f02699b75d051e4b77131a3e82a017d27be8a34adc79556807ee8edf6d8b0f5b</hash>
-        <hash alg="SHA3-512">6fe2843588a58d477e0e9dab5786d2acf2f804bc88ccf164495b0d4b21320e10b4f63f9228432e389b1f9292381e9766bb79fdf722759e2113d019fa22fdd066</hash>
+        <hash alg="MD5">79e1409f64b404eb3c098e9416afe046</hash>
+        <hash alg="SHA-1">2cd107fa2da21406cc459ca87de5e01cbc38b7b8</hash>
+        <hash alg="SHA-256">dad5c08148220792c0f6b21f042f4d7128f9565466f945644a93484b4e29f9cd</hash>
+        <hash alg="SHA-512">75ca10c751d6ab0ca5e4f983ac53c42d49d8d04e295062cbcd75b2922a371abbd9652a8f1c9f4999797bdb3c5a0b77015857bf112411ff707931580adcb338b2</hash>
+        <hash alg="SHA-384">ba73b2abb1c22f732f83bc972e3adef15b6e15df63bdf393e328cffc83103077bb3784ff9fcab0789147d916ba576dbb</hash>
+        <hash alg="SHA3-384">4e583d22aff4fc9d340c0c4990c2e41eac7a18d9c56fd6db23af9ee65772c7a23b72c5bff18415c9aca55aa89abc07aa</hash>
+        <hash alg="SHA3-256">f32b7e3397a3e96cd67637daf94961898665c8629649db9fbff2d51a5f40a334</hash>
+        <hash alg="SHA3-512">2e4dc8142ddedf4706ca0c4ba76f8f101b3aff90b801f4f206ad1e8294e060e561e910577240d9f2c1a2ab7d2580189f7b744908e9713b6af185e67f238cf346</hash>
       </hashes>
       <licenses>
         <license>
           <id>Apache-2.0</id>
         </license>
       </licenses>
-      <purl>pkg:maven/io.nats/jnats@2.26.0?type=jar</purl>
+      <purl>pkg:maven/io.nats/jnats@2.26.3?type=jar</purl>
       <externalReferences>
         <reference type="website">
           <url>https://github.com/nats-io/nats.java</url>
@@ -96052,21 +96052,21 @@ that achieves high performance when combined with Graal.</description>
         </reference>
       </externalReferences>
     </component>
-    <component type="library" bom-ref="pkg:maven/org.bouncycastle/bcprov-lts8on@2.73.10?type=jar">
+    <component type="library" bom-ref="pkg:maven/org.bouncycastle/bcprov-lts8on@2.73.12.1?type=jar">
       <group>org.bouncycastle</group>
       <name>bcprov-lts8on</name>
-      <version>2.73.10</version>
-      <description>The Long Term Stable (LTS) Bouncy Castle Crypto package is a Java implementation of cryptographic algorithms. This jar contains the JCA/JCE provider and low-level API for the BC LTS version 2.73.10 for Java 8 and later.</description>
+      <version>2.73.12.1</version>
+      <description>The Long Term Stable (LTS) Bouncy Castle Crypto package is a Java implementation of cryptographic algorithms. This jar contains the JCA/JCE provider and low-level API for the BC LTS version 2.73.12.1 for Java 8 and later.</description>
       <scope>required</scope>
       <hashes>
-        <hash alg="MD5">302b068279f3ba8d85b124efd9ce6266</hash>
-        <hash alg="SHA-1">273d1afe4b8df1a40650054ef64fcc0bdefe2b8d</hash>
-        <hash alg="SHA-256">136113cd0c7fccba8dbdc4fe5c30c2e32c2d3020a78eb19aeb7d848f78536b71</hash>
-        <hash alg="SHA-512">1d49a6e322e7886eccbaef8cb13e78128cfa72c66891347dc3809aee26ba95afefac48283e5d375fe840d78e9d6741c886163a58b932a60d64c433274db51ed1</hash>
-        <hash alg="SHA-384">d7273068ca639056e2189511456f76c2591b7107b91f360efa92a1b2f9f862d33e6bfb19aec0cb91f6634be123493354</hash>
-        <hash alg="SHA3-384">ee1278b5bbe3211d9b3d33abcca9abe460af3c92e09c7ddb1aa5082df6de53682f2c527e9250bcbfd60866847e3a2497</hash>
-        <hash alg="SHA3-256">cc88308f790d54ab792c7808186ddbe0dcd3b11797110f90907fffd3fd1d8f9f</hash>
-        <hash alg="SHA3-512">7ba92387ad8b7550bbadbc4c84b4de82f602213aee20dc2417a87f85088a376144451d35de195a149fadc634e666f88f2f068b1db0233acc65d440edd8c4c295</hash>
+        <hash alg="MD5">5b9c0165a99841d77c36acba434d7102</hash>
+        <hash alg="SHA-1">d634ca24be15785d559e5ee31de76a9b9c306414</hash>
+        <hash alg="SHA-256">7514e0d8b9987b1cce93c15d8379d14fed2663b37e7c0b0692e596ed6b6e58a7</hash>
+        <hash alg="SHA-512">263ffe105cef81a1477b3f0fec7382395fe5fbe4072ce718d5ceef384caa2c8bae207641359042c3534224e1bb6dfc39e7c5a0bdc18915f8f19eb8f880bb2473</hash>
+        <hash alg="SHA-384">266338d7b2cffab2c586388b289c814a084199308a1e616370643829c444e150e7a424d4b290bc25e9de59f7f449c186</hash>
+        <hash alg="SHA3-384">ff17acfdbcd25e133faa57c31a288cb687c43a891c4602bd3cc1729e9d2ad41b4f608731b389563abaea8372cf1d08b9</hash>
+        <hash alg="SHA3-256">f3958816ed48f65d943700c6b2458d0046d20b01dd92b80894c60f380da626fe</hash>
+        <hash alg="SHA3-512">3a347eb1d566b404e0b6b94a8b76f2b36edfe7580b8ff1b3b512293c6f15b1f7d1b8c4d62f76c49a72c3ed833df620c004c2284f53d13ea8c29ce8349aece5f5</hash>
       </hashes>
       <licenses>
         <license>
@@ -96074,7 +96074,7 @@ that achieves high performance when combined with Graal.</description>
           <url>https://www.bouncycastle.org/licence.html</url>
         </license>
       </licenses>
-      <purl>pkg:maven/org.bouncycastle/bcprov-lts8on@2.73.10?type=jar</purl>
+      <purl>pkg:maven/org.bouncycastle/bcprov-lts8on@2.73.12.1?type=jar</purl>
       <externalReferences>
         <reference type="website">
           <url>https://www.bouncycastle.org/lts-java</url>
@@ -116116,29 +116116,29 @@ Roster, Chat and other functionality.</description>
         </reference>
       </externalReferences>
     </component>
-    <component type="library" bom-ref="pkg:maven/org.apache.zookeeper/zookeeper@3.9.5?type=jar">
+    <component type="library" bom-ref="pkg:maven/org.apache.zookeeper/zookeeper@3.9.6?type=jar">
       <publisher>The Apache Software Foundation</publisher>
       <group>org.apache.zookeeper</group>
       <name>zookeeper</name>
-      <version>3.9.5</version>
+      <version>3.9.6</version>
       <description>ZooKeeper server</description>
       <scope>required</scope>
       <hashes>
-        <hash alg="MD5">59e783133aa7f71d48f4529b3f82d2c9</hash>
-        <hash alg="SHA-1">4f091e2a604d7c6a818ac2a7169e3bad5a5441dc</hash>
-        <hash alg="SHA-256">936d025db1a85f085edea25048c3f5b3de5fc29329c371a10925e3b78b0b38a0</hash>
-        <hash alg="SHA-512">84d4b23d332081115e4c68b454a70a1421047277d4c22f238563ab25d769cc8645e3cff5ae7bdbc367816853e4f5a4e60d4eb85eaab14266b97eb1af50305614</hash>
-        <hash alg="SHA-384">6a9f8b956147b58ee1e8796d0e0ee3d7b2f76b1c1a05e2f5fd74aaaf9641a9ecee27ee794098fc4287d927e8c8eba220</hash>
-        <hash alg="SHA3-384">92797f6989576bfb072872e5235170893532419ddf9204dc69eb80418b33db7ab35a14fc8c462475854c9138b36a40d9</hash>
-        <hash alg="SHA3-256">d89f11613e230055c21732c87ffe22110027c940e9a43f048997fe864e0ce861</hash>
-        <hash alg="SHA3-512">a7167e1f010ba7fbd68b500f9fb5a1626db5940ae73f2280d6c7472505762a51ccca15bc61949aa6b635e619ce5a9bc49940c930905a4d498b2394286d6db012</hash>
+        <hash alg="MD5">f74d1cdfc46e88a3d9a3f22c06970065</hash>
+        <hash alg="SHA-1">3b2ee5076baf8ccc740a0aaaa26110f976addf70</hash>
+        <hash alg="SHA-256">09bdf93be7c0b5b7cd9fe51bee6abe424796cd5aaf75cf0c10bbd6f1273562ee</hash>
+        <hash alg="SHA-512">a30fea3338f70c8c18f5d7b860d556a22f6d55758c2e63379c6093d0e457251c88761b488b53d7e1eeb42c0a0bda4d46d9760f1466c768b72d6dddc0367212f3</hash>
+        <hash alg="SHA-384">cf378a238683b27e3c87edf7a5934c71b33a96f354b6b1212f4a80f077b85d90fe180457f0afe79234cd6e6f171c5116</hash>
+        <hash alg="SHA3-384">ad1c387c8f04f06551440f05d3e46d2c8fe5a564d1a9d9cfde3a4d69355fa46fb2c04c46beddabb3159d665a8b243f37</hash>
+        <hash alg="SHA3-256">0a83a0fcdac50aed7487d6401b2c390b3d93538d2f5aae6775cd6dc582791679</hash>
+        <hash alg="SHA3-512">4e4966e69e1aa6ffd5b3d0d4980a49ab5bc761d17aa4c78519d9bb8f37eeeb8b4226ff6d517ca4e23997f1d955562c5d461b16dfcb6e7e50c11d721fafbb21dc</hash>
       </hashes>
       <licenses>
         <license>
           <id>Apache-2.0</id>
         </license>
       </licenses>
-      <purl>pkg:maven/org.apache.zookeeper/zookeeper@3.9.5?type=jar</purl>
+      <purl>pkg:maven/org.apache.zookeeper/zookeeper@3.9.6?type=jar</purl>
       <externalReferences>
         <reference type="website">
           <url>http://zookeeper.apache.org/zookeeper</url>
@@ -116160,29 +116160,29 @@ Roster, Chat and other functionality.</description>
         </reference>
       </externalReferences>
     </component>
-    <component type="library" bom-ref="pkg:maven/org.apache.zookeeper/zookeeper-jute@3.9.5?type=jar">
+    <component type="library" bom-ref="pkg:maven/org.apache.zookeeper/zookeeper-jute@3.9.6?type=jar">
       <publisher>The Apache Software Foundation</publisher>
       <group>org.apache.zookeeper</group>
       <name>zookeeper-jute</name>
-      <version>3.9.5</version>
+      <version>3.9.6</version>
       <description>ZooKeeper jute</description>
       <scope>required</scope>
       <hashes>
-        <hash alg="MD5">d77ecfdc652320208c229b5fcee6e289</hash>
-        <hash alg="SHA-1">20135d3521579fd7382fed744f6b74241ecb5b73</hash>
-        <hash alg="SHA-256">abcbc7f9d6c493daa118da6fa3061a201e2c521217526e8535adfb56b629e52a</hash>
-        <hash alg="SHA-512">e55a4d488af0621bdd30292a915377d6cba0a663cde3ce3c7c9ae57cef9314efb7a53b1853c240dd9a9da9475e30f9319c6e0c6ebd32f2649bd8ffaf7c12e1f1</hash>
-        <hash alg="SHA-384">348d8ece101a1b18806069644206e3a3795e0ec4d086ed5572752673655566ea63ffc2fe08cb0276caebed25623afb6a</hash>
-        <hash alg="SHA3-384">865dfb72f85893f25b300086a4610b70bccfc1e9af00add4b07a1881030201b0485a6323275acdf7df5b9d1bb4e426f2</hash>
-        <hash alg="SHA3-256">02019d3e1fea5fe8bd93e7fb55528d4d8961e72bdb86159be8827190bed9b6a4</hash>
-        <hash alg="SHA3-512">c256b24561e169a7bb85e530969df223be0e950dbde7e8fbe34880cb831034d39d24b7051248ee30bc602aec3dfcea88f01c1e641d94d8443b32db8e4d143b5d</hash>
+        <hash alg="MD5">9617689994d9e99b47762ac1e20b570f</hash>
+        <hash alg="SHA-1">00675eaa194fc043d828d2d0bccc5677c3a88d51</hash>
+        <hash alg="SHA-256">74f9cb1e4ba899ecc4b816201b4afd1c63c256705bd9176393fac4071597c75f</hash>
+        <hash alg="SHA-512">7842e103df8258d246133be858328d5f469977abf740d2251f266837f8179f25f9b48713d667fce9d83e8a7cc1993c8628a2b8bfc90662192316cacb678f8add</hash>
+        <hash alg="SHA-384">8036e1fbba6433deabf1af0f02493ff841ea5e993566f7046799ac5b238712e121124f7a08da92182c73517158782284</hash>
+        <hash alg="SHA3-384">96dc1bbb33422edae264745da7e60a44d9bc12f028a76c6fb85b616783dab780094d855754a138a2b64592c9fded7ade</hash>
+        <hash alg="SHA3-256">b8b309dd6172fa6420a2c3e97ee7ac79f5a34fc60eb832fec7ac66380445e9d8</hash>
+        <hash alg="SHA3-512">bc006f58c87ac9401da6cb5d0360362623e9654945f502cc6b8def53258c9659cb6cb4ec520fb6f8afc8c1e88b1b51186f5384f6dff0f94cbd97857d641c6618</hash>
       </hashes>
       <licenses>
         <license>
           <id>Apache-2.0</id>
         </license>
       </licenses>
-      <purl>pkg:maven/org.apache.zookeeper/zookeeper-jute@3.9.5?type=jar</purl>
+      <purl>pkg:maven/org.apache.zookeeper/zookeeper-jute@3.9.6?type=jar</purl>
       <externalReferences>
         <reference type="website">
           <url>http://zookeeper.apache.org/zookeeper-jute</url>
@@ -130065,8 +130065,8 @@ introspection of method/constructor parameter names, without having to add expli
     <dependency ref="pkg:maven/org.apache.camel/camel-test-infra-ftp@4.22.2-SNAPSHOT?type=jar">
       <dependency ref="pkg:maven/commons-io/commons-io@2.22.0?type=jar"/>
       <dependency ref="pkg:maven/org.apache.ftpserver/ftpserver-core@1.2.1?type=jar"/>
-      <dependency ref="pkg:maven/org.apache.sshd/sshd-sftp@2.19.0?type=jar"/>
-      <dependency ref="pkg:maven/org.apache.sshd/sshd-scp@2.19.0?type=jar"/>
+      <dependency ref="pkg:maven/org.apache.sshd/sshd-sftp@2.20.0?type=jar"/>
+      <dependency ref="pkg:maven/org.apache.sshd/sshd-scp@2.20.0?type=jar"/>
       <dependency ref="pkg:maven/org.apache.camel/camel-test-infra-common@4.22.2-SNAPSHOT?type=jar"/>
       <dependency ref="pkg:maven/org.junit.jupiter/junit-jupiter-api@6.1.2?type=jar"/>
       <dependency ref="pkg:maven/org.junit.jupiter/junit-jupiter-engine@6.1.2?type=jar"/>
@@ -130084,22 +130084,22 @@ introspection of method/constructor parameter names, without having to add expli
     <dependency ref="pkg:maven/org.apache.mina/mina-core@2.2.4?type=jar">
       <dependency ref="pkg:maven/org.slf4j/slf4j-api@2.0.18?type=jar"/>
     </dependency>
-    <dependency ref="pkg:maven/org.apache.sshd/sshd-sftp@2.19.0?type=jar">
-      <dependency ref="pkg:maven/org.apache.sshd/sshd-core@2.19.0?type=jar"/>
+    <dependency ref="pkg:maven/org.apache.sshd/sshd-sftp@2.20.0?type=jar">
+      <dependency ref="pkg:maven/org.apache.sshd/sshd-core@2.20.0?type=jar"/>
       <dependency ref="pkg:maven/org.slf4j/slf4j-api@2.0.18?type=jar"/>
       <dependency ref="pkg:maven/org.slf4j/jcl-over-slf4j@1.7.36?type=jar"/>
     </dependency>
-    <dependency ref="pkg:maven/org.apache.sshd/sshd-core@2.19.0?type=jar">
-      <dependency ref="pkg:maven/org.apache.sshd/sshd-common@2.19.0?type=jar"/>
+    <dependency ref="pkg:maven/org.apache.sshd/sshd-core@2.20.0?type=jar">
+      <dependency ref="pkg:maven/org.apache.sshd/sshd-common@2.20.0?type=jar"/>
       <dependency ref="pkg:maven/org.slf4j/slf4j-api@2.0.18?type=jar"/>
       <dependency ref="pkg:maven/org.slf4j/jcl-over-slf4j@1.7.36?type=jar"/>
     </dependency>
-    <dependency ref="pkg:maven/org.apache.sshd/sshd-common@2.19.0?type=jar">
+    <dependency ref="pkg:maven/org.apache.sshd/sshd-common@2.20.0?type=jar">
       <dependency ref="pkg:maven/org.slf4j/slf4j-api@2.0.18?type=jar"/>
       <dependency ref="pkg:maven/org.slf4j/jcl-over-slf4j@1.7.36?type=jar"/>
     </dependency>
-    <dependency ref="pkg:maven/org.apache.sshd/sshd-scp@2.19.0?type=jar">
-      <dependency ref="pkg:maven/org.apache.sshd/sshd-core@2.19.0?type=jar"/>
+    <dependency ref="pkg:maven/org.apache.sshd/sshd-scp@2.20.0?type=jar">
+      <dependency ref="pkg:maven/org.apache.sshd/sshd-core@2.20.0?type=jar"/>
       <dependency ref="pkg:maven/org.slf4j/slf4j-api@2.0.18?type=jar"/>
       <dependency ref="pkg:maven/org.slf4j/jcl-over-slf4j@1.7.36?type=jar"/>
     </dependency>
@@ -132066,6 +132066,7 @@ introspection of method/constructor parameter names, without having to add expli
     </dependency>
     <dependency ref="pkg:maven/org.apache.camel/camel-platform-http-vertx@4.22.2-SNAPSHOT?type=jar">
       <dependency ref="pkg:maven/org.apache.camel/camel-platform-http@4.22.2-SNAPSHOT?type=jar"/>
+      <dependency ref="pkg:maven/org.apache.camel/camel-http-base@4.22.2-SNAPSHOT?type=jar"/>
       <dependency ref="pkg:maven/org.apache.camel/camel-attachments@4.22.2-SNAPSHOT?type=jar"/>
       <dependency ref="pkg:maven/org.apache.camel/camel-vertx-common@4.22.2-SNAPSHOT?type=jar"/>
       <dependency ref="pkg:maven/io.vertx/vertx-web@4.5.34?type=jar"/>
@@ -134714,7 +134715,7 @@ introspection of method/constructor parameter names, without having to add expli
     </dependency>
     <dependency ref="pkg:maven/org.apache.camel/camel-ssh@4.22.2-SNAPSHOT?type=jar">
       <dependency ref="pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar"/>
-      <dependency ref="pkg:maven/org.apache.sshd/sshd-core@2.19.0?type=jar"/>
+      <dependency ref="pkg:maven/org.apache.sshd/sshd-core@2.20.0?type=jar"/>
       <dependency ref="pkg:maven/org.bouncycastle/bcpg-jdk18on@1.85?type=jar"/>
       <dependency ref="pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar"/>
     </dependency>
@@ -141166,13 +141167,13 @@ introspection of method/constructor parameter names, without having to add expli
     </dependency>
     <dependency ref="pkg:maven/org.apache.camel/camel-nats@4.22.2-SNAPSHOT?type=jar">
       <dependency ref="pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar"/>
-      <dependency ref="pkg:maven/io.nats/jnats@2.26.0?type=jar"/>
+      <dependency ref="pkg:maven/io.nats/jnats@2.26.3?type=jar"/>
     </dependency>
-    <dependency ref="pkg:maven/io.nats/jnats@2.26.0?type=jar">
-      <dependency ref="pkg:maven/org.bouncycastle/bcprov-lts8on@2.73.10?type=jar"/>
+    <dependency ref="pkg:maven/io.nats/jnats@2.26.3?type=jar">
+      <dependency ref="pkg:maven/org.bouncycastle/bcprov-lts8on@2.73.12.1?type=jar"/>
       <dependency ref="pkg:maven/org.jspecify/jspecify@1.0.1?type=jar"/>
     </dependency>
-    <dependency ref="pkg:maven/org.bouncycastle/bcprov-lts8on@2.73.10?type=jar"/>
+    <dependency ref="pkg:maven/org.bouncycastle/bcprov-lts8on@2.73.12.1?type=jar"/>
     <dependency ref="pkg:maven/org.apache.camel/camel-oaipmh@4.22.2-SNAPSHOT?type=jar">
       <dependency ref="pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar"/>
       <dependency ref="pkg:maven/joda-time/joda-time@2.14.3?type=jar"/>
@@ -143918,15 +143919,15 @@ introspection of method/constructor parameter names, without having to add expli
     </dependency>
     <dependency ref="pkg:maven/org.apache.camel/camel-zookeeper-master@4.22.2-SNAPSHOT?type=jar">
       <dependency ref="pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar"/>
-      <dependency ref="pkg:maven/org.apache.zookeeper/zookeeper@3.9.5?type=jar"/>
+      <dependency ref="pkg:maven/org.apache.zookeeper/zookeeper@3.9.6?type=jar"/>
       <dependency ref="pkg:maven/org.apache.curator/curator-framework@5.9.0?type=jar"/>
       <dependency ref="pkg:maven/org.apache.curator/curator-recipes@5.9.0?type=jar"/>
       <dependency ref="pkg:maven/com.fasterxml.jackson.core/jackson-core@2.22.1?type=jar"/>
       <dependency ref="pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.22.1?type=jar"/>
       <dependency ref="pkg:maven/com.fasterxml.jackson.core/jackson-annotations@2.22?type=jar"/>
     </dependency>
-    <dependency ref="pkg:maven/org.apache.zookeeper/zookeeper@3.9.5?type=jar">
-      <dependency ref="pkg:maven/org.apache.zookeeper/zookeeper-jute@3.9.5?type=jar"/>
+    <dependency ref="pkg:maven/org.apache.zookeeper/zookeeper@3.9.6?type=jar">
+      <dependency ref="pkg:maven/org.apache.zookeeper/zookeeper-jute@3.9.6?type=jar"/>
       <dependency ref="pkg:maven/org.apache.yetus/audience-annotations@0.12.0?type=jar"/>
       <dependency ref="pkg:maven/io.netty/netty-handler@4.2.18.Final?type=jar"/>
       <dependency ref="pkg:maven/io.netty/netty-transport-native-epoll@4.2.18.Final?classifier=linux-x86_64&amp;type=jar"/>
@@ -143934,14 +143935,14 @@ introspection of method/constructor parameter names, without having to add expli
       <dependency ref="pkg:maven/org.slf4j/slf4j-api@2.0.18?type=jar"/>
       <dependency ref="pkg:maven/commons-io/commons-io@2.17.0?type=jar"/>
     </dependency>
-    <dependency ref="pkg:maven/org.apache.zookeeper/zookeeper-jute@3.9.5?type=jar">
+    <dependency ref="pkg:maven/org.apache.zookeeper/zookeeper-jute@3.9.6?type=jar">
       <dependency ref="pkg:maven/org.apache.yetus/audience-annotations@0.12.0?type=jar"/>
     </dependency>
     <dependency ref="pkg:maven/org.apache.curator/curator-framework@5.9.0?type=jar">
       <dependency ref="pkg:maven/org.apache.curator/curator-client@5.9.0?type=jar"/>
     </dependency>
     <dependency ref="pkg:maven/org.apache.curator/curator-client@5.9.0?type=jar">
-      <dependency ref="pkg:maven/org.apache.zookeeper/zookeeper@3.9.5?type=jar"/>
+      <dependency ref="pkg:maven/org.apache.zookeeper/zookeeper@3.9.6?type=jar"/>
       <dependency ref="pkg:maven/com.google.guava/guava@33.6.0-jre?type=jar"/>
       <dependency ref="pkg:maven/org.slf4j/slf4j-api@2.0.18?type=jar"/>
     </dependency>
@@ -143951,7 +143952,7 @@ introspection of method/constructor parameter names, without having to add expli
     <dependency ref="pkg:maven/org.apache.camel/camel-zookeeper@4.22.2-SNAPSHOT?type=jar">
       <dependency ref="pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar"/>
       <dependency ref="pkg:maven/org.apache.camel/camel-cluster@4.22.2-SNAPSHOT?type=jar"/>
-      <dependency ref="pkg:maven/org.apache.zookeeper/zookeeper@3.9.5?type=jar"/>
+      <dependency ref="pkg:maven/org.apache.zookeeper/zookeeper@3.9.6?type=jar"/>
       <dependency ref="pkg:maven/org.apache.curator/curator-client@5.9.0?type=jar"/>
       <dependency ref="pkg:maven/org.apache.curator/curator-framework@5.9.0?type=jar"/>
       <dependency ref="pkg:maven/org.apache.curator/curator-recipes@5.9.0?type=jar"/>
@@ -143980,7 +143981,7 @@ introspection of method/constructor parameter names, without having to add expli
     </dependency>
     <dependency ref="pkg:maven/org.apache.camel/camel-mina-sftp@4.22.2-SNAPSHOT?type=jar">
       <dependency ref="pkg:maven/org.apache.camel/camel-ftp-common@4.22.2-SNAPSHOT?type=jar"/>
-      <dependency ref="pkg:maven/org.apache.sshd/sshd-sftp@2.19.0?type=jar"/>
+      <dependency ref="pkg:maven/org.apache.sshd/sshd-sftp@2.20.0?type=jar"/>
     </dependency>
     <dependency ref="pkg:maven/org.apache.camel/catalog@4.22.2-SNAPSHOT?type=pom">
       <dependency ref="pkg:maven/org.apache.camel/dummy-component@4.22.2-SNAPSHOT?type=jar"/>
