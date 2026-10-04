@@ -17,6 +17,10 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.util.json.JsonObject;
@@ -55,6 +59,11 @@ class AiPanelPromptBudgetTest {
     // raised from 9450 for camel_project_overview and camel_save_project_summary (CAMEL-25143), measured ~9750:
     // full mode only (hosted models), and the panel's own /overview sends no tools at all
     static final int FULL_BUDGET_TOKENS = 9_850;
+    /** Measured ~5.2k tokens for 26 tools: the core set (~4.7k) plus every tool group (CAMEL-24834). */
+    // the SQL group adds tui_execute_sql and tui_update_row (~385 tokens), each group one guidance line in the prompt
+    // (~130 for all three); an integration rarely has all three, and the groups only load for the integration that
+    // needs them
+    static final int CORE_WITH_GROUPS_BUDGET_TOKENS = 5_500;
 
     record Prefix(String mode, int tools, long promptChars, long toolChars) {
 
@@ -99,8 +108,21 @@ class AiPanelPromptBudgetTest {
         AiPanel panel = new AiPanel();
         panel.setToolRegistryForTesting(new TuiToolRegistry(null));
         panel.setToolModeForTesting(mode);
+        return measure(mode, panel);
+    }
+
+    static Prefix measure(String mode, AiPanel panel) {
         List<LlmClient.ToolDef> defs = panel.toolDefinitionsForTesting();
         return new Prefix(mode, defs.size(), panel.systemPromptForTesting().length(), wireChars(defs));
+    }
+
+    /** A core panel with every tool group loaded: datasources, OpenTelemetry, tracing, Micrometer, circuit breakers. */
+    static AiPanel coreWithAllGroups() {
+        AiPanelToolGroupsTest.FakeApp app = new AiPanelToolGroupsTest.FakeApp();
+        app.features = AiPanelToolGroupsTest.EVERYTHING;
+        AiPanel panel = AiPanelToolGroupsTest.panel(AiPanel.TOOL_MODE_CORE, app);
+        panel.refreshToolGroupsForTesting();
+        return panel;
     }
 
     @Test
@@ -110,6 +132,17 @@ class AiPanelPromptBudgetTest {
 
         assertTrue(core.totalTokens() <= CORE_BUDGET_TOKENS,
                 "core prefix grew to ~" + core.totalTokens() + " tokens, budget " + CORE_BUDGET_TOKENS + ": " + core);
+    }
+
+    @Test
+    void coreWithAllGroupsPrefixStaysWithinBudget() {
+        Prefix groups = measure("core+groups", coreWithAllGroups());
+        System.out.println("AI panel static prefix: " + groups);
+
+        assertTrue(groups.totalTokens() <= CORE_WITH_GROUPS_BUDGET_TOKENS,
+                "core prefix with all groups grew to ~" + groups.totalTokens() + " tokens, budget "
+                                                                           + CORE_WITH_GROUPS_BUDGET_TOKENS + ": "
+                                                                           + groups);
     }
 
     @Test
@@ -154,5 +187,20 @@ class AiPanelPromptBudgetTest {
         for (String prompt : List.of(core, full)) {
             assertTrue(prompt.contains("camel_write_file"), "write files with the tool");
         }
+
+        // CAMEL-24834: the guidance of the tool groups only names tools the model is given
+        AiPanel groups = coreWithAllGroups();
+        String prompt = groups.systemPromptForTesting();
+        int start = prompt.indexOf("The selected integration:");
+        assertTrue(start > 0, "the guidance is appended at the end");
+        Set<String> tools = groups.toolDefinitionsForTesting().stream().map(LlmClient.ToolDef::name)
+                .collect(Collectors.toSet());
+        Matcher m = Pattern.compile("\\b(?:tui|camel)_[a-z_]+").matcher(prompt.substring(start));
+        int named = 0;
+        while (m.find()) {
+            named++;
+            assertTrue(tools.contains(m.group()), m.group() + " is named in the guidance but not in the set");
+        }
+        assertTrue(named >= 4, "the guidance names the tools to use");
     }
 }

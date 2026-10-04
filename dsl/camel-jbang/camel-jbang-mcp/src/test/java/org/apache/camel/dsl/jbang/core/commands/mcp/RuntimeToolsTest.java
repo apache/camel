@@ -16,8 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
+import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.junit.jupiter.api.Test;
@@ -76,9 +78,19 @@ class RuntimeToolsTest {
     }
 
     @Test
+    void theToolGroupsToolIsVisibleAtTheReadOnlyAccessLevel() throws Exception {
+        // McpAccessFilter decides from the annotations: a read-only hint keeps the tool for a read-only client
+        Method m = RuntimeTools.class.getDeclaredMethod("camel_runtime_tool_groups", String.class);
+        Tool tool = m.getAnnotation(Tool.class);
+        assertThat(McpSecurityConfig.AccessLevel.READ_ONLY.permits(
+                tool.annotations().readOnlyHint(), tool.annotations().destructiveHint())).isTrue();
+    }
+
+    @Test
     void theNewWrappersDelegateToRegistryTools() {
         // CAMEL-24867: every wrapper names a tool the shared registry has, so a typo cannot hide until runtime
-        for (String name : List.of("execute_sql", "get_datasources", "get_sql_trace", "get_circuit_breakers", "get_metrics",
+        for (String name : List.of("execute_sql", "get_tool_groups", "get_datasources", "get_sql_trace",
+                "get_circuit_breakers", "get_metrics",
                 "get_eip_stats", "get_spans", "get_startup_steps", "get_route_analysis", "detect_config_drift")) {
             assertThat(ToolRegistry.findTool(name)).as(name).isNotNull();
         }

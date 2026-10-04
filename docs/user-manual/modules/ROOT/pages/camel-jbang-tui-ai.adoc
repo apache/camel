@@ -64,7 +64,7 @@ cycles backward.
 | Show or switch how file writes by the model (`camel_write_file`) are handled. `confirm` (default) shows the confirm dialog for every write, whatever the model passes; `auto` lets the model skip the dialog with `confirm=false`; `live` replays the edit in the Source editor so you watch it happen (see below). The mode lasts for the session.
 
 | `/tools [auto\|core\|full]` (`/t`)
-| Show which tool set is sent to the model, or switch it. `auto` (default) sends the core set to local providers and every tool to hosted ones; the choice is saved as `camel.tui.ai.tools`.
+| Show which tool set is sent to the model, or switch it. `auto` (default) sends the core set to local providers and every tool to hosted ones; the choice is saved as `camel.tui.ai.tools`. With the core set it also shows the tool groups loaded for the selected integration, for example `core (26 of 60 tools), mode auto (local provider); groups: sql, resilience (from the selected integration)`, see xref:camel-jbang-tui-local-models.adoc#_tool_groups_from_the_selected_integration[Tool groups].
 
 | `/context` (`/ctx`)
 | Show what the next request costs: provider and model, tool set, static prefix size, history size and the session total, and with Ollama the context window, the prompt size above which the history is compacted and the last measured prompt. Useful with local models, where prompt size is time.
