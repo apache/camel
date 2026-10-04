@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.iggy.client;
 
+import java.io.Closeable;
 import java.util.function.Consumer;
 
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -104,6 +105,13 @@ public class IggyClientFactory extends BasePooledObjectFactory<IggyBaseClient> {
     @Override
     public PooledObject<IggyBaseClient> wrap(IggyBaseClient iggyBaseClient) {
         return new DefaultPooledObject<>(iggyBaseClient);
+    }
+
+    @Override
+    public void destroyObject(PooledObject<IggyBaseClient> pooledObject) throws Exception {
+        if (pooledObject.getObject() instanceof Closeable closeable) {
+            closeable.close();
+        }
     }
 
 }
