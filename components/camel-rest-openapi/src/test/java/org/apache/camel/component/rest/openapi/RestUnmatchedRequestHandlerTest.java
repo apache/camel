@@ -312,30 +312,6 @@ class RestUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
     }
 
     @Test
-    void testIsValidOrAcceptedContentType() {
-        assertTrue(RestOpenApiProcessor.isValidOrAcceptedContentType(null, null));
-        assertTrue(RestOpenApiProcessor.isValidOrAcceptedContentType("application/json", null));
-        assertTrue(RestOpenApiProcessor.isValidOrAcceptedContentType(null, "application/json"));
-        assertTrue(RestOpenApiProcessor.isValidOrAcceptedContentType("application/json", "*/*"));
-
-        assertTrue(RestOpenApiProcessor.isValidOrAcceptedContentType("application/json", "application/json"));
-        assertTrue(RestOpenApiProcessor.isValidOrAcceptedContentType("application/xml", "application/json,application/xml"));
-        assertTrue(RestOpenApiProcessor.isValidOrAcceptedContentType("application/json", "APPLICATION/JSON"));
-        assertFalse(RestOpenApiProcessor.isValidOrAcceptedContentType("application/json", "application/xml"));
-
-        assertTrue(RestOpenApiProcessor.isValidOrAcceptedContentType(
-                "application/json", "application/xml;q=0.9, application/json"));
-        assertTrue(RestOpenApiProcessor.isValidOrAcceptedContentType(
-                "application/json", "application/json;q=0.9, application/xml;q=0.8"));
-        assertTrue(RestOpenApiProcessor.isValidOrAcceptedContentType("application/json", "application/json; charset=UTF-8"));
-        assertFalse(RestOpenApiProcessor.isValidOrAcceptedContentType(
-                "application/json", "application/xml;q=0.9, text/plain"));
-
-        assertTrue(RestOpenApiProcessor.isValidOrAcceptedContentType("application/json", "application/*"));
-        assertFalse(RestOpenApiProcessor.isValidOrAcceptedContentType("application/json", "text/*"));
-    }
-
-    @Test
     void testCustomHandlerFromFactoryFinderIsCalled() throws Exception {
         // Since we want to be able to test both a bean registered directly into
         // the registry and the factory finder we can not just put the factory

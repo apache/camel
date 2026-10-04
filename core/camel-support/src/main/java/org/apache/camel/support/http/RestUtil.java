@@ -27,6 +27,19 @@ public final class RestUtil {
      * Accept/Content-Type headers.
      */
     public static boolean isValidOrAcceptedContentType(String valid, String target) {
+        return isValidOrAccepted(valid, target, false);
+    }
+
+    /**
+     * Used for validating the Accept header of incoming REST calls against produces. Unlike
+     * {@link #isValidOrAcceptedContentType(String, String)} a media range such as application/* is supported, as it is
+     * only valid in the Accept header.
+     */
+    public static boolean isAcceptedMediaType(String produces, String accept) {
+        return isValidOrAccepted(produces, accept, true);
+    }
+
+    private static boolean isValidOrAccepted(String valid, String target, boolean mediaRange) {
         if (valid == null || target == null) {
             return true;
         }
@@ -44,11 +57,31 @@ public final class RestUtil {
         for (String part : target.split(",")) {
             // the media type is before its optional parameters (such as charset or q)
             part = StringHelper.before(part, ";", part).trim();
-            if (!part.isEmpty() && valid.contains(part)) {
+            if (!part.isEmpty() && (valid.contains(part) || mediaRange && isAcceptedByMediaRange(valid, part))) {
                 return true;
             }
         }
 
+        return false;
+    }
+
+    /**
+     * Whether the part is a media range (such as application/*) that accepts one of the valid media types, which is any
+     * media type of the same type.
+     */
+    private static boolean isAcceptedByMediaRange(String valid, String part) {
+        if (!part.endsWith("/*")) {
+            return false;
+        }
+        String type = part.substring(0, part.length() - 2);
+        if (type.isEmpty()) {
+            return false;
+        }
+        for (String mediaType : valid.split(",")) {
+            if (type.equals(StringHelper.before(mediaType.trim(), "/"))) {
+                return true;
+            }
+        }
         return false;
     }
 

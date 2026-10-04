@@ -19,7 +19,6 @@ package org.apache.camel.component.rest.openapi;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -36,11 +35,11 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
+import org.apache.camel.support.http.RestUtil;
 import org.apache.camel.support.processor.RestBindingAdvice;
 import org.apache.camel.support.processor.RestBindingAdviceFactory;
 import org.apache.camel.support.processor.RestBindingConfiguration;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,11 +121,11 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
             // Camel and must be answered here instead of being processed as if they were valid
             if (serverRequestValidation && unmatchedRequestCatchAllRegistered) {
                 String contentType = exchange.getMessage().getHeader(Exchange.CONTENT_TYPE, String.class);
-                if (!isValidOrAcceptedContentType(rcp.getConsumes(), contentType)) {
+                if (!RestUtil.isValidOrAcceptedContentType(rcp.getConsumes(), contentType)) {
                     return answerUnmatchedRequest(exchange, callback, 415, List.of());
                 }
                 String accept = exchange.getMessage().getHeader("Accept", String.class);
-                if (!isValidOrAcceptedContentType(rcp.getProduces(), accept)) {
+                if (!RestUtil.isAcceptedMediaType(rcp.getProduces(), accept)) {
                     return answerUnmatchedRequest(exchange, callback, 406, List.of());
                 }
             }
@@ -176,43 +175,6 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
         exchange.setRouteStop(true);
         callback.done(true);
         return true;
-    }
-
-    /**
-     * Whether the given Content-Type or Accept header value matches the consumes/produces of the operation. Unlike
-     * RestUtil#isValidOrAcceptedContentType, the parameters of each part are stripped and subtype wildcards are
-     * supported.
-     */
-    static boolean isValidOrAcceptedContentType(String valid, String target) {
-        if (valid == null || target == null) {
-            return true;
-        }
-
-        // Any MIME type
-        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept#Directives
-        if (target.contains("*/*")) {
-            return true;
-        }
-
-        valid = valid.toLowerCase(Locale.ENGLISH);
-        target = target.toLowerCase(Locale.ENGLISH);
-
-        // try each part of the target without its parameters
-        for (String part : target.split(",")) {
-            part = StringHelper.before(part, ";", part).trim();
-            if (part.isEmpty()) {
-                continue;
-            }
-            if (valid.contains(part)) {
-                return true;
-            }
-            // subtype wildcard such as application/* matches any subtype of that type
-            if (part.endsWith("/*") && valid.contains(part.substring(0, part.length() - 1))) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @Override
