@@ -298,6 +298,47 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
 
     @ParameterizedTest
     @MethodSource("petStoreVersions")
+    void requestValidationWithMissingPathParameter(String petStoreVersion) {
+        // no petId: without the check the request went out as /pet/{petId} (CAMEL-25321)
+        Exchange exchange = template.request("direct:validateDelete", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getMessage().setHeader("petStoreVersion", petStoreVersion);
+                exchange.getMessage().setHeader("api_key", "foo");
+            }
+        });
+
+        Exception exception = exchange.getException();
+        assertNotNull(exception);
+        assertInstanceOf(RestOpenApiValidationException.class, exception);
+        Set<String> errors = ((RestOpenApiValidationException) exception).getValidationErrors();
+        assertEquals(1, errors.size());
+        assertEquals("Path parameter 'petId' is required but none found: set the header petId, or an exchange variable "
+                     + "of that name, before the call.",
+                errors.iterator().next());
+    }
+
+    @ParameterizedTest
+    @MethodSource("petStoreVersions")
+    void requestValidationWithPathParameterFromVariable(String petStoreVersion) {
+        Exchange exchange = template.request("direct:validateDelete", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getMessage().setHeader("petStoreVersion", petStoreVersion);
+                exchange.getMessage().setHeader("api_key", "foo");
+                exchange.setVariable("petId", 10);
+            }
+        });
+
+        Exception exception = exchange.getException();
+        if (exception != null) {
+            throw new AssertionError("Unexpected validation failure", exception);
+        }
+        assertEquals("Pet deleted", exchange.getMessage().getBody(String.class));
+    }
+
+    @ParameterizedTest
+    @MethodSource("petStoreVersions")
     @SuppressWarnings("unchecked")
     void requestValidationWithRequiredQueryParameter(String petStoreVersion) {
         Map<String, Object> headers = Map.of(
@@ -364,6 +405,8 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getMessage().setHeader("fruitsApiVersion", fruitsApiVersion);
+                // the path parameter is given, so only the missing header fails the validation
+                exchange.getMessage().setHeader("id", 1);
             }
         });
 
@@ -375,6 +418,26 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
         Set<String> errors = validationException.getValidationErrors();
         assertEquals(1, errors.size());
         assertTrue(errors.iterator().next().startsWith("Header parameter 'deletionReason' is required"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("fruitsApiVersions")
+    void requestValidationReportsEveryMissingParameter(String fruitsApiVersion) {
+        // neither the path parameter id nor the required header deletionReason: both are reported, not only the first
+        Exchange exchange = template.request("direct:headerParam", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getMessage().setHeader("fruitsApiVersion", fruitsApiVersion);
+            }
+        });
+
+        Exception exception = exchange.getException();
+        assertInstanceOf(RestOpenApiValidationException.class, exception);
+        Set<String> errors = ((RestOpenApiValidationException) exception).getValidationErrors();
+        assertEquals(2, errors.size());
+        assertTrue(errors.stream().anyMatch(e -> e.startsWith("Path parameter 'id' is required")), errors.toString());
+        assertTrue(errors.stream().anyMatch(e -> e.startsWith("Header parameter 'deletionReason' is required")),
+                errors.toString());
     }
 
     @ParameterizedTest

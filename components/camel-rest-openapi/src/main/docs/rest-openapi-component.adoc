@@ -350,6 +350,10 @@ expected to be present among the Camel message exchange headers.
 * query parameters - Validates whether an HTTP query parameter required by the API operation is present. The query parameter is
 expected to be present among the Camel message exchange headers.
 
+* path parameters - Validates that every parameter in the path of the API operation, such as `sku` in
+`/stock/\{sku}/reserve`, has a value: a Camel message exchange header or an exchange variable of that name. Without
+the check, a missing value is sent as the literal `\{sku}` in the path.
+
 If any of the validation checks fail, then a `RestOpenApiValidationException` is thrown. The exception object
 has a `getValidationErrors` method that returns the error messages from the validator.
 
