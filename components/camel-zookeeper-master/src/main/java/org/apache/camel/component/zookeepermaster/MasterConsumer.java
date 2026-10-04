@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.zookeepermaster;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -36,13 +42,28 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed ZooKeeper Master Consumer")
 public class MasterConsumer extends DefaultConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(MasterConsumer.class);
+    // delay before the master tries again to start a consumer whose start failed
+    private static final long RETRY_DELAY_MILLIS = 5000;
 
     private ZookeeperGroupListenerSupport groupListener;
     private final MasterEndpoint endpoint;
     private final Processor processor;
-    private Consumer delegate;
-    private SuspendableService delegateService;
+    private volatile Consumer delegate;
+    private volatile SuspendableService delegateService;
     private volatile CamelNodeState thisNodeState;
+    // the leadership events come from the group thread (CHANGED) and the ZooKeeper connection thread
+    // (DISCONNECTED), and the consumer can be stopped meanwhile: the delegate and these fields are guarded by the lock
+    // (delegate and delegateService are also volatile, as doSuspend/doResume read them without it)
+    private final Lock leadershipLock = new ReentrantLock();
+    // incremented when the leadership may be lost or the consumer stops: a start that began before does not publish
+    // its consumer, it stops it
+    private long generation;
+    private boolean starting;
+    // the state published when this node starts its consumer, once per leadership term (a new state is a change of
+    // the group, which would trigger another leadership event)
+    private CamelNodeState startedState;
+    private ScheduledExecutorService retryExecutor;
+    private ScheduledFuture<?> retryTask;
 
     public MasterConsumer(MasterEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -94,6 +115,8 @@ public class MasterConsumer extends DefaultConsumer {
         this.groupListener.setZooKeeperPassword(endpoint.getComponent().getZooKeeperPassword());
         this.groupListener.setCurator(endpoint.getComponent().getCurator());
         this.groupListener.setMaximumConnectionTimeout(endpoint.getComponent().getMaximumConnectionTimeout());
+        this.retryExecutor = endpoint.getCamelContext().getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(this, "ZooKeeperMasterRetry");
         ServiceHelper.startService(groupListener);
 
         LOG.info("Attempting to become master for endpoint: {} in {} with singletonID: {}", endpoint,
@@ -105,9 +128,20 @@ public class MasterConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         try {
-            stopConsumer();
+            leadershipLock.lock();
+            try {
+                generation++;
+                cancelRetry();
+                stopConsumer();
+            } finally {
+                leadershipLock.unlock();
+            }
         } finally {
             ServiceHelper.stopAndShutdownServices(groupListener);
+            if (retryExecutor != null) {
+                endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(retryExecutor);
+                retryExecutor = null;
+            }
         }
         super.doStop();
     }
@@ -125,6 +159,14 @@ public class MasterConsumer extends DefaultConsumer {
         delegate = null;
         delegateService = null;
         thisNodeState = null;
+        startedState = null;
+    }
+
+    private void cancelRetry() {
+        if (retryTask != null) {
+            retryTask.cancel(false);
+            retryTask = null;
+        }
     }
 
     @Override
@@ -144,40 +186,102 @@ public class MasterConsumer extends DefaultConsumer {
     }
 
     protected Runnable onLockOwned() {
-        return () -> {
-            if (delegate == null) {
-                try {
-                    // ensure endpoint is also started
-                    LOG.info("Elected as master. Starting consumer: {}", endpoint.getConsumerEndpoint());
-                    ServiceHelper.startService(endpoint.getConsumerEndpoint());
+        return () -> startConsumer(-1);
+    }
 
-                    delegate = endpoint.getConsumerEndpoint().createConsumer(processor);
-                    delegateService = null;
-                    if (delegate instanceof SuspendableService) {
-                        delegateService = (SuspendableService) delegate;
-                    }
+    /**
+     * Starts the delegate consumer, as this node holds the leadership.
+     *
+     * @param retryGeneration -1 for a leadership event, else the generation of the start that failed
+     */
+    private void startConsumer(long retryGeneration) {
+        long startGeneration;
+        CamelNodeState state = null;
+        leadershipLock.lock();
+        try {
+            if (retryGeneration >= 0) {
+                retryTask = null;
+            }
+            if (delegate != null || starting || retryTask != null || !isRunAllowed()
+                    || retryGeneration >= 0 && retryGeneration != generation || !isLeader()) {
+                return;
+            }
+            starting = true;
+            startGeneration = generation;
+            if (startedState == null) {
+                startedState = createNodeState();
+                startedState.setStarted(true);
+                state = startedState;
+            }
+        } finally {
+            leadershipLock.unlock();
+        }
 
-                    // Lets show we are starting the consumer.
-                    thisNodeState = createNodeState();
-                    thisNodeState.setStarted(true);
-                    groupListener.updateState(thisNodeState);
+        // the consumer is created and started without holding the lock, as a start can take long (it may connect to
+        // a broker or a server), and the lock is needed to handle a disconnect or a stop meanwhile
+        Consumer consumer = null;
+        Exception cause = null;
+        try {
+            // ensure endpoint is also started
+            LOG.info("Elected as master. Starting consumer: {}", endpoint.getConsumerEndpoint());
+            ServiceHelper.startService(endpoint.getConsumerEndpoint());
 
-                    ServiceHelper.startService(delegate);
-                } catch (Exception e) {
-                    LOG.error("Failed to start master consumer for: {}", endpoint, e);
-                }
+            consumer = endpoint.getConsumerEndpoint().createConsumer(processor);
 
+            // Lets show we are starting the consumer.
+            if (state != null) {
+                thisNodeState = state;
+                groupListener.updateState(state);
+            }
+
+            ServiceHelper.startService(consumer);
+        } catch (Exception e) {
+            cause = e;
+        }
+
+        leadershipLock.lock();
+        try {
+            starting = false;
+            if (startGeneration != generation || !isRunAllowed()) {
+                // disconnected (no longer the master) or stopping while the consumer started: no event is coming to
+                // stop it later
+                LOG.info("Lost the leadership or stopping while the consumer started. Stopping consumer: {}",
+                        endpoint.getConsumerEndpoint());
+                ServiceHelper.stopAndShutdownServices(consumer);
+            } else if (cause != null) {
+                // forget the consumer (its start stopped it) and try again later, as long as this node is the master
+                LOG.warn("Failed to start master consumer for: {}. Trying again in {} millis.", endpoint,
+                        RETRY_DELAY_MILLIS, cause);
+                final long failedGeneration = startGeneration;
+                retryTask = retryExecutor.schedule(() -> startConsumer(failedGeneration), RETRY_DELAY_MILLIS,
+                        TimeUnit.MILLISECONDS);
+            } else {
+                delegate = consumer;
+                delegateService = consumer instanceof SuspendableService suspendable ? suspendable : null;
                 LOG.info("Elected as master. Consumer started: {}", endpoint.getConsumerEndpoint());
             }
-        };
+        } finally {
+            leadershipLock.unlock();
+        }
+    }
+
+    private boolean isLeader() {
+        // the group sets connected to false before it tells the listeners that it is disconnected
+        return groupListener != null && groupListener.getGroup() != null && groupListener.getGroup().isConnected()
+                && groupListener.getGroup().isMaster();
     }
 
     protected Runnable onDisconnected() {
         return () -> {
+            leadershipLock.lock();
             try {
+                generation++;
+                cancelRetry();
                 stopConsumer();
             } catch (Exception e) {
                 LOG.warn("Failed to stop master consumer for: {}", endpoint, e);
+            } finally {
+                leadershipLock.unlock();
             }
         };
     }
