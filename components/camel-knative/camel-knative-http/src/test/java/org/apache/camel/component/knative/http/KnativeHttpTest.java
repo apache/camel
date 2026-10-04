@@ -1399,6 +1399,45 @@ public class KnativeHttpTest {
                 .body(is(emptyOrNullString()));
     }
 
+    /**
+     * Without a reply the consumer answers 204 No Content, which tells Knative that the event has been delivered: a
+     * failed exchange must keep its error status, or the event is lost.
+     */
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testNoReplyFailure(CloudEvent ce) throws Exception {
+        configureKnativeComponent(
+                context,
+                ce,
+                sourceChannel(
+                        "channel",
+                        Map.of(
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("knative:channel/channel?reply=false")
+                    .throwException(new IllegalStateException("Forced"));
+        });
+
+        context.start();
+
+        given()
+                .body("test")
+                .header(Exchange.CONTENT_TYPE, "text/plain")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "org.apache.camel.event")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                        DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
+                .when()
+                .post()
+                .then()
+                .statusCode(500)
+                .body(is(emptyOrNullString()));
+    }
+
     @ParameterizedTest
     @EnumSource(CloudEvents.class)
     void testNoReplyMeta(CloudEvent ce) throws Exception {

@@ -3279,6 +3279,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("apiContextPath", def.getApiContextPath(), null);
         doWriteAttribute("routeId", def.getRouteId(), null);
         doWriteAttribute("missingOperation", def.getMissingOperation(), "fail");
+        doWriteAttribute("unmatchedRequestHandling", def.getUnmatchedRequestHandling(), "platform");
         doWriteAttribute("mockIncludePattern", def.getMockIncludePattern(), "classpath:camel-mock/**");
         endElement(name);
     }

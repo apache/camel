@@ -385,9 +385,12 @@ public class NatsConsumer extends DefaultConsumer {
                     NatsConsumer.this.processor.process(exchange);
 
                     // is there a reply? only send reply if exchange pattern supports output (InOut)
+                    // NATS has no error reply, so a failed exchange is not answered (the requester times out)
+                    // instead of answering with the body of the failed exchange as if it succeeded
                     if (!NatsConsumingTask.this.configuration.isReplyToDisabled()
                             && msg.getReplyTo() != null && msg.getConnection() != null
-                            && exchange.getPattern().isOutCapable()) {
+                            && exchange.getPattern().isOutCapable()
+                            && !exchange.isFailed() && !exchange.isRollbackOnly()) {
                         final Connection con = msg.getConnection();
                         final byte[] data = exchange.getMessage().getBody(byte[].class);
                         if (data != null) {

@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.rocketmq;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
@@ -24,6 +26,7 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.rocketmq.client.AccessChannel;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.MessageSelector;
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -62,19 +65,28 @@ public class RocketMQConsumer extends DefaultConsumer implements Suspendable {
         mqPushConsumer.setAccessChannel(AccessChannel.valueOf(endpoint.getAccessChannel()));
         mqPushConsumer.subscribe(endpoint.getTopicName(), messageSelector);
 
-        mqPushConsumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
-            MessageExt messageExt = msgs.get(0);
-            Exchange exchange = endpoint.createRocketExchange(messageExt.getBody());
-            RocketMQMessageConverter.populateHeadersByMessageExt(exchange.getIn(), messageExt);
-            try {
-                getProcessor().process(exchange);
-            } catch (Exception e) {
-                getExceptionHandler().handleException(e);
-                return ConsumeConcurrentlyStatus.RECONSUME_LATER;
-            }
-            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
-        });
+        mqPushConsumer.registerMessageListener((MessageListenerConcurrently) this::consumeMessage);
         mqPushConsumer.start();
+    }
+
+    ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+        MessageExt messageExt = msgs.get(0);
+        Exchange exchange = endpoint.createRocketExchange(messageExt.getBody());
+        RocketMQMessageConverter.populateHeadersByMessageExt(exchange.getIn(), messageExt);
+        try {
+            getProcessor().process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+        // a failed route sets the exception on the exchange (or marks it rollback only): the message must then be
+        // consumed again, acknowledging it would lose it
+        if (exchange.getException() != null || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+            }
+            return ConsumeConcurrentlyStatus.RECONSUME_LATER;
+        }
+        return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     }
 
     private void stopConsumer() {
