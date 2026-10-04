@@ -18,6 +18,7 @@ package org.apache.camel.language.bean;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.camel.BeanScope;
 import org.apache.camel.CamelContext;
@@ -580,9 +581,13 @@ public class BeanExpression implements Expression, Predicate {
         return NO_SUCH_KEY;
     }
 
+    /** At most this many keys are listed when a Map has no key of the name asked for. */
+    private static final int MAX_KEYS_LISTED = 20;
+
     /**
-     * ${body.type} on a Map body looks for a method named type; a key is read with ${body[type]}. Say so when the bean
-     * is a Map and the name is not a method call.
+     * ${body.type} on a Map body reads the key type (CAMEL-24916), so getting here means the Map has no such key: say
+     * that and list its keys, since the usual cause is a body that is not the Map one thinks (inside a split over an
+     * order's lines the body is a line, not the order) (CAMEL-25322).
      */
     private static String keyHint(BeanHolder holder, Exchange exchange, String methodName, String hint) {
         if (methodName == null || methodName.contains("(") || methodName.contains("[")) {
@@ -590,9 +595,12 @@ public class BeanExpression implements Expression, Predicate {
         }
         try {
             Object bean = holder != null ? holder.getBean(exchange) : null;
-            if (bean instanceof Map) {
-                return hint + " (the value is a Map: a key is read with [" + methodName + "], as in ${body[" + methodName
-                       + "]}, not with ." + methodName + ")";
+            if (bean instanceof Map<?, ?> map) {
+                String keys = map.keySet().stream().limit(MAX_KEYS_LISTED).map(String::valueOf)
+                        .collect(Collectors.joining(", "));
+                String more = map.size() > MAX_KEYS_LISTED ? ", ... (" + map.size() + " keys)" : "";
+                return hint + " (the Map has no key " + methodName
+                       + (map.isEmpty() ? "; it is empty)" : "; its keys are: " + keys + more + ")");
             }
         } catch (Exception e) {
             // ignore
