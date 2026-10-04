@@ -27,7 +27,9 @@ public enum ToolGroup {
     /** OpenTelemetry spans, message tracing and Micrometer metrics. */
     TRACING("tracing"),
     /** Circuit breakers. */
-    RESILIENCE("resilience");
+    RESILIENCE("resilience"),
+    /** The HTTP endpoints the integration serves, and a request to them (CAMEL-25307). */
+    HTTP("http");
 
     private final String id;
 

@@ -29,9 +29,9 @@ import org.apache.camel.util.json.JsonObject;
 
 /**
  * What a running integration has that a tool group is for (CAMEL-24834): its datasources and SQL endpoints, circuit
- * breakers, OpenTelemetry, message tracing and Micrometer. Read from the status file the integration writes
- * ({@code ~/.camel/<pid>-status.json}); a key that is missing (an older Camel, a console that is not on the classpath)
- * just means fewer features, never an error.
+ * breakers, OpenTelemetry, message tracing and Micrometer, and what it serves over HTTP (CAMEL-25307). Read from the
+ * status file the integration writes ({@code ~/.camel/<pid>-status.json}); a key that is missing (an older Camel, a
+ * console that is not on the classpath) just means fewer features, never an error.
  *
  * @param dataSources          the datasources in the registry, by name
  * @param sqlComponents        the SQL components the endpoints and routes use (sql, sql-stored, jdbc, spring-jdbc, jpa)
@@ -42,6 +42,7 @@ import org.apache.camel.util.json.JsonObject;
  * @param messageTracing       whether message tracing is enabled
  * @param micrometer           whether Micrometer metrics are on
  * @param signals              the status keys that gave each feature away, with what they said
+ * @param http                 what it serves over HTTP, null when nothing
  */
 public record AppFeatures(
         List<DataSource> dataSources,
@@ -52,7 +53,8 @@ public record AppFeatures(
         boolean openTelemetry,
         boolean messageTracing,
         boolean micrometer,
-        Map<String, String> signals) {
+        Map<String, String> signals,
+        HttpEndpoints.Served http) {
 
     /** The components whose endpoints talk SQL to a datasource. */
     static final Set<String> SQL_COMPONENTS = Set.of("sql", "sql-stored", "jdbc", "spring-jdbc", "jpa");
@@ -77,9 +79,29 @@ public record AppFeatures(
         signals = Collections.unmodifiableMap(new LinkedHashMap<>(signals));
     }
 
+    /** The features of an integration that serves nothing over HTTP. */
+    public AppFeatures(List<DataSource> dataSources, List<String> sqlComponents, boolean sqlTraced,
+                       boolean circuitBreaker, List<String> circuitBreakerRoutes, boolean openTelemetry,
+                       boolean messageTracing, boolean micrometer, Map<String, String> signals) {
+        this(dataSources, sqlComponents, sqlTraced, circuitBreaker, circuitBreakerRoutes, openTelemetry, messageTracing,
+             micrometer, signals, null);
+    }
+
     /** No integration, or nothing to tell: no tool group loads. */
     public static AppFeatures none() {
         return new AppFeatures(List.of(), List.of(), false, false, List.of(), false, false, false, Map.of());
+    }
+
+    /** Whether the integration serves HTTP: platform-http or Rest DSL endpoints. */
+    public boolean httpServed() {
+        return http != null;
+    }
+
+    /** These features with what the integration serves over HTTP. */
+    public AppFeatures withHttp(HttpEndpoints.Served served) {
+        return new AppFeatures(
+                dataSources, sqlComponents, sqlTraced, circuitBreaker, circuitBreakerRoutes,
+                openTelemetry, messageTracing, micrometer, signals, served);
     }
 
     /** The names of the datasources. */
@@ -123,7 +145,7 @@ public record AppFeatures(
                 new ArrayList<>(ds.values()), new ArrayList<>(components), sqlTraced || other.sqlTraced,
                 circuitBreaker || other.circuitBreaker, new ArrayList<>(routes),
                 openTelemetry || other.openTelemetry, messageTracing || other.messageTracing,
-                micrometer || other.micrometer, sig);
+                micrometer || other.micrometer, sig, other.http != null ? other.http : http);
     }
 
     /**
@@ -238,9 +260,15 @@ public record AppFeatures(
             signals.put("trace.enabled", "true");
         }
 
+        // HTTP: the Rest DSL and platform-http consoles, or HTTP consumers in the endpoints and routes
+        HttpEndpoints.Served http = HttpEndpoints.fromStatus(status);
+        if (http != null) {
+            http.signals().forEach(signals::putIfAbsent);
+        }
+
         return new AppFeatures(
                 new ArrayList<>(dataSources.values()), new ArrayList<>(components), sqlTraced,
-                breakerProcessor || breakers, new ArrayList<>(breakerRoutes), otel, tracing, micrometer, signals);
+                breakerProcessor || breakers, new ArrayList<>(breakerRoutes), otel, tracing, micrometer, signals, http);
     }
 
     private static void addSqlComponent(Set<String> components, String uri) {

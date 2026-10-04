@@ -26,14 +26,16 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ToolGroups;
 
 /**
  * The AI panel's side of {@link ToolGroups} (CAMEL-24834): the tui_* tools each group adds to the core set, and the
- * guidance line in the panel's words. Only SQL needs tools of its own; the spans, the traced messages, the metrics and
- * the circuit breakers are read with core tools (tui_get_spans, tui_get_history, tui_get_table), so those groups only
- * add the line that tells a small model where to look.
+ * guidance line in the panel's words. Only SQL and HTTP need tools of their own; the spans, the traced messages, the
+ * metrics and the circuit breakers are read with core tools (tui_get_spans, tui_get_history, tui_get_table), so those
+ * groups only add the line that tells a small model where to look.
  */
 final class TuiToolGroups {
 
     static final String SQL_TOOL = "tui_execute_sql";
     static final String UPDATE_ROW_TOOL = "tui_update_row";
+    static final String HTTP_ENDPOINTS_TOOL = "tui_http_endpoints";
+    static final String HTTP_REQUEST_TOOL = "tui_http_request";
 
     /**
      * The groups of an integration as the panel uses them.
@@ -75,10 +77,11 @@ final class TuiToolGroups {
     }
 
     static List<String> tools(ToolGroup group) {
-        if (group == ToolGroup.SQL) {
-            return List.of(SQL_TOOL, UPDATE_ROW_TOOL);
-        }
-        return List.of();
+        return switch (group) {
+            case SQL -> List.of(SQL_TOOL, UPDATE_ROW_TOOL);
+            case HTTP -> List.of(HTTP_ENDPOINTS_TOOL, HTTP_REQUEST_TOOL);
+            default -> List.of();
+        };
     }
 
     static String guidance(ToolGroup group, AppFeatures f) {
@@ -101,6 +104,8 @@ final class TuiToolGroups {
             case RESILIENCE -> ToolGroups.describeBreakers(f)
                                + ": tui_get_table tab 'Circuit Breaker' shows state (CLOSED/OPEN/HALF_OPEN) and failure"
                                + " rate; OPEN means the fallback runs.";
+            case HTTP -> "HTTP: " + ToolGroups.describeHttp(f) + "; " + HTTP_REQUEST_TOOL + " calls it, "
+                         + HTTP_ENDPOINTS_TOOL + " lists the operations.";
         };
     }
 }

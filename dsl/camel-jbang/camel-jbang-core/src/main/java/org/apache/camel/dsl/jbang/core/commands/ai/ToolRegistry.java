@@ -442,19 +442,57 @@ public final class ToolRegistry {
                 }));
 
         register(tool("get_tool_groups",
-                "Which runtime tool groups (sql, tracing, resilience) the integration needs, from what it has: "
+                "Which runtime tool groups (sql, tracing, resilience, http) the integration needs, from what it has: "
                                          + "datasources and SQL endpoints, OpenTelemetry, message tracing, Micrometer, "
-                                         + "circuit breakers. Returns the tools of each group with one line of guidance, "
+                                         + "circuit breakers, HTTP endpoints. Returns the tools of each group with one line of guidance, "
                                          + "and a fingerprint that changes only when the groups do.")
                 .param("name", "string", "Name or PID of the integration (default: the selected or only one)", false)
                 .executor((ctx, args) -> {
-                    String name = args.get("name");
-                    if (name != null && !name.isBlank()) {
-                        ctx.selectProcess(name);
-                    } else {
-                        ctx.selectSingleProcessIfNone();
-                    }
+                    selectNamedProcess(ctx, args);
                     return toolGroups(ctx, ctx.readFullStatus()).toJson();
+                }));
+
+        // CAMEL-25307: what the integration serves over HTTP, and a request to it
+        register(tool("get_http_endpoints",
+                "List the HTTP endpoints the integration serves (Rest DSL and platform-http): method, path, "
+                                            + "consumes/produces, route and OpenAPI operation, the server's base URL "
+                                            + "and the contract. includeSpec=true adds the OpenAPI contract itself.")
+                .param("name", "string", "Name or PID of the integration (default: the selected or only one)", false)
+                .param("includeSpec", "boolean", "Add the OpenAPI contract of a contract-first service", false)
+                .executor((ctx, args) -> {
+                    selectNamedProcess(ctx, args);
+                    JsonObject answer = HttpEndpoints.toJson(HttpEndpoints.fromStatus(ctx.readFullStatus()));
+                    if ("true".equalsIgnoreCase(args.get("includeSpec"))) {
+                        answer.put("spec", HttpEndpoints.capSpecs(ctx.executeAction("rest-spec", null)));
+                    }
+                    return answer.toJson();
+                }));
+
+        register(tool("http_request",
+                "Send an HTTP request to the integration's own server (localhost and its port) and return the "
+                                      + "status, headers and body. Pass the path, e.g. /api/orders/1; other hosts are "
+                                      + "refused.")
+                .param("method", "string", "GET (default), POST, PUT, PATCH, DELETE, HEAD or OPTIONS", false)
+                .param("path", "string", "The path with query, e.g. /api/orders?status=open", true)
+                .param("headers", "string", "Headers as a JSON object or one 'name: value' per line", false)
+                .param("body", "string", "The request body", false)
+                .param("timeoutSeconds", "integer", "How long to wait for the answer (default 30)", false)
+                .param("name", "string", "Name or PID of the integration (default: the selected or only one)", false)
+                .readOnly(false).destructive(false)
+                .executor((ctx, args) -> {
+                    selectNamedProcess(ctx, args);
+                    HttpEndpoints.Served served = HttpEndpoints.fromStatus(ctx.readFullStatus());
+                    int timeout = 30;
+                    try {
+                        String t = args.get("timeoutSeconds");
+                        if (t != null && !t.isBlank()) {
+                            timeout = (int) Double.parseDouble(t);
+                        }
+                    } catch (NumberFormatException e) {
+                        // use default
+                    }
+                    return HttpEndpoints.request(served != null ? served.port() : 0, args.get("method"),
+                            args.get("path"), args.get("headers"), args.get("body"), timeout).toJson();
                 }));
 
         // Route control
@@ -469,6 +507,16 @@ public final class ToolRegistry {
                 "Gracefully stop the Camel application. Finishes in-flight exchanges then shuts down cleanly.")
                 .readOnly(false).destructive(true)
                 .executor((ctx, args) -> ctx.stopApplication()));
+    }
+
+    /** Selects the process the call names, else keeps the selected one, else the only one running. */
+    private static void selectNamedProcess(ToolContext ctx, Map<String, String> args) {
+        String name = args.get("name");
+        if (name != null && !name.isBlank()) {
+            ctx.selectProcess(name);
+        } else {
+            ctx.selectSingleProcessIfNone();
+        }
     }
 
     /**
