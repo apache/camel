@@ -44,6 +44,10 @@ can be repeated. `stock.api.url` in `application.properties` says where the serv
   `POST /api/stock/{sku}/reserve`. `host` is the server; `componentName: http` picks the HTTP client to use.
 - The path parameter `sku` is taken from the header of the same name; the request body is the message body,
   built here as the JSON the contract's `Reservation` schema describes.
+- Client request validation is on (`camel.component.rest-openapi.request-validation-enabled=true` in
+  `application.properties`): a call without a value for a path parameter, a required header or query parameter,
+  or a required body is refused before it is sent, with a message that names what is missing, instead of going out
+  with `{sku}` in the path.
 - The order id and SKU are also kept in exchange properties for the log, since the response replaces the body
   and headers are sent on the wire, as the `http-client` example explains.
 - A 409 or 400 from the server is an `HttpOperationFailedException`; the `onException` logs its status code
@@ -58,8 +62,9 @@ can be repeated. `stock.api.url` in `application.properties` says where the serv
 
 ## Try changing
 
-- Set `requestValidationEnabled: true` on the endpoint and send a reservation without `qty`: the client
-  refuses it before any HTTP call.
+- Remove the `sku` header before the call: the validation refuses it with "Path parameter 'sku' is required but
+  none found" before any HTTP call. Turn the validation off in `application.properties` and the request goes out
+  with `{sku}` in the path and gets a 404.
 - Point `stock.api.url` at a server that is not running and watch the connection error reach the error handler.
 - Replace the contract's server with a public one, `https://petstore3.swagger.io/api/v3/openapi.json`, and
   call `getPetById`.
