@@ -2611,6 +2611,7 @@ public class ModelParser extends BaseParser {
                 case "mockIncludePattern": def.setMockIncludePattern(val); yield true;
                 case "routeId": def.setRouteId(val); yield true;
                 case "specification": def.setSpecification(val); yield true;
+                case "unmatchedRequestHandling": def.setUnmatchedRequestHandling(val); yield true;
                 default: yield optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
             }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }

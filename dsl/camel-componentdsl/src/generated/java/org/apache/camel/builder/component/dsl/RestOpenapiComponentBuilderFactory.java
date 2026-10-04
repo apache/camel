@@ -258,6 +258,25 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Who answers requests that match no operation in the OpenAPI
+         * specification: the HTTP layer (platform) or Camel via the unmatched
+         * request handler (camel). Can be overridden in endpoint configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: platform
+         * Group: consumer (advanced)
+         * 
+         * @param unmatchedRequestHandling the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder unmatchedRequestHandling(java.lang.String unmatchedRequestHandling) {
+            doSetProperty("unmatchedRequestHandling", unmatchedRequestHandling);
+            return this;
+        }
+    
         /**
          * Scheme hostname and port to direct the HTTP requests to in the form
          * of https://hostname:port. Can be configured at the endpoint,
@@ -461,6 +480,7 @@ public interface RestOpenapiComponentBuilderFactory {
             case "consumerComponentName": ((RestOpenApiComponent) component).setConsumerComponentName((java.lang.String) value); return true;
             case "mockIncludePattern": ((RestOpenApiComponent) component).setMockIncludePattern((java.lang.String) value); return true;
             case "restOpenapiProcessorStrategy": ((RestOpenApiComponent) component).setRestOpenapiProcessorStrategy((org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy) value); return true;
+            case "unmatchedRequestHandling": ((RestOpenApiComponent) component).setUnmatchedRequestHandling((java.lang.String) value); return true;
             case "host": ((RestOpenApiComponent) component).setHost((java.lang.String) value); return true;
             case "lazyStartProducer": ((RestOpenApiComponent) component).setLazyStartProducer((boolean) value); return true;
             case "requestValidationEnabled": ((RestOpenApiComponent) component).setRequestValidationEnabled((boolean) value); return true;
