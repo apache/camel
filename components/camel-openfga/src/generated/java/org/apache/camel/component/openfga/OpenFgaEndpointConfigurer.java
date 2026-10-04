@@ -44,6 +44,8 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "consistency": target.getConfiguration().setConsistency(property(camelContext, java.lang.String.class, value)); return true;
         case "contextualtuples":
         case "contextualTuples": target.getConfiguration().setContextualTuples(property(camelContext, java.lang.String.class, value)); return true;
+        case "continuationtoken":
+        case "continuationToken": target.getConfiguration().setContinuationToken(property(camelContext, java.lang.String.class, value)); return true;
         case "failopen":
         case "failOpen": target.getConfiguration().setFailOpen(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -55,6 +57,8 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "object": target.getConfiguration().setObject(property(camelContext, java.lang.String.class, value)); return true;
         case "openfgaclient":
         case "openFgaClient": target.getConfiguration().setOpenFgaClient(property(camelContext, dev.openfga.sdk.api.client.OpenFgaClient.class, value)); return true;
+        case "pagesize":
+        case "pageSize": target.getConfiguration().setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "readtimeout":
         case "readTimeout": target.getConfiguration().setReadTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "relation": target.getConfiguration().setRelation(property(camelContext, java.lang.String.class, value)); return true;
@@ -62,6 +66,8 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "scopes": target.getConfiguration().setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "starttime":
+        case "startTime": target.getConfiguration().setStartTime(property(camelContext, java.lang.String.class, value)); return true;
         case "storeid":
         case "storeId": target.getConfiguration().setStoreId(property(camelContext, java.lang.String.class, value)); return true;
         case "type": target.getConfiguration().setType(property(camelContext, java.lang.String.class, value)); return true;
@@ -101,6 +107,8 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "consistency": return java.lang.String.class;
         case "contextualtuples":
         case "contextualTuples": return java.lang.String.class;
+        case "continuationtoken":
+        case "continuationToken": return java.lang.String.class;
         case "failopen":
         case "failOpen": return boolean.class;
         case "lazystartproducer":
@@ -112,6 +120,8 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "object": return java.lang.String.class;
         case "openfgaclient":
         case "openFgaClient": return dev.openfga.sdk.api.client.OpenFgaClient.class;
+        case "pagesize":
+        case "pageSize": return java.lang.Integer.class;
         case "readtimeout":
         case "readTimeout": return long.class;
         case "relation": return java.lang.String.class;
@@ -119,6 +129,8 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "scopes": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "starttime":
+        case "startTime": return java.lang.String.class;
         case "storeid":
         case "storeId": return java.lang.String.class;
         case "type": return java.lang.String.class;
@@ -154,6 +166,8 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "consistency": return target.getConfiguration().getConsistency();
         case "contextualtuples":
         case "contextualTuples": return target.getConfiguration().getContextualTuples();
+        case "continuationtoken":
+        case "continuationToken": return target.getConfiguration().getContinuationToken();
         case "failopen":
         case "failOpen": return target.getConfiguration().isFailOpen();
         case "lazystartproducer":
@@ -165,6 +179,8 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "object": return target.getConfiguration().getObject();
         case "openfgaclient":
         case "openFgaClient": return target.getConfiguration().getOpenFgaClient();
+        case "pagesize":
+        case "pageSize": return target.getConfiguration().getPageSize();
         case "readtimeout":
         case "readTimeout": return target.getConfiguration().getReadTimeout();
         case "relation": return target.getConfiguration().getRelation();
@@ -172,6 +188,8 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "scopes": return target.getConfiguration().getScopes();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
+        case "starttime":
+        case "startTime": return target.getConfiguration().getStartTime();
         case "storeid":
         case "storeId": return target.getConfiguration().getStoreId();
         case "type": return target.getConfiguration().getType();
