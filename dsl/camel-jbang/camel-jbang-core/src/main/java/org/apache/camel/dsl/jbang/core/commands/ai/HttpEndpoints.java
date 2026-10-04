@@ -290,6 +290,18 @@ public final class HttpEndpoints {
     }
 
     /**
+     * One client for every request: a client per call would leave its executor threads and connections behind until the
+     * next GC (a model calls this dozens of times in a session), and HttpClient cannot be closed before Java 21. The
+     * per-request timeout is on the request.
+     */
+    private static final class Client {
+        static final HttpClient INSTANCE = HttpClient.newBuilder()
+                .followRedirects(HttpClient.Redirect.NEVER)
+                .connectTimeout(Duration.ofSeconds(10))
+                .build();
+    }
+
+    /**
      * Sends a request to the integration's own server and returns the status, the headers and the body (at most
      * {@value #MAX_BODY_CHARS} characters, the answer says when it was cut). Redirects are not followed, the answer
      * shows the Location header instead.
@@ -309,14 +321,10 @@ public final class HttpEndpoints {
         builder.method(m, body == null || body.isEmpty()
                 ? HttpRequest.BodyPublishers.noBody()
                 : HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8));
-        HttpClient client = HttpClient.newBuilder()
-                .followRedirects(HttpClient.Redirect.NEVER)
-                .connectTimeout(Duration.ofSeconds(Math.min(timeout, 10)))
-                .build();
-        long start = System.currentTimeMillis();
+        long start = System.nanoTime();
         HttpResponse<String> response;
         try {
-            response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            response = Client.INSTANCE.send(builder.build(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new ToolExecutionException(
                     m + " " + uri + " failed: " + e.getClass().getSimpleName()
@@ -328,7 +336,7 @@ public final class HttpEndpoints {
         JsonObject answer = new JsonObject();
         answer.put("request", m + " " + uri);
         answer.put("status", response.statusCode());
-        answer.put("elapsedMs", System.currentTimeMillis() - start);
+        answer.put("elapsedMs", (System.nanoTime() - start) / 1_000_000);
         JsonObject responseHeaders = new JsonObject();
         response.headers().map().forEach((k, v) -> responseHeaders.put(k, String.join(", ", v)));
         answer.put("headers", responseHeaders);
