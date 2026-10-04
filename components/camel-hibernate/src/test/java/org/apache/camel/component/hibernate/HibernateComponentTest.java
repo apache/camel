@@ -163,8 +163,12 @@ public class HibernateComponentTest extends CamelTestSupport {
         mockResult.expectedMinimumMessageCount(2);
         mockResult.assertIsSatisfied(5000);
 
-        List<?> remaining = template.requestBodyAndHeader("direct:query", null,
-                HibernateConstants.HIBERNATE_QUERY, "SELECT i FROM Item i", List.class);
+        org.awaitility.Awaitility.await()
+                .atMost(java.time.Duration.ofSeconds(5))
+                .pollInterval(java.time.Duration.ofMillis(50))
+                .until(() -> queryAllItems().isEmpty());
+
+        List<?> remaining = queryAllItems();
         assertEquals(0, remaining.size());
     }
 
