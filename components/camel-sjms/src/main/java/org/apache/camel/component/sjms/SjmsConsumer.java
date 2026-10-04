@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
@@ -102,6 +103,25 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
         }
 
         super.doStop();
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        // stop receiving messages while suspended
+        if (listenerContainer instanceof SuspendableService suspendable) {
+            suspendable.suspend();
+        }
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        if (listenerContainer instanceof SuspendableService suspendable) {
+            suspendable.resume();
+        }
+    }
+
+    public MessageListenerContainer getListenerContainer() {
+        return listenerContainer;
     }
 
     protected void prepareAndStartListenerContainer() {

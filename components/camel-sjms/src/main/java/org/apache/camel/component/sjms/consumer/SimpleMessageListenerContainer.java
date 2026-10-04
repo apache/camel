@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms.consumer;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.Lock;
@@ -71,6 +72,10 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     private ScheduledExecutorService recoverPool;
     private BackgroundTask recoverTask;
     private Future<?> recoverFuture;
+    // stops and starts the connection when the container is suspended and resumed, in that order (guarded by the
+    // lifecycle lock of the container: suspend, resume and stop)
+    private ExecutorService suspendExecutor;
+    private volatile Future<?> suspendTask;
 
     public SimpleMessageListenerContainer(SjmsEndpoint endpoint) {
         this.endpoint = endpoint;
@@ -265,6 +270,12 @@ public class SimpleMessageListenerContainer extends ServiceSupport
 
     @Override
     protected void doStop() throws Exception {
+        if (suspendExecutor != null) {
+            // let a pending stop or start of the connection finish first
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownGraceful(suspendExecutor);
+            suspendExecutor = null;
+            suspendTask = null;
+        }
         stopConnection();
         stopConsumers();
         if (recoverPool != null) {
@@ -282,9 +293,63 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     }
 
     @Override
+    protected void doSuspend() throws Exception {
+        // stop the delivery of messages; the consumers and sessions stay open, as the exchanges in flight may still
+        // use them (e.g. to send the reply of an async consumer). Connection.stop() waits for the message listeners
+        // in progress, and must not be called by a message listener (the JMS provider throws an
+        // IllegalStateException): a route policy suspends the consumer when an exchange is done, on the thread of
+        // the message listener or on a thread that the listener waits for, and the suspend must not wait for the
+        // listeners while it holds the lock of the consumer. So another thread stops the connection
+        submitSuspendTask(this::stopConnection);
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        // after a pending stop of the connection
+        submitSuspendTask(() -> {
+            try {
+                startConnection();
+            } catch (Exception e) {
+                LOG.warn("Error starting the JMS connection on resume. This exception is ignored.", e);
+            }
+        });
+    }
+
+    private void submitSuspendTask(Runnable task) {
+        if (suspendExecutor == null) {
+            suspendExecutor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
+                    "SjmsSuspendResume");
+        }
+        suspendTask = suspendExecutor.submit(task);
+    }
+
+    /**
+     * Whether a stop or start of the connection requested by a suspend or resume is still pending
+     */
+    boolean isSuspendResumePending() {
+        Future<?> task = suspendTask;
+        return task != null && !task.isDone();
+    }
+
+    /**
+     * Whether the connection is started (false as soon as a stop of the connection began)
+     */
+    boolean isConnectionStarted() {
+        return connectionStarted;
+    }
+
+    @Override
     protected void doShutdown() throws Exception {
         closeConnection(connection);
         this.connection = null;
+        // the connection recovery may have created consumers after stopConsumers, they are closed with the connection
+        consumerLock.lock();
+        try {
+            this.consumers = null;
+            this.sessions = null;
+        } finally {
+            consumerLock.unlock();
+        }
     }
 
     protected void initConsumers() throws Exception {
@@ -330,6 +395,9 @@ public class SimpleMessageListenerContainer extends ServiceSupport
                         closeSession(session);
                     }
                 }
+                // so that a restart creates new consumers
+                this.consumers = null;
+                this.sessions = null;
             }
         } finally {
             consumerLock.unlock();
