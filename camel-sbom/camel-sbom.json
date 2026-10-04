@@ -33705,45 +33705,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.apache.sshd/sshd-sftp@2.17.1?type=jar",
+      "bom-ref" : "pkg:maven/org.apache.sshd/sshd-sftp@2.20.0?type=jar",
       "publisher" : "The Apache Software Foundation",
       "group" : "org.apache.sshd",
       "name" : "sshd-sftp",
-      "version" : "2.17.1",
+      "version" : "2.20.0",
       "description" : "The Apache Software Foundation provides support for the Apache community of open-source software projects. The Apache projects are characterized by a collaborative, consensus based development process, an open and pragmatic software license, and a desire to create high quality software that leads the way in its field. We consider ourselves not simply a group of projects sharing a server, but rather a community of developers and users.",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "d8d1d37b5487d4229326afc66df58374"
+          "content" : "997cbfba037d2894bbb682955538f756"
         },
         {
           "alg" : "SHA-1",
-          "content" : "91085ab6f205ad68007a8034e58d46a82a0d126e"
+          "content" : "640163a12584c3eedd8e23ecd0f2b5d29143670d"
         },
         {
           "alg" : "SHA-256",
-          "content" : "84727e3ac45458e1efde1058269964e2526aa3d520584870ba007adb20534b3c"
+          "content" : "70ce2e0e35b1106c4371471fb93313e67e0ceab8f127bc09432e115f67a5089e"
         },
         {
           "alg" : "SHA-512",
-          "content" : "46ddc1e5ebbcac247ecafec8b147ac13f72b068bd7c4436ae14e5666e2a0130f15391afe456809e4fe6a2d4771c5df6e03a56a7c90b8f8ca66ced404d254e2f0"
+          "content" : "3759d02c205d01aba51d5e7eff65235888654a02c8117ed0807e33599a9fe6275d24f1f3fb4ab58e5dcd0fd809283625696c1ceed680d07e4da6269f23ef9dd0"
         },
         {
           "alg" : "SHA-384",
-          "content" : "d77cf16537db47e42dc3953dc09c1745a2caf63f93deb823843f80e376f057a2e1c0d5fed47030eb8432e3ab032fc9a7"
+          "content" : "cc9b415a4d7a76a937711153d21a31c6c9f3bbb22ff419fca41cad454f273d03002c6bde524b898445609ac8a20b9348"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "bd5cbee9c241e84a81cda2d618467f6df3ffabbfe39bf7d32f2195958d2509b7c5e4080ba908c64a8ee399e3c905d441"
+          "content" : "244c2b8057c662ba18696c3626be4eed06f367ef49c404028d47528dbaea33367e6c1713292dfa2bcc35b1a28a399876"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "f660cda69176559aeee917ea22a7ddc7da132048fb64e30bb66409d830bd78ae"
+          "content" : "7e1bd98470727feb47b22696561c16dcaaeca68d962846037ceeefd6dbd67b76"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "fe825c2330749ef925856990b29819313e1e9620bfc9cd06e759610bb594cf0d80464eac8de474fce16af08db993838f0aa8b7219017eee27426d6856804bb28"
+          "content" : "7df9021979896c3ed21e5447b31c475f28d9d700b95dcf99172a69357b4c3f29a32ebdefbec18392d090fe2497f8678b795ffe2bbed791c217911b6e0c7e6915"
         }
       ],
       "licenses" : [
@@ -33754,7 +33754,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.apache.sshd/sshd-sftp@2.17.1?type=jar",
+      "purl" : "pkg:maven/org.apache.sshd/sshd-sftp@2.20.0?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -33770,51 +33770,51 @@
         },
         {
           "type" : "vcs",
-          "url" : "https://github.com/apache/mina-sshd/tree/sshd-2.17.1/sshd-sftp"
+          "url" : "https://github.com/apache/mina-sshd/tree/sshd-2.20.0/sshd-sftp"
         }
       ]
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.apache.sshd/sshd-core@2.17.1?type=jar",
+      "bom-ref" : "pkg:maven/org.apache.sshd/sshd-core@2.20.0?type=jar",
       "publisher" : "The Apache Software Foundation",
       "group" : "org.apache.sshd",
       "name" : "sshd-core",
-      "version" : "2.17.1",
+      "version" : "2.20.0",
       "description" : "The Apache Software Foundation provides support for the Apache community of open-source software projects. The Apache projects are characterized by a collaborative, consensus based development process, an open and pragmatic software license, and a desire to create high quality software that leads the way in its field. We consider ourselves not simply a group of projects sharing a server, but rather a community of developers and users.",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "c059821a65212df7ffad96bbfca4f3c2"
+          "content" : "f47ea560908bfe2273ccc5affc276830"
         },
         {
           "alg" : "SHA-1",
-          "content" : "02582f7b736365e3cbe70bcf90f12ac99d7d7a29"
+          "content" : "e7de1ae88f20ca16af1360b6a2f3398425d2d501"
         },
         {
           "alg" : "SHA-256",
-          "content" : "b30769bbc053da28949ed1404abed546598ccf3de9100945b627f5b3a0fe003c"
+          "content" : "0f2fd957d1c7162b7fa682942e30de21be3377b98d698b6b5b729657df74e576"
         },
         {
           "alg" : "SHA-512",
-          "content" : "3908851829abc2e4afa852f76b2e76be99eb7b1a7189c0d5e7e98bd3029954eca3e54db16aca11f5ff3b6c62269f283fd9fdf386ece165931250209dd1967841"
+          "content" : "ffcdf18528665b31774bcf9f7057ca0fba3aa6ecba1f61d70ae5910a3475bdf1837609349938ad0b756a3c0ed3c234b3d7a6c479f3a628af9cef5a01723c5aac"
         },
         {
           "alg" : "SHA-384",
-          "content" : "029f2cbe66d34242757d76785e53fd210b7ab9b2b5ce9147e7d4f7bed60d8ae021912a4978c2c679f0a18472697f5ffb"
+          "content" : "774be305e5bf8d6e473c5e984cc6266e38d0b267ff7281cefee47fd6c7f4c7e2754105c36b868f9ac8de6ea9f809d308"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "c0eaa7a86cb783ad31d56bec2f99f13eeeee9650ee17c2308c51b0ea2169186fafc91b961b3280edaee87a2890623a8f"
+          "content" : "90091f539ded1c3a03860ffd6cccced8e4df1a13f47d807a604a2778469811a6e244bf74cb0a16d9a96163e2421c490a"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "09d6ca2e47185e8001edcbf1c5373c7d3b767a08ff65d8ee14d52d685adec5bd"
+          "content" : "16703327fd160da65cbcb69e78771b4559b1eb31dfa9411189925d28812748f9"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "bd9e8ec47fc84cddaa404d3d0fc152620c9d3ae955fe0e4e2398908e25063778c2cc9c7ee788f92f7ad3442fbabb0154f3a070b8185a9531fdabb391cf83fe6f"
+          "content" : "be71178f928a4468561ded7ac9e530ece582bbac4a76acc11e95e32568367a7356e80c85947f49279071d6e238c7c3b775a056e6f30eabd191735f1a46fd506f"
         }
       ],
       "licenses" : [
@@ -33825,7 +33825,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.apache.sshd/sshd-core@2.17.1?type=jar",
+      "purl" : "pkg:maven/org.apache.sshd/sshd-core@2.20.0?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -33841,51 +33841,51 @@
         },
         {
           "type" : "vcs",
-          "url" : "https://github.com/apache/mina-sshd/tree/sshd-2.17.1/sshd-core"
+          "url" : "https://github.com/apache/mina-sshd/tree/sshd-2.20.0/sshd-core"
         }
       ]
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.apache.sshd/sshd-common@2.17.1?type=jar",
+      "bom-ref" : "pkg:maven/org.apache.sshd/sshd-common@2.20.0?type=jar",
       "publisher" : "The Apache Software Foundation",
       "group" : "org.apache.sshd",
       "name" : "sshd-common",
-      "version" : "2.17.1",
+      "version" : "2.20.0",
       "description" : "The Apache Software Foundation provides support for the Apache community of open-source software projects. The Apache projects are characterized by a collaborative, consensus based development process, an open and pragmatic software license, and a desire to create high quality software that leads the way in its field. We consider ourselves not simply a group of projects sharing a server, but rather a community of developers and users.",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "f7767cbac0f8dc36cff471d264330636"
+          "content" : "4d0a4d5ae62af601f9a26994e57982fa"
         },
         {
           "alg" : "SHA-1",
-          "content" : "5c8ce7fcea1f8068b36c00a98714bb695f5935dd"
+          "content" : "8a7c2c39150ed4ba3a75671c5a2314b9406d08d2"
         },
         {
           "alg" : "SHA-256",
-          "content" : "4be43cffd261eb8138da20f87bd2d5609022df85b67bf8329cee2db488c0a1a4"
+          "content" : "55612c7c6a03302940c047d8b8b80761e963f4c529a032f47acda99a1a064334"
         },
         {
           "alg" : "SHA-512",
-          "content" : "88fb8b85fa9a6a42e1e1f167c90f779b10825a062c02238f2049238631e76df2d3f7b8fb25a68e8d48aebdcb326a5886130e3ad5636ce19ef158bfdfa8d3e58b"
+          "content" : "9c73ce1ff9a953c4d52ca4b264c38bbe5dd67b945a68ce06a22c9186c35b8563296f2f43fe1250c8200fba7e70a1ccc825f6f9aae05f81d476dc1dd151801eb0"
         },
         {
           "alg" : "SHA-384",
-          "content" : "1911af8d2a5c3b7f025f037896dcb1a1583a703ed31cfaa240030a29b124f19fd5343fd5a36d050ff196b1a66b7b145f"
+          "content" : "0f7c1d522d6a9bed3eb80304be4595b24f74ebc5e642ad2e011e803484ca1fcd797b2956fcd7638be9b31cf82a4396f1"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "0e104375ec7dabbc7d54efcee8089e5b6589e2339ed6a0ee0669825410eafc1ea8cd74ccea901b1c13ec6a751ecb11f0"
+          "content" : "c3b62dc367ddba0e103ba24a12c0a9d897f76204fb8f4c969241a81bb2f56d0a87da86cc6a62650869a035ec4c936d35"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "6fae1efc573d02006d35a5ebeab703e3d742080e7b3f493d4c7cb8128a756b7d"
+          "content" : "75f90fdaaa6c8e3d29e2f1ff82b6a76418e0c4bf4e626e2ce80b49a2398c7c68"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "61a89dbab404271b1f5b60cb5cb9b613d94bfc0e7effbd0be81744abb5755dbd3f49a6a3a0dcc71c4beae9f7041f6953737774bf7a350cda6d9c85b442c649b2"
+          "content" : "2ee7433d5750c28998d445a87fb9ccf3bc9896dbb06b656976babe5b5dd0a2b0aef1f5c295c7a6c44550f47e1374f65247a00b993d19f339de59a20f6c532dea"
         }
       ],
       "licenses" : [
@@ -33896,7 +33896,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.apache.sshd/sshd-common@2.17.1?type=jar",
+      "purl" : "pkg:maven/org.apache.sshd/sshd-common@2.20.0?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -33912,51 +33912,51 @@
         },
         {
           "type" : "vcs",
-          "url" : "https://github.com/apache/mina-sshd/tree/sshd-2.17.1/sshd-common"
+          "url" : "https://github.com/apache/mina-sshd/tree/sshd-2.20.0/sshd-common"
         }
       ]
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.apache.sshd/sshd-scp@2.17.1?type=jar",
+      "bom-ref" : "pkg:maven/org.apache.sshd/sshd-scp@2.20.0?type=jar",
       "publisher" : "The Apache Software Foundation",
       "group" : "org.apache.sshd",
       "name" : "sshd-scp",
-      "version" : "2.17.1",
+      "version" : "2.20.0",
       "description" : "The Apache Software Foundation provides support for the Apache community of open-source software projects. The Apache projects are characterized by a collaborative, consensus based development process, an open and pragmatic software license, and a desire to create high quality software that leads the way in its field. We consider ourselves not simply a group of projects sharing a server, but rather a community of developers and users.",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "791e035e4753ed7d9d983287c857217d"
+          "content" : "410150c05984acf8331560b2a31d807e"
         },
         {
           "alg" : "SHA-1",
-          "content" : "d002acc91320fd4c8456d23a42fdc62bf9dce943"
+          "content" : "92aa56bc0f8f9898520f2caa3504becb195d0696"
         },
         {
           "alg" : "SHA-256",
-          "content" : "514de8a4df96f32e6b94c0eb59c6f3770bb787980bebc8bd1c27cc95031e6a78"
+          "content" : "efb1f2c004ef847ec0bf25d8de223da2d7b162857c5b0e1f3fe1d04aa08d7e29"
         },
         {
           "alg" : "SHA-512",
-          "content" : "650594f1085817d32e616b96d1a5af138b468f423f641e0e0ce05aec00a4bc43681ee803cf54c32eac3c2cee733a0e59d3b21f663dad172e9b74b0222fb2ccd9"
+          "content" : "bc6baf9126e5af942ad1b1c6adc968b66237f83710309e0016183c05d2b0bb64051f9e26225332327fe5b92f36fef1a3f3b40f87dc5ad77f3ac1342c2a6fff81"
         },
         {
           "alg" : "SHA-384",
-          "content" : "f38d78d134b79ce1a8473ee43e47aea3332d2ca0db9449a62ed58313316ede7ece9825ee3eff52d22626fe50f23f86e3"
+          "content" : "78bd19beda361ac08bc33f0812ab1ca38cd5988f55d12185d60abe9cb1807ad81e8e4f7dbcd971ca2f784cd67f8753f4"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "e9c4a7e774bb8c4f7207791a69f68a22470371238061b72f03c422a408dca2231c77b6dba1a6236eca71e55c4a74a608"
+          "content" : "8ea726bed3af1ca885129c4b131fa17d6f655cd643e329b632471e68cb9e581354d04fc1859d228e79a366e205136e10"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "7260c4c872e2a19a03b8942122f703a23c99ee37d010d0787c7426185f636c91"
+          "content" : "bb69d60e32b74c98af0c5972d40bbd788cf19078b37f2b8b3fb54ceb8fa9a0cd"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "1619742a0f39568b28c77f1ab5ab5e75be2d0bb062f0b6e85c1a7149c18062b6754f0327bcfa6496ff7ef4c2f1ed88c73dff573ab2a546eb5c698a3efe72cb55"
+          "content" : "ca2d46a4bd7443ddd59c54f306e94c981fe272a029a505de3e5a71d1bfe8c3e91a29fb69b1ef6bdbc895c1167310c83e35e05eb3acf118bd080c3d2707b08f6c"
         }
       ],
       "licenses" : [
@@ -33967,7 +33967,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.apache.sshd/sshd-scp@2.17.1?type=jar",
+      "purl" : "pkg:maven/org.apache.sshd/sshd-scp@2.20.0?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -33983,7 +33983,7 @@
         },
         {
           "type" : "vcs",
-          "url" : "https://github.com/apache/mina-sshd/tree/sshd-2.17.1/sshd-scp"
+          "url" : "https://github.com/apache/mina-sshd/tree/sshd-2.20.0/sshd-scp"
         }
       ]
     },
@@ -223584,8 +223584,8 @@
       "dependsOn" : [
         "pkg:maven/commons-io/commons-io@2.21.0?type=jar",
         "pkg:maven/org.apache.ftpserver/ftpserver-core@1.2.1?type=jar",
-        "pkg:maven/org.apache.sshd/sshd-sftp@2.17.1?type=jar",
-        "pkg:maven/org.apache.sshd/sshd-scp@2.17.1?type=jar",
+        "pkg:maven/org.apache.sshd/sshd-sftp@2.20.0?type=jar",
+        "pkg:maven/org.apache.sshd/sshd-scp@2.20.0?type=jar",
         "pkg:maven/org.apache.camel/camel-test-infra-common@4.18.5-SNAPSHOT?classifier=tests&type=test-jar",
         "pkg:maven/org.apache.camel/spi-annotations@4.18.5-SNAPSHOT?type=jar"
       ]
@@ -223609,32 +223609,32 @@
       ]
     },
     {
-      "ref" : "pkg:maven/org.apache.sshd/sshd-sftp@2.17.1?type=jar",
+      "ref" : "pkg:maven/org.apache.sshd/sshd-sftp@2.20.0?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.apache.sshd/sshd-core@2.17.1?type=jar",
+        "pkg:maven/org.apache.sshd/sshd-core@2.20.0?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar",
         "pkg:maven/org.slf4j/jcl-over-slf4j@1.7.36?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.apache.sshd/sshd-core@2.17.1?type=jar",
+      "ref" : "pkg:maven/org.apache.sshd/sshd-core@2.20.0?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.apache.sshd/sshd-common@2.17.1?type=jar",
+        "pkg:maven/org.apache.sshd/sshd-common@2.20.0?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar",
         "pkg:maven/org.slf4j/jcl-over-slf4j@1.7.36?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.apache.sshd/sshd-common@2.17.1?type=jar",
+      "ref" : "pkg:maven/org.apache.sshd/sshd-common@2.20.0?type=jar",
       "dependsOn" : [
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar",
         "pkg:maven/org.slf4j/jcl-over-slf4j@1.7.36?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.apache.sshd/sshd-scp@2.17.1?type=jar",
+      "ref" : "pkg:maven/org.apache.sshd/sshd-scp@2.20.0?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.apache.sshd/sshd-core@2.17.1?type=jar",
+        "pkg:maven/org.apache.sshd/sshd-core@2.20.0?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar",
         "pkg:maven/org.slf4j/jcl-over-slf4j@1.7.36?type=jar"
       ]
@@ -230405,7 +230405,7 @@
       "ref" : "pkg:maven/org.apache.camel/camel-ssh@4.18.5-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.18.5-SNAPSHOT?type=jar",
-        "pkg:maven/org.apache.sshd/sshd-core@2.17.1?type=jar",
+        "pkg:maven/org.apache.sshd/sshd-core@2.20.0?type=jar",
         "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.83?type=jar",
         "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.83?type=jar",
         "pkg:maven/net.i2p.crypto/eddsa@0.3.0?type=jar"
@@ -239021,6 +239021,7 @@
       "ref" : "pkg:maven/org.apache.camel/camel-platform-http-vertx@4.18.5-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-platform-http@4.18.5-SNAPSHOT?type=jar",
+        "pkg:maven/org.apache.camel/camel-http-base@4.18.5-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-attachments@4.18.5-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-vertx-common@4.18.5-SNAPSHOT?type=jar",
         "pkg:maven/io.vertx/vertx-web@4.5.26?type=jar"
@@ -245140,7 +245141,7 @@
       "ref" : "pkg:maven/org.apache.camel/camel-mina-sftp@4.18.5-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-ftp@4.18.5-SNAPSHOT?type=jar",
-        "pkg:maven/org.apache.sshd/sshd-sftp@2.17.1?type=jar"
+        "pkg:maven/org.apache.sshd/sshd-sftp@2.20.0?type=jar"
       ]
     },
     {
