@@ -528,6 +528,18 @@ A header that carries a literal `${...}` string is now used as the object key ve
 A configured `keyName` or `bucketName` whose Simple expression resolves to `null` now fails with an
 `IllegalArgumentException` at the producer, instead of passing a `null` key/bucket on to the AWS SDK.
 
+=== camel-aws2-sqs - batchSeparator
+
+The `batchSeparator` option (default `,`), which splits a `String` body into the messages of the `sendBatchMessage`
+operation, was used as a regular expression: a separator such as `|` split the body into single characters, and `.`
+sent no message at all. It is now a plain string. A route that escaped a separator to work around this
+(for example `batchSeparator=\|`) must now use the separator itself (`batchSeparator=|`). The same applies to escape
+sequences, which the regular expression interpreted: `batchSeparator=\n` in an endpoint URI split the body at line
+breaks, and is now the two characters `+\+` and `n`; use the line break itself instead (for example
+`batchSeparator=%0A` in the endpoint URI, which works before and after this change). A separator that relied on a
+regular expression (such as `+\s*,\s*+`) is no longer supported; split the body in the route and send a `List`
+instead.
+
 === camel-azure-eventhubs
 
 The producer now leaves the Camel-internal headers (`Camel*`) out of the `EventData` application properties by
