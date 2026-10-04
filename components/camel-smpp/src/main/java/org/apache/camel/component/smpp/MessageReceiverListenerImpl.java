@@ -177,13 +177,6 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
     }
 
     /**
-     * Create a new exchange for communicating with this endpoint from a SMSC with the specified {@link ExchangePattern}
-     * such as whether its going to be an {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut} exchange
-     *
-     * @param  alertNotification the received message from the SMSC
-     * @return                   a new exchange
-     */
-    /**
      * Creates the exchange for a received {@code deliver_sm}.
      * <p/>
      * Built through {@link Consumer#createExchange(boolean)} rather than on the endpoint, as
@@ -196,10 +189,17 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
      */
     private Exchange createOnAcceptDeliverSmExchange(DeliverSm deliverSm) throws Exception {
         Exchange exchange = consumer.createExchange(false);
-        exchange.setPattern(endpoint.getExchangePattern());
-        exchange.setProperty(Exchange.BINDING, endpoint.getBinding());
-        exchange.setIn(endpoint.getBinding().createSmppMessage(endpoint.getCamelContext(), deliverSm));
-        return exchange;
+        try {
+            exchange.setPattern(endpoint.getExchangePattern());
+            exchange.setProperty(Exchange.BINDING, endpoint.getBinding());
+            exchange.setIn(endpoint.getBinding().createSmppMessage(endpoint.getCamelContext(), deliverSm));
+            return exchange;
+        } catch (Exception e) {
+            // the exchange is already out of the ExchangeFactory, and the caller's variable is still unassigned,
+            // so its finally cannot release it - a failed decode would otherwise cost a pooled exchange
+            consumer.releaseExchange(exchange, false);
+            throw e;
+        }
     }
 
     /**
@@ -212,17 +212,34 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
      */
     private Exchange createOnAcceptDataSmExchange(DataSm dataSm, String smppMessageId) {
         Exchange exchange = consumer.createExchange(false);
-        exchange.setPattern(endpoint.getExchangePattern());
-        exchange.setProperty(Exchange.BINDING, endpoint.getBinding());
-        exchange.setIn(endpoint.getBinding().createSmppMessage(endpoint.getCamelContext(), dataSm, smppMessageId));
-        return exchange;
+        try {
+            exchange.setPattern(endpoint.getExchangePattern());
+            exchange.setProperty(Exchange.BINDING, endpoint.getBinding());
+            exchange.setIn(endpoint.getBinding().createSmppMessage(endpoint.getCamelContext(), dataSm, smppMessageId));
+            return exchange;
+        } catch (Exception e) {
+            consumer.releaseExchange(exchange, false);
+            throw e;
+        }
     }
 
+    /**
+     * Create a new exchange for communicating with this endpoint from a SMSC with the specified {@link ExchangePattern}
+     * such as whether its going to be an {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut} exchange
+     *
+     * @param  alertNotification the received message from the SMSC
+     * @return                   a new exchange
+     */
     public Exchange createOnAcceptAlertNotificationExchange(AlertNotification alertNotification) {
         Exchange exchange = consumer.createExchange(false);
-        exchange.setProperty(Exchange.BINDING, endpoint.getBinding());
-        exchange.setIn(endpoint.getBinding().createSmppMessage(endpoint.getCamelContext(), alertNotification));
-        return exchange;
+        try {
+            exchange.setProperty(Exchange.BINDING, endpoint.getBinding());
+            exchange.setIn(endpoint.getBinding().createSmppMessage(endpoint.getCamelContext(), alertNotification));
+            return exchange;
+        } catch (Exception e) {
+            consumer.releaseExchange(exchange, false);
+            throw e;
+        }
     }
 
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.io.IOException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -32,6 +34,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -103,5 +107,25 @@ class MessageReceiverListenerImplTest {
 
         verify(consumer).createExchange(false);
         verify(consumer).releaseExchange(exchange, false);
+    }
+
+    /**
+     * The exchange is taken from the factory before the message is decoded, and the caller's own {@code finally} cannot
+     * release it because its variable is still unassigned when creation throws. A malformed delivery receipt would
+     * otherwise cost a pooled exchange on every occurrence.
+     */
+    @Test
+    void deliverSmReleasesItsExchangeWhenTheMessageCannotBeDecoded() throws Exception {
+        SmppBinding failing = mock(SmppBinding.class);
+        when(failing.createSmppMessage(any(CamelContext.class), any(DeliverSm.class)))
+                .thenThrow(new IOException("malformed delivery receipt"));
+        when(endpoint.getBinding()).thenReturn(failing);
+
+        ExceptionHandler handler = mock(ExceptionHandler.class);
+        new MessageReceiverListenerImpl(consumer, endpoint, received -> {
+        }, handler).onAcceptDeliverSm(deliverSm());
+
+        verify(consumer).releaseExchange(exchange, false);
+        verify(handler).handleException(anyString(), any(Exception.class));
     }
 }
