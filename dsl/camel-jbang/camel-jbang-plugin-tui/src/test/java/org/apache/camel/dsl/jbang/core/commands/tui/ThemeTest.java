@@ -293,6 +293,26 @@ class ThemeTest {
     }
 
     @Test
+    void syntaxStylesCarryTextStyleFromStylesheet() {
+        // CRT: a green phosphor terminal tells code apart by weight, keywords in bold high intensity.
+        Theme.setMode("crt");
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x66, 0xFF, 0x66)).bold(), Theme.syntaxKeywordStyle());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x22, 0xAA, 0x22)), Theme.syntaxCommentStyle());
+
+        // Monochrome: no color, comments in italic grey.
+        Theme.setMode("monochrome");
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x8A, 0x8A, 0x8A)).italic(), Theme.syntaxCommentStyle());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0xFF, 0xFF, 0xFF)).bold(), Theme.syntaxKeywordStyle());
+    }
+
+    @Test
+    void syntaxStylesArePlainColorsForThemesWithoutSyntaxTokens() {
+        Theme.setMode("dark");
+        assertEquals(Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_KEYWORD), Theme.syntaxKeywordStyle());
+        assertEquals(Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_COMMENT), Theme.syntaxCommentStyle());
+    }
+
+    @Test
     void syntaxColorsFollowThemeSwitches() {
         Theme.setMode("turbo-pascal");
         assertEquals(Color.rgb(0xFF, 0xFF, 0xFF), Theme.syntaxKeyword());

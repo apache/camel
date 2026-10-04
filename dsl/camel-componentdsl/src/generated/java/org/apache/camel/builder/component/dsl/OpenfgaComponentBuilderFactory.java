@@ -94,6 +94,33 @@ public interface OpenfgaComponentBuilderFactory {
         }
     
         /**
+         * Context passed to the CEL expressions of any conditioned relation the
+         * check touches, as a map resolved from the registry -
+         * conditionContext=#myContext. A map rather than an expression on
+         * purpose: OpenFGA types every condition parameter in the authorization
+         * model (int, bool, timestamp, ipaddress), and a map lets the route
+         * author supply values of the right Java type instead of strings that
+         * the server would then reject. A mistyped value is refused with an
+         * HTTP 400, which this component treats as a denial rather than as an
+         * unavailable decision point, so the failure direction is safe either
+         * way. Like contextualTuples this is endpoint-only. A condition can
+         * decide a relation, so letting a message choose the values it is
+         * evaluated with would hand the caller the decision.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param conditionContext the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder conditionContext(java.util.Map<java.lang.String, java.lang.Object> conditionContext) {
+            doSetProperty("conditionContext", conditionContext);
+            return this;
+        }
+    
+        /**
          * The component configuration.
          * 
          * The option is a:
@@ -126,6 +153,42 @@ public interface OpenfgaComponentBuilderFactory {
          */
         default OpenfgaComponentBuilder consistency(java.lang.String consistency) {
             doSetProperty("consistency", consistency);
+            return this;
+        }
+    
+        /**
+         * Relationship tuples supplied for the duration of one check and never
+         * stored, as semicolon-separated user,relation,object triples - for
+         * example
+         * user:${exchangeProperty.authenticatedSubject},member,team:eng. Each
+         * part is evaluated as a Simple expression against the exchange,
+         * exactly as user and object are, and applies to check, batchCheck,
+         * listObjects, listRelations and listUsers. This is how a route hands
+         * OpenFGA a relationship the stored graph does not hold - a group
+         * membership that lives in the token rather than in the store, or a
+         * fact about the request such as which network it arrived on. A
+         * contextual tuple grants. It is read exactly like a stored tuple, so
+         * user:anne,owner,document:secret makes {code check(user:anne, owner,
+         * document:secret)} answer true whatever the store contains. That is
+         * why this option is endpoint-only and is never taken from the message:
+         * a tuple the caller could choose would let it assert the very
+         * relationship being checked. By the same token, an expression here
+         * that reads an inbound header hands the caller that power anyway -
+         * keep these literal, or derive them from something the route
+         * established rather than from what it received. A part that resolves
+         * to blank denies the exchange rather than being dropped: the route
+         * asked for a tuple it did not get, and continuing without it would
+         * answer a different question than the one configured.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param contextualTuples the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder contextualTuples(java.lang.String contextualTuples) {
+            doSetProperty("contextualTuples", contextualTuples);
             return this;
         }
     
@@ -643,8 +706,10 @@ public interface OpenfgaComponentBuilderFactory {
             switch (name) {
             case "apiUrl": getOrCreateConfiguration((OpenFgaComponent) component).setApiUrl((java.lang.String) value); return true;
             case "authorizationModelId": getOrCreateConfiguration((OpenFgaComponent) component).setAuthorizationModelId((java.lang.String) value); return true;
+            case "conditionContext": getOrCreateConfiguration((OpenFgaComponent) component).setConditionContext((java.util.Map) value); return true;
             case "configuration": ((OpenFgaComponent) component).setConfiguration((org.apache.camel.component.openfga.OpenFgaConfiguration) value); return true;
             case "consistency": getOrCreateConfiguration((OpenFgaComponent) component).setConsistency((java.lang.String) value); return true;
+            case "contextualTuples": getOrCreateConfiguration((OpenFgaComponent) component).setContextualTuples((java.lang.String) value); return true;
             case "lazyStartProducer": ((OpenFgaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "object": getOrCreateConfiguration((OpenFgaComponent) component).setObject((java.lang.String) value); return true;
             case "relation": getOrCreateConfiguration((OpenFgaComponent) component).setRelation((java.lang.String) value); return true;

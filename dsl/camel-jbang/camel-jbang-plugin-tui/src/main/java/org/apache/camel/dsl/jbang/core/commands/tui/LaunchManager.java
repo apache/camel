@@ -148,19 +148,7 @@ class LaunchManager {
 
     /** The arguments with --example=name replaced by the files of the example, and its name unless one is given. */
     static List<String> exampleArgs(List<String> args, JsonObject example) {
-        List<String> answer = new ArrayList<>();
-        boolean named = args.stream().anyMatch(a -> a.startsWith("--name"));
-        for (String a : args) {
-            if (a.startsWith("--example=")) {
-                answer.addAll(ExampleHelper.getFiles(example));
-                if (!named) {
-                    answer.add("--name=" + TuiHelper.stripCategory(example.getString("name")));
-                }
-            } else {
-                answer.add(a);
-            }
-        }
-        return answer;
+        return ExampleHelper.runArgs(args, example);
     }
 
     void addPendingLaunch(String name, Process process, Path outputFile) {

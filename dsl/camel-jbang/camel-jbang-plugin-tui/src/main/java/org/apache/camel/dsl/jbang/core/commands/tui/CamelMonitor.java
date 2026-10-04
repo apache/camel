@@ -35,6 +35,7 @@ import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -202,6 +203,11 @@ public class CamelMonitor extends CamelCommand {
     private EditReplay.Editor activeReplayEditor;
     // null while the replay is parked: the tool call returned early with the user's question about the edit
     private volatile CompletableFuture<McpFacade.ReplayOutcome> activeReplayOutcome;
+    /**
+     * How long a live edit's tool call waits for the user to save or discard; after that the AI's turn goes on and the
+     * edit stays parked in the editor.
+     */
+    static final long REPLAY_WAIT_MINUTES = 5;
     private volatile String pendingEditQuestion;
     // the AI panel overlays the editor, so it is hidden while an edit is replayed and shown again afterwards
     private boolean replayHidAiPanel;
@@ -821,8 +827,20 @@ public class CamelMonitor extends CamelCommand {
                         pendingReplayOutcome = outcome;
                         pendingReplay = request;
                         try {
-                            // the user decides when this ends (save or discard); give up after a long while
-                            return outcome.get(30, TimeUnit.MINUTES);
+                            // the user decides when this ends (save or discard)
+                            return outcome.get(REPLAY_WAIT_MINUTES, TimeUnit.MINUTES);
+                        } catch (TimeoutException e) {
+                            if (pendingReplay == request) {
+                                // never started in the editor: nothing was replayed, nothing is pending
+                                pendingReplay = null;
+                                pendingReplayOutcome = null;
+                                return new McpFacade.ReplayOutcome(false, 0, List.of(), null);
+                            }
+                            // the user has not decided for a long while: the AI's turn goes on without it; the edit
+                            // stays parked in the editor and the AI is told what became of it with the next question.
+                            // complete() is atomic: a save at the same moment wins
+                            McpFacade.ReplayOutcome undecided = McpFacade.ReplayOutcome.undecidedOutcome();
+                            return outcome.complete(undecided) ? undecided : outcome.join();
                         } catch (Exception e) {
                             pendingReplay = null;
                             editReplay.abort();
@@ -893,6 +911,10 @@ public class CamelMonitor extends CamelCommand {
         }
         if (activeReplay == null) {
             return;
+        }
+        if (activeReplayOutcome != null && activeReplayOutcome.isDone()) {
+            // the tool call stopped waiting (the user took long to decide): the replay is parked
+            activeReplayOutcome = null;
         }
         String question = pendingEditQuestion;
         if (question != null) {
@@ -1308,6 +1330,14 @@ public class CamelMonitor extends CamelCommand {
                     return true;
                 }
                 if (aiPanel.handleKeyEvent(ke)) {
+                    return true;
+                }
+                if (editReplay.isAsking() && !ke.isCtrlC()) {
+                    // asking about a paused live edit: the keys the panel does not take stay away from the editor
+                    // beneath (its Esc would discard the edit); Esc and F8 go back to the edit
+                    if (ke.isCancel() || ke.isKey(KeyCode.F8)) {
+                        aiPanel.close();
+                    }
                     return true;
                 }
             }
@@ -2035,7 +2065,7 @@ public class CamelMonitor extends CamelCommand {
             renderSidePanel(frame, contentArea, shellPanel.panelHeight(), shellPanel::render);
         } else if (aiPanel.isOpen()) {
             aiPanel.initHeight(contentArea.height());
-            renderSidePanel(frame, contentArea, aiPanel.panelHeight(), aiPanel::render);
+            renderSidePanel(frame, contentArea, aiPanel.panelHeight(contentArea.height()), aiPanel::render);
         } else if (logPinned && tabRegistry.selectedTabIndex() != TAB_LOG) {
             logPinAnim.initHeight(contentArea.height());
             int ph = logPinAnim.panelHeight();

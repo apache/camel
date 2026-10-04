@@ -1,0 +1,16 @@
+# The same route with two configurations: application.properties for development and
+# application-prod.properties for production, chosen with --profile=prod.
+- route:
+    id: welcome
+    from:
+      uri: timer
+      parameters:
+        timerName: welcome
+        period: "{{welcome.period}}"
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "Welcome to {{shop.name}}, prices in {{shop.currency}}"
+        - log:
+            message: "${body}"

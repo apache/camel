@@ -1,12 +1,11 @@
 = Camel CLI - Development Tools
 
-The Camel CLI includes a suite of development tools for sending and receiving messages, managing dependencies, scripting, and configuring beans and data sources.
+The Camel CLI includes a suite of development tools for sending and receiving messages, managing dependencies, scripting, and configuring data sources.
+For Java beans and dependency injection, see xref:camel-jbang-beans.adoc[Java Beans].
 
 For debugging, see xref:camel-jbang-debugging.adoc[Debugging]. For data transformation, see xref:camel-jbang-transforming.adoc[Data Transformation].
 
 == Sending messages via Camel
-
-*Available since Camel 4*
 
 The `camel cmd send` command sends a message through a running Camel integration,
 reusing its existing endpoint configuration — a quick way to test routes without
@@ -124,8 +123,6 @@ Stop the unwanted instance or specify its PID.
 
 === Polling messages
 
-*Available since Camel 4.8*
-
 Use `--poll` to consume a message from a Kafka topic, JMS queue, FTP server, etc.
 (uses Camel consumer instead of producer — no body or headers are sent):
 
@@ -135,8 +132,6 @@ $ camel cmd send --poll --endpoint='activemq:cheese'
 ----
 
 == Receiving messages via Camel
-
-*Available since Camel 4.9*
 
 The `camel cmd receive` command consumes messages from a remote endpoint and dumps them
 in the terminal — a quick way to verify what an external system has received.
@@ -321,14 +316,6 @@ $ camel dependency update pom.xml
 NOTE: Only adding dependencies is supported (removal is manual).
 Only production code in `src/main` is scanned.
 
-== Dependency Injection
-
-The Camel CLI supports annotation-based dependency injection using Camel-native, Spring Boot,
-or Quarkus annotations — even though the runtime is standalone `camel-main` (no Spring or Quarkus container).
-
-See xref:camel-jbang-beans.adoc[Java Beans] for the full reference
-including XML DSL bean definitions and Spring Beans XML support.
-
 == Configuring JDBC DataSources
 
 Two approaches for JDBC connection pools:
@@ -398,70 +385,7 @@ Enable Hikari debug logging to see the pool configuration:
 logging.level.com.zaxxer.hikari = DEBUG
 ----
 
-== Validate Plugin
+== Validating routes
 
-*Available since Camel 4.18*
-
-The validate plugin checks whether Camel YAML source files are valid.
-
-[source,bash]
-----
-$ camel plugin add validate
-$ camel validate yaml cheese.yaml bad.yaml
-Validation error detected (errors:1)
-
-	File: bad.yaml
-		/0/from: required property 'steps' not found
-----
-
-When all files pass:
-
-[source,bash]
-----
-$ camel validate yaml cheese.yaml bad.yaml
-Validation success (files:2)
-----
-
-`camel validate yaml` checks the YAML DSL schema, then the endpoint URIs, Simple expressions and bean references
-against the Camel catalog (`--catalog=false` for the schema only); `--canonical` validates against the canonical
-schema and reports the deprecated compact notation. `camel validate source` validates any file `camel run` would
-load: YAML routes, `.properties` files (the `camel.*` keys), Java (compiles it), XSLT and XML. The routes of a Java
-or XML DSL file are also read into the Camel model, without compiling or running them, and checked as YAML routes
-are: the endpoint URIs (with the endpoint DSL and constants resolved), Simple expressions, and a `to` whose URI
-holds `+${...}+` and should be a `toD` - what the compiler cannot see inside the strings. A part of a Java route the
-parser cannot work out (a value computed at runtime) is left unchecked, and `camel_validate_source` lists it.
-As the routes of an application are spread over the files of its directory, `camel validate source` also reports a
-`direct:` or `seda:` endpoint a YAML, Java or XML route sends to that no route consumes, in that file or in the YAML, Java and
-XML route files of its directory and its subdirectories: with `direct:` the route would fail to start, with `seda:`
-the messages would be queued and never read. The check stays quiet when it cannot be certain: an endpoint only known
-at runtime (a property placeholder, an expression), route templates and Kamelets, and a directory that is only a part
-of a Maven or Gradle project, such as `src/main/resources/camel`.
-
-=== Validating against another Camel version or runtime
-
-Both commands validate against the CLI's own Camel version. A project that runs another version, or Camel
-Spring Boot or Camel Quarkus, is validated against the catalog and the YAML DSL schema of that version with
-`--camel-version` and `--runtime`, the same options `camel catalog` and `camel doc` take:
-
-[source,bash]
-----
-$ camel validate yaml --camel-version=4.18.0 orders.yaml
-$ camel validate source --runtime=quarkus --quarkus-version=3.30.1 orders.yaml application.properties
-Validation error detected (errors:1)
-
-	File: orders.yaml
-		line 4: atmosphere-websocket: Camel Quarkus has no extension for this component (no camel-quarkus-atmosphere-websocket); pick a component that has one, camel_catalog_find lists them
-----
-
-The catalog of that version is downloaded as for `camel catalog`, and the schema is read from the
-`camel-yaml-dsl` jar of that version (`--repos` and `--download=false` apply to both). With `--runtime=quarkus`
-the Quarkus platform is resolved from the Camel version through the Quarkus extension registry (cached for a
-day under `~/.camel`), or given with `--quarkus-version`; a component of the route that has no Camel Quarkus
-extension, or no Camel Spring Boot starter with `--runtime=spring-boot`, is an error. `--canonical` needs Camel
-4.22 or later, the first version with the canonical schema.
-
-The Simple expressions are parsed by the CLI's own Simple language (the catalog of the other version supplies
-its functions), and the Java, XSLT and XML checks of `camel validate source` use the CLI's classpath.
-
-The `camel_validate_source` tool of the MCP servers (xref:camel-jbang-mcp.adoc[]) does the same when it is
-given a `camelVersion`: the catalog and the schema of that version.
+Check routes, properties and other source files for mistakes before running them with `camel validate`.
+See xref:camel-jbang-validation.adoc[Validation].

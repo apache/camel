@@ -2,7 +2,7 @@
 
 The AI panel (*F8*) lets you ask about your integrations in plain language: the AI sees what the TUI sees, reads the
 sources and the catalog, and can change files with your confirmation. It works with hosted models and with local
-models through Ollama, so nothing has to leave your machine.
+models through Ollama, so nothing has to leave your machine (see xref:camel-jbang-tui-local-models.adoc[Local Models]).
 
 See xref:camel-jbang-tui.adoc[Camel TUI] for getting started and the other pages.
 
@@ -12,19 +12,13 @@ See xref:camel-jbang-tui.adoc[Camel TUI] for getting started and the other pages
 * <<_ai_panel_slash_commands,*Slash commands*>> -- run examples, change settings and steer the AI from the panel
 * <<_ai_project_overview,*Project overview*>> -- the AI explains the project once and the diagram shows it as capabilities
 * <<_ai_log,*AI log*>> -- what was asked, which tools ran and what they returned
-* <<_ollama,*Ollama tab*>> -- the local models, their context window and what is loaded
+* xref:camel-jbang-tui-local-models.adoc[*Local models*] -- Ollama or an OpenAI-compatible server on your own machine
 
 == Choosing an AI provider
 
-Press *F8* to open the built-in AI prompt panel. The panel auto-detects a provider in this order:
-
-1. `ANTHROPIC_API_KEY` → Anthropic Claude
-2. `CLOUD_ML_REGION` + `ANTHROPIC_VERTEX_PROJECT_ID` → Vertex AI
-3. `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` → Azure OpenAI
-4. `GEMINI_API_KEY` → Google Gemini
-5. `OPENAI_API_KEY` → OpenAI
-6. `LLM_API_KEY` + optional `LLM_BASE_URL` → any OpenAI-compatible server
-7. Ollama at `localhost:11434` → local Ollama (auto-detected, no key needed)
+Press *F8* to open the built-in AI prompt panel. The panel detects the provider from the environment
+(`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`, a local Ollama, and others) the same way as
+`camel ask`; the order is listed in xref:camel-jbang-ai-providers.adoc#_choosing_a_provider[AI Providers and Local Models].
 
 Press *Ctrl+P* inside the AI panel to switch provider or model at any time.
 
@@ -39,161 +33,9 @@ via *F2* -> _AI & MCP_ -> _Setup AI_. Use *F2* -> _Settings_ to pin a provider, 
 
 image::jbang/camel-tui-ai-panel-answer.png[A local Ollama model explains why an order failed]
 
-=== Using Ollama (local, no API key)
-
-Install Ollama natively for best performance — the native binary uses GPU acceleration
-(Metal on macOS, CUDA/ROCm on Linux):
-
-[source,bash]
-----
-# macOS
-brew install ollama
-
-# Linux
-curl -fsSL https://ollama.com/install.sh | sh
-
-# Pull a model — then open the TUI and press F8
-ollama pull qwen3.6:35b-a3b
-camel tui
-----
-
-Ollama at `localhost:11434` is auto-detected. No configuration needed.
-
-IMPORTANT: The F8 AI panel works by invoking built-in tools to inspect your running Camel process.
-Models smaller than ~14B do not reliably call tools and answer from training knowledge instead.
-Use at least a 14B model. Prefer a mixture-of-experts model such as `qwen3.6:35b-a3b`: with only
-3B parameters active per token it processes the tool-heavy prompt many times faster than a dense
-27B/32B model, so answers start in seconds instead of a minute.
-
-*Models that work well* (tool-calling capable, ≥14B, default Q4_K_M quantization):
-
-[options="header"]
-|===
-| Model | RAM | Notes
-| `qwen3.6:35b-a3b` | ~23 GB | Recommended: fastest prompt processing, needs 32 GB+
-| `qwen2.5:14b` | ~9 GB | Minimum for 16 GB machines
-| `qwen3.6:27b` | ~18 GB | Strong dense model, several times slower prompt processing
-| `qwen2.5:32b` | ~20 GB | Good quality, slow prompt processing
-| `hermes3:70b` | ~43 GB | Excellent tool calling, needs 64 GB+
-| `llama3.3:70b` | ~43 GB | Best open model, needs 64 GB+
-|===
-
-NOTE: `camel infra run ollama` runs Ollama in Docker and bypasses GPU acceleration,
-making inference significantly slower. Native install is preferred for development.
-
-NOTE: On Apple Silicon, use the default (GGUF) tags rather than the `-mlx` tags. The Ollama MLX
-engine cannot yet reuse the cached prompt for Qwen 3.x models, so every question re-processes the
-whole prompt, while the default engine reuses it and only processes what is new.
-
-=== Tool set for local models
-
-Every question sends the definitions of the `tui_*` tools the model may call, and a local model
-pays for each of them in prompt-processing time. The panel therefore sends only the core set of
-tools (state, tables, logs, errors, diagrams, topology, processor details, catalog docs, traces,
-spans, route control, sending messages, source files, infra services, navigation, log level and
-filters) to Ollama
-and to any provider on `localhost`, which roughly halves the prompt. Hosted providers get every
-tool, including the drawing, animation and automation tools. Use `/tools full` in the panel to send
-all tools to a local model too, `/tools core` to trim the set for a hosted one, pick *AI Tools* in
-*F2 -> Settings*, or set `camel.tui.ai.tools` in `.camel-cli.properties`. Ollama requests also ask the server to keep the
-model loaded for 30 minutes and for a context window of 32k or 64k (see <<_working_with_a_local_ollama_model>>;
-`OLLAMA_CONTEXT_LENGTH` overrides it), so follow-up questions reuse the cached prompt instead of reloading
-the model.
-
-=== Working with a local Ollama model
-
-A local model is not a slower version of a hosted one; it spends its time differently, and the TUI
-shows you where. This section explains what a question costs with Ollama and which knobs matter,
-with figures measured on an Apple M4 Pro (64 GB) running `qwen3.6:35b-a3b`.
-
-*How a question is spent.* Ollama answers in three phases, and every timing the TUI shows maps to one
-of them:
-
-1. *Load*: if the model is not in memory (first question, the keep-alive expired, or a request asked for
-   a different context size) Ollama starts a runner and loads the weights: 10 to 20 seconds for a 22 GB
-   model. The TUI asks Ollama to keep the model loaded for 30 minutes after each request.
-2. *Prefill*: the prompt (system prompt, tool definitions, conversation history, your question) is
-   processed in one batch, at roughly 600 to 700 tokens per second when nothing is cached.
-3. *Decode*: the answer is generated token by token, at 50 to 60 tokens per second for this model.
-
-The wait before anything appears, the time to first token, is load plus prefill. A cold first question
-therefore takes 20 seconds before the first word; a warm one under a second.
-
-*One question, many requests.* The panel answers by calling the `tui_*` tools, and every tool call the
-model makes costs a new request that sends the whole prompt again. A simple question can take 3 to 13
-requests. This is affordable only because Ollama caches the prompt prefix: the system prompt, the tool
-definitions and the history are identical from one step to the next, so each step prefills only the new
-tokens and takes about half a second. Across a session the cache hit is typically above 90%. The
-Ollama tab shows the request count per question as `×N` and the cache hit per question; a question
-with a high count and a short answer is the model exploring, which a smaller, sharper tool set reduces
-(see <<_tool_set_for_local_models>>).
-
-*The context window.* The TUI decides the window it asks Ollama for (`num_ctx`) once per model:
-
-1. `OLLAMA_CONTEXT_LENGTH` in the environment wins when set.
-2. If the model is already loaded, its window is adopted (raised to 32k when smaller), so the TUI never
-   makes Ollama reload a model another client is using. A request with a different `num_ctx` costs a
-   cold start and throws away everyone's prompt cache.
-3. Otherwise 64k when the model's weights plus the KV cache of a 64k window fit the machine's memory,
-   computed from what `ollama show` reports (layers, KV heads, head size), else 32k. Overshooting is
-   worse than being conservative: Ollama then moves layers to the CPU and generation slows to a crawl.
-
-The static prefix of system prompt and core tools is about 4.5k tokens, and each question with tool
-calls adds another 2k to 4k of history. The panel compacts the history once the prompt Ollama measured
-for the last request passes half the window, capped at half of 64k even when a larger window was
-adopted: every token of history is prefill time again after a cache loss (an idle unload after 30
-minutes, another client, a restart), and 64k at a few hundred tokens per second is already well over a
-minute. Compacting rewrites the history, which invalidates Ollama's prompt cache, so the request after
-a compaction prefills the whole prompt again: about 40 seconds for a 21k-token prompt. The panel
-therefore compacts local history rarely and then thoroughly, down to about a quarter of the window,
-and prints one line saying what it did and how long the next reply will take to start. `/compact` does
-the same on demand with the same line; `/context` shows the window, the compaction point and the last
-measured prompt; the panel title shows the fill as `ctx 34%`.
-
-*Choosing the model.* With no `camel.tui.ai.model` set the panel takes `llama3.2` when it is installed,
-otherwise the first installed model; run `/model <name>` in the panel or set *AI Model* in
-*F2 -> Settings* to pin one. The model must support tool calling and should have at least 14B
-parameters; a mixture-of-experts model such as `qwen3.6:35b-a3b` prefills several times faster than a
-dense model of similar quality, which is what matters for a tool-heavy prompt. *F2 -> Run Doctor* shows
-whether Ollama was found, which models are installed and whether they are large enough.
-
-*Where to look.* The <<_ollama>> tab is the instrument for all of the above: tokens per second live and
-per request, time to first token with cold starts marked, cache hit, how full the context window is
-and how it grows per question, GPU and process load, and one line per question with the requests it
-took, the question being answered right now on top with `working` as its reason and its time counting
-up, and a footer with the average per question. In the AI panel, `/context` prints what the next request will cost, `/usage` and *Ctrl+U* the
-session totals per question.
-
-*Remote and containerised Ollama.* Everything above applies to an Ollama on another host or inside
-`camel infra run ollama` as well, with two differences: the container runs without GPU acceleration,
-and the live runner state and host load on the Ollama tab need the server on the same machine.
-
-For the wider picture see the blog posts
-link:/blog/2026/09/camel-local-model-benchmark/[We had a frontier AI coach a small local model through Camel]
-on what a local model can do with Camel and what was changed to help it, and
-link:/blog/2026/09/camel-genai-observability-jbang/[Observe Your Camel AI Routes with GenAI OpenTelemetry]
-on observing routes that call Ollama.
-
-=== Using an OpenAI-compatible local server
-
-Set `LLM_API_KEY` and `LLM_BASE_URL` to connect to any OpenAI-compatible server
-(LM Studio, vLLM, llama.cpp, GPT4All, …):
-
-[source,bash]
-----
-export LLM_API_KEY=any-value
-export LLM_BASE_URL=http://localhost:1234
-camel tui
-----
-
-`OPENAI_BASE_URL` is also accepted as an alternative to `LLM_BASE_URL`.
-
-The panel uses the first model the server lists on `/v1/models`. To use another one, run
-`/model <name>` in the panel (`/model` alone lists what the server offers), set *AI Model* in
-*F2 -> Settings*, or set `camel.tui.ai.model`. The model must support tool calling, otherwise the
-panel answers from training data instead of inspecting your integration. When a request fails, the
-panel shows the HTTP status and the server's error message, for example a model that the server
-does not host.
+To run the model on your own machine, with Ollama or an OpenAI-compatible server such as LM Studio, see
+xref:camel-jbang-tui-local-models.adoc[Camel TUI Local Models]: which models work well, the tool set they get,
+what a question costs and the Ollama tab.
 
 == AI panel slash commands
 
@@ -228,7 +70,7 @@ cycles backward.
 | Show what the next request costs: provider and model, tool set, static prefix size, history size and the session total, and with Ollama the context window, the prompt size above which the history is compacted and the last measured prompt. Useful with local models, where prompt size is time.
 
 | `/compact`
-| Shrink the conversation history sent to the model right away: older tool results are cut to their first lines and the oldest turns are dropped. With a hosted provider the panel does this automatically after each answer for all but the latest turn. With Ollama or another `localhost` provider it waits until the prompt Ollama measured passes half the context window (see <<_working_with_a_local_ollama_model>>), then compacts thoroughly, because a local server can reuse its cached prompt only while the conversation is appended to and rewriting the history makes it process the whole prompt again. Both the command and the automatic compaction print one line with the sizes before and after and, locally, how long the next reply will take to start.
+| Shrink the conversation history sent to the model right away: older tool results are cut to their first lines and the oldest turns are dropped. With a hosted provider the panel does this automatically after each answer for all but the latest turn. With Ollama or another `localhost` provider it waits until the prompt Ollama measured passes half the context window (see xref:camel-jbang-tui-local-models.adoc#_working_with_a_local_ollama_model[Working with a local Ollama model]), then compacts thoroughly, because a local server can reuse its cached prompt only while the conversation is appended to and rewriting the history makes it process the whole prompt again. Both the command and the automatic compaction print one line with the sizes before and after and, locally, how long the next reply will take to start.
 
 | `/retry`
 | Send the last question again, starting from a clean turn in the model history.
@@ -314,7 +156,7 @@ model called and the time spent in them, the number of requests, the tokens and,
 the context window got (for example `61.1s · 25 tool calls, limit reached (2.5s in tools) · 26 requests
 · 231.3k tokens · ctx 18%`). The panel allows 25 tool calls per question. When the model reaches that
 the byline says `limit reached`, the panel asks the model to answer from what it has found so far, and
-the <<_ollama>> tab shows the question's request count in red with `limit` as its reason (the count is
+the xref:camel-jbang-tui-local-models.adoc#_ollama_tab[Ollama tab] shows the question's request count in red with `limit` as its reason (the count is
 yellow from 10 requests, and the total time yellow from 30 seconds and orange from a minute). A question
 that runs into the limit is usually a tool that makes the model guess, not a weak model: the AI log
 shows which one.
@@ -353,45 +195,3 @@ on a 10k-token prompt means the cache was hit, while a prefill of several second
 prompt was processed again. For OpenAI, Anthropic and Gemini it prints the number of `cached` input
 tokens the provider reported. Use it to check that follow-up questions are cheap before blaming the
 model for being slow.
-
-== Ollama
-
-The Ollama tab (under More, in the *AI* group) shows how the model served by a local
-https://ollama.com[Ollama] is performing, in the spirit of an LLM dashboard. It works with or without a
-running integration: it finds Ollama at `localhost:11434`, at the address of `camel infra run ollama`,
-or at the endpoint the AI panel (*F8*) is using. The tab is listed only while an Ollama server answers;
-the TUI checks every ten seconds, so it appears shortly after `ollama serve` starts.
-
-* *Model* -- the loaded model with its family, parameters, quantization, layers, experts (and how many
-  are active per token for a mixture-of-experts model), how much of it sits in GPU memory, the
-  allocated context length and when Ollama will unload it. With no model loaded, the installed models
-  are listed instead.
-* *Throughput* -- decode and prefill tokens per second, *live* while the model is generating and
-  otherwise from the last request; time to first token and load time (a load of a second or more
-  is a cold start); session averages and a sparkline of the decode rate.
-* *Context* -- how full the context window is, the share of the prompt served from Ollama's cache,
-  whether the model is working or idle, the speculative decoding method in use, and a per-turn trend
-  of how much of the window each AI panel prompt filled, with the session peak and the compactions seen.
-* *Host* -- GPU utilization and memory (Apple silicon through `ioreg`, NVIDIA through `nvidia-smi`),
-  and CPU and memory of the Ollama server and its model runner.
-* *Requests* -- one line per question asked in the AI panel (a question with tool calls costs one
-  request per step; *Enter* unfolds the steps) with the question text, prompt and generated tokens,
-  cache hit, the share of the context window reached, prefill and decode tokens per second, time to
-  first token, the time you waited and the stop reason. Calls made by Camel routes are listed as
-  their own lines.
-
-Two kinds of requests appear in the log. Questions asked in the AI panel with Ollama as the provider
-come with the timings Ollama reports for each request (prompt evaluation, generation, model load,
-total). Calls made by Camel routes through `camel-langchain4j-chat`, `camel-openai` or
-`camel-spring-ai-chat` appear when the integration runs with GenAI observability (`--observe`, or
-`--dep=camel:ai-observability`), tagged with the route id; Camel records tokens and duration for those,
-not the phase split.
-
-The live figures, the context panel and the host panel need the model runner on the same machine:
-Ollama starts a `llama-server` process per loaded model and the tab reads its slot state a few times a
-second. Against a remote or containerised Ollama the tab keeps the model, per-request and session data
-and says which panels are unavailable.
-
-Press *r* to reset the request log and the session totals, *F5* to refresh immediately. The same data
-is available to AI agents through the `tui_get_ollama` MCP tool. For what the figures mean for the AI
-panel and which knobs to turn, see <<_working_with_a_local_ollama_model>>.

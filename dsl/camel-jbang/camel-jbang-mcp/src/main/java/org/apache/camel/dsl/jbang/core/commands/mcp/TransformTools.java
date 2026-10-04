@@ -16,11 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
-import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,22 +27,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.ExpressionNode;
-import org.apache.camel.model.ProcessorDefinitionHelper;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.spi.Resource;
-import org.apache.camel.support.PluginHelper;
-import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.xml.in.ModelParser;
-import org.apache.camel.yaml.out.YamlModelWriter;
+import org.apache.camel.dsl.jbang.core.commands.RouteDslConverter;
 
 /**
- * MCP tool transforming Camel routes between DSL formats using Quarkus MCP Server. Validation is the shared
- * {@code camel_validate_source} tool.
+ * MCP tool transforming Camel routes between DSL formats with the route DSL converter of camel-jbang, which reads the
+ * routes without running them. Validation is the shared {@code camel_validate_source} tool.
  */
 @McpSecured
 @ApplicationScoped
@@ -56,13 +43,16 @@ public class TransformTools {
      * Tool to transform routes between DSL formats.
      */
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Transform a Camel route between different DSL formats (YAML, XML). " +
-                        "Note: Java to YAML/XML transformation has limitations."
-                        + " Java DSL can only be used as source format, not as target format.")
+          description = "Transform Camel routes between the YAML, XML and Java DSLs, without running them."
+                        + " Routes, rests, route templates, route configurations and beans are converted."
+                        + " The result is read back and compared with the source: what differs, or is not carried"
+                        + " over (such as comments, or the beans when the target is Java), is listed in notes."
+                        + " What cannot be converted without running it (a processor lambda) is refused with the reason.")
     public TransformResult camel_transform_route(
-            @ToolArg(description = "Route definition to transform") String route,
+            @ToolArg(description = "Route definition to transform: a YAML or XML routes file, a Java RouteBuilder class,"
+                                   + " or Java route statements such as from(\"timer:tick\").to(\"log:out\");") String route,
             @ToolArg(description = "Source format (yaml, xml, java)") String fromFormat,
-            @ToolArg(description = "Target format (yaml, xml)") String toFormat) {
+            @ToolArg(description = "Target format (yaml, xml, java)") String toFormat) {
 
         if (route == null || fromFormat == null || toFormat == null) {
             throw new ToolCallException("route, fromFormat, and toFormat are required", null);
@@ -72,175 +62,40 @@ public class TransformTools {
         result.fromFormat = fromFormat;
         result.toFormat = toFormat;
 
-        String from = fromFormat.toLowerCase();
-        String to = toFormat.toLowerCase();
+        String from = fromFormat.toLowerCase(Locale.ROOT);
+        String to = toFormat.toLowerCase(Locale.ROOT);
 
         if (from.equals(to)) {
             result.supported = true;
             result.result = route;
             return result;
         }
-
-        try {
-            if ("xml".equals(from) && "yaml".equals(to)) {
-                result.result = transformXmlToYaml(route);
-                result.supported = true;
-            } else if ("yaml".equals(from) && "xml".equals(to)) {
-                result.result = transformYamlToXml(route);
-                result.supported = true;
-            } else if ("java".equals(from) && "yaml".equals(to)) {
-                result.result = transformJavaToFormat(route, "yaml");
-                result.supported = true;
-            } else if ("java".equals(from) && "xml".equals(to)) {
-                result.result = transformJavaToFormat(route, "xml");
-                result.supported = true;
-            } else {
-                result.supported = false;
-                result.note = "Unsupported transformation: " + fromFormat + " to " + toFormat;
-            }
-        } catch (Throwable e) {
-            Throwable cause = ObjectHelper.createExceptionIterator(e).next();
-            String message = e.getMessage();
-            if (cause != e) {
-                message += ": " + cause.getMessage();
-            }
-            throw new ToolCallException(
-                    "Failed to transform route (" + e.getClass().getName() + "): " + message, null);
+        if (!RouteDslConverter.FORMATS.contains(from) || !RouteDslConverter.FORMATS.contains(to)) {
+            result.supported = false;
+            result.note = "Unsupported transformation: " + fromFormat + " to " + toFormat;
+            return result;
         }
 
+        RouteDslConverter.Result r = RouteDslConverter.convert(fileName(route, from), route, to, Map.of());
+        if (!r.converted()) {
+            throw new ToolCallException("Cannot transform route: " + r.refused(), null);
+        }
+        result.supported = true;
+        result.result = r.content();
+        result.notes = r.notes();
+        if (!r.notes().isEmpty()) {
+            result.note = String.join("; ", r.notes());
+        }
         return result;
     }
 
-    /**
-     * Transform an XML route definition to YAML format.
-     */
-    private String transformXmlToYaml(String xml) throws Exception {
-        // Try Spring namespace first (most common), then fall back to no namespace
-        RoutesDefinition routes = null;
-        try (ByteArrayInputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))) {
-            routes = new ModelParser(is, "http://camel.apache.org/schema/spring")
-                    .parseRoutesDefinition().orElse(null);
+    /** A file name for the route as the converter tells the DSLs apart: Java by its class. */
+    private static String fileName(String route, String format) {
+        if ("java".equals(format)) {
+            Matcher m = CLASS_NAME_PATTERN.matcher(route);
+            return (m.find() ? m.group(1) : "Route") + ".java";
         }
-        if (routes == null) {
-            try (ByteArrayInputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))) {
-                routes = new ModelParser(is)
-                        .parseRoutesDefinition().orElse(null);
-            }
-        }
-        if (routes == null) {
-            throw new IllegalArgumentException(
-                    "Could not parse XML route. Ensure it contains a valid <routes> or <route> element.");
-        }
-
-        YamlModelWriter writer = new YamlModelWriter();
-        List<JsonObject> roots = new ArrayList<>();
-        for (RouteDefinition route : routes.getRoutes()) {
-            roots.add(writer.writeRouteDefinition(route));
-        }
-        return writer.printAsYaml(roots);
-    }
-
-    /**
-     * Transform a YAML route definition to XML format.
-     */
-    private String transformYamlToXml(String yaml) throws Exception {
-        DefaultCamelContext ctx = new DefaultCamelContext();
-        try {
-            ctx.build();
-
-            Resource resource = ResourceHelper.fromString("route.yaml", yaml);
-            PluginHelper.getRoutesLoader(ctx).loadRoutes(resource);
-
-            List<RouteDefinition> routeDefs = ctx.getRouteDefinitions();
-            if (routeDefs == null || routeDefs.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "Could not parse YAML route. Ensure it contains a valid route definition.");
-            }
-
-            RoutesDefinition rd = new RoutesDefinition();
-            rd.setRoutes(routeDefs);
-            requireSeparateDeclarations(ctx);
-
-            StringWriter sw = new StringWriter();
-            new org.apache.camel.xml.out.ModelWriter(sw).writeRoutesDefinition(rd);
-            return sw.toString();
-        } finally {
-            ctx.stop();
-        }
-    }
-
-    private static void requireSeparateDeclarations(DefaultCamelContext context) throws ReflectiveOperationException {
-        // Semantic declarations are optional and live outside the model exported by this converter.
-        Class<?> type = context.getClassResolver().resolveClass("org.apache.camel.semantic.SemanticQuestions");
-        if (type == null) {
-            return;
-        }
-        Object questions = context.getCamelContextExtension().getContextPlugin(type);
-        if (questions != null && !(boolean) type.getMethod("isEmpty").invoke(questions)) {
-            throw new IllegalArgumentException(
-                    "Semantic declarations cannot be exported by the generic route converter. "
-                                               + "Keep them in a separate declaration resource and convert only the routes.");
-        }
-    }
-
-    private String transformJavaToFormat(String java, String targetFormat) throws Exception {
-        DefaultCamelContext ctx = new DefaultCamelContext();
-        try {
-            ctx.build();
-
-            String source = wrapSnippetIfNeeded(java);
-            String className = extractClassName(source);
-            Resource resource = ResourceHelper.fromString(className + ".java", source);
-            PluginHelper.getRoutesLoader(ctx).loadRoutes(resource);
-
-            List<RouteDefinition> routeDefs = ctx.getRouteDefinitions();
-            if (routeDefs == null || routeDefs.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "Could not parse Java route. Ensure it contains a valid route definition.");
-            }
-
-            // Java expression clauses are normally materialized when processors are created.
-            routeDefs.forEach(route -> ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ExpressionNode.class)
-                    .forEach(ExpressionNode::preCreateProcessor));
-
-            if ("yaml".equals(targetFormat)) {
-                YamlModelWriter writer = new YamlModelWriter();
-                List<JsonObject> roots = new ArrayList<>();
-                requireSeparateDeclarations(ctx);
-                for (RouteDefinition route : routeDefs) {
-                    roots.add(writer.writeRouteDefinition(route));
-                }
-                return writer.printAsYaml(roots);
-            } else {
-                RoutesDefinition rd = new RoutesDefinition();
-                rd.setRoutes(routeDefs);
-                requireSeparateDeclarations(ctx);
-
-                StringWriter sw = new StringWriter();
-                new org.apache.camel.xml.out.ModelWriter(sw).writeRoutesDefinition(rd);
-                return sw.toString();
-            }
-        } finally {
-            ctx.stop();
-        }
-    }
-
-    private static String wrapSnippetIfNeeded(String source) {
-        if (CLASS_NAME_PATTERN.matcher(source).find()) {
-            return source;
-        }
-        return "import org.apache.camel.builder.RouteBuilder;\n\n"
-               + "public class SnippetRoute extends RouteBuilder {\n"
-               + "    @Override\n"
-               + "    public void configure() {\n"
-               + "        " + source + "\n"
-               + "    }\n"
-               + "}\n";
-    }
-
-    private static String extractClassName(String source) {
-        Matcher m = CLASS_NAME_PATTERN.matcher(source);
-        return m.find() ? m.group(1) : "Route";
+        return "route.camel." + format;
     }
 
     // Result class for Jackson serialization
@@ -249,6 +104,7 @@ public class TransformTools {
         public String fromFormat;
         public String toFormat;
         public String note;
+        public List<String> notes = List.of();
         public boolean supported;
         public String result;
     }

@@ -46,6 +46,7 @@ public class JGroupsConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        endpoint.verifyConsumerDeserializationGuard();
         LOG.debug("Connecting receiver: {} to the cluster: {}.", receiver, clusterName);
         endpoint.getResolvedChannel().setReceiver(receiver);
         endpoint.connect();

@@ -37,9 +37,13 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
         case "clientSecret": target.getConfiguration().setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "conditioncontext":
+        case "conditionContext": target.getConfiguration().setConditionContext(property(camelContext, java.util.Map.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "consistency": target.getConfiguration().setConsistency(property(camelContext, java.lang.String.class, value)); return true;
+        case "contextualtuples":
+        case "contextualTuples": target.getConfiguration().setContextualTuples(property(camelContext, java.lang.String.class, value)); return true;
         case "failopen":
         case "failOpen": target.getConfiguration().setFailOpen(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -90,9 +94,13 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "clientId": return java.lang.String.class;
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
+        case "conditioncontext":
+        case "conditionContext": return java.util.Map.class;
         case "connecttimeout":
         case "connectTimeout": return long.class;
         case "consistency": return java.lang.String.class;
+        case "contextualtuples":
+        case "contextualTuples": return java.lang.String.class;
         case "failopen":
         case "failOpen": return boolean.class;
         case "lazystartproducer":
@@ -139,9 +147,13 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "clientId": return target.getConfiguration().getClientId();
         case "clientsecret":
         case "clientSecret": return target.getConfiguration().getClientSecret();
+        case "conditioncontext":
+        case "conditionContext": return target.getConfiguration().getConditionContext();
         case "connecttimeout":
         case "connectTimeout": return target.getConfiguration().getConnectTimeout();
         case "consistency": return target.getConfiguration().getConsistency();
+        case "contextualtuples":
+        case "contextualTuples": return target.getConfiguration().getContextualTuples();
         case "failopen":
         case "failOpen": return target.getConfiguration().isFailOpen();
         case "lazystartproducer":
@@ -166,6 +178,15 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "user": return target.getConfiguration().getUser();
         case "userfilters":
         case "userFilters": return target.getConfiguration().getUserFilters();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "conditioncontext":
+        case "conditionContext": return java.lang.Object.class;
         default: return null;
         }
     }

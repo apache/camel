@@ -18,6 +18,7 @@ package org.apache.camel.component.openfga.security;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 
@@ -278,6 +279,36 @@ public class OpenFgaSecurityPolicy implements AuthorizationPolicy {
      */
     public void setRelation(String relation) {
         configuration.setRelation(relation);
+    }
+
+    public String getContextualTuples() {
+        return configuration.getContextualTuples();
+    }
+
+    /**
+     * Relationship tuples supplied for the duration of one check and never stored, as semicolon-separated
+     * {@code user,relation,object} triples. Each part is a Simple expression, evaluated per exchange.
+     * <p/>
+     * Safe here for the same reason it is safe on an endpoint, and for no other: the value comes from whoever
+     * configured the policy, never from the message. A contextual tuple is read exactly like a stored one, so one built
+     * from caller input would let the caller assert the relationship being demanded - derive it from something the
+     * route established, such as a claim an earlier authentication step put on an exchange property.
+     */
+    public void setContextualTuples(String contextualTuples) {
+        configuration.setContextualTuples(contextualTuples);
+    }
+
+    public Map<String, Object> getConditionContext() {
+        return configuration.getConditionContext();
+    }
+
+    /**
+     * Context the CEL expression of any conditioned relation this check touches is evaluated with. A map rather than an
+     * expression, so values carry the Java type the authorization model declares ({@code int}, {@code bool},
+     * {@code timestamp}, {@code ipaddress}) instead of strings the server would reject.
+     */
+    public void setConditionContext(Map<String, Object> conditionContext) {
+        configuration.setConditionContext(conditionContext);
     }
 
     public String getConsistency() {

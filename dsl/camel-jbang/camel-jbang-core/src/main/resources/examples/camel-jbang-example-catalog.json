@@ -2,7 +2,7 @@
     {
         "name": "ai/docling-langchain4j-rag",
         "title": "Document Analysis with Docling and LangChain4j RAG",
-        "description": "Documents dropped in a directory are converted by a running Docling service, chunked and summarised by a local Ollama model through langchain4j-chat, and written to an output directory; an HTTP endpoint answers questions against the converted documents.",
+        "description": "Documents dropped in a directory are converted to Markdown by a Docling service, analysed by a local Ollama model through langchain4j-chat, and written as a report to an output directory; an HTTP endpoint answers questions against the latest document.",
         "level": "ai",
         "teaches": {
             "components": [
@@ -42,6 +42,8 @@
             "docling",
             "ollama"
         ],
+        "needs": "a local model",
+        "ciSkip": true,
         "order": 4
     },
     {
@@ -88,6 +90,7 @@
         "infraServices": [
             "ollama"
         ],
+        "needs": "a local model",
         "ciSkip": true,
         "order": 1
     },
@@ -109,7 +112,7 @@
             ],
             "languages": [
                 "simple",
-                "jsonpath",
+                "groovy",
                 "constant"
             ],
             "dataformats": [
@@ -164,6 +167,8 @@
             "pii-redaction.camel.yaml",
             "pii.schema.json"
         ],
+        "needs": "an OpenAI-compatible API",
+        "ciSkip": true,
         "order": 3
     },
     {
@@ -504,7 +509,7 @@
             "inbox",
             "archive"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -543,7 +548,7 @@
             ],
             "languages": [
                 "simple",
-                "jsonpath"
+                "groovy"
             ],
             "dataformats": [
                 "json"
@@ -555,7 +560,7 @@
             "rest",
             "client"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -584,11 +589,12 @@
                 "setBody",
                 "setHeader",
                 "choice",
+                "unmarshal",
                 "marshal"
             ],
             "languages": [
                 "constant",
-                "jsonpath",
+                "groovy",
                 "simple"
             ],
             "dataformats": [
@@ -601,7 +607,7 @@
             "http",
             "platform-http"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -686,7 +692,7 @@
             "client",
             "contract"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -723,7 +729,7 @@
             ],
             "languages": [
                 "simple",
-                "jsonpath",
+                "groovy",
                 "constant"
             ],
             "dataformats": [
@@ -736,7 +742,7 @@
             "rest",
             "contract"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -818,7 +824,7 @@
             "retry",
             "dead-letter"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -827,8 +833,7 @@
             "error-handling.camel.yaml",
             "orders/order-1001.json",
             "orders/order-1002.json",
-            "orders/order-1003.json",
-            "parked/order-1003.json"
+            "orders/order-1003.json"
         ],
         "order": 1
     },
@@ -856,7 +861,7 @@
         ],
         "bundled": true,
         "requiresDocker": false,
-        "hasCitrusTests": false,
+        "hasCitrusTests": true,
         "files": [
             "README.md",
             "application.properties",
@@ -885,7 +890,7 @@
         ],
         "bundled": true,
         "requiresDocker": false,
-        "hasCitrusTests": false,
+        "hasCitrusTests": true,
         "files": [
             "Greeter.java",
             "README.md",
@@ -920,7 +925,7 @@
         ],
         "bundled": true,
         "requiresDocker": false,
-        "hasCitrusTests": false,
+        "hasCitrusTests": true,
         "files": [
             "README.md",
             "splitter.camel.yaml"
@@ -948,7 +953,7 @@
         ],
         "bundled": true,
         "requiresDocker": false,
-        "hasCitrusTests": false,
+        "hasCitrusTests": true,
         "files": [
             "README.md",
             "application.properties",
@@ -987,7 +992,7 @@
             "aggregator",
             "batch"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -1027,7 +1032,7 @@
             "choice",
             "routing"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -1069,7 +1074,7 @@
             "filter",
             "multicast"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -1110,7 +1115,7 @@
             "splitter",
             "split"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -1145,7 +1150,7 @@
             "cron",
             "schedule"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -1180,7 +1185,7 @@
             "bean",
             "json"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -1215,7 +1220,7 @@
             "profiles",
             "configuration"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -1407,7 +1412,7 @@
             "file",
             "transformation"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -1448,7 +1453,7 @@
             "json",
             "transformation"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -1489,7 +1494,7 @@
             "validation",
             "dependencies"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -1530,7 +1535,7 @@
             "jsonpath",
             "transformation"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -1567,7 +1572,7 @@
             "jackson",
             "transformation"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
@@ -1599,7 +1604,7 @@
             "xslt",
             "transformation"
         ],
-        "bundled": false,
+        "bundled": true,
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [

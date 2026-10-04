@@ -707,6 +707,46 @@ public class YamlValidatorPropertyHintTest {
     }
 
     @Test
+    public void testJsonPathWithInlinedSimpleIsValid() throws Exception {
+        // the jsonpath language evaluates ${...} inside a JsonPath first (allowSimple, on by default)
+        List<Error> errors = validator.validate("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.store.book[?(@.price < ${header.max})]"
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[?(@.sku == '${header.sku}')]"
+                                resultType: java.util.List
+                """);
+        assertThat(errors).isEmpty();
+
+        // a whole ${...} is simple syntax, and so is any ${...} when allowSimple is off
+        errors = validator.validate("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "${body.price}"
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.store.book[?(@.price < ${header.max})]"
+                                allowSimple: false
+                """);
+        assertThat(errors).hasSize(2);
+        assertThat(errors.get(0).getMessage()).startsWith("jsonpath: ${...} is simple syntax, not jsonpath");
+    }
+
+    @Test
     public void testOnExceptionAsAListSaysMap() throws Exception {
         List<Error> errors = validator.validate("""
                 - onException:

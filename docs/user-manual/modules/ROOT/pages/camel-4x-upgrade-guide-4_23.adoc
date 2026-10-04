@@ -528,6 +528,24 @@ A header that carries a literal `${...}` string is now used as the object key ve
 A configured `keyName` or `bucketName` whose Simple expression resolves to `null` now fails with an
 `IllegalArgumentException` at the producer, instead of passing a `null` key/bucket on to the AWS SDK.
 
+=== camel-azure-eventhubs
+
+The producer now leaves the Camel-internal headers (`Camel*`) out of the `EventData` application properties by
+default. The upgrade guides for 4.14.9, 4.18.4 and 4.22.0 already announced this, but the filter was not installed, so
+those releases still copied every header. Configure a custom `headerFilterStrategy` on the component to change which
+headers are sent.
+
+A route that consumes from one Event Hub and produces to another no longer fails, or ignores the producer
+configuration, because of the `CamelAzureEventHubsPartitionKey` and `CamelAzureEventHubsPartitionId` headers that the
+consumer sets. Such a route used to fail with `Both partitionKey and partitionId are set` for every event with a
+partition key, and for every event when `partitionKey` was configured, and a configured `partitionId` was replaced by
+the partition the event was received from. The producer now picks the partition from, in this order: a partition
+header set by the route, the `partitionKey` or `partitionId` endpoint option, and the partition key of the received
+event. It no longer reuses the partition id of the received event, so an event without a partition key is no longer
+sent to the partition with the same id in the target Event Hub. To keep doing so, for example when mirroring between
+Event Hubs that have the same partitions, remove the `CamelAzureEventHubsReceivedPartitionId` exchange property before
+the producer.
+
 === camel-couchbase
 
 The `connectTimeout` option is now applied. It previously sat inside a condition that tested `queryTimeout`, so
@@ -745,6 +763,44 @@ written in the charset that the `Content-Type` declares. Bodies that are not a `
 `Content-Type` declares no charset, are sent as before (UTF-8 by default). A peer that ignored the declared charset and
 read such a message as UTF-8 must now use the declared charset, and characters that the declared charset cannot
 represent are written as `?`.
+
+=== camel-snmp - GET_NEXT (walk)
+
+A `GET_NEXT` walk now ends at the end of the agent's MIB view (`endOfMibView`, or `noSuchName` for SNMPv1) and at
+the end of the requested subtree by comparing OIDs (`1.3.6.1.4.1.20...` is no longer taken as part of
+`1.3.6.1.4.1.2`). Before, a walk that reached the end of the MIB view requested the same OID again forever. A walk
+whose request times out now fails with a `TimeoutException`, like `GET`, instead of returning the entries read so far
+(an empty list for an agent that does not answer), and an agent error other than `noSuchName` fails the exchange.
+An agent that answers with an OID inside the subtree that does not increase now also fails the exchange with a
+`CamelExchangeException` ("OID not increasing", like net-snmp's `snmpwalk`), instead of repeating the request.
+
+=== camel-vertx - request/reply over the event bus
+
+When a `vertx` consumer receives a message that expects a reply and the route fails, the sender now gets a failure
+reply (a `ReplyException` with failure type `RECIPIENT_FAILURE`, failure code 500 and the message
+`Exchange processing failed`; the exception of the route is not sent to the sender). Before, the consumer replied with
+the message body as if the route had succeeded, which usually echoed the request back. A route that ends without a
+body now replies with an empty (`null`) body instead of not replying, so the
+sender no longer waits until its reply timeout (30 seconds by default).
+
+=== camel-rocketmq - a message whose route failed is consumed again
+
+The consumer acknowledged a message (`CONSUME_SUCCESS`) whenever the processor returned, also when the route failed:
+a failed route sets the exception on the exchange instead of throwing it, so the message was lost. The consumer now
+answers `RECONSUME_LATER` for a failed exchange (or one marked rollback only), and RocketMQ redelivers the message with an increasing delay (up to
+the maximum reconsume times of the consumer group, 16 by default, then it goes to the dead letter queue of the group).
+A route that fails for a message, and relied on the message being dropped, now receives it again; handle the
+exception in the route (for example with `onException(...).handled(true)`) to acknowledge the message anyway.
+
+=== camel-dapr - pub/sub consumer acknowledges an event after the exchange
+
+The pub/sub consumer acknowledged every event with `SUCCESS` as soon as the exchange was handed to the route, also
+when the route then failed, so Dapr dropped events whose processing failed. The consumer now answers when the exchange
+is done: `SUCCESS` when it completed, and `RETRY` when it failed (or was marked rollback only), so that Dapr redelivers
+the event. A route that fails for an event, and relied on the event being dropped, now receives it again; handle the
+exception in the route (for example with `onException(...).handled(true)`) to acknowledge the event anyway. A poison
+event that always fails now gets `RETRY` every time, until a Dapr resiliency policy for the pub/sub component or a
+dead-letter topic on the subscription limits the redeliveries.
 
 === Components and Language removal
 
@@ -1224,6 +1280,14 @@ The message of the part is copied into the child exchange, so the exchanges in t
 untouched and remain usable after the split, for example by the batching consumer that owns them. Exchange
 properties of the part are not carried over to the child exchange, as is already the case for `Message` parts.
 
+=== camel-util - retainAll on the key set of the message headers ignores case
+
+`retainAll` on the key set of `CaseInsensitiveMap`, and so on `exchange.getMessage().getHeaders().keySet()`, now
+keeps a key when the given collection holds its name in any case, as lookups do. For example
+`headers.keySet().retainAll(List.of("accept"))` now keeps the `Accept` header. Prior to Camel 4.23 the names were
+compared case-sensitively, and such a call removed `Accept`. To keep headers by their exact name, remove the others
+explicitly, for example with `headers.keySet().removeIf(name -> !names.contains(name))`.
+
 === camel-core - Idempotent Consumer no longer stops its repository when the route is stopped
 
 Stopping a route with an Idempotent Consumer (for example with `stopRoute` on the route controller, over JMX,
@@ -1496,6 +1560,18 @@ Camel still uses a user-supplied `Config` or `ClientConfig` (a `hazelcastConfig`
 such a configuration that declares no `JavaSerializationFilterConfig`, unless a JVM-wide `jdk.serialFilter`
 is set. To remove the warning, declare a `java-serialization-filter` in the configuration, as described in
 the xref:components::hazelcast-summary.adoc[Hazelcast component] documentation.
+
+=== camel-pubnub - consumers of a shared PubNub client
+
+A PubNub client hands every message it receives to all its listeners. When several endpoints use the same client
+(a `pubnub` bean that is autowired or referenced), each consumer received the messages of the channels of the other
+consumers too, and every stop and start of a route added one more listener, so its messages were then received once
+more. A consumer now only receives the messages and presence events of its own channel, and removes its listener
+when it stops.
+
+The endpoint now destroys the PubNub client only when it created it. A client from the registry is no longer
+destroyed when an endpoint stops, for example when a route that uses the client is removed while other routes still
+use it: the application that created the client is responsible for destroying it.
 
 === camel-netty - NettyConverter.toByteArray returns a copy of the buffer's readable bytes
 
@@ -1819,6 +1895,15 @@ unparsable content type now fails fast with a `ParseException` at marshal time, 
 value was written into the `Content-Type` header as-is. Ensure a custom `ContentTypeResolver` returns a valid
 MIME type.
 
+=== camel-nats - no reply when the exchange failed
+
+A consumer with `exchangePattern=InOut` answered a request (a message with a reply subject) with the body of the
+exchange also when the exchange failed, so the requester got a successful reply, usually its own request. NATS has
+no error reply, so the consumer now sends no reply when the exchange failed or is marked rollback only, as camel-jms
+does without `transferException`: the requester times out (with the camel-nats producer, an
+`ExchangeTimedOutException` after `requestTimeout`). A failure that the route handles, for example with
+`onException(...).handled(true)`, is answered as before.
+
 === camel-netty - object codecs apply a deserialization filter by default
 
 The `ObjectDecoder` and `DatagramPacketObjectDecoder` codecs (used when a route configures Netty
@@ -1859,6 +1944,28 @@ level by default.
 Note that JGroups deserializes the payload inside its own receive path, so this check is a
 defense-in-depth allow-list on the resulting body type. The JVM-wide `jdk.serialFilter`, together
 with a channel secured with `AUTH` and encryption, remain the primary mitigations.
+
+=== camel-jgroups - the consumer refuses to start without a pre-read deserialization control
+
+Building on the deserialization filter above, the consumer now refuses to start when it would
+deserialize cluster messages on the default, unauthenticated channel and no pre-read protection is
+configured. The class check applied after `org.jgroups.Message.getObject()` is defense-in-depth only
+and cannot stop code that runs during deserialization, so a pre-read control is required. A pre-read
+control is any of: a JVM-wide `-Djdk.serialFilter`, the JGroups-native
+`-Djgroups.deserialization.filter` system property, or a channel secured with
+`AUTH` and/or `SYM_ENCRYPT`/`ASYM_ENCRYPT` supplied through `channelProperties`. The `deserializationFilter`
+option is a post-read check and does not satisfy the guard.
+
+When none of these is configured, the consumer fails to start. To keep the previous behaviour of
+accepting any serialized type without a pre-read control, set `acceptAllObjects=true` on the consumer;
+this opts out of the guard and also disables the post-read class check:
+
+[source,java]
+----
+from("jgroups:clusterName?acceptAllObjects=true")
+----
+
+Producers are unaffected.
 
 === camel-oauth
 
@@ -2058,6 +2165,12 @@ still available, but has to be asked for with the new
 Deployments that relied on the previous behaviour — a development cluster with a self-signed
 certificate, for example — must either configure a truststore or set `camel.knative.client.ssl.trust.all`
 explicitly. `KnativeOidcClientOptions` extends this class and is affected the same way.
+
+A Knative consumer with `reply=false` now answers a failed exchange with its error status instead of `204 No Content`.
+
+Such a consumer answered `204 No Content` to every request, also when the route failed, so Knative took the event as
+delivered and did not send it again. A failed exchange now keeps its status (500, or the `CamelHttpResponseCode`
+header the route set) with an empty body, as with `reply=true`. Successful exchanges still get `204 No Content`.
 
 === camel-paho
 
@@ -2361,6 +2474,15 @@ inherit values set on `defaultInstance`, and `defaultInstance` itself remains un
 
 Routes that compared unmarshalled bodies by identity, or that mutated one body expecting the change to
 be visible on another, must be updated.
+
+==== Consumer - failed exchanges
+
+The Thrift consumer now sends the exception of a failed exchange to the client as the result of the call: an
+exception declared by the Thrift method (such as `throws (1:InvalidOperation ouch)`) as that exception, any other
+exception as a `TApplicationException`. Before, with `synchronous=true` the failure was ignored (a `void` method
+returned normally, other methods returned the message body converted to the return type, or failed with
+`Return type requires not empty body`), and in the default asynchronous mode both the error and a regular response
+were sent, so the error could be read as the answer to the next call on the same connection.
 
 === camel-shiro
 
@@ -2954,6 +3076,22 @@ Local downloads configured with a plain `downloadFileName` directory now resolve
 path segments before checking that the destination remains inside that directory. Downloads through a
 symbolic link that resolves outside the configured directory are rejected. Valid object names using `/`
 as a pseudo-directory separator continue to work.
+
+The remote object name is untrusted input, so the consumer now also checks it whatever `downloadFileName`
+looks like. An absolute object name (one starting with `/` or `\`, or with a drive letter such as `C:`) and
+an object name with a `..` path segment are rejected, even when the name would normalize back inside the
+download directory (for example `a/../b.txt`). When the consumer lists the bucket, a rejected object is skipped
+and reported to the consumer's exception handler, which logs a warning by default, and the other objects of the
+poll are consumed as usual. The rejected object stays in the bucket, so it is reported again on every poll until it
+is removed or renamed. With `objectName`, which consumes a single object, the poll fails instead, and the failure is
+reported on every poll.
+
+The containment check is now also applied when `downloadFileName` is configured as a directory followed
+by an expression, such as `downloadFileName=/tmp/downloads/${file:name}`: the destination must stay within
+the static directory prefix configured before the first expression token (`/tmp/downloads` in the example).
+When `downloadFileName` is fully dynamic and has no static directory prefix (for example
+`downloadFileName=${file:name}`), a relative destination must stay within the working directory. An absolute
+destination that comes from the route's own expression is not confined.
 
 === camel-jt400
 
@@ -4235,3 +4373,13 @@ as Java, the error handler of an XML or YAML route is now `.errorHandler(...)` o
 
 The `timeout(long)` of the Resequencer EIP in Java keeps the millis as given (`2000`), instead of a duration
 (`2s0ms`).
+
+=== camel-jbang-mcp - camel_transform_route
+
+The `camel_transform_route` tool now converts with the same route DSL converter as `camel transform route
+--format=java`. It reads the routes without running them, so a Java route is no longer compiled. Instead it is read
+by the Java DSL parser, and a route the parser cannot read (such as a processor lambda) is refused with the reason.
+Property placeholders are kept as written instead of being resolved.
+
+In return, Java is also a target format, and rests, route templates, route configurations and beans are converted
+instead of only routes. A new `notes` field of the result lists what differs or is not carried over.

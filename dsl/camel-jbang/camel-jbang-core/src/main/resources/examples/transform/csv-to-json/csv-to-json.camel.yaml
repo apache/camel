@@ -1,0 +1,35 @@
+# The accountant drops a CSV of invoices in the inbox; each line becomes one JSON invoice, logged and
+# written to the outbox as its own file.
+- route:
+    id: csv-to-json
+    from:
+      uri: file
+      parameters:
+        directoryName: inbox
+        noop: true
+        include: ".*\\.csv"
+      steps:
+        - unmarshal:
+            csv:
+              useMaps: true
+              captureHeaderRecord: true
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - setHeader:
+                  name: invoiceId
+                  expression:
+                    simple:
+                      expression: "${body[invoiceId]}"
+              - marshal:
+                  json:
+                    library: Jackson
+              - log:
+                  message: "Invoice ${header.invoiceId}: ${body}"
+              - to:
+                  uri: file
+                  parameters:
+                    directoryName: outbox
+                    fileName: "${header.invoiceId}.json"

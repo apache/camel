@@ -972,7 +972,7 @@
     },
     {
       "source": "rest-dsl.adoc",
-      "yaml": "- rest:\n    path: \"\/customers\/\"\n    get:\n      - path: \"\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+      "yaml": "- rest:\n    path: \/stock\n    get:\n      - path: \"\/{sku}\"\n        to: direct:one-sku\n- route:\n    from:\n      uri: direct:one-sku\n      steps:\n        - choice:\n            when:\n              - expression:\n                  simple:\n                    expression: \"${header.sku} == 'CAMEL-MUG'\"\n                steps:\n                  - setBody:\n                      expression:\n                        constant:\n                          expression: '{\"sku\": \"CAMEL-MUG\", \"qty\": 42}'\n            otherwise:\n              steps:\n                - setHeader:\n                    name: CamelHttpResponseCode\n                    expression:\n                      constant:\n                        expression: \"404\"\n                - setBody:\n                    expression:\n                      simple:\n                        expression: '{\"error\": \"unknown SKU ${header.sku}\"}'\n"
     },
     {
       "source": "rest-dsl-openapi.adoc",
@@ -980,11 +980,19 @@
     },
     {
       "source": "rest-dsl.adoc",
-      "yaml": "- rest:\n    get:\n      - path: \"\/customers\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+      "yaml": "- rest:\n    path: \"\/customers\/\"\n    get:\n      - path: \"\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
     },
     {
       "source": "rest-dsl-openapi.adoc",
       "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n      missingOperation: ignore\n"
+    },
+    {
+      "source": "rest-dsl.adoc",
+      "yaml": "- rest:\n    get:\n      - path: \"\/customers\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+    },
+    {
+      "source": "rest-dsl-openapi.adoc",
+      "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n      missingOperation: ignore\n      unmatchedRequestHandling: camel\n"
     },
     {
       "source": "rest-dsl.adoc",
@@ -996,7 +1004,7 @@
     },
     {
       "source": "rest-dsl.adoc",
-      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    get:\n      - path: \"\/customers\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    get:\n      - path: \"\/customers\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
     },
     {
       "source": "rest-dsl.adoc",
@@ -1004,11 +1012,11 @@
     },
     {
       "source": "rest-dsl.adoc",
-      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    path: \"\/customers\/\"\n    get:\n      - path: \"\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/neworder\"\n        to: \"direct:customerNewOrder\"\n- route:\n    from:\n      uri: direct:customerNewOrder\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n- route:\n    from:\n      uri: direct:commonCustomerNewOrder\n      steps:\n        - log:\n            message: Created new order\n- route:\n    from:\n      uri: kafka:new-order\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n"
+      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    path: \"\/customers\/\"\n    get:\n      - path: \"\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/neworder\"\n        to: \"direct:customerNewOrder\"\n- route:\n    from:\n      uri: direct:customerNewOrder\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n- route:\n    from:\n      uri: direct:commonCustomerNewOrder\n      steps:\n        - log:\n            message: Created new order\n- route:\n    from:\n      uri: kafka:new-order\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n"
     },
     {
       "source": "rest-dsl.adoc",
-      "yaml": "- rest:\n    get:\n      - path: \"\/customers\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n        disabled: \"{{ordersEnabled}}\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n        disabled: \"true\"\n"
+      "yaml": "- rest:\n    get:\n      - path: \"\/customers\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n        disabled: \"{{ordersEnabled}}\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n        disabled: \"true\"\n"
     }
   ],
   "returnAddress": [

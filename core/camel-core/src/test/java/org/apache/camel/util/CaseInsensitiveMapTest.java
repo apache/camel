@@ -257,6 +257,78 @@ public class CaseInsensitiveMapTest {
     }
 
     @Test
+    public void testKeySetRemoveWithDifferentCase() {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("X-Trace", "abc");
+        map.put("Accept", "text/plain");
+
+        assertTrue(map.keySet().remove("x-trace"));
+        assertFalse(map.containsKey("X-Trace"));
+        assertEquals(List.of("Accept"), new ArrayList<>(map.keySet()));
+
+        assertFalse(map.keySet().remove("x-trace"));
+        assertFalse(map.keySet().remove("x-other"));
+        assertEquals(1, map.size());
+    }
+
+    @Test
+    public void testKeySetRemoveAllWithDifferentCase() {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("X-Trace", "abc");
+        map.put("X-TENANT", "t1");
+        map.put("Accept", "text/plain");
+
+        // fewer elements than the map
+        assertTrue(map.keySet().removeAll(List.of("x-trace", "x-tenant")));
+        assertEquals(List.of("Accept"), new ArrayList<>(map.keySet()));
+        assertFalse(map.keySet().removeAll(List.of("x-trace", "x-tenant")));
+
+        // more elements than the map: the result must not depend on the sizes
+        map.put("X-Trace", "abc");
+        map.put("X-TENANT", "t1");
+        assertTrue(map.keySet().removeAll(List.of("x-trace", "x-tenant", "x-other", "x-more")));
+        assertEquals(List.of("Accept"), new ArrayList<>(map.keySet()));
+        assertEquals("text/plain", map.get("accept"));
+    }
+
+    @Test
+    public void testKeySetRetainAllWithDifferentCase() {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("X-Trace", "abc");
+        map.put("X-TENANT", "t1");
+        map.put("Accept", "text/plain");
+
+        assertTrue(map.keySet().retainAll(List.of("accept", "x-tenant", "x-other")));
+        assertEquals(List.of("X-TENANT", "Accept"), new ArrayList<>(map.keySet()));
+        assertFalse(map.keySet().retainAll(Set.of("ACCEPT", "X-Tenant")));
+        assertEquals(2, map.size());
+
+        assertTrue(map.keySet().retainAll(List.of()));
+        assertTrue(map.isEmpty());
+    }
+
+    @Test
+    public void testKeySetIteratorRemove() {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("X-Trace", "abc");
+        map.put("X-Tenant", "t1");
+        map.put("Accept", "text/plain");
+
+        Iterator<String> it = map.keySet().iterator();
+        assertEquals("X-Trace", it.next());
+        assertEquals("X-Tenant", it.next());
+        it.remove();
+        assertThrows(IllegalStateException.class, it::remove);
+        assertEquals("Accept", it.next());
+        assertFalse(it.hasNext());
+
+        assertEquals(List.of("X-Trace", "Accept"), new ArrayList<>(map.keySet()));
+
+        assertTrue(map.keySet().removeIf(k -> k.startsWith("X-")));
+        assertEquals(List.of("Accept"), new ArrayList<>(map.keySet()));
+    }
+
+    @Test
     public void testRetainKeysCopyToAnotherMap() {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Foo", "cheese");

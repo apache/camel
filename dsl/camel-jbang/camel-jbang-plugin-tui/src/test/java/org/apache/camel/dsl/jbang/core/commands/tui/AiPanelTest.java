@@ -1866,4 +1866,29 @@ class AiPanelTest {
             return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         }
     }
+
+    @Test
+    void askingAboutAPausedLiveEditKeepsThePanelCompactUntilTheUserSizesIt() {
+        AiPanel panel = new AiPanel();
+        panel.initHeight(80);
+        assertEquals(40, panel.panelHeight(80), "half the content by default");
+
+        panel.askAboutEdit("About edit 1 of 2: ", question -> true);
+        // the edit in the editor stays in view: a quarter of the content, at least 10 rows
+        assertEquals(20, panel.panelHeight(80));
+        assertEquals(10, panel.panelHeight(24));
+
+        // the user sizes it: then it is the user's height
+        panel.cycleHeight(80);
+        while (panel.isAnimating()) {
+            panel.tickAnimation();
+        }
+        assertEquals(60, panel.panelHeight(80), "three quarters, no longer capped");
+        panel.close();
+
+        panel.askAboutEdit("About edit 2 of 2: ", question -> true);
+        assertEquals(20, panel.panelHeight(80));
+        panel.close();
+        assertEquals(60, panel.panelHeight(80), "a normal question opens the panel at its own height again");
+    }
 }

@@ -1230,6 +1230,7 @@ public final class JsonMapper {
         command.setDeprecationNote(obj.getString("deprecationNote"));
         command.setSourceClass(obj.getString("sourceClass"));
         command.setExamples(obj.getString("examples"));
+        command.setPlugin(obj.getString("plugin"));
 
         JsonArray options = (JsonArray) obj.get("options");
         if (options != null) {
@@ -1298,6 +1299,9 @@ public final class JsonMapper {
         }
         if (cmd.getExamples() != null) {
             json.put("examples", cmd.getExamples());
+        }
+        if (cmd.getPlugin() != null) {
+            json.put("plugin", cmd.getPlugin());
         }
 
         if (cmd.hasOptions()) {

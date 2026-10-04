@@ -70,6 +70,12 @@ final class EditReplay {
     /** Milliseconds per typed character, and per line removal. */
     static final long CHAR_DELAY_MS = 12;
     static final long LINE_DELAY_MS = 90;
+    /**
+     * At most this long to type one change: a longer one is typed faster, so a large edit does not keep the user (and
+     * the AI) waiting, while a small one keeps the pace of someone typing.
+     */
+    static final long HUNK_BUDGET_MS = 4000;
+    private static final long MAX_CATCH_UP_MS = 250;
 
     private final LongSupplier clock;
     private Editor editor;
@@ -83,8 +89,11 @@ final class EditReplay {
     private int row;
     private int bodyIndex;
     private int charIndex;
-    private long nextActionAt;
+    // fractional, so a fast pace below a millisecond per character still spreads over the ticks
+    private double nextActionAt;
     private int minRow;
+    // the pace of the current hunk: 1 for the natural pace, less for a change that would take longer than the budget
+    private double pace = 1;
     // where a question to the AI returns to: the pause, or the finished replay (asked after the last hunk)
     private Phase askedFrom = Phase.PAUSED;
 
@@ -196,9 +205,10 @@ final class EditReplay {
             row = start + hunk.before().size();
             bodyIndex = 0;
             charIndex = 0;
+            pace = pace(hunk);
             editor.moveToRow(row);
             phase = Phase.TYPING;
-            nextActionAt = now + LINE_DELAY_MS;
+            nextActionAt = now + delay(LINE_DELAY_MS);
             return;
         }
         phase = Phase.FINISHED;
@@ -213,6 +223,9 @@ final class EditReplay {
             phase = Phase.FINISHED;
             return;
         }
+        // the steps follow their own schedule, several in one tick when it is due (a tick is about 40 ms, a character
+        // 12 ms or less); after a stall the replay does not rush to catch up
+        nextActionAt = Math.max(nextActionAt, now - MAX_CATCH_UP_MS);
         while (phase == Phase.TYPING && now >= nextActionAt) {
             step(now);
         }
@@ -230,12 +243,12 @@ final class EditReplay {
             row++;
             bodyIndex++;
             editor.moveToRow(row);
-            nextActionAt = now + LINE_DELAY_MS / 3;
+            nextActionAt += delay(LINE_DELAY_MS / 3);
         } else if (entry.type() == '-') {
             editor.moveToRow(row);
             editor.deleteCurrentLine();
             bodyIndex++;
-            nextActionAt = now + LINE_DELAY_MS;
+            nextActionAt += delay(LINE_DELAY_MS);
         } else {
             String text = entry.text();
             if (charIndex == 0) {
@@ -244,15 +257,38 @@ final class EditReplay {
             if (charIndex < text.length()) {
                 editor.insertAtCursor(String.valueOf(text.charAt(charIndex)));
                 charIndex++;
-                nextActionAt = now + CHAR_DELAY_MS;
+                nextActionAt += delay(CHAR_DELAY_MS);
             } else {
                 editor.insertAtCursor("\n");
                 row++;
                 bodyIndex++;
                 charIndex = 0;
-                nextActionAt = now + LINE_DELAY_MS;
+                nextActionAt += delay(LINE_DELAY_MS);
             }
         }
+    }
+
+    /** How long the hunk takes at the natural pace. */
+    static long naturalTime(EditDiff.Hunk hunk) {
+        long ms = LINE_DELAY_MS;
+        for (EditDiff.DiffEntry entry : hunk.body()) {
+            ms += switch (entry.type()) {
+                case ' ' -> LINE_DELAY_MS / 3;
+                case '-' -> LINE_DELAY_MS;
+                default -> entry.text().length() * CHAR_DELAY_MS + LINE_DELAY_MS;
+            };
+        }
+        return ms;
+    }
+
+    /** The pace that types the hunk within the budget: 1 when it fits at the natural pace. */
+    static double pace(EditDiff.Hunk hunk) {
+        long natural = naturalTime(hunk);
+        return natural <= HUNK_BUDGET_MS ? 1 : (double) HUNK_BUDGET_MS / natural;
+    }
+
+    private double delay(long ms) {
+        return ms * pace;
     }
 
     /** Applies the rest of the current hunk at once. */
