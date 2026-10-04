@@ -727,7 +727,7 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
             if (body instanceof Map || body instanceof Collection) {
                 InvalidPayloadException answer = new InvalidPayloadException(
                         exchange, InputStream.class, in,
-                        "a " + (body instanceof Map ? "Map" : "List")
+                        "a " + (body instanceof Map ? "Map" : body instanceof List ? "List" : "Collection")
                                                          + " is not an HTTP request body: marshal it to JSON first "
                                                          + "(marshal: json) or set the body to the JSON text");
                 answer.initCause(e.getCause() != null ? e.getCause() : e);
