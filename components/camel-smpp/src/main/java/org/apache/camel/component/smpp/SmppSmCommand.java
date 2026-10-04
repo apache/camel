@@ -92,7 +92,8 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         String body = message.getBody(String.class);
 
         if (SmppUtils.is8Bit(alphabet)) {
-            splitter = new Smpp8BitSplitter(body.length());
+            // an 8-bit message is split by its length in bytes
+            splitter = new Smpp8BitSplitter(getShortMessage(message).length);
         } else if (alphabet == Alphabet.ALPHA_UCS2) {
             splitter = new SmppUcs2Splitter(body.length());
         } else {

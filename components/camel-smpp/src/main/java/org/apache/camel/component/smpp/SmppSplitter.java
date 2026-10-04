@@ -141,13 +141,13 @@ public class SmppSplitter {
         // determine how many messages
         int segmentNum = message.length / segmentLength;
         int messageLength = message.length;
+        if ((messageLength % segmentLength) > 0) {
+            segmentNum++;
+        }
         if (segmentNum > MAX_SEG_COUNT) {
             // this is too long, can't fit, so chop
             segmentNum = MAX_SEG_COUNT;
             messageLength = segmentNum * segmentLength;
-        }
-        if ((messageLength % segmentLength) > 0) {
-            segmentNum++;
         }
 
         byte[][] segments = new byte[segmentNum][];
