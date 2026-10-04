@@ -1,0 +1,107 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.smpp;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.DefaultExchange;
+import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.DeliverSm;
+import org.jsmpp.extra.ProcessRequestException;
+import org.jsmpp.session.Session;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+/**
+ * An exchange a consumer received a message for has to be built through {@link org.apache.camel.Consumer} rather than
+ * on the endpoint, so that the configured {@code ExchangeFactory} sees it, and it has to be released afterwards.
+ */
+class MessageReceiverListenerImplTest {
+
+    private SmppConsumer consumer;
+    private SmppEndpoint endpoint;
+    private CamelContext camelContext;
+    private Exchange exchange;
+
+    @BeforeEach
+    void setUp() {
+        camelContext = new DefaultCamelContext();
+        exchange = new DefaultExchange(camelContext);
+        consumer = mock(SmppConsumer.class);
+        endpoint = mock(SmppEndpoint.class);
+
+        when(consumer.createExchange(false)).thenReturn(exchange);
+        when(endpoint.getCamelContext()).thenReturn(camelContext);
+        when(endpoint.getBinding()).thenReturn(new SmppBinding());
+        when(endpoint.getExchangePattern()).thenReturn(ExchangePattern.InOnly);
+    }
+
+    private MessageReceiverListenerImpl listener(Processor processor) {
+        return new MessageReceiverListenerImpl(consumer, endpoint, processor, mock(ExceptionHandler.class));
+    }
+
+    private static DeliverSm deliverSm() {
+        DeliverSm deliverSm = new DeliverSm();
+        deliverSm.setShortMessage("Hello SMPP world!".getBytes());
+        return deliverSm;
+    }
+
+    @Test
+    void deliverSmTakesItsExchangeFromTheConsumerAndReleasesIt() throws Exception {
+        listener(received -> assertEquals("Hello SMPP world!", received.getIn().getBody(String.class)))
+                .onAcceptDeliverSm(deliverSm());
+
+        verify(consumer).createExchange(false);
+        verify(consumer).releaseExchange(exchange, false);
+    }
+
+    /**
+     * The failure path throws a {@link ProcessRequestException} so the SMSC gets a NACK, and must still release.
+     */
+    @Test
+    void deliverSmReleasesItsExchangeWhenTheRouteFailed() {
+        MessageReceiverListenerImpl listener
+                = listener(received -> received.setException(new IllegalStateException("the route blew up")));
+
+        ProcessRequestException thrown
+                = assertThrows(ProcessRequestException.class, () -> listener.onAcceptDeliverSm(deliverSm()));
+        assertEquals("the route blew up", thrown.getMessage());
+
+        verify(consumer).releaseExchange(exchange, false);
+    }
+
+    @Test
+    void dataSmTakesItsExchangeFromTheConsumerAndReleasesIt() throws Exception {
+        DataSm dataSm = new DataSm();
+
+        listener(received -> {
+        }).onAcceptDataSm(dataSm, mock(Session.class));
+
+        verify(consumer).createExchange(false);
+        verify(consumer).releaseExchange(exchange, false);
+    }
+}
