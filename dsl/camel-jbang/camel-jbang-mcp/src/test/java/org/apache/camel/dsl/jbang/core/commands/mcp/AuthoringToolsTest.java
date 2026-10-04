@@ -113,7 +113,7 @@ class AuthoringToolsTest {
     void anUnknownIntegrationNameIsAnError() {
         assertThatThrownBy(() -> tools.camel_eval_expression("${body}", null, "camel", "no-such-app-xyz-1"))
                 .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
-        assertThatThrownBy(() -> tools.camel_get_log("no-such-app-xyz-1", null, null, null))
+        assertThatThrownBy(() -> tools.camel_get_log("no-such-app-xyz-1", null, null, null, null))
                 .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
     }
 
