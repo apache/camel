@@ -43,6 +43,9 @@ public class PubNubEndpoint extends DefaultEndpoint {
     @UriParam
     private PubNubConfiguration configuration;
 
+    // whether the endpoint created the client (a client from the registry may be shared, and is not ours to destroy)
+    private boolean createdClient;
+
     public PubNubEndpoint(String uri, PubNubComponent component, PubNubConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
@@ -76,24 +79,36 @@ public class PubNubEndpoint extends DefaultEndpoint {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (pubnub != null) {
+        if (pubnub != null && createdClient) {
             pubnub.destroy();
             pubnub = null;
+            createdClient = false;
         }
     }
 
     @Override
     protected void doStart() throws Exception {
-        this.pubnub = getPubnub() != null ? getPubnub() : getInstance();
+        if (pubnub == null) {
+            pubnub = getInstance();
+            createdClient = true;
+        }
         super.doStart();
     }
 
     private PubNub getInstance() throws PubNubException {
-        PNConfiguration config = PNConfiguration.builder(new UserId(configuration.getUuid()), configuration.getSubscribeKey())
-                .publishKey(configuration.getPublishKey())
-                .secretKey(configuration.getSecretKey())
-                .authKey(configuration.getAuthKey())
-                .secure(configuration.isSecure()).build();
-        return PubNub.create(config);
+        PNConfiguration.Builder builder
+                = PNConfiguration.builder(new UserId(configuration.getUuid()), configuration.getSubscribeKey())
+                        .secure(configuration.isSecure());
+        // the builder does not accept null for the keys that are not configured, its defaults apply then
+        if (configuration.getPublishKey() != null) {
+            builder.publishKey(configuration.getPublishKey());
+        }
+        if (configuration.getSecretKey() != null) {
+            builder.secretKey(configuration.getSecretKey());
+        }
+        if (configuration.getAuthKey() != null) {
+            builder.authKey(configuration.getAuthKey());
+        }
+        return PubNub.create(builder.build());
     }
 }
