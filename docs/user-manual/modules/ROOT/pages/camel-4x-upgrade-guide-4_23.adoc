@@ -546,6 +546,15 @@ sent to the partition with the same id in the target Event Hub. To keep doing so
 Event Hubs that have the same partitions, remove the `CamelAzureEventHubsReceivedPartitionId` exchange property before
 the producer.
 
+=== camel-consul - readTimeout and writeTimeout
+
+The `readTimeout` and `writeTimeout` options (also on the Consul cluster service) set the connect timeout of the
+Consul client instead of its read and write timeouts. So the client always used the default read and write timeouts
+of its HTTP client (10 seconds), and the connect timeout was `writeTimeout` when it was set, otherwise `readTimeout`,
+otherwise `connectTimeout`. Each option now sets its own timeout: a request whose answer takes longer than a
+configured `readTimeout` now fails, and only `connectTimeout` sets the connect timeout. Blocking queries
+(`blockSeconds`) are not affected: the client computes the read timeout of a blocking query from its wait time.
+
 === camel-couchbase
 
 The `connectTimeout` option is now applied. It previously sat inside a condition that tested `queryTimeout`, so
