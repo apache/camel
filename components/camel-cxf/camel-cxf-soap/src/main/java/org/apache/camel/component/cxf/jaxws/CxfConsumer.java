@@ -168,11 +168,27 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
             Continuation continuation;
             if (!endpoint.isSynchronous() && isAsyncInvocationSupported(cxfExchange)
                     && (continuation = getContinuation(cxfExchange)) != null) {
+                // a resumed continuation belongs to a request that is in flight and must complete
+                if (continuation.isNew()) {
+                    rejectIfSuspended();
+                }
                 LOG.trace("Calling the Camel async processors.");
                 return asyncInvoke(cxfExchange, continuation);
             } else {
+                rejectIfSuspended();
                 LOG.trace("Calling the Camel sync processors.");
                 return syncInvoke(cxfExchange);
+            }
+        }
+
+        // a suspended consumer (suspended route, graceful shutdown) does not accept new requests, like the HTTP
+        // consumers, which answer 503
+        private void rejectIfSuspended() {
+            if (isSuspendingOrSuspended()) {
+                LOG.debug("Consumer suspended, cannot service request");
+                Fault fault = new Fault(new IllegalStateException("Service unavailable: the consumer is suspended"));
+                fault.setStatusCode(503);
+                throw fault;
             }
         }
 
