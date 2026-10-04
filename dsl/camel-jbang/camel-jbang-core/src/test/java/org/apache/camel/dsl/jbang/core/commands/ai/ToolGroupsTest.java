@@ -111,4 +111,34 @@ class ToolGroupsTest {
         assertEquals(fp, ToolGroups.select(reordered).fingerprint());
         assertNotEquals(fp, ToolGroups.select(AppFeatures.none()).fingerprint());
     }
+
+    static HttpEndpoints.Served stockApi(int port) {
+        return new HttpEndpoints.Served(
+                port, "/api", "stock-api.json", List.of(new HttpEndpoints.Endpoint(
+                        "GET", "/api/stock/{sku}", null, "application/json", "stock", "getStock", "rest", false)),
+                Map.of("rests", "1 service(s)"));
+    }
+
+    @Test
+    void httpLoadsTheEndpointAndRequestTools() {
+        // CAMEL-25307
+        ToolGroups.Selection s = ToolGroups.select(AppFeatures.none().withHttp(stockApi(8080)));
+        assertEquals(List.of(ToolGroup.HTTP), s.toolGroups());
+        assertEquals(List.of("camel_runtime_http_endpoints", "camel_runtime_http_request"), s.mcpTools());
+        assertEquals("HTTP: served on http://localhost:8080/api (contract stock-api.json); camel_runtime_http_request"
+                     + " calls it, camel_runtime_http_endpoints lists the operations.",
+                s.guidance().get(0));
+        assertEquals("http||http://localhost:8080/api", s.fingerprint());
+        assertEquals(s.fingerprint(), ToolGroups.select(AppFeatures.none().withHttp(stockApi(8080))).fingerprint());
+        assertNotEquals(s.fingerprint(), ToolGroups.select(AppFeatures.none().withHttp(stockApi(9090))).fingerprint());
+        assertTrue(ToolGroups.select(AppFeatures.none().withHttp(stockApi(0))).guidance().get(0)
+                .contains("the port is not known yet"));
+    }
+
+    @Test
+    void httpComesLastSoTheOtherGroupsKeepTheirPlace() {
+        ToolGroups.Selection s = ToolGroups.select(everything().withHttp(stockApi(8080)));
+        assertEquals(List.of(ToolGroup.SQL, ToolGroup.TRACING, ToolGroup.RESILIENCE, ToolGroup.HTTP), s.toolGroups());
+        assertEquals("http,resilience,sql,tracing|audit,orders|http://localhost:8080/api", s.fingerprint());
+    }
 }

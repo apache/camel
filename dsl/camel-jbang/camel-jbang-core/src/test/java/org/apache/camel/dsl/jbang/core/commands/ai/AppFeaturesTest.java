@@ -129,4 +129,52 @@ class AppFeaturesTest {
         assertEquals(List.of("orders"), merged.dataSourceNames());
         assertEquals(merged, merged.merge(AppFeatures.none()));
     }
+
+    @Test
+    void platformHttpIsHttp() throws Exception {
+        // CAMEL-25307
+        AppFeatures f = features("{'platform-http': {'server': 'http://0.0.0.0:8080', 'endpoints': ["
+                                 + "{'url': 'http://0.0.0.0:8080/api/orders', 'path': '/api/orders', 'verbs': 'GET,POST'},"
+                                 + "{'url': 'http://0.0.0.0:8080/api/orders/{id}', 'path': '/api/orders/{id}'}]}}");
+        assertTrue(f.httpServed());
+        assertEquals(8080, f.http().port());
+        assertEquals("http://localhost:8080/api", f.http().baseUrl());
+        assertEquals(3, f.http().endpoints().size(), "one per verb, ANY without verbs");
+        assertEquals("http://0.0.0.0:8080", f.signals().get("platform-http"));
+    }
+
+    @Test
+    void aContractFirstRestIsHttpWithItsContract() throws Exception {
+        AppFeatures f = features("{'rests': {'rests': [{'url': 'http://0.0.0.0:8080/api/stock/{sku}', 'method': 'get',"
+                                 + " 'contractFirst': true, 'operationId': 'getStock', 'routeId': 'stock',"
+                                 + " 'specificationUri': 'classpath:stock-api.json'}]},"
+                                 + " 'platform-http': {'server': 'http://0.0.0.0:9090'}}");
+        assertTrue(f.httpServed());
+        assertEquals("stock-api.json", f.http().contract());
+        assertEquals(9090, f.http().port(), "the embedded server knows the port");
+        assertEquals("/api/stock", f.http().basePath());
+        HttpEndpoints.Endpoint op = f.http().endpoints().get(0);
+        assertEquals("GET", op.method());
+        assertEquals("getStock", op.operationId());
+        assertEquals("1 service(s)", f.signals().get("rests"));
+        assertEquals("stock-api.json", f.signals().get("contract"));
+    }
+
+    @Test
+    void anHttpConsumerEndpointIsHttp() throws Exception {
+        // a status without the rest and platform-http consoles
+        AppFeatures f = features("{'routes': [{'routeId': 'r1', 'from': 'rest-openapi://classpath:pets.yaml?x=y'}]}");
+        assertTrue(f.httpServed());
+        assertEquals("pets.yaml", f.http().contract());
+        assertEquals(0, f.http().port());
+        assertEquals("rest-openapi", f.signals().get("endpoints.http"));
+    }
+
+    @Test
+    void emptyHttpSectionsAreNotHttp() throws Exception {
+        AppFeatures f = features("{'rests': {'rests': []}, 'platform-http': {},"
+                                 + " 'endpoints': {'endpoints': [{'uri': 'timer://tick'}, {'uri': 'http://example.com'}]}}");
+        assertFalse(f.httpServed());
+        assertTrue(ToolGroups.groups(f).isEmpty());
+    }
 }

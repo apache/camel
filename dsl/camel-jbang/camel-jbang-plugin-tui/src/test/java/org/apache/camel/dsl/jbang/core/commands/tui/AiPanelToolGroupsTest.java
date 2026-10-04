@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
+import org.apache.camel.dsl.jbang.core.commands.ai.HttpEndpoints;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolGroup;
 import org.junit.jupiter.api.Test;
 
@@ -41,8 +42,13 @@ class AiPanelToolGroupsTest {
             List.of(), List.of(), false, true, List.of("pay"), false, false, false, Map.of());
     static final AppFeatures OTEL = new AppFeatures(
             List.of(), List.of(), false, false, List.of(), true, false, false, Map.of());
+    static final HttpEndpoints.Served STOCK_API = new HttpEndpoints.Served(
+            8080, "/api", "stock-api.json", List.of(new HttpEndpoints.Endpoint(
+                    "GET", "/api/stock/{sku}", null, "application/json", "stock", "getStock", "rest", false)),
+            Map.of("rests", "1 service(s)"));
+    static final AppFeatures HTTP = AppFeatures.none().withHttp(STOCK_API);
     static final AppFeatures EVERYTHING = SQL.merge(BREAKERS).merge(new AppFeatures(
-            List.of(), List.of(), false, false, List.of(), true, true, true, Map.of()));
+            List.of(), List.of(), false, false, List.of(), true, true, true, Map.of())).merge(HTTP);
 
     /** A selected integration whose pid, reload count and features a test changes, counting the status reads. */
     static final class FakeApp implements AiPanel.AppStatusSource {
@@ -93,6 +99,24 @@ class AiPanelToolGroupsTest {
                                                            + " (tui_get_table tab 'SQL Trace'); don't guess a schema.\n"));
         assertTrue(panel.describeToolModeForTesting().contains("groups: sql (from the selected integration)"),
                 panel.describeToolModeForTesting());
+    }
+
+    @Test
+    void theHttpGroupAddsTheHttpTools() {
+        // CAMEL-25307: the endpoints and a request to them, only for an integration that serves HTTP
+        AiPanel plain = panel(AiPanel.TOOL_MODE_CORE, new FakeApp());
+        plain.refreshToolGroupsForTesting();
+        assertFalse(toolNames(plain).contains("tui_http_request"), "not a core tool");
+
+        FakeApp app = new FakeApp();
+        app.features = HTTP;
+        AiPanel panel = panel(AiPanel.TOOL_MODE_CORE, app);
+        panel.refreshToolGroupsForTesting();
+        assertEquals(List.of(ToolGroup.HTTP), panel.toolGroupsForTesting().groups());
+        assertTrue(toolNames(panel).containsAll(List.of("tui_http_endpoints", "tui_http_request")));
+        assertTrue(panel.systemPromptForTesting().contains(
+                "- HTTP: served on http://localhost:8080/api (contract stock-api.json); tui_http_request calls it,"
+                                                           + " tui_http_endpoints lists the operations.\n"));
     }
 
     @Test

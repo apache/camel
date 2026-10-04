@@ -798,8 +798,18 @@ process is running).
   the update count otherwise. Lets the model look at the data a route reads or writes, or try a statement
   before putting it in a route.
 
+| `camel_runtime_http_endpoints`
+| The HTTP endpoints the application serves (Rest DSL and platform-http): method, path, consumes/produces, route
+  and OpenAPI operation, the server's base URL and the contract. With `includeSpec=true` the OpenAPI contract
+  itself is added (cut at 12000 characters).
+
+| `camel_runtime_http_request`
+| Sends an HTTP request (method, path, headers, body) to the application's own server on localhost and its port,
+  and returns the status, the headers and the body (cut at 6000 characters, the answer says when). Any other host
+  is refused, and redirects are not followed.
+
 | `camel_runtime_tool_groups`
-| Which runtime tool groups (`sql`, `tracing`, `resilience`) the application needs, from what its status shows.
+| Which runtime tool groups (`sql`, `tracing`, `resilience`, `http`) the application needs, from what its status shows.
   See <<_tool_groups_for_local_models>>.
 
 | `camel_runtime_datasources`
@@ -852,13 +862,17 @@ runtime tool, it can offer the core tools plus the groups the selected applicati
 | `resilience`
 | a circuit breaker in a route, or circuit breakers in the Resilience4j or Fault Tolerance status
 | `camel_runtime_circuit_breakers`
+
+| `http`
+| Rest DSL services or platform-http endpoints, or a `platform-http`, `rest` or `rest-openapi` consumer
+| `camel_runtime_http_endpoints`, `camel_runtime_http_request`
 |===
 
 The answer names the application and its pid, lists the `core` tools (the shared `camel_*` tools a small model
 should always get), each loaded group with its tools and one line of guidance for the system prompt (for example
 `SQL: datasource(s) orders (HikariCP), used by sql endpoints. Table names come from the SQL trace
 (camel_runtime_sql_trace); don't guess a schema.`), and the `signals` in the status that loaded each group. Its
-`fingerprint` stays the same as long as the groups and the datasources do,
+`fingerprint` stays the same as long as the groups, the datasources and the HTTP base URL do,
 so a client calls the tool when the user selects an application or the application reloads, and rebuilds its
 tool list and prompt only when the fingerprint changes; the prompt then stays the same and a local model keeps
 its prompt cache. A status written by an older Camel version may lack some of the keys, which just loads fewer

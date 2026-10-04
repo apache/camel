@@ -72,13 +72,16 @@ from the *SQL Trace* tab
 | a line pointing at `tui_get_spans`, `tui_get_history` and the *Metrics* tab, which are core tools already
 | `resilience` | a circuit breaker in a route, or circuit breakers in the Resilience4j or Fault Tolerance status
 | a line naming the routes with a circuit breaker and pointing at the *Circuit Breaker* tab
+| `http` | Rest DSL services or platform-http endpoints, or a `platform-http`, `rest` or `rest-openapi` consumer
+| `tui_http_endpoints` (the served operations, optionally the OpenAPI contract) and `tui_http_request` (a request to
+the integration's own server on localhost, no other host), and a line with the base URL and the contract
 |===
 
 Each loaded group adds one line at the end of the system prompt. The groups are read again only when you
 select another integration or the selected one reloads its routes (after a reload the groups only grow), so
 the tools and the prompt stay the same from question to question and Ollama keeps reusing the cached prompt.
 An integration without any group yet is read again on each question, since one that just started may not
-have written its status completely. With all three groups the static prefix grows by about 520 tokens.
+have written its status completely. With all four groups the static prefix grows by about 800 tokens.
 
 The full tool set (`/tools full` and hosted providers) is not affected by the groups. `/tools` and `/context`
 show the loaded groups.

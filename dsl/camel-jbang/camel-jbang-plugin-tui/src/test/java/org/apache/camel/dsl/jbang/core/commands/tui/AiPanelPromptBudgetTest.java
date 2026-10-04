@@ -58,12 +58,17 @@ class AiPanelPromptBudgetTest {
     // saves far more tokens per edit than its schema costs once
     // raised from 9450 for camel_project_overview and camel_save_project_summary (CAMEL-25143), measured ~9750:
     // full mode only (hosted models), and the panel's own /overview sends no tools at all
-    static final int FULL_BUDGET_TOKENS = 9_850;
-    /** Measured ~5.2k tokens for 26 tools: the core set (~4.7k) plus every tool group (CAMEL-24834). */
+    // raised from 9850 for tui_http_endpoints and tui_http_request (CAMEL-25307), measured ~10070: a model that can
+    // see what the integration serves and call it is worth the ~250 tokens
+    static final int FULL_BUDGET_TOKENS = 10_250;
+    /** Measured ~5.5k tokens for 28 tools: the core set (~4.7k) plus every tool group (CAMEL-24834). */
     // the SQL group adds tui_execute_sql and tui_update_row (~385 tokens), each group one guidance line in the prompt
-    // (~130 for all three); an integration rarely has all three, and the groups only load for the integration that
+    // (~130 for all three); an integration rarely has all of them, and the groups only load for the integration that
     // needs them
-    static final int CORE_WITH_GROUPS_BUDGET_TOKENS = 5_500;
+    // raised from 5500 for the http group (CAMEL-25307), measured ~5460: tui_http_endpoints and tui_http_request
+    // (~245 tokens) and its guidance line (~35), for the local model that otherwise cannot see or call the HTTP API
+    // it is building
+    static final int CORE_WITH_GROUPS_BUDGET_TOKENS = 5_750;
 
     record Prefix(String mode, int tools, long promptChars, long toolChars) {
 
@@ -116,7 +121,10 @@ class AiPanelPromptBudgetTest {
         return new Prefix(mode, defs.size(), panel.systemPromptForTesting().length(), wireChars(defs));
     }
 
-    /** A core panel with every tool group loaded: datasources, OpenTelemetry, tracing, Micrometer, circuit breakers. */
+    /**
+     * A core panel with every tool group loaded: datasources, OpenTelemetry, tracing, Micrometer, circuit breakers,
+     * HTTP.
+     */
     static AiPanel coreWithAllGroups() {
         AiPanelToolGroupsTest.FakeApp app = new AiPanelToolGroupsTest.FakeApp();
         app.features = AiPanelToolGroupsTest.EVERYTHING;

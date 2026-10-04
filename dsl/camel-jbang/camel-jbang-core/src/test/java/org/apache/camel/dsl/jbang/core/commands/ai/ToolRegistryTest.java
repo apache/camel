@@ -181,6 +181,22 @@ class ToolRegistryTest {
     }
 
     @Test
+    void theHttpToolsAreInternal() {
+        // CAMEL-25307: reached through camel_runtime_http_endpoints and camel_runtime_http_request
+        ToolDescriptor endpoints = ToolRegistry.findTool("get_http_endpoints");
+        ToolDescriptor request = ToolRegistry.findTool("http_request");
+        assertNotNull(endpoints);
+        assertNotNull(request);
+        assertTrue(endpoints.isReadOnly());
+        assertFalse(request.isReadOnly());
+        assertFalse(request.isDestructive());
+        assertFalse(ToolRegistry.authoringTools().contains(endpoints));
+        assertFalse(ToolRegistry.authoringTools().contains(request));
+        assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("http_request", new ToolContext(), Map.of("path", "/hello")));
+    }
+
+    @Test
     void toolGroupsAnswerFromTheStatus() throws Exception {
         ToolContext ctx = new ToolContext();
         ctx.selectProcess(99999);
