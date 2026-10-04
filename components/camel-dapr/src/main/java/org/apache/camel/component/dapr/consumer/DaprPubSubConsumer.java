@@ -42,6 +42,7 @@ public class DaprPubSubConsumer extends DefaultConsumer {
     private final String pubSubName;
     private final String topic;
     private DaprPreviewClient client;
+    private boolean closeClient;
     private Closeable subscription;
 
     public DaprPubSubConsumer(final DaprEndpoint endpoint, final Processor processor) {
@@ -68,6 +69,8 @@ public class DaprPubSubConsumer extends DefaultConsumer {
 
         if (client == null) {
             client = new DaprClientBuilder().buildPreviewClient();
+            // created by this consumer: closed when it stops
+            closeClient = true;
         }
         subscription = client.subscribeToEvents(pubSubName, topic, new DaprSubscriptionListener(), TypeRef.get(byte[].class));
     }
@@ -76,9 +79,14 @@ public class DaprPubSubConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         if (subscription != null) {
             subscription.close();
+            subscription = null;
         }
-        if (client != null) {
+        // only close a client that this consumer created: a configured or autowired client can be shared with other
+        // endpoints, and is used again when the route is started again
+        if (closeClient && client != null) {
             client.close();
+            client = null;
+            closeClient = false;
         }
 
         // shutdown camel consumer
