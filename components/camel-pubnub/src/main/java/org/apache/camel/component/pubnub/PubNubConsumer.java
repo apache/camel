@@ -48,6 +48,7 @@ public class PubNubConsumer extends DefaultConsumer {
 
     private final PubNubEndpoint endpoint;
     private final PubNubConfiguration pubNubConfiguration;
+    private PubNubCallback callback;
 
     public PubNubConsumer(PubNubEndpoint endpoint, Processor processor, PubNubConfiguration pubNubConfiguration) {
         super(endpoint, processor);
@@ -56,7 +57,10 @@ public class PubNubConsumer extends DefaultConsumer {
     }
 
     private void initCommunication() {
-        endpoint.getPubnub().addListener(new PubNubCallback());
+        // the listener receives the events of all the channels the PubNub client subscribes to (the client may be
+        // shared by several endpoints), so it filters on the channel, and it is removed when this consumer stops
+        callback = new PubNubCallback();
+        endpoint.getPubnub().addListener(callback);
         if (pubNubConfiguration.isWithPresence()) {
             endpoint.getPubnub().subscribe().channels(Arrays.asList(pubNubConfiguration.getChannel())).withPresence().execute();
         } else {
@@ -65,11 +69,30 @@ public class PubNubConsumer extends DefaultConsumer {
     }
 
     private void terminateCommunication() {
+        if (callback != null) {
+            endpoint.getPubnub().removeListener(callback);
+            callback = null;
+        }
         try {
             endpoint.getPubnub().unsubscribe().channels(Arrays.asList(pubNubConfiguration.getChannel())).execute();
         } catch (Exception e) {
             // ignore
         }
+    }
+
+    /**
+     * Whether the event is for a channel of this consumer: the channel of the event, or the subscription it was
+     * received through (a wildcard channel such as news.*). The channel option may list several channels separated by
+     * commas, which the PubNub client subscribes to as separate channels.
+     */
+    private boolean isForThisChannel(String channel, String subscription) {
+        for (String ours : pubNubConfiguration.getChannel().split(",")) {
+            ours = ours.trim();
+            if (ours.equals(channel) || ours.equals(subscription)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -110,6 +133,9 @@ public class PubNubConsumer extends DefaultConsumer {
 
         @Override
         public void message(PubNub pubnub, PNMessageResult message) {
+            if (!isForThisChannel(message.getChannel(), message.getSubscription())) {
+                return;
+            }
             Exchange exchange = createExchange(true);
             Message inmessage = exchange.getIn();
             inmessage.setBody(message);
@@ -129,6 +155,9 @@ public class PubNubConsumer extends DefaultConsumer {
 
         @Override
         public void presence(PubNub pubnub, PNPresenceEventResult presence) {
+            if (!isForThisChannel(presence.getChannel(), presence.getSubscription())) {
+                return;
+            }
             Exchange exchange = createExchange(true);
             Message inmessage = exchange.getIn();
             inmessage.setBody(presence);

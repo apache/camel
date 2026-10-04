@@ -249,8 +249,10 @@ public class CatalogSamplesTest {
     void restOpenApiShowsTheConsumerEndpointAndTheContractFirstRest() {
         CamelCatalog catalog = new DefaultCamelCatalog();
         JsonObject o = CatalogSamples.sample(catalog, "component", "rest-openapi", 2);
-        assertThat(yaml(o, 0)).contains("rest-openapi:");
-        assertThat(yaml(o, 1)).contains("openApi:").contains("direct:getPetById");
+        // the contract-first Rest DSL counts as a use of rest-openapi and keeps its place, first on the page, ahead of
+        // the examples of a rest-openapi consumer (such as the one for unmatched requests)
+        assertThat(yaml(o, 0)).contains("openApi:").contains("direct:getPetById");
+        assertThat(yaml(o, 1)).contains("rest-openapi:");
     }
 
     @Test
