@@ -353,6 +353,74 @@ YAML::
 ----
 ====
 
+== Authorizing tool calls
+
+A tool call is a security boundary: an AI model decides, from its own output, which `ai-tool` route to invoke. Set
+an `authorizationPolicy` — a reference to an `org.apache.camel.spi.AuthorizationPolicy` bean — to authorize every
+call before the route runs. Set it on the *component* to guard every tool route by construction, or on a single
+endpoint to override.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// one policy guarding every ai-tool route
+AiToolComponent ai = context.getComponent("ai-tool", AiToolComponent.class);
+ai.getConfiguration().setAuthorizationPolicy(myAuthorizationPolicy);
+
+from("ai-tool:transferFunds?tags=banking&description=Transfer funds")
+    .to("bean:ledger");
+
+// ...or override on a single endpoint
+from("ai-tool:transferFunds?tags=banking&description=Transfer funds&authorizationPolicy=#myAuthorizationPolicy")
+    .to("bean:ledger");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ai-tool:transferFunds
+      parameters:
+        tags: banking
+        description: "Transfer funds"
+        authorizationPolicy: "#myAuthorizationPolicy"
+      steps:
+        - to: bean:ledger
+----
+====
+
+The guard runs in front of the route: it wraps the route's outer processor, so it executes before the route's unit
+of work, tracing and error handling. A denied call (`CamelAuthorizationException`) is returned to the model as a
+short refusal it can relay — not as a tool result and not as a stack trace — regardless of the tool-execution error
+strategy; the denial is logged at `WARN`, but it does not produce a route span or metric.
+
+The policy authorizes on *trustworthy* input only:
+
+* the *tool name* comes from the route (the tool's id), never from model output;
+* the *caller identity* comes from an exchange *property* (or a validated token) set before the agent ran — for
+  example by `camel-spiffe` or `camel-keycloak`. Authorize on properties or validated tokens only, *never* on
+  message headers: on a tool route the headers carry the model-controlled tool arguments (and, on the
+  `langchain4j-agent` path, the caller's inbound HTTP headers), so a policy such as OPA with the default
+  `includeHeaders="*"` would otherwise read attacker-influenced values.
+
+Which runtimes carry the caller identity:
+
+* `camel-langchain4j-agent` copies the calling exchange, so the identity property reaches the tool route today.
+* `camel-openai` and `camel-spring-ai-chat` currently build a fresh exchange, so an identity-based policy denies
+  under them until CAMEL-24832 propagates the caller context — the guard still applies, it simply has no identity to
+  authorize on yet.
+* Over the xref:others:mcp-server.adoc[MCP server] the authenticated transport caller is carried onto the tool
+  exchange as the `CamelMcpSecurityPrincipal` property (the raw transport principal — for the Vert.x streamable HTTP
+  server, an `io.vertx.ext.auth.User`). A policy over MCP reads that property directly; Camel's shipped
+  identity/token policies (Keycloak, Spring Security, Shiro) do not read it yet, so MCP authorization needs a policy
+  that inspects `CamelMcpSecurityPrincipal`. Exposing a runtime-neutral principal name and roles for the shipped
+  policies is tracked as a follow-up.
+
 == See Also
 
 * xref:langchain4j-agent-component.adoc[LangChain4j Agent Component] — discovers ai-tool tools via the `tags` option

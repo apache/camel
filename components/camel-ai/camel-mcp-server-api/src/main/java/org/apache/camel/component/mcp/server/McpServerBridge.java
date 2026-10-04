@@ -386,7 +386,17 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     }
 
     private McpServerTool createTool(AiToolSpec spec) {
-        McpToolCallHandler handler = arguments -> execute(spec, arguments);
+        McpToolCallHandler handler = new McpToolCallHandler() {
+            @Override
+            public McpToolCallResult call(Map<String, Object> arguments) {
+                return execute(spec, arguments, null);
+            }
+
+            @Override
+            public McpToolCallResult call(Map<String, Object> arguments, McpToolCallContext context) {
+                return execute(spec, arguments, context != null ? context.securityPrincipal() : null);
+            }
+        };
         return new McpServerTool() {
             @Override
             public String name() {
@@ -425,8 +435,13 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         };
     }
 
-    private McpToolCallResult execute(AiToolSpec spec, Map<String, Object> arguments) {
+    private McpToolCallResult execute(AiToolSpec spec, Map<String, Object> arguments, Object securityPrincipal) {
         Exchange exchange = spec.getConsumer().getEndpoint().createExchange();
+        if (securityPrincipal != null) {
+            // carry the transport's authenticated caller onto the tool exchange so a tool route's AuthorizationPolicy
+            // can authorize on it; it is an exchange property, which the model cannot set
+            exchange.setProperty(McpToolCallContext.SECURITY_PRINCIPAL_PROPERTY, securityPrincipal);
+        }
         boolean release = true;
         try {
             Future<AiToolResult> future = executor.submit(() -> AiToolExecutor.execute(spec, arguments, exchange));
@@ -454,6 +469,10 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 return new McpToolCallResult(success.value(), false, success.structuredContent());
             } else if (result instanceof AiToolResult.ArgumentError error) {
                 return new McpToolCallResult(error.message(), true);
+            } else if (result instanceof AiToolResult.AuthorizationDenied denied) {
+                // The denial message is already generic and caller-safe, so it is safe to return to the MCP client.
+                LOG.warn("MCP tool '{}' call denied by authorization policy", spec.getName());
+                return new McpToolCallResult(denied.message(), true);
             } else {
                 AiToolResult.ExecutionError error = (AiToolResult.ExecutionError) result;
                 // never leak raw route exception messages to remote MCP clients

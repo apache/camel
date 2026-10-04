@@ -393,6 +393,56 @@ public interface AiToolEndpointBuilderFactory {
             doSetProperty("title", title);
             return this;
         }
+        /**
+         * Reference to an org.apache.camel.spi.AuthorizationPolicy used to
+         * authorize tool calls before the route runs. Set it on the component
+         * to guard every tool route by construction, or per endpoint to
+         * override. The policy authorizes on trustworthy input only: the tool
+         * name comes from the route (never from model output), and the caller
+         * identity is carried as an exchange property set before the agent ran
+         * (for example by camel-spiffe or camel-keycloak), which the model
+         * cannot set. Authorize on exchange properties or validated tokens
+         * only, never on message headers (on a tool route the headers carry the
+         * model-controlled tool arguments). A denied call surfaces to the model
+         * as a short refusal rather than a stack trace.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.AuthorizationPolicy</code> type.
+         * 
+         * Group: security
+         * 
+         * @param authorizationPolicy the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder authorizationPolicy(org.apache.camel.spi.AuthorizationPolicy authorizationPolicy) {
+            doSetProperty("authorizationPolicy", authorizationPolicy);
+            return this;
+        }
+        /**
+         * Reference to an org.apache.camel.spi.AuthorizationPolicy used to
+         * authorize tool calls before the route runs. Set it on the component
+         * to guard every tool route by construction, or per endpoint to
+         * override. The policy authorizes on trustworthy input only: the tool
+         * name comes from the route (never from model output), and the caller
+         * identity is carried as an exchange property set before the agent ran
+         * (for example by camel-spiffe or camel-keycloak), which the model
+         * cannot set. Authorize on exchange properties or validated tokens
+         * only, never on message headers (on a tool route the headers carry the
+         * model-controlled tool arguments). A denied call surfaces to the model
+         * as a short refusal rather than a stack trace.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.AuthorizationPolicy</code> type.
+         * 
+         * Group: security
+         * 
+         * @param authorizationPolicy the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder authorizationPolicy(String authorizationPolicy) {
+            doSetProperty("authorizationPolicy", authorizationPolicy);
+            return this;
+        }
     }
 
     /**

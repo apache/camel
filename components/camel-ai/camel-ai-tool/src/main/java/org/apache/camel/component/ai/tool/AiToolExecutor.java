@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
@@ -83,7 +84,9 @@ public final class AiToolExecutor {
             return new AiToolResult.ExecutionError(cause.getMessage(), cause);
         }
 
-        Processor routeProcessor = consumer.getProcessor();
+        // Use the authorization-guarded processor when the consumer applied an AuthorizationPolicy, so the guard runs
+        // before the route body; falls back to the plain route processor otherwise.
+        Processor routeProcessor = consumer instanceof AiToolConsumer atc ? atc.getToolProcessor() : consumer.getProcessor();
         if (routeProcessor == null) {
             IllegalStateException cause = new IllegalStateException(
                     String.format("No route processor available for tool '%s'", toolName));
@@ -144,6 +147,10 @@ public final class AiToolExecutor {
 
             if (exchange.getException() != null) {
                 Exception routeError = exchange.getException();
+                AiToolResult denied = authorizationDenied(toolName, routeError);
+                if (denied != null) {
+                    return denied;
+                }
                 LOG.error("Error executing tool '{}': {}", toolName, routeError.getMessage(), routeError);
                 return new AiToolResult.ExecutionError(
                         String.format("Error executing tool '%s': %s", toolName, routeError.getMessage()), routeError);
@@ -153,10 +160,39 @@ public final class AiToolExecutor {
             LOG.debug("Tool '{}' execution completed successfully", toolName);
             return buildSuccessResult(spec, exchange, result);
         } catch (Exception e) {
+            AiToolResult denied = authorizationDenied(toolName, e);
+            if (denied != null) {
+                return denied;
+            }
             LOG.error("Error executing tool '{}': {}", toolName, e.getMessage(), e);
             return new AiToolResult.ExecutionError(
                     String.format("Error executing tool '%s': %s", toolName, e.getMessage()), e);
         }
+    }
+
+    /**
+     * Classifies an error from route execution as an authorization denial when a {@link CamelAuthorizationException} is
+     * present in its cause chain (the route's {@link org.apache.camel.spi.AuthorizationPolicy} rejected the call).
+     * Returns a caller-safe {@link AiToolResult.AuthorizationDenied} refusal that does not leak the policy's internal
+     * message, or {@code null} when the error is not an authorization denial.
+     */
+    private static AiToolResult authorizationDenied(String toolName, Throwable error) {
+        CamelAuthorizationException denial = findAuthorizationException(error);
+        if (denial == null) {
+            return null;
+        }
+        LOG.warn("Tool '{}' call denied by authorization policy: {}", toolName, denial.getMessage());
+        return new AiToolResult.AuthorizationDenied(
+                String.format("Access denied: not authorized to call tool '%s'", toolName), denial);
+    }
+
+    private static CamelAuthorizationException findAuthorizationException(Throwable error) {
+        for (Throwable t = error; t != null; t = t.getCause()) {
+            if (t instanceof CamelAuthorizationException cae) {
+                return cae;
+            }
+        }
+        return null;
     }
 
     private static AiToolResult buildSuccessResult(AiToolSpec spec, Exchange exchange, String stringBody) {

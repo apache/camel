@@ -4413,3 +4413,12 @@ Property placeholders are kept as written instead of being resolved.
 
 In return, Java is also a target format, and rests, route templates, route configurations and beans are converted
 instead of only routes. A new `notes` field of the result lists what differs or is not carried over.
+
+=== camel-ai-tool - new AiToolResult.AuthorizationDenied result variant (SPI)
+
+`org.apache.camel.component.ai.tool.AiToolResult` is a sealed interface and gained a new variant,
+`AiToolResult.AuthorizationDenied`, returned when an `ai-tool` route's `authorizationPolicy` denies a call. Code that
+consumes `AiToolResult` and handles its variants exhaustively — for example an AI adapter whose final branch casts to
+`AiToolResult.ExecutionError` — must add a branch for `AuthorizationDenied` and relay its `message()` to the model as
+a refusal (do not rethrow). The in-tree adapters (camel-openai, camel-spring-ai-chat, camel-langchain4j-agent and the
+MCP server bridge) already handle it.

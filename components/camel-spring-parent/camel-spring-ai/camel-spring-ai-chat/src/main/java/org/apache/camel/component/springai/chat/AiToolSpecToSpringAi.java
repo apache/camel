@@ -49,6 +49,10 @@ final class AiToolSpecToSpringAi {
                     return success.value();
                 } else if (result instanceof AiToolResult.ArgumentError argErr) {
                     return "Tool execution failed: " + argErr.message();
+                } else if (result instanceof AiToolResult.AuthorizationDenied denied) {
+                    // A denial is expected control flow: relay the refusal to the model.
+                    LOG.warn("Tool '{}' call denied by authorization policy", spec.getName());
+                    return denied.message();
                 } else if (result instanceof AiToolResult.ExecutionError execErr) {
                     LOG.warn("Tool '{}' execution failed: {}", spec.getName(), execErr.message(), execErr.cause());
                     return "Tool execution failed";

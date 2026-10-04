@@ -25,6 +25,8 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": target.setArgSchema(property(camelContext, java.lang.String.class, value)); return true;
+        case "authorizationpolicy":
+        case "authorizationPolicy": target.setAuthorizationPolicy(property(camelContext, org.apache.camel.spi.AuthorizationPolicy.class, value)); return true;
         case "description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "destructivehint":
         case "destructiveHint": target.setDestructiveHint(property(camelContext, java.lang.Boolean.class, value)); return true;
@@ -52,6 +54,8 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": return java.lang.String.class;
+        case "authorizationpolicy":
+        case "authorizationPolicy": return org.apache.camel.spi.AuthorizationPolicy.class;
         case "description": return java.lang.String.class;
         case "destructivehint":
         case "destructiveHint": return java.lang.Boolean.class;
@@ -80,6 +84,8 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": return target.getArgSchema();
+        case "authorizationpolicy":
+        case "authorizationPolicy": return target.getAuthorizationPolicy();
         case "description": return target.getDescription();
         case "destructivehint":
         case "destructiveHint": return target.getDestructiveHint();

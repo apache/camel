@@ -37,6 +37,7 @@ import org.apache.camel.component.mcp.server.McpServerIcon;
 import org.apache.camel.component.mcp.server.McpServerInfo;
 import org.apache.camel.component.mcp.server.McpServerResource;
 import org.apache.camel.component.mcp.server.McpServerTool;
+import org.apache.camel.component.mcp.server.McpToolCallContext;
 import org.apache.camel.component.mcp.server.McpToolCallResult;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
@@ -65,6 +66,12 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
             }
             """;
     private static final String APPLICATION_JSON = "application/json";
+
+    /**
+     * Key under which {@link VertxMcpStreamableServerTransportProvider} stashes the authenticated caller principal in
+     * the MCP transport context, so the tool-call handler reads it back via {@code exchange.transportContext()}.
+     */
+    static final String TRANSPORT_PRINCIPAL_KEY = "CamelMcpTransportPrincipal";
 
     private CamelContext camelContext;
     private McpServerInfo info;
@@ -159,7 +166,11 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
                 .tool(mcpTool)
                 .callHandler((exchange, request) -> {
                     Map<String, Object> arguments = request.arguments() != null ? request.arguments() : Map.of();
-                    McpToolCallResult result = tool.handler().call(arguments);
+                    Object principal = exchange.transportContext() != null
+                            ? exchange.transportContext().get(TRANSPORT_PRINCIPAL_KEY) : null;
+                    McpToolCallContext context = principal != null
+                            ? new McpToolCallContext(principal) : McpToolCallContext.EMPTY;
+                    McpToolCallResult result = tool.handler().call(arguments, context);
                     McpSchema.CallToolResult.Builder builder = McpSchema.CallToolResult.builder()
                             .addTextContent(result.text())
                             .isError(result.isError());
