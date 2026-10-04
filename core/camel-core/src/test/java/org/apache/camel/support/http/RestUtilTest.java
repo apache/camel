@@ -24,11 +24,14 @@ public class RestUtilTest {
     @Test
     public void testRestUtil() {
         Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType(null, null));
+        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", null));
+        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType(null, "application/json"));
         Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType(null, "*/*"));
         Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "*/*"));
 
         Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "application/xml"));
         Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/json"));
+        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "APPLICATION/JSON"));
         Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/json,application/xml"));
         Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/json, application/xml"));
         Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/xml,application/json"));
@@ -53,6 +56,8 @@ public class RestUtilTest {
         // the parameters of each media type (such as q or charset) are not part of the match
         Assertions.assertTrue(
                 RestUtil.isValidOrAcceptedContentType("application/json", "application/xml;q=0.9, application/json"));
+        Assertions.assertTrue(
+                RestUtil.isValidOrAcceptedContentType("application/json", "application/json;q=0.9, application/xml;q=0.8"));
         Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/json; charset=UTF-8"));
         Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "application/xml;q=0.9, text/plain"));
         // an empty part does not match
@@ -60,21 +65,35 @@ public class RestUtilTest {
     }
 
     @Test
-    public void testRestUtilWithMediaRange() {
+    public void testAcceptedMediaType() {
+        Assertions.assertTrue(RestUtil.isAcceptedMediaType(null, null));
+        Assertions.assertTrue(RestUtil.isAcceptedMediaType("application/json", null));
+        Assertions.assertTrue(RestUtil.isAcceptedMediaType("application/json", "*/*"));
+        Assertions.assertTrue(RestUtil.isAcceptedMediaType("application/json", "application/json"));
+        Assertions.assertTrue(RestUtil.isAcceptedMediaType("application/json", "application/xml;q=0.9, application/json"));
+        Assertions.assertFalse(RestUtil.isAcceptedMediaType("application/json", "application/xml"));
+
         // a media range such as application/* accepts any subtype of its type
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/*"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "Application/*"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "application/*;q=0.8"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json", "text/html, application/*;q=0.8"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("application/json,application/xml", "application/*"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("text/plain,application/xml", "application/*"));
-        Assertions.assertTrue(RestUtil.isValidOrAcceptedContentType("text/plain, application/xml", "application/*"));
+        Assertions.assertTrue(RestUtil.isAcceptedMediaType("application/json", "application/*"));
+        Assertions.assertTrue(RestUtil.isAcceptedMediaType("application/json", "Application/*"));
+        Assertions.assertTrue(RestUtil.isAcceptedMediaType("application/json", "application/*;q=0.8"));
+        Assertions.assertTrue(RestUtil.isAcceptedMediaType("application/json", "text/html, application/*;q=0.8"));
+        Assertions.assertTrue(RestUtil.isAcceptedMediaType("application/json,application/xml", "application/*"));
+        Assertions.assertTrue(RestUtil.isAcceptedMediaType("text/plain,application/xml", "application/*"));
+        Assertions.assertTrue(RestUtil.isAcceptedMediaType("text/plain, application/xml", "application/*"));
 
         // the type of the media range must be the same type, not only start or end the same
-        Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "text/*"));
-        Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "text/*, image/*"));
-        Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "app/*"));
-        Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("xapplication/json", "application/*"));
-        Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "/*"));
+        Assertions.assertFalse(RestUtil.isAcceptedMediaType("application/json", "text/*"));
+        Assertions.assertFalse(RestUtil.isAcceptedMediaType("application/json", "text/*, image/*"));
+        Assertions.assertFalse(RestUtil.isAcceptedMediaType("application/json", "app/*"));
+        Assertions.assertFalse(RestUtil.isAcceptedMediaType("xapplication/json", "application/*"));
+        Assertions.assertFalse(RestUtil.isAcceptedMediaType("application/json", "/*"));
+    }
+
+    @Test
+    public void testContentTypeWithMediaRange() {
+        // a media range is only valid in the Accept header, not as a Content-Type
+        Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "application/*"));
+        Assertions.assertFalse(RestUtil.isValidOrAcceptedContentType("application/json", "application/*; charset=UTF-8"));
     }
 }
