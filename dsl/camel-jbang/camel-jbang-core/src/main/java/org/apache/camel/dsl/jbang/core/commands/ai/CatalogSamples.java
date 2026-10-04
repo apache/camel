@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -376,10 +377,20 @@ public final class CatalogSamples {
         }
     }
 
+    /**
+     * Examples that use a component without naming its scheme: the contract-first Rest DSL ({@code rest: openApi:})
+     * runs on rest-openapi and is the form its page recommends for serving an API, so it ranks with the examples that
+     * use the endpoint instead of after them (where an example of a rest-openapi consumer pushed it out of the first
+     * two).
+     */
+    private static final Map<String, String> ALSO_USED_BY = Map.of("rest-openapi", "^\\s+openApi:");
+
     /** Matches an endpoint uri of one of the schemes: {@code uri: kafka:...}, {@code uri: "kafka:..."}. */
     private static Pattern schemePattern(Set<String> schemes) {
         String any = schemes.stream().map(Pattern::quote).collect(Collectors.joining("|"));
-        return Pattern.compile("(uri:\\s*[\"']?|[\"'])(" + any + "):");
+        String also = schemes.stream().map(ALSO_USED_BY::get).filter(Objects::nonNull).map(p -> "|" + p)
+                .collect(Collectors.joining());
+        return Pattern.compile("(uri:\\s*[\"']?|[\"'])(" + any + "):" + also, Pattern.MULTILINE);
     }
 
     private static ComponentModel componentModel(CamelCatalog catalog, String name) {

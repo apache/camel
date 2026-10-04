@@ -125,8 +125,11 @@ public class RocketMQProducer extends DefaultAsyncProducer {
             @Override
             public void onException(Throwable e) {
                 try {
-                    replyManager.cancelMessageKey(generateKey);
                     exchange.setException(e);
+                    // there is no reply manager when replyToTopic is not set
+                    if (replyManager != null) {
+                        replyManager.cancelMessageKey(generateKey);
+                    }
                 } finally {
                     callback.done(false);
                 }
