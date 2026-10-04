@@ -261,7 +261,11 @@ public class KnativeHttpConsumer extends DefaultConsumer {
                                 if (body != null) {
                                     request.response().end(body);
                                 } else {
-                                    request.response().setStatusCode(204);
+                                    // 204 tells the caller that the event has been delivered: a failed exchange
+                                    // without reply keeps its error status, so that the event is sent again
+                                    if (!exchange.isFailed()) {
+                                        request.response().setStatusCode(204);
+                                    }
                                     request.response().end();
                                 }
                             } catch (Exception e) {
