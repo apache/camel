@@ -32,6 +32,8 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": getOrCreateConfiguration(target).setArgSchema(property(camelContext, java.lang.String.class, value)); return true;
+        case "authorizationpolicy":
+        case "authorizationPolicy": getOrCreateConfiguration(target).setAuthorizationPolicy(property(camelContext, org.apache.camel.spi.AuthorizationPolicy.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -64,6 +66,8 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": return java.lang.String.class;
+        case "authorizationpolicy":
+        case "authorizationPolicy": return org.apache.camel.spi.AuthorizationPolicy.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
@@ -97,6 +101,8 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": return getOrCreateConfiguration(target).getArgSchema();
+        case "authorizationpolicy":
+        case "authorizationPolicy": return getOrCreateConfiguration(target).getAuthorizationPolicy();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":

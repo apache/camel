@@ -290,6 +290,10 @@ class McpToolCallExecutor extends ServiceSupport {
                 } else if (result instanceof AiToolResult.ArgumentError error) {
                     LOG.warn("Route tool '{}' argument error: {}", toolName, error.message());
                     return errorResult(toolCall, "Error: invalid tool arguments: " + error.message());
+                } else if (result instanceof AiToolResult.AuthorizationDenied denied) {
+                    // A denial is expected control flow: always relay the refusal to the model, never fail the exchange.
+                    LOG.warn("Route tool '{}' call denied by authorization policy", toolName);
+                    return errorResult(toolCall, denied.message());
                 } else {
                     AiToolResult.ExecutionError error = (AiToolResult.ExecutionError) result;
                     if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {

@@ -484,6 +484,10 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         } else if (result instanceof AiToolResult.ArgumentError error) {
             LOG.warn("Tool '{}' argument error: {}", toolName, error.message(), error.cause());
             return "Invalid arguments: " + error.message();
+        } else if (result instanceof AiToolResult.AuthorizationDenied denied) {
+            // A denial is expected control flow: relay the refusal to the model instead of rethrowing.
+            LOG.warn("Tool '{}' call denied by authorization policy", toolName);
+            return denied.message();
         } else if (result instanceof AiToolResult.ExecutionError error) {
             // Rethrow so LangChain4j's error handling machinery
             // (ToolExecutionErrorHandler, compensateOnToolErrors) can fire.
