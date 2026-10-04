@@ -783,6 +783,25 @@ the message body as if the route had succeeded, which usually echoed the request
 body now replies with an empty (`null`) body instead of not replying, so the
 sender no longer waits until its reply timeout (30 seconds by default).
 
+=== camel-rocketmq - a message whose route failed is consumed again
+
+The consumer acknowledged a message (`CONSUME_SUCCESS`) whenever the processor returned, also when the route failed:
+a failed route sets the exception on the exchange instead of throwing it, so the message was lost. The consumer now
+answers `RECONSUME_LATER` for a failed exchange (or one marked rollback only), and RocketMQ redelivers the message with an increasing delay (up to
+the maximum reconsume times of the consumer group, 16 by default, then it goes to the dead letter queue of the group).
+A route that fails for a message, and relied on the message being dropped, now receives it again; handle the
+exception in the route (for example with `onException(...).handled(true)`) to acknowledge the message anyway.
+
+=== camel-dapr - pub/sub consumer acknowledges an event after the exchange
+
+The pub/sub consumer acknowledged every event with `SUCCESS` as soon as the exchange was handed to the route, also
+when the route then failed, so Dapr dropped events whose processing failed. The consumer now answers when the exchange
+is done: `SUCCESS` when it completed, and `RETRY` when it failed (or was marked rollback only), so that Dapr redelivers
+the event. A route that fails for an event, and relied on the event being dropped, now receives it again; handle the
+exception in the route (for example with `onException(...).handled(true)`) to acknowledge the event anyway. A poison
+event that always fails now gets `RETRY` every time, until a Dapr resiliency policy for the pub/sub component or a
+dead-letter topic on the subscription limits the redeliveries.
+
 === Components and Language removal
 
 ==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
@@ -1542,6 +1561,18 @@ such a configuration that declares no `JavaSerializationFilterConfig`, unless a 
 is set. To remove the warning, declare a `java-serialization-filter` in the configuration, as described in
 the xref:components::hazelcast-summary.adoc[Hazelcast component] documentation.
 
+=== camel-pubnub - consumers of a shared PubNub client
+
+A PubNub client hands every message it receives to all its listeners. When several endpoints use the same client
+(a `pubnub` bean that is autowired or referenced), each consumer received the messages of the channels of the other
+consumers too, and every stop and start of a route added one more listener, so its messages were then received once
+more. A consumer now only receives the messages and presence events of its own channel, and removes its listener
+when it stops.
+
+The endpoint now destroys the PubNub client only when it created it. A client from the registry is no longer
+destroyed when an endpoint stops, for example when a route that uses the client is removed while other routes still
+use it: the application that created the client is responsible for destroying it.
+
 === camel-netty - NettyConverter.toByteArray returns a copy of the buffer's readable bytes
 
 The `ByteBuf` to `byte[]` type converter (`NettyConverter.toByteArray`, also used when converting a Netty
@@ -1864,6 +1895,15 @@ unparsable content type now fails fast with a `ParseException` at marshal time, 
 value was written into the `Content-Type` header as-is. Ensure a custom `ContentTypeResolver` returns a valid
 MIME type.
 
+=== camel-nats - no reply when the exchange failed
+
+A consumer with `exchangePattern=InOut` answered a request (a message with a reply subject) with the body of the
+exchange also when the exchange failed, so the requester got a successful reply, usually its own request. NATS has
+no error reply, so the consumer now sends no reply when the exchange failed or is marked rollback only, as camel-jms
+does without `transferException`: the requester times out (with the camel-nats producer, an
+`ExchangeTimedOutException` after `requestTimeout`). A failure that the route handles, for example with
+`onException(...).handled(true)`, is answered as before.
+
 === camel-netty - object codecs apply a deserialization filter by default
 
 The `ObjectDecoder` and `DatagramPacketObjectDecoder` codecs (used when a route configures Netty
@@ -2125,6 +2165,12 @@ still available, but has to be asked for with the new
 Deployments that relied on the previous behaviour — a development cluster with a self-signed
 certificate, for example — must either configure a truststore or set `camel.knative.client.ssl.trust.all`
 explicitly. `KnativeOidcClientOptions` extends this class and is affected the same way.
+
+A Knative consumer with `reply=false` now answers a failed exchange with its error status instead of `204 No Content`.
+
+Such a consumer answered `204 No Content` to every request, also when the route failed, so Knative took the event as
+delivered and did not send it again. A failed exchange now keeps its status (500, or the `CamelHttpResponseCode`
+header the route set) with an empty body, as with `reply=true`. Successful exchanges still get `204 No Content`.
 
 === camel-paho
 
