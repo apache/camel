@@ -224,6 +224,13 @@ To disable automatic downloading:
 camel run foo.java --download=false
 ----
 
+For an `import` in a Java or Groovy source, a Camel component is also found by its package, so
+importing any class of a component downloads it, not only the component class itself. For
+example, a route that imports `org.apache.camel.component.aws2.s3.AWS2S3Constants` for the
+headers of the `aws-s3-source` Kamelet gets `camel-aws2-s3` before the route is compiled. A class
+that is only looked up while running still needs the component class itself, so probing whether
+a class is present does not download a component.
+
 == Running with Spring Boot or Quarkus
 
 Camel CLI can run integrations using Spring Boot or Quarkus runtimes:
