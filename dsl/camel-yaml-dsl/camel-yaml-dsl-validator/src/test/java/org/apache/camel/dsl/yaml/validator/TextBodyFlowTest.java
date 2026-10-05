@@ -138,6 +138,13 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testAnUnclosedKeyIsStillReported() {
+        assertThat(TextBodyFlow.groovyRead("body['sku", java.util.Set.of())).isEqualTo("body['");
+        assertThat(TextBodyFlow.groovyRead("body['sku']", java.util.Set.of())).isEqualTo("body['sku']");
+        assertThat(TextBodyFlow.simpleRead("${body[sku", java.util.Set.of())).isEqualTo("${body[s");
+    }
+
+    @Test
     public void testUnknownFormatNamesTheChoices() {
         String yaml = """
                 - route:

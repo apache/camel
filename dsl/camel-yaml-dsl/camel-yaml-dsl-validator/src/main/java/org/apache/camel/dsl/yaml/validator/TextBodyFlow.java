@@ -385,9 +385,11 @@ final class TextBodyFlow {
             }
         }
         m = GROOVY_KEY.matcher(script);
-        return m.find()
-                ? script.substring(m.start(), Math.min(script.length(), script.indexOf(']', m.start()) + 1))
-                : null;
+        if (m.find()) {
+            int end = script.indexOf(']', m.start());
+            return end > 0 ? script.substring(m.start(), end + 1) : m.group();
+        }
+        return null;
     }
 
     static String simpleRead(String template, Set<String> readable) {
