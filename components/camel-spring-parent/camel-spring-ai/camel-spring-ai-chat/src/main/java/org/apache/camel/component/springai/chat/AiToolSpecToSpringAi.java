@@ -40,27 +40,26 @@ final class AiToolSpecToSpringAi {
     private AiToolSpecToSpringAi() {
     }
 
-    static ToolCallback toToolCallback(AiToolSpec spec) {
+    static ToolCallback toToolCallback(AiToolSpec spec, Exchange callingExchange) {
         Function<Map<String, Object>, String> function = args -> {
-            Exchange toolExchange = spec.getConsumer().getEndpoint().createExchange();
-            try {
-                AiToolResult result = AiToolExecutor.execute(spec, args, toolExchange);
-                if (result instanceof AiToolResult.Success success) {
-                    return success.value();
-                } else if (result instanceof AiToolResult.ArgumentError argErr) {
-                    return "Tool execution failed: " + argErr.message();
-                } else if (result instanceof AiToolResult.AuthorizationDenied denied) {
-                    // A denial is expected control flow: relay the refusal to the model.
-                    LOG.warn("Tool '{}' call denied by authorization policy", spec.getName());
-                    return denied.message();
-                } else if (result instanceof AiToolResult.ExecutionError execErr) {
-                    LOG.warn("Tool '{}' execution failed: {}", spec.getName(), execErr.message(), execErr.cause());
-                    return "Tool execution failed";
-                }
+            // isolated copy of the calling exchange so the caller's context (e.g. an authenticated subject kept as an
+            // exchange property) reaches the tool route; this is not a pooled consumer exchange, so it is not released
+            // here (CAMEL-24832)
+            Exchange toolExchange = AiToolExecutor.createToolExchange(callingExchange);
+            AiToolResult result = AiToolExecutor.execute(spec, args, toolExchange);
+            if (result instanceof AiToolResult.Success success) {
+                return success.value();
+            } else if (result instanceof AiToolResult.ArgumentError argErr) {
+                return "Tool execution failed: " + argErr.message();
+            } else if (result instanceof AiToolResult.AuthorizationDenied denied) {
+                // A denial is expected control flow: relay the refusal to the model.
+                LOG.warn("Tool '{}' call denied by authorization policy", spec.getName());
+                return denied.message();
+            } else if (result instanceof AiToolResult.ExecutionError execErr) {
+                LOG.warn("Tool '{}' execution failed: {}", spec.getName(), execErr.message(), execErr.cause());
                 return "Tool execution failed";
-            } finally {
-                spec.getConsumer().releaseExchange(toolExchange, false);
             }
+            return "Tool execution failed";
         };
 
         FunctionToolCallback.Builder builder = FunctionToolCallback

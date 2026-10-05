@@ -72,7 +72,6 @@ import org.apache.camel.component.langchain4j.agent.api.CompositeToolProvider;
 import org.apache.camel.component.langchain4j.agent.api.Headers;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -447,10 +446,10 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             if (arguments == null) {
                 return "Invalid arguments: could not parse the provided JSON arguments";
             }
-            // Isolate each tool invocation in its own exchange copy so that
-            // headers, body mutations and exceptions do not leak into the
-            // calling producer exchange (CAMEL-23944).
-            Exchange toolExchange = ExchangeHelper.createCopy(exchange, true);
+            // Isolate each tool invocation in its own exchange copy so that headers, body mutations and exceptions do
+            // not leak into the calling producer exchange, while the caller's context (properties/variables) reaches
+            // the tool route. Shared across the route-tool runtimes so they cannot drift (CAMEL-24832, CAMEL-23944).
+            Exchange toolExchange = AiToolExecutor.createToolExchange(exchange);
             AiToolResult result = AiToolExecutor.execute(spec, arguments, toolExchange);
             return toToolResponse(spec.getName(), result);
         };
