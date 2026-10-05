@@ -3394,6 +3394,25 @@ custom `headerFilterStrategy` is used as-is and is unaffected.
 Routes that relied on one of those headers reaching the wire must set it through the endpoint
 configuration or supply a `headerFilterStrategy` that permits it.
 
+=== camel-vertx - the vertxFactory option takes the public VertxBuilder
+
+The type of the `vertxFactory` option of the `vertx` component changed from the Vert.x internal class
+`io.vertx.core.impl.VertxBuilder` to the public interface `io.vertx.core.VertxBuilder`. The internal
+class does not implement the interface, and it no longer exists in Vert.x 5.
+
+An application that sets this option must create the builder with `Vertx.builder()`:
+
+[source,java]
+----
+// before
+component.setVertxFactory(new io.vertx.core.impl.VertxBuilder(options));
+
+// after
+component.setVertxFactory(Vertx.builder().with(options));
+----
+
+An application that does not set `vertxFactory` is not affected.
+
 === camel-disruptor - an interrupted request/reply producer fails the exchange
 
 A Disruptor producer whose thread is interrupted while it waits for the reply without a timeout (`waitForTaskToComplete`
