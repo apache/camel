@@ -57,8 +57,13 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
               label = "producer,consumer")
     private String tenantIdentifier;
 
+    public enum StatelessOperation {
+        INSERT,
+        UPSERT
+    }
+
     @UriParam(description = "Stateless operation to perform: insert or upsert.", label = "producer")
-    private String statelessOperation;
+    private StatelessOperation statelessOperation;
 
     @UriParam(description = "Whether selection query results should be returned as a stream.", label = "producer")
     private boolean streaming;
@@ -108,7 +113,7 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
         boolean hasSelectionQuery = selectionQuery != null && !selectionQuery.isBlank();
         boolean hasMutationQuery = mutationQuery != null && !mutationQuery.isBlank();
         boolean hasNaturalIdParameters = naturalIdParameters != null && !naturalIdParameters.isEmpty();
-        boolean hasStatelessOperation = statelessOperation != null && !statelessOperation.isBlank();
+        boolean hasStatelessOperation = statelessOperation != null;
 
         int configuredOperations = 0;
         if (hasSelectionQuery) {
@@ -128,10 +133,6 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
         if (configuredOperations != 1) {
             throw new IllegalArgumentException(
                     "Exactly one of selectionQuery, mutationQuery, naturalIdParameters or statelessOperation must be configured");
-        }
-
-        if (hasStatelessOperation && !statelessOperation.equals("insert") && !statelessOperation.equals("upsert")) {
-            throw new IllegalArgumentException("Invalid statelessOperation: " + statelessOperation);
         }
 
         if (streaming && !hasSelectionQuery) {
@@ -227,11 +228,11 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
         this.tenantIdentifier = tenantIdentifier;
     }
 
-    public String getStatelessOperation() {
+    public StatelessOperation getStatelessOperation() {
         return statelessOperation;
     }
 
-    public void setStatelessOperation(String statelessOperation) {
+    public void setStatelessOperation(StatelessOperation statelessOperation) {
         this.statelessOperation = statelessOperation;
     }
 
