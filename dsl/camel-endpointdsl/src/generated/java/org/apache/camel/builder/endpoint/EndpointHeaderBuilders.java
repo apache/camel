@@ -1803,6 +1803,19 @@ public class EndpointHeaderBuilders {
         return HazelcastTopicEndpointBuilderFactory.HazelcastTopicHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Hibernate (camel-hibernate)
+     * Camel Hibernate Component
+     * 
+     * Category: database
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static HibernateEndpointBuilderFactory.HibernateHeaderNameBuilder hibernate() {
+        return HibernateEndpointBuilderFactory.HibernateHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * HiveMQ (camel-hivemq)
      * Camel HiveMQ MQTT Client support
      * 

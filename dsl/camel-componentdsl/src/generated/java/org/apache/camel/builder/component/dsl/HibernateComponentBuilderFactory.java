@@ -67,21 +67,6 @@ public interface HibernateComponentBuilderFactory {
         }
     
         /**
-         * Explicit array of entity classes.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Class[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param entityClasses the value to set
-         * @return the dsl builder
-         */
-        default HibernateComponentBuilder entityClasses(java.lang.Class[] entityClasses) {
-            doSetProperty("entityClasses", entityClasses);
-            return this;
-        }
-    
-        /**
          * Arbitrary Hibernate configuration properties passthrough map.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
@@ -220,7 +205,6 @@ public interface HibernateComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "dataSource": ((HibernateComponent) component).setDataSource((java.lang.Object) value); return true;
-            case "entityClasses": ((HibernateComponent) component).setEntityClasses((java.lang.Class[]) value); return true;
             case "hibernateProperties": ((HibernateComponent) component).setHibernateProperties((java.util.Map) value); return true;
             case "schemaAction": ((HibernateComponent) component).setSchemaAction((java.lang.String) value); return true;
             case "sessionFactory": ((HibernateComponent) component).setSessionFactory((org.hibernate.SessionFactory) value); return true;
