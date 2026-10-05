@@ -17,11 +17,13 @@
 package org.apache.camel.component.smpp;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.support.DefaultExchange;
@@ -33,6 +35,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -127,5 +130,40 @@ class MessageReceiverListenerImplTest {
 
         verify(consumer).releaseExchange(exchange, false);
         verify(handler).handleException(anyString(), any(Exception.class));
+    }
+
+    /**
+     * In transceiver mode - {@code SmppProducer} with {@code messageReceiverRouteId} - the consumer belongs to the
+     * receiver route rather than to the SMPP endpoint, so a received message now reports that route's endpoint as
+     * {@code fromEndpoint}, the way alert notifications already did. The SMPP endpoint's exchange pattern still has to
+     * win over the receiver endpoint's, which is why the pattern is set explicitly.
+     */
+    @Test
+    void transceiverModeUsesTheReceiverRouteConsumerAndKeepsTheSmppPattern() throws Exception {
+        AtomicReference<Exchange> received = new AtomicReference<>();
+        DefaultCamelContext trxContext = new DefaultCamelContext();
+        trxContext.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:messageReceiver").routeId("messageReceiver").process(received::set);
+            }
+        });
+
+        when(endpoint.getCamelContext()).thenReturn(trxContext);
+        when(endpoint.getExchangePattern()).thenReturn(ExchangePattern.InOut);
+
+        // constructed before the context starts, so its StartupListener resolves the receiver route's consumer
+        MessageReceiverListenerImpl listener = new MessageReceiverListenerImpl(endpoint, "messageReceiver");
+        trxContext.start();
+        try {
+            listener.onAcceptDeliverSm(deliverSm());
+
+            assertNotNull(received.get(), "the receiver route should have been given the message");
+            assertEquals("direct://messageReceiver", received.get().getFromEndpoint().getEndpointUri());
+            assertEquals(ExchangePattern.InOut, received.get().getPattern(),
+                    "the SMPP endpoint's pattern must win over the receiver endpoint's");
+        } finally {
+            trxContext.stop();
+        }
     }
 }

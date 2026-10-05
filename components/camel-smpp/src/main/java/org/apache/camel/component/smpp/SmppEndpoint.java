@@ -81,9 +81,13 @@ public class SmppEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     /**
      * Create a new exchange for communicating with this endpoint from a SMSC
      *
-     * @param  deliverSm the received message from the SMSC
-     * @return           a new exchange
+     * @param      deliverSm the received message from the SMSC
+     * @return               a new exchange
+     * @deprecated           an exchange a consumer received a message for has to come from
+     *                       {@link org.apache.camel.Consumer#createExchange(boolean)}, so that the configured
+     *                       {@code ExchangeFactory} sees it; {@code MessageReceiverListenerImpl} does that itself now
      */
+    @Deprecated
     public Exchange createOnAcceptDeliverSmExchange(DeliverSm deliverSm) throws Exception {
         return createOnAcceptDeliverSmExchange(getExchangePattern(), deliverSm);
     }
@@ -92,10 +96,15 @@ public class SmppEndpoint extends DefaultEndpoint implements EndpointServiceLoca
      * Create a new exchange for communicating with this endpoint from a SMSC with the specified {@link ExchangePattern}
      * such as whether its going to be an {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut} exchange
      *
-     * @param  exchangePattern the message exchange pattern for the exchange
-     * @param  deliverSm       the received message from the SMSC
-     * @return                 a new exchange
+     * @param      exchangePattern the message exchange pattern for the exchange
+     * @param      deliverSm       the received message from the SMSC
+     * @return                     a new exchange
+     * @deprecated                 an exchange a consumer received a message for has to come from
+     *                             {@link org.apache.camel.Consumer#createExchange(boolean)}, so that the configured
+     *                             {@code ExchangeFactory} sees it; {@code MessageReceiverListenerImpl} does that itself
+     *                             now
      */
+    @Deprecated
     public Exchange createOnAcceptDeliverSmExchange(
             ExchangePattern exchangePattern,
             DeliverSm deliverSm)
@@ -109,10 +118,15 @@ public class SmppEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     /**
      * Create a new exchange for communicating with this endpoint from a SMSC
      *
-     * @param  dataSm        the received message from the SMSC
-     * @param  smppMessageId the smpp message id which will be used in the response
-     * @return               a new exchange
+     * @param      dataSm        the received message from the SMSC
+     * @param      smppMessageId the smpp message id which will be used in the response
+     * @return                   a new exchange
+     * @deprecated               an exchange a consumer received a message for has to come from
+     *                           {@link org.apache.camel.Consumer#createExchange(boolean)}, so that the configured
+     *                           {@code ExchangeFactory} sees it; {@code MessageReceiverListenerImpl} does that itself
+     *                           now
      */
+    @Deprecated
     public Exchange createOnAcceptDataSm(DataSm dataSm, String smppMessageId) {
         return createOnAcceptDataSm(getExchangePattern(), dataSm, smppMessageId);
     }
@@ -121,11 +135,16 @@ public class SmppEndpoint extends DefaultEndpoint implements EndpointServiceLoca
      * Create a new exchange for communicating with this endpoint from a SMSC with the specified {@link ExchangePattern}
      * such as whether its going to be an {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut} exchange
      *
-     * @param  exchangePattern the message exchange pattern for the exchange
-     * @param  dataSm          the received message from the SMSC
-     * @param  smppMessageId   the smpp message id which will be used in the response
-     * @return                 a new exchange
+     * @param      exchangePattern the message exchange pattern for the exchange
+     * @param      dataSm          the received message from the SMSC
+     * @param      smppMessageId   the smpp message id which will be used in the response
+     * @return                     a new exchange
+     * @deprecated                 an exchange a consumer received a message for has to come from
+     *                             {@link org.apache.camel.Consumer#createExchange(boolean)}, so that the configured
+     *                             {@code ExchangeFactory} sees it; {@code MessageReceiverListenerImpl} does that itself
+     *                             now
      */
+    @Deprecated
     public Exchange createOnAcceptDataSm(ExchangePattern exchangePattern, DataSm dataSm, String smppMessageId) {
         Exchange exchange = createExchange(exchangePattern);
         exchange.setProperty(Exchange.BINDING, getBinding());

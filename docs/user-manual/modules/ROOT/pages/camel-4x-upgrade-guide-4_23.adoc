@@ -576,6 +576,22 @@ falls back to its logging handler for such an exchange rather than bridging it a
 the consumer itself no longer stays silent, and that with `consumerProcessedStrategy=delete` the loss is now visible:
 the document is removed during the poll, before the route runs.
 
+=== camel-smpp - received exchanges now come from the consumer
+
+Exchanges for received `deliver_sm` and `data_sm` messages are now created through
+`Consumer#createExchange(boolean)` instead of on the endpoint, so that the configured `ExchangeFactory` sees them.
+Alert notifications already worked this way. Two consequences:
+
+* `Exchange#getFromRouteId()` is now set on received messages, where it was previously `null`, and exchange pooling
+  applies to them.
+* In transceiver mode - an `smpp` producer with `messageReceiverRouteId` - the consumer belongs to the receiver
+  route rather than to the SMPP endpoint, so `Exchange#getFromEndpoint()` now reports that route's endpoint (for
+  example `direct://messageReceiver`) instead of the SMPP endpoint. This matches what alert notifications already
+  did. The exchange pattern is unchanged: the SMPP endpoint's pattern is still applied explicitly.
+
+`SmppEndpoint#createOnAcceptDeliverSmExchange` and `SmppEndpoint#createOnAcceptDataSm` are deprecated. They are no
+longer used by the component; build such an exchange through the consumer instead.
+
 === camel-console
 
 The `context` developer console no longer counts routes created by Kamelets in its `routesTotal` and `routesStarted`

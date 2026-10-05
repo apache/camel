@@ -190,6 +190,8 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
     private Exchange createOnAcceptDeliverSmExchange(DeliverSm deliverSm) throws Exception {
         Exchange exchange = consumer.createExchange(false);
         try {
+            // the pattern has to be set explicitly: in transceiver mode the consumer belongs to the receiver route,
+            // not to this SMPP endpoint, so the factory would otherwise stamp that endpoint's pattern on the exchange
             exchange.setPattern(endpoint.getExchangePattern());
             exchange.setProperty(Exchange.BINDING, endpoint.getBinding());
             exchange.setIn(endpoint.getBinding().createSmppMessage(endpoint.getCamelContext(), deliverSm));
@@ -213,6 +215,7 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
     private Exchange createOnAcceptDataSmExchange(DataSm dataSm, String smppMessageId) {
         Exchange exchange = consumer.createExchange(false);
         try {
+            // see createOnAcceptDeliverSmExchange: the pattern cannot be left to the factory in transceiver mode
             exchange.setPattern(endpoint.getExchangePattern());
             exchange.setProperty(Exchange.BINDING, endpoint.getBinding());
             exchange.setIn(endpoint.getBinding().createSmppMessage(endpoint.getCamelContext(), dataSm, smppMessageId));
