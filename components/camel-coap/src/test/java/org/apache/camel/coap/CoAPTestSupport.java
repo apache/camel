@@ -16,11 +16,6 @@
  */
 package org.apache.camel.coap;
 
-import java.net.DatagramSocket;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
@@ -31,36 +26,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class CoAPTestSupport extends CamelTestSupport {
 
     @RegisterExtension
-    static AvailablePortFinder.Port PORT = findUdpPort();
-
-    /**
-     * Finds a port that is free for UDP as well as TCP. {@link AvailablePortFinder} only probes TCP, but CoAP over UDP
-     * and DTLS binds a UDP socket on all interfaces, so a port that is free for TCP can still be taken for UDP.
-     */
-    static AvailablePortFinder.Port findUdpPort() {
-        List<AvailablePortFinder.Port> rejected = new ArrayList<>();
-        try {
-            for (int i = 0; i < 100; i++) {
-                AvailablePortFinder.Port port = AvailablePortFinder.find();
-                if (isUdpPortFree(port.getPort())) {
-                    return port;
-                }
-                // keep the rejected port reserved until we are done, so find() does not return it again
-                rejected.add(port);
-            }
-            throw new IllegalStateException("Could not find a port that is free for both TCP and UDP");
-        } finally {
-            rejected.forEach(AvailablePortFinder.Port::release);
-        }
-    }
-
-    private static boolean isUdpPortFree(int port) {
-        try (DatagramSocket socket = new DatagramSocket(port)) {
-            return true;
-        } catch (SocketException e) {
-            return false;
-        }
-    }
+    static AvailablePortFinder.Port PORT = CoAPTestPorts.findUdpPort();
 
     @Override
     public void doPostSetup() {
