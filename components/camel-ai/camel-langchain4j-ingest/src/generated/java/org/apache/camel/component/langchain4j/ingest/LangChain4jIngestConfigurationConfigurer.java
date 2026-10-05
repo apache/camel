@@ -23,6 +23,8 @@ public class LangChain4jIngestConfigurationConfigurer extends org.apache.camel.s
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.langchain4j.ingest.LangChain4jIngestConfiguration target = (org.apache.camel.component.langchain4j.ingest.LangChain4jIngestConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "contenttype":
+        case "contentType": target.setContentType(property(camelContext, java.lang.String.class, value)); return true;
         case "documentfilter":
         case "documentFilter": target.setDocumentFilter(property(camelContext, org.apache.camel.Predicate.class, value)); return true;
         case "documentidheader":
@@ -49,6 +51,7 @@ public class LangChain4jIngestConfigurationConfigurer extends org.apache.camel.s
         case "maxSegmentSize": target.setMaxSegmentSize(property(camelContext, int.class, value)); return true;
         case "mindocumentsize":
         case "minDocumentSize": target.setMinDocumentSize(property(camelContext, int.class, value)); return true;
+        case "modality": target.setModality(property(camelContext, org.apache.camel.component.langchain4j.ingest.IngestModality.class, value)); return true;
         default: return false;
         }
     }
@@ -56,6 +59,8 @@ public class LangChain4jIngestConfigurationConfigurer extends org.apache.camel.s
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "contenttype":
+        case "contentType": return java.lang.String.class;
         case "documentfilter":
         case "documentFilter": return org.apache.camel.Predicate.class;
         case "documentidheader":
@@ -82,6 +87,7 @@ public class LangChain4jIngestConfigurationConfigurer extends org.apache.camel.s
         case "maxSegmentSize": return int.class;
         case "mindocumentsize":
         case "minDocumentSize": return int.class;
+        case "modality": return org.apache.camel.component.langchain4j.ingest.IngestModality.class;
         default: return null;
         }
     }
@@ -90,6 +96,8 @@ public class LangChain4jIngestConfigurationConfigurer extends org.apache.camel.s
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.langchain4j.ingest.LangChain4jIngestConfiguration target = (org.apache.camel.component.langchain4j.ingest.LangChain4jIngestConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "contenttype":
+        case "contentType": return target.getContentType();
         case "documentfilter":
         case "documentFilter": return target.getDocumentFilter();
         case "documentidheader":
@@ -116,6 +124,7 @@ public class LangChain4jIngestConfigurationConfigurer extends org.apache.camel.s
         case "maxSegmentSize": return target.getMaxSegmentSize();
         case "mindocumentsize":
         case "minDocumentSize": return target.getMinDocumentSize();
+        case "modality": return target.getModality();
         default: return null;
         }
     }
