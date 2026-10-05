@@ -21,6 +21,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -37,6 +38,7 @@ import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionSupport;
 import org.apache.camel.support.LanguageHelper;
+import org.apache.camel.util.MimeTypeHelper;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,10 +98,19 @@ public class GroovyExpression extends ExpressionSupport {
             // the cause and lose the hint
             String name = e.getProperty();
             boolean bean = name != null && exchange.getContext().getRegistry().lookupByName(name) != null;
-            String hint = bean
-                    ? "'" + name + "' is a bean in the registry, not a script variable; use"
-                      + " exchange.getContext().getRegistry().lookupByName('" + name + "'), or call it from the route with"
-                      + " - bean: {ref: " + name + "}"
+            Object body = exchange.getMessage().getBody();
+            // body.find { it.sku == ... } on the payload text iterates its bytes or characters: the body was not
+            // unmarshalled (CAMEL-25330)
+            boolean text = (body instanceof byte[] || body instanceof String) && e.getType() != null
+                    && (e.getType() == Byte.class || e.getType() == Character.class || e.getType() == String.class);
+            String hint = text
+                    ? "the body is still text (a " + (body instanceof byte[] ? "byte[]" : "String")
+                      + "), not parsed data: " + unmarshalHint(exchange, body)
+                    : bean
+                            ? "'" + name + "' is a bean in the registry, not a script variable; use"
+                              + " exchange.getContext().getRegistry().lookupByName('" + name
+                              + "'), or call it from the route with"
+                              + " - bean: {ref: " + name + "}"
                     : "the script variables are " + SCRIPT_VARIABLES_HINT;
             throw new groovy.lang.MissingPropertyException(
                     e.getMessageWithoutLocationText() + " (" + hint + ")", name, e.getType());
@@ -339,5 +350,73 @@ public class GroovyExpression extends ExpressionSupport {
                     return null;
             }
         }
+    }
+
+    /**
+     * Which data format turns the payload text into data, from the Content-Type, the file name (by its extension, as
+     * {@link MimeTypeHelper} maps it to a content type), or the first character of the text; the generic advice when
+     * none of them tells.
+     */
+    static String unmarshalHint(Exchange exchange, Object body) {
+        String type = exchange.getMessage().getHeader(Exchange.CONTENT_TYPE, String.class);
+        String file = exchange.getMessage().getHeader(Exchange.FILE_NAME, String.class);
+        String format = formatOf(type);
+        if (format == null && file != null) {
+            format = formatOf(MimeTypeHelper.probeMimeType(file));
+        }
+        if (format == null) {
+            int first = firstNonBlank(body);
+            if (first == '{' || first == '[') {
+                format = "json";
+            } else if (first == '<') {
+                format = "xml";
+            }
+        }
+        if ("json".equals(format)) {
+            return "unmarshal it first (unmarshal: json) to read its fields";
+        } else if ("xml".equals(format)) {
+            return "unmarshal it first (unmarshal: jacksonXml) to read its fields, or read them with xpath";
+        } else if ("csv".equals(format)) {
+            return "unmarshal it first (unmarshal: csv) to read its rows: a List of rows, or a Map per row with"
+                   + " useMaps: true";
+        }
+        return "unmarshal it first with the data format of the payload (json, jacksonXml, csv, ...) to read its fields";
+    }
+
+    /** The kind of payload a content type is: json, xml or csv (tab-separated values included), or null. */
+    private static String formatOf(String contentType) {
+        if (contentType == null) {
+            return null;
+        }
+        String s = contentType.toLowerCase(Locale.ROOT);
+        int semi = s.indexOf(';');
+        if (semi > 0) {
+            s = s.substring(0, semi).trim();
+        }
+        if (s.endsWith("/json") || s.endsWith("+json")) {
+            return "json";
+        } else if (s.endsWith("/xml") || s.endsWith("+xml")) {
+            return "xml";
+        } else if (s.endsWith("/csv") || s.endsWith("/tab-separated-values")) {
+            return "csv";
+        }
+        return null;
+    }
+
+    private static int firstNonBlank(Object body) {
+        if (body instanceof byte[] bytes) {
+            for (int i = 0; i < bytes.length && i < 256; i++) {
+                if (!Character.isWhitespace(bytes[i])) {
+                    return bytes[i];
+                }
+            }
+        } else if (body instanceof String text) {
+            for (int i = 0; i < text.length() && i < 256; i++) {
+                if (!Character.isWhitespace(text.charAt(i))) {
+                    return text.charAt(i);
+                }
+            }
+        }
+        return -1;
     }
 }
