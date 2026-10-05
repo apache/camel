@@ -730,6 +730,8 @@ public class YamlValidator {
             checkDynamicUri(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             // where the body comes from, across the routes of the file (CAMEL-24844)
             BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, bodylessEndpoints);
+            // a field read on a body that is still text (CAMEL-24844)
+            TextBodyFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
         }
         if (canonical) {
             checkOneOfCardinality(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
