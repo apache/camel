@@ -166,6 +166,23 @@ class LogTabRenderTest {
     }
 
     @Test
+    void theFixWithAiHintIsWithTheFKeysWhenAnErrorIsOnTheScreen() {
+        ctx.askAiCallback = (file, line, problem, text) -> {
+        };
+        LogTab tab = new LogTab(ctx);
+        tab.setEntriesForTesting(List.of(
+                LogTab.parseLogLine("2026-10-05 21:10:20.969  INFO 1 --- [ timer://orders] orders.camel.yaml:18 : Order 12"),
+                LogTab.parseLogLine(
+                        "2026-10-05 21:10:25.025 ERROR 1 --- [mer://inventory] orders.camel.yaml:43 : Stock is low")));
+        TuiTestHelper.renderToString(tab, 120, 20);
+
+        List<Span> spans = new ArrayList<>();
+        tab.renderFKeyHints(spans);
+        String hints = spans.stream().map(Span::content).reduce("", String::concat);
+        assertTrue(hints.contains("Shift+F8"), hints);
+    }
+
+    @Test
     void renderFooterHints() {
         LogTab tab = new LogTab(ctx);
         List<Span> footerSpans = new ArrayList<>();
