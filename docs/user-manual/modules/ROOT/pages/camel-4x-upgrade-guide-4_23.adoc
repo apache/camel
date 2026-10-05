@@ -616,6 +616,14 @@ does not set from the error handler, as documented. Prior to Camel 4.23 (since C
 were reset to their defaults: for example with `errorHandler(defaultErrorHandler().redeliveryDelay(0))` and
 `onException(IOException.class).maximumRedeliveries(3)`, the redeliveries were delayed 1 second each and not 0.
 
+=== Error handler - asynchronous delayed redelivery while stopping
+
+With `asyncDelayedRedelivery` and `allowRedeliveryWhileStopping=false`, stopping the route (or Camel) now rejects a
+redelivery that is waiting for its delay, as it already did without `asyncDelayedRedelivery`: the exchange fails with
+a `RejectedExecutionException` (and goes to the dead letter channel, if one is configured) within a second.
+Prior to Camel 4.23 the stop waited for the whole redelivery delay (or until the shutdown timeout) and the message was
+then redelivered.
+
 === camel-management
 
 The JMX `browse` operation of the `DefaultInflightRepository` MBean and the `listAwaitThreads` data of the
