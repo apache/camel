@@ -20537,9 +20537,11 @@
         "name" : "criteria",
         "type" : "object"
       }, {
+        "name" : "expert",
+        "type" : "string"
+      }, {
         "name" : "instructions",
-        "type" : "string",
-        "required" : true
+        "type" : "string"
       }, {
         "name" : "state",
         "type" : "string"
@@ -20566,9 +20568,11 @@
         "type" : "object",
         "required" : true
       }, {
+        "name" : "expert",
+        "type" : "string"
+      }, {
         "name" : "instructions",
-        "type" : "string",
-        "required" : true
+        "type" : "string"
       }, {
         "name" : "state",
         "type" : "string"
@@ -20584,9 +20588,11 @@
         "name" : "criteria",
         "type" : "any"
       }, {
+        "name" : "expert",
+        "type" : "string"
+      }, {
         "name" : "instructions",
-        "type" : "string",
-        "required" : true
+        "type" : "string"
       }, {
         "name" : "state",
         "type" : "string"
@@ -20613,9 +20619,11 @@
         "type" : "array",
         "required" : true
       }, {
+        "name" : "expert",
+        "type" : "string"
+      }, {
         "name" : "instructions",
-        "type" : "string",
-        "required" : true
+        "type" : "string"
       }, {
         "name" : "state",
         "type" : "string"

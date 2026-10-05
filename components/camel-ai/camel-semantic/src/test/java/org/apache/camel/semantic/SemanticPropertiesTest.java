@@ -31,18 +31,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SemanticPropertiesTest {
     @ParameterizedTest
-    @ValueSource(strings = { "bean", "class", "placeholder" })
+    @ValueSource(strings = { "bean", "class", "placeholder", "defaultExpert" })
     void camelMainBindsAdapterAndDefaultState(String selection) throws Exception {
         Main main = new Main();
         SemanticLanguageTest.LabelAdapter bean = new SemanticLanguageTest.LabelAdapter();
         main.bind("classifier", bean);
         String adapter = switch (selection) {
-            case "bean" -> "classifier";
+            case "bean", "defaultExpert" -> "classifier";
             case "placeholder" -> "{{adapter.name}}";
             default -> SemanticLanguageTest.LabelAdapter.class.getName();
         };
         main.addProperty("adapter.name", "classifier");
-        main.addProperty("camel.language.semantic.adapter", adapter);
+        main.addProperty(selection.equals("defaultExpert")
+                ? "camel.language.semantic.default-expert" : "camel.language.semantic.adapter", adapter);
         main.addProperty("camel.language.semantic.default-state", "${header.selected}");
         main.configure().addRoutesBuilder(new RouteBuilder() {
             public void configure() {
@@ -54,7 +55,7 @@ class SemanticPropertiesTest {
         });
         try {
             main.start();
-            if (selection.equals("bean") || selection.equals("placeholder")) {
+            if (!selection.equals("class")) {
                 assertThat(main.getCamelContext().getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME)).isNull();
             } else {
                 assertThat(main.getCamelContext().getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME))

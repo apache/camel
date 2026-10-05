@@ -28,6 +28,11 @@ import java.util.Map;
  * Referenced registry beans retain their existing lifecycle owner.
  */
 public interface SemanticAdapter {
+    /** Static defaults, or unknown for legacy adapters. This method must not load models or contact services. */
+    default SemanticCapabilities capabilities() {
+        return SemanticCapabilities.from(getClass().getAnnotation(SemanticExpert.class));
+    }
+
     /** Reject unsupported question kinds, criteria, decision policies or input selectors before traffic starts. */
     void validate(SemanticQuestion question);
 

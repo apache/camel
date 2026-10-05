@@ -74,7 +74,9 @@ public final class SemanticQuestionsBuilder {
             try {
                 definitions.put(name, question.build(context));
             } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Invalid semantic question '" + name + "': " + e.getMessage(), e);
+                String expert = question.getExpert() != null ? question.getExpert() : "default/automatic";
+                throw new IllegalArgumentException(
+                        "Invalid semantic question '" + name + "': " + e.getMessage() + " (expert '" + expert + "')", e);
             }
         });
         SemanticQuestions registry = SemanticQuestions.get(context);

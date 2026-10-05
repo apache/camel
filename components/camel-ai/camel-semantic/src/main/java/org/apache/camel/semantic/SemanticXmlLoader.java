@@ -73,10 +73,7 @@ final class SemanticXmlLoader extends RoutesBuilderLoaderSupport {
     @Override
     public void preParseRoute(Resource resource) throws Exception {
         Resource snapshot = snapshot(resource);
-        if (hasDeclarations(snapshot)) {
-            semantic.setCamelContext(getCamelContext());
-            semantic.preParseRoute(snapshot);
-        } else {
+        if (!hasDeclarations(snapshot)) {
             delegate().preParseRoute(snapshot);
         }
     }

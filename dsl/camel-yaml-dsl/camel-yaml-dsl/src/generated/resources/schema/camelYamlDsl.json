@@ -16502,6 +16502,9 @@
               "type" : "string"
             }
           },
+          "expert" : {
+            "type" : "string"
+          },
           "instructions" : {
             "type" : "string"
           },
@@ -16523,7 +16526,7 @@
             "enum" : [ "fail", "non-match" ]
           }
         },
-        "required" : [ "instructions", "type" ]
+        "required" : [ "type" ]
       },
       "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ChoiceSchema" : {
         "type" : "object",
@@ -16534,6 +16537,9 @@
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "expert" : {
+            "type" : "string"
           },
           "instructions" : {
             "type" : "string"
@@ -16546,7 +16552,7 @@
             "enum" : [ "choice" ]
           }
         },
-        "required" : [ "criteria", "instructions", "type" ]
+        "required" : [ "criteria", "type" ]
       },
       "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionSchema" : {
         "type" : "object",
@@ -16570,6 +16576,9 @@
               "type" : "string"
             }
           },
+          "expert" : {
+            "type" : "string"
+          },
           "instructions" : {
             "type" : "string"
           },
@@ -16581,7 +16590,7 @@
             "enum" : [ "score" ]
           }
         },
-        "required" : [ "criteria", "instructions", "type" ]
+        "required" : [ "criteria", "type" ]
       },
       "org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition$Inline" : {
         "type" : "object",
