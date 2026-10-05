@@ -25,8 +25,8 @@ The component does not use Jakarta Persistence (JPA), `camel-jpa`, or Spring `Pl
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
-## [source,xml]
-
+[source,xml]
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-hibernate</artifactId>
@@ -37,9 +37,7 @@ for this component:
 
 == URI format
 
----
-
-## hibernate:entityClassName
+=== hibernate:entityClassName
 
 Where `entityClassName` is the target entity class name or entity type name.
 
@@ -59,12 +57,13 @@ The component can use an existing Hibernate `SessionFactory` or create one durin
 
 An existing `SessionFactory` can be configured directly on the component:
 
-## [source,java]
-
+[source,java]
+----
 HibernateComponent component = new HibernateComponent();
 component.setSessionFactory(sessionFactory);
 
-## context.addComponent("hibernate", component);
+context.addComponent("hibernate", component);
+----
 
 The component does not own an externally supplied `SessionFactory` and therefore does not close it when the component stops.
 
@@ -74,16 +73,17 @@ If no `SessionFactory` is explicitly configured, the component attempts to reuse
 
 The component can bootstrap a `SessionFactory` using a `DataSource` and explicit entity classes:
 
-## [source,java]
-
+[source,java]
+----
 HibernateComponent component = new HibernateComponent();
 component.setDataSource(dataSource);
 component.setEntityClasses(new Class[] {
-MyEntity.class
+    MyEntity.class
 });
 component.setSchemaAction("update");
 
-## context.addComponent("hibernate", component);
+context.addComponent("hibernate", component);
+----
 
 The `DataSource` can be supplied directly or as a Camel registry name.
 
@@ -98,21 +98,22 @@ When the component creates the `SessionFactory`, it owns the resulting `SessionF
 
 Hibernate determines the database dialect automatically; the component does not require an explicit dialect configuration.
 
-# [NOTE]
-
-# Entity package scanning is not currently provided. Use `entityClasses` to explicitly register the entity classes used by the `SessionFactory`.
+[NOTE]
+====
+Entity package scanning is not currently provided. Use `entityClasses` to explicitly register the entity classes used by the `SessionFactory`.
+====
 
 ==== Hibernate properties
 
 Additional Hibernate configuration properties can be supplied through `hibernateProperties`.
 
-## [source,java]
-
+[source,java]
+----
 component.setHibernateProperties(Map.of(
-"hibernate.show_sql", true,
-"hibernate.format_sql", true
+    "hibernate.show_sql", true,
+    "hibernate.format_sql", true
 ));
----
+----
 
 The supplied properties are passed directly to Hibernate during `SessionFactory` bootstrap.
 
@@ -133,20 +134,20 @@ The endpoint validates this configuration during startup.
 
 Use `selectionQuery` to execute an HQL selection query using Hibernate's `SelectionQuery` API.
 
-## [source,java]
-
+[source,java]
+----
 from("direct:findEntities")
-.to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity where status = :status");
-------------------------------------------------------------------------------------------
+    .to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity where status = :status");
+----
 
 Query parameters are supplied through the `CamelHibernateParameters` message header:
 
-## [source,java]
-
+[source,java]
+----
 exchange.getMessage().setHeader(
-HibernateConstants.HIBERNATE_PARAMETERS,
-Map.of("status", "ACTIVE"));
-----------------------------
+    HibernateConstants.HIBERNATE_PARAMETERS,
+    Map.of("status", "ACTIVE"));
+----
 
 The query result is placed in the message body.
 
@@ -154,22 +155,22 @@ The query result is placed in the message body.
 
 Use `mutationQuery` to execute an HQL mutation query using Hibernate's `MutationQuery` API.
 
-## [source,java]
-
+[source,java]
+----
 from("direct:updateEntities")
-.to("hibernate:com.example.MyEntity?mutationQuery=update MyEntity set status = :status where status = :oldStatus");
--------------------------------------------------------------------------------------------------------------------
+    .to("hibernate:com.example.MyEntity?mutationQuery=update MyEntity set status = :status where status = :oldStatus");
+----
 
 Parameters are supplied through the `CamelHibernateParameters` header:
 
-## [source,java]
-
+[source,java]
+----
 exchange.getMessage().setHeader(
-HibernateConstants.HIBERNATE_PARAMETERS,
-Map.of(
-"status", "INACTIVE",
-"oldStatus", "EXPIRED"));
--------------------------
+    HibernateConstants.HIBERNATE_PARAMETERS,
+    Map.of(
+        "status", "INACTIVE",
+        "oldStatus", "EXPIRED"));
+----
 
 The mutation update count is placed in the message body.
 
@@ -183,11 +184,11 @@ The lookup uses Hibernate's native natural-id functionality rather than construc
 
 Set `readOnly=true` for a selection query when the returned entities are not intended to be modified.
 
-## [source,java]
-
+[source,java]
+----
 from("direct:readEntities")
-.to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&readOnly=true");
----------------------------------------------------------------------------------
+    .to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&readOnly=true");
+----
 
 The component configures both the Hibernate `Session` and the `SelectionQuery` as read-only.
 
@@ -199,22 +200,23 @@ The configuration contains the filter name and its parameter values. The compone
 
 For example, an application can configure a filter named `tenantFilter` with a tenant parameter:
 
-## [source,java]
-
+[source,java]
+----
 Map<String, Map<String, Object>> filters = Map.of(
-"tenantFilter", Map.of("tenantId", "tenant-a"));
+    "tenantFilter", Map.of("tenantId", "tenant-a"));
 
-## endpoint.setFilters(filters);
+endpoint.setFilters(filters);
+----
 
 ==== Multi-tenancy
 
 A tenant identifier can be supplied through `tenantIdentifier`.
 
-## [source,java]
-
+[source,java]
+----
 from("direct:tenantEntities")
-.to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&tenantIdentifier=tenant-a");
----------------------------------------------------------------------------------------------
+    .to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&tenantIdentifier=tenant-a");
+----
 
 The tenant identifier is used when creating the Hibernate `Session`.
 
@@ -224,21 +226,21 @@ The tenant is configured by the route rather than being taken from an untrusted 
 
 Use `statelessOperation=insert` to insert the entity contained in the message body using Hibernate's native `StatelessSession`.
 
-## [source,java]
-
+[source,java]
+----
 from("direct:insertEntity")
-.to("hibernate:com.example.MyEntity?statelessOperation=insert");
-----------------------------------------------------------------
+    .to("hibernate:com.example.MyEntity?statelessOperation=insert");
+----
 
 ==== Stateless upsert
 
 Use `statelessOperation=upsert` to perform a stateless upsert using Hibernate's native `StatelessSession`.
 
-## [source,java]
-
+[source,java]
+----
 from("direct:upsertEntity")
-.to("hibernate:com.example.MyEntity?statelessOperation=upsert");
-----------------------------------------------------------------
+    .to("hibernate:com.example.MyEntity?statelessOperation=upsert");
+----
 
 The supported stateless operations are `insert` and `upsert`.
 
@@ -250,31 +252,31 @@ Each selected entity is delivered to the route as the message body.
 
 For example:
 
-## [source,java]
-
+[source,java]
+----
 from("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&maximumResults=100&initialDelay=1000&delay=5000")
-.to("direct:processEntity");
-----------------------------
+    .to("direct:processEntity");
+----
 
 ==== Maximum results
 
 Use `maximumResults` to limit the number of entities retrieved during a poll.
 
-## [source,java]
-
+[source,java]
+----
 from("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&maximumResults=100")
-.to("direct:processEntity");
-----------------------------
+    .to("direct:processEntity");
+----
 
 ==== Competing consumers with SKIP LOCKED
 
 Set `skipLocked=true` to configure the selection query with a pessimistic write lock and Hibernate's `SKIP_LOCKED` timeout.
 
-## [source,java]
-
+[source,java]
+----
 from("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&skipLocked=true&maximumResults=100")
-.to("direct:processEntity");
-----------------------------
+    .to("direct:processEntity");
+----
 
 This allows multiple consumer instances to compete for database rows while skipping rows already locked by another consumer.
 
@@ -284,19 +286,19 @@ The database and Hibernate dialect must support the required locking behavior.
 
 Set `streaming=true` on a selection query to return the results as a Java `Stream`.
 
-## [source,java]
-
+[source,java]
+----
 from("direct:streamEntities")
-.to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&streaming=true")
-.process(exchange -> {
-Stream<?> stream = exchange.getMessage().getBody(Stream.class);
-try (stream) {
-stream.forEach(entity -> {
-// process entity
-});
-}
-});
----
+    .to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&streaming=true")
+    .process(exchange -> {
+        Stream<?> stream = exchange.getMessage().getBody(Stream.class);
+        try (stream) {
+            stream.forEach(entity -> {
+                // process entity
+            });
+        }
+    });
+----
 
 The Hibernate `Session` and transaction remain open while the stream is being consumed.
 
@@ -308,16 +310,16 @@ Query parameters are supplied through the `CamelHibernateParameters` message hea
 
 For example:
 
-## [source,java]
-
+[source,java]
+----
 Map<String, Object> parameters = Map.of(
-"status", "ACTIVE",
-"country", "US");
+    "status", "ACTIVE",
+    "country", "US");
 
 exchange.getMessage().setHeader(
-HibernateConstants.HIBERNATE_PARAMETERS,
-parameters);
-------------
+    HibernateConstants.HIBERNATE_PARAMETERS,
+    parameters);
+----
 
 The parameters are bound to the configured Hibernate query.
 
@@ -337,22 +339,20 @@ The component does not use `camel-jpa`, Jakarta Persistence, Spring `PlatformTra
 
 === Selection query
 
-# [tabs]
-
+[%tabs]
+====
 Java::
 +
 [source,java]
--------------
-
+----
 from("direct:findEntities")
-.to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity where status = :status");
-------------------------------------------------------------------------------------------
+    .to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity where status = :status");
+----
 
 XML::
 +
 [source,xml]
-------------
-
+----
 <route>
     <from uri="direct:findEntities"/>
     <to uri="hibernate:com.example.MyEntity?selectionQuery=from MyEntity where status = :status"/>
@@ -362,39 +362,34 @@ XML::
 YAML::
 +
 [source,yaml]
--------------
-
-* route:
-  from:
-  uri: direct:findEntities
-  steps:
-  - to:
-  uri: hibernate:com.example.MyEntity
-  parameters:
-  selectionQuery: "from MyEntity where status = :status"
-
----
-
+----
+- route:
+    from:
+      uri: direct:findEntities
+    steps:
+      - to:
+          uri: hibernate:com.example.MyEntity
+          parameters:
+            selectionQuery: "from MyEntity where status = :status"
+----
 ====
 
 === Mutation query
 
-# [tabs]
-
+[%tabs]
+====
 Java::
 +
 [source,java]
--------------
-
+----
 from("direct:updateEntities")
-.to("hibernate:com.example.MyEntity?mutationQuery=update MyEntity set status = :status where id = :id");
---------------------------------------------------------------------------------------------------------
+    .to("hibernate:com.example.MyEntity?mutationQuery=update MyEntity set status = :status where id = :id");
+----
 
 XML::
 +
 [source,xml]
-------------
-
+----
 <route>
     <from uri="direct:updateEntities"/>
     <to uri="hibernate:com.example.MyEntity?mutationQuery=update MyEntity set status = :status where id = :id"/>
@@ -404,39 +399,34 @@ XML::
 YAML::
 +
 [source,yaml]
--------------
-
-* route:
-  from:
-  uri: direct:updateEntities
-  steps:
-  - to:
-  uri: hibernate:com.example.MyEntity
-  parameters:
-  mutationQuery: "update MyEntity set status = :status where id = :id"
-
----
-
+----
+- route:
+    from:
+      uri: direct:updateEntities
+    steps:
+      - to:
+          uri: hibernate:com.example.MyEntity
+          parameters:
+            mutationQuery: "update MyEntity set status = :status where id = :id"
+----
 ====
 
 === Stateless insert
 
-# [tabs]
-
+[%tabs]
+====
 Java::
 +
 [source,java]
--------------
-
+----
 from("direct:insertEntity")
-.to("hibernate:com.example.MyEntity?statelessOperation=insert");
-----------------------------------------------------------------
+    .to("hibernate:com.example.MyEntity?statelessOperation=insert");
+----
 
 XML::
 +
 [source,xml]
-------------
-
+----
 <route>
     <from uri="direct:insertEntity"/>
     <to uri="hibernate:com.example.MyEntity?statelessOperation=insert"/>
@@ -446,39 +436,34 @@ XML::
 YAML::
 +
 [source,yaml]
--------------
-
-* route:
-  from:
-  uri: direct:insertEntity
-  steps:
-  - to:
-  uri: hibernate:com.example.MyEntity
-  parameters:
-  statelessOperation: insert
-
----
-
+----
+- route:
+    from:
+      uri: direct:insertEntity
+    steps:
+      - to:
+          uri: hibernate:com.example.MyEntity
+          parameters:
+            statelessOperation: insert
+----
 ====
 
 === Stateless upsert
 
-# [tabs]
-
+[%tabs]
+====
 Java::
 +
 [source,java]
--------------
-
+----
 from("direct:upsertEntity")
-.to("hibernate:com.example.MyEntity?statelessOperation=upsert");
-----------------------------------------------------------------
+    .to("hibernate:com.example.MyEntity?statelessOperation=upsert");
+----
 
 XML::
 +
 [source,xml]
-------------
-
+----
 <route>
     <from uri="direct:upsertEntity"/>
     <to uri="hibernate:com.example.MyEntity?statelessOperation=upsert"/>
@@ -488,39 +473,34 @@ XML::
 YAML::
 +
 [source,yaml]
--------------
-
-* route:
-  from:
-  uri: direct:upsertEntity
-  steps:
-  - to:
-  uri: hibernate:com.example.MyEntity
-  parameters:
-  statelessOperation: upsert
-
----
-
+----
+- route:
+    from:
+      uri: direct:upsertEntity
+    steps:
+      - to:
+          uri: hibernate:com.example.MyEntity
+          parameters:
+            statelessOperation: upsert
+----
 ====
 
 === Polling consumer
 
-# [tabs]
-
+[%tabs]
+====
 Java::
 +
 [source,java]
--------------
-
+----
 from("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&maximumResults=100&initialDelay=1000&delay=5000")
-.to("direct:processEntity");
-----------------------------
+    .to("direct:processEntity");
+----
 
 XML::
 +
 [source,xml]
-------------
-
+----
 <route>
     <from uri="hibernate:com.example.MyEntity?selectionQuery=from MyEntity&amp;maximumResults=100&amp;initialDelay=1000&amp;delay=5000"/>
     <to uri="direct:processEntity"/>
@@ -530,42 +510,37 @@ XML::
 YAML::
 +
 [source,yaml]
--------------
-
-* route:
-  from:
-  uri: hibernate:com.example.MyEntity
-  parameters:
-  selectionQuery: "from MyEntity"
-  maximumResults: 100
-  initialDelay: 1000
-  delay: 5000
-  steps:
-  - to:
-  uri: direct:processEntity
-
----
-
+----
+- route:
+    from:
+      uri: hibernate:com.example.MyEntity
+    parameters:
+      selectionQuery: "from MyEntity"
+      maximumResults: 100
+      initialDelay: 1000
+      delay: 5000
+    steps:
+      - to:
+          uri: direct:processEntity
+----
 ====
 
 === Competing consumers with SKIP LOCKED
 
-# [tabs]
-
+[%tabs]
+====
 Java::
 +
 [source,java]
--------------
-
+----
 from("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&skipLocked=true&maximumResults=100")
-.to("direct:processEntity");
-----------------------------
+    .to("direct:processEntity");
+----
 
 XML::
 +
 [source,xml]
-------------
-
+----
 <route>
     <from uri="hibernate:com.example.MyEntity?selectionQuery=from MyEntity&amp;skipLocked=true&amp;maximumResults=100"/>
     <to uri="direct:processEntity"/>
@@ -575,49 +550,44 @@ XML::
 YAML::
 +
 [source,yaml]
--------------
-
-* route:
-  from:
-  uri: hibernate:com.example.MyEntity
-  parameters:
-  selectionQuery: "from MyEntity"
-  skipLocked: true
-  maximumResults: 100
-  steps:
-  - to:
-  uri: direct:processEntity
-
----
-
+----
+- route:
+    from:
+      uri: hibernate:com.example.MyEntity
+    parameters:
+      selectionQuery: "from MyEntity"
+      skipLocked: true
+      maximumResults: 100
+    steps:
+      - to:
+          uri: direct:processEntity
+----
 ====
 
 === Streaming
 
-# [tabs]
-
+[%tabs]
+====
 Java::
 +
 [source,java]
--------------
-
+----
 from("direct:streamEntities")
-.to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&streaming=true")
-.process(exchange -> {
-Stream<?> stream = exchange.getMessage().getBody(Stream.class);
-try (stream) {
-stream.forEach(entity -> {
-// process entity
-});
-}
-});
----
+    .to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&streaming=true")
+    .process(exchange -> {
+        Stream<?> stream = exchange.getMessage().getBody(Stream.class);
+        try (stream) {
+            stream.forEach(entity -> {
+                // process entity
+            });
+        }
+    });
+----
 
 XML::
 +
 [source,xml]
-------------
-
+----
 <route>
     <from uri="direct:streamEntities"/>
     <to uri="hibernate:com.example.MyEntity?selectionQuery=from MyEntity&amp;streaming=true"/>
@@ -627,44 +597,36 @@ XML::
 YAML::
 +
 [source,yaml]
--------------
-
-* route:
-  from:
-  uri: direct:streamEntities
-  steps:
-  - to:
-  uri: hibernate:com.example.MyEntity
-  parameters:
-  selectionQuery: "from MyEntity"
-  streaming: true
-
----
-
+----
+- route:
+    from:
+      uri: direct:streamEntities
+    parameters:
+      selectionQuery: "from MyEntity"
+      streaming: true
+----
 ====
 
 === Native Hibernate SessionFactory configuration
 
-# [tabs]
-
+[%tabs]
+====
 Java::
 +
 [source,java]
--------------
-
+----
 HibernateComponent component = new HibernateComponent();
 component.setSessionFactory(sessionFactory);
 context.addComponent("hibernate", component);
 
 from("direct:findEntities")
-.to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity");
--------------------------------------------------------------------
+    .to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity");
+----
 
 XML::
 +
 [source,xml]
-------------
-
+----
 <bean id="hibernate" class="org.apache.camel.component.hibernate.HibernateComponent">
     <property name="sessionFactory" ref="sessionFactory"/>
 </bean>
@@ -673,44 +635,39 @@ XML::
 YAML::
 +
 [source,yaml]
--------------
-
-* route:
-  from:
-  uri: direct:findEntities
-  steps:
-  - to:
-  uri: hibernate:com.example.MyEntity
-  parameters:
-  selectionQuery: "from MyEntity"
-
----
-
+----
+- route:
+    from:
+      uri: direct:findEntities
+    steps:
+      - to:
+          uri: hibernate:com.example.MyEntity
+          parameters:
+            selectionQuery: "from MyEntity"
+----
 ====
 
 === Bootstrapping a SessionFactory
 
-# [tabs]
-
+[%tabs]
+====
 Java::
 +
 [source,java]
--------------
-
+----
 HibernateComponent component = new HibernateComponent();
 component.setDataSource(dataSource);
 component.setEntityClasses(new Class[] {
-MyEntity.class
+    MyEntity.class
 });
 component.setSchemaAction("update");
 context.addComponent("hibernate", component);
----------------------------------------------
+----
 
 XML::
 +
 [source,xml]
-------------
-
+----
 <bean id="hibernate" class="org.apache.camel.component.hibernate.HibernateComponent">
     <property name="dataSource" ref="dataSource"/>
     <property name="schemaAction" value="update"/>
@@ -720,19 +677,16 @@ XML::
 YAML::
 +
 [source,yaml]
--------------
-
-* route:
-  from:
-  uri: direct:findEntities
-  steps:
-  - to:
-  uri: hibernate:com.example.MyEntity
-  parameters:
-  selectionQuery: "from MyEntity"
-
----
-
+----
+- route:
+    from:
+      uri: direct:findEntities
+    steps:
+      - to:
+          uri: hibernate:com.example.MyEntity
+          parameters:
+            selectionQuery: "from MyEntity"
+----
 ====
 
 == Limitations and deferred features
