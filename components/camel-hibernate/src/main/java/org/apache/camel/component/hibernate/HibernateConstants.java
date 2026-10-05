@@ -16,9 +16,15 @@
  */
 package org.apache.camel.component.hibernate;
 
+import org.apache.camel.spi.Metadata;
+
 public final class HibernateConstants {
 
+    @Metadata(description = "Map of named parameters to bind to the Hibernate query.", label = "producer")
     public static final String HIBERNATE_PARAMETERS = "CamelHibernateParameters";
+
+    @Metadata(description = "The Hibernate Session associated with the current exchange.", label = "consumer,producer")
+    public static final String HIBERNATE_SESSION = "CamelHibernateSession";
 
     private HibernateConstants() {
     }
