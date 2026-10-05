@@ -737,6 +737,16 @@ public class Run extends CamelCommand {
         return prop;
     }
 
+    /**
+     * Whether a directory given as the only file (camel run . or camel run dirName) runs as --source-dir. A Maven
+     * project keeps running its files, and so do the Spring Boot and Quarkus runtimes, which export the files to run
+     * them.
+     */
+    boolean runsDirectoryAsSourceDir(Path dir) {
+        return (RuntimeType.jbang == runtime || RuntimeType.main == runtime)
+                && !Files.exists(dir.resolve("pom.xml"));
+    }
+
     private int run() throws Exception {
         if (!empty && !files.isEmpty() && sourceDir != null) {
             // cannot have both files and source dir at the same time
@@ -753,7 +763,13 @@ public class Run extends CamelCommand {
                 Path first = Path.of(name);
                 if (Files.isDirectory(first)) {
                     baseDir = first;
-                    RunHelper.dirToFiles(name, files);
+                    if (runsDirectoryAsSourceDir(first)) {
+                        // run the directory as --source-dir, so dev mode watches it: changed and new files are reloaded
+                        sourceDir = name;
+                        files.clear();
+                    } else {
+                        RunHelper.dirToFiles(name, files);
+                    }
                 }
             }
         }

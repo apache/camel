@@ -1796,6 +1796,11 @@ cost of a slower startup. If you passed `--runtime=main` explicitly and want the
 run, use `--runtime=jbang` (or leave the option out). The options `--background`, `--code`, `--open-api`,
 `--empty` and `--mcp-stdio` are not supported with `--runtime=main`.
 
+Running a directory (`camel run .` or `camel run mycode`) is now the same as `--source-dir`: the route files in
+its subfolders are loaded too, and in `--dev` mode changed and new files are reloaded (before, the directory was
+expanded to the files directly in it, and in `--dev` mode `camel run .` reloaded nothing). A directory with a
+`pom.xml`, and the `spring-boot` and `quarkus` runtimes, still run the files directly in the directory.
+
 Running an existing Maven project (`camel run pom.xml`) is unchanged, and still detects the runtime
 from the `pom.xml`. The other commands that take `--runtime` (such as `camel export`,
 `camel dependency list` and `camel version list`) accept `jbang` as an alias for `main`.
