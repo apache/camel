@@ -3024,6 +3024,13 @@ Local downloads configured with `fileDir` now resolve existing filesystem path s
 that the destination remains inside the configured directory. Downloads through a symbolic link that
 resolves outside `fileDir` are rejected. Valid nested download paths continue to work.
 
+=== camel-google-sheets - custom column names of a range that does not start at column A
+
+The `google-sheets:application-x-struct` data type now maps the custom `columnNames` to the columns of the range by
+their position. For a range that does not start at column A every column got the first name, so with the Kamelet
+default `columnNames=A` and a range such as `B:E` the JSON keys change from `A` for every column (each value
+overwriting the previous one) to `A`, `C`, `D`, `E`. Ranges that start at column A are not affected.
+
 === camel-google-storage
 
 Local downloads configured with a plain `downloadFileName` directory now resolve existing filesystem
