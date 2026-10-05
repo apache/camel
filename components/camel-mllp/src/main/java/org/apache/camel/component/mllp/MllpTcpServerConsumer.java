@@ -392,7 +392,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     fieldSeparatorIndexes.add(i);
                 } else if (MllpProtocolConstants.SEGMENT_DELIMITER == hl7MessageBytes[i]) {
                     // If the MSH Segment doesn't have a trailing field separator, add one so the field can be extracted into a header
-                    if (fieldSeparator != hl7MessageBytes[i - 1]) {
+                    if (i > 0 && fieldSeparator != hl7MessageBytes[i - 1]) {
                         fieldSeparatorIndexes.add(i);
                     }
                     endOfMSH = i;
@@ -400,7 +400,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 }
             }
 
-            if (-1 == endOfMSH) {
+            if (endOfMSH <= 0) {
                 // TODO:  May want to throw some sort of an Exception here
                 log.warn("Population of message headers failed - unable to find the end of the MSH segment");
             } else {
