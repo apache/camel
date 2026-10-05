@@ -126,7 +126,7 @@ public class MonitorItemTest extends AbstractMiloServerTest {
         final var time = 2 * 100;
         final var timeout = 10 * 1_000; // 10 seconds timeout for assertions
 
-        /**
+        /*
          * test1Endpoint is related to client C1_1 with: requestedPublishingInterval=2000 samplingInterval=100
          * queueSize=4 It should get the first 3 messages because of samplingInterval less than update rate and
          * queueSize over 3 and an update pause of 2 seconds after they are sent. From the rest 16 messages, sent in
@@ -137,7 +137,7 @@ public class MonitorItemTest extends AbstractMiloServerTest {
         test1Endpoint.setMinimumExpectedMessageCount(11);    // the first 3, plus at least 8 more from rest (if they fall to 2 periods)
         test1Endpoint.setAssertPeriod(3000);
 
-        /**
+        /*
          * test2Endpoint is related to client C1_2 with: requestedPublishingInterval=2000 samplingInterval=1000 from
          * default queueSize=4 It should get 1 (or 2 depending on exact timing) of the first 3 messages because of
          * samplingInterval and an update pause of 2 seconds after they are sent. From the rest 16 messages, sent in
@@ -148,7 +148,7 @@ public class MonitorItemTest extends AbstractMiloServerTest {
         test2Endpoint.setMinimumExpectedMessageCount(4);    // One or 2 of the first 3, plus 3 or 4 of the remaining 16
         test2Endpoint.setAssertPeriod(3000);
 
-        /**
+        /*
          * test3Endpoint is related to client C2_1 with: requestedPublishingInterval=1000 samplingInterval=100
          * queueSize=3 It should get the first 3 messages because of samplingInterval less than update rate and
          * queueSize over 3 and an update pause of 2 seconds after they are sent. From the rest 16 messages, sent in
@@ -212,7 +212,7 @@ public class MonitorItemTest extends AbstractMiloServerTest {
         int count2 = this.test2Endpoint.getReceivedCounter();
         assertTrue(count2 <= 6, "Not enough messages have been dropped, but should because of queueSize");
 
-        // The third client has request
+        // The third client has requestedPublishingInterval=1000, so with queueSize=3 some messages should be dropped
         int count3 = this.test3Endpoint.getReceivedCounter();
         assertTrue(count3 <= 15, "Not enough messages have been dropped, but should because of queueSize");
     }
