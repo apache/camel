@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 abstract class CoAPRestComponentTestBase extends CamelTestSupport {
     @RegisterExtension
-    static AvailablePortFinder.Port coapport = AvailablePortFinder.find();
+    static AvailablePortFinder.Port coapport = CoAPTestSupport.findUdpPort();
 
     @Produce("direct:start")
     protected ProducerTemplate sender;
