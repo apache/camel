@@ -96,10 +96,19 @@ public class GroovyExpression extends ExpressionSupport {
             // the cause and lose the hint
             String name = e.getProperty();
             boolean bean = name != null && exchange.getContext().getRegistry().lookupByName(name) != null;
-            String hint = bean
-                    ? "'" + name + "' is a bean in the registry, not a script variable; use"
-                      + " exchange.getContext().getRegistry().lookupByName('" + name + "'), or call it from the route with"
-                      + " - bean: {ref: " + name + "}"
+            Object body = exchange.getMessage().getBody();
+            // body.find { it.sku == ... } on the payload text iterates its bytes or characters: the body was not
+            // unmarshalled (CAMEL-25330)
+            boolean text = (body instanceof byte[] || body instanceof String) && e.getType() != null
+                    && (e.getType() == Byte.class || e.getType() == Character.class || e.getType() == String.class);
+            String hint = text
+                    ? "the body is still text (a " + (body instanceof byte[] ? "byte[]" : "String")
+                      + "), not parsed data: unmarshal it first (unmarshal: json for JSON) to read its fields"
+                    : bean
+                            ? "'" + name + "' is a bean in the registry, not a script variable; use"
+                              + " exchange.getContext().getRegistry().lookupByName('" + name
+                              + "'), or call it from the route with"
+                              + " - bean: {ref: " + name + "}"
                     : "the script variables are " + SCRIPT_VARIABLES_HINT;
             throw new groovy.lang.MissingPropertyException(
                     e.getMessageWithoutLocationText() + " (" + hint + ")", name, e.getType());
