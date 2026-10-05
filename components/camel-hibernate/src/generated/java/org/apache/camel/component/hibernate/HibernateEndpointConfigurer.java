@@ -31,15 +31,12 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "consumedelete":
-        case "consumeDelete": target.setConsumeDelete(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
-        case "entitymanagerfactory":
-        case "entityManagerFactory": target.setEntityManagerFactory(property(camelContext, jakarta.persistence.EntityManagerFactory.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "filters": target.setFilters(property(camelContext, java.util.Map.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
@@ -47,14 +44,14 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maximumresults":
         case "maximumResults": target.setMaximumResults(property(camelContext, int.class, value)); return true;
-        case "namedquery":
-        case "namedQuery": target.setNamedQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "nativequery":
-        case "nativeQuery": target.setNativeQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "mutationquery":
+        case "mutationQuery": target.setMutationQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "naturalidparameters":
+        case "naturalIdParameters": target.setNaturalIdParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "query": target.setQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "readonly":
+        case "readOnly": target.setReadOnly(property(camelContext, boolean.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "runlogginglevel":
@@ -64,22 +61,23 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "selectionquery":
+        case "selectionQuery": target.setSelectionQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "sessionfactory":
-        case "sessionFactory": target.setSessionFactory(property(camelContext, org.hibernate.SessionFactory.class, value)); return true;
+        case "skiplocked":
+        case "skipLocked": target.setSkipLocked(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "statelessoperation":
+        case "statelessOperation": target.setStatelessOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "streaming": target.setStreaming(property(camelContext, boolean.class, value)); return true;
+        case "tenantidentifier":
+        case "tenantIdentifier": target.setTenantIdentifier(property(camelContext, java.lang.String.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "transactionmanager":
-        case "transactionManager": target.setTransactionManager(property(camelContext, org.springframework.transaction.PlatformTransactionManager.class, value)); return true;
-        case "useexecuteupdate":
-        case "useExecuteUpdate": target.setUseExecuteUpdate(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "usepersist":
-        case "usePersist": target.setUsePersist(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -95,15 +93,12 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "backoffMultiplier": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "consumedelete":
-        case "consumeDelete": return boolean.class;
         case "delay": return long.class;
-        case "entitymanagerfactory":
-        case "entityManagerFactory": return jakarta.persistence.EntityManagerFactory.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filters": return java.util.Map.class;
         case "greedy": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
@@ -111,14 +106,14 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "lazyStartProducer": return boolean.class;
         case "maximumresults":
         case "maximumResults": return int.class;
-        case "namedquery":
-        case "namedQuery": return java.lang.String.class;
-        case "nativequery":
-        case "nativeQuery": return java.lang.String.class;
-        case "parameters": return java.util.Map.class;
+        case "mutationquery":
+        case "mutationQuery": return java.lang.String.class;
+        case "naturalidparameters":
+        case "naturalIdParameters": return java.util.Map.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
-        case "query": return java.lang.String.class;
+        case "readonly":
+        case "readOnly": return boolean.class;
         case "repeatcount":
         case "repeatCount": return long.class;
         case "runlogginglevel":
@@ -128,22 +123,23 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "scheduler": return java.lang.Object.class;
         case "schedulerproperties":
         case "schedulerProperties": return java.util.Map.class;
+        case "selectionquery":
+        case "selectionQuery": return java.lang.String.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
-        case "sessionfactory":
-        case "sessionFactory": return org.hibernate.SessionFactory.class;
+        case "skiplocked":
+        case "skipLocked": return boolean.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
+        case "statelessoperation":
+        case "statelessOperation": return java.lang.String.class;
+        case "streaming": return boolean.class;
+        case "tenantidentifier":
+        case "tenantIdentifier": return java.lang.String.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
-        case "transactionmanager":
-        case "transactionManager": return org.springframework.transaction.PlatformTransactionManager.class;
-        case "useexecuteupdate":
-        case "useExecuteUpdate": return java.lang.Boolean.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
-        case "usepersist":
-        case "usePersist": return boolean.class;
         default: return null;
         }
     }
@@ -160,15 +156,12 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "backoffMultiplier": return target.getBackoffMultiplier();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "consumedelete":
-        case "consumeDelete": return target.isConsumeDelete();
         case "delay": return target.getDelay();
-        case "entitymanagerfactory":
-        case "entityManagerFactory": return target.getEntityManagerFactory();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "filters": return target.getFilters();
         case "greedy": return target.isGreedy();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
@@ -176,14 +169,14 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maximumresults":
         case "maximumResults": return target.getMaximumResults();
-        case "namedquery":
-        case "namedQuery": return target.getNamedQuery();
-        case "nativequery":
-        case "nativeQuery": return target.getNativeQuery();
-        case "parameters": return target.getParameters();
+        case "mutationquery":
+        case "mutationQuery": return target.getMutationQuery();
+        case "naturalidparameters":
+        case "naturalIdParameters": return target.getNaturalIdParameters();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
-        case "query": return target.getQuery();
+        case "readonly":
+        case "readOnly": return target.isReadOnly();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
         case "runlogginglevel":
@@ -193,22 +186,23 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "scheduler": return target.getScheduler();
         case "schedulerproperties":
         case "schedulerProperties": return target.getSchedulerProperties();
+        case "selectionquery":
+        case "selectionQuery": return target.getSelectionQuery();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
-        case "sessionfactory":
-        case "sessionFactory": return target.getSessionFactory();
+        case "skiplocked":
+        case "skipLocked": return target.isSkipLocked();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
+        case "statelessoperation":
+        case "statelessOperation": return target.getStatelessOperation();
+        case "streaming": return target.isStreaming();
+        case "tenantidentifier":
+        case "tenantIdentifier": return target.getTenantIdentifier();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
-        case "transactionmanager":
-        case "transactionManager": return target.getTransactionManager();
-        case "useexecuteupdate":
-        case "useExecuteUpdate": return target.getUseExecuteUpdate();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
-        case "usepersist":
-        case "usePersist": return target.isUsePersist();
         default: return null;
         }
     }
@@ -216,7 +210,9 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "parameters": return java.lang.Object.class;
+        case "filters": return java.util.Map.class;
+        case "naturalidparameters":
+        case "naturalIdParameters": return java.lang.Object.class;
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         default: return null;

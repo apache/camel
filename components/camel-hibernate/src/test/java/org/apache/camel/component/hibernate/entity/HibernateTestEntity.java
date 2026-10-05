@@ -14,40 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hibernate;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.apache.camel.component.hibernate.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.ParamDef;
 
 @Entity
-@Table(name = "tags")
-public class Tag {
-
+@FilterDef(name = "nameFilter", parameters = @ParamDef(name = "name", type = String.class))
+@Filter(name = "nameFilter", condition = "name = :name")
+public class HibernateTestEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NaturalId
     private String name;
-
-    @ManyToMany(mappedBy = "tags")
-    private List<Product> products = new ArrayList<>();
-
-    public Tag() {
-    }
-
-    public Tag(String name) {
-        this.name = name;
-    }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -56,13 +48,5 @@ public class Tag {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
     }
 }

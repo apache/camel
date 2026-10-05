@@ -18,25 +18,17 @@ package org.apache.camel.component.hibernate;
 
 import java.util.Map;
 
-import jakarta.persistence.EntityManagerFactory;
-
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.jpa.DefaultTransactionStrategy;
-import org.apache.camel.component.jpa.TransactionStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.hibernate.SessionFactory;
-import org.springframework.transaction.PlatformTransactionManager;
 
-/**
- * Perform database operations using Hibernate ORM supporting both JPA-backed and Native Hibernate modes.
- */
 @UriEndpoint(firstVersion = "4.23.0", scheme = "hibernate", title = "Hibernate", syntax = "hibernate:entityClassName",
              category = { Category.DATABASE })
 public class HibernateEndpoint extends ScheduledPollEndpoint {
@@ -45,45 +37,38 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
     @Metadata(required = true)
     private String entityClassName;
 
+    @UriParam(description = "The HQL selection query to execute.")
+    private String selectionQuery;
+
+    @UriParam(description = "The HQL mutation query to execute.")
+    private String mutationQuery;
+
+    @UriParam(description = "The natural-id property values used for lookup.")
+    private Map<String, Object> naturalIdParameters;
+
+    @UriParam(description = "Whether the Hibernate session and selection query should be read-only.")
+    private boolean readOnly;
+
+    @UriParam(description = "Hibernate filters and their parameter values.")
+    private Map<String, Map<String, Object>> filters;
+
+    @UriParam(description = "The tenant identifier used to create the Hibernate session.")
+    private String tenantIdentifier;
+
+    @UriParam(description = "Stateless operation to perform: insert or upsert.")
+    private String statelessOperation;
+
+    @UriParam(description = "Whether selection query results should be returned as a stream.")
+    private boolean streaming;
+
+    @UriParam(description = "Whether the consumer should skip rows that are already locked by another consumer.")
+    private boolean skipLocked;
+
+    @UriParam(description = "The maximum number of entities to retrieve in a single poll.")
+    private int maximumResults;
+
     private Class<?> entityType;
-
-    @UriParam(description = "The EntityManagerFactory to use")
-    private EntityManagerFactory entityManagerFactory;
-
-    @UriParam(description = "The Hibernate SessionFactory to use")
     private SessionFactory sessionFactory;
-
-    @UriParam(description = "The PlatformTransactionManager to use")
-    private PlatformTransactionManager transactionManager;
-
-    private volatile TransactionStrategy transactionStrategy;
-
-    @UriParam(description = "HQL query to execute")
-    private String query;
-
-    @UriParam(description = "Named query to execute")
-    private String namedQuery;
-
-    @UriParam(description = "Native SQL query to execute")
-    private String nativeQuery;
-
-    @UriParam(defaultValue = "-1", description = "Maximum number of results to retrieve")
-    private int maximumResults = -1;
-
-    @UriParam(defaultValue = "true", description = "Whether to delete consumed entities after polling")
-    private boolean consumeDelete = true;
-
-    @UriParam(defaultValue = "false",
-              description = "Indicates to use entityManager.persist(entity) or session.persist(entity) instead of merge")
-    private boolean usePersist;
-
-    @UriParam(label = "producer",
-              description = "To configure whether to use executeUpdate() when the producer executes a query. When you use INSERT, UPDATE or DELETE as a named query, you need to specify this option to true because Camel does not look into the named query unlike query and nativeQuery.")
-    private Boolean useExecuteUpdate;
-
-    @UriParam(description = "Parameters to pass to the query in key-value map format", multiValue = true,
-              prefix = "parameters.")
-    private Map<String, Object> parameters;
 
     public HibernateEndpoint() {
     }
@@ -104,97 +89,50 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
         return consumer;
     }
 
-    public SessionFactory getResolvedSessionFactory() {
-        if (sessionFactory != null) {
-            return sessionFactory;
-        }
-
-        if (entityManagerFactory != null) {
-            return entityManagerFactory.unwrap(SessionFactory.class);
-        }
-
-        throw new IllegalArgumentException(
-                "Either SessionFactory or EntityManagerFactory must be configured on HibernateEndpoint");
-    }
-
-    public boolean isJpaBacked() {
-        return entityManagerFactory != null;
-    }
-
-    public boolean isNativeHibernate() {
-        return entityManagerFactory == null && sessionFactory != null;
-    }
-
-    public TransactionStrategy getTransactionStrategy() {
-        if (!isJpaBacked()) {
-            throw new IllegalStateException(
-                    "A TransactionStrategy is only available when an EntityManagerFactory is configured");
-        }
-
-        TransactionStrategy strategy = transactionStrategy;
-        if (strategy == null) {
-            synchronized (this) {
-                strategy = transactionStrategy;
-                if (strategy == null) {
-                    transactionStrategy = strategy = createTransactionStrategy();
-                }
-            }
-        }
-
-        return strategy;
-    }
-
-    public void setTransactionStrategy(TransactionStrategy transactionStrategy) {
-        this.transactionStrategy = transactionStrategy;
-    }
-
-    protected TransactionStrategy createTransactionStrategy() {
-        if (entityManagerFactory == null) {
-            throw new IllegalArgumentException(
-                    "EntityManagerFactory must be configured to create a transaction strategy");
-        }
-
-        DefaultTransactionStrategy strategy = new DefaultTransactionStrategy(getCamelContext(), entityManagerFactory);
-
-        if (transactionManager != null) {
-            strategy.setTransactionManager(transactionManager);
-        }
-
-        return strategy;
-    }
-
     @Override
     protected void doStart() throws Exception {
-        validateConfiguration();
-        resolveEntityType();
-        if (isJpaBacked() && transactionStrategy == null) {
-            transactionStrategy = createTransactionStrategy();
+        if (sessionFactory == null) {
+            sessionFactory = ((HibernateComponent) getComponent()).getSessionFactory();
         }
-        super.doStart();
-    }
+        if (sessionFactory == null) {
+            throw new IllegalArgumentException("SessionFactory must be configured or available on HibernateComponent");
+        }
 
-    protected void validateConfiguration() {
-        if (entityManagerFactory == null && sessionFactory == null) {
+        boolean hasSelectionQuery = selectionQuery != null && !selectionQuery.isBlank();
+        boolean hasMutationQuery = mutationQuery != null && !mutationQuery.isBlank();
+        boolean hasNaturalIdParameters = naturalIdParameters != null && !naturalIdParameters.isEmpty();
+        boolean hasStatelessOperation = statelessOperation != null && !statelessOperation.isBlank();
+
+        int configuredOperations = 0;
+        if (hasSelectionQuery) {
+            configuredOperations++;
+        }
+        if (hasMutationQuery) {
+            configuredOperations++;
+        }
+        if (hasNaturalIdParameters) {
+            configuredOperations++;
+        }
+
+        if (hasStatelessOperation) {
+            configuredOperations++;
+        }
+
+        if (configuredOperations != 1) {
             throw new IllegalArgumentException(
-                    "Either EntityManagerFactory or SessionFactory must be configured on HibernateEndpoint");
+                    "Exactly one of selectionQuery, mutationQuery, naturalIdParameters or statelessOperation must be configured");
         }
 
-        if (entityManagerFactory != null && sessionFactory != null) {
-            SessionFactory unwrappedSessionFactory;
-
-            try {
-                unwrappedSessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
-            } catch (RuntimeException e) {
-                throw new IllegalArgumentException(
-                        "The configured EntityManagerFactory cannot be unwrapped to a Hibernate SessionFactory",
-                        e);
-            }
-
-            if (unwrappedSessionFactory != sessionFactory) {
-                throw new IllegalArgumentException(
-                        "The configured EntityManagerFactory and SessionFactory do not refer to the same Hibernate SessionFactory");
-            }
+        if (hasStatelessOperation && !statelessOperation.equals("insert") && !statelessOperation.equals("upsert")) {
+            throw new IllegalArgumentException("Invalid statelessOperation: " + statelessOperation);
         }
+
+        if (streaming && !hasSelectionQuery) {
+            throw new IllegalArgumentException("streaming requires selectionQuery");
+        }
+
+        resolveEntityType();
+        super.doStart();
     }
 
     protected void resolveEntityType() throws ClassNotFoundException {
@@ -222,15 +160,6 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
         }
     }
 
-    public EntityManagerFactory getEntityManagerFactory() {
-        return entityManagerFactory;
-    }
-
-    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
-        this.transactionStrategy = null;
-    }
-
     public SessionFactory getSessionFactory() {
         return sessionFactory;
     }
@@ -239,37 +168,76 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
         this.sessionFactory = sessionFactory;
     }
 
-    public PlatformTransactionManager getTransactionManager() {
-        return transactionManager;
+    public String getSelectionQuery() {
+        return selectionQuery;
     }
 
-    public void setTransactionManager(PlatformTransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
-        this.transactionStrategy = null;
+    public void setSelectionQuery(String selectionQuery) {
+        this.selectionQuery = selectionQuery;
     }
 
-    public String getQuery() {
-        return query;
+    public String getMutationQuery() {
+        return mutationQuery;
     }
 
-    public void setQuery(String query) {
-        this.query = query;
+    public void setMutationQuery(String mutationQuery) {
+        this.mutationQuery = mutationQuery;
     }
 
-    public String getNamedQuery() {
-        return namedQuery;
+    public boolean isReadOnly() {
+        return readOnly;
     }
 
-    public void setNamedQuery(String namedQuery) {
-        this.namedQuery = namedQuery;
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
     }
 
-    public String getNativeQuery() {
-        return nativeQuery;
+    public Map<String, Object> getNaturalIdParameters() {
+        return naturalIdParameters;
     }
 
-    public void setNativeQuery(String nativeQuery) {
-        this.nativeQuery = nativeQuery;
+    public void setNaturalIdParameters(Map<String, Object> naturalIdParameters) {
+        this.naturalIdParameters = naturalIdParameters;
+    }
+
+    public Map<String, Map<String, Object>> getFilters() {
+        return filters;
+    }
+
+    public void setFilters(Map<String, Map<String, Object>> filters) {
+        this.filters = filters;
+    }
+
+    public String getTenantIdentifier() {
+        return tenantIdentifier;
+    }
+
+    public void setTenantIdentifier(String tenantIdentifier) {
+        this.tenantIdentifier = tenantIdentifier;
+    }
+
+    public String getStatelessOperation() {
+        return statelessOperation;
+    }
+
+    public void setStatelessOperation(String statelessOperation) {
+        this.statelessOperation = statelessOperation;
+    }
+
+    public boolean isStreaming() {
+        return streaming;
+    }
+
+    public void setStreaming(boolean streaming) {
+        this.streaming = streaming;
+    }
+
+    public boolean isSkipLocked() {
+        return skipLocked;
+    }
+
+    public void setSkipLocked(boolean skipLocked) {
+        this.skipLocked = skipLocked;
     }
 
     public int getMaximumResults() {
@@ -278,37 +246,5 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
 
     public void setMaximumResults(int maximumResults) {
         this.maximumResults = maximumResults;
-    }
-
-    public boolean isConsumeDelete() {
-        return consumeDelete;
-    }
-
-    public void setConsumeDelete(boolean consumeDelete) {
-        this.consumeDelete = consumeDelete;
-    }
-
-    public boolean isUsePersist() {
-        return usePersist;
-    }
-
-    public void setUsePersist(boolean usePersist) {
-        this.usePersist = usePersist;
-    }
-
-    public Boolean getUseExecuteUpdate() {
-        return useExecuteUpdate;
-    }
-
-    public void setUseExecuteUpdate(Boolean useExecuteUpdate) {
-        this.useExecuteUpdate = useExecuteUpdate;
-    }
-
-    public Map<String, Object> getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(Map<String, Object> parameters) {
-        this.parameters = parameters;
     }
 }

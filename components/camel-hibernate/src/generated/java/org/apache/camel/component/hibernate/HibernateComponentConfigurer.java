@@ -27,14 +27,18 @@ public class HibernateComponentConfigurer extends PropertyConfigurerSupport impl
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "entitymanagerfactory":
-        case "entityManagerFactory": target.setEntityManagerFactory(property(camelContext, jakarta.persistence.EntityManagerFactory.class, value)); return true;
+        case "datasource":
+        case "dataSource": target.setDataSource(property(camelContext, java.lang.Object.class, value)); return true;
+        case "entityclasses":
+        case "entityClasses": target.setEntityClasses(property(camelContext, java.lang.Class[].class, value)); return true;
+        case "hibernateproperties":
+        case "hibernateProperties": target.setHibernateProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "schemaaction":
+        case "schemaAction": target.setSchemaAction(property(camelContext, java.lang.String.class, value)); return true;
         case "sessionfactory":
         case "sessionFactory": target.setSessionFactory(property(camelContext, org.hibernate.SessionFactory.class, value)); return true;
-        case "transactionmanager":
-        case "transactionManager": target.setTransactionManager(property(camelContext, org.springframework.transaction.PlatformTransactionManager.class, value)); return true;
         default: return false;
         }
     }
@@ -46,14 +50,18 @@ public class HibernateComponentConfigurer extends PropertyConfigurerSupport impl
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "entitymanagerfactory":
-        case "entityManagerFactory": return jakarta.persistence.EntityManagerFactory.class;
+        case "datasource":
+        case "dataSource": return java.lang.Object.class;
+        case "entityclasses":
+        case "entityClasses": return java.lang.Class[].class;
+        case "hibernateproperties":
+        case "hibernateProperties": return java.util.Map.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "schemaaction":
+        case "schemaAction": return java.lang.String.class;
         case "sessionfactory":
         case "sessionFactory": return org.hibernate.SessionFactory.class;
-        case "transactionmanager":
-        case "transactionManager": return org.springframework.transaction.PlatformTransactionManager.class;
         default: return null;
         }
     }
@@ -66,14 +74,27 @@ public class HibernateComponentConfigurer extends PropertyConfigurerSupport impl
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "entitymanagerfactory":
-        case "entityManagerFactory": return target.getEntityManagerFactory();
+        case "datasource":
+        case "dataSource": return target.getDataSource();
+        case "entityclasses":
+        case "entityClasses": return target.getEntityClasses();
+        case "hibernateproperties":
+        case "hibernateProperties": return target.getHibernateProperties();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "schemaaction":
+        case "schemaAction": return target.getSchemaAction();
         case "sessionfactory":
         case "sessionFactory": return target.getSessionFactory();
-        case "transactionmanager":
-        case "transactionManager": return target.getTransactionManager();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "hibernateproperties":
+        case "hibernateProperties": return java.lang.Object.class;
         default: return null;
         }
     }

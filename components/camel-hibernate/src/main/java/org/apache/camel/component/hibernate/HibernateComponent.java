@@ -16,110 +16,223 @@
  */
 package org.apache.camel.component.hibernate;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import jakarta.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.hibernate.SessionFactory;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.AvailableSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Native Hibernate component for Apache Camel supporting both JPA-backed and Native Hibernate execution modes.
- */
 @Component("hibernate")
 public class HibernateComponent extends DefaultComponent {
 
-    @Metadata(description = "To use the SessionFactory as the factory for creating Hibernate sessions.")
+    private static final Logger LOG = LoggerFactory.getLogger(HibernateComponent.class);
+
+    @Metadata(description = "The Hibernate SessionFactory to use.")
     private SessionFactory sessionFactory;
 
-    @Metadata(description = "To use the EntityManagerFactory as the factory for creating Hibernate sessions.")
-    private EntityManagerFactory entityManagerFactory;
+    @Metadata(description = "The DataSource to use for bootstrapping the SessionFactory (bean reference or registry name).")
+    private Object dataSource;
 
-    @Metadata(description = "To use the Spring PlatformTransactionManager for managing transactions.")
-    private PlatformTransactionManager transactionManager;
+    @Metadata(description = "Explicit array of entity classes.")
+    private Class[] entityClasses;
+
+    @Metadata(description = "Schema generation action: none, validate, update, create.", defaultValue = "none")
+    private String schemaAction = "none";
+
+    @Metadata(description = "Arbitrary Hibernate configuration properties passthrough map.")
+    private Map<String, Object> hibernateProperties = new HashMap<>();
+
+    private boolean sessionFactoryOwned;
+    private StandardServiceRegistry serviceRegistry;
 
     public HibernateComponent() {
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // 1. Explicitly configured SessionFactory takes precedence (External, unowned)
+        if (sessionFactory != null) {
+            sessionFactoryOwned = false;
+            LOG.info("Using explicitly configured Hibernate SessionFactory (external, unowned).");
+            return;
+        }
+
+        // 2. Try to resolve SessionFactory from Camel registry (External, unowned)
+        sessionFactory = getCamelContext().getRegistry().findSingleByType(SessionFactory.class);
+        if (sessionFactory != null) {
+            sessionFactoryOwned = false;
+            LOG.info("Reusing existing Hibernate SessionFactory found in Camel registry (external, unowned).");
+            return;
+        }
+
+        // 3. Bootstrap SessionFactory natively (Component-created, owned)
+        validateSchemaAction(schemaAction);
+        sessionFactory = createAndBootstrapSessionFactory();
+        sessionFactoryOwned = true;
+        LOG.info("Successfully bootstrapped native Hibernate SessionFactory (component-created, owned).");
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (sessionFactoryOwned && sessionFactory != null && !sessionFactory.isClosed()) {
+            LOG.info("Closing component-owned Hibernate SessionFactory.");
+            sessionFactory.close();
+        }
+        if (serviceRegistry != null) {
+            StandardServiceRegistryBuilder.destroy(serviceRegistry);
+            serviceRegistry = null;
+        }
+        sessionFactory = null;
+        sessionFactoryOwned = false;
+        super.doStop();
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         HibernateEndpoint endpoint = new HibernateEndpoint(uri, this);
 
-        // Target entity class or named configuration passed via URI path
         if (remaining != null && !remaining.isEmpty()) {
             endpoint.setEntityClassName(remaining);
         }
 
         setProperties(endpoint, parameters);
-
-        // Auto-resolve required infrastructure from component defaults if not explicitly set on endpoint
-        if (endpoint.getSessionFactory() == null && sessionFactory != null) {
-            endpoint.setSessionFactory(sessionFactory);
-        }
-        if (endpoint.getEntityManagerFactory() == null && entityManagerFactory != null) {
-            endpoint.setEntityManagerFactory(entityManagerFactory);
-        }
-        if (endpoint.getTransactionManager() == null && transactionManager != null) {
-            endpoint.setTransactionManager(transactionManager);
-        }
-
-        // Auto-discover infrastructure beans from Camel Registry if still unassigned
-        if (endpoint.getSessionFactory() == null) {
-            SessionFactory sf = getCamelContext().getRegistry().findSingleByType(SessionFactory.class);
-            if (sf != null) {
-                endpoint.setSessionFactory(sf);
-            }
-        }
-        if (endpoint.getEntityManagerFactory() == null) {
-            EntityManagerFactory emf = getCamelContext().getRegistry().findSingleByType(EntityManagerFactory.class);
-            if (emf != null) {
-                endpoint.setEntityManagerFactory(emf);
-            }
-        }
-        if (endpoint.getTransactionManager() == null) {
-            PlatformTransactionManager tm = getCamelContext().getRegistry().findSingleByType(PlatformTransactionManager.class);
-            if (tm != null) {
-                endpoint.setTransactionManager(tm);
-            }
-        }
+        endpoint.setSessionFactory(sessionFactory);
 
         return endpoint;
+    }
+
+    private void validateSchemaAction(String action) {
+        if (action == null) {
+            return;
+        }
+        switch (action.toLowerCase()) {
+            case "none":
+            case "validate":
+            case "update":
+            case "create":
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Invalid schemaAction: '" + action + "'. Supported values are: none, validate, update, create.");
+        }
+    }
+
+    private SessionFactory createAndBootstrapSessionFactory() {
+        StandardServiceRegistryBuilder registryBuilder = new StandardServiceRegistryBuilder();
+
+        Map<String, Object> settings = new HashMap<>();
+        if (hibernateProperties != null) {
+            settings.putAll(hibernateProperties);
+        }
+
+        // Resolve DataSource
+        DataSource resolvedDataSource = resolveDataSource();
+        if (resolvedDataSource != null) {
+            settings.put(AvailableSettings.JAKARTA_NON_JTA_DATASOURCE, resolvedDataSource);
+        }
+
+        // Map schema action explicitly; "none" means do not request schema generation/update
+        if (schemaAction != null && !schemaAction.equalsIgnoreCase("none")) {
+            settings.put(AvailableSettings.HBM2DDL_AUTO, schemaAction.toLowerCase());
+        }
+
+        registryBuilder.applySettings(settings);
+        serviceRegistry = registryBuilder.build();
+
+        try {
+            MetadataSources metadataSources = new MetadataSources(serviceRegistry);
+
+            // Register explicit entity classes
+            if (entityClasses != null) {
+                for (Class<?> clazz : entityClasses) {
+                    metadataSources.addAnnotatedClass(clazz);
+                }
+            }
+
+            return metadataSources.buildMetadata().buildSessionFactory();
+        } catch (Exception e) {
+            // Cleanup service registry to prevent resource leaks on bootstrap failure
+            if (serviceRegistry != null) {
+                StandardServiceRegistryBuilder.destroy(serviceRegistry);
+                serviceRegistry = null;
+            }
+            sessionFactory = null;
+            sessionFactoryOwned = false;
+            throw new RuntimeCamelException("Failed to bootstrap Hibernate SessionFactory", e);
+        }
+    }
+
+    private DataSource resolveDataSource() {
+        if (dataSource == null) {
+            return getCamelContext().getRegistry().findSingleByType(DataSource.class);
+        }
+        if (dataSource instanceof DataSource ds) {
+            return ds;
+        }
+        if (dataSource instanceof String dsName) {
+            DataSource ds = getCamelContext().getRegistry().lookupByNameAndType(dsName, DataSource.class);
+            if (ds == null) {
+                throw new IllegalArgumentException(
+                        "DataSource bean with name '" + dsName + "' could not be found in Camel registry.");
+            }
+            return ds;
+        }
+        throw new IllegalArgumentException(
+                "Configured dataSource is neither a DataSource instance nor a valid registry name string.");
     }
 
     public SessionFactory getSessionFactory() {
         return sessionFactory;
     }
 
-    /**
-     * To use the SessionFactory as the factory for creating Hibernate sessions.
-     */
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
+        this.sessionFactoryOwned = false;
     }
 
-    public EntityManagerFactory getEntityManagerFactory() {
-        return entityManagerFactory;
+    public Object getDataSource() {
+        return dataSource;
     }
 
-    /**
-     * To use the EntityManagerFactory as the factory for creating Hibernate sessions.
-     */
-    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
+    public void setDataSource(Object dataSource) {
+        this.dataSource = dataSource;
     }
 
-    public PlatformTransactionManager getTransactionManager() {
-        return transactionManager;
+    public Class[] getEntityClasses() {
+        return entityClasses;
     }
 
-    /**
-     * To use the Spring PlatformTransactionManager for managing transactions.
-     */
-    public void setTransactionManager(PlatformTransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
+    public void setEntityClasses(Class[] entityClasses) {
+        this.entityClasses = entityClasses;
+    }
+
+    public String getSchemaAction() {
+        return schemaAction;
+    }
+
+    public void setSchemaAction(String schemaAction) {
+        this.schemaAction = schemaAction;
+    }
+
+    public Map<String, Object> getHibernateProperties() {
+        return hibernateProperties;
+    }
+
+    public void setHibernateProperties(Map<String, Object> hibernateProperties) {
+        this.hibernateProperties = hibernateProperties;
     }
 }

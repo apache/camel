@@ -14,12 +14,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hibernate;
-
-public final class HibernateConstants {
-
-    public static final String HIBERNATE_PARAMETERS = "CamelHibernateParameters";
-
-    private HibernateConstants() {
-    }
-}
+package org.apache.camel.component.hibernate.entity;
