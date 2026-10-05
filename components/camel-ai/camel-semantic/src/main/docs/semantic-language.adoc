@@ -162,7 +162,7 @@ alive. Constraints can remain until an unused expression is garbage-collected; s
 does not necessarily release an expression that is still referenced elsewhere.
 Loading declarations does not perform inference or start provider resources for validation.
 
-==== YAML reload and expert bean preparation
+=== YAML reload and expert bean preparation
 
 YAML declarations are registered during the loader's existing pre-parse phase, before beans in
 the resource set are prepared. On initial loading, expert validation waits until expressions
