@@ -34,10 +34,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Embeds a media document — audio, an image, video or a PDF, told by the MIME type — whole, as one vector, and stores
- * it with a placeholder segment: its text is the document id and it carries the same identity metadata as text
- * segments, so retrieval cites it the same way. Nothing is split or batched, which is why this is a class of its own
- * beside {@link IngestService} rather than a mode of it; the size checks count bytes. Embeds through LangChain4j's
- * {@code EmbeddingRequest} API, still experimental in 1.20.
+ * it with a placeholder segment: its text is the document id and it carries the same identity metadata as text segments
+ * plus the MIME type, so retrieval cites it the same way and can tell it from text. Nothing is split or batched, which
+ * is why this is a class of its own beside {@link IngestService} rather than a mode of it; the size checks count bytes.
+ * Embeds through LangChain4j's {@code EmbeddingRequest} API, still experimental in 1.20.
  */
 final class MediaIngestService {
 
@@ -70,15 +70,12 @@ final class MediaIngestService {
         if (minDocumentSize > 0 && bytes.length < minDocumentSize) {
             return new IngestResult(pipeline, documentId, 0, IngestResult.Outcome.FILTERED);
         }
-        if (maxDocumentSize > 0 && bytes.length > maxDocumentSize) {
-            throw new IllegalArgumentException(
-                    "Ingestion pipeline '" + pipeline + "': document '" + documentId + "' exceeds maxDocumentSize ("
-                                               + bytes.length + " > " + maxDocumentSize + " bytes)");
-        }
+        checkSize(documentId, bytes.length);
 
         Map<String, Object> identity = new LinkedHashMap<>();
         identity.put(LangChain4jIngest.METADATA_PIPELINE, pipeline);
         identity.put(LangChain4jIngest.METADATA_DOCUMENT_ID, documentId);
+        identity.put(LangChain4jIngest.METADATA_CONTENT_TYPE, mimeType);
 
         Content content = MediaTypes.contentOf(medium, Base64.getEncoder().encodeToString(bytes), mimeType);
         // one input, so one embedding is expected back. EmbeddingRequest and EmbeddingResponse are
@@ -94,5 +91,16 @@ final class MediaIngestService {
 
         LOG.debug("Ingestion pipeline '{}': wrote 1 vector of {} document '{}'", pipeline, mimeType, documentId);
         return new IngestResult(pipeline, documentId, 1, IngestResult.Outcome.INGESTED);
+    }
+
+    /**
+     * Fails an oversized document; the producer also applies it to the size a file consumer announces before the read.
+     */
+    void checkSize(String documentId, long size) {
+        if (maxDocumentSize > 0 && size > maxDocumentSize) {
+            throw new IllegalArgumentException(
+                    "Ingestion pipeline '" + pipeline + "': document '" + documentId + "' exceeds maxDocumentSize ("
+                                               + size + " > " + maxDocumentSize + " bytes)");
+        }
     }
 }

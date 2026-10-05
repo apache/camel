@@ -335,13 +335,14 @@ public interface Langchain4jIngestComponentBuilderFactory {
         }
     
         /**
-         * Maximum size of one document in characters (bytes with
-         * modality=media), applied to the text about to be split; 0, the
-         * default, means no limit. The pipeline holds a document in memory
-         * whole, so the cap is the protection against oversized - on a
-         * consumer-fed pipeline, attacker-sized - payloads. An oversized
-         * document fails the exchange cleanly and, with a repository
-         * configured, releases its dedup claim.
+         * Maximum size of one document: characters of the text about to be
+         * split, or bytes of a media body with modality=media; 0, the default,
+         * means no limit. The pipeline holds a document in memory whole, so the
+         * cap is the protection against oversized - on a consumer-fed pipeline,
+         * attacker-sized - payloads. An oversized document fails the exchange
+         * cleanly and, with a repository configured, releases its dedup claim.
+         * With modality=media the size a file consumer announces in
+         * CamelFileLength is checked before the body is read.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -360,10 +361,10 @@ public interface Langchain4jIngestComponentBuilderFactory {
          * #bean:name and evaluated with the message body available. A rejected
          * delivery is answered with a filtered result and releases its dedup
          * claim. Runs after the id patterns and after the dedup claim, so a
-         * duplicate is answered skipped without the filter being evaluated.
-         * With modality=media the body is the raw bytes, so the predicate
-         * should look at headers or the id rather than the body. Not looked up
-         * by type on purpose - an application may hold unrelated predicates.
+         * duplicate is answered skipped without the filter being evaluated. The
+         * body is still as the consumer delivered it, a file or stream say, not
+         * yet read as text or bytes. Not looked up by type on purpose - an
+         * application may hold unrelated predicates.
          * 
          * The option is a: &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt;
          * type.

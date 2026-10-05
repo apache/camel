@@ -170,8 +170,8 @@ public class LangChain4jIngestProducer extends DefaultProducer {
             // library with an opaque "text cannot be null or blank". addListener wraps the model
             // in ListeningEmbeddingModel, a package-private class that does not expose its
             // listeners, hence the check by name beside the listeners() one
-            // TODO drop the class-name check once a LangChain4j release after 1.20 returns the wrapped
-            // listeners from listeners() or builds the context without text
+            // TODO CAMEL-25332: drop the class-name check once a LangChain4j release after 1.20 returns the
+            // wrapped listeners from listeners() or builds the context without text
             if ("dev.langchain4j.model.embedding.ListeningEmbeddingModel".equals(model.getClass().getName())
                     || (model.listeners() != null && !model.listeners().isEmpty())) {
                 throw new IllegalArgumentException(
@@ -285,6 +285,11 @@ public class LangChain4jIngestProducer extends DefaultProducer {
             return filtered(documentId);
         }
         if (media) {
+            // a file consumer announces the size up front: an oversized file is refused before it is read
+            Long announced = exchange.getMessage().getHeader(Exchange.FILE_LENGTH, Long.class);
+            if (announced != null) {
+                mediaService.checkSize(documentId, announced);
+            }
             // bytes, not a String - a charset conversion would corrupt them. A null body stays
             // EMPTY; anything else must convert, so a wrong body type (a POJO, say) fails as an
             // InvalidPayloadException instead of being answered EMPTY by a silent null conversion

@@ -24,6 +24,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -120,6 +121,7 @@ class LangChain4jIngestMediaTest extends CamelTestSupport {
         assertThat(match.embedded().metadata().getString(LangChain4jIngest.METADATA_PIPELINE)).isEqualTo("library");
         assertThat(match.embedded().metadata().getString(LangChain4jIngest.METADATA_DOCUMENT_ID))
                 .isEqualTo("song-1.wav");
+        assertThat(match.embedded().metadata().getString(LangChain4jIngest.METADATA_CONTENT_TYPE)).isEqualTo("audio/wav");
     }
 
     @Test
@@ -179,6 +181,17 @@ class LangChain4jIngestMediaTest extends CamelTestSupport {
                 .isInstanceOf(CamelExecutionException.class)
                 .hasStackTraceContaining("exceeds maxDocumentSize")
                 .hasStackTraceContaining("bytes");
+    }
+
+    @Test
+    void oversizedFileIsRefusedBeforeItIsRead() {
+        // a file consumer announces the length up front; the cap applies to it before any read
+        Throwable thrown = catchThrowable(() -> template.requestBodyAndHeaders("direct:capped", unreadableBody(),
+                Map.<String, Object> of(Exchange.FILE_NAME, "big.wav", Exchange.FILE_LENGTH, 101L)));
+
+        assertThat(thrown).isInstanceOf(CamelExecutionException.class)
+                .hasStackTraceContaining("exceeds maxDocumentSize (101 > 100 bytes)");
+        assertThat(stackTraceOf(thrown)).as("the body must not have been read").doesNotContain("body must not be read");
     }
 
     @Test
