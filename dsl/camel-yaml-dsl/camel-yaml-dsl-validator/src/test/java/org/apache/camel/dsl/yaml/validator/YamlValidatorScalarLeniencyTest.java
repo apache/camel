@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml.validator;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
 import org.junit.jupiter.api.BeforeAll;
@@ -164,7 +165,7 @@ public class YamlValidatorScalarLeniencyTest {
                 var parameter = new ObjectMapper().readTree(stream)
                         .at("/items/definitions/org.apache.camel.model.rest.ParamDefinition");
                 assertThat(parameter.path("required")).as(resource)
-                        .extracting(node -> node.asText()).containsExactly("name");
+                        .extracting(JsonNode::asText).containsExactly("name");
                 assertThat(parameter.at("/properties/type/default").asText()).isEqualTo("path");
             }
         }
