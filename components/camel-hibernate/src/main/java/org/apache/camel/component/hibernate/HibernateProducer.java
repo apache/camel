@@ -45,18 +45,26 @@ public class HibernateProducer extends DefaultProducer {
             return;
         }
 
-        Session session = endpoint.getTenantIdentifier() == null
-                ? endpoint.getSessionFactory().openSession()
-                : endpoint.getSessionFactory().withOptions()
-                        .tenantIdentifier(endpoint.getTenantIdentifier())
-                        .openSession();
+        Session session = exchange.getProperty(HibernateConstants.HIBERNATE_SESSION, Session.class);
+        boolean sessionOwned = session == null;
 
-        Transaction transaction = session.beginTransaction();
+        if (sessionOwned) {
+            session = endpoint.getTenantIdentifier() == null
+                    ? endpoint.getSessionFactory().openSession()
+                    : endpoint.getSessionFactory().withOptions()
+                            .tenantIdentifier(endpoint.getTenantIdentifier())
+                            .openSession();
+        }
+
+        final Session activeSession = session;
+        final Transaction transaction = sessionOwned
+                ? activeSession.beginTransaction()
+                : activeSession.getTransaction();
 
         try {
             if (endpoint.getFilters() != null) {
                 endpoint.getFilters().forEach((filterName, parameters) -> {
-                    var filter = session.enableFilter(filterName);
+                    var filter = activeSession.enableFilter(filterName);
                     if (parameters != null) {
                         parameters.forEach(filter::setParameter);
                     }
@@ -68,20 +76,22 @@ public class HibernateProducer extends DefaultProducer {
                     HibernateConstants.HIBERNATE_PARAMETERS, Map.class);
 
             if (endpoint.getNaturalIdParameters() != null) {
-                Object entity = session.find(
+                Object entity = activeSession.find(
                         endpoint.getEntityType(),
                         endpoint.getNaturalIdParameters(),
                         KeyType.NATURAL);
 
                 exchange.getMessage().setBody(entity);
 
-                transaction.commit();
-                session.close();
+                if (sessionOwned) {
+                    transaction.commit();
+                    activeSession.close();
+                }
             } else if (endpoint.getSelectionQuery() != null) {
-                SelectionQuery<?> query = session.createSelectionQuery(
+                SelectionQuery<?> query = activeSession.createSelectionQuery(
                         endpoint.getSelectionQuery(), endpoint.getEntityType());
 
-                session.setDefaultReadOnly(endpoint.isReadOnly());
+                activeSession.setDefaultReadOnly(endpoint.isReadOnly());
                 query.setReadOnly(endpoint.isReadOnly());
 
                 if (parameters != null) {
@@ -89,32 +99,40 @@ public class HibernateProducer extends DefaultProducer {
                 }
 
                 if (endpoint.isStreaming()) {
-                    exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
-                        @Override
-                        public void onComplete(Exchange exchange) {
-                            closeStreamingSession(session, transaction, false);
-                        }
+                    if (sessionOwned) {
+                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                            @Override
+                            public void onComplete(Exchange exchange) {
+                                closeStreamingSession(activeSession, transaction, false);
+                            }
 
-                        @Override
-                        public void onFailure(Exchange exchange) {
-                            closeStreamingSession(session, transaction, true);
-                        }
-                    });
+                            @Override
+                            public void onFailure(Exchange exchange) {
+                                closeStreamingSession(activeSession, transaction, true);
+                            }
+                        });
+                    }
 
                     Stream<?> stream = query.getResultStream();
 
-                    exchange.getMessage().setBody(stream.onClose(
-                            () -> closeStreamingSession(session, transaction, false)));
+                    if (sessionOwned) {
+                        exchange.getMessage().setBody(stream.onClose(
+                                () -> closeStreamingSession(activeSession, transaction, false)));
+                    } else {
+                        exchange.getMessage().setBody(stream);
+                    }
 
                     return;
                 }
 
                 exchange.getMessage().setBody(query.getResultList());
 
-                transaction.commit();
-                session.close();
+                if (sessionOwned) {
+                    transaction.commit();
+                    activeSession.close();
+                }
             } else {
-                MutationQuery query = session.createMutationQuery(endpoint.getMutationQuery());
+                MutationQuery query = activeSession.createMutationQuery(endpoint.getMutationQuery());
 
                 if (parameters != null) {
                     parameters.forEach(query::setParameter);
@@ -122,14 +140,18 @@ public class HibernateProducer extends DefaultProducer {
 
                 exchange.getMessage().setBody(query.execute());
 
-                transaction.commit();
-                session.close();
+                if (sessionOwned) {
+                    transaction.commit();
+                    activeSession.close();
+                }
             }
         } catch (Exception e) {
-            if (transaction.isActive()) {
+            if (sessionOwned && transaction.isActive()) {
                 transaction.rollback();
             }
-            session.close();
+            if (sessionOwned) {
+                activeSession.close();
+            }
             throw e;
         }
     }
@@ -149,7 +171,14 @@ public class HibernateProducer extends DefaultProducer {
     }
 
     private void processStateless(Exchange exchange) {
-        try (StatelessSession session = endpoint.getSessionFactory().openStatelessSession()) {
+        StatelessSession session = endpoint.getTenantIdentifier() == null
+                ? endpoint.getSessionFactory().openStatelessSession()
+                : endpoint.getSessionFactory()
+                        .withStatelessOptions()
+                        .tenantIdentifier(endpoint.getTenantIdentifier())
+                        .openStatelessSession();
+
+        try (session) {
             Transaction transaction = session.beginTransaction();
 
             try {

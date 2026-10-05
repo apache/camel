@@ -37,34 +37,37 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
     @Metadata(required = true)
     private String entityClassName;
 
-    @UriParam(description = "The HQL selection query to execute.")
+    @UriParam(description = "The HQL selection query to execute.", label = "producer,consumer")
     private String selectionQuery;
 
-    @UriParam(description = "The HQL mutation query to execute.")
+    @UriParam(description = "The HQL mutation query to execute.", label = "producer")
     private String mutationQuery;
 
-    @UriParam(description = "The natural-id property values used for lookup.")
+    @UriParam(description = "The natural-id property values used for lookup.", label = "producer")
     private Map<String, Object> naturalIdParameters;
 
-    @UriParam(description = "Whether the Hibernate session and selection query should be read-only.")
+    @UriParam(description = "Whether the Hibernate session and selection query should be read-only.",
+              label = "producer,consumer")
     private boolean readOnly;
 
-    @UriParam(description = "Hibernate filters and their parameter values.")
+    @UriParam(description = "Hibernate filters and their parameter values.", label = "producer,consumer")
     private Map<String, Map<String, Object>> filters;
 
-    @UriParam(description = "The tenant identifier used to create the Hibernate session.")
+    @UriParam(description = "The tenant identifier used to create the Hibernate session.",
+              label = "producer,consumer")
     private String tenantIdentifier;
 
-    @UriParam(description = "Stateless operation to perform: insert or upsert.")
+    @UriParam(description = "Stateless operation to perform: insert or upsert.", label = "producer")
     private String statelessOperation;
 
-    @UriParam(description = "Whether selection query results should be returned as a stream.")
+    @UriParam(description = "Whether selection query results should be returned as a stream.", label = "producer")
     private boolean streaming;
 
-    @UriParam(description = "Whether the consumer should skip rows that are already locked by another consumer.")
+    @UriParam(description = "Whether the consumer should skip rows that are already locked by another consumer.",
+              label = "consumer")
     private boolean skipLocked;
 
-    @UriParam(description = "The maximum number of entities to retrieve in a single poll.")
+    @UriParam(description = "The maximum number of entities to retrieve in a single poll.", label = "consumer")
     private int maximumResults;
 
     private Class<?> entityType;
@@ -129,6 +132,10 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
 
         if (streaming && !hasSelectionQuery) {
             throw new IllegalArgumentException("streaming requires selectionQuery");
+        }
+
+        if (maximumResults < 0) {
+            throw new IllegalArgumentException("maximumResults cannot be negative");
         }
 
         resolveEntityType();
