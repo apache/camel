@@ -2,7 +2,7 @@
 :doctitle: Hibernate
 :shortname: hibernate
 :artifactid: camel-hibernate
-:description: Perform database operations using Hibernate ORM supporting both JPA-backed and Native Hibernate modes.
+:description: Camel Hibernate Component
 :since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:
@@ -12,16 +12,21 @@
 
 *{component-header}*
 
-The Hibernate component provides integration with relational databases through Hibernate ORM and Jakarta Persistence (JPA).
-It can persist or merge entities, run JPQL, named, or native queries, and poll the database for batch processing.
-JPA-backed mode uses an `EntityManagerFactory` and the `camel-jpa` `TransactionStrategy`. Native Hibernate mode uses a
-`SessionFactory` directly.
+The Hibernate component provides integration with relational databases using **Hibernate ORM 8**.
+
+The component uses Hibernate's native `SessionFactory`, `Session`, `StatelessSession`, `SelectionQuery`, and `MutationQuery` APIs.
+
+It supports HQL selection and mutation queries, natural-id lookups, Hibernate filters, read-only queries, streaming query results, stateless insert and upsert operations, multi-tenancy, and competing consumers using `SKIP_LOCKED`.
+
+The component can either reuse an existing Hibernate `SessionFactory` or bootstrap one using a configured `DataSource` and explicit entity classes.
+
+The component does not use Jakarta Persistence (JPA), `camel-jpa`, or Spring `PlatformTransactionManager`.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
-[source,xml]
-----
+## [source,xml]
+
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-hibernate</artifactId>
@@ -32,9 +37,9 @@ for this component:
 
 == URI format
 
-----
-hibernate:entityClassName[?options]
-----
+---
+
+## hibernate:entityClassName
 
 Where `entityClassName` is the target entity class name or entity type name.
 
@@ -46,255 +51,695 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== SessionFactory configuration
+
+The component can use an existing Hibernate `SessionFactory` or create one during startup.
+
+==== Using an existing SessionFactory
+
+An existing `SessionFactory` can be configured directly on the component:
+
+## [source,java]
+
+HibernateComponent component = new HibernateComponent();
+component.setSessionFactory(sessionFactory);
+
+## context.addComponent("hibernate", component);
+
+The component does not own an externally supplied `SessionFactory` and therefore does not close it when the component stops.
+
+If no `SessionFactory` is explicitly configured, the component attempts to reuse a `SessionFactory` available in the Camel registry.
+
+==== Bootstrapping a SessionFactory
+
+The component can bootstrap a `SessionFactory` using a `DataSource` and explicit entity classes:
+
+## [source,java]
+
+HibernateComponent component = new HibernateComponent();
+component.setDataSource(dataSource);
+component.setEntityClasses(new Class[] {
+MyEntity.class
+});
+component.setSchemaAction("update");
+
+## context.addComponent("hibernate", component);
+
+The `DataSource` can be supplied directly or as a Camel registry name.
+
+Supported values for `schemaAction` are:
+
+* `none`
+* `validate`
+* `update`
+* `create`
+
+When the component creates the `SessionFactory`, it owns the resulting `SessionFactory` and closes it when the component stops.
+
+Hibernate determines the database dialect automatically; the component does not require an explicit dialect configuration.
+
+# [NOTE]
+
+# Entity package scanning is not currently provided. Use `entityClasses` to explicitly register the entity classes used by the `SessionFactory`.
+
+==== Hibernate properties
+
+Additional Hibernate configuration properties can be supplied through `hibernateProperties`.
+
+## [source,java]
+
+component.setHibernateProperties(Map.of(
+"hibernate.show_sql", true,
+"hibernate.format_sql", true
+));
+---
+
+The supplied properties are passed directly to Hibernate during `SessionFactory` bootstrap.
+
 === Producer operations
 
-When acting as a producer, the Hibernate endpoint persists or queries entities depending on the Exchange message body or configured URI parameters:
+When acting as a producer, the endpoint performs exactly one configured operation.
 
-* **Persist / Merge**: If the body contains an entity instance (or collection of entities), sending the exchange to the endpoint persists or updates the entity in the database. If the body is `null` and no query is configured, the producer logs a warning and sets the outbound body to `null`.
-* **Query Execution**: If a query is provided via URI options (`query`, `namedQuery`, or `nativeQuery`) or overridden via the `CamelHibernateQuery` header, the producer executes the query and returns the result as the outbound body.
+The supported operations are:
 
-You can use `query`, `namedQuery` or `nativeQuery` on the producer. `query` (JPQL) and `nativeQuery` (SQL) text is inspected for `INSERT`, `UPDATE`, or `DELETE` so those statements run with `executeUpdate()` and return the update count. Named query names are not treated as query text. To run a named mutation query you must set `useExecuteUpdate=true`.
+* `selectionQuery`
+* `mutationQuery`
+* `naturalIdParameters`
+* `statelessOperation`
+
+The endpoint validates this configuration during startup.
+
+==== Selection query
+
+Use `selectionQuery` to execute an HQL selection query using Hibernate's `SelectionQuery` API.
+
+## [source,java]
+
+from("direct:findEntities")
+.to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity where status = :status");
+------------------------------------------------------------------------------------------
+
+Query parameters are supplied through the `CamelHibernateParameters` message header:
+
+## [source,java]
+
+exchange.getMessage().setHeader(
+HibernateConstants.HIBERNATE_PARAMETERS,
+Map.of("status", "ACTIVE"));
+----------------------------
+
+The query result is placed in the message body.
+
+==== Mutation query
+
+Use `mutationQuery` to execute an HQL mutation query using Hibernate's `MutationQuery` API.
+
+## [source,java]
+
+from("direct:updateEntities")
+.to("hibernate:com.example.MyEntity?mutationQuery=update MyEntity set status = :status where status = :oldStatus");
+-------------------------------------------------------------------------------------------------------------------
+
+Parameters are supplied through the `CamelHibernateParameters` header:
+
+## [source,java]
+
+exchange.getMessage().setHeader(
+HibernateConstants.HIBERNATE_PARAMETERS,
+Map.of(
+"status", "INACTIVE",
+"oldStatus", "EXPIRED"));
+-------------------------
+
+The mutation update count is placed in the message body.
+
+==== Natural-id lookup
+
+Hibernate entities that define a natural identifier can be looked up using `naturalIdParameters`.
+
+The lookup uses Hibernate's native natural-id functionality rather than constructing an HQL query.
+
+==== Read-only queries
+
+Set `readOnly=true` for a selection query when the returned entities are not intended to be modified.
+
+## [source,java]
+
+from("direct:readEntities")
+.to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&readOnly=true");
+---------------------------------------------------------------------------------
+
+The component configures both the Hibernate `Session` and the `SelectionQuery` as read-only.
+
+==== Hibernate filters
+
+Hibernate filters can be configured through the `filters` endpoint option.
+
+The configuration contains the filter name and its parameter values. The component enables the configured filters on the Hibernate `Session` before executing the operation.
+
+For example, an application can configure a filter named `tenantFilter` with a tenant parameter:
+
+## [source,java]
+
+Map<String, Map<String, Object>> filters = Map.of(
+"tenantFilter", Map.of("tenantId", "tenant-a"));
+
+## endpoint.setFilters(filters);
+
+==== Multi-tenancy
+
+A tenant identifier can be supplied through `tenantIdentifier`.
+
+## [source,java]
+
+from("direct:tenantEntities")
+.to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&tenantIdentifier=tenant-a");
+---------------------------------------------------------------------------------------------
+
+The tenant identifier is used when creating the Hibernate `Session`.
+
+The tenant is configured by the route rather than being taken from an untrusted message header.
+
+==== Stateless insert
+
+Use `statelessOperation=insert` to insert the entity contained in the message body using Hibernate's native `StatelessSession`.
+
+## [source,java]
+
+from("direct:insertEntity")
+.to("hibernate:com.example.MyEntity?statelessOperation=insert");
+----------------------------------------------------------------
+
+==== Stateless upsert
+
+Use `statelessOperation=upsert` to perform a stateless upsert using Hibernate's native `StatelessSession`.
+
+## [source,java]
+
+from("direct:upsertEntity")
+.to("hibernate:com.example.MyEntity?statelessOperation=upsert");
+----------------------------------------------------------------
+
+The supported stateless operations are `insert` and `upsert`.
 
 === Consumer operations
 
-When acting as a consumer, the endpoint polls the database periodically using a configured query (`query`, `namedQuery`, or `nativeQuery`).
+When acting as a consumer, the endpoint periodically executes its configured `selectionQuery`.
 
-* **Consume and Delete**: Setting `consumeDelete=true` deletes consumed entities from the database after processing to avoid re-processing during subsequent polling cycles.
-* **Maximum Results**: Use `maximumResults` to limit the number of records returned per poll batch.
+Each selected entity is delivered to the route as the message body.
 
-When `consumeDelete=true`, the consumer uses reflection to detach `@ManyToOne`, `@OneToOne`, and `@ManyToMany` associations (skipping uninitialized lazy proxies) so flush does not re-persist the deleted entity through a parent collection. This is a best-effort approach and may not cover every mapping style.
+For example:
 
-== Execution modes
+## [source,java]
 
-=== JPA-backed mode
+from("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&maximumResults=100&initialDelay=1000&delay=5000")
+.to("direct:processEntity");
+----------------------------
 
-In JPA-backed mode, the component uses Jakarta Persistence (`EntityManagerFactory`) and a Spring-managed `TransactionStrategy` from `camel-jpa`.
+==== Maximum results
 
-=== Native Hibernate mode
+Use `maximumResults` to limit the number of entities retrieved during a poll.
 
-In Native Hibernate mode, the component uses a Hibernate `SessionFactory` directly (the Hibernate `Session` is used as a JPA `EntityManager`).
+## [source,java]
+
+from("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&maximumResults=100")
+.to("direct:processEntity");
+----------------------------
+
+==== Competing consumers with SKIP LOCKED
+
+Set `skipLocked=true` to configure the selection query with a pessimistic write lock and Hibernate's `SKIP_LOCKED` timeout.
+
+## [source,java]
+
+from("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&skipLocked=true&maximumResults=100")
+.to("direct:processEntity");
+----------------------------
+
+This allows multiple consumer instances to compete for database rows while skipping rows already locked by another consumer.
+
+The database and Hibernate dialect must support the required locking behavior.
+
+=== Streaming query results
+
+Set `streaming=true` on a selection query to return the results as a Java `Stream`.
+
+## [source,java]
+
+from("direct:streamEntities")
+.to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&streaming=true")
+.process(exchange -> {
+Stream<?> stream = exchange.getMessage().getBody(Stream.class);
+try (stream) {
+stream.forEach(entity -> {
+// process entity
+});
+}
+});
+---
+
+The Hibernate `Session` and transaction remain open while the stream is being consumed.
+
+The returned stream must be closed after consumption so that the Hibernate session and transaction can be closed.
+
+== Query parameters
+
+Query parameters are supplied through the `CamelHibernateParameters` message header.
+
+For example:
+
+## [source,java]
+
+Map<String, Object> parameters = Map.of(
+"status", "ACTIVE",
+"country", "US");
+
+exchange.getMessage().setHeader(
+HibernateConstants.HIBERNATE_PARAMETERS,
+parameters);
+------------
+
+The parameters are bound to the configured Hibernate query.
+
+The component does not support replacing the configured query through a message header. Query text remains part of the route configuration.
+
+== Transactions
+
+The component uses native Hibernate transactions through `Session` and `StatelessSession`.
+
+Regular producer and consumer operations create a Hibernate `Session` and transaction.
+
+Stateless operations use a Hibernate `StatelessSession` and transaction.
+
+The component does not use `camel-jpa`, Jakarta Persistence, Spring `PlatformTransactionManager`, or a JPA transaction strategy.
 
 == Examples
 
-=== Persisting and querying entities
+=== Selection query
 
-[tabs]
-====
+# [tabs]
+
 Java::
 +
 [source,java]
-----
-from("direct:persist")
-    .to("hibernate:org.apache.camel.component.hibernate.Item");
+-------------
 
-from("direct:query")
-    .to("hibernate:org.apache.camel.component.hibernate.Item?query=SELECT i FROM Item i");
-----
+from("direct:findEntities")
+.to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity where status = :status");
+------------------------------------------------------------------------------------------
 
 XML::
 +
 [source,xml]
-----
+------------
+
 <route>
-  <from uri="direct:persist"/>
-  <to uri="hibernate:org.apache.camel.component.hibernate.Item"/>
-</route>
-<route>
-  <from uri="direct:query"/>
-  <to uri="hibernate:org.apache.camel.component.hibernate.Item?query=SELECT i FROM Item i"/>
+    <from uri="direct:findEntities"/>
+    <to uri="hibernate:com.example.MyEntity?selectionQuery=from MyEntity where status = :status"/>
 </route>
 ----
 
 YAML::
 +
 [source,yaml]
-----
-- route:
-    from:
-      uri: direct:persist
-      steps:
-        - to:
-            uri: hibernate:org.apache.camel.component.hibernate.Item
-- route:
-    from:
-      uri: direct:query
-      steps:
-        - to:
-            uri: hibernate:org.apache.camel.component.hibernate.Item
-            parameters:
-              query: SELECT i FROM Item i
-----
+-------------
+
+* route:
+  from:
+  uri: direct:findEntities
+  steps:
+  - to:
+  uri: hibernate:com.example.MyEntity
+  parameters:
+  selectionQuery: "from MyEntity where status = :status"
+
+---
+
 ====
 
-=== Named mutation queries
+=== Mutation query
 
-Named `INSERT`/`UPDATE`/`DELETE` queries require `useExecuteUpdate=true` because Camel does not inspect the named query name as query text:
+# [tabs]
 
-[tabs]
-====
 Java::
 +
 [source,java]
-----
-from("direct:deleteAll")
-    .to("hibernate:org.apache.camel.component.hibernate.Item?namedQuery=Item.removeAll&useExecuteUpdate=true");
-----
+-------------
+
+from("direct:updateEntities")
+.to("hibernate:com.example.MyEntity?mutationQuery=update MyEntity set status = :status where id = :id");
+--------------------------------------------------------------------------------------------------------
 
 XML::
 +
 [source,xml]
-----
+------------
+
 <route>
-  <from uri="direct:deleteAll"/>
-  <to uri="hibernate:org.apache.camel.component.hibernate.Item?namedQuery=Item.removeAll&amp;useExecuteUpdate=true"/>
+    <from uri="direct:updateEntities"/>
+    <to uri="hibernate:com.example.MyEntity?mutationQuery=update MyEntity set status = :status where id = :id"/>
 </route>
 ----
 
 YAML::
 +
 [source,yaml]
-----
-- route:
-    from:
-      uri: direct:deleteAll
-      steps:
-        - to:
-            uri: hibernate:org.apache.camel.component.hibernate.Item
-            parameters:
-              namedQuery: Item.removeAll
-              useExecuteUpdate: true
-----
+-------------
+
+* route:
+  from:
+  uri: direct:updateEntities
+  steps:
+  - to:
+  uri: hibernate:com.example.MyEntity
+  parameters:
+  mutationQuery: "update MyEntity set status = :status where id = :id"
+
+---
+
 ====
 
-=== Polling consumer with batch deletion
+=== Stateless insert
 
-[tabs]
-====
+# [tabs]
+
 Java::
 +
 [source,java]
-----
-from("hibernate:org.apache.camel.component.hibernate.Item?query=SELECT i FROM Item i&consumeDelete=true&initialDelay=100&delay=1000")
-    .to("mock:result");
-----
+-------------
+
+from("direct:insertEntity")
+.to("hibernate:com.example.MyEntity?statelessOperation=insert");
+----------------------------------------------------------------
 
 XML::
 +
 [source,xml]
-----
+------------
+
 <route>
-  <from uri="hibernate:org.apache.camel.component.hibernate.Item?query=SELECT i FROM Item i&amp;consumeDelete=true&amp;initialDelay=100&amp;delay=1000"/>
-  <to uri="mock:result"/>
+    <from uri="direct:insertEntity"/>
+    <to uri="hibernate:com.example.MyEntity?statelessOperation=insert"/>
 </route>
 ----
 
 YAML::
 +
 [source,yaml]
-----
-- route:
-    from:
-      uri: hibernate:org.apache.camel.component.hibernate.Item
-      parameters:
-        query: SELECT i FROM Item i
-        consumeDelete: true
-        initialDelay: 100
-        delay: 1000
-      steps:
-        - to:
-            uri: mock:result
-----
+-------------
+
+* route:
+  from:
+  uri: direct:insertEntity
+  steps:
+  - to:
+  uri: hibernate:com.example.MyEntity
+  parameters:
+  statelessOperation: insert
+
+---
+
 ====
 
-=== JPA-backed mode example
+=== Stateless upsert
 
-[tabs]
-====
+# [tabs]
+
 Java::
 +
 [source,java]
-----
-HibernateComponent component = new HibernateComponent();
-component.setEntityManagerFactory(entityManagerFactory);
-context.addComponent("hibernate", component);
+-------------
 
-from("direct:jpaPersist")
-    .to("hibernate:org.apache.camel.component.hibernate.Item?usePersist=true");
-
-from("hibernate:org.apache.camel.component.hibernate.Item?query=SELECT i FROM Item i WHERE i.price > 100.0&consumeDelete=true")
-    .to("mock:jpaResults");
-----
+from("direct:upsertEntity")
+.to("hibernate:com.example.MyEntity?statelessOperation=upsert");
+----------------------------------------------------------------
 
 XML::
 +
 [source,xml]
-----
-<bean id="hibernate" class="org.apache.camel.component.hibernate.HibernateComponent">
-  <property name="entityManagerFactory" ref="entityManagerFactory"/>
-</bean>
+------------
+
+<route>
+    <from uri="direct:upsertEntity"/>
+    <to uri="hibernate:com.example.MyEntity?statelessOperation=upsert"/>
+</route>
 ----
 
 YAML::
 +
 [source,yaml]
-----
-- route:
-    from:
-      uri: direct:jpaPersist
-      steps:
-        - to:
-            uri: hibernate:org.apache.camel.component.hibernate.Item
-            parameters:
-              usePersist: true
-----
+-------------
+
+* route:
+  from:
+  uri: direct:upsertEntity
+  steps:
+  - to:
+  uri: hibernate:com.example.MyEntity
+  parameters:
+  statelessOperation: upsert
+
+---
+
 ====
 
-=== Native Hibernate mode example
+=== Polling consumer
 
-[tabs]
-====
+# [tabs]
+
 Java::
 +
 [source,java]
+-------------
+
+from("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&maximumResults=100&initialDelay=1000&delay=5000")
+.to("direct:processEntity");
+----------------------------
+
+XML::
++
+[source,xml]
+------------
+
+<route>
+    <from uri="hibernate:com.example.MyEntity?selectionQuery=from MyEntity&amp;maximumResults=100&amp;initialDelay=1000&amp;delay=5000"/>
+    <to uri="direct:processEntity"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+-------------
+
+* route:
+  from:
+  uri: hibernate:com.example.MyEntity
+  parameters:
+  selectionQuery: "from MyEntity"
+  maximumResults: 100
+  initialDelay: 1000
+  delay: 5000
+  steps:
+  - to:
+  uri: direct:processEntity
+
+---
+
+====
+
+=== Competing consumers with SKIP LOCKED
+
+# [tabs]
+
+Java::
++
+[source,java]
+-------------
+
+from("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&skipLocked=true&maximumResults=100")
+.to("direct:processEntity");
+----------------------------
+
+XML::
++
+[source,xml]
+------------
+
+<route>
+    <from uri="hibernate:com.example.MyEntity?selectionQuery=from MyEntity&amp;skipLocked=true&amp;maximumResults=100"/>
+    <to uri="direct:processEntity"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+-------------
+
+* route:
+  from:
+  uri: hibernate:com.example.MyEntity
+  parameters:
+  selectionQuery: "from MyEntity"
+  skipLocked: true
+  maximumResults: 100
+  steps:
+  - to:
+  uri: direct:processEntity
+
+---
+
+====
+
+=== Streaming
+
+# [tabs]
+
+Java::
++
+[source,java]
+-------------
+
+from("direct:streamEntities")
+.to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&streaming=true")
+.process(exchange -> {
+Stream<?> stream = exchange.getMessage().getBody(Stream.class);
+try (stream) {
+stream.forEach(entity -> {
+// process entity
+});
+}
+});
+---
+
+XML::
++
+[source,xml]
+------------
+
+<route>
+    <from uri="direct:streamEntities"/>
+    <to uri="hibernate:com.example.MyEntity?selectionQuery=from MyEntity&amp;streaming=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+-------------
+
+* route:
+  from:
+  uri: direct:streamEntities
+  steps:
+  - to:
+  uri: hibernate:com.example.MyEntity
+  parameters:
+  selectionQuery: "from MyEntity"
+  streaming: true
+
+---
+
+====
+
+=== Native Hibernate SessionFactory configuration
+
+# [tabs]
+
+Java::
++
+[source,java]
+-------------
+
 HibernateComponent component = new HibernateComponent();
 component.setSessionFactory(sessionFactory);
 context.addComponent("hibernate", component);
 
-from("direct:nativePersist")
-    .to("hibernate:org.apache.camel.component.hibernate.Item");
-
-from("hibernate:org.apache.camel.component.hibernate.Item?namedQuery=Item.findAll&maximumResults=10")
-    .to("mock:nativeResults");
-----
+from("direct:findEntities")
+.to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity");
+-------------------------------------------------------------------
 
 XML::
 +
 [source,xml]
-----
+------------
+
 <bean id="hibernate" class="org.apache.camel.component.hibernate.HibernateComponent">
-  <property name="sessionFactory" ref="sessionFactory"/>
+    <property name="sessionFactory" ref="sessionFactory"/>
 </bean>
 ----
 
 YAML::
 +
 [source,yaml]
-----
-- route:
-    from:
-      uri: direct:nativePersist
-      steps:
-        - to:
-            uri: hibernate:org.apache.camel.component.hibernate.Item
-- route:
-    from:
-      uri: hibernate:org.apache.camel.component.hibernate.Item
-      parameters:
-        namedQuery: Item.findAll
-        maximumResults: 10
-      steps:
-        - to:
-            uri: mock:nativeResults
-----
+-------------
+
+* route:
+  from:
+  uri: direct:findEntities
+  steps:
+  - to:
+  uri: hibernate:com.example.MyEntity
+  parameters:
+  selectionQuery: "from MyEntity"
+
+---
+
 ====
+
+=== Bootstrapping a SessionFactory
+
+# [tabs]
+
+Java::
++
+[source,java]
+-------------
+
+HibernateComponent component = new HibernateComponent();
+component.setDataSource(dataSource);
+component.setEntityClasses(new Class[] {
+MyEntity.class
+});
+component.setSchemaAction("update");
+context.addComponent("hibernate", component);
+---------------------------------------------
+
+XML::
++
+[source,xml]
+------------
+
+<bean id="hibernate" class="org.apache.camel.component.hibernate.HibernateComponent">
+    <property name="dataSource" ref="dataSource"/>
+    <property name="schemaAction" value="update"/>
+</bean>
+----
+
+YAML::
++
+[source,yaml]
+-------------
+
+* route:
+  from:
+  uri: direct:findEntities
+  steps:
+  - to:
+  uri: hibernate:com.example.MyEntity
+  parameters:
+  selectionQuery: "from MyEntity"
+
+---
+
+====
+
+== Limitations and deferred features
+
+The following features are intentionally not part of the current implementation:
+
+* **Package entity scanning:** `packagesToScan` is not currently implemented. Entity classes are registered explicitly through `entityClasses`.
+* **Dynamic-map entities:** Legacy Hibernate `EntityMode.MAP` / dynamic-map support is not used because the legacy public API is not suitable for Hibernate ORM 8. The component uses typed entity classes.
+* **Message query replacement:** The component does not allow a message header to replace the query configured on the endpoint. Query text remains route configuration and message data is supplied through bound parameters.
+* **Transaction-manager integration:** The component uses native Hibernate transactions and does not use `camel-jpa`, Spring `PlatformTransactionManager`, or Jakarta Persistence.
