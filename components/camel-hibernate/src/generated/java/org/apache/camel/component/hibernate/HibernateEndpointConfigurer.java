@@ -31,6 +31,8 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "consumedelete":
+        case "consumeDelete": target.setConsumeDelete(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
@@ -93,6 +95,8 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "backoffMultiplier": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "consumedelete":
+        case "consumeDelete": return boolean.class;
         case "delay": return long.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
@@ -156,6 +160,8 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "backoffMultiplier": return target.getBackoffMultiplier();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "consumedelete":
+        case "consumeDelete": return target.isConsumeDelete();
         case "delay": return target.getDelay();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
