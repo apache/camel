@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * A groovy script that uses a bean name as a variable, or an unknown variable, gets a MissingPropertyException whose
  * message says where the beans are and what the script variables are (CAMEL-24698). A field read on a body that is
- * still the payload text says to unmarshal it first (CAMEL-25330).
+ * still the payload text says to unmarshal it first, and JSON text in a header is named (CAMEL-25330).
  */
 public class GroovyMissingPropertyHintTest extends CamelTestSupport {
 
@@ -107,6 +107,28 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
     }
 
     @Test
+    public void fieldReadOnJsonTextInAHeaderNamesTheHeader() {
+        // the benchmark wrote headers.skuList.find { ... } with the stock list kept as text in a header
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeaders("direct:header", java.util.List.of("x"),
+                        java.util.Map.of("sku", "A1", "skuList", "[{\"sku\": \"A1\"}]")));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("header 'skuList' is still JSON text, not parsed data"), cause.getMessage());
+        assertTrue(cause.getMessage().contains("new groovy.json.JsonSlurper().parseText(headers.skuList)"),
+                cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnTextElsewhereSaysItIsText() {
+        // a list of plain text values: an element is text, not data with fields
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("direct:field", java.util.List.of("A1", "B2"), "sku", "A1"));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("the value read here is still text (a String comes from iterating text)"),
+                cause.getMessage());
+    }
+
+    @Test
     public void fieldReadOnParsedBodyWorks() {
         Object out = template.requestBodyAndHeader("direct:field", java.util.List.of(java.util.Map.of("sku", "A1")),
                 "sku", "A1");
@@ -127,6 +149,7 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
                 from("direct:bean").transform().groovy("formatter.append(body)");
                 from("direct:unknown").transform().groovy("nosuch.toUpperCase()");
                 from("direct:field").transform().groovy("body.find { it.sku == headers.sku }");
+                from("direct:header").transform().groovy("headers.skuList.find { it.sku == headers.sku }");
                 from("direct:message").transform().groovy("message.getHeader('name') + ' ' + message.body");
             }
         };
