@@ -45,7 +45,13 @@ public class HibernateProducer extends DefaultProducer {
             return;
         }
 
-        Session session = exchange.getProperty(HibernateConstants.HIBERNATE_SESSION, Session.class);
+        HibernateSessionContext sessionContext = exchange.getExchangeExtension()
+                .getSafeCopyProperty(HibernateConstants.HIBERNATE_SESSION_CONTEXT, HibernateSessionContext.class);
+
+        Session session = sessionContext == null
+                ? null
+                : sessionContext.getSession(endpoint.getSessionFactory(), endpoint.getTenantIdentifier());
+
         boolean sessionOwned = session == null;
 
         if (sessionOwned) {
@@ -62,7 +68,7 @@ public class HibernateProducer extends DefaultProducer {
                 : activeSession.getTransaction();
 
         try {
-            if (endpoint.getFilters() != null) {
+            if (sessionOwned && endpoint.getFilters() != null) {
                 endpoint.getFilters().forEach((filterName, parameters) -> {
                     var filter = activeSession.enableFilter(filterName);
                     if (parameters != null) {
@@ -91,7 +97,9 @@ public class HibernateProducer extends DefaultProducer {
                 SelectionQuery<?> query = activeSession.createSelectionQuery(
                         endpoint.getSelectionQuery(), endpoint.getEntityType());
 
-                activeSession.setDefaultReadOnly(endpoint.isReadOnly());
+                if (sessionOwned) {
+                    activeSession.setDefaultReadOnly(endpoint.isReadOnly());
+                }
                 query.setReadOnly(endpoint.isReadOnly());
 
                 if (parameters != null) {
