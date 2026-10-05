@@ -129,8 +129,10 @@ Validation error detected (errors:1)
 
 The catalog of that version is downloaded as for `camel catalog`, and the schema is read from the
 `camel-yaml-dsl` jar of that version (`--repos` and `--download=false` apply to both). With `--runtime=quarkus`
-the Quarkus platform is resolved from the Camel version through the Quarkus extension registry (cached for a
-day under `~/.camel`), or given with `--quarkus-version`; a component of the route that has no Camel Quarkus
+the Quarkus platform is resolved from the Camel version through the Quarkus extension registry (the response is
+cached for a day under `~/.camel`, and the platform resolved for a released Camel version that the platform
+carries exactly is cached for 7 days; a `-SNAPSHOT` version is never cached, and `--fresh` clears both), or given
+with `--quarkus-version`; a component of the route that has no Camel Quarkus
 extension, or no Camel Spring Boot starter with `--runtime=spring-boot`, is an error. `--canonical` needs Camel
 4.22 or later, the first version with the canonical schema.
 
