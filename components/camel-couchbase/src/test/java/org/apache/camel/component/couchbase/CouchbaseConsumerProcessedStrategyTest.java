@@ -19,6 +19,9 @@ package org.apache.camel.component.couchbase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.couchbase.client.java.Bucket;
@@ -27,6 +30,7 @@ import com.couchbase.client.java.ClusterOptions;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.Scope;
 import com.couchbase.client.java.json.JsonObject;
+import com.couchbase.client.java.kv.GetOptions;
 import com.couchbase.client.java.kv.RemoveOptions;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
@@ -36,7 +40,9 @@ import com.couchbase.client.java.view.ViewRow;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ExceptionHandler;
 import org.junit.jupiter.api.AfterEach;
@@ -47,6 +53,8 @@ import org.mockito.MockedStatic;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -92,6 +100,10 @@ class CouchbaseConsumerProcessedStrategyTest {
 
     @AfterEach
     void tearDown() {
+        // exchanges still queued for a started route would hold up the graceful shutdown
+        if (context.hasEndpoint("seda://async") instanceof SedaEndpoint seda) {
+            seda.purgeQueue();
+        }
         context.stop();
         clusters.close();
     }
@@ -105,6 +117,43 @@ class CouchbaseConsumerProcessedStrategyTest {
         });
         context.start();
         return (CouchbaseConsumer) context.getRoute("couchbase").getConsumer();
+    }
+
+    /**
+     * The couchbase route hands every exchange over to a {@code seda} queue without waiting for it, so the
+     * on-completion that removes the document goes with the copy in the queue. The route consuming that queue is
+     * started by the test when the handed over exchanges should complete, so until then they are in flight.
+     */
+    private CouchbaseConsumer startHandoverRoutes(String uri, Processor before, Processor async) throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(uri).routeId("couchbase").process(before).to("seda:async?waitForTaskToComplete=Never");
+                from("seda:async").routeId("async").autoStartup(false).process(async);
+            }
+        });
+        context.start();
+        return (CouchbaseConsumer) context.getRoute("couchbase").getConsumer();
+    }
+
+    private CouchbaseConsumer startHandoverRoutes(String uri, Processor async) throws Exception {
+        return startHandoverRoutes(uri, exchange -> {
+        }, async);
+    }
+
+    /** The IDs of the handed over exchanges still waiting in the queue, in order. */
+    private List<Object> inFlightIds() {
+        return context.getEndpoint("seda:async", SedaEndpoint.class).getQueue().stream()
+                .map(exchange -> exchange.getMessage().getHeader(CouchbaseConstants.HEADER_ID))
+                .toList();
+    }
+
+    private void completeHandedOverExchanges(int count) throws Exception {
+        NotifyBuilder done = new NotifyBuilder(context).fromRoute("async").whenDone(count).create();
+        context.getRouteController().startRoute("async");
+        // the on-completions run before the exchange is signalled as done
+        assertTrue(done.matches(10, TimeUnit.SECONDS), "the handed over exchanges did not complete");
+        context.getRouteController().stopRoute("async");
     }
 
     private void queryReturns(String... ids) {
@@ -233,6 +282,136 @@ class CouchbaseConsumerProcessedStrategyTest {
         consumer.poll();
 
         assertFalse(removedYet());
+    }
+
+    @Test
+    void aDocumentWhoseHandedOverExchangeIsInFlightIsNotDeliveredAgain() throws Exception {
+        queryReturns("doc-1");
+        CouchbaseConsumer consumer = startHandoverRoutes(URI, exchange -> {
+        });
+
+        assertEquals(1, consumer.poll());
+        assertEquals(0, consumer.poll(), "the document must not be delivered again while its exchange is in flight");
+
+        assertEquals(List.of("doc-1"), inFlightIds());
+        verifyNotRemoved("doc-1");
+    }
+
+    @Test
+    void aDocumentWhoseHandedOverExchangeIsInFlightIsNotDeliveredAgainWhenConsumingAView() throws Exception {
+        ViewRow row = viewRow("doc-1");
+        ViewResult result = mock(ViewResult.class);
+        when(result.rows()).thenReturn(List.of(row));
+        when(bucket.viewQuery(anyString(), anyString(), any(ViewOptions.class))).thenReturn(result);
+        CouchbaseConsumer consumer = startHandoverRoutes(URI + "&useView=true&designDocumentName=dd&viewName=view",
+                exchange -> {
+                });
+
+        assertEquals(1, consumer.poll());
+        assertEquals(0, consumer.poll(), "the document must not be delivered again while its exchange is in flight");
+
+        assertEquals(List.of("doc-1"), inFlightIds());
+    }
+
+    @Test
+    void aHandedOverExchangeRemovesItsDocumentOnceWhenItCompletes() throws Exception {
+        queryReturns("doc-1");
+        List<Object> processed = new CopyOnWriteArrayList<>();
+        CouchbaseConsumer consumer = startHandoverRoutes(URI,
+                exchange -> processed.add(exchange.getMessage().getHeader(CouchbaseConstants.HEADER_ID)));
+
+        consumer.poll();
+        consumer.poll();
+        verifyNotRemoved("doc-1");
+
+        completeHandedOverExchanges(1);
+
+        assertEquals(List.of("doc-1"), processed);
+        verify(collection, times(1)).remove(eq("doc-1"), any(RemoveOptions.class));
+    }
+
+    @Test
+    void aFailedHandedOverExchangeReleasesItsDocumentForTheNextPoll() throws Exception {
+        queryReturns("doc-1");
+        CouchbaseConsumer consumer = startHandoverRoutes(URI, exchange -> {
+            throw new IllegalStateException("the route blew up");
+        });
+
+        assertEquals(1, consumer.poll());
+        assertEquals(0, consumer.poll());
+
+        completeHandedOverExchanges(1);
+
+        verifyNotRemoved("doc-1");
+        assertEquals(1, consumer.poll(), "a failed document must be consumed again by the next poll");
+        assertEquals(List.of("doc-1"), inFlightIds());
+    }
+
+    @Test
+    void rowsBeyondMaxMessagesPerPollAreNotLeftInFlight() throws Exception {
+        queryReturns("doc-1", "doc-2", "doc-3");
+        CouchbaseConsumer consumer = startHandoverRoutes(URI, exchange -> {
+        });
+        consumer.setMaxMessagesPerPoll(1);
+
+        consumer.poll();
+        // doc-1 is still in flight and skipped, it does not take the place of doc-2
+        consumer.poll();
+        consumer.poll();
+
+        assertEquals(List.of("doc-1", "doc-2", "doc-3"), inFlightIds());
+    }
+
+    @Test
+    void rowsLeftWhenTheConsumerStopsMidBatchAreNotLeftInFlight() throws Exception {
+        queryReturns("doc-1", "doc-2", "doc-3");
+        AtomicReference<CouchbaseConsumer> consumerRef = new AtomicReference<>();
+        AtomicBoolean stopping = new AtomicBoolean(true);
+        // what the shutdown strategy does to a consumer that should only complete its current task
+        CouchbaseConsumer consumer = startHandoverRoutes(URI, exchange -> {
+            if (stopping.get()) {
+                consumerRef.get().deferShutdown(ShutdownRunningTask.CompleteCurrentTaskOnly);
+            }
+        }, exchange -> {
+        });
+        consumerRef.set(consumer);
+
+        consumer.poll();
+        assertEquals(List.of("doc-1"), inFlightIds());
+
+        // the consumer carries on, as after a shutdown that timed out and was cancelled
+        stopping.set(false);
+        consumer.deferShutdown(ShutdownRunningTask.CompleteAllTasks);
+        consumer.poll();
+
+        assertEquals(List.of("doc-1", "doc-2", "doc-3"), inFlightIds());
+    }
+
+    @Test
+    void aPollThatFailsPartWayDoesNotLeaveItsRowsInFlight() throws Exception {
+        queryReturns("doc-1", "doc-2");
+        RuntimeException failure = new IllegalStateException("cannot get document");
+        when(collection.get(eq("doc-2"), any(GetOptions.class))).thenThrow(failure).thenReturn(null);
+        CouchbaseConsumer consumer = startHandoverRoutes(URI, exchange -> {
+        });
+
+        assertSame(failure, assertThrows(IllegalStateException.class, consumer::poll));
+        assertEquals(List.of(), inFlightIds());
+
+        assertEquals(2, consumer.poll());
+        assertEquals(List.of("doc-1", "doc-2"), inFlightIds());
+    }
+
+    @Test
+    void otherStrategiesStillDeliverADocumentWhoseExchangeIsInFlight() throws Exception {
+        queryReturns("doc-1");
+        CouchbaseConsumer consumer = startHandoverRoutes(URI.replace("=delete", "=none"), exchange -> {
+        });
+
+        assertEquals(1, consumer.poll());
+        assertEquals(1, consumer.poll());
+
+        assertEquals(List.of("doc-1", "doc-1"), inFlightIds());
     }
 
     private static ViewRow viewRow(String id) {

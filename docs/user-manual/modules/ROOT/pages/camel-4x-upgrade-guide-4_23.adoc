@@ -588,6 +588,14 @@ failure in the route (for example with a dead letter channel or a handled `onExc
 completes and the document is removed. While the route runs, the document is still in the bucket. A failure to remove
 the document is reported through the consumer's exception handler.
 
+If the route hands the exchange over to another thread (for example `seda` with `waitForTaskToComplete=Never`, or an
+asynchronous producer), the document is removed when that exchange completes, which can be after the next poll. Until
+its exchange has completed or failed, a document is skipped by later polls of the same consumer, so it is not delivered
+twice, in the same way as the in-progress repository of the file and aws2-s3 consumers. A skipped document does not
+count towards `maxMessagesPerPoll`. This only applies to the same consumer: another consumer reading the same bucket,
+for example on another node, can still read the document before it is removed. With the other strategies the document
+stays in the bucket, so later polls read it again as before.
+
 === camel-console
 
 The `context` developer console no longer counts routes created by Kamelets in its `routesTotal` and `routesStarted`
