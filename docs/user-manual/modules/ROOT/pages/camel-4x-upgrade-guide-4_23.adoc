@@ -755,6 +755,15 @@ data format also writes the message with the charset of the exchange when it mar
 US-ASCII messages are parsed as before. A route that repaired the wrongly decoded text itself must stop
 doing so.
 
+=== camel-barcode - text outside ISO-8859-1
+
+The barcode data format wrote the text in ISO-8859-1 (the ZXing default), so every character that ISO-8859-1 cannot
+represent (such as Japanese, Cyrillic, Greek or an emoji) was written as `?`. Such a text is now written in UTF-8,
+with an ECI segment that tells the reader the character set. A reader without ECI support sees the UTF-8 bytes
+instead of the `?` characters, so it must decode them as UTF-8. Text that ISO-8859-1 can represent is written as
+before, byte for byte, and a `CHARACTER_SET` hint takes precedence. The documented default encoding is now
+"ISO-8859-1, or UTF-8 when needed" instead of "UTF-8".
+
 === camel-bindy - fixed-length records with characters outside the BMP
 
 Since Camel 3.1 a fixed-length record is read by counting code points (or graphemes with

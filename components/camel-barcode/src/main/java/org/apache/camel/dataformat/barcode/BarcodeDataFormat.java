@@ -18,8 +18,11 @@ package org.apache.camel.dataformat.barcode;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -76,6 +79,19 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      * The decoding hint map, used for reading a barcode.
      */
     private final Map<DecodeHintType, Object> readerHintMap = new EnumMap<>(DecodeHintType.class);
+
+    /**
+     * The hints added by the user, which are applied on top of the optimized hints.
+     */
+    private final Map<EncodeHintType, Object> userWriterHintMap = new EnumMap<>(EncodeHintType.class);
+    private final Map<DecodeHintType, Object> userReaderHintMap = new EnumMap<>(DecodeHintType.class);
+
+    /**
+     * The hints removed by the user, which are removed from the optimized hints (also a default hint removed before the
+     * data format is started).
+     */
+    private final Set<EncodeHintType> removedWriterHints = EnumSet.noneOf(EncodeHintType.class);
+    private final Set<DecodeHintType> removedReaderHints = EnumSet.noneOf(DecodeHintType.class);
 
     /**
      * Create instance with default parameters.
@@ -170,6 +186,12 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
 
         // reader hints
         this.readerHintMap.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+
+        // the hints removed and added by the user
+        this.writerHintMap.keySet().removeAll(this.removedWriterHints);
+        this.readerHintMap.keySet().removeAll(this.removedReaderHints);
+        this.writerHintMap.putAll(this.userWriterHintMap);
+        this.readerHintMap.putAll(this.userReaderHintMap);
     }
 
     /**
@@ -187,13 +209,21 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
         // set values
         final String type = this.params.getType().toString();
 
+        // ZXing writes the text in ISO-8859-1 unless a character set is given, so use UTF-8 for a text that
+        // ISO-8859-1 cannot represent (ZXing then writes an ECI that tells the reader the character set)
+        Map<EncodeHintType, Object> hints = writerHintMap;
+        if (!hints.containsKey(EncodeHintType.CHARACTER_SET) && !StandardCharsets.ISO_8859_1.newEncoder().canEncode(payload)) {
+            hints = new EnumMap<>(writerHintMap);
+            hints.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.name());
+        }
+
         // create code image
         final BitMatrix matrix = writer.encode(
                 payload,
                 this.params.getFormat(),
                 this.params.getWidth(),
                 this.params.getHeight(),
-                writerHintMap);
+                hints);
 
         // write image back to stream
         MatrixToImageWriter.writeToStream(matrix, type, stream);
@@ -227,6 +257,8 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     public final void addToHintMap(final EncodeHintType hintType, final Object value) {
         this.writerHintMap.put(hintType, value);
+        this.userWriterHintMap.put(hintType, value);
+        this.removedWriterHints.remove(hintType);
         LOG.info("Added '{}' with value '{}' to writer hint map.", hintType, value);
     }
 
@@ -235,27 +267,39 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     public final void addToHintMap(final DecodeHintType hintType, final Object value) {
         this.readerHintMap.put(hintType, value);
+        this.userReaderHintMap.put(hintType, value);
+        this.removedReaderHints.remove(hintType);
     }
 
     /**
-     * Removes a hint from writer (encode) hint map.
+     * Removes a hint from writer (encode) hint map. A hint removed before the data format is started, such as a default
+     * hint, is removed when it starts.
      */
     public final void removeFromHintMap(final EncodeHintType hintType) {
+        this.userWriterHintMap.remove(hintType);
+        this.removedWriterHints.add(hintType);
         if (this.writerHintMap.containsKey(hintType)) {
             this.writerHintMap.remove(hintType);
             LOG.info("Removed '{}' from writer hint map.", hintType);
+        } else if (!isStarted()) {
+            LOG.info("Removing '{}' from writer hint map when the data format starts.", hintType);
         } else {
             LOG.warn("Could not find encode hint type '{}' in writer hint map.", hintType);
         }
     }
 
     /**
-     * Removes a hint from reader (decode) hint map.
+     * Removes a hint from reader (decode) hint map. A hint removed before the data format is started, such as a default
+     * hint, is removed when it starts.
      */
     public final void removeFromHintMap(final DecodeHintType hintType) {
+        this.userReaderHintMap.remove(hintType);
+        this.removedReaderHints.add(hintType);
         if (this.readerHintMap.containsKey(hintType)) {
             this.readerHintMap.remove(hintType);
             LOG.info("Removed '{}' from reader hint map.", hintType);
+        } else if (!isStarted()) {
+            LOG.info("Removing '{}' from reader hint map when the data format starts.", hintType);
         } else {
             LOG.warn("Could not find decode hint type '{}' in reader hint map.", hintType);
         }
