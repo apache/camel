@@ -530,6 +530,11 @@ public class CamelMonitor extends CamelCommand {
             public void fixFailure(Path file, int line, String failure, String lineText) {
                 openAiWithQuestion(dir -> AiFixPrompt.ofFailure(dir, file, line, failure, lineText));
             }
+
+            @Override
+            public void explainLogError(String error) {
+                openAiWithQuestion(dir -> AiFixPrompt.ofLogError(error));
+            }
         };
         ctx.projectOverviewCallback = () -> {
             if (shellPanel.isOpen()) {

@@ -81,6 +81,16 @@ restores the pinned log automatically.
 The pinned log panel can also be resized by dragging its top border
 with the mouse.
 
+## Fix with AI
+
+Press `Shift+F8` to ask the AI about an ERROR on the screen. When the
+ERROR is a failed exchange, the step that failed comes from its Message
+History, and the AI is asked to fix that line of the route. Otherwise
+the AI explains the error and fixes it if the cause is in the project.
+
+When different ERRORs are on the screen, a list comes up to pick one,
+newest first; the same error repeated is listed once with its count.
+
 ## Keys
 
 - `Up/Down` — scroll log
@@ -91,6 +101,7 @@ with the mouse.
 - `N` — previous match
 - `h` — highlight a word
 - `l` — change log level
+- `Shift+F8` — fix with AI: the ERROR on the screen (a list to pick from when there are several)
 - `f` — toggle follow mode (`End` turns it on). Scrolling with the mouse wheel, `Up`, `PgUp` or `Home` turns it off; the title then shows `(paused, End follows)` when new lines arrive below the view
 - `w` — toggle word wrap
 - `c` — toggle the compact view (on by default): the time, level, logger and message of each line, without the date, pid and thread

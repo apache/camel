@@ -55,6 +55,18 @@ final class AiFixPrompt {
                + " Dev mode reloads the file when it is saved.";
     }
 
+    /**
+     * The question for an ERROR of the log whose source line is not known (Shift+F8 in the Log tab): explain it, and
+     * fix it when the cause is in the project's routes.
+     *
+     * @param error the ERROR line, the exception and its causes
+     */
+    static String ofLogError(String error) {
+        return "Explain this ERROR from the log of the running integration:\n" + error + "\n"
+               + "If the cause is in the project's routes or configuration, fix it with camel_edit_file and check the"
+               + " file with camel_validate_source. Dev mode reloads the file when it is saved.";
+    }
+
     /** The name of the file relative to the project directory, when it is inside it. */
     private static String nameOf(Path directory, Path file) {
         String name = file.toString();
