@@ -25,7 +25,7 @@ The component does not use Jakarta Persistence (JPA), `camel-jpa`, or Spring `Pl
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
-## [source,xml]
+[source,xml]
 
 <dependency>
     <groupId>org.apache.camel</groupId>
@@ -39,7 +39,7 @@ for this component:
 
 ---
 
-## hibernate:entityClassName
+==== hibernate:entityClassName
 
 Where `entityClassName` is the target entity class name or entity type name.
 
@@ -59,12 +59,12 @@ The component can use an existing Hibernate `SessionFactory` or create one durin
 
 An existing `SessionFactory` can be configured directly on the component:
 
-## [source,java]
+[source,java]
 
 HibernateComponent component = new HibernateComponent();
 component.setSessionFactory(sessionFactory);
 
-## context.addComponent("hibernate", component);
+context.addComponent("hibernate", component);
 
 The component does not own an externally supplied `SessionFactory` and therefore does not close it when the component stops.
 
@@ -74,7 +74,7 @@ If no `SessionFactory` is explicitly configured, the component attempts to reuse
 
 The component can bootstrap a `SessionFactory` using a `DataSource` and explicit entity classes:
 
-## [source,java]
+[source,java]
 
 HibernateComponent component = new HibernateComponent();
 component.setDataSource(dataSource);
@@ -83,7 +83,7 @@ MyEntity.class
 });
 component.setSchemaAction("update");
 
-## context.addComponent("hibernate", component);
+context.addComponent("hibernate", component);
 
 The `DataSource` can be supplied directly or as a Camel registry name.
 
@@ -106,7 +106,7 @@ Hibernate determines the database dialect automatically; the component does not 
 
 Additional Hibernate configuration properties can be supplied through `hibernateProperties`.
 
-## [source,java]
+[source,java]
 
 component.setHibernateProperties(Map.of(
 "hibernate.show_sql", true,
@@ -133,7 +133,7 @@ The endpoint validates this configuration during startup.
 
 Use `selectionQuery` to execute an HQL selection query using Hibernate's `SelectionQuery` API.
 
-## [source,java]
+[source,java]
 
 from("direct:findEntities")
 .to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity where status = :status");
@@ -141,7 +141,7 @@ from("direct:findEntities")
 
 Query parameters are supplied through the `CamelHibernateParameters` message header:
 
-## [source,java]
+[source,java]
 
 exchange.getMessage().setHeader(
 HibernateConstants.HIBERNATE_PARAMETERS,
@@ -154,7 +154,7 @@ The query result is placed in the message body.
 
 Use `mutationQuery` to execute an HQL mutation query using Hibernate's `MutationQuery` API.
 
-## [source,java]
+[source,java]
 
 from("direct:updateEntities")
 .to("hibernate:com.example.MyEntity?mutationQuery=update MyEntity set status = :status where status = :oldStatus");
@@ -162,7 +162,7 @@ from("direct:updateEntities")
 
 Parameters are supplied through the `CamelHibernateParameters` header:
 
-## [source,java]
+[source,java]
 
 exchange.getMessage().setHeader(
 HibernateConstants.HIBERNATE_PARAMETERS,
@@ -183,7 +183,7 @@ The lookup uses Hibernate's native natural-id functionality rather than construc
 
 Set `readOnly=true` for a selection query when the returned entities are not intended to be modified.
 
-## [source,java]
+[source,java]
 
 from("direct:readEntities")
 .to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&readOnly=true");
@@ -199,18 +199,18 @@ The configuration contains the filter name and its parameter values. The compone
 
 For example, an application can configure a filter named `tenantFilter` with a tenant parameter:
 
-## [source,java]
+[source,java]
 
 Map<String, Map<String, Object>> filters = Map.of(
 "tenantFilter", Map.of("tenantId", "tenant-a"));
 
-## endpoint.setFilters(filters);
+endpoint.setFilters(filters);
 
 ==== Multi-tenancy
 
 A tenant identifier can be supplied through `tenantIdentifier`.
 
-## [source,java]
+[source,java]
 
 from("direct:tenantEntities")
 .to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&tenantIdentifier=tenant-a");
@@ -224,7 +224,7 @@ The tenant is configured by the route rather than being taken from an untrusted 
 
 Use `statelessOperation=insert` to insert the entity contained in the message body using Hibernate's native `StatelessSession`.
 
-## [source,java]
+[source,java]
 
 from("direct:insertEntity")
 .to("hibernate:com.example.MyEntity?statelessOperation=insert");
@@ -234,7 +234,7 @@ from("direct:insertEntity")
 
 Use `statelessOperation=upsert` to perform a stateless upsert using Hibernate's native `StatelessSession`.
 
-## [source,java]
+[source,java]
 
 from("direct:upsertEntity")
 .to("hibernate:com.example.MyEntity?statelessOperation=upsert");
@@ -250,7 +250,7 @@ Each selected entity is delivered to the route as the message body.
 
 For example:
 
-## [source,java]
+[source,java]
 
 from("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&maximumResults=100&initialDelay=1000&delay=5000")
 .to("direct:processEntity");
@@ -260,7 +260,7 @@ from("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&maximumResults
 
 Use `maximumResults` to limit the number of entities retrieved during a poll.
 
-## [source,java]
+[source,java]
 
 from("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&maximumResults=100")
 .to("direct:processEntity");
@@ -270,7 +270,7 @@ from("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&maximumResults
 
 Set `skipLocked=true` to configure the selection query with a pessimistic write lock and Hibernate's `SKIP_LOCKED` timeout.
 
-## [source,java]
+[source,java]
 
 from("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&skipLocked=true&maximumResults=100")
 .to("direct:processEntity");
@@ -284,7 +284,7 @@ The database and Hibernate dialect must support the required locking behavior.
 
 Set `streaming=true` on a selection query to return the results as a Java `Stream`.
 
-## [source,java]
+[source,java]
 
 from("direct:streamEntities")
 .to("hibernate:com.example.MyEntity?selectionQuery=from MyEntity&streaming=true")
@@ -308,7 +308,7 @@ Query parameters are supplied through the `CamelHibernateParameters` message hea
 
 For example:
 
-## [source,java]
+[source,java]
 
 Map<String, Object> parameters = Map.of(
 "status", "ACTIVE",
