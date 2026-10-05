@@ -50,6 +50,10 @@ and automatically detects new, modified, and deleted files:
 camel run --source-dir=mycode --dev
 ----
 
+Running a directory is the same as `--source-dir`, so `camel run . --dev` and `camel run mycode --dev` also reload
+changed files and pick up new ones. A directory with a `pom.xml` (an existing Maven project), and the Spring Boot and
+Quarkus runtimes, run the files in the directory instead.
+
 Without `--source-dir`, Camel only watches the specific files you listed on the command line.
 
 NOTE: You cannot combine files and source dir: `camel run abc.java --source-dir=mycode` is not allowed.
