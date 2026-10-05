@@ -162,6 +162,11 @@ alive. Constraints can remain until an unused expression is garbage-collected; s
 does not necessarily release an expression that is still referenced elsewhere.
 Loading declarations does not perform inference or start provider resources for validation.
 
+For questions using `expert` or `default-expert`, the registry bean is resolved when the
+expression is compiled. Rebinding that name does not update already compiled expressions.
+After replacing the bean, recreate the consuming routes or expressions, or reload their
+question declarations so the expressions compile against the replacement bean.
+
 === YAML reload and expert bean preparation
 
 YAML declarations are registered during the loader's existing pre-parse phase, before beans in
