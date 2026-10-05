@@ -85,6 +85,7 @@ public class HibernateConsumer extends ScheduledPollConsumer {
                     try {
                         exchange = createExchange(false);
                         exchange.getMessage().setBody(result);
+                        exchange.setProperty(HibernateConstants.HIBERNATE_SESSION, session);
 
                         getProcessor().process(exchange);
 

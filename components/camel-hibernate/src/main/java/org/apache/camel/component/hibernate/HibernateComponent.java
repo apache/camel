@@ -140,7 +140,9 @@ public class HibernateComponent extends DefaultComponent {
 
         // Resolve DataSource
         DataSource resolvedDataSource = resolveDataSource();
-        if (resolvedDataSource != null) {
+        if (resolvedDataSource != null
+                && !settings.containsKey(AvailableSettings.JAKARTA_JTA_DATASOURCE)
+                && !settings.containsKey(AvailableSettings.JAKARTA_NON_JTA_DATASOURCE)) {
             settings.put(AvailableSettings.JAKARTA_NON_JTA_DATASOURCE, resolvedDataSource);
         }
 
