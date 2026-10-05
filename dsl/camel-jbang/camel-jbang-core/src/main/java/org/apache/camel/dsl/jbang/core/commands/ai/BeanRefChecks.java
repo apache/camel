@@ -507,7 +507,7 @@ final class BeanRefChecks {
             }
         }
         if (hint.isEmpty()) {
-            hint = " (check the package name; a class of your own goes in a .java file next to the route; a class from"
+            hint = " (check the package name; a class of your own goes in a .java file next to the route or under src/main/java; a class from"
                    + " another library needs its dependency declared, camel.jbang.dependencies=<groupId>:<artifactId>:<version>"
                    + " in application.properties or --dep on camel run)";
         }

@@ -357,7 +357,17 @@ public final class SourceValidator {
                 return NONE;
             }
             try (var stream = Files.list(directory)) {
-                for (Path p : stream.filter(Files::isRegularFile).toList()) {
+                List<Path> files = new ArrayList<>(stream.filter(Files::isRegularFile).toList());
+                // a class of the project may also sit in the Maven layout, src/main/java/<package>/<Class>.java, which
+                // camel run --source-dir compiles too: without it a bean of that class was refused as not found
+                Path mavenSources = directory.resolve("src/main/java");
+                if (Files.isDirectory(mavenSources)) {
+                    try (var walk = Files.walk(mavenSources)) {
+                        walk.filter(Files::isRegularFile).filter(q -> q.getFileName().toString().endsWith(".java"))
+                                .forEach(files::add);
+                    }
+                }
+                for (Path p : files) {
                     String fn = p.getFileName().toString();
                     if (fn.equals(excludeFile)) {
                         continue;
