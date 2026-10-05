@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.KeyModifiers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -105,6 +108,61 @@ class LogTabRenderTest {
         String rendered = TuiTestHelper.renderToString(tab, 120, 20);
         assertTrue(rendered.contains("Loading") || rendered.contains("Log"),
                 "Should show loading state or Log title");
+    }
+
+    @Test
+    void wrappedLinesAreCountedByTheirRows() {
+        assertEquals(1, LogTab.wrappedRows("short line", 40));
+        assertEquals(2, LogTab.wrappedRows("one two three four five six seven eight nine ten", 30));
+        assertEquals(3, LogTab.wrappedRows("x".repeat(70), 30));
+        assertEquals(1, LogTab.wrappedRows("", 30));
+    }
+
+    @Test
+    void followingWithWordWrapShowsTheNewestLine() {
+        List<LogEntry> entries = new ArrayList<>();
+        for (int i = 0; i < 40; i++) {
+            // long continuation lines that wrap to two rows each
+            entries.add(LogTab.parseLogLine("orders.camel.yaml:" + i + "   orders/to" + i + "   "
+                                            + "to[direct:big-orders] ".repeat(8)));
+        }
+        entries.add(LogTab.parseLogLine(
+                "2026-10-05 20:14:59.906 ERROR 33838 --- [mer://inventory] orders.camel.yaml:44 : The newest line"));
+        LogTab tab = new LogTab(ctx);
+        tab.setEntriesForTesting(entries);
+
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
+
+        assertTrue(rendered.contains("The newest line"), rendered);
+    }
+
+    @Test
+    void shiftF8WithDifferentErrorsOnTheScreenShowsThePickList() {
+        ctx.askAiCallback = (file, line, problem, text) -> {
+        };
+        List<LogEntry> entries = new ArrayList<>();
+        for (String line : List.of(
+                "2026-10-05 20:14:57.676 ERROR 33838 --- [timer://billing] ocessor.errorhandler.DefaultErrorHandler : "
+                                   + "Failed delivery for (MessageId: 4E93-1). Exhausted after delivery attempt: 1",
+                "Message History",
+                "orders.camel.yaml:34                     billing/throwException2        throwException[]",
+                "Stacktrace",
+                "java.lang.IllegalStateException: No account for customer 42",
+                "\tat org.apache.camel.processor.ThrowExceptionProcessor.process(ThrowExceptionProcessor.java:68)",
+                "2026-10-05 20:14:59.906 ERROR 33838 --- [mer://inventory] orders.camel.yaml:44                     : "
+                                                                                                                    + "Stock is low for item 7")) {
+            entries.add(LogTab.parseLogLine(line));
+        }
+        LogTab tab = new LogTab(ctx);
+        tab.setEntriesForTesting(entries);
+        TuiTestHelper.renderToString(tab, 120, 20);
+
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.F8, KeyModifiers.SHIFT));
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
+
+        assertTrue(rendered.contains("which ERROR"), rendered);
+        assertTrue(rendered.contains("Stock is low for item 7"), rendered);
+        assertTrue(rendered.contains("IllegalStateException: No account for customer 42"), rendered);
     }
 
     @Test
