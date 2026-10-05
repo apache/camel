@@ -18,7 +18,6 @@ package org.apache.camel.component.hibernate;
 
 public final class HibernateConstants {
 
-    public static final String HIBERNATE_QUERY = "CamelHibernateQuery";
     public static final String HIBERNATE_PARAMETERS = "CamelHibernateParameters";
 
     private HibernateConstants() {
