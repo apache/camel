@@ -55,7 +55,8 @@ public class MiloClientConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         this.connection = getEndpoint().createConnection();
-        this.handle = this.connection.monitorValue(this.node, this.samplingInterval, this.queueSize, this::handleValueUpdate);
+        this.handle = this.connection.monitorValue(this.node, this.samplingInterval, this.queueSize,
+                getEndpoint().getMonitorFilterConfiguration(), this::handleValueUpdate);
     }
 
     @Override

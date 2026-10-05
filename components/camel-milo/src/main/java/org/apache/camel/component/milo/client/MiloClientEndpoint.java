@@ -63,8 +63,8 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     /**
      * The sampling interval in milliseconds
      */
-    @UriParam(defaultValue = "0.0")
-    private Double samplingInterval = 0.0;
+    @UriParam(defaultValue = "1000.0")
+    private Double samplingInterval = 1000.0;
 
     /**
      * The queue size used for OPC UA subscriptions. If not set, a queue size of 1 is requested.

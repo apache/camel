@@ -465,9 +465,9 @@ public class MiloClientConfiguration implements Cloneable {
 
     public String toCacheId() {
         if (this.clientId != null && !this.clientId.isEmpty()) {
-            return this.endpointUri + "|" + this.clientId;
+            return this.endpointUri + "|" + this.clientId + "|" + this.requestedPublishingInterval;
         } else {
-            return this.endpointUri;
+            return this.endpointUri + "|" + this.requestedPublishingInterval;
         }
     }
 

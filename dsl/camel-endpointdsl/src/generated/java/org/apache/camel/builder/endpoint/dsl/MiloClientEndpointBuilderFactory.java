@@ -336,7 +336,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Default: 0.0
+         * Default: 1000.0
          * Group: common
          * 
          * @param samplingInterval the value to set
@@ -351,7 +351,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Default: 0.0
+         * Default: 1000.0
          * Group: common
          * 
          * @param samplingInterval the value to set
@@ -1203,7 +1203,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Default: 0.0
+         * Default: 1000.0
          * Group: common
          * 
          * @param samplingInterval the value to set
@@ -1218,7 +1218,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Default: 0.0
+         * Default: 1000.0
          * Group: common
          * 
          * @param samplingInterval the value to set
@@ -1999,7 +1999,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Default: 0.0
+         * Default: 1000.0
          * Group: common
          * 
          * @param samplingInterval the value to set
@@ -2014,7 +2014,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Default: 0.0
+         * Default: 1000.0
          * Group: common
          * 
          * @param samplingInterval the value to set
