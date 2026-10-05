@@ -56,10 +56,13 @@ public class TotalRequestsThrottlerCleanTest extends ContextTestSupport {
 
         // takes a permit, which schedules the clean
         template.sendBody("direct:start", "first");
-        // the clean runs (as if 10 periods had passed) after race looked up the state, but before it takes a permit
+        // the clean runs after race looked up the state, but before it takes a permit
         template.sendBody("direct:start", "race");
 
-        // race took the first permit of the state that replaced the cleaned one, so one more permit is left
+        // race took its permit from the state that replaced the cleaned one, so that state hands out only one more
+        // permit, not a second full set next to the permit race took. The clean runs here while the permit of first
+        // is still delayed (in practice it runs 10 periods later), so first, race and second all pass: this test is
+        // about the permits of the replacement state, not about the per-period limit
         template.sendBody("direct:start", "second");
         Exception e = assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:start", "rejected"));
