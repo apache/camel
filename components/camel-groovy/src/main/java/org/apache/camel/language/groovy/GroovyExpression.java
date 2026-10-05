@@ -100,18 +100,31 @@ public class GroovyExpression extends ExpressionSupport {
             boolean bean = name != null && exchange.getContext().getRegistry().lookupByName(name) != null;
             Object body = exchange.getMessage().getBody();
             // body.find { it.sku == ... } on the payload text iterates its bytes or characters: the body was not
-            // unmarshalled (CAMEL-25330)
-            boolean text = (body instanceof byte[] || body instanceof String) && e.getType() != null
-                    && (e.getType() == Byte.class || e.getType() == Character.class || e.getType() == String.class);
-            String hint = text
-                    ? "the body is still text (a " + (body instanceof byte[] ? "byte[]" : "String")
-                      + "), not parsed data: " + unmarshalHint(exchange, body)
-                    : bean
-                            ? "'" + name + "' is a bean in the registry, not a script variable; use"
-                              + " exchange.getContext().getRegistry().lookupByName('" + name
-                              + "'), or call it from the route with"
-                              + " - bean: {ref: " + name + "}"
-                    : "the script variables are " + SCRIPT_VARIABLES_HINT;
+            // unmarshalled (CAMEL-25330). The same with JSON text in a header: headers.items.find { ... }
+            boolean onText = e.getType() == Byte.class || e.getType() == Character.class || e.getType() == String.class;
+            boolean bodyText = onText && (body instanceof byte[] || body instanceof String);
+            String textHeader = onText && !bodyText ? jsonTextHeader(exchange) : null;
+            String hint;
+            if (bodyText) {
+                hint = "the body is still text (a " + (body instanceof byte[] ? "byte[]" : "String")
+                       + "), not parsed data: " + unmarshalHint(exchange, body);
+            } else if (textHeader != null) {
+                String ref = isIdentifier(textHeader) ? "headers." + textHeader : "headers['" + textHeader + "']";
+                hint = "header '" + textHeader + "' is still JSON text, not parsed data: parse it in the script with"
+                       + " new groovy.json.JsonSlurper().parseText(" + ref + "), or set the header from the body after"
+                       + " unmarshal: json";
+            } else if (onText && !bean) {
+                hint = "the value read here is still text (a " + e.getType().getSimpleName()
+                       + " comes from iterating text), not parsed data: unmarshal it first (unmarshal: json for JSON),"
+                       + " or parse it in the script with new groovy.json.JsonSlurper().parseText(...)";
+            } else if (bean) {
+                hint = "'" + name + "' is a bean in the registry, not a script variable; use"
+                       + " exchange.getContext().getRegistry().lookupByName('" + name
+                       + "'), or call it from the route with"
+                       + " - bean: {ref: " + name + "}";
+            } else {
+                hint = "the script variables are " + SCRIPT_VARIABLES_HINT;
+            }
             throw new groovy.lang.MissingPropertyException(
                     e.getMessageWithoutLocationText() + " (" + hint + ")", name, e.getType());
         }
@@ -401,6 +414,29 @@ public class GroovyExpression extends ExpressionSupport {
             return "csv";
         }
         return null;
+    }
+
+    /** The first header that holds JSON text (a String or byte[] starting with { or [), or null. */
+    private static String jsonTextHeader(Exchange exchange) {
+        for (Map.Entry<String, Object> header : exchange.getMessage().getHeaders().entrySet()) {
+            int first = firstNonBlank(header.getValue());
+            if (first == '{' || first == '[') {
+                return header.getKey();
+            }
+        }
+        return null;
+    }
+
+    private static boolean isIdentifier(String name) {
+        if (name.isEmpty() || !Character.isJavaIdentifierStart(name.charAt(0))) {
+            return false;
+        }
+        for (int i = 1; i < name.length(); i++) {
+            if (!Character.isJavaIdentifierPart(name.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static int firstNonBlank(Object body) {
