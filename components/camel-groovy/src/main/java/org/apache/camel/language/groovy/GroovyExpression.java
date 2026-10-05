@@ -21,6 +21,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -103,7 +104,7 @@ public class GroovyExpression extends ExpressionSupport {
                     && (e.getType() == Byte.class || e.getType() == Character.class || e.getType() == String.class);
             String hint = text
                     ? "the body is still text (a " + (body instanceof byte[] ? "byte[]" : "String")
-                      + "), not parsed data: unmarshal it first (unmarshal: json for JSON) to read its fields"
+                      + "), not parsed data: " + unmarshalHint(exchange, body)
                     : bean
                             ? "'" + name + "' is a bean in the registry, not a script variable; use"
                               + " exchange.getContext().getRegistry().lookupByName('" + name
@@ -348,5 +349,56 @@ public class GroovyExpression extends ExpressionSupport {
                     return null;
             }
         }
+    }
+
+    /**
+     * Which data format turns the payload text into data, from the Content-Type, the file name, or the first character
+     * of the text; the generic advice when none of them tells.
+     */
+    static String unmarshalHint(Exchange exchange, Object body) {
+        String format = null;
+        String type = exchange.getMessage().getHeader(Exchange.CONTENT_TYPE, String.class);
+        String file = exchange.getMessage().getHeader(Exchange.FILE_NAME, String.class);
+        String probe = ((type != null ? type : "") + " " + (file != null ? file : "")).toLowerCase(Locale.ROOT);
+        if (probe.contains("json")) {
+            format = "json";
+        } else if (probe.contains("xml")) {
+            format = "xml";
+        } else if (probe.contains("csv")) {
+            format = "csv";
+        } else {
+            int first = firstNonBlank(body);
+            if (first == '{' || first == '[') {
+                format = "json";
+            } else if (first == '<') {
+                format = "xml";
+            }
+        }
+        if ("json".equals(format)) {
+            return "unmarshal it first (unmarshal: json) to read its fields";
+        } else if ("xml".equals(format)) {
+            return "unmarshal it first (unmarshal: jacksonXml) to read its fields, or read them with xpath";
+        } else if ("csv".equals(format)) {
+            return "unmarshal it first (unmarshal: csv) to read its rows: a List of rows, or a Map per row with"
+                   + " useMaps: true";
+        }
+        return "unmarshal it first with the data format of the payload (json, jacksonXml, csv, ...) to read its fields";
+    }
+
+    private static int firstNonBlank(Object body) {
+        if (body instanceof byte[] bytes) {
+            for (int i = 0; i < bytes.length && i < 256; i++) {
+                if (!Character.isWhitespace(bytes[i])) {
+                    return bytes[i];
+                }
+            }
+        } else if (body instanceof String text) {
+            for (int i = 0; i < text.length() && i < 256; i++) {
+                if (!Character.isWhitespace(text.charAt(i))) {
+                    return text.charAt(i);
+                }
+            }
+        }
+        return -1;
     }
 }

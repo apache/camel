@@ -17,6 +17,7 @@
 package org.apache.camel.processor.groovy;
 
 import groovy.lang.MissingPropertyException;
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -68,6 +69,32 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
                 () -> template.sendBodyAndHeader("direct:field", "[{\"sku\": \"A1\"}]", "sku", "A1"));
         MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
         assertTrue(cause.getMessage().contains("the body is still text (a String)"), cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnXmlTextSaysJacksonXml() {
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("direct:field", "<order><sku>A1</sku></order>", "sku", "A1"));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("unmarshal: jacksonXml"), cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnCsvFileSaysCsv() {
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeaders("direct:field", "sku,qty\nA1,2".getBytes(),
+                        java.util.Map.of("sku", "A1", Exchange.FILE_NAME, "orders.csv")));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("unmarshal: csv"), cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnUnknownTextNamesTheChoices() {
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("direct:field", "sku=A1", "sku", "A1"));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("the data format of the payload (json, jacksonXml, csv, ...)"),
+                cause.getMessage());
     }
 
     @Test
