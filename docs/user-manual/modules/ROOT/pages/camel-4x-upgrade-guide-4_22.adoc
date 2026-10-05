@@ -13,6 +13,24 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.1 to 4.22.2
 
+=== camel-azure-eventhubs
+
+The producer now leaves the Camel-internal headers (`Camel*`) out of the `EventData` application properties by
+default. The 4.22.0 upgrade guide already announced this, but the filter was not installed, so 4.22.0 and 4.22.1 still
+copied every header. Configure a custom `headerFilterStrategy` on the component
+to change which headers are sent.
+
+A route that consumes from one Event Hub and produces to another no longer fails, or ignores the producer
+configuration, because of the `CamelAzureEventHubsPartitionKey` and `CamelAzureEventHubsPartitionId` headers that the
+consumer sets. Such a route used to fail with `Both partitionKey and partitionId are set` for every event with a
+partition key, and for every event when `partitionKey` was configured, and a configured `partitionId` was replaced by
+the partition the event was received from. The producer now picks the partition from, in this order: a partition
+header set by the route, the `partitionKey` or `partitionId` endpoint option, and the partition key of the received
+event. It no longer reuses the partition id of the received event, so an event without a partition key is no longer
+sent to the partition with the same id in the target Event Hub. To keep doing so, for example when mirroring between
+Event Hubs that have the same partitions, remove the `CamelAzureEventHubsReceivedPartitionId` exchange property before
+the producer.
+
 === camel-xslt and camel-xslt-saxon - implicit DOM sources
 
 When a non-`Source` input is implicitly converted to a `DOMSource` pointing at its owner document's
@@ -1655,6 +1673,9 @@ case-insensitively) are no longer forwarded to Azure Event Hubs, consistent with
 filtering performed by other components.
 
 Ordinary application headers are unaffected.
+
+NOTE: The filter was not installed in 4.22.0 and 4.22.1, so the producer still copied every header. It is
+applied from 4.22.2, see the 4.22.2 entry for `camel-azure-eventhubs` (CAMEL-25227).
 
 === camel-azure-storage-datalake - openInputStream no longer uses Blob Query API
 
