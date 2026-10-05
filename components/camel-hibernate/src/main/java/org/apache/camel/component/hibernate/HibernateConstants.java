@@ -23,8 +23,7 @@ public final class HibernateConstants {
     @Metadata(description = "Map of named parameters to bind to the Hibernate query.", label = "producer")
     public static final String HIBERNATE_PARAMETERS = "CamelHibernateParameters";
 
-    @Metadata(description = "The Hibernate Session associated with the current exchange.", label = "consumer,producer")
-    public static final String HIBERNATE_SESSION = "CamelHibernateSession";
+    static final String HIBERNATE_SESSION_CONTEXT = "CamelHibernateSessionContext";
 
     private HibernateConstants() {
     }

@@ -38,6 +38,7 @@
         <label>database</label>
         <hibernate8-version>8.0.0.Beta3</hibernate8-version>
         <jakarta-persistence4-api-version>4.0.0-M7</jakarta-persistence4-api-version>
+        <h2-version>2.5.252</h2-version>
     </properties>
 
     <dependencies>
@@ -68,6 +69,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <version>${h2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
