@@ -17,6 +17,7 @@
 package org.apache.camel.component.hibernate;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
@@ -108,26 +109,28 @@ public class HibernateProducer extends DefaultProducer {
 
                 if (endpoint.isStreaming()) {
                     if (sessionOwned) {
+                        AtomicBoolean streamingSessionClosed = new AtomicBoolean();
+
                         exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                             @Override
                             public void onComplete(Exchange exchange) {
-                                closeStreamingSession(activeSession, transaction, false);
+                                closeStreamingSession(
+                                        activeSession, transaction, false, streamingSessionClosed);
                             }
 
                             @Override
                             public void onFailure(Exchange exchange) {
-                                closeStreamingSession(activeSession, transaction, true);
+                                closeStreamingSession(
+                                        activeSession, transaction, true, streamingSessionClosed);
                             }
                         });
-                    }
 
-                    Stream<?> stream = query.getResultStream();
-
-                    if (sessionOwned) {
+                        Stream<?> stream = query.getResultStream();
                         exchange.getMessage().setBody(stream.onClose(
-                                () -> closeStreamingSession(activeSession, transaction, false)));
+                                () -> closeStreamingSession(
+                                        activeSession, transaction, false, streamingSessionClosed)));
                     } else {
-                        exchange.getMessage().setBody(stream);
+                        exchange.getMessage().setBody(query.getResultStream());
                     }
 
                     return;
@@ -164,7 +167,13 @@ public class HibernateProducer extends DefaultProducer {
         }
     }
 
-    private void closeStreamingSession(Session session, Transaction transaction, boolean rollback) {
+    private void closeStreamingSession(
+            Session session, Transaction transaction, boolean rollback, AtomicBoolean closed) {
+
+        if (!closed.compareAndSet(false, true)) {
+            return;
+        }
+
         try {
             if (transaction.isActive()) {
                 if (rollback) {
@@ -192,13 +201,13 @@ public class HibernateProducer extends DefaultProducer {
             try {
                 Object body = exchange.getMessage().getBody();
 
-                if ("insert".equals(endpoint.getStatelessOperation())) {
-                    session.insert(body);
-                } else if ("upsert".equals(endpoint.getStatelessOperation())) {
-                    session.upsert(body);
-                } else {
-                    throw new IllegalArgumentException(
-                            "Invalid statelessOperation: " + endpoint.getStatelessOperation());
+                switch (endpoint.getStatelessOperation()) {
+                    case INSERT:
+                        session.insert(body);
+                        break;
+                    case UPSERT:
+                        session.upsert(body);
+                        break;
                 }
 
                 transaction.commit();

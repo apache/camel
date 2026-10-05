@@ -72,7 +72,7 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "statelessoperation":
-        case "statelessOperation": target.setStatelessOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "statelessOperation": target.setStatelessOperation(property(camelContext, org.apache.camel.component.hibernate.HibernateEndpoint.StatelessOperation.class, value)); return true;
         case "streaming": target.setStreaming(property(camelContext, boolean.class, value)); return true;
         case "tenantidentifier":
         case "tenantIdentifier": target.setTenantIdentifier(property(camelContext, java.lang.String.class, value)); return true;
@@ -136,7 +136,7 @@ public class HibernateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "statelessoperation":
-        case "statelessOperation": return java.lang.String.class;
+        case "statelessOperation": return org.apache.camel.component.hibernate.HibernateEndpoint.StatelessOperation.class;
         case "streaming": return boolean.class;
         case "tenantidentifier":
         case "tenantIdentifier": return java.lang.String.class;
