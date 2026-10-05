@@ -36,6 +36,8 @@
     <properties>
         <firstVersion>4.23.0</firstVersion>
         <label>database</label>
+        <hibernate8-version>8.0.0.Beta3</hibernate8-version>
+        <jakarta-persistence4-api-version>4.0.0-M7</jakarta-persistence4-api-version>
     </properties>
 
     <dependencies>
@@ -50,7 +52,6 @@
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate8-version}</version>
         </dependency>
-
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>

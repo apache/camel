@@ -555,6 +555,49 @@ public class HibernateBootstrapTest extends CamelTestSupport {
         Mockito.verify(session).close();
     }
 
+    @Test
+    void shouldContinueAfterProcessorFailure() throws Exception {
+        SessionFactory sessionFactory = Mockito.mock(SessionFactory.class);
+        Session session = Mockito.mock(Session.class);
+        Transaction transaction = Mockito.mock(Transaction.class);
+
+        @SuppressWarnings("unchecked")
+        SelectionQuery<HibernateTestEntity> query = Mockito.mock(SelectionQuery.class);
+
+        HibernateTestEntity entity1 = new HibernateTestEntity();
+        HibernateTestEntity entity2 = new HibernateTestEntity();
+        HibernateTestEntity entity3 = new HibernateTestEntity();
+
+        Mockito.when(sessionFactory.openSession()).thenReturn(session);
+        Mockito.when(session.beginTransaction()).thenReturn(transaction);
+        Mockito.when(session.createSelectionQuery(
+                "from HibernateTestEntity", HibernateTestEntity.class)).thenReturn(query);
+        Mockito.when(query.getResultList()).thenReturn(List.of(entity1, entity2, entity3));
+
+        List<HibernateTestEntity> processed = new java.util.ArrayList<>();
+
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            HibernateEndpoint endpoint = new HibernateEndpoint();
+            endpoint.setCamelContext(context);
+            endpoint.setSessionFactory(sessionFactory);
+            endpoint.setEntityType(HibernateTestEntity.class);
+            endpoint.setSelectionQuery("from HibernateTestEntity");
+
+            HibernateConsumer consumer = new HibernateConsumer(endpoint, exchange -> {
+                HibernateTestEntity entity = exchange.getMessage().getBody(HibernateTestEntity.class);
+                if (entity == entity2) {
+                    throw new IllegalStateException("poison row");
+                }
+                processed.add(entity);
+            });
+
+            assertEquals(3, consumer.poll());
+        }
+
+        assertEquals(List.of(entity1, entity3), processed);
+        Mockito.verify(transaction).commit();
+    }
+
     private HibernateComponent createComponent(String dataSourceName, String url, Class<?>... entityClasses)
             throws Exception {
         JdbcDataSource ds = new JdbcDataSource();

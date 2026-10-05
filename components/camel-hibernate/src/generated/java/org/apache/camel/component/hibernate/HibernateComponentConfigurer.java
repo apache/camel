@@ -29,8 +29,6 @@ public class HibernateComponentConfigurer extends PropertyConfigurerSupport impl
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "datasource":
         case "dataSource": target.setDataSource(property(camelContext, java.lang.Object.class, value)); return true;
-        case "entityclasses":
-        case "entityClasses": target.setEntityClasses(property(camelContext, java.lang.Class[].class, value)); return true;
         case "hibernateproperties":
         case "hibernateProperties": target.setHibernateProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "lazystartproducer":
@@ -52,8 +50,6 @@ public class HibernateComponentConfigurer extends PropertyConfigurerSupport impl
         case "bridgeErrorHandler": return boolean.class;
         case "datasource":
         case "dataSource": return java.lang.Object.class;
-        case "entityclasses":
-        case "entityClasses": return java.lang.Class[].class;
         case "hibernateproperties":
         case "hibernateProperties": return java.util.Map.class;
         case "lazystartproducer":
@@ -76,8 +72,6 @@ public class HibernateComponentConfigurer extends PropertyConfigurerSupport impl
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "datasource":
         case "dataSource": return target.getDataSource();
-        case "entityclasses":
-        case "entityClasses": return target.getEntityClasses();
         case "hibernateproperties":
         case "hibernateProperties": return target.getHibernateProperties();
         case "lazystartproducer":
