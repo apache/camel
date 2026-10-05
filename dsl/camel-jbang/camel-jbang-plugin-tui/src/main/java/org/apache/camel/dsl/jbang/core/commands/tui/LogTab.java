@@ -509,13 +509,18 @@ class LogTab extends AbstractTab {
             hint(spans, "l", "level");
         }
         hint(spans, "f", "follow" + (followMode ? " [on]" : " [off]"));
-        if (ctx.askAiCallback != null && hasErrorInView()) {
-            hint(spans, "Shift+F8", "fix with AI");
-        }
         if (ctx.logPinned) {
             hint(spans, "Ctrl+L", "pin (" + ctx.logPinPercent + "%)");
         } else {
             hint(spans, "Ctrl+L", "pin");
+        }
+    }
+
+    @Override
+    public void renderFKeyHints(List<Span> spans) {
+        // with the global F-keys, as in the Source and Errors tabs; not while a pick list is open
+        if (!showErrorPickPopup && !showLogLevelPopup && ctx.askAiCallback != null && hasErrorInView()) {
+            hint(spans, "Shift+F8", "fix with AI");
         }
     }
 
