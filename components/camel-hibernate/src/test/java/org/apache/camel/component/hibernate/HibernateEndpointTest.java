@@ -62,7 +62,7 @@ class HibernateEndpointTest {
     @Test
     void shouldStartWithStatelessInsert() throws Exception {
         HibernateEndpoint endpoint = createEndpoint();
-        endpoint.setStatelessOperation("insert");
+        endpoint.setStatelessOperation(HibernateEndpoint.StatelessOperation.INSERT);
 
         assertDoesNotThrow(endpoint::start);
 
@@ -72,7 +72,7 @@ class HibernateEndpointTest {
     @Test
     void shouldStartWithStatelessUpsert() throws Exception {
         HibernateEndpoint endpoint = createEndpoint();
-        endpoint.setStatelessOperation("upsert");
+        endpoint.setStatelessOperation(HibernateEndpoint.StatelessOperation.UPSERT);
 
         assertDoesNotThrow(endpoint::start);
 
@@ -91,14 +91,6 @@ class HibernateEndpointTest {
     @Test
     void shouldRejectNoOperation() {
         HibernateEndpoint endpoint = createEndpoint();
-
-        assertThrows(IllegalArgumentException.class, endpoint::start);
-    }
-
-    @Test
-    void shouldRejectInvalidStatelessOperation() {
-        HibernateEndpoint endpoint = createEndpoint();
-        endpoint.setStatelessOperation("delete");
 
         assertThrows(IllegalArgumentException.class, endpoint::start);
     }
