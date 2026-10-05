@@ -53,7 +53,7 @@ public class ConstantWithSimpleTest {
                 """;
         assertThat(lines(yaml)).singleElement().satisfies(m -> {
             assertThat(m).startsWith("Line 10: ");
-            assertThat(m).contains("constant: ${header.sku} is not evaluated, a constant is used as written");
+            assertThat(m).contains("/constant: ${header.sku} is not evaluated, a constant is used as written");
             assertThat(m).contains("use simple: {expression: \"{'error': 'unknown sku ${header.sku}'}\"}");
         });
     }
@@ -70,7 +70,7 @@ public class ConstantWithSimpleTest {
                             constant: "Hello ${body}"
                 """;
         assertThat(lines(yaml)).singleElement()
-                .satisfies(m -> assertThat(m).contains("constant: ${body} is not evaluated"));
+                .satisfies(m -> assertThat(m).contains("/constant: ${body} is not evaluated"));
     }
 
     @Test

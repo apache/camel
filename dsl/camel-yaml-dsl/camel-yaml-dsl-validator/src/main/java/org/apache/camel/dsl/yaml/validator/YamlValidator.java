@@ -875,7 +875,7 @@ public class YamlValidator {
                     .instanceLocation(path)
                     .messageKey("type")
                     .format(new MessageFormat("{0}"))
-                    .arguments("constant: " + m.group() + " is not evaluated, a constant is used as written: use simple:"
+                    .arguments(m.group() + " is not evaluated, a constant is used as written: use simple:"
                                + " {expression: \"" + text.replace("\"", "'") + "\"} for a value with expressions")
                     .build());
         }
