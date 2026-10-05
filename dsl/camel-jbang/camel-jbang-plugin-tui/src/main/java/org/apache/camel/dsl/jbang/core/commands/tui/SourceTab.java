@@ -487,6 +487,9 @@ class SourceTab extends AbstractTab {
         if (!fileActionsPopup.isVisible() && !(focusOnViewer && sourceViewer.isVisible())) {
             TuiHelper.hint(spans, "F12", "file actions");
         }
+        if (focusOnViewer && sourceViewer.showsFixWithAiHint()) {
+            TuiHelper.hint(spans, "Shift+F8", "fix with AI");
+        }
     }
 
     @Override

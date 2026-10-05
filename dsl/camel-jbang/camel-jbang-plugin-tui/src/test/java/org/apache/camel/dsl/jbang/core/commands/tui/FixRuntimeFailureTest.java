@@ -132,6 +132,16 @@ class FixRuntimeFailureTest {
     }
 
     @Test
+    void theHintShowsOnAFailingLineOfTheView() throws Exception {
+        SourceViewer viewer = viewer(routeFile(), 3);
+        viewer.goToLine(TO_LINE);
+        assertThat(viewer.showsFixWithAiHint()).isTrue();
+
+        viewer.goToLine(TO_LINE + 2);
+        assertThat(viewer.showsFixWithAiHint()).isFalse();
+    }
+
+    @Test
     void aLineWithoutFailuresAsksNothing() throws Exception {
         SourceViewer viewer = viewer(routeFile(), 3);
         viewer.goToLine(TO_LINE + 2);

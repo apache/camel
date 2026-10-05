@@ -2168,6 +2168,14 @@ class SourceViewer {
         return !markdownMode && (currentFormat == null || currentFormat.equals(originalFormat));
     }
 
+    /**
+     * Whether the view shows the fix with AI hint (Shift+F8) for the selected line: the Source tab puts it with the
+     * global F-keys.
+     */
+    boolean showsFixWithAiHint() {
+        return visible && !editMode && showsOwnSource() && canAskAiToFix(selectedLine, viewErrors);
+    }
+
     /** Whether Shift+F8 (fix with AI) has something to ask about on a 0-based line: a problem, or a runtime failure. */
     private boolean canAskAiToFix(int row, Map<Integer, String> problems) {
         return askAi != null && editableFile != null && row >= 0
@@ -3105,9 +3113,6 @@ class SourceViewer {
         }
         if (!viewErrors.isEmpty()) {
             TuiHelper.hint(spans, "F9", "next problem");
-        }
-        if (showsOwnSource() && canAskAiToFix(selectedLine, viewErrors)) {
-            TuiHelper.hint(spans, "Shift+F8", "fix with AI");
         }
         if (isMarkdownFile || currentRouteId != null) {
             TuiHelper.hint(spans, "Space", "format");

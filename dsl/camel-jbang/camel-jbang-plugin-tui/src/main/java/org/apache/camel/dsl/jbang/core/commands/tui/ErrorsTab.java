@@ -465,9 +465,6 @@ class ErrorsTab extends AbstractTableTab {
             diagram.renderFooterHints(spans);
             return;
         }
-        if (ctx.askAiCallback != null && selectedError() != null) {
-            hint(spans, "Shift+F8", "fix with AI");
-        }
         hint(spans, "Esc", "back");
         hint(spans, "PgUp/Dn", "detail");
         if (!wordWrap) {
@@ -476,6 +473,14 @@ class ErrorsTab extends AbstractTableTab {
         hint(spans, "Home/End", "top/end");
         hint(spans, "s", "sort");
         hintShowBhpv(spans, showBody, showHeaders, showProperties, showVariables);
+    }
+
+    @Override
+    public void renderFKeyHints(List<Span> spans) {
+        // with the global F-keys (after Esc back), as fix with AI is an F-key of every screen that has it
+        if (!diagram.isShowDiagram() && ctx.askAiCallback != null && selectedError() != null) {
+            hint(spans, "Shift+F8", "fix with AI");
+        }
     }
 
     /** The error selected in the table, or null. */
