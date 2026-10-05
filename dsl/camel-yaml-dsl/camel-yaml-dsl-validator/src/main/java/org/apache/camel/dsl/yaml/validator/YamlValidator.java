@@ -783,17 +783,29 @@ public class YamlValidator {
      * call to a method named $ and jsonpath as an invalid path. Says which language it is and how to write it there.
      */
     void checkSimpleSyntaxInScripts(JsonNode node, NodePath path, List<Error> errors) {
+        checkSimpleSyntaxInScripts(node, path, errors, false);
+    }
+
+    /**
+     * @param template inside a step that sets a template, such as setHeader CamelVelocityTemplate: its constant is
+     *                 template text with the template engine's own ${...}, not simple
+     */
+    private void checkSimpleSyntaxInScripts(JsonNode node, NodePath path, List<Error> errors, boolean template) {
         if (node == null) {
             return;
         }
         if (node.isArray()) {
             for (int i = 0; i < node.size(); i++) {
-                checkSimpleSyntaxInScripts(node.get(i), path.append(i), errors);
+                checkSimpleSyntaxInScripts(node.get(i), path.append(i), errors, template);
             }
             return;
         }
         if (!node.isObject()) {
             return;
+        }
+        if (node.has("name") && node.get("name").isTextual()
+                && node.get("name").asText().toLowerCase(Locale.ROOT).contains("template")) {
+            template = true;
         }
         var fields = node.fieldNames();
         while (fields.hasNext()) {
@@ -832,7 +844,40 @@ public class YamlValidator {
                                    + "\"}")
                         .build());
             }
-            checkSimpleSyntaxInScripts(value, path.append(name), errors);
+            if ("constant".equals(name) && !template) {
+                checkConstantWithSimple(value, path.append(name), errors);
+            }
+            checkSimpleSyntaxInScripts(value, path.append(name), errors, template);
+        }
+    }
+
+    /** A simple function in a constant: ${header.sku}, ${body}, ${exchangeProperty.x}, ${date:now:...}. */
+    private static final Pattern SIMPLE_FUNCTION = Pattern.compile("\\$\\{[a-z][^}]*}");
+
+    /**
+     * A constant is used as written, so ${header.sku} in it stays the literal text ${header.sku}. Only simple evaluates
+     * it (the error message in an otherwise right route reads "unknown sku ${header.sku}").
+     */
+    private static void checkConstantWithSimple(JsonNode value, NodePath path, List<Error> errors) {
+        String text = null;
+        if (value.isTextual()) {
+            text = value.asText();
+        } else if (value.isObject() && value.has("expression") && value.get("expression").isTextual()) {
+            text = value.get("expression").asText();
+        }
+        if (text == null || text.startsWith("resource:")) {
+            return;
+        }
+        Matcher m = SIMPLE_FUNCTION.matcher(text);
+        if (m.find()) {
+            errors.add(Error.builder()
+                    .keyword("type")
+                    .instanceLocation(path)
+                    .messageKey("type")
+                    .format(new MessageFormat("{0}"))
+                    .arguments("constant: " + m.group() + " is not evaluated, a constant is used as written: use simple:"
+                               + " {expression: \"" + text.replace("\"", "'") + "\"} for a value with expressions")
+                    .build());
         }
     }
 
