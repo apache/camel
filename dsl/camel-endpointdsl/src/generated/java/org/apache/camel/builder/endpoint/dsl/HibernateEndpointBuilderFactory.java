@@ -44,44 +44,11 @@ public interface HibernateEndpointBuilderFactory {
             return (AdvancedHibernateEndpointConsumerBuilder) this;
         }
         /**
-         * Hibernate filters and their parameter values.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.util.Map&lt;java.lang.String, java.lang.Object&gt;&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param filters the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointConsumerBuilder filters(Map<java.lang.String, java.util.Map<java.lang.String, java.lang.Object>> filters) {
-            doSetProperty("filters", filters);
-            return this;
-        }
-        /**
-         * Hibernate filters and their parameter values.
-         * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String,
-         * java.util.Map&lt;java.lang.String, java.lang.Object&gt;&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param filters the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointConsumerBuilder filters(String filters) {
-            doSetProperty("filters", filters);
-            return this;
-        }
-        /**
          * The maximum number of entities to retrieve in a single poll.
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @param maximumResults the value to set
          * @return the dsl builder
@@ -95,194 +62,13 @@ public interface HibernateEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @param maximumResults the value to set
          * @return the dsl builder
          */
         default HibernateEndpointConsumerBuilder maximumResults(String maximumResults) {
             doSetProperty("maximumResults", maximumResults);
-            return this;
-        }
-        /**
-         * The HQL mutation query to execute.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param mutationQuery the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointConsumerBuilder mutationQuery(String mutationQuery) {
-            doSetProperty("mutationQuery", mutationQuery);
-            return this;
-        }
-        /**
-         * The natural-id property values used for lookup.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * 
-         * Group: common
-         * 
-         * @param naturalIdParameters the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointConsumerBuilder naturalIdParameters(Map<java.lang.String, java.lang.Object> naturalIdParameters) {
-            doSetProperty("naturalIdParameters", naturalIdParameters);
-            return this;
-        }
-        /**
-         * The natural-id property values used for lookup.
-         * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param naturalIdParameters the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointConsumerBuilder naturalIdParameters(String naturalIdParameters) {
-            doSetProperty("naturalIdParameters", naturalIdParameters);
-            return this;
-        }
-        /**
-         * Whether the Hibernate session and selection query should be
-         * read-only.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param readOnly the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointConsumerBuilder readOnly(boolean readOnly) {
-            doSetProperty("readOnly", readOnly);
-            return this;
-        }
-        /**
-         * Whether the Hibernate session and selection query should be
-         * read-only.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param readOnly the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointConsumerBuilder readOnly(String readOnly) {
-            doSetProperty("readOnly", readOnly);
-            return this;
-        }
-        /**
-         * The HQL selection query to execute.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param selectionQuery the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointConsumerBuilder selectionQuery(String selectionQuery) {
-            doSetProperty("selectionQuery", selectionQuery);
-            return this;
-        }
-        /**
-         * Whether the consumer should skip rows that are already locked by
-         * another consumer.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param skipLocked the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointConsumerBuilder skipLocked(boolean skipLocked) {
-            doSetProperty("skipLocked", skipLocked);
-            return this;
-        }
-        /**
-         * Whether the consumer should skip rows that are already locked by
-         * another consumer.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param skipLocked the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointConsumerBuilder skipLocked(String skipLocked) {
-            doSetProperty("skipLocked", skipLocked);
-            return this;
-        }
-        /**
-         * Stateless operation to perform: insert or upsert.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param statelessOperation the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointConsumerBuilder statelessOperation(String statelessOperation) {
-            doSetProperty("statelessOperation", statelessOperation);
-            return this;
-        }
-        /**
-         * Whether selection query results should be returned as a stream.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param streaming the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointConsumerBuilder streaming(boolean streaming) {
-            doSetProperty("streaming", streaming);
-            return this;
-        }
-        /**
-         * Whether selection query results should be returned as a stream.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param streaming the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointConsumerBuilder streaming(String streaming) {
-            doSetProperty("streaming", streaming);
-            return this;
-        }
-        /**
-         * The tenant identifier used to create the Hibernate session.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param tenantIdentifier the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointConsumerBuilder tenantIdentifier(String tenantIdentifier) {
-            doSetProperty("tenantIdentifier", tenantIdentifier);
             return this;
         }
         /**
@@ -315,6 +101,38 @@ public interface HibernateEndpointBuilderFactory {
          */
         default HibernateEndpointConsumerBuilder sendEmptyMessageWhenIdle(String sendEmptyMessageWhenIdle) {
             doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * Whether the consumer should skip rows that are already locked by
+         * another consumer.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param skipLocked the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointConsumerBuilder skipLocked(boolean skipLocked) {
+            doSetProperty("skipLocked", skipLocked);
+            return this;
+        }
+        /**
+         * Whether the consumer should skip rows that are already locked by
+         * another consumer.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param skipLocked the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointConsumerBuilder skipLocked(String skipLocked) {
+            doSetProperty("skipLocked", skipLocked);
             return this;
         }
         /**
@@ -951,72 +769,11 @@ public interface HibernateEndpointBuilderFactory {
         }
 
         /**
-         * Hibernate filters and their parameter values.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.util.Map&lt;java.lang.String, java.lang.Object&gt;&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param filters the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointProducerBuilder filters(Map<java.lang.String, java.util.Map<java.lang.String, java.lang.Object>> filters) {
-            doSetProperty("filters", filters);
-            return this;
-        }
-        /**
-         * Hibernate filters and their parameter values.
-         * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String,
-         * java.util.Map&lt;java.lang.String, java.lang.Object&gt;&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param filters the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointProducerBuilder filters(String filters) {
-            doSetProperty("filters", filters);
-            return this;
-        }
-        /**
-         * The maximum number of entities to retrieve in a single poll.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         * 
-         * @param maximumResults the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointProducerBuilder maximumResults(int maximumResults) {
-            doSetProperty("maximumResults", maximumResults);
-            return this;
-        }
-        /**
-         * The maximum number of entities to retrieve in a single poll.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         * 
-         * @param maximumResults the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointProducerBuilder maximumResults(String maximumResults) {
-            doSetProperty("maximumResults", maximumResults);
-            return this;
-        }
-        /**
          * The HQL mutation query to execute.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param mutationQuery the value to set
          * @return the dsl builder
@@ -1031,7 +788,7 @@ public interface HibernateEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param naturalIdParameters the value to set
          * @return the dsl builder
@@ -1047,7 +804,7 @@ public interface HibernateEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param naturalIdParameters the value to set
          * @return the dsl builder
@@ -1057,89 +814,11 @@ public interface HibernateEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the Hibernate session and selection query should be
-         * read-only.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param readOnly the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointProducerBuilder readOnly(boolean readOnly) {
-            doSetProperty("readOnly", readOnly);
-            return this;
-        }
-        /**
-         * Whether the Hibernate session and selection query should be
-         * read-only.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param readOnly the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointProducerBuilder readOnly(String readOnly) {
-            doSetProperty("readOnly", readOnly);
-            return this;
-        }
-        /**
-         * The HQL selection query to execute.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param selectionQuery the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointProducerBuilder selectionQuery(String selectionQuery) {
-            doSetProperty("selectionQuery", selectionQuery);
-            return this;
-        }
-        /**
-         * Whether the consumer should skip rows that are already locked by
-         * another consumer.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param skipLocked the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointProducerBuilder skipLocked(boolean skipLocked) {
-            doSetProperty("skipLocked", skipLocked);
-            return this;
-        }
-        /**
-         * Whether the consumer should skip rows that are already locked by
-         * another consumer.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param skipLocked the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointProducerBuilder skipLocked(String skipLocked) {
-            doSetProperty("skipLocked", skipLocked);
-            return this;
-        }
-        /**
          * Stateless operation to perform: insert or upsert.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param statelessOperation the value to set
          * @return the dsl builder
@@ -1154,7 +833,7 @@ public interface HibernateEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: common
+         * Group: producer
          * 
          * @param streaming the value to set
          * @return the dsl builder
@@ -1169,27 +848,13 @@ public interface HibernateEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: common
+         * Group: producer
          * 
          * @param streaming the value to set
          * @return the dsl builder
          */
         default HibernateEndpointProducerBuilder streaming(String streaming) {
             doSetProperty("streaming", streaming);
-            return this;
-        }
-        /**
-         * The tenant identifier used to create the Hibernate session.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param tenantIdentifier the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointProducerBuilder tenantIdentifier(String tenantIdentifier) {
-            doSetProperty("tenantIdentifier", tenantIdentifier);
             return this;
         }
     }
@@ -1261,248 +926,6 @@ public interface HibernateEndpointBuilderFactory {
             return (AdvancedHibernateEndpointBuilder) this;
         }
 
-        /**
-         * Hibernate filters and their parameter values.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.util.Map&lt;java.lang.String, java.lang.Object&gt;&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param filters the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder filters(Map<java.lang.String, java.util.Map<java.lang.String, java.lang.Object>> filters) {
-            doSetProperty("filters", filters);
-            return this;
-        }
-        /**
-         * Hibernate filters and their parameter values.
-         * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String,
-         * java.util.Map&lt;java.lang.String, java.lang.Object&gt;&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param filters the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder filters(String filters) {
-            doSetProperty("filters", filters);
-            return this;
-        }
-        /**
-         * The maximum number of entities to retrieve in a single poll.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         * 
-         * @param maximumResults the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder maximumResults(int maximumResults) {
-            doSetProperty("maximumResults", maximumResults);
-            return this;
-        }
-        /**
-         * The maximum number of entities to retrieve in a single poll.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         * 
-         * @param maximumResults the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder maximumResults(String maximumResults) {
-            doSetProperty("maximumResults", maximumResults);
-            return this;
-        }
-        /**
-         * The HQL mutation query to execute.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param mutationQuery the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder mutationQuery(String mutationQuery) {
-            doSetProperty("mutationQuery", mutationQuery);
-            return this;
-        }
-        /**
-         * The natural-id property values used for lookup.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * 
-         * Group: common
-         * 
-         * @param naturalIdParameters the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder naturalIdParameters(Map<java.lang.String, java.lang.Object> naturalIdParameters) {
-            doSetProperty("naturalIdParameters", naturalIdParameters);
-            return this;
-        }
-        /**
-         * The natural-id property values used for lookup.
-         * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param naturalIdParameters the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder naturalIdParameters(String naturalIdParameters) {
-            doSetProperty("naturalIdParameters", naturalIdParameters);
-            return this;
-        }
-        /**
-         * Whether the Hibernate session and selection query should be
-         * read-only.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param readOnly the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder readOnly(boolean readOnly) {
-            doSetProperty("readOnly", readOnly);
-            return this;
-        }
-        /**
-         * Whether the Hibernate session and selection query should be
-         * read-only.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param readOnly the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder readOnly(String readOnly) {
-            doSetProperty("readOnly", readOnly);
-            return this;
-        }
-        /**
-         * The HQL selection query to execute.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param selectionQuery the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder selectionQuery(String selectionQuery) {
-            doSetProperty("selectionQuery", selectionQuery);
-            return this;
-        }
-        /**
-         * Whether the consumer should skip rows that are already locked by
-         * another consumer.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param skipLocked the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder skipLocked(boolean skipLocked) {
-            doSetProperty("skipLocked", skipLocked);
-            return this;
-        }
-        /**
-         * Whether the consumer should skip rows that are already locked by
-         * another consumer.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param skipLocked the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder skipLocked(String skipLocked) {
-            doSetProperty("skipLocked", skipLocked);
-            return this;
-        }
-        /**
-         * Stateless operation to perform: insert or upsert.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param statelessOperation the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder statelessOperation(String statelessOperation) {
-            doSetProperty("statelessOperation", statelessOperation);
-            return this;
-        }
-        /**
-         * Whether selection query results should be returned as a stream.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param streaming the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder streaming(boolean streaming) {
-            doSetProperty("streaming", streaming);
-            return this;
-        }
-        /**
-         * Whether selection query results should be returned as a stream.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param streaming the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder streaming(String streaming) {
-            doSetProperty("streaming", streaming);
-            return this;
-        }
-        /**
-         * The tenant identifier used to create the Hibernate session.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param tenantIdentifier the value to set
-         * @return the dsl builder
-         */
-        default HibernateEndpointBuilder tenantIdentifier(String tenantIdentifier) {
-            doSetProperty("tenantIdentifier", tenantIdentifier);
-            return this;
-        }
     }
 
     /**
@@ -1519,6 +942,19 @@ public interface HibernateEndpointBuilderFactory {
     }
 
     public interface HibernateBuilders {
+        /**
+         * Hibernate (camel-hibernate)
+         * Camel Hibernate Component
+         * 
+         * Category: database
+         * Since: 4.23
+         * Maven coordinates: org.apache.camel:camel-hibernate
+         * 
+         * @return the dsl builder for the headers' name.
+         */
+        default HibernateHeaderNameBuilder hibernate() {
+            return HibernateHeaderNameBuilder.INSTANCE;
+        }
         /**
          * Hibernate (camel-hibernate)
          * Camel Hibernate Component
@@ -1560,6 +996,41 @@ public interface HibernateEndpointBuilderFactory {
             return HibernateEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the Hibernate component.
+     */
+    public static class HibernateHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        public static final HibernateHeaderNameBuilder INSTANCE = new HibernateHeaderNameBuilder();
+
+        /**
+         * Map of named parameters to bind to the Hibernate query.
+         * 
+         * The option is a: {@code } type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HibernateParameters}.
+         */
+        public String hibernateParameters() {
+            return "CamelHibernateParameters";
+        }
+        /**
+         * The Hibernate Session associated with the current exchange.
+         * 
+         * The option is a: {@code } type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HibernateSession}.
+         */
+        public String hibernateSession() {
+            return "CamelHibernateSession";
+        }
     }
     static HibernateEndpointBuilder endpointBuilder(String componentName, String path) {
         class HibernateEndpointBuilderImpl extends AbstractEndpointBuilder implements HibernateEndpointBuilder, AdvancedHibernateEndpointBuilder {
