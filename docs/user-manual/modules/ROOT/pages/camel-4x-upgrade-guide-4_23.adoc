@@ -4488,3 +4488,9 @@ consumes `AiToolResult` and handles its variants exhaustively — for example an
 `AiToolResult.ExecutionError` — must add a branch for `AuthorizationDenied` and relay its `message()` to the model as
 a refusal (do not rethrow). The in-tree adapters (camel-openai, camel-spring-ai-chat, camel-langchain4j-agent and the
 MCP server bridge) already handle it.
+
+=== REST DSL - optional parameter type in generated schemas
+
+The generated XML and YAML schemas no longer require the `type` attribute on a REST `param`.
+Omitting it uses the existing runtime default, `path`. The parameter `name` remains required.
+Tools that consume these schemas now accept the same omission as the runtime.

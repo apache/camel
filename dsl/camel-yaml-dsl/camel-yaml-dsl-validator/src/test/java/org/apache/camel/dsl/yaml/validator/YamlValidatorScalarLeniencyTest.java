@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml.validator;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -154,6 +155,38 @@ public class YamlValidatorScalarLeniencyTest {
                       uri: timer:tick
                       steps: "log:hi"
                 """, "array expected");
+    }
+
+    @Test
+    public void testPublishedSchemasMakeRestParameterTypeOptional() throws Exception {
+        for (String resource : List.of("/schema/camelYamlDsl.json", "/schema/camelYamlDsl-canonical.json")) {
+            try (var stream = YamlValidator.class.getResourceAsStream(resource)) {
+                var parameter = new ObjectMapper().readTree(stream)
+                        .at("/items/definitions/org.apache.camel.model.rest.ParamDefinition");
+                assertThat(parameter.path("required")).as(resource)
+                        .extracting(node -> node.asText()).containsExactly("name");
+                assertThat(parameter.at("/properties/type/default").asText()).isEqualTo("path");
+            }
+        }
+    }
+
+    @Test
+    public void testRestParameterDefaultsItsTypeButStillRequiresItsName() throws Exception {
+        String yaml = """
+                - rest:
+                    path: /orders
+                    get:
+                      - path: /{id}
+                        param:
+                          - name: id
+                        to:
+                          uri: direct:lookup
+                """;
+        for (YamlValidator validator : List.of(classic, canonical)) {
+            assertThat(validator.validate(yaml)).isEmpty();
+            assertThat(validator.validate(yaml.replace("name: id", "type: path"))).isNotEmpty();
+            assertThat(validator.validate(yaml.replace("name: id", "name: id\n            type: invalid"))).isNotEmpty();
+        }
     }
 
     private void assertRejectedYaml(String yaml, String expectedInMessage) {

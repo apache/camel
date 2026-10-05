@@ -17887,7 +17887,6 @@
         "description" : "Sets the parameter type such as body, form, header, path, or query.",
         "title" : "Type",
         "default" : "path",
-        "required" : true,
         "displayName" : "Type",
         "kind" : "attribute",
         "index" : 2,

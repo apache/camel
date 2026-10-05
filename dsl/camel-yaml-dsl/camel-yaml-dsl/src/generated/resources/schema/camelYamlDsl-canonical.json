@@ -11924,7 +11924,7 @@
             "enum" : [ "body", "formData", "header", "path", "query" ]
           }
         },
-        "required" : [ "name", "type" ]
+        "required" : [ "name" ]
       },
       "org.apache.camel.model.rest.PatchDefinition" : {
         "title" : "Patch",
