@@ -183,6 +183,14 @@ coap://0.0.0.0:5683/my/resource?muteException=false
 
 For the Rest DSL, set it with `restConfiguration().endpointProperty("muteException", "false")`.
 
+=== camel-docling - output path handling
+
+The `CamelDoclingOutputFilePath` header, which selects the CLI output directory, is now normalized lexically
+(redundant separators and `.`/`..` segments are resolved) before it is passed to Docling; a header value
+without such segments is still used as given. A new `outputBaseDirectory` option additionally confines the
+header the same way `inputBaseDirectory` confines input paths - when set, an output path that resolves outside
+it, including an absolute path, is rejected with an `IOException`. `outputBaseDirectory` is unset by default.
+
 == Upgrading from 4.22.0 to 4.22.1
 
 === camel-docling

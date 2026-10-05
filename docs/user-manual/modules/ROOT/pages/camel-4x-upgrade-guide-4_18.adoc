@@ -111,6 +111,12 @@ Additionally, a local input path that does not exist is now reported as a `File 
 before Docling is invoked. Previously the size check silently skipped a path that resolved to nothing and
 the failure surfaced later, from the Docling process or API call.
 
+The `CamelDoclingOutputFilePath` header, which selects the CLI output directory, is now normalized lexically
+(redundant separators and `.`/`..` segments are resolved) before it is passed to Docling; a header value
+without such segments is still used as given. A new `outputBaseDirectory` option additionally confines the
+header the same way `inputBaseDirectory` confines input paths - when set, an output path that resolves outside
+it, including an absolute path, is rejected with an `IOException`. `outputBaseDirectory` is unset by default.
+
 === camel-dynamic-router
 
 The `dynamic-router-control` endpoint no longer takes the subscription `predicate`, or the
