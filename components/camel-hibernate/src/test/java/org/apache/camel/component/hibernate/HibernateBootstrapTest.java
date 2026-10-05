@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.component.hibernate.entity.HibernateTestEntity;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -462,6 +464,49 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
+    void shouldSkipLockedRowsWithH2() throws Exception {
+        HibernateComponent component = createComponent(
+                "skipLockedDs",
+                "jdbc:h2:mem:skiplockeddb;DB_CLOSE_DELAY=-1",
+                HibernateTestEntity.class);
+
+        SessionFactory sessionFactory = component.getSessionFactory();
+
+        Session lockingSession = sessionFactory.openSession();
+        Transaction lockingTransaction = lockingSession.beginTransaction();
+
+        HibernateTestEntity entity = new HibernateTestEntity();
+        entity.setId(1L);
+        lockingSession.persist(entity);
+        lockingTransaction.commit();
+
+        lockingTransaction = lockingSession.beginTransaction();
+        lockingSession.find(
+                HibernateTestEntity.class,
+                entity.getId(),
+                LockMode.PESSIMISTIC_WRITE);
+
+        try {
+            HibernateEndpoint endpoint = new HibernateEndpoint();
+            endpoint.setCamelContext(context);
+            endpoint.setSessionFactory(sessionFactory);
+            endpoint.setEntityType(HibernateTestEntity.class);
+            endpoint.setSelectionQuery("from HibernateTestEntity");
+            endpoint.setSkipLocked(true);
+            endpoint.setConsumeDelete(false);
+
+            HibernateConsumer consumer = new HibernateConsumer(endpoint, exchange -> {
+            });
+
+            assertEquals(0, consumer.poll());
+        } finally {
+            lockingTransaction.rollback();
+            lockingSession.close();
+            component.stop();
+        }
+    }
+
+    @Test
     void shouldStreamSelectionQueryResults() throws Exception {
         SessionFactory sessionFactory = Mockito.mock(SessionFactory.class);
         Session session = Mockito.mock(Session.class);
@@ -629,8 +674,12 @@ public class HibernateBootstrapTest extends CamelTestSupport {
         HibernateConsumer consumer = new HibernateConsumer(
                 consumerEndpoint,
                 exchange -> {
-                    assertSame(session, exchange.getProperty(
-                            HibernateConstants.HIBERNATE_SESSION, Session.class));
+                    HibernateSessionContext sessionContext = exchange.getExchangeExtension()
+                            .getSafeCopyProperty(
+                                    HibernateConstants.HIBERNATE_SESSION_CONTEXT,
+                                    HibernateSessionContext.class);
+                    assertNotNull(sessionContext);
+                    assertSame(session, sessionContext.getSession(sessionFactory, null));
 
                     HibernateEndpoint producerEndpoint = new HibernateEndpoint();
                     producerEndpoint.setCamelContext(context);
@@ -655,6 +704,122 @@ public class HibernateBootstrapTest extends CamelTestSupport {
                 "delete from HibernateTestEntity");
         Mockito.verify(transaction, Mockito.times(1)).commit();
         Mockito.verify(session, Mockito.times(1)).close();
+    }
+
+    @Test
+    void shouldDeleteConsumedEntityByDefault() throws Exception {
+        SessionFactory sessionFactory = Mockito.mock(SessionFactory.class);
+        Session session = Mockito.mock(Session.class);
+        Transaction transaction = Mockito.mock(Transaction.class);
+        SelectionQuery<HibernateTestEntity> query = Mockito.mock(SelectionQuery.class);
+        HibernateTestEntity entity = new HibernateTestEntity();
+
+        Mockito.when(sessionFactory.openSession()).thenReturn(session);
+        Mockito.when(session.beginTransaction()).thenReturn(transaction);
+        Mockito.when(query.getResultList()).thenReturn(List.of(entity));
+        Mockito.when(session.createSelectionQuery(
+                Mockito.eq("from HibernateTestEntity"),
+                Mockito.eq(HibernateTestEntity.class))).thenReturn(query);
+
+        HibernateEndpoint endpoint = new HibernateEndpoint();
+        endpoint.setCamelContext(context);
+        endpoint.setSessionFactory(sessionFactory);
+        endpoint.setEntityType(HibernateTestEntity.class);
+        endpoint.setSelectionQuery("from HibernateTestEntity");
+
+        Processor processor = exchange -> {
+        };
+        HibernateConsumer consumer = new HibernateConsumer(endpoint, processor);
+
+        assertEquals(1, consumer.poll());
+
+        Mockito.verify(session).remove(entity);
+        Mockito.verify(transaction).commit();
+        Mockito.verify(session).close();
+    }
+
+    @Test
+    void shouldNotDeleteConsumedEntityWhenConsumeDeleteDisabled() throws Exception {
+        SessionFactory sessionFactory = Mockito.mock(SessionFactory.class);
+        Session session = Mockito.mock(Session.class);
+        Transaction transaction = Mockito.mock(Transaction.class);
+        SelectionQuery<HibernateTestEntity> query = Mockito.mock(SelectionQuery.class);
+        HibernateTestEntity entity = new HibernateTestEntity();
+
+        Mockito.when(sessionFactory.openSession()).thenReturn(session);
+        Mockito.when(session.beginTransaction()).thenReturn(transaction);
+        Mockito.when(query.getResultList()).thenReturn(List.of(entity));
+        Mockito.when(session.createSelectionQuery(
+                Mockito.eq("from HibernateTestEntity"),
+                Mockito.eq(HibernateTestEntity.class))).thenReturn(query);
+
+        HibernateEndpoint endpoint = new HibernateEndpoint();
+        endpoint.setCamelContext(context);
+        endpoint.setSessionFactory(sessionFactory);
+        endpoint.setEntityType(HibernateTestEntity.class);
+        endpoint.setSelectionQuery("from HibernateTestEntity");
+        endpoint.setConsumeDelete(false);
+
+        Processor processor = exchange -> {
+        };
+        HibernateConsumer consumer = new HibernateConsumer(endpoint, processor);
+
+        assertEquals(1, consumer.poll());
+
+        Mockito.verify(session, Mockito.never()).remove(entity);
+        Mockito.verify(transaction).commit();
+        Mockito.verify(session).close();
+    }
+
+    @Test
+    void shouldNotReuseSessionContextForDifferentScope() {
+        SessionFactory sessionFactory = Mockito.mock(SessionFactory.class);
+        Session session = Mockito.mock(Session.class);
+
+        HibernateSessionContext context = new HibernateSessionContext(session, sessionFactory, "tenant-a");
+
+        assertSame(session, context.getSession(sessionFactory, "tenant-a"));
+        assertNull(context.getSession(Mockito.mock(SessionFactory.class), "tenant-a"));
+        assertNull(context.getSession(sessionFactory, "tenant-b"));
+        assertNull(context.safeCopy().getSession(sessionFactory, "tenant-a"));
+
+        context.invalidate();
+        assertNull(context.getSession(sessionFactory, "tenant-a"));
+    }
+
+    @Test
+    void shouldNotMutateReusedConsumerSession() throws Exception {
+        SessionFactory sessionFactory = Mockito.mock(SessionFactory.class);
+        Session session = Mockito.mock(Session.class);
+        Transaction transaction = Mockito.mock(Transaction.class);
+        SelectionQuery<HibernateTestEntity> query = Mockito.mock(SelectionQuery.class);
+
+        Mockito.when(session.getTransaction()).thenReturn(transaction);
+        Mockito.when(session.createSelectionQuery(
+                Mockito.eq("from HibernateTestEntity"),
+                Mockito.eq(HibernateTestEntity.class))).thenReturn(query);
+        Mockito.when(query.getResultList()).thenReturn(List.of());
+
+        HibernateEndpoint endpoint = new HibernateEndpoint();
+        endpoint.setCamelContext(context);
+        endpoint.setSessionFactory(sessionFactory);
+        endpoint.setEntityType(HibernateTestEntity.class);
+        endpoint.setSelectionQuery("from HibernateTestEntity");
+        endpoint.setReadOnly(true);
+        endpoint.setFilters(Map.of("testFilter", Map.of("tenant", "tenant-a")));
+
+        Exchange exchange = context.getEndpoint("direct:test").createExchange();
+        exchange.getExchangeExtension().setSafeCopyProperty(
+                HibernateConstants.HIBERNATE_SESSION_CONTEXT,
+                new HibernateSessionContext(session, sessionFactory, null));
+
+        new HibernateProducer(endpoint).process(exchange);
+
+        Mockito.verify(session, Mockito.never()).setDefaultReadOnly(true);
+        Mockito.verify(session, Mockito.never()).enableFilter("testFilter");
+        Mockito.verify(query).setReadOnly(true);
+        Mockito.verify(transaction, Mockito.never()).commit();
+        Mockito.verify(session, Mockito.never()).close();
     }
 
     private HibernateComponent createComponent(String dataSourceName, String url, Class<?>... entityClasses)

@@ -70,6 +70,10 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
     @UriParam(description = "The maximum number of entities to retrieve in a single poll.", label = "consumer")
     private int maximumResults;
 
+    @UriParam(description = "Whether to delete consumed entities after successful processing.",
+              label = "consumer", defaultValue = "true")
+    private boolean consumeDelete = true;
+
     private Class<?> entityType;
     private SessionFactory sessionFactory;
 
@@ -253,5 +257,13 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
 
     public void setMaximumResults(int maximumResults) {
         this.maximumResults = maximumResults;
+    }
+
+    public boolean isConsumeDelete() {
+        return consumeDelete;
+    }
+
+    public void setConsumeDelete(boolean consumeDelete) {
+        this.consumeDelete = consumeDelete;
     }
 }
