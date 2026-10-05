@@ -19,7 +19,7 @@ package org.apache.camel.component.jackson3xml;
 import tools.jackson.dataformat.xml.XmlMapper;
 
 /**
- * A {@link org.apache.camel.component.jacksonxml.JacksonXMLDataFormat} that is using a list
+ * A {@link org.apache.camel.component.jackson3xml.JacksonXMLDataFormat} that is using a list
  */
 public class ListJacksonXMLDataFormat extends JacksonXMLDataFormat {
 
