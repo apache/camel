@@ -67,7 +67,7 @@ public class TraceDevConsole extends AbstractDevConsole {
               javaType = "java.lang.String", enums = "true,false")
     public static final String DUMP = "dump";
 
-    private Queue<BacklogTracerEventMessage> queue;
+    private volatile Queue<BacklogTracerEventMessage> queue;
 
     public TraceDevConsole() {
         super("camel", "trace", "Camel Tracing", "Trace routed messages");
@@ -79,6 +79,11 @@ public class TraceDevConsole extends AbstractDevConsole {
 
     public void setCapacity(int capacity) {
         this.capacity = capacity;
+        // Camel Main configures the console after the registry has started it
+        Queue<BacklogTracerEventMessage> q = queue;
+        if (q != null) {
+            this.queue = ConsoleHelper.resize(q, capacity);
+        }
     }
 
     @Override
@@ -97,10 +102,11 @@ public class TraceDevConsole extends AbstractDevConsole {
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
             if ("true".equalsIgnoreCase(dump)) {
+                Queue<BacklogTracerEventMessage> q = queue;
                 for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
-                    addMessage(t);
+                    ConsoleHelper.offerLast(q, t);
                 }
-                for (BacklogTracerEventMessage t : queue) {
+                for (BacklogTracerEventMessage t : q) {
                     String json = t.toJSon(0);
                     sb.append(json).append("\n");
                 }
@@ -136,17 +142,6 @@ public class TraceDevConsole extends AbstractDevConsole {
         return sb.toString();
     }
 
-    private void addMessage(BacklogTracerEventMessage message) {
-        // ensure there is space on the queue by polling until at least single slot is free
-        int drain = queue.size() - capacity + 1;
-        if (drain > 0) {
-            for (int i = 0; i < drain; i++) {
-                queue.poll();
-            }
-        }
-        queue.add(message);
-    }
-
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String enabled = optionString(options, ENABLED);
         String dump = optionString(options, DUMP);
@@ -157,11 +152,12 @@ public class TraceDevConsole extends AbstractDevConsole {
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
             if ("true".equalsIgnoreCase(dump)) {
+                Queue<BacklogTracerEventMessage> q = queue;
                 for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
-                    addMessage(t);
+                    ConsoleHelper.offerLast(q, t);
                 }
                 List<Map<String, Object>> traces = new ArrayList<>();
-                for (BacklogTracerEventMessage t : queue) {
+                for (BacklogTracerEventMessage t : q) {
                     traces.add((JsonObject) t.asJSon());
                 }
                 response = new Response(
