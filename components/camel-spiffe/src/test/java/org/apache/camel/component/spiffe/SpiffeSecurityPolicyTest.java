@@ -159,4 +159,18 @@ class SpiffeSecurityPolicyTest extends CamelTestSupport {
                 .hasMessageContaining("No verified SPIFFE peer identity");
         authorized.assertIsSatisfied();
     }
+
+    @Test
+    void deniesACertificateWithASpiffeAndANonSpiffeUriSan() throws Exception {
+        MockEndpoint authorized = getMockEndpoint("mock:authorized");
+        authorized.expectedMessageCount(0);
+
+        // a valid X509-SVID has exactly one URI SAN in total; a second, non-spiffe URI means it is not an SVID, even
+        // though one of the two URIs is the expected SPIFFE ID
+        Exchange out = sendWithSession(sessionPresenting(certWithUriSans("https://example.org/web", FRONTEND)));
+
+        assertThat(out.getException()).isInstanceOf(CamelAuthorizationException.class)
+                .hasMessageContaining("No verified SPIFFE peer identity");
+        authorized.assertIsSatisfied();
+    }
 }

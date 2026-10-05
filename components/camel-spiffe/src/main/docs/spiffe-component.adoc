@@ -189,9 +189,9 @@ from("netty-http:https://0.0.0.0:8443?sslContextParameters=#spiffeSsl")
     .to("direct:handleOrder");
 ------------------------------------------------------------
 
-For a TLS consumer that exposes the `SSLSession` under a different header name, set `sslSessionHeader` accordingly; the
-verified client-certificate request attribute (`jakarta.servlet.request.X509Certificate`) is also honoured when a
-Servlet-based consumer surfaces it onto the message.
+For a TLS consumer that exposes the `SSLSession` under a different header name, set `sslSessionHeader` accordingly. The
+identity is always read from the verified `SSLSession`, never from a certificate object placed on a message header -
+nothing would prove the TLS layer had verified such a certificate.
 
 include::spring-boot:partial$starter.adoc[]
 

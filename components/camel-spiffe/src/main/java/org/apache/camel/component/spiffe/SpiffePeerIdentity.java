@@ -33,21 +33,15 @@ import org.apache.camel.Message;
  * Extracts the peer SPIFFE ID from the <em>verified</em> TLS peer certificate carried on an exchange.
  * <p>
  * The identity is taken from the certificate the TLS layer authenticated, never from a message header a sender could
- * set (see CAMEL-24730 for why that distinction matters in this component). The supported sources are, in order:
- * <ol>
- * <li>an {@link SSLSession} placed on the message by a TLS consumer - camel-netty-http stores it under
- * {@code CamelNettySSLSession}. {@link SSLSession#getPeerCertificates()} returns only the peer certificates the
- * handshake verified, and throws when the peer presented none;</li>
- * <li>the Servlet container's verified client-certificate request attribute
- * ({@code jakarta.servlet.request.X509Certificate}, or the legacy {@code javax} name), when a consumer surfaces it onto
- * the message.</li>
- * </ol>
+ * set (see CAMEL-24730 for why that distinction matters in this component). The source is the {@link SSLSession} a TLS
+ * consumer places on the message - camel-netty-http stores it under {@code CamelNettySSLSession}:
+ * {@link SSLSession#getPeerCertificates()} returns only the peer certificates the handshake verified, and throws when
+ * the peer presented none. A certificate object read from a message header is deliberately not trusted, because nothing
+ * proves the TLS layer verified it.
  */
 final class SpiffePeerIdentity {
 
     static final String SPIFFE_URI_SCHEME = "spiffe://";
-    static final String SERVLET_X509_ATTRIBUTE = "jakarta.servlet.request.X509Certificate";
-    static final String SERVLET_X509_ATTRIBUTE_LEGACY = "javax.servlet.request.X509Certificate";
 
     // RFC 5280 GeneralName tag for uniformResourceIdentifier, as returned by X509Certificate#getSubjectAlternativeNames
     private static final int SAN_TYPE_URI = 6;
@@ -66,17 +60,7 @@ final class SpiffePeerIdentity {
 
     private static X509Certificate peerCertificate(Message message, String sslSessionHeader) {
         SSLSession session = message.getHeader(sslSessionHeader, SSLSession.class);
-        if (session != null) {
-            X509Certificate cert = leafOf(peerCertificates(session));
-            if (cert != null) {
-                return cert;
-            }
-        }
-        X509Certificate cert = certificateFromHeader(message, SERVLET_X509_ATTRIBUTE);
-        if (cert == null) {
-            cert = certificateFromHeader(message, SERVLET_X509_ATTRIBUTE_LEGACY);
-        }
-        return cert;
+        return session != null ? leafOf(peerCertificates(session)) : null;
     }
 
     private static Certificate[] peerCertificates(SSLSession session) {
@@ -88,20 +72,6 @@ final class SpiffePeerIdentity {
         }
     }
 
-    private static X509Certificate certificateFromHeader(Message message, String name) {
-        Object value = message.getHeader(name);
-        if (value instanceof X509Certificate[] certs) {
-            return leafOf(certs);
-        }
-        if (value instanceof Certificate[] certs) {
-            return leafOf(certs);
-        }
-        if (value instanceof X509Certificate cert) {
-            return cert;
-        }
-        return null;
-    }
-
     private static X509Certificate leafOf(Certificate[] chain) {
         if (chain == null || chain.length == 0) {
             return null;
@@ -111,9 +81,10 @@ final class SpiffePeerIdentity {
     }
 
     /**
-     * Extracts the SPIFFE ID from a certificate's URI SAN. A SPIFFE X509-SVID carries exactly one URI SAN, which is the
-     * SPIFFE ID; a certificate with none, or with more than one SPIFFE URI, is not a valid SVID and yields {@code null}
-     * rather than an arbitrary choice between identities.
+     * Extracts the SPIFFE ID from a certificate's URI SAN. A SPIFFE X509-SVID carries exactly one URI SAN <em>in
+     * total</em>, and it is the SPIFFE ID. A certificate with no URI SAN, with more than one URI SAN (even if only one
+     * is a {@code spiffe://} URI), or whose single URI SAN is not a {@code spiffe://} URI, is not a valid SVID and
+     * yields {@code null} rather than an arbitrary choice of identity.
      */
     static SpiffeId fromCertificate(X509Certificate cert) {
         Collection<List<?>> sans;
@@ -125,25 +96,25 @@ final class SpiffePeerIdentity {
         if (sans == null) {
             return null;
         }
-        String spiffeUri = null;
+        String uri = null;
         for (List<?> san : sans) {
             if (san == null || san.size() < 2) {
                 continue;
             }
-            if (san.get(0) instanceof Integer type && type == SAN_TYPE_URI
-                    && san.get(1) instanceof String uri && uri.startsWith(SPIFFE_URI_SCHEME)) {
-                if (spiffeUri != null) {
-                    // more than one SPIFFE URI SAN: not a valid SVID, refuse to guess which identity to trust
+            if (san.get(0) instanceof Integer type && type == SAN_TYPE_URI && san.get(1) instanceof String value) {
+                if (uri != null) {
+                    // a valid X509-SVID has exactly one URI SAN in total; more than one is not an SVID, so refuse to
+                    // single out the spiffe:// one and trust it
                     return null;
                 }
-                spiffeUri = uri;
+                uri = value;
             }
         }
-        if (spiffeUri == null) {
+        if (uri == null || !uri.startsWith(SPIFFE_URI_SCHEME)) {
             return null;
         }
         try {
-            return SpiffeId.parse(spiffeUri);
+            return SpiffeId.parse(uri);
         } catch (RuntimeException e) {
             // malformed SPIFFE ID in the SAN
             return null;
