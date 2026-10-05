@@ -609,6 +609,13 @@ The `inflight` and `blocked` developer consoles now carry a `nodeSource` field p
 exchange sits at is in the source (such as `orders.camel.yaml:18`). It is `null` when message history or source
 location is disabled. Existing fields are unchanged.
 
+The `capacity` option of the `trace`, `receive`, `event` and `sql-trace` developer consoles, set from configuration
+(such as `camel.devConsole.trace.capacity`), is now applied. Prior to Camel 4.23 Camel Main set it after the console
+had started, so a capacity larger than the default broke the console (`Queue full` or
+`ArrayIndexOutOfBoundsException`), and the documented range was not checked. A capacity outside that range (50-1000
+for `trace` and `receive`, 25-1000 for `event` and `sql-trace`) now fails at startup with an `IllegalArgumentException`,
+also when it is lower than the minimum, which was accepted before.
+
 === Error handler - redelivery options of onException
 
 An `onException` that sets some of the redelivery options (such as `maximumRedeliveries`) now inherits the options it

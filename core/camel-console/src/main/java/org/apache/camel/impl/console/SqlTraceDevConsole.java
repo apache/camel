@@ -94,18 +94,18 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
     }
 
     public void setCapacity(int capacity) {
-        this.capacity = capacity;
-        // Camel Main configures the console after the registry has started it
         if (events != null) {
+            // Camel Main configures the console after the registry has started it: resize its buffers (an entry
+            // added meanwhile may be lost, which only matters while configuring)
+            ConsoleHelper.checkCapacity(capacity, 25);
             this.events = ConsoleHelper.resize(events, pos.getAndSet(0), capacity);
         }
+        this.capacity = capacity;
     }
 
     @Override
     protected void doInit() throws Exception {
-        if (capacity > 1000 || capacity < 25) {
-            throw new IllegalArgumentException("Capacity must be between 25 and 1000");
-        }
+        ConsoleHelper.checkCapacity(capacity, 25);
         this.events = new StatementEntry[capacity];
     }
 

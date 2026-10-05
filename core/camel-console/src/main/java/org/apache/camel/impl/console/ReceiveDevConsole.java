@@ -109,12 +109,14 @@ public class ReceiveDevConsole extends AbstractDevConsole {
     }
 
     public void setCapacity(int capacity) {
-        this.capacity = capacity;
-        // Camel Main configures the console after the registry has started it
         Queue<JsonObject> q = queue;
         if (q != null) {
+            // Camel Main configures the console after the registry has started it: resize its buffers (an entry
+            // added meanwhile may be lost, which only matters while configuring)
+            ConsoleHelper.checkCapacity(capacity, 50);
             this.queue = ConsoleHelper.resize(q, capacity);
         }
+        this.capacity = capacity;
     }
 
     public int getBodyMaxChars() {
@@ -135,9 +137,7 @@ public class ReceiveDevConsole extends AbstractDevConsole {
 
     @Override
     protected void doInit() throws Exception {
-        if (capacity > 1000 || capacity < 50) {
-            throw new IllegalArgumentException("Capacity must be between 50 and 1000");
-        }
+        ConsoleHelper.checkCapacity(capacity, 50);
         this.queue = new LinkedBlockingQueue<>(capacity);
     }
 

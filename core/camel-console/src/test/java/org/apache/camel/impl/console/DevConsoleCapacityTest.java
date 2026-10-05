@@ -18,6 +18,8 @@ package org.apache.camel.impl.console;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -28,6 +30,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -122,13 +125,14 @@ public class DevConsoleCapacityTest extends ContextTestSupport {
     @Test
     public void testEventCapacityLoweredAfterStart() {
         EventConsole console = resolve("event");
-        sendMessages("direct:start", 10);
+        console.setCapacity(100);
+        sendMessages("direct:start", 30);
 
-        console.setCapacity(10);
-        sendMessages("direct:start", 10);
+        console.setCapacity(25);
+        sendMessages("direct:start", 30);
 
         JsonObject out = (JsonObject) console.call(DevConsole.MediaType.JSON);
-        assertEquals(10, out.getCollection("exchangeEvents").size());
+        assertEquals(25, out.getCollection("exchangeEvents").size());
     }
 
     @Test
@@ -140,5 +144,27 @@ public class DevConsoleCapacityTest extends ContextTestSupport {
         JsonObject out = (JsonObject) console.call(DevConsole.MediaType.JSON);
         assertTrue(out.isEmpty());
         assertEquals("", console.call(DevConsole.MediaType.TEXT));
+    }
+
+    @Test
+    public void testInvalidCapacitySetAfterStart() {
+        // the range checked when the console starts is also checked when the capacity is set afterwards
+        TraceDevConsole trace = resolve("trace");
+        assertInvalidCapacity(trace::getCapacity, trace::setCapacity, 50);
+        ReceiveDevConsole receive = resolve("receive");
+        assertInvalidCapacity(receive::getCapacity, receive::setCapacity, 50);
+        EventConsole event = resolve("event");
+        assertInvalidCapacity(event::getCapacity, event::setCapacity, 25);
+        SqlTraceDevConsole sqlTrace = resolve("sql-trace");
+        assertInvalidCapacity(sqlTrace::getCapacity, sqlTrace::setCapacity, 25);
+    }
+
+    private static void assertInvalidCapacity(IntSupplier getter, IntConsumer setter, int min) {
+        int before = getter.getAsInt();
+        for (int capacity : new int[] { min - 1, 1001 }) {
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> setter.accept(capacity));
+            assertEquals("Capacity must be between " + min + " and 1000", e.getMessage());
+            assertEquals(before, getter.getAsInt());
+        }
     }
 }

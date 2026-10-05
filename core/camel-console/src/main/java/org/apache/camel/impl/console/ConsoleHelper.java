@@ -152,6 +152,17 @@ public final class ConsoleHelper {
     }
 
     /**
+     * Validates the capacity of a console buffer.
+     *
+     * @throws IllegalArgumentException if the capacity is not between the given minimum and 1000
+     */
+    static void checkCapacity(int capacity, int min) {
+        if (capacity > 1000 || capacity < min) {
+            throw new IllegalArgumentException("Capacity must be between " + min + " and 1000");
+        }
+    }
+
+    /**
      * Adds the element to the bounded queue, removing the oldest elements to make room.
      */
     static <T> void offerLast(Queue<T> queue, T element) {
