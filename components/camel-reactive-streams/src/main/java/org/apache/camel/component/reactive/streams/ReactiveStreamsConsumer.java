@@ -34,6 +34,11 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReactiveStreamsConsumer.class);
 
+    /**
+     * The consumer whose thread pool runs the exchange that the current thread is routing.
+     */
+    private static final ThreadLocal<ReactiveStreamsConsumer> ROUTING = new ThreadLocal<>();
+
     private final ReactiveStreamsEndpoint endpoint;
     private final CamelReactiveStreamsService service;
     private ExecutorService executor;
@@ -59,13 +64,23 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
         this.service.detachCamelConsumer(endpoint.getStream());
 
         if (executor != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            // the queued exchanges were already taken from the stream (they cannot be requested again),
+            // so let them complete before the processor is stopped; dropping them would also leave
+            // them counted as inflight by the subscriber, which would then request less or nothing
+            if (ROUTING.get() == this) {
+                // stopped by an exchange of this consumer (for example a route policy): the pool cannot be
+                // awaited from one of its own threads, the queued exchanges run after this one
+                endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
+            } else {
+                endpoint.getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
+            }
             executor = null;
         }
+
+        super.doStop();
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -98,13 +113,21 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
         ExecutorService executorService = this.executor;
         if (executorService != null && this.isRunAllowed()) {
 
-            executorService.execute(() -> this.getAsyncProcessor().process(exchange, doneSync -> {
-                if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-                }
+            executorService.execute(() -> {
+                ROUTING.set(this);
+                try {
+                    this.getAsyncProcessor().process(exchange, doneSync -> {
+                        if (exchange.getException() != null) {
+                            getExceptionHandler().handleException("Error processing exchange", exchange,
+                                    exchange.getException());
+                        }
 
-                callback.done(doneSync);
-            }));
+                        callback.done(doneSync);
+                    });
+                } finally {
+                    ROUTING.remove();
+                }
+            });
             return false;
 
         } else {
