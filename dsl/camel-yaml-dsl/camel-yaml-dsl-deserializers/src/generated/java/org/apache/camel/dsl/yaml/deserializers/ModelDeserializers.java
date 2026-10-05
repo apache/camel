@@ -11583,7 +11583,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "examples", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Examples of the parameter.", displayName = "Examples"),
                     @YamlProperty(name = "name", type = "string", required = true, description = "The parameter name.", displayName = "Name"),
                     @YamlProperty(name = "required", type = "boolean", defaultValue = "true", description = "Sets the parameter required flag.", displayName = "Required"),
-                    @YamlProperty(name = "type", type = "enum:body,formData,header,path,query", required = true, defaultValue = "path", description = "Sets the parameter type such as body, form, header, path, or query.", displayName = "Type")
+                    @YamlProperty(name = "type", type = "enum:body,formData,header,path,query", defaultValue = "path", description = "Sets the parameter type such as body, form, header, path, or query.", displayName = "Type")
             }
     )
     public static class ParamDefinitionDeserializer extends YamlDeserializerBase<ParamDefinition> {
