@@ -18,6 +18,7 @@ package org.apache.camel.component.printer;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -60,8 +61,11 @@ import static org.mockito.Mockito.when;
 
 @DisabledOnOs(OS.AIX)
 public class PrinterPrintTest extends CamelTestSupport {
-    Class<?> printServiceLookupServicesClass = PrintServiceLookup.class.getDeclaredClasses()[0];
+    // Saved state for AppContext-based JDKs (≤26): the Services object stored under the Services class key
     Object printServiceLookup;
+    // Saved state for JDK 27+: the two static fields on PrintServiceLookup directly
+    Object savedListOfLookupServices;
+    Object savedRegisteredServices;
 
     @BeforeEach
     public void setup() throws Exception {
@@ -406,13 +410,25 @@ public class PrinterPrintTest extends CamelTestSupport {
     }
 
     protected void setupJavaPrint() throws Exception {
-        // save the current print services
-        Class<?> clazz = context.getClassResolver().resolveClass("sun.awt.AppContext");
-        Object ac = clazz.getMethod("getAppContext").invoke(null);
-        printServiceLookup = clazz.getMethod("get", Object.class).invoke(ac, printServiceLookupServicesClass);
+        Class<?> appContextClass = context.getClassResolver().resolveClass("sun.awt.AppContext");
+        if (appContextClass != null) {
+            // JDK ≤26: state lives in an AppContext keyed by the inner Services class
+            Class<?> servicesClass = PrintServiceLookup.class.getDeclaredClasses()[0];
+            Object ac = appContextClass.getMethod("getAppContext").invoke(null);
+            printServiceLookup = appContextClass.getMethod("get", Object.class).invoke(ac, servicesClass);
+            appContextClass.getMethod("put", Object.class, Object.class).invoke(ac, servicesClass, null);
+        } else {
+            // JDK 27+: state lives in two static fields directly on PrintServiceLookup
+            Field listField = PrintServiceLookup.class.getDeclaredField("listOfLookupServices");
+            listField.setAccessible(true);
+            savedListOfLookupServices = listField.get(null);
+            listField.set(null, null);
 
-        // setup a new empty list of printer services
-        clazz.getMethod("put", Object.class, Object.class).invoke(ac, printServiceLookupServicesClass, null);
+            Field regField = PrintServiceLookup.class.getDeclaredField("registeredServices");
+            regField.setAccessible(true);
+            savedRegisteredServices = regField.get(null);
+            regField.set(null, null);
+        }
 
         Method method = PrintServiceLookup.class.getDeclaredMethod("initListOfLookupServices");
         method.setAccessible(true);
@@ -437,11 +453,23 @@ public class PrinterPrintTest extends CamelTestSupport {
     }
 
     protected void restoreJavaPrint() throws Exception {
-        // restore print services
-        if (printServiceLookup != null) {
-            Class<?> clazz = context.getClassResolver().resolveClass("sun.awt.AppContext");
-            Object ac = clazz.getMethod("getAppContext").invoke(null);
-            clazz.getMethod("put", Object.class, Object.class).invoke(ac, printServiceLookupServicesClass, printServiceLookup);
+        Class<?> appContextClass = context.getClassResolver().resolveClass("sun.awt.AppContext");
+        if (appContextClass != null) {
+            // JDK ≤26: restore the Services object in AppContext
+            if (printServiceLookup != null) {
+                Class<?> servicesClass = PrintServiceLookup.class.getDeclaredClasses()[0];
+                Object ac = appContextClass.getMethod("getAppContext").invoke(null);
+                appContextClass.getMethod("put", Object.class, Object.class).invoke(ac, servicesClass, printServiceLookup);
+            }
+        } else {
+            // JDK 27+: restore the two static fields
+            Field listField = PrintServiceLookup.class.getDeclaredField("listOfLookupServices");
+            listField.setAccessible(true);
+            listField.set(null, savedListOfLookupServices);
+
+            Field regField = PrintServiceLookup.class.getDeclaredField("registeredServices");
+            regField.setAccessible(true);
+            regField.set(null, savedRegisteredServices);
         }
     }
 
