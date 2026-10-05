@@ -364,7 +364,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
         endpoint.setCamelContext(context);
         endpoint.setSessionFactory(comp.getSessionFactory());
         endpoint.setEntityClassName(HibernateTestEntity.class.getName());
-        endpoint.setStatelessOperation("insert");
+        endpoint.setStatelessOperation(HibernateEndpoint.StatelessOperation.INSERT);
 
         endpoint.start();
 
@@ -402,7 +402,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
         endpoint.setCamelContext(context);
         endpoint.setSessionFactory(comp.getSessionFactory());
         endpoint.setEntityClassName(HibernateTestEntity.class.getName());
-        endpoint.setStatelessOperation("upsert");
+        endpoint.setStatelessOperation(HibernateEndpoint.StatelessOperation.UPSERT);
 
         endpoint.start();
 
