@@ -86,6 +86,21 @@ public class NettyHttpStringBodyCharsetTest extends BaseNettyTestSupport {
         assertNull(NettyHttpHelper.getCharsetFromContentType("text/plain"));
         assertNull(NettyHttpHelper.getCharsetFromContentType("multipart/form-data; boundary=charset"));
         assertNull(NettyHttpHelper.getCharsetFromContentType(null));
+        // an empty charset parameter is no charset
+        assertNull(NettyHttpHelper.getCharsetFromContentType("text/plain; charset="));
+        assertNull(NettyHttpHelper.getCharsetFromContentType("text/plain; charset=\"\""));
+    }
+
+    @Test
+    public void testRequestWithEmptyCharsetParameter() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:text");
+        mock.expectedBodiesReceived(TEXT);
+
+        // an empty charset is ignored: no CamelCharsetName is set, and the body is read as before
+        send("/text", "text/plain; charset=", TEXT.getBytes(StandardCharsets.UTF_8));
+
+        mock.assertIsSatisfied();
+        assertNull(mock.getReceivedExchanges().get(0).getProperty(Exchange.CHARSET_NAME));
     }
 
     private HttpResponse<byte[]> send(String path, String contentType, byte[] body) throws Exception {
