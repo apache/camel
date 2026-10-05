@@ -446,13 +446,14 @@ The Event developer console now exposes the full structured JSON payload in the 
 each event entry, while keeping the existing flat `type`, `timestamp`, `exchangeId`, and
 `message` fields for backwards compatibility.
 
-=== camel-jackson and camel-jackson3 - marshal a body that is already JSON text
+=== JSON data formats - marshal a body that is already JSON text
 
-`marshal` with the JSON data format of Jackson (`marshal: json`) now writes a body that is already the JSON text as
-it is, instead of serializing it as a Java object:
+`marshal` with a JSON data format (`marshal: json`, with Jackson, Jackson 3, Gson, JSON-B or Fastjson) now writes a body
+that is already the JSON text as it is, instead of serializing it as a Java object:
 
-* a file, an `InputStream` (or stream cache) and a `byte[]` are written as they are; before, the stream and the file
-  failed with "No serializer found" and the bytes were written as a Base64 string
+* a file, an `InputStream` (or stream cache) and a `byte[]` are written as they are; before, they were serialized as
+  objects (with Jackson the stream and the file failed with "No serializer found" and the bytes became a Base64
+  string)
 * a `String` whose text is a JSON object or array (it starts with `{` and ends with `}`, or `[` and `]`) is written as
   it is; before, it was written as one JSON string, `"{\"sku\": ...}"`. Any other `String` is still written as a
   JSON string (`"hello"`).

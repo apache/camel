@@ -42,6 +42,7 @@ import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.JsonPayloadHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
@@ -141,6 +142,13 @@ public class GsonDataFormat extends ServiceSupport
 
     @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
+        // a body that already is the JSON text is written as it is (CAMEL-25329)
+        if (JsonPayloadHelper.writeIfAlreadyJson(exchange, graph, stream) >= 0) {
+            if (contentTypeHeader) {
+                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            }
+            return;
+        }
         try (final OutputStreamWriter osw = new OutputStreamWriter(stream, ExchangeHelper.getCharsetName(exchange));
              final BufferedWriter writer = IOHelper.buffered(osw)) {
             gson.toJson(graph, writer);

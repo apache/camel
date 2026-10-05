@@ -100,7 +100,7 @@ A body that already is the JSON text is written as it is, not serialized as a Ja
 a `byte[]`, and a `String` whose text is a JSON object or array (it starts with `{` and ends with `}`, or `[` and
 `]`). So `marshal: json` after reading a JSON file, or after building the JSON with a template or a Simple
 expression, sends that JSON unchanged. Any other `String` is written as a JSON string, and POJOs, maps and lists are
-marshalled as usual.
+marshalled as usual. All the JSON data formats of Camel do the same.
 
 === Using custom ObjectMapper
 

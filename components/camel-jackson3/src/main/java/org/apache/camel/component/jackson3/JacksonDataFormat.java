@@ -16,15 +16,12 @@
  */
 package org.apache.camel.component.jackson3;
 
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.StreamCache;
-import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.JsonPayloadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.core.StreamReadConstraints;
@@ -121,45 +118,18 @@ public class JacksonDataFormat extends AbstractJacksonDataFormat {
     }
 
     /**
-     * A body that is already the JSON text is written as it is (CAMEL-25329): a file, a stream or bytes are the
-     * serialized form of a payload, never an object to serialize (Jackson would fail on the stream and file, and write
-     * the bytes as base64), and a String holding a JSON object or array would come out as one JSON string. Any other
-     * String, and every object, is marshalled as before.
+     * A body that is already the JSON text is written as it is (CAMEL-25329), see {@link JsonPayloadHelper}: a file, a
+     * stream, bytes, or a String holding a JSON object or array. Any other String, and every object, is marshalled as
+     * before.
      */
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        if (writeAsIs(exchange, graph, stream)) {
+        if (JsonPayloadHelper.writeIfAlreadyJson(exchange, graph, stream) >= 0) {
             if (isContentTypeHeader()) {
                 exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, getDefaultContentType());
             }
             return;
         }
         super.marshal(exchange, graph, stream);
-    }
-
-    private static boolean writeAsIs(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        if (graph instanceof byte[] bytes) {
-            stream.write(bytes);
-        } else if (graph instanceof StreamCache cache) {
-            cache.writeTo(stream);
-        } else if (graph instanceof InputStream is) {
-            is.transferTo(stream);
-        } else if (graph instanceof WrappedFile<?>) {
-            try (InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange,
-                    graph)) {
-                is.transferTo(stream);
-            }
-        } else if (graph instanceof String text && isJsonText(text)) {
-            stream.write(text.getBytes(StandardCharsets.UTF_8));
-        } else {
-            return false;
-        }
-        return true;
-    }
-
-    /** A JSON object or array, by its first and last character; no parsing. */
-    static boolean isJsonText(String text) {
-        String t = text.strip();
-        return t.length() >= 2 && (t.startsWith("{") && t.endsWith("}") || t.startsWith("[") && t.endsWith("]"));
     }
 }

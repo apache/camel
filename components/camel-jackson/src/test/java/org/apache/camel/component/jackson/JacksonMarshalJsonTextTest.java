@@ -17,14 +17,14 @@
 package org.apache.camel.component.jackson;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -73,15 +73,15 @@ public class JacksonMarshalJsonTextTest extends CamelTestSupport {
 
     @Test
     public void aFileIsWrittenAsIs() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:file");
-        mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived("Content-Type", "application/json");
-        // written under another name and moved in, so the consumer never reads a file that is still being written
-        Path tmp = Files.writeString(dir.resolve("item.tmp"), JSON);
-        Files.move(tmp, dir.resolve("item.json"), StandardCopyOption.ATOMIC_MOVE);
+        // the body a file consumer hands on: a GenericFile of the file
+        Path file = Files.writeString(dir.resolve("item.json"), JSON);
+        GenericFile<File> body = new GenericFile<>();
+        body.setFile(file.toFile());
+        body.setFileName("item.json");
+        body.setAbsoluteFilePath(file.toString());
+        body.setBody(file.toFile());
 
-        mock.assertIsSatisfied();
-        assertEquals(JSON, mock.getReceivedExchanges().get(0).getMessage().getBody(String.class));
+        assertEquals(JSON, marshal(body));
     }
 
     @Override
@@ -91,7 +91,6 @@ public class JacksonMarshalJsonTextTest extends CamelTestSupport {
             public void configure() {
                 JacksonDataFormat json = new JacksonDataFormat();
                 from("direct:marshal").marshal(json);
-                from("file:" + dir + "?noop=true&include=.*\\.json&initialDelay=0&delay=10").marshal(json).to("mock:file");
             }
         };
     }

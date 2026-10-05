@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jackson3;
+package org.apache.camel.component.gson;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * A body that is already the JSON text is written as it is: a file, a stream, bytes, or a String holding a JSON object
  * or array (CAMEL-25329). Any other String and every object is marshalled as before.
  */
-public class JacksonMarshalJsonTextTest extends CamelTestSupport {
+public class GsonMarshalJsonTextTest extends CamelTestSupport {
 
     private static final String JSON = "{\"sku\": \"CAMEL-MUG\", \"qty\": 2}";
 
@@ -89,7 +89,7 @@ public class JacksonMarshalJsonTextTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                JacksonDataFormat json = new JacksonDataFormat();
+                GsonDataFormat json = new GsonDataFormat();
                 from("direct:marshal").marshal(json);
             }
         };
