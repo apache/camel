@@ -38,6 +38,7 @@ import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionSupport;
 import org.apache.camel.support.LanguageHelper;
+import org.apache.camel.util.MimeTypeHelper;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -352,21 +353,18 @@ public class GroovyExpression extends ExpressionSupport {
     }
 
     /**
-     * Which data format turns the payload text into data, from the Content-Type, the file name, or the first character
-     * of the text; the generic advice when none of them tells.
+     * Which data format turns the payload text into data, from the Content-Type, the file name (by its extension, as
+     * {@link MimeTypeHelper} maps it to a content type), or the first character of the text; the generic advice when
+     * none of them tells.
      */
     static String unmarshalHint(Exchange exchange, Object body) {
-        String format = null;
         String type = exchange.getMessage().getHeader(Exchange.CONTENT_TYPE, String.class);
         String file = exchange.getMessage().getHeader(Exchange.FILE_NAME, String.class);
-        String probe = ((type != null ? type : "") + " " + (file != null ? file : "")).toLowerCase(Locale.ROOT);
-        if (probe.contains("json")) {
-            format = "json";
-        } else if (probe.contains("xml")) {
-            format = "xml";
-        } else if (probe.contains("csv")) {
-            format = "csv";
-        } else {
+        String format = formatOf(type);
+        if (format == null && file != null) {
+            format = formatOf(MimeTypeHelper.probeMimeType(file));
+        }
+        if (format == null) {
             int first = firstNonBlank(body);
             if (first == '{' || first == '[') {
                 format = "json";
@@ -383,6 +381,26 @@ public class GroovyExpression extends ExpressionSupport {
                    + " useMaps: true";
         }
         return "unmarshal it first with the data format of the payload (json, jacksonXml, csv, ...) to read its fields";
+    }
+
+    /** The kind of payload a content type is: json, xml or csv (tab-separated values included), or null. */
+    private static String formatOf(String contentType) {
+        if (contentType == null) {
+            return null;
+        }
+        String s = contentType.toLowerCase(Locale.ROOT);
+        int semi = s.indexOf(';');
+        if (semi > 0) {
+            s = s.substring(0, semi).trim();
+        }
+        if (s.endsWith("/json") || s.endsWith("+json")) {
+            return "json";
+        } else if (s.endsWith("/xml") || s.endsWith("+xml")) {
+            return "xml";
+        } else if (s.endsWith("/csv") || s.endsWith("/tab-separated-values")) {
+            return "csv";
+        }
+        return null;
     }
 
     private static int firstNonBlank(Object body) {

@@ -89,6 +89,15 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
     }
 
     @Test
+    public void fieldReadOnJsonContentTypeSaysJson() {
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeaders("direct:field", "sku=A1",
+                        java.util.Map.of("sku", "A1", Exchange.CONTENT_TYPE, "application/json; charset=UTF-8")));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("unmarshal: json"), cause.getMessage());
+    }
+
+    @Test
     public void fieldReadOnUnknownTextNamesTheChoices() {
         Exception e = assertThrows(Exception.class,
                 () -> template.sendBodyAndHeader("direct:field", "sku=A1", "sku", "A1"));
