@@ -209,9 +209,21 @@ class MonitorContext {
         return CommandLineHelper.getCamelDir().resolve(pid + "-trace.json");
     }
 
-    /** Asks the AI to fix a problem of a source file. */
+    Path getErrorFile(String pid) {
+        return CommandLineHelper.getCamelDir().resolve(pid + "-error.json");
+    }
+
+    /** Asks the AI to fix a problem of a source file, or a line that fails at runtime. */
     @FunctionalInterface
     interface AskAi {
         void fixProblem(Path file, int line, String problem, String lineText);
+
+        /**
+         * Asks the AI to fix a line whose processors fail at runtime (Shift+F8 on a line with failures in the live run
+         * data): the failure says how many exchanges failed and the exception of the last one.
+         */
+        default void fixFailure(Path file, int line, String failure, String lineText) {
+            fixProblem(file, line, failure, lineText);
+        }
     }
 }

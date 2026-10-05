@@ -37,6 +37,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import dev.tamboui.buffer.Buffer;
@@ -501,18 +502,34 @@ public class CamelMonitor extends CamelCommand {
     }
 
     /**
+     * Opens the AI panel with a question for the Source editor's fix with AI (Shift+F8), made from the directory of the
+     * selected integration's sources.
+     */
+    private void openAiWithQuestion(Function<Path, String> question) {
+        if (shellPanel.isOpen()) {
+            shellPanel.close();
+        }
+        Path dir = mcpFacade != null ? mcpFacade.getSelectedSourceDirectory() : null;
+        aiPanel.openWithQuestion(question.apply(dir));
+    }
+
+    /**
      * Wires the shared MonitorContext callbacks and connects the shell and AI panels.
      */
     private void wireContextCallbacks() {
         ctx.notificationCallback = (msg, error) -> setNotification(msg, error);
         ctx.openMarkdownCallback = actionsPopup::openMarkdown;
         ctx.openMarkdownAtCallback = actionsPopup::openMarkdownAt;
-        ctx.askAiCallback = (file, line, problem, lineText) -> {
-            if (shellPanel.isOpen()) {
-                shellPanel.close();
+        ctx.askAiCallback = new MonitorContext.AskAi() {
+            @Override
+            public void fixProblem(Path file, int line, String problem, String lineText) {
+                openAiWithQuestion(dir -> AiFixPrompt.of(dir, file, line, problem, lineText));
             }
-            Path dir = mcpFacade != null ? mcpFacade.getSelectedSourceDirectory() : null;
-            aiPanel.openWithQuestion(AiFixPrompt.of(dir, file, line, problem, lineText));
+
+            @Override
+            public void fixFailure(Path file, int line, String failure, String lineText) {
+                openAiWithQuestion(dir -> AiFixPrompt.ofFailure(dir, file, line, failure, lineText));
+            }
         };
         ctx.projectOverviewCallback = () -> {
             if (shellPanel.isOpen()) {

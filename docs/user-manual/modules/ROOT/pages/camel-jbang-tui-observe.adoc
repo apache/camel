@@ -130,6 +130,12 @@ Inspect tab):
 This combination of error details + visual diagram replay gives you a complete picture of
 what went wrong and why -- without leaving the terminal.
 
+Press *Shift+F8* on an error to ask the AI to fix it: the AI panel opens with the source line of the processor the
+error happened at, and its exception, the same question as *Shift+F8* on a failing line in the
+xref:camel-jbang-tui-source-editor.adoc#_fix_with_ai[Source editor].
+
+image::jbang/camel-tui-errors-fix-with-ai.png[Shift+F8 on an error writes the question for the AI]
+
 image::jbang/camel-tui-observe-error-diagram.png[A failed order: the path from checkout to payment-provider, and the onException handler that parked it]
 
 == OpenTelemetry Spans
