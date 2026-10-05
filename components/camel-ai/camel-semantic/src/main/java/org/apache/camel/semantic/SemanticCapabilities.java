@@ -289,12 +289,14 @@ public final class SemanticCapabilities {
         }
 
         public Builder inputTypes(InputType... inputTypes) {
-            this.inputTypes = Set.of(inputTypes);
+            this.inputTypes = EnumSet.noneOf(InputType.class);
+            Collections.addAll(this.inputTypes, inputTypes);
             return this;
         }
 
         public Builder resultTypes(ResultType... resultTypes) {
-            this.resultTypes = Set.of(resultTypes);
+            this.resultTypes = EnumSet.noneOf(ResultType.class);
+            Collections.addAll(this.resultTypes, resultTypes);
             return this;
         }
 
@@ -319,7 +321,8 @@ public final class SemanticCapabilities {
         }
 
         public Builder confidenceTypes(ResultType... confidenceTypes) {
-            this.confidenceTypes = Set.of(confidenceTypes);
+            this.confidenceTypes = EnumSet.noneOf(ResultType.class);
+            Collections.addAll(this.confidenceTypes, confidenceTypes);
             return this;
         }
 

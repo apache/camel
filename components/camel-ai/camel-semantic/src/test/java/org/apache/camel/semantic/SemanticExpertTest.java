@@ -221,6 +221,28 @@ class SemanticExpertTest {
         assertThat(expression.evaluate(exchange, Boolean.class)).isFalse();
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void rebindingNamedExpertRequiresNewExpressionOrDeclarationReplacement(boolean useDefault) {
+        if (useDefault) {
+            language.setDefaultExpert("security");
+        }
+        String expert = useDefault ? null : "security";
+        define(expert, "other", 0.5);
+        var expression = language.createExpression("ref:first");
+        assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
+
+        var replacement = new FixedExpert();
+        replacement.probability = 0.1;
+        context.getRegistry().unbind("security");
+        context.getRegistry().bind("security", replacement);
+        assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
+        assertThat(language.createExpression("ref:first").evaluate(exchange, Boolean.class)).isFalse();
+
+        define(expert, "other", 0.5);
+        assertThat(expression.evaluate(exchange, Boolean.class)).isFalse();
+    }
+
     @Test
     void changedDeclarationsAreValidatedBeforePublicationAndReselectExpert() {
         define("security", "other", 0.5);

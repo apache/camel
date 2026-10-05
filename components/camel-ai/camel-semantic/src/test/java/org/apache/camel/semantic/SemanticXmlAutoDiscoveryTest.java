@@ -85,7 +85,8 @@ class SemanticXmlAutoDiscoveryTest {
         Path routes = directory.resolve(filename);
         String files;
         if (standalone) {
-            Path questions = directory.resolve("my.questions.xml");
+            Path questions = directory.resolve(filename.endsWith(".semantic.xml")
+                    ? "my.questions.semantic.xml" : "my.questions.xml");
             Files.writeString(questions, declarations);
             Files.writeString(routes, "<routes>" + route + "</routes>");
             // The consumer is deliberately listed first.

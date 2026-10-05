@@ -52,6 +52,30 @@ class SemanticCapabilitiesTest {
     }
 
     @Test
+    void duplicateAnnotationValuesAreDeduplicated() {
+        var capabilities = SemanticCapabilities.from(DuplicateExpert.class.getAnnotation(SemanticExpert.class));
+        assertThat(capabilities.getInputTypes()).containsExactly(InputType.TEXT, InputType.STRUCTURED);
+        assertThat(capabilities.getResultTypes()).containsExactly(ResultType.BOOLEAN, ResultType.SCORE);
+        assertThat(capabilities.getConfidenceTypes()).containsExactly(ResultType.BOOLEAN, ResultType.SCORE);
+    }
+
+    @Test
+    void builderAcceptsEmptyEnumArrays() {
+        var capabilities = SemanticCapabilities.builder().inputTypes().resultTypes().confidenceTypes().build();
+        assertThat(capabilities.getInputTypes()).isEmpty();
+        assertThat(capabilities.getResultTypes()).isEmpty();
+        assertThat(capabilities.getConfidenceTypes()).isEmpty();
+    }
+
+    @SemanticExpert(name = "duplicates", description = "Duplicate capability values", provider = "test", artifactId = "test",
+                    instructions = Instructions.OPTIONAL, callerDefinedCriteria = false,
+                    inputTypes = { InputType.STRUCTURED, InputType.TEXT, InputType.TEXT },
+                    resultTypes = { ResultType.SCORE, ResultType.BOOLEAN, ResultType.BOOLEAN },
+                    confidenceTypes = { ResultType.SCORE, ResultType.BOOLEAN, ResultType.BOOLEAN })
+    private static class DuplicateExpert {
+    }
+
+    @Test
     void choiceLimitsDoNotApplyToBooleanCriteriaOrUnlimitedScores() {
         var capabilities = SemanticCapabilities.builder().resultTypes(ResultType.values())
                 .callerDefinedCriteria(true).maxChoices(1).build();
