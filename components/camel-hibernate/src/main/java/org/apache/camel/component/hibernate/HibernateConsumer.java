@@ -81,13 +81,20 @@ public class HibernateConsumer extends ScheduledPollConsumer {
                 List<?> results = query.getResultList();
 
                 for (Object result : results) {
-                    Exchange exchange = createExchange(false);
-                    exchange.getMessage().setBody(result);
+                    Exchange exchange = null;
+                    try {
+                        exchange = createExchange(false);
+                        exchange.getMessage().setBody(result);
 
-                    getProcessor().process(exchange);
+                        getProcessor().process(exchange);
 
-                    if (exchange.getException() != null) {
-                        throw exchange.getException();
+                        if (exchange.getException() != null) {
+                            handleException(exchange.getException());
+                        }
+                    } catch (Exception e) {
+                        handleException(e);
+                    } finally {
+                        releaseExchange(exchange, false);
                     }
                 }
 

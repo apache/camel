@@ -45,8 +45,7 @@ public class HibernateComponent extends DefaultComponent {
     @Metadata(description = "The DataSource to use for bootstrapping the SessionFactory (bean reference or registry name).")
     private Object dataSource;
 
-    @Metadata(description = "Explicit array of entity classes.")
-    private Class[] entityClasses;
+    private Class<?>[] entityClasses;
 
     @Metadata(description = "Schema generation action: none, validate, update, create.", defaultValue = "none")
     private String schemaAction = "none";
@@ -212,11 +211,13 @@ public class HibernateComponent extends DefaultComponent {
         this.dataSource = dataSource;
     }
 
-    public Class[] getEntityClasses() {
+    @Metadata(skip = true)
+    public Class<?>[] getEntityClasses() {
         return entityClasses;
     }
 
-    public void setEntityClasses(Class[] entityClasses) {
+    @Metadata(skip = true)
+    public void setEntityClasses(Class<?>[] entityClasses) {
         this.entityClasses = entityClasses;
     }
 

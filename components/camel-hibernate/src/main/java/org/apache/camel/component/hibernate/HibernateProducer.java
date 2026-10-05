@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.hibernate.KeyType;
 import org.hibernate.Session;
 import org.hibernate.StatelessSession;
@@ -88,10 +89,22 @@ public class HibernateProducer extends DefaultProducer {
                 }
 
                 if (endpoint.isStreaming()) {
+                    exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                        @Override
+                        public void onComplete(Exchange exchange) {
+                            closeStreamingSession(session, transaction, false);
+                        }
+
+                        @Override
+                        public void onFailure(Exchange exchange) {
+                            closeStreamingSession(session, transaction, true);
+                        }
+                    });
+
                     Stream<?> stream = query.getResultStream();
 
                     exchange.getMessage().setBody(stream.onClose(
-                            () -> closeStreamingSession(session, transaction)));
+                            () -> closeStreamingSession(session, transaction, false)));
 
                     return;
                 }
@@ -121,10 +134,14 @@ public class HibernateProducer extends DefaultProducer {
         }
     }
 
-    private void closeStreamingSession(Session session, Transaction transaction) {
+    private void closeStreamingSession(Session session, Transaction transaction, boolean rollback) {
         try {
             if (transaction.isActive()) {
-                transaction.commit();
+                if (rollback) {
+                    transaction.rollback();
+                } else {
+                    transaction.commit();
+                }
             }
         } finally {
             session.close();

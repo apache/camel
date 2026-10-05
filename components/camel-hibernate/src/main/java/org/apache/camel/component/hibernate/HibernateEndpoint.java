@@ -30,7 +30,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.hibernate.SessionFactory;
 
 @UriEndpoint(firstVersion = "4.23.0", scheme = "hibernate", title = "Hibernate", syntax = "hibernate:entityClassName",
-             category = { Category.DATABASE })
+             category = { Category.DATABASE }, headersClass = HibernateConstants.class)
 public class HibernateEndpoint extends ScheduledPollEndpoint {
 
     @UriPath(description = "Target entity class name or entity type name")
