@@ -21,7 +21,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -84,6 +86,13 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     private final Map<EncodeHintType, Object> userWriterHintMap = new EnumMap<>(EncodeHintType.class);
     private final Map<DecodeHintType, Object> userReaderHintMap = new EnumMap<>(DecodeHintType.class);
+
+    /**
+     * The hints removed by the user, which are removed from the optimized hints (also a default hint removed before the
+     * data format is started).
+     */
+    private final Set<EncodeHintType> removedWriterHints = EnumSet.noneOf(EncodeHintType.class);
+    private final Set<DecodeHintType> removedReaderHints = EnumSet.noneOf(DecodeHintType.class);
 
     /**
      * Create instance with default parameters.
@@ -179,7 +188,9 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
         // reader hints
         this.readerHintMap.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
 
-        // the hints added by the user
+        // the hints removed and added by the user
+        this.writerHintMap.keySet().removeAll(this.removedWriterHints);
+        this.readerHintMap.keySet().removeAll(this.removedReaderHints);
         this.writerHintMap.putAll(this.userWriterHintMap);
         this.readerHintMap.putAll(this.userReaderHintMap);
     }
@@ -248,6 +259,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     public final void addToHintMap(final EncodeHintType hintType, final Object value) {
         this.writerHintMap.put(hintType, value);
         this.userWriterHintMap.put(hintType, value);
+        this.removedWriterHints.remove(hintType);
         LOG.info("Added '{}' with value '{}' to writer hint map.", hintType, value);
     }
 
@@ -257,29 +269,38 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     public final void addToHintMap(final DecodeHintType hintType, final Object value) {
         this.readerHintMap.put(hintType, value);
         this.userReaderHintMap.put(hintType, value);
+        this.removedReaderHints.remove(hintType);
     }
 
     /**
-     * Removes a hint from writer (encode) hint map.
+     * Removes a hint from writer (encode) hint map. A hint removed before the data format is started, such as a default
+     * hint, is removed when it starts.
      */
     public final void removeFromHintMap(final EncodeHintType hintType) {
         this.userWriterHintMap.remove(hintType);
+        this.removedWriterHints.add(hintType);
         if (this.writerHintMap.containsKey(hintType)) {
             this.writerHintMap.remove(hintType);
             LOG.info("Removed '{}' from writer hint map.", hintType);
+        } else if (!isStarted()) {
+            LOG.info("Removing '{}' from writer hint map when the data format starts.", hintType);
         } else {
             LOG.warn("Could not find encode hint type '{}' in writer hint map.", hintType);
         }
     }
 
     /**
-     * Removes a hint from reader (decode) hint map.
+     * Removes a hint from reader (decode) hint map. A hint removed before the data format is started, such as a default
+     * hint, is removed when it starts.
      */
     public final void removeFromHintMap(final DecodeHintType hintType) {
         this.userReaderHintMap.remove(hintType);
+        this.removedReaderHints.add(hintType);
         if (this.readerHintMap.containsKey(hintType)) {
             this.readerHintMap.remove(hintType);
             LOG.info("Removed '{}' from reader hint map.", hintType);
+        } else if (!isStarted()) {
+            LOG.info("Removing '{}' from reader hint map when the data format starts.", hintType);
         } else {
             LOG.warn("Could not find decode hint type '{}' in reader hint map.", hintType);
         }

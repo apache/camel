@@ -33,10 +33,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * The text of a barcode must come back as it was written, also when ISO-8859-1 (the ZXing default) cannot represent it,
- * and the hints added before the data format is started must be used.
+ * and the hints added or removed before the data format is started must be used.
  */
 public class BarcodeDataFormatCharsetTest extends CamelTestSupport {
 
@@ -80,6 +81,37 @@ public class BarcodeDataFormatCharsetTest extends CamelTestSupport {
             assertEquals(Boolean.TRUE, format.getReaderHintMap().get(DecodeHintType.PURE_BARCODE));
             assertEquals(Boolean.TRUE, format.getReaderHintMap().get(DecodeHintType.TRY_HARDER));
         }
+    }
+
+    @Test
+    void testHintsRemovedBeforeStart() throws Exception {
+        BarcodeDataFormat format = new BarcodeDataFormat();
+        // default hints, and a hint added before start
+        format.removeFromHintMap(EncodeHintType.ERROR_CORRECTION);
+        format.removeFromHintMap(DecodeHintType.TRY_HARDER);
+        format.addToHintMap(EncodeHintType.MARGIN, 2);
+        format.removeFromHintMap(EncodeHintType.MARGIN);
+
+        Exchange exchange = new DefaultExchange(context);
+        assertEquals("Hello Camel", roundTrip(format, "Hello Camel", exchange));
+        assertFalse(format.getWriterHintMap().containsKey(EncodeHintType.ERROR_CORRECTION));
+        assertFalse(format.getWriterHintMap().containsKey(EncodeHintType.MARGIN));
+        assertFalse(format.getReaderHintMap().containsKey(DecodeHintType.TRY_HARDER));
+        // the QR code was written with the ZXing default error correction (L), not the default hint (H)
+        assertEquals("L", exchange.getMessage().getHeader("ERROR_CORRECTION_LEVEL"));
+
+        // a hint added again after it was removed is used
+        format.addToHintMap(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+        exchange = new DefaultExchange(context);
+        assertEquals("Hello Camel", roundTrip(format, "Hello Camel", exchange));
+        assertEquals("M", exchange.getMessage().getHeader("ERROR_CORRECTION_LEVEL"));
+    }
+
+    @Test
+    void testDefaultHintsWithoutRemoval() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        assertEquals("Hello Camel", roundTrip(new BarcodeDataFormat(), "Hello Camel", exchange));
+        assertEquals("H", exchange.getMessage().getHeader("ERROR_CORRECTION_LEVEL"));
     }
 
     @Test
