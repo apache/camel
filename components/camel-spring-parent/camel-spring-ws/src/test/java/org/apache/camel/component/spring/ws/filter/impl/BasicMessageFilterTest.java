@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.spring.ws.filter.impl;
 
+import java.util.List;
+import java.util.Locale;
+
 import jakarta.activation.DataHandler;
 
 import javax.xml.namespace.QName;
 
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.spring.ws.SpringWebserviceConstants;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.test.junit6.ExchangeTestSupport;
 import org.assertj.core.util.Streams;
 import org.junit.jupiter.api.BeforeEach;
@@ -183,5 +187,59 @@ class BasicMessageFilterTest extends ExchangeTestSupport {
 
         assertThat(Streams.stream(message.getAttachments()).toList()).isNotEmpty();
         assertThat(message.getAttachment("testAttachment")).isNotNull();
+    }
+
+    @Test
+    void producerDoesNotWriteInternalCamelHeaders() {
+        exchange.getIn().setHeader("CamelHttpUri", "http://localhost/backend");
+        exchange.getIn().setHeader("cAmElFileName", "request.xml");
+        exchange.getIn().setHeader("TransactionId", "42");
+
+        filter.filterProducer(exchange, message);
+
+        assertThat(attributeNames()).contains("foo", "TransactionId")
+                .noneMatch(name -> name.toLowerCase(Locale.ROOT).startsWith("camel"));
+    }
+
+    @Test
+    void consumerDoesNotWriteInternalCamelHeaders() {
+        exchange.getMessage().setHeader("CamelHttpUri", "http://localhost/backend");
+        exchange.getMessage().setHeader("cAmElFileName", "response.xml");
+        exchange.getMessage().setHeader("TransactionId", "42");
+        exchange.getMessage().setHeader("CamelElement", new QName("http://example.com/test", "camelElement"));
+        exchange.getMessage().setHeader("AppElement", new QName("http://example.com/test", "appElement"));
+
+        filter.filterConsumer(exchange, message);
+
+        assertThat(attributeNames()).contains("foo", "TransactionId")
+                .noneMatch(name -> name.toLowerCase(Locale.ROOT).startsWith("camel"));
+        assertThat(Streams.stream(message.getSoapHeader().examineAllHeaderElements())
+                .map(element -> element.getName().getLocalPart()).toList()).containsExactly("appElement");
+    }
+
+    @Test
+    void suppliedHeaderFilterStrategyIsApplied() {
+        DefaultHeaderFilterStrategy passThrough = new DefaultHeaderFilterStrategy();
+        passThrough.setOutFilterStartsWith((String[]) null);
+        filter = new BasicMessageFilter(() -> passThrough);
+        exchange.getIn().setHeader("CamelHttpUri", "http://localhost/backend");
+
+        filter.filterProducer(exchange, message);
+
+        assertThat(attributeNames()).contains("foo", "CamelHttpUri");
+    }
+
+    @Test
+    void noHeaderFilterStrategyWritesEveryHeader() {
+        filter = new BasicMessageFilter(() -> null);
+        exchange.getIn().setHeader("CamelHttpUri", "http://localhost/backend");
+
+        filter.filterProducer(exchange, message);
+
+        assertThat(attributeNames()).contains("foo", "CamelHttpUri");
+    }
+
+    private List<String> attributeNames() {
+        return Streams.stream(message.getSoapHeader().getAllAttributes()).map(QName::getLocalPart).toList();
     }
 }
