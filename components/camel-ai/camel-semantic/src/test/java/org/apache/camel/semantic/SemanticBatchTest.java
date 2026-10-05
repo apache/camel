@@ -278,10 +278,26 @@ class SemanticBatchTest {
         assertThatThrownBy(() -> expression.evaluate(exchange, Map.class))
                 .hasMessageContaining("Unknown semantic question: second");
         assertThat(exchange.getProperty(SemanticLanguage.RESULTS)).isNull();
-        questions.replace("test", Map.of("first", old, "second",
-                question(SemanticQuestion.Type.BOOLEAN, "${header.changed}", 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL)));
-        assertThatThrownBy(() -> expression.evaluate(exchange, Map.class))
+        assertThatThrownBy(() -> questions.replace("test", Map.of("first", old, "second",
+                question(SemanticQuestion.Type.BOOLEAN, "${header.changed}", 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL))))
                 .hasMessageContaining("same effective state selector");
+        assertThat(questions.get("first")).isSameAs(old);
+        assertThatThrownBy(() -> questions.get("second")).hasMessageContaining("Unknown semantic question");
+        assertThatThrownBy(() -> expression.evaluate(exchange, Map.class)).hasMessageContaining("Unknown semantic question");
+    }
+
+    @Test
+    void reloadChecksBatchSelectorsAcrossResourcesAndRetainsThePreviousSnapshot() {
+        SemanticQuestions questions = SemanticQuestions.get(context);
+        SemanticQuestion original = questions.get("urgent");
+        questions.replace("other", Map.of("other", original));
+        Expression expression = language.createExpression("refs:urgent,other");
+        assertThatThrownBy(() -> questions.replace("other", Map.of("other",
+                question(SemanticQuestion.Type.BOOLEAN, "${header.changed}", 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL))))
+                .hasMessageContaining("same effective state selector");
+        assertThat(adapter.calls).isEmpty();
+        assertThat(questions.get("other")).isSameAs(original);
+        assertThat(expression.evaluate(exchange, Map.class)).containsEntry("urgent", true).containsEntry("other", true);
     }
 
     @Test

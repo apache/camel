@@ -38,6 +38,7 @@ public final class SemanticQuestion {
     }
 
     private final Type type;
+    private final String expert;
     private final String instructions;
     private final String state;
     private final Map<String, String> criteria;
@@ -48,8 +49,18 @@ public final class SemanticQuestion {
 
     public SemanticQuestion(Type type, String instructions, String state, Map<String, String> criteria,
                             List<String> levels, double threshold, double uncertainty, UncertaintyPolicy uncertaintyPolicy) {
+        this(type, instructions, state, criteria, levels, threshold, uncertainty, uncertaintyPolicy, null);
+    }
+
+    public SemanticQuestion(Type type, String instructions, String state, Map<String, String> criteria,
+                            List<String> levels, double threshold, double uncertainty, UncertaintyPolicy uncertaintyPolicy,
+                            String expert) {
         this.type = Objects.requireNonNull(type, "Question type is required");
-        if (instructions == null || instructions.isBlank()) {
+        if (expert != null && expert.isBlank()) {
+            throw new IllegalArgumentException("Question expert must not be blank");
+        }
+        this.expert = expert;
+        if (instructions != null && instructions.isBlank()) {
             throw new IllegalArgumentException("Question instructions must not be blank");
         }
         if (state != null && state.isBlank()) {
@@ -82,6 +93,10 @@ public final class SemanticQuestion {
         this.threshold = threshold;
         this.uncertainty = uncertainty;
         this.uncertaintyPolicy = Objects.requireNonNull(uncertaintyPolicy, "Uncertainty policy is required");
+    }
+
+    public String getExpert() {
+        return expert;
     }
 
     public Type getType() {

@@ -26,6 +26,7 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.dsl.yaml.common.exception.InvalidEnumException;
+import org.apache.camel.dsl.yaml.common.exception.InvalidNodeTypeException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.semantic.SemanticQuestion;
 import org.apache.camel.semantic.SemanticQuestions;
@@ -48,7 +49,7 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
 })
 public class SemanticDefinitionDeserializer extends YamlDeserializerSupport implements ConstructNode, YamlDeserializerResolver {
     private static final Set<String> FIELDS
-            = Set.of("type", "instructions", "state", "criteria", "threshold", "uncertainty", "uncertaintyPolicy");
+            = Set.of("type", "expert", "instructions", "state", "criteria", "threshold", "uncertainty", "uncertaintyPolicy");
 
     @Override
     public ConstructNode resolve(String id) {
@@ -108,28 +109,34 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
             if (name.isBlank()) {
                 throw new YamlDeserializationException(definition, "Semantic question requires a nonblank name");
             }
+            Map<String, Node> values = fields(definition, "semantic question '" + name + "'");
+            String expert = values.containsKey("expert") ? asText(values.get("expert")) : "default/automatic";
             try {
-                result.put(name, readQuestion(context, name, definition));
-            } catch (IllegalArgumentException e) {
+                result.put(name, readQuestion(context, name, expert, definition, values));
+            } catch (IllegalArgumentException | InvalidNodeTypeException e) {
                 throw new YamlDeserializationException(
-                        definition, "Invalid semantic question '" + name + "': " + e.getMessage(), e);
+                        definition, "Invalid semantic question '" + name + "': " + e.getMessage()
+                                    + " (expert '" + expert + "')",
+                        e);
             }
         });
         return result;
     }
 
-    private static SemanticQuestion readQuestion(CamelContext context, String name, Node definition) {
-        Map<String, Node> values = fields(definition, "semantic question '" + name + "'");
+    private static SemanticQuestion readQuestion(
+            CamelContext context, String name, String expert, Node definition, Map<String, Node> values) {
+        String description = "semantic question '" + name + "'";
+        String expertContext = " (expert '" + expert + "')";
         values.forEach((field, value) -> {
             if (!FIELDS.contains(field)) {
                 throw new YamlDeserializationException(
-                        value, "Unknown property '" + field + "' in semantic question '" + name + "'");
+                        value, "Unknown property '" + field + "' in " + description + expertContext);
             }
         });
         if (!values.containsKey("type")) {
-            throw new YamlDeserializationException(definition, "Semantic question type is required: " + name);
+            throw new YamlDeserializationException(definition, "Semantic question type is required: " + name + expertContext);
         }
-        SemanticQuestion.Type type = enumeration(values.get("type"), name, "type", SemanticQuestion.Type.class);
+        SemanticQuestion.Type type = enumeration(values.get("type"), name, expert, "type", SemanticQuestion.Type.class);
         Map<String, String> criteria = new LinkedHashMap<>();
         List<String> levels = List.of();
         if (values.containsKey("criteria")) {
@@ -137,36 +144,38 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
                 levels = asSequenceNode(values.get("criteria")).getValue().stream().map(YamlDeserializerSupport::asText)
                         .toList();
             } else {
-                fields(values.get("criteria"), "criteria for semantic question '" + name + "'")
+                fields(values.get("criteria"), "criteria for " + description + expertContext)
                         .forEach((key, value) -> criteria.put(key, asText(value)));
             }
         }
         if (type != SemanticQuestion.Type.BOOLEAN && (values.containsKey("threshold") || values.containsKey("uncertainty")
                 || values.containsKey("uncertaintyPolicy"))) {
             throw new YamlDeserializationException(
-                    definition, "Threshold and uncertainty policy require a boolean question: " + name);
+                    definition, "Threshold and uncertainty policy require a boolean question: " + name + expertContext);
         }
         SemanticQuestion.UncertaintyPolicy policy = values.containsKey("uncertaintyPolicy")
-                ? enumeration(values.get("uncertaintyPolicy"), name, "uncertaintyPolicy",
+                ? enumeration(values.get("uncertaintyPolicy"), name, expert, "uncertaintyPolicy",
                         SemanticQuestion.UncertaintyPolicy.class)
                 : SemanticQuestion.UncertaintyPolicy.FAIL;
         return new SemanticQuestion(
                 type, asText(values.get("instructions")), asText(values.get("state")),
-                criteria, levels, number(context, values, name, "threshold", 0.5),
-                number(context, values, name, "uncertainty", 0), policy);
+                criteria, levels, number(context, values, name, expert, "threshold", 0.5),
+                number(context, values, name, expert, "uncertainty", 0), policy, asText(values.get("expert")));
     }
 
-    private static <T extends Enum<T>> T enumeration(Node node, String question, String field, Class<T> type) {
+    private static <T extends Enum<T>> T enumeration(Node node, String question, String expert, String field, Class<T> type) {
         try {
             return asEnum(node, type);
         } catch (InvalidEnumException e) {
             throw new YamlDeserializationException(
-                    node, "Invalid value for '" + field + "' in semantic question '" + question + "': " + asText(node), e);
+                    node, "Invalid value for '" + field + "' in semantic question '" + question + "': " + asText(node)
+                          + " (expert '" + expert + "')",
+                    e);
         }
     }
 
     private static double number(
-            CamelContext context, Map<String, Node> values, String question, String name, double fallback) {
+            CamelContext context, Map<String, Node> values, String question, String expert, String name, double fallback) {
         if (!values.containsKey(name)) {
             return fallback;
         }
@@ -177,7 +186,9 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
         } catch (NumberFormatException e) {
             throw new YamlDeserializationException(
                     node,
-                    "Invalid numeric value for '" + name + "' in semantic question '" + question + "': " + raw, e);
+                    "Invalid numeric value for '" + name + "' in semantic question '" + question + "': " + raw
+                          + " (expert '" + expert + "')",
+                    e);
         }
     }
 
@@ -208,7 +219,8 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
 
     @YamlType(properties = {
             @YamlProperty(name = "type", type = "enum:boolean", required = true),
-            @YamlProperty(name = "instructions", type = "string", required = true),
+            @YamlProperty(name = "expert", type = "string"),
+            @YamlProperty(name = "instructions", type = "string"),
             @YamlProperty(name = "state", type = "string"),
             @YamlProperty(name = "criteria", type = "map:string"),
             @YamlProperty(name = "threshold", type = "number"),
@@ -220,7 +232,8 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
 
     @YamlType(properties = {
             @YamlProperty(name = "type", type = "enum:choice", required = true),
-            @YamlProperty(name = "instructions", type = "string", required = true),
+            @YamlProperty(name = "expert", type = "string"),
+            @YamlProperty(name = "instructions", type = "string"),
             @YamlProperty(name = "state", type = "string"),
             @YamlProperty(name = "criteria", type = "map:string", required = true)
     })
@@ -229,7 +242,8 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
 
     @YamlType(properties = {
             @YamlProperty(name = "type", type = "enum:score", required = true),
-            @YamlProperty(name = "instructions", type = "string", required = true),
+            @YamlProperty(name = "expert", type = "string"),
+            @YamlProperty(name = "instructions", type = "string"),
             @YamlProperty(name = "state", type = "string"),
             @YamlProperty(name = "criteria", type = "array:string", required = true)
     })
