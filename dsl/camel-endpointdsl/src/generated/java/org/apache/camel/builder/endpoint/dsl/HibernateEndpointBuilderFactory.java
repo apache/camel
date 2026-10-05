@@ -44,6 +44,36 @@ public interface HibernateEndpointBuilderFactory {
             return (AdvancedHibernateEndpointConsumerBuilder) this;
         }
         /**
+         * Whether to delete consumed entities after successful processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param consumeDelete the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointConsumerBuilder consumeDelete(boolean consumeDelete) {
+            doSetProperty("consumeDelete", consumeDelete);
+            return this;
+        }
+        /**
+         * Whether to delete consumed entities after successful processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param consumeDelete the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointConsumerBuilder consumeDelete(String consumeDelete) {
+            doSetProperty("consumeDelete", consumeDelete);
+            return this;
+        }
+        /**
          * The maximum number of entities to retrieve in a single poll.
          * 
          * The option is a: <code>int</code> type.
@@ -816,7 +846,23 @@ public interface HibernateEndpointBuilderFactory {
         /**
          * Stateless operation to perform: insert or upsert.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.hibernate.HibernateEndpoint.StatelessOperation</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param statelessOperation the value to set
+         * @return the dsl builder
+         */
+        default HibernateEndpointProducerBuilder statelessOperation(org.apache.camel.component.hibernate.HibernateEndpoint.StatelessOperation statelessOperation) {
+            doSetProperty("statelessOperation", statelessOperation);
+            return this;
+        }
+        /**
+         * Stateless operation to perform: insert or upsert.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.hibernate.HibernateEndpoint.StatelessOperation</code> type.
          * 
          * Group: producer
          * 
@@ -1018,18 +1064,6 @@ public interface HibernateEndpointBuilderFactory {
          */
         public String hibernateParameters() {
             return "CamelHibernateParameters";
-        }
-        /**
-         * The Hibernate Session associated with the current exchange.
-         * 
-         * The option is a: {@code } type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code HibernateSession}.
-         */
-        public String hibernateSession() {
-            return "CamelHibernateSession";
         }
     }
     static HibernateEndpointBuilder endpointBuilder(String componentName, String path) {
