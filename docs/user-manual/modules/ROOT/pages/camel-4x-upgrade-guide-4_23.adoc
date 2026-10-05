@@ -3380,6 +3380,9 @@ onto the outgoing request; the `Content-Type` of the request is still taken from
 before. Headers consumed by the URI template or the query parameters continue to be filtered, and a
 custom `headerFilterStrategy` is used as-is and is unaffected.
 
+Routes that relied on one of those headers reaching the wire must set it through the endpoint
+configuration or supply a `headerFilterStrategy` that permits it.
+
 === camel-vertx - the vertxFactory option takes the public VertxBuilder
 
 The type of the `vertxFactory` option of the `vertx` component changed from the Vert.x internal class
@@ -3398,9 +3401,6 @@ component.setVertxFactory(Vertx.builder().with(options));
 ----
 
 An application that does not set `vertxFactory` is not affected.
-
-Routes that relied on one of those headers reaching the wire must set it through the endpoint
-configuration or supply a `headerFilterStrategy` that permits it.
 
 === camel-disruptor - an interrupted request/reply producer fails the exchange
 
