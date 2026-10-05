@@ -588,8 +588,28 @@ poll as if the exchange had been delivered.
 This is not a change to error handling. An exchange that failed while being routed has already passed through the
 route's error handler, which logs the exhausted failure, and `BridgeExceptionHandlerToErrorHandler` deliberately
 falls back to its logging handler for such an exchange rather than bridging it a second time. What changes is that
-the consumer itself no longer stays silent, and that with `consumerProcessedStrategy=delete` the loss is now visible:
-the document is removed during the poll, before the route runs.
+the consumer itself no longer stays silent.
+
+==== consumerProcessedStrategy=delete
+
+With `consumerProcessedStrategy=delete` the consumer now removes a document once its exchange has completed
+successfully. It used to remove every document of a poll while building the exchanges, before any of them was handed
+to the route, so the document was gone even when its exchange failed, and also when it was never handed to the route
+at all, because the consumer was stopping or the poll returned more rows than `maxMessagesPerPoll`.
+
+A document whose exchange fails, and a document that was not handed to the route, are now kept and consumed again by a
+later poll. A route that fails for the same document every time therefore receives it on every poll; handle the
+failure in the route (for example with a dead letter channel or a handled `onException`) so that the exchange
+completes and the document is removed. While the route runs, the document is still in the bucket. A failure to remove
+the document is reported through the consumer's exception handler.
+
+If the route hands the exchange over to another thread (for example `seda` with `waitForTaskToComplete=Never`, or an
+asynchronous producer), the document is removed when that exchange completes, which can be after the next poll. Until
+its exchange has completed or failed, a document is skipped by later polls of the same consumer, so it is not delivered
+twice, in the same way as the in-progress repository of the file and aws2-s3 consumers. A skipped document does not
+count towards `maxMessagesPerPoll`. This only applies to the same consumer: another consumer reading the same bucket,
+for example on another node, can still read the document before it is removed. With the other strategies the document
+stays in the bucket, so later polls read it again as before.
 
 === camel-smpp - received exchanges now come from the consumer
 
