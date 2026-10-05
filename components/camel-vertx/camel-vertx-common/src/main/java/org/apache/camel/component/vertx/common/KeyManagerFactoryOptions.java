@@ -19,7 +19,6 @@ package org.apache.camel.component.vertx.common;
 import java.util.function.Function;
 
 import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.X509KeyManager;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.net.KeyCertOptions;
@@ -43,16 +42,6 @@ public class KeyManagerFactoryOptions implements KeyCertOptions {
     @Override
     public KeyManagerFactory getKeyManagerFactory(Vertx vertx) {
         return keyManagerFactory;
-    }
-
-    @Override
-    public Function<String, X509KeyManager> keyManagerMapper(Vertx vertx) {
-        if (keyManagerFactory == null || keyManagerFactory.getKeyManagers() == null
-                || keyManagerFactory.getKeyManagers().length == 0) {
-            return null;
-        }
-        return keyManagerFactory.getKeyManagers()[0] instanceof X509KeyManager
-                ? serverName -> (X509KeyManager) keyManagerFactory.getKeyManagers()[0] : null;
     }
 
     @Override
