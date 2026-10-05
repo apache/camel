@@ -150,6 +150,31 @@ class CamelMonitorTest {
     }
 
     @Test
+    void dropFKeyHintsDropsTheGlobalOnesBeforeTheScreensOwn() {
+        // tab hint + F1/F2/F10 + the screen's own Shift+F8, fKeyTotal = 8 spans of which 2 are the screen's
+        List<Span> spans = footer("Esc", "back");
+        hint(spans, "F1", "help");
+        hint(spans, "F2", "actions");
+        hint(spans, "F10", "run");
+        hint(spans, "Shift+F8", "fix with AI");
+        int width = width(spans);
+
+        int available = width - pairWidth(spans, "F10") - pairWidth(spans, "F2");
+        int newWidth = CamelMonitor.dropFKeyHints(spans, 8, 2, width, available);
+
+        assertTrue(containsKey(spans, "Shift+F8"), "the screen's own F-key stays while global ones can go");
+        assertTrue(containsKey(spans, "F1"), "F1 (help) must be preserved");
+        assertFalse(containsKey(spans, "F10"), "F10 is dropped first");
+        assertFalse(containsKey(spans, "F2"), "F2 is dropped next");
+        assertEquals(width(spans), newWidth, "returned width must match the remaining spans");
+
+        // under heavy overflow the screen's own goes too, F1 stays
+        CamelMonitor.dropFKeyHints(spans, 4, 2, width(spans), 1);
+        assertFalse(containsKey(spans, "Shift+F8"));
+        assertTrue(containsKey(spans, "F1"));
+    }
+
+    @Test
     void dropFKeyHintsLeavesFooterUntouchedWhenItFits() {
         List<Span> spans = footer("Enter", "open");
         hint(spans, "F1", "help");
