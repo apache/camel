@@ -59,7 +59,6 @@ public class TotalRequestsThrottler extends AbstractThrottler {
     private static final Logger LOG = LoggerFactory.getLogger(TotalRequestsThrottler.class);
 
     private volatile long timePeriodMillis;
-    private final long cleanPeriodMillis;
     private final Expression correlationExpression;
     private final Map<String, ThrottlingState> states = new ConcurrentHashMap<>();
 
@@ -73,7 +72,6 @@ public class TotalRequestsThrottler extends AbstractThrottler {
             throw new IllegalArgumentException("TimePeriodMillis should be a positive number, was: " + timePeriodMillis);
         }
         this.timePeriodMillis = timePeriodMillis;
-        this.cleanPeriodMillis = timePeriodMillis * 10;
         this.correlationExpression = correlation;
     }
 
@@ -101,6 +99,13 @@ public class TotalRequestsThrottler extends AbstractThrottler {
             throttlingState.calculateAndSetMaxRequestsPerPeriod(exchange);
 
             ThrottlePermit permit = throttlingState.poll();
+            while (permit != null && throttlingState.isRemoved()) {
+                // the state was cleaned after the exchange looked it up, so the permit does not count:
+                // return it, and take a permit from the state that replaced it
+                throttlingState.returnPermit(permit);
+                throttlingState = throttlingState.currentState(exchange);
+                permit = throttlingState.poll();
+            }
 
             if (permit == null) {
                 if (isRejectExecution()) {
@@ -126,6 +131,11 @@ public class TotalRequestsThrottler extends AbstractThrottler {
                         start = System.currentTimeMillis();
                     }
                     permit = throttlingState.take();
+                    while (throttlingState.isRemoved()) {
+                        throttlingState.returnPermit(permit);
+                        throttlingState = throttlingState.currentState(exchange);
+                        permit = throttlingState.take();
+                    }
                     if (LOG.isTraceEnabled()) {
                         elapsed = System.currentTimeMillis() - start;
                     }
@@ -226,6 +236,11 @@ public class TotalRequestsThrottler extends AbstractThrottler {
         private final DelayQueue<ThrottlePermit> delayQueue = new DelayQueue<>();
         private final AtomicReference<ScheduledFuture<?>> cleanFuture = new AtomicReference<>();
         private volatile int throttleRate;
+        // not the lock above: a decrease of the throttle rate holds that lock while it waits for permits, which an
+        // exchange that took a permit returns only after it checked whether the state was removed
+        private final Lock removedLock = new ReentrantLock();
+        // guarded by removedLock
+        private boolean removed;
 
         ThrottlingState(String key) {
             this.key = key;
@@ -247,8 +262,50 @@ public class TotalRequestsThrottler extends AbstractThrottler {
             return delayQueue.take();
         }
 
+        /**
+         * Removes this state if all its permits are returned (no exchange took a permit it has not returned yet). Only
+         * this state is removed, and not a state that has already replaced it.
+         */
         public void clean() {
-            states.remove(key);
+            states.computeIfPresent(key, (k, s) -> s == this && markRemovedIfUnused() ? null : s);
+        }
+
+        private boolean markRemovedIfUnused() {
+            removedLock.lock();
+            try {
+                if (delayQueue.size() >= throttleRate) {
+                    removed = true;
+                }
+                return removed;
+            } finally {
+                removedLock.unlock();
+            }
+        }
+
+        /**
+         * Whether this state was removed by {@link #clean()} after the exchange looked it up, in which case a permit
+         * taken from it does not count, and must be taken from the state that replaced it instead.
+         */
+        private boolean isRemoved() {
+            removedLock.lock();
+            try {
+                return removed;
+            } finally {
+                removedLock.unlock();
+            }
+        }
+
+        private ThrottlingState currentState(Exchange exchange) throws Exception {
+            ThrottlingState answer = states.computeIfAbsent(key, ThrottlingState::new);
+            answer.calculateAndSetMaxRequestsPerPeriod(exchange);
+            return answer;
+        }
+
+        /**
+         * Puts a permit back as it was, without a new delay.
+         */
+        private void returnPermit(ThrottlePermit permit) {
+            delayQueue.put(permit);
         }
 
         /**
@@ -258,6 +315,10 @@ public class TotalRequestsThrottler extends AbstractThrottler {
             permit.setDelayMs(getTimePeriodMillis());
             delayQueue.put(permit);
             try {
+                // clean up 10 periods after the last permit was returned (with the current period, which can be
+                // changed at runtime), when no permit is delayed any longer
+                long period = getTimePeriodMillis();
+                long cleanPeriodMillis = period > Long.MAX_VALUE / 10 ? Long.MAX_VALUE : period * 10;
                 ScheduledFuture<?> next = asyncExecutor.schedule(this::clean, cleanPeriodMillis, TimeUnit.MILLISECONDS);
                 ScheduledFuture<?> prev = cleanFuture.getAndSet(next);
                 if (prev != null) {
