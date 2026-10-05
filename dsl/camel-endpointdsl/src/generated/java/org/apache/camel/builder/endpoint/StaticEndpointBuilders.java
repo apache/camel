@@ -7593,8 +7593,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hibernate (camel-hibernate)
-     * Perform database operations using Hibernate ORM supporting both
-     * JPA-backed and Native Hibernate modes.
+     * Camel Hibernate Component
      * 
      * Category: database
      * Since: 4.23
@@ -7613,8 +7612,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hibernate (camel-hibernate)
-     * Perform database operations using Hibernate ORM supporting both
-     * JPA-backed and Native Hibernate modes.
+     * Camel Hibernate Component
      * 
      * Category: database
      * Since: 4.23
