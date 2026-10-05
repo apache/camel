@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -196,6 +197,48 @@ class CloudEventJsonDataTypeTransformerTest {
         JsonObject data = (JsonObject) event.get("data");
         assertEquals("He said \"hi\"", data.getString("message"));
         assertEquals(2, data.getCollection("items").size());
+    }
+
+    @Test
+    void shouldKeepMalformedJsonDataAsText() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        // declared as Json, but cut short: nesting it would make the event invalid Json
+        String text = "{\"message\": \"Test1\", \"items\": [1, 2";
+        exchange.getMessage().setHeader(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, "application/json");
+        exchange.getMessage().setBody(text);
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        JsonObject event = (JsonObject) Jsoner.deserialize(exchange.getMessage().getBody(String.class));
+        assertEquals(text, event.getString("data"));
+    }
+
+    @Test
+    void shouldRecognizeJsonObjectsAndArrays() {
+        assertTrue(CloudEventJsonDataTypeTransformer.isJson("{}"));
+        assertTrue(CloudEventJsonDataTypeTransformer.isJson("[]"));
+        assertTrue(CloudEventJsonDataTypeTransformer.isJson(" \r\n\t{ } \n"));
+        assertTrue(CloudEventJsonDataTypeTransformer.isJson("[{\"a\":{\"b\":[[], {}]}}, \"\"]"));
+        assertTrue(CloudEventJsonDataTypeTransformer.isJson(
+                "{\"a\": [0, -1, 12.5, -0.25e10, 1E+2, 3e-4, true, false, null], \"s\": \"\\\"\\\\\\/\\b\\f\\n\\r\\t\\u00e9\u00e9\"}"));
+        // deeper than the initial nesting stack
+        assertTrue(CloudEventJsonDataTypeTransformer.isJson("[".repeat(100) + "{\"a\":1}" + "]".repeat(100)));
+    }
+
+    @Test
+    void shouldRejectTextThatIsNotJsonObjectOrArray() {
+        for (String text : new String[] {
+                null, "", "  ", "Test", "\"text\"", "42", "true", "null",
+                "[INFO] order 42 received", "{ \"a\": 1 } trailing", "[1] [2]",
+                "{", "[", "{\"a\": 1", "[1, 2", "{\"a\": 1]", "[1}",
+                "[1,]", "{\"a\": 1,}", "[,1]", "{,}", "[1 2]", "{\"a\" 1}", "{\"a\": 1 \"b\": 2}", "{a: 1}", "{'a': 1}",
+                "{\"a\"}", "{\"a\":}", "[01]", "[1.]", "[.5]", "[-]", "[1e]", "[1e+]", "[+1]", "[0x1F]",
+                "[tru]", "[nul]", "[True]", "[NaN]",
+                "[\"open]", "[\"a\\x\"]", "[\"a\\u12g4\"]", "[\"a\\u12\"]", "[\"a\\\"]",
+                "[\"raw\u0001control\"]", "[\"raw\nnew line\"]", "\u000b{}" }) {
+            assertFalse(CloudEventJsonDataTypeTransformer.isJson(text), text);
+        }
     }
 
     @Test
