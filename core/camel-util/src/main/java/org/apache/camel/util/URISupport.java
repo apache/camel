@@ -770,7 +770,15 @@ public final class URISupport {
                 return uri;
             }
             // use the faster and more simple normalizer
-            return doFastNormalizeUri(parts);
+            String answer = doFastNormalizeUri(parts);
+            if (answer.indexOf('%') != -1) {
+                // a key or value needed a percent escape (such as = or # in a value), and a uri with % is normalized
+                // by the complex normalizer, which form-encodes the query and also encodes the path (such as a # or
+                // the @ in a user name); normalize the whole uri the same way here, so normalizing a normalized uri
+                // gives the same uri (the fast parser only takes uris without %, so all % come from the query)
+                return doComplexNormalizeUri(uri);
+            }
+            return answer;
         } else {
             // use the legacy normalizer as the uri is complex and may have unsafe URL characters
             return doComplexNormalizeUri(uri);
@@ -899,13 +907,8 @@ public final class URISupport {
         // the much more aggressive application/x-www-form-urlencoded encoding used by
         // createQueryString()/URLEncoder, which would needlessly percent-encode characters that are
         // legal unescaped in a URI query, such as ':' (eg host:port) or '/' (eg produces=application/json)
+        // (normalizeUri uses the complex normalizer instead when this query needs a percent escape)
         query = buildSafeQueryString(keys, parameters);
-        if (query.indexOf('%') != -1) {
-            // a key or value needed a percent escape (such as = or # in a value), and a uri with % is normalized by
-            // the complex normalizer, which form-encodes the whole query; encode the same way here so normalizing a
-            // normalized uri gives the same uri (the fast parser only takes uris without %, so all % come from here)
-            query = createQueryString(keys, parameters, true);
-        }
         return buildUri(scheme, path, query);
     }
 

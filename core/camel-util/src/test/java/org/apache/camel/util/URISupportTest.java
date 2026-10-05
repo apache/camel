@@ -162,7 +162,7 @@ public class URISupportTest {
     @Test
     public void testNormalizeValueWithPercentEscapeFormEncodesTheQuery() throws Exception {
         // CAMEL-25188: a value with = or # needs a percent escape, and a uri with % is normalized by the complex
-        // normalizer, so the fast normalizer form-encodes the whole query the same way, whatever the key order
+        // normalizer, so such a uri is normalized by it too: the whole query is form-encoded, whatever the key order
         assertThat(URISupport.normalizeUri("log:foo?secretKey=abc/def=="))
                 .isEqualTo("log://foo?secretKey=abc%2Fdef%3D%3D");
         assertThat(URISupport.normalizeUri("log:foo?marker=a#b/c")).isEqualTo("log://foo?marker=a%23b%2Fc");
@@ -171,6 +171,19 @@ public class URISupportTest {
         // without a percent escape the query stays readable
         assertThat(URISupport.normalizeUri("foo:bar?produces=application/json&host=http://h"))
                 .isEqualTo("foo://bar?host=http://h&produces=application/json");
+    }
+
+    @Test
+    void testNormalizePathWhenQueryNeedsPercentEscape() throws Exception {
+        // CAMEL-25345: the complex normalizer also encodes a # in the path and every @ but the last in a user
+        // name, so a uri whose query needs a percent escape is normalized by it as a whole
+        assertThat(URISupport.normalizeUri("sql:select+*+from+orders+where+id=:#id?dataSource=#ds"))
+                .isEqualTo("sql://select+*+from+orders+where+id=:%23id?dataSource=%23ds");
+        assertThat(URISupport.normalizeUri("sftp://me@example.com@sftp.example.com/inbox?password=pa=ss"))
+                .isEqualTo("sftp://me%40example.com@sftp.example.com/inbox?password=pa%3Dss");
+        // without a percent escape the path is kept as is
+        assertThat(URISupport.normalizeUri("sftp://me@example.com@sftp.example.com/inbox?password=secret"))
+                .isEqualTo("sftp://me@example.com@sftp.example.com/inbox?password=secret");
     }
 
     @Test
@@ -202,7 +215,10 @@ public class URISupportTest {
                 "log:foo?webhookExternalUrl=https://example.com/hook?token=abc",
                 "log:foo?marker=a#b/c",
                 "log:foo?a+b=1",
-                "foo:bar?host=http://h&produces=application/json&x=a=b" };
+                "foo:bar?host=http://h&produces=application/json&x=a=b",
+                "sql:select+*+from+orders+where+id=:#id?dataSource=#ds",
+                "sftp://me@example.com@sftp.example.com/inbox?password=pa=ss",
+                "imaps://me@example.com@imap.example.com?password=secret&sslContextParameters=#ssl" };
         for (String uri : uris) {
             String once = URISupport.normalizeUri(uri);
             assertThat(URISupport.normalizeUri(once)).as("normalizing %s twice", uri).isEqualTo(once);

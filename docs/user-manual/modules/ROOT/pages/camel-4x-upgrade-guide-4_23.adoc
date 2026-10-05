@@ -1156,12 +1156,13 @@ Normalization is now always order-independent. As part of the fix, the encoding 
 query string is also less aggressive: characters that are legal unescaped in a URI query per RFC 3986
 (`:`, `/`, `,`, `'`, etc. - for example a MIME type such as `produces=application/json`, or a `host:port`
 value) are no longer percent-encoded, as long as no key or value in the query needs a percent escape.
-A value with `=` or `#` (for example `secretKey=abc/def==`) needs one, and then the whole query is
-form-encoded as in earlier releases, the same way as an endpoint URI that is already percent-encoded, so
-normalizing a normalized URI gives the same URI.
+A value with `=` or `#` (for example `secretKey=abc/def==`) needs one, and then the URI is normalized the
+same way as an endpoint URI that is already percent-encoded: the whole query is form-encoded as in earlier
+releases, and a `#` in the path, or an `@` in a user name such as `sftp://me@example.com@host`, is
+percent-encoded too. So normalizing a normalized URI gives the same URI.
 
 Code that asserts a literal, fully-normalized endpoint URI string containing one of those characters in a
-query value may need to update the expected string to the (now consistently) unencoded form.
+query value may need to update the expected string.
 
 === camel-core - double && in endpoint URIs
 
