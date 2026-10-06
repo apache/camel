@@ -13,6 +13,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.18.4 to 4.18.5
 
+=== camel-netty-http - the roles of a security constraint are matched by role name
+
+The roles of a `SecurityConstraintMapping` inclusion are a comma-separated list of role names, and an authenticated
+user is now accepted only when one of their roles is equal to one of those names. The comparison is case-sensitive,
+whitespace around each name and blank entries are ignored, and a value of `*` still accepts any role. A roles value
+that uses another separator, such as `admin;guest` or `admin guest`, must be changed to `admin,guest`.
+
 === camel-azure-eventhubs
 
 The producer now leaves the Camel-internal headers (`Camel*`) out of the `EventData` application properties by
