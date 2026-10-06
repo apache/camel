@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,6 +49,10 @@ import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
  * and support how Camel internally parses endpoint URIs.
  */
 public final class URISupport {
+
+    // an encoded & (%26) in a query, while the query is split into parameters: a noncharacter, which an endpoint uri
+    // does not contain (if it does, %26 is decoded to & as before)
+    private static final char ENCODED_AMPERSAND = '\uFFFF';
 
     public static final String RAW_TOKEN_PREFIX = "RAW";
     public static final char[] RAW_TOKEN_START = { '(', '{' };
@@ -419,12 +424,14 @@ public final class URISupport {
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
     public static Map<String, Object> parseParameters(URI uri) throws URISyntaxException {
-        String query = prepareQuery(uri);
+        boolean encodedAmpersand = hasEncodedAmpersand(uri);
+        String query = encodedAmpersand ? prepareQueryKeepingEncodedAmpersand(uri) : prepareQuery(uri);
         if (query == null) {
             // empty an empty map
             return new LinkedHashMap<>(0);
         }
-        return parseQuery(query);
+        Map<String, Object> parameters = parseQuery(query);
+        return encodedAmpersand ? restoreEncodedAmpersand(parameters) : parameters;
     }
 
     public static String prepareQuery(URI uri) {
@@ -437,6 +444,89 @@ public final class URISupport {
             query = query.substring(1);
         }
         return query;
+    }
+
+    /**
+     * Whether the query of the uri has an encoded & (%26), which {@link #prepareQuery(URI)} decodes to a separator
+     * between parameters. A uri that has the {@link #ENCODED_AMPERSAND} marker itself is parsed as before.
+     */
+    private static boolean hasEncodedAmpersand(URI uri) {
+        String raw = uri.getRawQuery() != null ? uri.getRawQuery() : uri.getRawSchemeSpecificPart();
+        return raw != null && raw.contains("%26") && raw.indexOf(ENCODED_AMPERSAND) == -1
+                && !raw.toUpperCase(Locale.ROOT).contains("%EF%BF%BF");
+    }
+
+    /**
+     * As {@link #prepareQuery(URI)}, but an encoded & (%26) is decoded to {@link #ENCODED_AMPERSAND} instead of &, so
+     * that parsing the query does not take it as a separator between parameters. Use
+     * {@link #restoreEncodedAmpersand(Map)} on the parsed parameters.
+     */
+    private static String prepareQueryKeepingEncodedAmpersand(URI uri) {
+        String rawQuery = uri.getRawQuery();
+        String decoded = decodeKeepingEncodedAmpersand(rawQuery != null ? rawQuery : uri.getRawSchemeSpecificPart());
+        if (rawQuery == null) {
+            return StringHelper.after(decoded, "?");
+        } else if (decoded.indexOf('?') == 0) {
+            // skip leading query
+            return decoded.substring(1);
+        }
+        return decoded;
+    }
+
+    /**
+     * Decodes the percent escapes like {@link URI#getQuery()}, except %26, which becomes {@link #ENCODED_AMPERSAND}.
+     */
+    private static String decodeKeepingEncodedAmpersand(String raw) {
+        int len = raw.length();
+        StringBuilder sb = new StringBuilder(len);
+        byte[] bytes = new byte[len / 3];
+        int count = 0;
+        for (int i = 0; i < len; i++) {
+            char ch = raw.charAt(i);
+            int hi = ch == '%' && i + 2 < len ? Character.digit(raw.charAt(i + 1), 16) : -1;
+            int lo = hi != -1 ? Character.digit(raw.charAt(i + 2), 16) : -1;
+            int b = lo != -1 ? (hi << 4) | lo : -1;
+            if (b != -1 && b != '&') {
+                bytes[count++] = (byte) b;
+                i += 2;
+                continue;
+            }
+            if (count > 0) {
+                sb.append(new String(bytes, 0, count, StandardCharsets.UTF_8));
+                count = 0;
+            }
+            if (b == '&') {
+                sb.append(ENCODED_AMPERSAND);
+                i += 2;
+            } else {
+                sb.append(ch);
+            }
+        }
+        if (count > 0) {
+            sb.append(new String(bytes, 0, count, StandardCharsets.UTF_8));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Turns {@link #ENCODED_AMPERSAND} in the keys and values back into &.
+     */
+    private static Map<String, Object> restoreEncodedAmpersand(Map<String, Object> parameters) {
+        Map<String, Object> answer = new LinkedHashMap<>(parameters.size());
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            Object value = entry.getValue();
+            if (value instanceof List<?> list) {
+                List<Object> values = new ArrayList<>(list.size());
+                for (Object v : list) {
+                    values.add(v instanceof String str ? str.replace(ENCODED_AMPERSAND, '&') : v);
+                }
+                value = values;
+            } else if (value instanceof String str) {
+                value = str.replace(ENCODED_AMPERSAND, '&');
+            }
+            answer.put(entry.getKey().replace(ENCODED_AMPERSAND, '&'), value);
+        }
+        return answer;
     }
 
     /**
@@ -845,12 +935,16 @@ public final class URISupport {
         }
 
         // in case there are parameters we should reorder them
-        String query = prepareQuery(u);
+        boolean encodedAmpersand = hasEncodedAmpersand(u);
+        String query = encodedAmpersand ? prepareQueryKeepingEncodedAmpersand(u) : prepareQuery(u);
         if (query == null) {
             // no parameters then just return
             return buildUri(scheme, path, null);
         } else {
             Map<String, Object> parameters = URISupport.parseQuery(query, false, false);
+            if (encodedAmpersand) {
+                parameters = restoreEncodedAmpersand(parameters);
+            }
             if (parameters.size() == 1) {
                 // only 1 parameter need to create new query string
                 query = URISupport.createQueryString(parameters);

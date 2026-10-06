@@ -149,6 +149,39 @@ public class URISupportTest {
     }
 
     @Test
+    public void testNormalizeEncodedAmpersand() throws Exception {
+        // an encoded & (%26) is part of a key or value, not a separator between parameters
+        assertThat(URISupport.normalizeUri("log:foo?marker=a%26b")).isEqualTo("log://foo?marker=a%26b");
+        assertThat(URISupport.normalizeUri("log:foo?showAll=true&marker=a%26b"))
+                .isEqualTo("log://foo?marker=a%26b&showAll=true");
+        assertThat(URISupport.normalizeUri("log:foo?a%26b=1")).isEqualTo("log://foo?a%26b=1");
+        assertThat(URISupport.normalizeUri("http://www.google.com?q=Tom%26Jerry"))
+                .isEqualTo("http://www.google.com?q=Tom%26Jerry");
+        // an encoded & at the end of a value is not a trailing & marker
+        assertThat(URISupport.normalizeUri("log:foo?marker=%E2%82%AC%26")).isEqualTo("log://foo?marker=%E2%82%AC%26");
+        String out = URISupport.normalizeUri("log:foo?showAll=true&marker=a%26b");
+        assertThat(URISupport.normalizeUri(out)).isEqualTo(out);
+    }
+
+    @Test
+    public void testParseParametersEncodedAmpersand() throws Exception {
+        Map<String, Object> parameters = URISupport.parseParameters(new URI("log:foo?marker=a%26b&showAll=true"));
+        assertEquals(2, parameters.size());
+        assertEquals("a&b", parameters.get("marker"));
+        assertEquals("true", parameters.get("showAll"));
+        parameters = URISupport.parseParameters(new URI("http://www.google.com?q=Tom%26Jerry"));
+        assertEquals(1, parameters.size());
+        assertEquals("Tom&Jerry", parameters.get("q"));
+        // a RAW value and the other escapes are decoded as before
+        parameters = URISupport.parseParameters(new URI("log:foo?marker=RAW(a%26b)"));
+        assertEquals("RAW(a&b)", parameters.get("marker"));
+        parameters = URISupport.parseParameters(new URI("log:foo?marker=a%3Db%23c%2Bd"));
+        assertEquals("a=b#c d", parameters.get("marker"));
+        parameters = URISupport.parseParameters(new URI("log:foo?marker=a%EF%BF%BFb"));
+        assertEquals("a\uFFFFb", parameters.get("marker"));
+    }
+
+    @Test
     public void testNormalizeSpaceTheSameInEverySpelling() throws Exception {
         // CAMEL-25188: the fast and the complex normalizer both write a space in a value as +
         assertThat(URISupport.normalizeUri("log:foo?marker=a+b")).isEqualTo("log://foo?marker=a+b");

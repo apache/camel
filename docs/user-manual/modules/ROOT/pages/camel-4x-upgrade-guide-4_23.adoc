@@ -1170,6 +1170,14 @@ An empty query parameter, such as from `delay=250&&period=500`, is now ignored, 
 `delay=250&period=500`. The old check also rejected a `&&` in the path of an endpoint, for example
 `language:simple:${header.a} == 1 && ${header.b} == 2`, which now works.
 
+=== camel-core - an encoded & in an endpoint URI
+
+An encoded `&` (`%26`) in the query of an endpoint URI is now part of the option value: `log:foo?marker=Tom%26Jerry`
+sets `marker` to `Tom&Jerry`. Before, the query was decoded before it was split into options, so `%26` separated two
+options. A component that is not lenient failed to create the endpoint (`There are 1 parameters that couldn't be set
+on the endpoint`), and a lenient component such as `http` took the text after `%26` as another parameter. The same
+applies to an option value with `&` set with the Endpoint DSL, which encodes the `&` as `%26`.
+
 === camel-core - masking of sensitive values in endpoint URIs
 
 `URISupport.sanitizeUri()`, which masks secrets in endpoint URIs shown in logs, events, JMX names and error
