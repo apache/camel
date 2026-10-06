@@ -646,7 +646,7 @@ The `run` command exports, builds, pushes, and deploys in one step:
 camel kubernetes run route.yaml --image-registry=kind
 ----
 
-The command auto-detects local clusters (`kind`, `minikube`, OpenShift) and configures the registry accordingly. Disable with `--disable-auto`.
+The command auto-detects local clusters (`kind`, `minikube`, OpenShift) and configures the registry accordingly. Disable with `--disable-auto`. Use `--cluster-type` to set the cluster type explicitly, skipping auto-detection while still applying the cluster-specific defaults.
 
 Customize the image:
 

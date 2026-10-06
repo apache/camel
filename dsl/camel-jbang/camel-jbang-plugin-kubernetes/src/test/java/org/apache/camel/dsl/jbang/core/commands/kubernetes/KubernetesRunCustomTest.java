@@ -163,6 +163,28 @@ class KubernetesRunCustomTest {
     @Test
     @SetEnvironmentVariable(key = "MINIKUBE_ACTIVE_DOCKERD", value = "foo")
     @SetEnvironmentVariable(key = "DOCKER_TLS_VERIFY", value = "foo")
+    public void explicitMinikubeClusterTypeShouldApplyDefaults() throws Exception {
+        // Even without auto-detection (minikube env vars are set but ignored because clusterType is explicit),
+        // passing --cluster-type=minikube should still apply the minikube defaults:
+        // imageBuilder=docker and imagePush=false.
+        KubernetesHelper.setKubernetesClient(client);
+        setupServerExpectsMinikube();
+        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
+                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
+                "--cluster-type=minikube");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit, printer.getOutput());
+        Assertions.assertEquals(ClusterType.MINIKUBE.name().toLowerCase(), command.clusterType.toLowerCase(),
+                printer.getOutput());
+        // Per-cluster defaults must be applied even when cluster type is set explicitly
+        Assertions.assertFalse(command.imagePush, "imagePush should be false for explicit minikube");
+        Assertions.assertEquals("docker", command.imageBuilder, "imageBuilder should be docker for explicit minikube");
+    }
+
+    @Test
+    @SetEnvironmentVariable(key = "MINIKUBE_ACTIVE_DOCKERD", value = "foo")
+    @SetEnvironmentVariable(key = "DOCKER_TLS_VERIFY", value = "foo")
     public void explicitClusterTypeShouldNotBeOverriddenByAutoDetection() throws Exception {
         // Minikube env is active (MINIKUBE_ACTIVE_DOCKERD + DOCKER_TLS_VERIFY set),
         // but user explicitly passes --cluster-type=openshift: the explicit value must win.

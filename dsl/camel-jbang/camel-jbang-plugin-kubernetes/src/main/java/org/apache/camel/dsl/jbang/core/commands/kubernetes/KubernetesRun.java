@@ -811,22 +811,24 @@ public class KubernetesRun extends KubernetesBaseCommand {
             if (verbose) {
                 printer().print("Automatic Kubernetes cluster detection... ");
             }
-            ClusterType cluster = KubernetesHelper.discoverClusterType();
-            this.clusterType = cluster.name();
-            if (ClusterType.MINIKUBE == cluster) {
-                this.imageBuilder = "docker";
-                this.imagePush = false;
-            } else if (ClusterType.OPENSHIFT == cluster) {
-                if (ObjectHelper.isEmpty(imageGroup)) {
-                    this.imageGroup = client().getNamespace();
-                }
-            }
+            this.clusterType = KubernetesHelper.discoverClusterType().name();
             if (verbose) {
                 printer().println(this.clusterType);
             }
         }
         if (clusterType == null) {
             this.clusterType = ClusterType.KUBERNETES.name();
+        }
+        if (!disableAuto) {
+            // Apply per-cluster defaults for the resolved cluster type (explicit or detected)
+            if (ClusterType.MINIKUBE.isEqualTo(clusterType)) {
+                this.imageBuilder = "docker";
+                this.imagePush = false;
+            } else if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+                if (ObjectHelper.isEmpty(imageGroup)) {
+                    this.imageGroup = client().getNamespace();
+                }
+            }
         }
     }
 
