@@ -16,11 +16,20 @@
  */
 package org.apache.camel.dsl.yaml;
 
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
 
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.support.PluginHelper;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
@@ -30,6 +39,7 @@ import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,6 +90,33 @@ class CompactNotationWarnTest extends YamlTestSupport {
                 """);
         assertThat(warnings).hasSize(1);
         assertThat(warnings.get(0)).contains("YAML DSL compact notation detected", "camel validate normalize");
+    }
+
+    @Test
+    void aFileInsideAJarIsNotWarnedAbout(@TempDir Path dir) throws Exception {
+        // CAMEL-25380: the Kamelets of the Kamelet catalog are compact, and the user cannot change a file in a jar
+        Path jar = dir.resolve("routes.jar");
+        try (JarOutputStream out = new JarOutputStream(Files.newOutputStream(jar))) {
+            out.putNextEntry(new JarEntry("jarroutes/compact.yaml"));
+            out.write("""
+                    - route:
+                        from:
+                          uri: "direct:start"
+                          steps:
+                            - setBody:
+                                simple: "Hello ${body}"
+                            - to: "mock:result"
+                    """.getBytes(StandardCharsets.UTF_8));
+            out.closeEntry();
+        }
+        try (URLClassLoader cl = new URLClassLoader(new URL[] { jar.toUri().toURL() }, getClass().getClassLoader())) {
+            context.setApplicationContextClassLoader(cl);
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource("classpath:jarroutes/compact.yaml");
+            assertThat(resource.exists()).isTrue();
+            loadRoutes(resource);
+        }
+        assertThat(context.getRouteDefinitions()).hasSize(1);
+        assertThat(warnings).isEmpty();
     }
 
     @Test
