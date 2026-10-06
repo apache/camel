@@ -17,6 +17,8 @@
 package org.apache.camel.http.base;
 
 import java.net.ProtocolException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -260,6 +262,28 @@ public final class HttpHelper {
                     keyPairConsumer.accept(key, value);
                 }
             }
+        }
+    }
+
+    /**
+     * Decodes the value of a path parameter as a path segment (RFC 3986): percent-encoded octets are decoded as UTF-8,
+     * and a {@code +} is kept, as it is a space only in form-encoded query strings. A value with a malformed escape is
+     * kept as it is.
+     * <p/>
+     * For consumers whose {@link Exchange#HTTP_PATH} is not decoded: decode each value after the path has been split
+     * (see {@link #evalPlaceholders(BiConsumer, String, String)}), so an encoded {@code /} stays in its parameter.
+     *
+     * @param  value the value of the path parameter as it is in the request path
+     * @return       the decoded value
+     */
+    public static String decodePathParameter(String value) {
+        if (value.indexOf('%') == -1) {
+            return value;
+        }
+        try {
+            return URLDecoder.decode(value.replace("+", "%2B"), StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            return value;
         }
     }
 
