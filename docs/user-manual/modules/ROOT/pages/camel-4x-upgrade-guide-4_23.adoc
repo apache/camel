@@ -1491,6 +1491,15 @@ timeout or the reply, and the send failure is logged at WARN level.
 which `ReplyManagerSupport` implements. A custom `ReplyManager` implementation that does not override it keeps the
 previous behaviour.
 
+=== camel-sjms - suspending a route stops the consumer
+
+A suspended sjms (or sjms2) consumer used to keep receiving and routing messages, also during a graceful shutdown and
+under route policies such as `ThrottlingInflightRoutePolicy`. It now stops the JMS connection of its listener container
+shortly after the suspend (the connection is stopped by another thread), and starts it again on resume. Messages that
+the JMS client has already prefetched are delivered after the resume. A connection factory that shares one connection
+and does not stop it on `Connection.stop()` (such as the pooled-jms `JmsPoolConnectionFactory`) keeps delivering to a
+suspended consumer, as before.
+
 === camel-tika
 
 The Tika dependency has been upgraded from 3.x to 4.x. Tika 4 removed the `TikaConfig` class and XML
