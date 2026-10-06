@@ -30,6 +30,7 @@ This exports a Spring Boot project named `my-app`, builds the container image, p
 `kubectl` is connected to. The runtime is one of `spring-boot`, `quarkus` (the default) or `main`.
 
 Local clusters (Kind, Minikube) and OpenShift are detected, and the image registry is configured for them.
+Use `--cluster-type` to set the cluster type explicitly, skipping auto-detection while still applying the cluster-specific defaults.
 For any other cluster, tell the plugin where to push the image:
 
 [source,bash]
