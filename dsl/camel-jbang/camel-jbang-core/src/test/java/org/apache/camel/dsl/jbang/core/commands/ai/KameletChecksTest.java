@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
  * The kamelet: endpoints of a route against the Kamelets they name, and the Kamelets in the catalog tools: what a model
@@ -329,6 +330,60 @@ class KameletChecksTest {
         assertThat(errors.get(0)).contains("unknown property 'tag'").contains(": none")
                 .contains("declared in its file under spec.definition.properties");
     }
+
+    @Test
+    void anUnknownNameThatRepeatsAWordDoesNotCrash() {
+        // a reproducer of the review: Set.of refused the duplicate aws
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: kamelet:aws-s3-to-aws-sqs
+                """;
+        assertThatCode(() -> KameletChecks.validateYaml(yaml, null)).doesNotThrowAnyException();
+        assertThatCode(() -> CatalogDocs.catalogDoc(catalog, "kafka-to-kafka", null, null, null, null, false, false,
+                null)).doesNotThrowAnyException();
+    }
+
+    @Test
+    void theOptionsOfTheKameletComponentAreNotUnknownProperties() {
+        // routeId and noErrorHandler in the uri, location and timeout under parameters: options of the kamelet: endpoint
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: kamelet:log-sink?routeId=myLog&noErrorHandler=false
+                        - to:
+                            uri: kamelet:log-sink
+                            parameters:
+                              location: file:/k/log-sink.kamelet.yaml
+                              timeout: 5000
+                """;
+        assertThat(KameletChecks.validateYaml(yaml, null)).isEmpty();
+    }
+
+    @Test
+    void aRequiredPropertyWithAColonSeparator(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("application.properties"), "camel.kamelet.timer-source.message: hello\n");
+        assertThat(KameletChecks.validateYaml(TIMER_TO_LOG, dir)).isEmpty();
+    }
+
+    @Test
+    void aRequiredPropertyFromTheTemplatePropertiesOfTheComponent(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("application.properties"),
+                "camel.component.kamelet.template-properties[timer-source].message=hello\n");
+        assertThat(KameletChecks.validateYaml(TIMER_TO_LOG, dir)).isEmpty();
+    }
+
+    private static final String TIMER_TO_LOG = """
+            - route:
+                from:
+                  uri: kamelet:timer-source
+                  steps:
+                    - to: kamelet:log-sink
+            """;
 
     @Test
     void theEndsOfAKameletTemplateAreNotKamelets() {

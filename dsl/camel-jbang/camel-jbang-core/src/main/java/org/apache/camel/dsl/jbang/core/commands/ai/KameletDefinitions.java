@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -231,7 +232,8 @@ public final class KameletDefinitions {
             return List.of();
         }
         String lower = name.toLowerCase(Locale.ROOT);
-        Set<String> words = Set.of(lower.split("[-_.]"));
+        // a name may repeat a word (aws-s3-to-aws-sqs): Set.of would refuse it
+        Set<String> words = new HashSet<>(Arrays.asList(lower.split("[-_.]")));
         record Scored(String name, int score) {
         }
         List<Scored> scored = new ArrayList<>();

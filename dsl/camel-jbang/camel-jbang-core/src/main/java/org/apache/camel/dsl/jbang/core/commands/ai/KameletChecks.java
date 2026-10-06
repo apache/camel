@@ -17,19 +17,24 @@
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
@@ -182,8 +187,9 @@ public final class KameletChecks {
             }
         }
         String where = def.source().startsWith("the project") ? " (" + def.source() + ")" : "";
+        Set<String> componentOptions = kameletComponentOptions();
         for (Map.Entry<String, Integer> e : given.entrySet()) {
-            if (def.property(e.getKey()) == null) {
+            if (def.property(e.getKey()) == null && !componentOptions.contains(e.getKey())) {
                 List<String> close = KameletDefinitions.suggestProperty(e.getKey(), def);
                 StringBuilder sb = new StringBuilder(EndpointChecks.linePrefix(e.getValue())).append("kamelet:")
                         .append(name).append(": unknown property '").append(e.getKey()).append("'");
@@ -218,6 +224,34 @@ public final class KameletChecks {
         }
     }
 
+    private static volatile Set<String> componentOptions;
+
+    /**
+     * The options of the kamelet component's own endpoint (routeId, location, timeout, noErrorHandler...): they go on a
+     * kamelet: endpoint beside the Kamelet's properties.
+     */
+    static Set<String> kameletComponentOptions() {
+        Set<String> answer = componentOptions;
+        if (answer == null) {
+            Set<String> names = new HashSet<>();
+            try {
+                ComponentModel model = new DefaultCamelCatalog().componentModel("kamelet");
+                if (model != null) {
+                    model.getEndpointOptions().forEach(o -> names.add(o.getName()));
+                }
+            } catch (Exception e) {
+                // the list below
+            }
+            if (names.isEmpty()) {
+                names.addAll(Set.of("templateId", "routeId", "location", "uuid", "block", "timeout",
+                        "failIfNoConsumers", "noErrorHandler", "bridgeErrorHandler", "lazyStartProducer",
+                        "exchangePattern", "exceptionHandler"));
+            }
+            componentOptions = answer = names;
+        }
+        return answer;
+    }
+
     private static final Pattern UNKNOWN_FUNCTION
             = Pattern.compile(
                     "Unknown function: (?:properties\\.|property\\.|header\\.|exchangeProperty\\.|variable\\.)?([\\w-]+)");
@@ -247,11 +281,24 @@ public final class KameletChecks {
         return answer;
     }
 
-    /** Whether application properties set the property of the Kamelet: camel.kamelet.name.prop or name.routeId.prop. */
+    /**
+     * Whether application properties set the property of the Kamelet: camel.kamelet.name.prop (or name.routeId.prop),
+     * or through the kamelet component, camel.component.kamelet.template-properties[name].prop (or route-properties of
+     * a route of it).
+     */
     static boolean inProperties(Map<String, String> properties, String kamelet, String property) {
         String prefix = "camel.kamelet." + kamelet + ".";
         for (String key : properties.keySet()) {
             if (key.startsWith(prefix) && (key.equals(prefix + property) || key.endsWith("." + property))) {
+                return true;
+            }
+            String k = key.replace("templateProperties", "template-properties").replace("routeProperties",
+                    "route-properties");
+            if (k.startsWith("camel.component.kamelet.template-properties[" + kamelet + "].")
+                    && k.endsWith("]." + property)) {
+                return true;
+            }
+            if (k.startsWith("camel.component.kamelet.route-properties[") && k.endsWith("]." + property)) {
                 return true;
             }
         }
@@ -262,16 +309,17 @@ public final class KameletChecks {
         Map<String, String> answer = new LinkedHashMap<>();
         try (Stream<Path> files = Files.list(directory)) {
             files.filter(p -> p.getFileName().toString().endsWith(".properties")).forEach(p -> {
-                try {
-                    for (String l : Files.readAllLines(p)) {
-                        String s = l.trim();
-                        int eq = s.indexOf('=');
-                        if (s.startsWith("camel.kamelet.") && eq > 0) {
-                            answer.put(s.substring(0, eq).trim(), s.substring(eq + 1).trim());
-                        }
-                    }
+                // as java.util.Properties reads them: key=value, key: value, key value
+                Properties props = new Properties();
+                try (Reader r = Files.newBufferedReader(p)) {
+                    props.load(r);
                 } catch (IOException e) {
                     // an unreadable file sets nothing
+                }
+                for (String key : props.stringPropertyNames()) {
+                    if (key.startsWith("camel.kamelet.") || key.startsWith("camel.component.kamelet.")) {
+                        answer.put(key, props.getProperty(key));
+                    }
                 }
             });
         } catch (IOException e) {
