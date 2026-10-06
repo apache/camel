@@ -1912,6 +1912,13 @@ validated before can now report errors, and `camel_write_file` refuses to write 
 TUI Source tab an XML route file with such problems is not saved, as a YAML
 file; a Java file is saved and its problems are shown.
 
+`camel kubernetes run --cluster-type=<type>` now uses the given cluster type. Before, unless `--disable-auto` was set,
+the detected cluster type (OpenShift, Minikube or Kubernetes) replaced it, together with its image settings. The
+defaults of the cluster type still apply, also to an explicit type (Minikube: `--image-builder=docker` and
+`--image-push=false`; OpenShift: the current namespace as `--image-group`), but they no longer replace an
+`--image-builder` or `--image-push` that you set, also when Minikube is detected. `--disable-auto` turns off both the
+detection and the defaults, as before.
+
 === camel-jbang (MCP servers)
 
 The Camel authoring tools for AI agents are now defined once, in `camel-jbang-core`, and exposed under the

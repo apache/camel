@@ -176,10 +176,7 @@ public final class KubernetesHelper {
             GenericKubernetesResourceList list = getKubernetesClient().genericKubernetesResources(nodecrd)
                     .withLabels(Collections.singletonMap("minikube.k8s.io/name", null)).list();
             minikube = list.getItems().size() > 0;
-            // thse env properties are set when running eval $(minikube docker-env) in the console
-            // this is important for the docker builder to actually build the image in the exposed docker from the minikube registry
-            minikubeEnv = System.getenv("MINIKUBE_ACTIVE_DOCKERD") != null
-                    && System.getenv("DOCKER_TLS_VERIFY") != null;
+            minikubeEnv = isMinikubeDockerEnv();
             if (minikube && !minikubeEnv) {
                 System.out.println(
                         "It seems you have minikube running but forgot to run \"eval $(minikube docker-env)\", default cluster to kubernetes.");
@@ -188,6 +185,15 @@ public final class KubernetesHelper {
             // ignore it, since we try to discover the cluster and don't want the caller to handle any error
         }
         return minikube && minikubeEnv;
+    }
+
+    /**
+     * Whether the Minikube Docker environment is active in this console, which is what {@code eval $(minikube
+     * docker-env)} sets. The docker image builder needs it to build the image in the Docker daemon of Minikube.
+     */
+    static boolean isMinikubeDockerEnv() {
+        return System.getenv("MINIKUBE_ACTIVE_DOCKERD") != null
+                && System.getenv("DOCKER_TLS_VERIFY") != null;
     }
 
     // when minikube is used with the registry addon exposed
@@ -341,7 +347,8 @@ public final class KubernetesHelper {
 
     public static File getKubernetesManifest(String clusterType, File workingDir, String extension) {
         String manifestFile;
-        if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)) {
+        if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)
+                || ClusterType.K3S.isEqualTo(clusterType)) {
             manifestFile = "kubernetes";
         } else {
             manifestFile = Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");
@@ -355,7 +362,8 @@ public final class KubernetesHelper {
 
     public static Path getKubernetesManifestPath(String clusterType, Path workingDir, String extension) {
         String manifestFile;
-        if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)) {
+        if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)
+                || ClusterType.K3S.isEqualTo(clusterType)) {
             manifestFile = "kubernetes";
         } else {
             manifestFile = Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");

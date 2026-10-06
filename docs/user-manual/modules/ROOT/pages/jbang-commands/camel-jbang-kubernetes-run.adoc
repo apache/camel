@@ -39,10 +39,10 @@ camel kubernetes run [options]
 | `--gav` | The Maven group:artifact:version |  | String
 | `--image` | The image name to be built. |  | String
 | `--image-build` | Whether to build container image as part of the run. | true | boolean
-| `--image-builder` | The image builder used to build the container image (e.g. docker, jib, s2i). | jib | String
+| `--image-builder` | The image builder used to build the container image (e.g. docker, jib, s2i). Default is jib, or docker on Minikube unless --disable-auto is set. |  | String
 | `--image-group` | The image registry group used to push images to. |  | String
 | `--image-platform` | List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64). |  | String
-| `--image-push` | Whether to push image to given image registry as part of the run. | true | boolean
+| `--image-push` | Whether to push image to given image registry as part of the run. Default is true, or false on Minikube unless --disable-auto is set. |  | Boolean
 | `--image-registry` | The image registry to hold the app container image. |  | String
 | `--java-version,--java` | Java version | 21 | String
 | `--kamelets-version` | Apache Camel Kamelets version |  | String
