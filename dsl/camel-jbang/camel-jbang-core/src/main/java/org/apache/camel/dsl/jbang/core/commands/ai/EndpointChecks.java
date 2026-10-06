@@ -367,6 +367,17 @@ final class EndpointChecks {
             if (!name.equals("include") && !name.equals("exclude") || value.startsWith("{{")) {
                 continue;
             }
+            String unquoted = withoutQuoteCharacters(value);
+            if (!unquoted.equals(value)) {
+                // \".*\\.json\" written as a plain YAML value: a backslash before a quote is not YAML escaping, so the
+                // quotes and backslashes are part of the regex and no file matches (CAMEL-25374)
+                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx)) + fullUri.substring(0, colon) + ": "
+                           + name + " has quote characters in its value (" + value + "): in YAML a backslash before a"
+                           + " quote is text, not escaping, and the quotes become part of the regex. Write the line as "
+                           + name + ": '" + unquoted.replace("\\\\", "\\") + "' (single quotes, one backslash before"
+                           + " the dot)");
+                continue;
+            }
             if (DOUBLED_BACKSLASH_ESCAPE.matcher(value).find()) {
                 // '.*\\.json$' in single quotes: YAML keeps both backslashes, and in a regex \\ is one literal
                 // backslash, so the pattern matches a file name with a backslash in it: no file matches and the route
@@ -386,6 +397,35 @@ final class EndpointChecks {
                            + "=" + value);
             }
         }
+    }
+
+    /**
+     * The value without the quote characters (" or ', with or without a backslash before them) at its ends, which a
+     * regex of a file name never has there; the value itself when it has none.
+     */
+    static String withoutQuoteCharacters(String value) {
+        // a backslash-quote first, so \" is taken as one piece
+        String[] quotes = { "\\\"", "\\'", "\"", "'" };
+        String v = value;
+        boolean changed = true;
+        while (changed && !v.isEmpty()) {
+            changed = false;
+            for (String q : quotes) {
+                if (v.startsWith(q)) {
+                    v = v.substring(q.length());
+                    changed = true;
+                    break;
+                }
+            }
+            for (String q : quotes) {
+                if (v.endsWith(q)) {
+                    v = v.substring(0, v.length() - q.length());
+                    changed = true;
+                    break;
+                }
+            }
+        }
+        return v;
     }
 
     /**
