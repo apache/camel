@@ -561,6 +561,16 @@ sent to the partition with the same id in the target Event Hub. To keep doing so
 Event Hubs that have the same partitions, remove the `CamelAzureEventHubsReceivedPartitionId` exchange property before
 the producer.
 
+=== camel-cloudevents - data of the application-cloudevents+json data type (Breaking change)
+
+The `application-cloudevents+json` data type now writes the body according to the `datacontenttype` of the event
+(CloudEvents JSON format, section 3.1): with a JSON content type (the default `application/json`, or a `json` subtype
+or `+json` suffix) a JSON scalar body is now nested too (`"data":42` instead of `"data":"42"`); with any other content
+type a JSON object or array body is now written as a string; and a `byte[]` body that is not valid text in the
+exchange charset is written as `data_base64`. Component CloudEvent data types that declare `application/octet-stream`
+or `text/plain` (such as `aws2-s3`, `aws-cloudtrail` or `google-pubsub`) therefore no longer nest a JSON body: set the
+`CamelCloudEventDataContentType` header to `application/json` before `application-cloudevents+json` to keep it nested.
+
 === camel-consul - readTimeout and writeTimeout
 
 The `readTimeout` and `writeTimeout` options (also on the Consul cluster service) set the connect timeout of the
