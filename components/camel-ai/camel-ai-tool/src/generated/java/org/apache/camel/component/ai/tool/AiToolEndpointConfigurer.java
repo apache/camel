@@ -25,6 +25,8 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": target.getConfiguration().setArgSchema(property(camelContext, java.lang.String.class, value)); return true;
+        case "authorizationpolicy":
+        case "authorizationPolicy": target.getConfiguration().setAuthorizationPolicy(property(camelContext, org.apache.camel.spi.AuthorizationPolicy.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "description": target.getConfiguration().setDescription(property(camelContext, java.lang.String.class, value)); return true;
@@ -58,6 +60,8 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": return java.lang.String.class;
+        case "authorizationpolicy":
+        case "authorizationPolicy": return org.apache.camel.spi.AuthorizationPolicy.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "description": return java.lang.String.class;
@@ -92,6 +96,8 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argschema":
         case "argSchema": return target.getConfiguration().getArgSchema();
+        case "authorizationpolicy":
+        case "authorizationPolicy": return target.getConfiguration().getAuthorizationPolicy();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "description": return target.getConfiguration().getDescription();

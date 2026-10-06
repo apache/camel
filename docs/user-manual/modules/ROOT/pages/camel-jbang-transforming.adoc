@@ -404,6 +404,24 @@ $ camel transform message --body=file:daltons.csv --dataformat=csv --option=capt
 
 NOTE: Some data formats require complex options that cannot be set from the command line.
 
+== Converting DataWeave to DataSonnet
+
+Migrating from MuleSoft? `camel transform dataweave` converts DataWeave (`.dwl`) scripts to
+xref:components:languages:datasonnet-language.adoc[DataSonnet], so you can review and keep the result:
+
+[source,bash]
+----
+camel transform dataweave --input=script.dwl --output=script.ds
+camel transform dataweave --input=src/dataweave --output=src/datasonnet
+camel transform dataweave --expression='payload.name'
+----
+
+A directory converts every `.dwl` file in it. Without `--output` the result is printed. Notes about the
+conversion are added as comments (turn them off with `--include-comments=false`).
+
+TIP: Camel can also run `.dwl` scripts as they are, converting them when they are loaded,
+see xref:components:languages:datasonnet-language.adoc#_dataweave_support[DataWeave Support].
+
 == Evaluating expressions
 
 Quickly evaluate a Camel expression without writing a route:
@@ -427,7 +445,7 @@ Use `--predicate` to evaluate as a boolean predicate instead of a value expressi
 
 == Transforming route DSL format
 
-The `camel transform route` command converts between YAML and XML DSL formats —
+The `camel transform route` command converts between the YAML, XML and Java DSL formats —
 useful when working with graphical editors or code generators that target a specific DSL.
 
 For example, given this YAML route (`route.yaml`):
@@ -512,3 +530,20 @@ written as a running Camel would dump them. This takes a fraction of a second, a
 When a route cannot be read completely that way, for example a processor written as a lambda or a value only known
 at runtime, the routes are compiled and started to dump them, which takes a few seconds and may download dependencies.
 The same happens with `--resolve-placeholders`. Use `--compile` to always compile and start the routes.
+
+=== Transforming to Java
+
+YAML and XML routes are transformed to the Java DSL with `--format=java`, one route builder class per file, named
+after it (`orders.camel.yaml` becomes `Orders.java`):
+
+[source,bash]
+----
+camel transform route --format=java orders.camel.yaml
+----
+
+Nothing runs: the file is read into the model without running it (the beans of a YAML file are read as definitions
+and not created), written as Java, and read back to check the Java has the same routes. What does not carry over is
+printed as a note: the comments, the beans (which Java declares in code, such as with `@BindToRegistry`), and anything
+the Java DSL writer does not write, named by the first difference found. A file that cannot be converted without
+losing part of it is refused with the reason, for example a Java route with a processor written as a lambda, or a
+predicate built in Java (`header("x").isEqualTo("y")`) which YAML and XML cannot express.

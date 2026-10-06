@@ -47,6 +47,7 @@ import org.apache.camel.component.netty.http.InboundStreamHttpRequest;
 import org.apache.camel.component.netty.http.NettyHttpConfiguration;
 import org.apache.camel.component.netty.http.NettyHttpConstants;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
+import org.apache.camel.component.netty.http.NettyHttpHelper;
 import org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty.http.SecurityAuthenticator;
 import org.apache.camel.http.base.OAuthHttpSecuritySupport;
@@ -377,7 +378,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
         // honor the character encoding
         String contentType = in.getHeader(NettyHttpConstants.CONTENT_TYPE, String.class);
-        String charset = org.apache.camel.support.http.HttpUtil.getCharsetFromContentType(contentType);
+        String charset = NettyHttpHelper.getCharsetFromContentType(contentType);
         if (charset != null) {
             exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
             in.setHeader(NettyHttpConstants.HTTP_CHARACTER_ENCODING, charset);

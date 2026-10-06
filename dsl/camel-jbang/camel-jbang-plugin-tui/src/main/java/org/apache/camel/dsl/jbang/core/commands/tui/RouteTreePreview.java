@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import dev.tamboui.style.Style;
 import dev.tamboui.text.Line;
@@ -35,6 +36,8 @@ class RouteTreePreview {
             "aggregate", "resequence", "routingSlip", "dynamicRouter",
             "throttle", "threads", "onException", "onCompletion",
             "intercept", "interceptFrom", "interceptSendToEndpoint");
+
+    private static final Pattern SELF_NAMED = Pattern.compile("[A-Za-z]+[\\[(]");
 
     private RouteTreePreview() {
     }
@@ -131,6 +134,10 @@ class RouteTreePreview {
         String code = node.info.code;
         if (code != null && !code.isEmpty()) {
             if (code.startsWith(type + "[") || code.startsWith(type + "(")) {
+                return code;
+            }
+            // a code that names its own node, such as otherwise[direct:x] of a Switch (a node of type to)
+            if (SELF_NAMED.matcher(code).lookingAt()) {
                 return code;
             }
             if (STRUCTURAL_TYPES.contains(type)) {

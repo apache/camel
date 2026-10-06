@@ -33,6 +33,8 @@ public class LangChain4jIngestComponentConfigurer extends PropertyConfigurerSupp
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.langchain4j.ingest.LangChain4jIngestConfiguration.class, value)); return true;
+        case "contenttype":
+        case "contentType": getOrCreateConfiguration(target).setContentType(property(camelContext, java.lang.String.class, value)); return true;
         case "documentfilter":
         case "documentFilter": getOrCreateConfiguration(target).setDocumentFilter(property(camelContext, org.apache.camel.Predicate.class, value)); return true;
         case "documentidheader":
@@ -61,6 +63,7 @@ public class LangChain4jIngestComponentConfigurer extends PropertyConfigurerSupp
         case "maxSegmentSize": getOrCreateConfiguration(target).setMaxSegmentSize(property(camelContext, int.class, value)); return true;
         case "mindocumentsize":
         case "minDocumentSize": getOrCreateConfiguration(target).setMinDocumentSize(property(camelContext, int.class, value)); return true;
+        case "modality": getOrCreateConfiguration(target).setModality(property(camelContext, org.apache.camel.component.langchain4j.ingest.IngestModality.class, value)); return true;
         default: return false;
         }
     }
@@ -76,6 +79,8 @@ public class LangChain4jIngestComponentConfigurer extends PropertyConfigurerSupp
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.langchain4j.ingest.LangChain4jIngestConfiguration.class;
+        case "contenttype":
+        case "contentType": return java.lang.String.class;
         case "documentfilter":
         case "documentFilter": return org.apache.camel.Predicate.class;
         case "documentidheader":
@@ -104,6 +109,7 @@ public class LangChain4jIngestComponentConfigurer extends PropertyConfigurerSupp
         case "maxSegmentSize": return int.class;
         case "mindocumentsize":
         case "minDocumentSize": return int.class;
+        case "modality": return org.apache.camel.component.langchain4j.ingest.IngestModality.class;
         default: return null;
         }
     }
@@ -115,6 +121,8 @@ public class LangChain4jIngestComponentConfigurer extends PropertyConfigurerSupp
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
+        case "contenttype":
+        case "contentType": return getOrCreateConfiguration(target).getContentType();
         case "documentfilter":
         case "documentFilter": return getOrCreateConfiguration(target).getDocumentFilter();
         case "documentidheader":
@@ -143,6 +151,7 @@ public class LangChain4jIngestComponentConfigurer extends PropertyConfigurerSupp
         case "maxSegmentSize": return getOrCreateConfiguration(target).getMaxSegmentSize();
         case "mindocumentsize":
         case "minDocumentSize": return getOrCreateConfiguration(target).getMinDocumentSize();
+        case "modality": return getOrCreateConfiguration(target).getModality();
         default: return null;
         }
     }

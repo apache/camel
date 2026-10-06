@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -144,6 +145,22 @@ final class TuiHelper {
         }
         int slash = name.lastIndexOf('/');
         return slash >= 0 ? name.substring(slash + 1) : name;
+    }
+
+    /**
+     * An endpoint URI as people write it: Camel normalizes URIs with their placeholders and spaces percent-encoded
+     * (platform-http:///stock/%7Bsku%7D), which reads poorly in a table. Only for display; the URI itself stays the
+     * key.
+     */
+    static String displayUri(String uri) {
+        if (uri == null || uri.indexOf('%') < 0) {
+            return uri;
+        }
+        try {
+            return URLDecoder.decode(uri.replace("+", "%2B"), StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            return uri;
+        }
     }
 
     static String truncate(String s, int max) {
@@ -583,7 +600,102 @@ final class TuiHelper {
         if (minutes > 0) {
             return minutes + "m" + (seconds % 60) + "s";
         }
-        return seconds + "s" + (ms % 1000) + "ms";
+        // 2.02s reads better than 2s20ms; a tenth is enough from 10 seconds on
+        return seconds < 10
+                ? String.format(Locale.US, "%.2fs", ms / 1000.0)
+                : String.format(Locale.US, "%.1fs", ms / 1000.0);
+    }
+
+    /**
+     * Wraps lines to a width with a hanging indent: the continuation of a "key = value" line starts under the value,
+     * and of an indented line under its first character, where a plain word wrap would start it at the left edge.
+     */
+    static List<Line> hangingWrap(List<Line> lines, int width) {
+        List<Line> out = new ArrayList<>(lines.size());
+        for (Line line : lines) {
+            if (width < 8 || line.width() <= width) {
+                out.add(line);
+            } else {
+                wrapLine(line, width, out);
+            }
+        }
+        return out;
+    }
+
+    private record StyledChar(String text, Style style, int width) {
+    }
+
+    private static void wrapLine(Line line, int width, List<Line> out) {
+        List<StyledChar> chars = new ArrayList<>();
+        StringBuilder plain = new StringBuilder();
+        for (Span span : line.spans()) {
+            String content = span.content();
+            for (int i = 0; i < content.length();) {
+                int cp = content.codePointAt(i);
+                String ch = new String(Character.toChars(cp));
+                chars.add(new StyledChar(ch, span.style(), Math.max(0, CharWidth.of(cp))));
+                plain.append(ch);
+                i += Character.charCount(cp);
+            }
+        }
+        String text = plain.toString();
+        int indent = 0;
+        int eq = text.indexOf(" = ");
+        if (eq > 0 && eq + 3 < width * 3 / 5) {
+            indent = eq + 3;
+        } else {
+            while (indent < text.length() && text.charAt(indent) == ' ') {
+                indent++;
+            }
+        }
+        indent = Math.min(indent, width / 2);
+
+        int start = 0;
+        boolean first = true;
+        while (start < chars.size()) {
+            int room = first ? width : width - indent;
+            int used = 0;
+            int end = start;
+            int lastSpace = -1;
+            while (end < chars.size() && used + chars.get(end).width() <= room) {
+                if (" ".equals(chars.get(end).text())) {
+                    lastSpace = end;
+                }
+                used += chars.get(end).width();
+                end++;
+            }
+            if (end < chars.size() && lastSpace > start) {
+                // break after the last space that fits, so a word is not cut
+                end = lastSpace + 1;
+            } else if (end == start) {
+                end = start + 1;
+            }
+            List<Span> spans = new ArrayList<>();
+            if (!first && indent > 0) {
+                spans.add(Span.raw(" ".repeat(indent)));
+            }
+            StringBuilder run = new StringBuilder();
+            Style runStyle = null;
+            for (int i = start; i < end; i++) {
+                StyledChar c = chars.get(i);
+                if (runStyle != null && !runStyle.equals(c.style())) {
+                    spans.add(Span.styled(run.toString(), runStyle));
+                    run.setLength(0);
+                }
+                runStyle = c.style();
+                run.append(c.text());
+            }
+            if (!run.isEmpty()) {
+                spans.add(Span.styled(run.toString(), runStyle));
+            }
+            out.add(Line.from(spans));
+            start = end;
+            // a continuation does not start with the spaces it broke at
+            while (start < chars.size() && " ".equals(chars.get(start).text())) {
+                start++;
+            }
+            first = false;
+        }
     }
 
     static String formatLoad(String l1, String l5, String l15) {

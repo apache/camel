@@ -29,7 +29,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.IntConsumer;
 
 import com.networknt.schema.Error;
@@ -102,6 +104,12 @@ class SourceViewer {
         List<DocEntry> provideForLine(List<String> lines, int cursorRow);
     }
 
+    /** The quick doc of what the cursor is on within the line; col is -1 in the view, which has no cursor. */
+    @FunctionalInterface
+    interface CursorQuickDocProvider {
+        List<DocEntry> provideAt(List<String> lines, int row, int col);
+    }
+
     @FunctionalInterface
     interface PropertiesValidator {
         String validate(String line);
@@ -131,6 +139,12 @@ class SourceViewer {
     @FunctionalInterface
     interface LiveRunData {
         Map<Integer, LiveLine> lines(String filePath);
+    }
+
+    /** The last runtime failure of a line of a file, by its path and 0-based line: the exception, or null. */
+    @FunctionalInterface
+    interface LineFailures {
+        String lastFailure(String filePath, int line);
     }
 
     private boolean visible;
@@ -203,6 +217,7 @@ class SourceViewer {
     private EndpointValidator simpleValidator;
     private EndpointValidator routeValidator;
     private LiveRunData liveRunData;
+    private LineFailures lineFailures;
     private Map<Integer, LiveLine> liveLines = Collections.emptyMap();
     private long liveLinesTime;
     private int liveTotalWidth;
@@ -214,6 +229,13 @@ class SourceViewer {
     private String uriCompletion;
     /** The completion being chosen in a uri: its row, the column its prefix ends at, the prefix and suffix. */
     private UriCompletion pendingUriCompletion;
+    private BiFunction<SimpleCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> simpleCompletion;
+    private SimpleCompletion pendingSimpleCompletion;
+    private CursorQuickDocProvider cursorQuickDocProvider;
+    private BiFunction<XmlCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> xmlCompletion;
+    private XmlCompletion pendingXmlCompletion;
+    private Function<JavaChainContext, List<AutocompletePopup.CompletionItem>> javaCompletion;
+    private JavaCompletion pendingJavaCompletion;
     private List<String> routeProblems = List.of();
     private List<String> validationErrors;
     private int validationErrorScroll;
@@ -223,6 +245,8 @@ class SourceViewer {
      */
     private Map<Integer, String> viewErrors = Collections.emptyMap();
     private boolean editInitialScroll;
+    /** The top line of the view when F4 was pressed, so the editor opens on the same screen; -1 when not known. */
+    private int editStartTop = -1;
     private long lastBackgroundValidationTime;
     private String lastBackgroundValidationContent;
     private static final long BACKGROUND_VALIDATION_INTERVAL_MS = 2000;
@@ -300,6 +324,37 @@ class SourceViewer {
      */
     void setLiveRunData(LiveRunData liveRunData) {
         this.liveRunData = liveRunData;
+    }
+
+    void setLineFailures(LineFailures lineFailures) {
+        this.lineFailures = lineFailures;
+    }
+
+    /**
+     * The runtime failure of a 0-based line for fix with AI (Shift+F8): how many exchanges failed on the line in the
+     * live run data, and the exception of the last one when known; null when nothing failed on it, or when the file is
+     * edited and not saved (the live run data is of the saved file).
+     */
+    String runtimeFailure(int row) {
+        if (!failsAtRuntime(row)) {
+            return null;
+        }
+        LiveLine live = liveLines().get(row);
+        String answer = live.failed() + (live.failed() == 1 ? " exchange" : " exchanges") + " failed on this line";
+        String last = lineFailures != null && loadedFilePath != null ? lineFailures.lastFailure(loadedFilePath, row) : null;
+        return last != null ? answer + ", the last with " + last : answer;
+    }
+
+    /**
+     * Whether processors on a 0-based line failed in the live run data, while the file is not edited (cheap: the hint
+     * of each frame asks it; the exception is only read on Shift+F8).
+     */
+    private boolean failsAtRuntime(int row) {
+        if (dirty || row < 0) {
+            return false;
+        }
+        LiveLine live = liveLines().get(row);
+        return live != null && live.failed() > 0;
     }
 
     /**
@@ -407,6 +462,51 @@ class SourceViewer {
     private record UriCompletion(int row, int endCol, String prefix, String suffix) {
     }
 
+    /**
+     * Tab completion in the simple expressions of a YAML, Java or XML route file (CAMEL-25219): the functions after ${,
+     * the header names after ${header., the operators after a function. Given the context at the cursor and the lines
+     * of the file; null for a file without routes.
+     */
+    void setSimpleCompletion(
+            BiFunction<SimpleCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> provider) {
+        this.simpleCompletion = provider;
+    }
+
+    private record SimpleCompletion(int row, int endCol, SimpleCompletionContext context) {
+    }
+
+    /**
+     * The quick doc of the simple function the cursor is on (CAMEL-25219), shown before the doc of the line in edit
+     * mode, and the functions of the selected line after it in the view; null for a file without routes.
+     */
+    void setCursorQuickDocProvider(CursorQuickDocProvider provider) {
+        this.cursorQuickDocProvider = provider;
+    }
+
+    /**
+     * Tab completion of the XML DSL (CAMEL-25240): the elements that go inside the parent after &lt; or on an empty
+     * line, the attributes in a start tag, their values. Given the context at the cursor and the lines of the file;
+     * null for a file that is no XML route.
+     */
+    void setXmlCompletion(
+            BiFunction<XmlCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> provider) {
+        this.xmlCompletion = provider;
+    }
+
+    private record XmlCompletion(int row, int endCol, XmlCompletionContext context) {
+    }
+
+    /**
+     * Tab completion of the Java DSL route chain (CAMEL-25241): after a dot, the options of the EIP the chain is on and
+     * the EIPs. Null for a file that is no Java route.
+     */
+    void setJavaCompletion(Function<JavaChainContext, List<AutocompletePopup.CompletionItem>> provider) {
+        this.javaCompletion = provider;
+    }
+
+    private record JavaCompletion(int row, int endCol, JavaChainContext context) {
+    }
+
     /** Opens the AI panel to fix the problem of the cursor line (Shift+F8); null when there is no AI panel. */
     void setAskAi(MonitorContext.AskAi askAi) {
         this.askAi = askAi;
@@ -425,6 +525,10 @@ class SourceViewer {
         simpleValidator = null;
         routeValidator = null;
         uriCompletion = null;
+        simpleCompletion = null;
+        cursorQuickDocProvider = null;
+        xmlCompletion = null;
+        javaCompletion = null;
     }
 
     void reset() {
@@ -466,6 +570,10 @@ class SourceViewer {
         simpleValidator = null;
         routeValidator = null;
         uriCompletion = null;
+        simpleCompletion = null;
+        cursorQuickDocProvider = null;
+        xmlCompletion = null;
+        javaCompletion = null;
     }
 
     boolean isMarkdownMode() {
@@ -670,6 +778,11 @@ class SourceViewer {
         }
         if (ke.isKey(KeyCode.F9) && !ke.hasShift() && !viewErrors.isEmpty()) {
             goToNextProblem(viewErrors, selectedLine);
+            return true;
+        }
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            // fix with AI: the problem of the selected line, or what fails on it at runtime
+            askAiToFix();
             return true;
         }
         if (isMarkdownFile && ke.isChar(' ')) {
@@ -920,7 +1033,7 @@ class SourceViewer {
             applyBlockEdit(YamlBlockEditor.deleteLine(editLines(), editState.cursorRow()));
             return true;
         }
-        if (ke.hasCtrl() && ke.isCharIgnoreCase('r') && isCamelYamlFile()) {
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('r') && (isCamelYamlFile() || uriCompletion != null)) {
             openRefactorPopup();
             return true;
         }
@@ -1066,6 +1179,7 @@ class SourceViewer {
         }
         editState.moveCursorToLineStart();
         editInitialScroll = true;
+        editStartTop = markdownMode ? -1 : scrollY;
         markdownModeBeforeEdit = markdownMode;
         markdownMode = false;
         quickDocEnabled = false;
@@ -1138,6 +1252,8 @@ class SourceViewer {
 
     private void exitEditMode() {
         boolean wasEditing = editMode;
+        int cursorRow = editState.cursorRow();
+        int top = editState.scrollRow();
         editMode = false;
         editState.clear();
         editHistory.clear();
@@ -1155,6 +1271,29 @@ class SourceViewer {
             markdownMode = markdownModeBeforeEdit;
         }
         markdownModeBeforeEdit = false;
+        editStartTop = -1;
+        if (wasEditing) {
+            keepEditorPosition(cursorRow, top);
+        }
+    }
+
+    /** The top line the editor opens on: the top line of the view, moved only as far as the cursor must stay seen. */
+    static int editorTopKeepingCursor(int viewTop, int cursorRow, int viewportHeight) {
+        int top = Math.min(Math.max(0, viewTop), cursorRow);
+        return Math.max(top, cursorRow - Math.max(1, viewportHeight) + 1);
+    }
+
+    /**
+     * The view continues where the editor was: the cursor line is selected and the same line is at the top, so leaving
+     * the editor does not move the code on the screen.
+     */
+    private void keepEditorPosition(int cursorRow, int top) {
+        if (lines.isEmpty()) {
+            return;
+        }
+        selectedLine = Math.min(Math.max(0, cursorRow), lines.size() - 1);
+        scrollY = Math.min(Math.max(0, top), selectedLine);
+        pendingScroll = false;
     }
 
     private boolean isPropertiesFile() {
@@ -1176,10 +1315,22 @@ class SourceViewer {
 
     private void openAutocomplete() {
         pendingUriCompletion = null;
+        pendingSimpleCompletion = null;
+        pendingXmlCompletion = null;
+        pendingJavaCompletion = null;
+        if (openSimpleAutocomplete()) {
+            return;
+        }
         if (isCamelYamlFile()) {
             openYamlAutocomplete();
         } else if (uriCompletion != null) {
-            openUriAutocomplete();
+            if (!openUriAutocomplete()) {
+                if ("xml".equals(uriCompletion)) {
+                    openXmlAutocomplete();
+                } else if ("java".equals(uriCompletion)) {
+                    openJavaAutocomplete();
+                }
+            }
         } else {
             openPropertiesAutocomplete();
         }
@@ -1189,14 +1340,14 @@ class SourceViewer {
      * The completion of the endpoint uri the cursor is in, in a Java or XML route: the component before the colon, an
      * option after ? or &, its value after =. Read from the line alone, so it works while the file does not parse.
      */
-    private void openUriAutocomplete() {
+    private boolean openUriAutocomplete() {
         int row = editState.cursorRow();
         int col = editState.cursorCol();
         String line = editState.getLine(row);
         EndpointUriContext c = "xml".equals(uriCompletion)
                 ? EndpointUriContext.inXml(line, col) : EndpointUriContext.inJava(line, col);
         if (c == null || !c.isEndpoint() || autocompleteProvider == null) {
-            return;
+            return false;
         }
         String before = c.before();
         int colon = before.indexOf(':');
@@ -1212,14 +1363,14 @@ class SourceViewer {
             int q = before.indexOf('?');
             if (q < 0) {
                 // the path of the uri: what goes there is the component's own
-                return;
+                return true;
             }
             int sep = Math.max(before.lastIndexOf('?'), before.lastIndexOf('&'));
             String segment = before.substring(sep + 1);
             int eq = segment.indexOf('=');
             if (eq >= 0) {
                 if (autocompleteValueProvider == null) {
-                    return;
+                    return true;
                 }
                 items = autocompleteValueProvider.provide("yaml:" + scheme + ":" + segment.substring(0, eq));
                 prefix = segment.substring(eq + 1);
@@ -1243,6 +1394,258 @@ class SourceViewer {
                 autocompletePopup.setTitlePrefix("Components");
             }
             pendingUriCompletion = new UriCompletion(row, col, prefix, suffix);
+        }
+        return true;
+    }
+
+    /**
+     * The completion of the simple expression the cursor is in, read from the line alone like the uris: true when the
+     * cursor is in one, so no other completion is tried, also when nothing matches there.
+     */
+    private boolean openSimpleAutocomplete() {
+        if (simpleCompletion == null) {
+            return false;
+        }
+        int row = editState.cursorRow();
+        int col = editState.cursorCol();
+        List<String> all = new ArrayList<>(editState.lineCount());
+        for (int i = 0; i < editState.lineCount(); i++) {
+            all.add(editState.getLine(i));
+        }
+        SimpleCompletionContext c = SimpleCompletionContext.at(all, row, col);
+        if (c == null) {
+            return false;
+        }
+        List<AutocompletePopup.CompletionItem> items = simpleCompletion.apply(c, all);
+        if (items != null && !items.isEmpty()) {
+            // not in value mode, which puts a popup with a long description over the line being edited
+            autocompletePopup = new AutocompletePopup(items, c.prefix(), c.prefix(), false);
+            autocompletePopup.setFullKeys(true);
+            autocompletePopup.setTitlePrefix(switch (c.kind()) {
+                case FUNCTION -> "Simple functions";
+                case HEADER -> "Headers";
+                case PROPERTY -> "Exchange properties";
+                case VARIABLE -> "Variables";
+                case OPERATOR -> "Operators";
+                case DATE_COMMAND -> "Date commands";
+                case DATE_PATTERN -> "Date patterns";
+                case TIME_ZONE -> "Time zones";
+                case BEAN -> "Beans";
+                case PROPERTY_KEY -> "Properties";
+            });
+            pendingSimpleCompletion = new SimpleCompletion(row, col, c);
+        }
+        return true;
+    }
+
+    /**
+     * Replaces the prefix the simple completion was opened on with the chosen item, and what closes it (the } of a
+     * function or name, the space after an operator) unless that is there already. A chosen header. or
+     * exchangeProperty. opens the names right away.
+     */
+    private void insertSimpleCompletion(AutocompletePopup.CompletionItem item) {
+        SimpleCompletion sc = pendingSimpleCompletion;
+        pendingSimpleCompletion = null;
+        if (editState.cursorRow() != sc.row()) {
+            return;
+        }
+        SimpleCompletionContext c = sc.context();
+        int col = editState.cursorCol();
+        for (; col < sc.endCol(); col++) {
+            editState.moveCursorRight();
+        }
+        for (; col > sc.endCol(); col--) {
+            editState.moveCursorLeft();
+        }
+        for (int i = 0; i < c.prefix().length(); i++) {
+            editState.deleteBackward();
+        }
+        // Tab in the middle of a word replaces all of it
+        String line = editState.getLine(sc.row());
+        int from = editState.cursorCol();
+        int end = from;
+        while (end < line.length() && isSimpleWordChar(line.charAt(end), c.kind())) {
+            end++;
+        }
+        for (int i = from; i < end; i++) {
+            editState.deleteForward();
+        }
+        String text = item.insertText();
+        String closing = c.closing();
+        if (c.kind() == SimpleCompletionContext.Kind.FUNCTION && text.endsWith("}")) {
+            text = text.substring(0, text.length() - 1);
+            closing = "}";
+        }
+        boolean hasClosing = !closing.isEmpty() && line.startsWith(closing, end);
+        editState.insert(text + (hasClosing ? "" : closing));
+        boolean stem = c.kind() == SimpleCompletionContext.Kind.FUNCTION
+                && (text.endsWith(".") || text.endsWith("[") || text.endsWith(":") || text.endsWith("("));
+        if (stem || c.kind() == SimpleCompletionContext.Kind.TIME_ZONE) {
+            // header. opens the header names, date: the date commands, bean: the beans, a time zone the patterns;
+            // only the simple completion, nothing else when the function has no values to offer
+            openSimpleAutocomplete();
+        }
+    }
+
+    /** A character of the function, name or operator being completed. */
+    private static boolean isSimpleWordChar(char c, SimpleCompletionContext.Kind kind) {
+        return switch (kind) {
+            case OPERATOR -> !Character.isWhitespace(c) && c != '$' && c != '\'' && c != '"';
+            case FUNCTION, HEADER, PROPERTY, VARIABLE ->
+                Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '.' || c == ':';
+            // the argument only: the .method after a bean, the :pattern after a date command stay
+            case PROPERTY_KEY -> Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '.';
+            case DATE_PATTERN -> c != '}' && c != ')' && c != '"' && c != '\'';
+            default -> Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == '/';
+        };
+    }
+
+    /**
+     * The completion of the XML DSL at the cursor, read from the text above it like the uris: the elements after &lt;
+     * or on an empty line, the attributes in a start tag, the values in an attribute.
+     */
+    private void openXmlAutocomplete() {
+        if (xmlCompletion == null) {
+            return;
+        }
+        int row = editState.cursorRow();
+        int col = editState.cursorCol();
+        List<String> all = new ArrayList<>(editState.lineCount());
+        for (int i = 0; i < editState.lineCount(); i++) {
+            all.add(editState.getLine(i));
+        }
+        XmlCompletionContext c = XmlCompletionContext.at(all, row, col);
+        if (c == null) {
+            return;
+        }
+        List<AutocompletePopup.CompletionItem> items = xmlCompletion.apply(c, all);
+        if (items != null && !items.isEmpty()) {
+            autocompletePopup = new AutocompletePopup(items, c.prefix(), c.prefix(), false);
+            autocompletePopup.setFullKeys(true);
+            autocompletePopup.setTitlePrefix(switch (c.kind()) {
+                case ELEMENT -> c.parent() != null ? "Inside " + c.parent() : "Elements";
+                case ATTRIBUTE -> c.element() + " attributes";
+                case VALUE -> c.attribute();
+            });
+            pendingXmlCompletion = new XmlCompletion(row, col, c);
+        }
+    }
+
+    /**
+     * Replaces the prefix the XML completion was opened on with the chosen element, attribute or value, and puts the
+     * cursor where the snippet says (in the first required attribute, inside the new element, in the quotes of the new
+     * attribute, whose values open right away).
+     */
+    private void insertXmlCompletion(AutocompletePopup.CompletionItem item) {
+        XmlCompletion xc = pendingXmlCompletion;
+        pendingXmlCompletion = null;
+        if (editState.cursorRow() != xc.row()) {
+            return;
+        }
+        XmlCompletionContext c = xc.context();
+        int col = editState.cursorCol();
+        for (; col < xc.endCol(); col++) {
+            editState.moveCursorRight();
+        }
+        for (; col > xc.endCol(); col--) {
+            editState.moveCursorLeft();
+        }
+        for (int i = 0; i < c.prefix().length(); i++) {
+            editState.deleteBackward();
+        }
+        // Tab in the middle of a name replaces all of it
+        String line = editState.getLine(xc.row());
+        int from = editState.cursorCol();
+        int end = from;
+        boolean value = c.kind() == XmlCompletionContext.Kind.VALUE;
+        while (end < line.length() && (value
+                ? line.charAt(end) != '"' && line.charAt(end) != '\''
+                : Character.isLetterOrDigit(line.charAt(end)) || line.charAt(end) == '-')) {
+            end++;
+        }
+        for (int i = from; i < end; i++) {
+            editState.deleteForward();
+        }
+        String text = item.insertText();
+        int caret = text.indexOf(XmlCompletions.CARET);
+        if (caret >= 0) {
+            text = text.substring(0, caret) + text.substring(caret + 1);
+        }
+        editState.insert(text);
+        for (int i = caret >= 0 ? text.length() - caret : 0; i > 0; i--) {
+            editState.moveCursorLeft();
+        }
+        if (c.kind() == XmlCompletionContext.Kind.ATTRIBUTE) {
+            openAutocomplete();
+        }
+    }
+
+    /** The completion of the Java DSL route chain after a dot, read from the text above the cursor like the uris. */
+    private void openJavaAutocomplete() {
+        if (javaCompletion == null) {
+            return;
+        }
+        int row = editState.cursorRow();
+        int col = editState.cursorCol();
+        List<String> all = new ArrayList<>(editState.lineCount());
+        for (int i = 0; i < editState.lineCount(); i++) {
+            all.add(editState.getLine(i));
+        }
+        JavaChainContext c = JavaChainContext.at(all, row, col);
+        if (c == null) {
+            return;
+        }
+        List<AutocompletePopup.CompletionItem> items = javaCompletion.apply(c);
+        if (items != null && !items.isEmpty()) {
+            autocompletePopup = new AutocompletePopup(items, c.prefix(), c.prefix(), false);
+            autocompletePopup.setFullKeys(true);
+            autocompletePopup.setTitlePrefix("Java DSL");
+            pendingJavaCompletion = new JavaCompletion(row, col, c);
+        }
+    }
+
+    /**
+     * Replaces the name typed after the dot with the chosen method, with its parentheses (the cursor inside them when
+     * it takes arguments) unless they follow already.
+     */
+    private void insertJavaCompletion(AutocompletePopup.CompletionItem item) {
+        JavaCompletion jc = pendingJavaCompletion;
+        pendingJavaCompletion = null;
+        if (editState.cursorRow() != jc.row()) {
+            return;
+        }
+        int col = editState.cursorCol();
+        for (; col < jc.endCol(); col++) {
+            editState.moveCursorRight();
+        }
+        for (; col > jc.endCol(); col--) {
+            editState.moveCursorLeft();
+        }
+        for (int i = 0; i < jc.context().prefix().length(); i++) {
+            editState.deleteBackward();
+        }
+        String line = editState.getLine(jc.row());
+        int from = editState.cursorCol();
+        int end = from;
+        while (end < line.length() && Character.isJavaIdentifierPart(line.charAt(end))) {
+            end++;
+        }
+        for (int i = from; i < end; i++) {
+            editState.deleteForward();
+        }
+        String text = item.insertText();
+        int caret = text.indexOf(XmlCompletions.CARET);
+        if (caret >= 0) {
+            text = text.substring(0, caret) + text.substring(caret + 1);
+        }
+        if (end < line.length() && line.charAt(end) == '(') {
+            // the arguments are there already: only the name changes
+            text = item.key();
+            caret = -1;
+        }
+        editState.insert(text);
+        for (int i = caret >= 0 ? text.length() - caret : 0; i > 0; i--) {
+            editState.moveCursorLeft();
         }
     }
 
@@ -1456,6 +1859,18 @@ class SourceViewer {
             insertUriCompletion(item);
             return;
         }
+        if (pendingSimpleCompletion != null) {
+            insertSimpleCompletion(item);
+            return;
+        }
+        if (pendingXmlCompletion != null) {
+            insertXmlCompletion(item);
+            return;
+        }
+        if (pendingJavaCompletion != null) {
+            insertJavaCompletion(item);
+            return;
+        }
         String currentLine = editState.getLine(editState.cursorRow());
         if (isCamelYamlFile()) {
             insertYamlCompletion(item, valueMode, currentLine, listItem);
@@ -1581,11 +1996,15 @@ class SourceViewer {
             dirty = false;
             Path path = editableFile;
             boolean restoreMarkdownMode = markdownModeBeforeEdit;
+            int cursorRow = editState.cursorRow();
+            int top = editState.scrollRow();
             notifySaved(editableFile);
             editMode = false;
             editState.clear();
             markdownModeBeforeEdit = false;
+            editStartTop = -1;
             loadFile(path);
+            keepEditorPosition(cursorRow, top);
             if (isMarkdownFile) {
                 markdownMode = restoreMarkdownMode;
             }
@@ -1681,14 +2100,24 @@ class SourceViewer {
     }
 
     /**
-     * Asks the AI to fix the problem of the cursor line (Shift+F8): the file is saved as it is in the editor, which the
-     * AI is about to change, edit mode left so the editor shows what the AI sees, and the AI panel opened with the
-     * question in its input, for the user to send with Enter or change first.
+     * Asks the AI to fix the problem of the cursor line (Shift+F8), or when it has none, the line whose processors fail
+     * at runtime: the file is saved as it is in the editor, which the AI is about to change, edit mode left so the
+     * editor shows what the AI sees, and the AI panel opened with the question in its input, for the user to send with
+     * Enter or change first.
      */
     private void askAiToFix() {
+        if (askAi == null || editableFile == null) {
+            return;
+        }
+        if (!editMode) {
+            askAiToFixInView();
+            return;
+        }
         int row = editState.cursorRow();
         String problem = visibleInlineErrors().get(row);
-        if (askAi == null || editableFile == null || problem == null) {
+        // a runtime failure is only known for the saved file (null while dirty), so it needs no save
+        String failure = problem == null ? runtimeFailure(row) : null;
+        if (problem == null && failure == null) {
             return;
         }
         String lineText = editState.getLine(row);
@@ -1705,7 +2134,52 @@ class SourceViewer {
         exitEditMode();
         loadFile(file);
         goToLine(row);
-        askAi.fixProblem(file, row + 1, problem, lineText);
+        if (problem != null) {
+            askAi.fixProblem(file, row + 1, problem, lineText);
+        } else {
+            askAi.fixFailure(file, row + 1, failure, lineText);
+        }
+    }
+
+    /**
+     * Shift+F8 in the view, as in the editor: the problem of the selected line, or else its runtime failure, while the
+     * view shows the file's own source (not the route converted to another DSL).
+     */
+    private void askAiToFixInView() {
+        int row = selectedLine;
+        if (row < 0 || row >= lines.size() || !showsOwnSource()) {
+            return;
+        }
+        // the view renders the lines (line numbers, live data), so the text comes from the file, which the view shows
+        String lineText = RuntimeFailures.lineText(editableFile, row);
+        String problem = viewErrors.get(row);
+        if (problem != null) {
+            askAi.fixProblem(editableFile, row + 1, problem, lineText);
+            return;
+        }
+        String failure = runtimeFailure(row);
+        if (failure != null) {
+            askAi.fixFailure(editableFile, row + 1, failure, lineText);
+        }
+    }
+
+    /** Whether the view shows the file's own source, and not its route converted to another DSL (Space). */
+    private boolean showsOwnSource() {
+        return !markdownMode && (currentFormat == null || currentFormat.equals(originalFormat));
+    }
+
+    /**
+     * Whether the view shows the fix with AI hint (Shift+F8) for the selected line: the Source tab puts it with the
+     * global F-keys.
+     */
+    boolean showsFixWithAiHint() {
+        return visible && !editMode && showsOwnSource() && canAskAiToFix(selectedLine, viewErrors);
+    }
+
+    /** Whether Shift+F8 (fix with AI) has something to ask about on a 0-based line: a problem, or a runtime failure. */
+    private boolean canAskAiToFix(int row, Map<Integer, String> problems) {
+        return askAi != null && editableFile != null && row >= 0
+                && (problems.containsKey(row) || failsAtRuntime(row));
     }
 
     /** Applies the fix of the problem on the line of the cursor (Shift+F9), and checks the content again right away. */
@@ -2034,6 +2508,17 @@ class SourceViewer {
                     rawLines.add(jo.getString("code") != null ? jo.getString("code") : "");
                 }
                 viewDocEntries = editQuickDocProvider.provideForLine(rawLines, selectedLine);
+                if (cursorQuickDocProvider != null) {
+                    List<DocEntry> used = cursorQuickDocProvider.provideAt(rawLines, selectedLine, -1);
+                    if (used != null && !used.isEmpty()) {
+                        List<DocEntry> merged = new ArrayList<>();
+                        if (viewDocEntries != null) {
+                            merged.addAll(viewDocEntries);
+                        }
+                        merged.addAll(used);
+                        viewDocEntries = merged;
+                    }
+                }
             }
         }
 
@@ -2243,7 +2728,20 @@ class SourceViewer {
             editorArea = new Rect(inner.left(), inner.top(), inner.width(), inner.height() - docPanelHeight);
             docArea = new Rect(inner.left(), inner.top() + inner.height() - docPanelHeight, inner.width(), docPanelHeight);
             lastVisibleLines = Math.max(1, editorArea.height());
-            editDocEntries = editQuickDocProvider.provideForLine(editLines(), editState.cursorRow());
+            List<String> textLines = editLines();
+            editDocEntries = editQuickDocProvider.provideForLine(textLines, editState.cursorRow());
+            if (cursorQuickDocProvider != null) {
+                List<DocEntry> here = cursorQuickDocProvider.provideAt(textLines, editState.cursorRow(),
+                        editState.cursorCol());
+                if (here != null && !here.isEmpty()) {
+                    // the function the cursor is on is more to the point than the step of the line
+                    List<DocEntry> merged = new ArrayList<>(here);
+                    if (editDocEntries != null) {
+                        merged.addAll(editDocEntries);
+                    }
+                    editDocEntries = merged;
+                }
+            }
         }
 
         int prefixWidth = plainMode ? 0 : 3;
@@ -2258,14 +2756,19 @@ class SourceViewer {
                 .showLineNumbers(!plainMode)
                 .lineNumberStyle(Style.EMPTY.dim())
                 .build();
-        // on first render, position cursor at 2/3 of viewport before TextArea renders
+        // on first render, keep the top line of the view (F4), else position the cursor at 2/3 of the viewport
         if (editInitialScroll) {
             editInitialScroll = false;
             int viewportH = textAreaRect.height();
-            int twoThirds = viewportH * 2 / 3;
-            int targetScroll = Math.max(0, editState.cursorRow() - twoThirds);
-            if (targetScroll > 0) {
-                editState.scrollDown(targetScroll, viewportH);
+            int targetScroll = editStartTop >= 0
+                    ? editorTopKeepingCursor(editStartTop, editState.cursorRow(), viewportH)
+                    : Math.max(0, editState.cursorRow() - viewportH * 2 / 3);
+            editStartTop = -1;
+            int delta = targetScroll - editState.scrollRow();
+            if (delta > 0) {
+                editState.scrollDown(delta, viewportH);
+            } else if (delta < 0) {
+                editState.scrollUp(-delta);
             }
         }
 
@@ -2579,7 +3082,7 @@ class SourceViewer {
             if (cursorFix() != null) {
                 TuiHelper.hint(spans, "Shift+F9", "fix");
             }
-            if (askAi != null && visibleInlineErrors().containsKey(editState.cursorRow())) {
+            if (canAskAiToFix(editState.cursorRow(), visibleInlineErrors())) {
                 TuiHelper.hint(spans, "Shift+F8", "fix with AI");
             }
             if (isCamelYamlFile()) {
@@ -2630,6 +3133,11 @@ class SourceViewer {
             return;
         }
         String rawLine = editState.getLine(row);
+        if (!isCamelYamlFile()) {
+            // Java and XML routes (CAMEL-25256)
+            openRouteRefactorPopup(row, rawLine);
+            return;
+        }
         List<RefactorPopup.Action> actions = new ArrayList<>();
         // Extract to new file: available on any EIP step block in a YAML route
         if (isCamelYamlFile()) {
@@ -2653,12 +3161,143 @@ class SourceViewer {
         refactorPopup.open(actions, currentUri);
     }
 
+    /**
+     * The refactorings of a Java or XML route: replace the endpoint URI of the line, extract the value at the cursor to
+     * a property, and in XML extract the step block of the line to a new route file.
+     */
+    private void openRouteRefactorPopup(int row, String rawLine) {
+        String dsl = uriCompletion;
+        List<RefactorPopup.Action> actions = new ArrayList<>();
+        if ("xml".equals(dsl) && RouteRefactorings.xmlStep(editLines(), row) != null) {
+            actions.add(RefactorPopup.Action.EXTRACT_TO_FILE);
+        }
+        RouteRefactorings.Value uri = RouteRefactorings.uri(dsl, rawLine);
+        if (uri != null) {
+            actions.add(RefactorPopup.Action.REPLACE_URI);
+        }
+        if (RouteRefactorings.isExtractable(RouteRefactorings.valueAt(dsl, rawLine, editState.cursorCol()))) {
+            actions.add(RefactorPopup.Action.EXTRACT_TO_PROPERTY);
+        }
+        if (actions.isEmpty()) {
+            notifySave("Nothing to refactor here: put the cursor on an endpoint URI, a value"
+                       + ("xml".equals(dsl) ? " or the start tag of a step" : ""),
+                    false);
+            return;
+        }
+        refactorPopup = new RefactorPopup();
+        refactorPopup.open(actions, uri != null ? uri.text() : null);
+    }
+
+    private void applyRouteRefactoring(RefactorPopup.Request req, int row, String rawLine) {
+        String dsl = uriCompletion;
+        switch (req.action()) {
+            case REPLACE_URI -> {
+                RouteRefactorings.Value uri = RouteRefactorings.uri(dsl, rawLine);
+                if (uri != null) {
+                    setLine(row, RouteRefactorings.replace(dsl, rawLine, uri, req.value()));
+                    notifySave("Replaced URI with: " + req.value(), false);
+                }
+            }
+            case EXTRACT_TO_PROPERTY -> {
+                RouteRefactorings.Value v = RouteRefactorings.valueAt(dsl, rawLine, editState.cursorCol());
+                if (!RouteRefactorings.isExtractable(v) || req.value() == null || req.value().isBlank()) {
+                    return;
+                }
+                String key = req.value().strip();
+                setLine(row, RouteRefactorings.replace(dsl, rawLine, v, "{{" + key + "}}"));
+                if (editableFile != null) {
+                    Path props = RouteRefactorings.propertiesFile(editableFile);
+                    try {
+                        Files.createDirectories(props.getParent());
+                        Files.writeString(props, key + "=" + RouteRefactorings.propertiesValue(v.text()) + "\n",
+                                StandardCharsets.UTF_8,
+                                StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                    } catch (IOException e) {
+                        notifySave("Warning: could not write " + props.getFileName() + ": " + e.getMessage(), true);
+                        return;
+                    }
+                }
+                notifySave("Extracted to property: " + key, false);
+            }
+            case EXTRACT_TO_FILE -> applyXmlExtractToFile(row, req.value());
+        }
+    }
+
+    /** The line replaced in the edited text, the cursor kept on it. */
+    private void setLine(int row, String newLine) {
+        recordEditChange();
+        List<String> lines = editLines();
+        lines.set(row, newLine);
+        editState.setText(YamlBlockEditor.fromLines(lines));
+        SourceEditorNavigation.positionCursor(editState, row, countLeadingSpaces(newLine));
+    }
+
+    /** The XML step block of the row moved to a new route (from direct:name) in name.camel.xml, a to in its place. */
+    private void applyXmlExtractToFile(int row, String name) {
+        if (editableFile == null) {
+            notifySave("Cannot extract: file is not writable", true);
+            return;
+        }
+        name = sanitizeFileName(name);
+        if (name.isEmpty()) {
+            notifySave("Cannot extract: invalid file name", true);
+            return;
+        }
+        List<String> lines = editLines();
+        RouteRefactorings.Block block = RouteRefactorings.xmlStep(lines, row);
+        if (block == null) {
+            return;
+        }
+        List<String> blockLines = new ArrayList<>(lines.subList(block.start(), block.end() + 1));
+        String newFileName = name + ".camel.xml";
+        Path newFile = editableFile.getParent().resolve(newFileName);
+        String route = RouteRefactorings.xmlRoute(name, blockLines, block.indent());
+        String newContent;
+        boolean existed = Files.exists(newFile);
+        try {
+            if (existed) {
+                newContent = RouteRefactorings.addXmlRoute(Files.readString(newFile, StandardCharsets.UTF_8), route);
+                if (newContent == null) {
+                    notifySave(newFileName + " exists and has no </routes> to add the route to", true);
+                    return;
+                }
+            } else {
+                newContent = RouteRefactorings.xmlRouteFile(name, blockLines, block.indent());
+            }
+        } catch (IOException e) {
+            notifySave("Failed to read " + newFileName + ": " + e.getMessage(), true);
+            return;
+        }
+        recordEditChange();
+        editState.setText(YamlBlockEditor.fromLines(RouteRefactorings.replaceWithTo(lines, block, name)));
+        SourceEditorNavigation.positionCursor(editState, block.start(), block.indent());
+        // saved at once, so the route index of the jump links sees both files (as the YAML extraction does)
+        try {
+            Files.writeString(editableFile, editState.text(), StandardCharsets.UTF_8);
+            dirty = false;
+            originalEditText = editState.text();
+            lineStatuses = null;
+            Files.writeString(newFile, newContent, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            notifySave("Failed to write " + newFileName + ": " + e.getMessage(), true);
+            return;
+        }
+        if (!existed && onFileCreated != null) {
+            onFileCreated.run();
+        }
+        notifySave(existed ? "Added route to " + newFileName : "Extracted to " + newFileName, false);
+    }
+
     private void applyRefactoring(RefactorPopup.Request req) {
         int row = editState.cursorRow();
         if (row < 0 || row >= editState.lineCount()) {
             return;
         }
         String rawLine = editState.getLine(row);
+        if (!isCamelYamlFile()) {
+            applyRouteRefactoring(req, row, rawLine);
+            return;
+        }
         switch (req.action()) {
             case EXTRACT_TO_FILE -> applyExtractToFile(row, req.value());
             case REPLACE_URI -> applyReplaceUri(row, rawLine, req.value());

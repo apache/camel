@@ -23,6 +23,10 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.semantic.SemanticAdapter;
+import org.apache.camel.semantic.SemanticExpert;
+import org.apache.camel.semantic.SemanticExpert.InputType;
+import org.apache.camel.semantic.SemanticExpert.Instructions;
+import org.apache.camel.semantic.SemanticExpert.ResultType;
 import org.apache.camel.semantic.SemanticQuestion;
 import org.apache.camel.semantic.SemanticResult;
 import org.apache.camel.spi.annotations.JdkService;
@@ -30,6 +34,17 @@ import org.apache.camel.util.json.JsonObject;
 
 /** Maps common questions to TypeSafe AI using the component's configured, managed transport. */
 @JdkService("semantic-adapter")
+@SemanticExpert(name = "typesafe-ai", provider = "typesafe-ai", artifactId = "camel-typesafe-ai",
+                description = "Instruction-driven boolean decisions, choices and rubric scores using TypeSafe AI",
+                inputTypes = { InputType.TEXT, InputType.STRUCTURED },
+                resultTypes = { ResultType.BOOLEAN, ResultType.CHOICE, ResultType.SCORE },
+                instructions = Instructions.REQUIRED, callerDefinedCriteria = true,
+                booleanProbability = true, choiceProbabilities = true,
+                confidenceTypes = { ResultType.BOOLEAN, ResultType.CHOICE, ResultType.SCORE },
+                probabilityMeaning = "Boolean: probability of true; choice: probability of each supplied category",
+                confidenceMeaning = "Optional provider-reported confidence; distinct from the normalized decision",
+                trueMeaning = "The supplied boolean instructions and criteria hold for the selected state",
+                maxChoices = 255, maxScoreLevels = 10)
 public class TypeSafeAiSemanticAdapter implements SemanticAdapter, CamelContextAware {
     private CamelContext camelContext;
     private volatile TypeSafeAiEndpoint endpoint;
@@ -46,10 +61,7 @@ public class TypeSafeAiSemanticAdapter implements SemanticAdapter, CamelContextA
 
     @Override
     public void validate(SemanticQuestion question) {
-        if (question.getType() == SemanticQuestion.Type.CHOICE && question.getCriteria().size() > 255
-                || question.getType() == SemanticQuestion.Type.SCORE && question.getLevels().size() > 10) {
-            throw new IllegalArgumentException("TypeSafe AI supports at most 255 choice criteria or 10 score levels");
-        }
+        capabilities().validate(question);
     }
 
     private TypeSafeAiEndpoint endpoint() {

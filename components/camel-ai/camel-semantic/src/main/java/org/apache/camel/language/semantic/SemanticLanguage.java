@@ -19,16 +19,19 @@ package org.apache.camel.language.semantic;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -37,6 +40,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.semantic.SemanticAdapter;
+import org.apache.camel.semantic.SemanticCapabilities;
 import org.apache.camel.semantic.SemanticQuestion;
 import org.apache.camel.semantic.SemanticQuestions;
 import org.apache.camel.semantic.SemanticResult;
@@ -62,8 +66,11 @@ public class SemanticLanguage extends LanguageSupport {
     public static final String ADAPTER_RESOURCE = FactoryFinder.DEFAULT_PATH + ADAPTER_FACTORY;
 
     private String adapter;
+    private String defaultExpert;
     private String defaultState = "${body}";
     private SemanticAdapter selectedAdapter;
+    private String selectedAdapterName;
+    private ManagedAdapter managedAdapter;
 
     public String getAdapter() {
         return adapter;
@@ -75,6 +82,15 @@ public class SemanticLanguage extends LanguageSupport {
      */
     public void setAdapter(String adapter) {
         this.adapter = adapter;
+    }
+
+    public String getDefaultExpert() {
+        return defaultExpert;
+    }
+
+    /** Default expert registry bean name for declarations without an explicit expert. */
+    public void setDefaultExpert(String defaultExpert) {
+        this.defaultExpert = defaultExpert;
     }
 
     public String getDefaultState() {
@@ -156,13 +172,19 @@ public class SemanticLanguage extends LanguageSupport {
                             "Semantic adapter bean does not implement SemanticAdapter: " + configured);
                 }
                 selectedAdapter = found;
+                selectedAdapterName = configured;
                 return found;
             }
         }
         ManagedAdapter owned = null;
         try {
-            Class<?> resolved = configured == null
+            Object candidate = configured == null
                     ? discoverAdapter(context) : context.getClassResolver().resolveClass(configured);
+            if (candidate instanceof SemanticAdapter registered) {
+                selectedAdapter = registered;
+                return registered;
+            }
+            Class<?> resolved = (Class<?>) candidate;
             if (resolved == null) {
                 throw new IllegalArgumentException("No semantic adapter bean or class found: " + configured);
             }
@@ -178,7 +200,9 @@ public class SemanticLanguage extends LanguageSupport {
                 context.getRegistry().bind(ADAPTER_NAME, instance);
             }
             context.addService(owned, true, true);
+            managedAdapter = owned;
             selectedAdapter = owned.instance;
+            selectedAdapterName = type.getName();
             return selectedAdapter;
         } catch (Exception failure) {
             if (owned != null) {
@@ -189,11 +213,35 @@ public class SemanticLanguage extends LanguageSupport {
                     failure.addSuppressed(cleanup);
                 }
             }
+            if (failure instanceof IllegalArgumentException invalid) {
+                throw invalid;
+            }
             throw RuntimeCamelException.wrapRuntimeCamelException(failure);
         }
     }
 
-    private Class<?> discoverAdapter(CamelContext context) throws IOException {
+    private synchronized void startAdapter(List<Group> groups) {
+        ManagedAdapter owned = managedAdapter;
+        if (owned == null || groups.stream().noneMatch(group -> group.expert.provider == owned.instance)) {
+            return;
+        }
+        try {
+            owned.activate();
+        } catch (Exception failure) {
+            selectedAdapter = null;
+            selectedAdapterName = null;
+            managedAdapter = null;
+            try {
+                getCamelContext().removeService(owned);
+                ServiceHelper.stopAndShutdownService(owned);
+            } catch (Exception cleanup) {
+                failure.addSuppressed(cleanup);
+            }
+            throw RuntimeCamelException.wrapRuntimeCamelException(failure);
+        }
+    }
+
+    private Object discoverAdapter(CamelContext context) throws IOException {
         // FactoryFinder resolves one descriptor; check all declarations first to avoid classpath-order selection.
         Set<String> candidates = new TreeSet<>();
         Enumeration<URL> resources = context.getClassResolver().loadAllResourcesAsURL(ADAPTER_RESOURCE);
@@ -209,10 +257,29 @@ public class SemanticLanguage extends LanguageSupport {
                 candidates.add(className);
             }
         }
-        if (candidates.size() != 1) {
+        Map<String, SemanticAdapter> registered = context.getRegistry().findByTypeWithName(SemanticAdapter.class);
+        Set<SemanticAdapter> instances = Collections.newSetFromMap(new IdentityHashMap<>());
+        instances.addAll(registered.values());
+        // A configured instance supersedes discovery of its implementation; aliases are one instance.
+        registered.values().forEach(value -> {
+            for (Class<?> type = value.getClass(); type != null; type = type.getSuperclass()) {
+                candidates.remove(type.getName());
+            }
+        });
+        if (candidates.size() + instances.size() != 1) {
+            Set<String> names = new TreeSet<>(registered.keySet());
+            names.addAll(candidates);
             throw new IllegalArgumentException(
-                    "Semantic language requires exactly one advertised adapter; found "
-                                               + candidates + ". Configure camel.language.semantic.adapter explicitly");
+                    "Semantic language requires exactly one eligible expert; available experts: " + names
+                                               + ". Specify expert or configure camel.language.semantic.default-expert explicitly");
+        }
+        if (instances.size() == 1) {
+            SemanticAdapter instance = instances.iterator().next();
+            // Keep an operator-facing name; aliases have no primary name, so choose deterministically.
+            selectedAdapterName = registered.entrySet().stream()
+                    .filter(entry -> entry.getValue() == instance)
+                    .map(Map.Entry::getKey).min(String::compareTo).orElseThrow();
+            return instance;
         }
         Class<?> resolved = context.getCamelContextExtension().getDefaultFactoryFinder().findClass(ADAPTER_FACTORY)
                 .orElseThrow(() -> new IllegalArgumentException("Cannot resolve advertised semantic adapter: " + candidates));
@@ -221,6 +288,42 @@ public class SemanticLanguage extends LanguageSupport {
                     "Resolved semantic adapter " + resolved.getName() + " does not match advertised adapter: " + candidates);
         }
         return resolved;
+    }
+
+    private ResolvedExpert expert(String name, SemanticQuestion question) {
+        String reference = question.getExpert() != null ? question.getExpert() : defaultExpert;
+        String label = reference != null ? reference : adapter != null ? adapter : "automatic";
+        try {
+            SemanticAdapter provider;
+            if (reference != null) {
+                label = getCamelContext().resolvePropertyPlaceholders(reference);
+                if (label.isBlank() || label.startsWith("#")) {
+                    throw new IllegalArgumentException("Expert must be a registry bean name without a # prefix");
+                }
+                Object bean = getCamelContext().getRegistry().lookupByName(label);
+                if (!(bean instanceof SemanticAdapter found)) {
+                    throw new IllegalArgumentException("Unknown expert or bean does not implement SemanticAdapter: " + label);
+                }
+                provider = found;
+            } else {
+                synchronized (this) {
+                    provider = adapter();
+                    label = selectedAdapterName;
+                }
+            }
+            SemanticCapabilities capabilities = provider.capabilities();
+            capabilities.validate(question);
+            provider.validate(question);
+            return new ResolvedExpert(provider, capabilities, label);
+        } catch (RuntimeException e) {
+            if (e instanceof IllegalArgumentException) {
+                throw new IllegalArgumentException(
+                        "Semantic evaluation '" + name + "', expert '" + label + "': " + e.getMessage(), e);
+            }
+            throw new RuntimeCamelException(
+                    "Semantic evaluation '" + name + "', expert '" + label + "': " + e.getMessage(),
+                    e instanceof RuntimeCamelException && e.getCause() != null ? e.getCause() : e);
+        }
     }
 
     private static final class AdapterLock {
@@ -243,6 +346,7 @@ public class SemanticLanguage extends LanguageSupport {
         private final CamelContext context;
         private final SemanticAdapter instance;
         private final AdapterLock lock;
+        private boolean activated;
 
         private ManagedAdapter(CamelContext context, SemanticAdapter instance, AdapterLock lock) {
             this.context = context;
@@ -250,14 +354,20 @@ public class SemanticLanguage extends LanguageSupport {
             this.lock = lock;
         }
 
-        @Override
-        protected void doInit() throws Exception {
-            ServiceHelper.initService(instance);
+        private synchronized void activate() throws Exception {
+            if (!activated) {
+                activated = true;
+                ServiceHelper.initService(instance);
+                ServiceHelper.startService(instance);
+            }
         }
 
         @Override
-        protected void doStart() throws Exception {
-            ServiceHelper.startService(instance);
+        protected synchronized void doStart() throws Exception {
+            // Own cleanup immediately, but start provider resources only after declaration validation.
+            if (activated) {
+                ServiceHelper.startService(instance);
+            }
         }
 
         @Override
@@ -283,9 +393,9 @@ public class SemanticLanguage extends LanguageSupport {
         private final List<String> names;
         private final boolean batch;
         private final boolean predicate;
+        private final Consumer<Map<String, SemanticQuestion>> validator = this::prepare;
         private volatile Compiled compiled;
         private volatile SemanticQuestions questions;
-        private volatile SemanticAdapter provider;
 
         private Evaluation(List<String> names, boolean batch, boolean predicate) {
             this.names = names;
@@ -298,11 +408,8 @@ public class SemanticLanguage extends LanguageSupport {
             super.init(context);
             questions = SemanticQuestions.get(context);
             Map<String, SemanticQuestion> selected = questions.get(names);
-            if (predicate) {
-                requireBoolean(selected.get(names.get(0)));
-            }
-            provider = adapter();
             compile(selected);
+            questions.setValidator(names, validator);
         }
 
         private void requireBoolean(SemanticQuestion question) {
@@ -313,30 +420,47 @@ public class SemanticLanguage extends LanguageSupport {
 
         private synchronized Compiled compile(Map<String, SemanticQuestion> selected) {
             if (compiled == null || !compiled.questions.equals(selected)) {
-                if (predicate) {
-                    requireBoolean(selected.get(names.get(0)));
-                }
-                String selector = null;
-                for (var entry : selected.entrySet()) {
-                    SemanticQuestion question = entry.getValue();
-                    provider.validate(question);
-                    String effective = question.getState() != null ? question.getState() : defaultState;
-                    if (effective == null || effective.isBlank()) {
-                        throw new IllegalArgumentException(
-                                "Semantic state selector must not be blank for question: " + entry.getKey());
-                    }
-                    effective = getCamelContext().resolvePropertyPlaceholders(effective);
-                    if (selector != null && !selector.equals(effective)) {
-                        throw new IllegalArgumentException(
-                                "Semantic batch questions must use the same effective state selector");
-                    }
-                    selector = effective;
-                }
-                Expression state = getCamelContext().resolveLanguage("simple").createExpression(selector);
-                state.init(getCamelContext());
-                compiled = new Compiled(selected, state);
+                Compiled candidate = prepare(selected);
+                startAdapter(candidate.groups);
+                compiled = candidate;
             }
             return compiled;
+        }
+
+        private Compiled prepare(Map<String, SemanticQuestion> selected) {
+            if (predicate) {
+                requireBoolean(selected.get(names.get(0)));
+            }
+            String selector = null;
+            Map<SemanticAdapter, Group> byInstance = new IdentityHashMap<>();
+            List<Group> groups = new ArrayList<>();
+            for (var entry : selected.entrySet()) {
+                SemanticQuestion question = entry.getValue();
+                ResolvedExpert resolved = expert(entry.getKey(), question);
+                Group group = byInstance.get(resolved.provider);
+                if (group == null) {
+                    group = new Group(resolved, new LinkedHashMap<>());
+                    byInstance.put(resolved.provider, group);
+                    groups.add(group);
+                }
+                group.questions.put(entry.getKey(), question);
+                String effective = question.getState() != null ? question.getState() : defaultState;
+                if (effective == null || effective.isBlank()) {
+                    throw new IllegalArgumentException(
+                            "Semantic state selector must not be blank for question: " + entry.getKey());
+                }
+                effective = getCamelContext().resolvePropertyPlaceholders(effective);
+                if (selector != null && !selector.equals(effective)) {
+                    throw new IllegalArgumentException(
+                            "Semantic batch questions must use the same effective state selector");
+                }
+                selector = effective;
+            }
+            Expression state = getCamelContext().resolveLanguage("simple").createExpression(selector);
+            state.init(getCamelContext());
+            return new Compiled(
+                    selected, state, groups.stream()
+                            .map(group -> new Group(group.expert, Collections.unmodifiableMap(group.questions))).toList());
         }
 
         @Override
@@ -380,10 +504,28 @@ public class SemanticLanguage extends LanguageSupport {
                             "Unsupported state type for semantic questions: " + names
                                                        + ". Select strings, maps or lists explicitly");
                 }
+                // Check every group's input before invoking any provider.
+                for (Group group : current.groups) {
+                    try {
+                        group.expert.capabilities.validateInput(state);
+                    } catch (IllegalArgumentException invalid) {
+                        throw new IllegalArgumentException(
+                                "Semantic evaluations " + group.questions.keySet() + ", expert '" + group.expert.reference
+                                                           + "': " + invalid.getMessage(),
+                                invalid);
+                    }
+                }
                 if (batch) {
-                    Map<String, SemanticResult> results = provider.evaluateBatch(current.questions, state);
-                    if (results == null || !results.keySet().equals(current.questions.keySet())) {
-                        throw new IllegalArgumentException("Semantic batch result names must match question names");
+                    Map<String, SemanticResult> results = new LinkedHashMap<>();
+                    for (Group group : current.groups) {
+                        if (Thread.currentThread().isInterrupted()) {
+                            throw new InterruptedException("Semantic batch evaluation interrupted");
+                        }
+                        Map<String, SemanticResult> answers = group.expert.provider.evaluateBatch(group.questions, state);
+                        if (answers == null || !answers.keySet().equals(group.questions.keySet())) {
+                            throw new IllegalArgumentException("Semantic batch result names must match question names");
+                        }
+                        results.putAll(answers);
                     }
                     Map<String, Object> decisions = new LinkedHashMap<>();
                     Map<String, SemanticResult> details = new LinkedHashMap<>();
@@ -399,7 +541,7 @@ public class SemanticLanguage extends LanguageSupport {
                     return Collections.unmodifiableMap(decisions);
                 }
                 SemanticQuestion question = current.questions.get(names.get(0));
-                SemanticResult result = provider.evaluate(question, state);
+                SemanticResult result = current.groups.get(0).expert.provider.evaluate(question, state);
                 if (result == null) {
                     throw new IllegalArgumentException("Missing result for semantic question: " + names.get(0));
                 }
@@ -425,6 +567,12 @@ public class SemanticLanguage extends LanguageSupport {
         }
     }
 
-    private record Compiled(Map<String, SemanticQuestion> questions, Expression state) {
+    private record ResolvedExpert(SemanticAdapter provider, SemanticCapabilities capabilities, String reference) {
+    }
+
+    private record Group(ResolvedExpert expert, Map<String, SemanticQuestion> questions) {
+    }
+
+    private record Compiled(Map<String, SemanticQuestion> questions, Expression state, List<Group> groups) {
     }
 }

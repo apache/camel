@@ -84,6 +84,59 @@ public interface OpenFgaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Context passed to the CEL expressions of any conditioned relation the
+         * check touches, as a map resolved from the registry -
+         * conditionContext=#myContext. A map rather than an expression on
+         * purpose: OpenFGA types every condition parameter in the authorization
+         * model (int, bool, timestamp, ipaddress), and a map lets the route
+         * author supply values of the right Java type instead of strings that
+         * the server would then reject. A mistyped value is refused with an
+         * HTTP 400, which this component treats as a denial rather than as an
+         * unavailable decision point, so the failure direction is safe either
+         * way. Like contextualTuples this is endpoint-only. A condition can
+         * decide a relation, so letting a message choose the values it is
+         * evaluated with would hand the caller the decision.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param conditionContext the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder conditionContext(Map<java.lang.String, java.lang.Object> conditionContext) {
+            doSetProperty("conditionContext", conditionContext);
+            return this;
+        }
+        /**
+         * Context passed to the CEL expressions of any conditioned relation the
+         * check touches, as a map resolved from the registry -
+         * conditionContext=#myContext. A map rather than an expression on
+         * purpose: OpenFGA types every condition parameter in the authorization
+         * model (int, bool, timestamp, ipaddress), and a map lets the route
+         * author supply values of the right Java type instead of strings that
+         * the server would then reject. A mistyped value is refused with an
+         * HTTP 400, which this component treats as a denial rather than as an
+         * unavailable decision point, so the failure direction is safe either
+         * way. Like contextualTuples this is endpoint-only. A condition can
+         * decide a relation, so letting a message choose the values it is
+         * evaluated with would hand the caller the decision.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param conditionContext the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder conditionContext(String conditionContext) {
+            doSetProperty("conditionContext", conditionContext);
+            return this;
+        }
+        /**
          * The consistency the query is answered with. OpenFGA's default,
          * MINIMIZE_LATENCY, may answer from a replica that has not caught up
          * yet, which right after a revoke means a tuple that was deleted can
@@ -103,6 +156,59 @@ public interface OpenFgaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Relationship tuples supplied for the duration of one check and never
+         * stored, as semicolon-separated user,relation,object triples - for
+         * example
+         * user:${exchangeProperty.authenticatedSubject},member,team:eng. Each
+         * part is evaluated as a Simple expression against the exchange,
+         * exactly as user and object are, and applies to check, batchCheck,
+         * listObjects, listRelations and listUsers. This is how a route hands
+         * OpenFGA a relationship the stored graph does not hold - a group
+         * membership that lives in the token rather than in the store, or a
+         * fact about the request such as which network it arrived on. A
+         * contextual tuple grants. It is read exactly like a stored tuple, so
+         * user:anne,owner,document:secret makes {code check(user:anne, owner,
+         * document:secret)} answer true whatever the store contains. That is
+         * why this option is endpoint-only and is never taken from the message:
+         * a tuple the caller could choose would let it assert the very
+         * relationship being checked. By the same token, an expression here
+         * that reads an inbound header hands the caller that power anyway -
+         * keep these literal, or derive them from something the route
+         * established rather than from what it received. A part that resolves
+         * to blank denies the exchange rather than being dropped: the route
+         * asked for a tuple it did not get, and continuing without it would
+         * answer a different question than the one configured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param contextualTuples the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder contextualTuples(String contextualTuples) {
+            doSetProperty("contextualTuples", contextualTuples);
+            return this;
+        }
+        /**
+         * The page to read from, for readTuples and readChanges. Evaluated as a
+         * Simple expression against the exchange, so a route can feed back the
+         * token the previous page returned -
+         * ${header.CamelOpenFgaContinuationToken} - and page through without
+         * the token being configured statically.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param continuationToken the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder continuationToken(String continuationToken) {
+            doSetProperty("continuationToken", continuationToken);
+            return this;
+        }
+        /**
          * The object being accessed, as an OpenFGA object identifier such as
          * {code document:budget}. Evaluated as a Simple expression against each
          * exchange, so document:${header.documentId} names the resource the
@@ -119,6 +225,39 @@ public interface OpenFgaEndpointBuilderFactory {
          */
         default OpenFgaEndpointBuilder object(String object) {
             doSetProperty("object", object);
+            return this;
+        }
+        /**
+         * How many entries a readTuples or readChanges page returns. Left
+         * unset, OpenFGA's own default applies. A page is one request: this
+         * bounds the answer, not the number of requests a route makes.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder pageSize(Integer pageSize) {
+            doSetProperty("pageSize", pageSize);
+            return this;
+        }
+        /**
+         * How many entries a readTuples or readChanges page returns. Left
+         * unset, OpenFGA's own default applies. A page is one request: this
+         * bounds the answer, not the number of requests a route makes.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder pageSize(String pageSize) {
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -154,6 +293,25 @@ public interface OpenFgaEndpointBuilderFactory {
          */
         default OpenFgaEndpointBuilder relations(String relations) {
             doSetProperty("relations", relations);
+            return this;
+        }
+        /**
+         * The earliest change readChanges returns, as an ISO-8601 timestamp
+         * such as {code 2026-10-01T00:00:00Z}. Without it a first read starts
+         * at the beginning of the store's change log, which on a busy store is
+         * a lot of history to page through before reaching anything current.
+         * Parsed when the endpoint starts, so a malformed value fails there
+         * rather than on the first exchange.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param startTime the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder startTime(String startTime) {
+            doSetProperty("startTime", startTime);
             return this;
         }
         /**
@@ -694,8 +852,9 @@ public interface OpenFgaEndpointBuilderFactory {
          * only: it is deliberately not overridable by a message header, so that
          * an inbound message cannot turn a check into a tuple write, nor a
          * check for one relation into a check for a weaker one.
-         * There are 7 enums and the value can be one of: check, batchCheck,
-         * listObjects, listRelations, listUsers, writeTuples, deleteTuples
+         * There are 10 enums and the value can be one of: check, batchCheck,
+         * listObjects, listRelations, listUsers, readTuples, readChanges,
+         * expand, writeTuples, deleteTuples
          * 
          * @param path operation
          * @return the dsl builder
@@ -719,8 +878,9 @@ public interface OpenFgaEndpointBuilderFactory {
          * only: it is deliberately not overridable by a message header, so that
          * an inbound message cannot turn a check into a tuple write, nor a
          * check for one relation into a check for a weaker one.
-         * There are 7 enums and the value can be one of: check, batchCheck,
-         * listObjects, listRelations, listUsers, writeTuples, deleteTuples
+         * There are 10 enums and the value can be one of: check, batchCheck,
+         * listObjects, listRelations, listUsers, readTuples, readChanges,
+         * expand, writeTuples, deleteTuples
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -761,7 +921,10 @@ public interface OpenFgaEndpointBuilderFactory {
          * evaluated the relationship and answered no; missing-user,
          * missing-object, missing-relation, wildcard-subject or
          * invalid-identifier when the exchange never reached OpenFGA because
-         * what it carried could not be used as a subject or an object.
+         * what it carried could not be used as a subject or an object;
+         * invalid-contextual-tuple when a configured contextual tuple did not
+         * resolve, so the check would have asked a different question than the
+         * endpoint was configured to ask.
          * 
          * The option is a: {@code String} type.
          * 
@@ -841,6 +1004,24 @@ public interface OpenFgaEndpointBuilderFactory {
          */
         public String openFgaStoreId() {
             return "CamelOpenFgaStoreId";
+        }
+        /**
+         * The continuation token the page came back with. Feed it back through
+         * the continuationToken option to read on. The two operations end
+         * differently: readTuples returns no token on its last page, so the
+         * header is absent once the read is done, whereas readChanges always
+         * returns a token - an empty body is what says the log has been read up
+         * to date, and that last token is what lets the next poll resume
+         * instead of replaying the whole log.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenFgaContinuationToken}.
+         */
+        public String openFgaContinuationToken() {
+            return "CamelOpenFgaContinuationToken";
         }
         /**
          * How many relationship tuples the writeTuples operation wrote.

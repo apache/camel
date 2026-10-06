@@ -1,17 +1,17 @@
 - route:
-    id: greeting-route
+    id: greeting
     from:
       uri: timer
       parameters:
-        timerName: start
-        period: 1000
+        timerName: greet
+        period: "{{greeter.period}}"
       steps:
         - setBody:
             expression:
-              simple:
-                expression: "I'm ${routeId}"
+              constant:
+                expression: "Camel"
         - bean:
             ref: greeter
+            method: greet
         - log:
             message: "${body}"
-

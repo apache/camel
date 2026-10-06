@@ -40,4 +40,17 @@ public abstract class GrpcRequestAbstractStreamObserver implements StreamObserve
         this.responseObserver = responseObserver;
         this.headers = headers;
     }
+
+    /**
+     * Sends the failure of the exchange to the client as an error, like for unary calls.
+     *
+     * @return true if the exchange failed and the error was sent
+     */
+    protected boolean sendFailure(Exchange exchange) {
+        if (exchange.isFailed()) {
+            responseObserver.onError(GrpcMethodHandler.toStatusException(endpoint, exchange.getException()));
+            return true;
+        }
+        return false;
+    }
 }

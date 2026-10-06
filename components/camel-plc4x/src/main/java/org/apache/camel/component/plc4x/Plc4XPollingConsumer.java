@@ -106,19 +106,18 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
                 rsp.put(field, response.getObject(field));
             }
             exchange.getIn().setBody(rsp);
-        } catch (ExecutionException | TimeoutException e) {
-            getExceptionHandler().handleException(e);
-            exchange.getIn().setBody(new HashMap<>());
+        } catch (TimeoutException e) {
+            // nothing received within the timeout
+            LOGGER.debug("No response from the PLC within {} millis", timeout);
+            return null;
+        } catch (ExecutionException e) {
+            // the read failed: fail the exchange instead of answering an empty result
+            exchange.setException(e.getCause() != null ? e.getCause() : e);
         } catch (InterruptedException e) {
-            getExceptionHandler().handleException(e);
             Thread.currentThread().interrupt();
+            exchange.setException(e);
         } catch (PlcConnectionException e) {
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.warn("Unable to reconnect, skipping request", e);
-            } else {
-                LOGGER.warn("Unable to reconnect, skipping request");
-            }
-            exchange.getIn().setBody(new HashMap<>());
+            exchange.setException(e);
         }
         return exchange;
     }

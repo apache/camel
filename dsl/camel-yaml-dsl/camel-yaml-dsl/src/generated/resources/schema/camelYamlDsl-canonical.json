@@ -7684,12 +7684,12 @@
           "disableFeatures" : {
             "type" : "string",
             "title" : "Disable Features",
-            "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature. Multiple features can be separated by comma."
+            "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name."
           },
           "enableFeatures" : {
             "type" : "string",
             "title" : "Enable Features",
-            "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature. Multiple features can be separated by comma."
+            "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name."
           },
           "enableJaxbAnnotationModule" : {
             "type" : "boolean",
@@ -11814,6 +11814,13 @@
             "type" : "string",
             "title" : "Specification",
             "description" : "Path to the OpenAPI specification file."
+          },
+          "unmatchedRequestHandling" : {
+            "type" : "string",
+            "title" : "Unmatched Request Handling",
+            "description" : "Who answers requests that match no operation in the OpenAPI specification: the HTTP layer (platform) or Camel via the unmatched request handler (camel).",
+            "default" : "platform",
+            "enum" : [ "platform", "camel" ]
           }
         },
         "required" : [ "specification" ]
@@ -11917,7 +11924,7 @@
             "enum" : [ "body", "formData", "header", "path", "query" ]
           }
         },
-        "required" : [ "name", "type" ]
+        "required" : [ "name" ]
       },
       "org.apache.camel.model.rest.PatchDefinition" : {
         "title" : "Patch",
@@ -13595,6 +13602,9 @@
               "type" : "string"
             }
           },
+          "expert" : {
+            "type" : "string"
+          },
           "instructions" : {
             "type" : "string"
           },
@@ -13616,7 +13626,7 @@
             "enum" : [ "fail", "non-match" ]
           }
         },
-        "required" : [ "instructions", "type" ]
+        "required" : [ "type" ]
       },
       "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ChoiceSchema" : {
         "type" : "object",
@@ -13627,6 +13637,9 @@
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "expert" : {
+            "type" : "string"
           },
           "instructions" : {
             "type" : "string"
@@ -13639,7 +13652,7 @@
             "enum" : [ "choice" ]
           }
         },
-        "required" : [ "criteria", "instructions", "type" ]
+        "required" : [ "criteria", "type" ]
       },
       "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionSchema" : {
         "type" : "object",
@@ -13663,6 +13676,9 @@
               "type" : "string"
             }
           },
+          "expert" : {
+            "type" : "string"
+          },
           "instructions" : {
             "type" : "string"
           },
@@ -13674,7 +13690,7 @@
             "enum" : [ "score" ]
           }
         },
-        "required" : [ "criteria", "instructions", "type" ]
+        "required" : [ "criteria", "type" ]
       }
     },
     "properties" : {

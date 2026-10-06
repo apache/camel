@@ -355,4 +355,16 @@ class AuthoringToolsTest {
                         "no-such-app-xyz")));
         assertTrue(e.getMessage().contains("no-such-app-xyz"), e.getMessage());
     }
+
+    @Test
+    void theErrorsGiveTheBodyAsTheAppSentIt() throws Exception {
+        // MessageHelper escapes the body value, as a dev console sends it
+        JsonObject errors = (JsonObject) Jsoner.deserialize("""
+                {"errors":[{"routeId":"checkout","message":{"body":{"type":"String",
+                "value":"{\\\\\\\"orderId\\\\\\\":\\\\\\\"ORD-1003\\\\\\\"}"}}}]}""");
+        String json = AuthoringTools.unescapeBodies(errors).toJson();
+        JsonObject body = (JsonObject) ((JsonObject) ((JsonObject) ((JsonArray) ((JsonObject) Jsoner.deserialize(json))
+                .get("errors")).get(0)).get("message")).get("body");
+        assertEquals("{\"orderId\":\"ORD-1003\"}", body.getString("value"));
+    }
 }

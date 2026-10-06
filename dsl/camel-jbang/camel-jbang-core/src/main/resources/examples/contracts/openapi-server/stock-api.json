@@ -1,0 +1,201 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Stock API",
+    "description": "What the warehouse has on the shelf, per SKU, and reservations against it.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/api"
+    }
+  ],
+  "paths": {
+    "/stock": {
+      "get": {
+        "operationId": "listStock",
+        "summary": "All stock levels",
+        "responses": {
+          "200": {
+            "description": "The stock levels",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StockItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stock/{sku}": {
+      "get": {
+        "operationId": "getStock",
+        "summary": "Stock level of one SKU",
+        "parameters": [
+          {
+            "name": "sku",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The stock level",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown SKU",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stock/{sku}/reserve": {
+      "post": {
+        "operationId": "reserveStock",
+        "summary": "Reserve a quantity of one SKU for an order",
+        "parameters": [
+          {
+            "name": "sku",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Reservation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reserved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request does not match the contract"
+          },
+          "404": {
+            "description": "Unknown SKU",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Not enough stock",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "StockItem": {
+        "type": "object",
+        "required": [
+          "sku",
+          "qty"
+        ],
+        "properties": {
+          "sku": {
+            "type": "string"
+          },
+          "qty": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "Reservation": {
+        "type": "object",
+        "required": [
+          "orderId",
+          "qty"
+        ],
+        "properties": {
+          "orderId": {
+            "type": "string"
+          },
+          "qty": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "ReservationResult": {
+        "type": "object",
+        "required": [
+          "sku",
+          "reserved",
+          "remaining"
+        ],
+        "properties": {
+          "sku": {
+            "type": "string"
+          },
+          "reserved": {
+            "type": "integer"
+          },
+          "remaining": {
+            "type": "integer"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

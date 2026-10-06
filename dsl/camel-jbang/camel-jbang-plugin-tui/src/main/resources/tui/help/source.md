@@ -8,7 +8,9 @@ explorer on the left and a source viewer on the right.
 - **Up/Down** — navigate files
 - **Enter** — open file or directory
 - **F4** — open file directly in edit mode
-- **F12** — file actions menu (new file, new folder, rename, duplicate, delete, copy path)
+- **F12** — file actions menu (new file, new folder, rename, duplicate, delete, copy path,
+  and for a route file, convert to YAML, XML or Java: a new file next to it,
+  without running it, with what did not carry over noted at its top)
 - **Backspace** — go to parent directory
 
 ## Source Viewer (right panel)
@@ -17,7 +19,9 @@ explorer on the left and a source viewer on the right.
 - **Esc** — cancel edit (in edit mode) or close viewer
 - **Ctrl+S** — save file and continue editing (Camel dev mode auto-reloads)
 - **F5** — save file and close editor (in edit mode)
-- **Ctrl+R** — open refactoring menu in edit mode (YAML files only; choose an action for the current line)
+- **Ctrl+R** — open refactoring menu in edit mode, for the current line: replace
+  the endpoint URI, extract the value at the cursor to a property, extract a step
+  to a new route file (YAML and XML)
 - **Space** — cycle format (YAML/Java/XML) for Camel routes
 - Quick documentation panel is shown at the bottom for Camel source files
   (YAML, XML and Java DSL routes: the component and options of an endpoint,
@@ -51,7 +55,9 @@ a heat map of the route: where messages go, where they fail.
 - **Ctrl+K** — delete current line
 - **Ctrl+Left / Ctrl+Right** — word navigation
 - **Home** — smart home (content indent, then column 0)
-- Quick documentation panel is shown at the bottom (shows doc for current line)
+- Quick documentation panel is shown at the bottom (shows doc for current line;
+  in a simple expression, the function, header or operator the cursor is on;
+  in XML, the element or attribute the cursor is on)
 - **F7** — show diff of unsaved changes
 - **F9** — jump to next validation error
 - **Shift+F8** — ask the AI to fix the problem on the cursor line: the file is
@@ -100,6 +106,44 @@ Press **F4** to enter edit mode, then **Tab** for context-aware completion:
   `?` or `&` (`&amp;` in XML; filtered by consumer/producer role, already given
   ones left out), and the value of an option after `=`
 
+**Java DSL routes:**
+- After a dot in a route chain, Tab lists the methods that compile there: the
+  options of the EIP the chain is on first (`.split(body()).` offers
+  `parallelProcessing`, `streaming`...), then the EIPs, and the `end()`,
+  `endChoice()` or `endDoTry()` that closes the block you are in
+- The method is inserted with its parentheses, the cursor inside them when it
+  takes arguments; the documentation comes from the catalog
+- In an argument, the chain of the argument (`.filter(header("x").` offers
+  `isEqualTo`, `isNotNull`...); also the REST DSL (`rest("/api").get(..).`),
+  `restConfiguration()` and route templates
+- Light help for hand-written edits: routes in variables and the code of
+  lambdas are not completed; an AI coding agent helps with more: the F8 AI
+  panel, or any agent that speaks ACP
+
+**XML DSL routes:**
+- After `<`, or on an empty line, Tab lists the elements that go inside the
+  parent element (the EIPs of a route, `when` and `otherwise` in a `choice`,
+  the languages where an expression goes); the chosen one is inserted with its
+  required attributes and its end tag (`<to uri=""/>`, `<split></split>`)
+- In a start tag, Tab lists the element's attributes, the required ones first,
+  without the ones already given; in an attribute value, its values (enums,
+  `true`/`false`, `{{placeholders}}`)
+- The structure and documentation come from the XML schema of the catalog
+
+**Simple expressions (YAML, Java and XML routes):**
+- After `${`, Tab lists the functions of the simple language, with their
+  parameters and examples; the chosen one is inserted as it is written
+  (`${body}`, `${date:`, `${random(`)
+- After `${header.` (also `exchangeProperty.` and `variable.`), Tab lists the
+  names the file sets or reads, then the headers of the components it uses
+- After a function and a space, Tab lists the operators: comparisons and
+  `&&` `||` where the EIP takes a predicate (`when`, `filter`, `validate`,
+  `onWhen`...), chaining (`~>`) and the default value (`?:`) elsewhere
+- In the arguments of a function: the commands after `${date:` (`now`,
+  `exchangeCreated`, `header.`...) and date patterns after the next `:`, the
+  time zones of `date-with-timezone`, the project's beans after `${bean:`, the
+  keys of its `.properties` files after `${properties:`
+
 Use **Up/Down** to navigate, **Enter** to accept, **Esc** to dismiss, and
 type to filter the completion list (an exact or prefix match comes first).
 
@@ -139,17 +183,20 @@ a YAML or XML file); **Enter** goes to its declaration.
 
 With `/write live` in the AI panel (`F8`), a change the AI makes is replayed
 here instead of shown as a diff: the AI panel hides, the file opens in edit
-mode and the change is typed hunk by hunk so you can follow it in context.
+mode and the change is typed hunk by hunk so you can follow it in context
+(a large change is typed faster, a few seconds at most).
 
 - **Enter** — continue with the next change
 - **any other key** — finish the current change at once
 - **F4** — edit yourself; the remaining changes wait
 - **F9** — continue the AI changes after editing yourself (a change whose
   surrounding lines you edited is skipped and reported to the AI)
-- **F8** — ask the AI about the current change: the AI panel opens with the
-  question prefilled ("About edit 2 of 3: ..."), the answer comes back in the
+- **F8** — ask the AI about the current change: a compact AI panel opens with
+  the question prefilled ("About edit 2 of 3: ..."), the answer comes back in the
   same turn, and closing the panel (`F8` or `Esc`) returns to the pause; if
   the AI revises the change it continues in the editor from where it is
 - **Esc** — stop; what was typed stays in the editor
 - then **Ctrl+S** / **F5** saves (this is the confirmation, dev mode reloads),
   **F7** shows the diff, **Esc** discards; the AI panel comes back afterwards
+- after five minutes without saving or discarding, the AI stops waiting; the
+  edit stays here and the AI is told what you did with it next time you ask

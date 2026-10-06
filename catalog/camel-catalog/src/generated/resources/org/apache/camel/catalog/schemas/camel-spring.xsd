@@ -8947,8 +8947,10 @@ To use custom Jackson modules referred from the Camel registry. Multiple modules
             <xs:documentation xml:lang="en">
 <![CDATA[
 Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature. Multiple features can be separated
-by comma.
+matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature,
+JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be
+separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g.
+SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8958,8 +8960,10 @@ by comma.
             <xs:documentation xml:lang="en">
 <![CDATA[
 Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name
-that matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature. Multiple features can be
-separated by comma.
+that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature,
+JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be
+separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g.
+SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15658,6 +15662,16 @@ Default value: fail
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="unmatchedRequestHandling" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Who answers requests that match no operation in the OpenAPI specification: the HTTP layer (platform) or Camel via the
+unmatched request handler (camel). Default value: platform
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="mockIncludePattern" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -16072,7 +16086,7 @@ The parameter name.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="type" type="tns:restParamType" use="required">
+    <xs:attribute name="type" type="tns:restParamType">
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[

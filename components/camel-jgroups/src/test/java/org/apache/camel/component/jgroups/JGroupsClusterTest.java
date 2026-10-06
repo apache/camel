@@ -38,7 +38,7 @@ public class JGroupsClusterTest {
 
     // Routing fixtures
 
-    String jgroupsEndpoint = format("jgroups:%s?enableViewMessages=true", randomUUID());
+    String jgroupsEndpoint = format("jgroups:%s?enableViewMessages=true&acceptAllObjects=true", randomUUID());
 
     DefaultCamelContext firstCamelContext;
 

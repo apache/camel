@@ -1,0 +1,50 @@
+# Only paid orders go further, and a paid order goes to two places at once: the warehouse to pick
+# it and invoicing to bill it. The filter drops the unpaid order, the multicast sends the same
+# message to both.
+- route:
+    id: filter-and-multicast
+    from:
+      uri: file
+      parameters:
+        directoryName: orders
+        noop: true
+        sortBy: "file:name"
+      steps:
+        - unmarshal:
+            json:
+              library: Jackson
+        - log:
+            message: "Order ${body[orderId]} received, status ${body[status]}"
+        - filter:
+            expression:
+              simple:
+                expression: "${body[status]} == 'paid'"
+            steps:
+              - multicast:
+                  steps:
+                    - to:
+                        uri: direct
+                        parameters:
+                          name: warehouse
+                    - to:
+                        uri: direct
+                        parameters:
+                          name: invoicing
+- route:
+    id: warehouse
+    from:
+      uri: direct
+      parameters:
+        name: warehouse
+      steps:
+        - log:
+            message: "Warehouse: pick ${body[lines].size()} line(s) for ${body[orderId]}"
+- route:
+    id: invoicing
+    from:
+      uri: direct
+      parameters:
+        name: invoicing
+      steps:
+        - log:
+            message: "Invoicing: bill customer ${body[customer]} for ${body[orderId]}"

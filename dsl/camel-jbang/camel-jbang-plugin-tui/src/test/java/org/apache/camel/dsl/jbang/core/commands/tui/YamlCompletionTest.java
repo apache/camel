@@ -418,11 +418,18 @@ class YamlCompletionTest {
 
     @Test
     void valueCompletionReturnsEnumValues() {
-        List<AutocompletePopup.CompletionItem> items = provideValueCompletions("kafka", "autoOffsetReset");
+        List<AutocompletePopup.CompletionItem> items = provideValueCompletions("kafka", "compressionCodec");
 
-        // kafka autoOffsetReset has enum values: latest, earliest, none
-        assertThat(items).anyMatch(i -> i.key().equals("latest"));
-        assertThat(items).anyMatch(i -> i.key().equals("earliest"));
+        assertThat(items).anyMatch(i -> i.key().equals("none"));
+        assertThat(items).anyMatch(i -> i.key().equals("gzip"));
+    }
+
+    @Test
+    void autoOffsetResetIsStringOptionWithNoEnumCompletions() {
+        // autoOffsetReset is intentionally a free-form string (no fixed enum) because Kafka 4.0
+        // introduced by_duration:<ISO-8601 duration> which cannot be expressed as a fixed enum value
+        List<AutocompletePopup.CompletionItem> items = provideValueCompletions("kafka", "autoOffsetReset");
+        assertThat(items).isEmpty();
     }
 
     // --- Property placeholder loading ---

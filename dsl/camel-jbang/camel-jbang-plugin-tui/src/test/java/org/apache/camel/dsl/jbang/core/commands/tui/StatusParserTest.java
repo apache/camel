@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -497,5 +498,15 @@ class StatusParserTest {
         assertNull(md.body());
         assertNull(md.exchangeProperties());
         assertNull(md.exchangeVariables());
+    }
+
+    @Test
+    void theBodyOfAMessageIsUnescapedOnce() throws Exception {
+        // MessageHelper escapes the body value, so a JSON body comes as {\"orderId\":...}
+        JsonObject message = (JsonObject) Jsoner.deserialize("""
+                {"body":{"type":"java.lang.String","value":"{\\\\\\\"orderId\\\\\\\":\\\\\\\"ORD-1003\\\\\\\"}"}}""");
+        assertEquals("{\"orderId\":\"ORD-1003\"}", StatusParser.parseMessage(message).body());
+        assertEquals("C:\\new", StatusParser.bodyText("C:\\\\new"), "an escaped backslash stays one backslash");
+        assertNull(StatusParser.bodyText(null));
     }
 }

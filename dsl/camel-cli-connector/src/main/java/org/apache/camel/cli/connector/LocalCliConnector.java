@@ -226,6 +226,9 @@ public class LocalCliConnector extends ServiceSupport
                 }
             }
         });
+        // the thread ends once the task is done: a non-daemon thread left waiting for more tasks keeps the JVM
+        // running (Spring Boot)
+        terminateExecutor.shutdown();
     }
 
     @Override
@@ -1362,33 +1365,7 @@ public class LocalCliConnector extends ServiceSupport
     @Override
     public JsonObject status() throws Exception {
         JsonObject root = new JsonObject();
-
-        // what runtime are in use
-        JsonObject rc = new JsonObject();
-        String dir = new File(".").getAbsolutePath();
-        dir = FileUtil.onlyPath(dir);
-        rc.put("pid", ProcessHandle.current().pid());
-        rc.put("directory", dir);
-        ProcessHandle.current().info().user().ifPresent(u -> rc.put("user", u));
-        rc.put("platform", platform);
-        if (platformVersion != null) {
-            rc.put("platformVersion", platformVersion);
-        }
-        if (mainClass != null) {
-            rc.put("mainClass", mainClass);
-        }
-        RuntimeMXBean mb = ManagementFactory.getRuntimeMXBean();
-        if (mb != null) {
-            rc.put("javaVersion", mb.getVmVersion());
-            rc.put("javaVendor", mb.getVmVendor());
-            rc.put("javaVmName", mb.getVmName());
-        }
-        String readmeFiles = camelContext.getPropertiesComponent()
-                .resolveProperty("camel.jbang.readmeFiles").orElse(null);
-        if (readmeFiles != null) {
-            rc.put("readmeFiles", readmeFiles);
-        }
-        root.put("runtime", rc);
+        root.put("runtime", runtime());
 
         DevConsoleRegistry dcr = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
         if (dcr != null) {
@@ -1649,6 +1626,35 @@ public class LocalCliConnector extends ServiceSupport
             root.put("vaults", vaults);
         }
         return root;
+    }
+
+    @Override
+    public JsonObject runtime() throws Exception {
+        JsonObject rc = new JsonObject();
+        String dir = new File(".").getAbsolutePath();
+        dir = FileUtil.onlyPath(dir);
+        rc.put("pid", ProcessHandle.current().pid());
+        rc.put("directory", dir);
+        ProcessHandle.current().info().user().ifPresent(u -> rc.put("user", u));
+        rc.put("platform", platform);
+        if (platformVersion != null) {
+            rc.put("platformVersion", platformVersion);
+        }
+        if (mainClass != null) {
+            rc.put("mainClass", mainClass);
+        }
+        RuntimeMXBean mb = ManagementFactory.getRuntimeMXBean();
+        if (mb != null) {
+            rc.put("javaVersion", mb.getVmVersion());
+            rc.put("javaVendor", mb.getVmVendor());
+            rc.put("javaVmName", mb.getVmName());
+        }
+        String readmeFiles = camelContext.getPropertiesComponent()
+                .resolveProperty("camel.jbang.readmeFiles").orElse(null);
+        if (readmeFiles != null) {
+            rc.put("readmeFiles", readmeFiles);
+        }
+        return rc;
     }
 
     @Override

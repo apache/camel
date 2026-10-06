@@ -51,13 +51,8 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
     }
 
     @Override
-    public void preParseRoute(Resource resource) throws Exception {
-        // Register before any consuming route (including another DSL/resource) is configured.
-        parse(resource);
-    }
-
-    @Override
     public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
+        // Resource-set bean preparation is complete; declarations still precede every route configuration.
         RoutesDefinition routes = parse(resource);
         RouteBuilder builder = new RouteBuilder(getCamelContext()) {
             @Override
@@ -147,47 +142,62 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
             if (!"question".equals(element.getLocalName())) {
                 throw new IllegalArgumentException("Unexpected semantic element: " + element.getTagName());
             }
-            attributes(element, Set.of("name", "type", "state", "threshold", "uncertainty", "uncertaintyPolicy"));
-            SemanticQuestionBuilder question = questions.question(element.getAttribute("name"));
-            if (element.hasAttribute("type")) {
-                question.type(element.getAttribute("type"));
+            try {
+                question(element, questions);
+            } catch (IllegalArgumentException e) {
+                String expert = element.hasAttribute("expert") ? element.getAttribute("expert") : "default/automatic";
+                throw new IllegalArgumentException(
+                        "Invalid semantic question '" + element.getAttribute("name") + "': " + e.getMessage()
+                                                   + " (expert '" + expert + "')",
+                        e);
             }
-            if (element.hasAttribute("state")) {
-                question.state(element.getAttribute("state"));
-            }
-            if (element.hasAttribute("threshold")) {
-                question.threshold(element.getAttribute("threshold"));
-            }
-            if (element.hasAttribute("uncertainty")) {
-                question.uncertainty(element.getAttribute("uncertainty"));
-            }
-            if (element.hasAttribute("uncertaintyPolicy")) {
-                question.uncertaintyPolicy(element.getAttribute("uncertaintyPolicy"));
-            }
-            boolean instructions = false;
-            for (Element child : children(element)) {
-                switch (child.getLocalName()) {
-                    case "instructions" -> {
-                        if (instructions) {
-                            throw new IllegalArgumentException("Duplicate instructions for semantic question");
-                        }
-                        instructions = true;
-                        attributes(child, Set.of());
-                        question.instructions(text(child));
+        }
+    }
+
+    private static void question(Element element, SemanticQuestionsBuilder questions) {
+        attributes(element, Set.of("name", "type", "expert", "state", "threshold", "uncertainty", "uncertaintyPolicy"));
+        SemanticQuestionBuilder question = questions.question(element.getAttribute("name"));
+        if (element.hasAttribute("type")) {
+            question.type(element.getAttribute("type"));
+        }
+        if (element.hasAttribute("expert")) {
+            question.expert(element.getAttribute("expert"));
+        }
+        if (element.hasAttribute("state")) {
+            question.state(element.getAttribute("state"));
+        }
+        if (element.hasAttribute("threshold")) {
+            question.threshold(element.getAttribute("threshold"));
+        }
+        if (element.hasAttribute("uncertainty")) {
+            question.uncertainty(element.getAttribute("uncertainty"));
+        }
+        if (element.hasAttribute("uncertaintyPolicy")) {
+            question.uncertaintyPolicy(element.getAttribute("uncertaintyPolicy"));
+        }
+        boolean instructions = false;
+        for (Element child : children(element)) {
+            switch (child.getLocalName()) {
+                case "instructions" -> {
+                    if (instructions) {
+                        throw new IllegalArgumentException("Duplicate instructions for semantic question");
                     }
-                    case "criterion" -> {
-                        attributes(child, Set.of("key", "value"));
-                        if (!children(child).isEmpty()) {
-                            throw new IllegalArgumentException("Semantic criterion must not contain elements");
-                        }
-                        question.criterion(child.getAttribute("key"), child.getAttribute("value"));
-                    }
-                    case "level" -> {
-                        attributes(child, Set.of());
-                        question.level(text(child));
-                    }
-                    default -> throw new IllegalArgumentException("Unexpected question element: " + child.getTagName());
+                    instructions = true;
+                    attributes(child, Set.of());
+                    question.instructions(text(child));
                 }
+                case "criterion" -> {
+                    attributes(child, Set.of("key", "value"));
+                    if (!children(child).isEmpty()) {
+                        throw new IllegalArgumentException("Semantic criterion must not contain elements");
+                    }
+                    question.criterion(child.getAttribute("key"), child.getAttribute("value"));
+                }
+                case "level" -> {
+                    attributes(child, Set.of());
+                    question.level(text(child));
+                }
+                default -> throw new IllegalArgumentException("Unexpected question element: " + child.getTagName());
             }
         }
     }

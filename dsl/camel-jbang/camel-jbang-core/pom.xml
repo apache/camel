@@ -291,6 +291,8 @@
                             </pages>
                             <entryPages>
                                 <entryPage>../../camel-yaml-dsl/camel-yaml-dsl/src/main/docs/yaml-dsl.adoc=beans</entryPage>
+                                <!-- the contract-first rest, next to the path-based examples of rest-dsl -->
+                                <entryPage>../../../docs/user-manual/modules/ROOT/pages/rest-dsl-openapi.adoc=rest</entryPage>
                             </entryPages>
                             <!-- user manual pages that show old syntax or YAML that is not a Camel file -->
                             <excludes>

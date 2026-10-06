@@ -168,8 +168,8 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
             if (globalMessageFilter != null) {
                 configuration.setMessageFilter(globalMessageFilter);
             } else {
-                // use basic as fallback
-                configuration.setMessageFilter(new BasicMessageFilter());
+                // use basic as fallback, filtering the headers it writes with the endpoint's header filter strategy
+                configuration.setMessageFilter(new BasicMessageFilter(configuration::getHeaderFilterStrategy));
             }
         }
     }

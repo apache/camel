@@ -139,10 +139,23 @@ class McpFacade {
      * still holds the applied hunks ({@code content} is the buffer, not the file), {@code remaining} hunks wait.
      */
     record ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content, String question,
-            int remaining) {
+            int remaining, boolean undecided) {
+
+        ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content, String question,
+                      int remaining) {
+            this(saved, applied, skipped, content, question, remaining, false);
+        }
 
         ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content) {
-            this(saved, applied, skipped, content, null, 0);
+            this(saved, applied, skipped, content, null, 0, false);
+        }
+
+        /**
+         * The user has neither saved nor discarded the replayed edit for a long while: the tool call returns, the edit
+         * stays in the editor, and what the user does with it is told with the next question.
+         */
+        static ReplayOutcome undecidedOutcome() {
+            return new ReplayOutcome(false, 0, List.of(), null, null, 0, true);
         }
 
         boolean paused() {
@@ -159,6 +172,26 @@ class McpFacade {
     }
 
     // Tab name constants
+    /**
+     * The index of a main tab by its name, by the label the tab bar shows (Route, Endpoint) or by its number key, else
+     * -1.
+     */
+    static int tabIndex(String tabName) {
+        if (tabName == null) {
+            return -1;
+        }
+        String name = tabName.trim();
+        for (int i = 0; i < TAB_NAMES.length; i++) {
+            String tab = TAB_NAMES[i];
+            String label = tab.endsWith("s") && !"Errors".equals(tab) ? tab.substring(0, tab.length() - 1) : tab;
+            String key = String.valueOf((i + 1) % 10);
+            if (tab.equalsIgnoreCase(name) || label.equalsIgnoreCase(name) || key.equals(name)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     static final String[] TAB_NAMES = {
             "Overview", "Source", "Log", "Activity", "Diagram",
             "Routes", "Endpoints", "Inspect", "Errors", "More"
@@ -311,6 +344,28 @@ class McpFacade {
         return info != null ? info.name : null;
     }
 
+    /** How often the selected integration has reloaded its routes, 0 when nothing is selected. */
+    int getSelectedReloadCount() {
+        if (ctx == null) {
+            return 0;
+        }
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.reloaded : 0;
+    }
+
+    /** The status document of the selected integration, null when nothing is selected or it has none yet. */
+    JsonObject readSelectedStatus() {
+        if (ctx == null || ctx.selectedPid == null) {
+            return null;
+        }
+        try {
+            return RuntimeHelper.readStatus(Long.parseLong(ctx.selectedPid));
+        } catch (RuntimeException e) {
+            // not a pid, or a status that cannot be read: no tool groups, the core set is still offered
+            return null;
+        }
+    }
+
     String getSelectedCamelVersion() {
         if (ctx == null) {
             return null;
@@ -375,6 +430,11 @@ class McpFacade {
     // ---- Tab navigation ----
 
     String navigateToTab(String tabName) {
+        int index = tabIndex(tabName);
+        if (index >= 0) {
+            bridge.handleTabKey(index);
+            return TAB_NAMES[index];
+        }
         for (int i = 0; i < TAB_NAMES.length; i++) {
             if (TAB_NAMES[i].equalsIgnoreCase(tabName)) {
                 bridge.handleTabKey(i);
@@ -393,19 +453,40 @@ class McpFacade {
     }
 
     String selectIntegration(String nameOrPid) {
-        List<IntegrationInfo> infos = data.get();
+        IntegrationInfo info = findIntegration(data.get(), nameOrPid);
+        if (info == null) {
+            return null;
+        }
+        ctx.selectedPid = info.pid;
+        bridge.resetIntegrationTabState();
+        return info.name != null ? info.name : info.pid;
+    }
+
+    /**
+     * The integration by its pid or name, else by the folder of its project: an opened project runs under the name its
+     * app gives itself (camel.main.name, spring.application.name), not the name of the folder it was opened as.
+     */
+    static IntegrationInfo findIntegration(List<IntegrationInfo> infos, String nameOrPid) {
         for (IntegrationInfo info : infos) {
-            if (info.vanishing) {
-                continue;
+            if (!info.vanishing && (nameOrPid.equals(info.pid)
+                    || (info.name != null && info.name.equalsIgnoreCase(nameOrPid)))) {
+                return info;
             }
-            if (nameOrPid.equals(info.pid)
-                    || (info.name != null && info.name.equalsIgnoreCase(nameOrPid))) {
-                ctx.selectedPid = info.pid;
-                bridge.resetIntegrationTabState();
-                return info.name != null ? info.name : info.pid;
+        }
+        for (IntegrationInfo info : infos) {
+            if (!info.vanishing && (folderNamed(info.directory, nameOrPid) || folderNamed(info.sourceDir, nameOrPid))) {
+                return info;
             }
         }
         return null;
+    }
+
+    private static boolean folderNamed(String dir, String name) {
+        if (dir == null || dir.isBlank()) {
+            return false;
+        }
+        Path folder = Path.of(dir).getFileName();
+        return folder != null && folder.toString().equalsIgnoreCase(name);
     }
 
     List<String> getTabNames() {
@@ -740,11 +821,27 @@ class McpFacade {
     // ---- Diagram navigation ----
 
     String navigateDiagramToRoute(String routeId) {
+        return navigateDiagramToRoute(routeId, 0);
+    }
+
+    /**
+     * Selects a route in the Diagram tab, waiting up to {@code waitMs} for the diagram to load: right after the
+     * integration was selected (or the tab opened) its routes are not there yet. The tab is switched to once.
+     */
+    String navigateDiagramToRoute(String routeId, long waitMs) {
         navigateToTab("Diagram");
-        if (tabRegistry.diagramTab().selectRoute(routeId)) {
-            return routeId;
-        }
-        return null;
+        DiagramTab tab = tabRegistry.diagramTab();
+        return TuiToolRegistry.retryUntilFound(
+                () -> tab.selectRoute(routeId) ? routeId : null, tab::isDiagramShown, waitMs);
+    }
+
+    /** As {@link #navigateDiagramToNode(String, String)}, waiting up to {@code waitMs} for the diagram to load. */
+    String navigateDiagramToNode(String routeId, String nodeId, long waitMs) {
+        navigateToTab("Diagram");
+        DiagramTab tab = tabRegistry.diagramTab();
+        return TuiToolRegistry.retryUntilFound(
+                () -> tab.selectNode(routeId, nodeId) ? (nodeId != null ? nodeId : routeId) : null,
+                tab::isDiagramShown, waitMs);
     }
 
     String navigateDiagramToNode(String routeId, String nodeId) {
@@ -1273,6 +1370,14 @@ class McpFacade {
         result.put("file", file);
         JsonArray skipped = new JsonArray();
         skipped.addAll(outcome.skipped());
+        if (outcome.undecided()) {
+            result.put("status", "pending");
+            result.put("message", "The change is in the user's editor, replayed as a live edit, but the user has not"
+                                  + " saved or discarded it yet; the file on disk is unchanged. End your turn now:"
+                                  + " do not write " + file + " again and do not say it is saved. Your next message"
+                                  + " tells you what the user did with it.");
+            return result;
+        }
         if (outcome.paused()) {
             result.put("status", "paused");
             result.put("appliedHunks", outcome.applied());

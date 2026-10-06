@@ -293,12 +293,12 @@
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - doTry:\n            steps:\n              - process:\n                  ref: processorFail\n              - to:\n                  uri: mock:result\n              - doCatch:\n                  exception:\n                    - java.io.IOException\n                    - java.lang.IllegalStateException\n                  steps:\n                    - to:\n                        uri: mock:catch\n              - doFinally:\n                  steps:\n                    - to:\n                        uri: mock:finally\n"
     },
     {
-      "source": "doTry-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - doTry:\n            steps:\n              - process:\n                  ref: processorFail\n              - to:\n                  uri: mock:result\n              - doCatch:\n                  exception:\n                    - java.io.IOException\n                    - java.lang.IllegalStateException\n                  onWhen:\n                    expression:\n                      simple:\n                        expression: \"${exception.message} contains 'Damn'\"\n                  steps:\n                    - to:\n                        uri: mock:catch\n              - doCatch:\n                  exception:\n                    - org.apache.camel.CamelExchangeException\n                  steps:\n                    - to:\n                        uri: mock:catchCamel\n              - doFinally:\n                  steps:\n                    - to:\n                        uri: mock:finally\n"
-    },
-    {
       "source": "try-catch-finally.adoc",
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - doTry:\n            steps:\n              - process:\n                  ref: processorFail\n              - to:\n                  uri: mock:result\n              - doCatch:\n                  exception:\n                    - java.io.IOException\n                    - java.lang.IllegalStateException\n                  steps:\n                    - to:\n                        uri: mock:catch\n              - doFinally:\n                  steps:\n                    - to:\n                        uri: mock:finally\n"
+    },
+    {
+      "source": "doTry-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - doTry:\n            steps:\n              - process:\n                  ref: processorFail\n              - to:\n                  uri: mock:result\n              - doCatch:\n                  exception:\n                    - java.io.IOException\n                    - java.lang.IllegalStateException\n                  onWhen:\n                    expression:\n                      simple:\n                        expression: \"${exception.message} contains 'Damn'\"\n                  steps:\n                    - to:\n                        uri: mock:catch\n              - doCatch:\n                  exception:\n                    - org.apache.camel.CamelExchangeException\n                  steps:\n                    - to:\n                        uri: mock:catchCamel\n              - doFinally:\n                  steps:\n                    - to:\n                        uri: mock:finally\n"
     },
     {
       "source": "try-catch-finally.adoc",
@@ -967,20 +967,44 @@
       "yaml": "- rest:\n    path: \"\/say\"\n    get:\n      - path: \"\/hello\"\n        to: \"direct:hello\"\n      - path: \"\/bye\"\n        consumes: \"application\/json\"\n        to: \"direct:bye\"\n    post:\n      - path: \"\/bye\"\n        to: \"direct:update\"\n- route:\n    from:\n      uri: direct:hello\n      steps:\n        - transform:\n            expression:\n              constant:\n                expression: Hello World\n- route:\n    from:\n      uri: direct:bye\n      steps:\n        - transform:\n            expression:\n              constant:\n                expression: Bye World\n"
     },
     {
-      "source": "rest-dsl.adoc",
-      "yaml": "- rest:\n    path: \"\/customers\/\"\n    get:\n      - path: \"\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+      "source": "rest-dsl-openapi.adoc",
+      "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n"
     },
     {
       "source": "rest-dsl.adoc",
-      "yaml": "- rest:\n    get:\n      - path: \"\/customers\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+      "yaml": "- rest:\n    path: \/stock\n    get:\n      - path: \"\/{sku}\"\n        to: direct:one-sku\n- route:\n    from:\n      uri: direct:one-sku\n      steps:\n        - choice:\n            when:\n              - expression:\n                  simple:\n                    expression: \"${header.sku} == 'CAMEL-MUG'\"\n                steps:\n                  - setBody:\n                      expression:\n                        constant:\n                          expression: '{\"sku\": \"CAMEL-MUG\", \"qty\": 42}'\n            otherwise:\n              steps:\n                - setHeader:\n                    name: CamelHttpResponseCode\n                    expression:\n                      constant:\n                        expression: \"404\"\n                - setBody:\n                    expression:\n                      simple:\n                        expression: '{\"error\": \"unknown SKU ${header.sku}\"}'\n"
+    },
+    {
+      "source": "rest-dsl-openapi.adoc",
+      "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n- route:\n    from:\n      uri: direct:getUserByName\n      steps:\n        - log:\n            message: \"do something here\"\n"
+    },
+    {
+      "source": "rest-dsl.adoc",
+      "yaml": "- rest:\n    path: \"\/customers\/\"\n    get:\n      - path: \"\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+    },
+    {
+      "source": "rest-dsl-openapi.adoc",
+      "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n      missingOperation: ignore\n"
+    },
+    {
+      "source": "rest-dsl.adoc",
+      "yaml": "- rest:\n    get:\n      - path: \"\/customers\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+    },
+    {
+      "source": "rest-dsl-openapi.adoc",
+      "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n      missingOperation: ignore\n      unmatchedRequestHandling: camel\n"
     },
     {
       "source": "rest-dsl.adoc",
       "yaml": "- rest:\n    path: \"items\/\"\n    get:\n      - path: \"{id}\/{filename}.{content-type}\"\n        to: \"direct:item\"\n"
     },
     {
+      "source": "rest-dsl-openapi.adoc",
+      "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n      missingOperation: mock\n"
+    },
+    {
       "source": "rest-dsl.adoc",
-      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    get:\n      - path: \"\/customers\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    get:\n      - path: \"\/customers\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
     },
     {
       "source": "rest-dsl.adoc",
@@ -988,11 +1012,11 @@
     },
     {
       "source": "rest-dsl.adoc",
-      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    path: \"\/customers\/\"\n    get:\n      - path: \"\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/neworder\"\n        to: \"direct:customerNewOrder\"\n- route:\n    from:\n      uri: direct:customerNewOrder\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n- route:\n    from:\n      uri: direct:commonCustomerNewOrder\n      steps:\n        - log:\n            message: Created new order\n- route:\n    from:\n      uri: kafka:new-order\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n"
+      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    path: \"\/customers\/\"\n    get:\n      - path: \"\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/neworder\"\n        to: \"direct:customerNewOrder\"\n- route:\n    from:\n      uri: direct:customerNewOrder\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n- route:\n    from:\n      uri: direct:commonCustomerNewOrder\n      steps:\n        - log:\n            message: Created new order\n- route:\n    from:\n      uri: kafka:new-order\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n"
     },
     {
       "source": "rest-dsl.adoc",
-      "yaml": "- rest:\n    get:\n      - path: \"\/customers\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n        disabled: \"{{ordersEnabled}}\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n        disabled: \"true\"\n"
+      "yaml": "- rest:\n    get:\n      - path: \"\/customers\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n        disabled: \"{{ordersEnabled}}\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n        disabled: \"true\"\n"
     }
   ],
   "returnAddress": [
@@ -1470,11 +1494,11 @@
     },
     {
       "source": "to-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: file:messages\/foo\n      steps:\n        - toD:\n            uri: \"freemarker:\/\/templateHome\/${body.templateName}.ftl\"\n        - to:\n            uri: jms:queue:foo\n"
+      "yaml": "- route:\n    from:\n      uri: file:messages\/foo\n      steps:\n        - toD:\n            uri: \"freemarker:\/\/templateHome\/${header.templateName}.ftl\"\n        - to:\n            uri: jms:queue:foo\n"
     },
     {
       "source": "to-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: file:messages\/foo\n      steps:\n        - recipientList:\n            expression:\n              simple:\n                expression: \"freemarker:\/\/templateHome\/${body.templateName}.ftl\"\n        - to:\n            uri: jms:queue:foo\n"
+      "yaml": "- route:\n    from:\n      uri: file:messages\/foo\n      steps:\n        - recipientList:\n            expression:\n              simple:\n                expression: \"freemarker:\/\/templateHome\/${header.templateName}.ftl\"\n        - to:\n            uri: jms:queue:foo\n"
     }
   ],
   "toD": [

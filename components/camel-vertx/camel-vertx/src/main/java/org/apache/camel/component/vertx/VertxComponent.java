@@ -20,10 +20,9 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxBuilder;
 import io.vertx.core.VertxOptions;
-import io.vertx.core.impl.VertxBuilder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -156,7 +155,7 @@ public class VertxComponent extends DefaultComponent {
             }
 
             if (vertxFactory == null) {
-                vertxFactory = new VertxBuilder(vertxOptions);
+                vertxFactory = Vertx.builder().with(vertxOptions);
             }
 
             // we are creating vertx so we should handle its lifecycle
@@ -169,7 +168,7 @@ public class VertxComponent extends DefaultComponent {
                 LOG.info("Creating Clustered Vertx {}:{}", vertxOptions.getEventBusOptions().getHost(),
                         vertxOptions.getEventBusOptions().getPort());
                 // use the async api as we want to wait for the eventbus to be ready before we are in started state
-                vertxFactory.clusteredVertx((AsyncResult<Vertx> event) -> {
+                vertxFactory.buildClustered().onComplete(event -> {
                     if (event.cause() != null) {
                         LOG.warn("Error creating Clustered Vertx {}:{} due {}", host, port,
                                 event.cause().getMessage(), event.cause());
@@ -182,7 +181,7 @@ public class VertxComponent extends DefaultComponent {
                 });
             } else {
                 LOG.info("Creating Non-Clustered Vertx");
-                vertx = vertxFactory.init().vertx();
+                vertx = vertxFactory.build();
                 LOG.info("EventBus is ready: {}", vertx);
                 latch.countDown();
             }

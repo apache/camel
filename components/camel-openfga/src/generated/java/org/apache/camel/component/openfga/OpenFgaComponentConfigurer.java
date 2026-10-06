@@ -46,10 +46,16 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "clientId": getOrCreateConfiguration(target).setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
         case "clientSecret": getOrCreateConfiguration(target).setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "conditioncontext":
+        case "conditionContext": getOrCreateConfiguration(target).setConditionContext(property(camelContext, java.util.Map.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.openfga.OpenFgaConfiguration.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": getOrCreateConfiguration(target).setConnectTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "consistency": getOrCreateConfiguration(target).setConsistency(property(camelContext, java.lang.String.class, value)); return true;
+        case "contextualtuples":
+        case "contextualTuples": getOrCreateConfiguration(target).setContextualTuples(property(camelContext, java.lang.String.class, value)); return true;
+        case "continuationtoken":
+        case "continuationToken": getOrCreateConfiguration(target).setContinuationToken(property(camelContext, java.lang.String.class, value)); return true;
         case "failopen":
         case "failOpen": getOrCreateConfiguration(target).setFailOpen(property(camelContext, boolean.class, value)); return true;
         case "healthcheckconsumerenabled":
@@ -65,6 +71,8 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "object": getOrCreateConfiguration(target).setObject(property(camelContext, java.lang.String.class, value)); return true;
         case "openfgaclient":
         case "openFgaClient": getOrCreateConfiguration(target).setOpenFgaClient(property(camelContext, dev.openfga.sdk.api.client.OpenFgaClient.class, value)); return true;
+        case "pagesize":
+        case "pageSize": getOrCreateConfiguration(target).setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "readtimeout":
         case "readTimeout": getOrCreateConfiguration(target).setReadTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "relation": getOrCreateConfiguration(target).setRelation(property(camelContext, java.lang.String.class, value)); return true;
@@ -72,6 +80,8 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": getOrCreateConfiguration(target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "starttime":
+        case "startTime": getOrCreateConfiguration(target).setStartTime(property(camelContext, java.lang.String.class, value)); return true;
         case "storeid":
         case "storeId": getOrCreateConfiguration(target).setStoreId(property(camelContext, java.lang.String.class, value)); return true;
         case "type": getOrCreateConfiguration(target).setType(property(camelContext, java.lang.String.class, value)); return true;
@@ -108,10 +118,16 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "clientId": return java.lang.String.class;
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
+        case "conditioncontext":
+        case "conditionContext": return java.util.Map.class;
         case "configuration": return org.apache.camel.component.openfga.OpenFgaConfiguration.class;
         case "connecttimeout":
         case "connectTimeout": return long.class;
         case "consistency": return java.lang.String.class;
+        case "contextualtuples":
+        case "contextualTuples": return java.lang.String.class;
+        case "continuationtoken":
+        case "continuationToken": return java.lang.String.class;
         case "failopen":
         case "failOpen": return boolean.class;
         case "healthcheckconsumerenabled":
@@ -127,6 +143,8 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "object": return java.lang.String.class;
         case "openfgaclient":
         case "openFgaClient": return dev.openfga.sdk.api.client.OpenFgaClient.class;
+        case "pagesize":
+        case "pageSize": return java.lang.Integer.class;
         case "readtimeout":
         case "readTimeout": return long.class;
         case "relation": return java.lang.String.class;
@@ -134,6 +152,8 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "scopes": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "starttime":
+        case "startTime": return java.lang.String.class;
         case "storeid":
         case "storeId": return java.lang.String.class;
         case "type": return java.lang.String.class;
@@ -166,10 +186,16 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "clientId": return getOrCreateConfiguration(target).getClientId();
         case "clientsecret":
         case "clientSecret": return getOrCreateConfiguration(target).getClientSecret();
+        case "conditioncontext":
+        case "conditionContext": return getOrCreateConfiguration(target).getConditionContext();
         case "configuration": return target.getConfiguration();
         case "connecttimeout":
         case "connectTimeout": return getOrCreateConfiguration(target).getConnectTimeout();
         case "consistency": return getOrCreateConfiguration(target).getConsistency();
+        case "contextualtuples":
+        case "contextualTuples": return getOrCreateConfiguration(target).getContextualTuples();
+        case "continuationtoken":
+        case "continuationToken": return getOrCreateConfiguration(target).getContinuationToken();
         case "failopen":
         case "failOpen": return getOrCreateConfiguration(target).isFailOpen();
         case "healthcheckconsumerenabled":
@@ -185,6 +211,8 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "object": return getOrCreateConfiguration(target).getObject();
         case "openfgaclient":
         case "openFgaClient": return getOrCreateConfiguration(target).getOpenFgaClient();
+        case "pagesize":
+        case "pageSize": return getOrCreateConfiguration(target).getPageSize();
         case "readtimeout":
         case "readTimeout": return getOrCreateConfiguration(target).getReadTimeout();
         case "relation": return getOrCreateConfiguration(target).getRelation();
@@ -192,6 +220,8 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "scopes": return getOrCreateConfiguration(target).getScopes();
         case "sslcontextparameters":
         case "sslContextParameters": return getOrCreateConfiguration(target).getSslContextParameters();
+        case "starttime":
+        case "startTime": return getOrCreateConfiguration(target).getStartTime();
         case "storeid":
         case "storeId": return getOrCreateConfiguration(target).getStoreId();
         case "type": return getOrCreateConfiguration(target).getType();
@@ -200,6 +230,15 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "user": return getOrCreateConfiguration(target).getUser();
         case "userfilters":
         case "userFilters": return getOrCreateConfiguration(target).getUserFilters();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "conditioncontext":
+        case "conditionContext": return java.lang.Object.class;
         default: return null;
         }
     }

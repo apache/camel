@@ -273,7 +273,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
 
                 functionCalls.forEach(call -> toolCallsLog.add(call.name()));
                 List<ChatCompletionMessageToolCall> toolCalls = OpenAIResponsesSupport.toChatToolCalls(functionCalls);
-                List<McpToolCallExecutor.ToolResult> results = toolCallExecutor.execute(toolCalls);
+                List<McpToolCallExecutor.ToolResult> results = toolCallExecutor.execute(toolCalls, exchange);
                 observability.recordIteration(
                         modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens, toolCalls,
                         results);

@@ -130,6 +130,16 @@ class YamlCompletionTreeTest {
     }
 
     @Test
+    void restParameterTypeDefaultsToPathAndIsOptional() {
+        JsonNode parameter = nodes.get("param");
+        JsonNode type = findChild(parameter, "type");
+        assertThat(type).isNotNull();
+        assertThat(type.path("default").asText()).isEqualTo("path");
+        assertThat(type.path("required").asBoolean()).isFalse();
+        assertThat(findChild(parameter, "name").path("required").asBoolean()).isTrue();
+    }
+
+    @Test
     void beanEipMetadataIsNotOverwrittenByBeanLanguage() {
         JsonNode bean = nodes.get("bean");
         assertThat(bean.get("title").asText()).isEqualTo("Bean");

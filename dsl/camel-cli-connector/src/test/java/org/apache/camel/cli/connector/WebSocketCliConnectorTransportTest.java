@@ -16,9 +16,12 @@
  */
 package org.apache.camel.cli.connector;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -255,6 +258,29 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
     }
 
     @Test
+    void keepsTheConnectionWhileASlowStatusIsCollected() throws Exception {
+        // the status of a large integration (thousands of processors) can take seconds to collect: it must hold up
+        // neither hello nor the heartbeats
+        property("camel.cli.websocket.heartbeat-interval", "200");
+        connector = new LocalCliConnector(new DefaultCliConnectorFactory()) {
+            @Override
+            public JsonObject status() throws Exception {
+                Thread.sleep(2000);
+                return super.status();
+            }
+        };
+        connector.setCamelContext(context);
+        long start = System.currentTimeMillis();
+        connector.start();
+
+        tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+        assertThat(System.currentTimeMillis() - start).isLessThan(1500);
+        // longer than 3 heartbeat intervals behind several status collections: still the first connection
+        await().during(6, TimeUnit.SECONDS).atMost(8, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertThat(tool.handshakes).hasValue(1));
+    }
+
+    @Test
     void reconnectsWhenTheToolStopsAnswering() throws Exception {
         property("camel.cli.websocket.heartbeatInterval", "200");
         startConnector();
@@ -304,6 +330,95 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
                 "camel.cli.websocket.token must be set when camel.cli.websocket.url is not a loopback address");
     }
 
+    @Test
+    void usesTheJdkClientByDefault() throws Exception {
+        startConnector();
+
+        assertThat(tool.awaitFrame(f -> "hello".equals(f.getString("type"))).getString("transport")).isEqualTo("jdk");
+    }
+
+    @Test
+    void usesTheClientFromTheRegistry() throws Exception {
+        RecordingClient client = new RecordingClient();
+        context.getRegistry().bind("myClient", client);
+        startConnector();
+
+        assertThat(tool.awaitFrame(f -> "hello".equals(f.getString("type"))).getString("transport")).isEqualTo("test");
+        assertThat(client.connects).hasValue(1);
+
+        tool.send(action("r1", "send", "endpoint", "direct:hello", "body", "World", "exchangePattern", "InOut"));
+        JsonObject result = tool.awaitResult("r1");
+        assertThat(result.getBoolean("ok")).isTrue();
+        assertThat(map(result, "result").toJson()).contains("Hello World");
+    }
+
+    @Test
+    void usesTheJdkClientWhenAsked() throws Exception {
+        RecordingClient client = new RecordingClient();
+        context.getRegistry().bind("myClient", client);
+        property("camel.cli.websocket.client", "jdk");
+        startConnector();
+
+        assertThat(tool.awaitFrame(f -> "hello".equals(f.getString("type"))).getString("transport")).isEqualTo("jdk");
+        assertThat(client.connects).hasValue(0);
+    }
+
+    @Test
+    void refusesAnUnknownClient() {
+        property("camel.cli.websocket.client", "netty");
+
+        assertThatThrownBy(this::startConnector).hasMessage("camel.cli.websocket.client must be auto or jdk: netty");
+    }
+
+    @Test
+    void sendsACloseFrameWhenStopping() throws Exception {
+        startConnector();
+        tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+
+        connector.stop();
+        connector = null;
+
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(tool.closeCodes).containsExactly((short) 1000));
+    }
+
+    @Test
+    void staysConnectedWhileTheToolAnswersPings() throws Exception {
+        // the tool never sends anything: only its pongs show it is alive
+        property("camel.cli.websocket.heartbeatInterval", "200");
+        startConnector();
+        tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+
+        await().during(1500, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertThat(tool.handshakes).hasValue(1));
+    }
+
+    @Test
+    void reconnectsWhenClosedBeforeTheClientReportsItOpen() throws Exception {
+        // a client calling the listener on its own threads can report the close before the connection itself
+        RecordingClient client = new RecordingClient();
+        client.closeFirstEarly = true;
+        context.getRegistry().bind("myClient", client);
+        startConnector();
+
+        tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+        assertThat(client.connects).hasValue(2);
+    }
+
+    @Test
+    void runsActionsReceivedBeforeTheClientReportsTheConnectionOpen() throws Exception {
+        // a tool that does not wait for the hello: its first action can arrive before the client completes connect()
+        RecordingClient client = new RecordingClient();
+        client.textFirstEarly = action("r1", "send", "endpoint", "direct:hello", "body", "Early", "exchangePattern", "InOut")
+                .toJson();
+        context.getRegistry().bind("myClient", client);
+        startConnector();
+
+        tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+        JsonObject result = tool.awaitResult("r1");
+        assertThat(result.getBoolean("ok")).isTrue();
+        assertThat(map(result, "result").toJson()).contains("Hello Early");
+    }
+
     private void startConnector() {
         connector = new LocalCliConnector(new DefaultCliConnectorFactory()) {
             @Override
@@ -338,6 +453,39 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
     }
 
     /**
+     * A client from the registry: the JDK client under another name.
+     */
+    private static class RecordingClient implements CliWebSocketClient {
+
+        final JdkCliWebSocketClient delegate = new JdkCliWebSocketClient();
+        final AtomicInteger connects = new AtomicInteger();
+        volatile boolean closeFirstEarly;
+        volatile String textFirstEarly;
+
+        @Override
+        public String getName() {
+            return "test";
+        }
+
+        @Override
+        public CompletionStage<Channel> connect(URI url, Map<String, String> headers, Listener listener) {
+            boolean first = connects.incrementAndGet() == 1;
+            return delegate.connect(url, headers, listener).thenCompose(channel -> {
+                if (first && closeFirstEarly) {
+                    listener.onClose(1001, "gone early");
+                }
+                if (first && textFirstEarly != null) {
+                    listener.onText(textFirstEarly);
+                    // and reports the connection open well after it
+                    return CompletableFuture.supplyAsync(() -> channel,
+                            CompletableFuture.delayedExecutor(500, TimeUnit.MILLISECONDS));
+                }
+                return CompletableFuture.completedFuture(channel);
+            });
+        }
+    }
+
+    /**
      * Plays the tool: a WebSocket server the connector dials out to.
      */
     private static class ToolServer implements AutoCloseable {
@@ -345,6 +493,7 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
         final BlockingQueue<JsonObject> frames = new LinkedBlockingQueue<>();
         final List<ServerWebSocket> sockets = new CopyOnWriteArrayList<>();
         final AtomicInteger handshakes = new AtomicInteger();
+        final List<Short> closeCodes = new CopyOnWriteArrayList<>();
         volatile String requiredToken;
         int port;
         private Vertx vertx;
@@ -371,7 +520,12 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
                                 throw new IllegalStateException(e);
                             }
                         });
-                        ws.closeHandler(v -> sockets.remove(ws));
+                        ws.closeHandler(v -> {
+                            sockets.remove(ws);
+                            if (ws.closeStatusCode() != null) {
+                                closeCodes.add(ws.closeStatusCode());
+                            }
+                        });
                     })
                     .listen(port, "127.0.0.1").toCompletionStage().toCompletableFuture().get(10, TimeUnit.SECONDS);
             this.port = server.actualPort();

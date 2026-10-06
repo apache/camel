@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -105,6 +106,18 @@ public class AiToolConfiguration implements Cloneable {
                             + "this tool's result directly to the caller without sending it back to the model. "
                             + "Also published as an MCP tool annotation when the tool is exposed via camel-mcp-server.")
     private Boolean returnDirect;
+
+    @Metadata(label = "consumer,security")
+    @UriParam(description = "Reference to an org.apache.camel.spi.AuthorizationPolicy used to authorize tool calls "
+                            + "before the route runs. Set it on the component to guard every tool route by "
+                            + "construction, or per endpoint to override. The policy authorizes on trustworthy input "
+                            + "only: the tool name comes from the route (never from model output), and the caller "
+                            + "identity is carried as an exchange property set before the agent ran (for example by "
+                            + "camel-spiffe or camel-keycloak), which the model cannot set. Authorize on exchange "
+                            + "properties or validated tokens only, never on message headers (on a tool route the "
+                            + "headers carry the model-controlled tool arguments). A denied call surfaces to the "
+                            + "model as a short refusal rather than a stack trace.")
+    private AuthorizationPolicy authorizationPolicy;
 
     public AiToolConfiguration() {
     }
@@ -203,6 +216,14 @@ public class AiToolConfiguration implements Cloneable {
 
     public void setReturnDirect(Boolean returnDirect) {
         this.returnDirect = returnDirect;
+    }
+
+    public AuthorizationPolicy getAuthorizationPolicy() {
+        return authorizationPolicy;
+    }
+
+    public void setAuthorizationPolicy(AuthorizationPolicy authorizationPolicy) {
+        this.authorizationPolicy = authorizationPolicy;
     }
 
     public AiToolConfiguration copy() {

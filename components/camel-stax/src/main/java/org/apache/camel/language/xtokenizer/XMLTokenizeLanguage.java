@@ -55,7 +55,7 @@ public class XMLTokenizeLanguage extends SingleInputTypedLanguageSupport {
 
         XMLTokenExpressionIterator xml = new XMLTokenExpressionIterator(source, expression, mode);
         xml.setGroup(property(int.class, properties, 3, 1));
-        Object obj = properties[4];
+        Object obj = property(Object.class, properties, 4, null);
         if (obj != null) {
             Namespaces ns;
             if (obj instanceof Namespaces namespaces) {

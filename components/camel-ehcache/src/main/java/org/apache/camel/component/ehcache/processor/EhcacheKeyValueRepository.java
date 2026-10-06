@@ -19,6 +19,7 @@ package org.apache.camel.component.ehcache.processor;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -108,7 +109,8 @@ public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValu
             return null;
         }
         if (entry.isExpired()) {
-            cache.remove(key);
+            // remove only the expired entry, not a new entry stored for the key in the meantime
+            cache.remove(key, entry);
             return null;
         }
         return entry.value();
@@ -125,9 +127,9 @@ public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValu
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
     public Object put(String key, Object value, Duration ttl) {
-        long expiresAt = hasPositiveTtl(ttl) ? System.currentTimeMillis() + ttl.toMillis() : Long.MAX_VALUE;
+        KeyValueTtlValue entry = newEntry(value, ttl);
         KeyValueTtlValue previous = cache.get(key);
-        cache.put(key, new KeyValueTtlValue(value, expiresAt));
+        cache.put(key, entry);
         if (previous == null || previous.isExpired()) {
             return null;
         }
@@ -153,7 +155,8 @@ public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValu
             return false;
         }
         if (entry.isExpired()) {
-            cache.remove(key);
+            // remove only the expired entry, not a new entry stored for the key in the meantime
+            cache.remove(key, entry);
             return false;
         }
         return true;
@@ -168,10 +171,59 @@ public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValu
             if (!entry.getValue().isExpired()) {
                 keys.add(entry.getKey());
             } else {
-                cache.remove(entry.getKey());
+                cache.remove(entry.getKey(), entry.getValue());
             }
         }
         return Set.copyOf(keys);
+    }
+
+    @Override
+    public Object putIfAbsent(String key, Object value, Duration ttl) {
+        KeyValueTtlValue entry = newEntry(value, ttl);
+        while (true) {
+            KeyValueTtlValue existing = cache.putIfAbsent(key, entry);
+            if (existing == null) {
+                return null;
+            }
+            if (!existing.isExpired()) {
+                return existing.value();
+            }
+            // an expired entry counts as absent: replace it, unless it was changed in the meantime. KeyValueTtlValue
+            // equality is per write, so the swap matches the stored entry also when the cache stores copies, and it
+            // fails only if another thread wrote or removed the key: the loop ends when no other thread does
+            if (cache.replace(key, existing, entry)) {
+                return null;
+            }
+        }
+    }
+
+    @Override
+    public boolean replace(String key, Object expectedOldValue, Object newValue, Duration ttl) {
+        KeyValueTtlValue entry = newEntry(newValue, ttl);
+        while (true) {
+            KeyValueTtlValue current = cache.get(key);
+            if (current == null || current.isExpired() || !Objects.equals(current.value(), expectedOldValue)) {
+                return false;
+            }
+            // compare-and-swap, so a concurrent update of the key is not overwritten
+            if (cache.replace(key, current, entry)) {
+                return true;
+            }
+        }
+    }
+
+    @Override
+    public boolean delete(String key, Object expectedValue) {
+        while (true) {
+            KeyValueTtlValue current = cache.get(key);
+            if (current == null || current.isExpired() || !Objects.equals(current.value(), expectedValue)) {
+                return false;
+            }
+            // compare-and-remove, so a concurrent update of the key is not removed
+            if (cache.remove(key, current)) {
+                return true;
+            }
+        }
     }
 
     @Override
@@ -184,6 +236,11 @@ public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValu
     @ManagedAttribute(description = "The number of entries in the repository")
     public int size() {
         return keys().size();
+    }
+
+    private static KeyValueTtlValue newEntry(Object value, Duration ttl) {
+        long expiresAt = hasPositiveTtl(ttl) ? System.currentTimeMillis() + ttl.toMillis() : Long.MAX_VALUE;
+        return new KeyValueTtlValue(value, expiresAt);
     }
 
     private static boolean hasPositiveTtl(Duration ttl) {

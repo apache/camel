@@ -271,7 +271,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-keycloak",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "26.7.4",
+  "serviceVersion" : "26.8.0",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.hivemq.services.HiveMQInfraService",
@@ -359,7 +359,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-opa",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "1.21.0-static",
+  "serviceVersion" : "1.21.1-static",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultInfraService",
@@ -381,7 +381,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-opensearch",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "3.8.0",
+  "serviceVersion" : "3.9.0",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.pulsar.services.PulsarInfraService",
@@ -788,7 +788,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-fhir",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "v8.12.0-1",
+  "serviceVersion" : "v8.12.0-2",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.pinecone.services.PineconeInfraService",

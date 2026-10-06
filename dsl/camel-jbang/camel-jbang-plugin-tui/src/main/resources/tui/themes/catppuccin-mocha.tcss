@@ -52,3 +52,14 @@ $mocha-fg: #CDD6F4;
 #diagram-action  { color: #CBA6F7; }
 #diagram-eip     { color: #B4BEFE; }
 #diagram-default { color: #6C7086; }
+
+/*
+ * Syntax tokens (optional), after the Catppuccin style guide: mauve keywords, green strings, blue functions, yellow types, peach constants, overlay2 comments.
+ */
+#syntax-comment  { color: #9399B2; }
+#syntax-string   { color: #A6E3A1; }
+#syntax-keyword  { color: #CBA6F7; }
+#syntax-function { color: #89B4FA; }
+#syntax-type     { color: #F9E2AF; }
+#syntax-constant { color: #FAB387; }
+#syntax-text     { color: $mocha-fg; }

@@ -1,0 +1,1 @@
+../../../../../components/camel-odata/src/main/docs/odata-component.adoc

@@ -31,6 +31,8 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dapr component which interfaces with Dapr Building Blocks.
@@ -38,6 +40,8 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "4.12.0", scheme = "dapr", title = "Dapr", syntax = "dapr:operation", category = {
         Category.CLOUD, Category.SAAS }, headersClass = DaprConstants.class)
 public class DaprEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DaprEndpoint.class);
 
     @UriParam
     private DaprConfiguration configuration;
@@ -81,6 +85,38 @@ public class DaprEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                 ? configuration.getPreviewClient() : new DaprClientBuilder().buildPreviewClient();
         workflowClient
                 = configuration.getWorkflowClient() != null ? configuration.getWorkflowClient() : new DaprWorkflowClient();
+    }
+
+    @Override
+    public void doStop() throws Exception {
+        // close only the clients that this endpoint created: a configured (or autowired) client can be shared with
+        // other endpoints and is closed by its owner. The clients are created again when the endpoint is started again
+        if (client != configuration.getClient()) {
+            close(client);
+        }
+        if (previewClient != configuration.getPreviewClient()) {
+            close(previewClient);
+        }
+        if (workflowClient != configuration.getWorkflowClient()) {
+            close(workflowClient);
+        }
+        client = null;
+        previewClient = null;
+        workflowClient = null;
+        super.doStop();
+    }
+
+    private static void close(AutoCloseable daprClient) {
+        if (daprClient == null) {
+            return;
+        }
+        try {
+            daprClient.close();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            LOG.debug("Failed to close {} due to: {}", daprClient, e.getMessage(), e);
+        }
     }
 
     /**

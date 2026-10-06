@@ -24,7 +24,8 @@ public class LangChain4jIngestEndpointUriFactory extends org.apache.camel.suppor
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(15);
+        Set<String> props = new HashSet<>(17);
+        props.add("contentType");
         props.add("documentFilter");
         props.add("documentIdHeader");
         props.add("documentSplitter");
@@ -39,6 +40,7 @@ public class LangChain4jIngestEndpointUriFactory extends org.apache.camel.suppor
         props.add("maxOverlapSize");
         props.add("maxSegmentSize");
         props.add("minDocumentSize");
+        props.add("modality");
         props.add("pipelineName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

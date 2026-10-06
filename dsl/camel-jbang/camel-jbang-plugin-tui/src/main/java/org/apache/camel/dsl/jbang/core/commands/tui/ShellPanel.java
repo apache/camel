@@ -63,6 +63,7 @@ import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 import org.jline.utils.ScreenTerminal;
 import org.jline.utils.ScreenTerminalOutputStream;
+import picocli.CommandLine;
 
 /**
  * Embeds a JLine interactive shell inside the TUI using a virtual terminal.
@@ -88,6 +89,7 @@ class ShellPanel {
     private ScreenTerminal screenTerminal;
     private LineDisciplineTerminal virtualTerminal;
     private Thread shellThread;
+    private static final long SHELL_STOP_MILLIS = 2000;
 
     private final ScrollbarState scrollbarState = new ScrollbarState();
 
@@ -443,6 +445,13 @@ class ShellPanel {
     private String startError;
 
     private void startShell(int width, int height) {
+        // the command line of the Camel CLI, taken here and not in the shell thread: that thread starts later, and
+        // the shell must swap the printer of this command line only (a test may point the static at another one by then)
+        CommandLine commandLine = CamelJBangMain.getCommandLine();
+        if (commandLine == null) {
+            startError = "The shell needs the Camel CLI";
+            return;
+        }
         try {
             screenTerminal = new ScreenTerminal(width, height);
             lastWidth = width;
@@ -466,7 +475,8 @@ class ShellPanel {
             delegateOut.delegate = new ScreenTerminalOutputStream(
                     screenTerminal, StandardCharsets.UTF_8, feedbackOutput);
 
-            shellThread = new Thread(() -> runShell(virtualTerminal), "tui-shell");
+            LineDisciplineTerminal terminal = virtualTerminal;
+            shellThread = new Thread(() -> runShell(terminal, commandLine), "tui-shell");
             shellThread.setDaemon(true);
             shellThread.start();
         } catch (Exception e) {
@@ -476,10 +486,10 @@ class ShellPanel {
         }
     }
 
-    private void runShell(LineDisciplineTerminal terminal) {
+    private void runShell(LineDisciplineTerminal terminal, CommandLine commandLine) {
         try {
             // TODO: replace with new PicocliCommandRegistry(commandLine, "Camel") when JLine merges #1947
-            PicocliCommandRegistry registry = new PicocliCommandRegistry(CamelJBangMain.getCommandLine()) {
+            PicocliCommandRegistry registry = new PicocliCommandRegistry(commandLine) {
                 @Override
                 public String name() {
                     return "Camel";
@@ -487,7 +497,7 @@ class ShellPanel {
             };
             // Redirect command output (printer()) through the virtual terminal
             // so it renders in the shell panel instead of the TUI's real terminal
-            CamelJBangMain main = (CamelJBangMain) CamelJBangMain.getCommandLine().getCommand();
+            CamelJBangMain main = (CamelJBangMain) commandLine.getCommand();
             Printer originalPrinter = main.getOut();
             Printer terminalPrinter = new Printer() {
                 @Override
@@ -560,10 +570,7 @@ class ShellPanel {
     }
 
     private void stopShell() {
-        if (shellThread != null) {
-            shellThread.interrupt();
-            shellThread = null;
-        }
+        // closing the terminal ends the shell's input, so it returns and puts the printer it swapped back
         if (virtualTerminal != null) {
             try {
                 virtualTerminal.close();
@@ -571,6 +578,17 @@ class ShellPanel {
                 LOG.log(Level.DEBUG, "Error closing virtual terminal during shutdown", e);
             }
             virtualTerminal = null;
+        }
+        Thread thread = shellThread;
+        shellThread = null;
+        if (thread != null) {
+            thread.interrupt();
+            try {
+                // wait for the shell to have restored the printer, so nothing writes to this panel afterwards
+                thread.join(SHELL_STOP_MILLIS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
         screenTerminal = null;
     }

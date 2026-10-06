@@ -306,10 +306,14 @@ public final class RunHelper {
     }
 
     /**
-     * When using camel run . or camel export . then dot should include all the files in the current folder.
+     * When using camel run . or camel export . then dot should include all the files in the current folder. The files
+     * of the current folder are named without a leading ./ (orders.camel.yaml), so they match the reload pattern in dev
+     * mode.
      */
     public static void dirToFiles(String dir, List<String> files) {
         files.clear();
+        boolean currentDir = Paths.get(dir).normalize().toString().isEmpty();
+        String base = currentDir ? "" : FileUtil.stripTrailingSeparator(dir) + "/";
         try (Stream<Path> paths = Files.list(Paths.get(dir))) {
             paths.filter(p -> {
                 try {
@@ -318,7 +322,7 @@ public final class RunHelper {
                     return false;
                 }
             })
-                    .forEach(f -> files.add(dir + "/" + f.getFileName()));
+                    .forEach(f -> files.add(base + f.getFileName()));
         } catch (IOException e) {
             // Ignore
         }

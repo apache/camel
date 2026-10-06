@@ -333,6 +333,21 @@ final class TuiToolDefinitions {
                         "body", propDef("string", "Message body to send"),
                         "headers", propDef("string", "Message headers as key=value pairs separated by newlines")),
                 List.of("endpoint"))));
+        // CAMEL-25307: the http tool group; the shared get_http_endpoints and http_request for the selected integration
+        tools.add(toToolDef(toolDef(
+                "tui_http_endpoints",
+                "HTTP endpoints the selected integration serves (Rest DSL, platform-http): method, path, "
+                                      + "consumes/produces, route, OpenAPI operation, base URL and contract.",
+                Map.of("includeSpec", propDef("boolean", "Add the OpenAPI contract of a contract-first service")))));
+        tools.add(toToolDef(toolDef(
+                "tui_http_request",
+                "Sends an HTTP request to the selected integration's own server (localhost and its port); returns "
+                                    + "status, headers and body. Other hosts are refused.",
+                Map.of("method", propDef("string", "GET (default), POST, PUT, PATCH, DELETE"),
+                        "path", propDef("string", "Path with query, e.g. /api/orders?status=open"),
+                        "headers", propDef("string", "JSON object or one 'name: value' per line"),
+                        "body", propDef("string", "Request body")),
+                List.of("path"))));
         tools.add(toToolDef(toolDef(
                 "tui_execute_sql",
                 "Executes a SQL query against a DataSource in the selected integration. "

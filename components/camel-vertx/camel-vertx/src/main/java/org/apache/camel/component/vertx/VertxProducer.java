@@ -60,7 +60,7 @@ public class VertxProducer extends DefaultAsyncProducer {
         if (body != null) {
             if (reply) {
                 LOG.debug("Sending to: {} with body: {}", address, body);
-                eventBus.request(address, body, new CamelReplyHandler(exchange, callback));
+                eventBus.<Object> request(address, body).onComplete(new CamelReplyHandler(exchange, callback));
                 return false;
             } else {
                 if (pubSub) {

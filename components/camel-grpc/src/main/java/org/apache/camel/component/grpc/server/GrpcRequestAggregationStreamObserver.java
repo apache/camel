@@ -62,6 +62,10 @@ public class GrpcRequestAggregationStreamObserver extends GrpcRequestAbstractStr
         try {
             latch.await();
 
+            if (sendFailure(exchange)) {
+                return;
+            }
+
             Object responseBody = exchange.getMessage().getBody();
             if (responseBody instanceof List) {
                 List<?> responseList = (List<?>) responseBody;

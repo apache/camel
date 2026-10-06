@@ -441,6 +441,60 @@ public final class ToolRegistry {
                     return result.toJson();
                 }));
 
+        register(tool("get_tool_groups",
+                "Which runtime tool groups (sql, tracing, resilience, http) the integration needs, from what it has: "
+                                         + "datasources and SQL endpoints, OpenTelemetry, message tracing, Micrometer, "
+                                         + "circuit breakers, HTTP endpoints. Returns the tools of each group with one line of guidance, "
+                                         + "and a fingerprint that changes only when the groups do.")
+                .param("name", "string", "Name or PID of the integration (default: the selected or only one)", false)
+                .executor((ctx, args) -> {
+                    selectNamedProcess(ctx, args);
+                    return toolGroups(ctx, ctx.readFullStatus()).toJson();
+                }));
+
+        // CAMEL-25307: what the integration serves over HTTP, and a request to it
+        register(tool("get_http_endpoints",
+                "List the HTTP endpoints the integration serves (Rest DSL and platform-http): method, path, "
+                                            + "consumes/produces, route and OpenAPI operation, the server's base URL "
+                                            + "and the contract. includeSpec=true adds the OpenAPI contract itself.")
+                .param("name", "string", "Name or PID of the integration (default: the selected or only one)", false)
+                .param("includeSpec", "boolean", "Add the OpenAPI contract of a contract-first service", false)
+                .executor((ctx, args) -> {
+                    selectNamedProcess(ctx, args);
+                    JsonObject answer = HttpEndpoints.toJson(HttpEndpoints.fromStatus(ctx.readFullStatus()));
+                    if ("true".equalsIgnoreCase(args.get("includeSpec"))) {
+                        answer.put("spec", HttpEndpoints.capSpecs(ctx.executeAction("rest-spec", null)));
+                    }
+                    return answer.toJson();
+                }));
+
+        register(tool("http_request",
+                "Send an HTTP request to the integration's own server (localhost and its port) and return the "
+                                      + "status, headers and body. Pass the path, e.g. /api/orders/1; other hosts are "
+                                      + "refused.")
+                .param("method", "string", "GET (default), POST, PUT, PATCH, DELETE, HEAD or OPTIONS", false)
+                .param("path", "string", "The path with query, e.g. /api/orders?status=open", true)
+                .param("headers", "string", "Headers as a JSON object or one 'name: value' per line", false)
+                .param("body", "string", "The request body", false)
+                .param("timeoutSeconds", "integer", "How long to wait for the answer (default 30)", false)
+                .param("name", "string", "Name or PID of the integration (default: the selected or only one)", false)
+                .readOnly(false).destructive(false)
+                .executor((ctx, args) -> {
+                    selectNamedProcess(ctx, args);
+                    HttpEndpoints.Served served = HttpEndpoints.fromStatus(ctx.readFullStatus());
+                    int timeout = 30;
+                    try {
+                        String t = args.get("timeoutSeconds");
+                        if (t != null && !t.isBlank()) {
+                            timeout = (int) Double.parseDouble(t);
+                        }
+                    } catch (NumberFormatException e) {
+                        // use default
+                    }
+                    return HttpEndpoints.request(served != null ? served.port() : 0, args.get("method"),
+                            args.get("path"), args.get("headers"), args.get("body"), timeout).toJson();
+                }));
+
         // Route control
         registerRouteControlTool("stop_route", "stop",
                 "Gracefully stop a route. The route will finish processing in-flight exchanges before stopping.");
@@ -453,6 +507,53 @@ public final class ToolRegistry {
                 "Gracefully stop the Camel application. Finishes in-flight exchanges then shuts down cleanly.")
                 .readOnly(false).destructive(true)
                 .executor((ctx, args) -> ctx.stopApplication()));
+    }
+
+    /** Selects the process the call names, else keeps the selected one, else the only one running. */
+    private static void selectNamedProcess(ToolContext ctx, Map<String, String> args) {
+        String name = args.get("name");
+        if (name != null && !name.isBlank()) {
+            ctx.selectProcess(name);
+        } else {
+            ctx.selectSingleProcessIfNone();
+        }
+    }
+
+    /**
+     * The answer of get_tool_groups: the integration, the core tools every client has, the groups its status calls for
+     * and the status keys that called for them.
+     */
+    static JsonObject toolGroups(ToolContext ctx, JsonObject status) {
+        AppFeatures features = AppFeatures.fromStatus(status);
+        ToolGroups.Selection selection = ToolGroups.select(features);
+        JsonObject answer = new JsonObject();
+        String app = null;
+        for (RuntimeHelper.ProcessInfo p : ctx.discoverProcesses()) {
+            if (p.pid() == ctx.pid()) {
+                app = p.name();
+            }
+        }
+        if (app == null && status != null && status.get("context") instanceof Map<?, ?> context
+                && context.get("name") != null) {
+            app = context.get("name").toString();
+        }
+        answer.put("app", app);
+        answer.put("pid", ctx.pid());
+        answer.put("fingerprint", selection.fingerprint());
+        JsonArray core = new JsonArray();
+        authoringTools().stream().filter(ToolDescriptor::isCore).map(ToolDescriptor::name).forEach(core::add);
+        answer.put("core", core);
+        JsonArray groups = new JsonArray();
+        for (ToolGroups.Group g : selection.groups()) {
+            JsonObject group = new JsonObject();
+            group.put("id", g.group().id());
+            group.put("tools", new JsonArray(g.tools()));
+            group.put("guidance", g.guidance());
+            groups.add(group);
+        }
+        answer.put("groups", groups);
+        answer.put("signals", new JsonObject(features.signals()));
+        return answer;
     }
 
     private static void registerRouteControlTool(String name, String command, String description) {
@@ -503,7 +604,7 @@ public final class ToolRegistry {
                 "Get startup recorder steps showing component initialization timing. "
                                            + "Shows each startup step with duration, level, and type. "
                                            + "Useful for diagnosing slow application startup. "
-                                           + "Requires startup recording to be enabled (camel.main.startup-recorder=true).")
+                                           + "Requires startup recording to be enabled (camel.main.startup-recorder=backlog).")
                 .executor((ctx, args) -> ctx.executeAction("startup-recorder", null)));
 
         register(tool("get_datasources",

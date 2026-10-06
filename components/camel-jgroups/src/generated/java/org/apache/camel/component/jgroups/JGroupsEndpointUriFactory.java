@@ -24,7 +24,8 @@ public class JGroupsEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(8);
+        Set<String> props = new HashSet<>(9);
+        props.add("acceptAllObjects");
         props.add("bridgeErrorHandler");
         props.add("channelProperties");
         props.add("clusterName");

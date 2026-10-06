@@ -12565,6 +12565,46 @@ public class StaticEndpointBuilders {
         return OAIPMHEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * OData (camel-odata)
+     * Camel OData Component
+     * 
+     * Category: http
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-odata
+     * 
+     * Syntax: <code>odata:httpUri</code>
+     * 
+     * Path parameter: httpUri (required)
+     * The base OData service URI
+     * 
+     * @param path httpUri
+     * @return the dsl builder
+     */
+    public static ODataEndpointBuilderFactory.ODataEndpointBuilder odata(String path) {
+        return odata("odata", path);
+    }
+    /**
+     * OData (camel-odata)
+     * Camel OData Component
+     * 
+     * Category: http
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-odata
+     * 
+     * Syntax: <code>odata:httpUri</code>
+     * 
+     * Path parameter: httpUri (required)
+     * The base OData service URI
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path httpUri
+     * @return the dsl builder
+     */
+    public static ODataEndpointBuilderFactory.ODataEndpointBuilder odata(String componentName, String path) {
+        return ODataEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Olingo2 (camel-olingo2)
      * Communicate with OData 2.0 services using Apache Olingo.
      * 
@@ -12834,8 +12874,9 @@ public class StaticEndpointBuilders {
      * it is deliberately not overridable by a message header, so that an
      * inbound message cannot turn a check into a tuple write, nor a check for
      * one relation into a check for a weaker one.
-     * There are 7 enums and the value can be one of: check, batchCheck,
-     * listObjects, listRelations, listUsers, writeTuples, deleteTuples
+     * There are 10 enums and the value can be one of: check, batchCheck,
+     * listObjects, listRelations, listUsers, readTuples, readChanges, expand,
+     * writeTuples, deleteTuples
      * 
      * @param path operation
      * @return the dsl builder
@@ -12859,8 +12900,9 @@ public class StaticEndpointBuilders {
      * it is deliberately not overridable by a message header, so that an
      * inbound message cannot turn a check into a tuple write, nor a check for
      * one relation into a check for a weaker one.
-     * There are 7 enums and the value can be one of: check, batchCheck,
-     * listObjects, listRelations, listUsers, writeTuples, deleteTuples
+     * There are 10 enums and the value can be one of: check, batchCheck,
+     * listObjects, listRelations, listUsers, readTuples, readChanges, expand,
+     * writeTuples, deleteTuples
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

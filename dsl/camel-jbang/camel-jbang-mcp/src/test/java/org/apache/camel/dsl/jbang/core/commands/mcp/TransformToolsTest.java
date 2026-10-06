@@ -66,12 +66,12 @@ class TransformToolsTest {
     @CsvSource({ "yaml,xml", "java,xml", "java,yaml" })
     void genericConversionDoesNotSilentlyLoseSemanticDeclarations(String source, String target) {
         assertThatThrownBy(() -> createTools().camel_transform_route(semanticRoute(source, "0.8"), source, target))
-                .isInstanceOf(ToolCallException.class).hasMessageContaining("Keep them in a separate declaration resource");
+                .isInstanceOf(ToolCallException.class).hasMessageContaining("keep them in a separate declaration resource");
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "xml", "yaml" })
-    void emptySemanticRegistryDoesNotPreventConversion(String target) {
+    void anEmptySemanticDeclarationIsRefusedToo(String target) {
         String route = """
                 import org.apache.camel.builder.RouteBuilder;
                 import static org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions;
@@ -82,20 +82,23 @@ class TransformToolsTest {
                     }
                 }
                 """;
-        var result = createTools().camel_transform_route(route, "java", target);
-
-        assertThat(result.supported).isTrue();
-        assertThat(result.result).contains("direct:input").doesNotContain("semantic");
+        // read without running it, so whether it declares anything is not known: refused, not dropped
+        assertThatThrownBy(() -> createTools().camel_transform_route(route, "java", target))
+                .isInstanceOf(ToolCallException.class).hasMessageContaining("semantic declarations");
     }
 
-    @ParameterizedTest
-    @CsvSource({ "yaml,xml", "java,xml", "java,yaml" })
-    void semanticConversionReportsMissingNumericProperty(String source, String target) {
-        String route = semanticRoute(source, "{{semantic.export.missing.threshold}}");
-
-        assertThatThrownBy(() -> createTools().camel_transform_route(route, source, target))
-                .isInstanceOf(ToolCallException.class)
-                .hasMessageContaining("Property with key [semantic.export.missing.threshold] not found");
+    @Test
+    void placeholdersAreNotResolved() {
+        // the routes are read, not run: a property that is not there is no error, the placeholder is kept
+        var result = createTools().camel_transform_route("""
+                - route:
+                    from:
+                      uri: "timer:{{my.timer.name}}"
+                      steps:
+                        - log: "{{my.message}}"
+                """, "yaml", "xml");
+        assertThat(result.supported).isTrue();
+        assertThat(result.result).contains("timer:{{my.timer.name}}", "{{my.message}}");
     }
 
     private static String semanticRoute(String source, String threshold) {
@@ -249,6 +252,52 @@ class TransformToolsTest {
         assertThat(result.supported).isTrue();
         assertThat(result.result).contains("timer:hello");
         assertThat(result.result).contains("log:foo");
+    }
+
+    @Test
+    void transformXmlToJava() {
+        String xml = """
+                <routes xmlns="http://camel.apache.org/schema/xml-io">
+                    <!-- greetings -->
+                    <route id="hello">
+                        <from uri="timer:tick"/>
+                        <log message="Hello ${body}" loggingLevel="WARN"/>
+                    </route>
+                </routes>
+                """;
+        TransformTools.TransformResult result = createTools().camel_transform_route(xml, "xml", "java");
+        assertThat(result.supported).isTrue();
+        assertThat(result.result).contains("public class Route extends RouteBuilder", "from(\"timer:tick\")",
+                ".routeId(\"hello\")", ".log(LoggingLevel.WARN, \"Hello ${body}\")");
+        // what is not carried over is said
+        assertThat(result.notes).anyMatch(n -> n.contains("comments"));
+        assertThat(result.note).contains("comments");
+    }
+
+    @Test
+    void restsAreCarriedOver() {
+        String xml = """
+                <rests xmlns="http://camel.apache.org/schema/xml-io">
+                    <rest path="/api">
+                        <get path="/orders">
+                            <to uri="direct:orders"/>
+                        </get>
+                    </rest>
+                </rests>
+                """;
+        TransformTools.TransformResult result = createTools().camel_transform_route(xml, "xml", "yaml");
+        assertThat(result.supported).isTrue();
+        assertThat(result.result).contains("- rest:", "path: /api", "get:", "path: /orders", "direct:orders");
+        assertThat(result.notes).isEmpty();
+    }
+
+    @Test
+    void whatOnlyRunsIsRefusedWithTheReason() {
+        String java = """
+                from("timer:tick").process(e -> e.getIn().setBody("x")).to("log:out");
+                """;
+        assertThatThrownBy(() -> createTools().camel_transform_route(java, "java", "yaml"))
+                .isInstanceOf(ToolCallException.class).hasMessageContaining("cannot be converted without running it");
     }
 
     @Test

@@ -71,19 +71,16 @@ public class Iso8583DataFormat extends ServiceSupport implements DataFormat, Dat
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         byte[] data = camelContext.getTypeConverter().mandatoryConvertTo(byte[].class, exchange, stream);
-        int len = -1;
         // hex-based to int
         String iType = exchange.getMessage().getHeader(Iso8583Constants.ISO_TYPE, isoType, String.class);
         int i = Integer.parseUnsignedInt(iType, 16);
-        String type = messageFactory.getIsoHeader(i);
-        if (type != null) {
-            len = type.length();
+        // the ISO header of a message type is optional, and it can be binary
+        byte[] binaryHeader = messageFactory.getBinaryIsoHeader(i);
+        if (binaryHeader != null) {
+            return messageFactory.parseMessage(data, binaryHeader.length, true);
         }
-        if (len == -1) {
-            throw new IllegalArgumentException(
-                    "IsoType " + iType + " is not known in the MessageFactory configuration file.");
-        }
-        return messageFactory.parseMessage(data, len);
+        String header = messageFactory.getIsoHeader(i);
+        return messageFactory.parseMessage(data, header != null ? header.length() : 0);
     }
 
     public MessageFactory getMessageFactory() {

@@ -312,6 +312,11 @@ final class SchemaHints {
                          + " key: errorHandler: {noErrorHandler: {}}, errorHandler: {deadLetterChannel: {deadLetterUri:"
                          + " \"direct:parked\"}}, errorHandler: {defaultErrorHandler: {redeliveryPolicy: {...}}}"
                          + " (a top-level - errorHandler: item applies to every route)"),
+            // - noErrorHandler: {} as a step of the route: the handler goes on the route, not among its steps (CAMEL-25328)
+            unknownProperty(".*/steps/\\d+", m -> ROUTE_ERROR_HANDLER_KINDS.contains(m.unknown()),
+                    m -> "an error handler is not a step: write it on the route, next to from:, as errorHandler: {"
+                         + m.unknown() + ": " + (m.unknown().equals("noErrorHandler") ? "{}" : "{...}")
+                         + "} (a top-level - errorHandler: item applies to every route)"),
             unknownProperty(".*/errorHandler", m -> m.unknown().equals("type") || m.unknown().equals("errorHandlerType"),
                     m -> "errorHandler: has the kind of handler as its key, not a " + m.unknown() + " property:"
                          + " errorHandler: {noErrorHandler: {}}, {deadLetterChannel: {deadLetterUri: \"...\"}} or"

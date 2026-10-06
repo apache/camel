@@ -38,6 +38,7 @@ import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
@@ -93,8 +94,17 @@ class LogTab extends AbstractTab {
     private long evictedSeen;
     private boolean followMode = true;
     private boolean wordWrap = true;
+    // time, level, logger and message only: the date, pid and thread take most of a row in a terminal
+    private boolean compact = true;
+    private boolean cachedCompact;
     private int hScroll;
     private boolean showLogLevelPopup;
+    // fix with AI (Shift+F8): the entries on the screen, and the pick list when several ERRORs are on it
+    private int lastViewStart;
+    private int lastViewCount;
+    private boolean showErrorPickPopup;
+    private List<LogErrors.LogError> errorChoices = List.of();
+    private final ListState errorPickListState = new ListState();
 
     private final SearchHighlighter search = new SearchHighlighter();
 
@@ -136,6 +146,31 @@ class LogTab extends AbstractTab {
             return handled;
         }
 
+        if (showErrorPickPopup) {
+            if (ke.isUp()) {
+                errorPickListState.selectPrevious();
+                return true;
+            }
+            if (ke.isDown()) {
+                errorPickListState.selectNext(errorChoices.size());
+                return true;
+            }
+            if (ke.isConfirm()) {
+                Integer sel = errorPickListState.selected();
+                showErrorPickPopup = false;
+                if (sel != null && sel >= 0 && sel < errorChoices.size()) {
+                    askAiAbout(errorChoices.get(sel));
+                }
+                return true;
+            }
+            return true;
+        }
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            // fix with AI: the ERROR on the screen, or pick one when there are several
+            askAiAboutErrorsInView();
+            return true;
+        }
+
         if (showLogLevelPopup) {
             if (ke.isUp()) {
                 logLevelListState.selectPrevious();
@@ -175,6 +210,11 @@ class LogTab extends AbstractTab {
         }
         if (ke.isCharIgnoreCase('w')) {
             wordWrap = !wordWrap;
+            hScroll = 0;
+            return true;
+        }
+        if (ke.isCharIgnoreCase('c')) {
+            compact = !compact;
             hScroll = 0;
             return true;
         }
@@ -234,6 +274,10 @@ class LogTab extends AbstractTab {
         }
         if (showLogLevelPopup) {
             showLogLevelPopup = false;
+            return true;
+        }
+        if (showErrorPickPopup) {
+            showErrorPickPopup = false;
             return true;
         }
         return false;
@@ -340,19 +384,29 @@ class LogTab extends AbstractTab {
         int hSkip = wordWrap ? 0 : hScroll;
 
         boolean entriesChanged = entries != cachedLogEntries;
-        if (entriesChanged || hSkip != cachedLogHSkip) {
+        if (entriesChanged || hSkip != cachedLogHSkip || compact != cachedCompact) {
             cachedLogEntries = entries;
             cachedLogHSkip = hSkip;
+            cachedCompact = compact;
             List<Line> built = new ArrayList<>(entries.size());
             int maxW = 0;
             for (int i = 0; i < entries.size(); i++) {
                 LogEntry entry = entries.get(i);
                 String raw = entry.raw != null ? entry.raw : "";
-                if (!wordWrap) {
-                    maxW = Math.max(maxW, CharWidth.of(TuiHelper.stripAnsi(raw)));
+                Line line;
+                if (compact && !entry.time.isEmpty()) {
+                    line = compactLine(entry);
+                    if (!wordWrap) {
+                        maxW = Math.max(maxW, line.width());
+                        line = hSkip > 0 ? TuiHelper.ansiToLine(lineText(line), hSkip) : line;
+                    }
+                } else {
+                    if (!wordWrap) {
+                        maxW = Math.max(maxW, CharWidth.of(TuiHelper.stripAnsi(raw)));
+                    }
+                    line = raw.indexOf('\u001B') >= 0
+                            ? TuiHelper.ansiToLine(raw, hSkip) : colorizePlainLog(raw, entry);
                 }
-                Line line = raw.indexOf('\u001B') >= 0
-                        ? TuiHelper.ansiToLine(raw, hSkip) : colorizePlainLog(raw, entry);
                 if (entry.repeat > 1) {
                     line = line.append(Span.styled("  (x" + entry.repeat + ")", Theme.warning().bold()));
                 }
@@ -377,7 +431,19 @@ class LogTab extends AbstractTab {
 
         List<Line> allLines = cachedLogLines;
         int start = Math.min(scroll, Math.max(0, allLines.size() - visibleHeight));
-        List<Line> visibleLines = allLines.subList(start, Math.min(allLines.size(), start + visibleHeight));
+        int count = visibleHeight;
+        if (wordWrap) {
+            // a wrapped line takes more than one row: show the entries that fit, the newest ones when following
+            int textWidth = Math.max(1, inner.width() - 1);
+            if (followMode) {
+                start = firstEntryThatFits(allLines, visibleHeight, textWidth);
+                scroll = start;
+            }
+            count = entriesThatFit(allLines, start, visibleHeight, textWidth);
+        }
+        List<Line> visibleLines = allLines.subList(start, Math.min(allLines.size(), start + count));
+        lastViewStart = start;
+        lastViewCount = count;
 
         int currentMatchLine = search.currentMatchLine();
         if (currentMatchLine >= 0 || search.hasFindTerm() || search.hasHighlightTerm()) {
@@ -409,6 +475,9 @@ class LogTab extends AbstractTab {
         if (showLogLevelPopup) {
             renderLogLevelPopup(frame, area);
         }
+        if (showErrorPickPopup) {
+            renderErrorPickPopup(frame, area);
+        }
     }
 
     @Override
@@ -422,6 +491,11 @@ class LogTab extends AbstractTab {
             hintLast(spans, "Enter", "set level");
             return;
         }
+        if (showErrorPickPopup) {
+            hint(spans, "Esc", "cancel");
+            hintLast(spans, "Enter", "fix with AI");
+            return;
+        }
 
         if (search.hasFindTerm()) {
             search.renderFindStatus(spans);
@@ -430,6 +504,7 @@ class LogTab extends AbstractTab {
         }
         search.renderSearchHints(spans);
         hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
+        hint(spans, "c", "compact" + (compact ? " [on]" : " [off]"));
         if (!ctx.isInfraSelected()) {
             hint(spans, "l", "level");
         }
@@ -439,6 +514,87 @@ class LogTab extends AbstractTab {
         } else {
             hint(spans, "Ctrl+L", "pin");
         }
+    }
+
+    @Override
+    public void renderFKeyHints(List<Span> spans) {
+        // with the global F-keys, as in the Source and Errors tabs; not while a pick list is open
+        if (!showErrorPickPopup && !showLogLevelPopup && ctx.askAiCallback != null && hasErrorInView()) {
+            hint(spans, "Shift+F8", "fix with AI");
+        }
+    }
+
+    /**
+     * Whether an ERROR is on the screen, for the Shift+F8 hint: also one whose stack trace is on it but not its first
+     * line, as the screen is often all stack trace.
+     */
+    private boolean hasErrorInView() {
+        return !LogErrors.inView(filteredLogEntries, lastViewStart, lastViewCount).isEmpty();
+    }
+
+    /**
+     * Fix with AI (Shift+F8) in the log: the ERROR on the screen is asked about right away; when different ERRORs are
+     * on it, a pick list comes up, newest first.
+     */
+    private void askAiAboutErrorsInView() {
+        if (ctx.askAiCallback == null) {
+            return;
+        }
+        List<LogErrors.LogError> errors = LogErrors.inView(filteredLogEntries, lastViewStart, lastViewCount);
+        if (errors.isEmpty()) {
+            if (ctx.notificationCallback != null) {
+                ctx.notificationCallback.accept("No ERROR on the screen: scroll to one, or ask the AI with F8", false);
+            }
+        } else if (errors.size() == 1) {
+            askAiAbout(errors.get(0));
+        } else {
+            errorChoices = errors;
+            errorPickListState.select(0);
+            showErrorPickPopup = true;
+        }
+    }
+
+    /**
+     * Asks the AI about an ERROR of the log: on its source line when the Message History of a failed exchange names the
+     * step that failed, else the error itself.
+     */
+    private void askAiAbout(LogErrors.LogError error) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        Path file = error.source() != null && info != null
+                ? RuntimeFailures.fileOf(FilesBrowser.resolveSourceDirectory(info), error.source()) : null;
+        int line = file != null ? LiveRunLines.lineOf(error.source(), file.getFileName().toString()) : -1;
+        if (line >= 0) {
+            ctx.askAiCallback.fixFailure(file, line + 1, error.failure(), RuntimeFailures.lineText(file, line));
+        } else {
+            ctx.askAiCallback.explainLogError(error.text());
+        }
+    }
+
+    private void renderErrorPickPopup(Frame frame, Rect area) {
+        int popupW = Math.min(area.width(), Math.max(40, area.width() * 3 / 4));
+        int popupH = Math.min(area.height(), errorChoices.size() + 2);
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, popupW, popupH);
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        List<ListItem> items = new ArrayList<>(errorChoices.size());
+        for (LogErrors.LogError e : errorChoices) {
+            items.add(ListItem.from("  " + e.label()).style(Theme.error()));
+        }
+        ListWidget list = ListWidget.builder()
+                .items(items.toArray(new ListItem[0]))
+                .highlightStyle(Theme.selectionBg())
+                .highlightSymbol("")
+                .scrollMode(ScrollMode.NONE)
+                .block(Block.builder()
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .title(" Fix with AI: which ERROR? ")
+                        .build())
+                .build();
+
+        frame.renderStatefulWidget(list, popup, errorPickListState);
     }
 
     private void renderLogLevelPopup(Frame frame, Rect area) {
@@ -467,6 +623,12 @@ class LogTab extends AbstractTab {
                 .build();
 
         frame.renderStatefulWidget(list, popup, logLevelListState);
+    }
+
+    /** The entries of the tab, as read from the log file (tests). */
+    void setEntriesForTesting(List<LogEntry> entries) {
+        filteredLogEntries = new ArrayList<>(entries);
+        logLoading = false;
     }
 
     void setLogLevel(String level) {
@@ -642,6 +804,103 @@ class LogTab extends AbstractTab {
                                                                + "(\\d+)\\s+---\\s+"
                                                                + "\\[([^]]*)]\\s+"
                                                                + "(\\S+)\\s*:\\s*(.*)$");
+
+    /** A log line in the compact view: 17:24:30.257 INFO VertxPlatformHttpServer Vert.x HttpServer started ... */
+    static Line compactLine(LogEntry entry) {
+        String time = entry.time.length() > 12 ? entry.time.substring(entry.time.length() - 12) : entry.time;
+        // the time of day: the date is the same for every line of a run
+        int space = time.indexOf(' ');
+        if (space >= 0) {
+            time = time.substring(space + 1);
+        }
+        String logger = entry.logger != null ? TuiHelper.truncate(entry.logger, 24) : "";
+        return Line.from(
+                Span.styled(time, DIM),
+                Span.raw(" "),
+                Span.styled(String.format("%5s", entry.level), levelStyle(entry.level)),
+                Span.raw(" "),
+                Span.styled(String.format("%-24s", logger), Style.EMPTY.fg(Theme.accent())),
+                Span.raw(" "),
+                Span.raw(entry.message != null ? entry.message : ""));
+    }
+
+    /**
+     * The rows a line of text takes when wrapped at word boundaries into the width, as the paragraph wraps it with word
+     * wrap on (a word longer than the width is broken).
+     */
+    static int wrappedRows(String text, int width) {
+        if (width <= 0 || text == null || text.isEmpty()) {
+            return 1;
+        }
+        int rows = 1;
+        int col = 0;
+        boolean first = true;
+        for (String word : text.split(" ", -1)) {
+            int w = CharWidth.of(word);
+            if (first) {
+                col = w;
+                first = false;
+            } else if (col + 1 + w <= width) {
+                col += 1 + w;
+            } else {
+                rows++;
+                col = w;
+            }
+            while (col > width) {
+                rows++;
+                col -= width;
+            }
+        }
+        return rows;
+    }
+
+    /** The first entry from which the last entries fit the height when wrapped (follow mode with word wrap). */
+    static int firstEntryThatFits(List<Line> lines, int height, int width) {
+        int rows = 0;
+        int i = lines.size();
+        while (i > 0) {
+            int r = wrappedRows(lineText(lines.get(i - 1)), width);
+            if (rows + r > height) {
+                break;
+            }
+            rows += r;
+            i--;
+        }
+        // an entry taller than the screen is still shown, from its first row
+        return i == lines.size() ? Math.max(0, i - 1) : i;
+    }
+
+    /** How many entries from the start fit the height when wrapped (at least one). */
+    static int entriesThatFit(List<Line> lines, int start, int height, int width) {
+        int rows = 0;
+        int n = 0;
+        for (int i = start; i < lines.size(); i++) {
+            int r = wrappedRows(lineText(lines.get(i)), width);
+            if (rows + r > height && n > 0) {
+                break;
+            }
+            rows += r;
+            n++;
+        }
+        return n;
+    }
+
+    private static String lineText(Line line) {
+        StringBuilder sb = new StringBuilder();
+        line.spans().forEach(sp -> sb.append(sp.content()));
+        return sb.toString();
+    }
+
+    private static Style levelStyle(String level) {
+        return switch (level) {
+            case "ERROR", "FATAL" -> Theme.error();
+            case "WARN" -> Theme.warning();
+            case "INFO" -> Theme.success();
+            case "DEBUG" -> Style.EMPTY.fg(Theme.accent());
+            case "TRACE" -> Style.EMPTY.dim();
+            default -> Style.EMPTY;
+        };
+    }
 
     private static Line colorizePlainLog(String raw, LogEntry entry) {
         String plain = TuiHelper.stripAnsi(raw);

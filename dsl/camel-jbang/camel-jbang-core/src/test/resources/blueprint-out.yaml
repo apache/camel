@@ -17,7 +17,7 @@
 
 - beans:
     - name: userService
-      type: "org.apache.camel.example.rest.UserService"
+      type: org.apache.camel.example.rest.UserService
 - route:
     from:
       uri: direct

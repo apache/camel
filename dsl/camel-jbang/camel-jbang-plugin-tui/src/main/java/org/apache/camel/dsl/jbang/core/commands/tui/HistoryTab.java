@@ -1437,22 +1437,23 @@ class HistoryTab extends AbstractTab {
     }
 
     record WaterfallStep(String nodeId, String processor, String direction, boolean first, boolean last,
-            int nodeLevel, long elapsed, int inlineDepth) {
+            int nodeLevel, long elapsed, int inlineDepth, long startMs) {
 
         static WaterfallStep fromTrace(TraceEntry e) {
             return new WaterfallStep(
                     e.nodeId, e.processor, e.direction, e.first, e.last, e.nodeLevel, e.elapsed,
-                    e.inlineDepth);
+                    e.inlineDepth, e.epochMs);
         }
 
         static WaterfallStep fromHistory(HistoryEntry e) {
             return new WaterfallStep(
                     e.nodeId, e.processor, e.direction, e.first, e.last, e.nodeLevel, e.elapsed,
-                    e.inlineDepth);
+                    e.inlineDepth, e.epochMs);
         }
 
         WaterfallStep withElapsed(long newElapsed) {
-            return new WaterfallStep(nodeId, processor, direction, first, last, nodeLevel, newElapsed, inlineDepth);
+            return new WaterfallStep(
+                    nodeId, processor, direction, first, last, nodeLevel, newElapsed, inlineDepth, startMs);
         }
 
         String label() {
@@ -1507,11 +1508,14 @@ class HistoryTab extends AbstractTab {
             return;
         }
 
+        long[] offsets = waterfallOffsets(forward);
         long maxElapsed = 0;
         long minDuration = Long.MAX_VALUE;
         long maxDuration = 0;
-        for (WaterfallStep e : forward) {
-            maxElapsed = Math.max(maxElapsed, e.elapsed);
+        for (int i = 0; i < forward.size(); i++) {
+            WaterfallStep e = forward.get(i);
+            // the time line: as long as the step that ends last
+            maxElapsed = Math.max(maxElapsed, offsets[i] + e.elapsed);
             if (!e.first) {
                 minDuration = Math.min(minDuration, e.elapsed);
                 maxDuration = Math.max(maxDuration, e.elapsed);
@@ -1558,7 +1562,7 @@ class HistoryTab extends AbstractTab {
         int end = Math.min(waterfallScroll + visibleLines, forward.size());
         List<Line> lines = new ArrayList<>();
         for (int i = waterfallScroll; i < end; i++) {
-            lines.add(renderWaterfallStep(forward.get(i), labelWidth, barMaxWidth,
+            lines.add(renderWaterfallStep(forward.get(i), offsets[i], labelWidth, barMaxWidth,
                     maxElapsed, minDuration, maxDuration, i == selectedForwardIndex));
         }
 
@@ -1577,8 +1581,50 @@ class HistoryTab extends AbstractTab {
         }
     }
 
+    /**
+     * When each step started, in ms from the first step processed, so the bars of a waterfall stand where they ran. A
+     * route row starts with its first step (its own time is when the exchange was created, before it was processed).
+     * Without the times of the steps, every bar starts at 0.
+     */
+    static long[] waterfallOffsets(List<WaterfallStep> steps) {
+        long[] offsets = new long[steps.size()];
+        // the steps processed set the time line; a route's first and last rows carry when the exchange was created
+        long t0 = Long.MAX_VALUE;
+        for (WaterfallStep s : steps) {
+            if (!s.first() && !s.last()) {
+                if (s.startMs() <= 0) {
+                    return offsets;
+                }
+                t0 = Math.min(t0, s.startMs());
+            }
+        }
+        if (t0 == Long.MAX_VALUE) {
+            return offsets;
+        }
+        for (int i = 0; i < steps.size(); i++) {
+            WaterfallStep s = steps.get(i);
+            if (s.first()) {
+                // a route starts with its first step
+                long start = i + 1 < steps.size() && !steps.get(i + 1).last() ? steps.get(i + 1).startMs() : t0;
+                offsets[i] = Math.max(0, start - t0);
+            } else if (s.last()) {
+                // the end of a route stands where the route started
+                offsets[i] = 0;
+                for (int j = i - 1; j >= 0; j--) {
+                    if (steps.get(j).first() && nodeIdEquals(steps.get(j).nodeId(), s.nodeId())) {
+                        offsets[i] = offsets[j];
+                        break;
+                    }
+                }
+            } else {
+                offsets[i] = Math.max(0, s.startMs() - t0);
+            }
+        }
+        return offsets;
+    }
+
     private static Line renderWaterfallStep(
-            WaterfallStep entry, int labelWidth, int maxBarWidth,
+            WaterfallStep entry, long offset, int labelWidth, int maxBarWidth,
             long maxElapsed, long minDuration, long maxDuration, boolean selected) {
         String indicator = selected ? ">> " : "   ";
         String indent = "  ".repeat(entry.nodeLevel);
@@ -1593,8 +1639,10 @@ class HistoryTab extends AbstractTab {
         Style bandStyle = isRoute ? Style.EMPTY.dim() : TuiHelper.colorForDuration(entry.elapsed, minDuration, maxDuration);
 
         double ratio = maxElapsed > 0 ? (double) entry.elapsed / maxElapsed : 0;
+        int lead = maxElapsed > 0 ? (int) Math.round((double) offset / maxElapsed * maxBarWidth) : 0;
         int barWidth = Math.max(1, (int) Math.round(ratio * maxBarWidth));
-        String bar = "█".repeat(barWidth);
+        lead = Math.min(lead, Math.max(0, maxBarWidth - barWidth));
+        String bar = " ".repeat(lead) + "█".repeat(barWidth);
 
         String durationStr = entry.elapsed + "ms";
         int pad = Math.max(1, 8 - durationStr.length());
@@ -2111,16 +2159,17 @@ class HistoryTab extends AbstractTab {
                 .build();
     }
 
-    private static Title buildHistoryTitle(List<HistoryEntry> entries) {
+    static Title buildHistoryTitle(List<HistoryEntry> entries) {
         if (entries.isEmpty()) {
             return Title.from(" History of last completed ");
         }
         HistoryEntry first = entries.get(0);
+        // the exchange completes at its last "last" step: a route called with direct or seda returns earlier, with
+        // its own (shorter) elapsed time
         HistoryEntry last = null;
         for (HistoryEntry e : entries) {
             if (e.last) {
                 last = e;
-                break;
             }
         }
         if (last == null) {
@@ -2133,7 +2182,7 @@ class HistoryTab extends AbstractTab {
         spans.add(Span.styled("status:" + (failed ? "failed" : "ok"),
                 failed ? Theme.error().bold() : Theme.success().bold()));
         if (last.elapsed >= 0) {
-            spans.add(Span.raw(" elapsed:" + TimeUtils.printDuration(last.elapsed, true)));
+            spans.add(Span.raw(" elapsed:" + TuiHelper.formatDurationMs(last.elapsed)));
         }
         if (first.epochMs > 0) {
             String ago = TimeUtils.printSince(first.epochMs);
@@ -2247,11 +2296,7 @@ class HistoryTab extends AbstractTab {
             } else {
                 lines.add(Line.from(Span.styled(" Body:", headerStyle)));
             }
-            try {
-                body = Jsoner.unescape(body);
-            } catch (Exception e) {
-                // ignore
-            }
+            // the body is unescaped when it is parsed (StatusParser.bodyText)
             String[] bodyParts = body.split("\n");
             for (String bl : bodyParts) {
                 lines.add(Line.from(Span.raw("   " + stripControlChars(bl))));
@@ -2330,19 +2375,11 @@ class HistoryTab extends AbstractTab {
         Rect inner = block.inner(area);
         int visibleHeight = Math.max(1, inner.height());
         int visibleWidth = Math.max(1, inner.width() - 1);
-        int contentHeight;
         if (wordWrap) {
-            contentHeight = 0;
-            for (Line l : lines) {
-                int w = l.width();
-                contentHeight += Math.max(1, (w + visibleWidth - 1) / visibleWidth);
-            }
-            // word-wrap breaks at word boundaries which can produce more lines
-            // than char-based math; add padding so last section is always reachable
-            contentHeight += visibleHeight;
-        } else {
-            contentHeight = lines.size();
+            // wrapped here, so a long header value continues under the value, not at the left edge
+            lines = TuiHelper.hangingWrap(lines, visibleWidth);
         }
+        int contentHeight = lines.size();
         int maxScroll = Math.max(0, contentHeight - visibleHeight);
         if (scroll[0] > maxScroll) {
             scroll[0] = maxScroll;
@@ -2360,7 +2397,7 @@ class HistoryTab extends AbstractTab {
         List<Line> visibleLines = (!wordWrap && hScroll[0] > 0) ? applyHSkip(lines, hScroll[0]) : lines;
         Paragraph detail = Paragraph.builder()
                 .text(Text.from(visibleLines))
-                .overflow(wordWrap ? Overflow.WRAP_WORD : Overflow.CLIP)
+                .overflow(Overflow.CLIP)
                 .scroll(scroll[0])
                 .build();
         frame.renderWidget(detail, hChunks.get(0));

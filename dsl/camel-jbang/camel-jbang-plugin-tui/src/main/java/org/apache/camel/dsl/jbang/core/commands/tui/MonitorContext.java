@@ -150,7 +150,14 @@ class MonitorContext {
         info.pid = "phantom-" + phantomCounter.incrementAndGet();
         info.state = 9;
         phantomIntegrations.add(info);
+        Runnable opened = onProjectOpened;
+        if (opened != null) {
+            opened.run();
+        }
     }
+
+    // called when a project is opened, so what was shown of an earlier run of it (its failure log) is put away
+    volatile Runnable onProjectOpened;
 
     void removePhantom(String pid) {
         phantomIntegrations.removeIf(i -> pid.equals(i.pid));
@@ -202,9 +209,28 @@ class MonitorContext {
         return CommandLineHelper.getCamelDir().resolve(pid + "-trace.json");
     }
 
-    /** Asks the AI to fix a problem of a source file. */
+    Path getErrorFile(String pid) {
+        return CommandLineHelper.getCamelDir().resolve(pid + "-error.json");
+    }
+
+    /** Asks the AI to fix a problem of a source file, or a line that fails at runtime. */
     @FunctionalInterface
     interface AskAi {
         void fixProblem(Path file, int line, String problem, String lineText);
+
+        /**
+         * Asks the AI to fix a line whose processors fail at runtime (Shift+F8 on a line with failures in the live run
+         * data): the failure says how many exchanges failed and the exception of the last one.
+         */
+        default void fixFailure(Path file, int line, String failure, String lineText) {
+            fixProblem(file, line, failure, lineText);
+        }
+
+        /**
+         * Asks the AI about an ERROR of the log whose source line is not known (Shift+F8 in the Log tab): the error
+         * line, the exception and its causes.
+         */
+        default void explainLogError(String error) {
+        }
     }
 }

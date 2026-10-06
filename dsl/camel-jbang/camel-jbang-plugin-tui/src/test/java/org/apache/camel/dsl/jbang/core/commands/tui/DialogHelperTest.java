@@ -91,6 +91,23 @@ class DialogHelperTest {
     }
 
     @Test
+    void confirmDialogWithADetailAndASecondChoice() {
+        Buffer buffer = Buffer.empty(AREA);
+        Frame frame = Frame.forTesting(buffer);
+
+        Rect popup = DialogHelper.renderConfirm(frame, AREA, "Confirm Quit", "Quit the TUI?",
+                "2 integrations started here keep running", "s", "stop them and quit");
+
+        String rendered = HealthTabRenderTest.bufferToString(buffer);
+        assertThat(rendered).contains("Quit the TUI?");
+        assertThat(rendered).contains("2 integrations started here keep running");
+        assertThat(rendered).contains(" Enter  confirm");
+        assertThat(rendered).contains(" s  stop them and quit");
+        assertThat(rendered).contains(" Esc  cancel");
+        assertThat(popup.height()).isEqualTo(DialogHelper.CONFIRM_HEIGHT + 1);
+    }
+
+    @Test
     void inputDialogShowsTitleAndPlaceholder() {
         Buffer buffer = Buffer.empty(AREA);
         Frame frame = Frame.forTesting(buffer);

@@ -22,20 +22,76 @@ The provider owns credentials, model selection, request timeout,
 concurrency limits and transport resources. TypeSafe AI uses
 `camel.component.typesafe-ai.*` settings even when a route contains no TypeSafe AI endpoint.
 
-One advertised adapter is selected automatically. No provider, or multiple distinct
-providers, is an error. Select an existing bean with
-`camel.language.semantic.adapter=myAdapter`, or a class using its fully qualified name.
+An *expert* is a configured semantic evaluator, implemented by `SemanticAdapter`. It is not
+an autonomous agent. Each named question can select a registry bean using `expert`.
+Without that field, `camel.language.semantic.default-expert=myExpert` selects the default bean.
+The existing `camel.language.semantic.adapter=myAdapter` setting remains supported as the
+default when `default-expert` is absent; it also accepts a fully qualified implementation class name.
+
+Without either default, Camel selects the sole eligible registered instance or advertised adapter.
+Registry aliases for one instance count once. A registered instance supersedes discovery of its
+implementation class, including advertised superclasses of registered subclasses. Differently
+configured instances remain distinct candidates.
+No eligible expert, or multiple candidates, is an initialization error listing the candidates.
+Unknown explicit names and invalid defaults fail without fallback. Selection never uses the
+question's result type: two boolean experts can evaluate entirely different properties.
 Use plain names without `#bean:` or `#class:` prefixes. Registry lookup takes precedence over
 class resolution. Class selection uses Camel's class resolver and injector.
 Created adapters are registered as `camelSemanticAdapter` and managed by the context.
 A collision at that name is an error. Referenced beans retain their existing lifecycle owner.
 
-Camel Main and Camel JBang bind `camel.language.semantic.adapter` and
-`camel.language.semantic.default-state` to the language. Embedded applications can resolve
-`SemanticLanguage` from the context and call `setAdapter` and `setDefaultState` before route setup.
+Camel Main and Camel JBang bind `camel.language.semantic.adapter`,
+`camel.language.semantic.default-expert` and `camel.language.semantic.default-state` to the language.
+Embedded applications can resolve `SemanticLanguage` from the context and call `setDefaultExpert`,
+`setAdapter` and `setDefaultState` before route setup.
 The catalog describes the generic `language` expression model; it does not provide a dedicated
 semantic Spring Boot configuration class. Configure the language bean explicitly in Spring Boot
 until generic-language starter configuration is available.
+
+== Fixed and instruction-driven experts
+
+Instructions are optional in the common declaration model. The selected expert decides whether
+they are required, optional or unsupported. TypeSafe AI still requires nonblank instructions.
+A fixed detector can reject instructions and caller-defined criteria because its model already
+defines the question it answers. Unsupported result types, instructions, criteria and decision
+policies fail during initialization, before inference. Replacements for declarations already referenced
+by initialized expressions are validated before publication; failed replacements retain the previous definitions.
+
+For example, given registered instances `security` (a fixed injection detector) and `general`
+(an instruction-driven expert):
+
+[source,yaml]
+----
+- semantic:
+    question:
+      injection:
+        expert: security
+        type: boolean
+        state: "${body}"
+        threshold: "{{security.injection.threshold}}"
+        uncertainty: "{{security.injection.uncertainty}}"
+        uncertaintyPolicy: fail
+      department:
+        expert: general
+        type: choice
+        instructions: Which department should handle this message?
+        criteria:
+          billing: Invoices, payments and refunds
+          technical: Bugs, outages and technical problems
+----
+
+Use `ref:injection` and `ref:department` in ordinary semantic expressions. Expert names can contain
+property placeholders, resolved during runtime selection. Java uses `.expert("security")`;
+XML uses `<question name="injection" type="boolean" expert="security"/>`. An omitted instruction
+stays absent in all three DSLs; an explicitly blank instruction is invalid.
+
+The selected text is data. A fixed injection detector must not prepend a synthetic instruction.
+Its boolean `probability` is the score for the positive class (INJECTION), even when BENIGN wins.
+Threshold and uncertainty policies produce the decision. A negative result means this evaluation
+did not detect injection; it does not establish general safety or grant authorization.
+Probability is distinct from a rubric SCORE and from optional provider confidence. Missing optional
+metadata remains absent, and invalid output or provider failure remains an error. Continue,
+quarantine and review are application decisions expressed using Camel EIPs.
 
 == Named questions
 
@@ -96,7 +152,35 @@ Reloading a resource replaces its complete set of questions, including removing 
 no longer present. Development-mode route reload also removes definitions from deleted or renamed files
 before parsing replacements. This replacement does not make the surrounding route reload transactional.
 Existing expressions resolve the current definition on their next evaluation.
-Loading declarations does not perform inference.
+Reload validates the candidate declaration snapshot for initialized expressions before publishing
+it, including expert capabilities, boolean predicate types, Simple state selectors, and compatible
+batch selectors across resources. Failed validation leaves the previous declarations available.
+Unused declarations are validated when first referenced, as at startup. Removed declarations
+remain removable; an expression that still references a removed name fails when evaluated.
+Validation registrations are weakly held: the registry does not keep expressions or their providers
+alive. Constraints can remain until an unused expression is garbage-collected; stopping a route
+does not necessarily release an expression that is still referenced elsewhere.
+Loading declarations does not perform inference or start provider resources for validation.
+
+For questions using `expert` or `default-expert`, the registry bean is resolved when the
+expression is compiled. Rebinding that name does not update already compiled expressions.
+After replacing the bean, recreate the consuming routes or expressions, or reload their
+question declarations so the expressions compile against the replacement bean.
+
+=== YAML reload and expert bean preparation
+
+YAML declarations are registered during the loader's existing pre-parse phase, before beans in
+the resource set are prepared. On initial loading, expert validation waits until expressions
+initialize, after bean preparation. On reload, replacements for initialized expressions are
+validated during pre-parsing, so the selected expert must already be registered.
+
+For example, changing an existing question to `expert: newSecurity` and introducing a
+`newSecurity` bean in the same reload fails if that bean is not yet in the registry. Keep expert
+beans registered outside the reloaded resource, prepare the new bean before reloading the
+declarations, or restart the application when changing both together. XML declaration loading
+runs after resource-set bean preparation; Java helpers validate when `register()` is called.
+The three DSLs share declaration fields and validation rules, but this YAML bean-order constraint
+remains because the existing resolver hook runs before bean preparation.
 
 === Java declarations
 
@@ -347,8 +431,13 @@ from resource reload. Questions that need a previous answer require separate eva
 
 `SemanticAdapter.evaluateBatch(Map<String, SemanticQuestion>, Object)` has a default
 implementation that invokes the existing single-question method sequentially, preserving
-compatibility with existing adapters. TypeSafe AI overrides it to send all questions in
-one HTTP request using the component's existing timeout and concurrency limits. No results
+compatibility with existing adapters. Questions are grouped by the resolved expert instance,
+and each group is passed to that instance's batch method. Two instances of the same class remain
+separate groups. Each group must return exactly its assigned names. Camel validates the complete
+combined result before publishing decisions or diagnostics, preserving the original reference order.
+
+TypeSafe AI sends its group in one HTTP request using the component's existing timeout and
+concurrency limits. A batch spanning experts can make multiple inference requests. No results
 are cached or combined across exchanges.
 
 == EIP integration
@@ -551,6 +640,36 @@ the action. The example's threshold is a decision policy, not an accuracy guaran
 This pattern uses Validate and existing authorization services. It does not add a semantic
 `AuthorizationPolicy` implementation or replace a component's internal guardrail interfaces.
 
+== Expert capabilities
+
+`SemanticAdapter.capabilities()` describes accepted text or structured input, supported result
+types, instruction and criteria support, optional probability/confidence semantics, and known limits.
+The default reads `@SemanticExpert` from the provider class. Unannotated legacy adapters report
+`known=false`, with no claimed capabilities. The language still requires instructions for these
+legacy adapters before calling their existing `validate` method. Providers that accept absent
+instructions must explicitly advertise optional or unsupported instructions.
+An adapter can override capabilities for its configured model using the named builder:
+
+[source,java]
+----
+@Override
+public SemanticCapabilities capabilities() {
+    return SemanticAdapter.super.capabilities().toBuilder()
+            .maxChoices(32)
+            .build();
+}
+----
+
+This example narrows an annotated adapter's limits. `SemanticCapabilities.builder()` creates an
+explicit descriptor from scratch; input and result sets are empty until supplied. Descriptors
+are immutable. Capability reporting and declaration validation must not perform inference or
+load models. Runtime input and response validation still apply.
+
+Providers declare static capabilities with `org.apache.camel.semantic.SemanticExpert` from
+`camel-semantic`. The annotation describes the implementation; it neither selects an expert nor
+describes application bean names. Runtime capabilities and `validate` remain authoritative for
+configured instances. No dedicated expert catalog model or discovery API is provided.
+
 == Implementing an adapter
 
 Implement `org.apache.camel.semantic.SemanticAdapter`. Advertise the implementation in
@@ -567,7 +686,8 @@ Discovery checks the declarations for ambiguity before resolving the implementat
 explicit selection. Only the selected adapter is constructed, through Camel's `Injector`.
 Explicit bean or class selection also works when packaging does not expose discovery resources.
 
-`validate` rejects unsupported questions and decision policies before traffic. `evaluate`
+The language checks known capabilities and then calls `validate` for model-specific restrictions
+before traffic. Providers should also validate when their SPI is called directly. `evaluate`
 must be thread-safe, bound time and resource consumption, honor interruption and propagate
 operational failures without disclosing input or credentials. Implement `CamelContextAware`
 for context injection and Camel `Service` interfaces when the adapter owns resources.

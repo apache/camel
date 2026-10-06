@@ -45,12 +45,26 @@ import dev.tamboui.widgets.scrollbar.ScrollbarState;
 
 class AutocompletePopup {
 
+    /**
+     * An entry of the popup; insert is the text that goes into the line when it differs from the key shown (a simple
+     * function is listed as date:command and inserted as date:), null otherwise.
+     */
     record CompletionItem(String key, String description, String type, Object defaultValue,
-            boolean deprecated, String deprecationNote, String group, boolean required) {
+            boolean deprecated, String deprecationNote, String group, boolean required, String insert) {
+
+        CompletionItem(String key, String description, String type, Object defaultValue,
+                       boolean deprecated, String deprecationNote, String group, boolean required) {
+            this(key, description, type, defaultValue, deprecated, deprecationNote, group, required, null);
+        }
 
         CompletionItem(String key, String description, String type, Object defaultValue,
                        boolean deprecated, String deprecationNote, String group) {
-            this(key, description, type, defaultValue, deprecated, deprecationNote, group, false);
+            this(key, description, type, defaultValue, deprecated, deprecationNote, group, false, null);
+        }
+
+        /** The text that goes into the line. */
+        String insertText() {
+            return insert != null ? insert : key;
         }
     }
 
@@ -83,6 +97,7 @@ class AutocompletePopup {
     private CompletionItem selectedItem;
     private Rect popupRect;
     private String titlePrefix;
+    private boolean fullKeys;
 
     AutocompletePopup(List<CompletionItem> items, String initialPrefix, String lineKeyText) {
         this(items, initialPrefix, lineKeyText, false);
@@ -314,7 +329,7 @@ class AutocompletePopup {
             Style keyStyle = ci.deprecated() ? deprecatedStyle : ci.required() ? boldStyle : normalStyle;
 
             String displayKey = key;
-            if (!key.startsWith("{{") && !key.endsWith(".")) {
+            if (!fullKeys && !key.startsWith("{{") && !key.endsWith(".")) {
                 int lastDot = key.lastIndexOf('.');
                 if (lastDot >= 0) {
                     displayKey = key.substring(lastDot + 1);
@@ -435,7 +450,10 @@ class AutocompletePopup {
             }
             if (selected.description() != null) {
                 lines.add(Line.empty());
-                lines.add(Line.from(Span.styled(selected.description(), dimStyle)));
+                // a simple function's description is followed by its parameters and examples, each on a line
+                for (String part : selected.description().split("\n", -1)) {
+                    lines.add(part.isEmpty() ? Line.empty() : Line.from(Span.styled(part, dimStyle)));
+                }
             }
         }
 
@@ -497,6 +515,14 @@ class AutocompletePopup {
             }
         }
         return null;
+    }
+
+    /**
+     * Lists the keys whole: header.name of the simple functions is not a property key whose group (up to its last dot)
+     * goes without saying.
+     */
+    void setFullKeys(boolean fullKeys) {
+        this.fullKeys = fullKeys;
     }
 
     boolean isValueMode() {

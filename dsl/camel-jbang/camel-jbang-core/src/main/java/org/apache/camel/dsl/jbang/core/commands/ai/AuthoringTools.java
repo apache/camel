@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor.tool;
 
@@ -99,6 +100,7 @@ public final class AuthoringTools {
                 .param("optionsFilter", "string", "Keyword to match in option names or descriptions", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
+                .deterministic(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogDocs.catalogDoc(ctx.catalog(), args.get("name"), args.get("endpoint"),
@@ -119,6 +121,7 @@ public final class AuthoringTools {
                 .param("limit", "integer", "Maximum matches per kind (default 10)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
+                .deterministic(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogDocs.find(ctx.catalog(), args.get("term"), args.get("kind"),
@@ -140,6 +143,7 @@ public final class AuthoringTools {
                 .param("limit", "integer", "Maximum samples to return (default 2, max 5)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
+                .deterministic(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogSamples.sample(ctx.catalog(), args.get("kind"), args.get("name"),
@@ -283,17 +287,18 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_get_log",
-                "Recent log records of a running integration, newest first, with optional filtering; a stack trace "
-                                              + "comes as one record with a detail block.")
+                "Recent log records of a running integration, newest first, with optional filtering; stack traces "
+                                              + "only with details.")
                 .param("name", "string", NAME_DESC, false)
                 .param("limit", "integer", "Maximum records to return (default 50)", false)
                 .param("filter", "string", "Case-insensitive substring filter on the message", false)
                 .param("level", "string", "Only this log level (INFO, WARN, ERROR, DEBUG, TRACE)", false)
+                .param("details", "boolean", "Include the stack traces (default false)", false)
                 .core(true)
                 .executor((ctx, args) -> {
                     RuntimeHelper.ProcessInfo p = selectProcess(ctx, args);
                     return LogFileReader.read(ctx.pid(), p != null ? p.name() : null, integer(args, "limit", 50),
-                            args.get("filter"), args.get("level")).toJson();
+                            args.get("filter"), args.get("level"), bool(args, "details", false)).toJson();
                 }));
 
         registry.accept(tool("camel_get_errors",
@@ -304,7 +309,7 @@ public final class AuthoringTools {
                 .executor((ctx, args) -> {
                     selectProcess(ctx, args);
                     JsonObject errors = ctx.readErrorFile();
-                    return errors != null ? errors.toJson() : "No errors captured.";
+                    return errors != null ? unescapeBodies(errors).toJson() : "No errors captured.";
                 }));
 
         registry.accept(tool("camel_eval_expression",
@@ -353,6 +358,7 @@ public final class AuthoringTools {
                 .param("error", "string", "The stack trace or error message", true)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
+                .deterministic(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return ErrorDiagnoser.diagnose(required(args, "error"), ctx.catalog()).toJson();
@@ -472,6 +478,17 @@ public final class AuthoringTools {
         return sb.toString();
     }
 
+    /** Where the shape of a Kamelet file is explained, said where an agent gets one wrong (CAMEL-25283). */
+    static final String KAMELET_GUIDE = "How to write a Kamelet (the file, and the source, sink and action kinds): "
+                                        + "camel_catalog_doc name=kamelet docPage=custom";
+
+    private static void putKameletGuide(JsonObject result, String file, List<String> errors) {
+        String name = file != null ? file.toLowerCase(Locale.ROOT) : "";
+        if (!errors.isEmpty() && (name.endsWith(".kamelet.yaml") || name.endsWith(".kamelet.yml"))) {
+            result.put("guide", KAMELET_GUIDE);
+        }
+    }
+
     private static String commaLines(String list) {
         return list == null ? null : list.replace(',', '\n');
     }
@@ -498,6 +515,7 @@ public final class AuthoringTools {
         result.put("valid", errors.isEmpty());
         result.put("file", file);
         result.put("errors", new JsonArray(errors));
+        putKameletGuide(result, file, errors);
         // the problems whose fix is certain, as edits an agent can apply (camel_edit_file find/replace)
         JsonArray fixes = new JsonArray();
         String[] lines = content.split("\n", -1);
@@ -918,6 +936,7 @@ public final class AuthoringTools {
                 result.put("errors", new JsonArray(errors));
                 result.put("message", "The file was not written: the content has validation errors. Fix them and"
                                       + " call camel_write_file again.");
+                putKameletGuide(result, file, errors);
                 return result;
             }
         }
@@ -1347,5 +1366,27 @@ public final class AuthoringTools {
         } catch (NumberFormatException e) {
             return defaultValue;
         }
+    }
+
+    /**
+     * Camel JSON-escapes the body of a message dump (MessageHelper), so a JSON body would reach the AI escaped twice (a
+     * body like {"orderId":1} showed as {\\"orderId\\":1}). The body values of the errors are unescaped once, as the
+     * TUI shows them.
+     */
+    static JsonObject unescapeBodies(JsonObject errors) {
+        Collection<Object> list = errors.getCollection("errors");
+        if (list != null) {
+            for (Object e : list) {
+                if (e instanceof JsonObject error && error.get("message") instanceof JsonObject message
+                        && message.get("body") instanceof JsonObject body && body.get("value") instanceof String value) {
+                    try {
+                        body.put("value", Jsoner.unescape(value));
+                    } catch (Exception ex) {
+                        // keep the value as it came
+                    }
+                }
+            }
+        }
+        return errors;
     }
 }

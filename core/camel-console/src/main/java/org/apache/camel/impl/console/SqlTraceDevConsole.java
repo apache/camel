@@ -49,7 +49,7 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
               description = "Maximum capacity of traced SQL statements (capacity must be between 25 and 1000)")
     private int capacity = 200;
 
-    private StatementEntry[] events;
+    private volatile StatementEntry[] events;
     private final AtomicInteger pos = new AtomicInteger();
     private final ConsoleEventNotifier listener = new ConsoleEventNotifier();
 
@@ -94,14 +94,18 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
     }
 
     public void setCapacity(int capacity) {
+        if (events != null) {
+            // Camel Main configures the console after the registry has started it: resize its buffers (an entry
+            // added meanwhile may be lost, which only matters while configuring)
+            ConsoleHelper.checkCapacity(capacity, 25);
+            this.events = ConsoleHelper.resize(events, pos.getAndSet(0), capacity);
+        }
         this.capacity = capacity;
     }
 
     @Override
     protected void doInit() throws Exception {
-        if (capacity > 1000 || capacity < 25) {
-            throw new IllegalArgumentException("Capacity must be between 25 and 1000");
-        }
+        ConsoleHelper.checkCapacity(capacity, 25);
         this.events = new StatementEntry[capacity];
     }
 
@@ -191,11 +195,13 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
 
     private List<StatementEntry> collectEvents() {
         List<StatementEntry> list = new ArrayList<>();
+        StatementEntry[] ring = events;
+        int capacity = ring.length;
         int cursor = pos.get();
         // cursor points to the NEXT write slot, so walk backward from cursor-1
         for (int i = 0; i < capacity; i++) {
             cursor = (cursor - 1 + capacity) % capacity;
-            StatementEntry event = events[cursor];
+            StatementEntry event = ring[cursor];
             if (event != null) {
                 list.add(event);
             }
@@ -345,8 +351,8 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
                             event.getTimestamp(), exchange.getExchangeId(), exchange.getFromRouteId(), nodeId, location,
                             uri, finalQuery, category, ese.getTimeTaken(), exchange.isFailed(), rowCount, updateCount);
 
-                    int p = pos.getAndUpdate(operand -> ++operand % capacity);
-                    events[p] = entry;
+                    StatementEntry[] ring = events;
+                    ring[ConsoleHelper.nextSlot(pos, ring.length)] = entry;
                 }
             }
         }

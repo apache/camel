@@ -201,6 +201,56 @@ memory- and CPU-expensive and a small file can still parse into a lot of text. A
 document fails the exchange like any other error (see below) and releases its dedup claim, so
 a trimmed re-delivery under the same id still ingests.
 
+=== Ingesting media: images, audio, video and PDF
+
+With `modality=media` the body is read as bytes and embedded whole, as one vector, by a
+multimodal embedding model. The model must list the medium (`IMAGE`, `AUDIO`, `VIDEO` or
+`PDF`) in its `supportedContentTypes()`; a text-only model fails the start. The vector is
+stored under a placeholder segment whose text is the document id, with the same identity
+metadata as text segments plus the MIME type under `camel_ingest_content_type`, so
+retrieval and citation work unchanged and a retriever on a shared store can tell a media
+hit from text.
+
+[source,java]
+----
+from("file:/var/data/photos?noop=true&recursive=true&readLock=changed&antInclude=**/*.jpg,**/*.png")
+    .to("langchain4j-ingest:photos?modality=media&documentIdHeader=CamelFileName");
+----
+
+Leave `charset` unset on the consumer: a file consumer with one converts the file through
+a Reader, which corrupts media. Keep other files out of the folder with the consumer's
+`antInclude`, as above, or the endpoint's `includeId` and `excludeId`: an unsupported file
+fails the exchange and is retried on every poll.
+
+The medium is taken from the MIME type: the `contentType` option when set, otherwise the
+document id's file extension looked up in Camel's MIME table (`MimeTypeHelper` in
+camel-util: wav, mp3, png, mp4, pdf and the like). Message headers are never consulted. An
+id ending in a query string, a URL say, has no usable extension and needs `contentType`. A
+document whose type is unknown, is not a medium or is one the model does not support fails
+the exchange before its dedup claim and before its body is read, so a mixed folder fails
+per file. A `.webm` file counts as video; a browser audio recording needs
+`contentType=audio/webm`. The family decides the medium and the provider decides the
+formats within it, so an `image/svg+xml` file passes as an image and fails at the
+provider. A `contentType` the model does not support, or one set with `modality=text`,
+fails the start.
+
+Nothing is split: `maxSegmentSize`, `maxOverlapSize` and `embeddingBatchSize` do not
+apply, a configured `documentSplitter` fails the start, and `maxDocumentSize` and
+`minDocumentSize` count bytes. Base64 encoding adds a third, so set `maxDocumentSize`
+against the model's request limit. A file consumer announces the length in
+`CamelFileLength`, which is checked against the cap before the file is read; any other
+body is checked once it is in memory. A `documentFilter` runs before the body is read and
+sees it as delivered, a file or stream rather than text, so filter on headers or the id.
+
+Several LangChain4j providers embed images (Jina, Voyage AI, Cohere, Google Gemini and
+Bedrock Titan among them); none embeds audio yet, so an audio model is typically a custom
+`EmbeddingModel` calling a service such as Wav2Vec2 or CLAP. The same bean embeds the
+query at retrieval time. A model with an `EmbeddingModelListener` attached is refused at
+start: LangChain4j 1.20 builds the listener context from the input text, which media lacks.
+Only a listener added by hand is affected; the Quarkus and Spring Boot LangChain4j
+integrations attach none to embedding models today. Media embedding goes through
+LangChain4j's `EmbeddingRequest` API, still experimental in 1.20, so it may change.
+
 === When ingestion fails
 
 A failure while splitting, embedding or storing — a rate-limited model, an unreachable store —

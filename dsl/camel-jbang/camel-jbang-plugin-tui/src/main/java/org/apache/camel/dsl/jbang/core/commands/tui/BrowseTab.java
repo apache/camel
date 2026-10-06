@@ -703,8 +703,7 @@ class BrowseTab extends AbstractTab {
                 // body is a JsonObject with {type, value}
                 JsonObject bodyObj = message.getMap("body");
                 if (bodyObj != null) {
-                    Object val = bodyObj.get("value");
-                    md.body = val != null ? val.toString() : null;
+                    md.body = StatusParser.bodyText(bodyObj.get("value"));
                 }
 
                 result.add(md);

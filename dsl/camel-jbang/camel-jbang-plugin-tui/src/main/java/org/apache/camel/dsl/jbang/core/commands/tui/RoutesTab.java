@@ -962,7 +962,7 @@ class RoutesTab extends AbstractTab {
         if (showDescription && route.description != null && !route.description.isBlank()) {
             return route.description;
         }
-        return route.from != null ? route.from : "";
+        return route.from != null ? TuiHelper.displayUri(route.from) : "";
     }
 
     /**
@@ -1140,7 +1140,8 @@ class RoutesTab extends AbstractTab {
             }
             rows.add(Row.from(
                     Cell.from("   route"),
-                    Cell.from(Span.styled(route.from != null ? route.from : route.routeId, routeStyle)),
+                    Cell.from(Span.styled(route.from != null ? TuiHelper.displayUri(route.from) : route.routeId,
+                            routeStyle)),
                     rightCell(formatThroughput(route.throughput), 8),
                     rightCell(String.valueOf(route.total), 8),
                     rightCell(String.valueOf(route.failed), 6,

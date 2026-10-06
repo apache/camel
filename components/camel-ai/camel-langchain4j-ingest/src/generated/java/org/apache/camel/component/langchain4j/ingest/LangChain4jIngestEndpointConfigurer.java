@@ -23,6 +23,8 @@ public class LangChain4jIngestEndpointConfigurer extends PropertyConfigurerSuppo
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LangChain4jIngestEndpoint target = (LangChain4jIngestEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "contenttype":
+        case "contentType": target.getConfiguration().setContentType(property(camelContext, java.lang.String.class, value)); return true;
         case "documentfilter":
         case "documentFilter": target.getConfiguration().setDocumentFilter(property(camelContext, org.apache.camel.Predicate.class, value)); return true;
         case "documentidheader":
@@ -51,6 +53,7 @@ public class LangChain4jIngestEndpointConfigurer extends PropertyConfigurerSuppo
         case "maxSegmentSize": target.getConfiguration().setMaxSegmentSize(property(camelContext, int.class, value)); return true;
         case "mindocumentsize":
         case "minDocumentSize": target.getConfiguration().setMinDocumentSize(property(camelContext, int.class, value)); return true;
+        case "modality": target.getConfiguration().setModality(property(camelContext, org.apache.camel.component.langchain4j.ingest.IngestModality.class, value)); return true;
         default: return false;
         }
     }
@@ -63,6 +66,8 @@ public class LangChain4jIngestEndpointConfigurer extends PropertyConfigurerSuppo
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "contenttype":
+        case "contentType": return java.lang.String.class;
         case "documentfilter":
         case "documentFilter": return org.apache.camel.Predicate.class;
         case "documentidheader":
@@ -91,6 +96,7 @@ public class LangChain4jIngestEndpointConfigurer extends PropertyConfigurerSuppo
         case "maxSegmentSize": return int.class;
         case "mindocumentsize":
         case "minDocumentSize": return int.class;
+        case "modality": return org.apache.camel.component.langchain4j.ingest.IngestModality.class;
         default: return null;
         }
     }
@@ -99,6 +105,8 @@ public class LangChain4jIngestEndpointConfigurer extends PropertyConfigurerSuppo
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LangChain4jIngestEndpoint target = (LangChain4jIngestEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "contenttype":
+        case "contentType": return target.getConfiguration().getContentType();
         case "documentfilter":
         case "documentFilter": return target.getConfiguration().getDocumentFilter();
         case "documentidheader":
@@ -127,6 +135,7 @@ public class LangChain4jIngestEndpointConfigurer extends PropertyConfigurerSuppo
         case "maxSegmentSize": return target.getConfiguration().getMaxSegmentSize();
         case "mindocumentsize":
         case "minDocumentSize": return target.getConfiguration().getMinDocumentSize();
+        case "modality": return target.getConfiguration().getModality();
         default: return null;
         }
     }

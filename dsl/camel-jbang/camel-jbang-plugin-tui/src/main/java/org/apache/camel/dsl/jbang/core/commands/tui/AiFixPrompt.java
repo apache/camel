@@ -34,6 +34,41 @@ final class AiFixPrompt {
      * @param line      the line of the problem, 1-based
      */
     static String of(Path directory, Path file, int line, String problem, String lineText) {
+        return "Fix the problem on line " + line + " of " + nameOf(directory, file) + ": " + problem + "\n"
+               + "The line is: " + lineText.strip() + "\n"
+               + "Change only what this problem is about, with camel_edit_file, then check the file with"
+               + " camel_validate_source.";
+    }
+
+    /**
+     * The question for a line that fails at runtime (Shift+F8 on a line with failures in the live run data). The cause
+     * may lie elsewhere than on the line (such as a direct: endpoint no route consumes), so the AI is asked to find it
+     * first, and dev mode reloads the fix once it is saved.
+     *
+     * @param failure how many exchanges failed on the line, and the exception of the last one when known
+     */
+    static String ofFailure(Path directory, Path file, int line, String failure, String lineText) {
+        return "Exchanges fail at runtime on line " + line + " of " + nameOf(directory, file) + ": " + failure + "\n"
+               + "The line is: " + lineText.strip() + "\n"
+               + "Find the cause from the integration's errors and log, then fix it with camel_edit_file (the fix may"
+               + " belong on another line or in another route) and check the file with camel_validate_source."
+               + " Dev mode reloads the file when it is saved.";
+    }
+
+    /**
+     * The question for an ERROR of the log whose source line is not known (Shift+F8 in the Log tab): explain it, and
+     * fix it when the cause is in the project's routes.
+     *
+     * @param error the ERROR line, the exception and its causes
+     */
+    static String ofLogError(String error) {
+        return "Explain this ERROR from the log of the running integration:\n" + error + "\n"
+               + "If the cause is in the project's routes or configuration, fix it with camel_edit_file and check the"
+               + " file with camel_validate_source. Dev mode reloads the file when it is saved.";
+    }
+
+    /** The name of the file relative to the project directory, when it is inside it. */
+    private static String nameOf(Path directory, Path file) {
         String name = file.toString();
         if (directory != null) {
             Path dir = directory.toAbsolutePath().normalize();
@@ -42,9 +77,6 @@ final class AiFixPrompt {
                 name = dir.relativize(abs).toString();
             }
         }
-        return "Fix the problem on line " + line + " of " + name + ": " + problem + "\n"
-               + "The line is: " + lineText.strip() + "\n"
-               + "Change only what this problem is about, with camel_edit_file, then check the file with"
-               + " camel_validate_source.";
+        return name;
     }
 }

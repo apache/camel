@@ -24,6 +24,7 @@ import java.util.stream.IntStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.language.semantic.SemanticLanguage;
+import org.apache.camel.semantic.SemanticExpert.ResultType;
 import org.apache.camel.semantic.SemanticQuestion;
 import org.apache.camel.semantic.SemanticQuestions;
 import org.apache.camel.semantic.SemanticResult;
@@ -39,6 +40,40 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
+    @Test
+    void advertisesCapabilitiesAndRequiresInstructionsWithoutTransport() {
+        TypeSafeAiSemanticAdapter adapter = new TypeSafeAiSemanticAdapter();
+        var capabilities = adapter.capabilities();
+        assertThat(capabilities.isKnown()).isTrue();
+        assertThat(capabilities.getName()).isEqualTo("typesafe-ai");
+        assertThat(capabilities.getArtifactId()).isEqualTo("camel-typesafe-ai");
+        assertThat(capabilities.getMaxChoices()).isEqualTo(255);
+        assertThat(capabilities.getMaxScoreLevels()).isEqualTo(10);
+        assertThat(capabilities.getResultTypes()).containsExactly(ResultType.BOOLEAN, ResultType.CHOICE, ResultType.SCORE);
+        assertThat(capabilities.isBooleanProbability()).isTrue();
+        SemanticQuestion fixed = new SemanticQuestion(
+                SemanticQuestion.Type.BOOLEAN, null, null,
+                null, null, 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
+        assertThatThrownBy(() -> adapter.validate(fixed)).hasMessageContaining("instructions are required");
+        assertThat(requests).isEmpty();
+    }
+
+    @Test
+    void subclassesRetainCapabilitiesAndProviderValidation() {
+        TypeSafeAiSemanticAdapter subclass = new TypeSafeAiSemanticAdapter() {
+        };
+        assertThat(subclass.capabilities()).usingRecursiveComparison()
+                .isEqualTo(new TypeSafeAiSemanticAdapter().capabilities());
+        SemanticQuestion missing = new SemanticQuestion(
+                SemanticQuestion.Type.BOOLEAN, null, null,
+                null, null, 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
+        assertThatThrownBy(() -> subclass.validate(missing)).hasMessageContaining("instructions are required");
+        SemanticQuestion score = new SemanticQuestion(
+                SemanticQuestion.Type.SCORE, "Score", null, null,
+                IntStream.range(0, 11).mapToObj(i -> "Level " + i).toList(), 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
+        assertThatThrownBy(() -> subclass.validate(score)).hasMessageContaining("10 score levels");
+    }
+
     @Test
     void directEvaluationInitializesTransportWithoutPriorValidation() throws Exception {
         respond = request -> result(Map.of("question", Map.of("type", "noul", "noul", 0.9)));

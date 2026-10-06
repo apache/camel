@@ -27,6 +27,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ import java.util.Map.Entry;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -714,6 +716,28 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
     }
 
     /**
+     * The body as a stream for the request entity. A Map or a List (a body unmarshalled from JSON, or built as a map)
+     * cannot become one, and the converter's message only names the conversion: say what to do (CAMEL-25309).
+     */
+    private static InputStream mandatoryBodyStream(Exchange exchange, Message in) throws InvalidPayloadException {
+        try {
+            return in.getMandatoryBody(InputStream.class);
+        } catch (InvalidPayloadException e) {
+            Object body = in.getBody();
+            if (body instanceof Map || body instanceof Collection) {
+                InvalidPayloadException answer = new InvalidPayloadException(
+                        exchange, InputStream.class, in,
+                        "a " + (body instanceof Map ? "Map" : body instanceof List ? "List" : "Collection")
+                                                         + " is not an HTTP request body: marshal it to JSON first "
+                                                         + "(marshal: json) or set the body to the JSON text");
+                answer.initCause(e.getCause() != null ? e.getCause() : e);
+                throw answer;
+            }
+            throw e;
+        }
+    }
+
+    /**
      * Creates a holder object for the data to send to the remote server.
      *
      * @param  exchange               the exchange with the IN message with data to send
@@ -833,7 +857,7 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                     // fallback as input stream
                     if (answer == null) {
                         // force the body as an input stream since this is the fallback
-                        InputStream is = in.getMandatoryBody(InputStream.class);
+                        InputStream is = mandatoryBodyStream(exchange, in);
                         if (multipart) {
                             answer = MultipartEntityBuilder.create().addBinaryBody(multipartName, is).build();
                         } else {

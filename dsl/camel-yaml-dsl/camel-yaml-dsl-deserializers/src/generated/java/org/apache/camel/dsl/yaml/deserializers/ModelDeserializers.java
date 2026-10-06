@@ -7509,8 +7509,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "allowUnmarshallType", type = "boolean", defaultValue = "false", description = "Whether to allow Jackson to use the CamelJacksonUnmarshalType header during unmarshalling. Should only be enabled when desired.", displayName = "Allow Unmarshall Type"),
                     @YamlProperty(name = "collectionType", type = "string", description = "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows using different collection types than java.util.Collection based as default.", displayName = "Collection Type"),
                     @YamlProperty(name = "contentTypeHeader", type = "boolean", defaultValue = "true", description = "Whether the data format should set the Content-Type header with the type from the data format. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON", displayName = "Content Type Header"),
-                    @YamlProperty(name = "disableFeatures", type = "string", description = "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature. Multiple features can be separated by comma.", displayName = "Disable Features"),
-                    @YamlProperty(name = "enableFeatures", type = "string", description = "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature. Multiple features can be separated by comma.", displayName = "Enable Features"),
+                    @YamlProperty(name = "disableFeatures", type = "string", description = "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.", displayName = "Disable Features"),
+                    @YamlProperty(name = "enableFeatures", type = "string", description = "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.", displayName = "Enable Features"),
                     @YamlProperty(name = "enableJaxbAnnotationModule", type = "boolean", defaultValue = "false", description = "Whether to enable the JAXB annotations module when using Jackson. When enabled then JAXB annotations can be used by Jackson.", displayName = "Enable Jaxb Annotation Module"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "include", type = "string", description = "If you want to marshal a POJO to JSON, and the POJO has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL.", displayName = "Include"),
@@ -10936,7 +10936,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "mockIncludePattern", type = "string", defaultValue = "classpath:camel-mock/**", description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.", displayName = "Mock Include Pattern"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
                     @YamlProperty(name = "routeId", type = "string", description = "The route id.", displayName = "Route Id"),
-                    @YamlProperty(name = "specification", type = "string", required = true, description = "Path to the OpenAPI specification file.", displayName = "Specification")
+                    @YamlProperty(name = "specification", type = "string", required = true, description = "Path to the OpenAPI specification file.", displayName = "Specification"),
+                    @YamlProperty(name = "unmatchedRequestHandling", type = "enum:platform,camel", defaultValue = "platform", description = "Who answers requests that match no operation in the OpenAPI specification: the HTTP layer (platform) or Camel via the unmatched request handler (camel).", displayName = "Unmatched Request Handling")
             }
     )
     public static class OpenApiDefinitionDeserializer extends YamlDeserializerBase<OpenApiDefinition> {
@@ -10982,6 +10983,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "specification": {
                     String val = asText(node);
                     target.setSpecification(val);
+                    break;
+                }
+                case "unmatchedRequestHandling": {
+                    String val = asText(node);
+                    target.setUnmatchedRequestHandling(val);
                     break;
                 }
                 case "id": {
@@ -11577,7 +11583,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "examples", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Examples of the parameter.", displayName = "Examples"),
                     @YamlProperty(name = "name", type = "string", required = true, description = "The parameter name.", displayName = "Name"),
                     @YamlProperty(name = "required", type = "boolean", defaultValue = "true", description = "Sets the parameter required flag.", displayName = "Required"),
-                    @YamlProperty(name = "type", type = "enum:body,formData,header,path,query", required = true, defaultValue = "path", description = "Sets the parameter type such as body, form, header, path, or query.", displayName = "Type")
+                    @YamlProperty(name = "type", type = "enum:body,formData,header,path,query", defaultValue = "path", description = "Sets the parameter type such as body, form, header, path, or query.", displayName = "Type")
             }
     )
     public static class ParamDefinitionDeserializer extends YamlDeserializerBase<ParamDefinition> {

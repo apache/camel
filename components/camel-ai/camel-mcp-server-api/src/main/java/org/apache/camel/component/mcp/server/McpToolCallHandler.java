@@ -37,4 +37,21 @@ public interface McpToolCallHandler {
      * @return           the sanitized result, never null
      */
     McpToolCallResult call(Map<String, Object> arguments);
+
+    /**
+     * Invokes the tool with the given arguments and the transport-supplied caller context, so a tool route's
+     * {@link org.apache.camel.spi.AuthorizationPolicy} can authorize on the caller's identity. The default ignores the
+     * context and calls {@link #call(Map)}; the bridge overrides it to stamp the caller principal onto the tool
+     * exchange. Engines that can determine a caller identity (such as the Vert.x streamable HTTP transport) call this
+     * overload; others keep calling {@link #call(Map)}.
+     *
+     * @param  arguments the tool arguments as parsed from the MCP {@code tools/call} request, never null
+     * @param  context   the transport-supplied caller context, never null (use {@link McpToolCallContext#EMPTY} when
+     *                   there is no caller identity)
+     * @return           the sanitized result, never null
+     * @since            4.23
+     */
+    default McpToolCallResult call(Map<String, Object> arguments, McpToolCallContext context) {
+        return call(arguments);
+    }
 }

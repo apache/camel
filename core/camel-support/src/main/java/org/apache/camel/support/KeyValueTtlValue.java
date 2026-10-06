@@ -18,6 +18,7 @@ package org.apache.camel.support;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * A value wrapper that holds the actual value and an expiration timestamp. Used by KeyValueRepository implementations
@@ -32,10 +33,13 @@ public final class KeyValueTtlValue implements Serializable {
 
     private final Object value;
     private final long expiresAt;
+    // identifies this write, so a copy made by a cache that stores values by value equals the original
+    private final long token;
 
     public KeyValueTtlValue(Object value, long expiresAt) {
         this.value = value;
         this.expiresAt = expiresAt;
+        this.token = ThreadLocalRandom.current().nextLong();
     }
 
     public Object value() {
@@ -48,5 +52,27 @@ public final class KeyValueTtlValue implements Serializable {
 
     public boolean isExpired() {
         return System.currentTimeMillis() >= expiresAt;
+    }
+
+    /**
+     * Two instances are equal when they are the same write: the original and the copies a cache that stores values by
+     * value makes of it (for example a serializing copier). The wrapped value is not compared, as it may have no value
+     * equality (a byte array, a POJO without equals), and a compare-and-swap of the cache must match the stored copy of
+     * an entry whatever its value.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof KeyValueTtlValue other)) {
+            return false;
+        }
+        return token == other.token && expiresAt == other.expiresAt;
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(token);
     }
 }

@@ -30,6 +30,7 @@ public final class SemanticQuestionBuilder {
     private final Map<String, String> criteria = new LinkedHashMap<>();
     private final List<String> levels = new ArrayList<>();
     private String type;
+    private String expert;
     private String instructions;
     private String state;
     private String threshold;
@@ -46,7 +47,17 @@ public final class SemanticQuestionBuilder {
         return this;
     }
 
-    /** The instructions sent to the provider. */
+    /** Select a configured expert by registry bean name. */
+    public SemanticQuestionBuilder expert(String expert) {
+        this.expert = expert;
+        return this;
+    }
+
+    String getExpert() {
+        return expert;
+    }
+
+    /** The instructions sent to the provider, if supported. */
     public SemanticQuestionBuilder instructions(String instructions) {
         this.instructions = instructions;
         return this;
@@ -126,7 +137,8 @@ public final class SemanticQuestionBuilder {
                 uncertainty == null ? 0 : parseDouble(context, uncertainty, "uncertainty"),
                 uncertaintyPolicy == null
                         ? SemanticQuestion.UncertaintyPolicy.FAIL
-                        : enumeration(uncertaintyPolicy, SemanticQuestion.UncertaintyPolicy.class));
+                        : enumeration(uncertaintyPolicy, SemanticQuestion.UncertaintyPolicy.class),
+                expert);
     }
 
     private static double parseDouble(CamelContext context, String value, String field) {

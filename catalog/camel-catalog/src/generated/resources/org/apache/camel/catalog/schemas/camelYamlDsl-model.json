@@ -12204,12 +12204,12 @@
       }, {
         "name" : "disableFeatures",
         "type" : "string",
-        "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature. Multiple features can be separated by comma.",
+        "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.",
         "title" : "Disable Features"
       }, {
         "name" : "enableFeatures",
         "type" : "string",
-        "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature. Multiple features can be separated by comma.",
+        "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.",
         "title" : "Enable Features"
       }, {
         "name" : "enableJaxbAnnotationModule",
@@ -16118,8 +16118,8 @@
         "displayName" : "Nested",
         "kind" : "attribute",
         "index" : 4,
-        "group" : "advanced",
-        "label" : "advanced"
+        "group" : "security",
+        "label" : "advanced,security"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -17799,6 +17799,17 @@
         "index" : 7,
         "group" : "common"
       }, {
+        "name" : "unmatchedRequestHandling",
+        "type" : "enum",
+        "enum" : [ "platform", "camel" ],
+        "description" : "Who answers requests that match no operation in the OpenAPI specification: the HTTP layer (platform) or Camel via the unmatched request handler (camel).",
+        "title" : "Unmatched Request Handling",
+        "default" : "platform",
+        "displayName" : "Unmatched Request Handling",
+        "kind" : "attribute",
+        "index" : 8,
+        "group" : "common"
+      }, {
         "name" : "mockIncludePattern",
         "type" : "string",
         "description" : "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.",
@@ -17806,7 +17817,7 @@
         "default" : "classpath:camel-mock/**",
         "displayName" : "Mock Include Pattern",
         "kind" : "attribute",
-        "index" : 8,
+        "index" : 9,
         "group" : "advanced",
         "label" : "advanced"
       } ]
@@ -17876,7 +17887,6 @@
         "description" : "Sets the parameter type such as body, form, header, path, or query.",
         "title" : "Type",
         "default" : "path",
-        "required" : true,
         "displayName" : "Type",
         "kind" : "attribute",
         "index" : 2,
@@ -20527,9 +20537,11 @@
         "name" : "criteria",
         "type" : "object"
       }, {
+        "name" : "expert",
+        "type" : "string"
+      }, {
         "name" : "instructions",
-        "type" : "string",
-        "required" : true
+        "type" : "string"
       }, {
         "name" : "state",
         "type" : "string"
@@ -20556,9 +20568,11 @@
         "type" : "object",
         "required" : true
       }, {
+        "name" : "expert",
+        "type" : "string"
+      }, {
         "name" : "instructions",
-        "type" : "string",
-        "required" : true
+        "type" : "string"
       }, {
         "name" : "state",
         "type" : "string"
@@ -20574,9 +20588,11 @@
         "name" : "criteria",
         "type" : "any"
       }, {
+        "name" : "expert",
+        "type" : "string"
+      }, {
         "name" : "instructions",
-        "type" : "string",
-        "required" : true
+        "type" : "string"
       }, {
         "name" : "state",
         "type" : "string"
@@ -20603,9 +20619,11 @@
         "type" : "array",
         "required" : true
       }, {
+        "name" : "expert",
+        "type" : "string"
+      }, {
         "name" : "instructions",
-        "type" : "string",
-        "required" : true
+        "type" : "string"
       }, {
         "name" : "state",
         "type" : "string"

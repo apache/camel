@@ -92,7 +92,7 @@
         <avro-ipc-jetty-version>1.12.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.2</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
-        <aws-java-sdk2-version>2.55.6</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.55.11</aws-java-sdk2-version>
         <azure-sdk-bom-version>1.3.3</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.39</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>
@@ -160,7 +160,7 @@
         <docling-java-version>0.6.6</docling-java-version>
         <docker-java-version>3.7.1</docker-java-version>
         <dropbox-version>7.1.1</dropbox-version>
-        <duckdb-jdbc-version>1.5.5.1</duckdb-jdbc-version>
+        <duckdb-jdbc-version>1.5.6.0</duckdb-jdbc-version>
         <ehcache3-version>3.12.0</ehcache3-version>
         <!-- github-api (kohsuke) for camel-github2 -->
         <github-api-version>1.330</github-api-version>
@@ -203,18 +203,18 @@
         <google-api-services-sheets-version>v4-rev20251110-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20251201-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.39.0</google-oauth-client-version>
-        <google-cloud-bigquery-version>2.72.0</google-cloud-bigquery-version>
-        <google-cloud-core-version>2.76.0</google-cloud-core-version>
-        <google-cloud-firestore-version>3.48.0</google-cloud-firestore-version>
+        <google-cloud-bigquery-version>2.73.0</google-cloud-bigquery-version>
+        <google-cloud-core-version>2.77.0</google-cloud-core-version>
+        <google-cloud-firestore-version>3.49.0</google-cloud-firestore-version>
         <google-cloud-functions-version>2.86.0</google-cloud-functions-version>
         <google-cloud-http-client-version>2.2.0</google-cloud-http-client-version>
-        <google-cloud-pubsub-version>1.156.0</google-cloud-pubsub-version>
-        <google-cloud-secretmanager-version>2.98.0</google-cloud-secretmanager-version>
-        <google-cloud-storage-version>2.74.0</google-cloud-storage-version>
-        <google-cloud-aiplatform-version>3.99.0</google-cloud-aiplatform-version>
-        <google-cloud-vision-version>3.96.0</google-cloud-vision-version>
-        <google-cloud-speech-version>4.93.0</google-cloud-speech-version>
-        <google-cloud-texttospeech-version>2.99.0</google-cloud-texttospeech-version>
+        <google-cloud-pubsub-version>1.157.0</google-cloud-pubsub-version>
+        <google-cloud-secretmanager-version>2.99.0</google-cloud-secretmanager-version>
+        <google-cloud-storage-version>2.75.0</google-cloud-storage-version>
+        <google-cloud-aiplatform-version>3.100.0</google-cloud-aiplatform-version>
+        <google-cloud-vision-version>3.97.0</google-cloud-vision-version>
+        <google-cloud-speech-version>4.94.0</google-cloud-speech-version>
+        <google-cloud-texttospeech-version>2.100.0</google-cloud-texttospeech-version>
         <google-genai-version>1.73.0</google-genai-version>
         <graalvm-version>25.2.4</graalvm-version>
         <graphql-java-version>26.1</graphql-java-version>
@@ -353,9 +353,9 @@
         <keycloak-version>26.7.4</keycloak-version>
         <kubernetes-client-version>7.9.0</kubernetes-client-version>
         <kudu-version>1.18.1</kudu-version>
-        <langchain4j-version>1.20.2</langchain4j-version>
+        <langchain4j-version>1.21.0</langchain4j-version>
         <!-- remove this one when all langchain4j artifacts are made final -->
-        <langchain4j-beta-version>1.20.2-beta30</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
+        <langchain4j-beta-version>1.21.0-beta31</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
         <langchain4j-community-version>1.20.0-beta30</langchain4j-community-version> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community--> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community-->
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.12</leveldb-api-version>
@@ -364,7 +364,7 @@
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.25.5</log4j2-version>
-        <logback-version>1.6.4</logback-version>
+        <logback-version>1.6.5</logback-version>
         <lucene-version>9.12.3</lucene-version>
         <littleproxy-version>2.9.1</littleproxy-version>
         <lz4-java-version>1.12.0</lz4-java-version>
@@ -415,17 +415,17 @@
         <nimbus-jose-jwt>10.10</nimbus-jose-jwt>
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
-        <ognl-version>3.4.13</ognl-version>
+        <ognl-version>3.4.14</ognl-version>
         <opa-version>2.1.1</opa-version>
         <opa-wasm-version>1.1.0</opa-wasm-version>
         <openfga-version>0.10.1</openfga-version>
         <mcp-java-sdk-version>2.0.1</mcp-java-sdk-version>
         <mssql-jdbc-version>12.10.0.jre11</mssql-jdbc-version>
         <ojdbc-version>23.8.0.25.04</ojdbc-version>
-        <openai-java-version>4.69.3</openai-java-version>
+        <openai-java-version>4.70.0</openai-java-version>
         <openapi-generator-version>7.25.0</openapi-generator-version>
         <openjpa-version>4.1.1</openjpa-version>
-        <opensearch-rest-client-version>3.8.0</opensearch-rest-client-version>
+        <opensearch-rest-client-version>3.9.0</opensearch-rest-client-version>
         <opensearch-java-client-version>3.10.0</opensearch-java-client-version>
         <opensearch-testcontainers-version>2.1.3</opensearch-testcontainers-version>
         <openstack4j-version>3.12</openstack4j-version>
@@ -473,7 +473,7 @@
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.8.7</reactor-version>
         <reactor-netty-version>1.3.7</reactor-netty-version>
-        <redisson-version>4.7.0</redisson-version>
+        <redisson-version>4.8.0</redisson-version>
         <redshift-jdbc-version>2.1.0.33</redshift-jdbc-version>
         <resilience4j-version>2.4.0</resilience4j-version>
         <rest-assured-version>6.0.1</rest-assured-version>
@@ -545,7 +545,7 @@
         <web3j-quorum-version>4.10.0</web3j-quorum-version>
         <wiremock-version>3.13.2</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
-        <woodstox-core-version>7.2.2</woodstox-core-version>
+        <woodstox-core-version>7.3.0</woodstox-core-version>
         <xbean-spring-version>5.0.0</xbean-spring-version>
         <xchange-version>5.2.5</xchange-version>
         <xerces-version>2.12.2</xerces-version>
@@ -2359,6 +2359,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-ocsf</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-odata</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

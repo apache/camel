@@ -17,18 +17,14 @@
 package org.apache.camel.cli.connector;
 
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.WebSocket;
-import java.net.http.WebSocketHandshakeException;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.CompletionStage;
+import java.util.Set;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -51,8 +47,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Transport that dials out to a developer tool over a WebSocket (JDK client), for tools that do not share the
- * filesystem of the integration or need events pushed instead of polled.
+ * Transport that dials out to a developer tool over a WebSocket, for tools that do not share the filesystem of the
+ * integration or need events pushed instead of polled.
  * <p/>
  * Every frame is a JSON envelope <tt>{"v":1,"type":...}</tt>. The tool sends <tt>action</tt> frames holding the same
  * action JSON the Camel CLI writes to its action file, and gets <tt>result</tt> frames back correlated by
@@ -61,9 +57,13 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * The connection is kept alive with pings, and re-established with an exponential backoff when it is lost.
  * <p/>
+ * The socket I/O is done by a {@link CliWebSocketClient}: the single one in the registry, if any, otherwise the JDK
+ * client (<tt>camel.cli.websocket.client=jdk</tt> always uses the JDK client).
+ * <p/>
  * Threads: actions run one at a time on their own thread (the dispatcher is not thread-safe, and an action can block
- * for a long time); connecting, snapshots, heartbeats and every write to the socket run on a second thread, so the JDK
- * WebSocket never has two sends in flight.
+ * for a long time); snapshots are collected on a second thread (the status of a large integration can take seconds);
+ * connecting, parsing the incoming frames, heartbeats and every write to the socket run on a third thread (the
+ * scheduler), so the client never has two sends in flight, and its callbacks never wait.
  */
 public class WebSocketCliConnectorTransport extends ServiceSupport implements CliConnectorTransport {
 
@@ -72,7 +72,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     private static final Logger LOG = LoggerFactory.getLogger(WebSocketCliConnectorTransport.class);
     private static final long SEND_TIMEOUT = 10000;
     private static final long STABLE_CONNECTION = 10000;
-    private static final int MAX_FRAME_SIZE = 16 * 1024 * 1024;
+    private static final int MAX_FRAME_SIZE = CliWebSocketClient.MAX_MESSAGE_SIZE;
+    private static final int NORMAL_CLOSURE = 1000;
     private static final int MAX_PENDING_ACTIONS = 64;
     // WebSocket servers commonly refuse messages over 256 KB (Vert.x, Quarkus): trace and receive snapshots can be
     // much larger (after a reconnect they hold every retained message), so they are split into frames of this size
@@ -91,20 +92,25 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     private long heartbeatInterval;
 
     private String threadNamePattern;
-    private HttpClient client;
+    private CliWebSocketClient client;
     private ThreadPoolExecutor actions;
     private ScheduledExecutorService scheduler;
-    // fields below are only used from the scheduler thread, except the volatile ones
+    // collects snapshots: the status of a large integration can take seconds, which must not hold up the scheduler
+    // (heartbeats, sends); snapshots are handed to the scheduler to be sent
+    private ScheduledExecutorService collector;
+    // fields below are only used from the scheduler thread, except the volatile ones and the snapshot ones below
     private volatile Connection connection;
     private volatile boolean ready;
     private volatile boolean stopping;
     private boolean listenerAdded;
-    // the snapshot task, only (re)scheduled from the scheduler thread or before it runs anything
+    private int failures;
+    // snapshot fields, only used on the collector thread (or before it runs anything)
     private ScheduledFuture<?> snapshotFuture;
     private long debugInterval;
     private ScheduledFuture<?> debugFuture;
-    private int failures;
     private long ticks;
+    // bumped when the rounds are rescheduled, so a round that was already running does not start a second chain
+    private long rounds;
 
     @Override
     public void configure(
@@ -156,7 +162,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
             LOG.warn("Camel CLI connector uses an unencrypted connection to a remote host; use wss:// or a tunnel");
         }
 
-        client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
+        client = resolveClient();
+        LOG.info("Camel CLI connector uses the {} WebSocket client", client.getName());
         // Camel's thread factory (naming, virtual threads when enabled) but not Camel's thread pools: these threads must
         // keep running while Camel is stopping, to report it and to send the close frame
         threadNamePattern = camelContext.getExecutorServiceManager().getThreadNamePattern();
@@ -165,6 +172,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
                 new CamelThreadFactory(threadNamePattern, "CliConnectorActions", true));
         scheduler = Executors.newSingleThreadScheduledExecutor(
                 new CamelThreadFactory(threadNamePattern, "CliConnectorWebSocket", true));
+        collector = Executors.newSingleThreadScheduledExecutor(
+                new CamelThreadFactory(threadNamePattern, "CliConnectorSnapshots", true));
 
         stopping = false;
         ready = camelContext.isStarted();
@@ -192,30 +201,82 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         scheduler.execute(this::connect);
     }
 
+    private CliWebSocketClient resolveClient() {
+        String name = property("camel.cli.websocket.client", "auto");
+        if ("jdk".equalsIgnoreCase(name)) {
+            return new JdkCliWebSocketClient();
+        }
+        if (!"auto".equalsIgnoreCase(name)) {
+            throw new IllegalArgumentException("camel.cli.websocket.client must be auto or jdk: " + name);
+        }
+        Set<CliWebSocketClient> found = camelContext.getRegistry().findByType(CliWebSocketClient.class);
+        if (found.size() == 1) {
+            return found.iterator().next();
+        }
+        if (found.size() > 1) {
+            LOG.warn("Camel CLI connector found {} WebSocket clients in the registry, using the JDK client", found.size());
+        }
+        return new JdkCliWebSocketClient();
+    }
+
     @Override
     public void updateDelay(int delay) {
         // camel-cli-debug makes it faster so breakpoints show up quickly: only the debug snapshot needs that
         debugInterval = delay;
-        execute(this::scheduleSnapshots);
+        ScheduledExecutorService c = collector;
+        if (c != null) {
+            // on the collector, which also reschedules the snapshot rounds
+            c.execute(this::scheduleSnapshots);
+        }
     }
 
     private void scheduleSnapshots() {
         if (snapshotFuture != null) {
             snapshotFuture.cancel(false);
         }
-        snapshotFuture = scheduler.scheduleWithFixedDelay(() -> safely(this::snapshotTask), snapshotInterval,
-                snapshotInterval, TimeUnit.MILLISECONDS);
+        long round = ++rounds;
+        snapshotFuture = collector.schedule(() -> snapshotRound(round), snapshotInterval, TimeUnit.MILLISECONDS);
         if (debugFuture != null) {
             debugFuture.cancel(false);
             debugFuture = null;
         }
         if (debugInterval > 0) {
-            debugFuture = scheduler.scheduleWithFixedDelay(() -> safely(this::debugTask), debugInterval,
+            debugFuture = collector.scheduleWithFixedDelay(() -> safely(this::debugTask), debugInterval,
                     debugInterval, TimeUnit.MILLISECONDS);
         }
     }
 
+    /**
+     * One round of snapshots, then the next one: once the scheduler has sent the frames of this round (a slow link does
+     * not queue frames without end), at least the snapshot interval later, and at least as long as collecting took (a
+     * slow status does not keep a CPU busy).
+     */
+    private void snapshotRound(long round) {
+        if (round != rounds) {
+            return;
+        }
+        long start = System.nanoTime();
+        safely(this::snapshotTask);
+        long delay = Math.max(snapshotInterval, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
+        // queued behind the frames of this round
+        execute(() -> {
+            ScheduledExecutorService c = collector;
+            if (c != null) {
+                try {
+                    c.execute(() -> {
+                        if (round == rounds) {
+                            snapshotFuture = c.schedule(() -> snapshotRound(round), delay, TimeUnit.MILLISECONDS);
+                        }
+                    });
+                } catch (RejectedExecutionException e) {
+                    // stopping
+                }
+            }
+        });
+    }
+
     private void debugTask() {
+        // note: shares the collector with the status, so a slow status delays it (as when both ran on the scheduler)
         Connection c = connection;
         if (c != null && c.helloSent) {
             // only sent when it changed, so the regular snapshot task does not send it again
@@ -232,7 +293,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
                     Connection c = connection;
                     if (c != null) {
                         connection = null;
-                        c.close(WebSocket.NORMAL_CLOSURE, "stopping");
+                        c.close(NORMAL_CLOSURE, "stopping");
                     }
                 }).get(SEND_TIMEOUT, TimeUnit.MILLISECONDS);
             } catch (Exception e) {
@@ -245,6 +306,10 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
             actions.shutdownNow();
             actions = null;
         }
+        if (collector != null) {
+            collector.shutdownNow();
+            collector = null;
+        }
         client = null;
     }
 
@@ -255,13 +320,16 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
             return;
         }
         try {
-            WebSocket.Builder builder = client.newWebSocketBuilder().connectTimeout(Duration.ofSeconds(10));
+            Map<String, String> headers = new HashMap<>();
             if (token != null && !token.isBlank()) {
-                builder.header("Authorization", "Bearer " + token);
+                headers.put("Authorization", "Bearer " + token);
             }
-            builder.buildAsync(url, new Connection()).whenComplete((ws, e) -> {
+            Connection c = new Connection();
+            client.connect(url, headers, c).whenComplete((channel, e) -> {
                 if (e != null) {
                     execute(() -> connectFailed(e));
+                } else {
+                    execute(() -> opened(c, channel));
                 }
             });
         } catch (Exception e) {
@@ -271,9 +339,9 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
 
     private void connectFailed(Throwable e) {
         failures++;
-        Throwable cause = e.getCause() != null ? e.getCause() : e;
-        if (cause instanceof WebSocketHandshakeException he) {
-            int code = he.getResponse().statusCode();
+        Throwable cause = e instanceof CompletionException && e.getCause() != null ? e.getCause() : e;
+        if (cause instanceof CliWebSocketHandshakeException he) {
+            int code = he.getStatusCode();
             if (code == 401 || code == 403) {
                 LOG.warn("Camel CLI connector was rejected by {} (HTTP {}): check camel.cli.websocket.token", where(), code);
             } else {
@@ -287,23 +355,38 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         reconnect();
     }
 
-    private void opened(Connection c) {
+    private void opened(Connection c, CliWebSocketClient.Channel channel) {
+        c.channel = channel;
         if (stopping) {
-            c.ws.abort();
+            channel.abort();
             return;
         }
+        if (c.lost) {
+            // closed or failed before the client reported it open
+            channel.abort();
+            failures++;
+            reconnect();
+            return;
+        }
+        c.openedAt = System.currentTimeMillis();
+        c.lastSeen = c.openedAt;
         connection = c;
         LOG.info("Camel CLI connector connected to {}", where());
         sayHello(c);
+        // what the tool sent before the client reported the connection open, in order
+        List<String> early = new ArrayList<>(c.early);
+        c.early.clear();
+        early.forEach(text -> onFrame(c, text));
     }
 
     private void closed(Connection c, String reason) {
         if (connection != c) {
-            // an old connection, or already handled
+            // an old connection, already handled, or not open yet (see opened)
+            c.lost = true;
             return;
         }
         connection = null;
-        c.ws.abort();
+        c.channel.abort();
         // a connection that drops right away counts as a failure, so a tool that keeps closing us is not hammered
         if (System.currentTimeMillis() - c.openedAt < STABLE_CONNECTION) {
             failures++;
@@ -339,7 +422,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
             // the tool went away without closing the connection (sleep, network change, crash)
             closed(c, "no heartbeat");
         } else {
-            c.ws.sendPing(ByteBuffer.allocate(0));
+            c.channel.sendPing();
         }
     }
 
@@ -352,17 +435,17 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         JsonObject frame = envelope("hello");
         frame.put("camelVersion", camelContext.getVersion());
         frame.put("name", camelContext.getName());
-        frame.put("transport", "jdk");
+        frame.put("transport", client.getName());
         try {
-            JsonObject status = snapshots.status();
-            frame.put("runtime", status.get("runtime"));
+            frame.put("runtime", snapshots.runtime());
             c.helloSent = true;
             send(c, frame);
-            sendSnapshot(c, "status", status);
         } catch (Exception e) {
             LOG.debug("Error sending hello due to: {}. Will retry.", e.getMessage(), e);
         }
     }
+
+    // ---- snapshots (collector thread) ----
 
     private void snapshotTask() {
         Connection c = connection;
@@ -371,7 +454,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         }
         if (!c.helloSent) {
             // not started yet, or the hello failed
-            sayHello(c);
+            execute(() -> sayHello(c));
             return;
         }
         snapshot(c, "status", false);
@@ -454,7 +537,8 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
         JsonObject frame = envelope("snapshot");
         frame.put("kind", kind);
         frame.put("data", data);
-        send(c, frame);
+        // only the scheduler sends, one frame at a time
+        execute(() -> send(c, frame));
     }
 
     private void send(Connection c, JsonObject frame) {
@@ -463,7 +547,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
             return;
         }
         try {
-            c.ws.sendText(wellFormed(frame.toJson()), true).get(SEND_TIMEOUT, TimeUnit.MILLISECONDS);
+            c.channel.sendText(wellFormed(frame.toJson())).toCompletableFuture().get(SEND_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             // a send that fails or hangs leaves the socket unusable
             closed(c, "send failed: " + describe(e));
@@ -473,6 +557,14 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     // ---- incoming frames ----
 
     private void onFrame(Connection c, String text) {
+        if (c != connection) {
+            if (c.channel == null && !c.lost && c.early.size() < MAX_PENDING_ACTIONS) {
+                // the client has not reported the connection open yet: kept until it does (see opened)
+                c.early.add(text);
+            }
+            // otherwise the connection is gone, and the result could not be sent
+            return;
+        }
         String requestId = null;
         try {
             JsonObject frame = (JsonObject) Jsoner.deserialize(text);
@@ -661,75 +753,55 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     }
 
     /**
-     * One WebSocket connection, and what has been sent on it.
+     * One WebSocket connection, and what has been sent on it. The callbacks come from the client, on any thread.
      */
-    private final class Connection implements WebSocket.Listener {
+    private final class Connection implements CliWebSocketClient.Listener {
 
-        private WebSocket ws;
-        private final StringBuilder partial = new StringBuilder();
-        private final long openedAt = System.currentTimeMillis();
+        // set on the scheduler thread, before the connection is used
+        private CliWebSocketClient.Channel channel;
+        private boolean lost;
+        private long openedAt = System.currentTimeMillis();
         private volatile long lastSeen = openedAt;
-        private boolean helloSent;
+        private volatile boolean helloSent;
+        // what was sent on this connection, only used on the collector thread
         private long lastTraceUid;
         private long lastReceiveUid;
         private final Map<String, String> lastSent = new HashMap<>();
+        // frames received before the connection is reported open, only used on the scheduler thread
+        private final List<String> early = new ArrayList<>();
 
         @Override
-        public void onOpen(WebSocket webSocket) {
-            this.ws = webSocket;
-            webSocket.request(1);
-            execute(() -> opened(this));
-        }
-
-        @Override
-        public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
+        public void onText(String text) {
             lastSeen = System.currentTimeMillis();
-            partial.append(data);
-            if (partial.length() > MAX_FRAME_SIZE) {
-                partial.setLength(0);
+            if (text.length() > MAX_FRAME_SIZE) {
                 execute(() -> closed(this, "frame larger than " + MAX_FRAME_SIZE + " chars"));
-                return null;
+                return;
             }
-            if (last) {
-                String text = partial.toString();
-                partial.setLength(0);
-                onFrame(this, text);
-            }
-            webSocket.request(1);
-            return null;
+            execute(() -> onFrame(this, text));
         }
 
         @Override
-        public CompletionStage<?> onPing(WebSocket webSocket, ByteBuffer message) {
+        public void onPong() {
             lastSeen = System.currentTimeMillis();
-            // the JDK replies with a pong
-            return WebSocket.Listener.super.onPing(webSocket, message);
         }
 
         @Override
-        public CompletionStage<?> onPong(WebSocket webSocket, ByteBuffer message) {
-            lastSeen = System.currentTimeMillis();
-            webSocket.request(1);
-            return null;
+        public void onClose(int statusCode, String reason) {
+            execute(() -> closed(this, "closed by the tool: " + statusCode
+                                       + (reason == null || reason.isEmpty() ? "" : " " + reason)));
         }
 
         @Override
-        public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
-            execute(() -> closed(this, "closed by the tool: " + statusCode + (reason.isEmpty() ? "" : " " + reason)));
-            return null;
-        }
-
-        @Override
-        public void onError(WebSocket webSocket, Throwable error) {
+        public void onError(Throwable error) {
             LOG.debug("Camel CLI connector websocket error: {}", error.getMessage(), error);
             execute(() -> closed(this, "error: " + describe(error)));
         }
 
         void close(int code, String reason) {
             try {
-                ws.sendClose(code, reason).get(SEND_TIMEOUT, TimeUnit.MILLISECONDS);
+                channel.close(code, reason).toCompletableFuture().get(SEND_TIMEOUT, TimeUnit.MILLISECONDS);
             } catch (Exception e) {
-                ws.abort();
+                channel.abort();
             }
         }
 

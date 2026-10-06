@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
@@ -53,7 +54,6 @@ public class SnmpProducer extends DefaultProducer {
     private USM usm;
     private Target target;
     private SnmpActionType actionType;
-    private PDU pdu;
 
     public SnmpProducer(SnmpEndpoint endpoint, SnmpActionType actionType) {
         super(endpoint);
@@ -69,27 +69,34 @@ public class SnmpProducer extends DefaultProducer {
         LOG.debug("targetAddress: {}", targetAddress);
 
         this.usm = SnmpHelper.createAndSetUSM(endpoint);
-        this.pdu = SnmpHelper.createPDU(endpoint);
         this.target = SnmpHelper.createTarget(endpoint);
+    }
+
+    /**
+     * Creates the request PDU of one exchange: the producer is shared by concurrent exchanges, and a walk changes its
+     * PDU for every request (SNMP4J also sends the same PDU again on a retry).
+     */
+    private PDU createPdu() {
+        PDU pdu = SnmpHelper.createPDU(endpoint);
 
         // in here,only POLL do set the oids
         if (this.actionType == SnmpActionType.POLL) {
             for (OID oid : this.endpoint.getOids()) {
-                this.pdu.add(new VariableBinding(oid));
+                pdu.add(new VariableBinding(oid));
             }
         }
-        this.pdu.setErrorIndex(0);
-        this.pdu.setErrorStatus(0);
+        pdu.setErrorIndex(0);
+        pdu.setErrorStatus(0);
         if (endpoint.getSnmpVersion() > SnmpConstants.version1) {
-            this.pdu.setMaxRepetitions(0);
+            pdu.setMaxRepetitions(0);
         }
         // support POLL and GET_NEXT
         if (this.actionType == SnmpActionType.GET_NEXT) {
-            this.pdu.setType(PDU.GETNEXT);
+            pdu.setType(PDU.GETNEXT);
         } else {
-            this.pdu.setType(PDU.GET);
+            pdu.setType(PDU.GET);
         }
-
+        return pdu;
     }
 
     @Override
@@ -104,7 +111,6 @@ public class SnmpProducer extends DefaultProducer {
             this.targetAddress = null;
             this.usm = null;
             this.target = null;
-            this.pdu = null;
         }
     }
 
@@ -132,42 +138,60 @@ public class SnmpProducer extends DefaultProducer {
 
             snmp.listen();
 
+            PDU pdu = createPdu();
             if (this.actionType == SnmpActionType.GET_NEXT) {
                 // snmp walk
                 List<SnmpMessage> smLst = new ArrayList<>();
                 for (OID oid : this.endpoint.getOids()) {
-                    this.pdu.clear();
-                    this.pdu.add(new VariableBinding(oid));
+                    pdu.clear();
+                    pdu.add(new VariableBinding(oid));
 
                     boolean matched = true;
                     while (matched) {
-                        ResponseEvent responseEvent = snmp.send(this.pdu, this.target);
+                        ResponseEvent responseEvent = snmp.send(pdu, this.target);
                         if (responseEvent == null || responseEvent.getResponse() == null) {
-                            break;
+                            throw new TimeoutException("SNMP Producer Timeout");
                         }
                         PDU response = responseEvent.getResponse();
-                        String nextOid = null;
-                        List<? extends VariableBinding> variableBindings = response.getVariableBindings();
-                        for (int i = 0; i < variableBindings.size(); i++) {
-                            VariableBinding variableBinding = variableBindings.get(i);
-                            nextOid = variableBinding.getOid().toDottedString();
-                            if (!nextOid.startsWith(oid.toDottedString())) {
+                        if (response.getErrorStatus() == PDU.noSuchName) {
+                            // SNMPv1 signals the end of the MIB view with noSuchName
+                            break;
+                        }
+                        if (response.getErrorStatus() != PDU.noError) {
+                            throw new CamelExchangeException(
+                                    "SNMP walk of " + oid + " failed: " + response.getErrorStatusText(), exchange);
+                        }
+                        OID requestedOid = pdu.get(0).getOid();
+                        VariableBinding next = null;
+                        for (VariableBinding variableBinding : response.getVariableBindings()) {
+                            // compare the OIDs, not their strings: 1.3.6.1.4.1.20 is not in the subtree of 1.3.6.1.4.1.2
+                            if (!variableBinding.getOid().startsWith(oid)) {
                                 matched = false;
                                 break;
                             }
+                            next = variableBinding;
                         }
-                        if (!matched) {
+                        // endOfMibView (SNMPv2c/v3) ends the walk
+                        if (!matched || next == null || next.isException()) {
                             break;
                         }
-                        this.pdu.clear();
-                        pdu.add(new VariableBinding(new OID(nextOid)));
+                        if (next.getOid().compareTo(requestedOid) <= 0) {
+                            // a walk on an OID that does not increase would not end: fail like net-snmp's snmpwalk,
+                            // so that a misbehaving agent does not give a silently partial result
+                            throw new CamelExchangeException(
+                                    "SNMP walk of " + oid + " failed: OID not increasing: " + requestedOid + " >= "
+                                                             + next.getOid(),
+                                    exchange);
+                        }
+                        pdu.clear();
+                        pdu.add(new VariableBinding(next.getOid()));
                         smLst.add(new SnmpMessage(getEndpoint().getCamelContext(), response));
                     }
                 }
                 exchange.getIn().setBody(smLst);
             } else {
                 // snmp get
-                ResponseEvent responseEvent = snmp.send(this.pdu, this.target);
+                ResponseEvent responseEvent = snmp.send(pdu, this.target);
 
                 LOG.debug("Snmp: sended");
 

@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -95,6 +96,48 @@ public class UnmarshalProcessorTest extends TestSupport {
 
         assertNull(exchange.getMessage().getBody(), "UnmarshalProcessor should allow null body");
         assertNull(exchange.getException(), "UnmarshalProcessor should allow null body");
+    }
+
+    @Test
+    public void testNullBodySaysTheBodyIsNull() throws Exception {
+        Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), null);
+        Processor processor = new UnmarshalProcessor(new MyDataFormat(new Object()));
+
+        processor.process(exchange);
+
+        NoTypeConversionAvailableException e
+                = assertInstanceOf(NoTypeConversionAvailableException.class, exchange.getException());
+        assertEquals("Cannot unmarshal using MyDataFormat: the message body is null, so there is nothing to unmarshal. "
+                     + "Set the message body first, or set allowNullBody=true to skip a null body.",
+                e.getMessage());
+        assertNull(e.getValue());
+        assertEquals(InputStream.class, e.getToType());
+        assertInstanceOf(NoTypeConversionAvailableException.class, e.getCause());
+    }
+
+    @Test
+    public void testNullVariableSaysTheVariableIsNull() throws Exception {
+        Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), "body");
+        UnmarshalProcessor processor = new UnmarshalProcessor(new MyDataFormat(new Object()));
+        processor.setVariableSend("order");
+
+        processor.process(exchange);
+
+        assertEquals("Cannot unmarshal using MyDataFormat: the variable order is null, so there is nothing to unmarshal. "
+                     + "Set the variable order first, or set allowNullBody=true to skip a null body.",
+                exchange.getException().getMessage());
+    }
+
+    @Test
+    public void testBodyThatCannotBeConvertedKeepsTheConverterMessage() throws Exception {
+        Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), new Object());
+        Processor processor = new UnmarshalProcessor(new MyDataFormat(new Object()));
+
+        processor.process(exchange);
+
+        assertEquals("No type converter available to convert from type: java.lang.Object to the required type: "
+                     + "java.io.InputStream",
+                exchange.getException().getMessage());
     }
 
     private static class MyDataFormat extends ServiceSupport implements DataFormat {

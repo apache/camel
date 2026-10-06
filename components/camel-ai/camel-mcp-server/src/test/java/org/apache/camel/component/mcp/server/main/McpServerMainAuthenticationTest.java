@@ -28,8 +28,14 @@ import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.spec.McpSchema;
+import org.apache.camel.CamelAuthorizationException;
+import org.apache.camel.NamedNode;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mcp.server.McpToolCallContext;
 import org.apache.camel.main.Main;
+import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -62,8 +68,18 @@ class McpServerMainAuthenticationTest {
                 from("ai-tool:say_hello?tags=secured&description=Say hello"
                      + "&parameter.name=string&parameter.name.required=true")
                         .setBody(simple("Hello ${header.name}"));
+
+                from("ai-tool:whoami?tags=secured&description=Report whether the caller is authenticated")
+                        .process(e -> {
+                            Object principal = e.getProperty(McpToolCallContext.SECURITY_PRINCIPAL_PROPERTY);
+                            e.getMessage().setBody(principal != null ? "principal-present" : "no-principal");
+                        });
+
+                from("ai-tool:blocked?tags=secured&description=Always denied&authorizationPolicy=#deny")
+                        .setBody(constant("SHOULD-NOT-RUN"));
             }
         });
+        main.bind("deny", new DenyAll());
         main.addInitialProperty("camel.server.enabled", "true");
         main.addInitialProperty("camel.server.port", String.valueOf(PORT));
         main.addInitialProperty("camel.server.authentication-enabled", "true");
@@ -124,6 +140,75 @@ class McpServerMainAuthenticationTest {
             if (client != null) {
                 client.closeGracefully();
             }
+        }
+    }
+
+    @Test
+    void testMcpToolCallCarriesAuthenticatedPrincipalToTheToolRoute() {
+        // CAMEL-24831: the authenticated caller (the Vert.x basic-auth user) must reach the tool route over MCP as the
+        // CamelMcpSecurityPrincipal exchange property, so a tool route's AuthorizationPolicy can authorize on it.
+        String credentials = Base64.getEncoder().encodeToString("camel:mcpPass".getBytes(UTF_8));
+        McpSyncClient client = null;
+        try {
+            client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + PORT)
+                    .httpRequestCustomizer((builder, method, uri, body, context) -> builder
+                            .header("Authorization", "Basic " + credentials))
+                    .build())
+                    .requestTimeout(Duration.ofSeconds(10))
+                    .initializationTimeout(Duration.ofSeconds(10))
+                    .build();
+
+            client.initialize();
+
+            McpSchema.CallToolResult result
+                    = client.callTool(new McpSchema.CallToolRequest("whoami", Map.of()));
+            assertThat(result.isError()).isNotEqualTo(Boolean.TRUE);
+            assertThat(result.content().toString()).contains("principal-present");
+        } finally {
+            if (client != null) {
+                client.closeGracefully();
+            }
+        }
+    }
+
+    @Test
+    void testMcpToolCallDeniedByPolicyIsReturnedAsError() {
+        // CAMEL-24831: a tool guarded by a deny-all authorizationPolicy, called over MCP, comes back as an error
+        // (the model-relayable refusal), and the route body does not run.
+        String credentials = Base64.getEncoder().encodeToString("camel:mcpPass".getBytes(UTF_8));
+        McpSyncClient client = null;
+        try {
+            client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + PORT)
+                    .httpRequestCustomizer((builder, method, uri, body, context) -> builder
+                            .header("Authorization", "Basic " + credentials))
+                    .build())
+                    .requestTimeout(Duration.ofSeconds(10))
+                    .initializationTimeout(Duration.ofSeconds(10))
+                    .build();
+            client.initialize();
+
+            McpSchema.CallToolResult result
+                    = client.callTool(new McpSchema.CallToolRequest("blocked", Map.of()));
+            assertThat(result.isError()).isEqualTo(Boolean.TRUE);
+            assertThat(result.content().toString()).contains("blocked");
+        } finally {
+            if (client != null) {
+                client.closeGracefully();
+            }
+        }
+    }
+
+    /** Denies every call, so a tool guarded by it must come back to the MCP client as an error. */
+    static final class DenyAll implements AuthorizationPolicy {
+        @Override
+        public void beforeWrap(Route route, NamedNode definition) {
+        }
+
+        @Override
+        public Processor wrap(Route route, Processor processor) {
+            return exchange -> {
+                throw new CamelAuthorizationException("denied", exchange);
+            };
         }
     }
 

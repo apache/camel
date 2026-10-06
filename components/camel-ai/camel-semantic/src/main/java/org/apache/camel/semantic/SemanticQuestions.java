@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
+import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Resource;
@@ -31,6 +33,14 @@ public final class SemanticQuestions {
     private final Map<String, Map<String, SemanticQuestion>> sources = new HashMap<>();
     private final Map<String, Resource> resources = new HashMap<>();
     private volatile Map<String, SemanticQuestion> questions = Map.of();
+    private final Map<Consumer<Map<String, SemanticQuestion>>, List<String>> validators = new WeakHashMap<>();
+
+    /** Validate current declarations and weakly track a callback owned by its initialized expression. */
+    public synchronized void setValidator(List<String> names, Consumer<Map<String, SemanticQuestion>> validator) {
+        // A replacement may have occurred between the expression's initial compilation and registration.
+        validator.accept(get(names));
+        validators.put(validator, List.copyOf(names));
+    }
 
     public static SemanticQuestions get(CamelContext context) {
         synchronized (CREATION_LOCK) {
@@ -61,6 +71,19 @@ public final class SemanticQuestions {
             }
             if (replacement.putIfAbsent(name, question) != null) {
                 throw new IllegalArgumentException("Duplicate semantic question: " + name);
+            }
+        });
+        validators.forEach((validator, names) -> {
+            if (!Collections.disjoint(names, definitions.keySet())) {
+                Map<String, SemanticQuestion> selected = new LinkedHashMap<>();
+                names.forEach(name -> {
+                    SemanticQuestion question = replacement.get(name);
+                    // Removed declarations remain removable; their existing expressions fail if evaluated again.
+                    if (question != null) {
+                        selected.put(name, question);
+                    }
+                });
+                validator.accept(Collections.unmodifiableMap(selected));
             }
         });
         if (definitions.isEmpty()) {
