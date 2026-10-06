@@ -1259,10 +1259,12 @@ query string is also less aggressive: characters that are legal unescaped in a U
 value) are no longer percent-encoded, as long as no key or value in the query needs a percent escape.
 A value with `=` or `#` (for example `secretKey=abc/def==`) needs one, and then the whole query is
 form-encoded as in earlier releases, the same way as an endpoint URI that is already percent-encoded, so
-normalizing a normalized URI gives the same URI.
+normalizing a normalized URI gives the same URI. Such a URI is then normalized as a whole like a percent-encoded
+URI, so a `#` in the path becomes `%23`, and in a user info with more than one `@` (an email address as the user)
+every `@` but the last becomes `%40`, for example `sftp://me%40example.com@host/in?password=pa%3Dss`.
 
 Code that asserts a literal, fully-normalized endpoint URI string containing one of those characters in a
-query value may need to update the expected string to the (now consistently) unencoded form.
+query value may need to update the expected string to the form described above.
 
 === camel-core - double && in endpoint URIs
 

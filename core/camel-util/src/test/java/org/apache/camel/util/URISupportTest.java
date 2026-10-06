@@ -210,6 +210,35 @@ public class URISupportTest {
     }
 
     @Test
+    public void testNormalizeTwiceGivesTheSameUriWithHashOrTwoAtInPath() throws Exception {
+        // CAMEL-25345: a value that needs a percent escape, and a path with # or with more than one @ (an email address
+        // as user), are normalized by the complex normalizer, which encodes the path
+        assertThat(URISupport.normalizeUri("sftp://me@example.com@host/in?password=pa=ss"))
+                .isEqualTo("sftp://me%40example.com@host/in?password=pa%3Dss");
+        assertThat(URISupport.normalizeUri("sql:select+*+from+t+where+id=:#id?dataSource=#ds"))
+                .isEqualTo("sql://select+*+from+t+where+id=:%23id?dataSource=%23ds");
+        assertThat(URISupport.normalizeUri("imaps://me@example.com@imap.example.com?password=x&sslContextParameters=#ssl"))
+                .isEqualTo("imaps://me%40example.com@imap.example.com?password=x&sslContextParameters=%23ssl");
+        // without a percent escape in the query the path is kept as is
+        assertThat(URISupport.normalizeUri("sftp://me@example.com@host/in?binary=true"))
+                .isEqualTo("sftp://me@example.com@host/in?binary=true");
+        assertThat(URISupport.normalizeUri("sql:select+*+from+t+where+id=:#id?dataSource=ds"))
+                .isEqualTo("sql://select+*+from+t+where+id=:#id?dataSource=ds");
+
+        String[] uris = {
+                "sftp://me@example.com@host/in?password=pa=ss",
+                "sql:select+*+from+t+where+id=:#id?dataSource=#ds",
+                "imaps://me@example.com@imap.example.com?password=x&sslContextParameters=#ssl",
+                "ftp://me@example.com@host/in/a@b?password=se=cret&binary=true",
+                "http://host/a#b?q=#x",
+                "log:a#b?marker=x=y&showAll=true" };
+        for (String uri : uris) {
+            String once = URISupport.normalizeUri(uri);
+            assertThat(URISupport.normalizeUri(once)).as("normalizing %s twice", uri).isEqualTo(once);
+        }
+    }
+
+    @Test
     public void testParseParametersURLEncodedValue() throws Exception {
         String out = URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren%20Hansen");
         URI uri = new URI(out);

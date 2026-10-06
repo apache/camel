@@ -305,6 +305,21 @@ public class DefaultCamelContextTest extends TestSupport {
     }
 
     @Test
+    public void testGetEndpointByItsUriWithHashOrTwoAtInPath() {
+        // CAMEL-25345: the uri of an endpoint finds the same endpoint (normalizing a normalized uri gives the same uri)
+        DefaultCamelContext ctx = new DefaultCamelContext(false);
+        ctx.disableJMX();
+        Endpoint endpoint = ctx.getEndpoint("log:me@example.com@host?marker=a=b");
+        Endpoint other = ctx.getEndpoint("log:a#b?marker=#c");
+
+        assertSame(endpoint, ctx.getEndpoint(endpoint.getEndpointUri()));
+        assertSame(endpoint, ctx.hasEndpoint(endpoint.getEndpointUri()));
+        assertSame(other, ctx.getEndpoint(other.getEndpointUri()));
+        assertSame(other, ctx.hasEndpoint(other.getEndpointUri()));
+        assertEquals(2, ctx.getEndpointRegistry().size());
+    }
+
+    @Test
     public void testGetRouteById() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();
