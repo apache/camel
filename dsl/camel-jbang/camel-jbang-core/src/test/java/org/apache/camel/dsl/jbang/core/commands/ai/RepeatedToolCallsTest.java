@@ -104,4 +104,35 @@ class RepeatedToolCallsTest {
             assertThat(calls.repeatOf(validate, fromDisk)).isNull();
         }
     }
+
+    /**
+     * CAMEL-25371: with a directory the checks read the other files of the project, so after a fix in another file the
+     * same content gets another answer: always answered in full.
+     */
+    @Test
+    void validatingContentAgainstADirectoryIsNotARepeat() {
+        ToolDescriptor validate = ToolRegistry.findTool("camel_validate_source");
+        Map<String, String> args = Map.of("directory", "/work/project", "file", "orders.camel.yaml",
+                "content", "- from:\n    uri: timer:x\n    steps:\n      - to: direct:audit\n");
+        for (int i = 0; i < 4; i++) {
+            assertThat(calls.repeatOf(validate, args)).isNull();
+        }
+    }
+
+    /**
+     * CAMEL-25371: the source is compared exactly, as whitespace can decide the answer (a newline before
+     * {@code <?xml}).
+     */
+    @Test
+    void contentThatOnlyDiffersInWhitespaceIsAnotherQuestion() {
+        ToolDescriptor validate = ToolRegistry.findTool("camel_validate_source");
+        String xml = "<?xml version=\"1.0\"?>\n<routes/>\n";
+        Map<String, String> withNewline = Map.of("file", "routes.camel.xml", "content", "\n" + xml);
+        assertThat(calls.repeatOf(validate, withNewline)).isNull();
+        assertThat(calls.repeatOf(validate, withNewline)).isNull();
+        // the fix (the newline removed) is validated, not answered with the note
+        assertThat(calls.repeatOf(validate, Map.of("file", "routes.camel.xml", "content", xml))).isNull();
+        // and the key does not hold the source itself
+        assertThat(RepeatedToolCalls.key("camel_validate_source", withNewline, "content")).doesNotContain("<routes/>");
+    }
 }

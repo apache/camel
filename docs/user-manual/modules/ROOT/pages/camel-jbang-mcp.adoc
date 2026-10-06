@@ -321,7 +321,8 @@ project `directory` as an argument, the runtime tools take the integration `name
   misspelled option such as `logLevel` instead of `loggingLevel`), endpoint URIs, simple expressions, and
   `camel.*` options. The routes of a Java or XML file are read into the Camel model without compiling them and
   get the same checks (the endpoint DSL and constants resolved, a `to` that needs `toD`); what the parser could
-  not read is listed under `notChecked`.
+  not read is listed under `notChecked`. When the `content` is the same as the file on disk, the answer has
+  `sameAsFile: true` and a `note`: an edit the agent meant to make may not be in what it validated.
   Takes the content, or reads the file from the project directory. With `camelVersion` (or the version of the
   selected integration in the TUI) the catalog and the YAML DSL schema of that Camel version answer, the schema
   read from its `camel-yaml-dsl` jar; without it the CLI's own, with nothing to download.
@@ -417,6 +418,11 @@ An agent asking one of them the same question again and again gets nothing new, 
 stuck doing that until its tool call budget is spent. So the first two identical calls of a session are answered
 in full, and from the third the answer is a short note instead: that the call was already answered and how many
 times it was asked. The changed answer helps the agent break the loop, and the context is not filled with copies.
+`camel_validate_source` counts the same way when it is given `content` and no `directory`: the same source gets
+the same answer, and the note also says to change the line the error names. Validating a file on disk, or
+`content` with a `directory` (the checks then read the other files of the project, which a fix can change), is
+always answered in full.
+
 Calls with other arguments, and the tools that read files, logs or the running integration, are always answered
 in full, so re-reading a file after an edit or polling a log keeps working.
 

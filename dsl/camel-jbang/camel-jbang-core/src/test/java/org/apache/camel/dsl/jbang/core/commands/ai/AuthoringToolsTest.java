@@ -370,12 +370,13 @@ class AuthoringToolsTest {
 
     /** CAMEL-25371: validating content that is the file on disk says the edit is not in it. */
     @Test
-    void validatingTheFileAsItIsSaysSo(@org.junit.jupiter.api.io.TempDir java.nio.file.Path dir) throws Exception {
-        java.nio.file.Files.writeString(dir.resolve("route.camel.yaml"), VALID_ROUTE);
+    void validatingTheFileAsItIsSaysSo(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("route.camel.yaml"), VALID_ROUTE);
         JsonObject same = call("camel_validate_source", new ToolContext(),
                 Map.of("directory", dir.toString(), "file", "route.camel.yaml", "content", VALID_ROUTE));
         assertTrue(Boolean.TRUE.equals(same.get("sameAsFile")), same.toJson());
-        assertTrue(same.getString("note").contains("an edit you meant to make is not in it"), same.toJson());
+        assertTrue(same.getString("note").contains("if you meant to change the file, that change is not in this content"),
+                same.toJson());
 
         JsonObject changed = call("camel_validate_source", new ToolContext(),
                 Map.of("directory", dir.toString(), "file", "route.camel.yaml", "content", INVALID_ROUTE));

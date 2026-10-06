@@ -16,7 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.HexFormat;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -57,7 +61,7 @@ public final class RepeatedToolCalls {
         if (counts.size() >= MAX_TRACKED) {
             counts.clear();
         }
-        int times = counts.merge(key(tool.name(), args), 1, Integer::sum);
+        int times = counts.merge(key(tool.name(), args, tool.deterministicWhen()), 1, Integer::sum);
         if (times <= FULL_ANSWERS) {
             return null;
         }
@@ -82,16 +86,36 @@ public final class RepeatedToolCalls {
      * argument as an empty string is asking the same question as one that leaves it out.
      */
     static String key(String tool, Map<String, ?> args) {
+        return key(tool, args, null);
+    }
+
+    /**
+     * As {@link #key(String, Map)}, with the argument that makes the call deterministic (the source to validate) keyed
+     * by a digest of its exact text: whitespace can decide the answer there (a newline before {@code <?xml ...?>}), and
+     * the key does not hold a copy of the source.
+     */
+    static String key(String tool, Map<String, ?> args, String exact) {
         Map<String, String> sorted = new TreeMap<>();
         if (args != null) {
             for (Map.Entry<String, ?> e : args.entrySet()) {
                 Object v = e.getValue();
-                String s = v != null ? v.toString().trim() : "";
-                if (!s.isEmpty()) {
-                    sorted.put(e.getKey(), s);
+                String s = v != null ? v.toString() : "";
+                if (s.isBlank()) {
+                    continue;
                 }
+                sorted.put(e.getKey(), e.getKey().equals(exact) ? digest(s) : s.trim());
             }
         }
         return tool + sorted;
+    }
+
+    private static String digest(String text) {
+        try {
+            byte[] hash = MessageDigest.getInstance("SHA-256").digest(text.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hash);
+        } catch (NoSuchAlgorithmException e) {
+            // every JVM has SHA-256; the text itself is an exact key too
+            return text;
+        }
     }
 }
