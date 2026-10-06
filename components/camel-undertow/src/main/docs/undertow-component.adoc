@@ -333,8 +333,9 @@ If there is an object passed to the component as parameter `securityConfiguratio
 Provider will be used
 for authentication of all requests.
 
-Property `requireServletContext` of security providers forces the Undertow server to start
-with servlet context. There will be no servlet actually handled. This feature is meant only
+Property `requireServletContext` of security providers forces the Undertow server to run
+with servlet context, as soon as an endpoint that uses such a provider, configured on the endpoint
+or on the component, is started. There will be no servlet actually handled. This feature is meant only
 for use with servlet filters, which needs servlet context for their functionality.
 
 ==== WebSocket endpoints

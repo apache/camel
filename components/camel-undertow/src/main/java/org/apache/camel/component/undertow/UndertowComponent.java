@@ -365,6 +365,18 @@ public class UndertowComponent extends DefaultComponent
     public HttpHandler registerEndpoint(
             UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler)
             throws Exception {
+        return registerEndpoint(consumer != null ? consumer.getEndpoint() : null, consumer, registrationInfo, sslContext,
+                handler);
+    }
+
+    /**
+     * Registers a handler on behalf of the given endpoint: the endpoint of the consumer, or a producer endpoint that
+     * registers a handler, such as a WebSocket producer, when {@code consumer} is {@code null}.
+     */
+    public HttpHandler registerEndpoint(
+            UndertowEndpoint endpoint, UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo,
+            SSLContext sslContext, HttpHandler handler)
+            throws Exception {
         final URI uri = registrationInfo.getUri();
         final UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), sslContext);
         final UndertowHost host = undertowRegistry.computeIfAbsent(key, this::createUndertowHost);
@@ -384,7 +396,7 @@ public class UndertowComponent extends DefaultComponent
             handlerWrapped = this.securityProvider.wrapHttpHandler(handler);
         }
 
-        return host.registerHandler(consumer, registrationInfo, handlerWrapped);
+        return host.registerHandler(endpoint, consumer, registrationInfo, handlerWrapped);
     }
 
     public void unregisterEndpoint(
@@ -404,7 +416,7 @@ public class UndertowComponent extends DefaultComponent
     }
 
     protected UndertowHost createUndertowHost(UndertowHostKey key) {
-        return new DefaultUndertowHost(key, hostOptions, securityProvider);
+        return new DefaultUndertowHost(key, hostOptions);
     }
 
     public UndertowHttpBinding getUndertowHttpBinding() {

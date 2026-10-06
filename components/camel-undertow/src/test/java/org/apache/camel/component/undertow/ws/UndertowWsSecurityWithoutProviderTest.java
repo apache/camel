@@ -41,6 +41,7 @@ import org.apache.camel.component.undertow.UndertowBasicAuthHandler;
 import org.apache.camel.spi.OAuthTokenValidationFactory;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -52,12 +53,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class UndertowWsSecurityWithoutProviderTest extends BaseUndertowTest {
 
     private final AtomicInteger lateRouteInvocations = new AtomicInteger();
+    private final AtomicInteger lateBasicRouteInvocations = new AtomicInteger();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.getRegistry().bind(OAuthTokenValidationFactory.FACTORY, new StubOAuthTokenValidationFactory());
         context.getRegistry().bind("basicAuth", new UndertowBasicAuthHandler());
+        context.getRegistry().bind("lateBasicAuth", new UndertowBasicAuthHandler());
         return context;
     }
 
@@ -76,6 +79,11 @@ class UndertowWsSecurityWithoutProviderTest extends BaseUndertowTest {
                 from("direct:late").to("undertow:ws://localhost:{{port}}/late?sendToAll=true");
                 from("undertow:ws://localhost:{{port}}/late?allowedRoles=user").routeId("late").autoStartup(false)
                         .process(exchange -> lateRouteInvocations.incrementAndGet());
+
+                from("direct:lateBasic").to("undertow:ws://localhost:{{port}}/lateBasic?sendToAll=true");
+                from("undertow:ws://localhost:{{port}}/lateBasic?handlers=#lateBasicAuth").routeId("lateBasic")
+                        .autoStartup(false)
+                        .process(exchange -> lateBasicRouteInvocations.incrementAndGet());
             }
         };
     }
@@ -119,6 +127,32 @@ class UndertowWsSecurityWithoutProviderTest extends BaseUndertowTest {
         assertEquals(CloseMessage.MSG_VIOLATES_POLICY, listener.closeCode.orTimeout(10, TimeUnit.SECONDS).join());
         assertTrue(listener.received.isEmpty());
         assertEquals(0, lateRouteInvocations.get());
+    }
+
+    @Test
+    void connectionOpenedBeforeAConsumerWithHandlersStartedIsNotServed() throws Exception {
+        // only the producer uses the path, and it has no security settings, so the upgrade does not go through the
+        // handlers of the consumer
+        RecordingListener listener = new RecordingListener();
+        WebSocket webSocket = connect("/lateBasic", null, listener);
+
+        context.getRouteController().startRoute("lateBasic");
+
+        // the connection does not get what the producer sends
+        template.sendBody("direct:lateBasic", "broadcast");
+        // and its messages do not reach the route: it is closed instead
+        webSocket.sendText("hello", true).join();
+
+        assertEquals(CloseMessage.MSG_VIOLATES_POLICY, listener.closeCode.orTimeout(10, TimeUnit.SECONDS).join());
+        assertTrue(listener.received.isEmpty());
+        assertEquals(0, lateBasicRouteInvocations.get());
+
+        // a connection that goes through the handlers is served
+        String credentials = Base64.getEncoder().encodeToString("guest:secret".getBytes(StandardCharsets.UTF_8));
+        WebSocket authenticated = connect("/lateBasic", "Basic " + credentials, new RecordingListener());
+        authenticated.sendText("hello", true).join();
+        await().atMost(10, TimeUnit.SECONDS).until(() -> lateBasicRouteInvocations.get() == 1);
+        authenticated.sendClose(WebSocket.NORMAL_CLOSURE, "done").join();
     }
 
     private void assertRefused(String path, String authorization, int statusCode) {

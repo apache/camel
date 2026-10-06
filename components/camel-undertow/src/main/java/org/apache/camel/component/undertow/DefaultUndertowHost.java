@@ -44,29 +44,23 @@ public class DefaultUndertowHost implements UndertowHost {
     private final Lock lock = new ReentrantLock();
     private final UndertowHostKey key;
     private final UndertowHostOptions options;
-    private final UndertowSecurityProvider securityProvider;
     private final CamelRootHandler rootHandler;
     private final RestRootHandler restHandler;
     private Undertow undertow;
     private String hostString;
     private DeploymentManager deploymentManager;
+    // the rest or the root handler, depending on the first endpoint registered on the server
+    private HttpHandler serverHandler;
+    // the server handler, or the servlet deployment around it once an endpoint needs a servlet context
+    private volatile HttpHandler entryHandler;
 
     public DefaultUndertowHost(UndertowHostKey key) {
         this(key, null);
     }
 
     public DefaultUndertowHost(UndertowHostKey key, UndertowHostOptions options) {
-        this(key, options, null);
-    }
-
-    /**
-     * @param securityProvider the security provider of the component, which applies when the first endpoint registered
-     *                         on the host is not a consumer, such as a WebSocket producer
-     */
-    public DefaultUndertowHost(UndertowHostKey key, UndertowHostOptions options, UndertowSecurityProvider securityProvider) {
         this.key = key;
         this.options = options;
-        this.securityProvider = securityProvider;
         this.rootHandler = new CamelRootHandler(new NotFoundHandler());
         this.restHandler = new RestRootHandler();
         this.restHandler.init(key.getPort());
@@ -80,6 +74,13 @@ public class DefaultUndertowHost implements UndertowHost {
     @Override
     public HttpHandler registerHandler(
             UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler) {
+        return registerHandler(consumer != null ? consumer.getEndpoint() : null, consumer, registrationInfo, handler);
+    }
+
+    @Override
+    public HttpHandler registerHandler(
+            UndertowEndpoint endpoint, UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo,
+            HttpHandler handler) {
         lock.lock();
         try {
             if (undertow == null) {
@@ -132,12 +133,10 @@ public class DefaultUndertowHost implements UndertowHost {
                     }
                 }
 
-                if (consumer != null && consumer.isRest()) {
-                    // use the rest handler as its a rest consumer
-                    undertow = registerHandler(consumer, builder, restHandler);
-                } else {
-                    undertow = registerHandler(consumer, builder, rootHandler);
-                }
+                // use the rest handler as its a rest consumer
+                serverHandler = consumer != null && consumer.isRest() ? restHandler : rootHandler;
+                entryHandler = serverHandler;
+                undertow = builder.setHandler(exchange -> entryHandler.handleRequest(exchange)).build();
                 LOG.info("Starting Undertow server on {}://{}:{}", key.getSslContext() != null ? "https" : "http",
                         key.getHost(),
                         key.getPort());
@@ -161,6 +160,9 @@ public class DefaultUndertowHost implements UndertowHost {
                     throw e;
                 }
             }
+            if (deploymentManager == null && requiresServletContext(endpoint)) {
+                deployServletContext();
+            }
             if (consumer != null && consumer.isRest()) {
                 restHandler.addConsumer(consumer, handler);
                 return restHandler;
@@ -173,36 +175,44 @@ public class DefaultUndertowHost implements UndertowHost {
         }
     }
 
-    private Undertow registerHandler(UndertowConsumer consumer, Undertow.Builder builder, HttpHandler handler) {
-        UndertowSecurityProvider securityProvider = consumer == null
-                ? this.securityProvider
-                : consumer.getEndpoint().getComponent().getSecurityProvider() != null
-                        ? consumer.getEndpoint().getComponent().getSecurityProvider()
-                : consumer.getEndpoint().getSecurityProvider();
-        //if security provider needs servlet context, start empty servlet
-        if (securityProvider != null && securityProvider.requireServletContext()) {
-            DeploymentInfo deployment = Servlets.deployment()
-                    .setContextPath("")
-                    .setDisplayName("application")
-                    .setDeploymentName("camel-undertow")
-                    .setClassLoader(getClass().getClassLoader())
-                    //httpHandler for servlet is ignored, camel handler is used instead of it
-                    .addOuterHandlerChainWrapper(h -> handler);
-
-            deploymentManager = Servlets.newContainer().addDeployment(deployment);
-            deploymentManager.deploy();
-            try {
-                return builder.setHandler(deploymentManager.start()).build();
-            } catch (ServletException e) {
-                LOG.warn("Failed to start Undertow server on {}://{}:{}, reason: {}",
-                        key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort(), e.getMessage());
-
-                throw new RuntimeException(e);
-            }
-
+    /**
+     * Whether the security provider of the endpoint, or of its component, needs a servlet context, for example to run
+     * servlet filters. A producer endpoint can register first on a server, such as a WebSocket producer.
+     */
+    private static boolean requiresServletContext(UndertowEndpoint endpoint) {
+        if (endpoint == null) {
+            return false;
         }
+        UndertowSecurityProvider endpointProvider = endpoint.getSecurityProvider();
+        UndertowSecurityProvider componentProvider = endpoint.getComponent().getSecurityProvider();
+        return endpointProvider != null && endpointProvider.requireServletContext()
+                || componentProvider != null && componentProvider.requireServletContext();
+    }
 
-        return builder.setHandler(handler).build();
+    /**
+     * Starts an empty servlet deployment around the handler of the server, so that every request has a servlet context.
+     */
+    private void deployServletContext() {
+        HttpHandler handler = serverHandler;
+        DeploymentInfo deployment = Servlets.deployment()
+                .setContextPath("")
+                .setDisplayName("application")
+                .setDeploymentName("camel-undertow")
+                .setClassLoader(getClass().getClassLoader())
+                //httpHandler for servlet is ignored, camel handler is used instead of it
+                .addOuterHandlerChainWrapper(h -> handler);
+
+        DeploymentManager manager = Servlets.newContainer().addDeployment(deployment);
+        manager.deploy();
+        try {
+            entryHandler = manager.start();
+        } catch (ServletException e) {
+            LOG.warn("Failed to start the servlet context of the Undertow server on {}://{}:{}, reason: {}",
+                    key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort(), e.getMessage());
+            manager.undeploy();
+            throw new RuntimeException(e);
+        }
+        deploymentManager = manager;
     }
 
     @Override

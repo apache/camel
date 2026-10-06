@@ -414,7 +414,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
 
     /**
      * Fails closed for WebSocket channels whose handshake did not pass the security checks of this consumer's endpoint
-     * (OAuth validation, security provider and allowed roles). Such channels can exist when the shared
+     * (OAuth validation, security provider, allowed roles and custom handlers). Such channels can exist when the shared
      * {@link CamelWebSocketHandler} accepted a handshake before these checks applied to its path, for example while the
      * path was only used by producers. Returns {@code true} when the event must not be delivered to the route; the
      * channel is closed if still open.
