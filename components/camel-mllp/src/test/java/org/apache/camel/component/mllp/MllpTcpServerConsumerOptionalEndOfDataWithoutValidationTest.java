@@ -39,6 +39,7 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithoutValidationTest
     }
 
     @Override
+    @Test
     public void testInvalidMessage() throws Exception {
         expectedCompleteCount = 1;
 
@@ -46,11 +47,13 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithoutValidationTest
     }
 
     @Override
+    @Test
     public void testNthInvalidMessage() throws Exception {
         runNthInvalidMessage();
     }
 
     @Override
+    @Test
     public void testMessageContainingEmbeddedStartOfBlock() throws Exception {
         expectedCompleteCount = 1;
 
@@ -58,11 +61,13 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithoutValidationTest
     }
 
     @Override
+    @Test
     public void testNthMessageContainingEmbeddedStartOfBlock() throws Exception {
         runNthMessageContainingEmbeddedStartOfBlock();
     }
 
     @Override
+    @Test
     public void testMessageContainingEmbeddedEndOfBlock() {
         expectedCompleteCount = 1;
 
@@ -77,11 +82,13 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithoutValidationTest
     }
 
     @Override
+    @Test
     public void testNthMessageContainingEmbeddedEndOfBlock() throws Exception {
         runNthMessageContainingEmbeddedEndOfBlock();
     }
 
     @Override
+    @Test
     public void testInvalidMessageContainingEmbeddedEndOfBlock() throws Exception {
         runInvalidMessageContainingEmbeddedEndOfBlock();
     }
