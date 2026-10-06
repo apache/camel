@@ -126,11 +126,15 @@ steps:
       steps:
         - choice:
             when:
-              - simple: "${body.statusUpdate} != null"
+              - expression:
+                  simple:
+                    expression: "${body.statusUpdate} != null"
                 steps:
                   - log:
                       message: "Progress: ${body.statusUpdate.status.state}"
-              - simple: "${body.message} != null"
+              - expression:
+                  simple:
+                    expression: "${body.message} != null"
                 steps:
                   - log:
                       message: "Final message received"

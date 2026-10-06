@@ -204,21 +204,35 @@ Inline prompt strings in every route become hard to maintain. Common patterns:
 
 === External prompt files
 
-Load prompts from the classpath or file system and pass them as the body or via a processor:
+Keep a prompt in its own file as a Simple template, and load it with the `resource:` prefix: the template is read
+once and evaluated for each exchange, so `${body}` in it is the document the route received. For example
+`prompts/extract-resume.txt` on the classpath:
+
+[source,text]
+----
+Extract structured data from this resume. Use only facts present in the document.
+
+Document to parse:
+${body}
+----
+
+The route reads the resumes from a folder and sends each one with the prompt:
 
 [source,yaml]
 ----
 - route:
     from:
-        uri: file:prompts/extract-resume.txt?noop=true
-        steps:
-          - setHeader:
-              name: CamelOpenAIUserMessage
-              expression:
-                simple:
-                  expression: "${body}\n\nDocument to parse:\n${exchangeProperty.documentText}"
-          - to:
-              uri: openai:chat-completion?jsonSchema=resource:classpath:schemas/resume.schema.json
+      uri: file:inbox/resumes
+      steps:
+        - setHeader:
+            name: CamelOpenAIUserMessage
+            expression:
+              simple:
+                expression: resource:classpath:prompts/extract-resume.txt
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              jsonSchema: resource:classpath:schemas/resume.schema.json
 ----
 
 See xref:openai-component.adoc#_basic_chat_completion_with_string_input[OpenAI — file-based prompts].

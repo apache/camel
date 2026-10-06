@@ -243,8 +243,8 @@ xref:ROOT:opa-component.adoc[OPA], xref:ROOT:openfga-component.adoc[OpenFGA]
 
 |LLM observability
 |xref:others:ai-observability.adoc[AI Observability]
-|Record an OpenTelemetry span and Micrometer metrics (model, tokens, duration) for every LLM call, inside the route's
-trace.
+|Record an OpenTelemetry span and Micrometer metrics (model, tokens, duration) for each call of the LangChain4j, OpenAI
+and Spring AI chat producers, inside the route's trace.
 
 |RAG ingestion
 |xref:ROOT:langchain4j-ingest-component.adoc[LangChain4j Ingest]
