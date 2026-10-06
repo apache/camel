@@ -191,9 +191,13 @@ The producer sends the events to the partition chosen, in this order, by:
 . the partition key of the event received by an `azure-eventhubs` consumer earlier in the route, so that events with
 the same key stay together
 
-Otherwise, Event Hubs picks the partition. The consumer sets the same two headers on every event it receives. While
-they still hold the received values, the producer does not take them as a partition chosen by the route, and it never
-reuses the partition id of a received event, because partitions differ from one Event Hub to another.
+Otherwise, Event Hubs picks the partition. The partition key and the partition id are looked up separately, so a
+partition id header set by the route together with a `partitionKey` endpoint option, or a partition key header together
+with a `partitionId` option, selects both, and the producer fails with `Both partitionKey and partitionId are set`.
+
+The consumer sets the same two headers on every event it receives. While they still hold the received values, the
+producer does not take them as a partition chosen by the route, and it never reuses the partition id of a received
+event, because partitions differ from one Event Hub to another.
 
 To keep the partition of the received event, for example when mirroring between Event Hubs that have the same
 partitions, remove the `CamelAzureEventHubsReceivedPartitionId` exchange property, or
