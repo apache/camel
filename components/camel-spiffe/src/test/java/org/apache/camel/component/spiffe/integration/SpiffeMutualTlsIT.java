@@ -38,6 +38,8 @@ import org.apache.camel.test.infra.spiffe.services.SpiffeService;
 import org.apache.camel.test.infra.spiffe.services.SpiffeServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -47,7 +49,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * Completes a real mutual-TLS handshake through {@link SpiffeSSLContextParameters} against SVIDs from a live SPIRE
  * Workload API, asserting that an allow-listed peer connects and a non-allow-listed one is refused during the
  * handshake.
+ * <p>
+ * Linux only: the SPIRE agent is run in the host PID namespace with the Workload API socket bind-mounted, which works
+ * against a Linux Docker daemon but not Docker Desktop's VM or rootless Podman, so the test is skipped off Linux rather
+ * than left to fail on a developer machine.
  */
+@EnabledOnOs(OS.LINUX)
 class SpiffeMutualTlsIT extends CamelTestSupport {
 
     @RegisterExtension
