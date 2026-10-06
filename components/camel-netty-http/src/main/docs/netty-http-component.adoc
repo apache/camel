@@ -169,6 +169,11 @@ no roles)
 * access to /public/* is an exclusion that means no authentication is
 necessary, and is therefore public for everyone without logging in
 
+The roles of an inclusion are a comma-separated list of role names. A user
+is in role when one of the user roles is equal to one of the listed names.
+The comparison is case-sensitive, whitespace around each name and blank
+entries are ignored, and a value of `*` accepts any role.
+
 To use this constraint, we just need to refer to the bean id as shown
 below:
 
