@@ -181,6 +181,15 @@ This can break an application that has such an invalid value configured and work
 good enough, as it now fails when starting. To keep the previous result, correct the configured value, or remove the
 property so the `defaultValue` is used.
 
+=== @PropertyInject - the separator is a plain string (Breaking change)
+
+The `separator` of `@PropertyInject`, which splits the value into an array, a collection or a map, was used as a
+regular expression: a separator such as `|` split the value into single characters, and `.` gave no values at all.
+It is now a plain string, as documented ("for example to use comma to separate the values"). An application that
+escaped a separator to work around this (for example `separator = "\\|"`) must now use the separator itself
+(`separator = "|"`). A separator that relied on a regular expression (such as `+separator = "\\s*;\\s*"+`) is no
+longer supported; use the plain separator (the values are trimmed).
+
 === Aggregate EIP - optimistic locking retry delay
 
 When optimistic locking is enabled without configuring an `optimisticLockRetryPolicy`, the retry delay between
