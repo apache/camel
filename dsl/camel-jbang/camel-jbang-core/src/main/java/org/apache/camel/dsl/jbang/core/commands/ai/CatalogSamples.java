@@ -426,6 +426,68 @@ public final class CatalogSamples {
      * @param limit   the maximum number of samples, at most {@link #MAX_LIMIT}
      */
     public static JsonObject sample(CamelCatalog catalog, String kind, String name, int limit) {
+        String lower = name != null ? name.trim().toLowerCase(Locale.ROOT) : "";
+        boolean kameletKind = "kamelet".equalsIgnoreCase(kind) || "kamelet file".equalsIgnoreCase(kind);
+        if (kameletKind || lower.contains("kamelet") && !lower.equals("kamelet") && kind == null) {
+            // kamelet-custom, custom-kamelet, kamelet-action: how to write a Kamelet file
+            List<Map<String, String>> files = kameletFileSamples(catalog);
+            if (!files.isEmpty()) {
+                JsonObject answer = new JsonObject();
+                answer.put("name", name.trim());
+                answer.put("kind", "kamelet file");
+                answer.put("placement", KAMELET_FILE_PLACEMENT);
+                putSamples(answer, files, Math.max(1, Math.min(MAX_LIMIT, limit <= 0 ? DEFAULT_LIMIT : limit)));
+                answer.put("guide", AuthoringTools.KAMELET_GUIDE);
+                return answer;
+            }
+        }
+        JsonObject answer = doSample(catalog, kind, name, limit);
+        if (lower.equals("kamelet") && !answer.containsKey("error")) {
+            // the samples show a route that uses a Kamelet; a model asking for kamelet often wants to write one
+            List<Map<String, String>> files = kameletFileSamples(catalog);
+            if (!files.isEmpty()) {
+                JsonObject file = new JsonObject();
+                file.put("source", files.get(0).get("source"));
+                file.put("placement", KAMELET_FILE_PLACEMENT);
+                file.put("yaml", files.get(0).get("yaml"));
+                answer.put("kameletFile", file);
+            }
+            answer.put("guide", AuthoringTools.KAMELET_GUIDE);
+        }
+        return answer;
+    }
+
+    static final String KAMELET_FILE_PLACEMENT = "a file of its own, <name>.kamelet.yaml, beside the routes; a route"
+                                                 + " uses it as kamelet:<name>";
+
+    private static final Pattern KAMELET_FILE_BLOCK = Pattern.compile(
+            "(?m)^\\.([\\w.-]+\\.kamelet\\.yaml)\\s*\\n\\[source,yaml\\]\\s*\\n----\\n(.*?)\\n----", Pattern.DOTALL);
+
+    /** The Kamelet files of the guide on writing a Kamelet (kamelet-custom.adoc), the action first. */
+    static List<Map<String, String>> kameletFileSamples(CamelCatalog catalog) {
+        String adoc = null;
+        try {
+            adoc = catalog != null ? catalog.asciiDoc("kamelet-custom") : null;
+        } catch (Exception e) {
+            // no guide in this catalog
+        }
+        List<Map<String, String>> answer = new ArrayList<>();
+        if (adoc != null) {
+            Matcher m = KAMELET_FILE_BLOCK.matcher(adoc);
+            while (m.find()) {
+                Map<String, String> sample = Map.of("source", "kamelet-custom.adoc: " + m.group(1), "yaml", m.group(2) + "\n");
+                // the action first: the building block a project writes most
+                if (m.group(2).contains("kamelet.type: action")) {
+                    answer.add(0, sample);
+                } else {
+                    answer.add(sample);
+                }
+            }
+        }
+        return answer;
+    }
+
+    private static JsonObject doSample(CamelCatalog catalog, String kind, String name, int limit) {
         JsonObject answer = new JsonObject();
         String given = name != null ? name.trim() : "";
         if (given.isEmpty()) {

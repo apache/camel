@@ -302,6 +302,125 @@ class KameletChecksTest {
     }
 
     @Test
+    void theShapeOfAKameletFile(@TempDir Path dir) {
+        // what a local model wrote in the benchmark: properties under spec, required on the property, do: as the route
+        String content = """
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: tag-order-action
+                  labels:
+                    camel.apache.org/kamelet.type: action
+                spec:
+                  definition:
+                    title: Tag Order Action
+                  properties:
+                    tag:
+                      title: Tag
+                      type: string
+                      required: true
+                  do:
+                    - setBody:
+                        simple: "${body} [${properties.tag}]"
+                """;
+        List<String> errors = SourceValidator.validate("tag-order-action.kamelet.yaml", content, catalog, null, dir);
+        assertThat(errors).anySatisfy(e -> assertThat(e).startsWith("Line 10: ").contains("spec.properties is not a key")
+                .contains("spec.definition"));
+        assertThat(errors).anySatisfy(e -> assertThat(e).startsWith("Line 15: ").contains("spec.do is not a key")
+                .contains("template: {from: {uri: kamelet:source"));
+        assertThat(errors).anySatisfy(e -> assertThat(e).contains("has no spec.template"));
+        assertThat(errors).anySatisfy(e -> assertThat(e).contains("Unknown function: properties.tag")
+                .contains("the placeholder {{tag}}"));
+    }
+
+    @Test
+    void aRequiredMarkOnAPropertyAndAnActionFromAComponent() {
+        String content = """
+                kind: Kamelet
+                metadata:
+                  name: my-action
+                  labels:
+                    camel.apache.org/kamelet.type: action
+                spec:
+                  definition:
+                    required:
+                      - tag
+                      - other
+                    properties:
+                      tag:
+                        type: string
+                        required: true
+                  template:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: kamelet:sink
+                """;
+        List<String> errors = KameletChecks.validateKameletFile(content);
+        assertThat(errors).anySatisfy(e -> assertThat(e).contains("properties.tag.required"));
+        assertThat(errors).anySatisfy(e -> assertThat(e).contains("lists other, which is not under"));
+        assertThat(errors).anySatisfy(e -> assertThat(e).contains("an action Kamelet starts from: {uri: kamelet:source}"));
+    }
+
+    @Test
+    void aTemplateThatStartsFromItself() {
+        // the benchmark: from: kamelet:tag-order-action/route in tag-order-action recursed to a StackOverflowError
+        String content = """
+                kind: Kamelet
+                metadata:
+                  name: tag-order-action
+                spec:
+                  template:
+                    from:
+                      uri: kamelet:tag-order-action/route
+                      steps:
+                        - setBody:
+                            simple: "${body} [{{tag}}]"
+                """;
+        assertThat(KameletChecks.validateKameletFile(content)).anySatisfy(
+                e -> assertThat(e).startsWith("Line 7: ").contains("is entered from kamelet:source"));
+    }
+
+    @Test
+    void stepsUnderTheTemplate() {
+        String content = """
+                kind: Kamelet
+                metadata:
+                  name: my-action
+                spec:
+                  template:
+                    from:
+                      uri: kamelet:source
+                    steps:
+                      - to: kamelet:sink
+                """;
+        assertThat(KameletChecks.validateKameletFile(content)).anySatisfy(
+                e -> assertThat(e).contains("spec.template.steps: the steps go under from:"));
+    }
+
+    @Test
+    void theDependenciesOfAKamelet() {
+        // camel:simple failed to download on every reload: simple is in camel core
+        assertThat(KameletChecks.camelDependency("simple")).contains("part of camel core").contains("leave it out");
+        assertThat(KameletChecks.camelDependency("timer")).isNull();
+        assertThat(KameletChecks.camelDependency("jackson")).isNull();
+        assertThat(KameletChecks.camelDependency("jq")).isNull();
+        assertThat(KameletChecks.camelDependency("core")).isNull();
+        assertThat(KameletChecks.camelDependency("no-such-thing")).contains("is not a Camel artifact");
+    }
+
+    @Test
+    void aGoodKameletFileHasNoShapeErrors() {
+        assertThat(KameletChecks.validateKameletFile(TAG_KAMELET.formatted("${body} [{{tag}}]"))).isEmpty();
+    }
+
+    @Test
+    void anUnknownDocNameWithKameletPointsToTheGuide() {
+        JsonObject doc = CatalogDocs.catalogDoc(catalog, "kamelet-custom", null, null, null, null, false, false, null);
+        assertThat(doc.toJson()).contains("camel_catalog_doc name=kamelet docPage=custom");
+    }
+
+    @Test
     void aPropertyTheProjectsKameletLacks(@TempDir Path dir) throws Exception {
         Files.writeString(dir.resolve("tag-order-action.kamelet.yaml"), """
                 apiVersion: camel.apache.org/v1
@@ -431,6 +550,56 @@ class KameletChecksTest {
         JsonObject doc = CatalogDocs.catalogDoc(catalog, "kafka-not-secured-source", null, null, null, null, false,
                 false, null);
         assertThat(doc.toJson()).contains("kafka-source");
+    }
+
+    @Test
+    void howToWriteAKameletWithKindKamelet() {
+        // a model asked name=kamelet kind=kamelet docPage=custom 14 times and got "Kamelet not found"
+        JsonObject doc = CatalogDocs.catalogDoc(catalog, "kamelet", null, "kamelet", null, null, false, false, "custom");
+        assertThat(doc.getString("kind")).isEqualTo("component");
+        assertThat(doc.getString("name")).isEqualTo("kamelet");
+        JsonObject other = CatalogDocs.catalogDoc(catalog, "kamelet-custom", null, "kamelet", null, null, false, false,
+                "custom");
+        assertThat(other.getString("name")).isEqualTo("kamelet");
+    }
+
+    @Test
+    void aKameletNotInTheCatalogPointsToHowToWriteOne() {
+        JsonObject doc = CatalogDocs.catalogDoc(catalog, "tag-order-action", null, "kamelet", null, null, false, false,
+                null);
+        assertThat(doc.toJson()).contains("Kamelet not found: tag-order-action")
+                .contains("camel_catalog_doc name=kamelet docPage=custom");
+    }
+
+    @Test
+    void theSampleOfKameletShowsAKameletFile() {
+        // every model asked camel_catalog_sample kamelet first, and got only routes that call a Kamelet
+        JsonObject sample = CatalogSamples.sample(catalog, "kamelet", 3);
+        JsonObject file = (JsonObject) sample.get("kameletFile");
+        assertThat(file).isNotNull();
+        assertThat(file.getString("yaml")).contains("kind: Kamelet").contains("uri: kamelet:source");
+        assertThat(file.getString("placement")).contains("<name>.kamelet.yaml");
+        assertThat(sample.getString("guide")).contains("docPage=custom");
+    }
+
+    @Test
+    void aSampleWithKindKamelet() {
+        assertThat(CatalogSamples.sample(catalog, "kamelet", "tag-order-action", 3).getString("kind"))
+                .isEqualTo("kamelet file");
+    }
+
+    @Test
+    void aSampleOfAKameletByAnotherName() {
+        // kamelet-custom, as a model named it after its project
+        JsonObject sample = CatalogSamples.sample(catalog, "kamelet-custom", 3);
+        assertThat(sample.getString("kind")).isEqualTo("kamelet file");
+        assertThat(sample.toJson()).contains("kind: Kamelet").contains("kamelet.type: action");
+    }
+
+    @Test
+    void theDocPagesAreNamedWithTheirCall() {
+        JsonObject doc = CatalogDocs.catalogDoc(catalog, "kamelet", null, null, null, null, false, false, null);
+        assertThat(doc.getString("docPagesHint")).contains("docPage=custom: Writing a custom Kamelet");
     }
 
     @Test

@@ -50,6 +50,55 @@ optional `default`.
 In the template a parameter is written as a property placeholder: `+{{customer}}+`. A parameter that may be left out
 is written `+{{?customer}}+`, which removes the option it sets when no value is given, instead of failing.
 
+== Mistakes to avoid
+
+* A parameter in the template is the placeholder `+{{tag}}+`, also inside an expression: `+simple: {expression: "${body} [{{tag}}]"}+`.
+  It is not `${tag}`, `${properties.tag}` or `${header.tag}`.
+* `properties` and `required` go under `spec.definition`, not directly under `spec`. `required` is a list of names
+  (`required: [tag]`), not `required: true` on a property.
+* The route is `spec.template` with a `from` and its `steps` under the `from`: no `steps`, `do` or `route` directly
+  under `spec` or `template`.
+* An action or a sink starts `from: kamelet:source`, never from the Kamelet itself: `kamelet:<its own name>` would
+  create the Kamelet again and again.
+* The file is one YAML document, without a `---`.
+
+== An action Kamelet
+
+This action keeps only the fields of a JSON object that are named in its `allowlist` parameter, so personal data
+such as the customer and email does not travel further.
+
+.content-filter-action.kamelet.yaml
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Kamelet
+metadata:
+  name: content-filter-action
+  labels:
+    camel.apache.org/kamelet.type: action
+spec:
+  definition:
+    title: Content Filter Action
+    description: Keeps only the listed fields of a JSON object
+    required:
+      - allowlist
+    properties:
+      allowlist:
+        title: Allowlist
+        description: Comma separated names of the fields to keep
+        type: string
+  dependencies:
+    - "camel:jq"
+  template:
+    from:
+      uri: kamelet:source
+      steps:
+        - setBody:
+            expression:
+              jq:
+                expression: 'with_entries(select(.key as $k | "{{allowlist}}" | split(",") | index($k)))'
+----
+
 == A source Kamelet
 
 This source produces a sample order at a fixed interval. The route that uses it chooses the customer, and may change
@@ -89,46 +138,11 @@ spec:
         period: "{{period}}"
       steps:
         - setBody:
-            simple:
-              expression: '{"id": "${exchangeId}", "customer": "{{customer}}", "email": "someone@example.com", "country": "DK"}'
+            expression:
+              simple:
+                expression: '{"id": "${exchangeId}", "customer": "{{customer}}", "email": "someone@example.com", "country": "DK"}'
         - to:
             uri: kamelet:sink
-----
-
-== An action Kamelet
-
-This action keeps only the fields of a JSON object that are named in its `allowlist` parameter, so personal data
-such as the customer and email does not travel further.
-
-.content-filter-action.kamelet.yaml
-[source,yaml]
-----
-apiVersion: camel.apache.org/v1
-kind: Kamelet
-metadata:
-  name: content-filter-action
-  labels:
-    camel.apache.org/kamelet.type: action
-spec:
-  definition:
-    title: Content Filter Action
-    description: Keeps only the listed fields of a JSON object
-    required:
-      - allowlist
-    properties:
-      allowlist:
-        title: Allowlist
-        description: Comma separated names of the fields to keep
-        type: string
-  dependencies:
-    - "camel:jq"
-  template:
-    from:
-      uri: kamelet:source
-      steps:
-        - setBody:
-            jq:
-              expression: 'with_entries(select(.key as $k | "{{allowlist}}" | split(",") | index($k)))'
 ----
 
 == A sink Kamelet

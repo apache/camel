@@ -33,7 +33,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -252,9 +254,224 @@ public final class KameletChecks {
         return answer;
     }
 
+    /** The keys of spec of a Kamelet; anything else is not read. */
+    private static final Set<String> SPEC_KEYS = Set.of("definition", "template", "dependencies", "types", "dataTypes",
+            "sources", "flow");
+
+    /**
+     * The shape of a Kamelet file: what a model gets wrong writing one, and the runtime only reports as a Kamelet that
+     * cannot be loaded or used. spec.template with from: is the route; the properties are under spec.definition, with
+     * the required ones listed in spec.definition.required; an action or a sink starts from kamelet:source.
+     */
+    public static List<String> validateKameletFile(String content) {
+        List<String> errors = new ArrayList<>();
+        Node root;
+        try {
+            root = new Yaml(new SafeConstructor(new LoaderOptions())).compose(new StringReader(content));
+        } catch (Exception e) {
+            // not YAML: the schema check says so
+            return errors;
+        }
+        if (!(root instanceof MappingNode doc) || !"Kamelet".equals(scalar(value(doc, "kind")))) {
+            return errors;
+        }
+        Node specNode = value(doc, "spec");
+        if (!(specNode instanceof MappingNode spec)) {
+            errors.add(EndpointChecks.linePrefix(line(doc)) + "a Kamelet has a spec: with definition: (its properties)"
+                       + " and template: (its route); " + AuthoringTools.KAMELET_GUIDE);
+            return errors;
+        }
+        for (NodeTuple t : spec.getValue()) {
+            String key = scalar(t.getKeyNode());
+            if (key == null || SPEC_KEYS.contains(key)) {
+                continue;
+            }
+            String hint = switch (key) {
+                case "properties", "required" -> "it goes under spec.definition (definition: {required: [...],"
+                                                 + " properties: {name: {type: string, ...}}})";
+                case "from", "route", "steps", "do", "flow", "routeTemplate" -> "the route of a Kamelet is spec.template:"
+                                                                                + " template: {from: {uri: kamelet:source, steps: [...]}}";
+                default -> "the keys of spec are definition, template, dependencies and types";
+            };
+            errors.add(EndpointChecks.linePrefix(t.getKeyNode().getStartMark().getLine()) + "spec." + key
+                       + " is not a key of a Kamelet: " + hint);
+        }
+        Node definition = value(spec, "definition");
+        Set<String> declared = new java.util.LinkedHashSet<>();
+        if (definition instanceof MappingNode def) {
+            if (value(def, "properties") instanceof MappingNode props) {
+                for (NodeTuple p : props.getValue()) {
+                    String pname = scalar(p.getKeyNode());
+                    declared.add(pname);
+                    if (p.getValueNode() instanceof MappingNode pm && value(pm, "required") != null) {
+                        errors.add(EndpointChecks.linePrefix(value(pm, "required").getStartMark().getLine())
+                                   + "spec.definition.properties." + pname + ".required: a required property is listed"
+                                   + " in spec.definition.required (required: [" + pname + "]), not marked on the"
+                                   + " property");
+                    }
+                }
+            }
+            if (value(def, "required") instanceof SequenceNode req) {
+                for (Node r : req.getValue()) {
+                    String rname = scalar(r);
+                    if (rname != null && !declared.contains(rname)) {
+                        errors.add(EndpointChecks.linePrefix(r.getStartMark().getLine()) + "spec.definition.required"
+                                   + " lists " + rname + ", which is not under spec.definition.properties");
+                    }
+                }
+            }
+        }
+        if (value(spec, "dependencies") instanceof SequenceNode deps) {
+            for (Node d : deps.getValue()) {
+                String dep = scalar(d);
+                String problem = dep != null && dep.startsWith("camel:") ? camelDependency(dep.substring(6)) : null;
+                if (problem != null) {
+                    errors.add(EndpointChecks.linePrefix(d.getStartMark().getLine()) + "spec.dependencies: " + dep + " "
+                               + problem);
+                }
+            }
+        }
+        Node template = value(spec, "template");
+        if (template == null) {
+            errors.add(EndpointChecks.linePrefix(spec.getStartMark().getLine()) + "the Kamelet has no spec.template:"
+                       + " its route, template: {from: {uri: kamelet:source, steps: [...]}} for an action or a sink, or"
+                       + " from: the component for a source; " + AuthoringTools.KAMELET_GUIDE);
+        } else if (template instanceof MappingNode tm) {
+            Node from = value(tm, "from");
+            if (from == null && value(tm, "route") instanceof MappingNode route) {
+                from = value(route, "from");
+            }
+            String type = null;
+            if (value(doc, "metadata") instanceof MappingNode meta && value(meta, "labels") instanceof MappingNode labels) {
+                type = scalar(value(labels, "camel.apache.org/kamelet.type"));
+            }
+            if (value(tm, "steps") != null) {
+                errors.add(EndpointChecks.linePrefix(tm.getStartMark().getLine()) + "spec.template.steps: the steps go"
+                           + " under from:, template: {from: {uri: kamelet:source, steps: [...]}}");
+            }
+            if (from instanceof MappingNode fm0 && scalar(value(fm0, "uri")) != null
+                    && scalar(value(fm0, "uri")).startsWith("kamelet:")
+                    && !scalar(value(fm0, "uri")).startsWith("kamelet:source")) {
+                // from: kamelet:<itself> instantiates the Kamelet from within itself, over and over
+                errors.add(EndpointChecks.linePrefix(value(fm0, "uri").getStartMark().getLine()) + "the template starts"
+                           + " from " + scalar(value(fm0, "uri")) + ": a Kamelet's template is entered from kamelet:source,"
+                           + " the message the route sends to the Kamelet");
+            } else if (from == null) {
+                errors.add(EndpointChecks.linePrefix(tm.getStartMark().getLine()) + "spec.template has no from: the"
+                           + " route starts with from: {uri: kamelet:source, steps: [...]} for an action or a sink");
+            } else if (("action".equals(type) || "sink".equals(type)) && from instanceof MappingNode fm) {
+                String uri = scalar(value(fm, "uri"));
+                if (uri != null && !uri.startsWith("kamelet:")) {
+                    errors.add(EndpointChecks.linePrefix(value(fm, "uri").getStartMark().getLine()) + "an " + type
+                               + " Kamelet starts from: {uri: kamelet:source}, the message it is sent; " + uri
+                               + " is the from: of a source");
+                }
+            }
+        }
+        return errors;
+    }
+
+    private static volatile CamelCatalog dependencyCatalog;
+
+    /**
+     * What is wrong with camel:name as a dependency, or null: it names the artifact without camel- (camel:jq for
+     * camel-jq), which the runtime downloads. A language of camel core such as simple has no artifact of its own, so
+     * camel:simple failed to download on every reload.
+     */
+    static String camelDependency(String name) {
+        if (name.isBlank() || "core".equals(name) || "kamelet".equals(name)) {
+            return null;
+        }
+        CamelCatalog catalog = dependencyCatalog;
+        if (catalog == null) {
+            catalog = new DefaultCamelCatalog();
+            dependencyCatalog = catalog;
+        }
+        try {
+            String artifact = artifactOf(catalog, name);
+            if (artifact == null) {
+                return isArtifact(catalog, "camel-" + name)
+                        ? null
+                        : "is not a Camel artifact: a dependency is camel:<artifact without camel->, such as camel:jq";
+            }
+            if (artifact.equals("camel-" + name)) {
+                return null;
+            }
+            if (artifact.startsWith("camel-core") || artifact.equals("camel-base") || artifact.equals("camel-support")) {
+                return "is part of camel core (" + artifact + "): leave it out, as the runtime has it; camel:" + name
+                       + " is downloaded as an artifact camel-" + name + ", which does not exist";
+            }
+            return isArtifact(catalog, "camel-" + name)
+                    ? null
+                    : "is in " + artifact + ": write camel:" + artifact.substring("camel-".length());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** The artifact of the component, language, data format or other of the given name, or null. */
+    private static String artifactOf(CamelCatalog catalog, String name) {
+        ArtifactModel<?> model = catalog.componentModel(name);
+        if (model == null) {
+            model = catalog.languageModel(name);
+        }
+        if (model == null) {
+            model = catalog.dataFormatModel(name);
+        }
+        if (model == null) {
+            model = catalog.otherModel(name);
+        }
+        return model != null ? model.getArtifactId() : null;
+    }
+
+    /** Whether some component, data format, language or other of the catalog is in the given artifact. */
+    private static boolean isArtifact(CamelCatalog catalog, String artifactId) {
+        for (String n : catalog.findComponentNames()) {
+            if (artifactId.equals(artifactOf(catalog, n))) {
+                return true;
+            }
+        }
+        for (String n : catalog.findDataFormatNames()) {
+            ArtifactModel<?> m = catalog.dataFormatModel(n);
+            if (m != null && artifactId.equals(m.getArtifactId())) {
+                return true;
+            }
+        }
+        for (String n : catalog.findLanguageNames()) {
+            ArtifactModel<?> m = catalog.languageModel(n);
+            if (m != null && artifactId.equals(m.getArtifactId())) {
+                return true;
+            }
+        }
+        for (String n : catalog.findOtherNames()) {
+            ArtifactModel<?> m = catalog.otherModel(n);
+            if (m != null && artifactId.equals(m.getArtifactId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Node value(MappingNode map, String key) {
+        for (NodeTuple t : map.getValue()) {
+            if (key.equals(scalar(t.getKeyNode()))) {
+                return t.getValueNode();
+            }
+        }
+        return null;
+    }
+
+    private static String scalar(Node node) {
+        return node instanceof ScalarNode s ? s.getValue() : null;
+    }
+
+    private static int line(Node node) {
+        return node.getStartMark().getLine();
+    }
+
     private static final Pattern UNKNOWN_FUNCTION
             = Pattern.compile(
-                    "Unknown function: (?:properties\\.|property\\.|header\\.|exchangeProperty\\.|variable\\.)?([\\w-]+)");
+                    "Unknown function: (properties[.:]|property[.:]|header\\.|exchangeProperty\\.|variable\\.)?([\\w-]+)");
 
     /**
      * The messages of a Kamelet file with what a model gets wrong in its template: a property of the Kamelet written as
@@ -265,14 +482,13 @@ public final class KameletChecks {
             return msgs;
         }
         KameletDefinitions.Definition def = KameletDefinitions.parse(content, fileName, fileName);
-        if (def == null || def.properties().isEmpty()) {
-            return msgs;
-        }
         List<String> answer = new ArrayList<>();
         for (String m : msgs) {
             Matcher matcher = UNKNOWN_FUNCTION.matcher(m);
-            if (matcher.find() && def.property(matcher.group(1)) != null) {
-                String p = matcher.group(1);
+            // properties.tag is a property whether the file declares it yet or not; a bare tag only when declared
+            if (matcher.find() && (matcher.group(1) != null
+                    || def != null && def.property(matcher.group(2)) != null)) {
+                String p = matcher.group(2);
                 m = m + " (in a Kamelet's template its property " + p + " is the placeholder {{" + p
                     + "}}, as in simple: \"${body} {{" + p + "}}\"; it is not a header or an exchange property)";
             }
