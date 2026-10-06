@@ -205,8 +205,8 @@ public class CamelWebSocketHandler implements HttpHandler {
     }
 
     private void upgrade(HttpServerExchange exchange) throws Exception {
-        List<UndertowEndpoint> endpoints = securityEndpoints();
-        if (endpoints.stream().noneMatch(CamelWebSocketHandler::hasSecurityChecks)) {
+        PathSecurity path = pathSecurity();
+        if (path.endpoints.stream().noneMatch(endpoint -> hasSecurityChecks(endpoint, path.consumer))) {
             this.delegate.handleRequest(exchange);
             return;
         }
@@ -216,7 +216,7 @@ public class CamelWebSocketHandler implements HttpHandler {
         }
         Set<String> authenticatedEndpoints = new HashSet<>();
         Map<String, Object> headers = new HashMap<>();
-        for (UndertowEndpoint endpoint : endpoints) {
+        for (UndertowEndpoint endpoint : path.endpoints) {
             OAuthHttpSecuritySupport oauthHttpSecurity = endpoint.getOauthHttpSecurity();
             if (oauthHttpSecurity != null) {
                 Validation validation = oauthHttpSecurity.validate(endpoint.getCamelContext(), authorizationHeaders(exchange));
@@ -238,7 +238,7 @@ public class CamelWebSocketHandler implements HttpHandler {
                     endpoint.getSecurityProvider().addHeader(headers::put, exchange);
                 }
             }
-            if (requiresHandshakeResult(endpoint) && (endpoint.getHandlers() == null
+            if (requiresHandshakeResult(endpoint, path.consumer) && (!path.consumer || endpoint.getHandlers() == null
                     || endpoint.getEndpointUri().equals(exchange.getAttachment(CONSUMER_HANDLERS_ATTACHMENT)))) {
                 authenticatedEndpoints.add(endpoint.getEndpointUri());
             }
@@ -254,33 +254,33 @@ public class CamelWebSocketHandler implements HttpHandler {
      * The endpoints whose security settings apply to the path: the consumer's, also while it is stopped, otherwise the
      * producers'. All the Camel endpoints of a path share its WebSocket connections.
      */
-    private List<UndertowEndpoint> securityEndpoints() {
+    private PathSecurity pathSecurity() {
         consumerLock.lock();
         try {
             if (consumerEndpoint != null) {
-                return List.of(consumerEndpoint);
+                return new PathSecurity(List.of(consumerEndpoint), true);
             }
         } finally {
             consumerLock.unlock();
         }
-        return producerEndpoints.stream().distinct().toList();
+        return new PathSecurity(producerEndpoints.stream().distinct().toList(), false);
     }
 
-    private static boolean hasSecurityChecks(UndertowEndpoint endpoint) {
-        return endpoint.getOauthHttpSecurity() != null || requiresHandshakeResult(endpoint);
+    private static boolean hasSecurityChecks(UndertowEndpoint endpoint, boolean consumer) {
+        return endpoint.getOauthHttpSecurity() != null || requiresHandshakeResult(endpoint, consumer);
     }
 
     /**
-     * Whether a channel must have passed the security provider, allowed roles or custom handlers of the endpoint during
-     * its handshake.
+     * Whether a channel must have passed the security provider, the allowed roles or, for the endpoint of a consumer,
+     * the custom handlers of the endpoint during its handshake. Only consumers run their custom handlers.
      */
-    private static boolean requiresHandshakeResult(UndertowEndpoint endpoint) {
-        return endpoint.requiresAuthentication() || endpoint.getHandlers() != null;
+    private static boolean requiresHandshakeResult(UndertowEndpoint endpoint, boolean consumer) {
+        return endpoint.requiresAuthentication() || consumer && endpoint.getHandlers() != null;
     }
 
-    private static boolean isAuthenticated(WebSocketChannel channel, List<UndertowEndpoint> endpoints) {
-        for (UndertowEndpoint endpoint : endpoints) {
-            if (!isAuthenticated(channel, endpoint)) {
+    private static boolean isAuthenticated(WebSocketChannel channel, PathSecurity path) {
+        for (UndertowEndpoint endpoint : path.endpoints) {
+            if (!isAuthenticated(channel, endpoint, path.consumer)) {
                 return false;
             }
         }
@@ -288,17 +288,21 @@ public class CamelWebSocketHandler implements HttpHandler {
     }
 
     /**
-     * Whether the handshake of the given channel passed the security checks of the given endpoint: its OAuth
-     * validation, its security provider, its allowed roles and its custom handlers. Always {@code true} for an endpoint
-     * without such checks.
+     * Whether the handshake of the given channel passed the security checks of the given endpoint of a consumer: its
+     * OAuth validation, its security provider, its allowed roles and its custom handlers. Always {@code true} for an
+     * endpoint without such checks.
      */
     public static boolean isAuthenticated(WebSocketChannel channel, UndertowEndpoint endpoint) {
+        return isAuthenticated(channel, endpoint, true);
+    }
+
+    private static boolean isAuthenticated(WebSocketChannel channel, UndertowEndpoint endpoint, boolean consumer) {
         if (endpoint.getOauthHttpSecurity() != null && (channel == null
                 || !(channel.getAttribute(
                         OAuthHttpSecuritySupport.OAUTH_TOKEN_VALIDATION_RESULT) instanceof OAuthTokenValidationResult))) {
             return false;
         }
-        if (requiresHandshakeResult(endpoint)) {
+        if (requiresHandshakeResult(endpoint, consumer)) {
             return channel != null
                     && channel.getAttribute(HANDSHAKE_RESULT) instanceof HandshakeResult result
                     && result.endpointUris.contains(endpoint.getEndpointUri());
@@ -353,9 +357,9 @@ public class CamelWebSocketHandler implements HttpHandler {
             final Exchange camelExchange, final AsyncCallback camelCallback)
             throws IOException {
         // only the peers whose handshake passed the security checks of the path receive messages
-        List<UndertowEndpoint> endpoints = securityEndpoints();
+        PathSecurity path = pathSecurity();
         List<WebSocketChannel> targetPeers = delegate.getPeerConnections().stream()
-                .filter(peer -> isAuthenticated(peer, endpoints))
+                .filter(peer -> isAuthenticated(peer, path))
                 .filter(peerFilter)
                 .collect(Collectors.toList());
         if (targetPeers.isEmpty()) {
@@ -437,7 +441,11 @@ public class CamelWebSocketHandler implements HttpHandler {
         boolean ownSettings = producerEndpoint.getAllowedRoles() != null
                 || producerEndpoint.getSecurityConfiguration() != null
                 || producerEndpoint.getSecurityProvider() != producerEndpoint.getComponent().getSecurityProvider();
-        return ownSettings && (producerEndpoint.getSecurityProvider() != consumerEndpoint.getSecurityProvider()
+        // endpoints that configure the same security configuration each get a provider of their own, which are alike
+        boolean sameProvider = producerEndpoint.getSecurityProvider() == consumerEndpoint.getSecurityProvider()
+                || producerEndpoint.getSecurityConfiguration() != null
+                        && producerEndpoint.getSecurityConfiguration() == consumerEndpoint.getSecurityConfiguration();
+        return ownSettings && (!sameProvider
                 || !Objects.equals(producerEndpoint.computeAllowedRoles(), consumerEndpoint.computeAllowedRoles()));
     }
 
@@ -628,6 +636,19 @@ public class CamelWebSocketHandler implements HttpHandler {
     }
 
     /**
+     * The endpoints whose security settings apply to a path, and whether that is the endpoint of its consumer.
+     */
+    private static final class PathSecurity {
+        private final List<UndertowEndpoint> endpoints;
+        private final boolean consumer;
+
+        private PathSecurity(List<UndertowEndpoint> endpoints, boolean consumer) {
+            this.endpoints = endpoints;
+            this.consumer = consumer;
+        }
+    }
+
+    /**
      * The handlers of a consumer, which end with {@link #upgradeHandler}, and the endpoint of that consumer.
      */
     private static final class ConsumerHandlers {
@@ -674,7 +695,7 @@ public class CamelWebSocketHandler implements HttpHandler {
             if (handshakeResult != null) {
                 channel.setAttribute(HANDSHAKE_RESULT, handshakeResult);
             }
-            if (!isAuthenticated(channel, securityEndpoints())) {
+            if (!isAuthenticated(channel, pathSecurity())) {
                 // the handshake did not pass the security checks that now apply to the path, for example because it
                 // completed before a consumer requiring them was set on this handler: fail closed
                 LOG.warn("Closing WebSocket channel whose handshake did not pass the security checks");
