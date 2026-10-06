@@ -421,6 +421,8 @@
         <openfeature-sdk-version>1.22.1</openfeature-sdk-version>
         <openfga-version>0.11.0</openfga-version>
         <flagd-provider-version>0.14.2</flagd-provider-version>
+        <flagd-core-version>2.0.1</flagd-core-version>
+        <flagd-api-version>1.0.0</flagd-api-version>
         <mcp-java-sdk-version>2.0.1</mcp-java-sdk-version>
         <mssql-jdbc-version>12.10.0.jre11</mssql-jdbc-version>
         <ojdbc-version>23.8.0.25.04</ojdbc-version>
@@ -3908,6 +3910,17 @@
                 <groupId>javax.inject</groupId>
                 <artifactId>javax.inject</artifactId>
                 <version>${javax-inject-version}</version>
+            </dependency>
+            <!-- flagd declares open version ranges for these transitive deps; pin them -->
+            <dependency>
+                <groupId>dev.openfeature.contrib.tools</groupId>
+                <artifactId>flagd-core</artifactId>
+                <version>${flagd-core-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.openfeature.contrib.tools</groupId>
+                <artifactId>flagd-api</artifactId>
+                <version>${flagd-api-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

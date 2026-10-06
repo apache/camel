@@ -17,7 +17,6 @@
 package org.apache.camel.component.openfeature;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import dev.openfeature.sdk.Client;
@@ -27,15 +26,31 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("openfeature")
 public class OpenFeatureComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(OpenFeatureComponent.class);
 
     @Metadata
     private OpenFeatureConfiguration configuration = new OpenFeatureConfiguration();
 
     private volatile OpenFeatureAPI api;
-    private final Set<String> initializedDomains = ConcurrentHashMap.newKeySet();
+    private final Map<String, DomainBinding> domainBindings = new ConcurrentHashMap<>();
+
+    private static class DomainBinding {
+        final FeatureProvider provider;
+        final boolean owned;
+        int refCount;
+
+        DomainBinding(FeatureProvider provider, boolean owned) {
+            this.provider = provider;
+            this.owned = owned;
+            this.refCount = 1;
+        }
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -52,20 +67,53 @@ public class OpenFeatureComponent extends DefaultComponent {
 
     @Override
     protected void doStop() throws Exception {
-        OpenFeatureAPI a = api;
         api = null;
-        initializedDomains.clear();
-        if (a != null) {
-            a.shutdown();
+        for (DomainBinding binding : domainBindings.values()) {
+            if (binding.owned) {
+                try {
+                    binding.provider.shutdown();
+                } catch (Exception e) {
+                    LOG.debug("Error shutting down owned provider: {}", e.getMessage(), e);
+                }
+            }
         }
+        domainBindings.clear();
         super.doStop();
     }
 
-    synchronized Client registerProviderAndGetClient(String domain, FeatureProvider provider) throws Exception {
-        if (initializedDomains.add(domain)) {
-            api.setProviderAndWait(domain, provider);
+    synchronized Client registerEndpoint(String domain, FeatureProvider provider, boolean owned) throws Exception {
+        DomainBinding existing = domainBindings.get(domain);
+        if (existing != null) {
+            existing.refCount++;
+            if (existing.provider != provider) {
+                LOG.warn("Domain '{}' already has a registered provider; this endpoint's provider settings are ignored.",
+                        domain);
+                if (owned) {
+                    provider.shutdown();
+                }
+            }
+            return api.getClient(domain);
         }
+        api.setProviderAndWait(domain, provider);
+        domainBindings.put(domain, new DomainBinding(provider, owned));
         return api.getClient(domain);
+    }
+
+    synchronized void unregisterEndpoint(String domain) {
+        DomainBinding binding = domainBindings.get(domain);
+        if (binding != null) {
+            binding.refCount--;
+            if (binding.refCount <= 0) {
+                domainBindings.remove(domain);
+                if (binding.owned) {
+                    try {
+                        binding.provider.shutdown();
+                    } catch (Exception e) {
+                        LOG.debug("Error shutting down owned provider for domain '{}': {}", domain, e.getMessage(), e);
+                    }
+                }
+            }
+        }
     }
 
     public OpenFeatureConfiguration getConfiguration() {

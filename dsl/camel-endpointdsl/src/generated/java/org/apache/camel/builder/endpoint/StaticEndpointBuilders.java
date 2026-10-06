@@ -12906,7 +12906,7 @@ public class StaticEndpointBuilders {
      * OpenFeature (camel-openfeature)
      * Evaluate feature flags using the OpenFeature specification with flagd.
      * 
-     * Category: core
+     * Category: cloud
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-openfeature
      * 
@@ -12925,7 +12925,7 @@ public class StaticEndpointBuilders {
      * OpenFeature (camel-openfeature)
      * Evaluate feature flags using the OpenFeature specification with flagd.
      * 
-     * Category: core
+     * Category: cloud
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-openfeature
      * 

@@ -45,6 +45,86 @@ public interface OpenFeatureEndpointBuilderFactory {
         }
 
         /**
+         * Path to the TLS certificate for the remote flagd connection.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param certPath the value to set
+         * @return the dsl builder
+         */
+        default OpenFeatureEndpointBuilder certPath(String certPath) {
+            doSetProperty("certPath", certPath);
+            return this;
+        }
+        /**
+         * When true, a Map message body is used as the evaluation context. When
+         * false (default), the body is not used as context. The
+         * CamelOpenFeatureEvaluationContext header is always used regardless of
+         * this setting.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param contextFromBody the value to set
+         * @return the dsl builder
+         */
+        default OpenFeatureEndpointBuilder contextFromBody(boolean contextFromBody) {
+            doSetProperty("contextFromBody", contextFromBody);
+            return this;
+        }
+        /**
+         * When true, a Map message body is used as the evaluation context. When
+         * false (default), the body is not used as context. The
+         * CamelOpenFeatureEvaluationContext header is always used regardless of
+         * this setting.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param contextFromBody the value to set
+         * @return the dsl builder
+         */
+        default OpenFeatureEndpointBuilder contextFromBody(String contextFromBody) {
+            doSetProperty("contextFromBody", contextFromBody);
+            return this;
+        }
+        /**
+         * Deadline in milliseconds for the remote flagd connection.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 500
+         * Group: common
+         * 
+         * @param deadline the value to set
+         * @return the dsl builder
+         */
+        default OpenFeatureEndpointBuilder deadline(int deadline) {
+            doSetProperty("deadline", deadline);
+            return this;
+        }
+        /**
+         * Deadline in milliseconds for the remote flagd connection.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 500
+         * Group: common
+         * 
+         * @param deadline the value to set
+         * @return the dsl builder
+         */
+        default OpenFeatureEndpointBuilder deadline(String deadline) {
+            doSetProperty("deadline", deadline);
+            return this;
+        }
+        /**
          * Default value when flag evaluation fails. When evaluationType is not
          * set, also determines the evaluation type: true or false
          * (case-insensitive) selects boolean evaluation, any other value
@@ -169,8 +249,8 @@ public interface OpenFeatureEndpointBuilderFactory {
             return this;
         }
         /**
-         * Bean reference to a custom FeatureProvider (e.g. #myProvider).
-         * Mutually exclusive with flags and flagsResource.
+         * Bean reference to a custom FeatureProvider (e.g. #myProvider). When
+         * set, takes precedence over flags, flagsResource, and host.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -181,6 +261,36 @@ public interface OpenFeatureEndpointBuilderFactory {
          */
         default OpenFeatureEndpointBuilder provider(String provider) {
             doSetProperty("provider", provider);
+            return this;
+        }
+        /**
+         * Whether to use TLS for the remote flagd connection.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default OpenFeatureEndpointBuilder tls(boolean tls) {
+            doSetProperty("tls", tls);
+            return this;
+        }
+        /**
+         * Whether to use TLS for the remote flagd connection.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default OpenFeatureEndpointBuilder tls(String tls) {
+            doSetProperty("tls", tls);
             return this;
         }
         /**
@@ -264,7 +374,21 @@ public interface OpenFeatureEndpointBuilderFactory {
          * Evaluate feature flags using the OpenFeature specification with
          * flagd.
          * 
-         * Category: core
+         * Category: cloud
+         * Since: 4.23
+         * Maven coordinates: org.apache.camel:camel-openfeature
+         * 
+         * @return the dsl builder for the headers' name.
+         */
+        default OpenFeatureHeaderNameBuilder openfeature() {
+            return OpenFeatureHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * OpenFeature (camel-openfeature)
+         * Evaluate feature flags using the OpenFeature specification with
+         * flagd.
+         * 
+         * Category: cloud
          * Since: 4.23
          * Maven coordinates: org.apache.camel:camel-openfeature
          * 
@@ -284,7 +408,7 @@ public interface OpenFeatureEndpointBuilderFactory {
          * Evaluate feature flags using the OpenFeature specification with
          * flagd.
          * 
-         * Category: core
+         * Category: cloud
          * Since: 4.23
          * Maven coordinates: org.apache.camel:camel-openfeature
          * 
@@ -302,6 +426,103 @@ public interface OpenFeatureEndpointBuilderFactory {
             return OpenFeatureEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the OpenFeature component.
+     */
+    public static class OpenFeatureHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        public static final OpenFeatureHeaderNameBuilder INSTANCE = new OpenFeatureHeaderNameBuilder();
+
+        /**
+         * Overrides the configured flag key for this message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenFeatureFlagKey}.
+         */
+        public String openFeatureFlagKey() {
+            return "CamelOpenFeatureFlagKey";
+        }
+        /**
+         * Sets the targeting key for the OpenFeature evaluation context.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenFeatureTargetingKey}.
+         */
+        public String openFeatureTargetingKey() {
+            return "CamelOpenFeatureTargetingKey";
+        }
+        /**
+         * A Map of additional evaluation context key-value pairs.
+         * 
+         * The option is a: {@code java.util.Map} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenFeatureEvaluationContext}.
+         */
+        public String openFeatureEvaluationContext() {
+            return "CamelOpenFeatureEvaluationContext";
+        }
+        /**
+         * Sets the evaluation type (boolean, variant) for the OpenFeature
+         * evaluation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenFeatureEvaluationType}.
+         */
+        public String openFeatureEvaluationType() {
+            return "CamelOpenFeatureEvaluationType";
+        }
+        /**
+         * The variant name returned by the provider for this evaluation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenFeatureVariant}.
+         */
+        public String openFeatureVariant() {
+            return "CamelOpenFeatureVariant";
+        }
+        /**
+         * The reason string returned by the provider for this evaluation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenFeatureReason}.
+         */
+        public String openFeatureReason() {
+            return "CamelOpenFeatureReason";
+        }
+        /**
+         * The error code when the evaluation failed (e.g. FLAG_NOT_FOUND,
+         * TYPE_MISMATCH).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenFeatureErrorCode}.
+         */
+        public String openFeatureErrorCode() {
+            return "CamelOpenFeatureErrorCode";
+        }
     }
     static OpenFeatureEndpointBuilder endpointBuilder(String componentName, String path) {
         class OpenFeatureEndpointBuilderImpl extends AbstractEndpointBuilder implements OpenFeatureEndpointBuilder, AdvancedOpenFeatureEndpointBuilder {

@@ -36,6 +36,18 @@
       "state": "DISABLED",
       "variants": { "on": true, "off": false },
       "defaultVariant": "on"
+    },
+    "targeted-boolean": {
+      "state": "ENABLED",
+      "variants": { "on": true, "off": false },
+      "defaultVariant": "off",
+      "targeting": {
+        "if": [
+          { "in": [{ "var": "customer_tier" }, ["ENTERPRISE", "VIP"]] },
+          "on",
+          "off"
+        ]
+      }
     }
   }
 }

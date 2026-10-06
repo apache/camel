@@ -3049,6 +3049,19 @@ public class EndpointHeaderBuilders {
         return OpenAIEndpointBuilderFactory.OpenAIHeaderNameBuilder.INSTANCE;
     }
     /**
+     * OpenFeature (camel-openfeature)
+     * Evaluate feature flags using the OpenFeature specification with flagd.
+     * 
+     * Category: cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-openfeature
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static OpenFeatureEndpointBuilderFactory.OpenFeatureHeaderNameBuilder openfeature() {
+        return OpenFeatureEndpointBuilderFactory.OpenFeatureHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * OpenFGA (camel-openfga)
      * Authorize an Exchange against an OpenFGA relationship graph, and maintain
      * the relationship tuples it is authorized against.

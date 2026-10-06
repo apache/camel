@@ -50,7 +50,8 @@ class OpenFeatureProducerTest extends CamelTestSupport {
 
                 from("direct:targeted-flag")
                         .to("openfeature:test-targeted?flagKey=hazmat-compliance-v2&defaultValue=v1&flagsResource="
-                            + FLAGS_RESOURCE);
+                            + FLAGS_RESOURCE
+                            + "&contextFromBody=true");
 
                 from("direct:variant-type")
                         .to("openfeature:test-variant?flagKey=new-routing-algorithm&evaluationType=variant&flagsResource="
@@ -58,6 +59,15 @@ class OpenFeatureProducerTest extends CamelTestSupport {
 
                 from("direct:boolean-type-explicit")
                         .to("openfeature:test-bool-type?flagKey=enrichment-enabled&evaluationType=boolean&flagsResource="
+                            + FLAGS_RESOURCE);
+
+                from("direct:targeted-boolean")
+                        .to("openfeature:test-targeted-bool?flagKey=targeted-boolean&flagsResource="
+                            + FLAGS_RESOURCE
+                            + "&contextFromBody=true");
+
+                from("direct:targeted-boolean-header")
+                        .to("openfeature:test-targeted-bool-hdr?flagKey=targeted-boolean&flagsResource="
                             + FLAGS_RESOURCE);
             }
         };
@@ -180,5 +190,54 @@ class OpenFeatureProducerTest extends CamelTestSupport {
         });
         Object result = template.requestBody("direct:inline-flag", "ignored");
         assertThat(result).isEqualTo(true);
+    }
+
+    @Test
+    void testBooleanFlagWithTargetingKeyReturnsBooleanNotString() {
+        Exchange exchange = template.request("direct:targeted-boolean", e -> {
+            e.getMessage().setBody(Map.of("customer_tier", "ENTERPRISE"));
+            e.getMessage().setHeader(OpenFeatureConstants.TARGETING_KEY, "user-123");
+        });
+        Object result = exchange.getMessage().getBody();
+        assertThat(result).isInstanceOf(Boolean.class);
+        assertThat(result).isEqualTo(true);
+    }
+
+    @Test
+    void testBooleanFlagWithTargetingKeyDefaultVariant() {
+        Exchange exchange = template.request("direct:targeted-boolean", e -> {
+            e.getMessage().setBody(Map.of("customer_tier", "STANDARD"));
+            e.getMessage().setHeader(OpenFeatureConstants.TARGETING_KEY, "user-456");
+        });
+        Object result = exchange.getMessage().getBody();
+        assertThat(result).isInstanceOf(Boolean.class);
+        assertThat(result).isEqualTo(false);
+    }
+
+    @Test
+    void testBooleanFlagWithMapBodyReturnsBoolean() {
+        Object result = template.requestBody("direct:targeted-boolean",
+                Map.of("targetingKey", "user-789", "customer_tier", "VIP"));
+        assertThat(result).isInstanceOf(Boolean.class);
+        assertThat(result).isEqualTo(true);
+    }
+
+    @Test
+    void testMapBodyNotUsedAsContextByDefault() {
+        Object result = template.requestBody("direct:targeted-boolean-header",
+                Map.of("targetingKey", "user-789", "customer_tier", "ENTERPRISE"));
+        assertThat(result).isInstanceOf(Boolean.class);
+        assertThat(result).isEqualTo(false);
+    }
+
+    @Test
+    void testEvaluationDetailsHeaders() {
+        Exchange exchange = template.request("direct:boolean-flag", e -> e.getMessage().setBody("ignored"));
+        assertThat(exchange.getMessage().getHeader(OpenFeatureConstants.EVALUATION_VARIANT, String.class))
+                .isNotNull();
+        assertThat(exchange.getMessage().getHeader(OpenFeatureConstants.EVALUATION_REASON, String.class))
+                .isNotNull();
+        assertThat(exchange.getMessage().getHeader(OpenFeatureConstants.EVALUATION_ERROR_CODE))
+                .isNull();
     }
 }

@@ -23,6 +23,11 @@ public class OpenFeatureEndpointConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OpenFeatureEndpoint target = (OpenFeatureEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "certpath":
+        case "certPath": target.getConfiguration().setCertPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "contextfrombody":
+        case "contextFromBody": target.getConfiguration().setContextFromBody(property(camelContext, boolean.class, value)); return true;
+        case "deadline": target.getConfiguration().setDeadline(property(camelContext, int.class, value)); return true;
         case "defaultvalue":
         case "defaultValue": target.getConfiguration().setDefaultValue(property(camelContext, java.lang.String.class, value)); return true;
         case "evaluationtype":
@@ -39,6 +44,7 @@ public class OpenFeatureEndpointConfigurer extends PropertyConfigurerSupport imp
         case "provider": target.getConfiguration().setProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "resultproperty":
         case "resultProperty": target.getConfiguration().setResultProperty(property(camelContext, java.lang.String.class, value)); return true;
+        case "tls": target.getConfiguration().setTls(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -46,6 +52,11 @@ public class OpenFeatureEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "certpath":
+        case "certPath": return java.lang.String.class;
+        case "contextfrombody":
+        case "contextFromBody": return boolean.class;
+        case "deadline": return int.class;
         case "defaultvalue":
         case "defaultValue": return java.lang.String.class;
         case "evaluationtype":
@@ -62,6 +73,7 @@ public class OpenFeatureEndpointConfigurer extends PropertyConfigurerSupport imp
         case "provider": return java.lang.String.class;
         case "resultproperty":
         case "resultProperty": return java.lang.String.class;
+        case "tls": return boolean.class;
         default: return null;
         }
     }
@@ -70,6 +82,11 @@ public class OpenFeatureEndpointConfigurer extends PropertyConfigurerSupport imp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         OpenFeatureEndpoint target = (OpenFeatureEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "certpath":
+        case "certPath": return target.getConfiguration().getCertPath();
+        case "contextfrombody":
+        case "contextFromBody": return target.getConfiguration().isContextFromBody();
+        case "deadline": return target.getConfiguration().getDeadline();
         case "defaultvalue":
         case "defaultValue": return target.getConfiguration().getDefaultValue();
         case "evaluationtype":
@@ -86,6 +103,7 @@ public class OpenFeatureEndpointConfigurer extends PropertyConfigurerSupport imp
         case "provider": return target.getConfiguration().getProvider();
         case "resultproperty":
         case "resultProperty": return target.getConfiguration().getResultProperty();
+        case "tls": return target.getConfiguration().isTls();
         default: return null;
         }
     }

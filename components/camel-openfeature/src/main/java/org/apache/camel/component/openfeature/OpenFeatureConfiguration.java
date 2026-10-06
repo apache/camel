@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.openfeature;
 
-import dev.openfeature.sdk.MutableContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -50,6 +48,18 @@ public class OpenFeatureConfiguration implements Cloneable {
     @UriParam(label = "common", defaultValue = "8013", description = "Remote flagd service port.")
     private int port = 8013;
 
+    @UriParam(label = "common", defaultValue = "false",
+              description = "Whether to use TLS for the remote flagd connection.")
+    private boolean tls;
+
+    @UriParam(label = "common",
+              description = "Path to the TLS certificate for the remote flagd connection.")
+    private String certPath;
+
+    @UriParam(label = "common", defaultValue = "500",
+              description = "Deadline in milliseconds for the remote flagd connection.")
+    private int deadline = 500;
+
     @UriParam(label = "common",
               description = "A JSON object defining feature flags in flagd format (inline). Mutually exclusive with flagsResource.")
     private String flags;
@@ -61,8 +71,14 @@ public class OpenFeatureConfiguration implements Cloneable {
 
     @UriParam(label = "common",
               description = "Bean reference to a custom FeatureProvider (e.g. #myProvider)."
-                            + " Mutually exclusive with flags and flagsResource.")
+                            + " When set, takes precedence over flags, flagsResource, and host.")
     private String provider;
+
+    @UriParam(label = "common", defaultValue = "false",
+              description = "When true, a Map message body is used as the evaluation context."
+                            + " When false (default), the body is not used as context."
+                            + " The CamelOpenFeatureEvaluationContext header is always used regardless of this setting.")
+    private boolean contextFromBody;
 
     public String getFlagKey() {
         return flagKey;
@@ -124,6 +140,33 @@ public class OpenFeatureConfiguration implements Cloneable {
         this.port = port;
     }
 
+    public boolean isTls() {
+        return tls;
+    }
+
+    /** Whether to use TLS for the remote flagd connection. */
+    public void setTls(boolean tls) {
+        this.tls = tls;
+    }
+
+    public String getCertPath() {
+        return certPath;
+    }
+
+    /** Path to the TLS certificate for the remote flagd connection. */
+    public void setCertPath(String certPath) {
+        this.certPath = certPath;
+    }
+
+    public int getDeadline() {
+        return deadline;
+    }
+
+    /** Deadline in milliseconds for the remote flagd connection. */
+    public void setDeadline(int deadline) {
+        this.deadline = deadline;
+    }
+
     public String getFlags() {
         return flags;
     }
@@ -150,32 +193,20 @@ public class OpenFeatureConfiguration implements Cloneable {
     }
 
     /**
-     * Bean reference to a custom FeatureProvider (e.g. #myProvider). Mutually exclusive with flags and flagsResource.
+     * Bean reference to a custom FeatureProvider (e.g. #myProvider). When set, takes precedence over flags,
+     * flagsResource, and host.
      */
     public void setProvider(String provider) {
         this.provider = provider;
     }
 
-    public boolean isBooleanEvaluation(Exchange exchange, MutableContext ctx) {
-        String evalType = exchange.getIn().getHeader(OpenFeatureConstants.EVALUATION_TYPE, String.class);
-        if (evalType == null) {
-            evalType = exchange.getProperty(OpenFeatureConstants.EVALUATION_TYPE, String.class);
-        }
-        if (evalType == null) {
-            evalType = evaluationType;
-        }
+    public boolean isContextFromBody() {
+        return contextFromBody;
+    }
 
-        if ("boolean".equalsIgnoreCase(evalType)) {
-            return true;
-        }
-        if ("variant".equalsIgnoreCase(evalType)) {
-            return false;
-        }
-        if (!ctx.asMap().isEmpty()) {
-            return false;
-        }
-
-        return "true".equalsIgnoreCase(defaultValue) || "false".equalsIgnoreCase(defaultValue);
+    /** When true, a Map message body is used as the evaluation context. */
+    public void setContextFromBody(boolean contextFromBody) {
+        this.contextFromBody = contextFromBody;
     }
 
     public OpenFeatureConfiguration copy() {
@@ -187,9 +218,6 @@ public class OpenFeatureConfiguration implements Cloneable {
     }
 
     void validate() {
-        if (provider != null && (flags != null || flagsResource != null)) {
-            throw new IllegalArgumentException("provider is mutually exclusive with flags and flagsResource");
-        }
         if (flags != null && flagsResource != null) {
             throw new IllegalArgumentException("flags and flagsResource are mutually exclusive");
         }

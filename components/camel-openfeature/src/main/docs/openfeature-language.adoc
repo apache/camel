@@ -33,6 +33,11 @@ The language evaluates the given flag key as a boolean and returns the
 result. It uses the `openfeature:flags` endpoint by default, inheriting
 component-level configuration such as `flagsResource` or `host`.
 
+The language does not modify the exchange — it reads targeting context
+from message headers but does not set any properties or headers itself.
+This means it is safe to use before a producer `to("openfeature:...")`
+call without leaking settings.
+
 === Java DSL
 
 [source,java]
@@ -66,7 +71,7 @@ keeps the message body untouched:
 [source,java]
 ----
 from("direct:start")
-    .setProperty("CamelOpenFeatureTargetingKey", simple("${body[order_id]}"))
+    .setHeader("CamelOpenFeatureTargetingKey", simple("${body[order_id]}"))
     .setProperty("routingAlgorithm", language("openfeature", "new-routing-algorithm"))
     .toD("direct:route-${exchangeProperty.routingAlgorithm}");
 ----
@@ -87,7 +92,7 @@ providers for consistent fractional rollouts.
 Set the targeting key and context attributes as message headers before the
 language evaluates:
 
-* `CamelOpenFeatureTargetingKey` (header or exchange property): sets the
+* `CamelOpenFeatureTargetingKey` (header): sets the
   targeting key for the evaluation.
 * `CamelOpenFeatureEvaluationContext` (header): a `Map<String, Object>` of additional
   context key-value pairs.
@@ -134,7 +139,8 @@ from("direct:start")
 
 `createExpression` defaults to variant (string) evaluation and returns an
 `Expression`. When called with `evaluate(exchange, Boolean.class)`, it
-automatically switches to boolean evaluation:
+automatically switches to boolean evaluation for that call without
+affecting other callers:
 
 [source,java]
 ----
