@@ -353,4 +353,30 @@ public final class ObjectConverter {
         return toNumber(str);
     }
 
+    /**
+     * Returns the converted value, or null if the value is null
+     */
+    @Converter(order = 41, allowNull = true)
+    public static BigDecimal toBigDecimal(Object value) {
+        if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
+            return null;
+        }
+        if (value instanceof String str) {
+            return new BigDecimal(str);
+        }
+
+        if (value instanceof BigDecimal bd) {
+            return bd;
+        } else if (value instanceof BigInteger bi) {
+            return new BigDecimal(bi);
+        } else if (value instanceof Double || value instanceof Float) {
+            // use the decimal text of the value, as the binary value of 0.1 is not exactly 0.1
+            return new BigDecimal(value.toString());
+        } else if (value instanceof Number number) {
+            return BigDecimal.valueOf(number.longValue());
+        } else {
+            return null;
+        }
+    }
+
 }

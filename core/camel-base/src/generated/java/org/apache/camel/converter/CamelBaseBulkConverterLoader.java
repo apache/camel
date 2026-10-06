@@ -41,7 +41,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
 
     @Override
     public int size() {
-        return 129;
+        return 130;
     }
 
     @Override
@@ -371,6 +371,15 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof java.lang.StringBuilder) {
                 return org.apache.camel.converter.ObjectConverter.toString((java.lang.StringBuilder) value);
             }
+        } else if (to == java.math.BigDecimal.class) {
+            if (value instanceof java.lang.Object) {
+                Object obj = org.apache.camel.converter.ObjectConverter.toBigDecimal(value);
+                if (obj == null) {
+                    return Void.class;
+                } else {
+                    return obj;
+                }
+            }
         } else if (to == java.math.BigInteger.class) {
             if (value instanceof java.lang.Object) {
                 Object obj = org.apache.camel.converter.ObjectConverter.toBigInteger(value);
@@ -612,6 +621,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
         registry.addConverter(new TypeConvertible<>(java.lang.StringBuffer.class, java.lang.String.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.ByteArrayOutputStream.class, java.lang.String.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.StringBuilder.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Object.class, java.math.BigDecimal.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.Object.class, java.math.BigInteger.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.CharSequence.class, java.net.URI.class), this);
         registry.addConverter(new TypeConvertible<>(byte[].class, java.nio.ByteBuffer.class), this);
@@ -942,6 +952,10 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return this;
             }
             if (from == java.lang.StringBuilder.class) {
+                return this;
+            }
+        } else if (to == java.math.BigDecimal.class) {
+            if (from == java.lang.Object.class) {
                 return this;
             }
         } else if (to == java.math.BigInteger.class) {

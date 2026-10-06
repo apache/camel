@@ -1283,6 +1283,10 @@ interfaces are tried before the super class at each level, and `java.lang.Object
 * Converting a `String` to a `Number` now returns an `Integer` for all values within the `Integer` range
 (including `Integer.MAX_VALUE`, which returned a `Long` before), and supports exponent notation such as `1e5`.
 * Converting a `BigDecimal`, or a `double` larger than a `long`, to `BigInteger` no longer loses precision.
+* A `String` or a `Number` can now be converted to `BigDecimal`. There was no such type converter before, so the
+conversion returned `null`: `${bodyAs(java.math.BigDecimal)}` was empty for a body of `"1000.01"`, and a bean method
+with a `BigDecimal` parameter could not be called with a `String` body. A `double` or `float` is converted from its
+decimal text, so `0.1` becomes `0.1`.
 * Converting a `byte[]` to `char` no longer sign-extends bytes above 127.
 * Converting a `String` to `ByteBuffer` now uses the charset from the `CamelCharsetName` header or exchange
 property (like the other converters), and falls back to the default charset.
