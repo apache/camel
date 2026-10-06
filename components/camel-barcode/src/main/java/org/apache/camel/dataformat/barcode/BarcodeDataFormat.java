@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.barcode;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
@@ -313,17 +314,21 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     /**
-     * The writer (encode) hint map.
+     * The writer (encode) hint map, as a read-only view. Use {@link #addToHintMap(EncodeHintType, Object)} and
+     * {@link #removeFromHintMap(EncodeHintType)} to change it: the hints are computed again when the data format
+     * starts, and only the changes made with these methods are applied again.
      */
     public final Map<EncodeHintType, Object> getWriterHintMap() {
-        return writerHintMap;
+        return Collections.unmodifiableMap(writerHintMap);
     }
 
     /**
-     * The reader (decode) hint map.
+     * The reader (decode) hint map, as a read-only view. Use {@link #addToHintMap(DecodeHintType, Object)} and
+     * {@link #removeFromHintMap(DecodeHintType)} to change it: the hints are computed again when the data format
+     * starts, and only the changes made with these methods are applied again.
      */
     public final Map<DecodeHintType, Object> getReaderHintMap() {
-        return readerHintMap;
+        return Collections.unmodifiableMap(readerHintMap);
     }
 
     public BarcodeFormat getBarcodeFormat() {

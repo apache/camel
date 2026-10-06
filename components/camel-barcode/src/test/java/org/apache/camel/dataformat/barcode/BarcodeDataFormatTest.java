@@ -22,11 +22,13 @@ import java.util.Map;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.EncodeHintType;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -226,6 +228,30 @@ public class BarcodeDataFormatTest {
             instance.start();
             Map<DecodeHintType, Object> result = instance.getReaderHintMap();
             assertNotNull(result);
+        }
+    }
+
+    /**
+     * A change made through the maps returned by the getters would bypass the hints tracked by
+     * {@code addToHintMap}/{@code removeFromHintMap}, and be lost when the data format starts again, so the maps are
+     * read-only.
+     */
+    @Test
+    final void testHintMapsAreReadOnly() throws IOException {
+        try (BarcodeDataFormat instance = new BarcodeDataFormat()) {
+            instance.start();
+            Map<EncodeHintType, Object> writerHints = instance.getWriterHintMap();
+            Map<DecodeHintType, Object> readerHints = instance.getReaderHintMap();
+
+            assertThrows(UnsupportedOperationException.class, () -> writerHints.put(EncodeHintType.MARGIN, 10));
+            assertThrows(UnsupportedOperationException.class, () -> writerHints.remove(EncodeHintType.ERROR_CORRECTION));
+            assertThrows(UnsupportedOperationException.class, writerHints::clear);
+            assertThrows(UnsupportedOperationException.class, () -> readerHints.put(DecodeHintType.PURE_BARCODE, true));
+            assertThrows(UnsupportedOperationException.class, () -> readerHints.remove(DecodeHintType.TRY_HARDER));
+            assertThrows(UnsupportedOperationException.class, readerHints::clear);
+
+            assertEquals(Map.of(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H), instance.getWriterHintMap());
+            assertEquals(Map.of(DecodeHintType.TRY_HARDER, Boolean.TRUE), instance.getReaderHintMap());
         }
     }
 
