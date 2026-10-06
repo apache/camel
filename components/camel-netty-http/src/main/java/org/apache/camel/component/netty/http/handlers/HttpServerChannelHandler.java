@@ -239,8 +239,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
         // the user must have one of the roles, compared by the exact role name
         Set<String> names = roleNames(roles);
-        for (String userRole : roleNames(userRoles)) {
-            if (names.contains(userRole)) {
+        for (String userRole : ObjectHelper.createIterable(userRoles)) {
+            if (names.contains(userRole.trim())) {
                 return true;
             }
         }
