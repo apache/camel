@@ -53,7 +53,7 @@ is written `+{{?customer}}+`, which removes the option it sets when no value is 
 == Mistakes to avoid
 
 * A parameter in the template is the placeholder `+{{tag}}+`, also inside an expression: `+simple: {expression: "${body} [{{tag}}]"}+`.
-  It is not `${tag}`, `${properties.tag}` or `${header.tag}`.
+  It is not `+${tag}+`, `+${properties.tag}+` or `+${header.tag}+`.
 * `properties` and `required` go under `spec.definition`, not directly under `spec`. `required` is a list of names
   (`required: [tag]`), not `required: true` on a property.
 * The route is `spec.template` with a `from` and its `steps` under the `from`: no `steps`, `do` or `route` directly
