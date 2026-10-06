@@ -56,8 +56,28 @@ class SecurityProviderWebSocketTest extends AbstractSecurityProviderTest {
                         .to("undertow:ws://localhost:{{port}}/stopped?sendToAll=true");
                 from("undertow:ws://localhost:{{port}}/stopped?allowedRoles=user").routeId("stopped")
                         .to("mock:stopped");
+
+                from("undertow:ws://localhost:{{port}}/prefix?matchOnUriPrefix=true&allowedRoles=user")
+                        .to("mock:prefix");
             }
         };
+    }
+
+    @Test
+    void subPathOfAPrefixPathIsGuarded() throws Exception {
+        securityConfiguration.setRoleToAssign("admin");
+        assertRefused("/prefix/sub");
+
+        securityConfiguration.setRoleToAssign("user");
+        MockEndpoint prefix = getMockEndpoint("mock:prefix");
+        prefix.expectedBodiesReceived("hello");
+
+        WebsocketTestClient client = new WebsocketTestClient("ws://localhost:" + getPort() + "/prefix/sub");
+        client.connect();
+        client.sendTextMessage("hello");
+
+        prefix.assertIsSatisfied();
+        client.close();
     }
 
     @Test

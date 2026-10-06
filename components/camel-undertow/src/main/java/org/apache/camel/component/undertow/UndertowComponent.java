@@ -374,7 +374,9 @@ public class UndertowComponent extends DefaultComponent
 
         HttpHandler handlerWrapped = handler;
         if (handler instanceof CamelWebSocketHandler webSocketHandler) {
-            // the WebSocket handler of a path is shared by its consumer and producers, so it must stay registered as is
+            // the WebSocket handler of a path is shared by its consumer and producers, so it must stay registered as is.
+            // It is wrapped before the registration, so that it cannot receive a request unwrapped; when the path
+            // already has a handler, the registration keeps that one and this instance is not used
             if (this.securityProvider != null) {
                 webSocketHandler.wrapWith(this.securityProvider);
             }

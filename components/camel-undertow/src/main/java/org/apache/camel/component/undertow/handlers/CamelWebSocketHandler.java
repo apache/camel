@@ -30,8 +30,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -98,6 +100,8 @@ public class CamelWebSocketHandler implements HttpHandler {
     private UndertowEndpoint consumerEndpoint;
 
     private final List<UndertowEndpoint> producerEndpoints = new CopyOnWriteArrayList<>();
+
+    private final Set<String> warnedProducerEndpoints = ConcurrentHashMap.newKeySet();
 
     private final Lock consumerLock = new ReentrantLock();
 
@@ -374,6 +378,7 @@ public class CamelWebSocketHandler implements HttpHandler {
                 // both are kept when the consumer is unset, so that the path stays guarded while the consumer is stopped
                 this.consumerEndpoint = consumer.getEndpoint();
                 this.consumerHandler = consumerHandler != null ? consumerHandler : upgradeHandler;
+                producerEndpoints.forEach(this::warnIfProducerSettingsUnused);
             }
         } finally {
             consumerLock.unlock();
@@ -386,6 +391,34 @@ public class CamelWebSocketHandler implements HttpHandler {
      */
     public void addProducer(UndertowEndpoint endpoint) {
         producerEndpoints.add(endpoint);
+        warnIfProducerSettingsUnused(endpoint);
+    }
+
+    private void warnIfProducerSettingsUnused(UndertowEndpoint producerEndpoint) {
+        UndertowEndpoint pathConsumerEndpoint;
+        consumerLock.lock();
+        try {
+            pathConsumerEndpoint = consumerEndpoint;
+        } finally {
+            consumerLock.unlock();
+        }
+        if (pathConsumerEndpoint != null && hasUnusedSecuritySettings(pathConsumerEndpoint, producerEndpoint)
+                && warnedProducerEndpoints.add(producerEndpoint.getEndpointUri())) {
+            LOG.warn("The security settings of {} are not used: the settings of the consumer {} apply to its WebSocket path",
+                    producerEndpoint, pathConsumerEndpoint);
+        }
+    }
+
+    /**
+     * Whether the producer endpoint has security settings of its own that differ from the ones of the consumer
+     * endpoint, which apply to the path instead.
+     */
+    static boolean hasUnusedSecuritySettings(UndertowEndpoint consumerEndpoint, UndertowEndpoint producerEndpoint) {
+        boolean ownSettings = producerEndpoint.getAllowedRoles() != null
+                || producerEndpoint.getSecurityConfiguration() != null
+                || producerEndpoint.getSecurityProvider() != producerEndpoint.getComponent().getSecurityProvider();
+        return ownSettings && (producerEndpoint.getSecurityProvider() != consumerEndpoint.getSecurityProvider()
+                || !Objects.equals(producerEndpoint.computeAllowedRoles(), consumerEndpoint.computeAllowedRoles()));
     }
 
     public void removeProducer(UndertowEndpoint endpoint) {
