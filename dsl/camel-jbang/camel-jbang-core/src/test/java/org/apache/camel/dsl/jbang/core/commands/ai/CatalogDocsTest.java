@@ -22,9 +22,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
@@ -474,5 +477,28 @@ class CatalogDocsTest {
             assertTrue(groovy.containsKey("message") && groovy.containsKey("attachments") && groovy.containsKey("log"),
                     "the groovy extras");
         }
+    }
+
+    /** CAMEL-25370: an element that is one of several kinds says to write the kind as the key. */
+    @Test
+    void errorHandlerTypeIsWrittenAsItsKind() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        var doc = CatalogDocs.catalogDoc(catalog, "errorHandler", null, "eip", null, null, false, false, null);
+        JsonObject type = ((JsonArray) doc.get("options")).stream().map(JsonObject.class::cast)
+                .filter(o -> "errorHandlerType".equals(o.getString("name"))).findFirst().orElseThrow();
+        assertTrue(((JsonArray) type.get("oneOf")).contains("noErrorHandler"), type.toJson());
+        assertTrue(type.getString("yaml").contains("not 'errorHandlerType'"), type.toJson());
+    }
+
+    /** CAMEL-25370: a filter that matches no option of onException finds the one of its redeliveryPolicy. */
+    @Test
+    void optionsFilterFindsTheRedeliveryPolicyOptions() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        var doc = CatalogDocs.catalogDoc(catalog, "onException", null, "eip", "logStackTrace", null, false, false, null);
+        JsonArray nested = (JsonArray) doc.get("nestedOptions");
+        assertTrue(nested != null && !nested.isEmpty(), doc.toJson());
+        JsonObject first = (JsonObject) nested.get(0);
+        assertTrue("redeliveryPolicy".equals(first.getString("under")), first.toJson());
+        assertTrue(first.getString("name").toLowerCase().contains("logstacktrace"), first.toJson());
     }
 }

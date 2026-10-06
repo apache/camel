@@ -90,6 +90,10 @@ public final class CatalogSamples {
             Map.entry("redeliveryPolicy", "onException"),
             Map.entry("deadLetterChannel", "errorHandler"),
             Map.entry("defaultErrorHandler", "errorHandler"),
+            Map.entry("noErrorHandler", "errorHandler"),
+            Map.entry("jtaTransactionErrorHandler", "errorHandler"),
+            Map.entry("springTransactionErrorHandler", "errorHandler"),
+            Map.entry("refErrorHandler", "errorHandler"),
             Map.entry("get", "rest"),
             Map.entry("post", "rest"),
             Map.entry("aggregationStrategy", "aggregate"));
@@ -648,7 +652,17 @@ public final class CatalogSamples {
         return k;
     }
 
+    /** The kinds of error handler, each the one key under errorHandler:. */
+    static final Set<String> ERROR_HANDLERS = Set.of("errorHandler", "deadLetterChannel", "defaultErrorHandler",
+            "noErrorHandler", "jtaTransactionErrorHandler", "springTransactionErrorHandler", "refErrorHandler");
+
     static String placement(String key) {
+        if (ERROR_HANDLERS.contains(key)) {
+            // a step it is not, and it has two places (CAMEL-25370)
+            return "errorHandler: with the kind (deadLetterChannel, defaultErrorHandler, noErrorHandler) as its one key,"
+                   + " either as a top-level list item - errorHandler: for every route, or under one route, next to from:,"
+                   + " for that route only; never a step";
+        }
         if (TOP_LEVEL.contains(key)) {
             return "top-level entry: a list item at the same level as route or from, not a step inside a route";
         }

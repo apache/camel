@@ -378,4 +378,23 @@ public class CatalogSamplesTest {
         assertThat((Integer) bindy.get("count")).isZero();
         assertThat(bindy.getString("hint")).contains("no YAML route example");
     }
+
+    /** CAMEL-25370: the error handler has samples, both of its places, and its kinds resolve to it. */
+    @Test
+    void errorHandlerHasSamplesAndItsTwoPlaces() {
+        JsonObject o = CatalogSamples.sample("errorHandler", 5);
+        assertThat(o.getString("name")).isEqualTo("errorHandler");
+        assertThat(o.getString("placement")).contains("top-level").contains("under one route").contains("never a step");
+        JsonArray samples = (JsonArray) o.get("samples");
+        assertThat(samples).isNotEmpty();
+        assertThat(samples.stream().map(s -> ((JsonObject) s).getString("yaml")))
+                .anyMatch(y -> y.contains("errorHandler:") && y.contains("noErrorHandler"));
+
+        o = CatalogSamples.sample("noErrorHandler", 1);
+        assertThat(o.getString("name")).isEqualTo("errorHandler");
+        assertThat(o.getString("partOf")).isEqualTo("errorHandler");
+
+        o = CatalogSamples.sample("deadLetterChannel", 1);
+        assertThat(o.getString("placement")).contains("never a step");
+    }
 }

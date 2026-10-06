@@ -345,10 +345,43 @@ public final class CatalogDocs {
             String matchedTerm) {
         String doc = includeDoc ? catalog.asciiDoc(model.getName() + "-eip") : null;
         JsonObject result = eipDoc(model, filter, scope, doc);
+        if (filter != null && scope != OptionScope.NONE && result.getIntegerOrDefault("matchedOptions", 0) == 0) {
+            putNestedOptions(catalog, model, filter, result);
+        }
         if (matchedTerm != null) {
             result.put("matchedTerm", matchedTerm);
         }
         return result;
+    }
+
+    /**
+     * The options of the elements of an EIP that match the filter, when none of its own do: logStackTrace is an option
+     * of the redeliveryPolicy of onException, and a filter on onException found nothing (CAMEL-25370).
+     */
+    private static void putNestedOptions(CamelCatalog catalog, EipModel model, String filter, JsonObject result) {
+        JsonArray nested = new JsonArray();
+        for (BaseOptionModel opt : model.getOptions()) {
+            if (!"element".equals(opt.getKind())) {
+                continue;
+            }
+            EipModel element = catalog.eipModel(opt.getName());
+            if (element == null || element.getOptions() == null) {
+                continue;
+            }
+            for (BaseOptionModel inner : element.getOptions()) {
+                if (matchesOptionFilter(inner, filter)) {
+                    JsonObject o = optionToJson(inner, null);
+                    o.put("under", opt.getName());
+                    nested.add(o);
+                }
+            }
+        }
+        if (!nested.isEmpty()) {
+            result.put("nestedOptions", nested);
+            result.put("nestedHint", "options of an element of " + model.getName() + ": write them under that element,"
+                                     + " for example " + ((JsonObject) nested.get(0)).getString("under") + ": {"
+                                     + ((JsonObject) nested.get(0)).getString("name") + ": ...}");
+        }
     }
 
     /**
@@ -1534,6 +1567,15 @@ public final class CatalogDocs {
             JsonArray enums = new JsonArray();
             enums.addAll(opt.getEnums());
             o.put("enumValues", enums);
+        }
+        if ("element".equals(opt.getKind()) && opt.getOneOfs() != null && !opt.getOneOfs().isEmpty()) {
+            // an element that is one of several kinds is written as that kind, not under its own name: the error
+            // handler is errorHandler: {deadLetterChannel: {...}}, never errorHandlerType: (CAMEL-25370)
+            JsonArray oneOf = new JsonArray();
+            oneOf.addAll(opt.getOneOfs());
+            o.put("oneOf", oneOf);
+            o.put("yaml", "write one of oneOf as the key, not '" + opt.getName() + "': for example "
+                          + opt.getOneOfs().get(0) + ": {...}");
         }
         return o;
     }
