@@ -255,6 +255,12 @@ public interface Exchange extends VariableAware {
               description = "Flag to mark that this exchange is currently being executed as onCompletion", javaType = "boolean")
     String ON_COMPLETION = "CamelOnCompletion";
     String ON_COMPLETION_ROUTE_IDS = "CamelOnCompletionRouteIds";
+    /**
+     * Exchange property key for tracking which named route configuration IDs have already fired their onCompletion
+     * handler for this exchange. Used to ensure a named route configuration's onCompletion fires at most once per
+     * exchange, even when multiple opted-in routes are traversed in the same exchange.
+     */
+    String ON_COMPLETION_FIRED_CONFIG_IDS = "CamelOnCompletionFiredConfigIds";
     String OFFSET = "CamelOffset";
     String OVERRULE_FILE_NAME = "CamelOverruleFileName";
 
