@@ -3375,6 +3375,58 @@ public class StaticEndpointBuilders {
         return ChunkEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Citrus (camel-test-citrus)
+     * Citrus message validation component for testing
+     * 
+     * Category: testing
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-test-citrus
+     * 
+     * Syntax: <code>citrus:operation/name</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation to perform. 'validate' validates exchanges without
+     * modifying them. 'receive' validates exchanges and returns a simulated
+     * response.
+     * 
+     * Path parameter: name
+     * A unique name to identify this endpoint. Allows multiple Citrus endpoints
+     * with different validation expectations in the same route.
+     * 
+     * @param path operation/name
+     * @return the dsl builder
+     */
+    public static CitrusEndpointBuilderFactory.CitrusEndpointBuilder citrus(String path) {
+        return citrus("citrus", path);
+    }
+    /**
+     * Citrus (camel-test-citrus)
+     * Citrus message validation component for testing
+     * 
+     * Category: testing
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-test-citrus
+     * 
+     * Syntax: <code>citrus:operation/name</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation to perform. 'validate' validates exchanges without
+     * modifying them. 'receive' validates exchanges and returns a simulated
+     * response.
+     * 
+     * Path parameter: name
+     * A unique name to identify this endpoint. Allows multiple Citrus endpoints
+     * with different validation expectations in the same route.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation/name
+     * @return the dsl builder
+     */
+    public static CitrusEndpointBuilderFactory.CitrusEndpointBuilder citrus(String componentName, String path) {
+        return CitrusEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Class (camel-bean)
      * Invoke methods of Java beans specified by class name.
      * 

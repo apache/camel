@@ -1,0 +1,378 @@
+= Citrus Component
+:doctitle: Citrus
+:shortname: citrus
+:artifactid: camel-test-citrus
+:description: Citrus message validation component for testing
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Citrus component integrates with the https://citrusframework.org/[Citrus integration test framework]
+to perform message validation on exchanges arriving at a Camel endpoint. It allows test authors to
+verify exchange body content, headers, and path expressions (JsonPath, XPath) using Citrus validation
+modules.
+
+This component is intended for use in Camel route unit and integration tests.
+
+== URI format
+
+----
+citrus:operation/name[?options]
+----
+
+Where `operation` is `validate` or `receive`, and `name` is an optional identifier to distinguish
+multiple Citrus endpoints in the same route.
+
+* `validate` — validates exchanges without modifying them (pass-through validation).
+* `receive` — validates exchanges and returns a simulated response (request/response simulation).
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+The Citrus endpoint acts as a producer-only endpoint. Routes send exchanges *to* `citrus:validate`,
+and the component validates each exchange using Citrus message validation.
+
+=== Validation modules
+
+The component does not bundle Citrus validation modules. You must add the required validation
+module dependency for your message type to your test classpath:
+
+[cols="1,2", options="header"]
+|===
+| Dependency | Description
+
+| `citrus-validation-json`
+| JSON message validation with JsonPath expressions and JSON schema support
+
+| `citrus-validation-xml`
+| XML message validation with XPath expressions, XML schema (XSD/WSDL) and XSLT support
+
+| `citrus-validation-text`
+| Plain text message validation including binary (stream and base64) and gzip support
+
+| `citrus-validation-yaml`
+| YAML message validation
+
+| `citrus-validation-binary`
+| Binary message validation with stream comparison and base64 encoding
+
+| `citrus-validation-hamcrest`
+| Hamcrest matcher assertions for use with JsonPath and XPath expressions
+|===
+
+All modules use the `org.citrusframework` group ID. Refer to the
+https://citrusframework.org/citrus/reference/html/[Citrus reference documentation] for detailed
+usage of each validation module.
+
+=== Citrus empowered message validation
+
+Citrus uses a powerful template-based approach to message validation: you provide an expected message template and
+Citrus compares it against the received message using format-aware comparison. This brings several
+capabilities beyond simple string equality.
+
+==== Ignore expressions
+
+Use the `@ignore@` placeholder anywhere in an expected message template to skip validation of dynamic
+values such as timestamps, generated IDs, or correlation tokens. The element must be present, but its
+value is not checked.
+
+[source,json]
+----
+{
+  "orderId": "@ignore@",
+  "timestamp": "@ignore@",
+  "status": "created"
+}
+----
+
+This works across all supported message types — in XML element and attribute values, JSON property values,
+and YAML property values. The ignore placeholder can also replace an entire sub-object or element
+including its children.
+
+For plain text messages, the `@ignore@` placeholder works on a positional basis — it matches a word-length
+character sequence at the exact position in the text. Use `@ignore(n)@` to ignore exactly _n_ characters
+when the value contains non-word characters:
+
+[source,plaintext]
+----
+Your current id is "@ignore@", it expires on 01/01/2030
+----
+
+This ignores the word following `id is "` based on the position of the ignore expression in the template.
+Because no character count is specified, Citrus ignores the entire word regardless of its length.
+The word boundary is determined by the first non-word character (whitespace, punctuation, etc.).
+
+[source,plaintext]
+----
+Your current id is "@ignore(12)@", it expires on @ignore(10)@
+----
+
+This ignores the next 12 characters starting at the position of the ignore expression in the template.
+This also includes whitespace and non-word characters (e.g. `Your current id is "1234/ 34567 D", it expires on 01/01/2030`).
+
+==== Validation matchers
+
+Citrus validation matchers are inline assertions embedded directly in the expected message template,
+surrounded by `@` markers. They work across all message formats (JSON, XML, YAML, plain text) and
+provide richer assertions than exact equality:
+
+[source,json]
+----
+{
+  "name": "@equalsIgnoreCase('JOHN')@",
+  "age": "@greaterThan(17)@",
+  "email": "@matches('[a-z]+@[a-z]+\\.[a-z]+')@",
+  "created": "@matchesDatePattern('yyyy-MM-dd')@",
+  "id": "@isNumber()@",
+  "token": "@startsWith('tk-')@",
+  "status": "@contains('active')@"
+}
+----
+
+You can also use `@variable('name')@` to extract the actual value into a Citrus test variable for
+later use, and `@assertThat(hamcrestMatcher)@` to use Hamcrest matchers inline (requires
+`citrus-validation-hamcrest`):
+
+[source,json]
+----
+{
+  "count": "@assertThat(allOf(greaterThan(0), lessThan(100)))@",
+  "type": "@assertThat(anyOf(equalTo(A), equalTo(B)))@"
+}
+----
+
+==== JSON validation
+
+Citrus JSON validation compares JSON object structures regardless of property order.
+It supports two modes configurable via `citrus.json.message.validation.strict`:
+
+* **Strict mode** (default): the received JSON must match the expected structure exactly — no
+  additional properties or array items are allowed.
+* **Non-strict mode**: the expected JSON can be a subset of the received message — additional
+  properties and array items in the received JSON are silently ignored. This is useful when you
+  only want to verify specific fields.
+
+JSON validation also supports:
+
+* **JsonPath expressions** for targeted field validation without specifying the full message body
+* **JSON schema validation** against JSON Schema V3/V4 definitions
+* **`@ignore@` and validation matchers** within JSON values
+
+==== XML validation
+
+Citrus XML validation performs a structural DOM tree comparison that correctly handles:
+
+* **XML namespaces** with different prefixes — the comparison is namespace-aware, so
+  `<ns1:element xmlns:ns1="...">` and `<ns2:element xmlns:ns2="...">` are treated as equivalent
+  when they share the same namespace URI.
+* **XML schema validation** against XSD and WSDL definitions to verify structural correctness.
+* **XPath expressions** for targeted element validation, with full namespace support via
+  namespace context configuration. This includes automatic namespace prefix resolution when the
+  prefixes differ between the control template and the received message.
+* **`@ignore@` and validation matchers** within XML element values and attributes.
+
+==== Plain text validation
+
+Plain text validation performs exact string comparison with support for:
+
+* **Positional `@ignore@`** to skip dynamic word-length sequences at specific positions.
+* **`@ignore(n)@`** to skip exactly _n_ characters (useful for values with non-word characters).
+* **`@variable('name')@`** to extract values at specific positions into test variables.
+* **Whitespace normalization** (configurable) to ignore line separator differences (CR, LF, CRLF)
+  or all whitespace.
+* **Gzip** and **binary/base64** content comparison via the respective message types.
+
+==== YAML validation
+
+YAML validation compares YAML documents structurally, similar to JSON validation:
+
+* **Strict/non-strict mode** — configurable via `citrus.yaml.message.validation.strict`.
+* **Path expressions** for ignoring specific elements in the YAML structure.
+* **`@ignore@` and validation matchers** within YAML values.
+
+=== Validation specification API
+
+The endpoint provides a fluent API for specifying validation expectations. You can define a single
+validation that applies to all incoming exchanges, or specify individual validations for each
+exchange in sequence.
+
+==== Single validation for all exchanges
+
+Use `allMessages()` to define one validation specification that is applied to every exchange.
+The returned `MessageValidationSpec` provides a fluent API with `body()`, `header()`, and
+`validate()` methods:
+
+[source,java]
+----
+CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=json", CitrusEndpoint.class);
+citrus.allMessages()
+    .body("{\"status\": \"ok\"}")
+    .header("operation", "test");
+citrus.expectedMessageCount(3);
+
+// All three exchanges are validated against the same spec
+template.sendBodyAndHeader("direct:start", "{\"status\": \"ok\"}", "operation", "test");
+template.sendBodyAndHeader("direct:start", "{\"status\": \"ok\"}", "operation", "test");
+template.sendBodyAndHeader("direct:start", "{\"status\": \"ok\"}", "operation", "test");
+
+citrus.assertIsSatisfied();
+----
+
+==== Per-exchange sequential validation
+
+Use `message()` to specify different validation expectations for the 1st, 2nd, 3rd, etc.
+exchange. Each call to `message()` auto-increments the index, so specs are applied in order.
+Each incoming exchange triggers the next validation spec in sequence:
+
+[source,java]
+----
+CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=json", CitrusEndpoint.class);
+
+citrus.message().body("{\"event\": \"created\"}").header("action", "create");
+citrus.message().body("{\"event\": \"updated\"}").header("action", "update");
+citrus.message().body("{\"event\": \"deleted\"}").header("action", "delete");
+citrus.expectedMessageCount(3);
+
+template.sendBodyAndHeader("direct:start", "{\"event\": \"created\"}", "action", "create");
+template.sendBodyAndHeader("direct:start", "{\"event\": \"updated\"}", "action", "update");
+template.sendBodyAndHeader("direct:start", "{\"event\": \"deleted\"}", "action", "delete");
+
+citrus.assertIsSatisfied();
+----
+
+You can also use `message(index)` to target a specific exchange by its 0-based position.
+
+When both `message(index)` and `allMessages()` are configured, the indexed spec takes priority —
+it replaces `allMessages()` for that exchange entirely (the two are never combined). The
+`allMessages()` spec acts as a fallback for exchanges that have no matching indexed spec.
+
+If an exchange arrives at an index with no matching indexed spec and no `allMessages()` fallback,
+the endpoint fails with an error.
+
+[source,java]
+----
+citrus.message(0).body("{\"event\": \"start\"}");
+citrus.allMessages().body("{\"event\": \"progress\"}").header("type", "status");
+
+// Exchange 0 → validated against message(0) only (allMessages() is NOT applied)
+// Exchange 1, 2, ... → validated against allMessages() (body + header)
+----
+
+=== Receive operation (request/response simulation)
+
+The `receive` operation extends the validation endpoint with response simulation. It uses a
+Gherkin-style fluent API to define what the endpoint expects to receive (`when`) and what it
+should respond with (`then`). This is useful for simulating backend services in route tests.
+
+==== Basic usage
+
+[source,java]
+----
+CitrusEndpoint citrus = context.getEndpoint("citrus:receive/service?messageType=json", CitrusEndpoint.class);
+
+// Define expected request and simulated response
+citrus.when().allMessages().receive()
+    .body("{\"action\": \"greet\"}");
+citrus.then().allMessages().respond()
+    .body("{\"greeting\": \"Hello!\"}");
+citrus.expectedMessageCount(1);
+
+// Send a request and verify the response
+Exchange result = template.send("direct:start", exchange -> {
+    exchange.getIn().setBody("{\"action\": \"greet\"}");
+});
+
+citrus.assertIsSatisfied();
+assertThat(result.getIn().getBody(String.class)).isEqualTo("{\"greeting\": \"Hello!\"}");
+----
+
+==== Gherkin-style API
+
+The `when()` and `then()` methods provide a natural-language-like syntax:
+
+* `when().message(index).receive()` — define validation expectations for a specific exchange
+* `when().allMessages().receive()` — define default validation for all exchanges
+* `then().message(index).respond()` — define the response for a specific exchange
+* `then().allMessages().respond()` — define the default response for all exchanges
+* `then().message(index).send()` — alias for `respond()`
+
+Both the `receive()` spec and the `respond()` spec support `body()` and `header()` methods.
+
+==== Per-exchange request/response
+
+You can define different request expectations and responses for each exchange in sequence:
+
+[source,java]
+----
+CitrusEndpoint citrus = context.getEndpoint("citrus:receive/service?messageType=json", CitrusEndpoint.class);
+
+citrus.when().message(0).receive().body("{\"action\": \"create\"}");
+citrus.then().message(0).respond().body("{\"id\": \"1\", \"status\": \"created\"}");
+
+citrus.when().message(1).receive().body("{\"action\": \"update\"}");
+citrus.then().message(1).respond().body("{\"id\": \"1\", \"status\": \"updated\"}");
+
+citrus.expectedMessageCount(2);
+----
+
+Indexed specs take priority over `allMessages()` for both request validation and response
+simulation. When a specific exchange has no indexed spec, the `allMessages()` spec is used as
+a fallback.
+
+==== Response with headers
+
+[source,java]
+----
+citrus.then().allMessages().respond()
+    .body("{\"greeting\": \"Hello!\"}")
+    .header("Content-Type", "application/json")
+    .header("X-Status", "ok");
+----
+
+==== Citrus variables in responses
+
+Exchange properties are available as Citrus test variables in response templates. This enables
+dynamic response generation based on the incoming request context:
+
+[source,java]
+----
+citrus.then().allMessages().respond()
+    .body("{\"greeting\": \"Hello ${userName}!\"}")
+    .header("X-Correlation-Id", "${correlationId}");
+----
+
+==== Response-only mode
+
+When you only need response simulation without request validation, omit the `when()` specification:
+
+[source,java]
+----
+CitrusEndpoint citrus = context.getEndpoint("citrus:receive/responder", CitrusEndpoint.class);
+
+citrus.then().allMessages().respond()
+    .body("OK")
+    .header("status", "200");
+citrus.expectedMessageCount(1);
+----
+
+=== Exchange properties as Citrus variables
+
+All exchange properties are automatically propagated to the Citrus test context as test variables.
+This enables the use of Citrus functions and validation matchers in expected message templates.
+
+=== Path validation
+
+Path validation expressions are automatically classified:
+
+* Expressions starting with `$` are treated as JsonPath
+* Expressions starting with `/` are treated as XPath
