@@ -43,6 +43,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,6 +62,7 @@ class UndertowWsSecurityWithoutProviderTest extends BaseUndertowTest {
         context.getRegistry().bind(OAuthTokenValidationFactory.FACTORY, new StubOAuthTokenValidationFactory());
         context.getRegistry().bind("basicAuth", new UndertowBasicAuthHandler());
         context.getRegistry().bind("lateBasicAuth", new UndertowBasicAuthHandler());
+        context.getRegistry().bind("producerBasicAuth", new UndertowBasicAuthHandler());
         return context;
     }
 
@@ -79,6 +81,10 @@ class UndertowWsSecurityWithoutProviderTest extends BaseUndertowTest {
                 from("direct:late").to("undertow:ws://localhost:{{port}}/late?sendToAll=true");
                 from("undertow:ws://localhost:{{port}}/late?allowedRoles=user").routeId("late").autoStartup(false)
                         .process(exchange -> lateRouteInvocations.incrementAndGet());
+
+                // handlers is a consumer option: a producer does not run it
+                from("direct:producerHandlers")
+                        .to("undertow:ws://localhost:{{port}}/producerHandlers?handlers=#producerBasicAuth&sendToAll=true");
 
                 from("direct:lateBasic").to("undertow:ws://localhost:{{port}}/lateBasic?sendToAll=true");
                 from("undertow:ws://localhost:{{port}}/lateBasic?handlers=#lateBasicAuth").routeId("lateBasic")
@@ -153,6 +159,20 @@ class UndertowWsSecurityWithoutProviderTest extends BaseUndertowTest {
         authenticated.sendText("hello", true).join();
         await().atMost(10, TimeUnit.SECONDS).until(() -> lateBasicRouteInvocations.get() == 1);
         authenticated.sendClose(WebSocket.NORMAL_CLOSURE, "done").join();
+    }
+
+    @Test
+    void handlersOfAProducerDoNotGuardItsPath() {
+        RecordingListener listener = new RecordingListener();
+        WebSocket webSocket = connect("/producerHandlers", null, listener);
+
+        // the server registers the connection shortly after the client has completed the upgrade
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            template.sendBody("direct:producerHandlers", "update");
+            assertFalse(listener.received.isEmpty());
+        });
+        assertEquals("update", listener.received.get(0));
+        webSocket.sendClose(WebSocket.NORMAL_CLOSURE, "done").join();
     }
 
     private void assertRefused(String path, String authorization, int statusCode) {
