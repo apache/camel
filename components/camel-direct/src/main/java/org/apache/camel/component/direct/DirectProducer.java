@@ -99,9 +99,15 @@ public class DirectProducer extends DefaultAsyncProducer {
                 }
             }
         } catch (InterruptedException e) {
-            LOG.info("Interrupted while processing the exchange");
+            // the only wait here is for a consumer to appear (block=true), and what interrupts it is a forced shutdown,
+            // such as a dev mode reload that adds the consumer in the same edit (CAMEL-25365)
+            LOG.info("Interrupted while waiting for a consumer on {}: the route is being stopped or reloaded",
+                    endpoint.getEndpointUri());
             Thread.currentThread().interrupt();
-            exchange.setException(e);
+            exchange.setException(new DirectConsumerNotAvailableException(
+                    "No consumers available on endpoint: " + endpoint
+                                                                          + " (interrupted while waiting for one, as the route is being stopped or reloaded)",
+                    exchange));
             callback.done(true);
             return true;
         } catch (Exception e) {

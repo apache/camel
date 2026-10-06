@@ -694,6 +694,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                                      + (TimeUnit.SECONDS.convert(timeout, timeUnit) - (loopCount++ * loopDelaySeconds))
                                      + " seconds.";
                         msg += inflightsBuilder.toString();
+                        if (!logInflightExchangesOnTimeout) {
+                            // the verbose listing is off (as in the dev profile), so say in this line where they wait
+                            msg += waitingAt(context, routes);
+                        }
 
                         LOG.info(msg);
 
@@ -799,6 +803,41 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
         // the same service can be a child of several route services, so the sum can exceed an int
         return (int) Math.min(Integer.MAX_VALUE, inflight);
+    }
+
+    /**
+     * Where the inflight exchanges of the routes are, for the one-line waiting message: route, node and the line in the
+     * source, such as {@code picked-lines/to1 (aggregator.camel.yaml:23)}. A dev mode reload waits here for exchanges
+     * blocked on something only the reload itself would add, such as a direct endpoint whose consumer is part of the
+     * same edit, and without the place the wait is a mystery (CAMEL-25365). Empty when the inflight repository cannot
+     * be browsed.
+     */
+    static String waitingAt(CamelContext camelContext, List<RouteStartupOrder> routes) {
+        if (!camelContext.getInflightRepository().isInflightBrowseEnabled()) {
+            return "";
+        }
+        Set<String> routeIds = new HashSet<>();
+        for (RouteStartupOrder route : routes) {
+            routeIds.add(route.getRoute().getId());
+        }
+        Set<String> places = new LinkedHashSet<>();
+        int more = 0;
+        for (InflightRepository.InflightExchange inflight : camelContext.getInflightRepository().browse()) {
+            if (!routeIds.contains(inflight.getExchange().getFromRouteId())) {
+                continue;
+            }
+            String place = inflight.getAtRouteId() + "/" + inflight.getNodeId()
+                           + (inflight.getNodeSource() != null ? " (" + inflight.getNodeSource() + ")" : "");
+            if (places.size() < 3 || places.contains(place)) {
+                places.add(place);
+            } else {
+                more++;
+            }
+        }
+        if (places.isEmpty()) {
+            return "";
+        }
+        return ". Waiting at: " + String.join(", ", places) + (more > 0 ? " and " + more + " more" : "");
     }
 
     /**
