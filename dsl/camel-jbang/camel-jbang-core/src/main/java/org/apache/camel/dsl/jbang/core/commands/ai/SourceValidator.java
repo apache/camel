@@ -121,6 +121,18 @@ public final class SourceValidator {
             // route: read it, so that a GET operation is known to carry no body (CAMEL-24844)
             List<String> msgs = validateCamelYaml(content, catalog, schemaValidator,
                     directory != null ? OpenApiVerbs.bodylessEndpoints(content, directory) : Set.of());
+            if (name.endsWith(".kamelet.yaml") || name.endsWith(".kamelet.yml")) {
+                // the shape of a Kamelet file, which the schema of a route file does not know
+                List<String> shape = KameletChecks.validateKameletFile(content);
+                if (!shape.isEmpty()) {
+                    msgs = new ArrayList<>(msgs);
+                    msgs.addAll(shape);
+                }
+            }
+            if (msgs.isEmpty()) {
+                // the kamelet: endpoints against the Kamelet catalog and the project's own Kamelets
+                msgs = new ArrayList<>(KameletChecks.validateYaml(content, directory, checkConsumers));
+            }
             if (directory != null && msgs.isEmpty()) {
                 msgs = new ArrayList<>(msgs);
                 BeanDeclarations declarations = BeanDeclarations.scan(directory, fileName);
@@ -132,7 +144,7 @@ public final class SourceValidator {
                     msgs.addAll(EndpointConsumerChecks.validateYamlConsumers(content, directory, fileName, catalog));
                 }
             }
-            return msgs;
+            return KameletChecks.withTemplateHints(name, content, msgs);
         }
         if (name.endsWith(".properties")) {
             return validateProperties(content, catalog, extraPropertyLine);

@@ -83,13 +83,13 @@ public final class AuthoringTools {
     /** Registers the authoring tools; called once by the {@link ToolRegistry}. */
     static void register(Consumer<ToolDescriptor> registry) {
         registry.accept(tool("camel_catalog_doc",
-                "Catalog documentation of a component, data format, language, EIP, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI.")
+                "Catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI.")
                 .param("name", "string",
                         "Name, e.g. kafka, json (a data format by its YAML name or artifact), simple, timer, choice, split, Exchange",
                         false)
                 .param("endpoint", "string", "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092", false)
                 .param("kind", "string",
-                        "component, dataformat, language, eip, bean or api (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it; api is the Java API to call from a bean or script before writing it: Exchange, Message, CamelContext, Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter, or the variables of groovy, js, python, java scripts)",
+                        "component, dataformat, language, eip, kamelet, bean or api (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it; api is the Java API to call from a bean or script before writing it: Exchange, Message, CamelContext, Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter, or the variables of groovy, js, python, java scripts)",
                         false)
                 .param("includeOptions", "string",
                         "common (default: no deprecated or advanced), required, all or false", false)
@@ -112,13 +112,13 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_catalog_find",
-                "Finds Camel components, data formats, languages and EIPs by a protocol, product, alias or other term "
+                "Finds Camel components, data formats, languages, EIPs and Kamelets by a protocol, product, alias or other term "
                                                    + "that is not the exact name (mqtt, s3, snowflake, csv, fan-out, dedup): best "
                                                    + "match first with title and description. camel_catalog_doc then gives the "
                                                    + "options of one.")
                 .param("term", "string", "What to look for, e.g. mqtt, s3, database, csv, fan-out", true)
                 .param("kind", "string",
-                        "component, dataformat, language, eip or bean (default: all); bean with an interface name such as AggregationStrategy lists the built-in implementations",
+                        "component, dataformat, language, eip, kamelet or bean (default: all); bean with an interface name such as AggregationStrategy lists the built-in implementations",
                         false)
                 .param("limit", "integer", "Maximum matches per kind (default 10)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
