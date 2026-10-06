@@ -42,6 +42,7 @@ public class ForyDataFormat extends ServiceSupport implements DataFormat, DataFo
     private CamelContext camelContext;
     private Class<?> unmarshalType;
     private String unmarshalTypeName;
+    @Metadata(label = "security", security = "insecure:serialization", insecureValue = "false")
     private boolean requireClassRegistration = true;
     private boolean threadSafe = true;
     private boolean allowAutoWiredFory = true;

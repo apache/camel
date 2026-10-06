@@ -83,6 +83,7 @@ public final class SecurityUtils {
         map.put("nested", new SecurityOption(INSECURE_DEV, "true"));
         map.put("objectcodecpattern", new SecurityOption(INSECURE_SERIALIZATION, ""));
         map.put("objectmessageenabled", new SecurityOption(INSECURE_SERIALIZATION, "true"));
+        map.put("requireclassregistration", new SecurityOption(INSECURE_SERIALIZATION, VALUE_FALSE));
         map.put("sendenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("serializablepackages", new SecurityOption(INSECURE_SERIALIZATION, ""));
         map.put("skiptlsverify", new SecurityOption(INSECURE_SSL, "true"));
@@ -183,6 +184,8 @@ public final class SecurityUtils {
                 "component:jms",
                 "component:sjms",
                 "component:sjms2"));
+        owners.put("requireclassregistration", Set.of(
+                "dataformat:fory"));
         owners.put("serializablepackages", Set.of(
                 "component:avro",
                 "dataformat:avro"));
