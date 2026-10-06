@@ -16,6 +16,7 @@
  */
 package org.apache.camel.http.common;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -529,11 +531,19 @@ public class DefaultHttpBinding implements HttpBinding {
         // prefer streaming
         InputStream is = null;
         if (checkChunked(message, exchange)) {
-            is = message.getBody(InputStream.class);
+            // a String body is written in the charset of the content type
+            is = toInputStreamWithContentTypeCharset(message, contentType);
+            if (is == null) {
+                is = message.getBody(InputStream.class);
+            }
         } else {
             // try to use input stream first, so we can copy directly
             if (!isText(contentType)) {
-                is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, message.getBody());
+                // a String body is written in the charset of the content type
+                is = toInputStreamWithContentTypeCharset(message, contentType);
+                if (is == null) {
+                    is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, message.getBody());
+                }
             }
         }
 
@@ -593,6 +603,31 @@ public class DefaultHttpBinding implements HttpBinding {
                 }
             }
         }
+    }
+
+    /**
+     * Converts a String body with the charset that the content type declares, so the bytes match the Content-Type
+     * header. Returns <tt>null</tt> when the body is not a String or no supported charset is declared, and the body is
+     * then converted with the type converter (the charset of the exchange).
+     */
+    private static InputStream toInputStreamWithContentTypeCharset(Message message, String contentType) {
+        if (contentType != null && message.getBody() instanceof String text) {
+            for (String part : contentType.split(";")) {
+                part = part.trim();
+                // the parameter name is case-insensitive (RFC 9110, section 5.6.6)
+                if (part.regionMatches(true, 0, "charset=", 0, 8)) {
+                    String charset = IOHelper.normalizeCharset(part.substring(8));
+                    try {
+                        return new ByteArrayInputStream(text.getBytes(Charset.forName(charset)));
+                    } catch (IllegalArgumentException e) {
+                        // unsupported or illegal charset name: keep the conversion with the exchange charset
+                        LOG.debug("Cannot use charset {} of the content type: {}", charset, e.getMessage());
+                        return null;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     protected boolean checkChunked(Message message, Exchange exchange) {
