@@ -2593,6 +2593,16 @@ A route that relies on an undeclared exception's message reaching the caller mus
 cxf://http://localhost:8080/service?serviceClass=com.example.MyService&muteException=false
 ----
 
+==== A suspended consumer rejects new requests
+
+The CXF consumers (`cxf` and `cxfrs`) are suspendable, so that a graceful shutdown keeps the CXF server running
+while the requests in flight complete, but a suspended consumer kept accepting and routing new requests: during a
+graceful shutdown (until the shutdown timeout), and while the route was suspended (route controller, JMX, route
+policies such as `ThrottlingInflightRoutePolicy`). A suspended consumer now rejects a new request with HTTP status
+503 (Service Unavailable), like the HTTP consumers do; the requests in flight, including asynchronous ones whose
+continuation resumes later, still complete. The `cxf` consumer rejects the request with a SOAP fault, which is
+logged at DEBUG level only; over a transport other than HTTP the caller gets the fault only.
+
 === camel-thrift
 
 The `thrift` data format used to deserialize into its own `defaultInstance` and return that object to

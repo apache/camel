@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Request;
+import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import jakarta.ws.rs.core.UriInfo;
 
@@ -58,18 +59,30 @@ public class CxfRsInvoker extends JAXRSInvoker {
             Exchange cxfExchange, final Object serviceObject, Method method,
             Object[] paramArray)
             throws Exception {
+        OperationResourceInfo ori = cxfExchange.get(OperationResourceInfo.class);
+        // a sub resource locator only returns the sub resource, whose method is invoked next (and checked then)
+        Continuation continuation = null;
+        if (!ori.isSubResourceLocator()) {
+            continuation = endpoint.isSynchronous() ? null : getContinuation(cxfExchange);
+            // a resumed continuation belongs to a request that is in flight and must complete
+            if ((continuation == null || continuation.isNew()) && cxfRsConsumer.isSuspendingOrSuspended()) {
+                // a suspended consumer (suspended route, graceful shutdown) does not accept new requests, like the
+                // HTTP consumers, which answer 503 (a response rather than an exception, which CXF logs with its
+                // stack trace)
+                LOG.debug("Consumer suspended, cannot service request");
+                return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
+            }
+        }
         Object response = null;
         if (endpoint.isPerformInvocation()) {
             response = super.performInvocation(cxfExchange, serviceObject, method, paramArray);
         }
         paramArray = insertExchange(method, paramArray, cxfExchange);
-        OperationResourceInfo ori = cxfExchange.get(OperationResourceInfo.class);
         if (ori.isSubResourceLocator()) {
             // don't delegate the sub resource locator call to camel processor
             return method.invoke(serviceObject, paramArray);
         }
-        Continuation continuation;
-        if (!endpoint.isSynchronous() && (continuation = getContinuation(cxfExchange)) != null) {
+        if (continuation != null) {
             LOG.trace("Calling the Camel async processors.");
             return asyncInvoke(cxfExchange, method, paramArray, continuation, response);
         } else {
