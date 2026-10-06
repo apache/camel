@@ -35,7 +35,7 @@ public class LRATimeoutIT extends AbstractLRATestSupport {
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedMessageCount(1);
 
-        template.sendBody("direct:saga", "Hello");
+        template.sendBody("direct:timeout-saga", "Hello");
 
         end.assertIsSatisfied();
         compensate.assertIsSatisfied();
@@ -55,7 +55,7 @@ public class LRATimeoutIT extends AbstractLRATestSupport {
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedMessageCount(1);
 
-        template.sendBody("direct:saga-auto", "Hello");
+        template.sendBody("direct:timeout-saga-auto", "Hello");
 
         end.assertIsSatisfied();
         complete.assertIsSatisfied();
@@ -69,7 +69,7 @@ public class LRATimeoutIT extends AbstractLRATestSupport {
             @Override
             public void configure() {
 
-                from("direct:saga")
+                from("direct:timeout-saga")
                         .saga()
                         .timeout(100, TimeUnit.MILLISECONDS)
                         .option("id", constant("myid"))
@@ -77,7 +77,7 @@ public class LRATimeoutIT extends AbstractLRATestSupport {
                         .compensation("mock:compensate")
                         .to("mock:end");
 
-                from("direct:saga-auto")
+                from("direct:timeout-saga-auto")
                         .saga()
                         .timeout(350, TimeUnit.MILLISECONDS)
                         .option("id", constant("myid"))
