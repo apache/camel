@@ -393,13 +393,19 @@ YAML::
       steps:
         - setHeader:
             name: "CamelDoclingOperation"
-            constant: "CONVERT_TO_HTML"
+            expression:
+              constant:
+                expression: "CONVERT_TO_HTML"
         - setHeader:
             name: "CamelDoclingEnableOCR"
-            constant: true
+            expression:
+              constant:
+                expression: true
         - setHeader:
             name: "CamelDoclingOCRLanguage"
-            constant: "es"
+            expression:
+              constant:
+                expression: "es"
         - to:
             uri: docling:CONVERT_TO_MARKDOWN  # Operation will be overridden by header
         - to:

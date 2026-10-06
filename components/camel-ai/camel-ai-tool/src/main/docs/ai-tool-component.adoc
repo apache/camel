@@ -187,7 +187,8 @@ YAML::
             "additionalProperties": false
           }
       steps:
-        - to: direct:createOrder
+        - to:
+            uri: direct:createOrder
 ----
 ====
 
@@ -228,7 +229,9 @@ YAML::
         outputParameter.unit: string
       steps:
         - setBody:
-            constant: '{"temperature":21.5,"unit":"celsius"}'
+            expression:
+              constant:
+                expression: '{"temperature":21.5,"unit":"celsius"}'
 ----
 ====
 
@@ -277,7 +280,8 @@ YAML::
         idempotentHint: false
         openWorldHint: true
       steps:
-        - to: direct:deleteOrder
+        - to:
+            uri: direct:deleteOrder
 ----
 ====
 
@@ -414,7 +418,8 @@ YAML::
         description: "Transfer funds"
         authorizationPolicy: "#myAuthorizationPolicy"
       steps:
-        - to: bean:ledger
+        - to:
+            uri: bean:ledger
 ----
 ====
 
