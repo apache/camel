@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.spiffe.integration;
 
+import java.util.List;
+
 import io.spiffe.exception.JwtSvidException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -67,8 +69,8 @@ class SpiffeWorkloadApiIT extends CamelTestSupport {
         assertThat(out.getException()).isNull();
         assertThat(out.getMessage().getHeader(SpiffeConstants.SPIFFE_ID))
                 .isEqualTo(service.getWorkloadSpiffeId());
-        // the default x509Response is the certificate chain, which must carry at least the leaf
-        assertThat(out.getMessage().getBody()).isNotNull();
+        // the default x509Response is the certificate chain, which must carry at least the leaf certificate
+        assertThat(out.getMessage().getBody(List.class)).isNotEmpty();
     }
 
     @Test

@@ -90,6 +90,18 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
 
     @Override
     public void initialize() {
+        try {
+            doInitialize();
+        } catch (RuntimeException e) {
+            // a partial start would leak the server container, the network and the temp socket directory, and a
+            // TestServiceUtil.tryInitialize() retry would overwrite the fields and orphan them; tear down whatever
+            // came up before propagating
+            cleanup();
+            throw e;
+        }
+    }
+
+    private void doInitialize() {
         createHostSocketDir();
         network = Network.newNetwork();
 
@@ -225,19 +237,39 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
     @Override
     public void shutdown() {
         LOG.info("Stopping the SPIRE containers");
-        if (agent != null) {
-            agent.stop();
-        }
-        if (server != null) {
-            server.stop();
-        }
+        cleanup();
+    }
+
+    // stops whatever has been started and nulls the fields, so it is safe to call from a failed initialize() (before
+    // a retry) as well as from shutdown(); every step is best-effort so one failure does not leak the rest
+    private void cleanup() {
+        agent = stopQuietly(agent);
+        server = stopQuietly(server);
         if (network != null) {
-            network.close();
+            try {
+                network.close();
+            } catch (RuntimeException e) {
+                // best effort on cleanup
+            }
+            network = null;
         }
         if (hostSocketDir != null) {
             deleteQuietly(hostSocketDir.resolve(SOCKET_FILE));
             deleteQuietly(hostSocketDir);
+            hostSocketDir = null;
         }
+        socketPath = null;
+    }
+
+    private static GenericContainer<?> stopQuietly(GenericContainer<?> container) {
+        if (container != null) {
+            try {
+                container.stop();
+            } catch (RuntimeException e) {
+                // best effort on cleanup
+            }
+        }
+        return null;
     }
 
     private static void deleteQuietly(Path path) {
