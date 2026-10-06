@@ -37,6 +37,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import dev.tamboui.buffer.Buffer;
@@ -501,18 +502,34 @@ public class CamelMonitor extends CamelCommand {
     }
 
     /**
+     * Opens the AI panel with a question for the Source editor's fix with AI (Shift+F8), made from the directory of the
+     * selected integration's sources.
+     */
+    private void openAiWithQuestion(Function<Path, String> question) {
+        if (shellPanel.isOpen()) {
+            shellPanel.close();
+        }
+        Path dir = mcpFacade != null ? mcpFacade.getSelectedSourceDirectory() : null;
+        aiPanel.openWithQuestion(question.apply(dir));
+    }
+
+    /**
      * Wires the shared MonitorContext callbacks and connects the shell and AI panels.
      */
     private void wireContextCallbacks() {
         ctx.notificationCallback = (msg, error) -> setNotification(msg, error);
         ctx.openMarkdownCallback = actionsPopup::openMarkdown;
         ctx.openMarkdownAtCallback = actionsPopup::openMarkdownAt;
-        ctx.askAiCallback = (file, line, problem, lineText) -> {
-            if (shellPanel.isOpen()) {
-                shellPanel.close();
+        ctx.askAiCallback = new MonitorContext.AskAi() {
+            @Override
+            public void fixProblem(Path file, int line, String problem, String lineText) {
+                openAiWithQuestion(dir -> AiFixPrompt.of(dir, file, line, problem, lineText));
             }
-            Path dir = mcpFacade != null ? mcpFacade.getSelectedSourceDirectory() : null;
-            aiPanel.openWithQuestion(AiFixPrompt.of(dir, file, line, problem, lineText));
+
+            @Override
+            public void fixFailure(Path file, int line, String failure, String lineText) {
+                openAiWithQuestion(dir -> AiFixPrompt.ofFailure(dir, file, line, failure, lineText));
+            }
         };
         ctx.projectOverviewCallback = () -> {
             if (shellPanel.isOpen()) {
@@ -2929,7 +2946,7 @@ public class CamelMonitor extends CamelCommand {
             rightWidth = 0;
             minGap = 0;
             // Drop secondary F-key hints (F2/F3/F6) before tab-specific action hints.
-            hintsWidth = dropFKeyHints(spans, fKeyTotal, hintsWidth, area.width());
+            hintsWidth = dropFKeyHints(spans, fKeyTotal, tabFKeySpans, hintsWidth, area.width());
             // Then drop tab-specific hints from the tail, keeping at least 4 spans
             while (spans.size() > 4 && hintsWidth > area.width()) {
                 Span labelSpan = spans.remove(spans.size() - 1);
@@ -2948,6 +2965,9 @@ public class CamelMonitor extends CamelCommand {
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
     }
 
+    // how many of the F-key hint spans of the footer are the screen's own (after F1/F2/F10)
+    private int tabFKeySpans;
+
     private int insertFKeyHints(List<Span> spans) {
         int insertPos = Math.min(2, spans.size());
         List<Span> fKeySpans = new ArrayList<>();
@@ -2958,9 +2978,11 @@ public class CamelMonitor extends CamelCommand {
         }
         hint(fKeySpans, "F2", "actions");
         hint(fKeySpans, "F10", "run");
+        int globalFKeys = fKeySpans.size();
         if (tab != null) {
             tab.renderFKeyHints(fKeySpans);
         }
+        tabFKeySpans = fKeySpans.size() - globalFKeys;
         spans.addAll(insertPos, fKeySpans);
         // Return total F-key span count. The footer drop loop uses this to remove pairs from
         // the tail, stopping before the first pair (F1 help when present).
@@ -2979,7 +3001,27 @@ public class CamelMonitor extends CamelCommand {
      * @return            the rendered width of {@code spans} after dropping
      */
     static int dropFKeyHints(List<Span> spans, int fKeyTotal, int hintsWidth, int available) {
-        while (fKeyTotal > 2 && hintsWidth > available) {
+        return dropFKeyHints(spans, fKeyTotal, 0, hintsWidth, available);
+    }
+
+    /**
+     * As {@link #dropFKeyHints(List, int, int, int)}, with the screen's own F-key hints (such as Shift+F8 fix with AI
+     * or F12 file actions) after the global ones: the global F2/F10 are dropped first, as they are the same on every
+     * screen, and then the screen's own from the tail.
+     *
+     * @param tabFKeys how many of the F-key spans are the screen's own, at the end of the F-key spans
+     */
+    static int dropFKeyHints(List<Span> spans, int fKeyTotal, int tabFKeys, int hintsWidth, int available) {
+        int globalTotal = fKeyTotal - Math.max(0, tabFKeys);
+        while (globalTotal > 2 && hintsWidth > available) {
+            // the last global pair: its key span is at index globalTotal (the F-keys start at 2)
+            Span labelSpan = spans.remove(globalTotal + 1);
+            Span keySpan = spans.remove(globalTotal);
+            hintsWidth -= keySpan.width() + labelSpan.width();
+            globalTotal -= 2;
+            fKeyTotal -= 2;
+        }
+        while (fKeyTotal > Math.max(2, globalTotal) && hintsWidth > available) {
             Span labelSpan = spans.remove(fKeyTotal + 1);
             Span keySpan = spans.remove(fKeyTotal);
             hintsWidth -= keySpan.width() + labelSpan.width();
