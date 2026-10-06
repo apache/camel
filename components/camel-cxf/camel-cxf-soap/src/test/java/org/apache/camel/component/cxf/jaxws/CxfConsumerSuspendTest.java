@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.jaxws;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,10 +28,18 @@ import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.transport.http.HTTPException;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -51,6 +60,8 @@ class CxfConsumerSuspendTest extends CamelTestSupport {
     private final CountDownLatch entered = new CountDownLatch(1);
     private final CountDownLatch release = new CountDownLatch(1);
     private volatile boolean block;
+    // the bus of the test clients
+    private Bus clientBus;
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -83,6 +94,43 @@ class CxfConsumerSuspendTest extends CamelTestSupport {
         context.getRouteController().resumeRoute("cxf");
         assertEquals("echo c", client.echo("c"));
         assertEquals(2, processed.get());
+    }
+
+    @Test
+    void testRejectedRequestIsNotLoggedAsWarning() throws Exception {
+        HelloService client = createClient();
+        assertEquals("echo a", client.echo("a"));
+        context.getRouteController().suspendRoute("cxf");
+
+        // CXF logs an unexpected fault at WARN level with its stack trace: a rejected request is expected while the
+        // consumer is suspended (e.g. every request during a graceful shutdown under load)
+        // (the client, on this thread, logs the 503 fault it receives)
+        String clientThread = Thread.currentThread().getName();
+        List<LogEvent> warnings = new CopyOnWriteArrayList<>();
+        AbstractAppender appender = new AbstractAppender("CxfConsumerSuspendTest", null, null, true, Property.EMPTY_ARRAY) {
+            @Override
+            public void append(LogEvent event) {
+                if (event.getLevel().isMoreSpecificThan(Level.WARN) && event.getLoggerName().startsWith("org.apache.cxf")
+                        && !clientThread.equals(event.getThreadName())) {
+                    warnings.add(event.toImmutable());
+                }
+            }
+        };
+        appender.start();
+        Logger cxfLogger = (Logger) LogManager.getLogger("org.apache.cxf");
+        cxfLogger.addAppender(appender);
+        try {
+            Exception e = assertThrows(Exception.class, () -> client.echo("b"));
+            assertServiceUnavailable(e);
+        } finally {
+            cxfLogger.removeAppender(appender);
+            appender.stop();
+        }
+        assertTrue(warnings.isEmpty(), () -> "A rejected request must not be logged as a warning by the CXF server: "
+                                             + warnings.stream()
+                                                     .map(w -> w.getThreadName() + " " + w.getLoggerName() + ": "
+                                                               + w.getMessage().getFormattedMessage())
+                                                     .toList());
     }
 
     @Test
@@ -125,12 +173,23 @@ class CxfConsumerSuspendTest extends CamelTestSupport {
         assertEquals(503, http.getResponseCode());
     }
 
-    private static HelloService createClient() {
+    private HelloService createClient() {
+        if (clientBus == null) {
+            clientBus = BusFactory.newInstance().createBus();
+        }
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(ADDRESS);
         clientBean.setServiceClass(HelloService.class);
-        clientBean.setBus(BusFactory.newInstance().createBus());
+        clientBean.setBus(clientBus);
         return (HelloService) proxyFactory.create();
+    }
+
+    @AfterEach
+    void shutdownClientBus() {
+        if (clientBus != null) {
+            clientBus.shutdown(true);
+            clientBus = null;
+        }
     }
 }

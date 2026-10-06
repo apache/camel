@@ -2498,8 +2498,8 @@ while the requests in flight complete, but a suspended consumer kept accepting a
 graceful shutdown (until the shutdown timeout), and while the route was suspended (route controller, JMX, route
 policies such as `ThrottlingInflightRoutePolicy`). A suspended consumer now rejects a new request with HTTP status
 503 (Service Unavailable), like the HTTP consumers do; the requests in flight, including asynchronous ones whose
-continuation resumes later, still complete. The `cxf` consumer rejects the request with a SOAP fault, which CXF logs
-at WARN level; over a transport other than HTTP the caller gets the fault only.
+continuation resumes later, still complete. The `cxf` consumer rejects the request with a SOAP fault, which is
+logged at DEBUG level only; over a transport other than HTTP the caller gets the fault only.
 
 === camel-thrift
 

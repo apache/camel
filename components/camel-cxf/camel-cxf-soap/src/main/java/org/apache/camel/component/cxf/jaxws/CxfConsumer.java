@@ -48,6 +48,7 @@ import org.apache.cxf.continuations.ContinuationProvider;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.interceptor.Fault;
+import org.apache.cxf.logging.FaultListener;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.FaultMode;
 import org.apache.cxf.message.Message;
@@ -67,6 +68,8 @@ import org.slf4j.LoggerFactory;
 public class CxfConsumer extends DefaultConsumer implements Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfConsumer.class);
+    // skips the default logging of a fault by CXF
+    private static final FaultListener NO_FAULT_LOGGING = (exception, description, message) -> false;
 
     private Server server;
     private CxfEndpoint cxfEndpoint;
@@ -170,12 +173,12 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
                     && (continuation = getContinuation(cxfExchange)) != null) {
                 // a resumed continuation belongs to a request that is in flight and must complete
                 if (continuation.isNew()) {
-                    rejectIfSuspended();
+                    rejectIfSuspended(cxfExchange);
                 }
                 LOG.trace("Calling the Camel async processors.");
                 return asyncInvoke(cxfExchange, continuation);
             } else {
-                rejectIfSuspended();
+                rejectIfSuspended(cxfExchange);
                 LOG.trace("Calling the Camel sync processors.");
                 return syncInvoke(cxfExchange);
             }
@@ -183,9 +186,16 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
 
         // a suspended consumer (suspended route, graceful shutdown) does not accept new requests, like the HTTP
         // consumers, which answer 503
-        private void rejectIfSuspended() {
+        private void rejectIfSuspended(Exchange cxfExchange) {
             if (isSuspendingOrSuspended()) {
                 LOG.debug("Consumer suspended, cannot service request");
+                // CXF logs a fault it does not expect at WARN level with its stack trace (PhaseInterceptorChain),
+                // unless a FaultListener of the message says otherwise: a rejected request is expected while
+                // suspended (e.g. every request during a graceful shutdown under load), so it is only logged above
+                Message in = cxfExchange.getInMessage();
+                if (in != null) {
+                    in.put(FaultListener.class.getName(), NO_FAULT_LOGGING);
+                }
                 Fault fault = new Fault(new IllegalStateException("Service unavailable: the consumer is suspended"));
                 fault.setStatusCode(503);
                 throw fault;
