@@ -681,6 +681,17 @@
   "serviceVersion" : "16.3",
   "uiSupported" : true
 }, {
+  "service" : "org.apache.camel.test.infra.spiffe.services.SpiffeInfraService",
+  "description" : "SPIFFE/SPIRE server and agent exposing the Workload API",
+  "implementation" : "org.apache.camel.test.infra.spiffe.services.SpiffeLocalContainerInfraService",
+  "alias" : [ "spiffe" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-spiffe",
+  "version" : "4.23.0-SNAPSHOT",
+  "serviceVersion" : null,
+  "uiSupported" : false
+}, {
   "service" : "org.apache.camel.test.infra.weaviate.services.WeaviateInfraService",
   "description" : "Weaviate is an open source vector database",
   "implementation" : "org.apache.camel.test.infra.weaviate.services.WeaviateLocalContainerInfraService",
