@@ -20,13 +20,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hibernate.entity.HibernateTestEntity;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultUnitOfWork;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.h2.jdbcx.JdbcDataSource;
+import org.hibernate.Filter;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionBuilder;
@@ -720,7 +724,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
 
         context.addComponent("hibernate", component);
 
-        context.addRoutes(new org.apache.camel.builder.RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 from("hibernate:" + HibernateTestEntity.class.getName()
