@@ -101,6 +101,8 @@ class SmppSplitBodyTest {
 
     private byte[][] splitEightBit(Object body) throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        // the charset that a String body is converted with
+        exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.UTF_8.name());
         exchange.getIn().setHeader(SmppConstants.ALPHABET, Alphabet.ALPHA_8_BIT.value());
         exchange.getIn().setBody(body);
         return command.splitBody(exchange.getIn());

@@ -627,6 +627,17 @@ Alert notifications already worked this way. Two consequences:
 `SmppEndpoint#createOnAcceptDeliverSmExchange` and `SmppEndpoint#createOnAcceptDataSm` are deprecated. They are no
 longer used by the component; build such an exchange through the consumer instead.
 
+==== 8-bit messages are split by their length in bytes
+
+With an 8-bit alphabet (`alphabet=4`, or an 8-bit data coding), the producer now decides whether to split a message by
+the length in bytes of the body as it is sent, instead of the number of characters of the body read as a String. A
+body of at most 140 characters but more than 140 bytes (for example text with multi-byte characters, or binary data)
+is now sent as several segments; with `splittingPolicy=TRUNCATE` it is truncated to 140 bytes, and with
+`splittingPolicy=REJECT` it is rejected, where it was previously sent as one oversize short message. A message that
+needs more than 255 segments is cut to 255 segments: with exactly 255 full segments and a remainder, the total number
+of segments in the UDH was written as `0` (also with the national language splitter). The protected
+`SmppSmCommand#createSplitter` now also takes the encoded body.
+
 === camel-console
 
 The `context` developer console no longer counts routes created by Kamelets in its `routesTotal` and `routesStarted`

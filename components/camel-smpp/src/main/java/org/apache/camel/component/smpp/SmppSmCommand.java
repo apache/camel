@@ -45,7 +45,7 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
 
     protected byte[][] splitBody(Message message) throws SmppException {
         byte[] shortMessage = getShortMessage(message);
-        SmppSplitter splitter = createSplitter(message);
+        SmppSplitter splitter = createSplitter(message, shortMessage);
         byte[][] segments = splitter.split(shortMessage);
         if (segments.length > 1) {
             // Message body is split into multiple parts,
@@ -77,7 +77,13 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         return config.getSplittingPolicy();
     }
 
-    protected SmppSplitter createSplitter(Message message) throws SmppException {
+    /**
+     * Creates the splitter for the message.
+     *
+     * @param message      the message
+     * @param shortMessage the body of the message, encoded as it is sent
+     */
+    protected SmppSplitter createSplitter(Message message, byte[] shortMessage) throws SmppException {
 
         SmppSplitter splitter;
         // use the splitter if provided via header
@@ -93,7 +99,7 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
 
         if (SmppUtils.is8Bit(alphabet)) {
             // an 8-bit message is split by its length in bytes
-            splitter = new Smpp8BitSplitter(getShortMessage(message).length);
+            splitter = new Smpp8BitSplitter(shortMessage.length);
         } else if (alphabet == Alphabet.ALPHA_UCS2) {
             splitter = new SmppUcs2Splitter(body.length());
         } else {
