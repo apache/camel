@@ -92,31 +92,61 @@ class CompactNotationWarnTest extends YamlTestSupport {
         assertThat(warnings.get(0)).contains("YAML DSL compact notation detected", "camel validate normalize");
     }
 
+    private static final String COMPACT_ROUTE = """
+            - route:
+                from:
+                  uri: "direct:start"
+                  steps:
+                    - setBody:
+                        simple: "Hello ${body}"
+                    - to: "mock:result"
+            """;
+
     @Test
-    void aFileInsideAJarIsNotWarnedAbout(@TempDir Path dir) throws Exception {
-        // CAMEL-25380: the Kamelets of the Kamelet catalog are compact, and the user cannot change a file in a jar
-        Path jar = dir.resolve("routes.jar");
+    void aKameletOfTheKameletCatalogIsNotWarnedAbout(@TempDir Path dir) throws Exception {
+        // CAMEL-25380: the user cannot normalize a Kamelet of the camel-kamelets jar
+        Path jar = jar(dir.resolve("camel-kamelets-4.22.1.jar"), "kamelets/compact.yaml");
+        loadFromClasspath(jar, "classpath:kamelets/compact.yaml");
+        assertThat(warnings).isEmpty();
+    }
+
+    @Test
+    void aFileInTheApplicationsJarIsWarnedAbout(@TempDir Path dir) throws Exception {
+        // the application's own routes and custom Kamelets are files to normalize, in a jar or not
+        Path jar = jar(dir.resolve("my-app.jar"), "kamelets/compact.yaml");
+        loadFromClasspath(jar, "classpath:kamelets/compact.yaml");
+        assertThat(warnings).hasSize(1);
+    }
+
+    @Test
+    void aClasspathFileOutsideAJarIsWarnedAbout(@TempDir Path dir) throws Exception {
+        Files.createDirectories(dir.resolve("routes"));
+        Files.writeString(dir.resolve("routes/compact.yaml"), COMPACT_ROUTE);
+        loadFromClasspath(dir, "classpath:routes/compact.yaml");
+        assertThat(warnings).hasSize(1);
+    }
+
+    private static Path jar(Path jar, String entry) throws Exception {
         try (JarOutputStream out = new JarOutputStream(Files.newOutputStream(jar))) {
-            out.putNextEntry(new JarEntry("jarroutes/compact.yaml"));
-            out.write("""
-                    - route:
-                        from:
-                          uri: "direct:start"
-                          steps:
-                            - setBody:
-                                simple: "Hello ${body}"
-                            - to: "mock:result"
-                    """.getBytes(StandardCharsets.UTF_8));
+            out.putNextEntry(new JarEntry(entry));
+            out.write(COMPACT_ROUTE.getBytes(StandardCharsets.UTF_8));
             out.closeEntry();
         }
-        try (URLClassLoader cl = new URLClassLoader(new URL[] { jar.toUri().toURL() }, getClass().getClassLoader())) {
+        return jar;
+    }
+
+    private void loadFromClasspath(Path classpathEntry, String location) throws Exception {
+        ClassLoader original = context.getApplicationContextClassLoader();
+        try (URLClassLoader cl = new URLClassLoader(
+                new URL[] { classpathEntry.toUri().toURL() }, getClass().getClassLoader())) {
             context.setApplicationContextClassLoader(cl);
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource("classpath:jarroutes/compact.yaml");
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(location);
             assertThat(resource.exists()).isTrue();
             loadRoutes(resource);
+        } finally {
+            context.setApplicationContextClassLoader(original);
         }
         assertThat(context.getRouteDefinitions()).hasSize(1);
-        assertThat(warnings).isEmpty();
     }
 
     @Test

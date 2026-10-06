@@ -18,7 +18,6 @@ package org.apache.camel.dsl.yaml;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -69,29 +68,7 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
         } catch (Exception e) {
             // ignore
         }
-        if (ctx.isCompactNotationWarn() && isInsideJar(resource)) {
-            // a file inside a jar, such as a Kamelet of the Kamelet catalog, is not the user's to normalize: the
-            // warning told every user of timer-source to fix a file they cannot change
-            ctx.setCompactNotationWarn(false);
-        }
         return ctx;
-    }
-
-    private boolean isInsideJar(Resource resource) {
-        String loc = resource != null ? resource.getLocation() : null;
-        if (loc == null || !loc.startsWith("classpath:")) {
-            return false;
-        }
-        try {
-            String path = loc.substring("classpath:".length());
-            if (path.startsWith("/")) {
-                path = path.substring(1);
-            }
-            URL url = getCamelContext().getClassResolver().loadResourceAsURL(path);
-            return url != null && "jar".equals(url.getProtocol());
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     @Override
