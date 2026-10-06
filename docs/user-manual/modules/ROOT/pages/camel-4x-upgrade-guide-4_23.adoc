@@ -1380,7 +1380,7 @@ timeout or the reply, and the send failure is logged at WARN level.
 which `ReplyManagerSupport` implements. A custom `ReplyManager` implementation that does not override it keeps the
 previous behaviour.
 
-==== Suspending a route stops the consumer
+=== camel-sjms - suspending a route stops the consumer
 
 A suspended sjms (or sjms2) consumer used to keep receiving and routing messages, also during a graceful shutdown and
 under route policies such as `ThrottlingInflightRoutePolicy`. It now stops the JMS connection of its listener container
