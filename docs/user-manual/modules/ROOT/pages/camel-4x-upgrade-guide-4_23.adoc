@@ -3934,7 +3934,7 @@ the SSL endpoint options were ignored when `sslContextParameters` was configured
 When `sslContextParameters` is configured and `securityProtocol` is the default (`PLAINTEXT`), the security protocol
 `SSL` is now used. Previously `PLAINTEXT` was used unless `securityProtocol` (or `saslAuthType`) was configured.
 
-==== A suspended consumer keeps its partitions
+=== camel-kafka - a suspended consumer keeps its partitions
 
 A route started with its consumer suspended, for example by a `ThrottlingExceptionRoutePolicy` with `keepOpen=true`,
 now starts its Kafka consumer: the consumer joins the consumer group and holds its assigned partitions paused until the
