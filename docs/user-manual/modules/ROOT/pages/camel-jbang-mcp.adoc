@@ -282,7 +282,10 @@ project `directory` as an argument, the runtime tools take the integration `name
   `includeOptions` picks the options listed: `common` (the default) leaves out the deprecated and advanced
   ones and says how many with `omittedOptions`, `required` lists the required ones, `all` everything, `false`
   none; `optionsFilter` matches a keyword in the option names, descriptions and groups and searches all
-  options.
+  options. When it matches none of an EIP's own options, the options of the EIP's elements are searched and
+  listed under `nestedOptions` with the element they go under (`logStackTrace` of `onException` is an option
+  of its `redeliveryPolicy`). An element written as one of several kinds has `oneOf` with the kinds and a
+  `yaml` hint: the kind is the key (`errorHandler: {deadLetterChannel: ...}`, not `errorHandlerType:`).
   With `kind=api` (or a class name such as `Exchange`) it answers with the compact API reference of the core
   classes a bean or script calls: `Exchange`, `Message`, `CamelContext`, `Registry`, `ProducerTemplate`,
   `Processor`, `AggregationStrategy`, `Predicate`, `Expression` and `TypeConverter`, one line per method with

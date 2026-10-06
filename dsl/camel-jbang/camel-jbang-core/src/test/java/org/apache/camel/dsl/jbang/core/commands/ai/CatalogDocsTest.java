@@ -500,5 +500,51 @@ class CatalogDocsTest {
         JsonObject first = (JsonObject) nested.get(0);
         assertTrue("redeliveryPolicy".equals(first.getString("under")), first.toJson());
         assertTrue(first.getString("name").toLowerCase().contains("logstacktrace"), first.toJson());
+        assertTrue(doc.getString("nestedHint").contains("redeliveryPolicy: {"), doc.toJson());
+    }
+
+    /**
+     * CAMEL-25370: the kind hint is only for a single element written as one of its kinds: not for outputs (written
+     * under steps:), setHeaders' headers (written as headers:) or choice's when (its kind is its own name).
+     */
+    @Test
+    void elementsThatAreNotWrittenAsTheirKindHaveNoKindHint() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        assertNoKindHint(catalog, "filter", "outputs");
+        assertNoKindHint(catalog, "setHeaders", "headers");
+        assertNoKindHint(catalog, "choice", "when");
+        assertNoKindHint(catalog, "doTry", "doCatch");
+    }
+
+    private static void assertNoKindHint(CamelCatalog catalog, String eip, String option) {
+        var doc = CatalogDocs.catalogDoc(catalog, eip, null, "eip", option, "all", false, false, null);
+        JsonObject o = ((JsonArray) doc.get("options")).stream().map(JsonObject.class::cast)
+                .filter(j -> option.equals(j.getString("name"))).findFirst().orElseThrow();
+        assertFalse(o.containsKey("oneOf"), o.toJson());
+        assertFalse(o.containsKey("yaml"), o.toJson());
+    }
+
+    /** CAMEL-25370: an element named like another model is not searched (templatedRoute.bean is not the bean EIP). */
+    @Test
+    void theNestedSearchOnlyFollowsTheModelTheElementHolds() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        var doc = CatalogDocs.catalogDoc(catalog, "templatedRoute", null, "eip", "method", null, false, false, null);
+        JsonArray nested = (JsonArray) doc.get("nestedOptions");
+        assertTrue(nested == null || nested.stream().map(JsonObject.class::cast)
+                .noneMatch(o -> "bean".equals(o.getString("under"))), doc.toJson());
+    }
+
+    /** CAMEL-25370: the nested search is only for a filter none of the EIP's own options match, in any scope. */
+    @Test
+    void theNestedSearchKeepsTheScope() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        // redelivery matches options of onException itself, which the required scope leaves out
+        var doc = CatalogDocs.catalogDoc(catalog, "onException", null, "eip", "redelivery", "required", false, false,
+                null);
+        assertFalse(doc.containsKey("nestedOptions"), doc.toJson());
+        // logStackTrace matches no option of onException, and no required option of its redeliveryPolicy
+        doc = CatalogDocs.catalogDoc(catalog, "onException", null, "eip", "logStackTrace", "required", false, false,
+                null);
+        assertFalse(doc.containsKey("nestedOptions"), doc.toJson());
     }
 }

@@ -78,7 +78,8 @@ public class AuthoringTools {
             @ToolArg(description = "Include the full AsciiDoc page (default false)", required = false) Boolean includeDoc,
             @ToolArg(description = "simple doc sub-page to return as text (functions, operators, ognl, advanced)",
                      required = false) String docPage,
-            @ToolArg(description = "Keyword to match in option names or descriptions", required = false) String optionsFilter,
+            @ToolArg(description = "Keyword to match in option names or descriptions; for an EIP whose own options do not match, the options of its elements are searched (nestedOptions)",
+                     required = false) String optionsFilter,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         return callDeterministic(connection, "camel_catalog_doc", args("name", name, "endpoint", endpoint, "kind", kind,
                 "includeOptions", includeOptions, "includeHeaders", includeHeaders, "includeDoc", includeDoc,

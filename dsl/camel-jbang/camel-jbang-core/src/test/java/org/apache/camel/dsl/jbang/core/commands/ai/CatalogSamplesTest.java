@@ -395,6 +395,17 @@ public class CatalogSamplesTest {
         assertThat(o.getString("partOf")).isEqualTo("errorHandler");
 
         o = CatalogSamples.sample("deadLetterChannel", 1);
-        assertThat(o.getString("placement")).contains("never a step");
+        assertThat(o.getString("placement")).contains("never a step").contains("routeConfiguration");
+        assertThat(o.getString("note")).contains("the sample shows it in place");
+    }
+
+    /** CAMEL-25370: a kind the samples do not show is not said to be shown; where it goes and its options are. */
+    @Test
+    void anErrorHandlerKindTheSamplesDoNotShow() {
+        JsonObject o = CatalogSamples.sample("refErrorHandler", 5);
+        assertThat(o.getString("partOf")).isEqualTo("errorHandler");
+        assertThat(o.getString("note")).doesNotContain("the sample shows it in place")
+                .contains("write refErrorHandler where they write theirs")
+                .contains("camel_catalog_doc refErrorHandler");
     }
 }

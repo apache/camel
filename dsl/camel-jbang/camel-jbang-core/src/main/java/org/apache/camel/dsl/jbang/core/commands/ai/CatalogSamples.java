@@ -516,7 +516,6 @@ public final class CatalogSamples {
         answer.put("kind", "eip");
         if (partOf != null) {
             answer.put("partOf", partOf);
-            answer.put("note", given + " is a part of " + partOf + "; the sample shows it in place");
         } else if (!key.equalsIgnoreCase(normalize(given))) {
             answer.put("note", "'" + given + "' is done with the " + key + " EIP");
         }
@@ -525,6 +524,12 @@ public final class CatalogSamples {
         if (list.isEmpty()) {
             list = samples().getOrDefault(key, List.of());
         }
+        if (partOf != null) {
+            answer.put("note", given + " is a part of " + partOf + "; " + (shows(list, given)
+                    ? "the sample shows it in place"
+                    : "the samples show another kind in the same place: write " + given + " where they write theirs,"
+                      + " and camel_catalog_doc " + given + " gives its options"));
+        }
         putSamples(answer, list, max);
         if (!also.isEmpty()) {
             answer.put("also", new JsonArray(also));
@@ -532,6 +537,12 @@ public final class CatalogSamples {
                                + "; ask with kind for that sample");
         }
         return answer;
+    }
+
+    /** Whether one of the samples writes the given key, such as refErrorHandler: under errorHandler:. */
+    private static boolean shows(List<Map<String, String>> samples, String key) {
+        String k = key.toLowerCase(Locale.ROOT) + ":";
+        return samples.stream().anyMatch(s -> s.get("yaml") != null && s.get("yaml").toLowerCase(Locale.ROOT).contains(k));
     }
 
     private static JsonObject catalogAnswer(CamelCatalog catalog, String kind, String name, int max) {
@@ -661,7 +672,7 @@ public final class CatalogSamples {
             // a step it is not, and it has two places (CAMEL-25370)
             return "errorHandler: with the kind (deadLetterChannel, defaultErrorHandler, noErrorHandler) as its one key,"
                    + " either as a top-level list item - errorHandler: for every route, or under one route, next to from:,"
-                   + " for that route only; never a step";
+                   + " for that route only, or inside a routeConfiguration for the routes that use it; never a step";
         }
         if (TOP_LEVEL.contains(key)) {
             return "top-level entry: a list item at the same level as route or from, not a step inside a route";
