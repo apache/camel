@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.spiffe.integration;
 
+import java.io.IOException;
 import java.net.InetAddress;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
 
@@ -36,7 +37,6 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -81,8 +81,12 @@ class SpiffeMutualTlsIT extends CamelTestSupport {
         SSLContext serverContext = serverSsl("spiffe://example.org/not-allowed").createSSLContext(context);
         SSLContext clientContext = clientSsl().createSSLContext(context);
 
+        // a rejected mutual-TLS handshake surfaces as an IOException - a TLS alert (SSLHandshakeException) when the peer
+        // sends one, or a connection reset (SocketException) when it just drops the connection; both are acceptable, the
+        // point is that the handshake does not complete
         assertThatThrownBy(() -> handshake(serverContext, clientContext))
-                .satisfies(t -> assertThat(causedBySsl(t)).as("handshake should fail with a TLS error").isTrue());
+                .as("a non-allow-listed peer must be refused during the handshake")
+                .isInstanceOf(IOException.class);
     }
 
     /**
@@ -114,19 +118,18 @@ class SpiffeMutualTlsIT extends CamelTestSupport {
                 clientSocket.getOutputStream().write(42);
                 clientSocket.getOutputStream().flush();
             }
-            // surface a server-side handshake rejection to the caller
-            server.get(20, TimeUnit.SECONDS);
+            // surface a server-side handshake rejection to the caller as its underlying cause (an IOException),
+            // rather than the ExecutionException wrapper the Future would otherwise throw
+            try {
+                server.get(20, TimeUnit.SECONDS);
+            } catch (ExecutionException e) {
+                if (e.getCause() instanceof Exception cause) {
+                    throw cause;
+                }
+                throw e;
+            }
         } finally {
             executor.shutdownNow();
         }
-    }
-
-    private static boolean causedBySsl(Throwable t) {
-        for (Throwable c = t; c != null; c = c.getCause()) {
-            if (c instanceof SSLException) {
-                return true;
-            }
-        }
-        return false;
     }
 }
