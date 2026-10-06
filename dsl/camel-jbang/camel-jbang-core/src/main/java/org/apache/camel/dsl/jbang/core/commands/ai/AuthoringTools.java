@@ -162,6 +162,11 @@ public final class AuthoringTools {
                 .param("content", "string", "The source to validate", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
+                // the same content gets the same answer: a model that validates it again and again is stuck
+                // (CAMEL-25371). Not with a directory: the checks then read the other files, which a fix can change.
+                .deterministicWhen("content", "directory")
+                .repeatHint("The content is the same each time, so the answer is too: change the line the error names,"
+                            + " then validate the changed content, or write it with camel_write_file.")
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     String file = required(args, "file");
@@ -176,8 +181,16 @@ public final class AuthoringTools {
                             throw new ToolExecutionException("No such file in the directory: " + file);
                         }
                         content = read(path);
+                        return validate(ctx, dir, file, content).toJson();
                     }
-                    return validate(ctx, dir, file, content).toJson();
+                    JsonObject result = validate(ctx, dir, file, content);
+                    if (sameAsOnDisk(ctx, directory, file, content)) {
+                        // a model that meant to change the file validates the old version: say so (CAMEL-25371)
+                        result.put("sameAsFile", true);
+                        result.put("note", "This content is the same as " + file + " on disk: if you meant to change"
+                                           + " the file, that change is not in this content.");
+                    }
+                    return result.toJson();
                 }));
 
         registry.accept(tool("camel_get_files",
@@ -1391,4 +1404,15 @@ public final class AuthoringTools {
         }
         return errors;
     }
+
+    /** Whether the content is exactly the file's content on disk; false when there is no such file. */
+    static boolean sameAsOnDisk(ToolContext ctx, String directory, String file, String content) {
+        try {
+            Path path = resolveFile(ctx.resolveDirectory(directory), file);
+            return Files.isRegularFile(path) && read(path).strip().equals(content.strip());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

@@ -103,7 +103,7 @@ class AuthoringToolsTest {
         JsonObject listed = tools.camel_get_files(dir.toString(), null);
         assertThat(listed.getInteger("totalFiles")).isEqualTo(1);
         assertThat(tools.camel_get_files(dir.toString(), "demo.camel.yaml").getString("content")).isEqualTo(route);
-        assertThat(tools.camel_validate_source(dir.toString(), "demo.camel.yaml", null, null).getBoolean("valid"))
+        assertThat(tools.camel_validate_source(null, dir.toString(), "demo.camel.yaml", null, null).getBoolean("valid"))
                 .isTrue();
         assertThatThrownBy(() -> tools.camel_get_files(null, null))
                 .isInstanceOf(ToolCallException.class).hasMessageContaining("directory is required");
@@ -152,9 +152,10 @@ class AuthoringToolsTest {
                 boolean marked = meta != null && "camel.apache.org/".equals(meta.prefix())
                         && "deterministic".equals(meta.name()) && "true".equals(meta.value());
                 assertThat(marked).as(m.getName() + " marked deterministic").isEqualTo(td.isDeterministic());
+                // a tool that is deterministic for some arguments (camel_validate_source with content) counts too
                 boolean connected = Arrays.stream(m.getParameterTypes()).anyMatch(t -> t == McpConnection.class);
                 assertThat(connected).as(m.getName() + " gets the connection to count its repeats")
-                        .isEqualTo(td.isDeterministic());
+                        .isEqualTo(td.isDeterministic() || td.deterministicWhen() != null);
             }
         }
     }
@@ -180,6 +181,27 @@ class AuthoringToolsTest {
         assertThat(counted.camel_catalog_doc(agent, "timer", null, null, null, null, null, null, null, null)
                 .get("repeated")).isNull();
         assertThat(counted.camel_catalog_doc(connection("agent-2"), "sql", null, null, null, null, null, null, null, null)
+                .get("repeated")).isNull();
+    }
+
+    /** CAMEL-25371: validating the same content again is a repeat, also over the camel mcp server. */
+    @Test
+    void aThirdIdenticalValidationOfTheSameContentGetsAShortNote() {
+        AuthoringTools counted = new AuthoringTools();
+        counted.repeatedCalls = new RepeatedCallSessions();
+        McpConnection agent = connection("agent-1");
+        String content = "- from:\n    uri: timer:x\n    steps:\n      - to: log:x\n";
+
+        JsonObject first = counted.camel_validate_source(agent, null, "route.camel.yaml", content, null);
+        JsonObject second = counted.camel_validate_source(agent, null, "route.camel.yaml", content, null);
+        JsonObject third = counted.camel_validate_source(agent, null, "route.camel.yaml", content, null);
+
+        assertThat(first.get("repeated")).isNull();
+        assertThat(second.get("repeated")).isNull();
+        assertThat(third.getBoolean("repeated")).isTrue();
+        assertThat(third.getString("note")).contains("camel_validate_source", "change the line the error names");
+        // changed content is a new question
+        assertThat(counted.camel_validate_source(agent, null, "route.camel.yaml", content + "\n", null)
                 .get("repeated")).isNull();
     }
 

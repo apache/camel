@@ -130,13 +130,16 @@ public class AuthoringTools {
                         + "its builder() accepts, the ways to create a class with no constructor). Use on content "
                         + "before writing it, or on an existing file (no content) to explain a reload error.")
     public JsonObject camel_validate_source(
+            McpConnection connection,
             @ToolArg(description = DIRECTORY_DESC + "; needed when no content is given", required = false) String directory,
             @ToolArg(description = "File name; picks the checks by extension, read when no content",
                      required = true) String file,
             @ToolArg(description = "The source to validate", required = false) String content,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
-        return call("camel_validate_source", args("directory", directory, "file", file, "content", content,
-                "camelVersion", camelVersion));
+        // the same content without a directory gets the same answer: the third identical call gets a short note
+        // (CAMEL-25371)
+        return callDeterministic(connection, "camel_validate_source", args("directory", directory, "file", file,
+                "content", content, "camelVersion", camelVersion));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
