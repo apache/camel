@@ -111,6 +111,7 @@ public final class ArtifactUtils {
             Map.entry("camunda", "camel-camunda"),
             Map.entry("chatscript", "camel-chatscript"),
             Map.entry("chunk", "camel-chunk"),
+            Map.entry("citrus", "camel-test-citrus"),
             Map.entry("class", "camel-bean"),
             Map.entry("clickhouse", "camel-clickhouse"),
             Map.entry("clickup", "camel-clickup"),
