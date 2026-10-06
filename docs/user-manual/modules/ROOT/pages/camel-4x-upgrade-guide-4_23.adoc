@@ -686,6 +686,13 @@ succeeded on its second redelivery reported 1 instead of 2, and a route whose ex
 completed reported 0), and a processor or route that the exchange went through after a redelivery could count that
 redelivery as well.
 
+==== mbeansLevel=ContextOnly
+
+With `mbeansLevel=ContextOnly` the components are no longer registered as MBeans (like the endpoints, thread pools
+and most services, which were not registered at this level already). Prior to Camel 4.23 an MBean was registered for
+every component. Use `RoutesOnly` (or `Default`) to keep the component MBeans. The CamelContext, health check and route
+controller MBeans are still registered.
+
 === camel-groovy
 
 A `GroovyShellFactory` is now looked up in the registry once per `CamelContext`, when the first groovy expression is
