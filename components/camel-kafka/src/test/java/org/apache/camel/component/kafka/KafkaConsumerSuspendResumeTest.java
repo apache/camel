@@ -149,6 +149,19 @@ class KafkaConsumerSuspendResumeTest extends CamelTestSupport {
     }
 
     @Test
+    void testSuspendedConsumerIsRecoverable() throws Exception {
+        startRoute(false);
+        KafkaConsumer consumer = kafkaConsumer();
+        context.getRouteController().suspendRoute("kafka");
+        await().atMost(20, TimeUnit.SECONDS).until(consumer::isKafkaPaused);
+
+        // the fetcher thread of a suspended consumer keeps polling (and reconnecting), so the health check must not
+        // report that it gave up recovering
+        assertTrue(consumer.healthStates().stream().allMatch(TaskHealthState::isRecoverable),
+                "A suspended consumer is recoverable");
+    }
+
+    @Test
     void testStartedWithOpenCircuit() throws Exception {
         // keepOpen suspends the consumer when the route starts, before the fetcher thread runs
         startRoute(true);

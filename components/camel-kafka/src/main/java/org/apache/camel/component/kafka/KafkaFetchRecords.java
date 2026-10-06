@@ -496,11 +496,6 @@ public class KafkaFetchRecords implements Runnable {
         return TopicHelper.getPrintableTopic(topicPattern, topicName);
     }
 
-    private boolean isKafkaConsumerRunnable() {
-        return kafkaConsumer.isRunAllowed() && !kafkaConsumer.isStoppingOrStopped()
-                && !kafkaConsumer.isSuspendingOrSuspended();
-    }
-
     private boolean isKafkaConsumerRunnableAndNotStopped() {
         return kafkaConsumer.isRunAllowed() && !kafkaConsumer.isStoppingOrStopped();
     }
@@ -585,8 +580,9 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     private boolean isRecoverable() {
+        // a suspended consumer keeps polling and reconnecting
         return (pollExceptionStrategy != null && pollExceptionStrategy.canContinue() || isReconnect())
-                && isKafkaConsumerRunnable();
+                && isKafkaConsumerRunnableAndNotStopped();
     }
 
     // concurrent access happens here
