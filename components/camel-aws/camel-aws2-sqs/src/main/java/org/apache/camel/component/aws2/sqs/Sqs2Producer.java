@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -138,7 +139,8 @@ public class Sqs2Producer extends DefaultProducer {
             sendBatchEntries(amazonSQS, exchange, entries);
         } else if (exchange.getIn().getBody() instanceof String) {
             String c = exchange.getIn().getBody(String.class);
-            String[] elements = c.split(getConfiguration().getBatchSeparator());
+            // the separator is a plain string, not a regular expression
+            String[] elements = c.split(Pattern.quote(getConfiguration().getBatchSeparator()));
             List<SendMessageBatchRequestEntry> entries = new ArrayList<>();
             int index = 0;
             for (String o : elements) {
