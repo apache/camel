@@ -635,8 +635,7 @@ body of at most 140 characters but more than 140 bytes (for example text with mu
 is now sent as several segments; with `splittingPolicy=TRUNCATE` it is truncated to 140 bytes, and with
 `splittingPolicy=REJECT` it is rejected, where it was previously sent as one oversize short message. A message that
 needs more than 255 segments is cut to 255 segments: with exactly 255 full segments and a remainder, the total number
-of segments in the UDH was written as `0` (also with the national language splitter). The protected
-`SmppSmCommand#createSplitter` now also takes the encoded body.
+of segments in the UDH was written as `0` (also with the national language splitter).
 
 === camel-console
 
