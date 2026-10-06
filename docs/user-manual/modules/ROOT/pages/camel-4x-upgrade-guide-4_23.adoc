@@ -3983,6 +3983,18 @@ Other SOAP response header attributes and elements are mapped as before, and the
 available in the `CamelSpringWebserviceSoapHeader` header. A route that relies on the previous behaviour can supply a
 custom `headerFilterStrategy` on the `spring-ws` endpoint.
 
+=== camel-spring-ws - internal Camel headers are no longer written into SOAP headers
+
+The default `messageFilter` of the `spring-ws` component, `BasicMessageFilter`, now applies the endpoint's
+`headerFilterStrategy` before it writes a message header into the SOAP header, both on the request sent by the
+producer and on the response returned by the consumer. With the default `SpringWebserviceHeaderFilterStrategy`,
+message headers whose names start with `Camel` or `camel` (case-insensitively) are no longer written into the SOAP
+header. Other message headers are written as before.
+
+A `BasicMessageFilter` created in application code applies a `SpringWebserviceHeaderFilterStrategy` unless it is
+created with another strategy. A route that relies on the previous behaviour can supply a custom
+`headerFilterStrategy` on the `spring-ws` endpoint.
+
 === camel-mustache, camel-chunk - potential breaking change
 
 The Exchange header constants in `MustacheConstants` and `ChunkConstants` have been renamed to
