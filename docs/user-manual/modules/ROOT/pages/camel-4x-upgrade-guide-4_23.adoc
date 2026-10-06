@@ -591,6 +591,11 @@ otherwise `connectTimeout`. Each option now sets its own timeout: a request whos
 configured `readTimeout` now fails, and only `connectTimeout` sets the connect timeout. Blocking queries
 (`blockSeconds`) are not affected: the client computes the read timeout of a blocking query from its wait time.
 
+=== camel-cm-sms - GSM 03.38 detection
+
+A message that contains `<`, `>`, `¤` or a form feed, and otherwise only GSM 03.38 characters, is now sent in the GSM
+encoding (160 characters, or 153 per part) instead of as unicode (70, or 67 per part), so it may be sent in fewer parts.
+
 === camel-couchbase
 
 The `connectTimeout` option is now applied. It previously sat inside a condition that tested `queryTimeout`, so
