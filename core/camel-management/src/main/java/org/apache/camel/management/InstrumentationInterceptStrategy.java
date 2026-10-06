@@ -20,9 +20,9 @@ import java.util.Map;
 
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.spi.ManagementInterceptStrategy;
-import org.apache.camel.util.KeyValueHolder;
 
 /**
  * This strategy class wraps targeted processors with a {@link InstrumentationProcessor}. Each InstrumentationProcessor
@@ -33,13 +33,26 @@ import org.apache.camel.util.KeyValueHolder;
  */
 public class InstrumentationInterceptStrategy implements ManagementInterceptStrategy {
 
+    /**
+     * A processor that has been wrapped for performance counters.
+     *
+     * @param definition               the definition the processor was created from, which can be shared by several
+     *                                 routes (such as the outputs of a context scoped onException)
+     * @param instrumentationProcessor the processor that wraps it
+     * @param route                    the route the processor belongs to
+     */
+    public record WrappedProcessor(NamedNode definition, InstrumentationProcessor<?> instrumentationProcessor, Route route) {
+    }
+
     private final Map<NamedNode, PerformanceCounter> registeredCounters;
-    private final Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor<?>>> wrappedProcessors;
+    private final Map<Processor, WrappedProcessor> wrappedProcessors;
+    private final Route route;
 
     public InstrumentationInterceptStrategy(Map<NamedNode, PerformanceCounter> registeredCounters,
-                                            Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor<?>>> wrappedProcessors) {
+                                            Map<Processor, WrappedProcessor> wrappedProcessors, Route route) {
         this.registeredCounters = registeredCounters;
         this.wrappedProcessors = wrappedProcessors;
+        this.route = route;
     }
 
     @Override
@@ -55,9 +68,7 @@ public class InstrumentationInterceptStrategy implements ManagementInterceptStra
         if (counter != null) {
             // add it to the mapping of wrappers so we can later change it to a
             // decorated counter when we register the processor
-            KeyValueHolder<NamedNode, InstrumentationProcessor<?>> holder
-                    = new KeyValueHolder<>(definition, instrumentationProcessor);
-            wrappedProcessors.put(target, holder);
+            wrappedProcessors.put(target, new WrappedProcessor(definition, instrumentationProcessor, route));
         }
         return instrumentationProcessor;
     }
