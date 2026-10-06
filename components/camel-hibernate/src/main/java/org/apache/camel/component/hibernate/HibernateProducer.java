@@ -27,8 +27,10 @@ import org.hibernate.KeyType;
 import org.hibernate.Session;
 import org.hibernate.StatelessSession;
 import org.hibernate.Transaction;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.query.MutationQuery;
 import org.hibernate.query.SelectionQuery;
+import org.hibernate.resource.transaction.spi.TransactionCoordinatorBuilder;
 
 public class HibernateProducer extends DefaultProducer {
 
@@ -41,6 +43,23 @@ public class HibernateProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        if (endpoint.isStreaming() && exchange.isTransacted()) {
+            throw new IllegalArgumentException(
+                    "streaming=true is not supported inside a transacted exchange because streams can outlive route transactions.");
+        }
+
+        if (exchange.isTransacted()) {
+            boolean isJta = endpoint.getSessionFactory()
+                    .unwrap(SessionFactoryImplementor.class)
+                    .getServiceRegistry()
+                    .requireService(TransactionCoordinatorBuilder.class)
+                    .isJta();
+            if (!isJta) {
+                throw new IllegalStateException(
+                        "Hibernate producer does not support transacted() exchanges with a resource-local SessionFactory.");
+            }
+        }
+
         if (endpoint.getStatelessOperation() != null) {
             processStateless(exchange);
             return;
@@ -51,7 +70,10 @@ public class HibernateProducer extends DefaultProducer {
 
         Session session = sessionContext == null
                 ? null
-                : sessionContext.getSession(endpoint.getSessionFactory(), endpoint.getTenantIdentifier());
+                : sessionContext.getSession(
+                        endpoint.getSessionFactory(),
+                        endpoint.getTenantIdentifier(),
+                        endpoint.getFilters());
 
         boolean sessionOwned = session == null;
 
