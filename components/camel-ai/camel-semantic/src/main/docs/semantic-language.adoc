@@ -136,15 +136,18 @@ The xref:others:yaml-dsl.adoc[YAML DSL] supports declarations alongside routes, 
                   simple:
                     expression: "${exchangeProperty.department} == 'billing'"
                 steps:
-                  - to: direct:billing
+                  - to:
+                      uri: direct:billing
               - expression:
                   simple:
                     expression: "${exchangeProperty.department} == 'technical'"
                 steps:
-                  - to: direct:technical
+                  - to:
+                      uri: direct:technical
             otherwise:
               steps:
-                - to: direct:review
+                - to:
+                    uri: direct:review
 ----
 
 Names are context-wide. Duplicate declarations across resources and unknown references fail.
@@ -394,10 +397,12 @@ For example, replace the route above with:
                   simple:
                     expression: "${exchangeProperty.decision[department]} == 'billing'"
                 steps:
-                  - to: direct:billing
+                  - to:
+                      uri: direct:billing
             otherwise:
               steps:
-                - to: direct:review
+                - to:
+                    uri: direct:review
 ----
 
 A result might contain `actionable -> true`, `department -> "billing"` and `urgency -> 1.2`.

@@ -212,6 +212,44 @@ See also the full xref:enterprise-integration-patterns.adoc[Enterprise Integrati
 |xref:languages:semantic-language.adoc[Semantic], xref:switch-eip.adoc[Switch]
 |Evaluate a Semantic choice question once and dispatch its category string through literal Switch cases.
 
+|Guardrail / Guard decision
+|xref:languages:semantic-language.adoc[Semantic], xref:ROOT:typesafe-ai-component.adoc[TypeSafe AI],
+xref:filter-eip.adoc[Filter], xref:validate-eip.adoc[Validate]
+|Ask a yes/no question about the message (is this request actionable, does this action fit the task) and filter or
+validate on the answer. A System One model such as Jev answers with a fast, structured decision instead of
+generated text.
+
+|Tool / Function calling
+|xref:ROOT:ai-tool-component.adoc[AI Tool]
+|Expose a route as a tool an AI agent can call. The same route works with the LangChain4j, Spring AI and OpenAI
+agents.
+
+|MCP server
+|xref:others:mcp-server.adoc[MCP Server], xref:ROOT:ai-resource-component.adoc[AI Resource]
+|Expose `ai-tool` routes as MCP tools and `ai-resource` routes as MCP resources to any MCP client.
+
+|MCP client
+|xref:others:langchain4j-agent-mcp.adoc[LangChain4j Agent MCP], xref:others:openai-mcp.adoc[OpenAI MCP]
+|Let an agent in a route call the tools of remote MCP servers.
+
+|Tool authorization / Agent permissions
+|xref:ROOT:ai-tool-component.adoc#_authorizing_tool_calls[AI Tool authorization],
+xref:ROOT:opa-component.adoc[OPA], xref:ROOT:openfga-component.adoc[OpenFGA]
+|Authorize every tool call before it runs, on the caller identity and the tool name, never on model output.
+
+|Agent identity / Workload identity
+|xref:ROOT:spiffe-component.adoc[SPIFFE]
+|Give each workload a cryptographic identity and mutual TLS, so a tool call can be authorized on who is calling.
+
+|LLM observability
+|xref:others:ai-observability.adoc[AI Observability]
+|Record an OpenTelemetry span and Micrometer metrics (model, tokens, duration) for every LLM call, inside the route's
+trace.
+
+|RAG ingestion
+|xref:ROOT:langchain4j-ingest-component.adoc[LangChain4j Ingest]
+|Split, embed and store documents in an embedding store for retrieval-augmented generation.
+
 |Agent-to-Agent / A2A
 |xref:ROOT:a2a-component.adoc[A2A]
 |Google's Agent-to-Agent protocol for communication between AI agents.
