@@ -170,6 +170,27 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
     }
 
     @Test
+    public void testValueWithTheNameOfAnUnsetOptionalPathParameter() throws Exception {
+        // CAMEL-25383: removing the unset optional path and port found their names inside the value of name
+        EndpointUriFactory assembler = new MySecondAssembler();
+        assembler.setCamelContext(context);
+
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("name", "{{path}}");
+        params.put("verbose", true);
+        Assertions.assertEquals("acme2:{{path}}?verbose=true", assembler.buildUri("acme2", params));
+
+        params = new LinkedHashMap<>();
+        params.put("name", "files/path-port");
+        Assertions.assertEquals("acme2:files/path-port", assembler.buildUri("acme2", params));
+
+        params = new LinkedHashMap<>();
+        params.put("name", "{{shareName}}/{{path}}");
+        params.put("port", "4444");
+        Assertions.assertEquals("acme2:{{shareName}}/{{path}}:4444", assembler.buildUri("acme2", params));
+    }
+
+    @Test
     public void testJms() throws Exception {
         EndpointUriFactory assembler = new MyJmsAssembler();
         assembler.setCamelContext(context);
