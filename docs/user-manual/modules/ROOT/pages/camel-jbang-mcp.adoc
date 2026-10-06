@@ -352,7 +352,13 @@ project `directory` as an argument, the runtime tools take the integration `name
 | Starts an integration from a project directory with `camel run --source-dir` in a separate process, in dev
   mode by default: the directory is watched, so a changed or added file (a route, a bean file, a Java class) is
   reloaded. Name files to run only those, for a directory that holds several apps. Returns the pid, name and
-  log file once the integration is up.
+  log file once the integration is up. When an integration already runs from the directory, or one started
+  earlier is still starting, no second copy is started: the answer is that one (`status: running` with its
+  pid, name and log file, or `status: starting`), with what dev mode and `camel_control restart` do for it.
+  When the start fails, the answer has the cause from the console output: each log record with its exception
+  lines (also a message over several lines, such as the diagnostics of a Java class that does not compile) and
+  the first line of the user's code, without the stack frames. A failed `camel_control restart` answers the
+  same way.
 
 | `camel_control`
 | Controls a running integration: `stop`, `kill`, `restart` (picks up edited files without dev mode),
