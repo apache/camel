@@ -858,7 +858,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         private void runNotAllowed() {
             LOG.trace("Run not allowed, will reject executing exchange: {}", exchange);
             if (exchange.getException() == null) {
-                exchange.setException(new RejectedExecutionException());
+                exchange.setException(new RejectedExecutionException(notAllowedReason()));
             }
             AsyncCallback cb = callback;
             taskFactory.release(this);
@@ -1117,7 +1117,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             if (!isRunAllowed()) {
                 LOG.trace("Run not allowed, will reject executing exchange: {}", exchange);
                 if (exchange.getException() == null) {
-                    exchange.setException(new RejectedExecutionException());
+                    exchange.setException(new RejectedExecutionException(notAllowedReason()));
                 }
                 AsyncCallback cb = callback;
                 taskFactory.release(this);
@@ -1214,8 +1214,44 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 LOG.trace("Scheduling redelivery task to run in {} millis for exchangeId: {}", redeliveryDelay,
                         exchange.getExchangeId());
             }
-            executorService.schedule(() -> reactiveExecutor.schedule(this::redeliver), redeliveryDelay,
+            if (currentRedeliveryPolicy.isAllowRedeliveryWhileStopping()) {
+                executorService.schedule(() -> reactiveExecutor.schedule(this::redeliver), redeliveryDelay,
+                        TimeUnit.MILLISECONDS);
+            } else {
+                // the redelivery is not allowed while stopping, so wake up every second to check whether we are
+                // preparing for shutdown, the same as the synchronous redelivery does (see sleep())
+                scheduleAsynchronousRedelivery(new StopWatch());
+            }
+        }
+
+        private void scheduleAsynchronousRedelivery(StopWatch watch) {
+            long delay = Math.max(0, Math.min(1000, redeliveryDelay - watch.taken()));
+            executorService.schedule(() -> reactiveExecutor.schedule(() -> onAsynchronousRedeliveryWakeUp(watch)), delay,
                     TimeUnit.MILLISECONDS);
+        }
+
+        private void onAsynchronousRedeliveryWakeUp(StopWatch watch) {
+            if (preparingShutdown) {
+                LOG.debug("Rejected redelivery while stopping");
+                rejectRedelivery(new RejectedExecutionException("Redelivery not allowed while stopping"));
+            } else if (watch.taken() < redeliveryDelay) {
+                try {
+                    scheduleAsynchronousRedelivery(watch);
+                } catch (RejectedExecutionException e) {
+                    rejectRedelivery(e);
+                }
+            } else {
+                redeliver();
+            }
+        }
+
+        private void rejectRedelivery(RejectedExecutionException cause) {
+            // the task was rejected
+            exchange.setException(cause);
+            // mark the exchange as redelivery exhausted so the failure processor / dead letter channel can process the exchange
+            exchange.getExchangeExtension().setRedeliveryExhausted(true);
+            // jump to start of loop which then detects that we are failed and exhausted
+            reactiveExecutor.schedule(this);
         }
 
         private void runSynchronousRedelivery() {
@@ -2172,4 +2208,15 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         return sb.toString();
     }
 
+    /**
+     * Why an exchange cannot go on: its route is being stopped. Without a message the error reads
+     * {@code RejectedExecutionException - null}, which looks like a fault in the route, while it is a route stop or a
+     * dev mode reload cutting the exchange off (CAMEL-25365).
+     */
+    String notAllowedReason() {
+        return shutdownStrategy.isForceShutdown()
+                ? "The exchange cannot continue: its route was forced to shut down, as the graceful shutdown timed out"
+                  + " while it was in flight (the CamelContext is being stopped)"
+                : "The exchange cannot continue: its route is being stopped or reloaded";
+    }
 }

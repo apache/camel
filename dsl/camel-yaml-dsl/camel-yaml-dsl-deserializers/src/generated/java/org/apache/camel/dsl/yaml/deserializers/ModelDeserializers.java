@@ -10936,7 +10936,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "mockIncludePattern", type = "string", defaultValue = "classpath:camel-mock/**", description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.", displayName = "Mock Include Pattern"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
                     @YamlProperty(name = "routeId", type = "string", description = "The route id.", displayName = "Route Id"),
-                    @YamlProperty(name = "specification", type = "string", required = true, description = "Path to the OpenAPI specification file.", displayName = "Specification")
+                    @YamlProperty(name = "specification", type = "string", required = true, description = "Path to the OpenAPI specification file.", displayName = "Specification"),
+                    @YamlProperty(name = "unmatchedRequestHandling", type = "enum:platform,camel", defaultValue = "platform", description = "Who answers requests that match no operation in the OpenAPI specification: the HTTP layer (platform) or Camel via the unmatched request handler (camel).", displayName = "Unmatched Request Handling")
             }
     )
     public static class OpenApiDefinitionDeserializer extends YamlDeserializerBase<OpenApiDefinition> {
@@ -10982,6 +10983,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "specification": {
                     String val = asText(node);
                     target.setSpecification(val);
+                    break;
+                }
+                case "unmatchedRequestHandling": {
+                    String val = asText(node);
+                    target.setUnmatchedRequestHandling(val);
                     break;
                 }
                 case "id": {
@@ -11577,7 +11583,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "examples", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Examples of the parameter.", displayName = "Examples"),
                     @YamlProperty(name = "name", type = "string", required = true, description = "The parameter name.", displayName = "Name"),
                     @YamlProperty(name = "required", type = "boolean", defaultValue = "true", description = "Sets the parameter required flag.", displayName = "Required"),
-                    @YamlProperty(name = "type", type = "enum:body,formData,header,path,query", required = true, defaultValue = "path", description = "Sets the parameter type such as body, form, header, path, or query.", displayName = "Type")
+                    @YamlProperty(name = "type", type = "enum:body,formData,header,path,query", defaultValue = "path", description = "Sets the parameter type such as body, form, header, path, or query.", displayName = "Type")
             }
     )
     public static class ParamDefinitionDeserializer extends YamlDeserializerBase<ParamDefinition> {

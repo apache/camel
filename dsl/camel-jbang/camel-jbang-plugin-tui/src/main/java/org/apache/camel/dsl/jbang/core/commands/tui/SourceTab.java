@@ -156,6 +156,13 @@ class SourceTab extends AbstractTab {
             IntegrationInfo info = ctx.findSelectedIntegration();
             return info != null ? LiveRunLines.of(info.routes, path) : Map.of();
         });
+        // the exception of the last failure on a line, for fix with AI (Shift+F8) on a line that fails at runtime
+        sourceViewer.setLineFailures((path, line) -> {
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            return info != null
+                    ? RuntimeFailures.lastFailure(info.routes, RuntimeFailures.load(info.pid, ctx::getErrorFile), path, line)
+                    : null;
+        });
         sourceViewer.setOnFileLoaded(p -> {
             if (hasJumpLinks(p)) {
                 sourceViewer.setJumpLinks(computeJumpLinks(p));
@@ -479,6 +486,9 @@ class SourceTab extends AbstractTab {
         // when the file list is focused (not the viewer) and no dialog is open.
         if (!fileActionsPopup.isVisible() && !(focusOnViewer && sourceViewer.isVisible())) {
             TuiHelper.hint(spans, "F12", "file actions");
+        }
+        if (focusOnViewer && sourceViewer.showsFixWithAiHint()) {
+            TuiHelper.hint(spans, "Shift+F8", "fix with AI");
         }
     }
 

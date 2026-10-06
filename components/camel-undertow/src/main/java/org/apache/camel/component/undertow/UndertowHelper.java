@@ -22,7 +22,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Map;
 
-import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import org.apache.camel.Exchange;
@@ -188,16 +187,38 @@ public final class UndertowHelper {
      *                     not supported, in which case the body is converted as before (UTF-8 by default)
      */
     public static ByteBuffer toByteBuffer(String body, String contentType) {
-        String name = contentType != null ? Headers.extractQuotedValueFromHeader(contentType, "charset") : null;
-        if (ObjectHelper.isEmpty(name)) {
+        String name = getCharsetFromContentType(contentType);
+        if (name == null) {
             return null;
         }
         try {
-            return ByteBuffer.wrap(body.getBytes(Charset.forName(IOHelper.normalizeCharset(name))));
+            return ByteBuffer.wrap(body.getBytes(Charset.forName(name)));
         } catch (IllegalArgumentException e) {
             // unknown or unsupported charset in the Content-Type
             return null;
         }
+    }
+
+    /**
+     * Gets the charset parameter of a Content-Type. The parameter name is case-insensitive (RFC 9110), as in the other
+     * HTTP components. Unlike {@link IOHelper#getCharsetNameFromContentType(String)}, there is no default: a
+     * Content-Type without a charset gives <tt>null</tt>.
+     *
+     * @param  contentType the Content-Type, may be <tt>null</tt>
+     * @return             the charset name, or <tt>null</tt> when the Content-Type declares no charset
+     */
+    public static String getCharsetFromContentType(String contentType) {
+        if (contentType == null) {
+            return null;
+        }
+        for (String parameter : contentType.split(";")) {
+            parameter = parameter.trim();
+            if (parameter.regionMatches(true, 0, "charset=", 0, 8)) {
+                String name = IOHelper.normalizeCharset(parameter.substring(8));
+                return ObjectHelper.isEmpty(name) ? null : name;
+            }
+        }
+        return null;
     }
 
 }

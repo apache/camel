@@ -44,6 +44,12 @@ public final class LangChain4jIngest {
      */
     public static final String METADATA_DOCUMENT_ID = "camel_ingest_document_id";
 
+    /**
+     * Metadata key carrying the MIME type of a media document on its placeholder segment, absent on text segments, so a
+     * retriever on a shared store can tell a media hit from text.
+     */
+    public static final String METADATA_CONTENT_TYPE = "camel_ingest_content_type";
+
     private LangChain4jIngest() {
     }
 }

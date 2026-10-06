@@ -38,7 +38,9 @@ public final class OpenFgaConstants {
               description = "Why the exchange was denied, set only on a deny. `denied` when OpenFGA evaluated the"
                             + " relationship and answered no; `missing-user`, `missing-object`, `missing-relation`,"
                             + " `wildcard-subject` or `invalid-identifier` when the exchange never reached OpenFGA"
-                            + " because what it carried could not be used as a subject or an object.",
+                            + " because what it carried could not be used as a subject or an object;"
+                            + " `invalid-contextual-tuple` when a configured contextual tuple did not resolve, so the"
+                            + " check would have asked a different question than the endpoint was configured to ask.",
               javaType = "String")
     public static final String DENY_REASON = HEADER_PREFIX + "DenyReason";
 
@@ -73,6 +75,16 @@ public final class OpenFgaConstants {
                             + " relationship graph produced the verdict.",
               javaType = "String")
     public static final String STORE_ID = HEADER_PREFIX + "StoreId";
+
+    @Metadata(label = "producer",
+              description = "The continuation token the page came back with. Feed it back through the"
+                            + " continuationToken option to read on. The two operations end differently: readTuples"
+                            + " returns no token on its last page, so the header is absent once the read is done,"
+                            + " whereas readChanges always returns a token - an empty body is what says the log has"
+                            + " been read up to date, and that last token is what lets the next poll resume instead"
+                            + " of replaying the whole log.",
+              javaType = "String")
+    public static final String CONTINUATION_TOKEN = HEADER_PREFIX + "ContinuationToken";
 
     @Metadata(label = "producer", description = "How many relationship tuples the writeTuples operation wrote.",
               javaType = "Integer")

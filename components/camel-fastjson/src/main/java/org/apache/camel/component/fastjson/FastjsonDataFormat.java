@@ -33,6 +33,7 @@ import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.JsonPayloadHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
@@ -92,6 +93,16 @@ public class FastjsonDataFormat extends ServiceSupport
 
     @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
+        // a body that already is the JSON text is written as it is (CAMEL-25329)
+        long written = JsonPayloadHelper.writeIfAlreadyJson(exchange, graph, stream);
+        if (written >= 0) {
+            if (contentTypeHeader) {
+                Message message = exchange.getMessage();
+                message.setHeader(Exchange.CONTENT_TYPE, "application/json");
+                message.setHeader(Exchange.CONTENT_LENGTH, written);
+            }
+            return;
+        }
         int len = JSON.writeJSONString(stream,
                 config.getCharset(),
                 graph,

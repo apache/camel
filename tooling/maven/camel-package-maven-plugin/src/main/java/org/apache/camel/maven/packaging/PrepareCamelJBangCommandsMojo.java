@@ -52,20 +52,45 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * Prepares camel-jbang by scanning command classes and generating command metadata for documentation.
+ * <p>
+ * In camel-jbang-core the command hierarchy is read from {@code CamelJBangMain}, and in a camel-jbang plugin module
+ * from the {@code customize} method of the class annotated with {@code @CamelJBangPlugin}. A plugin writes its metadata
+ * to {@link #PLUGIN_METADATA_FILE}, so it does not shadow the metadata of camel-jbang-core on the classpath.
  */
 @Mojo(name = "prepare-jbang-commands", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true,
       requiresDependencyResolution = ResolutionScope.COMPILE)
 public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
 
-    // Pattern to match .addSubcommand("name", new CommandLine(new ClassName(main)) or (this))
+    public static final String CORE_METADATA_FILE = "META-INF/camel-jbang-commands-metadata.json";
+    public static final String PLUGIN_METADATA_FILE = "META-INF/camel-jbang-plugin-commands-metadata.json";
+
+    // Pattern to match .addSubcommand("name", new CommandLine(new ClassName(main)) (with any constructor arguments)
     private static final Pattern SUBCOMMAND_PATTERN = Pattern.compile(
-            "\\.addSubcommand\\(\\s*\"([^\"]+)\"\\s*,\\s*new\\s+CommandLine\\(\\s*new\\s+([A-Za-z0-9_]+)\\s*\\(\\s*(?:main|this)\\s*\\)\\s*\\)");
+            "\\.addSubcommand\\(\\s*\"([^\"]+)\"\\s*,\\s*new\\s+CommandLine\\(\\s*new\\s+([A-Za-z0-9_]+)\\s*\\([^()]*\\)\\s*\\)");
+
+    // Pattern to match the plugin root command: commandLine.addSubcommand("name", ...)
+    private static final Pattern PLUGIN_ROOT_PATTERN = Pattern.compile(
+            "commandLine\\.addSubcommand\\(\\s*\"([^\"]+)\"\\s*,\\s*(.+)$");
+
+    // Pattern to match a command class created inline: new CommandLine(new ClassName(...)) or new ClassName(...)
+    private static final Pattern NEW_COMMAND_PATTERN = Pattern.compile(
+            "^new\\s+(?:CommandLine\\(\\s*new\\s+)?([A-Za-z0-9_]+)\\s*\\(");
+
+    // Pattern to match the name of a plugin: @CamelJBangPlugin(name = "camel-jbang-plugin-xxx"
+    private static final Pattern PLUGIN_NAME_PATTERN = Pattern.compile(
+            "@CamelJBangPlugin\\(\\s*name\\s*=\\s*\"camel-jbang-plugin-([^\"]+)\"");
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File outFolder;
 
     @Parameter(defaultValue = "${project.basedir}/src/main/java/org/apache/camel/dsl/jbang/core/commands")
     protected File commandsDir;
+
+    /**
+     * The commands of camel-jbang-core, where a plugin command may inherit its options from.
+     */
+    @Parameter(defaultValue = "${project.basedir}/../camel-jbang-core/src/main/java/org/apache/camel/dsl/jbang/core/commands")
+    protected File coreCommandsDir;
 
     @Inject
     public PrepareCamelJBangCommandsMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
@@ -76,6 +101,9 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
     public void execute(MavenProject project) throws MojoFailureException, MojoExecutionException {
         outFolder = new File(project.getBasedir(), "src/generated/resources");
         commandsDir = new File(project.getBasedir(), "src/main/java/org/apache/camel/dsl/jbang/core/commands");
+        coreCommandsDir = new File(
+                project.getBasedir().getParentFile(),
+                "camel-jbang-core/src/main/java/org/apache/camel/dsl/jbang/core/commands");
         super.execute(project);
     }
 
@@ -91,12 +119,19 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
             Map<String, CommandInfo> commandsByClassName = new HashMap<>();
             scanCommandClasses(commandsDir, commandsByClassName);
 
-            // Step 2: Parse CamelJBangMain.java to get command hierarchy
+            // Step 2: Parse CamelJBangMain.java (core) or the plugin class to get command hierarchy
             File mainFile = new File(commandsDir, "CamelJBangMain.java");
             JBangCommandModel model = new JBangCommandModel();
+            String metadataFile = CORE_METADATA_FILE;
 
             if (mainFile.exists()) {
                 parseCommandHierarchy(mainFile, commandsByClassName, model);
+            } else {
+                File pluginFile = findPluginFile(commandsDir);
+                if (pluginFile != null) {
+                    parsePluginHierarchy(pluginFile, commandsByClassName, model);
+                    metadataFile = PLUGIN_METADATA_FILE;
+                }
             }
 
             if (!model.getCommands().isEmpty()) {
@@ -104,7 +139,7 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
                 sortCommandsRecursively(model.getCommands());
 
                 String json = JsonMapper.createJsonSchema(model);
-                updateResource(outFolder.toPath(), "META-INF/camel-jbang-commands-metadata.json", json);
+                updateResource(outFolder.toPath(), metadataFile, json);
                 getLog().info("Generated JBang commands metadata with " + countCommands(model) + " commands");
             }
         } catch (Exception e) {
@@ -180,76 +215,175 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         Stack<ParentInfo> parentStack = new Stack<>();
 
         for (int i = startLine; i < lines.size(); i++) {
-            String line = lines.get(i);
-            String trimmedLine = line.trim();
+            String trimmedLine = lines.get(i).trim();
 
             // Check if we've reached the end of the chain
             if (trimmedLine.startsWith(".setParameterExceptionHandler") || trimmedLine.equals(";")) {
                 break;
             }
 
-            // Look for .addSubcommand pattern
-            Matcher matcher = SUBCOMMAND_PATTERN.matcher(trimmedLine);
-            if (matcher.find()) {
-                String cmdName = matcher.group(1);
-                String className = matcher.group(2);
+            processSubcommandLine(lines.get(i), parentStack, commandsByClassName, model, null);
+        }
+    }
 
-                CommandInfo info = commandsByClassName.get(className);
-                if (info == null) {
-                    getLog().debug("Command class not found: " + className);
+    private void parsePluginHierarchy(
+            File pluginFile, Map<String, CommandInfo> commandsByClassName,
+            JBangCommandModel model)
+            throws IOException {
+
+        String source = Files.readString(pluginFile.toPath());
+        Matcher nameMatcher = PLUGIN_NAME_PATTERN.matcher(source);
+        if (!nameMatcher.find()) {
+            getLog().debug("No plugin name found in: " + pluginFile);
+            return;
+        }
+        String plugin = nameMatcher.group(1);
+
+        List<String> lines = Files.readAllLines(pluginFile.toPath());
+        for (String line : lines) {
+            Matcher matcher = PLUGIN_ROOT_PATTERN.matcher(line.trim());
+            if (!matcher.find()) {
+                continue;
+            }
+            String cmdName = matcher.group(1);
+            String target = matcher.group(2).trim();
+
+            Matcher newMatcher = NEW_COMMAND_PATTERN.matcher(target);
+            if (newMatcher.find()) {
+                // a command without subcommands: commandLine.addSubcommand("name", new Command(main))
+                CommandInfo info = commandsByClassName.get(newMatcher.group(1));
+                if (info != null && !info.hidden) {
+                    JBangCommand cmd = createCommand(info, cmdName, "");
+                    cmd.setPlugin(plugin);
+                    model.addCommand(cmd);
+                }
+                continue;
+            }
+
+            // a command with subcommands built as a variable: var cmd = new CommandLine(new Command(main))
+            String variable = target.replaceAll("[^A-Za-z0-9_].*$", "");
+            Pattern declaration = Pattern.compile(
+                    "\\b" + Pattern.quote(variable) + "\\s*=\\s*new\\s+CommandLine\\(\\s*new\\s+([A-Za-z0-9_]+)\\s*\\(");
+            for (int i = 0; i < lines.size(); i++) {
+                Matcher declMatcher = declaration.matcher(lines.get(i));
+                if (!declMatcher.find()) {
                     continue;
                 }
+                CommandInfo info = commandsByClassName.get(declMatcher.group(1));
+                if (info == null || info.hidden) {
+                    break;
+                }
+                JBangCommand root = createCommand(info, cmdName, "");
+                root.setPlugin(plugin);
+                model.addCommand(root);
 
-                // Calculate indentation level (number of leading spaces)
-                int indent = 0;
-                for (char c : line.toCharArray()) {
-                    if (c == ' ') {
-                        indent++;
-                    } else if (c == '\t') {
-                        indent += 4;
-                    } else {
+                // the subcommands are chained to the declaration until the statement ends
+                Stack<ParentInfo> parentStack = new Stack<>();
+                parentStack.push(new ParentInfo(root, -1));
+                for (int j = i + 1; j < lines.size(); j++) {
+                    processSubcommandLine(lines.get(j), parentStack, commandsByClassName, model, plugin);
+                    if (lines.get(j).trim().endsWith(";")) {
                         break;
                     }
                 }
-
-                // Pop parents that are at same or deeper indentation level
-                // This handles transitioning from subcommands back to parent level
-                while (!parentStack.isEmpty() && parentStack.peek().indent >= indent) {
-                    parentStack.pop();
-                }
-
-                // Determine parent path
-                String parentPath = "";
-                if (!parentStack.isEmpty()) {
-                    parentPath = parentStack.peek().command.getFullName();
-                }
-
-                JBangCommand cmd = createCommand(info, cmdName, parentPath);
-
-                // Add to parent or model
-                if (parentStack.isEmpty()) {
-                    model.addCommand(cmd);
-                } else {
-                    parentStack.peek().command.addSubcommand(cmd);
-                }
-
-                // Check if this command has subcommands by looking at the line ending
-                // Count closing parens at end of line
-                String lineEnd = trimmedLine.replaceAll("\\s+", "");
-                int closingParens = 0;
-                for (int j = lineEnd.length() - 1; j >= 0 && lineEnd.charAt(j) == ')'; j--) {
-                    closingParens++;
-                }
-
-                // Pattern: .addSubcommand("x", new CommandLine(new X(main))
-                // - Ends with 2 parens ()) = has subcommands (CommandLine not closed)
-                // - Ends with 3 parens ())) = leaf command (closes CommandLine + addSubcommand)
-                if (closingParens == 2) {
-                    // This command may have subcommands - push onto stack
-                    parentStack.push(new ParentInfo(cmd, indent));
-                }
-                // If closingParens >= 3, it's a leaf command and doesn't have subcommands
+                break;
             }
+        }
+    }
+
+    private void processSubcommandLine(
+            String line, Stack<ParentInfo> parentStack, Map<String, CommandInfo> commandsByClassName,
+            JBangCommandModel model, String plugin) {
+
+        String trimmedLine = line.trim();
+        Matcher matcher = SUBCOMMAND_PATTERN.matcher(trimmedLine);
+        if (!matcher.find()) {
+            return;
+        }
+        String cmdName = matcher.group(1);
+        String className = matcher.group(2);
+
+        // Calculate indentation level (number of leading spaces)
+        int indent = 0;
+        for (char c : line.toCharArray()) {
+            if (c == ' ') {
+                indent++;
+            } else if (c == '\t') {
+                indent += 4;
+            } else {
+                break;
+            }
+        }
+
+        // Pop parents that are at same or deeper indentation level
+        // This handles transitioning from subcommands back to parent level
+        while (!parentStack.isEmpty() && parentStack.peek().indent >= indent) {
+            parentStack.pop();
+        }
+
+        // Check if this command has subcommands by looking at the line ending
+        // Count closing parens at end of line
+        String lineEnd = trimmedLine.replaceAll("\\s+", "");
+        if (lineEnd.endsWith(";")) {
+            lineEnd = lineEnd.substring(0, lineEnd.length() - 1);
+        }
+        int closingParens = 0;
+        for (int j = lineEnd.length() - 1; j >= 0 && lineEnd.charAt(j) == ')'; j--) {
+            closingParens++;
+        }
+        // Pattern: .addSubcommand("x", new CommandLine(new X(main))
+        // - Ends with 2 parens ()) = has subcommands (CommandLine not closed)
+        // - Ends with 3 parens ())) = leaf command (closes CommandLine + addSubcommand)
+        boolean hasSubcommands = closingParens == 2;
+
+        CommandInfo info = commandsByClassName.get(className);
+        boolean parentSkipped = !parentStack.isEmpty() && parentStack.peek().command == null;
+        if (info == null || info.hidden || parentSkipped) {
+            if (info == null) {
+                getLog().debug("Command class not found: " + className);
+            }
+            if (hasSubcommands) {
+                // keep its subcommands out of the documentation as well
+                parentStack.push(new ParentInfo(null, indent));
+            }
+            return;
+        }
+
+        // Determine parent path
+        String parentPath = "";
+        if (!parentStack.isEmpty()) {
+            parentPath = parentStack.peek().command.getFullName();
+        }
+
+        JBangCommand cmd = createCommand(info, cmdName, parentPath);
+        cmd.setPlugin(plugin);
+
+        // Add to parent or model
+        if (parentStack.isEmpty()) {
+            model.addCommand(cmd);
+        } else {
+            parentStack.peek().command.addSubcommand(cmd);
+        }
+
+        if (hasSubcommands) {
+            // This command may have subcommands - push onto stack
+            parentStack.push(new ParentInfo(cmd, indent));
+        }
+    }
+
+    private File findPluginFile(File dir) throws IOException {
+        try (Stream<Path> paths = Files.walk(dir.toPath())) {
+            return paths.filter(p -> p.toString().endsWith(".java"))
+                    .filter(p -> {
+                        try {
+                            return Files.readString(p).contains("@CamelJBangPlugin(");
+                        } catch (IOException e) {
+                            return false;
+                        }
+                    })
+                    .map(Path::toFile)
+                    .findFirst()
+                    .orElse(null);
         }
     }
 
@@ -328,6 +462,11 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         // Check for deprecated
         if (clazz.getAnnotation(Deprecated.class) != null) {
             info.deprecated = true;
+        }
+
+        // Check for hidden
+        if ("true".equals(commandAnn.getStringValue("hidden"))) {
+            info.hidden = true;
         }
 
         // Parse options from this class AND parent classes
@@ -436,7 +575,13 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         }
 
         // Search recursively from commands root
-        return findClassFileRecursive(commandsRoot, className);
+        File found = findClassFileRecursive(commandsRoot, className);
+        if (found == null && coreCommandsDir != null && coreCommandsDir.isDirectory()
+                && !coreCommandsDir.equals(commandsDir)) {
+            // a plugin command may extend a command of camel-jbang-core
+            found = findClassFileRecursive(coreCommandsDir, className);
+        }
+        return found;
     }
 
     private File findClassFileRecursive(File dir, String className) {
@@ -673,6 +818,7 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         String name;
         String description;
         boolean deprecated;
+        boolean hidden;
         List<OptionInfo> options;
     }
 

@@ -149,7 +149,7 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
                     "No tools configured on the endpoint. Configure mcpServer.* parameters and/or the tags option.");
         }
 
-        List<McpToolCallExecutor.ToolResult> results = toolCallExecutor.execute(toolCalls);
+        List<McpToolCallExecutor.ToolResult> results = toolCallExecutor.execute(toolCalls, exchange);
         for (McpToolCallExecutor.ToolResult result : results) {
             history.add(ChatCompletionMessageParam.ofTool(
                     ChatCompletionToolMessageParam.builder()

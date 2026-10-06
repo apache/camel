@@ -720,6 +720,29 @@ public class DefaultMessageHeaderTest {
     }
 
     @Test
+    public void testCopyOnWriteKeySetRemoveWithDifferentCase() {
+        DefaultMessage original = new DefaultMessage(camelContext);
+        original.setHeader("X-Trace", "abc");
+        original.setHeader("X-Tenant", "t1");
+        original.setHeader("Accept", "text/plain");
+
+        DefaultMessage copy = new DefaultMessage(camelContext);
+        copy.copyFrom(original);
+
+        assertTrue(copy.getHeaders().keySet().remove("x-trace"));
+        assertEquals(Set.of("X-Tenant", "Accept"), Set.copyOf(copy.getHeaders().keySet()));
+
+        assertTrue(copy.getHeaders().keySet().removeAll(Set.of("x-tenant")));
+        assertEquals(Set.of("Accept"), Set.copyOf(copy.getHeaders().keySet()));
+
+        // original unaffected
+        assertEquals(Set.of("X-Trace", "X-Tenant", "Accept"), Set.copyOf(original.getHeaders().keySet()));
+
+        assertTrue(original.getHeaders().keySet().retainAll(Set.of("accept")));
+        assertEquals(Set.of("Accept"), Set.copyOf(original.getHeaders().keySet()));
+    }
+
+    @Test
     public void testLazyCopyOnWriteValues() {
         DefaultMessage original = new DefaultMessage(camelContext);
         original.setHeader("foo", "bar");

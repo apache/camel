@@ -26,16 +26,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import javax.management.AttributeValueExp;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.Query;
-import javax.management.QueryExp;
-import javax.management.StringValueExp;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
@@ -55,11 +50,13 @@ import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.api.management.mbean.RouteError;
+import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.ExchangeHelper;
@@ -530,21 +527,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
             sb.append("  <processorStats>\n");
             MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
             if (server != null) {
-                // get all the processor mbeans and sort them accordingly to their index
-                String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-                ObjectName query = ObjectName.getInstance(
-                        jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
-                Set<ObjectName> names = server.queryNames(query, null);
-                List<ManagedProcessorMBean> mps = new ArrayList<>();
-                for (ObjectName on : names) {
-                    ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on,
-                            ManagedProcessorMBean.class);
-
-                    // the processor must belong to this route
-                    if (getRouteId().equals(processor.getRouteId())) {
-                        mps.add(processor);
-                    }
-                }
+                // get all the processor mbeans of this route and sort them accordingly to their index
+                List<ManagedProcessorMBean> mps = routeProcessorMBeans(false, ManagedProcessorMBean.class);
                 mps.sort(new OrderProcessorMBeans());
 
                 // walk the processors in reverse order, and calculate the accumulated total time
@@ -649,21 +633,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
             arr = new JsonArray();
             MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
             if (server != null) {
-                // get all the processor mbeans and sort them accordingly to their index
-                String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-                ObjectName query = ObjectName.getInstance(
-                        jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
-                Set<ObjectName> names = server.queryNames(query, null);
-                List<ManagedProcessorMBean> mps = new ArrayList<>();
-                for (ObjectName on : names) {
-                    ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on,
-                            ManagedProcessorMBean.class);
-
-                    // the processor must belong to this route
-                    if (getRouteId().equals(processor.getRouteId())) {
-                        mps.add(processor);
-                    }
-                }
+                // get all the processor mbeans of this route and sort them accordingly to their index
+                List<ManagedProcessorMBean> mps = routeProcessorMBeans(false, ManagedProcessorMBean.class);
                 mps.sort(new OrderProcessorMBeans());
 
                 // walk the processors in reverse order, and calculate the accumulated total time
@@ -724,21 +695,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
         sb.append("  <stepStats>\n");
         MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (server != null) {
-            // get all the processor mbeans and sort them accordingly to their index
-            String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-            ObjectName query = ObjectName
-                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=steps,*");
-            Set<ObjectName> names = server.queryNames(query, null);
-            List<ManagedStepMBean> mps = new ArrayList<>();
-            for (ObjectName on : names) {
-                ManagedStepMBean step
-                        = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedStepMBean.class);
-
-                // the step must belong to this route
-                if (getRouteId().equals(step.getRouteId())) {
-                    mps.add(step);
-                }
-            }
+            // get all the step mbeans of this route and sort them accordingly to their index
+            List<ManagedStepMBean> mps = routeProcessorMBeans(true, ManagedStepMBean.class);
             mps.sort(new OrderProcessorMBeans());
 
             // and now add the sorted list of steps to the xml output
@@ -790,20 +748,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
 
         MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (server != null) {
-            String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-            List<ManagedProcessorMBean> processors = new ArrayList<>();
-            // gather all the processors for this CamelContext, which requires JMX
-            ObjectName query = ObjectName
-                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
-            Set<ObjectName> names = server.queryNames(query, null);
-            for (ObjectName on : names) {
-                ManagedProcessorMBean processor
-                        = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedProcessorMBean.class);
-                // the processor must belong to this route
-                if (getRouteId().equals(processor.getRouteId())) {
-                    processors.add(processor);
-                }
-            }
+            // gather all the processors for this route, which requires JMX
+            List<ManagedProcessorMBean> processors = routeProcessorMBeans(false, ManagedProcessorMBean.class);
             processors.sort(new OrderProcessorMBeans());
 
             // grab route consumer
@@ -818,16 +764,13 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
                                 escapeXml(route.getRouteId()), escapeXml(id), 0, escapeXml(location), line));
             }
             for (ManagedProcessorMBean processor : processors) {
-                // the step must belong to this route
-                if (route.getRouteId().equals(processor.getRouteId())) {
-                    int line = processor.getSourceLineNumber() != null ? processor.getSourceLineNumber() : -1;
-                    String location = processor.getSourceLocation() != null ? processor.getSourceLocation() : "";
-                    sb.append("\n    <routeLocation")
-                            .append(String.format(
-                                    " routeId=\"%s\" id=\"%s\" index=\"%s\" sourceLocation=\"%s\" sourceLineNumber=\"%s\"/>",
-                                    escapeXml(route.getRouteId()), escapeXml(processor.getProcessorId()), processor.getIndex(),
-                                    escapeXml(location), line));
-                }
+                int line = processor.getSourceLineNumber() != null ? processor.getSourceLineNumber() : -1;
+                String location = processor.getSourceLocation() != null ? processor.getSourceLocation() : "";
+                sb.append("\n    <routeLocation")
+                        .append(String.format(
+                                " routeId=\"%s\" id=\"%s\" index=\"%s\" sourceLocation=\"%s\" sourceLineNumber=\"%s\"/>",
+                                escapeXml(route.getRouteId()), escapeXml(processor.getProcessorId()), processor.getIndex(),
+                                escapeXml(location), line));
             }
         }
         sb.append("\n</routeLocations>");
@@ -848,17 +791,12 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
         if (includeProcessors) {
             MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
             if (server != null) {
-                // get all the processor mbeans and sort them accordingly to their index
-                String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-                // the route id must be equal (match would treat * and ? in the route id as wildcards)
-                QueryExp queryExp = Query.eq(new AttributeValueExp("RouteId"), new StringValueExp(getRouteId()));
                 // steps are registered as their own type
-                for (String type : new String[] { "processors", "steps" }) {
-                    ObjectName query = ObjectName.getInstance(
-                            jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=" + type + ",*");
-                    Set<ObjectName> names = server.queryNames(query, queryExp);
-                    for (ObjectName name : names) {
-                        server.invoke(name, "reset", null, null);
+                for (boolean steps : new boolean[] { false, true }) {
+                    for (ObjectName name : routeProcessorMBeanNames(steps)) {
+                        if (server.isRegistered(name)) {
+                            server.invoke(name, "reset", null, null);
+                        }
                     }
                 }
             }
@@ -1007,22 +945,58 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
 
         MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (server != null) {
-            String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-            // gather all the processors for this CamelContext, which requires JMX
-            ObjectName query = ObjectName
-                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
-            Set<ObjectName> names = server.queryNames(query, null);
-            for (ObjectName on : names) {
-                ManagedProcessorMBean processor
-                        = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedProcessorMBean.class);
-                // the processor must belong to this route
-                if (getRouteId().equals(processor.getRouteId())) {
-                    ids.add(processor.getProcessorId());
-                }
+            // gather all the processors for this route, which requires JMX
+            for (ManagedProcessorMBean processor : routeProcessorMBeans(false, ManagedProcessorMBean.class)) {
+                ids.add(processor.getProcessorId());
             }
         }
 
         return ids;
+    }
+
+    /**
+     * Gets the processor (or step) mbeans of this route.
+     */
+    private <T extends ManagedProcessorMBean> List<T> routeProcessorMBeans(boolean steps, Class<T> type) throws Exception {
+        ManagementAgent agent = getContext().getManagementStrategy().getManagementAgent();
+        List<T> answer = new ArrayList<>();
+        for (ObjectName on : routeProcessorMBeanNames(steps)) {
+            T mp = agent.newProxyClient(on, type);
+            if (mp != null) {
+                answer.add(mp);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Gets the names of the processor (or step) mbeans of this route.
+     * <p/>
+     * The default management agent knows the mbeans of each route, otherwise all the processor mbeans of the
+     * CamelContext are queried, which is slow with many routes as the route id of each mbean must be read.
+     */
+    private List<ObjectName> routeProcessorMBeanNames(boolean steps) throws Exception {
+        ManagementAgent agent = getContext().getManagementStrategy().getManagementAgent();
+        if (agent instanceof DefaultManagementAgent dma) {
+            return dma.getRouteProcessorMBeanNames(getRouteId(), steps);
+        }
+
+        List<ObjectName> answer = new ArrayList<>();
+        MBeanServer server = agent.getMBeanServer();
+        if (server != null) {
+            String prefix = agent.getIncludeHostName() ? "*/" : "";
+            String type = steps ? "steps" : "processors";
+            ObjectName query = ObjectName
+                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=" + type + ",*");
+            for (ObjectName on : server.queryNames(query, null)) {
+                ManagedProcessorMBean processor = agent.newProxyClient(on, ManagedProcessorMBean.class);
+                // the processor must belong to this route
+                if (processor != null && getRouteId().equals(processor.getRouteId())) {
+                    answer.add(on);
+                }
+            }
+        }
+        return answer;
     }
 
     private Integer getInflightExchanges() {

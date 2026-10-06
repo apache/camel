@@ -146,6 +146,12 @@ public class SecurityScanTools {
             if (idx < 0) {
                 return null;
             }
+            // require a token boundary before the key, so a longer identifier that merely ends in the key
+            // (isNested, unnested, an unrelated ...nested field) is not treated as this option
+            if (idx > 0 && Character.isLetterOrDigit(normalized.charAt(idx - 1))) {
+                from = idx + 1;
+                continue;
+            }
             int after = idx + optionKey.length();
             // a quoted key ("key":value) leaves a closing quote before the separator
             if (after < normalized.length() && normalized.charAt(after) == '"') {

@@ -1,0 +1,242 @@
+= Kamelet - Writing a custom Kamelet
+:tabs-sync-option:
+
+xref:ROOT:kamelet-component.adoc[Back to Kamelet Component]
+
+A Kamelet is a route template in a `.kamelet.yaml` file, together with a description of the parameters it takes.
+You write one when the same piece of an integration is needed in several routes: a policy such as removing
+personal data, a connection to a system with your company's settings, or a destination every route writes to.
+The routes then use it by name, with their own parameter values, like any other endpoint.
+
+== The three kinds of Kamelet
+
+Every Kamelet is one of three kinds, set by the `camel.apache.org/kamelet.type` label. The kind decides where its
+template starts and ends, and where a route uses it.
+
+[cols="1,3,2",options="header"]
+|===
+| Kind | Template | Used in a route as
+
+| `source`
+| Starts at a component that produces messages (a timer, a queue, an API), and ends with `to: kamelet:sink`, which
+  hands each message to the route.
+| `from: kamelet:<name>`
+
+| `sink`
+| Starts with `from: kamelet:source`, which receives the message of the route, and ends at a component that sends
+  it somewhere (a file, a topic, an API).
+| `to: kamelet:<name>`, usually as the last step
+
+| `action`
+| Starts with `from: kamelet:source` and changes the message (filter fields, convert, enrich). The changed message
+  goes back to the route.
+| `to: kamelet:<name>`, as a step in the middle
+|===
+
+== The file
+
+A Kamelet file is a YAML object (not a list of routes like a `.camel.yaml` file) with these parts:
+
+`apiVersion` and `kind`:: always `camel.apache.org/v1` and `Kamelet`.
+`metadata.name`:: the name routes use in `kamelet:<name>`. Name the file after it: `<name>.kamelet.yaml`.
+`metadata.labels`:: `camel.apache.org/kamelet.type` with `source`, `sink` or `action`.
+`spec.definition`:: the parameters as a JSON schema: a `title` and `description` for the Kamelet, the names of the
+`required` parameters, and under `properties` each parameter with its `title`, `description`, `type`, and an
+optional `default`.
+`spec.dependencies`:: the Camel components and libraries the template uses, as `camel:<name>` or
+`mvn:<groupId>:<artifactId>:<version>`.
+`spec.template`:: the route itself, written as in the YAML DSL: a `from` with its `steps`, and optionally `beans`.
+
+In the template a parameter is written as a property placeholder: `+{{customer}}+`. A parameter that may be left out
+is written `+{{?customer}}+`, which removes the option it sets when no value is given, instead of failing.
+
+== Mistakes to avoid
+
+* A parameter in the template is the placeholder `+{{tag}}+`, also inside an expression: `+simple: {expression: "${body} [{{tag}}]"}+`.
+  It is not `+${tag}+`, `+${properties.tag}+` or `+${header.tag}+`.
+* `properties` and `required` go under `spec.definition`, not directly under `spec`. `required` is a list of names
+  (`required: [tag]`), not `required: true` on a property.
+* The route is `spec.template` with a `from` and its `steps` under the `from`: no `steps`, `do` or `route` directly
+  under `spec` or `template`.
+* An action or a sink starts `from: kamelet:source`, never from the Kamelet itself: `kamelet:<its own name>` would
+  create the Kamelet again and again.
+* The file is one YAML document, without a `---`.
+
+== An action Kamelet
+
+This action keeps only the fields of a JSON object that are named in its `allowlist` parameter, so personal data
+such as the customer and email does not travel further.
+
+.content-filter-action.kamelet.yaml
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Kamelet
+metadata:
+  name: content-filter-action
+  labels:
+    camel.apache.org/kamelet.type: action
+spec:
+  definition:
+    title: Content Filter Action
+    description: Keeps only the listed fields of a JSON object
+    required:
+      - allowlist
+    properties:
+      allowlist:
+        title: Allowlist
+        description: Comma separated names of the fields to keep
+        type: string
+  dependencies:
+    - "camel:jq"
+  template:
+    from:
+      uri: kamelet:source
+      steps:
+        - setBody:
+            expression:
+              jq:
+                expression: 'with_entries(select(.key as $k | "{{allowlist}}" | split(",") | index($k)))'
+----
+
+== A source Kamelet
+
+This source produces a sample order at a fixed interval. The route that uses it chooses the customer, and may change
+the interval, which has a default.
+
+.order-source.kamelet.yaml
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Kamelet
+metadata:
+  name: order-source
+  labels:
+    camel.apache.org/kamelet.type: source
+spec:
+  definition:
+    title: Order Source
+    description: Produces a sample order at a fixed interval
+    required:
+      - customer
+    properties:
+      customer:
+        title: Customer
+        description: The customer name to put in the order
+        type: string
+      period:
+        title: Period
+        description: Milliseconds between orders
+        type: integer
+        default: 5000
+  dependencies:
+    - "camel:timer"
+  template:
+    from:
+      uri: timer:orders
+      parameters:
+        period: "{{period}}"
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: '{"id": "${exchangeId}", "customer": "{{customer}}", "email": "someone@example.com", "country": "DK"}'
+        - to:
+            uri: kamelet:sink
+----
+
+== A sink Kamelet
+
+This sink writes each message to a file in a directory.
+
+.archive-sink.kamelet.yaml
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Kamelet
+metadata:
+  name: archive-sink
+  labels:
+    camel.apache.org/kamelet.type: sink
+spec:
+  definition:
+    title: Archive Sink
+    description: Writes each message to a file in a directory
+    required:
+      - directory
+    properties:
+      directory:
+        title: Directory
+        description: The directory to write the files to
+        type: string
+      fileExtension:
+        title: File Extension
+        description: The extension of the file names
+        type: string
+        default: json
+  dependencies:
+    - "camel:file"
+  template:
+    from:
+      uri: kamelet:source
+      steps:
+        - to:
+            uri: "file:{{directory}}"
+            parameters:
+              fileName: "${exchangeId}.{{fileExtension}}"
+----
+
+== Using the Kamelets in a route
+
+A route uses each Kamelet by name, passing the parameters as endpoint parameters. Parameters with a default can be
+left out, or given to override the default:
+
+.orders.camel.yaml
+[source,yaml]
+----
+- route:
+    id: export-orders
+    from:
+      uri: kamelet:order-source
+      parameters:
+        customer: Donald
+        period: 2000
+      steps:
+        - to:
+            uri: kamelet:content-filter-action
+            parameters:
+              allowlist: id,country
+        - log:
+            message: "Filtered: ${body}"
+        - to:
+            uri: kamelet:archive-sink
+            parameters:
+              directory: target/orders
+----
+
+Each file written then holds only the fields that are allowed, such as `{"id":"...","country":"DK"}`.
+
+== Where Camel finds a Kamelet
+
+When a route uses `kamelet:<name>`, Camel loads `<name>.kamelet.yaml` from the `location` of the Kamelet component,
+which is `classpath:kamelets` by default. Set `camel.component.kamelet.location` to look elsewhere; several locations
+can be given, separated by comma.
+
+With the Camel CLI, the Kamelet files can simply be run with the route:
+
+[source,bash]
+----
+camel run orders.camel.yaml order-source.kamelet.yaml content-filter-action.kamelet.yaml archive-sink.kamelet.yaml
+----
+
+A Kamelet can also call another Kamelet in its template, as any route can.
+
+== Checking a Kamelet
+
+`camel validate yaml` checks a Kamelet file: the template against the YAML DSL, with the errors reported at their
+line in the template.
+
+[source,bash]
+----
+camel validate yaml content-filter-action.kamelet.yaml
+----

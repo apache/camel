@@ -78,9 +78,13 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
 
         @Override
         public void watch(final EventClient client) {
+            query(client, configuration.getBlockSeconds());
+        }
+
+        private void query(final EventClient client, long delaySeconds) {
             Runnable runnable = () -> client.listEvents(key,
                     QueryOptions.blockSeconds(configuration.getBlockSeconds(), index.get()).build(), EventWatcher.this);
-            scheduledExecutorService.schedule(runnable, configuration.getBlockSeconds(), TimeUnit.SECONDS);
+            scheduledExecutorService.schedule(runnable, delaySeconds, TimeUnit.SECONDS);
         }
 
         @Override
@@ -98,6 +102,11 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
         @Override
         public void onFailure(Throwable throwable) {
             onError(throwable);
+            // only an answer starts the next query: query again, or the events are not watched anymore. Wait at
+            // least one second, so that a Consul agent that is down is not queried in a loop
+            if (isRunAllowed()) {
+                query(client(), Math.max(1, configuration.getBlockSeconds()));
+            }
         }
 
         private void onEvent(Event event) {

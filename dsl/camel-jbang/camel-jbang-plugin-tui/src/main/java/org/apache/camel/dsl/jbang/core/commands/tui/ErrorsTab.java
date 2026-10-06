@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
@@ -93,6 +95,11 @@ class ErrorsTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            // fix with AI: the selected error, on the source line it happened at
+            askAiToFixSelectedError();
+            return true;
+        }
         if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()) {
             if (diagram.isHistoryTopologyMode()) {
                 if (ke.isUp()) {
@@ -466,6 +473,48 @@ class ErrorsTab extends AbstractTableTab {
         hint(spans, "Home/End", "top/end");
         hint(spans, "s", "sort");
         hintShowBhpv(spans, showBody, showHeaders, showProperties, showVariables);
+    }
+
+    @Override
+    public void renderFKeyHints(List<Span> spans) {
+        // with the global F-keys (after Esc back), as fix with AI is an F-key of every screen that has it
+        if (!diagram.isShowDiagram() && ctx.askAiCallback != null && selectedError() != null) {
+            hint(spans, "Shift+F8", "fix with AI");
+        }
+    }
+
+    /** The error selected in the table, or null. */
+    private ErrorInfo selectedError() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        List<ErrorInfo> sorted = applyFilter(info.errors);
+        Integer sel = tableState.selected();
+        return sel != null && sel >= 0 && sel < sorted.size() ? sorted.get(sel) : null;
+    }
+
+    /**
+     * Asks the AI to fix the selected error (Shift+F8), as the Source editor does for a line that fails at runtime: the
+     * source line of the processor it happened at, and its exception.
+     */
+    private void askAiToFixSelectedError() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        ErrorInfo error = selectedError();
+        if (info == null || error == null || ctx.askAiCallback == null) {
+            return;
+        }
+        String source = RuntimeFailures.sourceOf(info.routes, error);
+        Path file = RuntimeFailures.fileOf(FilesBrowser.resolveSourceDirectory(info), source);
+        int line = file != null ? LiveRunLines.lineOf(source, file.getFileName().toString()) : -1;
+        if (line < 0) {
+            if (ctx.notificationCallback != null) {
+                ctx.notificationCallback.accept("The source line of this error is not known, ask the AI with F8", false);
+            }
+            return;
+        }
+        ctx.askAiCallback.fixFailure(file, line + 1, RuntimeFailures.failureOf(error),
+                RuntimeFailures.lineText(file, line));
     }
 
     /** How often this kind of error happened, and how long it has been going on (CAMEL-24911). */

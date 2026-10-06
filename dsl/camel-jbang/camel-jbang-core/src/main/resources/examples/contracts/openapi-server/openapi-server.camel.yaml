@@ -139,24 +139,11 @@
             expression:
               constant:
                 expression: resource:file:stock.json
+        - unmarshal:
+            json:
+              library: Jackson
+        # the item of that SKU as a map, or null when there is none
         - setBody:
             expression:
-              jsonpath:
-                expression: "$[?(@.sku == '${header.sku}')]"
-                resultType: java.util.List
-        - choice:
-            when:
-              - expression:
-                  simple:
-                    expression: "${body.size()} == 0"
-                steps:
-                  - setBody:
-                      expression:
-                        simple:
-                          expression: "${null}"
-            otherwise:
-              steps:
-                - setBody:
-                    expression:
-                      simple:
-                        expression: "${body[0]}"
+              groovy:
+                expression: "body.find { it.sku == headers.sku }"

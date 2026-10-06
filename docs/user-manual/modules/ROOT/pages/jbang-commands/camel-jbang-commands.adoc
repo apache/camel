@@ -50,3 +50,20 @@ TIP: You can also use `camel --help` or `camel <command> --help` to see availabl
 | xref:jbang-commands/camel-jbang-version.adoc[camel version] | Manage Camel versions
 | xref:jbang-commands/camel-jbang-wrapper.adoc[camel wrapper] | Install Camel wrapper scripts for version pinning
 |===
+
+== Plugin commands
+
+These commands are provided by plugins. A plugin is installed with `camel plugin add <plugin>`.
+
+[cols="2,1,5",options="header"]
+|===
+| Command | Plugin | Description
+| xref:jbang-commands/camel-jbang-edit.adoc[camel edit] | `edit` | Edit Camel with suggestions and diagnostics
+| xref:jbang-commands/camel-jbang-generate.adoc[camel generate] | `generate` | Generate source code
+| xref:jbang-commands/camel-jbang-kubernetes.adoc[camel kubernetes] | `kubernetes` | Manage Camel applications running on Kubernetes
+| xref:jbang-commands/camel-jbang-mcp.adoc[camel mcp] | `mcp` | MCP server for AI coding assistants
+| xref:jbang-commands/camel-jbang-route-parser.adoc[camel route-parser] | `route-parser` | Parses Java route and dumps route structure
+| xref:jbang-commands/camel-jbang-test.adoc[camel test] | `test` | Manage tests for Camel applications
+| xref:jbang-commands/camel-jbang-tui.adoc[camel tui] | `tui` | Camel TUI
+| xref:jbang-commands/camel-jbang-validate.adoc[camel validate] | `validate` | Validate Camel source code
+|===

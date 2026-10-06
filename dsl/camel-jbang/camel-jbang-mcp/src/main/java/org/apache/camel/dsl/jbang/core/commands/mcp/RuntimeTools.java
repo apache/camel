@@ -288,6 +288,59 @@ public class RuntimeTools {
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
+                  Which runtime tool groups the Camel application needs, from what it has: sql (datasources, \
+                  SQL endpoints), tracing (OpenTelemetry, message tracing, Micrometer) and resilience (circuit \
+                  breakers). Returns the core tools, each group's tools with one line of guidance, and a fingerprint \
+                  that changes only when the groups do. A client for a small model offers the core tools plus these.""")
+    public JsonObject camel_runtime_tool_groups(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
+        return delegateToRegistry("get_tool_groups", nameOrPid, Map.of());
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  List the HTTP endpoints the running Camel application serves (Rest DSL and platform-http): \
+                  method, path, consumes/produces, route and OpenAPI operation, the server's base URL and the \
+                  contract. includeSpec=true adds the OpenAPI contract itself.""")
+    public JsonObject camel_runtime_http_endpoints(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "Add the OpenAPI contract of a contract-first service (default false)",
+                     required = false) Boolean includeSpec) {
+        Map<String, String> args = new HashMap<>();
+        if (includeSpec != null && includeSpec) {
+            args.put("includeSpec", "true");
+        }
+        return delegateToRegistry("get_http_endpoints", nameOrPid, args);
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Send an HTTP request to the running Camel application's own server (localhost and its port) and \
+                  return the status, headers and body (cut at 6000 characters). Pass the path, e.g. /api/orders/1; \
+                  other hosts are refused. Use camel_runtime_http_endpoints for the paths it serves.""")
+    public JsonObject camel_runtime_http_request(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "GET (default), POST, PUT, PATCH, DELETE, HEAD or OPTIONS",
+                     required = false) String method,
+            @ToolArg(description = "The path with query, e.g. /api/orders?status=open") String path,
+            @ToolArg(description = "Headers as a JSON object or one 'name: value' per line",
+                     required = false) String headers,
+            @ToolArg(description = "The request body", required = false) String body) {
+        if (path == null || path.isBlank()) {
+            throw new ToolCallException("path is required, e.g. /api/orders/1", null);
+        }
+        Map<String, String> args = new HashMap<>();
+        args.put("path", path);
+        putIfNotBlank(args, "method", method);
+        putIfNotBlank(args, "headers", headers);
+        if (body != null) {
+            args.put("body", body);
+        }
+        return delegateToRegistry("http_request", nameOrPid, args);
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
                   Get the datasources of the running Camel application with their connection pool status: \
                   active, idle and total connections, max pool size and waiting threads (HikariCP and Agroal).""")
     public JsonObject camel_runtime_datasources(
@@ -346,7 +399,7 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the startup recorder steps of the running Camel application: each step with duration, level \
-                  and type, for diagnosing a slow startup. Requires camel.main.startup-recorder=true.""")
+                  and type, for diagnosing a slow startup. Requires camel.main.startup-recorder=backlog.""")
     public JsonObject camel_runtime_startup_steps(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_startup_steps", nameOrPid, Map.of());

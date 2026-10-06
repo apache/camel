@@ -82,7 +82,7 @@ public class KubernetesDeploymentsConsumer extends DefaultConsumer {
 
     class DeploymentsConsumerTask implements Runnable {
 
-        private Watch watch;
+        private volatile Watch watch;
 
         @Override
         public void run() {
@@ -140,10 +140,16 @@ public class KubernetesDeploymentsConsumer extends DefaultConsumer {
                 public void onClose(WatcherException cause) {
                     if (cause != null) {
                         LOG.error(cause.getMessage(), cause);
+                        // the client gave up the watch (410 Gone): watch again
+                        KubernetesHelper.watchAgain(KubernetesDeploymentsConsumer.this, executor, DeploymentsConsumerTask.this);
                     }
 
                 }
             });
+            if (!isRunAllowed()) {
+                // the consumer was stopped while the watch was being created, so stopping could not close it
+                watch.close();
+            }
         }
 
         public Watch getWatch() {

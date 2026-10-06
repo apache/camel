@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.jackson3;
 
+import java.io.OutputStream;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.JsonPayloadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.core.StreamReadConstraints;
@@ -113,4 +117,19 @@ public class JacksonDataFormat extends AbstractJacksonDataFormat {
         return "application/json";
     }
 
+    /**
+     * A body that is already the JSON text is written as it is (CAMEL-25329), see {@link JsonPayloadHelper}: a file, a
+     * stream, bytes, or a String holding a JSON object or array. Any other String, and every object, is marshalled as
+     * before.
+     */
+    @Override
+    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        if (JsonPayloadHelper.writeIfAlreadyJson(exchange, graph, stream) >= 0) {
+            if (isContentTypeHeader()) {
+                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, getDefaultContentType());
+            }
+            return;
+        }
+        super.marshal(exchange, graph, stream);
+    }
 }

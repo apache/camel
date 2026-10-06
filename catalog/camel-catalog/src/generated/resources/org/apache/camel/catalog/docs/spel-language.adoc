@@ -118,13 +118,46 @@ use `spel` as an Expression passed in as a parameter
 to the `setBody` method.
 Though if we use the fluent API, we can do this instead:
 
-._Java-only: fluent API for spel expression_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:example")
     .setBody().spel("Hello #{request.body}! What a beautiful #{request.headers['dayOrNight']}")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:example"/>
+  <setBody>
+    <spel>Hello #{request.body}! What a beautiful #{request.headers['dayOrNight']}</spel>
+  </setBody>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:example
+      steps:
+        - setBody:
+            expression:
+              spel:
+                expression: 'Hello #{request.body}! What a beautiful #{request.headers[''dayOrNight'']}'
+        - to:
+            uri: mock:result
+----
+====
 
 Notice we now use the `spel` method from the `setBody()` method. And
 this does not require us to statically import the `spel` method.

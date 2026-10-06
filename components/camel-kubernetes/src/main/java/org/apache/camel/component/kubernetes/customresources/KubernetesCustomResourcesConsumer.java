@@ -80,7 +80,7 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
 
     class CustomResourcesConsumerTask implements Runnable {
 
-        private Watch watch;
+        private volatile Watch watch;
 
         @Override
         public void run() {
@@ -89,7 +89,7 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
             }
             String namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
             try {
-                getEndpoint().getKubernetesClient()
+                watch = getEndpoint().getKubernetesClient()
                         .genericKubernetesResources(getCRDContext(getEndpoint().getKubernetesConfiguration()))
                         .inNamespace(namespace)
                         .watch(new Watcher<>() {
@@ -113,11 +113,20 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
                             public void onClose(WatcherException cause) {
                                 if (cause != null) {
                                     LOG.error(cause.getMessage(), cause);
+                                    // the client gave up the watch (410 Gone): watch again
+                                    KubernetesHelper.watchAgain(KubernetesCustomResourcesConsumer.this, executor,
+                                            CustomResourcesConsumerTask.this);
                                 }
                             }
                         });
+                if (!isRunAllowed()) {
+                    // the consumer was stopped while the watch was being created, so stopping could not close it
+                    watch.close();
+                }
             } catch (Exception e) {
                 LOG.error("Exception in handling githubsource instance change", e);
+                // so that watching again is tried again
+                throw e;
             }
         }
 

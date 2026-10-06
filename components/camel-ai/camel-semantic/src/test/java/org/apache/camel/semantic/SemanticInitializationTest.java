@@ -27,7 +27,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.support.service.ServiceSupport;
@@ -96,7 +95,7 @@ class SemanticInitializationTest {
                     try {
                         language.createExpression("ref:q");
                         return "created";
-                    } catch (RuntimeCamelException e) {
+                    } catch (IllegalArgumentException e) {
                         assertThat(e).hasRootCauseInstanceOf(IllegalArgumentException.class)
                                 .hasRootCauseMessage(
                                         "Semantic adapter registry name is already bound: " + SemanticLanguage.ADAPTER_NAME);

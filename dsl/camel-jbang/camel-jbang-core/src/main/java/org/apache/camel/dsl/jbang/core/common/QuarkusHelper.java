@@ -26,10 +26,13 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -76,6 +79,14 @@ import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS
 public final class QuarkusHelper {
 
     public static final String QUARKUS_PLATFORM_URL_PROPERTY = "camel.jbang.quarkus.platform.url";
+
+    private static final String PLATFORM_MAPPING_FILE = "platform-mapping.json";
+
+    /**
+     * How long a remembered Camel to Quarkus platform mapping is trusted. The registry may later publish a newer
+     * platform for the same Camel version (a respin), so the mapping is not kept forever.
+     */
+    private static final Duration PLATFORM_MAPPING_TTL = Duration.ofDays(7);
 
     private QuarkusHelper() {
     }
@@ -127,6 +138,9 @@ public final class QuarkusHelper {
      * <p>
      * This is used by export/run commands to query the registry for the correct platform BOM version instead of using
      * the build-time constant. The registry may have a newer compatible version.
+     * <p>
+     * A platform whose Camel version is exactly the requested released {@code camelVersion} is remembered next to the
+     * cached registry response and reused without asking the registry again for 7 days. {@code fresh} drops it.
      *
      * @param  camelVersion                    if specified, the value of {@code --camel-version} CLI parameter or the
      *                                         Camel version of the currently running camel-jbang. Must not be
@@ -142,17 +156,136 @@ public final class QuarkusHelper {
             boolean download,
             String quarkusExtensionRegistryBaseUri,
             boolean fresh) {
+        return findQuarkusPlatformBom(
+                camelVersion, mavenResolver, download, quarkusExtensionRegistryBaseUri, fresh, registriesDir(),
+                Clock.systemUTC());
+    }
+
+    static QuarkusPlatformBom findQuarkusPlatformBom(
+            String camelVersion,
+            Function<MavenGav, MavenArtifact> mavenResolver,
+            boolean download,
+            String quarkusExtensionRegistryBaseUri,
+            boolean fresh,
+            Path registriesDir,
+            Clock clock) {
         if (camelVersion == null) {
             camelVersion = RuntimeType.main.version();
         }
+        final boolean snapshot = camelVersion.endsWith("-SNAPSHOT");
 
-        JsonArray streams = fetchPlatformStreams(quarkusExtensionRegistryBaseUri, download, fresh, registriesDir());
+        final Path mappingFile = platformMappingFile(quarkusExtensionRegistryBaseUri, registriesDir);
+        if (mappingFile != null) {
+            if (fresh) {
+                if (download) {
+                    try {
+                        Files.deleteIfExists(mappingFile);
+                    } catch (IOException e) {
+                        // the mapping is only a cache, the registry is asked below
+                    }
+                }
+            } else if (!snapshot) {
+                QuarkusPlatformBom cached
+                        = readPlatformMapping(mappingFile, camelVersion, quarkusExtensionRegistryBaseUri, clock);
+                if (cached != null) {
+                    return cached;
+                }
+            }
+        }
+
+        JsonArray streams = fetchPlatformStreams(quarkusExtensionRegistryBaseUri, download, fresh, registriesDir);
         if (streams == null || streams.isEmpty()) {
             return null;
         }
         Optional<QuarkusPlatformBom> resolved
                 = findPlatformBom(streams, new MajorMinor(camelVersion), mavenResolver, quarkusExtensionRegistryBaseUri);
+        // only a platform with exactly the requested released Camel version is final; a fallback may be replaced
+        if (mappingFile != null && !snapshot && resolved.isPresent() && camelVersion.equals(resolved.get().camelVersion())) {
+            storePlatformMapping(mappingFile, camelVersion, resolved.get(), clock);
+        }
         return resolved.orElse(null);
+    }
+
+    /**
+     * @return the file remembering the Camel version to platform mapping of the given registry, or {@code null} for a
+     *         {@code file://} registry, which is not cached, or an invalid URI, which {@link #fetchPlatformStreams}
+     *         reports
+     */
+    private static Path platformMappingFile(String quarkusExtensionRegistryBaseUri, Path registriesDir) {
+        try {
+            final URI uri = new URI(quarkusExtensionRegistryBaseUri + "/client/platforms/all");
+            if ("file".equals(uri.getScheme())) {
+                return null;
+            }
+            return cacheFile(uri, registriesDir).resolveSibling(PLATFORM_MAPPING_FILE);
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
+    /**
+     * @return the platform remembered for the given Camel version, or {@code null} if there is none or the entry is
+     *         unusable: incomplete, without a timestamp, stamped in the future or older than
+     *         {@link #PLATFORM_MAPPING_TTL}
+     */
+    private static QuarkusPlatformBom readPlatformMapping(
+            Path mappingFile, String camelVersion, String quarkusExtensionRegistryBaseUri, Clock clock) {
+        if (readPlatformMappings(mappingFile).get(camelVersion) instanceof JsonObject entry
+                && entry.get("groupId") instanceof String groupId && !groupId.isBlank()
+                && entry.get("version") instanceof String version && !version.isBlank()
+                && entry.get("resolvedAt") instanceof Number resolvedAt) {
+            final long age = clock.millis() - resolvedAt.longValue();
+            if (age >= 0 && age <= PLATFORM_MAPPING_TTL.toMillis()) {
+                return new QuarkusPlatformBom(groupId, version, camelVersion, quarkusExtensionRegistryBaseUri);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Concurrent processes are last-writer-wins: the file is replaced atomically, so it is never torn, and an entry
+     * lost to another writer is only a cache miss.
+     */
+    private static void storePlatformMapping(Path mappingFile, String camelVersion, QuarkusPlatformBom bom, Clock clock) {
+        JsonObject mappings = readPlatformMappings(mappingFile);
+        JsonObject entry = new JsonObject();
+        entry.put("groupId", bom.groupId());
+        entry.put("version", bom.version());
+        entry.put("resolvedAt", clock.millis());
+        mappings.put(camelVersion, entry);
+        Path tmp = null;
+        try {
+            Path dir = mappingFile.getParent();
+            Files.createDirectories(dir);
+            tmp = Files.createTempFile(dir, PLATFORM_MAPPING_FILE, ".tmp");
+            Files.writeString(tmp, Jsoner.serialize(mappings));
+            try {
+                Files.move(tmp, mappingFile, StandardCopyOption.ATOMIC_MOVE);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(tmp, mappingFile, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            // the mapping is only a cache, the next run asks the registry again
+        } finally {
+            if (tmp != null) {
+                try {
+                    Files.deleteIfExists(tmp);
+                } catch (IOException e) {
+                    // nothing more can be done for a leftover temp file
+                }
+            }
+        }
+    }
+
+    private static JsonObject readPlatformMappings(Path mappingFile) {
+        try {
+            if (Jsoner.deserialize(Files.readString(mappingFile)) instanceof JsonObject mappings) {
+                return mappings;
+            }
+        } catch (IOException | DeserializationException e) {
+            // a missing, unreadable or corrupt mapping is a cache miss
+        }
+        return new JsonObject();
     }
 
     public static String resolveCamelVersionFromQuarkusCamelBom(
@@ -260,7 +393,9 @@ public final class QuarkusHelper {
         if (relPath != null && relPath.startsWith("/")) {
             relPath = relPath.substring(1);
         }
-        final Path cacheFile = registriesDir.resolve(uri.getHost()).resolve(relPath + ".json").normalize();
+        // the port is part of the registry: two registries on one host must not share their caches
+        final String registryDir = uri.getPort() < 0 ? uri.getHost() : uri.getHost() + "_" + uri.getPort();
+        final Path cacheFile = registriesDir.resolve(registryDir).resolve(relPath + ".json").normalize();
         if (!cacheFile.startsWith(registriesDir)) {
             throw new IllegalStateException(
                     "Could not create a safe cache directory for " + uri + ": " + cacheFile + " is not under "

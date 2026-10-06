@@ -18,6 +18,8 @@ package org.apache.camel.component.couchbase;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -38,6 +40,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.resume.ResumeStrategyHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +58,11 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
     static final String SQL_DOCUMENT_ID_ALIAS = "__id";
 
     private final Lock lock = new ReentrantLock();
+    /**
+     * IDs of the documents whose exchange was created by a poll and has not completed or failed yet, with
+     * {@code consumerProcessedStrategy=delete}. See {@link #isInFlight(String)}.
+     */
+    private final Set<String> inFlight = ConcurrentHashMap.newKeySet();
     private final CouchbaseEndpoint endpoint;
     private Bucket bucket;
     private Scope scope;
@@ -144,17 +152,25 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
     protected int poll() throws Exception {
         lock.lock();
         try {
-            if (useSqlQuery) {
-                return pollWithSqlQuery();
-            } else {
-                return pollWithView();
+            Queue<Object> exchanges = new ArrayDeque<>();
+            try {
+                if (useSqlQuery) {
+                    pollWithSqlQuery(exchanges);
+                } else {
+                    pollWithView(exchanges);
+                }
+            } catch (Exception e) {
+                // the poll failed part way, so none of the exchanges created so far is handed to the route
+                releaseUndelivered(exchanges);
+                throw e;
             }
+            return processBatch(exchanges);
         } finally {
             lock.unlock();
         }
     }
 
-    private int pollWithSqlQuery() throws Exception {
+    private void pollWithSqlQuery(Queue<Object> exchanges) throws Exception {
         QueryOptions queryOptions = QueryOptions.queryOptions()
                 .scanConsistency(QueryScanConsistency.REQUEST_PLUS);
 
@@ -167,7 +183,7 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
         }
 
         String consumerProcessedStrategy = endpoint.getConsumerProcessedStrategy();
-        Queue<Object> exchanges = new ArrayDeque<>();
+        boolean removeOnCompletion = "delete".equalsIgnoreCase(consumerProcessedStrategy);
 
         for (JsonObject row : result.rowsAsObject()) {
             String id = row.getString(SQL_DOCUMENT_ID_ALIAS);
@@ -175,6 +191,9 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
                 LOG.warn("Row does not contain '{}' field. "
                          + "Ensure your SQL++ query includes META().id AS {} in the SELECT clause. Skipping row.",
                         SQL_DOCUMENT_ID_ALIAS, SQL_DOCUMENT_ID_ALIAS);
+                continue;
+            }
+            if (removeOnCompletion && isInFlight(id)) {
                 continue;
             }
 
@@ -190,12 +209,8 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
             exchange.getIn().setBody(doc);
             exchange.getIn().setHeader(HEADER_ID, id);
 
-            if ("delete".equalsIgnoreCase(consumerProcessedStrategy)) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Deleting doc with ID {}", id);
-                }
-                CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
-                        endpoint.getConsumerRetryPause());
+            if (removeOnCompletion) {
+                removeDocumentOnCompletion(exchange, id);
             } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Filtering out ID {}", id);
@@ -212,12 +227,10 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
 
             exchanges.add(exchange);
         }
-
-        return processBatch(exchanges);
     }
 
     @SuppressWarnings("deprecation")
-    private int pollWithView() throws Exception {
+    private void pollWithView(Queue<Object> exchanges) throws Exception {
         ViewResult result = bucket.viewQuery(endpoint.getDesignDocumentName(), endpoint.getViewName(), this.viewOptions);
 
         // okay we have some response from CouchBase so lets mark the consumer as ready
@@ -228,11 +241,14 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
         }
 
         String consumerProcessedStrategy = endpoint.getConsumerProcessedStrategy();
+        boolean removeOnCompletion = "delete".equalsIgnoreCase(consumerProcessedStrategy);
 
-        Queue<Object> exchanges = new ArrayDeque<>();
         for (ViewRow row : result.rows()) {
             Object doc;
             String id = row.id().get();
+            if (removeOnCompletion && isInFlight(id)) {
+                continue;
+            }
             if (endpoint.isFullDocument()) {
                 doc = CouchbaseCollectionOperation.getDocument(collection, id, endpoint.getQueryTimeout(),
                         endpoint.getConsumerRetryPause());
@@ -255,12 +271,8 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
             exchange.getIn().setHeader(HEADER_DESIGN_DOCUMENT_NAME, designDocumentName);
             exchange.getIn().setHeader(HEADER_VIEWNAME, viewName);
 
-            if ("delete".equalsIgnoreCase(consumerProcessedStrategy)) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Deleting doc with ID {}", id);
-                }
-                CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
-                        endpoint.getConsumerRetryPause());
+            if (removeOnCompletion) {
+                removeDocumentOnCompletion(exchange, id);
             } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Filtering out ID {}", id);
@@ -273,8 +285,87 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
             logDetails(id, doc, key, designDocumentName, viewName, exchange);
             exchanges.add(exchange);
         }
+    }
 
-        return processBatch(exchanges);
+    /**
+     * Whether the exchange of this document, created by an earlier poll, has not completed or failed yet.
+     * <p/>
+     * With {@code consumerProcessedStrategy=delete} the document is removed only when its exchange completes. If the
+     * route hands the exchange over to another thread (for example {@code seda} with
+     * {@code waitForTaskToComplete=Never}, or an asynchronous producer), that can be after the next poll has read the
+     * same document again, which would deliver it twice. Such a document is skipped until its exchange is done, as the
+     * in-progress repository of the file and aws2-s3 consumers does. A skipped row does not count towards
+     * {@code maxMessagesPerPoll}, as no exchange is created for it.
+     * <p/>
+     * The other strategies leave the document in place, so reading it again on the next poll is what they do anyway;
+     * they are not guarded. The guard is kept per consumer, it does not stop another consumer, for example on another
+     * node, from reading the same document.
+     */
+    private boolean isInFlight(String id) {
+        // only the poll adds an ID, under the poll lock, so checking first and adding later does not race
+        if (inFlight.contains(id)) {
+            LOG.trace("Skipping document with ID {} as its exchange is still in progress", id);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Removes the document once its exchange has been processed successfully.
+     * <p/>
+     * Removing it while the exchanges are built, before any of them is handed to the route, loses the document when its
+     * exchange fails, or when it is never delivered at all because the batch is cut short by {@code maxMessagesPerPoll}
+     * or by the consumer stopping. The on-completion runs only for an exchange that went through the route and
+     * completed: a failed exchange keeps its document for the next poll, and an undelivered one is not touched.
+     * <p/>
+     * The on-completion is handed over with the exchange, so that the document is not removed before an asynchronous
+     * part of the route has processed it. Until then the document is marked as in progress (see
+     * {@link #isInFlight(String)}), and it is released when the exchange completes or fails, or by
+     * {@link #releaseUndelivered(Queue)} when the exchange is never handed to the route.
+     */
+    private void removeDocumentOnCompletion(Exchange exchange, String id) {
+        inFlight.add(id);
+        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+            @Override
+            public void onComplete(Exchange exchange) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Deleting doc with ID {}", id);
+                }
+                try {
+                    CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
+                            endpoint.getConsumerRetryPause());
+                } catch (Exception e) {
+                    getExceptionHandler().handleException("Error removing document with ID " + id, exchange, e);
+                } finally {
+                    inFlight.remove(id);
+                }
+            }
+
+            @Override
+            public void onFailure(Exchange exchange) {
+                // the document is kept, so a later poll may consume it again
+                inFlight.remove(id);
+            }
+        });
+    }
+
+    /**
+     * Releases exchanges that were created by a poll but never handed to the route, and their documents.
+     * <p/>
+     * Nothing else will release these, and a pooled exchange that is never released never returns to the pool. With
+     * {@code consumerProcessedStrategy=delete} their documents are left in place, as the removal only runs on
+     * completion, and are no longer marked as in progress, so a later poll picks them up.
+     */
+    private void releaseUndelivered(Queue<Object> exchanges) {
+        Object next;
+        while ((next = exchanges.poll()) != null) {
+            Exchange exchange = (Exchange) next;
+            String id = exchange.getIn().getHeader(HEADER_ID, String.class);
+            if (id != null) {
+                inFlight.remove(id);
+            }
+            releaseExchange(exchange, false);
+        }
     }
 
     @Override
@@ -297,16 +388,8 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
         }
 
         // Anything still queued was never handed to the route - the batch was cut short because the consumer is
-        // stopping, or the poll returned more rows than maxMessagesPerPoll. Nothing else will release these, and a
-        // pooled exchange that is never released never returns to the pool.
-        //
-        // Releasing them is not the same as handling them: with consumerProcessedStrategy=delete the document was
-        // already removed during the poll, above, so these rows are lost rather than redelivered. That predates
-        // this method and is not fixed here - see CAMEL-25221
-        Exchange remaining;
-        while ((remaining = (Exchange) exchanges.poll()) != null) {
-            releaseExchange(remaining, false);
-        }
+        // stopping, or the poll returned more rows than maxMessagesPerPoll
+        releaseUndelivered(exchanges);
 
         return answer;
     }
@@ -320,9 +403,7 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
      * exchange had been delivered.
      * <p/>
      * The route's own error handler has already logged the exhausted failure by this point, so this is not the only
-     * record of it; what it adds is that the consumer no longer treats a failed exchange as a delivered one. It matters
-     * most with {@code consumerProcessedStrategy=delete}, where the document is removed during the poll, before the
-     * route runs, so a failure means the document is gone.
+     * record of it; what it adds is that the consumer no longer treats a failed exchange as a delivered one.
      */
     private void processExchange(Exchange exchange) {
         try {

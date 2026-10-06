@@ -258,6 +258,29 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
     }
 
     @Test
+    void keepsTheConnectionWhileASlowStatusIsCollected() throws Exception {
+        // the status of a large integration (thousands of processors) can take seconds to collect: it must hold up
+        // neither hello nor the heartbeats
+        property("camel.cli.websocket.heartbeat-interval", "200");
+        connector = new LocalCliConnector(new DefaultCliConnectorFactory()) {
+            @Override
+            public JsonObject status() throws Exception {
+                Thread.sleep(2000);
+                return super.status();
+            }
+        };
+        connector.setCamelContext(context);
+        long start = System.currentTimeMillis();
+        connector.start();
+
+        tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+        assertThat(System.currentTimeMillis() - start).isLessThan(1500);
+        // longer than 3 heartbeat intervals behind several status collections: still the first connection
+        await().during(6, TimeUnit.SECONDS).atMost(8, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertThat(tool.handshakes).hasValue(1));
+    }
+
+    @Test
     void reconnectsWhenTheToolStopsAnswering() throws Exception {
         property("camel.cli.websocket.heartbeatInterval", "200");
         startConnector();

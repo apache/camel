@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -143,7 +144,10 @@ class TuiToolRegistry {
     private static Map<String, String> stringArgs(Map<String, Object> args) {
         Map<String, String> stringArgs = new LinkedHashMap<>();
         for (Map.Entry<String, Object> e : args.entrySet()) {
-            if (e.getValue() != null) {
+            if (e.getValue() instanceof Map<?, ?> || e.getValue() instanceof List<?>) {
+                // e.g. headers passed as an object: the shared tools read JSON
+                stringArgs.put(e.getKey(), Jsoner.serialize(e.getValue()));
+            } else if (e.getValue() != null) {
                 stringArgs.put(e.getKey(), String.valueOf(e.getValue()));
             }
         }
@@ -229,7 +233,7 @@ class TuiToolRegistry {
     private static final Set<String> READ_ONLY_TUI_TOOLS = Set.of(
             "tui_get_ai_log", "tui_get_diagram", "tui_get_events", "tui_get_history", "tui_get_mcp_log",
             "tui_get_ollama", "tui_get_options", "tui_get_processor_detail", "tui_get_readme", "tui_get_screen",
-            "tui_get_spans",
+            "tui_get_spans", "tui_http_endpoints",
             "tui_get_state", "tui_get_status", "tui_get_table", "tui_get_themes", "tui_get_topology",
             "tui_list_examples", "tui_locate", "tui_wait_for_idle");
 
@@ -265,6 +269,16 @@ class TuiToolRegistry {
     }
 
     /**
+     * Returns the {@link #CORE_TOOLS} definitions plus the given ones (the tools of the integration's tool groups, see
+     * {@link TuiToolGroups}), in registry order.
+     */
+    List<ToolDef> getCoreToolDefinitions(Collection<String> extra) {
+        return getToolDefinitions().stream()
+                .filter(t -> CORE_TOOLS.contains(t.name()) || extra.contains(t.name()))
+                .toList();
+    }
+
+    /**
      * Executes a tool by name, returns result string.
      */
     String execute(String name, Map<String, Object> args) throws Exception {
@@ -295,6 +309,8 @@ class TuiToolRegistry {
             case "tui_get_topology" -> callGetTopology();
             case "tui_send_message" -> callSendMessage(args);
             case "tui_execute_sql" -> callExecuteSql(args);
+            case "tui_http_endpoints" -> executeShared("get_http_endpoints", args);
+            case "tui_http_request" -> executeShared("http_request", args);
             case "tui_update_row" -> callUpdateRow(args);
             case "tui_set_log_level" -> callSetLogLevel(args);
             case "tui_filter" -> callFilter(args);

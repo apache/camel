@@ -41,16 +41,18 @@ public abstract class EndpointUriFactorySupport implements EndpointUriFactory {
     }
 
     private static int indexOfPathParameter(String uri, String name) {
-        // skip the scheme
-        int idx = uri.indexOf(name, uri.indexOf(':') + 1);
-        while (idx != -1) {
+        // the last match after the scheme: the path parameters are built in the order of the syntax, so the values
+        // of those before this one are before its name, and may contain it as a word ({{name}}) (CAMEL-25383)
+        int scheme = uri.indexOf(':');
+        int idx = uri.lastIndexOf(name);
+        while (idx > scheme) {
             int end = idx + name.length();
             boolean start = idx == 0 || !Character.isLetterOrDigit(uri.charAt(idx - 1));
             boolean stop = end == uri.length() || !Character.isLetterOrDigit(uri.charAt(end));
             if (start && stop) {
                 return idx;
             }
-            idx = uri.indexOf(name, idx + 1);
+            idx = uri.lastIndexOf(name, idx - 1);
         }
         return -1;
     }

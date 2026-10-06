@@ -169,9 +169,44 @@ final class SchemaHints {
                     m -> "a top-level entry is one key: - route:, - beans:, - rest:...; the lines that belong to it"
                          + " must be indented under it, a second key at the same level as the entry is read as a"
                          + " separate property"),
-            append("maxProperties", ".*/steps/\\d+", ANY,
-                    m -> "a step is one EIP: an option of that EIP is indented under its key, and the next EIP is its"
-                         + " own - item"));
+            append("maxProperties", ".*/steps/\\d+", ANY, SchemaHints::stepWithTwoKeys));
+
+    /**
+     * The keys of a step after its EIP, each with where it goes: an option of the EIP is indented under it, another EIP
+     * is the next - item (CAMEL-25372). Without the keys, the generic sentence.
+     */
+    static String stepWithTwoKeys(Match m) {
+        String generic = "a step is one EIP: an option of that EIP is indented under its key, and the next EIP is its"
+                         + " own - item";
+        var node = m.error().getInstanceNode();
+        if (node == null || !node.isObject() || node.size() < 2) {
+            return generic;
+        }
+        List<String> keys = new ArrayList<>();
+        node.fieldNames().forEachRemaining(keys::add);
+        Set<String> steps = m.validator().stepNames();
+        String eip = keys.stream().filter(steps::contains).findFirst().orElse(null);
+        if (eip == null) {
+            return generic;
+        }
+        Set<String> options = m.validator().optionsOf(eip);
+        List<String> parts = new ArrayList<>();
+        for (String k : keys) {
+            if (k.equals(eip)) {
+                continue;
+            }
+            if (steps.contains(k)) {
+                parts.add(k + ": is another EIP: start it as its own item, - " + k + ":");
+            } else if (options.contains(k)) {
+                parts.add(k + ": is at the column of - " + eip + ": as an option of " + eip + " it is indented under "
+                          + eip + ":, two spaces more, next to its other options");
+            } else {
+                // neither: say what a step is, without guessing where the key belongs
+                return generic;
+            }
+        }
+        return parts.isEmpty() ? generic : String.join("; ", parts);
+    }
 
     // -------------------------------------------------------------------------------------------------------------
     // expression hints
@@ -312,6 +347,11 @@ final class SchemaHints {
                          + " key: errorHandler: {noErrorHandler: {}}, errorHandler: {deadLetterChannel: {deadLetterUri:"
                          + " \"direct:parked\"}}, errorHandler: {defaultErrorHandler: {redeliveryPolicy: {...}}}"
                          + " (a top-level - errorHandler: item applies to every route)"),
+            // - noErrorHandler: {} as a step of the route: the handler goes on the route, not among its steps (CAMEL-25328)
+            unknownProperty(".*/steps/\\d+", m -> ROUTE_ERROR_HANDLER_KINDS.contains(m.unknown()),
+                    m -> "an error handler is not a step: write it on the route, next to from:, as errorHandler: {"
+                         + m.unknown() + ": " + (m.unknown().equals("noErrorHandler") ? "{}" : "{...}")
+                         + "} (a top-level - errorHandler: item applies to every route)"),
             unknownProperty(".*/errorHandler", m -> m.unknown().equals("type") || m.unknown().equals("errorHandlerType"),
                     m -> "errorHandler: has the kind of handler as its key, not a " + m.unknown() + " property:"
                          + " errorHandler: {noErrorHandler: {}}, {deadLetterChannel: {deadLetterUri: \"...\"}} or"

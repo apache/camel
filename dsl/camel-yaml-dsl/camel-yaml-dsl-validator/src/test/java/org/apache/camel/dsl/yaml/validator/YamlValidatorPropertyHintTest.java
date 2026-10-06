@@ -90,6 +90,25 @@ public class YamlValidatorPropertyHintTest {
         }
     }
 
+    /** CAMEL-25328: an error handler written as a step of the route says where it goes. */
+    @Test
+    public void testErrorHandlerAsAStepGetsTheRouteForm() throws Exception {
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate("""
+                    - route:
+                        id: payment-provider
+                        from:
+                          uri: direct:charge
+                          steps:
+                            - noErrorHandler: {}
+                            - log: "charged"
+                    """);
+            assertThat(errors).extracting(Error::getMessage)
+                    .anyMatch(m -> m.contains("noErrorHandler") && m.contains("an error handler is not a step")
+                            && m.contains("errorHandler: {noErrorHandler: {}}"));
+        }
+    }
+
     /** CAMEL-24888: the shapes the local model wrote on the HTTP rungs, each with the form to write. */
     @Test
     public void testHttpRungShapesGetTheForm() throws Exception {
@@ -704,6 +723,46 @@ public class YamlValidatorPropertyHintTest {
         assertThat(errors.get(0).getMessage())
                 .startsWith("groovy: ${...} is simple syntax, not groovy: write the expression in groovy (body.value < 1")
                 .contains("or use simple: {expression: \"${body.value} < 1\"}");
+    }
+
+    @Test
+    public void testJsonPathWithInlinedSimpleIsValid() throws Exception {
+        // the jsonpath language evaluates ${...} inside a JsonPath first (allowSimple, on by default)
+        List<Error> errors = validator.validate("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.store.book[?(@.price < ${header.max})]"
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[?(@.sku == '${header.sku}')]"
+                                resultType: java.util.List
+                """);
+        assertThat(errors).isEmpty();
+
+        // a whole ${...} is simple syntax, and so is any ${...} when allowSimple is off
+        errors = validator.validate("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "${body.price}"
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.store.book[?(@.price < ${header.max})]"
+                                allowSimple: false
+                """);
+        assertThat(errors).hasSize(2);
+        assertThat(errors.get(0).getMessage()).startsWith("jsonpath: ${...} is simple syntax, not jsonpath");
     }
 
     @Test

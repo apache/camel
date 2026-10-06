@@ -141,6 +141,12 @@ class SourceViewer {
         Map<Integer, LiveLine> lines(String filePath);
     }
 
+    /** The last runtime failure of a line of a file, by its path and 0-based line: the exception, or null. */
+    @FunctionalInterface
+    interface LineFailures {
+        String lastFailure(String filePath, int line);
+    }
+
     private boolean visible;
     private List<String> lines = Collections.emptyList();
     private List<JsonObject> codeData = Collections.emptyList();
@@ -211,6 +217,7 @@ class SourceViewer {
     private EndpointValidator simpleValidator;
     private EndpointValidator routeValidator;
     private LiveRunData liveRunData;
+    private LineFailures lineFailures;
     private Map<Integer, LiveLine> liveLines = Collections.emptyMap();
     private long liveLinesTime;
     private int liveTotalWidth;
@@ -238,6 +245,8 @@ class SourceViewer {
      */
     private Map<Integer, String> viewErrors = Collections.emptyMap();
     private boolean editInitialScroll;
+    /** The top line of the view when F4 was pressed, so the editor opens on the same screen; -1 when not known. */
+    private int editStartTop = -1;
     private long lastBackgroundValidationTime;
     private String lastBackgroundValidationContent;
     private static final long BACKGROUND_VALIDATION_INTERVAL_MS = 2000;
@@ -315,6 +324,37 @@ class SourceViewer {
      */
     void setLiveRunData(LiveRunData liveRunData) {
         this.liveRunData = liveRunData;
+    }
+
+    void setLineFailures(LineFailures lineFailures) {
+        this.lineFailures = lineFailures;
+    }
+
+    /**
+     * The runtime failure of a 0-based line for fix with AI (Shift+F8): how many exchanges failed on the line in the
+     * live run data, and the exception of the last one when known; null when nothing failed on it, or when the file is
+     * edited and not saved (the live run data is of the saved file).
+     */
+    String runtimeFailure(int row) {
+        if (!failsAtRuntime(row)) {
+            return null;
+        }
+        LiveLine live = liveLines().get(row);
+        String answer = live.failed() + (live.failed() == 1 ? " exchange" : " exchanges") + " failed on this line";
+        String last = lineFailures != null && loadedFilePath != null ? lineFailures.lastFailure(loadedFilePath, row) : null;
+        return last != null ? answer + ", the last with " + last : answer;
+    }
+
+    /**
+     * Whether processors on a 0-based line failed in the live run data, while the file is not edited (cheap: the hint
+     * of each frame asks it; the exception is only read on Shift+F8).
+     */
+    private boolean failsAtRuntime(int row) {
+        if (dirty || row < 0) {
+            return false;
+        }
+        LiveLine live = liveLines().get(row);
+        return live != null && live.failed() > 0;
     }
 
     /**
@@ -740,6 +780,11 @@ class SourceViewer {
             goToNextProblem(viewErrors, selectedLine);
             return true;
         }
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            // fix with AI: the problem of the selected line, or what fails on it at runtime
+            askAiToFix();
+            return true;
+        }
         if (isMarkdownFile && ke.isChar(' ')) {
             markdownMode = !markdownMode;
             return true;
@@ -1134,6 +1179,7 @@ class SourceViewer {
         }
         editState.moveCursorToLineStart();
         editInitialScroll = true;
+        editStartTop = markdownMode ? -1 : scrollY;
         markdownModeBeforeEdit = markdownMode;
         markdownMode = false;
         quickDocEnabled = false;
@@ -1206,6 +1252,8 @@ class SourceViewer {
 
     private void exitEditMode() {
         boolean wasEditing = editMode;
+        int cursorRow = editState.cursorRow();
+        int top = editState.scrollRow();
         editMode = false;
         editState.clear();
         editHistory.clear();
@@ -1223,6 +1271,29 @@ class SourceViewer {
             markdownMode = markdownModeBeforeEdit;
         }
         markdownModeBeforeEdit = false;
+        editStartTop = -1;
+        if (wasEditing) {
+            keepEditorPosition(cursorRow, top);
+        }
+    }
+
+    /** The top line the editor opens on: the top line of the view, moved only as far as the cursor must stay seen. */
+    static int editorTopKeepingCursor(int viewTop, int cursorRow, int viewportHeight) {
+        int top = Math.min(Math.max(0, viewTop), cursorRow);
+        return Math.max(top, cursorRow - Math.max(1, viewportHeight) + 1);
+    }
+
+    /**
+     * The view continues where the editor was: the cursor line is selected and the same line is at the top, so leaving
+     * the editor does not move the code on the screen.
+     */
+    private void keepEditorPosition(int cursorRow, int top) {
+        if (lines.isEmpty()) {
+            return;
+        }
+        selectedLine = Math.min(Math.max(0, cursorRow), lines.size() - 1);
+        scrollY = Math.min(Math.max(0, top), selectedLine);
+        pendingScroll = false;
     }
 
     private boolean isPropertiesFile() {
@@ -1925,11 +1996,15 @@ class SourceViewer {
             dirty = false;
             Path path = editableFile;
             boolean restoreMarkdownMode = markdownModeBeforeEdit;
+            int cursorRow = editState.cursorRow();
+            int top = editState.scrollRow();
             notifySaved(editableFile);
             editMode = false;
             editState.clear();
             markdownModeBeforeEdit = false;
+            editStartTop = -1;
             loadFile(path);
+            keepEditorPosition(cursorRow, top);
             if (isMarkdownFile) {
                 markdownMode = restoreMarkdownMode;
             }
@@ -2025,14 +2100,24 @@ class SourceViewer {
     }
 
     /**
-     * Asks the AI to fix the problem of the cursor line (Shift+F8): the file is saved as it is in the editor, which the
-     * AI is about to change, edit mode left so the editor shows what the AI sees, and the AI panel opened with the
-     * question in its input, for the user to send with Enter or change first.
+     * Asks the AI to fix the problem of the cursor line (Shift+F8), or when it has none, the line whose processors fail
+     * at runtime: the file is saved as it is in the editor, which the AI is about to change, edit mode left so the
+     * editor shows what the AI sees, and the AI panel opened with the question in its input, for the user to send with
+     * Enter or change first.
      */
     private void askAiToFix() {
+        if (askAi == null || editableFile == null) {
+            return;
+        }
+        if (!editMode) {
+            askAiToFixInView();
+            return;
+        }
         int row = editState.cursorRow();
         String problem = visibleInlineErrors().get(row);
-        if (askAi == null || editableFile == null || problem == null) {
+        // a runtime failure is only known for the saved file (null while dirty), so it needs no save
+        String failure = problem == null ? runtimeFailure(row) : null;
+        if (problem == null && failure == null) {
             return;
         }
         String lineText = editState.getLine(row);
@@ -2049,7 +2134,52 @@ class SourceViewer {
         exitEditMode();
         loadFile(file);
         goToLine(row);
-        askAi.fixProblem(file, row + 1, problem, lineText);
+        if (problem != null) {
+            askAi.fixProblem(file, row + 1, problem, lineText);
+        } else {
+            askAi.fixFailure(file, row + 1, failure, lineText);
+        }
+    }
+
+    /**
+     * Shift+F8 in the view, as in the editor: the problem of the selected line, or else its runtime failure, while the
+     * view shows the file's own source (not the route converted to another DSL).
+     */
+    private void askAiToFixInView() {
+        int row = selectedLine;
+        if (row < 0 || row >= lines.size() || !showsOwnSource()) {
+            return;
+        }
+        // the view renders the lines (line numbers, live data), so the text comes from the file, which the view shows
+        String lineText = RuntimeFailures.lineText(editableFile, row);
+        String problem = viewErrors.get(row);
+        if (problem != null) {
+            askAi.fixProblem(editableFile, row + 1, problem, lineText);
+            return;
+        }
+        String failure = runtimeFailure(row);
+        if (failure != null) {
+            askAi.fixFailure(editableFile, row + 1, failure, lineText);
+        }
+    }
+
+    /** Whether the view shows the file's own source, and not its route converted to another DSL (Space). */
+    private boolean showsOwnSource() {
+        return !markdownMode && (currentFormat == null || currentFormat.equals(originalFormat));
+    }
+
+    /**
+     * Whether the view shows the fix with AI hint (Shift+F8) for the selected line: the Source tab puts it with the
+     * global F-keys.
+     */
+    boolean showsFixWithAiHint() {
+        return visible && !editMode && showsOwnSource() && canAskAiToFix(selectedLine, viewErrors);
+    }
+
+    /** Whether Shift+F8 (fix with AI) has something to ask about on a 0-based line: a problem, or a runtime failure. */
+    private boolean canAskAiToFix(int row, Map<Integer, String> problems) {
+        return askAi != null && editableFile != null && row >= 0
+                && (problems.containsKey(row) || failsAtRuntime(row));
     }
 
     /** Applies the fix of the problem on the line of the cursor (Shift+F9), and checks the content again right away. */
@@ -2626,14 +2756,19 @@ class SourceViewer {
                 .showLineNumbers(!plainMode)
                 .lineNumberStyle(Style.EMPTY.dim())
                 .build();
-        // on first render, position cursor at 2/3 of viewport before TextArea renders
+        // on first render, keep the top line of the view (F4), else position the cursor at 2/3 of the viewport
         if (editInitialScroll) {
             editInitialScroll = false;
             int viewportH = textAreaRect.height();
-            int twoThirds = viewportH * 2 / 3;
-            int targetScroll = Math.max(0, editState.cursorRow() - twoThirds);
-            if (targetScroll > 0) {
-                editState.scrollDown(targetScroll, viewportH);
+            int targetScroll = editStartTop >= 0
+                    ? editorTopKeepingCursor(editStartTop, editState.cursorRow(), viewportH)
+                    : Math.max(0, editState.cursorRow() - viewportH * 2 / 3);
+            editStartTop = -1;
+            int delta = targetScroll - editState.scrollRow();
+            if (delta > 0) {
+                editState.scrollDown(delta, viewportH);
+            } else if (delta < 0) {
+                editState.scrollUp(-delta);
             }
         }
 
@@ -2947,7 +3082,7 @@ class SourceViewer {
             if (cursorFix() != null) {
                 TuiHelper.hint(spans, "Shift+F9", "fix");
             }
-            if (askAi != null && visibleInlineErrors().containsKey(editState.cursorRow())) {
+            if (canAskAiToFix(editState.cursorRow(), visibleInlineErrors())) {
                 TuiHelper.hint(spans, "Shift+F8", "fix with AI");
             }
             if (isCamelYamlFile()) {

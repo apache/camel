@@ -278,6 +278,18 @@ public class YamlValidator {
             Error marked = indentationError(msg, lines);
             return marked != null ? marked : plain;
         }
+        // errorHandler: at column 1 in a file of - items is YAML, not prose: the list item marker is missing
+        Matcher key = TOP_KEY.matcher(text);
+        if (key.matches() && firstEntryIsListItem(lines)) {
+            String name = key.group(1);
+            return Error.builder()
+                    .messageKey("parser")
+                    .format(new MessageFormat("{0}"))
+                    .arguments("line " + line + ": " + name + ": is a top-level key in a file whose entries are list"
+                               + " items (- route:, ...): write it as a list item, - " + name + ":, and indent the lines"
+                               + " under it two spaces more, as the - route: entries are (CAMEL-25372)")
+                    .build();
+        }
         String cleaned = msg.replace("\n", " ").replaceAll("\\s+", " ").trim();
         int cut = cleaned.indexOf("in 'reader'");
         String head = cut > 0 ? cleaned.substring(0, cut).trim() : cleaned;
@@ -288,6 +300,21 @@ public class YamlValidator {
                            + "\"): a route file holds only the YAML, put explanations in a # comment or leave them out"
                            + " (" + head + ")")
                 .build();
+    }
+
+    /** A mapping key alone at column 1: errorHandler:, beans:, restConfiguration:. */
+    private static final Pattern TOP_KEY = Pattern.compile("^([A-Za-z][\\w-]*):\\s*$");
+
+    /** Whether the first entry of the file (past comments and blank lines) is a list item. */
+    private static boolean firstEntryIsListItem(String[] lines) {
+        for (String l : lines) {
+            String t = l.strip();
+            if (t.isEmpty() || t.startsWith("#") || t.equals("---")) {
+                continue;
+            }
+            return l.startsWith("- ");
+        }
+        return false;
     }
 
     private static final Pattern SNAKE_MARK = Pattern.compile("in 'reader', line (\\d+), column (\\d+):");
@@ -665,19 +692,15 @@ public class YamlValidator {
 
     private List<Error> validate(JsonNode target, Set<String> bodylessEndpoints) {
         Schema against = isKamelet(target) ? kameletSchema : schema;
-        // before the noise filter, which keeps one branch per construct: the alternatives of a construct are the
-        // keys its branches require, and they are only all present while nothing has been dropped yet
-        List<Error> raw = new ArrayList<>(against.validate(target));
-        removeSatisfiedAlternatives(raw);
-        var errors = filterOneOfNoise(raw);
+        // A branch only matches after scalar conversion if it has no other errors, including missing required fields.
+        var errors = filterOneOfNoise(new ArrayList<>(against.validate(target)));
         // the checks below walk the document looking for Camel nodes, and spec.definition of a Kamelet is a JSON
         // schema of its properties, not Camel: a property named delay is not the Delay EIP, which is what
         // aws-s3-source and eight others were told. Removing the branch leaves every path under spec.template as it
         // was, so the locations and the lines stay right.
         JsonNode camelOnly = isKamelet(target) ? withoutKameletMetadata(target) : target;
-        // the locations the runtime accepts after all, before they are dropped: a branch of an anyOf that failed only
-        // because of one of them leaves its companions behind, and those say the file needs a property it does not
-        // (fhir-sink unmarshals with fhirXml, whose fhirVersion is a placeholder, and was told fhirJson was required)
+        // Keep accepted scalar locations to remove their enclosing composition errors. Required fields remain
+        // mandatory even when another field in the same object accepts placeholders or scalar conversion.
         List<String> accepted = new ArrayList<>();
         for (Error e : errors) {
             if (isRuntimeAcceptedScalar(e)) {
@@ -688,7 +711,7 @@ public class YamlValidator {
         if (!accepted.isEmpty()) {
             errors.removeIf(e -> {
                 String keyword = e.getKeyword();
-                if (!"required".equals(keyword) && !"oneOf".equals(keyword) && !"anyOf".equals(keyword)) {
+                if (!"oneOf".equals(keyword) && !"anyOf".equals(keyword)) {
                     return false;
                 }
                 String at = String.valueOf(e.getInstanceLocation());
@@ -730,6 +753,8 @@ public class YamlValidator {
             checkDynamicUri(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             // where the body comes from, across the routes of the file (CAMEL-24844)
             BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, bodylessEndpoints);
+            // a field read on a body that is still text (CAMEL-24844)
+            TextBodyFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
         }
         if (canonical) {
             checkOneOfCardinality(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
@@ -783,17 +808,29 @@ public class YamlValidator {
      * call to a method named $ and jsonpath as an invalid path. Says which language it is and how to write it there.
      */
     void checkSimpleSyntaxInScripts(JsonNode node, NodePath path, List<Error> errors) {
+        checkSimpleSyntaxInScripts(node, path, errors, false);
+    }
+
+    /**
+     * @param template inside a step that sets a template, such as setHeader CamelVelocityTemplate: its constant is
+     *                 template text with the template engine's own ${...}, not simple
+     */
+    private void checkSimpleSyntaxInScripts(JsonNode node, NodePath path, List<Error> errors, boolean template) {
         if (node == null) {
             return;
         }
         if (node.isArray()) {
             for (int i = 0; i < node.size(); i++) {
-                checkSimpleSyntaxInScripts(node.get(i), path.append(i), errors);
+                checkSimpleSyntaxInScripts(node.get(i), path.append(i), errors, template);
             }
             return;
         }
         if (!node.isObject()) {
             return;
+        }
+        if (node.has("name") && node.get("name").isTextual()
+                && node.get("name").asText().toLowerCase(Locale.ROOT).contains("template")) {
+            template = true;
         }
         var fields = node.fieldNames();
         while (fields.hasNext()) {
@@ -809,7 +846,8 @@ public class YamlValidator {
             }
             String outsideQuotes
                     = text != null ? text.replaceAll("\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'", "\"\"") : null;
-            if (outsideQuotes != null && outsideQuotes.contains("${") && !name.equals("js") && !name.equals("quickjs")) {
+            if (outsideQuotes != null && outsideQuotes.contains("${") && !name.equals("js") && !name.equals("quickjs")
+                    && !jsonPathWithInlineSimple(name, value, outsideQuotes)) {
                 // "${x}" inside quotes is a groovy GString (or a JS template) and is fine; ${...} outside quotes is simple
                 String example;
                 if (name.equals("groovy") || name.equals("mvel") || name.equals("ognl") || name.equals("jactl")) {
@@ -831,8 +869,56 @@ public class YamlValidator {
                                    + "\"}")
                         .build());
             }
-            checkSimpleSyntaxInScripts(value, path.append(name), errors);
+            if ("constant".equals(name) && !template) {
+                checkConstantWithSimple(value, path.append(name), errors);
+            }
+            checkSimpleSyntaxInScripts(value, path.append(name), errors, template);
         }
+    }
+
+    /** A simple function in a constant: ${header.sku}, ${body}, ${exchangeProperty.x}, ${date:now:...}. */
+    private static final Pattern SIMPLE_FUNCTION = Pattern.compile("\\$\\{[a-z][^}]*}");
+
+    /**
+     * A constant is used as written, so ${header.sku} in it stays the literal text ${header.sku}. Only simple evaluates
+     * it (the error message in an otherwise right route reads "unknown sku ${header.sku}").
+     */
+    private static void checkConstantWithSimple(JsonNode value, NodePath path, List<Error> errors) {
+        String text = null;
+        if (value.isTextual()) {
+            text = value.asText();
+        } else if (value.isObject() && value.has("expression") && value.get("expression").isTextual()) {
+            text = value.get("expression").asText();
+        }
+        if (text == null || text.startsWith("resource:")) {
+            return;
+        }
+        Matcher m = SIMPLE_FUNCTION.matcher(text);
+        if (m.find()) {
+            errors.add(Error.builder()
+                    .keyword("type")
+                    .instanceLocation(path)
+                    .messageKey("type")
+                    .format(new MessageFormat("{0}"))
+                    .arguments(m.group() + " is not evaluated, a constant is used as written: use simple:"
+                               + " {expression: \"" + text.replace("\"", "'") + "\"} for a value with expressions")
+                    .build());
+        }
+    }
+
+    /**
+     * A JsonPath with Simple inlined, such as $.store.book[?(@.price < ${header.max})]: the jsonpath language evaluates
+     * the ${...} first (allowSimple, on by default), so it is valid when the expression has a JsonPath root of its own.
+     * A whole ${...} (jsonpath: ${body.x}) has none and is simple syntax.
+     */
+    private static boolean jsonPathWithInlineSimple(String name, JsonNode value, String outsideQuotes) {
+        if (!name.equals("jsonpath")) {
+            return false;
+        }
+        if (value.isObject() && value.has("allowSimple") && "false".equals(value.get("allowSimple").asText())) {
+            return false;
+        }
+        return outsideQuotes.replaceAll("\\$\\{[^}]*}", "").contains("$");
     }
 
     /**
@@ -1029,6 +1115,7 @@ public class YamlValidator {
             }
 
             String prefix = meta.getEvaluationPath().toString();
+            String instance = meta.getInstanceLocation().toString();
 
             Map<String, List<Error>> branches = new LinkedHashMap<>();
             for (Error e : errors) {
@@ -1036,7 +1123,9 @@ public class YamlValidator {
                     continue;
                 }
                 String path = e.getEvaluationPath().toString();
-                if (path.startsWith(prefix + "/")) {
+                String location = e.getInstanceLocation().toString();
+                if (path.startsWith(prefix + "/")
+                        && (location.equals(instance) || location.startsWith(instance + "/"))) {
                     String rest = path.substring(prefix.length() + 1);
                     String branchIndex = rest.contains("/") ? rest.substring(0, rest.indexOf('/')) : rest;
                     branches.computeIfAbsent(branchIndex, k -> new ArrayList<>()).add(e);
@@ -1047,17 +1136,19 @@ public class YamlValidator {
                 continue;
             }
 
-            // find the best-matching branch using a three-tier priority:
-            //   1. property-level errors (additionalProperties, enum, pattern, etc.) — "right branch, wrong value/property"
-            //   2. type errors only — "wrong branch entirely" (less informative)
-            //   3. structural errors only (required, oneOf, not) — wrong-branch noise
+            // find the best-matching branch using a four-tier priority:
+            //   1. only runtime-accepted scalar errors — a matching branch once placeholders/conversions are allowed
+            //   2. property-level errors (additionalProperties, enum, pattern, etc.) — "right branch, wrong value/property"
+            //   3. type errors only — "wrong branch entirely" (less informative)
+            //   4. structural errors only (required, oneOf, not) — wrong-branch noise
             // within the same tier, prefer the deepest instance location
             String bestBranch = null;
             int bestDepth = -1;
             int bestTier = 0;
 
             for (Map.Entry<String, List<Error>> entry : branches.entrySet()) {
-                int tier = branchTier(entry.getValue());
+                int tier = entry.getValue().stream().allMatch(YamlValidator::isRuntimeAcceptedScalar)
+                        ? 3 : branchTier(entry.getValue());
                 int maxDepth = entry.getValue().stream()
                         .mapToInt(e -> e.getInstanceLocation().toString().length())
                         .max().orElse(0);
@@ -1214,52 +1305,6 @@ public class YamlValidator {
     }
 
     /**
-     * Drops "required property X not found" where one of the alternatives is in fact there.
-     * <p/>
-     * The branches of a {@code oneOf} each require their own key, and when all of them are reported the file is told it
-     * needs a key it does not: {@code unmarshal: {fhirXml: ...}} in one when branch of a choice was told "required
-     * property 'fhirJson' not found", because the winner of the other when branch was chosen for it as well. Collected
-     * per construct and per place, they name the keys the file did not write; if the object at that place has anything
-     * in it, a branch was chosen and the rest are noise. When it is empty, the file really does have to pick one and
-     * the errors stay (CAMEL-25238).
-     */
-    private static void removeSatisfiedAlternatives(List<Error> errors) {
-        Map<String, List<Error>> groups = new LinkedHashMap<>();
-        for (Error e : errors) {
-            if (!"required".equals(e.getKeyword())) {
-                continue;
-            }
-            String construct = constructOf(String.valueOf(e.getEvaluationPath()));
-            if (construct != null) {
-                groups.computeIfAbsent(construct + "@" + e.getInstanceLocation(), k -> new ArrayList<>()).add(e);
-            }
-        }
-        for (List<Error> group : groups.values()) {
-            JsonNode instance = group.get(0).getInstanceNode();
-            if (instance == null || !instance.isObject()) {
-                continue;
-            }
-            // the branches of a pick-one construct each require their own key, so one error per key the file did not
-            // write. The key it did write is the one missing from them: that branch got past its required check and
-            // failed, if at all, further in. So a non-empty object means a branch was chosen and the rest are noise.
-            // An object with nothing in it, or with a key no branch knows, still gets the construct's own error and
-            // the additionalProperties error, which is what actually tells the author what to do.
-            if (!instance.isEmpty() && group.size() > 1) {
-                errors.removeAll(group);
-            }
-        }
-    }
-
-    /**
-     * The schema construct an error came from when it came from inside a branch of a {@code oneOf} or an {@code anyOf}:
-     * its evaluation path up to and including that keyword, or null when it is not inside one.
-     */
-    private static String constructOf(String evaluationPath) {
-        int at = Math.max(evaluationPath.lastIndexOf("/oneOf/"), evaluationPath.lastIndexOf("/anyOf/"));
-        return at < 0 ? null : evaluationPath.substring(0, at + 7);
-    }
-
-    /**
      * Whether the schema rejected a scalar that the Camel runtime accepts, in which case the error is dropped.
      * <p>
      * Camel's model declares nearly every scalar attribute as a {@code String} field carrying the real type in
@@ -1333,6 +1378,24 @@ public class YamlValidator {
     /** The names of the EIP steps, from the schema. */
     Set<String> stepNames() {
         return stepNames;
+    }
+
+    /** The options of an EIP as the YAML DSL schema lists them, or empty when the EIP is not known (CAMEL-25372). */
+    Set<String> optionsOf(String eip) {
+        JsonNode ref = model.at("/items/definitions/org.apache.camel.model.ProcessorDefinition/properties/" + eip + "/$ref");
+        JsonNode definition = ref.isTextual() ? model.at(ref.asText().substring(1)) : null;
+        Set<String> answer = new LinkedHashSet<>();
+        if (definition == null || definition.isMissingNode()) {
+            return answer;
+        }
+        // the definition is an object, or a oneOf of a short form and an object
+        List<JsonNode> shapes = new ArrayList<>();
+        shapes.add(definition);
+        definition.path("oneOf").forEach(shapes::add);
+        for (JsonNode shape : shapes) {
+            shape.path("properties").fieldNames().forEachRemaining(answer::add);
+        }
+        return answer;
     }
 
     /** The properties of resilience4jConfiguration, from the schema. */

@@ -20,8 +20,12 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
@@ -71,6 +75,14 @@ public class YamlNormalizeCommand extends CamelCommand {
         if (matched.isEmpty()) {
             return 0;
         }
+        // a Kamelet loads as a route template: its template is normalized and put back into the Kamelet file
+        Map<String, String> kamelets = new LinkedHashMap<>();
+        for (String n : matched) {
+            String content = readFile(n);
+            if (content != null && KameletNormalizer.isKamelet(content)) {
+                kamelets.put(n, content);
+            }
+        }
 
         String dump = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/normalize-output.yaml";
         Files.deleteIfExists(Path.of(dump));
@@ -80,7 +92,8 @@ public class YamlNormalizeCommand extends CamelCommand {
             @Override
             protected void doAddInitialProperty(KameletMain main) {
                 main.addInitialProperty("camel.main.dumpRoutes", "yaml");
-                main.addInitialProperty("camel.main.dumpRoutesInclude", "routes,rests,routeConfigurations,beans,dataFormats");
+                main.addInitialProperty("camel.main.dumpRoutesInclude",
+                        "routes,rests,routeConfigurations,routeTemplates,beans,dataFormats");
                 main.addInitialProperty("camel.main.dumpRoutesLog", "false");
                 main.addInitialProperty("camel.main.dumpRoutesResolvePlaceholders", "false");
                 main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", "true");
@@ -101,22 +114,71 @@ public class YamlNormalizeCommand extends CamelCommand {
 
         String normalized = waitForDumpFile(Path.of(target));
         if (normalized == null) {
-            printer().printErr("Error normalizing files");
+            printer().printErr("Error normalizing files: nothing was loaded from " + String.join(", ", matched)
+                               + " (see the errors above)");
             return 1;
         }
 
+        // the dump has one item per routeTemplate, route, rest...: those of the Kamelets go back into their files
+        Map<String, String> kameletOutput = new LinkedHashMap<>();
+        Set<String> kameletIds = new HashSet<>();
+        for (Map.Entry<String, String> e : kamelets.entrySet()) {
+            String id = KameletNormalizer.kameletName(e.getValue(), e.getKey());
+            List<String> lost = new ArrayList<>();
+            String k = KameletNormalizer.normalize(e.getValue(), normalized, id, lost);
+            if (!lost.isEmpty()) {
+                printer().printErr("WARN: " + e.getKey() + ": " + lost.size() + " comment line(s) of the template could"
+                                   + " not be put back where they were, they are at the end of the template: "
+                                   + String.join(" / ", lost));
+            }
+            if (k == null) {
+                printer().printErr("Error normalizing the Kamelet " + e.getKey() + ": its template " + id
+                                   + " did not load (see the errors above), or the file has no spec.template");
+                return 1;
+            }
+            kameletIds.add(id);
+            kameletOutput.put(e.getKey(), k);
+        }
+        String routes = KameletNormalizer.withoutTemplates(normalized, kameletIds);
+
+        List<String> documents = new ArrayList<>();
+        if (!routes.isBlank()) {
+            documents.add(routes);
+        }
+        documents.addAll(kameletOutput.values());
         if (output != null) {
             Path outPath = Path.of(output);
             if (Files.isDirectory(outPath)) {
-                outPath = outPath.resolve("normalized.yaml");
+                if (!routes.isBlank()) {
+                    Files.writeString(outPath.resolve("normalized.yaml"), routes);
+                }
+                for (Map.Entry<String, String> e : kameletOutput.entrySet()) {
+                    Files.writeString(outPath.resolve(Path.of(e.getKey()).getFileName()), e.getValue());
+                }
+            } else if (documents.size() > 1 && !kameletOutput.isEmpty()) {
+                printer().printErr("--output must be a directory to normalize Kamelets with other files:"
+                                   + " each Kamelet is written to a file of its own name");
+                return 1;
+            } else {
+                Files.writeString(outPath, documents.get(0));
             }
-            Files.writeString(outPath, normalized);
             printer().println("Normalized " + matched.size() + " file(s) to " + output);
         } else {
-            printer().println(normalized);
+            // more than one document: one YAML stream, separated by ---
+            printer().println(String.join("\n---\n", documents));
         }
 
         return 0;
+    }
+
+    private static String readFile(String name) {
+        try {
+            String n = name.startsWith("file:") ? name.substring(5) : name;
+            Path p = Path.of(n);
+            return Files.isRegularFile(p) ? Files.readString(p) : null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private String waitForDumpFile(Path dumpFile) {

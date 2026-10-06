@@ -112,7 +112,7 @@
             ],
             "languages": [
                 "simple",
-                "jsonpath",
+                "groovy",
                 "constant"
             ],
             "dataformats": [
@@ -548,7 +548,7 @@
             ],
             "languages": [
                 "simple",
-                "jsonpath"
+                "groovy"
             ],
             "dataformats": [
                 "json"
@@ -589,11 +589,12 @@
                 "setBody",
                 "setHeader",
                 "choice",
+                "unmarshal",
                 "marshal"
             ],
             "languages": [
                 "constant",
-                "jsonpath",
+                "groovy",
                 "simple"
             ],
             "dataformats": [
@@ -728,7 +729,7 @@
             ],
             "languages": [
                 "simple",
-                "jsonpath",
+                "groovy",
                 "constant"
             ],
             "dataformats": [

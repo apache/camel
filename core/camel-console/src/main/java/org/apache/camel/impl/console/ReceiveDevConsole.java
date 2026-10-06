@@ -96,7 +96,7 @@ public class ReceiveDevConsole extends AbstractDevConsole {
     private final List<Consumer> consumers = new ArrayList<>();
     private final AtomicBoolean enabled = new AtomicBoolean();
     private final AtomicLong uuid = new AtomicLong();
-    private Queue<JsonObject> queue;
+    private volatile Queue<JsonObject> queue;
     private long firstTimestamp;
     private long lastTimestamp;
 
@@ -109,6 +109,13 @@ public class ReceiveDevConsole extends AbstractDevConsole {
     }
 
     public void setCapacity(int capacity) {
+        Queue<JsonObject> q = queue;
+        if (q != null) {
+            // Camel Main configures the console after the registry has started it: resize its buffers (an entry
+            // added meanwhile may be lost, which only matters while configuring)
+            ConsoleHelper.checkCapacity(capacity, 50);
+            this.queue = ConsoleHelper.resize(q, capacity);
+        }
         this.capacity = capacity;
     }
 
@@ -130,9 +137,7 @@ public class ReceiveDevConsole extends AbstractDevConsole {
 
     @Override
     protected void doInit() throws Exception {
-        if (capacity > 1000 || capacity < 50) {
-            throw new IllegalArgumentException("Capacity must be between 50 and 1000");
-        }
+        ConsoleHelper.checkCapacity(capacity, 50);
         this.queue = new LinkedBlockingQueue<>(capacity);
     }
 
@@ -153,10 +158,11 @@ public class ReceiveDevConsole extends AbstractDevConsole {
 
         String dump = optionString(options, DUMP);
         if ("true".equals(dump)) {
+            Queue<JsonObject> q = queue;
             JsonArray arr = new JsonArray();
-            arr.addAll(queue);
+            arr.addAll(q);
             if (removeOnDump) {
-                queue.clear();
+                q.clear();
             }
             JsonObject jo = (JsonObject) arr.get(0);
             firstTimestamp = jo.getLongOrDefault("timestamp", 0);
@@ -205,9 +211,10 @@ public class ReceiveDevConsole extends AbstractDevConsole {
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String dump = optionString(options, DUMP);
         if ("true".equals(dump)) {
-            List<Map<String, Object>> messages = new ArrayList<>(queue);
+            Queue<JsonObject> q = queue;
+            List<Map<String, Object>> messages = new ArrayList<>(q);
             if (removeOnDump) {
-                queue.clear();
+                q.clear();
             }
             JsonObject first = (JsonObject) messages.get(0);
             firstTimestamp = first.getLongOrDefault("timestamp", 0);
@@ -282,14 +289,7 @@ public class ReceiveDevConsole extends AbstractDevConsole {
         lastTimestamp = exchange.getMessage().getMessageTimestamp();
         json.put("timestamp", lastTimestamp);
 
-        // ensure there is space on the queue by polling until at least single slot is free
-        int drain = queue.size() - capacity + 1;
-        if (drain > 0) {
-            for (int i = 0; i < drain; i++) {
-                queue.poll();
-            }
-        }
-        queue.add(json);
+        ConsoleHelper.offerLast(queue, json);
     }
 
     protected static Endpoint findMatchingEndpoint(CamelContext camelContext, String endpoint) {

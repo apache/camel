@@ -187,7 +187,8 @@ YAML::
             "additionalProperties": false
           }
       steps:
-        - to: direct:createOrder
+        - to:
+            uri: direct:createOrder
 ----
 ====
 
@@ -228,7 +229,9 @@ YAML::
         outputParameter.unit: string
       steps:
         - setBody:
-            constant: '{"temperature":21.5,"unit":"celsius"}'
+            expression:
+              constant:
+                expression: '{"temperature":21.5,"unit":"celsius"}'
 ----
 ====
 
@@ -277,7 +280,8 @@ YAML::
         idempotentHint: false
         openWorldHint: true
       steps:
-        - to: direct:deleteOrder
+        - to:
+            uri: direct:deleteOrder
 ----
 ====
 
@@ -352,6 +356,97 @@ YAML::
             uri: "bean:userService?method=findById(${header.id})"
 ----
 ====
+
+== The calling exchange
+
+Each tool invocation runs on a copy of the *calling exchange* — the exchange that drives the agent (the
+`langchain4j-agent`, `openai` or `spring-ai-chat` producer). The context the caller set before the agent ran is
+carried onto the tool route:
+
+* exchange *properties* — most importantly an authenticated caller's identity kept as a property, so a tool route
+  can be guarded on it (for example `exchangeProperty.subject`) and the model cannot forge it;
+* exchange *variables*.
+
+The message itself is *clean*: the tool route receives only its own arguments (supplied by the model and placed on
+the message as headers), not the caller's body or inbound headers, and a tool that sets no body returns `No result`
+rather than echoing the caller's body back to the model. Any change the tool makes — to its message, body or
+exception — is isolated to the copy and does not leak back into the calling exchange.
+
+The tool exchange runs in its own *unit of work* and with its own exchange id; it does not share the caller's. So
+each tool call is independent: the tool route's own `onCompletion`, error handler and `useOriginalMessage()` apply
+to the tool call rather than to the caller, parallel tool calls in a batch get distinct exchange ids, and an error
+handler cannot restore the caller's message into the result.
+
+All route-tool runtimes build the tool exchange the same way, so an authorization check on an exchange property
+behaves identically whether the agent loop is driven by `camel-langchain4j-agent`, `camel-openai` or
+`camel-spring-ai-chat`.
+
+== Authorizing tool calls
+
+A tool call is a security boundary: an AI model decides, from its own output, which `ai-tool` route to invoke. Set
+an `authorizationPolicy` — a reference to an `org.apache.camel.spi.AuthorizationPolicy` bean — to authorize every
+call before the route runs. Set it on the *component* to guard every tool route by construction, or on a single
+endpoint to override.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// one policy guarding every ai-tool route
+AiToolComponent ai = context.getComponent("ai-tool", AiToolComponent.class);
+ai.getConfiguration().setAuthorizationPolicy(myAuthorizationPolicy);
+
+from("ai-tool:transferFunds?tags=banking&description=Transfer funds")
+    .to("bean:ledger");
+
+// ...or override on a single endpoint
+from("ai-tool:transferFunds?tags=banking&description=Transfer funds&authorizationPolicy=#myAuthorizationPolicy")
+    .to("bean:ledger");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ai-tool:transferFunds
+      parameters:
+        tags: banking
+        description: "Transfer funds"
+        authorizationPolicy: "#myAuthorizationPolicy"
+      steps:
+        - to:
+            uri: bean:ledger
+----
+====
+
+The guard runs in front of the route: it wraps the route's outer processor, so it executes before the route's unit
+of work, tracing and error handling. A denied call (`CamelAuthorizationException`) is returned to the model as a
+short refusal it can relay — not as a tool result and not as a stack trace — regardless of the tool-execution error
+strategy; the denial is logged at `WARN`, but it does not produce a route span or metric.
+
+The policy authorizes on *trustworthy* input only:
+
+* the *tool name* comes from the route (the tool's id), never from model output;
+* the *caller identity* comes from an exchange *property* (or a validated token) set before the agent ran — for
+  example by `camel-spiffe` or `camel-keycloak`. Authorize on properties or validated tokens only, *never* on
+  message headers: on a tool route the headers carry the model-controlled tool arguments (and, on the
+  `langchain4j-agent` path, the caller's inbound HTTP headers), so a policy such as OPA with the default
+  `includeHeaders="*"` would otherwise read attacker-influenced values.
+
+Which runtimes carry the caller identity:
+
+* `camel-langchain4j-agent`, `camel-openai` and `camel-spring-ai-chat` all copy the calling exchange (see
+  <<The calling exchange>> above), so the identity property reaches the tool route.
+* Over the xref:others:mcp-server.adoc[MCP server] the authenticated transport caller is carried onto the tool
+  exchange as the `CamelMcpSecurityPrincipal` property (the raw transport principal — for the Vert.x streamable HTTP
+  server, an `io.vertx.ext.auth.User`). A policy over MCP reads that property directly; Camel's shipped
+  identity/token policies (Keycloak, Spring Security, Shiro) do not read it yet, so MCP authorization needs a policy
+  that inspects `CamelMcpSecurityPrincipal`. Exposing a runtime-neutral principal name and roles for the shipped
+  policies is tracked as a follow-up.
 
 == See Also
 

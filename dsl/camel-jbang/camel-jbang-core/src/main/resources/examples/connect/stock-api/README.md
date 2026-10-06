@@ -40,17 +40,17 @@ Then, in another terminal, call it with `curl` as above. Stop it with `ctrl` + `
   item. Each operation hands over to a `direct` route. The CLI starts the HTTP server on port 8080 because the
   file uses the REST DSL; `application.properties` sets the port.
 - The list route sets the body to `resource:file:stock.json`, the file next to the route, and the content type.
-- The item route loads the same file and picks the item with a `jsonpath` filter, `$[?(@.sku == '...')]`, in which
-  the `{sku}` path parameter arrives as the header `sku`. The result is a list: empty means 404 with a small error
-  body, otherwise the first element is marshalled back to JSON.
+- The item route loads the same file, unmarshals it into a list of maps, and picks the item with one line of Groovy,
+  `body.find { it.sku == headers.sku }`, in which the `{sku}` path parameter arrives as the header `sku`. The result is
+  the item or null: null means 404 with a small error body, otherwise the item is marshalled back to JSON.
 - `CamelHttpResponseCode` is the header that sets the status code; 200 is the default.
 
 ## Build it step by step
 
 1. A `rest` with one `get` that answers `resource:file:stock.json`; run it and `curl localhost:8080/stock`.
 2. Add the `/{sku}` operation and log `${header.sku}` to see the path parameter arrive.
-3. Filter the file with `jsonpath` and return the first element; `curl` a known SKU.
-4. Add the `choice` for the empty result and the 404.
+3. Unmarshal the file and find the item with Groovy, `body.find { it.sku == headers.sku }`; `curl` a known SKU.
+4. Add the `choice` for the null result and the 404.
 
 ## Try changing
 

@@ -157,6 +157,64 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
     }
 
     @Test
+    public void testTransformFromValueRangeColumnNamesNotStartingAtColumnA() throws Exception {
+        Exchange inbound = new DefaultExchange(camelContext);
+
+        ValueRange valueRange = new ValueRange();
+        valueRange.setRange("Sheet1!B2:D3");
+        valueRange.setMajorDimension(RangeCoordinate.DIMENSION_ROWS);
+        valueRange.setValues(Arrays.asList(Arrays.asList("Ann", "31", "Oslo"), Arrays.asList("Bob", "42", "Rome")));
+
+        inbound.getMessage().setBody(valueRange);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", spreadsheetId);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "columnNames", "name,age,city");
+        transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
+
+        @SuppressWarnings("unchecked")
+        List<String> model = inbound.getMessage().getBody(List.class);
+        Assertions.assertEquals(2, model.size());
+        JSONAssert.assertEquals(String.format(
+                "{\"spreadsheetId\":\"%s\", \"name\":\"Ann\",\"age\":\"31\",\"city\":\"Oslo\"}", spreadsheetId),
+                model.get(0), JSONCompareMode.STRICT);
+        JSONAssert.assertEquals(String.format(
+                "{\"spreadsheetId\":\"%s\", \"name\":\"Bob\",\"age\":\"42\",\"city\":\"Rome\"}", spreadsheetId),
+                model.get(1), JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void testTransformFromSplitValuesColumnNamesNotStartingAtColumnA() throws Exception {
+        Exchange inbound = new DefaultExchange(camelContext);
+
+        inbound.getMessage().setBody(Arrays.asList("Ann", "31", "Oslo"));
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "splitResults", true);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", spreadsheetId);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "Sheet1!C1:E1");
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "columnNames", "name,age");
+        transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
+
+        // the third column has no custom name and keeps its A1 name
+        JSONAssert.assertEquals(String.format(
+                "{\"spreadsheetId\":\"%s\", \"name\":\"Ann\",\"age\":\"31\",\"E\":\"Oslo\"}", spreadsheetId),
+                inbound.getMessage().getBody(String.class), JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void testTransformToValueRangeColumnNamesNotStartingAtColumnA() throws Exception {
+        Exchange inbound = new DefaultExchange(camelContext);
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "B1:D1");
+        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "columnNames", "name,age,city");
+
+        inbound.getMessage().setBody("{\"spreadsheetId\": \"" + spreadsheetId + "\", \"name\": \"Ann\", \"age\": 31,"
+                                     + " \"city\": \"Oslo\"}");
+
+        transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
+
+        ValueRange valueRange = (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
+        Assertions.assertEquals(1L, valueRange.getValues().size());
+        Assertions.assertEquals(Arrays.asList("Ann", 31, "Oslo"), valueRange.getValues().get(0));
+    }
+
+    @Test
     public void testTransformToEmptyValueRange() throws Exception {
         Exchange inbound = new DefaultExchange(camelContext);
         inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", spreadsheetId);
