@@ -253,7 +253,8 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
                 doc = CouchbaseCollectionOperation.getDocument(collection, id, endpoint.getQueryTimeout(),
                         endpoint.getConsumerRetryPause());
             } else {
-                doc = row.valueAs(Object.class);
+                // the SDK returns the value as an Optional, which is empty when the view emitted no value (null)
+                doc = row.valueAs(Object.class).orElse(null);
             }
 
             // Use String.class instead of the shaded JsonNode class to avoid conflicts

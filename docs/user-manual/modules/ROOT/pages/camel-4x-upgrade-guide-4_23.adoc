@@ -590,6 +590,12 @@ route's error handler, which logs the exhausted failure, and `BridgeExceptionHan
 falls back to its logging handler for such an exchange rather than bridging it a second time. What changes is that
 the consumer itself no longer stays silent.
 
+==== useView=true with fullDocument=false
+
+With `useView=true` and `fullDocument=false` the message body is now the value the view emitted for the row, or `null`
+when the view emitted no value. It used to be a `java.util.Optional` holding that value. A route that unwrapped the
+`Optional` itself must now use the body directly.
+
 ==== consumerProcessedStrategy=delete
 
 With `consumerProcessedStrategy=delete` the consumer now removes a document once its exchange has completed
@@ -610,6 +616,13 @@ twice, in the same way as the in-progress repository of the file and aws2-s3 con
 count towards `maxMessagesPerPoll`. This only applies to the same consumer: another consumer reading the same bucket,
 for example on another node, can still read the document before it is removed. With the other strategies the document
 stays in the bucket, so later polls read it again as before.
+
+A view or SQL++ query that returns several rows for one document (for example a view that emits one row per element of
+an array in the document) now delivers only the first of these rows with `consumerProcessedStrategy=delete`: the
+document is in progress from its first row on, so its other rows are skipped, and once that exchange has completed the
+document is removed. Previously the first row removed the document while the poll was built, and the next row of the
+same document failed to read or remove it, as it no longer existed, so the whole poll failed. With the other
+strategies every row is delivered as before.
 
 === camel-smpp - received exchanges now come from the consumer
 
