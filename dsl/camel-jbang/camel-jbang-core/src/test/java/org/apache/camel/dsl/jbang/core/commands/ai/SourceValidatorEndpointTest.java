@@ -593,6 +593,30 @@ class SourceValidatorEndpointTest {
                 .anyMatch(e -> e.startsWith("Line 3: file: the directory archived/${header.monthDir} cannot be dynamic"));
     }
 
+    /**
+     * CAMEL-25374: quotes escaped with a backslash in a plain YAML value are text, so they are part of the regex. The
+     * hint gives the line to write, without echoing the stray quotes back.
+     */
+    @Test
+    void quoteCharactersInAnIncludeRegexAreReported() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      parameters:
+                        include: \\".*\\\\.json\\"
+                      steps:
+                        - to:
+                            uri: log:done
+                """;
+        List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(errors).anyMatch(e -> e.startsWith("Line 5: file: include has quote characters in its value")
+                && e.contains("Write the line as include: '.*\\.json'"));
+        assertThat(errors).noneMatch(e -> e.contains("matches a literal backslash"));
+        assertThat(EndpointChecks.withoutQuoteCharacters("'.*\\.json'")).isEqualTo(".*\\.json");
+        assertThat(EndpointChecks.withoutQuoteCharacters(".*\\.json")).isEqualTo(".*\\.json");
+    }
+
     /** CAMEL-24854: a doubled backslash in an include regex (kept as is inside single quotes) matches no file. */
     @Test
     void aDoubledBackslashInAnIncludeRegexIsReported() {
