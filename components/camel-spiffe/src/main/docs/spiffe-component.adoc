@@ -155,6 +155,14 @@ verified SPIFFE ID:
 
 [source,java]
 ------------------------------------------------------------
+// the server must REQUIRE a client certificate, or the policy has no verified peer to authorize
+SpiffeSSLContextParameters serverSsl = new SpiffeSSLContextParameters();
+serverSsl.setAcceptedSpiffeIds("spiffe://example.org/frontend");
+SSLContextServerParameters serverParameters = new SSLContextServerParameters();
+serverParameters.setClientAuthentication(ClientAuthentication.REQUIRE.name());
+serverSsl.setServerParameters(serverParameters);
+getCamelContext().getRegistry().bind("spiffeSsl", serverSsl);
+
 SpiffeSecurityPolicy spiffePolicy = new SpiffeSecurityPolicy("spiffe://example.org/frontend");
 getCamelContext().getRegistry().bind("spiffePolicy", spiffePolicy);
 
@@ -162,6 +170,27 @@ from("netty-http:https://0.0.0.0:8443?sslContextParameters=#spiffeSsl")
     .policy(spiffePolicy)
     .to("direct:handleOrder");
 ------------------------------------------------------------
+
+[IMPORTANT]
+====
+A few things about the server side decide whether, and for which peers, this policy can work.
+
+* *The server must request a client certificate.* `serverParameters.clientAuthentication` defaults to unset, which
+  leaves the JSSE default: the server never asks. `SSLSession.getPeerCertificates()` then throws and the policy
+  fails closed, so *every* request is denied. Set it to `REQUIRE`, as above.
+* *The server must use `SpiffeSSLContextParameters`*, not a plain truststore that happens to trust the SPIFFE CA.
+  Such a truststore accepts any SVID that CA issued, which is a weaker check than the allow-list this policy
+  appears to give you.
+* *The handshake allow-list gates every policy.* `SpiffeSSLContextParameters.acceptedSpiffeIds` decides who may
+  connect at all, so a peer it rejects never reaches any route's policy. When several routes with different
+  `SpiffeSecurityPolicy` allow-lists share one server, this TLS-level list must contain every ID those policies
+  accept (or use `acceptAnySpiffeId` and let each policy narrow it), otherwise the handshake turns a peer away
+  before its route could have authorized it.
+
+Only camel-netty and camel-netty-http put the `SSLSession` on the message today, as the `CamelNettySSLSession`
+header. Behind platform-http, jetty, undertow or servlet there is no session on the exchange, so the policy has no
+verified peer certificate to read and denies everything.
+====
 
 The peer SPIFFE ID is taken from the *verified* TLS peer certificate the consumer put on the exchange - the
 `CamelNettySSLSession` header for camel-netty-http - and never from a message header a sender could set (see the
