@@ -188,9 +188,11 @@ public class DefaultHttpBinding implements HttpBinding {
             }
         }
 
-        if (request.getCharacterEncoding() != null) {
-            headers.put(Exchange.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
-            message.getExchange().setProperty(ExchangePropertyKey.CHARSET_NAME, request.getCharacterEncoding());
+        String characterEncoding = request.getCharacterEncoding();
+        // servlet containers may return an empty charset parameter (charset=) as an empty name, which is no charset
+        if (characterEncoding != null && !characterEncoding.isBlank()) {
+            headers.put(Exchange.HTTP_CHARACTER_ENCODING, characterEncoding);
+            message.getExchange().setProperty(ExchangePropertyKey.CHARSET_NAME, characterEncoding);
         }
 
         try {
@@ -275,7 +277,7 @@ public class DefaultHttpBinding implements HttpBinding {
                     && request.getContentType().startsWith(HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
                     && !skipWwwFormUrlEncoding) {
                 String charset = request.getCharacterEncoding();
-                if (charset == null) {
+                if (charset == null || charset.isBlank()) {
                     charset = "UTF-8";
                 }
 
