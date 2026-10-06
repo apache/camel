@@ -858,7 +858,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         private void runNotAllowed() {
             LOG.trace("Run not allowed, will reject executing exchange: {}", exchange);
             if (exchange.getException() == null) {
-                exchange.setException(new RejectedExecutionException());
+                exchange.setException(new RejectedExecutionException(notAllowedReason()));
             }
             AsyncCallback cb = callback;
             taskFactory.release(this);
@@ -1117,7 +1117,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             if (!isRunAllowed()) {
                 LOG.trace("Run not allowed, will reject executing exchange: {}", exchange);
                 if (exchange.getException() == null) {
-                    exchange.setException(new RejectedExecutionException());
+                    exchange.setException(new RejectedExecutionException(notAllowedReason()));
                 }
                 AsyncCallback cb = callback;
                 taskFactory.release(this);
@@ -2208,4 +2208,15 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         return sb.toString();
     }
 
+    /**
+     * Why an exchange cannot go on: its route is being stopped. Without a message the error reads
+     * {@code RejectedExecutionException - null}, which looks like a fault in the route, while it is a route stop or a
+     * dev mode reload cutting the exchange off (CAMEL-25365).
+     */
+    String notAllowedReason() {
+        return shutdownStrategy.isForceShutdown()
+                ? "The exchange cannot continue: its route was forced to shut down, as the graceful shutdown timed out"
+                  + " while it was in flight (the CamelContext is being stopped)"
+                : "The exchange cannot continue: its route is being stopped or reloaded";
+    }
 }
