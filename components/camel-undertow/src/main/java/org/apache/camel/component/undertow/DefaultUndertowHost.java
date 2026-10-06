@@ -136,6 +136,10 @@ public class DefaultUndertowHost implements UndertowHost {
                 // use the rest handler as its a rest consumer
                 serverHandler = consumer != null && consumer.isRest() ? restHandler : rootHandler;
                 entryHandler = serverHandler;
+                if (requiresServletContext(endpoint)) {
+                    // deploy before the server starts, so that a failure leaves no server running
+                    deployServletContext();
+                }
                 undertow = builder.setHandler(exchange -> entryHandler.handleRequest(exchange)).build();
                 LOG.info("Starting Undertow server on {}://{}:{}", key.getSslContext() != null ? "https" : "http",
                         key.getHost(),
@@ -156,11 +160,16 @@ public class DefaultUndertowHost implements UndertowHost {
                     // initialization again.
                     undertow.stop();
                     undertow = null;
+                    if (deploymentManager != null) {
+                        deploymentManager.undeploy();
+                        deploymentManager = null;
+                    }
 
                     throw e;
                 }
             }
             if (deploymentManager == null && requiresServletContext(endpoint)) {
+                // a later endpoint needs a servlet context: wrap the handler of the running server
                 deployServletContext();
             }
             if (consumer != null && consumer.isRest()) {

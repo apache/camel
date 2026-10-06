@@ -18,6 +18,7 @@ package org.apache.camel.component.undertow.handlers;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.undertow.UndertowEndpoint;
+import org.apache.camel.component.undertow.spi.AbstractSecurityProviderTest;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
@@ -48,6 +49,29 @@ class CamelWebSocketHandlerSecuritySettingsTest {
     @Test
     void producerWithRolesOnAPathWhoseConsumerHasNone() throws Exception {
         assertTrue(hasUnusedSecuritySettings("fireWebSocketChannelEvents=true", "allowedRoles=admin"));
+    }
+
+    @Test
+    void producerWithTheSameSecurityConfigurationAsTheConsumer() throws Exception {
+        // each endpoint that configures a security configuration gets a provider instance of its own
+        Object configuration = new Object();
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+            UndertowEndpoint consumerEndpoint = endpoint(context, "allowedRoles=user", configuration);
+            UndertowEndpoint producerEndpoint = endpoint(context, "allowedRoles=user&sendToAll=true", configuration);
+            assertFalse(CamelWebSocketHandler.hasUnusedSecuritySettings(consumerEndpoint, producerEndpoint));
+
+            UndertowEndpoint otherProducerEndpoint = endpoint(context, "allowedRoles=user&sendToAll=false", new Object());
+            assertTrue(CamelWebSocketHandler.hasUnusedSecuritySettings(consumerEndpoint, otherProducerEndpoint));
+        }
+    }
+
+    private static UndertowEndpoint endpoint(CamelContext context, String options, Object securityConfiguration) {
+        UndertowEndpoint endpoint
+                = context.getEndpoint("undertow:ws://localhost:8080/path?" + options, UndertowEndpoint.class);
+        endpoint.setSecurityConfiguration(securityConfiguration);
+        endpoint.setSecurityProvider(new AbstractSecurityProviderTest.MockSecurityProvider());
+        return endpoint;
     }
 
     private static boolean hasUnusedSecuritySettings(String consumerOptions, String producerOptions) throws Exception {
