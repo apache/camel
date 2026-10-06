@@ -109,6 +109,111 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
         }
     }
 
+    /**
+     * By default (oauth2CachedTokensKey=FULL_URI) a cached token is only reused for the same request URI, so a request
+     * with a different query or path requests a new token (CAMEL-22080 keeps this default).
+     */
+    @Test
+    public void aDifferentQueryRequestsANewTokenByDefault() throws Exception {
+        assertDifferentQuery("", false);
+    }
+
+    @Test
+    public void aDifferentPathRequestsANewTokenByDefault() throws Exception {
+        assertDifferentPath("", false);
+    }
+
+    @Test
+    public void aDifferentHttpPathHeaderRequestsANewTokenByDefault() throws Exception {
+        assertDifferentHttpPathHeader("", false);
+    }
+
+    /**
+     * The token request does not depend on the request URI, so with oauth2CachedTokensKey=HOST_ONLY a token is shared
+     * by every request to the same scheme, host and port, whatever the path and query (CAMEL-22080).
+     */
+    @Test
+    public void aDifferentQueryReusesTheCachedTokenWithHostOnly() throws Exception {
+        assertDifferentQuery("&oauth2CachedTokensKey=HOST_ONLY", true);
+    }
+
+    @Test
+    public void aDifferentPathReusesTheCachedTokenWithHostOnly() throws Exception {
+        assertDifferentPath("&oauth2CachedTokensKey=HOST_ONLY", true);
+    }
+
+    @Test
+    public void aDifferentHttpPathHeaderReusesTheCachedTokenWithHostOnly() throws Exception {
+        assertDifferentHttpPathHeader("&oauth2CachedTokensKey=HOST_ONLY", true);
+    }
+
+    private void assertDifferentQuery(String keyOption, boolean reused) throws Exception {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+            String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
+            String options = "&httpMethod=POST&oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret
+                             + "&oauth2TokenEndpoint=" + tokenEndpoint + "&oauth2CacheTokens=true" + keyOption;
+            String base = "http://localhost:" + localServer.getLocalPort() + "/post?eventId=";
+
+            assertExchange(template.request(base + "1" + options, exchange -> {
+            }));
+            localOAuth2Server.close();
+
+            Exchange exchange = template.request(base + "2" + options, exchange1 -> {
+            });
+            assertTokenReused(exchange, reused);
+        }
+    }
+
+    private void assertDifferentPath(String keyOption, boolean reused) throws Exception {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+            String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
+            String options = "?httpMethod=POST&oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret
+                             + "&oauth2TokenEndpoint=" + tokenEndpoint + "&oauth2CacheTokens=true" + keyOption;
+            String base = "http://localhost:" + localServer.getLocalPort();
+
+            assertExchange(template.request(base + "/post" + options, exchange -> {
+            }));
+            localOAuth2Server.close();
+
+            Exchange exchange = template.request(base + "/other" + options, exchange1 -> {
+            });
+            assertTokenReused(exchange, reused);
+        }
+    }
+
+    private void assertDifferentHttpPathHeader(String keyOption, boolean reused) throws Exception {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+            String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
+
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:path")
+                            .to("http://localhost:" + localServer.getLocalPort() + "?httpMethod=POST&oauth2ClientId="
+                                + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint="
+                                + tokenEndpoint + "&oauth2CacheTokens=true" + keyOption);
+                }
+            });
+
+            assertExchange(template.send("direct:path", e -> e.getIn().setHeader(Exchange.HTTP_PATH, "/post")));
+            localOAuth2Server.close();
+            Exchange exchange = template.send("direct:path", e -> e.getIn().setHeader(Exchange.HTTP_PATH, "/other"));
+
+            assertTokenReused(exchange, reused);
+        }
+    }
+
+    /**
+     * The token endpoint is closed before the second request: a reused token succeeds, a new token request fails.
+     */
+    private void assertTokenReused(Exchange exchange, boolean reused) {
+        if (reused) {
+            assertExchange(exchange);
+        } else {
+            assertExceptionExchange(exchange);
+        }
+    }
+
     @Test
     public void tokenIsNotCachedWhenCacheTokensIsFalse() throws Exception {
         try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
@@ -209,6 +314,13 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/post",
+                        new HeaderValidationHandler(
+                                "POST",
+                                null,
+                                null,
+                                null,
+                                expectedHeaders))
+                .register("/other",
                         new HeaderValidationHandler(
                                 "POST",
                                 null,

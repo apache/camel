@@ -197,6 +197,16 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     @UriParam(label = "producer,advanced", defaultValue = "true",
               description = "Whether the Content-Type header should automatic include charset for string based content.")
     private boolean contentTypeCharsetEnabled = true;
+    @UriParam(label = "producer,security", defaultValue = "FULL_URI",
+              description = "How cached OAuth2 tokens are shared between requests when oauth2CacheTokens is enabled."
+                            + " FULL_URI uses one token per request URI including the query, HOST_AND_PATH one per path,"
+                            + " and HOST_ONLY one per scheme, host and port. The token request does not depend on the"
+                            + " request URI, so HOST_AND_PATH and HOST_ONLY request fewer tokens.")
+    private OAuth2CachedTokensKey oauth2CachedTokensKey = OAuth2CachedTokensKey.FULL_URI;
+    @UriParam(label = "producer,security,advanced",
+              description = "To use a custom strategy to compute the key of cached OAuth2 tokens when oauth2CacheTokens is"
+                            + " enabled. When set, oauth2CachedTokensKey is not used.")
+    private OAuth2CachedTokensKeyResolver oauth2CachedTokensKeyResolver;
 
     public HttpEndpoint() {
     }
@@ -869,4 +879,28 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
         return -1;
     }
 
+    public OAuth2CachedTokensKey getOauth2CachedTokensKey() {
+        return oauth2CachedTokensKey;
+    }
+
+    /**
+     * How cached OAuth2 tokens are shared between requests when oauth2CacheTokens is enabled. FULL_URI uses one token
+     * per request URI including the query, HOST_AND_PATH one per path, and HOST_ONLY one per scheme, host and port. The
+     * token request does not depend on the request URI, so HOST_AND_PATH and HOST_ONLY request fewer tokens.
+     */
+    public void setOauth2CachedTokensKey(OAuth2CachedTokensKey oauth2CachedTokensKey) {
+        this.oauth2CachedTokensKey = oauth2CachedTokensKey;
+    }
+
+    public OAuth2CachedTokensKeyResolver getOauth2CachedTokensKeyResolver() {
+        return oauth2CachedTokensKeyResolver;
+    }
+
+    /**
+     * To use a custom strategy to compute the key of cached OAuth2 tokens when oauth2CacheTokens is enabled. When set,
+     * oauth2CachedTokensKey is not used.
+     */
+    public void setOauth2CachedTokensKeyResolver(OAuth2CachedTokensKeyResolver oauth2CachedTokensKeyResolver) {
+        this.oauth2CachedTokensKeyResolver = oauth2CachedTokensKeyResolver;
+    }
 }
