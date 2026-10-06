@@ -957,6 +957,14 @@ not answer within the timeout of `receive(timeout)` or `receiveNoWait()`, as oth
 periodically and should go on while the PLC is unreachable can handle the exception, for example with `onException`
 or `doTry`/`doCatch`.
 
+=== camel-reactive-streams - stopping a consumer
+
+Stopping a `reactive-streams` consumer now routes the items it already received from the stream before the route
+stops, waiting up to the `shutdownAwaitTermination` of the `ExecutorServiceManager` (10 seconds by default). Before,
+these items were dropped, and after a restart the consumer could stop requesting items. A route that synchronously
+stops itself from one of its own exchanges now waits for that timeout; stop it asynchronously instead (for example with
+the Control Bus `async=true` option).
+
 === camel-vertx - request/reply over the event bus
 
 When a `vertx` consumer receives a message that expects a reply and the route fails, the sender now gets a failure
