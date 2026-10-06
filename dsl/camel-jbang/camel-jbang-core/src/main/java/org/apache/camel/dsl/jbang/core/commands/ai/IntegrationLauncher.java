@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -40,6 +41,9 @@ public final class IntegrationLauncher {
 
     /** How long a started integration is given to publish its status file before the call returns without a pid. */
     static final long STARTUP_TIMEOUT_MS = 30_000;
+
+    /** The last log records of a failed start that are returned. */
+    static final int FAILURE_RECORDS = 15;
 
     private IntegrationLauncher() {
     }
@@ -72,6 +76,22 @@ public final class IntegrationLauncher {
             return result;
         }
         result.put("directory", directory.toString());
+        if (sourceDir) {
+            // the whole directory is the app: one already running from it is that app, and a second copy only fights
+            // it for ports and files and makes its name ambiguous to the other tools
+            RuntimeHelper.ProcessInfo running = runningFrom(directory);
+            if (running != null) {
+                String runningName = running.contextName() != null && !running.contextName().isBlank()
+                        ? running.contextName() : running.name();
+                result.put("status", "running");
+                result.put("pid", running.pid());
+                result.put("name", runningName);
+                result.put("message", runningName + " (pid " + running.pid() + ") already runs from this directory;"
+                                      + " a second copy was not started. In dev mode a changed or added file is reloaded;"
+                                      + " camel_control restart restarts it, for example after adding a Java class.");
+                return result;
+            }
+        }
         result.put("command", String.join(" ", cmd));
         Path output;
         Process process;
@@ -95,7 +115,7 @@ public final class IntegrationLauncher {
             if (!process.isAlive()) {
                 result.put("status", "failed");
                 result.put("exitCode", process.exitValue());
-                result.put("output", readTail(output));
+                result.put("output", failureOutput(output));
                 result.put("message", "camel run exited before the integration started; the output has the reason");
                 return result;
             }
@@ -218,6 +238,61 @@ public final class IntegrationLauncher {
         return null;
     }
 
+    /**
+     * The console output of a run that failed to start, as camel_get_log shows a log (CAMEL-25364): each record keeps
+     * its message, an error its root cause and the first line of the user's code, and the stack frames are left out.
+     * The end of the raw output is mostly frames of the runtime, and the line that says what went wrong is above them.
+     */
+    static String failureOutput(Path output) {
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(output, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return readTail(output);
+        }
+        if (lines.size() > 5000) {
+            lines = lines.subList(lines.size() - 5000, lines.size());
+        }
+        lines = lines.stream().filter(l -> !l.isBlank()).toList();
+        JsonObject log = LogFileReader.build(lines, FAILURE_RECORDS, null, null, false, new JsonObject());
+        JsonArray rows = (JsonArray) log.get("lines");
+        if (rows == null || rows.isEmpty()) {
+            return readTail(output);
+        }
+        StringBuilder sb = new StringBuilder();
+        // newest first in the log tool; oldest first here, so it reads as the console did
+        for (int i = rows.size() - 1; i >= 0; i--) {
+            JsonObject r = (JsonObject) rows.get(i);
+            String level = r.getStringOrDefault("time", "").isEmpty() ? "" : r.getStringOrDefault("level", "") + " ";
+            sb.append(level).append(r.getStringOrDefault("message", ""));
+            if (r.get("cause") != null) {
+                sb.append("\n  cause: ").append(r.getString("cause"));
+            }
+            if (r.get("at") != null) {
+                sb.append("\n  at: ").append(r.getString("at"));
+            }
+            if (r.get("detailLines") != null) {
+                sb.append("\n  (").append(r.get("detailLines")).append(" lines of stack trace left out)");
+            } else if (r.get("detail") != null) {
+                sb.append("\n").append(r.getString("detail"));
+            }
+            sb.append("\n");
+        }
+        return sb.toString().strip();
+    }
+
+    /** The integration that runs with this directory as its working directory, or null. */
+    private static RuntimeHelper.ProcessInfo runningFrom(Path directory) {
+        Path wanted = directory.toAbsolutePath().normalize();
+        for (RuntimeHelper.ProcessInfo p : RuntimeHelper.discoverProcesses()) {
+            Path dir = workingDirectory(p.pid());
+            if (dir != null && dir.toAbsolutePath().normalize().equals(wanted)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
     private static String readTail(Path output) {
         try {
             String text = Files.readString(output, StandardCharsets.UTF_8);
@@ -324,7 +399,8 @@ public final class IntegrationLauncher {
             }
             if (!p.isAlive()) {
                 return "Restart of " + (name != null ? name : "pid " + pid) + " failed with exit code "
-                       + p.exitValue() + ":\n" + readTail(output);
+                       + p.exitValue() + ", so it is stopped now: fix the cause below, then camel_run starts it again.\n"
+                       + failureOutput(output);
             }
             return "Restarting " + (name != null ? name : "pid " + pid) + " as pid " + p.pid()
                    + " (still starting)";

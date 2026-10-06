@@ -61,4 +61,46 @@ class IntegrationLauncherTest {
                 .containsExactly("run", "a.camel.yaml", "application.properties", "--dev", "--name=demo",
                         "--logging-color=false", "--port=9000");
     }
+
+    /**
+     * CAMEL-25364: a failed start returns what went wrong, not the last stack frames of the runtime. The cause and the
+     * first frame of the user's code are kept, the frames are counted.
+     */
+    @Test
+    void failureOutputKeepsTheCauseNotTheFrames(@TempDir Path dir) throws Exception {
+        StringBuilder out = new StringBuilder();
+        out.append("2026-10-06 01:12:03.101  INFO 81990 --- [           main] org.apache.camel.main.MainSupport  :"
+                   + " Apache Camel (JBang) 4.23.0-SNAPSHOT is starting\n");
+        out.append("2026-10-06 01:12:04.552 ERROR 81990 --- [           main] org.apache.camel.main.MainSupport  :"
+                   + " Failed to create route: order-generator at: >>> Bean[ref:orderNumber method:next] <<<\n");
+        out.append("org.apache.camel.FailedToCreateRouteException: Failed to create route: order-generator\n");
+        for (int i = 0; i < 30; i++) {
+            out.append("\tat org.apache.camel.impl.engine.AbstractCamelContext.startingRoutes(AbstractCamelContext.java:")
+                    .append(1196 + i).append(")\n");
+        }
+        out.append("Caused by: org.apache.camel.NoSuchBeanException: No bean could be found in the registry for:"
+                   + " orderNumber\n");
+        out.append("\tat org.apache.camel.component.bean.RegistryBean.getBean(RegistryBean.java:94)\n");
+        out.append("\tat camel.example.OrderNumber.next(OrderNumber.java:12)\n");
+        out.append("\t... 30 more\n");
+        Path output = dir.resolve("camel-launch.log");
+        Files.writeString(output, out.toString());
+
+        String text = IntegrationLauncher.failureOutput(output);
+        assertThat(text).contains("ERROR Failed to create route: order-generator at: >>> Bean[ref:orderNumber");
+        assertThat(text).contains("cause: org.apache.camel.NoSuchBeanException: No bean could be found in the registry"
+                                  + " for: orderNumber");
+        assertThat(text).contains("at: camel.example.OrderNumber.next(OrderNumber.java:12)");
+        assertThat(text).contains("lines of stack trace left out");
+        assertThat(text).doesNotContain("AbstractCamelContext.startingRoutes");
+        // oldest first, as the console printed it
+        assertThat(text.indexOf("is starting")).isLessThan(text.indexOf("Failed to create route"));
+    }
+
+    @Test
+    void failureOutputOfPlainTextIsKept(@TempDir Path dir) throws Exception {
+        Path output = dir.resolve("camel-launch.log");
+        Files.writeString(output, "Cannot find dependency org.example:missing:1.0\n");
+        assertThat(IntegrationLauncher.failureOutput(output)).isEqualTo("Cannot find dependency org.example:missing:1.0");
+    }
 }
