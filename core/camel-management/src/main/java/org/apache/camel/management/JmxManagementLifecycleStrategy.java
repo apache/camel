@@ -24,8 +24,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.management.JMException;
 import javax.management.MalformedObjectNameException;
@@ -103,6 +106,7 @@ import org.apache.camel.spi.ErrorRegistry;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementAgent;
@@ -156,6 +160,12 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     private final Map<BacklogTracer, ManagedBacklogTracer> managedBacklogTracers = new HashMap<>();
     private final Map<DefaultBacklogDebugger, ManagedBacklogDebugger> managedBacklogDebuggers = new HashMap<>();
     private final Map<Object, Object> managedThreadPools = new HashMap<>();
+    // the endpoint whose MBean is registered with the given name, as endpoints that only differ in a masked secret
+    // (such as a password) get the same name, and removing one of them must not unregister the MBean of the other
+    private final Map<ObjectName, Endpoint> managedEndpoints = new ConcurrentHashMap<>();
+    // held while an endpoint MBean is registered or unregistered together with the change to managedEndpoints, so that
+    // endpoints with the same name that are added or removed at the same time agree on the endpoint that owns the MBean
+    private final Lock managedEndpointsLock = new ReentrantLock();
     // route group MBean is shared by all routes in the same group, so its performance counters
     // aggregate the statistics across all the member routes
     private final Map<String, ManagedRouteGroup> managedRouteGroups = new HashMap<>();
@@ -433,7 +443,17 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 // endpoint should not be managed
                 return;
             }
-            manageObject(me);
+            ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectName(me);
+            managedEndpointsLock.lock();
+            try {
+                boolean exists = on != null && getManagementStrategy().isManagedName(on);
+                manageObject(me);
+                if (on != null && !exists) {
+                    managedEndpoints.put(on, originalEndpoint(endpoint));
+                }
+            } finally {
+                managedEndpointsLock.unlock();
+            }
         } catch (Exception e) {
             LOG.warn("Could not register Endpoint MBean for endpoint: {}. This exception will be ignored.", endpoint, e);
         }
@@ -448,10 +468,45 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
         try {
             Object me = getManagementObjectStrategy().getManagedObjectForEndpoint(camelContext, endpoint);
-            unmanageObject(me);
+            ObjectName on = me != null ? getManagementStrategy().getManagementObjectNameStrategy().getObjectName(me) : null;
+            managedEndpointsLock.lock();
+            try {
+                if (on != null) {
+                    Endpoint owner = managedEndpoints.get(on);
+                    if (owner != null && owner != originalEndpoint(endpoint) && isEndpointRegistered(owner)) {
+                        // the MBean belongs to another endpoint with the same name (only differs in a masked secret)
+                        LOG.debug("Not unregistering Endpoint MBean: {} as it belongs to another endpoint", on);
+                        return;
+                    }
+                    managedEndpoints.remove(on);
+                }
+                unmanageObject(me);
+            } finally {
+                managedEndpointsLock.unlock();
+            }
         } catch (Exception e) {
             LOG.warn("Could not unregister Endpoint MBean for endpoint: {}. This exception will be ignored.", endpoint, e);
         }
+    }
+
+    private boolean isEndpointRegistered(Endpoint endpoint) {
+        // the endpoint may have been replaced in the registry (addEndpoint) without being removed
+        for (Endpoint registered : camelContext.getEndpoints()) {
+            if (originalEndpoint(registered) == endpoint) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Endpoint originalEndpoint(Endpoint endpoint) {
+        // the endpoint registry may hold an intercepting endpoint (interceptSendToEndpoint, mock endpoints) that wraps
+        // the endpoint whose MBean was registered
+        Endpoint answer = endpoint;
+        while (answer instanceof InterceptSendToEndpoint intercept) {
+            answer = intercept.getOriginalEndpoint();
+        }
+        return answer;
     }
 
     @Override
@@ -1179,6 +1234,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         managedBacklogTracers.clear();
         managedBacklogDebuggers.clear();
         managedThreadPools.clear();
+        managedEndpoints.clear();
         managedRouteGroups.clear();
     }
 
