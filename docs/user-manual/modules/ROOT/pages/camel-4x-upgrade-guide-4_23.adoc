@@ -181,7 +181,7 @@ This can break an application that has such an invalid value configured and work
 good enough, as it now fails when starting. To keep the previous result, correct the configured value, or remove the
 property so the `defaultValue` is used.
 
-=== @PropertyInject - the separator is a plain string
+=== @PropertyInject - the separator is a plain string (Breaking change)
 
 The `separator` of `@PropertyInject`, which splits the value into an array, a collection or a map, was used as a
 regular expression: a separator such as `|` split the value into single characters, and `.` gave no values at all.
