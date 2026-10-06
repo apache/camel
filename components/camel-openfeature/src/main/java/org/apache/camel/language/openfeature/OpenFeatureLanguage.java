@@ -102,9 +102,8 @@ public class OpenFeatureLanguage extends LanguageSupport {
         private final String endpointUri;
         private final String targetingKey;
         private final Map<String, Object> contextMap;
+        private final String evaluationType;
         private OpenFeatureEndpoint endpoint;
-        private boolean useFlagKeyHeader;
-        private String evaluationType;
 
         private Evaluation(String flagKey, String endpointUri, String targetingKey,
                            Map<String, Object> contextMap, String evaluationType) {
@@ -121,43 +120,43 @@ public class OpenFeatureLanguage extends LanguageSupport {
             if (endpointUri == null || !endpointUri.startsWith("openfeature:")) {
                 throw new IllegalArgumentException("OpenFeature language endpoint must be an openfeature: URI");
             }
-            String uri = endpointUri;
-            if (uri.contains("flagKey=")) {
-                useFlagKeyHeader = true;
-            } else {
-                uri += (uri.contains("?") ? "&" : "?") + "flagKey=" + flagKey;
-                useFlagKeyHeader = false;
-            }
-            endpoint = context.getEndpoint(uri, OpenFeatureEndpoint.class);
+            endpoint = context.getEndpoint(endpointUri, OpenFeatureEndpoint.class);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <T> T evaluate(Exchange exchange, Class<T> type) {
-            if (Boolean.class.isAssignableFrom(type)) {
-                evaluationType = "boolean";
+            String localEvalType = evaluationType;
+            if (type != null && (Boolean.class.isAssignableFrom(type) || boolean.class == type)) {
+                localEvalType = "boolean";
             }
-            return super.evaluate(exchange, type);
+            Object result = doEvaluate(exchange, localEvalType);
+            return exchange.getContext().getTypeConverter().convertTo(type, exchange, result);
         }
 
         @Override
         public Object evaluate(Exchange exchange) {
+            return doEvaluate(exchange, evaluationType);
+        }
+
+        @SuppressWarnings("unchecked")
+        private Object doEvaluate(Exchange exchange, String evalType) {
             try {
                 if (endpoint == null) {
                     throw new IllegalStateException("OpenFeature expression must be initialized");
                 }
-                if (useFlagKeyHeader) {
-                    exchange.setProperty(OpenFeatureConstants.FLAG_KEY, flagKey);
+                String tk = targetingKey;
+                if (tk == null) {
+                    tk = exchange.getMessage().getHeader(OpenFeatureConstants.TARGETING_KEY, String.class);
                 }
-                if (targetingKey != null) {
-                    exchange.setProperty(OpenFeatureConstants.TARGETING_KEY, targetingKey);
+                Map<String, Object> ctx = contextMap;
+                if (ctx == null) {
+                    Object ctxHeader = exchange.getMessage().getHeader(OpenFeatureConstants.EVALUATION_CONTEXT);
+                    if (ctxHeader instanceof Map) {
+                        ctx = (Map<String, Object>) ctxHeader;
+                    }
                 }
-                if (contextMap != null && !contextMap.isEmpty()) {
-                    exchange.setProperty(OpenFeatureConstants.EVALUATION_CONTEXT, contextMap);
-                }
-                if (evaluationType != null) {
-                    exchange.setProperty(OpenFeatureConstants.EVALUATION_TYPE, evaluationType);
-                }
-                return endpoint.evaluate(exchange);
+                return endpoint.evaluate(exchange, flagKey, evalType, tk, ctx);
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }

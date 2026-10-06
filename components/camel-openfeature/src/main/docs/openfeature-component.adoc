@@ -7,7 +7,6 @@
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only producer is supported
-:core:
 
 *Since Camel {since}*
 
@@ -60,13 +59,13 @@ The component resolves the feature flag provider in this order:
 
 1. *Explicit provider bean* (`provider`): a bean reference (e.g., `#myProvider`)
    to a custom `FeatureProvider` looked up from the Camel registry.
+   When set, `provider` takes precedence over `flags`, `flagsResource`,
+   and `host`.
 2. *Default bean lookup*: a bean named `flags` of type `FeatureProvider`
    in the Camel registry.
 3. *Flagd fallback* (`flags`, `flagsResource`, or `host`): creates a flagd
    provider automatically. Use `flags` or `flagsResource` for local file-based
    evaluation, or `host` for a remote flagd gRPC service.
-
-The `provider` option is mutually exclusive with `flags` and `flagsResource`.
 
 == Evaluation type
 
@@ -85,20 +84,6 @@ When `evaluationType` is not set, the type is inferred from `defaultValue`:
 The default is `"false"` with no `evaluationType`, so boolean evaluation is
 the default.
 
-== Message headers
-
-The producer supports the following message headers (all also checked as
-exchange properties):
-
-[width="100%",cols="20%,10%,70%",options="header"]
-|===
-| Header / Property | Type | Description
-| `CamelOpenFeatureFlagKey` | `String` | Overrides the configured `flagKey` for this message.
-| `CamelOpenFeatureTargetingKey` | `String` | Sets the targeting key for the evaluation context.
-| `CamelOpenFeatureEvaluationContext` | `Map<String, Object>` | Evaluation context key-value pairs.
-| `CamelOpenFeatureEvaluationType` | `String` | Overrides the evaluation type (`boolean` or `variant`) for this message.
-|===
-
 == Evaluation context and targeting key
 
 The OpenFeature evaluation context carries metadata about the current
@@ -113,11 +98,29 @@ The evaluation context is built from these sources:
 1. *`CamelOpenFeatureEvaluationContext` header or exchange property*: when
    set to a `Map<String, Object>`, entries are added to the context. An
    entry with key `"targetingKey"` is treated as the targeting key.
-2. *Message body* (fallback): when no `CamelOpenFeatureEvaluationContext`
-   header or property is set and the body is a `Map<String, Object>`,
-   body entries are used as the context instead.
+   Context values preserve their original types (Boolean, Integer, Double,
+   String, etc.) for accurate provider-side evaluation.
+2. *Message body* (opt-in): when `contextFromBody=true` is set and no
+   `CamelOpenFeatureEvaluationContext` header or property is present,
+   a `Map<String, Object>` body is used as the context.
+   This is disabled by default to prevent untrusted inbound messages from
+   supplying targeting attributes.
 3. *`CamelOpenFeatureTargetingKey` header or exchange property*: when set,
    overrides the targeting key from any of the above sources.
+
+== Evaluation result details
+
+The producer exposes evaluation details as message headers after each
+evaluation:
+
+* `CamelOpenFeatureVariant` — the variant name returned by the provider
+* `CamelOpenFeatureReason` — the reason string (e.g. `TARGETING_MATCH`,
+  `DEFAULT`, `STATIC`)
+* `CamelOpenFeatureErrorCode` — the error code when evaluation failed
+  (e.g. `FLAG_NOT_FOUND`, `TYPE_MISMATCH`)
+
+When an evaluation error occurs, a warning is logged with the flag key,
+error code, and error message.
 
 == Usage
 
@@ -275,16 +278,8 @@ from("direct:start")
     .toD("direct:orders-${exchangeProperty.orderVariant}");
 ----
 
-The evaluation context is provided via the message body as a `Map`:
-
-[source,java]
-----
-template.requestBody("direct:start",
-    Map.of("targetingKey", "order-123", "customer_tier", "ENTERPRISE"));
-----
-
-Alternatively, set the context via headers — useful when the message body
-carries business data:
+The evaluation context is provided via a header — useful when the message
+body carries business data:
 
 [source,java]
 ----
@@ -294,6 +289,31 @@ from("direct:start")
         constant(Map.of("customer_tier", "ENTERPRISE")))
     .to("openfeature:flags?flagKey=order-compliance-v2&evaluationType=variant&resultProperty=orderVariant")
     .toD("direct:orders-${exchangeProperty.orderVariant}");
+----
+
+Alternatively, enable `contextFromBody=true` to use a `Map` body as the
+evaluation context:
+
+[source,java]
+----
+from("direct:start")
+    .to("openfeature:flags?flagKey=order-compliance-v2&evaluationType=variant"
+        + "&resultProperty=orderVariant&contextFromBody=true")
+    .toD("direct:orders-${exchangeProperty.orderVariant}");
+----
+
+=== Remote flagd service
+
+For a remote flagd service, configure `host` (and optionally `port`,
+`tls`, `certPath`, and `deadline`):
+
+[source,properties]
+----
+camel.component.openfeature.host = flagd.example.com
+camel.component.openfeature.port = 8013
+camel.component.openfeature.tls = true
+camel.component.openfeature.cert-path = /etc/tls/ca.crt
+camel.component.openfeature.deadline = 1000
 ----
 
 === Custom provider

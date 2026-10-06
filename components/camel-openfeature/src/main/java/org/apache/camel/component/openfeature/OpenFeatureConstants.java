@@ -36,6 +36,18 @@ public final class OpenFeatureConstants {
               javaType = "String", applicableFor = "openfeature")
     public static final String EVALUATION_TYPE = "CamelOpenFeatureEvaluationType";
 
+    @Metadata(description = "The variant name returned by the provider for this evaluation.",
+              javaType = "String", applicableFor = "openfeature")
+    public static final String EVALUATION_VARIANT = "CamelOpenFeatureVariant";
+
+    @Metadata(description = "The reason string returned by the provider for this evaluation.",
+              javaType = "String", applicableFor = "openfeature")
+    public static final String EVALUATION_REASON = "CamelOpenFeatureReason";
+
+    @Metadata(description = "The error code when the evaluation failed (e.g. FLAG_NOT_FOUND, TYPE_MISMATCH).",
+              javaType = "String", applicableFor = "openfeature")
+    public static final String EVALUATION_ERROR_CODE = "CamelOpenFeatureErrorCode";
+
     private OpenFeatureConstants() {
     }
 }

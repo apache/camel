@@ -32,7 +32,12 @@ public class OpenFeatureComponentConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "certpath":
+        case "certPath": getOrCreateConfiguration(target).setCertPath(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.openfeature.OpenFeatureConfiguration.class, value)); return true;
+        case "contextfrombody":
+        case "contextFromBody": getOrCreateConfiguration(target).setContextFromBody(property(camelContext, boolean.class, value)); return true;
+        case "deadline": getOrCreateConfiguration(target).setDeadline(property(camelContext, int.class, value)); return true;
         case "defaultvalue":
         case "defaultValue": getOrCreateConfiguration(target).setDefaultValue(property(camelContext, java.lang.String.class, value)); return true;
         case "evaluationtype":
@@ -49,6 +54,7 @@ public class OpenFeatureComponentConfigurer extends PropertyConfigurerSupport im
         case "provider": getOrCreateConfiguration(target).setProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "resultproperty":
         case "resultProperty": getOrCreateConfiguration(target).setResultProperty(property(camelContext, java.lang.String.class, value)); return true;
+        case "tls": getOrCreateConfiguration(target).setTls(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -58,7 +64,12 @@ public class OpenFeatureComponentConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "certpath":
+        case "certPath": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.openfeature.OpenFeatureConfiguration.class;
+        case "contextfrombody":
+        case "contextFromBody": return boolean.class;
+        case "deadline": return int.class;
         case "defaultvalue":
         case "defaultValue": return java.lang.String.class;
         case "evaluationtype":
@@ -75,6 +86,7 @@ public class OpenFeatureComponentConfigurer extends PropertyConfigurerSupport im
         case "provider": return java.lang.String.class;
         case "resultproperty":
         case "resultProperty": return java.lang.String.class;
+        case "tls": return boolean.class;
         default: return null;
         }
     }
@@ -85,7 +97,12 @@ public class OpenFeatureComponentConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "certpath":
+        case "certPath": return getOrCreateConfiguration(target).getCertPath();
         case "configuration": return target.getConfiguration();
+        case "contextfrombody":
+        case "contextFromBody": return getOrCreateConfiguration(target).isContextFromBody();
+        case "deadline": return getOrCreateConfiguration(target).getDeadline();
         case "defaultvalue":
         case "defaultValue": return getOrCreateConfiguration(target).getDefaultValue();
         case "evaluationtype":
@@ -102,6 +119,7 @@ public class OpenFeatureComponentConfigurer extends PropertyConfigurerSupport im
         case "provider": return getOrCreateConfiguration(target).getProvider();
         case "resultproperty":
         case "resultProperty": return getOrCreateConfiguration(target).getResultProperty();
+        case "tls": return getOrCreateConfiguration(target).isTls();
         default: return null;
         }
     }

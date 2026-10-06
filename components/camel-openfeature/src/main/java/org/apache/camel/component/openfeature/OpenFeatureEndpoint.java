@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 
 import dev.openfeature.contrib.providers.flagd.Config;
@@ -28,7 +30,9 @@ import dev.openfeature.contrib.providers.flagd.FlagdOptions;
 import dev.openfeature.contrib.providers.flagd.FlagdProvider;
 import dev.openfeature.sdk.Client;
 import dev.openfeature.sdk.FeatureProvider;
+import dev.openfeature.sdk.FlagEvaluationDetails;
 import dev.openfeature.sdk.MutableContext;
+import dev.openfeature.sdk.Value;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -40,12 +44,15 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ResourceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Evaluate feature flags using the OpenFeature specification with flagd. */
 @UriEndpoint(firstVersion = "4.23.0", scheme = "openfeature", title = "OpenFeature", syntax = "openfeature:domain",
-             producerOnly = true, category = { Category.CORE })
+             producerOnly = true, category = { Category.CLOUD }, headersClass = OpenFeatureConstants.class)
 public class OpenFeatureEndpoint extends DefaultEndpoint {
 
+    private static final Logger LOG = LoggerFactory.getLogger(OpenFeatureEndpoint.class);
     private static final String DEFAULT_PROVIDER_BEAN = "flags";
 
     @UriPath
@@ -93,17 +100,15 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
 
         FeatureProvider provider = resolveProvider();
         resolvedProvider = provider;
-        client = getComponent().registerProviderAndGetClient(domain, provider);
+        client = getComponent().registerEndpoint(domain, provider, ownedProvider);
     }
 
     @Override
     protected void doStop() throws Exception {
         client = null;
-
-        if (ownedProvider && resolvedProvider != null) {
-            resolvedProvider.shutdown();
-        }
         resolvedProvider = null;
+
+        getComponent().unregisterEndpoint(domain);
 
         File tmp = tempFlagFile;
         tempFlagFile = null;
@@ -114,47 +119,133 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
         super.doStop();
     }
 
+    /**
+     * Evaluate a flag from the producer path. Reads flag key, evaluation type, targeting key and context from exchange
+     * headers/properties/configuration. Sets result detail headers on the exchange.
+     */
+    public Object evaluate(Exchange exchange) {
+        Client c = client;
+        if (c == null) {
+            throw new IllegalStateException("OpenFeature endpoint is not started");
+        }
+        String flagKey = resolveFlagKey(exchange);
+        String evalType = resolveEvaluationType(exchange);
+        MutableContext ctx = buildContext(exchange);
+
+        if (isBooleanEvaluation(evalType)) {
+            boolean defaultVal = Boolean.parseBoolean(configuration.getDefaultValue());
+            FlagEvaluationDetails<Boolean> details = c.getBooleanDetails(flagKey, defaultVal, ctx);
+            setResultHeaders(exchange, details);
+            if (details.getErrorCode() != null) {
+                LOG.warn("OpenFeature evaluation error for flag '{}': {} - {}",
+                        flagKey, details.getErrorCode(), details.getErrorMessage());
+            }
+            return details.getValue();
+        } else {
+            FlagEvaluationDetails<String> details = c.getStringDetails(flagKey, configuration.getDefaultValue(), ctx);
+            setResultHeaders(exchange, details);
+            if (details.getErrorCode() != null) {
+                LOG.warn("OpenFeature evaluation error for flag '{}': {} - {}",
+                        flagKey, details.getErrorCode(), details.getErrorMessage());
+            }
+            return details.getValue();
+        }
+    }
+
+    /**
+     * Evaluate a flag from the language path with explicit parameters. Does not read from or write to the exchange — no
+     * side effects on headers or properties.
+     */
+    public Object evaluate(
+            Exchange exchange, String flagKey, String evaluationType, String targetingKey, Map<String, Object> contextMap) {
+        Client c = client;
+        if (c == null) {
+            throw new IllegalStateException("OpenFeature endpoint is not started");
+        }
+        MutableContext ctx = buildMutableContext(targetingKey, contextMap);
+
+        if (isBooleanEvaluation(evaluationType)) {
+            boolean defaultVal = Boolean.parseBoolean(configuration.getDefaultValue());
+            return c.getBooleanValue(flagKey, defaultVal, ctx);
+        } else {
+            return c.getStringValue(flagKey, configuration.getDefaultValue(), ctx);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     MutableContext buildContext(Exchange exchange) {
-        MutableContext ctx = new MutableContext();
+        Map<String, Object> contextMap = null;
 
-        // 1. CamelOpenFeatureEvaluationContext header
         Object contextHeader = exchange.getMessage().getHeader(OpenFeatureConstants.EVALUATION_CONTEXT);
         if (contextHeader == null) {
             contextHeader = exchange.getProperty(OpenFeatureConstants.EVALUATION_CONTEXT);
         }
         if (contextHeader instanceof Map) {
-            addMapToContext(ctx, (Map<String, Object>) contextHeader);
-        } else {
-            // Fallback to body map entries
+            contextMap = (Map<String, Object>) contextHeader;
+        } else if (configuration.isContextFromBody()) {
             Object body = exchange.getMessage().getBody();
             if (body instanceof Map) {
-                addMapToContext(ctx, (Map<String, Object>) body);
+                contextMap = (Map<String, Object>) body;
             }
         }
 
-        // 2. CamelOpenFeatureTargetingKey header or exchange property
         String targetingKey = exchange.getMessage().getHeader(OpenFeatureConstants.TARGETING_KEY, String.class);
         if (targetingKey == null) {
             targetingKey = exchange.getProperty(OpenFeatureConstants.TARGETING_KEY, String.class);
         }
-        if (targetingKey != null) {
-            ctx.setTargetingKey(targetingKey);
-        }
 
-        return ctx;
+        return buildMutableContext(targetingKey, contextMap);
     }
 
-    private static void addMapToContext(MutableContext ctx, Map<String, Object> map) {
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue() != null ? String.valueOf(entry.getValue()) : "";
-            if ("targetingKey".equals(key)) {
-                ctx.setTargetingKey(value);
+    static MutableContext buildMutableContext(String targetingKey, Map<String, Object> contextMap) {
+        if (contextMap == null || contextMap.isEmpty()) {
+            if (targetingKey != null) {
+                return new MutableContext(targetingKey);
+            }
+            return new MutableContext();
+        }
+
+        Map<String, Value> attributes = new HashMap<>();
+        String tk = targetingKey;
+        for (Map.Entry<String, Object> entry : contextMap.entrySet()) {
+            if ("targetingKey".equals(entry.getKey())) {
+                if (tk == null && entry.getValue() != null) {
+                    tk = String.valueOf(entry.getValue());
+                }
             } else {
-                ctx.add(key, value);
+                attributes.put(entry.getKey(), toValue(entry.getValue()));
             }
         }
+
+        if (tk != null) {
+            return new MutableContext(tk, attributes);
+        }
+        return new MutableContext(attributes);
+    }
+
+    private static Value toValue(Object obj) {
+        if (obj == null) {
+            return new Value();
+        }
+        if (obj instanceof Boolean) {
+            return new Value((Boolean) obj);
+        }
+        if (obj instanceof String) {
+            return new Value((String) obj);
+        }
+        if (obj instanceof Integer) {
+            return new Value((Integer) obj);
+        }
+        if (obj instanceof Long) {
+            return new Value(((Long) obj).intValue());
+        }
+        if (obj instanceof Double) {
+            return new Value((Double) obj);
+        }
+        if (obj instanceof Instant) {
+            return new Value((Instant) obj);
+        }
+        return new Value(String.valueOf(obj));
     }
 
     String resolveFlagKey(Exchange exchange) {
@@ -173,24 +264,41 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
         return key;
     }
 
-    public Object evaluate(Exchange exchange) {
-        Client c = client;
-        if (c == null) {
-            throw new IllegalStateException("OpenFeature endpoint is not started");
+    private String resolveEvaluationType(Exchange exchange) {
+        String evalType = exchange.getMessage().getHeader(OpenFeatureConstants.EVALUATION_TYPE, String.class);
+        if (evalType == null) {
+            evalType = exchange.getProperty(OpenFeatureConstants.EVALUATION_TYPE, String.class);
         }
-        String flagKey = resolveFlagKey(exchange);
-        MutableContext ctx = buildContext(exchange);
+        if (evalType == null) {
+            evalType = configuration.getEvaluationType();
+        }
+        return evalType;
+    }
 
-        if (configuration.isBooleanEvaluation(exchange, ctx)) {
-            boolean defaultVal = Boolean.parseBoolean(configuration.getDefaultValue());
-            return c.getBooleanValue(flagKey, defaultVal, ctx);
-        } else {
-            return c.getStringValue(flagKey, configuration.getDefaultValue(), ctx);
+    private boolean isBooleanEvaluation(String evalType) {
+        if ("boolean".equalsIgnoreCase(evalType)) {
+            return true;
+        }
+        if ("variant".equalsIgnoreCase(evalType)) {
+            return false;
+        }
+        String dv = configuration.getDefaultValue();
+        return "true".equalsIgnoreCase(dv) || "false".equalsIgnoreCase(dv);
+    }
+
+    private void setResultHeaders(Exchange exchange, FlagEvaluationDetails<?> details) {
+        if (details.getVariant() != null) {
+            exchange.getMessage().setHeader(OpenFeatureConstants.EVALUATION_VARIANT, details.getVariant());
+        }
+        if (details.getReason() != null) {
+            exchange.getMessage().setHeader(OpenFeatureConstants.EVALUATION_REASON, details.getReason());
+        }
+        if (details.getErrorCode() != null) {
+            exchange.getMessage().setHeader(OpenFeatureConstants.EVALUATION_ERROR_CODE, details.getErrorCode().name());
         }
     }
 
     private FeatureProvider resolveProvider() throws IOException {
-        // 1. Explicit provider bean reference
         String providerRef = configuration.getProvider();
         if (providerRef != null) {
             String beanName = providerRef.startsWith("#") ? providerRef.substring(1) : providerRef;
@@ -204,7 +312,6 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
             return provider;
         }
 
-        // 2. Registry lookup for default bean
         FeatureProvider defaultProvider = getCamelContext().getRegistry()
                 .lookupByNameAndType(DEFAULT_PROVIDER_BEAN, FeatureProvider.class);
         if (defaultProvider != null) {
@@ -212,33 +319,50 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
             return defaultProvider;
         }
 
-        // 3. Fallback to FlagdProvider
         ownedProvider = true;
         return createFlagdProvider();
     }
 
     private FeatureProvider createFlagdProvider() throws IOException {
         if (configuration.getFlags() != null) {
-            return createFileProvider(configuration.getFlags());
+            return createFileProviderFromContent(configuration.getFlags());
         }
         if (configuration.getFlagsResource() != null) {
-            String content = loadResource(configuration.getFlagsResource());
-            return createFileProvider(content);
+            String resource = configuration.getFlagsResource();
+            if (resource.startsWith("file:")) {
+                return createFileProviderFromPath(resource.substring(5));
+            }
+            String content = loadResource(resource);
+            return createFileProviderFromContent(content);
         }
         if (configuration.getHost() != null) {
-            FlagdOptions options = FlagdOptions.builder()
+            FlagdOptions.FlagdOptionsBuilder builder = FlagdOptions.builder()
                     .host(configuration.getHost())
                     .port(configuration.getPort())
-                    .build();
-            return new FlagdProvider(options);
+                    .deadline(configuration.getDeadline());
+            if (configuration.isTls()) {
+                builder.tls(true);
+                if (configuration.getCertPath() != null) {
+                    builder.certPath(configuration.getCertPath());
+                }
+            }
+            return new FlagdProvider(builder.build());
         }
         throw new IllegalArgumentException(
                 "No provider found. Set a provider bean reference, register a '" + DEFAULT_PROVIDER_BEAN
                                            + "' bean of type FeatureProvider, or configure flags, flagsResource, or host for the default flagd provider.");
     }
 
-    private FlagdProvider createFileProvider(String flagContent) throws IOException {
-        File tmp = File.createTempFile("camel-openfeature-", ".json");
+    private FlagdProvider createFileProviderFromPath(String path) {
+        FlagdOptions options = FlagdOptions.builder()
+                .resolverType(Config.Resolver.FILE)
+                .offlineFlagSourcePath(path)
+                .build();
+        return new FlagdProvider(options);
+    }
+
+    private FlagdProvider createFileProviderFromContent(String flagContent) throws IOException {
+        File tmp = Files.createTempFile("camel-openfeature-", ".json").toFile();
         Files.writeString(tmp.toPath(), flagContent, StandardCharsets.UTF_8);
         tempFlagFile = tmp;
 
@@ -287,7 +411,8 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Bean reference to a custom FeatureProvider (e.g. #myProvider). Mutually exclusive with flags and flagsResource.
+     * Bean reference to a custom FeatureProvider (e.g. #myProvider). When set, takes precedence over flags,
+     * flagsResource, and host.
      */
     public void setProvider(String provider) {
         configuration.setProvider(provider);

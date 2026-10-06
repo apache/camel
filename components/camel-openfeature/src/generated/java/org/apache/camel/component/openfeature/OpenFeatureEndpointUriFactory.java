@@ -24,7 +24,10 @@ public class OpenFeatureEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(11);
+        Set<String> props = new HashSet<>(15);
+        props.add("certPath");
+        props.add("contextFromBody");
+        props.add("deadline");
         props.add("defaultValue");
         props.add("domain");
         props.add("evaluationType");
@@ -36,6 +39,7 @@ public class OpenFeatureEndpointUriFactory extends org.apache.camel.support.comp
         props.add("port");
         props.add("provider");
         props.add("resultProperty");
+        props.add("tls");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();

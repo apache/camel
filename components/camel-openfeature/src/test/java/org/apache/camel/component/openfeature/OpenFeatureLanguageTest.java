@@ -71,9 +71,15 @@ class OpenFeatureLanguageTest extends CamelTestSupport {
                         .end();
 
                 from("direct:with-context")
-                        .filter().language("openfeature", "enrichment-enabled")
+                        .filter().language("openfeature", "targeted-boolean")
                             .to("mock:context-filtered")
                         .end();
+
+                from("direct:language-then-producer")
+                        .filter().language("openfeature", "enrichment-enabled")
+                            .to("mock:lang-filtered")
+                        .end()
+                        .to("openfeature:flags?flagKey=hazmat-compliance-v2&evaluationType=variant&resultProperty=variant");
             }
         };
     }
@@ -118,7 +124,7 @@ class OpenFeatureLanguageTest extends CamelTestSupport {
     }
 
     @Test
-    void testEvaluationContextViaHeaders() throws Exception {
+    void testTargetedBooleanWithContextHeaders() throws Exception {
         MockEndpoint filtered = getMockEndpoint("mock:context-filtered");
         filtered.expectedMessageCount(1);
 
@@ -130,9 +136,33 @@ class OpenFeatureLanguageTest extends CamelTestSupport {
     }
 
     @Test
+    void testTargetedBooleanBlocksForStandard() throws Exception {
+        MockEndpoint filtered = getMockEndpoint("mock:context-filtered");
+        filtered.expectedMessageCount(0);
+
+        template.sendBodyAndHeaders("direct:with-context", "test-message",
+                Map.of(OpenFeatureConstants.TARGETING_KEY, "user-456",
+                        OpenFeatureConstants.EVALUATION_CONTEXT, Map.of("customer_tier", "STANDARD")));
+
+        filtered.assertIsSatisfied();
+    }
+
+    @Test
+    void testLanguageDoesNotLeakIntoProducer() {
+        Exchange exchange = template.request("direct:language-then-producer", e -> {
+            e.getMessage().setBody("test-message");
+            e.getMessage().setHeader(OpenFeatureConstants.EVALUATION_CONTEXT,
+                    Map.of("targetingKey", "order-123", "customer_tier", "ENTERPRISE"));
+        });
+        assertThat(exchange.getProperty("variant")).isEqualTo("v2");
+        assertThat(exchange.getProperty(OpenFeatureConstants.EVALUATION_TYPE)).isNull();
+        assertThat(exchange.getProperty(OpenFeatureConstants.FLAG_KEY)).isNull();
+    }
+
+    @Test
     void testCreatePredicateWithContext() throws Exception {
         Predicate flag = context.resolveLanguage("openfeature").createPredicate(
-                "enrichment-enabled",
+                "targeted-boolean",
                 new Object[] { null, "user-42", Map.of("customer_tier", "ENTERPRISE") });
 
         context.addRoutes(new RouteBuilder() {
@@ -149,6 +179,30 @@ class OpenFeatureLanguageTest extends CamelTestSupport {
         filtered.expectedMessageCount(1);
 
         template.sendBody("direct:predicate-context", "test-message");
+
+        filtered.assertIsSatisfied();
+    }
+
+    @Test
+    void testCreatePredicateBlocksForStandard() throws Exception {
+        Predicate flag = context.resolveLanguage("openfeature").createPredicate(
+                "targeted-boolean",
+                new Object[] { null, "user-42", Map.of("customer_tier", "STANDARD") });
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:predicate-context-standard")
+                        .filter(flag)
+                            .to("mock:predicate-filtered-standard")
+                        .end();
+            }
+        });
+
+        MockEndpoint filtered = getMockEndpoint("mock:predicate-filtered-standard");
+        filtered.expectedMessageCount(0);
+
+        template.sendBody("direct:predicate-context-standard", "test-message");
 
         filtered.assertIsSatisfied();
     }

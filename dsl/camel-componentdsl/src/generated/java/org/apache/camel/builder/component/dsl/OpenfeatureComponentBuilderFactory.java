@@ -35,7 +35,7 @@ public interface OpenfeatureComponentBuilderFactory {
      * OpenFeature (camel-openfeature)
      * Evaluate feature flags using the OpenFeature specification with flagd.
      * 
-     * Category: core
+     * Category: cloud
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-openfeature
      * 
@@ -51,6 +51,21 @@ public interface OpenfeatureComponentBuilderFactory {
     interface OpenfeatureComponentBuilder extends ComponentBuilder<OpenFeatureComponent> {
     
         /**
+         * Path to the TLS certificate for the remote flagd connection.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param certPath the value to set
+         * @return the dsl builder
+         */
+        default OpenfeatureComponentBuilder certPath(java.lang.String certPath) {
+            doSetProperty("certPath", certPath);
+            return this;
+        }
+    
+        /**
          * Default configuration shared by OpenFeature endpoints.
          * 
          * The option is a:
@@ -63,6 +78,43 @@ public interface OpenfeatureComponentBuilderFactory {
          */
         default OpenfeatureComponentBuilder configuration(org.apache.camel.component.openfeature.OpenFeatureConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+    
+        
+        /**
+         * When true, a Map message body is used as the evaluation context. When
+         * false (default), the body is not used as context. The
+         * CamelOpenFeatureEvaluationContext header is always used regardless of
+         * this setting.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param contextFromBody the value to set
+         * @return the dsl builder
+         */
+        default OpenfeatureComponentBuilder contextFromBody(boolean contextFromBody) {
+            doSetProperty("contextFromBody", contextFromBody);
+            return this;
+        }
+    
+        
+        /**
+         * Deadline in milliseconds for the remote flagd connection.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 500
+         * Group: common
+         * 
+         * @param deadline the value to set
+         * @return the dsl builder
+         */
+        default OpenfeatureComponentBuilder deadline(int deadline) {
+            doSetProperty("deadline", deadline);
             return this;
         }
     
@@ -185,8 +237,8 @@ public interface OpenfeatureComponentBuilderFactory {
         }
     
         /**
-         * Bean reference to a custom FeatureProvider (e.g. #myProvider).
-         * Mutually exclusive with flags and flagsResource.
+         * Bean reference to a custom FeatureProvider (e.g. #myProvider). When
+         * set, takes precedence over flags, flagsResource, and host.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -197,6 +249,23 @@ public interface OpenfeatureComponentBuilderFactory {
          */
         default OpenfeatureComponentBuilder provider(java.lang.String provider) {
             doSetProperty("provider", provider);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to use TLS for the remote flagd connection.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default OpenfeatureComponentBuilder tls(boolean tls) {
+            doSetProperty("tls", tls);
             return this;
         }
     
@@ -283,7 +352,10 @@ public interface OpenfeatureComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "certPath": getOrCreateConfiguration((OpenFeatureComponent) component).setCertPath((java.lang.String) value); return true;
             case "configuration": ((OpenFeatureComponent) component).setConfiguration((org.apache.camel.component.openfeature.OpenFeatureConfiguration) value); return true;
+            case "contextFromBody": getOrCreateConfiguration((OpenFeatureComponent) component).setContextFromBody((boolean) value); return true;
+            case "deadline": getOrCreateConfiguration((OpenFeatureComponent) component).setDeadline((int) value); return true;
             case "defaultValue": getOrCreateConfiguration((OpenFeatureComponent) component).setDefaultValue((java.lang.String) value); return true;
             case "evaluationType": getOrCreateConfiguration((OpenFeatureComponent) component).setEvaluationType((java.lang.String) value); return true;
             case "flagKey": getOrCreateConfiguration((OpenFeatureComponent) component).setFlagKey((java.lang.String) value); return true;
@@ -292,6 +364,7 @@ public interface OpenfeatureComponentBuilderFactory {
             case "host": getOrCreateConfiguration((OpenFeatureComponent) component).setHost((java.lang.String) value); return true;
             case "port": getOrCreateConfiguration((OpenFeatureComponent) component).setPort((int) value); return true;
             case "provider": getOrCreateConfiguration((OpenFeatureComponent) component).setProvider((java.lang.String) value); return true;
+            case "tls": getOrCreateConfiguration((OpenFeatureComponent) component).setTls((boolean) value); return true;
             case "lazyStartProducer": ((OpenFeatureComponent) component).setLazyStartProducer((boolean) value); return true;
             case "resultProperty": getOrCreateConfiguration((OpenFeatureComponent) component).setResultProperty((java.lang.String) value); return true;
             case "autowiredEnabled": ((OpenFeatureComponent) component).setAutowiredEnabled((boolean) value); return true;
