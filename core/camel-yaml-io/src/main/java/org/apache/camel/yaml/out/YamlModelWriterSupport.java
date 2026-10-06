@@ -29,6 +29,7 @@ import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.apache.camel.yaml.io.YamlPrinter;
 
 /**
@@ -203,7 +204,9 @@ public abstract class YamlModelWriterSupport {
         if (uri == null) {
             return;
         }
-        if (!uriAsParameters) {
+        if (!uriAsParameters || questionMarkInPlaceholder(uri)) {
+            // an optional placeholder before the query (https://host/{{?path}}?a=b): its ? is not where the query
+            // starts, and the uri cannot be split into parameters without breaking it, so it is kept as written
             jo.put("uri", uri);
             return;
         }
@@ -215,6 +218,15 @@ public abstract class YamlModelWriterSupport {
                             : null;
             if (catalog != null) {
                 params = catalog.endpointProperties(uri);
+                if (params != null && !params.isEmpty() && !uri.startsWith("kamelet:")
+                        && (fewerPathPartsThanSyntax(catalog, uri) || !rebuildsThePath(catalog, uri, params))) {
+                    // the catalog parsed the path into options that would mean something else: fewer path parts than
+                    // the syntax has (azure-storage-blob:{{accountName}} for accountName/containerName: the one part went
+                    // to containerName, the component reads it as accountName), or options it cannot write back as the
+                    // same path (pulsar:{{type}}/{{tenant}}/{{ns}}/{{topic}} for persistence://tenant/namespace/topic)
+                    jo.put("uri", uri);
+                    return;
+                }
             }
             if (params == null || params.isEmpty()) {
                 Map<String, Object> raw = URISupport.parseQuery(URISupport.extractQuery(uri));
@@ -249,6 +261,73 @@ public abstract class YamlModelWriterSupport {
         } catch (Exception e) {
             jo.put("uri", uri);
         }
+    }
+
+    /**
+     * Whether the uri has fewer path parts than the syntax of its component has path options, when the syntax has more
+     * than one: which option a part is cannot be told from the uri alone.
+     */
+    static boolean fewerPathPartsThanSyntax(RuntimeCamelCatalog catalog, String uri) {
+        try {
+            int colon = uri.indexOf(':');
+            if (colon < 0) {
+                return false;
+            }
+            String json = catalog.componentJSonSchema(uri.substring(0, colon));
+            if (json == null) {
+                return false;
+            }
+            Object component = ((JsonObject) Jsoner.deserialize(json)).get("component");
+            String syntax = component instanceof JsonObject c ? c.getString("syntax") : null;
+            if (syntax == null || syntax.indexOf(':') < 0) {
+                return false;
+            }
+            int options = pathParts(syntax.substring(syntax.indexOf(':') + 1));
+            if (options < 2) {
+                return false;
+            }
+            return pathParts(path(uri).substring(colon + 1)) < options;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static int pathParts(String path) {
+        int n = 0;
+        for (String part : path.replaceFirst("^/+", "").split("[:/]")) {
+            if (!part.isEmpty()) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    /**
+     * Whether the catalog builds the uri back from the options to the same path: only then do the options mean what the
+     * uri says.
+     */
+    static boolean rebuildsThePath(RuntimeCamelCatalog catalog, String uri, Map<String, String> params) {
+        try {
+            String scheme = uri.substring(0, uri.indexOf(':'));
+            String rebuilt = catalog.asEndpointUri(scheme, params, false);
+            return rebuilt != null && path(rebuilt).equals(path(uri));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static String path(String uri) {
+        int q = uri.indexOf('?');
+        return q >= 0 ? uri.substring(0, q) : uri;
+    }
+
+    /** Whether the first ? of the uri is inside a {{...}} property placeholder, such as {{?name}}. */
+    static boolean questionMarkInPlaceholder(String uri) {
+        int idx = uri.indexOf('?');
+        if (idx < 0) {
+            return false;
+        }
+        return uri.lastIndexOf("{{", idx) > uri.lastIndexOf("}}", idx);
     }
 
     protected Object parseValue(String value) {
