@@ -163,12 +163,12 @@ The message body is the user prompt when no header overrides it:
 ----
 - route:
     from:
-        uri: direct:ask
-        steps:
-          - to:
-              uri: openai:chat-completion
-              parameters:
-                model: gpt-4o-mini
+      uri: direct:ask
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4o-mini
 ----
 
 Send `"Summarize this CV: ..."` as the exchange body.
@@ -205,7 +205,7 @@ Inline prompt strings in every route become hard to maintain. Common patterns:
 === External prompt files
 
 Keep a prompt in its own file as a Simple template, and load it with the `resource:` prefix: the template is read
-once and evaluated for each exchange, so `${body}` in it is the document the route received. For example
+once and evaluated for each exchange, so `+${body}+` in it is the document the route received. For example
 `prompts/extract-resume.txt` on the classpath:
 
 [source,text]
@@ -269,21 +269,21 @@ With `streaming=true`, the OpenAI component returns an `Iterator<ChatCompletionC
 ----
 - route:
     from:
-        uri: direct:stream-chat
-        steps:
-          - to:
-              uri: openai:chat-completion
-              parameters:
-                userMessage: Explain Apache Camel in one paragraph
-                streaming: true
-          - split:
+      uri: direct:stream-chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              userMessage: Explain Apache Camel in one paragraph
               streaming: true
-              expression:
-                simple:
-                  expression: ${body}
-              steps:
-                - log:
-                    message: "chunk: ${body}"
+        - split:
+            streaming: true
+            expression:
+              simple:
+                expression: ${body}
+            steps:
+              - log:
+                  message: "chunk: ${body}"
 ----
 
 IMPORTANT: Conversation memory is **not** updated for streaming responses. Use non-streaming mode when you need multi-turn history on the same exchange.

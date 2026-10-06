@@ -64,12 +64,12 @@ YAML::
 ----
 - route:
     from:
-        uri: direct:classify
-        steps:
-          - to:
-              uri: "openai:batch?batchEndpoint=/v1/chat/completions&model=gpt-4o-mini&systemMessage=Classify the ticket"
-          - log:
-              message: "Batch ${header.CamelOpenAIBatchId} is ${header.CamelOpenAIBatchStatus}"
+      uri: direct:classify
+      steps:
+        - to:
+            uri: "openai:batch?batchEndpoint=/v1/chat/completions&model=gpt-4o-mini&systemMessage=Classify the ticket"
+        - log:
+            message: "Batch ${header.CamelOpenAIBatchId} is ${header.CamelOpenAIBatchStatus}"
 ----
 ====
 
