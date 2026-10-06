@@ -173,4 +173,74 @@ class SpiffeSecurityPolicyTest extends CamelTestSupport {
                 .hasMessageContaining("No verified SPIFFE peer identity");
         authorized.assertIsSatisfied();
     }
+
+    /**
+     * A sender cannot assert an identity by setting the session header: an {@link SSLSession} is a Java object, so a
+     * String header does not convert to one and the policy sees no session at all.
+     */
+    @Test
+    void deniesAStringValuedSslSessionHeader() throws Exception {
+        MockEndpoint authorized = getMockEndpoint("mock:authorized");
+        authorized.expectedMessageCount(0);
+
+        Exchange out = template.request("direct:start", e -> {
+            e.getMessage().setHeader(SpiffeSecurityPolicy.DEFAULT_SSL_SESSION_HEADER, FRONTEND);
+            e.getMessage().setBody("payload");
+        });
+
+        assertThat(out.getException()).isInstanceOf(CamelAuthorizationException.class)
+                .hasMessageContaining("No verified SPIFFE peer identity");
+        assertThat(out.getProperty(SpiffeConstants.PEER_SPIFFE_ID)).isNull();
+        authorized.assertIsSatisfied();
+    }
+
+    @Test
+    void deniesAnIdWhoseTrustDomainOnlyLooksLikeTheAllowedOne() throws Exception {
+        MockEndpoint authorized = getMockEndpoint("mock:authorized");
+        authorized.expectedMessageCount(0);
+
+        Exchange out = sendWithSession(sessionPresenting(certWithUriSans("spiffe://example.org.evil/frontend")));
+
+        assertThat(out.getException()).isInstanceOf(CamelAuthorizationException.class);
+        assertThat(out.getProperty(SpiffeConstants.PEER_SPIFFE_ID)).isNull();
+        authorized.assertIsSatisfied();
+    }
+
+    @Test
+    void deniesAnIdWhosePathOnlyStartsWithTheAllowedOne() throws Exception {
+        MockEndpoint authorized = getMockEndpoint("mock:authorized");
+        authorized.expectedMessageCount(0);
+
+        Exchange out = sendWithSession(sessionPresenting(certWithUriSans(FRONTEND + "/x")));
+
+        assertThat(out.getException()).isInstanceOf(CamelAuthorizationException.class);
+        assertThat(out.getProperty(SpiffeConstants.PEER_SPIFFE_ID)).isNull();
+        authorized.assertIsSatisfied();
+    }
+
+    @Test
+    void deniesAMalformedSpiffeUriSan() throws Exception {
+        MockEndpoint authorized = getMockEndpoint("mock:authorized");
+        authorized.expectedMessageCount(0);
+
+        Exchange out = sendWithSession(sessionPresenting(certWithUriSans("spiffe://")));
+
+        assertThat(out.getException()).isInstanceOf(CamelAuthorizationException.class)
+                .hasMessageContaining("No verified SPIFFE peer identity");
+        assertThat(out.getProperty(SpiffeConstants.PEER_SPIFFE_ID)).isNull();
+        authorized.assertIsSatisfied();
+    }
+
+    @Test
+    void deniesALeafCertificateThatIsNotAnX509() throws Exception {
+        MockEndpoint authorized = getMockEndpoint("mock:authorized");
+        authorized.expectedMessageCount(0);
+
+        Exchange out = sendWithSession(sessionPresenting(mock(Certificate.class)));
+
+        assertThat(out.getException()).isInstanceOf(CamelAuthorizationException.class)
+                .hasMessageContaining("No verified SPIFFE peer identity");
+        assertThat(out.getProperty(SpiffeConstants.PEER_SPIFFE_ID)).isNull();
+        authorized.assertIsSatisfied();
+    }
 }

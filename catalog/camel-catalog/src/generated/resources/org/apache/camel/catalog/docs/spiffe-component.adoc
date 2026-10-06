@@ -155,6 +155,14 @@ verified SPIFFE ID:
 
 [source,java]
 ------------------------------------------------------------
+// the server must REQUIRE a client certificate, or the policy has no verified peer to authorize
+SpiffeSSLContextParameters serverSsl = new SpiffeSSLContextParameters();
+serverSsl.setAcceptedSpiffeIds("spiffe://example.org/frontend");
+SSLContextServerParameters serverParameters = new SSLContextServerParameters();
+serverParameters.setClientAuthentication(ClientAuthentication.REQUIRE.name());
+serverSsl.setServerParameters(serverParameters);
+getCamelContext().getRegistry().bind("spiffeSsl", serverSsl);
+
 SpiffeSecurityPolicy spiffePolicy = new SpiffeSecurityPolicy("spiffe://example.org/frontend");
 getCamelContext().getRegistry().bind("spiffePolicy", spiffePolicy);
 
@@ -162,6 +170,22 @@ from("netty-http:https://0.0.0.0:8443?sslContextParameters=#spiffeSsl")
     .policy(spiffePolicy)
     .to("direct:handleOrder");
 ------------------------------------------------------------
+
+[IMPORTANT]
+====
+Two things about the server side decide whether this policy can work at all.
+
+* *The server must request a client certificate.* `serverParameters.clientAuthentication` defaults to unset, which
+  leaves the JSSE default: the server never asks. `SSLSession.getPeerCertificates()` then throws and the policy
+  fails closed, so *every* request is denied. Set it to `REQUIRE`, as above.
+* *The server must use `SpiffeSSLContextParameters`*, not a plain truststore that happens to trust the SPIFFE CA.
+  Such a truststore accepts any SVID that CA issued, which is a weaker check than the allow-list this policy
+  appears to give you.
+
+Only camel-netty and camel-netty-http put the `SSLSession` on the message today, as the `CamelNettySSLSession`
+header. Behind platform-http, jetty, undertow or servlet there is no session on the exchange, so the policy has no
+verified peer certificate to read and denies everything.
+====
 
 The peer SPIFFE ID is taken from the *verified* TLS peer certificate the consumer put on the exchange - the
 `CamelNettySSLSession` header for camel-netty-http - and never from a message header a sender could set (see the
