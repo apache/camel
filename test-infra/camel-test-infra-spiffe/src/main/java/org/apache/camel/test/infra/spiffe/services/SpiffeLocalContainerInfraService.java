@@ -45,6 +45,11 @@ import org.testcontainers.utility.MountableFile;
  * PID namespace because the {@code unix} workload attestor resolves the calling process through {@code /proc}, which a
  * container cannot see otherwise; a single registration entry is created for {@code unix:uid:<the test process uid>} so
  * the test JVM is issued {@code spiffe://<trustDomain>/workload}.
+ * <p>
+ * This assumes a Linux Docker host: the host PID namespace, the Unix-socket bind mount and the {@code unix:uid}
+ * selector all rely on the test JVM and the containers sharing one Linux kernel. It is not expected to work on Docker
+ * Desktop (macOS/Windows, where the daemon runs in a separate VM) or on rootless Podman (uid remapping) - which is also
+ * why the component gates these integration tests off non-amd64 CI. It targets a Linux CI/development Docker.
  */
 @InfraService(service = SpiffeInfraService.class,
               description = "SPIFFE/SPIRE server and agent exposing the Workload API",
@@ -143,6 +148,9 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
         try {
             // keep the socket path short (AF_UNIX sun_path is limited to ~108 bytes); /tmp keeps it well within that
             hostSocketDir = Files.createTempDirectory(Path.of("/tmp"), "spiffe");
+            // world-accessible so both sides of the bind mount can use the socket: the agent container (running as
+            // root, which creates the socket) and the host test process may run under different uids, so an
+            // owner-only directory would stop one of them traversing it to create or connect to the socket
             hostSocketDir.toFile().setReadable(true, false);
             hostSocketDir.toFile().setWritable(true, false);
             hostSocketDir.toFile().setExecutable(true, false);

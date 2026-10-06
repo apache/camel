@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.spiffe.integration;
 
-import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,6 +27,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
 
@@ -81,12 +84,14 @@ class SpiffeMutualTlsIT extends CamelTestSupport {
         SSLContext serverContext = serverSsl("spiffe://example.org/not-allowed").createSSLContext(context);
         SSLContext clientContext = clientSsl().createSSLContext(context);
 
-        // a rejected mutual-TLS handshake surfaces as an IOException - a TLS alert (SSLHandshakeException) when the peer
-        // sends one, or a connection reset (SocketException) when it just drops the connection; both are acceptable, the
-        // point is that the handshake does not complete
+        // a rejected mutual-TLS handshake surfaces either as a TLS alert (SSLException) or, on some JSSE stacks, a
+        // connection reset (SocketException) - both mean the peer was refused mid-handshake. Accept those two, but
+        // exclude a timeout or a failure to connect, which would point to a broken test rather than a rejected peer.
         assertThatThrownBy(() -> handshake(serverContext, clientContext))
-                .as("a non-allow-listed peer must be refused during the handshake")
-                .isInstanceOf(IOException.class);
+                .as("a non-allow-listed peer must be refused during the handshake, not time out or fail to connect")
+                .isInstanceOfAny(SSLException.class, SocketException.class)
+                .isNotInstanceOf(SocketTimeoutException.class)
+                .isNotInstanceOf(ConnectException.class);
     }
 
     /**
@@ -98,7 +103,9 @@ class SpiffeMutualTlsIT extends CamelTestSupport {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         try (SSLServerSocket serverSocket = (SSLServerSocket) serverContext.getServerSocketFactory()
                 .createServerSocket(0, 1, InetAddress.getLoopbackAddress())) {
-            serverSocket.setNeedClientAuth(true);
+            // deliberately do NOT force client auth on the socket: requiring the client certificate must come from the
+            // SpiffeSSLContextParameters serverParameters (clientAuthentication=REQUIRE) applied by its decorator, so
+            // this test actually covers that the decorator preserves client authentication (the CAMEL-24571 regression)
             serverSocket.setSoTimeout(15000);
 
             Future<Void> server = executor.submit(() -> {
