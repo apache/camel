@@ -202,7 +202,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
 
         ThreadFactory threadFactory = createThreadFactory(source, sanitizedName, true);
         ExecutorService executorService = threadPoolFactory.newThreadPool(profile, threadFactory);
-        onThreadPoolCreated(executorService, source, profile.getId());
+        onThreadPoolCreated(executorService, source, sanitizedName, profile.getId());
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created new ThreadPool for source: {} with name: {}. -> {}", source, sanitizedName, executorService);
         }
@@ -227,7 +227,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
     public ExecutorService newCachedThreadPool(Object source, String name) {
         String sanitizedName = URISupport.sanitizeUri(name);
         ExecutorService answer = threadPoolFactory.newCachedThreadPool(createThreadFactory(source, sanitizedName, true));
-        onThreadPoolCreated(answer, source, null);
+        onThreadPoolCreated(answer, source, sanitizedName, null);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created new CachedThreadPool for source: {} with name: {}. -> {}", source, sanitizedName, answer);
@@ -261,7 +261,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         profile.addDefaults(getDefaultThreadPoolProfile());
         ScheduledExecutorService answer
                 = threadPoolFactory.newScheduledThreadPool(profile, createThreadFactory(source, sanitizedName, true));
-        onThreadPoolCreated(answer, source, null);
+        onThreadPoolCreated(answer, source, sanitizedName, null);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created new ScheduledThreadPool for source: {} with name: {} -> {}", source, sanitizedName, answer);
@@ -550,9 +550,11 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
      *
      * @param executorService     the thread pool
      * @param source              the source to use the thread pool
+     * @param name                the name of the thread pool
      * @param threadPoolProfileId profile id, if the thread pool was created from a thread pool profile
      */
-    private void onThreadPoolCreated(ExecutorService executorService, Object source, String threadPoolProfileId) {
+    private void onThreadPoolCreated(
+            ExecutorService executorService, Object source, String name, String threadPoolProfileId) {
         // add to internal list of thread pools
         executorServices.add(executorService);
 
@@ -574,6 +576,9 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
             } else {
                 // fallback and use the simple class name with hashcode for the id so its unique for this given source
                 id = source.getClass().getSimpleName() + "(" + ObjectHelper.getIdentityHashCode(source) + ")";
+                // and the name of the thread pool as source id, as a source can create several thread pools
+                // (such as the timeout checker and the optimistic locking executor of the aggregator)
+                sourceId = name;
             }
         } else {
             // no source, so fallback and use the simple class name from thread pool and its hashcode identity so its unique

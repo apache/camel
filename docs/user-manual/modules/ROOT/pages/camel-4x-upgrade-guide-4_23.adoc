@@ -700,6 +700,12 @@ then redelivered.
 
 === camel-management
 
+The thread pool MBeans of a source that creates several thread pools (such as the timeout checker and the optimistic
+locking pools of the Aggregate EIP) had the same name, so only the first one was registered. For a source that is not
+an EIP, a name or a static service, the `SourceId` attribute is now the name of the thread pool, which is also added to
+the MBean name: `AggregateProcessor(0x1b2c3d4e)(AggregateTimeoutChecker)` instead of `AggregateProcessor(0x1b2c3d4e)`.
+The names of the thread pools of EIPs, of pools created by name and of static services do not change.
+
 The JMX `browse` operation of the `DefaultInflightRepository` MBean and the `listAwaitThreads` data of the
 `DefaultAsyncProcessorAwaitManager` MBean gained a `nodeSource` column, saying where the node is in the source (such
 as `orders.camel.yaml:18`), next to the existing `nodeId`. It is `null` when message history or source location is
