@@ -38,6 +38,8 @@ public class ToolDescriptor {
     private boolean destructive = false;
     private boolean core = false;
     private boolean deterministic = false;
+    private String deterministicWhen;
+    private String repeatHint;
 
     public record Param(String name, String type, String description, boolean required) {
     }
@@ -93,6 +95,21 @@ public class ToolDescriptor {
         return this;
     }
 
+    /**
+     * Marks the tool as deterministic when the given argument is passed: validating the given content always gives the
+     * same answer, while validating the file on disk does not (CAMEL-25371).
+     */
+    public ToolDescriptor deterministicWhen(String param) {
+        deterministicWhen = param;
+        return this;
+    }
+
+    /** What the note of a repeated call adds for this tool: what to do instead of asking again. */
+    public ToolDescriptor repeatHint(String hint) {
+        repeatHint = hint;
+        return this;
+    }
+
     public ToolDescriptor executor(ToolExecutor exec) {
         this.executor = exec;
         return this;
@@ -126,6 +143,21 @@ public class ToolDescriptor {
 
     public boolean isDeterministic() {
         return deterministic;
+    }
+
+    /**
+     * Whether this call gives the same answer each time: the tool is deterministic, or the argument that makes it so.
+     */
+    public boolean isDeterministic(java.util.Map<String, ?> args) {
+        if (deterministic) {
+            return true;
+        }
+        Object v = deterministicWhen != null && args != null ? args.get(deterministicWhen) : null;
+        return v != null && !v.toString().isBlank();
+    }
+
+    public String repeatHint() {
+        return repeatHint;
     }
 
     /**

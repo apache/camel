@@ -87,4 +87,21 @@ class RepeatedToolCallsTest {
         calls.reset();
         assertThat(calls.repeatOf(catalogDoc, sql)).isNull();
     }
+
+    /** CAMEL-25371: validating the same content is the same question; validating the file on disk is not. */
+    @Test
+    void validatingTheSameContentIsARepeat() {
+        ToolDescriptor validate = ToolRegistry.findTool("camel_validate_source");
+        Map<String, String> args = Map.of("file", "route.camel.yaml", "content", "- from:\n    uri: timer:x\n");
+        assertThat(calls.repeatOf(validate, args)).isNull();
+        assertThat(calls.repeatOf(validate, args)).isNull();
+        JsonObject note = calls.repeatOf(validate, args);
+        assertThat(note).isNotNull();
+        assertThat(note.getString("note")).contains("change the line the error names");
+
+        Map<String, String> fromDisk = Map.of("file", "route.camel.yaml");
+        for (int i = 0; i < 4; i++) {
+            assertThat(calls.repeatOf(validate, fromDisk)).isNull();
+        }
+    }
 }

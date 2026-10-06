@@ -51,7 +51,7 @@ public final class RepeatedToolCalls {
      * identical calls.
      */
     public synchronized JsonObject repeatOf(ToolDescriptor tool, Map<String, ?> args) {
-        if (tool == null || !tool.isDeterministic()) {
+        if (tool == null || !tool.isDeterministic(args)) {
             return null;
         }
         if (counts.size() >= MAX_TRACKED) {
@@ -67,7 +67,8 @@ public final class RepeatedToolCalls {
         note.put("timesAsked", times);
         note.put("note", tool.name() + " was already called with these same arguments " + (times - 1)
                          + " times in this session and answered in full. Its answer does not change, so it is not sent"
-                         + " again: it is in your earlier tool result.");
+                         + " again: it is in your earlier tool result."
+                         + (tool.repeatHint() != null ? " " + tool.repeatHint() : ""));
         return note;
     }
 
