@@ -225,5 +225,12 @@ class MonitorContext {
         default void fixFailure(Path file, int line, String failure, String lineText) {
             fixProblem(file, line, failure, lineText);
         }
+
+        /**
+         * Asks the AI about an ERROR of the log whose source line is not known (Shift+F8 in the Log tab): the error
+         * line, the exception and its causes.
+         */
+        default void explainLogError(String error) {
+        }
     }
 }
