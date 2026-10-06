@@ -1280,6 +1280,10 @@ a type converter or fallback type converter is added.
 for a super type. This used to depend on the iteration order of an internal map, which could change
 between JVM restarts. The nearest super type now wins: the type hierarchy is walked breadth-first,
 interfaces are tried before the super class at each level, and `java.lang.Object` is tried last.
+* As a last resort (after the fallback type converters), the registry uses a type converter whose types are
+assignable to or from the requested types. When more than one type converter matched, this also depended on
+the iteration order of the internal map. The nearest one now wins (the fewest levels between its types and the
+requested types), and the class names of its types decide between equally near ones.
 * Converting a `String` to a `Number` now returns an `Integer` for all values within the `Integer` range
 (including `Integer.MAX_VALUE`, which returned a `Long` before), and supports exponent notation such as `1e5`.
 * Converting a `BigDecimal`, or a `double` larger than a `long`, to `BigInteger` no longer loses precision.

@@ -170,6 +170,40 @@ public class CoreTypeConverterRegistryTest extends ContextTestSupport {
         }
     }
 
+    @Test
+    void testAssignableMatchIsDeterministic() {
+        TypeConverter fromCache = new NamedConverter("cache");
+        TypeConverter fromPayload = new NamedConverter("payload");
+        TypeConverter fromSecond = new NamedConverter("second");
+        TypeConverter fromImplOfSecond = new NamedConverter("implOfSecond");
+
+        // CAMEL-21513 / CAMEL-25231: like CachedCxfPayload (a CxfPayload that implements StreamCache) to SAXSource
+        // with converters from StreamCache and from CxfPayload to Source, more than one converter matches, and the
+        // one chosen must not depend on the order the converters map is iterated
+        for (boolean reverse : List.of(false, true)) {
+            Map<TypeConvertible<?, ?>, TypeConverter> converters = new LinkedHashMap<>();
+            List<Object[]> entries = new ArrayList<>(
+                    List.of(new Object[] { Cache.class, fromCache }, new Object[] { Payload.class, fromPayload },
+                            new Object[] { SecondIface.class, fromSecond },
+                            new Object[] { ImplOfSecond.class, fromImplOfSecond }));
+            if (reverse) {
+                Collections.reverse(entries);
+            }
+            for (Object[] e : entries) {
+                converters.put(new TypeConvertible<>((Class<?>) e[0], Bar.class), (TypeConverter) e[1]);
+            }
+
+            // both are one level away, so the class names decide
+            assertSame(fromCache,
+                    TypeResolverHelper.tryAssignableFrom(new TypeConvertible<>(CachedPayload.class, SubBar.class),
+                            converters));
+            // the super class is nearer than the interface of the super class
+            assertSame(fromImplOfSecond,
+                    TypeResolverHelper.tryAssignableFrom(new TypeConvertible<>(SubOfSecond.class, SubBar.class),
+                            converters));
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -233,6 +267,21 @@ public class CoreTypeConverterRegistryTest extends ContextTestSupport {
     public static class SubOfSecond extends ImplOfSecond {
     }
 
+    public static class Bar {
+    }
+
+    public static class SubBar extends Bar {
+    }
+
+    public interface Cache {
+    }
+
+    public static class Payload {
+    }
+
+    public static class CachedPayload extends Payload implements Cache {
+    }
+
     private static class NamedConverter extends TypeConverterSupport {
         private final String name;
 
@@ -243,6 +292,11 @@ public class CoreTypeConverterRegistryTest extends ContextTestSupport {
         @Override
         public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
             return type.cast(new Foo(name));
+        }
+
+        @Override
+        public String toString() {
+            return name;
         }
     }
 
