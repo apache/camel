@@ -501,6 +501,13 @@ The `org.apache.camel.processor.InterceptSendToEndpointCallback` class is deprec
 - A hardcoded node id in a route template no longer clashes with the same id in a regular route, as the ids of
   the route created from the template are prefixed.
 
+==== A route id that is already used (Breaking change)
+
+Creating a route from a route template (`TemplatedRouteBuilder`, `templatedRoute`, `addRouteFromTemplate`, or a
+Kamelet endpoint with a route id) with the id of an existing route now fails with
+`FailedToCreateRouteFromTemplateException`. Prior to Camel 4.23 the existing route was removed and replaced without
+notice. To replace such a route, stop and remove it first.
+
 === camel-aws2-ddb
 
 The `aws2-ddb:application-json` data type transformer no longer overwrites a `CamelAwsDdbReturnValues` header that

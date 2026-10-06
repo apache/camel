@@ -645,6 +645,13 @@ public class DefaultModel implements Model {
         if (group != null) {
             def.setGroup(group);
         }
+        // a route from a template (or a Kamelet) must not replace an existing route with the same id
+        String id = def.getId();
+        if (id != null && (getRouteDefinition(id) != null || camelContext.getRoute(id) != null)) {
+            throw new FailedToCreateRouteFromTemplateException(
+                    id, routeTemplateId,
+                    "Route with id: " + id + " already exists. Remove the existing route first or use another route id.");
+        }
         def.setTemplateParameters(prop);
         def.setTemplateDefaultParameters(propDefaultValues);
         def.setRouteTemplateContext(routeTemplateContext);
@@ -671,7 +678,8 @@ public class DefaultModel implements Model {
         String duplicate = RouteDefinitionHelper.validateUniqueIds(def, routeDefinitions, prefixId);
         if (duplicate != null) {
             throw new FailedToCreateRouteFromTemplateException(
-                    routeId, routeTemplateId,
+                    def.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)),
+                    routeTemplateId,
                     "Duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
         }
 
