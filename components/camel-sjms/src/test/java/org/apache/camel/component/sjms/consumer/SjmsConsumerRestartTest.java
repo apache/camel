@@ -21,6 +21,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSContext;
+import jakarta.jms.JMSException;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Consumer;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
@@ -38,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * A suspended sjms route must not consume, and must consume again when resumed. The route policies (throttling inflight
  * / exception, master, scheduled) suspend and resume the consumer, and JMX can stop and start the same consumer
- * instance.
+ * instance. The listener container may start after the suspend (asyncStartListener, autoStartup=false).
  */
 class SjmsConsumerRestartTest extends JmsTestSupport {
 
@@ -47,6 +53,52 @@ class SjmsConsumerRestartTest extends JmsTestSupport {
     private final CountDownLatch entered = new CountDownLatch(1);
     private final CountDownLatch release = new CountDownLatch(1);
     private final AtomicInteger processed = new AtomicInteger();
+    private final CountDownLatch connectionEntered = new CountDownLatch(1);
+    // holds the next connection created with the gated connection factory
+    private volatile CountDownLatch connectionGate;
+
+    @BindToRegistry("gatedConnectionFactory")
+    private final ConnectionFactory gatedConnectionFactory = new ConnectionFactory() {
+        @Override
+        public Connection createConnection() throws JMSException {
+            CountDownLatch gate = connectionGate;
+            connectionGate = null;
+            if (gate != null) {
+                connectionEntered.countDown();
+                try {
+                    assertTrue(gate.await(20, TimeUnit.SECONDS));
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            return connectionFactory.createConnection();
+        }
+
+        @Override
+        public Connection createConnection(String userName, String password) throws JMSException {
+            return connectionFactory.createConnection(userName, password);
+        }
+
+        @Override
+        public JMSContext createContext() {
+            return connectionFactory.createContext();
+        }
+
+        @Override
+        public JMSContext createContext(String userName, String password) {
+            return connectionFactory.createContext(userName, password);
+        }
+
+        @Override
+        public JMSContext createContext(String userName, String password, int sessionMode) {
+            return connectionFactory.createContext(userName, password, sessionMode);
+        }
+
+        @Override
+        public JMSContext createContext(int sessionMode) {
+            return connectionFactory.createContext(sessionMode);
+        }
+    };
 
     @Test
     void testSuspendResumeRoute() throws Exception {
@@ -159,15 +211,66 @@ class SjmsConsumerRestartTest extends JmsTestSupport {
     }
 
     @Test
-    void testStopStartRoute() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:route");
+    void testSuspendedBeforeAsyncStart() throws Exception {
+        // the asynchronous start of the listener container is held while it tests the connection
+        CountDownLatch proceed = new CountDownLatch(1);
+        connectionGate = proceed;
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from(QUEUE + "asyncstart?asyncStartListener=true&testConnectionOnStartup=true"
+                     + "&connectionFactory=#gatedConnectionFactory")
+                        .routeId("asyncstart").to("mock:asyncstart");
+            }
+        });
+        assertTrue(connectionEntered.await(20, TimeUnit.SECONDS));
+        context.getRouteController().suspendRoute("asyncstart");
+        proceed.countDown();
 
-        // a route restart creates a new consumer
-        context.getRouteController().stopRoute("route");
-        context.getRouteController().startRoute("route");
+        // the container starts after the suspend, and must then be suspended too
+        SimpleMessageListenerContainer container = container("asyncstart");
+        await().atMost(20, TimeUnit.SECONDS)
+                .until(() -> container.isSuspended() && !container.isSuspendResumePending());
+        MockEndpoint mock = getMockEndpoint("mock:asyncstart");
+        mock.expectedMessageCount(0);
+        mock.setAssertPeriod(1000);
+        template.sendBody(QUEUE + "asyncstart", "Hello World");
+        mock.assertIsSatisfied();
 
+        mock.reset();
         mock.expectedBodiesReceived("Hello World");
-        template.sendBody(QUEUE + "route", "Hello World");
+        context.getRouteController().resumeRoute("asyncstart");
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    void testSuspendResumeBeforeListenerStarted() throws Exception {
+        // autoStartup=false: the consumer starts without its listener container, which is started later
+        context.getRouteController().suspendRoute("manual");
+        context.getRouteController().resumeRoute("manual");
+        ((SjmsConsumer) context.getRoute("manual").getConsumer()).startListenerContainer();
+
+        MockEndpoint mock = getMockEndpoint("mock:manual");
+        mock.expectedBodiesReceived("Hello World");
+        template.sendBody(QUEUE + "manual", "Hello World");
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    void testListenerStartedWhileSuspended() throws Exception {
+        // autoStartup=false, and the listener container is started while the route is suspended
+        context.getRouteController().suspendRoute("manualsuspended");
+        ((SjmsConsumer) context.getRoute("manualsuspended").getConsumer()).startListenerContainer();
+        awaitSuspendResume("manualsuspended");
+
+        MockEndpoint mock = getMockEndpoint("mock:manualsuspended");
+        mock.expectedMessageCount(0);
+        mock.setAssertPeriod(1000);
+        template.sendBody(QUEUE + "manualsuspended", "Hello World");
+        mock.assertIsSatisfied();
+
+        mock.reset();
+        mock.expectedBodiesReceived("Hello World");
+        context.getRouteController().resumeRoute("manualsuspended");
         mock.assertIsSatisfied();
     }
 
@@ -188,7 +291,8 @@ class SjmsConsumerRestartTest extends JmsTestSupport {
                 from(QUEUE + "suspend").routeId("suspend").to("mock:suspend");
                 from(QUEUE + "policy").routeId("policy").to("mock:policy");
                 from(QUEUE + "restart").routeId("restart").to("mock:restart");
-                from(QUEUE + "route").routeId("route").to("mock:route");
+                from(QUEUE + "manual?autoStartup=false").routeId("manual").to("mock:manual");
+                from(QUEUE + "manualsuspended?autoStartup=false").routeId("manualsuspended").to("mock:manualsuspended");
                 from(QUEUE + "async?asyncConsumer=true").routeId("async")
                         .threads(1)
                         .process(e -> {

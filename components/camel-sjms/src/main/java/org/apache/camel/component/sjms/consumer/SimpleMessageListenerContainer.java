@@ -324,7 +324,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     }
 
     /**
-     * Whether a stop or start of the connection requested by a suspend or resume is still pending
+     * Whether a stop or start of the connection requested by a suspend or resume is still pending. Only for tests.
      */
     boolean isSuspendResumePending() {
         Future<?> task = suspendTask;
@@ -332,7 +332,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     }
 
     /**
-     * Whether the connection is started (false as soon as a stop of the connection began)
+     * Whether the connection is started (false as soon as a stop of the connection began). Only for tests.
      */
     boolean isConnectionStarted() {
         return connectionStarted;

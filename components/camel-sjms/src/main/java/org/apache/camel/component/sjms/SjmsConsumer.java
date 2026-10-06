@@ -21,8 +21,8 @@ import jakarta.jms.Connection;
 import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
+import org.apache.camel.StatefulService;
 import org.apache.camel.Suspendable;
-import org.apache.camel.SuspendableService;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
@@ -107,16 +107,18 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
 
     @Override
     protected void doSuspend() throws Exception {
-        // stop receiving messages while suspended
-        if (listenerContainer instanceof SuspendableService suspendable) {
-            suspendable.suspend();
+        // stop receiving messages while suspended. A listener container that is not started yet (autoStartup=false,
+        // or asyncStartListener=true and the start task did not run yet) is left alone: startListenerContainer
+        // suspends it when it starts it
+        if (listenerContainer instanceof StatefulService container && container.isStarted()) {
+            container.suspend();
         }
     }
 
     @Override
     protected void doResume() throws Exception {
-        if (listenerContainer instanceof SuspendableService suspendable) {
-            suspendable.resume();
+        if (listenerContainer instanceof StatefulService container && container.isSuspended()) {
+            container.resume();
         }
     }
 
@@ -169,6 +171,18 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
         LOG.trace("Starting listener container {} on destination {}", listenerContainer, getDestinationName());
         ServiceHelper.startService(listenerContainer);
         LOG.debug("Started listener container {} on destination {}", listenerContainer, getDestinationName());
+        // the consumer may have been suspended while its listener container was not started (doSuspend left it alone)
+        lock.lock();
+        try {
+            if (isSuspendingOrSuspended() && listenerContainer instanceof StatefulService container
+                    && container.isStarted()) {
+                LOG.debug("Suspending listener container {} on destination {}, as the consumer is suspended",
+                        listenerContainer, getDestinationName());
+                container.suspend();
+            }
+        } finally {
+            lock.unlock();
+        }
     }
 
     protected void stopAndDestroyListenerContainer() {

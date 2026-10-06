@@ -1380,22 +1380,14 @@ timeout or the reply, and the send failure is logged at WARN level.
 which `ReplyManagerSupport` implements. A custom `ReplyManager` implementation that does not override it keeps the
 previous behaviour.
 
-=== camel-sjms - suspending a route stops the consumer
+==== Suspending a route stops the consumer
 
-Suspending an sjms (or sjms2) consumer did nothing: the consumer kept receiving and routing messages while the route
-was reported as suspended. This applied to the graceful shutdown (which suspends the consumer and then waits for the
-inflight messages, so the consumer kept taking new messages until the shutdown timeout), to suspending a route (route
-controller, JMX), and to the route policies such as `ThrottlingInflightRoutePolicy` and
-`ThrottlingExceptionRoutePolicy`. A suspended consumer now stops the JMS connection of its listener container, and
-starts it again when it is resumed. The connection is stopped and started by a separate thread, because
-`Connection.stop()` waits for the message listeners in progress, and a route policy suspends the consumer on the thread
-of a message listener. Messages that the JMS client has already prefetched stay with the stopped connection until it
-is started again or closed. A connection factory that hands out a shared connection and does not stop it on
-`Connection.stop()` (for example the pooled-jms `JmsPoolConnectionFactory`, or Spring's `SingleConnectionFactory`
-while another consumer uses the connection) keeps delivering to a suspended consumer, as before.
-
-A consumer that is stopped and started again (for example with the JMX operations of the consumer) now also receives
-messages again, instead of none.
+A suspended sjms (or sjms2) consumer used to keep receiving and routing messages, also during a graceful shutdown and
+under route policies such as `ThrottlingInflightRoutePolicy`. It now stops the JMS connection of its listener container
+shortly after the suspend (the connection is stopped by another thread), and starts it again on resume. Messages that
+the JMS client has already prefetched are delivered after the resume. A connection factory that shares one connection
+and does not stop it on `Connection.stop()` (such as the pooled-jms `JmsPoolConnectionFactory`) keeps delivering to a
+suspended consumer, as before.
 
 === camel-tika
 
