@@ -100,7 +100,8 @@ public final class TemplatedRouteBuilder {
     }
 
     /**
-     * Binds the bean to the template local repository (takes precedence over global beans)
+     * Binds the bean to the template local repository (takes precedence over global beans, and over a template bean
+     * with the same name)
      *
      * @param id   the id of the bean
      * @param bean the bean
@@ -111,7 +112,8 @@ public final class TemplatedRouteBuilder {
     }
 
     /**
-     * Binds the bean to the template local repository (takes precedence over global beans)
+     * Binds the bean to the template local repository (takes precedence over global beans, and over a template bean
+     * with the same name)
      *
      * @param id   the id of the bean
      * @param type the type of the bean to associate the binding
@@ -123,7 +125,8 @@ public final class TemplatedRouteBuilder {
     }
 
     /**
-     * Binds the bean (via a supplier) to the template local repository (takes precedence over global beans)
+     * Binds the bean (via a supplier) to the template local repository (takes precedence over global beans, and over a
+     * template bean with the same name)
      *
      * @param id   the id of the bean
      * @param type the type of the bean to associate the binding

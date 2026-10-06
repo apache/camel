@@ -652,6 +652,10 @@ This is an advanced feature.
 
 See xref:route-template-bean-binding.adoc[Route Template Bean Binding] for details.
 
+A bean that is bound when creating the route (`TemplatedRouteBuilder.bean` or the beans of a `templatedRoute`)
+takes precedence over a `templateBean` with the same name, which is then not created. This allows replacing a
+template bean, for example with a mock in a test.
+
 == Configuring route templates when creating route (advanced)
 
 There may be some special situations where you want to be able to do some custom configuration/code when

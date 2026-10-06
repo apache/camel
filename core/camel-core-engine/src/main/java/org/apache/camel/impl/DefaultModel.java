@@ -20,8 +20,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
@@ -64,6 +66,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.RouteTemplateLoaderListener;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.LocalBeanRegistry;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.RouteTemplateHelper;
 import org.apache.camel.util.AntPathMatcher;
@@ -708,7 +711,16 @@ public class DefaultModel implements Model {
 
     private static void addTemplateBeans(RouteTemplateContext routeTemplateContext, RouteTemplateDefinition target)
             throws Exception {
+        // a bean the caller has bound (TemplatedRouteBuilder or templated route) takes precedence over the template
+        // bean with the same name, as a parameter takes precedence over the default value of the template
+        Set<String> callerBeans = Collections.emptySet();
+        if (routeTemplateContext.getLocalBeanRepository() instanceof LocalBeanRegistry local) {
+            callerBeans = new HashSet<>(local.keys());
+        }
         for (BeanFactoryDefinition b : target.getTemplateBeans()) {
+            if (callerBeans.contains(b.getName())) {
+                continue;
+            }
             // route template beans do not directly support property placeholders
             // but need to use rtc.property API calls
             b.setScriptPropertyPlaceholders("false");
