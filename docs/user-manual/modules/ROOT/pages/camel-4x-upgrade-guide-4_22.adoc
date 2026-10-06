@@ -228,6 +228,24 @@ without such segments is still used as given. A new `outputBaseDirectory` option
 header the same way `inputBaseDirectory` confines input paths - when set, an output path that resolves outside
 it, including an absolute path, is rejected with an `IOException`. `outputBaseDirectory` is unset by default.
 
+=== camel-undertow - WebSocket endpoints apply the security provider, allowed roles and handlers
+
+WebSocket endpoints (`ws://` and `wss://`) now apply the `UndertowSecurityProvider` (the `securityConfiguration` or
+`securityProvider` option), the `allowedRoles` option, and the `handlers` and `accessLog` options, as HTTP endpoints
+do. Previously these options had no effect on WebSocket endpoints. They apply to the upgrade request: a client that
+the security provider rejects, or that connects to an endpoint with `allowedRoles` but no security provider, now gets
+the same status code as on an HTTP endpoint (for example `403`) and no connection is opened. The headers that the
+security provider adds are set on the exchanges of the connection.
+
+All the endpoints of a WebSocket path share its connections. The settings of the consumer apply to the path,
+including the messages sent by producers on that path, and keep applying while the consumer is stopped; a path that
+only has producers applies their settings. This also applies to the `oauthProfile` option: while the consumer is
+stopped, upgrade requests to its path are still validated. A connection that was opened before these settings
+applied does not receive the messages of the producers, and it is closed when it sends a message.
+
+A WebSocket client that connected without satisfying the configured security provider or allowed roles is now
+rejected: it must authenticate, or the option must be removed from the WebSocket endpoint.
+
 == Upgrading from 4.22.0 to 4.22.1
 
 === camel-docling
