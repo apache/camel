@@ -202,8 +202,9 @@ class MasterConsumerLeadershipTest extends CamelTestSupport {
             if (creates.incrementAndGet() < gateFrom) {
                 return newConsumer(processor);
             }
-            creating.countDown();
+            // read the gate before signalling, as the test may clear it right after that signal
             CountDownLatch gate = createGate;
+            creating.countDown();
             if (gate != null) {
                 assertTrue(gate.await(20, TimeUnit.SECONDS));
             }

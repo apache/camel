@@ -45,7 +45,7 @@ public class MasterConsumer extends DefaultConsumer {
     // delay before the master tries again to start a consumer whose start failed
     private static final long RETRY_DELAY_MILLIS = 5000;
 
-    private ZookeeperGroupListenerSupport groupListener;
+    private volatile ZookeeperGroupListenerSupport groupListener;
     private final MasterEndpoint endpoint;
     private final Processor processor;
     private volatile Consumer delegate;
@@ -62,7 +62,7 @@ public class MasterConsumer extends DefaultConsumer {
     // the state published when this node starts its consumer, once per leadership term (a new state is a change of
     // the group, which would trigger another leadership event)
     private CamelNodeState startedState;
-    private ScheduledExecutorService retryExecutor;
+    private volatile ScheduledExecutorService retryExecutor;
     private ScheduledFuture<?> retryTask;
     private volatile long retryDelay = RETRY_DELAY_MILLIS;
     // failed starts in a row, for the log
