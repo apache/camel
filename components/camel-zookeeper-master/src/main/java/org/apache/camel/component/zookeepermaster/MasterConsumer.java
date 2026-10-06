@@ -64,6 +64,9 @@ public class MasterConsumer extends DefaultConsumer {
     private CamelNodeState startedState;
     private ScheduledExecutorService retryExecutor;
     private ScheduledFuture<?> retryTask;
+    private volatile long retryDelay = RETRY_DELAY_MILLIS;
+    // failed starts in a row, for the log
+    private int failedStarts;
 
     public MasterConsumer(MasterEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -131,6 +134,7 @@ public class MasterConsumer extends DefaultConsumer {
             leadershipLock.lock();
             try {
                 generation++;
+                failedStarts = 0;
                 cancelRetry();
                 stopConsumer();
             } finally {
@@ -160,6 +164,13 @@ public class MasterConsumer extends DefaultConsumer {
         delegateService = null;
         thisNodeState = null;
         startedState = null;
+    }
+
+    /**
+     * The delay before the master tries again to start a consumer whose start failed (5 seconds). For tests.
+     */
+    void setRetryDelay(long retryDelay) {
+        this.retryDelay = retryDelay;
     }
 
     private void cancelRetry() {
@@ -199,7 +210,9 @@ public class MasterConsumer extends DefaultConsumer {
         CamelNodeState state = null;
         leadershipLock.lock();
         try {
-            if (retryGeneration >= 0) {
+            if (retryGeneration >= 0 && retryGeneration == generation) {
+                // this is the scheduled task (a task of an older generation was cancelled, and a newer one may be
+                // scheduled meanwhile)
                 retryTask = null;
             }
             if (delegate != null || starting || retryTask != null || !isRunAllowed()
@@ -248,20 +261,36 @@ public class MasterConsumer extends DefaultConsumer {
                 LOG.info("Lost the leadership or stopping while the consumer started. Stopping consumer: {}",
                         endpoint.getConsumerEndpoint());
                 ServiceHelper.stopAndShutdownServices(consumer);
+                // a leadership event that came meanwhile (reconnected, or the route was started again) was skipped,
+                // as this start was in flight: start again if this node is the master now
+                if (isRunAllowed() && isLeader() && delegate == null && retryTask == null) {
+                    LOG.info("Elected as master again while the consumer started. Starting consumer again: {}",
+                            endpoint.getConsumerEndpoint());
+                    scheduleStart(0);
+                }
             } else if (cause != null) {
                 // forget the consumer (its start stopped it) and try again later, as long as this node is the master
-                LOG.warn("Failed to start master consumer for: {}. Trying again in {} millis.", endpoint,
-                        RETRY_DELAY_MILLIS, cause);
-                final long failedGeneration = startGeneration;
-                retryTask = retryExecutor.schedule(() -> startConsumer(failedGeneration), RETRY_DELAY_MILLIS,
-                        TimeUnit.MILLISECONDS);
+                failedStarts++;
+                getExceptionHandler().handleException("Failed to start master consumer for: " + endpoint + " (attempt #"
+                                                      + failedStarts + "). Trying again in " + retryDelay + " millis.",
+                        cause);
+                scheduleStart(retryDelay);
             } else {
+                failedStarts = 0;
                 delegate = consumer;
                 delegateService = consumer instanceof SuspendableService suspendable ? suspendable : null;
                 LOG.info("Elected as master. Consumer started: {}", endpoint.getConsumerEndpoint());
             }
         } finally {
             leadershipLock.unlock();
+        }
+    }
+
+    // under the lock: starts the consumer for the current generation, unless a disconnect or a stop comes first
+    private void scheduleStart(long delay) {
+        if (retryExecutor != null) {
+            final long scheduledGeneration = generation;
+            retryTask = retryExecutor.schedule(() -> startConsumer(scheduledGeneration), delay, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -276,6 +305,7 @@ public class MasterConsumer extends DefaultConsumer {
             leadershipLock.lock();
             try {
                 generation++;
+                failedStarts = 0;
                 cancelRetry();
                 stopConsumer();
             } catch (Exception e) {

@@ -63,6 +63,7 @@ class MasterConsumerLeadershipTest extends CamelTestSupport {
     @Test
     void testFailedStartIsRetried() throws Exception {
         startRoute();
+        masterConsumer().setRetryDelay(10);
         delegateEndpoint.failStarts.set(1);
 
         // elected: the start of the consumer fails (broker or server not available yet)
@@ -110,6 +111,61 @@ class MasterConsumerLeadershipTest extends CamelTestSupport {
         assertEquals(0, delegateEndpoint.running.get(), "A stopped route must not consume");
     }
 
+    @Test
+    void testReconnectedWhileRetryIsStarting() throws Exception {
+        startRoute();
+        masterConsumer().setRetryDelay(10);
+        delegateEndpoint.failStarts.set(1);
+        // the first start fails, the retry (on the retry thread) is held while it creates its consumer
+        delegateEndpoint.gateFrom = 2;
+        delegateEndpoint.createGate = new CountDownLatch(1);
+
+        groupFactory.group.fireChanged();
+        assertTrue(delegateEndpoint.creating.await(20, TimeUnit.SECONDS));
+
+        // ZooKeeper suspends and reconnects meanwhile, and this node is elected again
+        groupFactory.group.connected = false;
+        groupFactory.group.master = false;
+        groupFactory.group.fire(GroupListener.GroupEvent.DISCONNECTED);
+        groupFactory.group.connected = true;
+        groupFactory.group.master = true;
+        groupFactory.group.fireChanged();
+
+        delegateEndpoint.createGate.countDown();
+        // the retry stops its consumer (it began before the disconnect), and the master must start one again
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, delegateEndpoint.running.get(),
+                "A master elected again while a start was in flight must consume"));
+    }
+
+    @Test
+    void testConsumerRestartedWhileCreatingConsumer() throws Exception {
+        startRoute();
+        CountDownLatch gate = new CountDownLatch(1);
+        delegateEndpoint.createGate = gate;
+
+        Thread groupThread = new Thread(groupFactory.group::fireChanged, "group");
+        groupThread.start();
+        assertTrue(delegateEndpoint.creating.await(20, TimeUnit.SECONDS));
+        // only that create is slow
+        delegateEndpoint.createGate = null;
+
+        // the consumer is stopped and started again (as by JMX; a route restart creates a new consumer) while the old
+        // group thread is still in the slow start, and the new group elects this node
+        MasterConsumer consumer = masterConsumer();
+        consumer.stop();
+        consumer.start();
+        groupFactory.group.fireChanged();
+
+        gate.countDown();
+        groupThread.join(20000);
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, delegateEndpoint.running.get(),
+                "A master started again while its old start was in flight must consume"));
+    }
+
+    private MasterConsumer masterConsumer() {
+        return (MasterConsumer) context.getRoute("master").getConsumer();
+    }
+
     private void startRoute() throws Exception {
         context.addEndpoint("controlled:delegate", delegateEndpoint);
         context.addRoutes(new RouteBuilder() {
@@ -125,7 +181,10 @@ class MasterConsumerLeadershipTest extends CamelTestSupport {
     private final class ControlledEndpoint extends DefaultEndpoint {
         final AtomicInteger failStarts = new AtomicInteger();
         final AtomicInteger running = new AtomicInteger();
+        final AtomicInteger creates = new AtomicInteger();
         final CountDownLatch creating = new CountDownLatch(1);
+        // the createGate holds the creates from this one on (1 = the first)
+        volatile int gateFrom = 1;
         volatile CountDownLatch createGate;
 
         @Override
@@ -140,11 +199,18 @@ class MasterConsumerLeadershipTest extends CamelTestSupport {
 
         @Override
         public Consumer createConsumer(Processor processor) throws Exception {
+            if (creates.incrementAndGet() < gateFrom) {
+                return newConsumer(processor);
+            }
             creating.countDown();
             CountDownLatch gate = createGate;
             if (gate != null) {
                 assertTrue(gate.await(20, TimeUnit.SECONDS));
             }
+            return newConsumer(processor);
+        }
+
+        private Consumer newConsumer(Processor processor) {
             return new DefaultConsumer(this, processor) {
                 private boolean up;
 
