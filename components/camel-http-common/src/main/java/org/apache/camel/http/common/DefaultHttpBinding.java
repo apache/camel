@@ -543,9 +543,14 @@ public class DefaultHttpBinding implements HttpBinding {
                 CachedOutputStream stream = new CachedOutputStream(exchange);
                 try {
                     // copy directly from input stream to the cached output stream to get the content length
-                    int len = copyStream(is, stream, response.getBufferSize());
-                    // we need to setup the length if message is not chucked
-                    response.setContentLength(len);
+                    copyStream(is, stream, response.getBufferSize());
+                    // we need to setup the length if message is not chucked. Take it as a long from the cache, as the
+                    // int count of copyStream cannot hold the length of a response of 2 GiB or more. This assumes
+                    // that a spoolCipher is a stream or 8-bit cipher (as documented), as the length of a spool file
+                    // written with a padded block cipher is larger than the body
+                    StreamCache cache = stream.newStreamCache();
+                    long len = cache.length();
+                    response.setContentLengthLong(len);
                     OutputStream current = stream.getCurrentStream();
                     if (current instanceof ByteArrayOutputStream bos) {
                         if (LOG.isDebugEnabled()) {
@@ -555,9 +560,9 @@ public class DefaultHttpBinding implements HttpBinding {
                     } else {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Streaming response in non-chunked mode with content-length {} and buffer size: {}", len,
-                                    len);
+                                    response.getBufferSize());
                         }
-                        copyStream(stream.getInputStream(), os, len);
+                        copyStream((InputStream) cache, os, response.getBufferSize());
                     }
                 } finally {
                     IOHelper.close(is, os);
