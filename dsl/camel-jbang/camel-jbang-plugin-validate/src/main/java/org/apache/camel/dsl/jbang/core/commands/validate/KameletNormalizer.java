@@ -17,8 +17,11 @@
 package org.apache.camel.dsl.jbang.core.commands.validate;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,6 +67,14 @@ final class KameletNormalizer {
      * dump, or null when the dump has no such template or the Kamelet has no spec.template.
      */
     static String normalize(String kamelet, String dump, String templateId) {
+        return normalize(kamelet, dump, templateId, new ArrayList<>());
+    }
+
+    /**
+     * As {@link #normalize(String, String, String)}; the comments of the template are put back before the line they
+     * were written before, and those that cannot be placed are added to lost (and kept at the end of the template).
+     */
+    static String normalize(String kamelet, String dump, String templateId, List<String> lost) {
         List<String> chunk = templateChunk(dump, templateId);
         if (chunk == null) {
             return null;
@@ -160,11 +171,106 @@ final class KameletNormalizer {
         for (int i = 0; i <= template; i++) {
             out.add(lines[i]);
         }
-        out.addAll(body);
+        // the dump is of the model, which has no comments: put those of the template back where they were
+        List<String> original = new ArrayList<>();
+        for (int i = template + 1; i < bodyEnd; i++) {
+            original.add(lines[i]);
+        }
+        out.addAll(keepComments(original, body, child, lost));
         for (int i = bodyEnd; i < lines.length; i++) {
             out.add(lines[i]);
         }
         return String.join("\n", out);
+    }
+
+    /**
+     * The normalized lines with the comments of the original put back: a comment block goes before the normalized line
+     * that matches the line it was written before (a step such as - removeHeader:, or a key such as useHeaderSubject:).
+     * The two are walked in order, as normalizing keeps the order of steps and keys. A block whose line is not found is
+     * added to lost and kept at the end.
+     */
+    static List<String> keepComments(List<String> original, List<String> normalized, int indent, List<String> lost) {
+        Map<Integer, List<String>> before = new TreeMap<>();
+        List<String> block = new ArrayList<>();
+        Set<Integer> used = new HashSet<>();
+        int from = 0;
+        for (String l : original) {
+            String t = l.trim();
+            if (t.startsWith("#")) {
+                block.add(l);
+                continue;
+            }
+            if (t.isEmpty()) {
+                continue;
+            }
+            String signature = signature(t);
+            int idx = find(normalized, signature, from, used);
+            if (idx < 0 && !block.isEmpty()) {
+                // an option the normalized form sorted earlier (parameters are in the catalog's order)
+                idx = find(normalized, signature, 0, used);
+            }
+            if (idx >= 0) {
+                used.add(idx);
+                from = Math.max(from, idx + 1);
+                if (!block.isEmpty()) {
+                    before.computeIfAbsent(idx, k -> new ArrayList<>()).addAll(reindent(block, indent(normalized.get(idx))));
+                }
+            } else if (!block.isEmpty()) {
+                // its line is gone (an option folded into a uri kept as written): after the last line found, which
+                // is where it was in the original
+                lost.addAll(block.stream().map(String::trim).toList());
+                before.computeIfAbsent(from, k -> new ArrayList<>())
+                        .addAll(reindent(block, from > 0 ? indent(normalized.get(from - 1)) : indent));
+            }
+            block.clear();
+        }
+        if (!block.isEmpty()) {
+            // comments after the last line of the template: after the last line found
+            before.computeIfAbsent(from, k -> new ArrayList<>())
+                    .addAll(reindent(block, from > 0 ? indent(normalized.get(from - 1)) : indent));
+        }
+        List<String> out = new ArrayList<>();
+        for (int i = 0; i <= normalized.size(); i++) {
+            List<String> comments = before.get(i);
+            if (comments != null) {
+                out.addAll(comments);
+            }
+            if (i < normalized.size()) {
+                out.add(normalized.get(i));
+            }
+        }
+        return out;
+    }
+
+    /** What a line is, to find it after normalizing: "- key" for a step, "key" for a key, else the line. */
+    private static String signature(String trimmed) {
+        boolean step = trimmed.startsWith("- ");
+        String t = step ? trimmed.substring(2).trim() : trimmed;
+        int colon = t.indexOf(':');
+        String key = colon > 0 && !t.startsWith("\"") && !t.startsWith("'") ? t.substring(0, colon) : t;
+        return (step ? "- " : "") + key;
+    }
+
+    private static int find(List<String> lines, String signature, int from, Set<Integer> used) {
+        for (int i = from; i < lines.size(); i++) {
+            String t = lines.get(i).trim();
+            if (!t.isEmpty() && !t.startsWith("#") && !used.contains(i) && signature(t).equals(signature)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static List<String> reindent(List<String> block, int indent) {
+        int min = Integer.MAX_VALUE;
+        for (String l : block) {
+            min = Math.min(min, indent(l));
+        }
+        List<String> answer = new ArrayList<>();
+        for (String l : block) {
+            answer.add(" ".repeat(indent) + l.substring(min));
+        }
+        return answer;
     }
 
     /** The dump without the routeTemplates of the given ids: what is left are the routes of the other files. */

@@ -65,11 +65,25 @@ class YamlUriPlaceholderTest {
                     return null;
                 });
         // the round trip writes containerName={{accountName}} back as the same text, so it needs this check too
-        assertThat(YamlModelWriterSupport.fewerPathPartsThanSyntax(catalog, "azure-storage-blob:{{accountName}}"))
+        assertThat(YamlModelWriterSupport.pathPartsDifferFromSyntax(catalog, "azure-storage-blob:{{accountName}}"))
                 .isTrue();
-        assertThat(YamlModelWriterSupport.fewerPathPartsThanSyntax(catalog, "azure-storage-blob:a/b?x=y")).isFalse();
-        assertThat(YamlModelWriterSupport.fewerPathPartsThanSyntax(catalog, "timer:tick?period=5")).isFalse();
-        assertThat(YamlModelWriterSupport.fewerPathPartsThanSyntax(catalog, "unknown:x")).isFalse();
+        assertThat(YamlModelWriterSupport.pathPartsDifferFromSyntax(catalog, "azure-storage-blob:a/b?x=y")).isFalse();
+        // more parts than options: containerName would get b/c, which the uri Camel builds from the options breaks
+        assertThat(YamlModelWriterSupport.pathPartsDifferFromSyntax(catalog, "azure-storage-blob:a/b/c")).isTrue();
+        assertThat(YamlModelWriterSupport.pathPartsDifferFromSyntax(catalog, "timer:tick?period=5")).isFalse();
+        assertThat(YamlModelWriterSupport.pathPartsDifferFromSyntax(catalog, "unknown:x")).isFalse();
+    }
+
+    @Test
+    void aParseThatBreaksAPlaceholderIsNotUsed() {
+        // normalizing the normalized azure-storage-files-source turned {{directoryName}} into {}}
+        String uri = "azure-files?account={{accountName}}&share={{shareName}}/{{directoryName}}";
+        assertThat(YamlModelWriterSupport.samePlaceholders(uri,
+                Map.of("account", "{{accountName}}", "share", "{{shareName}}/{{directoryName}}"))).isTrue();
+        assertThat(YamlModelWriterSupport.samePlaceholders(uri,
+                Map.of("account", "{{accountName}}", "share", "{{shareName}}/{}}"))).isFalse();
+        assertThat(YamlModelWriterSupport.samePlaceholders("aws2-s3:{{bucket}}?accessKey=RAW({{?accessKey}})",
+                Map.of("bucketNameOrArn", "{{bucket}}", "accessKey", "RAW({{?accessKey}})"))).isTrue();
     }
 
     /** A catalog whose asEndpointUri answers the given uri, or fails when it is null. */

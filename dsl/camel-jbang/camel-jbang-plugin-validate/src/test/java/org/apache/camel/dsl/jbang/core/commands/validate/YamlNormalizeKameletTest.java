@@ -18,6 +18,8 @@ package org.apache.camel.dsl.jbang.core.commands.validate;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -148,6 +150,71 @@ class YamlNormalizeKameletTest {
         assertThat(KameletNormalizer.withoutTemplates(dump, Set.of("my-action")))
                 .contains("id: other").contains("- route:").doesNotContain("my-action");
         assertThat(KameletNormalizer.normalize(kamelet, dump, "missing")).isNull();
+    }
+
+    @Test
+    void theCommentsOfTheTemplateAreKept() {
+        // review of the camel-kamelets PR: the comments of 16 templates (several on security decisions) were dropped
+        String kamelet = """
+                kind: Kamelet
+                metadata:
+                  name: my-sink
+                spec:
+                  template:
+                    from:
+                      uri: kamelet:source
+                      steps:
+                        # drop the headers from upstream
+                        - removeHeader:
+                            name: Subject
+                        - to:
+                            uri: "mail:smtp"
+                            parameters:
+                              host: "{{host}}"
+                              # needed, else the Subject header is ignored
+                              useHeaderSubject: true
+                        # the end
+                """;
+        String dump = """
+                - routeTemplate:
+                    id: my-sink
+                    route:
+                      from:
+                        uri: kamelet:source
+                        steps:
+                          - removeHeader:
+                              name: Subject
+                          - to:
+                              uri: mail
+                              parameters:
+                                protocol: smtp
+                                host: "{{host}}"
+                                useHeaderSubject: true
+                """;
+        List<String> lost = new ArrayList<>();
+        String normalized = KameletNormalizer.normalize(kamelet, dump, "my-sink", lost);
+        assertThat(lost).isEmpty();
+        assertThat(normalized).isEqualTo("""
+                kind: Kamelet
+                metadata:
+                  name: my-sink
+                spec:
+                  template:
+                    from:
+                      uri: kamelet:source
+                      steps:
+                        # drop the headers from upstream
+                        - removeHeader:
+                            name: Subject
+                        - to:
+                            uri: mail
+                            parameters:
+                              protocol: smtp
+                              host: "{{host}}"
+                              # needed, else the Subject header is ignored
+                              useHeaderSubject: true
+                              # the end
+                """);
     }
 
     @Test

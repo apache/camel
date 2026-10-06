@@ -16,12 +16,17 @@
  */
 package org.apache.camel.yaml.out;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
@@ -216,10 +221,16 @@ public abstract class YamlModelWriterSupport {
                     = camelContext != null
                             ? camelContext.getCamelContextExtension().getContextPlugin(RuntimeCamelCatalog.class)
                             : null;
-            if (catalog != null) {
+            int colon = uri.indexOf(':');
+            int question = uri.indexOf('?');
+            boolean schemeAndQuery = colon < 0 || question >= 0 && question < colon;
+            if (catalog != null && !schemeAndQuery) {
+                // scheme?a=b (as a uri built from parameters is): the query as written, the catalog would mangle a
+                // value such as {{share}}/{{directory}} (normalizing a normalized Kamelet changed it)
                 params = catalog.endpointProperties(uri);
                 if (params != null && !params.isEmpty() && !uri.startsWith("kamelet:")
-                        && (fewerPathPartsThanSyntax(catalog, uri) || !rebuildsThePath(catalog, uri, params))) {
+                        && (pathPartsDifferFromSyntax(catalog, uri) || !rebuildsThePath(catalog, uri, params)
+                                || !samePlaceholders(uri, params))) {
                     // the catalog parsed the path into options that would mean something else: fewer path parts than
                     // the syntax has (azure-storage-blob:{{accountName}} for accountName/containerName: the one part went
                     // to containerName, the component reads it as accountName), or options it cannot write back as the
@@ -254,6 +265,11 @@ public abstract class YamlModelWriterSupport {
                 }
             }
             if (params != null && !params.isEmpty()) {
+                String written = (String) jo.get("uri");
+                if (catalog != null && written != null && !written.startsWith("kamelet:")) {
+                    int c = written.indexOf(':');
+                    params = asCamelBuildsThem(catalog, c > 0 ? written.substring(0, c) : written, params);
+                }
                 JsonObject p = new JsonObject();
                 params.forEach((k, v) -> p.put(k, parseValue(v)));
                 jo.put("parameters", p);
@@ -264,21 +280,18 @@ public abstract class YamlModelWriterSupport {
     }
 
     /**
-     * Whether the uri has fewer path parts than the syntax of its component has path options, when the syntax has more
-     * than one: which option a part is cannot be told from the uri alone.
+     * Whether the uri has another number of path parts than the syntax of its component has path options, when the
+     * syntax has more than one. Fewer: which option a part is cannot be told from the uri alone. More: an option would
+     * get two parts (share: {{shareName}}/{{directoryName}} on azure-files://account/share), which the uri built from
+     * the options breaks.
      */
-    static boolean fewerPathPartsThanSyntax(RuntimeCamelCatalog catalog, String uri) {
+    static boolean pathPartsDifferFromSyntax(RuntimeCamelCatalog catalog, String uri) {
         try {
             int colon = uri.indexOf(':');
             if (colon < 0) {
                 return false;
             }
-            String json = catalog.componentJSonSchema(uri.substring(0, colon));
-            if (json == null) {
-                return false;
-            }
-            Object component = ((JsonObject) Jsoner.deserialize(json)).get("component");
-            String syntax = component instanceof JsonObject c ? c.getString("syntax") : null;
+            String syntax = syntax(catalog, uri.substring(0, colon));
             if (syntax == null || syntax.indexOf(':') < 0) {
                 return false;
             }
@@ -286,10 +299,53 @@ public abstract class YamlModelWriterSupport {
             if (options < 2) {
                 return false;
             }
-            return pathParts(path(uri).substring(colon + 1)) < options;
+            return pathParts(path(uri).substring(colon + 1)) != options;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private static JsonObject componentSchema(RuntimeCamelCatalog catalog, String scheme) {
+        try {
+            String json = catalog.componentJSonSchema(scheme);
+            return json != null ? (JsonObject) Jsoner.deserialize(json) : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static String syntax(RuntimeCamelCatalog catalog, String scheme) {
+        JsonObject schema = componentSchema(catalog, scheme);
+        Object component = schema != null ? schema.get("component") : null;
+        return component instanceof JsonObject c ? c.getString("syntax") : null;
+    }
+
+    /**
+     * The options as Camel builds the uri from them: the path options first in the order of the syntax, then the others
+     * sorted, with a secret option in RAW() as the YAML DSL wraps it. So a normalized file normalizes to itself.
+     */
+    static Map<String, String> asCamelBuildsThem(RuntimeCamelCatalog catalog, String scheme, Map<String, String> params) {
+        JsonObject schema = componentSchema(catalog, scheme);
+        Object properties = schema != null ? schema.get("properties") : null;
+        if (!(properties instanceof JsonObject props)) {
+            return params;
+        }
+        Map<String, String> answer = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> e : props.entrySet()) {
+            if (e.getValue() instanceof JsonObject o && "path".equals(o.getString("kind")) && params.containsKey(e.getKey())) {
+                answer.put(e.getKey(), params.get(e.getKey()));
+            }
+        }
+        new TreeMap<>(params).forEach(answer::putIfAbsent);
+        for (Map.Entry<String, String> e : answer.entrySet()) {
+            Object option = props.get(e.getKey());
+            String v = e.getValue();
+            if (option instanceof JsonObject o && Boolean.TRUE.equals(o.getBoolean("secret")) && v != null
+                    && !v.startsWith("#") && !v.startsWith("RAW(")) {
+                e.setValue("RAW(" + v + ")");
+            }
+        }
+        return answer;
     }
 
     private static int pathParts(String path) {
@@ -319,6 +375,29 @@ public abstract class YamlModelWriterSupport {
     private static String path(String uri) {
         int q = uri.indexOf('?');
         return q >= 0 ? uri.substring(0, q) : uri;
+    }
+
+    private static final Pattern PLACEHOLDER = Pattern.compile("\\{\\{[^{}]*}}");
+
+    /** Whether the options have the same {{placeholders}} as the uri: a parse that broke one is not used. */
+    static boolean samePlaceholders(String uri, Map<String, String> params) {
+        List<String> inUri = placeholders(uri);
+        List<String> inParams = new ArrayList<>();
+        params.values().forEach(v -> inParams.addAll(placeholders(v)));
+        Collections.sort(inUri);
+        Collections.sort(inParams);
+        return inUri.equals(inParams);
+    }
+
+    private static List<String> placeholders(String text) {
+        List<String> answer = new ArrayList<>();
+        if (text != null) {
+            Matcher m = PLACEHOLDER.matcher(text);
+            while (m.find()) {
+                answer.add(m.group());
+            }
+        }
+        return answer;
     }
 
     /** Whether the first ? of the uri is inside a {{...}} property placeholder, such as {{?name}}. */

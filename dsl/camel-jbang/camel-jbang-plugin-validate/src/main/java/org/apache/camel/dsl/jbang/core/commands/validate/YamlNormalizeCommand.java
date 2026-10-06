@@ -124,7 +124,13 @@ public class YamlNormalizeCommand extends CamelCommand {
         Set<String> kameletIds = new HashSet<>();
         for (Map.Entry<String, String> e : kamelets.entrySet()) {
             String id = KameletNormalizer.kameletName(e.getValue(), e.getKey());
-            String k = KameletNormalizer.normalize(e.getValue(), normalized, id);
+            List<String> lost = new ArrayList<>();
+            String k = KameletNormalizer.normalize(e.getValue(), normalized, id, lost);
+            if (!lost.isEmpty()) {
+                printer().printErr("WARN: " + e.getKey() + ": " + lost.size() + " comment line(s) of the template could"
+                                   + " not be put back where they were, they are at the end of the template: "
+                                   + String.join(" / ", lost));
+            }
             if (k == null) {
                 printer().printErr("Error normalizing the Kamelet " + e.getKey() + ": its template " + id
                                    + " did not load (see the errors above), or the file has no spec.template");
