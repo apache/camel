@@ -528,7 +528,7 @@ A header that carries a literal `${...}` string is now used as the object key ve
 A configured `keyName` or `bucketName` whose Simple expression resolves to `null` now fails with an
 `IllegalArgumentException` at the producer, instead of passing a `null` key/bucket on to the AWS SDK.
 
-=== camel-aws2-sqs - batchSeparator
+=== camel-aws2-sqs
 
 The `batchSeparator` option (default `,`), which splits a `String` body into the messages of the `sendBatchMessage`
 operation, was used as a regular expression: a separator such as `|` split the body into single characters, and `.`
