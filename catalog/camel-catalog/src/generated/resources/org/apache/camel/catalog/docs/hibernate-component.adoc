@@ -210,6 +210,8 @@ endpoint.setFilters(filters);
 
 When a producer reuses a `Session` supplied by a Hibernate consumer, its filter configuration must match the filters associated with that `Session`. If the producer's filters differ, the shared `Session` is not reused and the producer opens a separate `Session` so that its filters can be applied without changing the consumer's session state.
 
+When the producer's filters differ from the consumer's session, the producer opens a separate `Session`. If the consumer holds a pessimistic lock, such as when `skipLocked=true`, the producer's separate session may block waiting for a lock held by the consumer. Configure compatible filters when the producer needs to operate on rows locked by the consumer so that the consumer session can be reused.
+
 ==== Multi-tenancy
 
 A tenant identifier can be supplied through `tenantIdentifier`.
@@ -267,7 +269,9 @@ use their own `StatelessSession`.
 
 If processing an entity fails, the consumer rolls back the active poll transaction and
 stops processing the current batch. This prevents changes made earlier in the same poll
-from being committed after a later entity fails.
+from being committed after a later entity fails. Entities processed before the failure
+may therefore be delivered again on a subsequent poll. A consistently failing entity
+can prevent later rows from being processed until the failure is resolved.
 
 For example:
 
@@ -358,6 +362,8 @@ The component uses native Hibernate transactions through `Session` and `Stateles
 Regular producer and consumer operations create a Hibernate `Session` and transaction. Each operation commits its own transaction unless the configured `SessionFactory` is backed by JTA.
 
 Stateless operations use a Hibernate `StatelessSession` and transaction. Stateless operations do not participate in consumer session reuse.
+
+Entities may become detached when the Hibernate `Session` is closed. Lazy associations should therefore be initialized while the session is active. This is particularly important when consumer results are sent to asynchronous endpoints such as `seda:` or `wireTap:`, where processing can outlive the consumer's poll session.
 
 The component does not provide its own JTA or Spring transaction-manager integration. A transacted Camel exchange requires a JTA-backed `SessionFactory`; using a resource-local `SessionFactory` in a transacted exchange fails fast.
 
@@ -727,5 +733,5 @@ The following features are intentionally not part of the current implementation:
 * **Dynamic-map entities:** Legacy Hibernate `EntityMode.MAP` / dynamic-map support is not used because the legacy public API is not suitable for Hibernate ORM 8. The component uses typed entity classes.
 * **Message query replacement:** The component does not allow a message header to replace the query configured on the endpoint. Query text remains route configuration and message data is supplied through bound parameters.
 * **Transaction-manager integration:** The component uses native Hibernate transactions and does not use `camel-jpa`, Spring `PlatformTransactionManager`, or Jakarta Persistence.
-* **JTA transaction integration:** JTA-backed transaction coordination is not currently provided. Resource-local `SessionFactory` operations are rejected when used inside a transacted Camel exchange.
+* **JTA transaction integration:** The component does not configure or provide JTA transaction coordination itself. When a Camel exchange is already transacted, the configured SessionFactory must provide JTA-backed transaction coordination. Resource-local SessionFactory operations are rejected in that case.
 * **Streaming in transacted exchanges:** `streaming=true` cannot be used inside a transacted Camel exchange because the Hibernate stream and session may outlive the route transaction.
