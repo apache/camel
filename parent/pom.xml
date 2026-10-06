@@ -547,7 +547,7 @@
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>7.3.0</woodstox-core-version>
         <xbean-spring-version>5.0.0</xbean-spring-version>
-        <xchange-version>5.2.5</xchange-version>
+        <xchange-version>6.0.0</xchange-version>
         <xerces-version>2.12.2</xerces-version>
         <xml-resolver-version>1.2</xml-resolver-version>
         <xmlsec-version>4.0.4</xmlsec-version>
