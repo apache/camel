@@ -104,10 +104,16 @@ public class DirectProducer extends DefaultAsyncProducer {
             LOG.info("Interrupted while waiting for a consumer on {}: the route is being stopped or reloaded",
                     endpoint.getEndpointUri());
             Thread.currentThread().interrupt();
-            exchange.setException(new DirectConsumerNotAvailableException(
+            DirectConsumerNotAvailableException cause = new DirectConsumerNotAvailableException(
                     "No consumers available on endpoint: " + endpoint
-                                                                          + " (interrupted while waiting for one, as the route is being stopped or reloaded)",
-                    exchange));
+                                                                                                + " (interrupted while waiting for one, as the route is being stopped or reloaded)",
+                    exchange);
+            // keep the interruption as the cause, so onException(InterruptedException.class) still matches
+            cause.initCause(e);
+            exchange.setException(cause);
+            // stay marked as interrupted, as setException(InterruptedException) did, so the error handler stops
+            // routing instead of handling a failure (onException, redelivery, dead letter channel, the ERROR log)
+            exchange.getExchangeExtension().setInterrupted(true);
             callback.done(true);
             return true;
         } catch (Exception e) {

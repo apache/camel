@@ -2216,7 +2216,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     String notAllowedReason() {
         return shutdownStrategy.isForceShutdown()
                 ? "The exchange cannot continue: its route was forced to shut down, as the graceful shutdown timed out"
-                  + " while it was in flight (a route reload in dev mode does this when an exchange waits for something)"
+                  + " while it was in flight (the CamelContext is being stopped)"
                 : "The exchange cannot continue: its route is being stopped or reloaded";
     }
 }

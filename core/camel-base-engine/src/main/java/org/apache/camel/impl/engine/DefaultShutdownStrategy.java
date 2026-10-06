@@ -823,7 +823,14 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         Set<String> places = new LinkedHashSet<>();
         int more = 0;
         for (InflightRepository.InflightExchange inflight : camelContext.getInflightRepository().browse()) {
-            if (!routeIds.contains(inflight.getExchange().getFromRouteId())) {
+            // the route the exchange was created by, or the route it is in now: an exchange that came in through
+            // direct: keeps the route of its caller as its from route
+            if (!routeIds.contains(inflight.getExchange().getFromRouteId())
+                    && !routeIds.contains(inflight.getAtRouteId())) {
+                continue;
+            }
+            // between two nodes, or before the route is entered, there is no place to name yet
+            if (inflight.getAtRouteId() == null || inflight.getNodeId() == null) {
                 continue;
             }
             String place = inflight.getAtRouteId() + "/" + inflight.getNodeId()
