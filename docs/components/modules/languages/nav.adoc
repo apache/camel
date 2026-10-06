@@ -17,6 +17,7 @@
 ** xref:jsonpath-language.adoc[JSONPath]
 ** xref:mvel-language.adoc[MVEL]
 ** xref:ognl-language.adoc[OGNL]
+** xref:openfeature-language.adoc[OpenFeature]
 ** xref:python-language.adoc[Python]
 ** xref:python3-language.adoc[Python 3]
 ** xref:quickjs-language.adoc[QuickJS]

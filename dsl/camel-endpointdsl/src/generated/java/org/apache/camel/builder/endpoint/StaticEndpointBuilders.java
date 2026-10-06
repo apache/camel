@@ -12903,6 +12903,46 @@ public class StaticEndpointBuilders {
         return OpenAIEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * OpenFeature (camel-openfeature)
+     * Evaluate feature flags using the OpenFeature specification with flagd.
+     * 
+     * Category: core
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-openfeature
+     * 
+     * Syntax: <code>openfeature:domain</code>
+     * 
+     * Path parameter: domain (required)
+     * The OpenFeature domain to bind the provider to.
+     * 
+     * @param path domain
+     * @return the dsl builder
+     */
+    public static OpenFeatureEndpointBuilderFactory.OpenFeatureEndpointBuilder openfeature(String path) {
+        return openfeature("openfeature", path);
+    }
+    /**
+     * OpenFeature (camel-openfeature)
+     * Evaluate feature flags using the OpenFeature specification with flagd.
+     * 
+     * Category: core
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-openfeature
+     * 
+     * Syntax: <code>openfeature:domain</code>
+     * 
+     * Path parameter: domain (required)
+     * The OpenFeature domain to bind the provider to.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path domain
+     * @return the dsl builder
+     */
+    public static OpenFeatureEndpointBuilderFactory.OpenFeatureEndpointBuilder openfeature(String componentName, String path) {
+        return OpenFeatureEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * OpenFGA (camel-openfga)
      * Authorize an Exchange against an OpenFGA relationship graph, and maintain
      * the relationship tuples it is authorized against.

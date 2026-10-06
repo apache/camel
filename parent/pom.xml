@@ -418,7 +418,9 @@
         <onnxruntime-version>1.30.0</onnxruntime-version>
         <opa-version>2.1.1</opa-version>
         <opa-wasm-version>1.1.0</opa-wasm-version>
+        <openfeature-sdk-version>1.22.1</openfeature-sdk-version>
         <openfga-version>0.11.0</openfga-version>
+        <flagd-provider-version>0.14.2</flagd-provider-version>
         <mcp-java-sdk-version>2.0.1</mcp-java-sdk-version>
         <mssql-jdbc-version>12.10.0.jre11</mssql-jdbc-version>
         <ojdbc-version>23.8.0.25.04</ojdbc-version>
@@ -2424,6 +2426,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-openapi-validator</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-openfeature</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
