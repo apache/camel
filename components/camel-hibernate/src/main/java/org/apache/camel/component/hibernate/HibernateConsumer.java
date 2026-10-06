@@ -88,7 +88,8 @@ public class HibernateConsumer extends ScheduledPollConsumer {
                         HibernateSessionContext sessionContext = new HibernateSessionContext(
                                 session,
                                 endpoint.getSessionFactory(),
-                                endpoint.getTenantIdentifier());
+                                endpoint.getTenantIdentifier(),
+                                endpoint.getFilters());
 
                         exchange.getExchangeExtension().setSafeCopyProperty(
                                 HibernateConstants.HIBERNATE_SESSION_CONTEXT, sessionContext);
@@ -96,12 +97,10 @@ public class HibernateConsumer extends ScheduledPollConsumer {
                         getProcessor().process(exchange);
 
                         if (exchange.getException() != null) {
-                            handleException(exchange.getException());
+                            throw exchange.getException();
                         } else if (endpoint.isConsumeDelete()) {
                             session.remove(result);
                         }
-                    } catch (Exception e) {
-                        handleException(e);
                     } finally {
                         if (exchange != null) {
                             HibernateSessionContext sessionContext = exchange.getExchangeExtension()
