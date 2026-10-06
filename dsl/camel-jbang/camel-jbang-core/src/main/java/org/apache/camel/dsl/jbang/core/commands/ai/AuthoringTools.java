@@ -97,7 +97,9 @@ public final class AuthoringTools {
                 .param("includeDoc", "boolean", "Include the full AsciiDoc page (default false)", false)
                 .param("docPage", "string", "simple doc sub-page to return as text (functions, operators, ognl, advanced)",
                         false)
-                .param("optionsFilter", "string", "Keyword to match in option names or descriptions", false)
+                .param("optionsFilter", "string",
+                        "Keyword to match in option names or descriptions; for an EIP whose own options do not match, the options of its elements are searched (nestedOptions)",
+                        false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
                 .deterministic(true)

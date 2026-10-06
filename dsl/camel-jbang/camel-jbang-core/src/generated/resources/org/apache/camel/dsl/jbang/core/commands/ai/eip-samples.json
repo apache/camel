@@ -339,6 +339,16 @@
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - enrich:\n            expression:\n              simple:\n                expression: \"http:myserver\/${header.orderId}\/order\"\n        - to:\n            uri: mock:result\n"
     }
   ],
+  "errorHandler": [
+    {
+      "source": "error-handler.adoc",
+      "yaml": "- route:\n    errorHandler:\n      deadLetterChannel:\n        deadLetterUri: mock:dead\n        redeliveryPolicy:\n          maximumRedeliveries: 3\n          redeliveryDelay: 250\n    from:\n      uri: direct:in\n      steps:\n        - process:\n            ref: myFailureProcessor\n        - to:\n            uri: mock:result\n"
+    },
+    {
+      "source": "error-handler.adoc",
+      "yaml": "- onException:\n    # in case of io exception then try to redeliver up till 2 times\n    # (do not use any delay due faster unit testing)\n    exception:\n      - java.io.IOException\n    redeliveryPolicy:\n      maximumRedeliveries: 2\n      redeliveryDelay: 0\n- route:\n    from:\n      uri: direct:start\n      steps:\n        - to:\n            uri: mock:a\n        - to:\n            uri: direct:sub\n        - to:\n            uri: mock:c\n- route:\n    errorHandler:\n      noErrorHandler: {}\n    from:\n      uri: direct:sub\n      steps:\n        - to:\n            uri: mock:b\n        - process:\n            ref: myProcessor\n"
+    }
+  ],
   "eventDrivenConsumer": [
     {
       "source": "eventDrivenConsumer-eip.adoc",

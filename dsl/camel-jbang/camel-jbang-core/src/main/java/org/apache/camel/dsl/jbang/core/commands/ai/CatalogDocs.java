@@ -345,10 +345,68 @@ public final class CatalogDocs {
             String matchedTerm) {
         String doc = includeDoc ? catalog.asciiDoc(model.getName() + "-eip") : null;
         JsonObject result = eipDoc(model, filter, scope, doc);
+        // only when the filter matched none of the EIP's own options, also none the scope left out
+        if (filter != null && scope != OptionScope.NONE && result.getIntegerOrDefault("matchedOptions", 0) == 0
+                && result.getIntegerOrDefault("omittedOptions", 0) == 0) {
+            putNestedOptions(catalog, model, filter, scope, result);
+        }
         if (matchedTerm != null) {
             result.put("matchedTerm", matchedTerm);
         }
         return result;
+    }
+
+    /**
+     * The options of the elements of an EIP that match the filter, when none of its own do: logStackTrace is an option
+     * of the redeliveryPolicy of onException, and a filter on onException found nothing (CAMEL-25370).
+     */
+    private static void putNestedOptions(
+            CamelCatalog catalog, EipModel model, String filter, OptionScope scope, JsonObject result) {
+        JsonArray nested = new JsonArray();
+        String example = null;
+        for (BaseOptionModel opt : model.getOptions()) {
+            if (!"element".equals(opt.getKind())) {
+                continue;
+            }
+            EipModel element = catalog.eipModel(opt.getName());
+            // the option must hold that model, not one that only shares its name (templatedRoute.bean is a bean
+            // factory, not the bean EIP)
+            if (element == null || element.getOptions() == null || !holds(opt, element)) {
+                continue;
+            }
+            boolean list = "array".equals(opt.getType());
+            for (BaseOptionModel inner : element.getOptions()) {
+                if (matchesOptionFilter(inner, filter) && scope.accepts(inner, filter)) {
+                    JsonObject o = optionToJson(inner, null);
+                    o.put("under", opt.getName());
+                    nested.add(o);
+                    if (example == null) {
+                        example = opt.getName() + ": " + (list ? "[{" : "{") + inner.getName() + ": ..." + (list ? "}]" : "}");
+                    }
+                }
+            }
+        }
+        if (!nested.isEmpty()) {
+            result.put("nestedOptions", nested);
+            result.put("nestedHint", "options of an element of " + model.getName() + ": write them under that element,"
+                                     + " for example " + example);
+        }
+    }
+
+    /** Whether the element option holds the given model: its java type, inside List&lt;...&gt; and without generics. */
+    private static boolean holds(BaseOptionModel opt, EipModel element) {
+        String type = opt.getJavaType();
+        if (type == null || element.getJavaType() == null) {
+            return false;
+        }
+        if (type.startsWith("java.util.List<") && type.endsWith(">")) {
+            type = type.substring("java.util.List<".length(), type.length() - 1);
+        }
+        int generic = type.indexOf('<');
+        if (generic > 0) {
+            type = type.substring(0, generic);
+        }
+        return type.equals(element.getJavaType());
     }
 
     /**
@@ -1534,6 +1592,17 @@ public final class CatalogDocs {
             JsonArray enums = new JsonArray();
             enums.addAll(opt.getEnums());
             o.put("enumValues", enums);
+        }
+        if ("element".equals(opt.getKind()) && "object".equals(opt.getType()) && opt.getOneOfs() != null
+                && !opt.getOneOfs().isEmpty() && !opt.getOneOfs().contains(opt.getName())) {
+            // a single element that is one of several kinds is written as that kind, not under its own name: the
+            // error handler is errorHandler: {deadLetterChannel: {...}}, never errorHandlerType: (CAMEL-25370). Not
+            // a list such as outputs (written under steps:), nor an element whose kind is its own name (when).
+            JsonArray oneOf = new JsonArray();
+            oneOf.addAll(opt.getOneOfs());
+            o.put("oneOf", oneOf);
+            o.put("yaml", "write one of oneOf as the key, not '" + opt.getName() + "': for example "
+                          + opt.getOneOfs().get(0) + ": {...}");
         }
         return o;
     }
