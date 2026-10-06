@@ -278,6 +278,18 @@ public class YamlValidator {
             Error marked = indentationError(msg, lines);
             return marked != null ? marked : plain;
         }
+        // errorHandler: at column 1 in a file of - items is YAML, not prose: the list item marker is missing
+        Matcher key = TOP_KEY.matcher(text);
+        if (key.matches() && firstEntryIsListItem(lines)) {
+            String name = key.group(1);
+            return Error.builder()
+                    .messageKey("parser")
+                    .format(new MessageFormat("{0}"))
+                    .arguments("line " + line + ": " + name + ": is a top-level key in a file whose entries are list"
+                               + " items (- route:, ...): write it as a list item, - " + name + ":, and indent the lines"
+                               + " under it two spaces more, as the - route: entries are (CAMEL-25372)")
+                    .build();
+        }
         String cleaned = msg.replace("\n", " ").replaceAll("\\s+", " ").trim();
         int cut = cleaned.indexOf("in 'reader'");
         String head = cut > 0 ? cleaned.substring(0, cut).trim() : cleaned;
@@ -288,6 +300,21 @@ public class YamlValidator {
                            + "\"): a route file holds only the YAML, put explanations in a # comment or leave them out"
                            + " (" + head + ")")
                 .build();
+    }
+
+    /** A mapping key alone at column 1: errorHandler:, beans:, restConfiguration:. */
+    private static final Pattern TOP_KEY = Pattern.compile("^([A-Za-z][\\w-]*):\\s*$");
+
+    /** Whether the first entry of the file (past comments and blank lines) is a list item. */
+    private static boolean firstEntryIsListItem(String[] lines) {
+        for (String l : lines) {
+            String t = l.strip();
+            if (t.isEmpty() || t.startsWith("#") || t.equals("---")) {
+                continue;
+            }
+            return l.startsWith("- ");
+        }
+        return false;
     }
 
     private static final Pattern SNAKE_MARK = Pattern.compile("in 'reader', line (\\d+), column (\\d+):");
@@ -1351,6 +1378,24 @@ public class YamlValidator {
     /** The names of the EIP steps, from the schema. */
     Set<String> stepNames() {
         return stepNames;
+    }
+
+    /** The options of an EIP as the YAML DSL schema lists them, or empty when the EIP is not known (CAMEL-25372). */
+    Set<String> optionsOf(String eip) {
+        JsonNode ref = model.at("/items/definitions/org.apache.camel.model.ProcessorDefinition/properties/" + eip + "/$ref");
+        JsonNode definition = ref.isTextual() ? model.at(ref.asText().substring(1)) : null;
+        Set<String> answer = new LinkedHashSet<>();
+        if (definition == null || definition.isMissingNode()) {
+            return answer;
+        }
+        // the definition is an object, or a oneOf of a short form and an object
+        List<JsonNode> shapes = new ArrayList<>();
+        shapes.add(definition);
+        definition.path("oneOf").forEach(shapes::add);
+        for (JsonNode shape : shapes) {
+            shape.path("properties").fieldNames().forEachRemaining(answer::add);
+        }
+        return answer;
     }
 
     /** The properties of resilience4jConfiguration, from the schema. */
