@@ -3882,6 +3882,19 @@ public interface ComponentsBuilderFactory {
         return OpenaiComponentBuilderFactory.openai();
     }
     /**
+     * OpenFeature (camel-openfeature)
+     * Evaluate feature flags using the OpenFeature specification with flagd.
+     * 
+     * Category: core
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-openfeature
+     * 
+     * @return the dsl builder
+     */
+    static OpenfeatureComponentBuilderFactory.OpenfeatureComponentBuilder openfeature() {
+        return OpenfeatureComponentBuilderFactory.openfeature();
+    }
+    /**
      * OpenFGA (camel-openfga)
      * Authorize an Exchange against an OpenFGA relationship graph, and maintain
      * the relationship tuples it is authorized against.

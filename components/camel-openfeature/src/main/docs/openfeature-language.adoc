@@ -1,0 +1,182 @@
+= OpenFeature Language
+:doctitle: OpenFeature
+:shortname: openfeature
+:artifactid: camel-openfeature
+:description: Evaluate a feature flag as a boolean predicate
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The OpenFeature language evaluates a feature flag as a boolean predicate,
+for use in EIP constructs such as `filter()`, `choice()`, and `validate()`.
+
+The expression string is the feature flag key.
+
+== Dependencies
+
+This language is provided by the `camel-openfeature` component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-openfeature</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+== Usage
+
+The language evaluates the given flag key as a boolean and returns the
+result. It uses the `openfeature:flags` endpoint by default, inheriting
+component-level configuration such as `flagsResource` or `host`.
+
+=== Java DSL
+
+[source,java]
+----
+from("direct:start")
+    .filter().language("openfeature", "enrichment-enabled")
+        .to("direct:enrich-order")
+    .end();
+----
+
+=== Choice
+
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when().language("openfeature", "enrichment-enabled")
+            .to("direct:enrich-order")
+        .otherwise()
+            .to("direct:skip-enrichment")
+    .end();
+----
+
+=== Expression with setProperty
+
+The language can also be used as an expression to store the evaluation
+result in an exchange property. This is a lightweight alternative to the
+component's `resultProperty` option — it avoids a full `to()` call and
+keeps the message body untouched:
+
+[source,java]
+----
+from("direct:start")
+    .setProperty("CamelOpenFeatureTargetingKey", simple("${body[order_id]}"))
+    .setProperty("routingAlgorithm", language("openfeature", "new-routing-algorithm"))
+    .toD("direct:route-${exchangeProperty.routingAlgorithm}");
+----
+
+The `language()` expression defaults to variant (string) evaluation, so
+the property receives the string variant value directly.
+
+== Evaluation context
+
+The language supports the OpenFeature evaluation context — metadata about
+the current request such as a user ID or customer tier — so the provider
+can apply targeting rules. The *targeting key* uniquely identifies the
+subject of the evaluation (e.g. a user or session) and is used by
+providers for consistent fractional rollouts.
+
+=== Via message headers
+
+Set the targeting key and context attributes as message headers before the
+language evaluates:
+
+* `CamelOpenFeatureTargetingKey` (header or exchange property): sets the
+  targeting key for the evaluation.
+* `CamelOpenFeatureEvaluationContext` (header): a `Map<String, Object>` of additional
+  context key-value pairs.
+
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelOpenFeatureTargetingKey", constant("user-123"))
+    .setHeader("CamelOpenFeatureEvaluationContext", constant(Map.of("customer_tier", "ENTERPRISE")))
+    .filter().language("openfeature", "enrichment-enabled")
+        .to("direct:enrich-order")
+    .end();
+----
+
+=== Via createPredicate / createExpression
+
+When building a predicate or expression programmatically, pass the
+targeting key, context map and evaluation type as positional properties.
+Both `createPredicate` and `createExpression` accept the same positional
+properties:
+
+[width="100%",cols="10%,15%,75%",options="header"]
+|===
+| Index | Type | Description
+| 0 | `String` | Endpoint URI (default: `openfeature:flags`)
+| 1 | `String` | Targeting key
+| 2 | `Map<String, Object>` | Evaluation context key-value pairs
+| 3 | `String` | Evaluation type: `boolean` or `variant` (default: `boolean` for createPredicate, `variant` for createExpression)
+|===
+
+`createPredicate` defaults to boolean evaluation and returns a `Predicate`:
+
+[source,java]
+----
+Predicate enrichmentEnabled = context.resolveLanguage("openfeature").createPredicate(
+    "enrichment-enabled",
+    new Object[] { null, "user-123", Map.of("customer_tier", "ENTERPRISE") });
+
+from("direct:start")
+    .filter(enrichmentEnabled)
+        .to("direct:enrich-order")
+    .end();
+----
+
+`createExpression` defaults to variant (string) evaluation and returns an
+`Expression`. When called with `evaluate(exchange, Boolean.class)`, it
+automatically switches to boolean evaluation:
+
+[source,java]
+----
+Expression variant = context.resolveLanguage("openfeature").createExpression(
+    "hazmat-compliance-v2",
+    new Object[] { null, "order-123", Map.of("customer_tier", "ENTERPRISE") });
+
+Object result = variant.evaluate(exchange, Object.class); // returns String
+----
+
+[source,java]
+----
+Expression flag = context.resolveLanguage("openfeature").createExpression("enrichment-enabled");
+
+Boolean result = flag.evaluate(exchange, Boolean.class); // returns Boolean
+----
+
+Pass `null` for the endpoint URI to use the default (`openfeature:flags`).
+Pass `null` for the targeting key or context map when not needed.
+
+== Configuration
+
+The language evaluates against a managed `openfeature:` endpoint. The
+default endpoint URI is `openfeature:flags`. Configure the component
+to provide flag definitions:
+
+[source,properties]
+----
+camel.component.openfeature.flags-resource = classpath:flags.json
+----
+
+Or for a remote flagd service:
+
+[source,properties]
+----
+camel.component.openfeature.host = localhost
+camel.component.openfeature.port = 8013
+----
+
+Or with a custom provider bean:
+
+[source,properties]
+----
+camel.component.openfeature.provider = #myFlagProvider
+----

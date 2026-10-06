@@ -1,0 +1,41 @@
+{
+  "$schema": "https://flagd.dev/schema/v0/flags.json",
+  "flags": {
+    "enrichment-enabled": {
+      "state": "ENABLED",
+      "variants": { "on": true, "off": false },
+      "defaultVariant": "on"
+    },
+    "new-routing-algorithm": {
+      "state": "ENABLED",
+      "variants": {
+        "legacy": "content-based-router",
+        "new": "dynamic-router"
+      },
+      "defaultVariant": "legacy",
+      "targeting": {
+        "fractional": [
+          ["legacy", 90],
+          ["new", 10]
+        ]
+      }
+    },
+    "hazmat-compliance-v2": {
+      "state": "ENABLED",
+      "variants": { "v1": "v1", "v2": "v2" },
+      "defaultVariant": "v1",
+      "targeting": {
+        "if": [
+          { "in": [{ "var": "customer_tier" }, ["ENTERPRISE", "VIP"]] },
+          "v2",
+          "v1"
+        ]
+      }
+    },
+    "disabled-flag": {
+      "state": "DISABLED",
+      "variants": { "on": true, "off": false },
+      "defaultVariant": "on"
+    }
+  }
+}

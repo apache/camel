@@ -250,6 +250,7 @@
         <module>camel-once</module>
         <module>camel-opa</module>
         <module>camel-openfga</module>
+        <module>camel-openfeature</module>
         <module>camel-openstack</module>
         <module>camel-opentelemetry</module>
         <module>camel-opentelemetry2</module>
