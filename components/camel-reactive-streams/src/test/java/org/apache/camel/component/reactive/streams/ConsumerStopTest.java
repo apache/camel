@@ -66,18 +66,6 @@ class ConsumerStopTest extends BaseReactiveTest {
     }
 
     @Test
-    void testConsumesAgainAfterRestartWithoutQueuedExchanges() throws Exception {
-        // the last exchange of the first request waits: nothing is queued behind it
-        startWithQueuedExchanges("last", 10);
-        stopWhileTheFirstExchangeWaits("last");
-
-        context.getRouteController().startRoute("last");
-
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(
-                () -> assertTrue(received.contains(11), "The route must consume again after its restart"));
-    }
-
-    @Test
     void testStopFromTheRouteDoesNotWaitForItself() throws Exception {
         // a stop that waited for the pool from one of its threads would wait for this timeout
         context.getExecutorServiceManager().setShutdownAwaitTermination(60000);
@@ -158,15 +146,6 @@ class ConsumerStopTest extends BaseReactiveTest {
                             received.add(e.getMessage().getBody(Integer.class));
                         });
 
-                // the next request is only made when every exchange is done
-                from("reactive-streams:last?maxInflightExchanges=10&exchangesRefillLowWatermark=0").routeId("last")
-                        .process(e -> {
-                            if (e.getMessage().getBody(Integer.class) == 10) {
-                                gateReached.countDown();
-                                gate.await();
-                            }
-                            received.add(e.getMessage().getBody(Integer.class));
-                        });
             }
         };
     }

@@ -17,6 +17,7 @@
 package org.apache.camel.component.reactive.streams;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -35,7 +36,8 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(ReactiveStreamsConsumer.class);
 
     /**
-     * The consumer whose thread pool runs the exchange that the current thread is routing.
+     * The consumer whose thread pool runs the exchange that the current thread is routing. It is only set while the
+     * pool thread routes the exchange synchronously.
      */
     private static final ThreadLocal<ReactiveStreamsConsumer> ROUTING = new ThreadLocal<>();
 
@@ -117,9 +119,14 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
                 ROUTING.set(this);
                 try {
                     this.getAsyncProcessor().process(exchange, doneSync -> {
-                        if (exchange.getException() != null) {
-                            getExceptionHandler().handleException("Error processing exchange", exchange,
-                                    exchange.getException());
+                        Exception cause = exchange.getException();
+                        if (cause instanceof RejectedExecutionException && !isRunAllowed()) {
+                            // an item queued when the consumer was stopped from one of its own exchanges: one line
+                            // per item, as there can be up to maxInflightExchanges of them
+                            LOG.warn("Item {} of stream {} not routed as the consumer is stopped",
+                                    exchange.getExchangeId(), endpoint.getStream());
+                        } else if (cause != null) {
+                            getExceptionHandler().handleException("Error processing exchange", exchange, cause);
                         }
 
                         callback.done(doneSync);
