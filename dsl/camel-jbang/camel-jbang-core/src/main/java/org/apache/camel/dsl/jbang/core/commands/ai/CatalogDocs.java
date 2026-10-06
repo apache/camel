@@ -309,6 +309,16 @@ public final class CatalogDocs {
                 return notFound("Bean", name, findBeans(catalog, name).stream().map(PojoBeanModel::getName).limit(5).toList());
             }
         }
+        if (kind == null || "kamelet".equals(kind)) {
+            KameletDefinitions.Definition def = KameletDefinitions.catalog().get(name);
+            if (def != null) {
+                return kameletDoc(def);
+            }
+            if (kind != null) {
+                return notFound("Kamelet", name,
+                        KameletDefinitions.suggest(name, KameletDefinitions.catalog().keySet(), 5));
+            }
+        }
         JsonObject group = mainOptionsGroup(catalog, name);
         if (group != null) {
             return group;
@@ -323,7 +333,76 @@ public final class CatalogDocs {
         suggestions.addAll(catalog.suggestLanguageNames(name, 3));
         suggestions.addAll(catalog.suggestEipNames(name, 3));
         suggestions.addAll(findBeans(catalog, name).stream().map(PojoBeanModel::getName).limit(3).toList());
+        suggestions.addAll(KameletDefinitions.suggest(name, KameletDefinitions.catalog().keySet(), 3));
         return notFound("Artifact", name, suggestions);
+    }
+
+    /** The Kamelets of the catalog whose name has the term, then those whose description has it. */
+    private static List<KameletDefinitions.Definition> kameletsMatching(String lowerTerm) {
+        List<KameletDefinitions.Definition> byName = new ArrayList<>();
+        List<KameletDefinitions.Definition> byDescription = new ArrayList<>();
+        String dashed = lowerTerm.trim().replace(' ', '-');
+        for (KameletDefinitions.Definition def : KameletDefinitions.catalog().values()) {
+            if (def.name().contains(dashed)) {
+                byName.add(def);
+            } else if (def.description() != null && def.description().toLowerCase(Locale.ROOT).contains(lowerTerm)) {
+                byDescription.add(def);
+            }
+        }
+        byName.sort((a, b) -> Integer.compare(a.name().length(), b.name().length()));
+        byName.addAll(byDescription);
+        return byName;
+    }
+
+    /**
+     * A Kamelet of the catalog: its properties, which go under parameters of the kamelet: endpoint, and how to write
+     * it. A model writes the options of the component a Kamelet wraps instead (brokers on kafka-sink, which has
+     * bootstrapServers), as it knows those from years of examples.
+     */
+    public static JsonObject kameletDoc(KameletDefinitions.Definition def) {
+        JsonObject result = new JsonObject();
+        result.put("kind", "kamelet");
+        result.put("name", def.name());
+        if (def.type() != null) {
+            result.put("type", def.type());
+        }
+        if (def.description() != null) {
+            result.put("description", def.description());
+        }
+        result.put("from", def.source());
+        StringBuilder params = new StringBuilder();
+        for (KameletDefinitions.Property p : def.properties()) {
+            if (p.required() && p.defaultValue() == null) {
+                params.append(params.isEmpty() ? "" : ", ").append(p.name()).append(": <").append(p.name()).append(">");
+            }
+        }
+        String endpoint = "{uri: kamelet:" + def.name() + (params.isEmpty() ? "" : ", parameters: {" + params + "}") + "}";
+        result.put("yaml", ("source".equals(def.type()) ? "from: " : "- to: ") + endpoint
+                           + " (its properties go under parameters: they are the Kamelet's, not the options of the"
+                           + " component it uses)");
+        JsonArray props = new JsonArray();
+        for (KameletDefinitions.Property p : def.properties()) {
+            JsonObject o = new JsonObject();
+            o.put("name", p.name());
+            if (p.required() && p.defaultValue() == null) {
+                o.put("required", true);
+            }
+            if (p.type() != null) {
+                o.put("type", p.type());
+            }
+            if (p.defaultValue() != null) {
+                o.put("defaultValue", p.defaultValue());
+            }
+            if (!p.enumValues().isEmpty()) {
+                o.put("enum", new JsonArray(p.enumValues()));
+            }
+            if (p.description() != null) {
+                o.put("description", p.description());
+            }
+            props.add(o);
+        }
+        result.put("properties", props);
+        return result;
     }
 
     /**
@@ -531,6 +610,24 @@ public final class CatalogDocs {
                 if (bean.getInterfaceType() != null) {
                     o.put("interfaceType", bean.getInterfaceType());
                 }
+                matches.add(o);
+            }
+        }
+        if (kind == null || "kamelet".equals(kind)) {
+            // the Kamelets whose name or description has the term: a few next to the components, all when asked for
+            int n = 0;
+            int maxKamelets = kind == null ? Math.min(max, 5) : max;
+            String lower = term.toLowerCase(Locale.ROOT);
+            for (KameletDefinitions.Definition def : kameletsMatching(lower)) {
+                if (n++ >= maxKamelets) {
+                    break;
+                }
+                JsonObject o = summary("kamelet", def.name(), def.title() != null ? def.title() : def.name(),
+                        def.description(), null);
+                if (def.type() != null) {
+                    o.put("type", def.type());
+                }
+                o.put("uri", "kamelet:" + def.name());
                 matches.add(o);
             }
         }

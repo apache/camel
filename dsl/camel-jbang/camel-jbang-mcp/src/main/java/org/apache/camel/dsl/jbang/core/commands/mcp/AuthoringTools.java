@@ -53,7 +53,7 @@ public class AuthoringTools {
     RepeatedCallSessions repeatedCalls;
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Camel catalog documentation of a component, data format, language, EIP, built-in bean or the "
+          description = "Camel catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the "
                         + "Java API (description, options, Maven coordinates), with the URI rules of a component. For "
                         + "simple also its syntax rules, functions and operators: count and names by group, or with "
                         + "optionsFilter the matching ones with parameters and examples. kind=api is the Java API to "
@@ -69,7 +69,7 @@ public class AuthoringTools {
                      required = false) String name,
             @ToolArg(description = "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092",
                      required = false) String endpoint,
-            @ToolArg(description = "component, dataformat, language, eip, bean or api (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it; api is the Java API to call from a bean or script before writing it: Exchange, Message, CamelContext, Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter, or the variables of groovy, js, python, java scripts)",
+            @ToolArg(description = "component, dataformat, language, eip, kamelet, bean or api (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it; api is the Java API to call from a bean or script before writing it: Exchange, Message, CamelContext, Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter, or the variables of groovy, js, python, java scripts)",
                      required = false) String kind,
             @ToolArg(description = "common (default: no deprecated or advanced), required, all or false",
                      required = false) String includeOptions,
@@ -88,14 +88,14 @@ public class AuthoringTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Finds Camel components, data formats, languages and EIPs by a protocol, product, alias or "
+          description = "Finds Camel components, data formats, languages, EIPs and Kamelets by a protocol, product, alias or "
                         + "other term that is not the exact name (mqtt, s3, snowflake, csv, fan-out, dedup): best "
                         + "match first with title and description. camel_catalog_doc then gives the options of one.")
     @MetaField(prefix = "camel.apache.org/", name = "deterministic", type = MetaField.Type.BOOLEAN, value = "true")
     public JsonObject camel_catalog_find(
             McpConnection connection,
             @ToolArg(description = "What to look for, e.g. mqtt, s3, database, csv, fan-out", required = true) String term,
-            @ToolArg(description = "component, dataformat, language, eip or bean (default: all); bean with an interface name such as AggregationStrategy lists the built-in implementations",
+            @ToolArg(description = "component, dataformat, language, eip, kamelet or bean (default: all); bean with an interface name such as AggregationStrategy lists the built-in implementations",
                      required = false) String kind,
             @ToolArg(description = "Maximum matches per kind (default 10)", required = false) Integer limit,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
