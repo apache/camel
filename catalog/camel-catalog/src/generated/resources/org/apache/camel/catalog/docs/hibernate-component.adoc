@@ -208,6 +208,8 @@ Map<String, Map<String, Object>> filters = Map.of(
 endpoint.setFilters(filters);
 ----
 
+When a producer reuses a `Session` supplied by a Hibernate consumer, its filter configuration must match the filters associated with that `Session`. If the producer's filters differ, the shared `Session` is not reused and the producer opens a separate `Session` so that its filters can be applied without changing the consumer's session state.
+
 ==== Multi-tenancy
 
 A tenant identifier can be supplied through `tenantIdentifier`.
@@ -250,6 +252,23 @@ When acting as a consumer, the endpoint periodically executes its configured `se
 
 Each selected entity is delivered to the route as the message body.
 
+By default, successfully processed entities are deleted from the database (`consumeDelete=true`).
+Set `consumeDelete=false` to leave consumed entities in the database.
+
+When a Hibernate consumer invokes a Hibernate producer in the same route processing thread,
+the producer reuses the consumer's Hibernate `Session` and transaction when the producer's
+session requirements are compatible with the consumer session. This allows the
+producer to operate on entities and locks held by the consumer without opening a second
+session.
+
+Session sharing has limits. A copied exchange does not carry the live Hibernate `Session`,
+so processing a copied exchange can open a separate session. Stateless operations always
+use their own `StatelessSession`.
+
+If processing an entity fails, the consumer rolls back the active poll transaction and
+stops processing the current batch. This prevents changes made earlier in the same poll
+from being committed after a later entity fails.
+
 For example:
 
 [source,java]
@@ -282,6 +301,10 @@ This allows multiple consumer instances to compete for database rows while skipp
 
 The database and Hibernate dialect must support the required locking behavior.
 
+When processing uses a copied exchange that cannot reuse the consumer's `Session`, the
+processing may use a separate session and therefore does not share the consumer's live
+transaction or session-level locks.
+
 === Streaming query results
 
 Set `streaming=true` on a selection query to return the results as a Java `Stream`.
@@ -303,6 +326,9 @@ from("direct:streamEntities")
 The Hibernate `Session` and transaction remain open while the stream is being consumed.
 
 The returned stream must be closed after consumption so that the Hibernate session and transaction can be closed.
+
+Streaming is not supported inside a transacted Camel exchange because the stream can
+outlive the route transaction while the Hibernate `Session` and transaction remain open.
 
 == Query parameters
 
@@ -329,9 +355,13 @@ The component does not support replacing the configured query through a message 
 
 The component uses native Hibernate transactions through `Session` and `StatelessSession`.
 
-Regular producer and consumer operations create a Hibernate `Session` and transaction.
+Regular producer and consumer operations create a Hibernate `Session` and transaction. Each operation commits its own transaction unless the configured `SessionFactory` is backed by JTA.
 
-Stateless operations use a Hibernate `StatelessSession` and transaction.
+Stateless operations use a Hibernate `StatelessSession` and transaction. Stateless operations do not participate in consumer session reuse.
+
+The component does not provide its own JTA or Spring transaction-manager integration. A transacted Camel exchange requires a JTA-backed `SessionFactory`; using a resource-local `SessionFactory` in a transacted exchange fails fast.
+
+Streaming is not supported inside a transacted Camel exchange because the returned stream can outlive the route transaction while the Hibernate `Session` and transaction remain open.
 
 The component does not use `camel-jpa`, Jakarta Persistence, Spring `PlatformTransactionManager`, or a JPA transaction strategy.
 
@@ -697,3 +727,5 @@ The following features are intentionally not part of the current implementation:
 * **Dynamic-map entities:** Legacy Hibernate `EntityMode.MAP` / dynamic-map support is not used because the legacy public API is not suitable for Hibernate ORM 8. The component uses typed entity classes.
 * **Message query replacement:** The component does not allow a message header to replace the query configured on the endpoint. Query text remains route configuration and message data is supplied through bound parameters.
 * **Transaction-manager integration:** The component uses native Hibernate transactions and does not use `camel-jpa`, Spring `PlatformTransactionManager`, or Jakarta Persistence.
+* **JTA transaction integration:** JTA-backed transaction coordination is not currently provided. Resource-local `SessionFactory` operations are rejected when used inside a transacted Camel exchange.
+* **Streaming in transacted exchanges:** `streaming=true` cannot be used inside a transacted Camel exchange because the Hibernate stream and session may outlive the route transaction.
