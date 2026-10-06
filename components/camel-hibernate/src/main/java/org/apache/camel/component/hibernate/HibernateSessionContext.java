@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.hibernate;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.camel.SafeCopyProperty;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -25,22 +30,32 @@ final class HibernateSessionContext implements SafeCopyProperty {
     private final Session session;
     private final SessionFactory sessionFactory;
     private final String tenantIdentifier;
+    private final Map<String, Map<String, Object>> filters;
     private final Thread ownerThread;
     private volatile boolean active = true;
 
-    HibernateSessionContext(Session session, SessionFactory sessionFactory, String tenantIdentifier) {
+    HibernateSessionContext(
+                            Session session,
+                            SessionFactory sessionFactory,
+                            String tenantIdentifier,
+                            Map<String, Map<String, Object>> filters) {
         this.session = session;
         this.sessionFactory = sessionFactory;
         this.tenantIdentifier = tenantIdentifier;
+        this.filters = copyFilters(filters);
         this.ownerThread = Thread.currentThread();
     }
 
-    Session getSession(SessionFactory expectedSessionFactory, String expectedTenantIdentifier) {
+    Session getSession(
+            SessionFactory expectedSessionFactory,
+            String expectedTenantIdentifier,
+            Map<String, Map<String, Object>> expectedFilters) {
         if (!active
                 || session == null
                 || ownerThread != Thread.currentThread()
                 || sessionFactory != expectedSessionFactory
-                || !java.util.Objects.equals(tenantIdentifier, expectedTenantIdentifier)) {
+                || !Objects.equals(tenantIdentifier, expectedTenantIdentifier)
+                || !Objects.equals(filters, expectedFilters)) {
             return null;
         }
 
@@ -53,6 +68,23 @@ final class HibernateSessionContext implements SafeCopyProperty {
 
     @Override
     public HibernateSessionContext safeCopy() {
-        return new HibernateSessionContext(null, sessionFactory, tenantIdentifier);
+        return new HibernateSessionContext(null, sessionFactory, tenantIdentifier, filters);
+    }
+
+    private static Map<String, Map<String, Object>> copyFilters(Map<String, Map<String, Object>> filters) {
+        if (filters == null) {
+            return null;
+        }
+        Map<String, Map<String, Object>> copy = new HashMap<>();
+        for (Map.Entry<String, Map<String, Object>> entry : filters.entrySet()) {
+            Map<String, Object> inner = entry.getValue();
+            if (inner == null) {
+                copy.put(entry.getKey(), null);
+            } else {
+                Map<String, Object> innerCopy = new HashMap<>(inner);
+                copy.put(entry.getKey(), Collections.unmodifiableMap(innerCopy));
+            }
+        }
+        return Collections.unmodifiableMap(copy);
     }
 }
