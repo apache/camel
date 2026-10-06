@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -88,13 +89,65 @@ class IntegrationLauncherTest {
 
         String text = IntegrationLauncher.failureOutput(output);
         assertThat(text).contains("ERROR Failed to create route: order-generator at: >>> Bean[ref:orderNumber");
-        assertThat(text).contains("cause: org.apache.camel.NoSuchBeanException: No bean could be found in the registry"
-                                  + " for: orderNumber");
+        assertThat(text).contains("org.apache.camel.FailedToCreateRouteException: Failed to create route: order-generator");
+        assertThat(text).contains("Caused by: org.apache.camel.NoSuchBeanException: No bean could be found in the"
+                                  + " registry for: orderNumber");
         assertThat(text).contains("at: camel.example.OrderNumber.next(OrderNumber.java:12)");
-        assertThat(text).contains("lines of stack trace left out");
+        assertThat(text).contains("(stack frames left out)");
         assertThat(text).doesNotContain("AbstractCamelContext.startingRoutes");
         // oldest first, as the console printed it
         assertThat(text.indexOf("is starting")).isLessThan(text.indexOf("Failed to create route"));
+    }
+
+    /**
+     * CAMEL-25364: an exception message over several lines is kept, such as the diagnostics of a Java class that does
+     * not compile: they are continuation lines in the same block as the frames, and this output is the only copy.
+     */
+    @Test
+    void failureOutputKeepsAMessageOverSeveralLines(@TempDir Path dir) throws Exception {
+        String out = "2026-10-06 01:12:04.552 ERROR 81990 --- [           main] org.apache.camel.main.KameletMain  :"
+                     + " Error starting Camel: org.joor.ReflectException: Compilation error:\n"
+                     + "org.joor.ReflectException: Compilation error:\n"
+                     + "/work/OrderNumber.java:12: error: cannot find symbol\n"
+                     + "        return prefix + counter.incrementAndGet();\n"
+                     + "  symbol:   variable counter\n"
+                     + "\tat org.joor.Compile.compile(Compile.java:178)\n"
+                     + "\tat org.apache.camel.dsl.java.joor.MultiCompile.compileUnit(MultiCompile.java:207)\n"
+                     + "\tat org.apache.camel.main.KameletMain.run(KameletMain.java:512)\n";
+        Path output = dir.resolve("camel-launch.log");
+        Files.writeString(output, out);
+
+        String text = IntegrationLauncher.failureOutput(output);
+        assertThat(text).contains("ERROR Error starting Camel: org.joor.ReflectException: Compilation error:");
+        assertThat(text).contains("/work/OrderNumber.java:12: error: cannot find symbol");
+        assertThat(text).contains("symbol:   variable counter");
+        assertThat(text).contains("(stack frames left out)");
+        assertThat(text).doesNotContain("MultiCompile.compileUnit(");
+    }
+
+    /**
+     * CAMEL-25364: output with no log records is returned as it is, with its end, where a launcher prints its error.
+     */
+    @Test
+    void failureOutputWithoutLogRecordsKeepsTheEnd(@TempDir Path dir) throws Exception {
+        StringBuilder out = new StringBuilder();
+        for (int i = 1; i <= 60; i++) {
+            out.append("Downloading dependency ").append(i).append('\n');
+        }
+        out.append("Cannot find dependency org.example:missing:1.0\n");
+        Path output = dir.resolve("camel-launch.log");
+        Files.writeString(output, out.toString());
+        assertThat(IntegrationLauncher.failureOutput(output)).contains("Downloading dependency 60")
+                .endsWith("Cannot find dependency org.example:missing:1.0");
+    }
+
+    /** CAMEL-25364: console output that is not UTF-8 (a Windows code page) is still returned. */
+    @Test
+    void failureOutputThatIsNotUtf8IsKept(@TempDir Path dir) throws Exception {
+        Path output = dir.resolve("camel-launch.log");
+        // C:\Users\Jörg in ISO-8859-1: the ö is a single byte that is not valid UTF-8
+        Files.write(output, "Cannot read C:\\Users\\J\u00f6rg\\route.camel.yaml\n".getBytes(StandardCharsets.ISO_8859_1));
+        assertThat(IntegrationLauncher.failureOutput(output)).contains("Cannot read C:\\Users\\J").contains("rg\\route");
     }
 
     @Test
