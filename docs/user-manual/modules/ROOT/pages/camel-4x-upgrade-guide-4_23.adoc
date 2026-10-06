@@ -866,6 +866,13 @@ recognized whatever its case (`Charset=ISO-8859-1`). A peer that ignored the dec
 message as UTF-8 must now use the declared charset, and characters that the declared charset cannot represent are
 written as `?`.
 
+=== camel-netty-http - the roles of a security constraint are matched by role name
+
+The roles of a `SecurityConstraintMapping` inclusion are a comma-separated list of role names, and an authenticated
+user is now accepted only when one of their roles is equal to one of those names. The comparison is case-sensitive,
+whitespace around each name and blank entries are ignored, and a value of `*` still accepts any role. A roles value
+that uses another separator, such as `admin;guest` or `admin guest`, must be changed to `admin,guest`.
+
 === camel-snmp - GET_NEXT (walk)
 
 A `GET_NEXT` walk now ends at the end of the agent's MIB view (`endOfMibView`, or `noSuchName` for SNMPv1) and at
