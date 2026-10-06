@@ -16,11 +16,21 @@
  */
 package org.apache.camel.component.infinispan.remote;
 
+import java.time.Duration;
 import java.util.List;
 
+import org.apache.camel.support.task.ForegroundTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
+import org.apache.camel.support.task.budget.IterationBoundedBudget;
+import org.infinispan.protostream.FileDescriptorSource;
 import org.infinispan.protostream.domain.User;
+import org.junit.jupiter.api.Assumptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InfinispanRemoteQueryTestSupport extends InfinispanRemoteTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(InfinispanRemoteQueryTestSupport.class);
 
     public static final User[] USERS = new User[] {
             createUser("nameA", "surnameA"),
@@ -78,4 +88,30 @@ public class InfinispanRemoteQueryTestSupport extends InfinispanRemoteTestSuppor
         return false;
     }
 
+    /**
+     * Registers a protobuf schema with the Infinispan server, retrying on transient errors. Under parallel {@code -T1C}
+     * builds the server's internal {@code ___protobuf_metadata} cache may not be ready yet, causing connection or
+     * lifecycle state exceptions. The retry loop mirrors the pattern used by
+     * {@link InfinispanRemoteTestSupport#createCache()} for regular cache creation.
+     *
+     * @param schema the protobuf schema descriptor to register
+     */
+    protected void registerSchema(FileDescriptorSource schema) {
+        final IterationBoundedBudget budget
+                = Budgets.iterationBudget().withInterval(Duration.ofSeconds(1)).withMaxIterations(30).build();
+        final ForegroundTask task = Tasks.foregroundTask()
+                .withBudget(budget).build();
+
+        final boolean registered = task.run(null, () -> {
+            try {
+                cacheContainer.administration().schemas().create(schema);
+                return true;
+            } catch (Exception e) {
+                LOG.warn("Unable to register protobuf schema (will retry): {}", e.getMessage(), e);
+                return false;
+            }
+        });
+
+        Assumptions.assumeTrue(registered, "The Infinispan protobuf schema could not be registered");
+    }
 }

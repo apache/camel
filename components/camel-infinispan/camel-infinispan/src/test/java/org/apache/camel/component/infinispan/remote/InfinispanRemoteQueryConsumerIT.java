@@ -107,9 +107,7 @@ public class InfinispanRemoteQueryConsumerIT extends InfinispanRemoteQueryTestSu
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        cacheContainer.administration()
-                .schemas()
-                .create(FileDescriptorSource.fromResources("sample_bank_account/bank.proto"));
+        registerSchema(FileDescriptorSource.fromResources("sample_bank_account/bank.proto"));
 
         MarshallerRegistration.init(MarshallerUtil.getSerializationContext(cacheContainer));
         SerializationContext serCtx = MarshallerUtil.getSerializationContext(cacheContainer);
