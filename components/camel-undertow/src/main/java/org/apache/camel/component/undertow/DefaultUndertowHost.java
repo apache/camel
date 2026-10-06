@@ -44,6 +44,7 @@ public class DefaultUndertowHost implements UndertowHost {
     private final Lock lock = new ReentrantLock();
     private final UndertowHostKey key;
     private final UndertowHostOptions options;
+    private final UndertowSecurityProvider securityProvider;
     private final CamelRootHandler rootHandler;
     private final RestRootHandler restHandler;
     private Undertow undertow;
@@ -55,8 +56,17 @@ public class DefaultUndertowHost implements UndertowHost {
     }
 
     public DefaultUndertowHost(UndertowHostKey key, UndertowHostOptions options) {
+        this(key, options, null);
+    }
+
+    /**
+     * @param securityProvider the security provider of the component, which applies when the first endpoint registered
+     *                         on the host is not a consumer, such as a WebSocket producer
+     */
+    public DefaultUndertowHost(UndertowHostKey key, UndertowHostOptions options, UndertowSecurityProvider securityProvider) {
         this.key = key;
         this.options = options;
+        this.securityProvider = securityProvider;
         this.rootHandler = new CamelRootHandler(new NotFoundHandler());
         this.restHandler = new RestRootHandler();
         this.restHandler.init(key.getPort());
@@ -165,7 +175,7 @@ public class DefaultUndertowHost implements UndertowHost {
 
     private Undertow registerHandler(UndertowConsumer consumer, Undertow.Builder builder, HttpHandler handler) {
         UndertowSecurityProvider securityProvider = consumer == null
-                ? null
+                ? this.securityProvider
                 : consumer.getEndpoint().getComponent().getSecurityProvider() != null
                         ? consumer.getEndpoint().getComponent().getSecurityProvider()
                 : consumer.getEndpoint().getSecurityProvider();
@@ -212,11 +222,12 @@ public class DefaultUndertowHost implements UndertowHost {
                         registrationInfo.isMatchOnUriPrefix());
                 stop = rootHandler.isEmpty();
             }
-            if (deploymentManager != null) {
-                deploymentManager.undeploy();
-            }
-
             if (stop) {
+                // the servlet deployment serves every endpoint of the server, so it can only go with the server
+                if (deploymentManager != null) {
+                    deploymentManager.undeploy();
+                    deploymentManager = null;
+                }
                 LOG.info("Stopping Undertow server on {}://{}:{}", key.getSslContext() != null ? "https" : "http",
                         key.getHost(),
                         key.getPort());

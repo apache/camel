@@ -258,6 +258,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
         if (endpoint.isWebSocket()) {
             this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(null,
                     endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
+            this.webSocketHandler.addProducer(endpoint);
         }
 
         LOG.debug("Created worker: {} with options: {}", worker, options);
@@ -268,6 +269,9 @@ public class UndertowProducer extends DefaultAsyncProducer {
         super.doStop();
 
         if (endpoint.isWebSocket()) {
+            if (webSocketHandler != null) {
+                webSocketHandler.removeProducer(endpoint);
+            }
             endpoint.getComponent().unregisterEndpoint(null, endpoint.getHttpHandlerRegistrationInfo(),
                     endpoint.getSslContext());
         }

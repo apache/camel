@@ -37,6 +37,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
@@ -372,7 +373,12 @@ public class UndertowComponent extends DefaultComponent
         handlers.add(registrationInfo);
 
         HttpHandler handlerWrapped = handler;
-        if (this.securityProvider != null) {
+        if (handler instanceof CamelWebSocketHandler webSocketHandler) {
+            // the WebSocket handler of a path is shared by its consumer and producers, so it must stay registered as is
+            if (this.securityProvider != null) {
+                webSocketHandler.wrapWith(this.securityProvider);
+            }
+        } else if (this.securityProvider != null) {
             handlerWrapped = this.securityProvider.wrapHttpHandler(handler);
         }
 
@@ -396,7 +402,7 @@ public class UndertowComponent extends DefaultComponent
     }
 
     protected UndertowHost createUndertowHost(UndertowHostKey key) {
-        return new DefaultUndertowHost(key, hostOptions);
+        return new DefaultUndertowHost(key, hostOptions, securityProvider);
     }
 
     public UndertowHttpBinding getUndertowHttpBinding() {
