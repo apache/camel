@@ -230,7 +230,16 @@ public abstract class YamlModelWriterSupport {
                 if (idx != -1) {
                     scheme = scheme.substring(0, idx);
                 }
-                jo.put("uri", scheme);
+                if ("kamelet".equals(scheme) && params.get("templateId") != null) {
+                    // the Kamelet is named in the uri (kamelet:log-sink, kamelet:source), not as a templateId
+                    // parameter: that is how Kamelets are written and read
+                    params = new LinkedHashMap<>(params);
+                    String path = params.remove("templateId");
+                    String routeId = params.remove("routeId");
+                    jo.put("uri", "kamelet:" + path + (routeId != null ? "/" + routeId : ""));
+                } else {
+                    jo.put("uri", scheme);
+                }
             }
             if (params != null && !params.isEmpty()) {
                 JsonObject p = new JsonObject();

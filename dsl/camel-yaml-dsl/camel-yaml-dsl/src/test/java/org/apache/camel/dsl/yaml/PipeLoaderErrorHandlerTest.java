@@ -81,8 +81,9 @@ class PipeLoaderErrorHandlerTest extends YamlTestSupport {
         assertThat(route.getErrorHandlerFactory()).isNotNull();
         assertThat(route.getErrorHandlerFactory()).isInstanceOf(DeadLetterChannelDefinition.class);
         DeadLetterChannelDefinition eh = (DeadLetterChannelDefinition) route.getErrorHandlerFactory();
+        // the properties in the order the Pipe declares them
         assertThat(eh.getDeadLetterUri()).isEqualTo(
-                "kamelet:error-handler?kafkaTopic=my-first-test&logMessage=ERROR!&kafkaServiceAccountId=scott&kafkaBrokers=my-broker&kafkaServiceAccountSecret=tiger");
+                "kamelet:error-handler?logMessage=ERROR!&kafkaBrokers=my-broker&kafkaTopic=my-first-test&kafkaServiceAccountId=scott&kafkaServiceAccountSecret=tiger");
         assertThat(eh.getRedeliveryPolicy().getMaximumRedeliveries()).isEqualTo("1");
         assertThat(eh.getRedeliveryPolicy().getRedeliveryDelay()).isEqualTo("2000");
         assertThat(route.getRouteId()).isEqualTo("timer-event-source");
