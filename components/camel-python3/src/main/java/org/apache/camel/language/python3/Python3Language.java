@@ -50,10 +50,10 @@ import org.graalvm.polyglot.Value;
  * Camel expression language for Python 3 via <a href="https://www.graalvm.org/python/">GraalPy</a>.
  *
  * <p>
- * Default scripts see only data bindings: {@code body}, {@code headers}, {@code properties}, and {@code exchangeId}.
- * {@code exchange}, {@code message}, and {@code context} are intentionally absent so they resolve as Python
- * {@code NameError} rather than opaque objects with no usable API. Binding them by default would also become a
- * privilege escalation if host access were later widened.
+ * Default scripts see only data bindings: {@code body}, {@code headers}, {@code properties}, {@code variables} (when
+ * the script names it), and {@code exchangeId}. {@code exchange}, {@code message}, and {@code context} are
+ * intentionally absent so they resolve as Python {@code NameError} rather than opaque objects with no usable API.
+ * Binding them by default would also become a privilege escalation if host access were later widened.
  * </p>
  *
  * <p>
@@ -163,7 +163,7 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
         }
     }
 
-    Object evaluateExpression(String script, Exchange exchange) {
+    Object evaluateExpression(String script, Exchange exchange, boolean bindVariables) {
         try (Context cx = Python3Helper.newContext(engine(), hostAccess)) {
             Value b = cx.getBindings("python");
             // Default: data only. Do not bind exchange/message/context — they are undefined (NameError)
@@ -171,6 +171,9 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
             b.putMember("exchangeId", exchange.getExchangeId());
             b.putMember("headers", exchange.getMessage().getHeaders());
             b.putMember("properties", exchange.getAllProperties());
+            if (bindVariables) {
+                b.putMember("variables", exchange.getVariables());
+            }
             b.putMember("body", exchange.getMessage().getBody());
             if (bindCamelHostObjects) {
                 b.putMember("exchange", exchange);

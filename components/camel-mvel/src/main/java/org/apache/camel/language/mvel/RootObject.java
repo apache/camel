@@ -81,4 +81,27 @@ public class RootObject {
     public <T> T getHeader(String name, Class<T> type) {
         return exchange.getMessage().getHeader(name, type);
     }
+
+    /**
+     * The variables of the exchange (exchange-scoped only; global and route variables are not in this map).
+     */
+    public Map<String, Object> getVariables() {
+        return exchange.getVariables();
+    }
+
+    /**
+     * The variable with the given name, which can be prefixed with {@code global:} or {@code route:} for a global or
+     * route variable.
+     */
+    public Object getVariable(String name) {
+        return exchange.getVariable(name);
+    }
+
+    /**
+     * The variable with the given name converted to the given type, which can be prefixed with {@code global:} or
+     * {@code route:} for a global or route variable.
+     */
+    public <T> T getVariable(String name, Class<T> type) {
+        return exchange.getVariable(name, type);
+    }
 }

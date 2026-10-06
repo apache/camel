@@ -34,11 +34,22 @@ The following variables are bound by default:
 |body |Object |the message body
 |headers |Map |the message headers
 |properties |Map |the exchange properties
+|variables |Map |the exchange variables
 |exchangeId |String |the exchange id
 |=======================================================================
 
-By default, Python can index Java maps and lists (for example `headers['foo']`)
-but cannot invoke methods on host objects.
+By default, Python can index Java maps and lists (for example `headers['foo']`
+or `variables['foo']`) but cannot invoke methods on host objects.
+
+`variables` holds the exchange-scoped variables (for example set with the
+xref:eips:setVariable-eip.adoc[Set Variable] EIP). Global and route variables,
+such as `global:foo`, are not in this map, so in default mode a script cannot read
+them; with trusted host access they can be read with `exchange.getVariable(...)`.
+Like `headers`, it is the exchange's own map rather than a copy, so an assignment
+such as `variables['foo'] = 'bar'` updates the exchange. Such an assignment does not
+go through `Exchange.setVariable`, so `variables['global:foo'] = 1` sets an exchange
+variable named `global:foo`, not a global one. Setting a variable to `None` fails,
+because the variables map does not accept null values.
 
 `message`, `exchange`, and `context` are not bound in default mode. Scripts that
 refer to them raise a Python `NameError`. Those variables are available only when
