@@ -503,6 +503,9 @@ The `org.apache.camel.processor.InterceptSendToEndpointCallback` class is deprec
 - A bean bound by `TemplatedRouteBuilder.bean` or in a `templatedRoute` is now used instead of a `templateBean` with
   the same name, which is no longer created. Prior to Camel 4.23 the template bean replaced it when both had the same
   type, and was used when the route looked the bean up by the type of the template bean (such as `process("myBean")`).
+  When the same `RouteTemplateContext` is reused for several `addRouteFromTemplate` calls, the template beans bound for
+  the first route are now kept as beans of the caller, so the later routes share these instances instead of each
+  getting new ones. Use a new `RouteTemplateContext` per route to get new template beans for each route.
 
 === camel-aws2-ddb
 
