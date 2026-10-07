@@ -64,6 +64,30 @@ public interface ApicurioRegistryConstants {
               javaType = "String")
     String HEADER_VALIDATION_ERRORS = "CamelApicurioRegistryValidationErrors";
 
+    @Metadata(label = "producer",
+              description = "Labels to filter searchArtifacts by, as key:value pairs. Either a comma-separated String"
+                            + " or a collection.",
+              javaType = "String")
+    String HEADER_LABELS = "CamelApicurioRegistryLabels";
+
+    @Metadata(label = "producer", description = "The number of results to skip in searchArtifacts. Defaults to 0.",
+              javaType = "Integer")
+    String HEADER_SEARCH_OFFSET = "CamelApicurioRegistrySearchOffset";
+
+    @Metadata(label = "producer",
+              description = "The maximum number of results returned by searchArtifacts. The registry defaults to 20.",
+              javaType = "Integer")
+    String HEADER_SEARCH_LIMIT = "CamelApicurioRegistrySearchLimit";
+
+    @Metadata(label = "producer", description = "The sort order for searchArtifacts: asc or desc", javaType = "String")
+    String HEADER_SEARCH_ORDER = "CamelApicurioRegistrySearchOrder";
+
+    @Metadata(label = "producer",
+              description = "The field to sort searchArtifacts by: groupId, artifactId, createdOn, modifiedOn,"
+                            + " artifactType or name",
+              javaType = "String")
+    String HEADER_SEARCH_ORDER_BY = "CamelApicurioRegistrySearchOrderBy";
+
     String OPERATION_CREATE_ARTIFACT = "createArtifact";
     String OPERATION_UPDATE_ARTIFACT = "updateArtifact";
     String OPERATION_DELETE_ARTIFACT = "deleteArtifact";

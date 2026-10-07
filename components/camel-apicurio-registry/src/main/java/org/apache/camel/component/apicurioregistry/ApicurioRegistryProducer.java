@@ -18,10 +18,14 @@ package org.apache.camel.component.apicurioregistry;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import io.apicurio.registry.rest.client.RegistryClient;
 import io.apicurio.registry.rest.client.models.ArtifactMetaData;
+import io.apicurio.registry.rest.client.models.ArtifactSearchResults;
+import io.apicurio.registry.rest.client.models.ArtifactSortBy;
 import io.apicurio.registry.rest.client.models.CreateArtifact;
 import io.apicurio.registry.rest.client.models.CreateArtifactResponse;
 import io.apicurio.registry.rest.client.models.CreateGroup;
@@ -38,6 +42,7 @@ import io.apicurio.registry.rest.client.models.VersionSortBy;
 import org.apache.camel.Message;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.support.HeaderSelectorProducer;
+import org.apache.camel.util.ObjectHelper;
 
 public class ApicurioRegistryProducer extends HeaderSelectorProducer {
 
@@ -67,9 +72,26 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
         return aid != null ? aid : endpoint.getArtifactId();
     }
 
+    private String requireGroupId(Message message, String operation) {
+        return require(resolveGroupId(message), "groupId", ApicurioRegistryConstants.HEADER_GROUP_ID, operation);
+    }
+
+    private String requireArtifactId(Message message, String operation) {
+        return require(resolveArtifactId(message), "artifactId", ApicurioRegistryConstants.HEADER_ARTIFACT_ID, operation);
+    }
+
+    private static String require(String value, String name, String header, String operation) {
+        if (ObjectHelper.isEmpty(value)) {
+            throw new IllegalArgumentException(
+                    "The " + operation + " operation requires the " + name + ": set it in the endpoint path or the "
+                                               + header + " header");
+        }
+        return value;
+    }
+
     @InvokeOnHeader(ApicurioRegistryConstants.OPERATION_CREATE_ARTIFACT)
     public void createArtifact(Message message) {
-        String groupId = resolveGroupId(message);
+        String groupId = requireGroupId(message, "createArtifact");
         String artifactId = resolveArtifactId(message);
         String artifactType = message.getHeader(
                 ApicurioRegistryConstants.HEADER_ARTIFACT_TYPE, configuration.getArtifactType(), String.class);
@@ -107,8 +129,8 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(ApicurioRegistryConstants.OPERATION_UPDATE_ARTIFACT)
     public void updateArtifact(Message message) {
-        String groupId = resolveGroupId(message);
-        String artifactId = resolveArtifactId(message);
+        String groupId = requireGroupId(message, "updateArtifact");
+        String artifactId = requireArtifactId(message, "updateArtifact");
         String content = message.getBody(String.class);
         String version = message.getHeader(ApicurioRegistryConstants.HEADER_VERSION, String.class);
         String contentType = message.getHeader(
@@ -128,15 +150,15 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(ApicurioRegistryConstants.OPERATION_DELETE_ARTIFACT)
     public void deleteArtifact(Message message) {
-        String groupId = resolveGroupId(message);
-        String artifactId = resolveArtifactId(message);
+        String groupId = requireGroupId(message, "deleteArtifact");
+        String artifactId = requireArtifactId(message, "deleteArtifact");
         getClient().groups().byGroupId(groupId).artifacts().byArtifactId(artifactId).delete();
     }
 
     @InvokeOnHeader(ApicurioRegistryConstants.OPERATION_GET_ARTIFACT_CONTENT)
     public void getArtifactContent(Message message) throws Exception {
-        String groupId = resolveGroupId(message);
-        String artifactId = resolveArtifactId(message);
+        String groupId = requireGroupId(message, "getArtifactContent");
+        String artifactId = requireArtifactId(message, "getArtifactContent");
         String version = message.getHeader(
                 ApicurioRegistryConstants.HEADER_VERSION, "branch=latest", String.class);
 
@@ -148,8 +170,8 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(ApicurioRegistryConstants.OPERATION_GET_ARTIFACT_METADATA)
     public void getArtifactMetadata(Message message) {
-        String groupId = resolveGroupId(message);
-        String artifactId = resolveArtifactId(message);
+        String groupId = requireGroupId(message, "getArtifactMetadata");
+        String artifactId = requireArtifactId(message, "getArtifactMetadata");
 
         ArtifactMetaData metadata = getClient().groups().byGroupId(groupId).artifacts()
                 .byArtifactId(artifactId).get();
@@ -158,28 +180,64 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(ApicurioRegistryConstants.OPERATION_SEARCH_ARTIFACTS)
     public void searchArtifacts(Message message) {
-        var results = getClient().search().artifacts().get(config -> {
-            String name = message.getHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_NAME, String.class);
-            String groupId = resolveGroupId(message);
-            String description = message.getHeader(
-                    ApicurioRegistryConstants.HEADER_ARTIFACT_DESCRIPTION, String.class);
-            if (name != null) {
-                config.queryParameters.name = name;
+        String name = message.getHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_NAME, String.class);
+        String groupId = resolveGroupId(message);
+        String artifactId = resolveArtifactId(message);
+        String description = message.getHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_DESCRIPTION, String.class);
+        // only an explicit header: the artifactType endpoint option has a default that would filter every search
+        String artifactType = message.getHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_TYPE, String.class);
+        String[] labels = toLabels(message.getHeader(ApicurioRegistryConstants.HEADER_LABELS));
+        Integer offset = message.getHeader(ApicurioRegistryConstants.HEADER_SEARCH_OFFSET, Integer.class);
+        Integer limit = message.getHeader(ApicurioRegistryConstants.HEADER_SEARCH_LIMIT, Integer.class);
+        String order = message.getHeader(ApicurioRegistryConstants.HEADER_SEARCH_ORDER, String.class);
+        String orderBy = message.getHeader(ApicurioRegistryConstants.HEADER_SEARCH_ORDER_BY, String.class);
+
+        ArtifactSearchResults results = getClient().search().artifacts().get(config -> {
+            var query = config.queryParameters;
+            query.name = name;
+            query.groupId = groupId;
+            query.artifactId = artifactId;
+            query.description = description;
+            query.artifactType = artifactType;
+            query.labels = labels;
+            query.offset = offset;
+            query.limit = limit;
+            if (order != null) {
+                query.order = parseEnum(SortOrder.forValue(order), order, ApicurioRegistryConstants.HEADER_SEARCH_ORDER);
             }
-            if (groupId != null) {
-                config.queryParameters.groupId = groupId;
-            }
-            if (description != null) {
-                config.queryParameters.description = description;
+            if (orderBy != null) {
+                query.orderby = parseEnum(ArtifactSortBy.forValue(orderBy), orderBy,
+                        ApicurioRegistryConstants.HEADER_SEARCH_ORDER_BY);
             }
         });
         message.setBody(results);
     }
 
+    private static <T> T parseEnum(T value, String text, String header) {
+        if (value == null) {
+            throw new IllegalArgumentException("Unsupported value '" + text + "' for header " + header);
+        }
+        return value;
+    }
+
+    private static String[] toLabels(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof String[] array) {
+            return array;
+        }
+        if (value instanceof Collection<?> collection) {
+            return collection.stream().map(String::valueOf).toArray(String[]::new);
+        }
+        return Arrays.stream(value.toString().split(",")).map(String::trim).filter(l -> !l.isEmpty())
+                .toArray(String[]::new);
+    }
+
     @InvokeOnHeader(ApicurioRegistryConstants.OPERATION_LIST_VERSIONS)
     public void listVersions(Message message) {
-        String groupId = resolveGroupId(message);
-        String artifactId = resolveArtifactId(message);
+        String groupId = requireGroupId(message, "listVersions");
+        String artifactId = requireArtifactId(message, "listVersions");
 
         List<SearchedVersion> all = new ArrayList<>();
         Integer total = null;
@@ -214,7 +272,7 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(ApicurioRegistryConstants.OPERATION_CREATE_GROUP)
     public void createGroup(Message message) {
-        String groupId = resolveGroupId(message);
+        String groupId = requireGroupId(message, "createGroup");
         String description = message.getHeader(
                 ApicurioRegistryConstants.HEADER_ARTIFACT_DESCRIPTION, String.class);
 
@@ -228,14 +286,14 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(ApicurioRegistryConstants.OPERATION_TEST_COMPATIBILITY)
     public void testCompatibility(Message message) throws Exception {
-        boolean compatible = doDryRun(message);
+        boolean compatible = doDryRun(message, ApicurioRegistryConstants.OPERATION_TEST_COMPATIBILITY);
         message.setHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT, compatible);
         message.setBody(compatible);
     }
 
     @InvokeOnHeader(ApicurioRegistryConstants.OPERATION_VALIDATE)
     public void validate(Message message) throws Exception {
-        boolean valid = doDryRun(message);
+        boolean valid = doDryRun(message, ApicurioRegistryConstants.OPERATION_VALIDATE);
         message.setHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT, valid);
         if (!valid && configuration.isFailOnValidation()) {
             String errors = message.getHeader(
@@ -247,10 +305,10 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
         }
     }
 
-    private boolean doDryRun(Message message) throws Exception {
+    private boolean doDryRun(Message message, String operation) throws Exception {
         message.removeHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS);
-        String groupId = resolveGroupId(message);
-        String artifactId = resolveArtifactId(message);
+        String groupId = requireGroupId(message, operation);
+        String artifactId = requireArtifactId(message, operation);
         String content = message.getBody(String.class);
         String contentType = message.getHeader(
                 ApicurioRegistryConstants.HEADER_CONTENT_TYPE, "application/json", String.class);

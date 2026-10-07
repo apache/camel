@@ -24,7 +24,7 @@ public class ApicurioRegistryEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(36);
+        Set<String> props = new HashSet<>(41);
         props.add("artifactId");
         props.add("artifactType");
         props.add("authType");
@@ -47,6 +47,10 @@ public class ApicurioRegistryEndpointUriFactory extends org.apache.camel.support
         props.add("operation");
         props.add("password");
         props.add("pollStrategy");
+        props.add("proxyHost");
+        props.add("proxyPassword");
+        props.add("proxyPort");
+        props.add("proxyUsername");
         props.add("registryClient");
         props.add("registryUrl");
         props.add("repeatCount");
@@ -56,15 +60,17 @@ public class ApicurioRegistryEndpointUriFactory extends org.apache.camel.support
         props.add("schedulerProperties");
         props.add("scope");
         props.add("sendEmptyMessageWhenIdle");
+        props.add("sslContextParameters");
         props.add("startScheduler");
         props.add("timeUnit");
         props.add("tokenEndpoint");
         props.add("useFixedDelay");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
+        Set<String> secretProps = new HashSet<>(3);
         secretProps.add("clientSecret");
         secretProps.add("password");
+        secretProps.add("proxyPassword");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         Map<String, String> prefixes = new HashMap<>(1);
