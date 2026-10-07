@@ -346,6 +346,7 @@ class OverviewTab extends AbstractTab {
 
         lastTableArea = chunks.get(0);
         TableState renderState = infraFocused ? new TableState() : tableState;
+        clampTableOffset(table, chunks.get(0), renderState, integrationCount);
         frame.renderStatefulWidget(table, chunks.get(0), renderState);
         renderTableScrollbar(frame, lastTableArea, table, tableState, tableScrollState, integrationCount);
 
