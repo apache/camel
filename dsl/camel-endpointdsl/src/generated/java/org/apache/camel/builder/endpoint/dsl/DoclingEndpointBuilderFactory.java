@@ -35,11 +35,3576 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 public interface DoclingEndpointBuilderFactory {
 
     /**
+     * Builder for endpoint consumers for the Docling component.
+     */
+    public interface DoclingEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default AdvancedDoclingEndpointConsumerBuilder advanced() {
+            return (AdvancedDoclingEndpointConsumerBuilder) this;
+        }
+        /**
+         * Include the content of the output file in the exchange body and
+         * delete the output file.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param contentInBody the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder contentInBody(boolean contentInBody) {
+            doSetProperty("contentInBody", contentInBody);
+            return this;
+        }
+        /**
+         * Include the content of the output file in the exchange body and
+         * delete the output file.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param contentInBody the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder contentInBody(String contentInBody) {
+            doSetProperty("contentInBody", contentInBody);
+            return this;
+        }
+        /**
+         * Docling-serve API URL (e.g., http://localhost:5001).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: http://localhost:5001
+         * Group: common
+         * 
+         * @param doclingServeUrl the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder doclingServeUrl(String doclingServeUrl) {
+            doSetProperty("doclingServeUrl", doclingServeUrl);
+            return this;
+        }
+        /**
+         * Enable OCR processing for scanned documents.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param enableOCR the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder enableOCR(boolean enableOCR) {
+            doSetProperty("enableOCR", enableOCR);
+            return this;
+        }
+        /**
+         * Enable OCR processing for scanned documents.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param enableOCR the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder enableOCR(String enableOCR) {
+            doSetProperty("enableOCR", enableOCR);
+            return this;
+        }
+        /**
+         * Show layout information with bounding boxes.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param includeLayoutInfo the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder includeLayoutInfo(boolean includeLayoutInfo) {
+            doSetProperty("includeLayoutInfo", includeLayoutInfo);
+            return this;
+        }
+        /**
+         * Show layout information with bounding boxes.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param includeLayoutInfo the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder includeLayoutInfo(String includeLayoutInfo) {
+            doSetProperty("includeLayoutInfo", includeLayoutInfo);
+            return this;
+        }
+        /**
+         * Language code for OCR processing.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: en
+         * Group: common
+         * 
+         * @param ocrLanguage the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder ocrLanguage(String ocrLanguage) {
+            doSetProperty("ocrLanguage", ocrLanguage);
+            return this;
+        }
+        /**
+         * The operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.docling.DoclingOperations</code>
+         * type.
+         * 
+         * Required: true
+         * Default: CONVERT_TO_MARKDOWN
+         * Group: common
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder operation(org.apache.camel.component.docling.DoclingOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The operation to perform.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.docling.DoclingOperations</code>
+         * type.
+         * 
+         * Required: true
+         * Default: CONVERT_TO_MARKDOWN
+         * Group: common
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Output format for document conversion.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: markdown
+         * Group: common
+         * 
+         * @param outputFormat the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder outputFormat(String outputFormat) {
+            doSetProperty("outputFormat", outputFormat);
+            return this;
+        }
+        /**
+         * Use docling-serve API instead of CLI command.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDoclingServe the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder useDoclingServe(boolean useDoclingServe) {
+            doSetProperty("useDoclingServe", useDoclingServe);
+            return this;
+        }
+        /**
+         * Use docling-serve API instead of CLI command.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDoclingServe the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder useDoclingServe(String useDoclingServe) {
+            doSetProperty("useDoclingServe", useDoclingServe);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder sendEmptyMessageWhenIdle(boolean sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder sendEmptyMessageWhenIdle(String sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * Fail entire batch on first error (true) or continue processing
+         * remaining documents (false).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: batch
+         * 
+         * @param batchFailOnFirstError the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder batchFailOnFirstError(boolean batchFailOnFirstError) {
+            doSetProperty("batchFailOnFirstError", batchFailOnFirstError);
+            return this;
+        }
+        /**
+         * Fail entire batch on first error (true) or continue processing
+         * remaining documents (false).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: batch
+         * 
+         * @param batchFailOnFirstError the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder batchFailOnFirstError(String batchFailOnFirstError) {
+            doSetProperty("batchFailOnFirstError", batchFailOnFirstError);
+            return this;
+        }
+        /**
+         * Number of parallel threads for batch processing.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 4
+         * Group: batch
+         * 
+         * @param batchParallelism the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder batchParallelism(int batchParallelism) {
+            doSetProperty("batchParallelism", batchParallelism);
+            return this;
+        }
+        /**
+         * Number of parallel threads for batch processing.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 4
+         * Group: batch
+         * 
+         * @param batchParallelism the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder batchParallelism(String batchParallelism) {
+            doSetProperty("batchParallelism", batchParallelism);
+            return this;
+        }
+        /**
+         * Number of documents to submit per sub-batch. Documents are
+         * partitioned into sub-batches of this size and each sub-batch is
+         * processed before starting the next one. Within each sub-batch, up to
+         * batchParallelism threads are used concurrently. This controls memory
+         * usage and back-pressure when processing large document sets.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: batch
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder batchSize(int batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
+         * Number of documents to submit per sub-batch. Documents are
+         * partitioned into sub-batches of this size and each sub-batch is
+         * processed before starting the next one. Within each sub-batch, up to
+         * batchParallelism threads are used concurrently. This controls memory
+         * usage and back-pressure when processing large document sets.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: batch
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder batchSize(String batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
+         * Maximum time to wait for batch completion in milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: batch
+         * 
+         * @param batchTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder batchTimeout(long batchTimeout) {
+            doSetProperty("batchTimeout", batchTimeout);
+            return this;
+        }
+        /**
+         * Maximum time to wait for batch completion in milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: batch
+         * 
+         * @param batchTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder batchTimeout(String batchTimeout) {
+            doSetProperty("batchTimeout", batchTimeout);
+            return this;
+        }
+        /**
+         * Split batch results into individual exchanges (one per document)
+         * instead of single BatchProcessingResults.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: batch
+         * 
+         * @param splitBatchResults the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder splitBatchResults(boolean splitBatchResults) {
+            doSetProperty("splitBatchResults", splitBatchResults);
+            return this;
+        }
+        /**
+         * Split batch results into individual exchanges (one per document)
+         * instead of single BatchProcessingResults.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: batch
+         * 
+         * @param splitBatchResults the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder splitBatchResults(String splitBatchResults) {
+            doSetProperty("splitBatchResults", splitBatchResults);
+            return this;
+        }
+        /**
+         * Include raw text in chunk output.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: chunking
+         * 
+         * @param chunkingIncludeRawText the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder chunkingIncludeRawText(Boolean chunkingIncludeRawText) {
+            doSetProperty("chunkingIncludeRawText", chunkingIncludeRawText);
+            return this;
+        }
+        /**
+         * Include raw text in chunk output.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: chunking
+         * 
+         * @param chunkingIncludeRawText the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder chunkingIncludeRawText(String chunkingIncludeRawText) {
+            doSetProperty("chunkingIncludeRawText", chunkingIncludeRawText);
+            return this;
+        }
+        /**
+         * Maximum number of tokens per chunk for hybrid chunking.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: chunking
+         * 
+         * @param chunkingMaxTokens the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder chunkingMaxTokens(Integer chunkingMaxTokens) {
+            doSetProperty("chunkingMaxTokens", chunkingMaxTokens);
+            return this;
+        }
+        /**
+         * Maximum number of tokens per chunk for hybrid chunking.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: chunking
+         * 
+         * @param chunkingMaxTokens the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder chunkingMaxTokens(String chunkingMaxTokens) {
+            doSetProperty("chunkingMaxTokens", chunkingMaxTokens);
+            return this;
+        }
+        /**
+         * Whether to merge peer chunks in hybrid chunking.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: true
+         * Group: chunking
+         * 
+         * @param chunkingMergePeers the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder chunkingMergePeers(Boolean chunkingMergePeers) {
+            doSetProperty("chunkingMergePeers", chunkingMergePeers);
+            return this;
+        }
+        /**
+         * Whether to merge peer chunks in hybrid chunking.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: true
+         * Group: chunking
+         * 
+         * @param chunkingMergePeers the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder chunkingMergePeers(String chunkingMergePeers) {
+            doSetProperty("chunkingMergePeers", chunkingMergePeers);
+            return this;
+        }
+        /**
+         * Tokenizer model for hybrid chunking (e.g.
+         * sentence-transformers/all-MiniLM-L6-v2).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: chunking
+         * 
+         * @param chunkingTokenizer the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder chunkingTokenizer(String chunkingTokenizer) {
+            doSetProperty("chunkingTokenizer", chunkingTokenizer);
+            return this;
+        }
+        /**
+         * Use markdown format for tables in chunk output.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: chunking
+         * 
+         * @param chunkingUseMarkdownTables the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder chunkingUseMarkdownTables(Boolean chunkingUseMarkdownTables) {
+            doSetProperty("chunkingUseMarkdownTables", chunkingUseMarkdownTables);
+            return this;
+        }
+        /**
+         * Use markdown format for tables in chunk output.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: chunking
+         * 
+         * @param chunkingUseMarkdownTables the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder chunkingUseMarkdownTables(String chunkingUseMarkdownTables) {
+            doSetProperty("chunkingUseMarkdownTables", chunkingUseMarkdownTables);
+            return this;
+        }
+        /**
+         * Include metadata in message headers when extracting metadata.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: metadata
+         * 
+         * @param includeMetadataInHeaders the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder includeMetadataInHeaders(boolean includeMetadataInHeaders) {
+            doSetProperty("includeMetadataInHeaders", includeMetadataInHeaders);
+            return this;
+        }
+        /**
+         * Include metadata in message headers when extracting metadata.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: metadata
+         * 
+         * @param includeMetadataInHeaders the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder includeMetadataInHeaders(String includeMetadataInHeaders) {
+            doSetProperty("includeMetadataInHeaders", includeMetadataInHeaders);
+            return this;
+        }
+        /**
+         * Include raw metadata as returned by the parser.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: metadata
+         * 
+         * @param includeRawMetadata the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder includeRawMetadata(boolean includeRawMetadata) {
+            doSetProperty("includeRawMetadata", includeRawMetadata);
+            return this;
+        }
+        /**
+         * Include raw metadata as returned by the parser.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: metadata
+         * 
+         * @param includeRawMetadata the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder includeRawMetadata(String includeRawMetadata) {
+            doSetProperty("includeRawMetadata", includeRawMetadata);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder backoffErrorThreshold(int backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder backoffErrorThreshold(String backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder backoffIdleThreshold(int backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder backoffIdleThreshold(String backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder backoffMultiplier(int backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder backoffMultiplier(String backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder delay(long delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder delay(String delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder greedy(boolean greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder greedy(String greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder initialDelay(long initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder initialDelay(String initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: TRACE
+         * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder runLoggingLevel(org.apache.camel.LoggingLevel runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: TRACE
+         * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder runLoggingLevel(String runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option is a:
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder scheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder scheduledExecutorService(String scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a <code>java.lang.Object</code> type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder scheduler(String scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder schedulerProperties(String key, Object value) {
+            doSetMultiValueProperty("schedulerProperties", "scheduler." + key, value);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder schedulerProperties(Map values) {
+            doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder startScheduler(boolean startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder startScheduler(String startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Default: MILLISECONDS
+         * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Default: MILLISECONDS
+         * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder timeUnit(String timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+        /**
+         * Whether a String message body that starts with / or contains \ is
+         * interpreted as a local filesystem path to read. When disabled, such a
+         * body is rejected instead of being read. This does not affect the
+         * CamelDoclingInputFilePath header, nor File, byte or explicit path
+         * collection bodies used by the batch operations.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowFilePathSource the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder allowFilePathSource(boolean allowFilePathSource) {
+            doSetProperty("allowFilePathSource", allowFilePathSource);
+            return this;
+        }
+        /**
+         * Whether a String message body that starts with / or contains \ is
+         * interpreted as a local filesystem path to read. When disabled, such a
+         * body is rejected instead of being read. This does not affect the
+         * CamelDoclingInputFilePath header, nor File, byte or explicit path
+         * collection bodies used by the batch operations.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowFilePathSource the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder allowFilePathSource(String allowFilePathSource) {
+            doSetProperty("allowFilePathSource", allowFilePathSource);
+            return this;
+        }
+        /**
+         * Whether a String message body that starts with http:// or https:// is
+         * interpreted as a remote URL for Docling to fetch. When disabled, such
+         * a body is rejected instead of being fetched. This does not affect the
+         * CamelDoclingInputFilePath header, nor bodies of any other type.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowUrlSource the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder allowUrlSource(boolean allowUrlSource) {
+            doSetProperty("allowUrlSource", allowUrlSource);
+            return this;
+        }
+        /**
+         * Whether a String message body that starts with http:// or https:// is
+         * interpreted as a remote URL for Docling to fetch. When disabled, such
+         * a body is rejected instead of being fetched. This does not affect the
+         * CamelDoclingInputFilePath header, nor bodies of any other type.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowUrlSource the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder allowUrlSource(String allowUrlSource) {
+            doSetProperty("allowUrlSource", allowUrlSource);
+            return this;
+        }
+        /**
+         * Header name for API key authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: X-API-Key
+         * Group: security
+         * 
+         * @param apiKeyHeader the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder apiKeyHeader(String apiKeyHeader) {
+            doSetProperty("apiKeyHeader", apiKeyHeader);
+            return this;
+        }
+        /**
+         * Authentication scheme (BEARER, API_KEY, NONE).
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.docling.AuthenticationScheme</code>
+         * type.
+         * 
+         * Default: NONE
+         * Group: security
+         * 
+         * @param authenticationScheme the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder authenticationScheme(org.apache.camel.component.docling.AuthenticationScheme authenticationScheme) {
+            doSetProperty("authenticationScheme", authenticationScheme);
+            return this;
+        }
+        /**
+         * Authentication scheme (BEARER, API_KEY, NONE).
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.docling.AuthenticationScheme</code>
+         * type.
+         * 
+         * Default: NONE
+         * Group: security
+         * 
+         * @param authenticationScheme the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder authenticationScheme(String authenticationScheme) {
+            doSetProperty("authenticationScheme", authenticationScheme);
+            return this;
+        }
+        /**
+         * Authentication token for docling-serve API (Bearer token or API key).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param authenticationToken the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder authenticationToken(String authenticationToken) {
+            doSetProperty("authenticationToken", authenticationToken);
+            return this;
+        }
+        /**
+         * When set, every local input file path must resolve inside this
+         * directory once normalized. Applies to the CamelDoclingInputFilePath
+         * header, to file path message bodies, and to the paths used by the
+         * batch operations. When empty, no directory restriction is applied.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param inputBaseDirectory the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder inputBaseDirectory(String inputBaseDirectory) {
+            doSetProperty("inputBaseDirectory", inputBaseDirectory);
+            return this;
+        }
+        /**
+         * Maximum file size in bytes for processing.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 52428800
+         * Group: security
+         * 
+         * @param maxFileSize the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder maxFileSize(long maxFileSize) {
+            doSetProperty("maxFileSize", maxFileSize);
+            return this;
+        }
+        /**
+         * Maximum file size in bytes for processing.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 52428800
+         * Group: security
+         * 
+         * @param maxFileSize the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder maxFileSize(String maxFileSize) {
+            doSetProperty("maxFileSize", maxFileSize);
+            return this;
+        }
+        /**
+         * OAuth profile name for obtaining an access token via the OAuth 2.0
+         * Client Credentials grant. When set, the token is acquired from the
+         * configured identity provider and used as authenticationToken.
+         * Requires camel-oauth on the classpath.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthProfile the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder oauthProfile(String oauthProfile) {
+            doSetProperty("oauthProfile", oauthProfile);
+            return this;
+        }
+        /**
+         * When set, the output directory passed to the docling CLI must resolve
+         * inside this directory once normalized. Applies to the
+         * CamelDoclingOutputFilePath header. The check is lexical and does not
+         * resolve symbolic links, matching inputBaseDirectory. When empty, no
+         * directory restriction is applied and the header value is only
+         * normalized.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param outputBaseDirectory the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointConsumerBuilder outputBaseDirectory(String outputBaseDirectory) {
+            doSetProperty("outputBaseDirectory", outputBaseDirectory);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the Docling component.
+     */
+    public interface AdvancedDoclingEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default DoclingEndpointConsumerBuilder basic() {
+            return (DoclingEndpointConsumerBuilder) this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder bridgeErrorHandler(String bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder exceptionHandler(org.apache.camel.spi.ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder exceptionHandler(String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder exchangePattern(org.apache.camel.ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder exchangePattern(String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder pollStrategy(org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder pollStrategy(String pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * Abort processing on error.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param abortOnError the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder abortOnError(Boolean abortOnError) {
+            doSetProperty("abortOnError", abortOnError);
+            return this;
+        }
+        /**
+         * Abort processing on error.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param abortOnError the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder abortOnError(String abortOnError) {
+            doSetProperty("abortOnError", abortOnError);
+            return this;
+        }
+        /**
+         * Polling interval for async conversion status in milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 2000
+         * Group: advanced
+         * 
+         * @param asyncPollInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder asyncPollInterval(long asyncPollInterval) {
+            doSetProperty("asyncPollInterval", asyncPollInterval);
+            return this;
+        }
+        /**
+         * Polling interval for async conversion status in milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 2000
+         * Group: advanced
+         * 
+         * @param asyncPollInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder asyncPollInterval(String asyncPollInterval) {
+            doSetProperty("asyncPollInterval", asyncPollInterval);
+            return this;
+        }
+        /**
+         * Time-to-live for pending async conversion tasks in milliseconds.
+         * Tasks older than this will be evicted from memory to prevent leaks.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 86400000
+         * Group: advanced
+         * 
+         * @param asyncTaskTtl the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder asyncTaskTtl(long asyncTaskTtl) {
+            doSetProperty("asyncTaskTtl", asyncTaskTtl);
+            return this;
+        }
+        /**
+         * Time-to-live for pending async conversion tasks in milliseconds.
+         * Tasks older than this will be evicted from memory to prevent leaks.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 86400000
+         * Group: advanced
+         * 
+         * @param asyncTaskTtl the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder asyncTaskTtl(String asyncTaskTtl) {
+            doSetProperty("asyncTaskTtl", asyncTaskTtl);
+            return this;
+        }
+        /**
+         * Maximum time to wait for async conversion completion in milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: advanced
+         * 
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder asyncTimeout(long asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+        /**
+         * Maximum time to wait for async conversion completion in milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: advanced
+         * 
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder asyncTimeout(String asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+        /**
+         * Path to Docling Python executable or command.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param doclingCommand the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder doclingCommand(String doclingCommand) {
+            doSetProperty("doclingCommand", doclingCommand);
+            return this;
+        }
+        /**
+         * Enable code enrichment in document processing.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doCodeEnrichment the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder doCodeEnrichment(Boolean doCodeEnrichment) {
+            doSetProperty("doCodeEnrichment", doCodeEnrichment);
+            return this;
+        }
+        /**
+         * Enable code enrichment in document processing.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doCodeEnrichment the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder doCodeEnrichment(String doCodeEnrichment) {
+            doSetProperty("doCodeEnrichment", doCodeEnrichment);
+            return this;
+        }
+        /**
+         * Document processing timeout in seconds.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param documentTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder documentTimeout(Long documentTimeout) {
+            doSetProperty("documentTimeout", documentTimeout);
+            return this;
+        }
+        /**
+         * Document processing timeout in seconds.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param documentTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder documentTimeout(String documentTimeout) {
+            doSetProperty("documentTimeout", documentTimeout);
+            return this;
+        }
+        /**
+         * Enable formula enrichment in document processing.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doFormulaEnrichment the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder doFormulaEnrichment(Boolean doFormulaEnrichment) {
+            doSetProperty("doFormulaEnrichment", doFormulaEnrichment);
+            return this;
+        }
+        /**
+         * Enable formula enrichment in document processing.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doFormulaEnrichment the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder doFormulaEnrichment(String doFormulaEnrichment) {
+            doSetProperty("doFormulaEnrichment", doFormulaEnrichment);
+            return this;
+        }
+        /**
+         * Enable OCR processing in docling-serve API mode. When not set, the
+         * server uses its own defaults. Set enableOCR to false to explicitly
+         * disable OCR.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doOcr the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder doOcr(Boolean doOcr) {
+            doSetProperty("doOcr", doOcr);
+            return this;
+        }
+        /**
+         * Enable OCR processing in docling-serve API mode. When not set, the
+         * server uses its own defaults. Set enableOCR to false to explicitly
+         * disable OCR.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doOcr the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder doOcr(String doOcr) {
+            doSetProperty("doOcr", doOcr);
+            return this;
+        }
+        /**
+         * Enable picture classification in document processing.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doPictureClassification the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder doPictureClassification(Boolean doPictureClassification) {
+            doSetProperty("doPictureClassification", doPictureClassification);
+            return this;
+        }
+        /**
+         * Enable picture classification in document processing.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doPictureClassification the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder doPictureClassification(String doPictureClassification) {
+            doSetProperty("doPictureClassification", doPictureClassification);
+            return this;
+        }
+        /**
+         * Enable picture description generation in document processing.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doPictureDescription the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder doPictureDescription(Boolean doPictureDescription) {
+            doSetProperty("doPictureDescription", doPictureDescription);
+            return this;
+        }
+        /**
+         * Enable picture description generation in document processing.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doPictureDescription the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder doPictureDescription(String doPictureDescription) {
+            doSetProperty("doPictureDescription", doPictureDescription);
+            return this;
+        }
+        /**
+         * Enable table structure recognition.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doTableStructure the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder doTableStructure(Boolean doTableStructure) {
+            doSetProperty("doTableStructure", doTableStructure);
+            return this;
+        }
+        /**
+         * Enable table structure recognition.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doTableStructure the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder doTableStructure(String doTableStructure) {
+            doSetProperty("doTableStructure", doTableStructure);
+            return this;
+        }
+        /**
+         * Force OCR processing even for digital documents.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param forceOcr the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder forceOcr(Boolean forceOcr) {
+            doSetProperty("forceOcr", forceOcr);
+            return this;
+        }
+        /**
+         * Force OCR processing even for digital documents.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param forceOcr the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder forceOcr(String forceOcr) {
+            doSetProperty("forceOcr", forceOcr);
+            return this;
+        }
+        /**
+         * Image export mode for referenced images.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param imageExportMode the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder imageExportMode(String imageExportMode) {
+            doSetProperty("imageExportMode", imageExportMode);
+            return this;
+        }
+        /**
+         * Scale factor for exported images.
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param imagesScale the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder imagesScale(Double imagesScale) {
+            doSetProperty("imagesScale", imagesScale);
+            return this;
+        }
+        /**
+         * Scale factor for exported images.
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param imagesScale the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder imagesScale(String imagesScale) {
+            doSetProperty("imagesScale", imagesScale);
+            return this;
+        }
+        /**
+         * Include images in the conversion output.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeImages the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder includeImages(Boolean includeImages) {
+            doSetProperty("includeImages", includeImages);
+            return this;
+        }
+        /**
+         * Include images in the conversion output.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeImages the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder includeImages(String includeImages) {
+            doSetProperty("includeImages", includeImages);
+            return this;
+        }
+        /**
+         * Placeholder string for page breaks in markdown output.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param mdPageBreakPlaceholder the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder mdPageBreakPlaceholder(String mdPageBreakPlaceholder) {
+            doSetProperty("mdPageBreakPlaceholder", mdPageBreakPlaceholder);
+            return this;
+        }
+        /**
+         * OCR engine to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param ocrEngine the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder ocrEngine(String ocrEngine) {
+            doSetProperty("ocrEngine", ocrEngine);
+            return this;
+        }
+        /**
+         * PDF parsing backend.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param pdfBackend the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder pdfBackend(String pdfBackend) {
+            doSetProperty("pdfBackend", pdfBackend);
+            return this;
+        }
+        /**
+         * Processing pipeline to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param pipeline the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder pipeline(String pipeline) {
+            doSetProperty("pipeline", pipeline);
+            return this;
+        }
+        /**
+         * Timeout for Docling process execution in milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param processTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder processTimeout(long processTimeout) {
+            doSetProperty("processTimeout", processTimeout);
+            return this;
+        }
+        /**
+         * Timeout for Docling process execution in milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param processTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder processTimeout(String processTimeout) {
+            doSetProperty("processTimeout", processTimeout);
+            return this;
+        }
+        /**
+         * Enable table cell matching post-processing.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tableCellMatching the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder tableCellMatching(Boolean tableCellMatching) {
+            doSetProperty("tableCellMatching", tableCellMatching);
+            return this;
+        }
+        /**
+         * Enable table cell matching post-processing.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tableCellMatching the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder tableCellMatching(String tableCellMatching) {
+            doSetProperty("tableCellMatching", tableCellMatching);
+            return this;
+        }
+        /**
+         * Table structure recognition mode.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param tableMode the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder tableMode(String tableMode) {
+            doSetProperty("tableMode", tableMode);
+            return this;
+        }
+        /**
+         * Use asynchronous conversion mode (docling-serve API only).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param useAsyncMode the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder useAsyncMode(boolean useAsyncMode) {
+            doSetProperty("useAsyncMode", useAsyncMode);
+            return this;
+        }
+        /**
+         * Use asynchronous conversion mode (docling-serve API only).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param useAsyncMode the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder useAsyncMode(String useAsyncMode) {
+            doSetProperty("useAsyncMode", useAsyncMode);
+            return this;
+        }
+        /**
+         * Working directory for Docling execution.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param workingDirectory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointConsumerBuilder workingDirectory(String workingDirectory) {
+            doSetProperty("workingDirectory", workingDirectory);
+            return this;
+        }
+    }
+
+    /**
+     * Builder for endpoint producers for the Docling component.
+     */
+    public interface DoclingEndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default AdvancedDoclingEndpointProducerBuilder advanced() {
+            return (AdvancedDoclingEndpointProducerBuilder) this;
+        }
+
+        /**
+         * Include the content of the output file in the exchange body and
+         * delete the output file.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param contentInBody the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder contentInBody(boolean contentInBody) {
+            doSetProperty("contentInBody", contentInBody);
+            return this;
+        }
+        /**
+         * Include the content of the output file in the exchange body and
+         * delete the output file.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param contentInBody the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder contentInBody(String contentInBody) {
+            doSetProperty("contentInBody", contentInBody);
+            return this;
+        }
+        /**
+         * Docling-serve API URL (e.g., http://localhost:5001).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: http://localhost:5001
+         * Group: common
+         * 
+         * @param doclingServeUrl the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder doclingServeUrl(String doclingServeUrl) {
+            doSetProperty("doclingServeUrl", doclingServeUrl);
+            return this;
+        }
+        /**
+         * Enable OCR processing for scanned documents.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param enableOCR the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder enableOCR(boolean enableOCR) {
+            doSetProperty("enableOCR", enableOCR);
+            return this;
+        }
+        /**
+         * Enable OCR processing for scanned documents.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param enableOCR the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder enableOCR(String enableOCR) {
+            doSetProperty("enableOCR", enableOCR);
+            return this;
+        }
+        /**
+         * Show layout information with bounding boxes.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param includeLayoutInfo the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder includeLayoutInfo(boolean includeLayoutInfo) {
+            doSetProperty("includeLayoutInfo", includeLayoutInfo);
+            return this;
+        }
+        /**
+         * Show layout information with bounding boxes.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param includeLayoutInfo the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder includeLayoutInfo(String includeLayoutInfo) {
+            doSetProperty("includeLayoutInfo", includeLayoutInfo);
+            return this;
+        }
+        /**
+         * Language code for OCR processing.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: en
+         * Group: common
+         * 
+         * @param ocrLanguage the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder ocrLanguage(String ocrLanguage) {
+            doSetProperty("ocrLanguage", ocrLanguage);
+            return this;
+        }
+        /**
+         * The operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.docling.DoclingOperations</code>
+         * type.
+         * 
+         * Required: true
+         * Default: CONVERT_TO_MARKDOWN
+         * Group: common
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder operation(org.apache.camel.component.docling.DoclingOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The operation to perform.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.docling.DoclingOperations</code>
+         * type.
+         * 
+         * Required: true
+         * Default: CONVERT_TO_MARKDOWN
+         * Group: common
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Output format for document conversion.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: markdown
+         * Group: common
+         * 
+         * @param outputFormat the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder outputFormat(String outputFormat) {
+            doSetProperty("outputFormat", outputFormat);
+            return this;
+        }
+        /**
+         * Use docling-serve API instead of CLI command.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDoclingServe the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder useDoclingServe(boolean useDoclingServe) {
+            doSetProperty("useDoclingServe", useDoclingServe);
+            return this;
+        }
+        /**
+         * Use docling-serve API instead of CLI command.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDoclingServe the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder useDoclingServe(String useDoclingServe) {
+            doSetProperty("useDoclingServe", useDoclingServe);
+            return this;
+        }
+        /**
+         * Fail entire batch on first error (true) or continue processing
+         * remaining documents (false).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: batch
+         * 
+         * @param batchFailOnFirstError the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder batchFailOnFirstError(boolean batchFailOnFirstError) {
+            doSetProperty("batchFailOnFirstError", batchFailOnFirstError);
+            return this;
+        }
+        /**
+         * Fail entire batch on first error (true) or continue processing
+         * remaining documents (false).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: batch
+         * 
+         * @param batchFailOnFirstError the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder batchFailOnFirstError(String batchFailOnFirstError) {
+            doSetProperty("batchFailOnFirstError", batchFailOnFirstError);
+            return this;
+        }
+        /**
+         * Number of parallel threads for batch processing.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 4
+         * Group: batch
+         * 
+         * @param batchParallelism the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder batchParallelism(int batchParallelism) {
+            doSetProperty("batchParallelism", batchParallelism);
+            return this;
+        }
+        /**
+         * Number of parallel threads for batch processing.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 4
+         * Group: batch
+         * 
+         * @param batchParallelism the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder batchParallelism(String batchParallelism) {
+            doSetProperty("batchParallelism", batchParallelism);
+            return this;
+        }
+        /**
+         * Number of documents to submit per sub-batch. Documents are
+         * partitioned into sub-batches of this size and each sub-batch is
+         * processed before starting the next one. Within each sub-batch, up to
+         * batchParallelism threads are used concurrently. This controls memory
+         * usage and back-pressure when processing large document sets.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: batch
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder batchSize(int batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
+         * Number of documents to submit per sub-batch. Documents are
+         * partitioned into sub-batches of this size and each sub-batch is
+         * processed before starting the next one. Within each sub-batch, up to
+         * batchParallelism threads are used concurrently. This controls memory
+         * usage and back-pressure when processing large document sets.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: batch
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder batchSize(String batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
+         * Maximum time to wait for batch completion in milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: batch
+         * 
+         * @param batchTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder batchTimeout(long batchTimeout) {
+            doSetProperty("batchTimeout", batchTimeout);
+            return this;
+        }
+        /**
+         * Maximum time to wait for batch completion in milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: batch
+         * 
+         * @param batchTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder batchTimeout(String batchTimeout) {
+            doSetProperty("batchTimeout", batchTimeout);
+            return this;
+        }
+        /**
+         * Split batch results into individual exchanges (one per document)
+         * instead of single BatchProcessingResults.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: batch
+         * 
+         * @param splitBatchResults the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder splitBatchResults(boolean splitBatchResults) {
+            doSetProperty("splitBatchResults", splitBatchResults);
+            return this;
+        }
+        /**
+         * Split batch results into individual exchanges (one per document)
+         * instead of single BatchProcessingResults.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: batch
+         * 
+         * @param splitBatchResults the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder splitBatchResults(String splitBatchResults) {
+            doSetProperty("splitBatchResults", splitBatchResults);
+            return this;
+        }
+        /**
+         * Include raw text in chunk output.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: chunking
+         * 
+         * @param chunkingIncludeRawText the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder chunkingIncludeRawText(Boolean chunkingIncludeRawText) {
+            doSetProperty("chunkingIncludeRawText", chunkingIncludeRawText);
+            return this;
+        }
+        /**
+         * Include raw text in chunk output.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: chunking
+         * 
+         * @param chunkingIncludeRawText the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder chunkingIncludeRawText(String chunkingIncludeRawText) {
+            doSetProperty("chunkingIncludeRawText", chunkingIncludeRawText);
+            return this;
+        }
+        /**
+         * Maximum number of tokens per chunk for hybrid chunking.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: chunking
+         * 
+         * @param chunkingMaxTokens the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder chunkingMaxTokens(Integer chunkingMaxTokens) {
+            doSetProperty("chunkingMaxTokens", chunkingMaxTokens);
+            return this;
+        }
+        /**
+         * Maximum number of tokens per chunk for hybrid chunking.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: chunking
+         * 
+         * @param chunkingMaxTokens the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder chunkingMaxTokens(String chunkingMaxTokens) {
+            doSetProperty("chunkingMaxTokens", chunkingMaxTokens);
+            return this;
+        }
+        /**
+         * Whether to merge peer chunks in hybrid chunking.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: true
+         * Group: chunking
+         * 
+         * @param chunkingMergePeers the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder chunkingMergePeers(Boolean chunkingMergePeers) {
+            doSetProperty("chunkingMergePeers", chunkingMergePeers);
+            return this;
+        }
+        /**
+         * Whether to merge peer chunks in hybrid chunking.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: true
+         * Group: chunking
+         * 
+         * @param chunkingMergePeers the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder chunkingMergePeers(String chunkingMergePeers) {
+            doSetProperty("chunkingMergePeers", chunkingMergePeers);
+            return this;
+        }
+        /**
+         * Tokenizer model for hybrid chunking (e.g.
+         * sentence-transformers/all-MiniLM-L6-v2).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: chunking
+         * 
+         * @param chunkingTokenizer the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder chunkingTokenizer(String chunkingTokenizer) {
+            doSetProperty("chunkingTokenizer", chunkingTokenizer);
+            return this;
+        }
+        /**
+         * Use markdown format for tables in chunk output.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: chunking
+         * 
+         * @param chunkingUseMarkdownTables the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder chunkingUseMarkdownTables(Boolean chunkingUseMarkdownTables) {
+            doSetProperty("chunkingUseMarkdownTables", chunkingUseMarkdownTables);
+            return this;
+        }
+        /**
+         * Use markdown format for tables in chunk output.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: chunking
+         * 
+         * @param chunkingUseMarkdownTables the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder chunkingUseMarkdownTables(String chunkingUseMarkdownTables) {
+            doSetProperty("chunkingUseMarkdownTables", chunkingUseMarkdownTables);
+            return this;
+        }
+        /**
+         * Include metadata in message headers when extracting metadata.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: metadata
+         * 
+         * @param includeMetadataInHeaders the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder includeMetadataInHeaders(boolean includeMetadataInHeaders) {
+            doSetProperty("includeMetadataInHeaders", includeMetadataInHeaders);
+            return this;
+        }
+        /**
+         * Include metadata in message headers when extracting metadata.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: metadata
+         * 
+         * @param includeMetadataInHeaders the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder includeMetadataInHeaders(String includeMetadataInHeaders) {
+            doSetProperty("includeMetadataInHeaders", includeMetadataInHeaders);
+            return this;
+        }
+        /**
+         * Include raw metadata as returned by the parser.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: metadata
+         * 
+         * @param includeRawMetadata the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder includeRawMetadata(boolean includeRawMetadata) {
+            doSetProperty("includeRawMetadata", includeRawMetadata);
+            return this;
+        }
+        /**
+         * Include raw metadata as returned by the parser.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: metadata
+         * 
+         * @param includeRawMetadata the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder includeRawMetadata(String includeRawMetadata) {
+            doSetProperty("includeRawMetadata", includeRawMetadata);
+            return this;
+        }
+        /**
+         * Whether a String message body that starts with / or contains \ is
+         * interpreted as a local filesystem path to read. When disabled, such a
+         * body is rejected instead of being read. This does not affect the
+         * CamelDoclingInputFilePath header, nor File, byte or explicit path
+         * collection bodies used by the batch operations.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowFilePathSource the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder allowFilePathSource(boolean allowFilePathSource) {
+            doSetProperty("allowFilePathSource", allowFilePathSource);
+            return this;
+        }
+        /**
+         * Whether a String message body that starts with / or contains \ is
+         * interpreted as a local filesystem path to read. When disabled, such a
+         * body is rejected instead of being read. This does not affect the
+         * CamelDoclingInputFilePath header, nor File, byte or explicit path
+         * collection bodies used by the batch operations.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowFilePathSource the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder allowFilePathSource(String allowFilePathSource) {
+            doSetProperty("allowFilePathSource", allowFilePathSource);
+            return this;
+        }
+        /**
+         * Whether a String message body that starts with http:// or https:// is
+         * interpreted as a remote URL for Docling to fetch. When disabled, such
+         * a body is rejected instead of being fetched. This does not affect the
+         * CamelDoclingInputFilePath header, nor bodies of any other type.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowUrlSource the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder allowUrlSource(boolean allowUrlSource) {
+            doSetProperty("allowUrlSource", allowUrlSource);
+            return this;
+        }
+        /**
+         * Whether a String message body that starts with http:// or https:// is
+         * interpreted as a remote URL for Docling to fetch. When disabled, such
+         * a body is rejected instead of being fetched. This does not affect the
+         * CamelDoclingInputFilePath header, nor bodies of any other type.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowUrlSource the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder allowUrlSource(String allowUrlSource) {
+            doSetProperty("allowUrlSource", allowUrlSource);
+            return this;
+        }
+        /**
+         * Header name for API key authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: X-API-Key
+         * Group: security
+         * 
+         * @param apiKeyHeader the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder apiKeyHeader(String apiKeyHeader) {
+            doSetProperty("apiKeyHeader", apiKeyHeader);
+            return this;
+        }
+        /**
+         * Authentication scheme (BEARER, API_KEY, NONE).
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.docling.AuthenticationScheme</code>
+         * type.
+         * 
+         * Default: NONE
+         * Group: security
+         * 
+         * @param authenticationScheme the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder authenticationScheme(org.apache.camel.component.docling.AuthenticationScheme authenticationScheme) {
+            doSetProperty("authenticationScheme", authenticationScheme);
+            return this;
+        }
+        /**
+         * Authentication scheme (BEARER, API_KEY, NONE).
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.docling.AuthenticationScheme</code>
+         * type.
+         * 
+         * Default: NONE
+         * Group: security
+         * 
+         * @param authenticationScheme the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder authenticationScheme(String authenticationScheme) {
+            doSetProperty("authenticationScheme", authenticationScheme);
+            return this;
+        }
+        /**
+         * Authentication token for docling-serve API (Bearer token or API key).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param authenticationToken the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder authenticationToken(String authenticationToken) {
+            doSetProperty("authenticationToken", authenticationToken);
+            return this;
+        }
+        /**
+         * When set, every local input file path must resolve inside this
+         * directory once normalized. Applies to the CamelDoclingInputFilePath
+         * header, to file path message bodies, and to the paths used by the
+         * batch operations. When empty, no directory restriction is applied.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param inputBaseDirectory the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder inputBaseDirectory(String inputBaseDirectory) {
+            doSetProperty("inputBaseDirectory", inputBaseDirectory);
+            return this;
+        }
+        /**
+         * Maximum file size in bytes for processing.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 52428800
+         * Group: security
+         * 
+         * @param maxFileSize the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder maxFileSize(long maxFileSize) {
+            doSetProperty("maxFileSize", maxFileSize);
+            return this;
+        }
+        /**
+         * Maximum file size in bytes for processing.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 52428800
+         * Group: security
+         * 
+         * @param maxFileSize the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder maxFileSize(String maxFileSize) {
+            doSetProperty("maxFileSize", maxFileSize);
+            return this;
+        }
+        /**
+         * OAuth profile name for obtaining an access token via the OAuth 2.0
+         * Client Credentials grant. When set, the token is acquired from the
+         * configured identity provider and used as authenticationToken.
+         * Requires camel-oauth on the classpath.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthProfile the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder oauthProfile(String oauthProfile) {
+            doSetProperty("oauthProfile", oauthProfile);
+            return this;
+        }
+        /**
+         * When set, the output directory passed to the docling CLI must resolve
+         * inside this directory once normalized. Applies to the
+         * CamelDoclingOutputFilePath header. The check is lexical and does not
+         * resolve symbolic links, matching inputBaseDirectory. When empty, no
+         * directory restriction is applied and the header value is only
+         * normalized.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param outputBaseDirectory the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointProducerBuilder outputBaseDirectory(String outputBaseDirectory) {
+            doSetProperty("outputBaseDirectory", outputBaseDirectory);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the Docling component.
+     */
+    public interface AdvancedDoclingEndpointProducerBuilder extends EndpointProducerBuilder {
+        default DoclingEndpointProducerBuilder basic() {
+            return (DoclingEndpointProducerBuilder) this;
+        }
+
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Abort processing on error.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param abortOnError the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder abortOnError(Boolean abortOnError) {
+            doSetProperty("abortOnError", abortOnError);
+            return this;
+        }
+        /**
+         * Abort processing on error.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param abortOnError the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder abortOnError(String abortOnError) {
+            doSetProperty("abortOnError", abortOnError);
+            return this;
+        }
+        /**
+         * Polling interval for async conversion status in milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 2000
+         * Group: advanced
+         * 
+         * @param asyncPollInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder asyncPollInterval(long asyncPollInterval) {
+            doSetProperty("asyncPollInterval", asyncPollInterval);
+            return this;
+        }
+        /**
+         * Polling interval for async conversion status in milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 2000
+         * Group: advanced
+         * 
+         * @param asyncPollInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder asyncPollInterval(String asyncPollInterval) {
+            doSetProperty("asyncPollInterval", asyncPollInterval);
+            return this;
+        }
+        /**
+         * Time-to-live for pending async conversion tasks in milliseconds.
+         * Tasks older than this will be evicted from memory to prevent leaks.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 86400000
+         * Group: advanced
+         * 
+         * @param asyncTaskTtl the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder asyncTaskTtl(long asyncTaskTtl) {
+            doSetProperty("asyncTaskTtl", asyncTaskTtl);
+            return this;
+        }
+        /**
+         * Time-to-live for pending async conversion tasks in milliseconds.
+         * Tasks older than this will be evicted from memory to prevent leaks.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 86400000
+         * Group: advanced
+         * 
+         * @param asyncTaskTtl the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder asyncTaskTtl(String asyncTaskTtl) {
+            doSetProperty("asyncTaskTtl", asyncTaskTtl);
+            return this;
+        }
+        /**
+         * Maximum time to wait for async conversion completion in milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: advanced
+         * 
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder asyncTimeout(long asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+        /**
+         * Maximum time to wait for async conversion completion in milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: advanced
+         * 
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder asyncTimeout(String asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+        /**
+         * Path to Docling Python executable or command.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param doclingCommand the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder doclingCommand(String doclingCommand) {
+            doSetProperty("doclingCommand", doclingCommand);
+            return this;
+        }
+        /**
+         * Enable code enrichment in document processing.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doCodeEnrichment the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder doCodeEnrichment(Boolean doCodeEnrichment) {
+            doSetProperty("doCodeEnrichment", doCodeEnrichment);
+            return this;
+        }
+        /**
+         * Enable code enrichment in document processing.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doCodeEnrichment the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder doCodeEnrichment(String doCodeEnrichment) {
+            doSetProperty("doCodeEnrichment", doCodeEnrichment);
+            return this;
+        }
+        /**
+         * Document processing timeout in seconds.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param documentTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder documentTimeout(Long documentTimeout) {
+            doSetProperty("documentTimeout", documentTimeout);
+            return this;
+        }
+        /**
+         * Document processing timeout in seconds.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param documentTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder documentTimeout(String documentTimeout) {
+            doSetProperty("documentTimeout", documentTimeout);
+            return this;
+        }
+        /**
+         * Enable formula enrichment in document processing.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doFormulaEnrichment the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder doFormulaEnrichment(Boolean doFormulaEnrichment) {
+            doSetProperty("doFormulaEnrichment", doFormulaEnrichment);
+            return this;
+        }
+        /**
+         * Enable formula enrichment in document processing.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doFormulaEnrichment the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder doFormulaEnrichment(String doFormulaEnrichment) {
+            doSetProperty("doFormulaEnrichment", doFormulaEnrichment);
+            return this;
+        }
+        /**
+         * Enable OCR processing in docling-serve API mode. When not set, the
+         * server uses its own defaults. Set enableOCR to false to explicitly
+         * disable OCR.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doOcr the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder doOcr(Boolean doOcr) {
+            doSetProperty("doOcr", doOcr);
+            return this;
+        }
+        /**
+         * Enable OCR processing in docling-serve API mode. When not set, the
+         * server uses its own defaults. Set enableOCR to false to explicitly
+         * disable OCR.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doOcr the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder doOcr(String doOcr) {
+            doSetProperty("doOcr", doOcr);
+            return this;
+        }
+        /**
+         * Enable picture classification in document processing.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doPictureClassification the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder doPictureClassification(Boolean doPictureClassification) {
+            doSetProperty("doPictureClassification", doPictureClassification);
+            return this;
+        }
+        /**
+         * Enable picture classification in document processing.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doPictureClassification the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder doPictureClassification(String doPictureClassification) {
+            doSetProperty("doPictureClassification", doPictureClassification);
+            return this;
+        }
+        /**
+         * Enable picture description generation in document processing.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doPictureDescription the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder doPictureDescription(Boolean doPictureDescription) {
+            doSetProperty("doPictureDescription", doPictureDescription);
+            return this;
+        }
+        /**
+         * Enable picture description generation in document processing.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doPictureDescription the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder doPictureDescription(String doPictureDescription) {
+            doSetProperty("doPictureDescription", doPictureDescription);
+            return this;
+        }
+        /**
+         * Enable table structure recognition.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doTableStructure the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder doTableStructure(Boolean doTableStructure) {
+            doSetProperty("doTableStructure", doTableStructure);
+            return this;
+        }
+        /**
+         * Enable table structure recognition.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doTableStructure the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder doTableStructure(String doTableStructure) {
+            doSetProperty("doTableStructure", doTableStructure);
+            return this;
+        }
+        /**
+         * Force OCR processing even for digital documents.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param forceOcr the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder forceOcr(Boolean forceOcr) {
+            doSetProperty("forceOcr", forceOcr);
+            return this;
+        }
+        /**
+         * Force OCR processing even for digital documents.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param forceOcr the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder forceOcr(String forceOcr) {
+            doSetProperty("forceOcr", forceOcr);
+            return this;
+        }
+        /**
+         * Image export mode for referenced images.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param imageExportMode the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder imageExportMode(String imageExportMode) {
+            doSetProperty("imageExportMode", imageExportMode);
+            return this;
+        }
+        /**
+         * Scale factor for exported images.
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param imagesScale the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder imagesScale(Double imagesScale) {
+            doSetProperty("imagesScale", imagesScale);
+            return this;
+        }
+        /**
+         * Scale factor for exported images.
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param imagesScale the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder imagesScale(String imagesScale) {
+            doSetProperty("imagesScale", imagesScale);
+            return this;
+        }
+        /**
+         * Include images in the conversion output.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeImages the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder includeImages(Boolean includeImages) {
+            doSetProperty("includeImages", includeImages);
+            return this;
+        }
+        /**
+         * Include images in the conversion output.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeImages the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder includeImages(String includeImages) {
+            doSetProperty("includeImages", includeImages);
+            return this;
+        }
+        /**
+         * Placeholder string for page breaks in markdown output.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param mdPageBreakPlaceholder the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder mdPageBreakPlaceholder(String mdPageBreakPlaceholder) {
+            doSetProperty("mdPageBreakPlaceholder", mdPageBreakPlaceholder);
+            return this;
+        }
+        /**
+         * OCR engine to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param ocrEngine the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder ocrEngine(String ocrEngine) {
+            doSetProperty("ocrEngine", ocrEngine);
+            return this;
+        }
+        /**
+         * PDF parsing backend.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param pdfBackend the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder pdfBackend(String pdfBackend) {
+            doSetProperty("pdfBackend", pdfBackend);
+            return this;
+        }
+        /**
+         * Processing pipeline to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param pipeline the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder pipeline(String pipeline) {
+            doSetProperty("pipeline", pipeline);
+            return this;
+        }
+        /**
+         * Timeout for Docling process execution in milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param processTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder processTimeout(long processTimeout) {
+            doSetProperty("processTimeout", processTimeout);
+            return this;
+        }
+        /**
+         * Timeout for Docling process execution in milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param processTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder processTimeout(String processTimeout) {
+            doSetProperty("processTimeout", processTimeout);
+            return this;
+        }
+        /**
+         * Enable table cell matching post-processing.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tableCellMatching the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder tableCellMatching(Boolean tableCellMatching) {
+            doSetProperty("tableCellMatching", tableCellMatching);
+            return this;
+        }
+        /**
+         * Enable table cell matching post-processing.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tableCellMatching the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder tableCellMatching(String tableCellMatching) {
+            doSetProperty("tableCellMatching", tableCellMatching);
+            return this;
+        }
+        /**
+         * Table structure recognition mode.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param tableMode the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder tableMode(String tableMode) {
+            doSetProperty("tableMode", tableMode);
+            return this;
+        }
+        /**
+         * Use asynchronous conversion mode (docling-serve API only).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param useAsyncMode the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder useAsyncMode(boolean useAsyncMode) {
+            doSetProperty("useAsyncMode", useAsyncMode);
+            return this;
+        }
+        /**
+         * Use asynchronous conversion mode (docling-serve API only).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param useAsyncMode the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder useAsyncMode(String useAsyncMode) {
+            doSetProperty("useAsyncMode", useAsyncMode);
+            return this;
+        }
+        /**
+         * Working directory for Docling execution.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param workingDirectory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointProducerBuilder workingDirectory(String workingDirectory) {
+            doSetProperty("workingDirectory", workingDirectory);
+            return this;
+        }
+    }
+
+    /**
      * Builder for endpoint for the Docling component.
      */
     public interface DoclingEndpointBuilder
             extends
-                EndpointProducerBuilder {
+                DoclingEndpointConsumerBuilder,
+                DoclingEndpointProducerBuilder {
         default AdvancedDoclingEndpointBuilder advanced() {
             return (AdvancedDoclingEndpointBuilder) this;
         }
@@ -51,7 +3616,7 @@ public interface DoclingEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param contentInBody the value to set
          * @return the dsl builder
@@ -67,7 +3632,7 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param contentInBody the value to set
          * @return the dsl builder
@@ -82,7 +3647,7 @@ public interface DoclingEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: http://localhost:5001
-         * Group: producer
+         * Group: common
          * 
          * @param doclingServeUrl the value to set
          * @return the dsl builder
@@ -97,7 +3662,7 @@ public interface DoclingEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: true
-         * Group: producer
+         * Group: common
          * 
          * @param enableOCR the value to set
          * @return the dsl builder
@@ -112,7 +3677,7 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
-         * Group: producer
+         * Group: common
          * 
          * @param enableOCR the value to set
          * @return the dsl builder
@@ -127,7 +3692,7 @@ public interface DoclingEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param includeLayoutInfo the value to set
          * @return the dsl builder
@@ -142,7 +3707,7 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param includeLayoutInfo the value to set
          * @return the dsl builder
@@ -157,7 +3722,7 @@ public interface DoclingEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: en
-         * Group: producer
+         * Group: common
          * 
          * @param ocrLanguage the value to set
          * @return the dsl builder
@@ -175,7 +3740,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * Required: true
          * Default: CONVERT_TO_MARKDOWN
-         * Group: producer
+         * Group: common
          * 
          * @param operation the value to set
          * @return the dsl builder
@@ -193,7 +3758,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * Required: true
          * Default: CONVERT_TO_MARKDOWN
-         * Group: producer
+         * Group: common
          * 
          * @param operation the value to set
          * @return the dsl builder
@@ -208,7 +3773,7 @@ public interface DoclingEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: markdown
-         * Group: producer
+         * Group: common
          * 
          * @param outputFormat the value to set
          * @return the dsl builder
@@ -223,7 +3788,7 @@ public interface DoclingEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param useDoclingServe the value to set
          * @return the dsl builder
@@ -238,7 +3803,7 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param useDoclingServe the value to set
          * @return the dsl builder
@@ -833,57 +4398,12 @@ public interface DoclingEndpointBuilderFactory {
      */
     public interface AdvancedDoclingEndpointBuilder
             extends
-                EndpointProducerBuilder {
+                AdvancedDoclingEndpointConsumerBuilder,
+                AdvancedDoclingEndpointProducerBuilder {
         default DoclingEndpointBuilder basic() {
             return (DoclingEndpointBuilder) this;
         }
 
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder lazyStartProducer(String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
         /**
          * Abort processing on error.
          * 
@@ -1591,7 +5111,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code DoclingOperations} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingOperation}.
          */
@@ -1603,7 +5123,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingOutputFormat}.
          */
@@ -1615,7 +5135,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingInputFilePath}.
          */
@@ -1627,7 +5147,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingOutputFilePath}.
          */
@@ -1639,7 +5159,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Map<String, Object>} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingProcessingOptions}.
          */
@@ -1651,7 +5171,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingEnableOCR}.
          */
@@ -1663,7 +5183,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingOCRLanguage}.
          */
@@ -1675,7 +5195,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code List<String>} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingCustomArguments}.
          */
@@ -1687,7 +5207,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingUseAsyncMode}.
          */
@@ -1699,7 +5219,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingAsyncPollInterval}.
          */
@@ -1711,7 +5231,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingAsyncTimeout}.
          */
@@ -1723,7 +5243,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingTaskId}.
          */
@@ -1735,7 +5255,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingBatchSize}.
          */
@@ -1747,7 +5267,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingBatchParallelism}.
          */
@@ -1759,7 +5279,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingBatchFailOnFirstError}.
          */
@@ -1771,7 +5291,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingBatchTimeout}.
          */
@@ -1783,7 +5303,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingBatchTotalDocuments}.
          */
@@ -1795,7 +5315,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingBatchSuccessCount}.
          */
@@ -1807,7 +5327,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingBatchFailureCount}.
          */
@@ -1819,7 +5339,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingBatchProcessingTime}.
          */
@@ -1832,7 +5352,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingBatchSplitResults}.
          */
@@ -1844,7 +5364,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingMetadataPageCount}.
          */
@@ -1856,7 +5376,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingMetadataTitle}.
          */
@@ -1868,7 +5388,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingMetadataLanguage}.
          */
@@ -1880,7 +5400,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingMetadataDocumentType}.
          */
@@ -1892,7 +5412,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingMetadataFormat}.
          */
@@ -1904,7 +5424,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingMetadataFileSize}.
          */
@@ -1916,7 +5436,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingMetadataFileName}.
          */
@@ -1928,7 +5448,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Map<String, Object>} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingMetadataRaw}.
          */
@@ -1941,7 +5461,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingChunkingTokenizer}.
          */
@@ -1953,7 +5473,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingChunkingMaxTokens}.
          */
@@ -1965,7 +5485,7 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code DoclingChunkingMergePeers}.
          */

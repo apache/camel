@@ -6,7 +6,7 @@
 :since: 4.15
 :supportlevel: Stable
 :tabs-sync-option:
-:component-header: Only producer is supported
+:component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: AI
 
@@ -1218,6 +1218,33 @@ YAML::
             ref: "doclingDocumentProcessor"
 ----
 ====
+
+== Consuming asynchronous conversions
+
+Instead of submitting a conversion with `SUBMIT_ASYNC_CONVERSION` and then polling `CHECK_CONVERSION_STATUS` by hand, a
+`docling:` consumer can emit each async conversion event-driven, as soon as it finishes:
+
+[source,java]
+----
+// submit conversions asynchronously; each returns a task id and runs in the background
+from("direct:submit")
+    .to("docling:convert?useDoclingServe=true&operation=SUBMIT_ASYNC_CONVERSION");
+
+// the consumer emits one exchange per completed task (the path, here "onComplete", is just a label)
+from("docling:onComplete?useDoclingServe=true&delay=5000")
+    .to("mock:done");
+----
+
+The consumer scans the tasks submitted via `SUBMIT_ASYNC_CONVERSION` on the same component and emits one exchange as
+each task completes:
+
+- a successful conversion carries the converted content as the message body — the same shape the synchronous
+  `CONVERT_*` operations produce for the configured `outputFormat` — and the task id in the `CamelDoclingTaskId` header;
+- a failed conversion completes the exchange with the underlying exception, so the route's `onException` machinery
+  applies.
+
+It is a scheduled polling consumer, so the poll interval and the other scheduler options (`delay`, `initialDelay`,
+`useFixedDelay`, ...) are configured on the endpoint as usual.
 
 == Error Handling
 

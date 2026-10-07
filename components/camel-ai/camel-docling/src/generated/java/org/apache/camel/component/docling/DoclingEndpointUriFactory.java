@@ -24,7 +24,7 @@ public class DoclingEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(56);
+        Set<String> props = new HashSet<>(75);
         props.add("abortOnError");
         props.add("allowFilePathSource");
         props.add("allowUrlSource");
@@ -34,16 +34,21 @@ public class DoclingEndpointUriFactory extends org.apache.camel.support.componen
         props.add("asyncTimeout");
         props.add("authenticationScheme");
         props.add("authenticationToken");
+        props.add("backoffErrorThreshold");
+        props.add("backoffIdleThreshold");
+        props.add("backoffMultiplier");
         props.add("batchFailOnFirstError");
         props.add("batchParallelism");
         props.add("batchSize");
         props.add("batchTimeout");
+        props.add("bridgeErrorHandler");
         props.add("chunkingIncludeRawText");
         props.add("chunkingMaxTokens");
         props.add("chunkingMergePeers");
         props.add("chunkingTokenizer");
         props.add("chunkingUseMarkdownTables");
         props.add("contentInBody");
+        props.add("delay");
         props.add("doCodeEnrichment");
         props.add("doFormulaEnrichment");
         props.add("doOcr");
@@ -54,13 +59,17 @@ public class DoclingEndpointUriFactory extends org.apache.camel.support.componen
         props.add("doclingServeUrl");
         props.add("documentTimeout");
         props.add("enableOCR");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
         props.add("forceOcr");
+        props.add("greedy");
         props.add("imageExportMode");
         props.add("imagesScale");
         props.add("includeImages");
         props.add("includeLayoutInfo");
         props.add("includeMetadataInHeaders");
         props.add("includeRawMetadata");
+        props.add("initialDelay");
         props.add("inputBaseDirectory");
         props.add("lazyStartProducer");
         props.add("maxFileSize");
@@ -74,19 +83,31 @@ public class DoclingEndpointUriFactory extends org.apache.camel.support.componen
         props.add("outputFormat");
         props.add("pdfBackend");
         props.add("pipeline");
+        props.add("pollStrategy");
         props.add("processTimeout");
+        props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("sendEmptyMessageWhenIdle");
         props.add("splitBatchResults");
+        props.add("startScheduler");
         props.add("tableCellMatching");
         props.add("tableMode");
+        props.add("timeUnit");
         props.add("useAsyncMode");
         props.add("useDoclingServe");
+        props.add("useFixedDelay");
         props.add("workingDirectory");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("authenticationToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptyMap();
+        Map<String, String> prefixes = new HashMap<>(1);
+        prefixes.put("schedulerProperties", "scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
 
     @Override

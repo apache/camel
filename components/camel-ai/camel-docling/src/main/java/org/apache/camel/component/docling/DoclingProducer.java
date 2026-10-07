@@ -1650,45 +1650,7 @@ public class DoclingProducer extends DefaultProducer {
     }
 
     private String extractConvertedContent(ConvertDocumentResponse response, String outputFormat) throws IOException {
-        try {
-            if (response instanceof InBodyConvertDocumentResponse inBodyResponse) {
-                DocumentResponse document = inBodyResponse.getDocument();
-
-                if (document == null) {
-                    throw new IOException("No document in response");
-                }
-
-                String format = mapOutputFormat(outputFormat);
-
-                switch (format) {
-                    case "md":
-                        String markdown = document.getMarkdownContent();
-                        return markdown != null ? markdown : "";
-                    case "html":
-                        String html = document.getHtmlContent();
-                        return html != null ? html : "";
-                    case "text":
-                        String text = document.getTextContent();
-                        return text != null ? text : "";
-                    case "json":
-                        // Return the document JSON content
-                        var jsonDoc = document.getJsonContent();
-                        if (jsonDoc != null) {
-                            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonDoc);
-                        }
-                        return "{}";
-                    default:
-                        // Default to markdown
-                        String defaultMarkdown = document.getMarkdownContent();
-                        return defaultMarkdown != null ? defaultMarkdown : "";
-                }
-            } else {
-                throw new IOException("Unsupported response type: cannot extract converted content");
-            }
-        } catch (Exception e) {
-            LOG.warn("Failed to extract content from response: {}", e.getMessage());
-            throw new IOException("Failed to extract content from response", e);
-        }
+        return DoclingContentExtractor.extract(response, outputFormat);
     }
 
     private OutputFormat mapToOutputFormat(String outputFormat) {
@@ -1713,27 +1675,6 @@ public class DoclingProducer extends DefaultProducer {
                 return OutputFormat.HTML_SPLIT_PAGE;
             default:
                 return OutputFormat.MARKDOWN;
-        }
-    }
-
-    private String mapOutputFormat(String outputFormat) {
-        if (outputFormat == null) {
-            return "md";
-        }
-
-        switch (outputFormat.toLowerCase()) {
-            case "markdown":
-            case "md":
-                return "md";
-            case "html":
-                return "html";
-            case "json":
-                return "json";
-            case "text":
-            case "txt":
-                return "text";
-            default:
-                return "md";
         }
     }
 
