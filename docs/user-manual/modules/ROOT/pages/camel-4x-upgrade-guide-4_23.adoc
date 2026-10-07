@@ -742,6 +742,10 @@ succeeded on its second redelivery reported 1 instead of 2, and a route whose ex
 completed reported 0), and a processor or route that the exchange went through after a redelivery could count that
 redelivery as well.
 
+The constructor of `org.apache.camel.management.InstrumentationInterceptStrategy` (used internally by
+`JmxManagementLifecycleStrategy`) now takes a map of `InstrumentationInterceptStrategy.WrappedProcessor` values and the
+`Route` whose processors it instruments, which must not be `null`.
+
 ==== mbeansLevel=ContextOnly
 
 With `mbeansLevel=ContextOnly` the components are no longer registered as MBeans (like the endpoints, thread pools
