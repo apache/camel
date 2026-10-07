@@ -4130,7 +4130,9 @@ The Kafka client code that the `kafka` component shares with other Kafka based c
 from `camel-kafka` into a new `camel-kafka-common` module. This includes `KafkaClientConfiguration` (the base class
 of `KafkaConfiguration`), `AbstractKafkaComponent`, `KafkaConstants`, `KafkaHeaderFilterStrategy`, the header
 serializers and deserializers (`org.apache.camel.component.kafka.serde`), `KafkaSecurityConfigurer` and
-`KafkaAuthType`, `PollExceptionStrategy` and `PollOnError`. The packages and class names are unchanged.
+`KafkaAuthType`, `PollExceptionStrategy`, `PollOnError`, `KafkaConsumerFatalException`, `TaskHealthState`,
+`consumer.support.KafkaRecordProcessor` and `consumer.support.interop.JMSDeserializer`. The packages and class names
+are unchanged.
 
 `camel-kafka` depends on `camel-kafka-common`, so nothing changes for applications that depend on `camel-kafka`.
 If you build your classpath without transitive dependencies, add the `camel-kafka-common` dependency:

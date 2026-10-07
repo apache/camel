@@ -43,7 +43,7 @@ public abstract class AbstractKafkaComponent extends HealthCheckComponent
     private boolean useGlobalSslContextParameters;
     @Metadata(autowired = true, label = "consumer,advanced",
               description = "To use a custom strategy with the consumer to control how to handle exceptions thrown from the "
-                            + "Kafka broker while pooling messages.")
+                            + "Kafka broker while polling messages.")
     private PollExceptionStrategy pollExceptionStrategy;
     @Metadata(label = "consumer,advanced",
               description = "Maximum attempts to create the kafka consumer (kafka-client), before eventually giving up and "
@@ -91,7 +91,7 @@ public abstract class AbstractKafkaComponent extends HealthCheckComponent
 
     /**
      * To use a custom strategy with the consumer to control how to handle exceptions thrown from the Kafka broker while
-     * pooling messages.
+     * polling messages.
      */
     public void setPollExceptionStrategy(PollExceptionStrategy pollExceptionStrategy) {
         this.pollExceptionStrategy = pollExceptionStrategy;
