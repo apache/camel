@@ -87,6 +87,14 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
         return (OpenFeatureComponent) super.getComponent();
     }
 
+    public String getEvaluationType() {
+        return evaluationType;
+    }
+
+    public void setEvaluationType(String evaluationType) {
+        this.evaluationType = evaluationType;
+    }
+
     @Override
     public Producer createProducer() {
         return new OpenFeatureProducer(this);
