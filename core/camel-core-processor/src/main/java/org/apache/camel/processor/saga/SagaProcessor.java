@@ -120,10 +120,8 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
                             exchange.setException(cause);
                             callback.done(false);
                         } else {
-                            ifNotException(null, exchange, callback, () -> {
-                                setCurrentSagaCoordinator(exchange, previousCoordinator);
-                                callback.done(false);
-                            });
+                            setCurrentSagaCoordinator(exchange, previousCoordinator);
+                            callback.done(false);
                         }
                     });
                 } else {

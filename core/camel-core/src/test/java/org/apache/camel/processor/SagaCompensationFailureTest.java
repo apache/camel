@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.log.ConsumingAppender;
 import org.apache.camel.model.SagaCompletionMode;
@@ -40,6 +41,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,10 +63,17 @@ public class SagaCompensationFailureTest extends ContextTestSupport {
     public void testFailedCompensationKeepsTheOriginalException() {
         Exchange result = template.send("direct:saga-fails", e -> e.getMessage().setBody("hello"));
 
+        // the exception that caused the compensation stays on the exchange
         Exception ex = result.getException();
-        assertNotNull(ex, "the failure should propagate to the exchange");
-        assertTrue(chainContains(ex, "business failure"),
-                "the exception that caused the compensation should not be lost, but got: " + ex);
+        assertInstanceOf(IllegalArgumentException.class, ex);
+        assertEquals("business failure", ex.getMessage());
+
+        // and the compensation failure is attached to it
+        Throwable[] suppressed = ex.getSuppressed();
+        assertEquals(1, suppressed.length, "the compensation failure should be attached as a suppressed exception");
+        assertInstanceOf(RuntimeCamelException.class, suppressed[0]);
+        assertTrue(suppressed[0].getMessage().contains("Unable to compensate all required steps of the saga"),
+                suppressed[0].getMessage());
     }
 
     @Test
@@ -78,7 +87,8 @@ public class SagaCompensationFailureTest extends ContextTestSupport {
         ExecutionException ex = assertThrows(ExecutionException.class,
                 () -> saga.compensate(result).get(5, TimeUnit.SECONDS),
                 "a saga whose compensation failed is reported as successfully compensated");
-        assertNotNull(ex.getCause());
+        assertInstanceOf(IllegalStateException.class, ex.getCause());
+        assertTrue(ex.getCause().getMessage().contains("status is FAILED"), ex.getCause().getMessage());
     }
 
     @Test
@@ -113,20 +123,6 @@ public class SagaCompensationFailureTest extends ContextTestSupport {
         LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         ctx.getConfiguration().removeLogger(SAGA_SERVICE_LOGGER);
         ctx.updateLoggers();
-    }
-
-    private static boolean chainContains(Throwable t, String message) {
-        for (Throwable c = t; c != null; c = c.getCause()) {
-            if (c.getMessage() != null && c.getMessage().contains(message)) {
-                return true;
-            }
-            for (Throwable s : c.getSuppressed()) {
-                if (chainContains(s, message)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     @Override
