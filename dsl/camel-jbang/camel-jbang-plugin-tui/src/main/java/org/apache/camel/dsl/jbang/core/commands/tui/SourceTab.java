@@ -848,7 +848,10 @@ class SourceTab extends AbstractTab {
         if (loadDirectory(currentDir, r.fileName())) {
             openSelectedEntry();
         }
-        notify("Converted to " + r.fileName() + (r.notes().isEmpty() ? "" : ", see the notes at its top"), false);
+        // the original stays, so the folder now has the same routes twice: the next run fails with duplicate route ids
+        notify("Converted to " + r.fileName() + (r.notes().isEmpty() ? "" : ", see the notes at its top")
+               + ". " + entry.name() + " defines the same routes: delete or rename one of them before the next run",
+                true);
     }
 
     private void openSelectedEntry() {
