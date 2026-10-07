@@ -99,12 +99,20 @@ public class CamelSubscription implements Subscription {
         LOG.debug("Requested {} events from subscriber", l);
         if (l <= 0) {
             // wrong argument
+            List<Exchange> bufferCopy;
             mutex.lock();
-            terminated = true;
-            mutex.unlock();
+            try {
+                terminated = true;
+                bufferCopy = new LinkedList<>(buffer);
+                buffer.clear();
+            } finally {
+                mutex.unlock();
+            }
 
             publisher.unsubscribe(this);
             subscriber.onError(new IllegalArgumentException("3.9"));
+            // the subscription is terminated: the buffered exchanges are discarded as on cancel()
+            discardBuffer(bufferCopy);
         } else {
             mutex.lock();
             requested += l;
@@ -175,7 +183,8 @@ public class CamelSubscription implements Subscription {
 
         if (sendingQueue != null) {
             LOG.debug("Sending {} events to the subscriber", sendingQueue.size());
-            for (Exchange data : sendingQueue) {
+            Exchange data;
+            while ((data = sendingQueue.poll()) != null) {
                 // TODO what if the subscriber throws an exception?
                 this.subscriber.onNext(data);
 
@@ -184,6 +193,9 @@ public class CamelSubscription implements Subscription {
                 mutex.unlock();
 
                 if (shouldStop) {
+                    // the subscription was cancelled: the exchanges taken from the buffer
+                    // but not sent must be discarded like the ones left in the buffer
+                    discardBuffer(sendingQueue);
                     break;
                 }
             }
