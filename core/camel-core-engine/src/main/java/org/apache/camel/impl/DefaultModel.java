@@ -647,7 +647,8 @@ public class DefaultModel implements Model {
         }
         // a route from a template (or a Kamelet) must not replace an existing route with the same id, unless that
         // route was created from the same template (such as the route of a Kamelet with a route id that is created
-        // again when its parent route is updated)
+        // again when its parent route is updated); a route that exists in the CamelContext but has no route
+        // definition in the model is never replaced
         String id = def.getId();
         if (id != null) {
             RouteDefinition existing = getRouteDefinition(id);
