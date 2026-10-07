@@ -1304,6 +1304,7 @@ public class CamelMonitor extends CamelCommand {
         TuiSettings settings = TuiSettings.load();
         ctx.confirmActions = settings.isConfirmActions();
         ctx.validateOnSave = settings.isValidateOnSave();
+        ctx.routeTree = settings.isRouteTree();
         ctx.panelTop = settings.isPanelTop();
         ctx.panelOverlay = settings.isPanelOverlay();
     }

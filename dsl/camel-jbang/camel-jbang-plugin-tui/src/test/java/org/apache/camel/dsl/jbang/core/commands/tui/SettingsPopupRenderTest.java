@@ -72,7 +72,7 @@ class SettingsPopupRenderTest {
                 new TabRegistry.TabEntry("🩺", "Health", "health", "7", 6, -1)));
         popup.open();
 
-        Rect area = new Rect(0, 0, 80, 28);
+        Rect area = new Rect(0, 0, 80, 29);
         Buffer buffer = Buffer.empty(area);
         Frame frame = Frame.forTesting(buffer);
         popup.render(frame, area);
@@ -112,7 +112,7 @@ class SettingsPopupRenderTest {
         String rendered = TuiTestHelper.bufferToString(buffer);
         assertTrue(rendered.contains("Theme:"), rendered);
         assertFalse(rendered.contains("ACP Command"), "the last rows do not fit in 25 lines");
-        for (int i = 0; i < 19; i++) {
+        for (int i = 0; i < 20; i++) {
             popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
         }
         buffer = Buffer.empty(area);

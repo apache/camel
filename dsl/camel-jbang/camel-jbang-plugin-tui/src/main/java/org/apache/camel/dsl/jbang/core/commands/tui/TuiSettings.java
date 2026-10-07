@@ -48,6 +48,7 @@ final class TuiSettings {
     static final String PROP_AI_PROMPT_HISTORY = "camel.tui.ai.promptHistory";
     static final String PROP_CONFIRM_ACTIONS = "camel.tui.confirmActions";
     static final String PROP_VALIDATE_ON_SAVE = "camel.tui.validateOnSave";
+    static final String PROP_ROUTE_TREE = "camel.tui.routeTree";
     static final String PROP_PANEL_POSITION = "camel.tui.panelPosition";
     static final String PROP_PANEL_SPACE = "camel.tui.panelSpace";
 
@@ -69,6 +70,7 @@ final class TuiSettings {
     private String aiPromptHistory;
     private String confirmActions;
     private String validateOnSave;
+    private String routeTree;
     private String panelPosition;
     private String panelSpace;
 
@@ -237,6 +239,19 @@ final class TuiSettings {
         this.validateOnSave = validateOnSave;
     }
 
+    String getRouteTree() {
+        return routeTree;
+    }
+
+    void setRouteTree(String routeTree) {
+        this.routeTree = routeTree;
+    }
+
+    /** Whether the source editor shows the route tree at first (Ctrl+T shows or hides it); off by default. */
+    boolean isRouteTree() {
+        return "true".equals(routeTree);
+    }
+
     boolean isValidateOnSave() {
         return !"false".equals(validateOnSave);
     }
@@ -293,6 +308,7 @@ final class TuiSettings {
             settings.aiPromptHistory = trimToNull(TuiUserConfig.read(PROP_AI_PROMPT_HISTORY));
             settings.confirmActions = trimToNull(TuiUserConfig.read(PROP_CONFIRM_ACTIONS));
             settings.validateOnSave = trimToNull(TuiUserConfig.read(PROP_VALIDATE_ON_SAVE));
+            settings.routeTree = trimToNull(TuiUserConfig.read(PROP_ROUTE_TREE));
             settings.panelPosition = trimToNull(TuiUserConfig.read(PROP_PANEL_POSITION));
             settings.panelSpace = trimToNull(TuiUserConfig.read(PROP_PANEL_SPACE));
         } catch (RuntimeException e) {
@@ -326,6 +342,7 @@ final class TuiSettings {
             TuiUserConfig.write(PROP_AI_PROMPT_HISTORY, aiPromptHistory);
             TuiUserConfig.write(PROP_CONFIRM_ACTIONS, confirmActions);
             TuiUserConfig.write(PROP_VALIDATE_ON_SAVE, validateOnSave);
+            TuiUserConfig.write(PROP_ROUTE_TREE, routeTree);
             TuiUserConfig.write(PROP_PANEL_POSITION, panelPosition);
             TuiUserConfig.write(PROP_PANEL_SPACE, panelSpace);
         } catch (RuntimeException e) {

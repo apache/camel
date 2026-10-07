@@ -174,6 +174,14 @@ a YAML or XML file); **Enter** goes to its declaration.
   node in the source editor. Type a **line number** (e.g. `47`) and press
   **Enter** to jump directly to that line.
 
+## Route Tree
+- **Ctrl+T** — show or hide the route tree at the top right of the source:
+  the route the cursor is in, from its `from` through each step, with the
+  branches indented and the step under the cursor marked with ▶. It follows
+  the cursor as you move and edit, for YAML, XML and Java routes, also when
+  the route does not run. The **Route Tree** setting (F2 → Settings) says
+  whether it is shown at first. It needs an editor of 90 columns or more.
+
 ## General
 - **Tab** — toggle focus between file list and source viewer
 - The focused panel title is highlighted; the unfocused panel dims
