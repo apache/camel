@@ -213,7 +213,6 @@ public class KafkaComponent extends AbstractKafkaComponent {
         if (kafkaClientFactory == null) {
             kafkaClientFactory = new DefaultKafkaClientFactory();
         }
-
         if (configuration.isAllowManualCommit() && kafkaManualCommitFactory == null) {
             LOG.warn("The component was setup for allowing manual commits, but a manual commit factory was not set");
         }

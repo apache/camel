@@ -49,13 +49,15 @@ import org.apache.kafka.common.config.internals.BrokerSecurityConfigs;
 import org.apache.kafka.common.security.auth.SecurityProtocol;
 
 /**
- * The options shared by every Kafka client that Camel creates: the brokers, the client id, the connection, metrics and
- * backoff settings, the security (SSL, SASL, Kerberos, OAuth) settings, the deserializers and header handling, and the
- * additional properties.
+ * Base configuration of the Camel Kafka endpoints: the brokers, the client id, the connection, metrics and backoff
+ * settings, the security (SSL, SASL, Kerberos, OAuth) settings and the additional properties, which every Kafka client
+ * uses, together with the options for reading records (key and value deserializers, header deserializer, header filter
+ * strategy, schema registry and the validation of the brokers at startup), which the Kafka consumers use.
  * <p/>
- * A configuration for a specific client extends this class with the options of that client, and builds the client
+ * A configuration for a specific endpoint extends this class with the options of its clients, and builds the client
  * properties with {@link #applyCommonClientProperties(Properties)}, {@link #applySecurityProperties(Properties)} and
- * {@link #applyAdditionalProperties(Properties)}.
+ * {@link #applyAdditionalProperties(Properties)}. A configuration for a client that does not read records, such as an
+ * admin client, should not extend this class as it is, as it would inherit the options for reading records.
  */
 @UriParams
 public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilterStrategyAware {
