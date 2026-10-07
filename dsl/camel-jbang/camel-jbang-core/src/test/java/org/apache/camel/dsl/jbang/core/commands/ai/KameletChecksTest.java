@@ -308,6 +308,19 @@ class KameletChecksTest {
     }
 
     @Test
+    void camelCoreIsImpliedAndCamelKameletIsNot() {
+        String content = withDependencies(TAG_KAMELET.formatted("${body} [{{tag}}]"), "camel:core", "camel:kamelet");
+        assertThat(KameletChecks.unusedDependencies(content)).singleElement().asString()
+                .contains("camel:core is implied");
+        // also when the template uses a bean, whose class may need the other dependencies
+        String bean = withDependencies(TAG_KAMELET.formatted("${body}"), "camel:core", "camel:kafka")
+                .replace("        - setBody:\n",
+                        "        - bean:\n            beanType: org.example.HoistField\n        - setBody:\n");
+        assertThat(KameletChecks.unusedDependencies(bean)).singleElement().asString()
+                .contains("camel:core is implied");
+    }
+
+    @Test
     void theDependenciesTheTemplateUsesAreNotNoted() {
         String source = """
                 apiVersion: camel.apache.org/v1

@@ -381,6 +381,7 @@ public final class KameletChecks {
      * the Kamelet works, but an exported project gets the artifact for nothing. A model copies them from a sample whose
      * template starts from a timer, or from the route that uses the Kamelet (CAMEL-25403). Nothing is said when the
      * template could use a component in a way not visible here: a bean, a class reference or a placeholder as a scheme.
+     * camel:core is noted as implied, as every Camel runtime has it.
      */
     public static List<String> unusedDependencies(String content) {
         List<String> notes = new ArrayList<>();
@@ -397,9 +398,8 @@ public final class KameletChecks {
             return notes;
         }
         Set<String> used = new HashSet<>();
-        if (!collectUsed(null, template, used)) {
-            return notes;
-        }
+        // false when the template may use a component unseen: then only camel:core is noted
+        boolean inspectable = collectUsed(null, template, used);
         CamelCatalog catalog = catalog();
         Set<String> usedArtifacts = new HashSet<>();
         for (String name : used) {
@@ -418,6 +418,15 @@ public final class KameletChecks {
                 continue;
             }
             String name = dep.substring("camel:".length());
+            if ("core".equals(name)) {
+                // every Camel runtime has camel-core; camel:kamelet is not implied, it runs the template
+                notes.add(EndpointChecks.linePrefix(line(d)) + "spec.dependencies: camel:core is implied, every Camel"
+                          + " runtime has it: leave it out");
+                continue;
+            }
+            if (!inspectable) {
+                continue;
+            }
             ComponentModel model = catalog.componentModel(name);
             // only a component is checked: a language or a data format may be used in ways the template does not show
             if (model == null || catalog.languageModel(name) != null || catalog.dataFormatModel(name) != null
