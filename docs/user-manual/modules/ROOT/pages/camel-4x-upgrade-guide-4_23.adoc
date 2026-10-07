@@ -704,6 +704,10 @@ The thread pool MBeans of a source that creates several thread pools (such as th
 locking pools of the Aggregate EIP) had the same name, so only the first one was registered. For a source that is not
 an EIP, a name or a static service, the `SourceId` attribute is now the name of the thread pool, which is also added to
 the MBean name: `AggregateProcessor(0x1b2c3d4e)(AggregateTimeoutChecker)` instead of `AggregateProcessor(0x1b2c3d4e)`.
+This also applies to the thread pools of component consumers, producers and their helper services, such as the
+consumer threads of `seda` (`SedaConsumer(0x1b2c3d4e)(seda://foo)`), the reply manager pools of request/reply over
+`jms` and `sjms` (`JmsProducer(0x1b2c3d4e)(JmsReplyManagerTimeoutChecker[bar])`), the timeout pools of `netty`
+request/reply and the read lock release task of `file`.
 The names of the thread pools of EIPs, of pools created by name and of static services do not change.
 
 The JMX `browse` operation of the `DefaultInflightRepository` MBean and the `listAwaitThreads` data of the
