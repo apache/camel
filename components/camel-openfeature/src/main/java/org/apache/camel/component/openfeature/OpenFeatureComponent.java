@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.openfeature.sdk.Client;
 import dev.openfeature.sdk.FeatureProvider;
@@ -42,12 +43,14 @@ public class OpenFeatureComponent extends DefaultComponent {
 
     private volatile OpenFeatureAPI api;
     private final Map<String, DomainBinding> domainBindings = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Object> domainLocks = new ConcurrentHashMap<>();
 
     private static class DomainBinding {
         final FeatureProvider provider;
         final boolean owned;
         int refCount;
         File tempFlagFile;
+        private final AtomicBoolean shutdownCalled = new AtomicBoolean();
 
         DomainBinding(FeatureProvider provider, boolean owned) {
             this.provider = provider;
@@ -56,6 +59,9 @@ public class OpenFeatureComponent extends DefaultComponent {
         }
 
         void shutdown() {
+            if (!shutdownCalled.compareAndSet(false, true)) {
+                return;
+            }
             if (owned) {
                 try {
                     provider.shutdown();
@@ -132,46 +138,53 @@ public class OpenFeatureComponent extends DefaultComponent {
         super.doStop();
     }
 
-    synchronized Client acquireOrRegister(String domain, ProviderSupplier providerSupplier) throws Exception {
-        DomainBinding existing = domainBindings.get(domain);
-        if (existing != null) {
-            existing.refCount++;
+    Client acquireOrRegister(String domain, ProviderSupplier providerSupplier) throws Exception {
+        Object lock = domainLocks.computeIfAbsent(domain, k -> new Object());
+        synchronized (lock) {
+            DomainBinding existing = domainBindings.get(domain);
+            if (existing != null) {
+                existing.refCount++;
+                return api.getClient(domain);
+            }
+
+            ProviderRegistration reg = providerSupplier.get();
+            try {
+                api.setProviderAndWait(domain, reg.provider);
+            } catch (Exception e) {
+                if (reg.owned) {
+                    try {
+                        reg.provider.shutdown();
+                    } catch (Exception suppressed) {
+                        e.addSuppressed(suppressed);
+                    }
+                }
+                if (reg.tempFlagFile != null) {
+                    try {
+                        Files.deleteIfExists(reg.tempFlagFile.toPath());
+                    } catch (IOException suppressed) {
+                        e.addSuppressed(suppressed);
+                    }
+                }
+                throw e;
+            }
+            DomainBinding binding = new DomainBinding(reg.provider, reg.owned);
+            binding.tempFlagFile = reg.tempFlagFile;
+            domainBindings.put(domain, binding);
             return api.getClient(domain);
         }
-
-        ProviderRegistration reg = providerSupplier.get();
-        try {
-            api.setProviderAndWait(domain, reg.provider);
-        } catch (Exception e) {
-            if (reg.owned) {
-                try {
-                    reg.provider.shutdown();
-                } catch (Exception suppressed) {
-                    e.addSuppressed(suppressed);
-                }
-            }
-            if (reg.tempFlagFile != null) {
-                try {
-                    Files.deleteIfExists(reg.tempFlagFile.toPath());
-                } catch (IOException suppressed) {
-                    e.addSuppressed(suppressed);
-                }
-            }
-            throw e;
-        }
-        DomainBinding binding = new DomainBinding(reg.provider, reg.owned);
-        binding.tempFlagFile = reg.tempFlagFile;
-        domainBindings.put(domain, binding);
-        return api.getClient(domain);
     }
 
-    synchronized void unregisterEndpoint(String domain) {
-        DomainBinding binding = domainBindings.get(domain);
-        if (binding != null) {
-            binding.refCount--;
-            if (binding.refCount <= 0) {
-                domainBindings.remove(domain);
-                binding.shutdown();
+    void unregisterEndpoint(String domain) {
+        Object lock = domainLocks.computeIfAbsent(domain, k -> new Object());
+        synchronized (lock) {
+            DomainBinding binding = domainBindings.get(domain);
+            if (binding != null) {
+                binding.refCount--;
+                if (binding.refCount <= 0) {
+                    domainBindings.remove(domain);
+                    domainLocks.remove(domain);
+                    binding.shutdown();
+                }
             }
         }
     }
