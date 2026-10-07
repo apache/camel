@@ -560,22 +560,6 @@ public class CamelMonitor extends CamelCommand {
      * session with confirmations off quit at once. The F2 menu's Quit entry and the {@code tui_action} MCP tool go
      * through here too, so quitting behaves the same however it is asked for.
      */
-    /**
-     * Deletes the folders of the examples that no longer run; an example that still runs keeps its folder and the files
-     * it reads (CAMEL-25425).
-     */
-    private void deleteExampleDirs() {
-        try {
-            List<Path> runningDirs = ctx.data.get().stream()
-                    .filter(i -> !i.vanishing && i.directory != null)
-                    .map(i -> Path.of(i.directory))
-                    .toList();
-            actionsPopup.getLaunchManager().deleteExampleDirs(runningDirs);
-        } catch (Exception e) {
-            // best effort: what is left is removed by a later session
-        }
-    }
-
     void quitTui(boolean confirm) {
         if (confirm && ctx.confirmActions) {
             LaunchManager launches = actionsPopup.getLaunchManager();
@@ -595,6 +579,22 @@ public class CamelMonitor extends CamelCommand {
             }
         } else {
             runner.quit();
+        }
+    }
+
+    /**
+     * Deletes the folders of the examples that no longer run; an example that still runs keeps its folder and the files
+     * it reads (CAMEL-25425).
+     */
+    private void deleteExampleDirs() {
+        try {
+            List<Path> runningDirs = ctx.data.get().stream()
+                    .filter(i -> !i.vanishing && i.directory != null)
+                    .map(i -> Path.of(i.directory))
+                    .toList();
+            actionsPopup.getLaunchManager().deleteExampleDirs(runningDirs);
+        } catch (Exception e) {
+            // best effort: what is left is removed by a later session
         }
     }
 
