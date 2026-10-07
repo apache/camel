@@ -1930,7 +1930,8 @@ public class Run extends CamelCommand {
 
         pb = new ProcessBuilder();
         pb.command(javaCmd);
-        pb.directory(runDirPath.toFile());
+        // run in the current directory (not the export folder), so the routes read and write files relative to
+        // where camel run is started, as with JBang: file:orders in an example reads its orders folder (CAMEL-25423)
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
         p = pb.start();
         processRef.set(p);
@@ -2450,6 +2451,9 @@ public class Run extends CamelCommand {
         if (springBootRunJvmArgs != null) {
             mvnCmd.add("-Dspring-boot.run.jvmArguments=" + springBootRunJvmArgs);
         }
+        // run in the current directory, not the export folder, so the routes read and write files relative to where
+        // camel run is started (CAMEL-25423)
+        mvnCmd.add("-Dspring-boot.run.workingDirectory=" + Paths.get(".").toAbsolutePath().normalize());
         mvnCmd.add("spring-boot:run");
         pb.command(mvnCmd);
 

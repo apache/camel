@@ -213,7 +213,7 @@
             "orders/order-1003.json"
         ],
         "infraServices": [
-            "aws"
+            "aws sqs"
         ],
         "order": 1
     },

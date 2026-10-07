@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
@@ -192,7 +193,7 @@ class LaunchManager {
                 .collect(Collectors.toSet());
         List<String> missing = new ArrayList<>();
         for (String alias : required) {
-            if (!runningAliases.contains(alias)) {
+            if (!runningAliases.contains(serviceOf(alias))) {
                 missing.add(alias);
             }
         }
@@ -205,14 +206,25 @@ class LaunchManager {
     }
 
     /**
-     * Starts an infra service in the background via {@code camel infra run <alias> --background}. The launch is
-     * monitored like any other, so a failure surfaces through the failure log callback.
+     * The service of an infra entry, which may name its implementation too: {@code aws sqs} is the {@code aws} service.
+     * A running service is known by the service alone.
+     */
+    static String serviceOf(String alias) {
+        String s = alias.trim();
+        int space = s.indexOf(' ');
+        return space > 0 ? s.substring(0, space) : s;
+    }
+
+    /**
+     * Starts an infra service in the background via {@code camel infra run <alias> --background}, where the alias may
+     * name the implementation too ({@code aws sqs}). The launch is monitored like any other, so a failure surfaces
+     * through the failure log callback.
      */
     void startInfra(String alias) throws IOException {
         List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
         cmd.add("infra");
         cmd.add("run");
-        cmd.add(alias);
+        cmd.addAll(Arrays.asList(alias.trim().split("\\s+")));
         cmd.add("--background");
         Path outputFile = createSecureTempFile("camel-infra-", ".log");
         outputFile.toFile().deleteOnExit();
@@ -342,7 +354,7 @@ class LaunchManager {
                     .filter(i -> i.alive)
                     .map(i -> i.alias)
                     .collect(Collectors.toSet());
-            if (runningAliases.containsAll(deferredLaunch.requiredInfra)) {
+            if (deferredLaunch.requiredInfra.stream().map(LaunchManager::serviceOf).allMatch(runningAliases::contains)) {
                 DeferredLaunch dl = deferredLaunch;
                 deferredLaunch = null;
                 dl.launchAction.run();
