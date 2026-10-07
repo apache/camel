@@ -40,7 +40,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.lowlevel.Compose;
 
-import static org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions;
+import static org.apache.camel.semantic.SemanticEvaluationsBuilder.semanticEvaluations;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -53,13 +53,15 @@ class SemanticContractTest {
             context.getRegistry().bind("content", expert);
             declarations(context, dsl);
             context.start();
-            var evaluation = SemanticQuestions.get(context).get("categories");
+            var evaluation = SemanticEvaluations.get(context).get("categories");
             assertThat(evaluation.getExpert()).isEqualTo("content");
             assertThat(evaluation.getState()).isEqualTo("${body}");
             assertThat(evaluation.getParameters()).containsOnlyKeys("policy", "limit");
+            assertThat(evaluation.getParameters().get("limit")).isInstanceOf(Number.class);
             assertThat(evaluation.getParameters().get("policy")).isInstanceOfSatisfying(Map.class, policy -> {
                 assertThat(policy.get("allowed-tags")).isEqualTo(List.of("privacy", "unsafe"));
                 assertThat(policy.get("enabled")).isEqualTo(true);
+                assertThat(policy.get("cutoff")).isInstanceOf(Number.class);
             });
             assertThat(new BigDecimal(((Map<?, ?>) evaluation.getParameters().get("policy")).get("cutoff").toString()))
                     .isEqualByComparingTo("0.7");
@@ -100,8 +102,8 @@ class SemanticContractTest {
         try (var context = new DefaultCamelContext()) {
             var expert = new ContentExpert();
             context.getRegistry().bind("content", expert);
-            SemanticQuestions.get(context).replace("test",
-                    Map.of("q", new SemanticQuestion(operation, "content", null, Map.of())));
+            SemanticEvaluations.get(context).replace("test",
+                    Map.of("q", new SemanticEvaluation(operation, "content", null, Map.of())));
             context.start();
             var exchange = new DefaultExchange(context);
             exchange.getMessage().setBody(Map.of("response", "answer"));
@@ -118,14 +120,14 @@ class SemanticContractTest {
     void cachedNestedSelectorsValidateTheCompleteReplacement(boolean transitive) throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("content", new ContentExpert());
-            var registry = SemanticQuestions.get(context);
-            Map<String, SemanticQuestion> declarations = new LinkedHashMap<>();
-            declarations.put("outer", new SemanticQuestion("detect", "content", "${semantic('inner')} ready", Map.of()));
-            declarations.put("inner", new SemanticQuestion(
+            var registry = SemanticEvaluations.get(context);
+            Map<String, SemanticEvaluation> declarations = new LinkedHashMap<>();
+            declarations.put("outer", new SemanticEvaluation("detect", "content", "${semantic('inner')} ready", Map.of()));
+            declarations.put("inner", new SemanticEvaluation(
                     "detect", "content",
                     transitive ? "${semantic('leaf')} ready" : null, Map.of()));
             if (transitive) {
-                declarations.put("leaf", new SemanticQuestion("detect", "content", null, Map.of()));
+                declarations.put("leaf", new SemanticEvaluation("detect", "content", null, Map.of()));
             }
             registry.replace("test", declarations);
             context.start();
@@ -133,11 +135,11 @@ class SemanticContractTest {
             exchange.getMessage().setBody("content");
             var expression = context.resolveLanguage("semantic").createExpression("ref:outer");
             assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
-            Map<String, SemanticQuestion> replacement = new LinkedHashMap<>(declarations);
+            Map<String, SemanticEvaluation> replacement = new LinkedHashMap<>(declarations);
             String removed = transitive ? "leaf" : "inner";
             replacement.remove(removed);
             assertThatThrownBy(() -> registry.replace("test", replacement))
-                    .hasMessageContaining("Unknown semantic question: " + removed);
+                    .hasMessageContaining("Unknown semantic evaluation: " + removed);
             assertThat(registry.get(removed)).isSameAs(declarations.get(removed));
             assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
         }
@@ -149,13 +151,13 @@ class SemanticContractTest {
         var entered = new CountDownLatch(1);
         var release = new CountDownLatch(1);
         try (var context = new DefaultCamelContext()) {
-            var original = new SemanticQuestion("detect", "content", null, Map.of());
-            var candidate = new SemanticQuestion("detect", "content", "${header.candidate}", Map.of());
-            var registry = SemanticQuestions.get(context);
+            var original = new SemanticEvaluation("detect", "content", null, Map.of());
+            var candidate = new SemanticEvaluation("detect", "content", "${header.candidate}", Map.of());
+            var registry = SemanticEvaluations.get(context);
             context.getRegistry().bind("content", new ContentExpert() {
                 @Override
-                public void validate(SemanticQuestion question) {
-                    if (question == candidate) {
+                public void validate(SemanticEvaluation evaluation) {
+                    if (evaluation == candidate) {
                         entered.countDown();
                         try {
                             assertThat(release.await(10, TimeUnit.SECONDS)).isTrue();
@@ -187,17 +189,17 @@ class SemanticContractTest {
     void invalidProgrammaticReplacementRetainsUnusedDeclarations() throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("content", new ContentExpert());
-            var registry = SemanticQuestions.get(context);
-            var previous = new SemanticQuestion("detect", "content", null, Map.of());
+            var registry = SemanticEvaluations.get(context);
+            var previous = new SemanticEvaluation("detect", "content", null, Map.of());
             registry.replace("test", Map.of("q", previous));
             context.start();
             assertThatThrownBy(() -> registry.replace("test", Map.of("q",
-                    new SemanticQuestion("detect", "content", null, Map.of("threshold", "wrong")))))
+                    new SemanticEvaluation("detect", "content", null, Map.of("threshold", "wrong")))))
                     .hasMessageContaining("q").hasMessageContaining("content").hasMessageContaining("threshold");
             assertThat(registry.get("q")).isSameAs(previous);
-            assertThat(previous.getThreshold()).isNull();
-            assertThat(previous.getUncertainty()).isNull();
-            assertThat(previous.getUncertaintyPolicy()).isNull();
+            assertThat(previous.getParameters().get("threshold")).isNull();
+            assertThat(previous.getParameters().get("uncertainty")).isNull();
+            assertThat(previous.getParameters().get("uncertaintyPolicy")).isNull();
         }
     }
 
@@ -208,7 +210,7 @@ class SemanticContractTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    semanticQuestions(this).expert("content")
+                    semanticEvaluations(this).expert("content")
                             .evaluation("categories").operation("classify").end()
                             .evaluation("safety").operation("safety").register();
                     from("direct:check").choice()
@@ -240,7 +242,7 @@ class SemanticContractTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    semanticQuestions(this).expert("content")
+                    semanticEvaluations(this).expert("content")
                             .evaluation("injection").operation("detect").parameter("threshold", 0.9).end()
                             .evaluation("defaultPolicy").operation("detect").register();
                 }
@@ -273,8 +275,8 @@ class SemanticContractTest {
         try (var context = new DefaultCamelContext()) {
             var expert = new ContentExpert();
             context.getRegistry().bind("content", expert);
-            SemanticQuestions.get(context).replace("test",
-                    Map.of("categories", new SemanticQuestion("classify", "content", null, Map.of())));
+            SemanticEvaluations.get(context).replace("test",
+                    Map.of("categories", new SemanticEvaluation("classify", "content", null, Map.of())));
             context.start();
             var expression = context.resolveLanguage("simple").createExpression("${semantic('categories')}");
             var exchange = new DefaultExchange(context);
@@ -301,8 +303,8 @@ class SemanticContractTest {
                     throw new AssertionError("Runtime must read the class contract directly");
                 }
             });
-            SemanticQuestions.get(context).replace("test",
-                    Map.of("detect", new SemanticQuestion("detect", "content", null, Map.of())));
+            SemanticEvaluations.get(context).replace("test",
+                    Map.of("detect", new SemanticEvaluation("detect", "content", null, Map.of())));
             context.start();
             var exchange = new DefaultExchange(context);
             exchange.getMessage().setBody("content");
@@ -322,9 +324,9 @@ class SemanticContractTest {
             if (started) {
                 context.start();
             }
-            SemanticQuestions.get(context).replace("test", Map.of(
-                    "inner", new SemanticQuestion("boolean", null, null, Map.of()),
-                    "outer", new SemanticQuestion("detect", "content", "${semantic('inner')} ready", Map.of())));
+            SemanticEvaluations.get(context).replace("test", Map.of(
+                    "inner", new SemanticEvaluation("boolean", null, null, Map.of()),
+                    "outer", new SemanticEvaluation("detect", "content", "${semantic('inner')} ready", Map.of())));
             context.start();
             assertThat(SemanticExpertTest.ManagedExpert.initialized).isZero();
             assertThat(SemanticExpertTest.ManagedExpert.started).isZero();
@@ -341,7 +343,7 @@ class SemanticContractTest {
         try (var context = new DefaultCamelContext()) {
             var expert = new ContentExpert();
             context.getRegistry().bind("content", expert);
-            SemanticQuestions.get(context).replace("test", Map.of("bad", new SemanticQuestion(
+            SemanticEvaluations.get(context).replace("test", Map.of("bad", new SemanticEvaluation(
                     "detect", "content", null,
                     Map.of("threshold", "private-value"))));
             assertThatThrownBy(context::start).hasMessageContaining("bad").hasMessageContaining("content")
@@ -354,9 +356,9 @@ class SemanticContractTest {
     void nestedStateEvaluationCannotLeaveResultsWhenOuterEvaluationFails() throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("content", new ContentExpert());
-            SemanticQuestions.get(context).replace("test", Map.of(
-                    "inner", new SemanticQuestion("safety", "content", null, Map.of()),
-                    "outer", new SemanticQuestion("classify", "content", "${semantic('inner')}", Map.of())));
+            SemanticEvaluations.get(context).replace("test", Map.of(
+                    "inner", new SemanticEvaluation("safety", "content", null, Map.of()),
+                    "outer", new SemanticEvaluation("classify", "content", "${semantic('inner')}", Map.of())));
             context.start();
             var exchange = new DefaultExchange(context);
             exchange.getMessage().setBody(Map.of("response", "answer"));
@@ -374,7 +376,7 @@ class SemanticContractTest {
             context.getRegistry().bind("content", new ContentExpert());
             numericDeclaration(context, dsl, "9007199254740993");
             context.start();
-            Object value = SemanticQuestions.get(context).get("numeric").getParameters().get("limit");
+            Object value = SemanticEvaluations.get(context).get("numeric").getParameters().get("limit");
             assertThat(new BigDecimal(value.toString())).isEqualByComparingTo("9007199254740993");
         }
         try (var context = new DefaultCamelContext()) {
@@ -386,8 +388,8 @@ class SemanticContractTest {
 
     private static void numericDeclaration(DefaultCamelContext context, String dsl, String value) throws Exception {
         if (dsl.equals("java")) {
-            SemanticQuestions.get(context).replace("test", Map.of("numeric",
-                    new SemanticQuestion("classify", "content", null, Map.of("limit", new BigDecimal(value)))));
+            SemanticEvaluations.get(context).replace("test", Map.of("numeric",
+                    new SemanticEvaluation("classify", "content", null, Map.of("limit", new BigDecimal(value)))));
         } else if (dsl.equals("yaml")) {
             yamlDeclaration(context, """
                     - semantic:
@@ -424,11 +426,12 @@ class SemanticContractTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    semanticQuestions(this).expert("content").state("${body}")
+                    semanticEvaluations(this).expert("content").state("${body}")
                             .evaluation("categories").operation("classify")
-                            .parameter("limit", 2).parameter("policy",
+                            .parameter("limit", Double.valueOf(getContext().resolvePropertyPlaceholders("{{limit:2}}")))
+                            .parameter("policy",
                                     Map.of("allowed-tags", List.of("{{label:privacy}}", "unsafe"), "enabled", true, "cutoff",
-                                            0.7))
+                                            Double.valueOf(getContext().resolvePropertyPlaceholders("{{cutoff:0.7}}"))))
                             .register();
                 }
             });
@@ -441,11 +444,11 @@ class SemanticContractTest {
                           categories:
                             operation: classify
                             parameters:
-                              limit: 2
+                              limit: !number "{{limit:2}}"
                               policy:
                                 allowed-tags: ["{{label:privacy}}", unsafe]
                                 enabled: true
-                                cutoff: 0.7
+                                cutoff: !number "{{cutoff:0.7}}"
                     """;
             yamlDeclaration(context, yaml);
         } else {
@@ -454,11 +457,11 @@ class SemanticContractTest {
                             <semantic expert="content" state="${body}">
                               <evaluation name="categories" operation="classify">
                                 <parameters>
-                                  <parameter name="limit"><number>2</number></parameter>
+                                  <parameter name="limit"><number>{{limit:2}}</number></parameter>
                                   <parameter name="policy"><map>
                                     <entry key="allowed-tags"><list><string>{{label:privacy}}</string><string>unsafe</string></list></entry>
                                     <entry key="enabled"><boolean>true</boolean></entry>
-                                    <entry key="cutoff"><number>0.7</number></entry>
+                                    <entry key="cutoff"><number>{{cutoff:0.7}}</number></entry>
                                   </map></parameter>
                                 </parameters>
                               </evaluation>
@@ -500,11 +503,11 @@ class SemanticContractTest {
         boolean malformed;
 
         @Override
-        public void validate(SemanticQuestion evaluation) {
+        public void validate(SemanticEvaluation evaluation) {
         }
 
         @Override
-        public void validateInput(SemanticQuestion evaluation, Object selected) {
+        public void validateInput(SemanticEvaluation evaluation, Object selected) {
             if (!evaluation.getOperation().equals("detect")
                     && (!(selected instanceof Map<?, ?> map) || !map.containsKey("response"))) {
                 throw new IllegalArgumentException("Selected state requires a response");
@@ -512,7 +515,7 @@ class SemanticContractTest {
         }
 
         @Override
-        public SemanticResult evaluate(SemanticQuestion evaluation, Object selected) {
+        public SemanticResult evaluate(SemanticEvaluation evaluation, Object selected) {
             calls++;
             state = selected;
             parameters = evaluation.getParameters();

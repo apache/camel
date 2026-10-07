@@ -27,16 +27,16 @@ class SemanticSchemaTest {
     void numericDecisionPoliciesAcceptRuntimeScalarForms(boolean canonical) throws Exception {
         var validator = new YamlValidator(canonical);
         for (String value : new String[] { "0.1", "\"0.1\"", "\"{{limit}}\"", "\"{{limit:0.1}}\"" }) {
-            assertThat(validator.validate(booleanQuestion(value)))
+            assertThat(validator.validate(booleanEvaluation(value)))
                     .as("decision policy %s in canonical mode %s", value, canonical).isEmpty();
         }
     }
 
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
-    void scalarConversionsInDifferentQuestionsSelectTheirOwnSchema(boolean canonical) throws Exception {
+    void scalarConversionsInDifferentEvaluationsSelectTheirOwnSchema(boolean canonical) throws Exception {
         var validator = new YamlValidator(canonical);
-        String questions = booleanQuestion("\"{{limit:0.1}}\"") + """
+        String evaluations = booleanEvaluation("\"{{limit:0.1}}\"") + """
                       topic:
                         type: choice
                         instructions: Select the topic
@@ -46,19 +46,19 @@ class SemanticSchemaTest {
                         instructions: Assess urgency
                         criteria: [1, 2, 3]
                 """;
-        assertThat(validator.validate(questions)).isEmpty();
+        assertThat(validator.validate(evaluations)).isEmpty();
     }
 
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
-    void placeholdersDoNotHideInvalidQuestionFields(boolean canonical) throws Exception {
+    void placeholdersDoNotHideInvalidEvaluationFields(boolean canonical) throws Exception {
         var validator = new YamlValidator(canonical);
-        String question = booleanQuestion("\"{{limit:0.1}}\"");
+        String evaluation = booleanEvaluation("\"{{limit:0.1}}\"");
         for (String invalid : new String[] {
-                question.replace("threshold:", "thresholdd:"),
-                question.replace("threshold: \"{{limit:0.1}}\"", "threshold: not-a-number"),
-                question.replace("threshold: \"{{limit:0.1}}\"", "threshold: {value: 0.1}") }) {
-            assertThat(validator.validate(invalid)).as("invalid question: %s", invalid).isNotEmpty();
+                evaluation.replace("threshold:", "thresholdd:"),
+                evaluation.replace("threshold: \"{{limit:0.1}}\"", "threshold: not-a-number"),
+                evaluation.replace("threshold: \"{{limit:0.1}}\"", "threshold: {value: 0.1}") }) {
+            assertThat(validator.validate(invalid)).as("invalid evaluation: %s", invalid).isNotEmpty();
         }
     }
 
@@ -66,32 +66,30 @@ class SemanticSchemaTest {
     @ValueSource(booleans = { false, true })
     void expertContractsOwnOperationNamesAndRequiredParameters(boolean canonical) throws Exception {
         var validator = new YamlValidator(canonical);
-        for (String declaration : new String[] { "question", "evaluation" }) {
-            String yaml = """
-                    - semantic:
-                        expert: content
-                        state: "${body}"
-                        %s:
-                          safety:
-                            operation: classify
-                            parameters:
-                              policy:
-                                labels: [privacy, unsafe]
-                                limit: 2
-                                enabled: true
-                          department:
-                            type: choice
-                            instructions: Department?
-                            criteria: {billing: Invoices, support: Questions}
-                          score:
-                            operation: rank
-                            criteria: [Low, High]
-                    """.formatted(declaration);
-            assertThat(validator.validate(yaml)).isEmpty();
-            assertThat(validator.validate(yaml.replace("parameters:", "paramters:"))).isNotEmpty();
-            assertThat(validator.validate(yaml.replace("parameters:", "parameters: []\n            ignored:")))
-                    .isNotEmpty();
-        }
+        String yaml = """
+                - semantic:
+                    expert: content
+                    state: "${body}"
+                    evaluation:
+                      safety:
+                        operation: classify
+                        parameters:
+                          policy:
+                            labels: [privacy, unsafe]
+                            limit: !number "{{limit:2}}"
+                            enabled: true
+                      department:
+                        type: choice
+                        instructions: Department?
+                        criteria: {billing: Invoices, support: Questions}
+                      score:
+                        operation: rank
+                        criteria: [Low, High]
+                """;
+        assertThat(validator.validate(yaml)).isEmpty();
+        assertThat(validator.validate(yaml.replace("parameters:", "paramters:"))).isNotEmpty();
+        assertThat(validator.validate(yaml.replace("parameters:", "parameters: []\n            ignored:")))
+                .isNotEmpty();
     }
 
     @ParameterizedTest
@@ -99,15 +97,16 @@ class SemanticSchemaTest {
     void semanticRequiresExactlyOneDeclarationBlock(boolean canonical) throws Exception {
         var validator = new YamlValidator(canonical);
         assertThat(validator.validate("- semantic: {expert: content}")).isNotEmpty();
+        assertThat(validator.validate("- semantic: {question: {}}")).isNotEmpty();
         assertThat(validator.validate("- semantic: {question: {}, evaluation: {}}")).isNotEmpty();
         assertThat(validator.validate("- semantic: {evaluation: {q: {operation: detect, uncertaintyPolicy: expert-policy}}}"))
                 .isEmpty();
     }
 
-    private static String booleanQuestion(String value) {
+    private static String booleanEvaluation(String value) {
         return """
                 - semantic:
-                    question:
+                    evaluation:
                       actionable:
                         type: boolean
                         instructions: Is this actionable?
@@ -118,11 +117,11 @@ class SemanticSchemaTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
-    void questionSyntaxIsClosedAndExpertConstraintsAreValidatedAtRuntime(boolean canonical) throws Exception {
+    void evaluationSyntaxIsClosedAndExpertConstraintsAreValidatedAtRuntime(boolean canonical) throws Exception {
         YamlValidator validator = new YamlValidator(canonical);
         String choice = """
                 - semantic:
-                    question:
+                    evaluation:
                       topic:
                         type: choice
                         instructions: Select the topic
@@ -137,11 +136,11 @@ class SemanticSchemaTest {
                 choice.replace("instructions:", "typo:"),
                 choice.replace("instructions:", "uncertainty-policy: fail\n        instructions:") }) {
             assertThat(validator.validate(invalid)).isNotEmpty().allSatisfy(
-                    error -> assertThat(error.getInstanceLocation().toString()).startsWith("/0/semantic/question/topic"));
+                    error -> assertThat(error.getInstanceLocation().toString()).startsWith("/0/semantic/evaluation/topic"));
         }
         assertThat(validator.validate("""
                 - semantic:
-                    question:
+                    evaluation:
                       actionable:
                         type: boolean
                         instructions: Is this actionable?

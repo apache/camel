@@ -22,33 +22,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 /** Immutable evaluation declaration. The expert defines the operation, parameter vocabulary and result semantics. */
-public final class SemanticQuestion {
+public final class SemanticEvaluation {
     private static final Set<Class<?>> NUMBER_TYPES = Set.of(Byte.class, Short.class, Integer.class, Long.class,
             Float.class, Double.class, BigInteger.class, BigDecimal.class);
-
-    public enum Type {
-        BOOLEAN,
-        CHOICE,
-        SCORE,
-        CLASSIFICATION
-    }
-
-    public enum UncertaintyPolicy {
-        FAIL,
-        NON_MATCH
-    }
 
     private final String operation;
     private final String expert;
     private final String state;
     private final Map<String, Object> parameters;
 
-    public SemanticQuestion(String operation, String expert, String state, Map<String, ?> parameters) {
+    public SemanticEvaluation(String operation, String expert, String state, Map<String, ?> parameters) {
         if (operation == null || operation.isBlank()) {
             throw new IllegalArgumentException("Evaluation operation is required");
         }
@@ -62,41 +49,6 @@ public final class SemanticQuestion {
         this.expert = expert;
         this.state = state;
         this.parameters = immutableMap(parameters == null ? Map.of() : parameters);
-    }
-
-    /** Convenience declaration for instruction-driven operations named boolean, choice or score. */
-    public SemanticQuestion(Type type, String instructions, String state, Map<String, String> criteria,
-                            List<String> levels, double threshold, double uncertainty, UncertaintyPolicy policy) {
-        this(type, instructions, state, criteria, levels, threshold, uncertainty, policy, null);
-    }
-
-    public SemanticQuestion(Type type, String instructions, String state, Map<String, String> criteria,
-                            List<String> levels, double threshold, double uncertainty, UncertaintyPolicy policy,
-                            String expert) {
-        this(type.name().toLowerCase(Locale.ROOT), expert, state,
-             instructionParameters(type, instructions, criteria, levels, threshold, uncertainty, policy));
-    }
-
-    private static Map<String, Object> instructionParameters(
-            Type type, String instructions, Map<String, String> criteria,
-            List<String> levels, double threshold, double uncertainty,
-            UncertaintyPolicy policy) {
-        Map<String, Object> values = new LinkedHashMap<>();
-        if (instructions != null) {
-            values.put("instructions", instructions);
-        }
-        if (criteria != null && !criteria.isEmpty()) {
-            values.put("criteria", criteria);
-        }
-        if (levels != null && !levels.isEmpty()) {
-            values.put("criteria", levels);
-        }
-        if (type == Type.BOOLEAN) {
-            values.put("threshold", threshold);
-            values.put("uncertainty", uncertainty);
-            values.put("uncertaintyPolicy", policy == UncertaintyPolicy.NON_MATCH ? "non-match" : "fail");
-        }
-        return values;
     }
 
     static Map<String, Object> immutableMap(Map<String, ?> values) {
@@ -149,45 +101,4 @@ public final class SemanticQuestion {
         return parameters;
     }
 
-    /**
-     * Instruction-driven operation kind; custom operations have their result type in the expert contract.
-     *
-     * @throws IllegalArgumentException if the operation is not a built-in instruction-driven kind
-     */
-    public Type getType() {
-        return Type.valueOf(operation.toUpperCase(Locale.ROOT));
-    }
-
-    public String getInstructions() {
-        return (String) parameters.get("instructions");
-    }
-
-    @SuppressWarnings("unchecked")
-    public Map<String, String> getCriteria() {
-        return parameters.get("criteria") instanceof Map<?, ?> map ? (Map<String, String>) map : Map.of();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<String> getLevels() {
-        return parameters.get("criteria") instanceof List<?> list ? (List<String>) list : List.of();
-    }
-
-    /** Requested threshold, or null when omitted. Defaults belong to the expert. */
-    public Double getThreshold() {
-        return parameters.get("threshold") instanceof Number number ? number.doubleValue() : null;
-    }
-
-    /** Requested uncertainty band, or null when omitted. Defaults belong to the expert. */
-    public Double getUncertainty() {
-        return parameters.get("uncertainty") instanceof Number number ? number.doubleValue() : null;
-    }
-
-    /** Requested instruction-driven policy, or null when omitted. Custom policies remain available in parameters. */
-    public UncertaintyPolicy getUncertaintyPolicy() {
-        Object policy = parameters.get("uncertaintyPolicy");
-        if (policy == null) {
-            return null;
-        }
-        return UncertaintyPolicy.valueOf(policy.toString().toUpperCase(Locale.ROOT).replace('-', '_'));
-    }
 }

@@ -106,7 +106,7 @@ class SemanticXmlLoaderTest {
                 </routes>
                 """.formatted(declarations ? """
                 <semantic>
-                  <question name="urgent" type="boolean"><instructions>Urgent?</instructions></question>
+                  <evaluation name="urgent" type="boolean"><instructions>Urgent?</instructions></evaluation>
                 </semantic>
                 """ : "");
         try (var context = new DefaultCamelContext()) {
@@ -115,9 +115,10 @@ class SemanticXmlLoaderTest {
             context.start();
             assertThat(context.getRouteDefinitions()).hasSize(2);
             if (declarations) {
-                assertThat(SemanticQuestions.get(context).get("urgent").getInstructions()).isEqualTo("Urgent?");
+                assertThat(SemanticEvaluations.get(context).get("urgent").getParameters().get("instructions"))
+                        .isEqualTo("Urgent?");
             } else {
-                assertThat(context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class)).isNull();
+                assertThat(context.getCamelContextExtension().getContextPlugin(SemanticEvaluations.class)).isNull();
             }
             try (var template = context.createProducerTemplate()) {
                 assertThat(template.requestBody("direct:nested", "hello", String.class)).isEqualTo("<semantic/>");

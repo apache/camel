@@ -26,8 +26,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.util.StringHelper;
 
 /** Fluent definition of an expert-owned evaluation. All DSLs build the same immutable declaration. */
-public final class SemanticQuestionBuilder {
-    private final SemanticQuestionsBuilder parent;
+public final class SemanticEvaluationBuilder {
+    private final SemanticEvaluationsBuilder parent;
     private final Map<String, Object> parameters = new LinkedHashMap<>();
     private final Map<String, String> criteria = new LinkedHashMap<>();
     private final List<String> levels = new ArrayList<>();
@@ -39,25 +39,25 @@ public final class SemanticQuestionBuilder {
     private String state;
 
     /** Create a standalone declaration, completed with {@link #build(CamelContext)}. */
-    public SemanticQuestionBuilder() {
+    public SemanticEvaluationBuilder() {
         this(null);
     }
 
-    SemanticQuestionBuilder(SemanticQuestionsBuilder parent) {
+    SemanticEvaluationBuilder(SemanticEvaluationsBuilder parent) {
         this.parent = parent;
     }
 
-    public SemanticQuestionBuilder operation(String operation) {
+    public SemanticEvaluationBuilder operation(String operation) {
         this.operation = operation;
         return this;
     }
 
     /** Select an instruction-driven operation by type, such as boolean, choice or score. */
-    public SemanticQuestionBuilder type(String type) {
+    public SemanticEvaluationBuilder type(String type) {
         return operation(type.toLowerCase(Locale.ROOT));
     }
 
-    public SemanticQuestionBuilder expert(String expert) {
+    public SemanticEvaluationBuilder expert(String expert) {
         this.expert = expert;
         return this;
     }
@@ -66,12 +66,12 @@ public final class SemanticQuestionBuilder {
         return expert != null ? expert : parent != null ? parent.getExpert() : null;
     }
 
-    public SemanticQuestionBuilder state(String state) {
+    public SemanticEvaluationBuilder state(String state) {
         this.state = state;
         return this;
     }
 
-    public SemanticQuestionBuilder parameter(String name, Object value) {
+    public SemanticEvaluationBuilder parameter(String name, Object value) {
         if (parameters.containsKey(name)) {
             throw new IllegalArgumentException("Duplicate semantic parameter: " + name);
         }
@@ -79,16 +79,16 @@ public final class SemanticQuestionBuilder {
         return this;
     }
 
-    public SemanticQuestionBuilder parameters(Map<String, ?> values) {
+    public SemanticEvaluationBuilder parameters(Map<String, ?> values) {
         values.forEach(this::parameter);
         return this;
     }
 
-    public SemanticQuestionBuilder instructions(String instructions) {
+    public SemanticEvaluationBuilder instructions(String instructions) {
         return parameter("instructions", instructions);
     }
 
-    public SemanticQuestionBuilder criterion(String name, String description) {
+    public SemanticEvaluationBuilder criterion(String name, String description) {
         if (criteria.containsKey(name)) {
             throw new IllegalArgumentException("Duplicate semantic criterion: " + name);
         }
@@ -96,36 +96,36 @@ public final class SemanticQuestionBuilder {
         return this;
     }
 
-    public SemanticQuestionBuilder level(String level) {
+    public SemanticEvaluationBuilder level(String level) {
         levels.add(level);
         return this;
     }
 
-    public SemanticQuestionBuilder threshold(double threshold) {
+    public SemanticEvaluationBuilder threshold(double threshold) {
         return parameter("threshold", threshold);
     }
 
-    public SemanticQuestionBuilder threshold(String threshold) {
+    public SemanticEvaluationBuilder threshold(String threshold) {
         this.threshold = threshold;
         return this;
     }
 
-    public SemanticQuestionBuilder uncertainty(double uncertainty) {
+    public SemanticEvaluationBuilder uncertainty(double uncertainty) {
         return parameter("uncertainty", uncertainty);
     }
 
-    public SemanticQuestionBuilder uncertainty(String uncertainty) {
+    public SemanticEvaluationBuilder uncertainty(String uncertainty) {
         this.uncertainty = uncertainty;
         return this;
     }
 
-    public SemanticQuestionBuilder uncertaintyPolicy(String policy) {
+    public SemanticEvaluationBuilder uncertaintyPolicy(String policy) {
         parameter("uncertaintyPolicy", policy);
         normalizeUncertaintyPolicy = true;
         return this;
     }
 
-    public SemanticQuestionsBuilder end() {
+    public SemanticEvaluationsBuilder end() {
         if (parent == null) {
             throw new IllegalStateException("Complete a standalone declaration with build(context)");
         }
@@ -137,7 +137,7 @@ public final class SemanticQuestionBuilder {
     }
 
     /** Build an immutable declaration, resolving placeholders in parameter values while retaining their types. */
-    public SemanticQuestion build(CamelContext context) {
+    public SemanticEvaluation build(CamelContext context) {
         Map<String, Object> values = new LinkedHashMap<>(parameters);
         if (!criteria.isEmpty() || !levels.isEmpty()) {
             if (values.containsKey("criteria") || !criteria.isEmpty() && !levels.isEmpty()) {
@@ -163,7 +163,7 @@ public final class SemanticQuestionBuilder {
             values.put("uncertaintyPolicy",
                     StringHelper.asEnumConstantValue(policy).toLowerCase(Locale.ROOT).replace('_', '-'));
         }
-        return new SemanticQuestion(
+        return new SemanticEvaluation(
                 operation, getExpert(), state != null ? state : parent != null ? parent.getState() : null, values);
     }
 

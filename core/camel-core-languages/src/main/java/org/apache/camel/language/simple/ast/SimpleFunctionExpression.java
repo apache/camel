@@ -25,12 +25,12 @@ import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.FileExpressionBuilder;
 import org.apache.camel.language.simple.SimpleFunctionDispatcher;
 import org.apache.camel.language.simple.SimpleFunctionHelper;
+import org.apache.camel.language.simple.SimplePredicateExpression;
 import org.apache.camel.language.simple.SimplePredicateParser;
 import org.apache.camel.language.simple.SimpleSyntaxHints;
 import org.apache.camel.language.simple.functions.DirectFunctionFactory;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
-import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
@@ -141,6 +141,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
     private Expression createNegatedExpression(CamelContext camelContext, String function) {
         final String name = function.substring(1).trim();
         final Expression exp = doCreateSimpleExpression(camelContext, name);
+        // Preserve the value-based rule for existing functions: ${body} is true and a missing header is false
+        // (CAMEL-24984). Only functions opting in explicitly use their predicate contract under negation.
+        final Predicate predicate = exp instanceof SimplePredicateExpression p
+                ? p : exchange -> ObjectHelper.evaluateValuePredicate(exp.evaluate(exchange, Object.class));
         return new Expression() {
             @Override
             public void init(CamelContext context) {
@@ -149,8 +153,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                // Preserve a function's predicate contract, including semantic's boolean-only guard.
-                boolean matches = ExpressionToPredicateAdapter.toPredicate(exp).matches(exchange);
+                boolean matches = predicate.matches(exchange);
                 return exchange.getContext().getTypeConverter().convertTo(type, exchange, !matches);
             }
 

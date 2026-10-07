@@ -25,17 +25,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.semantic.SemanticAdapter;
 import org.apache.camel.semantic.SemanticCapabilities;
+import org.apache.camel.semantic.SemanticEvaluation;
 import org.apache.camel.semantic.SemanticExpert;
 import org.apache.camel.semantic.SemanticExpert.InputType;
 import org.apache.camel.semantic.SemanticExpert.ResultType;
 import org.apache.camel.semantic.SemanticOperation;
 import org.apache.camel.semantic.SemanticParameter;
-import org.apache.camel.semantic.SemanticQuestion;
 import org.apache.camel.semantic.SemanticResult;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.json.JsonObject;
 
-/** Maps common questions to TypeSafe AI using the component's configured, managed transport. */
+/** Maps semantic evaluations to TypeSafe AI using the component's configured, managed transport. */
 @JdkService("semantic-adapter")
 @SemanticExpert(name = "typesafe-ai", provider = "typesafe-ai", artifactId = "camel-typesafe-ai",
                 description = "Instruction-driven decisions using TypeSafe AI",
@@ -112,14 +112,14 @@ public class TypeSafeAiSemanticAdapter implements SemanticAdapter, CamelContextA
     }
 
     @Override
-    public void validate(SemanticQuestion question) {
+    public void validate(SemanticEvaluation question) {
         SemanticCapabilities.from(getClass()).validate(question);
-        if (question.getCriteria().entrySet().stream().anyMatch(entry -> entry.getKey().isBlank() || entry.getValue().isBlank())
-                || question.getLevels().stream().anyMatch(String::isBlank)) {
+        if (criteria(question).entrySet().stream().anyMatch(entry -> entry.getKey().isBlank() || entry.getValue().isBlank())
+                || levels(question).stream().anyMatch(String::isBlank)) {
             throw new IllegalArgumentException("Parameter 'criteria' requires nonblank names and descriptions");
         }
-        if (question.getType() == SemanticQuestion.Type.BOOLEAN) {
-            if (question.getCriteria().keySet().stream().anyMatch(key -> !key.equals("true") && !key.equals("false"))) {
+        if ("boolean".equals(question.getOperation())) {
+            if (criteria(question).keySet().stream().anyMatch(key -> !key.equals("true") && !key.equals("false"))) {
                 throw new IllegalArgumentException("Parameter 'criteria' requires true or false keys");
             }
             double threshold = threshold(question);
@@ -145,12 +145,12 @@ public class TypeSafeAiSemanticAdapter implements SemanticAdapter, CamelContextA
     }
 
     @Override
-    public SemanticResult evaluate(SemanticQuestion question, Object state) throws Exception {
+    public SemanticResult evaluate(SemanticEvaluation question, Object state) throws Exception {
         return evaluateBatch(Map.of("question", question), state).get("question");
     }
 
     @Override
-    public Map<String, SemanticResult> evaluateBatch(Map<String, SemanticQuestion> questions, Object state) throws Exception {
+    public Map<String, SemanticResult> evaluateBatch(Map<String, SemanticEvaluation> questions, Object state) throws Exception {
         Map<String, Object> definitions = new LinkedHashMap<>();
         questions.forEach((name, question) -> definitions.put(name, definition(question)));
         JsonObject response = endpoint().evaluate(Map.of("state", state, "questions", definitions));
@@ -160,37 +160,37 @@ public class TypeSafeAiSemanticAdapter implements SemanticAdapter, CamelContextA
         return results;
     }
 
-    private Map<String, Object> definition(SemanticQuestion question) {
+    private Map<String, Object> definition(SemanticEvaluation question) {
         validate(question);
         Map<String, Object> definition = new HashMap<>();
-        definition.put("instructions", question.getInstructions());
+        definition.put("instructions", question.getParameters().get("instructions"));
         definition.put("type", type(question));
-        if (question.getType() == SemanticQuestion.Type.SCORE) {
-            definition.put("criteria", question.getLevels());
-        } else if (!question.getCriteria().isEmpty()) {
-            definition.put("criteria", question.getCriteria());
+        if ("score".equals(question.getOperation())) {
+            definition.put("criteria", levels(question));
+        } else if (!criteria(question).isEmpty()) {
+            definition.put("criteria", criteria(question));
         }
         return definition;
     }
 
-    private String type(SemanticQuestion question) {
-        return switch (question.getType()) {
-            case BOOLEAN -> "noul";
-            case CHOICE -> "choice";
-            case SCORE -> "score";
+    private String type(SemanticEvaluation question) {
+        return switch (question.getOperation()) {
+            case "boolean" -> "noul";
+            case "choice" -> "choice";
+            case "score" -> "score";
             default -> throw new IllegalArgumentException("Unsupported TypeSafe AI operation");
         };
     }
 
-    private SemanticResult result(SemanticQuestion question, JsonObject answer, JsonObject response) {
+    private SemanticResult result(SemanticEvaluation question, JsonObject answer, JsonObject response) {
         Map<String, Double> probabilities = new HashMap<>();
         if (answer.get("probabilities") instanceof Map<?, ?> values) {
             values.forEach((key, value) -> probabilities.put((String) key, ((Number) value).doubleValue()));
         }
-        Double probability = question.getType() == SemanticQuestion.Type.BOOLEAN ? answer.getDouble("noul") : null;
-        Object value = switch (question.getType()) {
-            case BOOLEAN -> booleanDecision(question, probability);
-            case SCORE -> answer.getDouble("score");
+        Double probability = "boolean".equals(question.getOperation()) ? answer.getDouble("noul") : null;
+        Object value = switch (question.getOperation()) {
+            case "boolean" -> booleanDecision(question, probability);
+            case "score" -> answer.getDouble("score");
             default -> answer.get(type(question));
         };
         SemanticResult result = new SemanticResult(
@@ -199,27 +199,39 @@ public class TypeSafeAiSemanticAdapter implements SemanticAdapter, CamelContextA
                 probabilities, answer.get("confidence") == null ? null : answer.getDouble("confidence"),
                 Map.of("provider", "typesafe-ai", "model", response.get("model"), "usage", response.get("usage")));
         SemanticCapabilities.from(getClass()).operation(question.getOperation()).validateResult(result);
-        if (question.getType() == SemanticQuestion.Type.CHOICE
-                && (!question.getCriteria().containsKey(value)
-                        || !probabilities.isEmpty() && !probabilities.keySet().equals(question.getCriteria().keySet()))) {
+        if ("choice".equals(question.getOperation())
+                && (!criteria(question).containsKey(value)
+                        || !probabilities.isEmpty() && !probabilities.keySet().equals(criteria(question).keySet()))) {
             throw new IllegalArgumentException("TypeSafe AI choice result must match the supplied criteria");
         }
-        if (question.getType() == SemanticQuestion.Type.SCORE
-                && ((Number) value).doubleValue() > question.getLevels().size() - 1) {
+        if ("score".equals(question.getOperation())
+                && ((Number) value).doubleValue() > levels(question).size() - 1) {
             throw new IllegalArgumentException("TypeSafe AI score result must be within the supplied levels");
         }
         return result;
     }
 
-    private static double threshold(SemanticQuestion question) {
+    @SuppressWarnings("unchecked")
+    private static Map<String, String> criteria(SemanticEvaluation evaluation) {
+        return evaluation.getParameters().get("criteria") instanceof Map<?, ?> map
+                ? (Map<String, String>) map : Map.of();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<String> levels(SemanticEvaluation evaluation) {
+        return evaluation.getParameters().get("criteria") instanceof List<?> list
+                ? (List<String>) list : List.of();
+    }
+
+    private static double threshold(SemanticEvaluation question) {
         return ((Number) question.getParameters().getOrDefault("threshold", 0.5)).doubleValue();
     }
 
-    private static double uncertainty(SemanticQuestion question) {
+    private static double uncertainty(SemanticEvaluation question) {
         return ((Number) question.getParameters().getOrDefault("uncertainty", 0.0)).doubleValue();
     }
 
-    private static boolean booleanDecision(SemanticQuestion question, double probability) {
+    private static boolean booleanDecision(SemanticEvaluation question, double probability) {
         double threshold = threshold(question);
         double uncertainty = uncertainty(question);
         if (uncertainty > 0 && probability >= threshold - uncertainty && probability <= threshold + uncertainty) {

@@ -71,7 +71,7 @@ class SemanticCapabilitiesTest {
         Map<String, Object> policy = new LinkedHashMap<>();
         List<String> labels = new ArrayList<>(List.of("privacy"));
         policy.put("labels", labels);
-        SemanticQuestion evaluation = new SemanticQuestion(
+        SemanticEvaluation evaluation = new SemanticEvaluation(
                 "classify", "expert", null,
                 Map.of("criterion", "safety", "policy", policy));
         labels.add("later");
@@ -104,12 +104,11 @@ class SemanticCapabilitiesTest {
 
     @Test
     void explicitPolicyValuesArePreservedAndMutableNumbersAreRejected() {
-        var evaluation = new SemanticQuestion(
-                SemanticQuestion.Type.BOOLEAN, null, null, null, null,
-                0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
+        var evaluation = new SemanticEvaluation(
+                "boolean", null, null, Map.of("threshold", 0.5, "uncertainty", 0.0, "uncertaintyPolicy", "fail"));
         assertThat(evaluation.getParameters()).containsEntry("threshold", 0.5).containsEntry("uncertainty", 0.0)
                 .containsEntry("uncertaintyPolicy", "fail");
-        assertThatThrownBy(() -> new SemanticQuestion("classify", "expert", null, Map.of("threshold", new AtomicInteger(1))))
+        assertThatThrownBy(() -> new SemanticEvaluation("classify", "expert", null, Map.of("threshold", new AtomicInteger(1))))
                 .hasMessageContaining("immutable scalar");
         var operation = SemanticCapabilities.from(StaticExpert.class).operation("classify");
         assertThatCode(() -> operation.validate(Map.of("criterion", "safety", "limit", 2.0))).doesNotThrowAnyException();

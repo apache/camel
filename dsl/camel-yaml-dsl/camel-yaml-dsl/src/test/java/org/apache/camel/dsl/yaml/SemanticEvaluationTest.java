@@ -30,11 +30,11 @@ import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
 import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.semantic.SemanticAdapter;
+import org.apache.camel.semantic.SemanticEvaluation;
+import org.apache.camel.semantic.SemanticEvaluations;
 import org.apache.camel.semantic.SemanticExpert;
 import org.apache.camel.semantic.SemanticOperation;
 import org.apache.camel.semantic.SemanticParameter;
-import org.apache.camel.semantic.SemanticQuestion;
-import org.apache.camel.semantic.SemanticQuestions;
 import org.apache.camel.semantic.SemanticResult;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.DefaultExchange;
@@ -48,11 +48,11 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions;
+import static org.apache.camel.semantic.SemanticEvaluationsBuilder.semanticEvaluations;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class SemanticQuestionTest extends YamlTestSupport {
+class SemanticEvaluationTest extends YamlTestSupport {
     @TempDir
     Path directory;
     private final AtomicInteger calls = new AtomicInteger();
@@ -69,7 +69,7 @@ class SemanticQuestionTest extends YamlTestSupport {
                                inputRequirements = "Text", resultType = SemanticExpert.ResultType.CHOICE,
                                resultMeaning = "Department",
                                parameters = {
-                                       @SemanticParameter(name = "instructions", description = "Question", required = true,
+                                       @SemanticParameter(name = "instructions", description = "Evaluation", required = true,
                                                           minSize = 1),
                                        @SemanticParameter(name = "criteria", description = "Labels", type = Map.class,
                                                           itemType = String.class,
@@ -78,7 +78,7 @@ class SemanticQuestionTest extends YamlTestSupport {
                                inputRequirements = "Text", resultType = SemanticExpert.ResultType.BOOLEAN,
                                resultMeaning = "Decision",
                                parameters = {
-                                       @SemanticParameter(name = "instructions", description = "Question", required = true,
+                                       @SemanticParameter(name = "instructions", description = "Evaluation", required = true,
                                                           minSize = 1),
                                        @SemanticParameter(name = "threshold", description = "Threshold", type = Number.class,
                                                           minimum = 0,
@@ -93,16 +93,16 @@ class SemanticQuestionTest extends YamlTestSupport {
                                inputRequirements = "Text", resultType = SemanticExpert.ResultType.SCORE,
                                resultMeaning = "Score",
                                parameters = {
-                                       @SemanticParameter(name = "instructions", description = "Question", required = true,
+                                       @SemanticParameter(name = "instructions", description = "Evaluation", required = true,
                                                           minSize = 1),
                                        @SemanticParameter(name = "criteria", description = "Levels", type = List.class,
                                                           itemType = String.class,
                                                           required = true, minSize = 2) }) })
     private class Classifier implements SemanticAdapter {
-        public void validate(SemanticQuestion question) {
+        public void validate(SemanticEvaluation evaluation) {
         }
 
-        public SemanticResult evaluate(SemanticQuestion question, Object state) {
+        public SemanticResult evaluate(SemanticEvaluation evaluation, Object state) {
             calls.incrementAndGet();
             selected = state;
             return new SemanticResult(
@@ -113,7 +113,7 @@ class SemanticQuestionTest extends YamlTestSupport {
     private static String declarations(String state) {
         return """
                 - semantic:
-                    question:
+                    evaluation:
                       department:
                         type: choice
                         state: %s
@@ -136,12 +136,12 @@ class SemanticQuestionTest extends YamlTestSupport {
                                                resultType = SemanticExpert.ResultType.CLASSIFICATION,
                                                resultMeaning = "Content labels", labels = "privacy") })
     public static class SecurityExpert implements SemanticAdapter {
-        public void validate(SemanticQuestion question) {
+        public void validate(SemanticEvaluation evaluation) {
         }
 
-        public SemanticResult evaluate(SemanticQuestion question, Object state) {
+        public SemanticResult evaluate(SemanticEvaluation evaluation, Object state) {
             return new SemanticResult(
-                    question.getOperation().equals("injection")
+                    evaluation.getOperation().equals("injection")
                             ? state.toString().contains("injection") : Set.of("privacy"),
                     null, null, null, null);
         }
@@ -154,7 +154,7 @@ class SemanticQuestionTest extends YamlTestSupport {
         String beans = """
                 - beans:
                     - name: newSecurity
-                      type: org.apache.camel.dsl.yaml.SemanticQuestionTest$SecurityExpert
+                      type: org.apache.camel.dsl.yaml.SemanticEvaluationTest$SecurityExpert
                 """;
         String declarations = """
                 - semantic:
@@ -214,15 +214,15 @@ class SemanticQuestionTest extends YamlTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                semanticQuestions(this).question("javaDepartment").type("choice").state("${header.selected}")
+                semanticEvaluations(this).evaluation("javaDepartment").type("choice").state("${header.selected}")
                         .instructions("Which department?")
                         .criterion("billing", "Invoices and refunds").criterion("technical", "Bugs and outages").register();
             }
         });
         loadRoutes(declarations("${header.selected}") + route());
         context.start();
-        SemanticQuestion java = SemanticQuestions.get(context).get("javaDepartment");
-        SemanticQuestion yaml = SemanticQuestions.get(context).get("department");
+        SemanticEvaluation java = SemanticEvaluations.get(context).get("javaDepartment");
+        SemanticEvaluation yaml = SemanticEvaluations.get(context).get("department");
         assertThat(java).usingRecursiveComparison().isEqualTo(yaml);
         assertThat(calls).hasValue(0);
         try (var template = context.createProducerTemplate()) {
@@ -239,14 +239,41 @@ class SemanticQuestionTest extends YamlTestSupport {
     }
 
     @Test
-    void ordinaryResourceDoesNotCreateSemanticQuestionState() throws Exception {
+    void ordinaryResourceDoesNotCreateSemanticEvaluationState() throws Exception {
         loadRoutes("""
                 - from:
                     uri: direct:ordinary
                     steps:
                       - to: mock:ordinary
                 """);
-        assertThat(context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class)).isNull();
+        assertThat(context.getCamelContextExtension().getContextPlugin(SemanticEvaluations.class)).isNull();
+    }
+
+    @Test
+    void preParseRuntimeFailuresRetainTheResourceLocation() throws Exception {
+        context.getRegistry().bind("failing", new FailingValidationExpert());
+        context.start();
+        String yaml = """
+                - semantic:
+                    expert: failing
+                    evaluation:
+                      invalid:
+                        operation: injection
+                """;
+        assertThatThrownBy(() -> PluginHelper.getRoutesLoader(context)
+                .loadRoutes(ResourceHelper.fromString("failing-expert.yaml", yaml)))
+                .hasStackTraceContaining("Error pre-parsing resource: failing-expert.yaml")
+                .hasStackTraceContaining("expert 'failing'")
+                .hasStackTraceContaining("Expert validation failed");
+        assertThatThrownBy(() -> SemanticEvaluations.get(context).get("invalid"))
+                .hasMessageContaining("Unknown semantic evaluation");
+    }
+
+    public static class FailingValidationExpert extends SecurityExpert {
+        @Override
+        public void validate(SemanticEvaluation evaluation) {
+            throw new IllegalStateException("Expert validation failed");
+        }
     }
 
     private static String route() {
@@ -281,7 +308,7 @@ class SemanticQuestionTest extends YamlTestSupport {
     }
 
     @Test
-    void batchExpressionReusesNamedQuestionsAndResults() throws Exception {
+    void batchExpressionReusesNamedEvaluationsAndResults() throws Exception {
         loadRoutes(declarations("${body}") + declarations("${body}").replace("department:", "second:") + """
                 - route:
                     from:
@@ -335,7 +362,7 @@ class SemanticQuestionTest extends YamlTestSupport {
     @Test
     void declarationsInAnotherResourceResolveBeforeTraffic() throws Exception {
         loadRoutes(ResourceHelper.fromString("routes.yaml", route()),
-                ResourceHelper.fromString("questions.yaml", declarations("${body}")));
+                ResourceHelper.fromString("evaluations.yaml", declarations("${body}")));
         context.start();
         try (var template = context.createProducerTemplate()) {
             template.sendBody("direct:tickets", "invoice");
@@ -344,31 +371,31 @@ class SemanticQuestionTest extends YamlTestSupport {
     }
 
     @Test
-    void resourceReloadUpdatesStateAndRemovesObsoleteQuestions() throws Exception {
-        loadRoutes(ResourceHelper.fromString("questions.yaml", declarations("${body}")),
+    void resourceReloadUpdatesStateAndRemovesObsoleteEvaluations() throws Exception {
+        loadRoutes(ResourceHelper.fromString("evaluations.yaml", declarations("${body}")),
                 ResourceHelper.fromString("routes.yaml", route()));
         context.start();
         PluginHelper.getRoutesLoader(context)
-                .updateRoutes(ResourceHelper.fromString("questions.yaml", declarations("${header.updated}")));
+                .updateRoutes(ResourceHelper.fromString("evaluations.yaml", declarations("${header.updated}")));
         try (var template = context.createProducerTemplate()) {
             template.sendBodyAndHeader("direct:tickets", "original", "updated", "invoice");
         }
         assertThat(selected).isEqualTo("invoice");
-        PluginHelper.getRoutesLoader(context).updateRoutes(ResourceHelper.fromString("questions.yaml", "[]"));
-        assertThatThrownBy(() -> SemanticQuestions.get(context).get("department")).hasMessageContaining("Unknown");
+        PluginHelper.getRoutesLoader(context).updateRoutes(ResourceHelper.fromString("evaluations.yaml", "[]"));
+        assertThatThrownBy(() -> SemanticEvaluations.get(context).get("department")).hasMessageContaining("Unknown");
     }
 
     @ParameterizedTest
     @MethodSource("malformedTopLevelResources")
-    void malformedTopLevelEntriesUseNormalLoaderErrorsAndKeepQuestions(String yaml) throws Exception {
-        loadRoutes(ResourceHelper.fromString("questions.yaml", declarations("${body}")));
+    void malformedTopLevelEntriesUseNormalLoaderErrorsAndKeepEvaluations(String yaml) throws Exception {
+        loadRoutes(ResourceHelper.fromString("evaluations.yaml", declarations("${body}")));
         context.start();
-        SemanticQuestion original = SemanticQuestions.get(context).get("department");
+        SemanticEvaluation original = SemanticEvaluations.get(context).get("department");
         assertThatThrownBy(() -> PluginHelper.getRoutesLoader(context)
-                .updateRoutes(ResourceHelper.fromString("questions.yaml", yaml)))
+                .updateRoutes(ResourceHelper.fromString("evaluations.yaml", yaml)))
                 .isInstanceOf(YamlDeserializationException.class)
                 .hasMessageContaining("Unable to find constructor for node");
-        assertThat(SemanticQuestions.get(context).get("department")).isSameAs(original);
+        assertThat(SemanticEvaluations.get(context).get("department")).isSameAs(original);
     }
 
     static Stream<String> malformedTopLevelResources() {
@@ -377,8 +404,8 @@ class SemanticQuestionTest extends YamlTestSupport {
     }
 
     @Test
-    void watcherDropsDeletedQuestionOnlyResourcesBeforeLoadingRenamedFiles() throws Exception {
-        Path original = directory.resolve("questions.yaml");
+    void watcherDropsDeletedEvaluationOnlyResourcesBeforeLoadingRenamedFiles() throws Exception {
+        Path original = directory.resolve("evaluations.yaml");
         Files.writeString(original, declarations("${body}"));
         Resource source = ResourceHelper.resolveResource(context, original.toUri().toString());
         loadRoutes(source);
@@ -387,15 +414,15 @@ class SemanticQuestionTest extends YamlTestSupport {
         watcher.setCamelContext(context);
         Path renamed = Files.move(original, directory.resolve("q.yaml"));
         watcher.reload(source);
-        assertThatThrownBy(() -> SemanticQuestions.get(context).get("department"))
+        assertThatThrownBy(() -> SemanticEvaluations.get(context).get("department"))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Unknown");
         Resource replacement = ResourceHelper.resolveResource(context, renamed.toUri().toString());
         watcher.reload(replacement);
         assertThat(watcher.getLastError()).isNull();
-        assertThat(SemanticQuestions.get(context).get("department").getState()).isEqualTo("${body}");
+        assertThat(SemanticEvaluations.get(context).get("department").getState()).isEqualTo("${body}");
         Files.delete(renamed);
         watcher.reload(replacement);
-        assertThatThrownBy(() -> SemanticQuestions.get(context).get("department"))
+        assertThatThrownBy(() -> SemanticEvaluations.get(context).get("department"))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Unknown");
     }
 
@@ -408,7 +435,7 @@ class SemanticQuestionTest extends YamlTestSupport {
     @Test
     void duplicatesAndInvalidDefinitionsAreRejected() {
         assertThatThrownBy(() -> loadRoutesNoValidate(declarations("${body}") + declarations("${body}")))
-                .hasStackTraceContaining("Duplicate semantic question");
+                .hasStackTraceContaining("Duplicate semantic evaluation");
         assertThatThrownBy(() -> loadRoutesNoValidate(declarations("${body}").replace("instructions:", "typo:")))
                 .hasStackTraceContaining("Unknown property");
         assertThatThrownBy(() -> loadRoutesNoValidate(declarations("${body}")
@@ -420,7 +447,7 @@ class SemanticQuestionTest extends YamlTestSupport {
     void schemaAcceptsBooleanAndScoreDefinitionsAndRejectsWrongCriteria() throws Exception {
         loadRoutes("""
                 - semantic:
-                    question:
+                    evaluation:
                       actionable:
                         type: boolean
                         instructions: Is the request actionable?
@@ -432,7 +459,8 @@ class SemanticQuestionTest extends YamlTestSupport {
                         instructions: How urgent?
                         criteria: [Routine, Urgent]
                 """);
-        assertThat(SemanticQuestions.get(context).get("urgency").getLevels()).containsExactly("Routine", "Urgent");
+        assertThat(SemanticEvaluations.get(context).get("urgency").getParameters().get("criteria"))
+                .isEqualTo(List.of("Routine", "Urgent"));
         context.start();
         assertThatThrownBy(() -> loadRoutesNoValidate(declarations("${body}").replace("type: choice", "type: score")))
                 .hasStackTraceContaining("criteria").hasStackTraceContaining("List");
@@ -442,23 +470,23 @@ class SemanticQuestionTest extends YamlTestSupport {
     void numericPlaceholdersResolveBeforeValidation() throws Exception {
         loadRoutesNoValidate("""
                 - semantic:
-                    question:
+                    evaluation:
                       urgent:
                         type: boolean
                         instructions: Urgent?
                         threshold: "{{threshold:0.8}}"
                         uncertainty: "{{uncertainty:0.1}}"
                 """);
-        assertThat(SemanticQuestions.get(context).get("urgent").getThreshold()).isEqualTo(0.8);
-        assertThat(SemanticQuestions.get(context).get("urgent").getUncertainty()).isEqualTo(0.1);
+        assertThat(SemanticEvaluations.get(context).get("urgent").getParameters().get("threshold")).isEqualTo(0.8);
+        assertThat(SemanticEvaluations.get(context).get("urgent").getParameters().get("uncertainty")).isEqualTo(0.1);
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "threshold", "uncertainty" })
-    void invalidNumericValuesIdentifyQuestionFieldAndLocation(String field) {
+    void invalidNumericValuesIdentifyEvaluationFieldAndLocation(String field) {
         String yaml = """
                 - semantic:
-                    question:
+                    evaluation:
                       spam:
                         type: boolean
                         instructions: Is this spam?
@@ -468,7 +496,7 @@ class SemanticQuestionTest extends YamlTestSupport {
                 .hasMessageContaining("route-0.yaml")
                 .isInstanceOfSatisfying(YamlDeserializationException.class, error -> {
                     assertThat(error).hasMessageContaining(
-                            "Invalid numeric value for '" + field + "' in semantic question 'spam'");
+                            "Invalid numeric value for '" + field + "' in semantic evaluation 'spam'");
                     assertThat(error.getProblemMark()).hasValueSatisfying(mark -> {
                         assertThat(mark.getLine()).isEqualTo(5);
                         assertThat(mark.getColumn()).isEqualTo(8 + field.length() + 2);
@@ -481,7 +509,7 @@ class SemanticQuestionTest extends YamlTestSupport {
     void invalidContractValuesFailAtStartupWithoutInference(String field) throws Exception {
         String yaml = """
                 - semantic:
-                    question:
+                    evaluation:
                       spam:
                         type: boolean
                         instructions: Is this spam?
@@ -501,15 +529,15 @@ class SemanticQuestionTest extends YamlTestSupport {
     void enumParsingFollowsYamlDslConventions(String policy) throws Exception {
         loadRoutesNoValidate("""
                 - semantic:
-                    question:
+                    evaluation:
                       spam:
                         type: BoOlEaN
                         instructions: Is this spam?
                         uncertaintyPolicy: %s
                 """.formatted(policy));
-        SemanticQuestion question = SemanticQuestions.get(context).get("spam");
-        assertThat(question.getType()).isEqualTo(SemanticQuestion.Type.BOOLEAN);
-        assertThat(question.getUncertaintyPolicy()).isEqualTo(SemanticQuestion.UncertaintyPolicy.NON_MATCH);
+        SemanticEvaluation evaluation = SemanticEvaluations.get(context).get("spam");
+        assertThat(evaluation.getOperation()).isEqualTo("boolean");
+        assertThat(evaluation.getParameters().get("uncertaintyPolicy")).isEqualTo("non-match");
     }
 
     @ParameterizedTest
@@ -528,21 +556,21 @@ class SemanticQuestionTest extends YamlTestSupport {
 
     static Stream<Arguments> invalidStructures() {
         String declaration = declarations("${body}");
-        String question = """
+        String evaluation = """
                 - semantic:
-                    question:
+                    evaluation:
                       q: {type: boolean, instructions: Is it valid?}
                 """;
         return Stream.of(
                 Arguments.of(declaration.replace("instructions:", "typo:"),
-                        "Unknown property 'typo' in semantic question 'department'", 5, 14),
+                        "Unknown property 'typo' in semantic evaluation 'department'", 5, 14),
                 Arguments.of(declaration.replace("        type: choice\n", ""),
                         "Specify exactly one operation or type: department", 3, 8),
                 Arguments.of(declaration.replace("type: choice", "type: choice\n        type: choice"),
-                        "Duplicate key 'type' in semantic question 'department'", 4, 8),
+                        "Duplicate key 'type' in semantic evaluation 'department'", 4, 8),
                 Arguments.of("- semantic: {other: {}}", "Unknown property 'other' in semantic declaration", 0, 20),
-                Arguments.of(question + question, "Duplicate semantic question: q", 4, 4),
-                Arguments.of(question + "      q: {type: boolean, instructions: Is it valid?}\n",
+                Arguments.of(evaluation + evaluation, "Duplicate semantic evaluation: q", 4, 4),
+                Arguments.of(evaluation + "      q: {type: boolean, instructions: Is it valid?}\n",
                         "Duplicate key 'q' in semantic evaluations", 3, 6));
     }
 

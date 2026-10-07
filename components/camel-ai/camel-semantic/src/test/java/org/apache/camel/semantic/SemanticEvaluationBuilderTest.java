@@ -30,12 +30,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions;
+import static org.apache.camel.semantic.SemanticEvaluationsBuilder.semanticEvaluations;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class SemanticQuestionBuilderTest {
-    static Stream<Consumer<SemanticQuestionBuilder>> conflicts() {
+class SemanticEvaluationBuilderTest {
+    static Stream<Consumer<SemanticEvaluationBuilder>> conflicts() {
         return Stream.of(
                 b -> b.criterion("a", "A").level("B"),
                 b -> b.level("B").criterion("a", "A"),
@@ -46,14 +46,14 @@ class SemanticQuestionBuilderTest {
 
     @ParameterizedTest
     @MethodSource("conflicts")
-    void criteriaConflictsHaveDeclarationContext(Consumer<SemanticQuestionBuilder> configure) throws Exception {
+    void criteriaConflictsHaveDeclarationContext(Consumer<SemanticEvaluationBuilder> configure) throws Exception {
         try (var context = new DefaultCamelContext()) {
             assertThatThrownBy(() -> context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    var question = semanticQuestions(this).expert("selected").evaluation("q").operation("choice");
-                    configure.accept(question);
-                    question.register();
+                    var evaluation = semanticEvaluations(this).expert("selected").evaluation("q").operation("choice");
+                    configure.accept(evaluation);
+                    evaluation.register();
                 }
             })).hasMessageContaining("'q'").hasMessageContaining("expert 'selected'")
                     .hasMessageContaining("Duplicate parameter 'criteria'");
@@ -64,7 +64,7 @@ class SemanticQuestionBuilderTest {
     void callerCriteriaAreNeverMutated() throws Exception {
         try (var context = new DefaultCamelContext()) {
             Map<String, String> supplied = new LinkedHashMap<>(Map.of("a", "A"));
-            var builder = new SemanticQuestionBuilder().operation("choice").parameter("criteria", supplied);
+            var builder = new SemanticEvaluationBuilder().operation("choice").parameter("criteria", supplied);
             builder.criterion("b", "B");
             assertThatThrownBy(() -> builder.build(context)).hasMessageContaining("Duplicate parameter 'criteria'");
             assertThat(supplied).containsExactlyEntriesOf(Map.of("a", "A"));
@@ -93,12 +93,26 @@ class SemanticQuestionBuilderTest {
             var properties = new Properties();
             properties.setProperty("myPolicy", "NON_MATCH");
             context.getPropertiesComponent().setInitialProperties(properties);
-            var shorthand = new SemanticQuestionBuilder().operation("boolean").uncertaintyPolicy("{{myPolicy}}")
+            var shorthand = new SemanticEvaluationBuilder().operation("boolean").uncertaintyPolicy("{{myPolicy}}")
                     .build(context);
-            var generic = new SemanticQuestionBuilder().operation("custom").parameter("uncertaintyPolicy", "{{myPolicy}}")
+            var generic = new SemanticEvaluationBuilder().operation("custom").parameter("uncertaintyPolicy", "{{myPolicy}}")
                     .build(context);
             assertThat(shorthand.getParameters()).containsEntry("uncertaintyPolicy", "non-match");
             assertThat(generic.getParameters()).containsEntry("uncertaintyPolicy", "NON_MATCH");
+        }
+    }
+
+    @Test
+    void stringParametersRemainStringsAndLiteralPromptPlaceholdersCanBeEscaped() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var declaration = new SemanticEvaluationBuilder().operation("custom")
+                    .parameter("numberAsText", "{{limit:0.8}}")
+                    .parameter("instructions", "Explain \\{{example\\}} and \\{{")
+                    .parameter("policy", Map.of("action", "custom-policy"))
+                    .build(context);
+            assertThat(declaration.getParameters()).containsEntry("numberAsText", "0.8")
+                    .containsEntry("instructions", "Explain {{example}} and {{")
+                    .containsEntry("policy", Map.of("action", "custom-policy"));
         }
     }
 
@@ -110,7 +124,7 @@ class SemanticQuestionBuilderTest {
             assertThatThrownBy(() -> context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    semanticQuestions(this).expert("fixed").evaluation("q").operation("boolean")
+                    semanticEvaluations(this).expert("fixed").evaluation("q").operation("boolean")
                             .uncertaintyPolicy(null).register();
                 }
             })).hasMessageContaining("'q'").hasMessageContaining("'fixed'")

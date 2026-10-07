@@ -99,7 +99,7 @@ public final class SemanticCapabilities {
         return result;
     }
 
-    public void validate(SemanticQuestion evaluation) {
+    public void validate(SemanticEvaluation evaluation) {
         operation(evaluation.getOperation()).validate(evaluation.getParameters());
     }
 

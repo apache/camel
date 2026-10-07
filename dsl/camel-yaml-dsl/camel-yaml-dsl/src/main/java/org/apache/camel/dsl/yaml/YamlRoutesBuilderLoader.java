@@ -36,6 +36,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
+import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -128,7 +129,14 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     protected RouteBuilder builder(final YamlDeserializationContext ctx, final Node root) {
         // All resources have prepared their beans before declarations are validated and routes constructed.
         setDeserializationContext(root, ctx);
-        ctx.preParse(root);
+        try {
+            ctx.preParse(root);
+        } catch (YamlDeserializationException e) {
+            // Keep the precise node location already supplied by the deserializer.
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Error pre-parsing resource: " + ctx.getResource().getLocation(), e);
+        }
 
         // we need to keep track of already configured items as the yaml-dsl returns a
         // RouteConfigurationBuilder that is capable of both route and route

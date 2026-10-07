@@ -85,11 +85,11 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
         if (!NAMESPACES.contains(namespace)) {
             throw new IllegalArgumentException("Unsupported semantic XML namespace: " + namespace);
         }
-        SemanticQuestionsBuilder questions
-                = new SemanticQuestionsBuilder(getCamelContext(), resource, resource.getLocation(), null);
+        SemanticEvaluationsBuilder evaluations
+                = new SemanticEvaluationsBuilder(getCamelContext(), resource, resource.getLocation(), null);
         RoutesDefinition routes = new RoutesDefinition();
         if ("semantic".equals(root.getLocalName())) {
-            declarations(root, questions);
+            declarations(root, evaluations);
         } else if ("routes".equals(root.getLocalName())) {
             boolean found = false;
             for (Element child : children(root)) {
@@ -98,7 +98,7 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
                         throw new IllegalArgumentException("Only one semantic declaration block is allowed");
                     }
                     found = true;
-                    declarations(child, questions);
+                    declarations(child, evaluations);
                 } else if (!"route".equals(child.getLocalName())) {
                     throw new IllegalArgumentException("Unexpected element in routes: " + child.getTagName());
                 }
@@ -110,8 +110,8 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
         } else {
             throw new IllegalArgumentException("Expected semantic or routes root element");
         }
-        // Parse the complete document and validate every question before publishing any definitions.
-        questions.register();
+        // Parse the complete document and validate every evaluation before publishing any definitions.
+        evaluations.register();
         return routes;
     }
 
@@ -139,58 +139,58 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
         }
     }
 
-    private static void declarations(Element semantic, SemanticQuestionsBuilder questions) {
+    private void declarations(Element semantic, SemanticEvaluationsBuilder evaluations) {
         attributes(semantic, Set.of("expert", "state"));
         if (semantic.hasAttribute("expert")) {
-            questions.expert(semantic.getAttribute("expert"));
+            evaluations.expert(semantic.getAttribute("expert"));
         }
         if (semantic.hasAttribute("state")) {
-            questions.state(semantic.getAttribute("state"));
+            evaluations.state(semantic.getAttribute("state"));
         }
         for (Element element : children(semantic)) {
-            if (!"question".equals(element.getLocalName()) && !"evaluation".equals(element.getLocalName())) {
+            if (!"evaluation".equals(element.getLocalName())) {
                 throw new IllegalArgumentException("Unexpected semantic element: " + element.getTagName());
             }
             try {
-                question(element, questions);
+                evaluation(element, evaluations);
             } catch (IllegalArgumentException e) {
                 String expert = element.hasAttribute("expert") ? element.getAttribute("expert")
-                        : questions.getExpert() != null ? questions.getExpert() : "default/automatic";
+                        : evaluations.getExpert() != null ? evaluations.getExpert() : "default/automatic";
                 throw new IllegalArgumentException(
-                        "Invalid semantic question '" + element.getAttribute("name") + "': " + e.getMessage()
+                        "Invalid semantic evaluation '" + element.getAttribute("name") + "': " + e.getMessage()
                                                    + " (expert '" + expert + "')",
                         e);
             }
         }
     }
 
-    private static void question(Element element, SemanticQuestionsBuilder questions) {
+    private void evaluation(Element element, SemanticEvaluationsBuilder evaluations) {
         attributes(element,
                 Set.of("name", "type", "operation", "expert", "state", "threshold", "uncertainty", "uncertaintyPolicy"));
-        SemanticQuestionBuilder question = questions.question(element.getAttribute("name"));
+        SemanticEvaluationBuilder evaluation = evaluations.evaluation(element.getAttribute("name"));
         if (element.hasAttribute("type") && element.hasAttribute("operation")) {
             throw new IllegalArgumentException("Specify exactly one operation or type");
         }
         if (element.hasAttribute("operation")) {
-            question.operation(element.getAttribute("operation"));
+            evaluation.operation(element.getAttribute("operation"));
         }
         if (element.hasAttribute("type")) {
-            question.type(element.getAttribute("type"));
+            evaluation.type(element.getAttribute("type"));
         }
         if (element.hasAttribute("expert")) {
-            question.expert(element.getAttribute("expert"));
+            evaluation.expert(element.getAttribute("expert"));
         }
         if (element.hasAttribute("state")) {
-            question.state(element.getAttribute("state"));
+            evaluation.state(element.getAttribute("state"));
         }
         if (element.hasAttribute("threshold")) {
-            question.threshold(element.getAttribute("threshold"));
+            evaluation.threshold(element.getAttribute("threshold"));
         }
         if (element.hasAttribute("uncertainty")) {
-            question.uncertainty(element.getAttribute("uncertainty"));
+            evaluation.uncertainty(element.getAttribute("uncertainty"));
         }
         if (element.hasAttribute("uncertaintyPolicy")) {
-            question.uncertaintyPolicy(element.getAttribute("uncertaintyPolicy"));
+            evaluation.uncertaintyPolicy(element.getAttribute("uncertaintyPolicy"));
         }
         boolean instructions = false;
         for (Element child : children(element)) {
@@ -202,34 +202,34 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
                             throw new IllegalArgumentException("Expected parameter element");
                         }
                         attributes(parameter, Set.of("name"));
-                        question.parameter(parameter.getAttribute("name"), parameterValue(parameter));
+                        evaluation.parameter(parameter.getAttribute("name"), parameterValue(parameter));
                     }
                 }
                 case "instructions" -> {
                     if (instructions) {
-                        throw new IllegalArgumentException("Duplicate instructions for semantic question");
+                        throw new IllegalArgumentException("Duplicate instructions for semantic evaluation");
                     }
                     instructions = true;
                     attributes(child, Set.of());
-                    question.instructions(text(child));
+                    evaluation.instructions(text(child));
                 }
                 case "criterion" -> {
                     attributes(child, Set.of("key", "value"));
                     if (!children(child).isEmpty()) {
                         throw new IllegalArgumentException("Semantic criterion must not contain elements");
                     }
-                    question.criterion(child.getAttribute("key"), child.getAttribute("value"));
+                    evaluation.criterion(child.getAttribute("key"), child.getAttribute("value"));
                 }
                 case "level" -> {
                     attributes(child, Set.of());
-                    question.level(text(child));
+                    evaluation.level(text(child));
                 }
-                default -> throw new IllegalArgumentException("Unexpected question element: " + child.getTagName());
+                default -> throw new IllegalArgumentException("Unexpected evaluation element: " + child.getTagName());
             }
         }
     }
 
-    private static Object parameterValue(Element parent) {
+    private Object parameterValue(Element parent) {
         List<Element> values = children(parent);
         if (values.size() != 1) {
             throw new IllegalArgumentException("Parameter or map entry requires exactly one typed value");
@@ -237,7 +237,7 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
         return value(values.get(0));
     }
 
-    private static Object value(Element element) {
+    private Object value(Element element) {
         attributes(element, Set.of());
         return switch (element.getLocalName()) {
             case "string" -> text(element);
@@ -249,7 +249,7 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
             }
             case "number" -> {
                 try {
-                    yield new BigDecimal(text(element).strip());
+                    yield new BigDecimal(getCamelContext().resolvePropertyPlaceholders(text(element)).strip());
                 } catch (NumberFormatException invalid) {
                     throw new IllegalArgumentException("Invalid numeric parameter");
                 }
@@ -261,7 +261,7 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
                 }
                 yield Boolean.valueOf(text);
             }
-            case "list" -> children(element).stream().map(SemanticXmlRoutesBuilderLoader::value).toList();
+            case "list" -> children(element).stream().map(this::value).toList();
             case "map" -> {
                 Map<String, Object> map = new LinkedHashMap<>();
                 for (Element entry : children(element)) {

@@ -29,25 +29,26 @@ import java.util.Map;
  * Referenced registry beans retain their existing lifecycle owner.
  */
 public interface SemanticAdapter {
-    /** Reject unsupported question kinds, criteria, decision policies or input selectors before traffic starts. */
-    void validate(SemanticQuestion question);
+    /** Reject unsupported evaluation kinds, criteria, decision policies or input selectors before traffic starts. */
+    void validate(SemanticEvaluation evaluation);
 
     /** Validate message-dependent requirements before any operation in a batch performs inference. */
-    default void validateInput(SemanticQuestion evaluation, Object state) {
+    default void validateInput(SemanticEvaluation evaluation, Object state) {
     }
 
     /** Synchronous, potentially blocking evaluation. Operational errors must be thrown, never returned as decisions. */
-    SemanticResult evaluate(SemanticQuestion question, Object state) throws Exception;
+    SemanticResult evaluate(SemanticEvaluation evaluation, Object state) throws Exception;
 
     /**
-     * Evaluate named questions against the same selected state, returning exactly one result per name. The default
-     * implementation calls the single-question method sequentially; providers may override it to use one request.
+     * Evaluate named evaluations against the same selected state, returning exactly one result per name. The default
+     * implementation calls the single-evaluation method sequentially; providers may override it to use one request.
      * Operational errors must be thrown, never returned as partial results. The expert applies any requested decision
      * policy exactly once.
      */
-    default Map<String, SemanticResult> evaluateBatch(Map<String, SemanticQuestion> questions, Object state) throws Exception {
+    default Map<String, SemanticResult> evaluateBatch(Map<String, SemanticEvaluation> evaluations, Object state)
+            throws Exception {
         Map<String, SemanticResult> results = new LinkedHashMap<>();
-        for (var entry : questions.entrySet()) {
+        for (var entry : evaluations.entrySet()) {
             if (Thread.currentThread().isInterrupted()) {
                 throw new InterruptedException("Semantic batch evaluation interrupted");
             }

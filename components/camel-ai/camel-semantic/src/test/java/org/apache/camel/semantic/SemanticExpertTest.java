@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions;
+import static org.apache.camel.semantic.SemanticEvaluationsBuilder.semanticEvaluations;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -99,8 +99,8 @@ class SemanticExpertTest {
             context.getRegistry().bind("a-security", registered);
         }
         String name = aliases ? "a-security" : "security";
-        assertThatThrownBy(() -> SemanticQuestions.get(context).replace("test", Map.of("first",
-                question(null, "Unsupported", Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5))))
+        assertThatThrownBy(() -> SemanticEvaluations.get(context).replace("test", Map.of("first",
+                evaluation(null, "Unsupported", Map.of(), "boolean", 0.5))))
                 .hasMessageContaining("evaluation 'first', expert '" + name + "'")
                 .hasMessageContaining("Unknown parameter 'instructions'");
         define(null, null, 0.5);
@@ -128,11 +128,11 @@ class SemanticExpertTest {
     void adaptersMustDeclareTheirStaticContract(boolean automatic) {
         SemanticAdapter legacy = new SemanticAdapter() {
             @Override
-            public void validate(SemanticQuestion question) {
+            public void validate(SemanticEvaluation evaluation) {
             }
 
             @Override
-            public SemanticResult evaluate(SemanticQuestion question, Object state) {
+            public SemanticResult evaluate(SemanticEvaluation evaluation, Object state) {
                 return new SemanticResult(true, null, null, null, null);
             }
         };
@@ -143,20 +143,20 @@ class SemanticExpertTest {
             context.getRegistry().unbind("other");
         }
         String reference = automatic ? null : "legacy";
-        assertThatThrownBy(() -> SemanticQuestions.get(context).replace("test",
-                Map.of("first", question(reference, null, Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5))))
+        assertThatThrownBy(() -> SemanticEvaluations.get(context).replace("test",
+                Map.of("first", evaluation(reference, null, Map.of(), "boolean", 0.5))))
                 .hasMessageContaining("first").hasMessageContaining("expert 'legacy'")
                 .hasMessageContaining("@SemanticExpert");
     }
 
     @Test
     void fixedExpertRejectsInstructionsCriteriaAndChoiceBeforeInference() {
-        List<SemanticQuestion> invalid = List.of(
-                question("security", "Is it valid?", Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5),
-                question("security", null, Map.of("true", "valid"), SemanticQuestion.Type.BOOLEAN, 0.5),
-                question("security", null, Map.of("billing", "invoices"), SemanticQuestion.Type.CHOICE, 0.5));
-        for (SemanticQuestion question : invalid) {
-            assertThatThrownBy(() -> SemanticQuestions.get(context).replace("test", Map.of("first", question)))
+        List<SemanticEvaluation> invalid = List.of(
+                evaluation("security", "Is it valid?", Map.of(), "boolean", 0.5),
+                evaluation("security", null, Map.of("true", "valid"), "boolean", 0.5),
+                evaluation("security", null, Map.of("billing", "invoices"), "choice", 0.5));
+        for (SemanticEvaluation evaluation : invalid) {
+            assertThatThrownBy(() -> SemanticEvaluations.get(context).replace("test", Map.of("first", evaluation)))
                     .hasMessageContaining("first").hasMessageContaining("security");
         }
         assertThat(security.calls).isZero();
@@ -166,8 +166,8 @@ class SemanticExpertTest {
     void mixedBatchGroupsByIdentityAndPublishesResultsInReferenceOrder() {
         context.getRegistry().bind("alias", security);
         define("security", "other", 0.5);
-        SemanticQuestions.get(context).replace("alias", Map.of("third", question("alias", null, Map.of(),
-                SemanticQuestion.Type.BOOLEAN, 0.5)));
+        SemanticEvaluations.get(context).replace("alias", Map.of("third", evaluation("alias", null, Map.of(),
+                "boolean", 0.5)));
         Map<?, ?> decisions = language.createExpression("refs:first,second,third").evaluate(exchange, Map.class);
         assertThat(decisions.keySet().toArray()).containsExactly("first", "second", "third");
         assertThat(decisions.get("first")).isEqualTo(true);
@@ -202,14 +202,12 @@ class SemanticExpertTest {
         assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
         security.probability = 0.899;
         assertThat(expression.evaluate(exchange, Boolean.class)).isFalse();
-        SemanticQuestions.get(context).replace("test", Map.of("first", new SemanticQuestion(
-                SemanticQuestion.Type.BOOLEAN, null, null, null, null, 0.9, 0.05,
-                SemanticQuestion.UncertaintyPolicy.FAIL, "security")));
+        SemanticEvaluations.get(context).replace("test", Map.of("first", new SemanticEvaluation(
+                "boolean", "security", null, Map.of("threshold", 0.9, "uncertainty", 0.05, "uncertaintyPolicy", "fail"))));
         assertThatThrownBy(() -> expression.evaluate(exchange, Boolean.class)).hasMessageContaining("uncertain");
         assertThat(exchange.getProperty(SemanticLanguage.RESULT)).isNull();
-        SemanticQuestions.get(context).replace("test", Map.of("first", new SemanticQuestion(
-                SemanticQuestion.Type.BOOLEAN, null, null, null, null, 0.9, 0.05,
-                SemanticQuestion.UncertaintyPolicy.NON_MATCH, "security")));
+        SemanticEvaluations.get(context).replace("test", Map.of("first", new SemanticEvaluation(
+                "boolean", "security", null, Map.of("threshold", 0.9, "uncertainty", 0.05, "uncertaintyPolicy", "non-match"))));
         assertThat(expression.evaluate(exchange, Boolean.class)).isFalse();
     }
 
@@ -239,9 +237,9 @@ class SemanticExpertTest {
     void changedDeclarationsAreValidatedBeforePublicationAndReselectExpert() {
         define("security", "other", 0.5);
         var expression = language.createExpression("ref:first");
-        var previous = SemanticQuestions.get(context).get("first");
+        var previous = SemanticEvaluations.get(context).get("first");
         assertThatThrownBy(() -> define("missing", "other", 0.5)).hasMessageContaining("missing");
-        assertThat(SemanticQuestions.get(context).get("first")).isSameAs(previous);
+        assertThat(SemanticEvaluations.get(context).get("first")).isSameAs(previous);
         define("other", "security", 0.5);
         assertThat(expression.evaluate(exchange, Boolean.class)).isFalse();
         assertThat(security.calls).isZero();
@@ -250,22 +248,22 @@ class SemanticExpertTest {
 
     @Test
     void reloadValidatesBothInitializedReferencesAndUnusedDeclarations() {
-        Map<String, SemanticQuestion> definitions = new LinkedHashMap<>();
+        Map<String, SemanticEvaluation> definitions = new LinkedHashMap<>();
         for (String name : List.of("first", "second", "third")) {
-            definitions.put(name, question("security", null, Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5));
+            definitions.put(name, evaluation("security", null, Map.of(), "boolean", 0.5));
         }
-        definitions.put("draft", question("security", null, Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5));
-        SemanticQuestions questions = SemanticQuestions.get(context);
-        questions.replace("test", definitions);
+        definitions.put("draft", evaluation("security", null, Map.of(), "boolean", 0.5));
+        SemanticEvaluations evaluations = SemanticEvaluations.get(context);
+        evaluations.replace("test", definitions);
         var single = language.createExpression("ref:first");
         var batch = language.createExpression("refs:second,third");
-        questions.replace("test", definitions);
+        evaluations.replace("test", definitions);
         for (String name : List.of("first", "second", "third", "draft")) {
-            Map<String, SemanticQuestion> invalid = new LinkedHashMap<>(definitions);
-            invalid.put(name, question("missing", null, Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5));
-            assertThatThrownBy(() -> questions.replace("test", invalid))
+            Map<String, SemanticEvaluation> invalid = new LinkedHashMap<>(definitions);
+            invalid.put(name, evaluation("missing", null, Map.of(), "boolean", 0.5));
+            assertThatThrownBy(() -> evaluations.replace("test", invalid))
                     .isInstanceOf(IllegalArgumentException.class).hasMessageContaining(name).hasMessageContaining("missing");
-            assertThat(questions.get(name)).isSameAs(definitions.get(name));
+            assertThat(evaluations.get(name)).isSameAs(definitions.get(name));
         }
         assertThat(single.evaluate(exchange, Boolean.class)).isTrue();
         assertThat(batch.evaluate(exchange, Map.class)).containsEntry("second", true).containsEntry("third", true);
@@ -296,7 +294,7 @@ class SemanticExpertTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    semanticQuestions(this).question("injection").type("boolean").expert("{{selected.expert}}")
+                    semanticEvaluations(this).evaluation("injection").type("boolean").expert("{{selected.expert}}")
                             .threshold("{{injection.threshold}}").register();
                     from("direct:expert").setBody().language("semantic", "ref:injection");
                 }
@@ -305,13 +303,13 @@ class SemanticExpertTest {
             PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("expert.xml",
                     """
                             <routes xmlns="http://camel.apache.org/schema/xml-io">
-                              <semantic><question name="injection" type="boolean" expert="{{selected.expert}}"
+                              <semantic><evaluation name="injection" type="boolean" expert="{{selected.expert}}"
                                                   threshold="{{injection.threshold}}"/></semantic>
                               <route><from uri="direct:expert"/><setBody><language language="semantic">ref:injection</language></setBody></route>
                             </routes>
                             """));
         }
-        assertThat(SemanticQuestions.get(context).get("injection").getExpert()).isEqualTo("{{selected.expert}}");
+        assertThat(SemanticEvaluations.get(context).get("injection").getExpert()).isEqualTo("{{selected.expert}}");
         assertThat(security.calls).isZero();
         try (var template = context.createProducerTemplate()) {
             assertThat(template.requestBody("direct:expert", "text", Boolean.class)).isFalse();
@@ -327,7 +325,7 @@ class SemanticExpertTest {
                     context.addRoutes(new RouteBuilder() {
                         @Override
                         public void configure() {
-                            semanticQuestions(this).question("invalid").type("boolean").expert("security")
+                            semanticEvaluations(this).evaluation("invalid").type("boolean").expert("security")
                                     .threshold(threshold).register();
                         }
                     });
@@ -335,7 +333,7 @@ class SemanticExpertTest {
                     PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("invalid.xml",
                             """
                                     <semantic xmlns="http://camel.apache.org/schema/semantic">
-                                      <question name="invalid" type="boolean" expert="security" threshold="%s"/>
+                                      <evaluation name="invalid" type="boolean" expert="security" threshold="%s"/>
                                     </semantic>
                                     """.formatted(threshold)));
                 }
@@ -349,7 +347,7 @@ class SemanticExpertTest {
         assertThatThrownBy(() -> PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("invalid.xml",
                 """
                         <semantic xmlns="http://camel.apache.org/schema/semantic">
-                          <question name="invalid" type="boolean" expert="security" thresholdd="0.9"/>
+                          <evaluation name="invalid" type="boolean" expert="security" thresholdd="0.9"/>
                         </semantic>
                         """)))
                 .hasStackTraceContaining("'invalid'").hasStackTraceContaining("expert 'security'")
@@ -361,8 +359,8 @@ class SemanticExpertTest {
         ManagedExpert.initialized = 0;
         ManagedExpert.started = 0;
         language.setAdapter(ManagedExpert.class.getName());
-        assertThatThrownBy(() -> SemanticQuestions.get(context).replace("test", Map.of("first",
-                question(null, "Unsupported", Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5))))
+        assertThatThrownBy(() -> SemanticEvaluations.get(context).replace("test", Map.of("first",
+                evaluation(null, "Unsupported", Map.of(), "boolean", 0.5))))
                 .hasMessageContaining("Unknown parameter 'instructions'");
         assertThat(ManagedExpert.initialized).isZero();
         assertThat(ManagedExpert.started).isZero();
@@ -392,11 +390,11 @@ class SemanticExpertTest {
         }
 
         @Override
-        public void validate(SemanticQuestion question) {
+        public void validate(SemanticEvaluation evaluation) {
         }
 
         @Override
-        public SemanticResult evaluate(SemanticQuestion question, Object state) {
+        public SemanticResult evaluate(SemanticEvaluation evaluation, Object state) {
             return new SemanticResult(true, null, null, null, null);
         }
     }
@@ -441,30 +439,40 @@ class SemanticExpertTest {
     @Test
     void instructionDrivenAndFixedSemanticExpertsShareOneBatch() {
         context.getRegistry().bind("general", new SemanticLanguageTest.LabelAdapter());
-        SemanticQuestions.get(context).replace("test", Map.of(
-                "injection", question("security", null, Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5),
-                "department", question("general", "Which department?", Map.of("billing", "invoices"),
-                        SemanticQuestion.Type.CHOICE, 0.5)));
+        SemanticEvaluations.get(context).replace("test", Map.of(
+                "injection", evaluation("security", null, Map.of(), "boolean", 0.5),
+                "department", evaluation("general", "Which department?", Map.of("billing", "invoices"),
+                        "choice", 0.5)));
         var result = language.createExpression("refs:injection,department").evaluate(exchange, Map.class);
         assertThat(result).containsEntry("injection", true).containsEntry("department", "billing");
         assertThat(security.batches).containsExactly(List.of("injection"));
     }
 
     private void define(String first, String second, double threshold) {
-        SemanticQuestions.get(context).replace("test", Map.of(
-                "first", question(first, null, Map.of(), SemanticQuestion.Type.BOOLEAN, threshold),
-                "second", question(second, null, Map.of(), SemanticQuestion.Type.BOOLEAN, threshold)));
+        SemanticEvaluations.get(context).replace("test", Map.of(
+                "first", evaluation(first, null, Map.of(), "boolean", threshold),
+                "second", evaluation(second, null, Map.of(), "boolean", threshold)));
     }
 
-    private static SemanticQuestion question(
+    private static SemanticEvaluation evaluation(
             String expert, String instructions, Map<String, String> criteria,
-            SemanticQuestion.Type type, double threshold) {
-        if (type == SemanticQuestion.Type.BOOLEAN && instructions == null && criteria.isEmpty() && threshold == 0.5) {
-            return new SemanticQuestion("boolean", expert, null, Map.of());
+            String type, double threshold) {
+        if ("boolean".equals(type) && instructions == null && criteria.isEmpty() && threshold == 0.5) {
+            return new SemanticEvaluation("boolean", expert, null, Map.of());
         }
-        return new SemanticQuestion(
-                type, instructions, null, criteria, List.of(), threshold, 0,
-                SemanticQuestion.UncertaintyPolicy.FAIL, expert);
+        Map<String, Object> parameters = new LinkedHashMap<>();
+        if (instructions != null) {
+            parameters.put("instructions", instructions);
+        }
+        if (!criteria.isEmpty()) {
+            parameters.put("criteria", criteria);
+        }
+        if ("boolean".equals(type)) {
+            parameters.put("threshold", threshold);
+            parameters.put("uncertainty", 0.0);
+            parameters.put("uncertaintyPolicy", "fail");
+        }
+        return new SemanticEvaluation(type, expert, null, parameters);
     }
 
 }
