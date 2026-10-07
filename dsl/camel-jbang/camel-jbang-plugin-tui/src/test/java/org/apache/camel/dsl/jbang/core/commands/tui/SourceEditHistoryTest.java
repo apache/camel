@@ -47,6 +47,26 @@ class SourceEditHistoryTest {
     }
 
     @Test
+    void undoTakesBackOneChangeAndPutsTheCursorWhereItWas() {
+        SourceEditorNavigation.positionCursor(state, 1, 4);
+        history.beforeChange(state);
+        state.insert('X');
+        history.beforeChange(state);
+        state.insert('Y');
+
+        assertThat(history.undo(state)).isTrue();
+        assertThat(state.getLine(1)).isEqualTo("betaX");
+        assertThat(history.undo(state)).isTrue();
+        assertThat(state.text()).isEqualTo("alpha\nbeta\n");
+        assertThat(state.cursorRow()).isEqualTo(1);
+        assertThat(state.cursorCol()).isEqualTo(4);
+        assertThat(history.undo(state)).isFalse();
+
+        assertThat(history.redo(state)).isTrue();
+        assertThat(state.getLine(1)).isEqualTo("betaX");
+    }
+
+    @Test
     void redoReappliesUndoneChange() {
         history.beforeChange(state);
         state.setText("alpha\nchanged\n");

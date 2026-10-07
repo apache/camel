@@ -1084,7 +1084,7 @@ class TuiToolRegistry {
         }
         return "Unknown or unsupported action: " + action
                + ". Use a name (reset-stats, reset-screen, screenshot, show-keystrokes, "
-               + "tape-recording, doctor, caption, mcp-info, mcp-log, toggle-theme) "
+               + "tape-recording, doctor, caption, mcp-info, mcp-log, next-theme) "
                + "or a menu label from tui_get_options actions";
     }
 

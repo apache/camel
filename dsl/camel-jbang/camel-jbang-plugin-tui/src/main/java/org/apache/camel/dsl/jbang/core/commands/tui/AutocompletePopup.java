@@ -101,6 +101,7 @@ class AutocompletePopup {
     // the row of the filtered list a divider is drawn above, -1 for none: the properties of a Kamelet above it, the
     // options of the kamelet component itself, for special uses only, below it (CAMEL-25411)
     private int dividerAt = -1;
+    private String dividerLabel = KAMELET_COMPONENT_OPTIONS;
 
     static final String KAMELET_GROUP = "kamelet ";
     static final String KAMELET_COMPONENT_OPTIONS = "kamelet component options";
@@ -328,7 +329,7 @@ class AutocompletePopup {
         for (int row = 0; row < filteredItems.size(); row++) {
             CompletionItem ci = filteredItems.get(row);
             if (row == dividerAt) {
-                String text = "── " + KAMELET_COMPONENT_OPTIONS + " ";
+                String text = "── " + dividerLabel + " ";
                 items.add(ListItem.from(Line.from(Span.styled(
                         text + "─".repeat(Math.max(1, listRect.width() - 2 - text.length())), dimStyle))));
             }
@@ -578,12 +579,25 @@ class AutocompletePopup {
             filteredItems.sort(Comparator.comparingInt(item -> rank(item.key(), f)));
         }
         dividerAt = -1;
+        dividerLabel = KAMELET_COMPONENT_OPTIONS;
         boolean kamelet = filteredItems.stream().anyMatch(AutocompletePopup::isKameletProperty);
         if (kamelet && !filteredItems.stream().allMatch(AutocompletePopup::isKameletProperty)) {
             // the properties of the Kamelet stay above the divider while filtering (the sort is stable)
             filteredItems.sort(Comparator.comparing(item -> !isKameletProperty(item)));
             for (int i = 0; i < filteredItems.size(); i++) {
                 if (!isKameletProperty(filteredItems.get(i))) {
+                    dividerAt = i;
+                    break;
+                }
+            }
+        } else if (filteredItems.stream().anyMatch(AutocompletePopup::isAdvanced)
+                && !filteredItems.stream().allMatch(AutocompletePopup::isAdvanced)) {
+            // the common options first, the advanced ones (the catalog's "advanced" groups) below a divider, as an
+            // alphabetical list put bridgeErrorHandler and exceptionHandler before delay and period (CAMEL-25426)
+            filteredItems.sort(Comparator.comparing(AutocompletePopup::isAdvanced));
+            dividerLabel = "advanced";
+            for (int i = 0; i < filteredItems.size(); i++) {
+                if (isAdvanced(filteredItems.get(i))) {
                     dividerAt = i;
                     break;
                 }
@@ -597,6 +611,11 @@ class AutocompletePopup {
      * options of the kamelet component below the divider are for special uses, and not what the title names
      * (CAMEL-25411).
      */
+    /** An option of an advanced group of the catalog: "advanced", "consumer (advanced)", "producer (advanced)". */
+    static boolean isAdvanced(CompletionItem item) {
+        return item.group() != null && item.group().contains("advanced");
+    }
+
     String title() {
         String label = titlePrefix != null ? titlePrefix : "Completions";
         boolean kamelet = allItems.stream().anyMatch(AutocompletePopup::isKameletProperty);

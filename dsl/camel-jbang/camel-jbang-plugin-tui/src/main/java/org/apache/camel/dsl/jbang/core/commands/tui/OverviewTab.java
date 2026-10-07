@@ -1076,12 +1076,12 @@ class OverviewTab extends AbstractTab {
                 lines.add(Line.from(Span.styled("Load (1m/5m/15m):", dim)));
                 if (cpu != null) {
                     lines.add(Line.from(
-                            Span.styled("CPU:  ", dim),
+                            Span.styled("CPU:      ", dim),
                             Span.raw(cpu.format("%.1f / %.1f / %.1f %%"))));
                 }
                 if (hasInfl) {
                     lines.add(Line.from(
-                            Span.styled("Infl: ", dim),
+                            Span.styled("Inflight: ", dim),
                             Span.raw(sel.inflightLoad01 + " / " + sel.inflightLoad05 + " / " + sel.inflightLoad15)));
                 }
             }

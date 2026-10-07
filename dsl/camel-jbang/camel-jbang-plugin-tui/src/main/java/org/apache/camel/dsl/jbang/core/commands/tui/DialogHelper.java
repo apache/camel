@@ -136,12 +136,19 @@ final class DialogHelper {
      */
     static Rect renderConfirm(
             Frame frame, Rect area, String title, String message, String detail, String extraKey, String extraLabel) {
+        return renderConfirm(frame, area, title, message, detail, "Enter", "confirm", extraKey, extraLabel);
+    }
+
+    /** As above, accepted with the given key (a destructive choice takes "y", not Enter). */
+    static Rect renderConfirm(
+            Frame frame, Rect area, String title, String message, String detail, String acceptKey, String acceptLabel,
+            String extraKey, String extraLabel) {
         Style accent = Theme.warning();
         String titleText = " " + title + " ";
         String msg = message.trim();
         Line hints = extraKey != null
-                ? TuiHelper.hintLine("Enter", "confirm", extraKey, extraLabel, "Esc", "cancel")
-                : TuiHelper.hintLine("Enter", "confirm", "Esc", "cancel");
+                ? TuiHelper.hintLine(acceptKey, acceptLabel, extraKey, extraLabel, "Esc", "cancel")
+                : TuiHelper.hintLine(acceptKey, acceptLabel, "Esc", "cancel");
         int contentW = Math.max(msg.length(), Math.max(detail != null ? detail.length() : 0, hints.width()));
         int popupW = clampWidth(area, CONFIRM_MIN_WIDTH, Math.max(contentW + 6, titleText.length() + 4));
         Rect popup = centered(area, popupW, CONFIRM_HEIGHT + (detail != null ? 1 : 0));

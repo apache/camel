@@ -28,6 +28,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AutocompletePopupTest {
 
     @Test
+    void theAdvancedOptionsComeAfterTheCommonOnes() {
+        var items = List.of(
+                new AutocompletePopup.CompletionItem(
+                        "bridgeErrorHandler", "", "boolean", null, false, null,
+                        "consumer (advanced)", false),
+                new AutocompletePopup.CompletionItem("delay", "", "integer", null, false, null, "consumer", false),
+                new AutocompletePopup.CompletionItem(
+                        "exchangePattern", "", "object", null, false, null,
+                        "consumer (advanced)", false),
+                new AutocompletePopup.CompletionItem("period", "", "integer", null, false, null, "consumer", false));
+        var popup = new AutocompletePopup(items, "", "");
+
+        // the first two are the common options, delay and period, in their order; the advanced ones follow
+        popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertThat(popup.consumeSelectedItem().key()).isEqualTo("period");
+
+        var first = new AutocompletePopup(items, "", "");
+        first.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertThat(first.consumeSelectedItem().key()).isEqualTo("delay");
+    }
+
+    @Test
     void escClosesPopup() {
         var popup = new AutocompletePopup(sampleItems(), "", "");
         assertThat(popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE)))

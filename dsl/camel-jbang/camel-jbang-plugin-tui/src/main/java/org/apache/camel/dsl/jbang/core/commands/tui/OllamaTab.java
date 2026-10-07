@@ -29,6 +29,7 @@ import java.util.Set;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -436,7 +437,9 @@ class OllamaTab extends AbstractTab {
                 lines.add(trend);
             }
         }
-        frame.renderWidget(Paragraph.builder().text(Text.from(lines)).block(block).build(), area);
+        // wrap: the panel is narrow, and the sentences under the gauge are cut otherwise ("once the runner is foun")
+        frame.renderWidget(Paragraph.builder().text(Text.from(lines)).overflow(Overflow.WRAP_WORD).block(block).build(),
+                area);
     }
 
     /**

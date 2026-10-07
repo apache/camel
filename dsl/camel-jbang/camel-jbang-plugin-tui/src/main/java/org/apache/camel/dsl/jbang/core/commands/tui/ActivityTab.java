@@ -274,9 +274,10 @@ class ActivityTab extends AbstractTableTab {
                 oldestTs < Long.MAX_VALUE
                         ? Span.styled("   Window: ", dim)
                         : Span.raw(""),
+                // newest to oldest, as ages: "2m18s - 2m20s ago" (the larger first read as a range going backwards)
                 oldestTs < Long.MAX_VALUE
-                        ? Span.raw(TimeUtils.printSince(oldestTs)
-                                   + " ... " + TimeUtils.printSince(newestTs))
+                        ? Span.raw(TimeUtils.printSince(newestTs)
+                                   + " - " + TimeUtils.printSince(oldestTs) + " ago")
                         : Span.raw("")));
 
         String title = paused

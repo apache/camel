@@ -287,7 +287,7 @@ final class TuiToolDefinitions {
                 "Invokes a TUI action by name or by its F2 menu label (as listed in tui_get_options actions), "
                               + "bypassing fragile key sequences. "
                               + "Names: reset-stats, reset-screen, screenshot, show-keystrokes, "
-                              + "tape-recording, doctor, caption, mcp-info, mcp-log, toggle-theme.",
+                              + "tape-recording, doctor, caption, mcp-info, mcp-log, next-theme.",
                 Map.of("action", propDef("string",
                         "Action name in kebab-case (e.g. 'reset-stats') or menu label (e.g. 'Run Doctor')")),
                 List.of("action"))));

@@ -1357,7 +1357,8 @@ class HistoryTab extends AbstractTab {
             String changes = computeTraceChanges(prev, entry);
             rows.add(buildStepRow(i + 1, entry.inlineDepth,
                     entry.direction, entry.first, entry.last, entry.failed,
-                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed, changes));
+                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed, changes,
+                    area.width()));
         }
 
         String stepTitle
@@ -1367,7 +1368,8 @@ class HistoryTab extends AbstractTab {
         Style tableHighlight = showFocus && detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg();
         lastTraceStepArea = chunks.get(0);
         detailSplit.setBorderPos(chunks.get(1).y());
-        Table stepTable = buildStepTable(rows, stepTitle, showDescription, tableBorderStyle, tableHighlight);
+        Table stepTable = buildStepTable(rows, stepTitle, showDescription, tableBorderStyle, tableHighlight,
+                idColumnWidth(area.width()));
         traceStepTableState.scrollToSelected(stepTable.viewportHeight(chunks.get(0)), rows);
         frame.renderStatefulWidget(stepTable, chunks.get(0), traceStepTableState);
         renderTableScrollbar(frame, lastTraceStepArea, stepTable, traceStepTableState, traceStepScrollState,
@@ -1690,7 +1692,8 @@ class HistoryTab extends AbstractTab {
             String changes = computeHistoryChanges(prev, entry);
             rows.add(buildStepRow(i + 1, entry.inlineDepth,
                     entry.direction, entry.first, entry.last, entry.failed,
-                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed, changes));
+                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed, changes,
+                    area.width()));
         }
 
         Title historyTitle = buildHistoryTitle(current);
@@ -1699,7 +1702,8 @@ class HistoryTab extends AbstractTab {
         Style tableHighlight = showFocus && detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg();
         lastHistoryTableArea = chunks.get(0);
         vSplit.setBorderPos(chunks.get(1).y());
-        Table historyTable = buildStepTable(rows, historyTitle, showDescription, tableBorderStyle, tableHighlight);
+        Table historyTable = buildStepTable(rows, historyTitle, showDescription, tableBorderStyle, tableHighlight,
+                idColumnWidth(area.width()));
         historyTableState.scrollToSelected(historyTable.viewportHeight(chunks.get(0)), rows);
         frame.renderStatefulWidget(historyTable, chunks.get(0), historyTableState);
         renderTableScrollbar(frame, lastHistoryTableArea, historyTable, historyTableState, historyTableScrollState,
@@ -2055,11 +2059,23 @@ class HistoryTab extends AbstractTab {
         return sortStyle(column, traceSort);
     }
 
+    /** ROUTE and ID give way on a narrow screen, so the processor keeps room. */
+    static int idColumnWidth(int areaWidth) {
+        return areaWidth < 130 ? 16 : 25;
+    }
+
+    /** The width the PROCESSOR column gets: the borders, ">> ", 7 gaps and the other columns. */
+    static int processorWidth(int areaWidth) {
+        // 2 of slack: the table sits a little inside the area of the tab
+        return Math.max(0, areaWidth - 2 - 3 - 7 - 2 - (3 + 4 + 12 + 2 * idColumnWidth(areaWidth) + 4 + 11));
+    }
+
     private static Row buildStepRow(
             int stepNumber, int inlineDepth,
             String direction, boolean first, boolean last, boolean failed,
             String timestamp, String routeId, String nodeId, String processor,
-            String description, long elapsed, String changes) {
+            String description, long elapsed, String changes, int areaWidth) {
+        int idWidth = idColumnWidth(areaWidth);
         Style dirStyle;
         if (first || last || !direction.isBlank()) {
             dirStyle = failed ? Theme.error() : Theme.success();
@@ -2074,9 +2090,11 @@ class HistoryTab extends AbstractTab {
                 rightCell(String.valueOf(stepNumber), 3),
                 Cell.from(Span.styled(direction, dirStyle)),
                 Cell.from(timestamp != null ? TuiHelper.truncate(timestamp, 12) : ""),
-                Cell.from(Span.styled(routeId != null ? TuiHelper.truncate(routeId, 25) : "", Style.EMPTY.fg(Theme.accent()))),
-                Cell.from(indent + (nodeId != null ? TuiHelper.truncate(nodeId, 25) : "")),
-                Cell.from(indent + display),
+                Cell.from(Span.styled(routeId != null ? TuiHelper.truncate(routeId, idWidth) : "",
+                        Style.EMPTY.fg(Theme.accent()))),
+                Cell.from(TuiHelper.truncate(indent + (nodeId != null ? nodeId : ""), idWidth)),
+                // a long processor ends with an ellipsis where it is cut
+                Cell.from(TuiHelper.truncate(indent + display, processorWidth(areaWidth))),
                 Cell.from(Line.from(changeSpans)),
                 rightCell(elapsedStr, 10));
     }
@@ -2122,12 +2140,12 @@ class HistoryTab extends AbstractTab {
     }
 
     private static Table buildStepTable(List<Row> rows, Object title, boolean descriptionMode) {
-        return buildStepTable(rows, title, descriptionMode, Style.EMPTY, Theme.selectionBg());
+        return buildStepTable(rows, title, descriptionMode, Style.EMPTY, Theme.selectionBg(), 25);
     }
 
     private static Table buildStepTable(
             List<Row> rows, Object title, boolean descriptionMode,
-            Style borderStyle, Style highlightStyle) {
+            Style borderStyle, Style highlightStyle, int idWidth) {
         Row header = Row.from(
                 rightCell("#", 3, Style.EMPTY.bold()),
                 Cell.from(Span.styled("", Style.EMPTY.bold())),
@@ -2148,8 +2166,8 @@ class HistoryTab extends AbstractTab {
                         Constraint.length(3),
                         Constraint.length(4),
                         Constraint.length(12),
-                        Constraint.length(25),
-                        Constraint.length(25),
+                        Constraint.length(idWidth),
+                        Constraint.length(idWidth),
                         Constraint.fill(),
                         Constraint.length(4),
                         Constraint.length(11))
