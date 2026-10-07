@@ -28,7 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * The value of a path parameter of a collection request is decoded as a path segment (RFC 3986), as the Rest DSL
@@ -79,6 +79,6 @@ class RestPostmanPathParameterDecodingTest {
         processor.process(exchange, done -> {
         });
 
-        assertEquals(expected, exchange.getMessage().getHeader("petId"));
+        assertThat(exchange.getMessage().getHeader("petId")).isEqualTo(expected);
     }
 }
