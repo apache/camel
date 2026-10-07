@@ -19,7 +19,9 @@ package org.apache.camel.language.wasm;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.StringHelper;
 import org.assertj.core.api.InstanceOfAssertFactories;
@@ -93,6 +95,35 @@ public class WasmLanguageTest {
                     .hasCauseInstanceOf(RuntimeException.class)
                     .extracting(Throwable::getCause, as(InstanceOfAssertFactories.THROWABLE))
                     .hasMessage("this is an error");
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = { byte[].class, String.class, Boolean.class })
+    public void testPredicate(Class<?> resultType) throws Exception {
+        try (CamelContext cc = new DefaultCamelContext()) {
+
+            cc.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    // the transform function upper-cases the body, so it returns TRUE, FALSE or nothing
+                    from("direct:in")
+                            .filter()
+                            .wasm("transform", "functions.wasm", resultType)
+                            .to("mock:result");
+                }
+            });
+            cc.start();
+
+            MockEndpoint mock = cc.getEndpoint("mock:result", MockEndpoint.class);
+            mock.expectedBodiesReceived("true");
+
+            ProducerTemplate pt = cc.createProducerTemplate();
+            pt.sendBody("direct:in", "false");
+            pt.sendBody("direct:in", "");
+            pt.sendBody("direct:in", "true");
+
+            mock.assertIsSatisfied();
         }
     }
 }

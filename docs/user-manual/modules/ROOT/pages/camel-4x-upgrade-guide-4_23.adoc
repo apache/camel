@@ -3075,6 +3075,13 @@ example:
 This is not a functional change for messages without a `DOCTYPE`, and it does not add a document parse:
 `XPathExpression.evaluate(InputSource)` already built a full DOM internally.
 
+=== camel-wasm - the wasm predicate
+
+The `wasm` language used as a predicate only matched a Jackson `BooleanNode` result, so with the default result type
+(`byte[]`) or `resultType` set to `Boolean` or `String` it never matched. The result is now evaluated with the standard
+Camel rules (`true`/`false` text, a `Boolean`, empty is `false`), so filters and choices that never matched before can
+now match. A `JsonNode` result still only matches when it is the JSON boolean `true`.
+
 === camel-core, camel-lra
 
 The saga id normally travels in the exchange's internal state, which survives `removeHeaders("*")`.

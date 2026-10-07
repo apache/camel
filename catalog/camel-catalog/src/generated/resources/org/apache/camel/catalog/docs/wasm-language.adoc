@@ -184,6 +184,24 @@ YAML::
 ====
 
 
+== Using Wasm as a predicate
+
+When the function is used as a xref:manual::predicate.adoc[Predicate], for example with the
+xref:eips:filter-eip.adoc[Filter] EIP, its result is converted to a boolean with the standard Camel rules:
+a `Boolean` is used directly, the strings `true` and `false` (in any case) are parsed, empty data is
+`false`, and any other non-null value is `true`. With the default result type (`byte[]`), the returned
+bytes are first converted to a string, so the function can simply return `true` or `false`.
+If the result type is a Jackson `JsonNode`, only the JSON boolean `true` matches.
+
+[source,java]
+----
+from("direct:in")
+    .filter()
+        .wasm("is_valid", "classpath://functions.wasm")
+    .to("direct:valid");
+----
+
+
 == Dependencies
 
 If you use Maven you could add the following to your `pom.xml`,
