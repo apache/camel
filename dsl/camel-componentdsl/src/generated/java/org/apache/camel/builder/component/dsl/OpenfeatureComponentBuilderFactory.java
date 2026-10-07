@@ -139,10 +139,10 @@ public interface OpenfeatureComponentBuilderFactory {
         }
     
         /**
-         * The evaluation type. When set to 'boolean', boolean evaluation is
-         * used (getBooleanValue). When set to 'variant', string evaluation is
-         * used (getStringValue). When not set, the type is inferred from
-         * defaultValue.
+         * The evaluation type. 'boolean' and 'isEnabled' use boolean evaluation
+         * (getBooleanValue). 'variant' uses string evaluation (getStringValue).
+         * When not set, the type is inferred from defaultValue. Can also be set
+         * as a path parameter in the endpoint URI, which takes precedence.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -190,7 +190,8 @@ public interface OpenfeatureComponentBuilderFactory {
     
         /**
          * Camel resource URI pointing to a feature flag definition file in
-         * flagd format. Mutually exclusive with flags and provider.
+         * flagd format. Mutually exclusive with flags. When provider is also
+         * set, the provider takes precedence.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

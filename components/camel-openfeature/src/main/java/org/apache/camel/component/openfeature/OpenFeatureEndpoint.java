@@ -73,8 +73,6 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
     private OpenFeatureConfiguration configuration;
 
     private volatile Client client;
-    private volatile File tempFlagFile;
-    private volatile boolean ownedProvider;
 
     public OpenFeatureEndpoint(String uri, OpenFeatureComponent component, String domain, String evaluationType,
                                OpenFeatureConfiguration configuration) {
@@ -108,12 +106,7 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException("domain must not be blank");
         }
 
-        if (getComponent().hasDomainBinding(domain)) {
-            client = getComponent().acquireClient(domain);
-        } else {
-            FeatureProvider provider = resolveProvider();
-            client = getComponent().registerEndpoint(domain, provider, ownedProvider);
-        }
+        client = getComponent().acquireOrRegister(domain, this::resolveProvider);
     }
 
     @Override
@@ -122,14 +115,6 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
             client = null;
             getComponent().unregisterEndpoint(domain);
         }
-        ownedProvider = false;
-
-        File tmp = tempFlagFile;
-        tempFlagFile = null;
-        if (tmp != null) {
-            Files.deleteIfExists(tmp.toPath());
-        }
-
         super.doStop();
     }
 
@@ -326,7 +311,7 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
         }
     }
 
-    private FeatureProvider resolveProvider() throws IOException {
+    private OpenFeatureComponent.ProviderRegistration resolveProvider() throws IOException {
         String providerRef = configuration.getProvider();
         if (providerRef != null) {
             String beanName = providerRef.startsWith("#") ? providerRef.substring(1) : providerRef;
@@ -336,27 +321,32 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
                 throw new IllegalArgumentException(
                         "No FeatureProvider bean found in the registry with name: " + beanName);
             }
-            return provider;
+            return new OpenFeatureComponent.ProviderRegistration(provider, false);
         }
 
         FeatureProvider defaultProvider = getCamelContext().getRegistry()
                 .lookupByNameAndType(DEFAULT_PROVIDER_BEAN, FeatureProvider.class);
         if (defaultProvider != null) {
-            return defaultProvider;
+            LOG.debug("Using FeatureProvider bean '{}' from registry", DEFAULT_PROVIDER_BEAN);
+            return new OpenFeatureComponent.ProviderRegistration(defaultProvider, false);
         }
 
         return createFlagdProvider();
     }
 
-    private FeatureProvider createFlagdProvider() throws IOException {
-        ownedProvider = true;
+    private OpenFeatureComponent.ProviderRegistration createFlagdProvider() throws IOException {
+        if (configuration.getCertPath() != null && !configuration.isTls()) {
+            LOG.warn("certPath is set but tls=false — certPath will be ignored");
+        }
+
         if (configuration.getFlags() != null) {
             return createFileProviderFromContent(configuration.getFlags());
         }
         if (configuration.getFlagsResource() != null) {
             String resource = configuration.getFlagsResource();
             if (resource.startsWith("file:")) {
-                return createFileProviderFromPath(resource.substring(5));
+                return new OpenFeatureComponent.ProviderRegistration(
+                        createFileProviderFromPath(resource.substring(5)), true);
             }
             String content = loadResource(resource);
             return createFileProviderFromContent(content);
@@ -372,7 +362,7 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
                     builder.certPath(configuration.getCertPath());
                 }
             }
-            return new FlagdProvider(builder.build());
+            return new OpenFeatureComponent.ProviderRegistration(new FlagdProvider(builder.build()), true);
         }
         throw new IllegalArgumentException(
                 "No provider found. Set a provider bean reference, register a '" + DEFAULT_PROVIDER_BEAN
@@ -387,16 +377,19 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
         return new FlagdProvider(options);
     }
 
-    private FlagdProvider createFileProviderFromContent(String flagContent) throws IOException {
+    private OpenFeatureComponent.ProviderRegistration createFileProviderFromContent(String flagContent)
+            throws IOException {
         File tmp = Files.createTempFile("camel-openfeature-", ".json").toFile();
         Files.writeString(tmp.toPath(), flagContent, StandardCharsets.UTF_8);
-        tempFlagFile = tmp;
 
         FlagdOptions options = FlagdOptions.builder()
                 .resolverType(Config.Resolver.FILE)
                 .offlineFlagSourcePath(tmp.getAbsolutePath())
                 .build();
-        return new FlagdProvider(options);
+        FlagdProvider provider = new FlagdProvider(options);
+        OpenFeatureComponent.ProviderRegistration reg = new OpenFeatureComponent.ProviderRegistration(provider, true);
+        reg.tempFlagFile = tmp;
+        return reg;
     }
 
     private String loadResource(String location) throws IOException {

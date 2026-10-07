@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.openfeature;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,12 +47,48 @@ public class OpenFeatureComponent extends DefaultComponent {
         final FeatureProvider provider;
         final boolean owned;
         int refCount;
+        File tempFlagFile;
 
         DomainBinding(FeatureProvider provider, boolean owned) {
             this.provider = provider;
             this.owned = owned;
             this.refCount = 1;
         }
+
+        void shutdown() {
+            if (owned) {
+                try {
+                    provider.shutdown();
+                } catch (Exception e) {
+                    LOG.debug("Error shutting down owned provider: {}", e.getMessage(), e);
+                }
+            }
+
+            if (tempFlagFile != null) {
+                try {
+                    Files.deleteIfExists(tempFlagFile.toPath());
+                } catch (IOException e) {
+                    LOG.debug("Error deleting temp flag file: {}", e.getMessage(), e);
+                }
+                tempFlagFile = null;
+            }
+        }
+    }
+
+    static class ProviderRegistration {
+        final FeatureProvider provider;
+        final boolean owned;
+        File tempFlagFile;
+
+        ProviderRegistration(FeatureProvider provider, boolean owned) {
+            this.provider = provider;
+            this.owned = owned;
+        }
+    }
+
+    @FunctionalInterface
+    interface ProviderSupplier {
+        ProviderRegistration get() throws Exception;
     }
 
     @Override
@@ -79,6 +118,9 @@ public class OpenFeatureComponent extends DefaultComponent {
     protected void doStop() throws Exception {
         OpenFeatureAPI localApi = api;
         api = null;
+        for (DomainBinding binding : domainBindings.values()) {
+            binding.shutdown();
+        }
         domainBindings.clear();
         if (localApi != null) {
             try {
@@ -90,22 +132,36 @@ public class OpenFeatureComponent extends DefaultComponent {
         super.doStop();
     }
 
-    synchronized boolean hasDomainBinding(String domain) {
-        return domainBindings.containsKey(domain);
-    }
-
-    synchronized Client acquireClient(String domain) {
+    synchronized Client acquireOrRegister(String domain, ProviderSupplier providerSupplier) throws Exception {
         DomainBinding existing = domainBindings.get(domain);
-        if (existing == null) {
-            throw new IllegalStateException("No binding exists for domain '" + domain + "'");
+        if (existing != null) {
+            existing.refCount++;
+            return api.getClient(domain);
         }
-        existing.refCount++;
-        return api.getClient(domain);
-    }
 
-    synchronized Client registerEndpoint(String domain, FeatureProvider provider, boolean owned) throws Exception {
-        api.setProviderAndWait(domain, provider);
-        domainBindings.put(domain, new DomainBinding(provider, owned));
+        ProviderRegistration reg = providerSupplier.get();
+        try {
+            api.setProviderAndWait(domain, reg.provider);
+        } catch (Exception e) {
+            if (reg.owned) {
+                try {
+                    reg.provider.shutdown();
+                } catch (Exception suppressed) {
+                    e.addSuppressed(suppressed);
+                }
+            }
+            if (reg.tempFlagFile != null) {
+                try {
+                    Files.deleteIfExists(reg.tempFlagFile.toPath());
+                } catch (IOException suppressed) {
+                    e.addSuppressed(suppressed);
+                }
+            }
+            throw e;
+        }
+        DomainBinding binding = new DomainBinding(reg.provider, reg.owned);
+        binding.tempFlagFile = reg.tempFlagFile;
+        domainBindings.put(domain, binding);
         return api.getClient(domain);
     }
 
@@ -115,13 +171,7 @@ public class OpenFeatureComponent extends DefaultComponent {
             binding.refCount--;
             if (binding.refCount <= 0) {
                 domainBindings.remove(domain);
-                if (binding.owned) {
-                    try {
-                        binding.provider.shutdown();
-                    } catch (Exception e) {
-                        LOG.debug("Error shutting down owned provider for domain '{}': {}", domain, e.getMessage(), e);
-                    }
-                }
+                binding.shutdown();
             }
         }
     }
