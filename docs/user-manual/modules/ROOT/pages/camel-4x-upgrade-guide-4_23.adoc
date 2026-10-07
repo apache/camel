@@ -4720,3 +4720,10 @@ consumes `AiToolResult` and handles its variants exhaustively — for example an
 `AiToolResult.ExecutionError` — must add a branch for `AuthorizationDenied` and relay its `message()` to the model as
 a refusal (do not rethrow). The in-tree adapters (camel-openai, camel-spring-ai-chat, camel-langchain4j-agent and the
 MCP server bridge) already handle it.
+
+=== camel-kubernetes
+
+The `kubernetes-configmaps` developer console now reports the config map names and refresh settings from
+`camel.vault.kubernetescm` instead of reading the Kubernetes secrets vault configuration.
+Its text output labels the list `Config maps in use:` instead of `Secrets in use:`.
+Both Kubernetes vault consoles return empty lists when no resource names are configured.
