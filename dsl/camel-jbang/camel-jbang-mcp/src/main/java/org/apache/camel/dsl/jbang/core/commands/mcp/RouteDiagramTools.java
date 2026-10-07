@@ -50,18 +50,22 @@ public class RouteDiagramTools {
     public RouteDiagramResult camel_render_route_diagram(
             @ToolArg(description = "Absolute or relative path to the Camel route source file (YAML, XML, Java, ...)") String sourceFile,
             @ToolArg(description = "Optional output file path. For image themes a PNG is written; for text themes a .txt "
-                                   + "file is written. If not specified, a temporary file is created.") String outputFile,
+                                   + "file is written. If not specified, a temporary file is created.",
+                     required = false) String outputFile,
             @ToolArg(description = "Color theme: 'dark' (default), 'light', 'transparent', 'ascii' (plain ASCII art), "
                                    + "'unicode' (box-drawing characters), or a custom spec like "
                                    + "'bg=#1e1e1e:from=#2e7d32:to=#1565c0'. "
-                                   + "Use 'ascii' or 'unicode' to get a text diagram that can be read directly.") String theme,
+                                   + "Use 'ascii' or 'unicode' to get a text diagram that can be read directly.",
+                     required = false) String theme,
             @ToolArg(description = "Optional filter to limit the diagram to routes whose route id or source filename "
-                                   + "matches the given pattern (supports wildcards)") String filter,
+                                   + "matches the given pattern (supports wildcards)",
+                     required = false) String filter,
             @ToolArg(description = "Image width in pixels; 0 (or unset) = auto (only used for image themes)") Integer width,
-            @ToolArg(description = "Font size in logical pixels for node text (default 12)") Integer fontSize,
-            @ToolArg(description = "Node box width in logical pixels (default 180)") Integer boxWidth,
+            @ToolArg(description = "Font size in logical pixels for node text (default 12)", required = false) Integer fontSize,
+            @ToolArg(description = "Node box width in logical pixels (default 180)", required = false) Integer boxWidth,
             @ToolArg(description = "What text to display in diagram nodes: 'code' (default), 'description' (prefer "
-                                   + "description over code if available), or 'both' (show description and code)") String nodeLabel,
+                                   + "description over code if available), or 'both' (show description and code)",
+                     required = false) String nodeLabel,
             @ToolArg(description = "Whether to ignore route loading and compilation errors (use with care)") Boolean ignoreLoadingError) {
 
         if (sourceFile == null || sourceFile.isBlank()) {

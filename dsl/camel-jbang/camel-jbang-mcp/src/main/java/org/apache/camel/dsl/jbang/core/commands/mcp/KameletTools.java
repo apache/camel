@@ -48,8 +48,9 @@ public class KameletTools {
     public KameletListResult camel_catalog_kamelets(
             @ToolArg(description = "Filter kamelets by name or description (case-insensitive substring match)") String filter,
             @ToolArg(description = "Filter by type: source, sink, or action") String type,
-            @ToolArg(description = "Maximum number of results to return (default: 50)") Integer limit,
-            @ToolArg(description = "Apache Camel Kamelets version. If not specified, uses the default version.") String kameletsVersion) {
+            @ToolArg(description = "Maximum number of results to return (default: 50)", required = false) Integer limit,
+            @ToolArg(description = "Apache Camel Kamelets version. If not specified, uses the default version.",
+                     required = false) String kameletsVersion) {
 
         int maxResults = limit != null ? limit : 50;
 
@@ -104,7 +105,8 @@ public class KameletTools {
                         + "dependencies, and usage information.")
     public KameletDetailResult camel_catalog_kamelet_doc(
             @ToolArg(description = "Kamelet name (e.g., aws-s3-source, kafka-sink, log-action)") String kamelet,
-            @ToolArg(description = "Apache Camel Kamelets version. If not specified, uses the default version.") String kameletsVersion) {
+            @ToolArg(description = "Apache Camel Kamelets version. If not specified, uses the default version.",
+                     required = false) String kameletsVersion) {
 
         if (kamelet == null || kamelet.isBlank()) {
             throw new ToolCallException("Kamelet name is required", null);

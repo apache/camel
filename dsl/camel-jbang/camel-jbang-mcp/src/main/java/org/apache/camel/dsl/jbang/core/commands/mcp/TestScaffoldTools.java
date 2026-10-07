@@ -81,8 +81,8 @@ public class TestScaffoldTools {
                         + "and @RegisterExtension stubs for infrastructure components (Kafka, AWS, etc.).")
     public String camel_route_test_scaffold(
             @ToolArg(description = "The Camel route definition (YAML or XML)") String route,
-            @ToolArg(description = "Route format: yaml or xml (default: yaml)") String format,
-            @ToolArg(description = "Target runtime: main or spring-boot (default: main)") String runtime,
+            @ToolArg(description = "Route format: yaml or xml (default: yaml)", required = false) String format,
+            @ToolArg(description = "Target runtime: main or spring-boot (default: main)", required = false) String runtime,
             @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
             @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 

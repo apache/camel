@@ -205,7 +205,7 @@ public class RuntimeTools {
     public JsonObject camel_runtime_route_dump(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Route ID to dump (use * for all routes)") String routeId,
-            @ToolArg(description = "Output format: xml, yaml, or java (default: yaml)") String format) {
+            @ToolArg(description = "Output format: xml, yaml, or java (default: yaml)", required = false) String format) {
         Map<String, String> args = new HashMap<>();
         args.put("routeId", routeId != null ? routeId : "*");
         args.put("format", format != null ? format : "yaml");
@@ -511,8 +511,10 @@ public class RuntimeTools {
                   with tools like Eclipse MAT, VisualVM, or jhat. The dump is written to the process working directory.""")
     public JsonObject camel_runtime_heap_dump(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
-            @ToolArg(description = "File name for the heap dump (without .hprof extension). Defaults to heap-dump-<timestamp>") String name,
-            @ToolArg(description = "Whether to dump only live objects (default true). Live dumps trigger a GC first") String live) {
+            @ToolArg(description = "File name for the heap dump (without .hprof extension). Defaults to heap-dump-<timestamp>",
+                     required = false) String name,
+            @ToolArg(description = "Whether to dump only live objects (default true). Live dumps trigger a GC first",
+                     required = false) String live) {
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
         return runtimeService.executeAction(p.pid(), "heap-dump", root -> {
             if (name != null && !name.isBlank()) {
@@ -541,15 +543,19 @@ public class RuntimeTools {
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Command: start, stop, status, or query") String command,
             @ToolArg(description = "Recording duration in seconds (only for start command, default 60, use 0 for manual stop)") String duration,
-            @ToolArg(description = "Recording mode: dual (default, two recordings at Xs and 2Xs with trend comparison) or single (one recording)") String mode,
-            @ToolArg(description = "Include allocation stack traces in results (default false, set true for detailed analysis)") String stacktrace,
+            @ToolArg(description = "Recording mode: dual (default, two recordings at Xs and 2Xs with trend comparison) or single (one recording)",
+                     required = false) String mode,
+            @ToolArg(description = "Include allocation stack traces in results (default false, set true for detailed analysis)",
+                     required = false) String stacktrace,
             @ToolArg(description = "Minimum total size in bytes to include a sample (e.g. 1024 for 1KB). Filters out small allocations to reduce noise. Default 1024 (1KB) in dual mode") String minSize) {
         if (command == null || command.isBlank()) {
             throw new ToolCallException("command is required (start, stop, status, or query)", null);
         }
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
 
-        if ("start".equals(command) && "dual".equalsIgnoreCase(mode)) {
+        // dual is the documented default: an omitted or blank mode records twice too
+        boolean dual = mode == null || mode.isBlank() || "dual".equalsIgnoreCase(mode);
+        if ("start".equals(command) && dual) {
             return doDualJfrRecording(p.pid(), duration, stacktrace, minSize);
         }
 
@@ -701,7 +707,7 @@ public class RuntimeTools {
     public JsonObject camel_runtime_browse(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Endpoint URI to browse") String endpoint,
-            @ToolArg(description = "Maximum number of messages to return (default: 50)") Integer limit) {
+            @ToolArg(description = "Maximum number of messages to return (default: 50)", required = false) Integer limit) {
         if (endpoint == null || endpoint.isBlank()) {
             throw new ToolCallException("endpoint is required", null);
         }

@@ -61,7 +61,8 @@ public class DependencySecurityAuditTools {
             @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
             @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
             @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom,
-            @ToolArg(description = "If true (default), mask credentials in POM content") Boolean sanitizePom) {
+            @ToolArg(description = "If true (default), mask credentials in POM content",
+                     required = false) Boolean sanitizePom) {
 
         if (pomContent == null || pomContent.isBlank()) {
             throw new ToolCallException("pomContent is required", null);
