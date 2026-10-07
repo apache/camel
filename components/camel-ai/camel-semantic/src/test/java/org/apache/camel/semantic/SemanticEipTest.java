@@ -43,7 +43,7 @@ class SemanticEipTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                context.getRegistry().bind("classifier", new SemanticAdapter() {
+                context.getRegistry().bind("classifier", new TestSemanticAdapter() {
                     public void validate(SemanticQuestion question) {
                     }
 

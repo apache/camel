@@ -27,7 +27,7 @@
     </parent>
     <artifactId>camel-semantic</artifactId>
     <name>Camel :: AI :: Semantic Evaluation</name>
-    <description>Evaluate named questions about message content to produce boolean decisions, categories and scores through provider adapters</description>
+    <description>Evaluate named questions about message content to produce boolean decisions, categories, scores and label sets through provider adapters</description>
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

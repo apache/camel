@@ -46,6 +46,7 @@ class SemanticXmlLoaderTest {
             }
         };
         try (var context = new DefaultCamelContext(registry)) {
+            context.getRegistry().bind("fixture", new SemanticLanguageTest.CountingAdapter());
             context.start();
             SemanticXmlLoader loader = registry.lookupByNameAndType(SemanticXmlLoader.REGISTRY_KEY, SemanticXmlLoader.class);
             lookups.set(0);
@@ -79,6 +80,7 @@ class SemanticXmlLoaderTest {
             XmlRoutesBuilderLoader custom = new XmlRoutesBuilderLoader();
             context.getRegistry().bind("customXml", custom);
 
+            context.getRegistry().bind("fixture", new SemanticLanguageTest.CountingAdapter());
             context.start();
 
             assertThat(loader.isSupportedExtension("xml")).isFalse();
@@ -109,6 +111,7 @@ class SemanticXmlLoaderTest {
                 """ : "");
         try (var context = new DefaultCamelContext()) {
             PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("nested.routes.xml", routes));
+            context.getRegistry().bind("fixture", new SemanticLanguageTest.CountingAdapter());
             context.start();
             assertThat(context.getRouteDefinitions()).hasSize(2);
             if (declarations) {

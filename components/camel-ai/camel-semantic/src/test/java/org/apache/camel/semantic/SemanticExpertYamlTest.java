@@ -19,9 +19,6 @@ package org.apache.camel.semantic;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.semantic.SemanticExpert.InputType;
-import org.apache.camel.semantic.SemanticExpert.Instructions;
-import org.apache.camel.semantic.SemanticExpert.ResultType;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ResourceHelper;
 import org.junit.jupiter.api.Test;
@@ -74,7 +71,7 @@ class SemanticExpertYamlTest {
                     DECLARATIONS.replace("type: boolean", "type: boolean\n        instructions: unsupported")))
                     .isInstanceOfSatisfying(YamlDeserializationException.class, error -> {
                         assertThat(error).hasMessageContaining("injection").hasMessageContaining("security")
-                                .hasMessageContaining("Instructions are unsupported");
+                                .hasMessageContaining("Unknown parameter 'instructions'");
                         assertThat(error.getProblemMark()).hasValueSatisfying(mark -> {
                             assertThat(mark.getName()).isEqualTo("questions.yaml");
                             assertThat(mark.getLine()).isZero();
@@ -101,9 +98,11 @@ class SemanticExpertYamlTest {
                 yaml = yaml.replace("        type: boolean\n", "");
             }
             String declaration = yaml;
+            context.getRegistry().bind("security", new FixedExpert());
+            context.start();
             assertThatThrownBy(() -> preParse(context, declaration))
                     .isInstanceOf(YamlDeserializationException.class)
-                    .hasMessageContaining("semantic question 'injection'").hasMessageContaining("expert 'security'");
+                    .hasMessageContaining("injection").hasMessageContaining("expert 'security'");
         }
     }
 
@@ -128,16 +127,27 @@ class SemanticExpertYamlTest {
     }
 
     @Test
-    void unusedDeclarationsDoNotMakeAnUnchangedReloadFail() throws Exception {
+    void malformedBlockExpertAndUnknownKeysHaveUsefulContext() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            assertThatThrownBy(() -> preParse(context,
+                    "- semantic: {expert: [invalid], evaluation: {q: {operation: detect}}}"))
+                    .isInstanceOf(YamlDeserializationException.class).hasMessageContaining("'q'")
+                    .hasMessageContaining("invalid expert reference");
+            assertThatThrownBy(() -> preParse(context,
+                    "- semantic: {expertt: security, evaluation: {q: {operation: detect}}}"))
+                    .isInstanceOf(YamlDeserializationException.class).hasMessageContaining("Unknown property 'expertt'");
+        }
+    }
+
+    @Test
+    void unusedAmbiguousDeclarationsFailAtStartup() throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("security", new FixedExpert());
             context.getRegistry().bind("other", new FixedExpert());
             String declarations = DECLARATIONS + "      draft: {type: boolean}\n";
             preParse(context, declarations);
-            context.start();
-            context.resolveLanguage("semantic").createExpression("ref:injection");
-            preParse(context, declarations);
-            assertThat(SemanticQuestions.get(context).get("draft").getExpert()).isNull();
+            assertThatThrownBy(context::start).hasMessageContaining("draft")
+                    .hasMessageContaining("exactly one eligible expert");
         }
     }
 
@@ -151,20 +161,9 @@ class SemanticExpertYamlTest {
         }
     }
 
-    @SemanticExpert(name = "fixed", description = "Fixed test expert", provider = "test", artifactId = "test",
-                    inputTypes = InputType.TEXT, resultTypes = ResultType.BOOLEAN,
-                    instructions = Instructions.UNSUPPORTED, callerDefinedCriteria = false, booleanProbability = true)
-    private static class FixedExpert implements SemanticAdapter {
-        private int calls;
-
-        @Override
-        public void validate(SemanticQuestion question) {
-        }
-
-        @Override
-        public SemanticResult evaluate(SemanticQuestion question, Object state) {
-            calls++;
-            return new SemanticResult(null, 0.8, null, null, null);
+    private static class FixedExpert extends FixedSemanticExpert {
+        private FixedExpert() {
+            probability = 0.8;
         }
     }
 }

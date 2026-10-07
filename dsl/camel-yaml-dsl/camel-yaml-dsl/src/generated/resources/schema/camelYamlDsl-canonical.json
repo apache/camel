@@ -13581,92 +13581,56 @@
       },
       "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer" : {
         "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "question" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionSchema"
-            }
-          }
-        },
-        "required" : [ "question" ]
-      },
-      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$BooleanSchema" : {
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "criteria" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "expert" : {
-            "type" : "string"
-          },
-          "instructions" : {
-            "type" : "string"
-          },
-          "state" : {
-            "type" : "string"
-          },
-          "threshold" : {
-            "type" : "number"
-          },
-          "type" : {
-            "type" : "string",
-            "enum" : [ "boolean" ]
-          },
-          "uncertainty" : {
-            "type" : "number"
-          },
-          "uncertaintyPolicy" : {
-            "type" : "string",
-            "enum" : [ "fail", "non-match" ]
-          }
-        },
-        "required" : [ "type" ]
-      },
-      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ChoiceSchema" : {
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "criteria" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "expert" : {
-            "type" : "string"
-          },
-          "instructions" : {
-            "type" : "string"
-          },
-          "state" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "enum" : [ "choice" ]
-          }
-        },
-        "required" : [ "criteria", "type" ]
-      },
-      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionSchema" : {
-        "type" : "object",
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$BooleanSchema"
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionBlockSchema"
           }, {
-            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ChoiceSchema"
-          }, {
-            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ScoreSchema"
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationBlockSchema"
           } ]
         } ]
       },
-      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ScoreSchema" : {
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$BlockSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "expert" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          }
+        }
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationBlockSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "evaluation" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema"
+            }
+          },
+          "expert" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "evaluation" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema" : {
+        "type" : "object",
+        "anyOf" : [ {
+          "oneOf" : [ {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$MapCriteriaSchema"
+          }, {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ListCriteriaSchema"
+          } ]
+        } ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ListCriteriaSchema" : {
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -13682,15 +13646,87 @@
           "instructions" : {
             "type" : "string"
           },
+          "operation" : {
+            "type" : "string"
+          },
+          "parameters" : {
+            "type" : "object"
+          },
           "state" : {
             "type" : "string"
           },
+          "threshold" : {
+            "type" : "number"
+          },
           "type" : {
-            "type" : "string",
-            "enum" : [ "score" ]
+            "type" : "string"
+          },
+          "uncertainty" : {
+            "type" : "number"
+          },
+          "uncertaintyPolicy" : {
+            "type" : "string"
           }
         },
-        "required" : [ "criteria", "type" ]
+        "required" : [ "criteria" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$MapCriteriaSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "criteria" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "expert" : {
+            "type" : "string"
+          },
+          "instructions" : {
+            "type" : "string"
+          },
+          "operation" : {
+            "type" : "string"
+          },
+          "parameters" : {
+            "type" : "object"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "threshold" : {
+            "type" : "number"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "uncertainty" : {
+            "type" : "number"
+          },
+          "uncertaintyPolicy" : {
+            "type" : "string"
+          }
+        }
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionBlockSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "expert" : {
+            "type" : "string"
+          },
+          "question" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema"
+            }
+          },
+          "state" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "question" ]
       }
     },
     "properties" : {

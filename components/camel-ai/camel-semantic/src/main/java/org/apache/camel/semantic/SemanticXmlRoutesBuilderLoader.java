@@ -18,8 +18,11 @@ package org.apache.camel.semantic;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.XMLConstants;
@@ -137,15 +140,22 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
     }
 
     private static void declarations(Element semantic, SemanticQuestionsBuilder questions) {
-        attributes(semantic, Set.of());
+        attributes(semantic, Set.of("expert", "state"));
+        if (semantic.hasAttribute("expert")) {
+            questions.expert(semantic.getAttribute("expert"));
+        }
+        if (semantic.hasAttribute("state")) {
+            questions.state(semantic.getAttribute("state"));
+        }
         for (Element element : children(semantic)) {
-            if (!"question".equals(element.getLocalName())) {
+            if (!"question".equals(element.getLocalName()) && !"evaluation".equals(element.getLocalName())) {
                 throw new IllegalArgumentException("Unexpected semantic element: " + element.getTagName());
             }
             try {
                 question(element, questions);
             } catch (IllegalArgumentException e) {
-                String expert = element.hasAttribute("expert") ? element.getAttribute("expert") : "default/automatic";
+                String expert = element.hasAttribute("expert") ? element.getAttribute("expert")
+                        : questions.getExpert() != null ? questions.getExpert() : "default/automatic";
                 throw new IllegalArgumentException(
                         "Invalid semantic question '" + element.getAttribute("name") + "': " + e.getMessage()
                                                    + " (expert '" + expert + "')",
@@ -155,8 +165,15 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
     }
 
     private static void question(Element element, SemanticQuestionsBuilder questions) {
-        attributes(element, Set.of("name", "type", "expert", "state", "threshold", "uncertainty", "uncertaintyPolicy"));
+        attributes(element,
+                Set.of("name", "type", "operation", "expert", "state", "threshold", "uncertainty", "uncertaintyPolicy"));
         SemanticQuestionBuilder question = questions.question(element.getAttribute("name"));
+        if (element.hasAttribute("type") && element.hasAttribute("operation")) {
+            throw new IllegalArgumentException("Specify exactly one operation or type");
+        }
+        if (element.hasAttribute("operation")) {
+            question.operation(element.getAttribute("operation"));
+        }
         if (element.hasAttribute("type")) {
             question.type(element.getAttribute("type"));
         }
@@ -178,6 +195,16 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
         boolean instructions = false;
         for (Element child : children(element)) {
             switch (child.getLocalName()) {
+                case "parameters" -> {
+                    attributes(child, Set.of());
+                    for (Element parameter : children(child)) {
+                        if (!"parameter".equals(parameter.getLocalName())) {
+                            throw new IllegalArgumentException("Expected parameter element");
+                        }
+                        attributes(parameter, Set.of("name"));
+                        question.parameter(parameter.getAttribute("name"), parameterValue(parameter));
+                    }
+                }
                 case "instructions" -> {
                     if (instructions) {
                         throw new IllegalArgumentException("Duplicate instructions for semantic question");
@@ -200,6 +227,58 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
                 default -> throw new IllegalArgumentException("Unexpected question element: " + child.getTagName());
             }
         }
+    }
+
+    private static Object parameterValue(Element parent) {
+        List<Element> values = children(parent);
+        if (values.size() != 1) {
+            throw new IllegalArgumentException("Parameter or map entry requires exactly one typed value");
+        }
+        return value(values.get(0));
+    }
+
+    private static Object value(Element element) {
+        attributes(element, Set.of());
+        return switch (element.getLocalName()) {
+            case "string" -> text(element);
+            case "null" -> {
+                if (!text(element).isBlank()) {
+                    throw new IllegalArgumentException("Null parameter value must be empty");
+                }
+                yield null;
+            }
+            case "number" -> {
+                try {
+                    yield new BigDecimal(text(element).strip());
+                } catch (NumberFormatException invalid) {
+                    throw new IllegalArgumentException("Invalid numeric parameter");
+                }
+            }
+            case "boolean" -> {
+                String text = text(element).strip();
+                if (!"true".equals(text) && !"false".equals(text)) {
+                    throw new IllegalArgumentException("Invalid boolean parameter");
+                }
+                yield Boolean.valueOf(text);
+            }
+            case "list" -> children(element).stream().map(SemanticXmlRoutesBuilderLoader::value).toList();
+            case "map" -> {
+                Map<String, Object> map = new LinkedHashMap<>();
+                for (Element entry : children(element)) {
+                    if (!"entry".equals(entry.getLocalName())) {
+                        throw new IllegalArgumentException("Expected map entry");
+                    }
+                    attributes(entry, Set.of("key"));
+                    String key = entry.getAttribute("key");
+                    if (map.containsKey(key)) {
+                        throw new IllegalArgumentException("Duplicate parameter map key: " + key);
+                    }
+                    map.put(key, parameterValue(entry));
+                }
+                yield map;
+            }
+            default -> throw new IllegalArgumentException("Unknown parameter value type: " + element.getLocalName());
+        };
     }
 
     private static String text(Element element) {

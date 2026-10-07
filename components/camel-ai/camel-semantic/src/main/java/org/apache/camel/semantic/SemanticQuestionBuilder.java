@@ -19,57 +19,75 @@ package org.apache.camel.semantic;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.StringHelper;
 
-/** Fluent definition of a named semantic question. */
+/** Fluent definition of an expert-owned evaluation. All DSLs build the same immutable declaration. */
 public final class SemanticQuestionBuilder {
     private final SemanticQuestionsBuilder parent;
+    private final Map<String, Object> parameters = new LinkedHashMap<>();
     private final Map<String, String> criteria = new LinkedHashMap<>();
     private final List<String> levels = new ArrayList<>();
-    private String type;
-    private String expert;
-    private String instructions;
-    private String state;
     private String threshold;
     private String uncertainty;
-    private String uncertaintyPolicy;
+    private boolean normalizeUncertaintyPolicy;
+    private String operation;
+    private String expert;
+    private String state;
+
+    /** Create a standalone declaration, completed with {@link #build(CamelContext)}. */
+    public SemanticQuestionBuilder() {
+        this(null);
+    }
 
     SemanticQuestionBuilder(SemanticQuestionsBuilder parent) {
         this.parent = parent;
     }
 
-    /** The question type: boolean, choice or score. */
-    public SemanticQuestionBuilder type(String type) {
-        this.type = type;
+    public SemanticQuestionBuilder operation(String operation) {
+        this.operation = operation;
         return this;
     }
 
-    /** Select a configured expert by registry bean name. */
+    /** Select an instruction-driven operation by type, such as boolean, choice or score. */
+    public SemanticQuestionBuilder type(String type) {
+        return operation(type.toLowerCase(Locale.ROOT));
+    }
+
     public SemanticQuestionBuilder expert(String expert) {
         this.expert = expert;
         return this;
     }
 
     String getExpert() {
-        return expert;
+        return expert != null ? expert : parent != null ? parent.getExpert() : null;
     }
 
-    /** The instructions sent to the provider, if supported. */
-    public SemanticQuestionBuilder instructions(String instructions) {
-        this.instructions = instructions;
-        return this;
-    }
-
-    /** A Simple expression selecting the state to evaluate; defaults to the message body. */
     public SemanticQuestionBuilder state(String state) {
         this.state = state;
         return this;
     }
 
-    /** Add a named choice, or a true/false criterion for a boolean question. */
+    public SemanticQuestionBuilder parameter(String name, Object value) {
+        if (parameters.containsKey(name)) {
+            throw new IllegalArgumentException("Duplicate semantic parameter: " + name);
+        }
+        parameters.put(name, value);
+        return this;
+    }
+
+    public SemanticQuestionBuilder parameters(Map<String, ?> values) {
+        values.forEach(this::parameter);
+        return this;
+    }
+
+    public SemanticQuestionBuilder instructions(String instructions) {
+        return parameter("instructions", instructions);
+    }
+
     public SemanticQuestionBuilder criterion(String name, String description) {
         if (criteria.containsKey(name)) {
             throw new IllegalArgumentException("Duplicate semantic criterion: " + name);
@@ -78,84 +96,89 @@ public final class SemanticQuestionBuilder {
         return this;
     }
 
-    /** Add an ordered score level. */
     public SemanticQuestionBuilder level(String level) {
         levels.add(level);
         return this;
     }
 
-    /** Boolean decision threshold; defaults to 0.5. */
     public SemanticQuestionBuilder threshold(double threshold) {
-        return threshold(Double.toString(threshold));
+        return parameter("threshold", threshold);
     }
 
-    /** Boolean decision threshold, optionally using property placeholders. */
     public SemanticQuestionBuilder threshold(String threshold) {
         this.threshold = threshold;
         return this;
     }
 
-    /** Boolean uncertainty band; defaults to zero. */
     public SemanticQuestionBuilder uncertainty(double uncertainty) {
-        return uncertainty(Double.toString(uncertainty));
+        return parameter("uncertainty", uncertainty);
     }
 
-    /** Boolean uncertainty band, optionally using property placeholders. */
     public SemanticQuestionBuilder uncertainty(String uncertainty) {
         this.uncertainty = uncertainty;
         return this;
     }
 
-    /** Boolean uncertainty policy: fail (default) or non-match. */
-    public SemanticQuestionBuilder uncertaintyPolicy(String uncertaintyPolicy) {
-        this.uncertaintyPolicy = uncertaintyPolicy;
+    public SemanticQuestionBuilder uncertaintyPolicy(String policy) {
+        parameter("uncertaintyPolicy", policy);
+        normalizeUncertaintyPolicy = true;
         return this;
     }
 
-    /** Return to the group to add another question. */
     public SemanticQuestionsBuilder end() {
+        if (parent == null) {
+            throw new IllegalStateException("Complete a standalone declaration with build(context)");
+        }
         return parent;
     }
 
-    /** Validate and register the entire group. */
     public void register() {
-        parent.register();
+        end().register();
     }
 
-    SemanticQuestion build(CamelContext context) {
-        if (type == null) {
-            throw new IllegalArgumentException("Question type is required");
+    /** Build an immutable declaration, resolving placeholders in parameter values while retaining their types. */
+    public SemanticQuestion build(CamelContext context) {
+        Map<String, Object> values = new LinkedHashMap<>(parameters);
+        if (!criteria.isEmpty() || !levels.isEmpty()) {
+            if (values.containsKey("criteria") || !criteria.isEmpty() && !levels.isEmpty()) {
+                throw new IllegalArgumentException("Duplicate parameter 'criteria'");
+            }
+            values.put("criteria", !criteria.isEmpty() ? criteria : levels);
         }
-        SemanticQuestion.Type questionType = enumeration(type, SemanticQuestion.Type.class);
-        if (questionType != SemanticQuestion.Type.BOOLEAN
-                && (threshold != null || uncertainty != null || uncertaintyPolicy != null)) {
-            throw new IllegalArgumentException("Threshold and uncertainty policy require a boolean question");
-        }
-        return new SemanticQuestion(
-                questionType, instructions, state, criteria, levels,
-                threshold == null ? 0.5 : parseDouble(context, threshold, "threshold"),
-                uncertainty == null ? 0 : parseDouble(context, uncertainty, "uncertainty"),
-                uncertaintyPolicy == null
-                        ? SemanticQuestion.UncertaintyPolicy.FAIL
-                        : enumeration(uncertaintyPolicy, SemanticQuestion.UncertaintyPolicy.class),
-                expert);
-    }
-
-    private static double parseDouble(CamelContext context, String value, String field) {
-        try {
-            return Double.parseDouble(context.resolvePropertyPlaceholders(value));
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(field + " must be a valid number: " + value, e);
-        }
-    }
-
-    private static <T extends Enum<T>> T enumeration(String value, Class<T> type) {
-        String normalized = StringHelper.asEnumConstantValue(value);
-        for (T constant : type.getEnumConstants()) {
-            if (constant.name().equalsIgnoreCase(value) || constant.name().equalsIgnoreCase(normalized)) {
-                return constant;
+        for (String numeric : List.of("threshold", "uncertainty")) {
+            String text = numeric.equals("threshold") ? threshold : uncertainty;
+            if (text != null) {
+                if (values.containsKey(numeric)) {
+                    throw new IllegalArgumentException("Duplicate parameter '" + numeric + "'");
+                }
+                try {
+                    values.put(numeric, Double.valueOf(context.resolvePropertyPlaceholders(text)));
+                } catch (NumberFormatException invalid) {
+                    throw new IllegalArgumentException("Parameter '" + numeric + "' must be a valid number");
+                }
             }
         }
-        throw new IllegalArgumentException("Invalid " + type.getSimpleName() + ": " + value);
+        values.replaceAll((name, value) -> resolve(context, value));
+        if (normalizeUncertaintyPolicy && values.get("uncertaintyPolicy") instanceof String policy) {
+            values.put("uncertaintyPolicy",
+                    StringHelper.asEnumConstantValue(policy).toLowerCase(Locale.ROOT).replace('_', '-'));
+        }
+        return new SemanticQuestion(
+                operation, getExpert(), state != null ? state : parent != null ? parent.getState() : null, values);
+    }
+
+    private static Object resolve(CamelContext context, Object value) {
+        if (value instanceof String text) {
+            return context.resolvePropertyPlaceholders(text);
+        }
+        if (value instanceof Map<?, ?> map) {
+            Map<Object, Object> resolved = new LinkedHashMap<>();
+            map.forEach((key, item) -> resolved.put(key, resolve(context, item)));
+            return resolved;
+        }
+        if (value instanceof List<?> list) {
+            return list.stream().map(item -> resolve(context, item)).toList();
+        }
+        return value;
     }
 }

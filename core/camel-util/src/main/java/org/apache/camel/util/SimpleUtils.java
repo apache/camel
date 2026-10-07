@@ -124,6 +124,7 @@ public class SimpleUtils {
                     "routegroup",
                     "routeid",
                     "safequote",
+                    "semantic",
                     "setattachment",
                     "setheader",
                     "setvariable",

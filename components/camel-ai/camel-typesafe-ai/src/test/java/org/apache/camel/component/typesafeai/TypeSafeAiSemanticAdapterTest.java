@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.language.semantic.SemanticLanguage;
-import org.apache.camel.semantic.SemanticExpert.ResultType;
+import org.apache.camel.semantic.SemanticCapabilities;
 import org.apache.camel.semantic.SemanticQuestion;
 import org.apache.camel.semantic.SemanticQuestions;
 import org.apache.camel.semantic.SemanticResult;
@@ -34,27 +34,82 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
+    @ParameterizedTest
+    @CsvSource({ "0.25, fail", "0.5, fail", "0.75, fail", "0.25, non-match", "0.5, non-match", "0.75, non-match" })
+    void inclusiveUncertaintyBandIsAppliedByTheAdapter(double probability, String policy) throws Exception {
+        respond = request -> result(Map.of("question", Map.of("type", "noul", "noul", probability)));
+        var adapter = new TypeSafeAiSemanticAdapter();
+        adapter.setCamelContext(context);
+        var question = new SemanticQuestion(
+                "boolean", null, null, Map.of(
+                        "instructions", "Classify", "threshold", 0.5, "uncertainty", 0.25, "uncertaintyPolicy", policy));
+        if (policy.equals("fail")) {
+            assertThatThrownBy(() -> adapter.evaluate(question, "text"))
+                    .isInstanceOf(IllegalStateException.class).hasMessageContaining("uncertain");
+        } else {
+            var result = adapter.evaluate(question, "text");
+            assertThat(result.getValue()).isEqualTo(false);
+            assertThat(result.getProbability()).isEqualTo(probability);
+        }
+        assertThat(requests).hasSize(1);
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "0.249, false", "0.751, true" })
+    void outsideUncertaintyBandUsesThreshold(double probability, boolean expected) throws Exception {
+        respond = request -> result(Map.of("question", Map.of("type", "noul", "noul", probability)));
+        var adapter = new TypeSafeAiSemanticAdapter();
+        adapter.setCamelContext(context);
+        var question = new SemanticQuestion(
+                "boolean", null, null,
+                Map.of("instructions", "Classify", "threshold", 0.5, "uncertainty", 0.25));
+        assertThat(adapter.evaluate(question, "text").getValue()).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = { 0.1, 0.9 })
+    void invalidUncertaintyBandFailsWithoutTransport(double threshold) {
+        var adapter = new TypeSafeAiSemanticAdapter();
+        var question = new SemanticQuestion(
+                "boolean", null, null,
+                Map.of("instructions", "Classify", "threshold", threshold, "uncertainty", 0.25));
+        assertThatThrownBy(() -> adapter.validate(question)).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("band within [0,1]");
+        assertThat(requests).isEmpty();
+    }
+
+    @Test
+    void omittedPolicyUsesAdapterDefaults() throws Exception {
+        respond = request -> result(Map.of("question", Map.of("type", "noul", "noul", 0.5)));
+        var adapter = new TypeSafeAiSemanticAdapter();
+        adapter.setCamelContext(context);
+        var question = new SemanticQuestion("boolean", null, null, Map.of("instructions", "Classify"));
+        assertThat(adapter.evaluate(question, "text").getValue()).isEqualTo(true);
+        assertThat(question.getParameters()).containsOnlyKeys("instructions");
+    }
+
     @Test
     void advertisesCapabilitiesAndRequiresInstructionsWithoutTransport() {
         TypeSafeAiSemanticAdapter adapter = new TypeSafeAiSemanticAdapter();
-        var capabilities = adapter.capabilities();
-        assertThat(capabilities.isKnown()).isTrue();
+        var capabilities = SemanticCapabilities.from(adapter.getClass());
         assertThat(capabilities.getName()).isEqualTo("typesafe-ai");
         assertThat(capabilities.getArtifactId()).isEqualTo("camel-typesafe-ai");
-        assertThat(capabilities.getMaxChoices()).isEqualTo(255);
-        assertThat(capabilities.getMaxScoreLevels()).isEqualTo(10);
-        assertThat(capabilities.getResultTypes()).containsExactly(ResultType.BOOLEAN, ResultType.CHOICE, ResultType.SCORE);
-        assertThat(capabilities.isBooleanProbability()).isTrue();
+        assertThat(capabilities.operation("choice").getParameters().get("criteria").getMaxSize()).isEqualTo(255);
+        assertThat(capabilities.operation("score").getParameters().get("criteria").getMaxSize()).isEqualTo(10);
+        assertThat(capabilities.getOperations()).containsOnlyKeys("boolean", "choice", "score");
+        assertThat(capabilities.operation("boolean").isProbability()).isTrue();
+        assertThat(capabilities.operation("boolean").isConfidence()).isFalse();
         SemanticQuestion fixed = new SemanticQuestion(
                 SemanticQuestion.Type.BOOLEAN, null, null,
                 null, null, 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
-        assertThatThrownBy(() -> adapter.validate(fixed)).hasMessageContaining("instructions are required");
+        assertThatThrownBy(() -> adapter.validate(fixed)).hasMessageContaining("Parameter 'instructions' is required");
         assertThat(requests).isEmpty();
     }
 
@@ -62,16 +117,17 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
     void subclassesRetainCapabilitiesAndProviderValidation() {
         TypeSafeAiSemanticAdapter subclass = new TypeSafeAiSemanticAdapter() {
         };
-        assertThat(subclass.capabilities()).usingRecursiveComparison()
-                .isEqualTo(new TypeSafeAiSemanticAdapter().capabilities());
+        assertThat(SemanticCapabilities.from(subclass.getClass())).usingRecursiveComparison()
+                .isEqualTo(SemanticCapabilities.from(TypeSafeAiSemanticAdapter.class));
         SemanticQuestion missing = new SemanticQuestion(
                 SemanticQuestion.Type.BOOLEAN, null, null,
                 null, null, 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
-        assertThatThrownBy(() -> subclass.validate(missing)).hasMessageContaining("instructions are required");
+        assertThatThrownBy(() -> subclass.validate(missing)).hasMessageContaining("Parameter 'instructions' is required");
         SemanticQuestion score = new SemanticQuestion(
                 SemanticQuestion.Type.SCORE, "Score", null, null,
                 IntStream.range(0, 11).mapToObj(i -> "Level " + i).toList(), 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
-        assertThatThrownBy(() -> subclass.validate(score)).hasMessageContaining("10 score levels");
+        assertThatThrownBy(() -> subclass.validate(score))
+                .hasMessageContaining("Parameter 'criteria' is outside its size constraints");
     }
 
     @Test
@@ -82,7 +138,7 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
         SemanticQuestion question = new SemanticQuestion(
                 SemanticQuestion.Type.BOOLEAN, "Classify", null,
                 Map.of(), List.of(), 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
-        assertThat(adapter.evaluate(question, "original").decision(question)).isEqualTo(true);
+        assertThat(adapter.evaluate(question, "original").getValue()).isEqualTo(true);
         assertThat(requests).hasSize(1);
         assertThat(authorization).containsExactly("Bearer test-key");
     }
@@ -100,9 +156,9 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
                 Map.of(), IntStream.range(0, 11).mapToObj(i -> "Level " + i).toList(), 0.5, 0,
                 SemanticQuestion.UncertaintyPolicy.FAIL);
         assertThatThrownBy(() -> adapter.validate(choice)).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("255 choice criteria");
+                .hasMessageContaining("Parameter 'criteria' is outside its size constraints");
         assertThatThrownBy(() -> adapter.evaluate(score, "original")).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("10 score levels");
+                .hasMessageContaining("Parameter 'criteria' is outside its size constraints");
         assertThat(requests).isEmpty();
     }
 

@@ -126,6 +126,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     }
 
     protected RouteBuilder builder(final YamlDeserializationContext ctx, final Node root) {
+        // All resources have prepared their beans before declarations are validated and routes constructed.
+        setDeserializationContext(root, ctx);
+        ctx.preParse(root);
 
         // we need to keep track of already configured items as the yaml-dsl returns a
         // RouteConfigurationBuilder that is capable of both route and route
@@ -710,7 +713,6 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
         setDeserializationContext(root, ctx);
 
-        ctx.preParse(root);
         Object target = preConfigureNode(root, ctx, true);
         Iterator<?> it = ObjectHelper.createIterator(target);
         while (it.hasNext()) {

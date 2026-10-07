@@ -30,6 +30,7 @@ import org.apache.camel.language.simple.SimpleSyntaxHints;
 import org.apache.camel.language.simple.functions.DirectFunctionFactory;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
@@ -148,9 +149,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                Object value = exp.evaluate(exchange, Object.class);
-                // the same rule the language uses for a predicate on its own (CAMEL-24984)
-                boolean matches = ObjectHelper.evaluateValuePredicate(value);
+                // Preserve a function's predicate contract, including semantic's boolean-only guard.
+                boolean matches = ExpressionToPredicateAdapter.toPredicate(exp).matches(exchange);
                 return exchange.getContext().getTypeConverter().convertTo(type, exchange, !matches);
             }
 

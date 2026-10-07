@@ -169,6 +169,7 @@ class SemanticXmlAutoDiscoveryTest {
                     delegate.set(loader);
                 }
             });
+            context.getRegistry().bind("fixture", new SemanticLanguageTest.CountingAdapter());
             context.start();
             PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("ordinary.xml", """
                     <camel xmlns="http://camel.apache.org/schema/xml-io">
@@ -228,6 +229,7 @@ class SemanticXmlAutoDiscoveryTest {
     @Test
     void contextWithApplicationRegistryDiscoversXmlDeclarations() throws Exception {
         try (var context = new DefaultCamelContext(new SimpleRegistry())) {
+            context.getRegistry().bind("fixture", new SemanticLanguageTest.CountingAdapter());
             context.start();
             PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("questions.xml", """
                     <semantic><question name="urgent" type="boolean"><instructions>Urgent?</instructions></question></semantic>
@@ -240,6 +242,7 @@ class SemanticXmlAutoDiscoveryTest {
     void contextRestartReinstallsAutomaticLoader() throws Exception {
         try (var context = new DefaultCamelContext()) {
             for (int i = 0; i < 2; i++) {
+                context.getRegistry().bind("fixture", new SemanticLanguageTest.CountingAdapter());
                 context.start();
                 PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("questions.xml",
                         """

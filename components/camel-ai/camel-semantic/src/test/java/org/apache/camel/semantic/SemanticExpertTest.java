@@ -27,7 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.semantic.SemanticExpert.InputType;
-import org.apache.camel.semantic.SemanticExpert.Instructions;
 import org.apache.camel.semantic.SemanticExpert.ResultType;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PluginHelper;
@@ -46,15 +45,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class SemanticExpertTest {
     private DefaultCamelContext context;
     private SemanticLanguage language;
-    private FixedExpert security;
-    private FixedExpert other;
+    private FixedSemanticExpert security;
+    private FixedSemanticExpert other;
     private DefaultExchange exchange;
 
     @BeforeEach
     void setup() throws Exception {
         context = new DefaultCamelContext();
-        security = new FixedExpert();
-        other = new FixedExpert();
+        security = new FixedSemanticExpert();
+        other = new FixedSemanticExpert();
         other.probability = 0.1;
         context.getRegistry().bind("security", security);
         context.getRegistry().bind("other", other);
@@ -92,7 +91,7 @@ class SemanticExpertTest {
     @ValueSource(booleans = { false, true })
     void automaticExpertErrorsRetainAStableRegistryName(boolean aliases) {
         context.getRegistry().unbind("other");
-        var registered = new FixedExpert() {
+        var registered = new FixedSemanticExpert() {
         };
         context.getRegistry().bind("security", registered);
         if (aliases) {
@@ -100,11 +99,10 @@ class SemanticExpertTest {
             context.getRegistry().bind("a-security", registered);
         }
         String name = aliases ? "a-security" : "security";
-        SemanticQuestions.get(context).replace("test", Map.of("first",
-                question(null, "Unsupported", Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5)));
-        assertThatThrownBy(() -> language.createExpression("ref:first"))
+        assertThatThrownBy(() -> SemanticQuestions.get(context).replace("test", Map.of("first",
+                question(null, "Unsupported", Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5))))
                 .hasMessageContaining("evaluation 'first', expert '" + name + "'")
-                .hasMessageContaining("Instructions are unsupported");
+                .hasMessageContaining("Unknown parameter 'instructions'");
         define(null, null, 0.5);
         var expression = language.createExpression("ref:first");
         exchange.getMessage().setBody(Map.of("text", "input"));
@@ -117,9 +115,8 @@ class SemanticExpertTest {
     @Test
     void unknownExplicitExpertNeverFallsBackToDefaultOrClassLoading() {
         language.setDefaultExpert("security");
-        for (String name : List.of("missing", FixedExpert.class.getName(), "#security")) {
-            define(name, "security", 0.5);
-            assertThatThrownBy(() -> language.createExpression("ref:first"))
+        for (String name : List.of("missing", FixedSemanticExpert.class.getName(), "#security")) {
+            assertThatThrownBy(() -> define(name, "security", 0.5))
                     .hasMessageContaining("first").hasMessageContaining(name);
         }
         assertThat(security.calls).isZero();
@@ -128,7 +125,7 @@ class SemanticExpertTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
-    void legacyAdaptersReportUnknownRatherThanUniversalCapabilities(boolean automatic) {
+    void adaptersMustDeclareTheirStaticContract(boolean automatic) {
         SemanticAdapter legacy = new SemanticAdapter() {
             @Override
             public void validate(SemanticQuestion question) {
@@ -139,21 +136,17 @@ class SemanticExpertTest {
                 return new SemanticResult(true, null, null, null, null);
             }
         };
-        assertThat(legacy.capabilities().isKnown()).isFalse();
-        assertThat(legacy.capabilities().getResultTypes()).isEmpty();
+        assertThatThrownBy(() -> SemanticCapabilities.from(legacy.getClass())).hasMessageContaining("@SemanticExpert");
         context.getRegistry().bind("legacy", legacy);
         if (automatic) {
             context.getRegistry().unbind("security");
             context.getRegistry().unbind("other");
         }
         String reference = automatic ? null : "legacy";
-        define(reference, "security", 0.5);
-        assertThatThrownBy(() -> language.createExpression("ref:first"))
+        assertThatThrownBy(() -> SemanticQuestions.get(context).replace("test",
+                Map.of("first", question(reference, null, Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5))))
                 .hasMessageContaining("first").hasMessageContaining("expert 'legacy'")
-                .hasMessageContaining("instructions are required");
-        SemanticQuestions.get(context).replace("test", Map.of("first",
-                question(reference, "Is this valid?", Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5)));
-        assertThat(language.createExpression("ref:first").evaluate(exchange, Boolean.class)).isTrue();
+                .hasMessageContaining("@SemanticExpert");
     }
 
     @Test
@@ -163,8 +156,7 @@ class SemanticExpertTest {
                 question("security", null, Map.of("true", "valid"), SemanticQuestion.Type.BOOLEAN, 0.5),
                 question("security", null, Map.of("billing", "invoices"), SemanticQuestion.Type.CHOICE, 0.5));
         for (SemanticQuestion question : invalid) {
-            SemanticQuestions.get(context).replace("test", Map.of("first", question));
-            assertThatThrownBy(() -> language.createExpression("ref:first"))
+            assertThatThrownBy(() -> SemanticQuestions.get(context).replace("test", Map.of("first", question)))
                     .hasMessageContaining("first").hasMessageContaining("security");
         }
         assertThat(security.calls).isZero();
@@ -232,7 +224,7 @@ class SemanticExpertTest {
         var expression = language.createExpression("ref:first");
         assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
 
-        var replacement = new FixedExpert();
+        var replacement = new FixedSemanticExpert();
         replacement.probability = 0.1;
         context.getRegistry().unbind("security");
         context.getRegistry().bind("security", replacement);
@@ -257,22 +249,18 @@ class SemanticExpertTest {
     }
 
     @Test
-    void reloadValidatesAllInitializedReferencesAndLeavesUnusedDraftsAlone() {
+    void reloadValidatesBothInitializedReferencesAndUnusedDeclarations() {
         Map<String, SemanticQuestion> definitions = new LinkedHashMap<>();
         for (String name : List.of("first", "second", "third")) {
             definitions.put(name, question("security", null, Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5));
         }
-        definitions.put("draft", question(null, null, Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5));
+        definitions.put("draft", question("security", null, Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5));
         SemanticQuestions questions = SemanticQuestions.get(context);
         questions.replace("test", definitions);
         var single = language.createExpression("ref:first");
         var batch = language.createExpression("refs:second,third");
         questions.replace("test", definitions);
-        assertThatThrownBy(() -> language.createExpression("ref:draft"))
-                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("exactly one eligible expert");
-        // A failed expression must not make an unused draft mandatory on the next reload.
-        questions.replace("test", definitions);
-        for (String name : List.of("first", "second", "third")) {
+        for (String name : List.of("first", "second", "third", "draft")) {
             Map<String, SemanticQuestion> invalid = new LinkedHashMap<>(definitions);
             invalid.put(name, question("missing", null, Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5));
             assertThatThrownBy(() -> questions.replace("test", invalid))
@@ -351,7 +339,7 @@ class SemanticExpertTest {
                                     </semantic>
                                     """.formatted(threshold)));
                 }
-            }).hasStackTraceContaining("semantic question 'invalid'").hasStackTraceContaining("expert 'security'");
+            }).hasStackTraceContaining("'invalid'").hasStackTraceContaining("expert 'security'");
             assertThat(security.calls).isZero();
         }
     }
@@ -364,7 +352,7 @@ class SemanticExpertTest {
                           <question name="invalid" type="boolean" expert="security" thresholdd="0.9"/>
                         </semantic>
                         """)))
-                .hasStackTraceContaining("semantic question 'invalid'").hasStackTraceContaining("expert 'security'")
+                .hasStackTraceContaining("'invalid'").hasStackTraceContaining("expert 'security'")
                 .hasStackTraceContaining("thresholdd");
     }
 
@@ -373,9 +361,9 @@ class SemanticExpertTest {
         ManagedExpert.initialized = 0;
         ManagedExpert.started = 0;
         language.setAdapter(ManagedExpert.class.getName());
-        SemanticQuestions.get(context).replace("test", Map.of("first",
-                question(null, "Unsupported", Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5)));
-        assertThatThrownBy(() -> language.createExpression("ref:first")).hasMessageContaining("Instructions are unsupported");
+        assertThatThrownBy(() -> SemanticQuestions.get(context).replace("test", Map.of("first",
+                question(null, "Unsupported", Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5))))
+                .hasMessageContaining("Unknown parameter 'instructions'");
         assertThat(ManagedExpert.initialized).isZero();
         assertThat(ManagedExpert.started).isZero();
         define(null, null, 0.5);
@@ -384,9 +372,11 @@ class SemanticExpertTest {
         assertThat(ManagedExpert.started).isOne();
     }
 
-    @SemanticExpert(name = "managed", description = "Fixed detection", provider = "test", artifactId = "test",
-                    inputTypes = InputType.TEXT, resultTypes = ResultType.BOOLEAN, instructions = Instructions.UNSUPPORTED,
-                    callerDefinedCriteria = false)
+    @SemanticExpert(name = "fixed", description = "Fixed detection", provider = "test", artifactId = "test",
+                    operations = @SemanticOperation(name = "boolean", description = "Detect injection",
+                                                    inputTypes = InputType.TEXT, inputRequirements = "A text message",
+                                                    resultType = ResultType.BOOLEAN,
+                                                    resultMeaning = "True means injection detected"))
     public static class ManagedExpert extends ServiceSupport implements SemanticAdapter {
         static int initialized;
         static int started;
@@ -421,7 +411,7 @@ class SemanticExpertTest {
         assertThat(DirectService.events).containsExactly("init", "start");
     }
 
-    public static class DirectService extends FixedExpert implements Service {
+    public static class DirectService extends FixedSemanticExpert implements Service {
         static final List<String> events = new ArrayList<>();
 
         @Override
@@ -443,13 +433,13 @@ class SemanticExpertTest {
     @Test
     void booleanOnlyExpertRejectsProbabilityPoliciesBeforeStarting() {
         context.getRegistry().bind("label", new ManagedExpert());
-        define("label", "security", 0.8);
-        assertThatThrownBy(() -> language.createExpression("ref:first"))
-                .hasMessageContaining("first").hasMessageContaining("label").hasMessageContaining("probability support");
+        assertThatThrownBy(() -> define("label", "security", 0.8))
+                .hasMessageContaining("first").hasMessageContaining("label")
+                .hasMessageContaining("Unknown parameter 'threshold'");
     }
 
     @Test
-    void instructionDrivenAndFixedExpertsShareOneBatch() {
+    void instructionDrivenAndFixedSemanticExpertsShareOneBatch() {
         context.getRegistry().bind("general", new SemanticLanguageTest.LabelAdapter());
         SemanticQuestions.get(context).replace("test", Map.of(
                 "injection", question("security", null, Map.of(), SemanticQuestion.Type.BOOLEAN, 0.5),
@@ -469,52 +459,12 @@ class SemanticExpertTest {
     private static SemanticQuestion question(
             String expert, String instructions, Map<String, String> criteria,
             SemanticQuestion.Type type, double threshold) {
+        if (type == SemanticQuestion.Type.BOOLEAN && instructions == null && criteria.isEmpty() && threshold == 0.5) {
+            return new SemanticQuestion("boolean", expert, null, Map.of());
+        }
         return new SemanticQuestion(
                 type, instructions, null, criteria, List.of(), threshold, 0,
                 SemanticQuestion.UncertaintyPolicy.FAIL, expert);
     }
 
-    @SemanticExpert(name = "fixed", description = "Prompt-injection detection", provider = "test", artifactId = "test",
-                    inputTypes = InputType.TEXT, resultTypes = ResultType.BOOLEAN, instructions = Instructions.UNSUPPORTED,
-                    callerDefinedCriteria = false, booleanProbability = true, trueMeaning = "Injection detected",
-                    probabilityMeaning = "Probability of INJECTION, even when BENIGN wins")
-    public static class FixedExpert implements SemanticAdapter {
-        double probability = 0.9;
-        boolean fail;
-        int calls;
-        final List<List<String>> batches = new ArrayList<>();
-        final List<Object> states = new ArrayList<>();
-
-        @Override
-        public void validate(SemanticQuestion question) {
-            capabilities().validate(question);
-        }
-
-        @Override
-        public SemanticResult evaluate(SemanticQuestion question, Object state) {
-            calls++;
-            states.add(state);
-            if (fail) {
-                throw new IllegalStateException("provider unavailable");
-            }
-            return new SemanticResult(null, probability, null, null, Map.of("provider", "fixed"));
-        }
-
-        @Override
-        public Map<String, SemanticResult> evaluateBatch(Map<String, SemanticQuestion> questions, Object state)
-                throws Exception {
-            batches.add(List.copyOf(questions.keySet()));
-            return SemanticAdapter.super.evaluateBatch(questions, state);
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            return other instanceof FixedExpert;
-        }
-
-        @Override
-        public int hashCode() {
-            return 1;
-        }
-    }
 }
