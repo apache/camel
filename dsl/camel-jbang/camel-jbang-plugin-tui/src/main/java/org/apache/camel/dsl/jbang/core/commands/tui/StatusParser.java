@@ -1602,7 +1602,7 @@ final class StatusParser {
         }
         long lastCheck = vo.getLongOrDefault("startCheckTimestamp", 0);
         long lastReload = vo.getLongOrDefault("lastReloadTimestamp", 0);
-        JsonArray arr = (JsonArray) vo.get("configmap");
+        JsonArray arr = (JsonArray) vo.get("configmaps");
         if (arr != null) {
             for (int i = 0; i < arr.size(); i++) {
                 JsonObject jo = (JsonObject) arr.get(i);
