@@ -59,6 +59,9 @@ public class ExchangeFailureHandlingEvent extends AbstractExchangeEvent implemen
             String uri = URISupport.sanitizeUri(deadLetterUri);
             return getExchange().getExchangeId() + " exchange failed"
                    + " and sending to dead letter channel: " + uri;
+        } else if (failureHandler == null) {
+            // no failure processor: the error handler handles it (redelivery, logging)
+            return getExchange().getExchangeId() + " exchange failed and being handled by the error handler";
         } else {
             return getExchange().getExchangeId() + " exchange failed"
                    + " and sending to processor: " + failureHandler;
