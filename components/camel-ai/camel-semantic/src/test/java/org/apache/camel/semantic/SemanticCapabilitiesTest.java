@@ -18,6 +18,7 @@ package org.apache.camel.semantic;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +80,25 @@ class SemanticCapabilitiesTest {
         assertThat(evaluation.getParameters()).doesNotContainKey("threshold");
         assertThat(evaluation.getParameters().get("policy")).isEqualTo(Map.of("labels", List.of("privacy")));
         assertThatThrownBy(() -> evaluation.getParameters().clear()).isInstanceOf(UnsupportedOperationException.class);
+        var frozenPolicy = (Map<?, ?>) evaluation.getParameters().get("policy");
+        var frozenLabels = (List<?>) frozenPolicy.get("labels");
+        assertThatThrownBy(frozenPolicy::clear).isInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(frozenLabels::clear).isInstanceOf(UnsupportedOperationException.class);
+    }
+
+    @Test
+    void nestedParameterMapsRejectInvalidKeys() {
+        for (Object key : Arrays.asList("", " \t", null, 1)) {
+            Map<Object, Object> invalid = new LinkedHashMap<>();
+            invalid.put(key, true);
+            for (Object value : List.of(invalid, List.of(invalid))) {
+                assertThatThrownBy(() -> new SemanticEvaluation("custom", null, null, Map.of("policy", value)))
+                        .isExactlyInstanceOf(IllegalArgumentException.class)
+                        .hasMessage(key instanceof String
+                                ? "Parameter names must not be blank"
+                                : "Parameter maps require string keys");
+            }
+        }
     }
 
     @Test

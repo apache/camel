@@ -69,9 +69,12 @@ public final class SemanticEvaluation {
                 if (!(key instanceof String name)) {
                     throw new IllegalArgumentException("Parameter maps require string keys");
                 }
-                copy.put(name, entry);
+                if (name.isBlank()) {
+                    throw new IllegalArgumentException("Parameter names must not be blank");
+                }
+                copy.put(name, immutableValue(entry));
             });
-            return immutableMap(copy);
+            return Collections.unmodifiableMap(copy);
         }
         if (value instanceof List<?> list) {
             List<Object> copy = new ArrayList<>();

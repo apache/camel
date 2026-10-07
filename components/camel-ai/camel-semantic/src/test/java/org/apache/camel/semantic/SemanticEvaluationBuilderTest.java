@@ -117,6 +117,16 @@ class SemanticEvaluationBuilderTest {
     }
 
     @Test
+    void nonStringNestedKeysFailWithValidationError() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var builder = new SemanticEvaluationBuilder().operation("custom").parameter("policy", Map.of(1, true));
+            assertThatThrownBy(() -> builder.build(context))
+                    .isExactlyInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Parameter maps require string keys");
+        }
+    }
+
+    @Test
     void nullPolicyIsRejectedWithContractContext() throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("fixed", new FixedSemanticExpert());
