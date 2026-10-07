@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -59,9 +60,9 @@ public final class MainHelper {
 
     private final String version;
     private final StopWatch stopWatch;
-    private final Set<String> componentEnvNames = new HashSet<>();
-    private final Set<String> dataformatEnvNames = new HashSet<>();
-    private final Set<String> languageEnvNames = new HashSet<>();
+    private final Map<String, String> componentEnvNames = new HashMap<>();
+    private final Map<String, String> dataformatEnvNames = new HashMap<>();
+    private final Map<String, String> languageEnvNames = new HashMap<>();
 
     public MainHelper() {
         stopWatch = new StopWatch();
@@ -163,17 +164,20 @@ public final class MainHelper {
         Set<String> toRemove = new HashSet<>();
         env.forEach((k, v) -> {
             if (custom) {
+                if (!k.startsWith("CAMEL_COMPONENT_")) {
+                    return;
+                }
                 toRemove.add(k);
                 String ck = "camel.component." + k.substring(16).toLowerCase(Locale.US).replace('_', '-');
                 ck = ck.replaceFirst("-", ".");
                 properties.put(ck, v);
             } else {
-                Optional<String> e
-                        = componentEnvNames.stream().filter(k::startsWith).findFirst();
+                Optional<Map.Entry<String, String>> e = longestMatch(componentEnvNames, k);
                 if (e.isPresent()) {
                     toRemove.add(k);
-                    String cname = "camel.component." + e.get().substring(16).toLowerCase(Locale.US).replace('_', '-');
-                    String option = k.substring(cname.length() + 1).toLowerCase(Locale.US).replace('_', '-');
+                    String catalogName = e.get().getValue();
+                    String cname = "camel.component." + catalogName;
+                    String option = k.substring(e.get().getKey().length() + 1).toLowerCase(Locale.US).replace('_', '-');
                     properties.put(cname + "." + option, v);
                 }
             }
@@ -185,17 +189,20 @@ public final class MainHelper {
         Set<String> toRemove = new HashSet<>();
         env.forEach((k, v) -> {
             if (custom) {
+                if (!k.startsWith("CAMEL_DATAFORMAT_")) {
+                    return;
+                }
                 toRemove.add(k);
                 String ck = "camel.dataformat." + k.substring(17).toLowerCase(Locale.US).replace('_', '-');
                 ck = ck.replaceFirst("-", ".");
                 properties.put(ck, v);
             } else {
-                Optional<String> e
-                        = dataformatEnvNames.stream().filter(k::startsWith).findFirst();
+                Optional<Map.Entry<String, String>> e = longestMatch(dataformatEnvNames, k);
                 if (e.isPresent()) {
                     toRemove.add(k);
-                    String cname = "camel.dataformat." + e.get().substring(17).toLowerCase(Locale.US).replace('_', '-');
-                    String option = k.substring(cname.length() + 1).toLowerCase(Locale.US).replace('_', '-');
+                    String catalogName = e.get().getValue();
+                    String cname = "camel.dataformat." + catalogName;
+                    String option = k.substring(e.get().getKey().length() + 1).toLowerCase(Locale.US).replace('_', '-');
                     properties.put(cname + "." + option, v);
                 }
             }
@@ -207,17 +214,20 @@ public final class MainHelper {
         Set<String> toRemove = new HashSet<>();
         env.forEach((k, v) -> {
             if (custom) {
+                if (!k.startsWith("CAMEL_LANGUAGE_")) {
+                    return;
+                }
                 toRemove.add(k);
                 String ck = "camel.language." + k.substring(15).toLowerCase(Locale.US).replace('_', '-');
                 ck = ck.replaceFirst("-", ".");
                 properties.put(ck, v);
             } else {
-                Optional<String> e
-                        = languageEnvNames.stream().filter(k::startsWith).findFirst();
+                Optional<Map.Entry<String, String>> e = longestMatch(languageEnvNames, k);
                 if (e.isPresent()) {
                     toRemove.add(k);
-                    String cname = "camel.language." + e.get().substring(15).toLowerCase(Locale.US).replace('_', '-');
-                    String option = k.substring(cname.length() + 1).toLowerCase(Locale.US).replace('_', '-');
+                    String catalogName = e.get().getValue();
+                    String cname = "camel.language." + catalogName;
+                    String option = k.substring(e.get().getKey().length() + 1).toLowerCase(Locale.US).replace('_', '-');
                     properties.put(cname + "." + option, v);
                 }
             }
@@ -477,19 +487,37 @@ public final class MainHelper {
     }
 
     /**
+     * Returns the longest name from {@code names} such that {@code envVarKey} starts with that name followed by
+     * {@code _}, or {@link Optional#empty()} if no such name exists.
+     * <p>
+     * Using the longest match is critical when the catalog contains prefix pairs such as {@code CAMEL_COMPONENT_NETTY}
+     * / {@code CAMEL_COMPONENT_NETTY_HTTP} or {@code CAMEL_LANGUAGE_JS} / {@code CAMEL_LANGUAGE_JSONPATH}: a simple
+     * {@code findFirst()} on a {@link java.util.HashSet} gives a non-deterministic result, whereas the longest match
+     * always selects the most specific name.
+     */
+    private static Optional<Map.Entry<String, String>> longestMatch(Map<String, String> names, String envVarKey) {
+        return names.entrySet().stream()
+                .filter(e -> envVarKey.startsWith(e.getKey() + "_"))
+                .max(Comparator.comparingInt(e -> e.getKey().length()));
+    }
+
+    /**
      * Loads the entire stream into memory as a String and returns it.
      * <p/>
      * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line terminator at the of the text.
      * <p/>
      * Warning, don't use for crazy big streams :)
      */
-    private static void loadLines(InputStream in, Set<String> lines, Function<String, String> func) throws IOException {
+    private static void loadLines(
+            InputStream in, Map<String, String> map,
+            Function<String, String> keyFunc)
+            throws IOException {
         if (in != null) {
             try (final InputStreamReader isr = new InputStreamReader(in);
                  final BufferedReader reader = new LineNumberReader(isr)) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    lines.add(func.apply(line));
+                    map.put(keyFunc.apply(line), line);
                 }
             }
         }

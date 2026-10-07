@@ -37,6 +37,7 @@
  */
 package ${package};
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -150,7 +151,27 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                         #set( $foo = $elementRefs.add($root) )
                         #if( $list )
                             #if( $member.name == "outputs" )
+                            #if( $clazz.simpleName == "TryDefinition" )
+        List<ProcessorDefinition<?>> outputs = new ArrayList<>(def.getOutputs());
+        for (CatchDefinition clause : def.getCatchClauses()) {
+            if (!outputs.contains(clause)) {
+                int index = outputs.size();
+                for (int i = 0; i < outputs.size(); i++) {
+                    if (outputs.get(i) instanceof FinallyDefinition) {
+                        index = i;
+                        break;
+                    }
+                }
+                outputs.add(index, clause);
+            }
+        }
+        if (def.getFinallyClause() != null && !outputs.contains(def.getFinallyClause())) {
+            outputs.add(def.getFinallyClause());
+        }
+        doWriteOutputs(sb, outputs, this::doWrite${root.simpleName}Ref);
+                            #else
         doWriteOutputs(sb, def.${member.getter}(), this::doWrite${root.simpleName}Ref);
+                            #end
                             #else
                                 #set( $refName = $member.xmlElementRef.name() )
                                 #if( $refName && $refName != $default && $refName != "" )

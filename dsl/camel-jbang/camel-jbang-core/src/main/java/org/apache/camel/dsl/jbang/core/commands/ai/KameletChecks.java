@@ -22,6 +22,7 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -369,6 +370,162 @@ public final class KameletChecks {
             }
         }
         return errors;
+    }
+
+    /** The scheme of an endpoint uri written as a value: timer:orders, kamelet:source, https://... */
+    private static final Pattern URI_SCHEME = Pattern.compile("^([a-zA-Z][a-zA-Z0-9+.-]*):");
+
+    /**
+     * The camel: dependencies of a Kamelet file that name a component its template does not use: no endpoint of the
+     * template has its scheme, and no language or data format of the template is in its artifact. Notes, not errors:
+     * the Kamelet works, but an exported project gets the artifact for nothing. A model copies them from a sample whose
+     * template starts from a timer, or from the route that uses the Kamelet (CAMEL-25403). Nothing is said when the
+     * template could use a component in a way not visible here: a bean, a class reference or a placeholder as a scheme.
+     * camel:core is noted as implied, as every Camel runtime has it.
+     */
+    public static List<String> unusedDependencies(String content) {
+        List<String> notes = new ArrayList<>();
+        Node root;
+        try {
+            root = new Yaml(new SafeConstructor(new LoaderOptions())).compose(new StringReader(content));
+        } catch (Exception e) {
+            return notes;
+        }
+        if (!(root instanceof MappingNode doc) || !"Kamelet".equals(scalar(value(doc, "kind")))
+                || !(value(doc, "spec") instanceof MappingNode spec)
+                || !(value(spec, "dependencies") instanceof SequenceNode deps)
+                || !(value(spec, "template") instanceof MappingNode template)) {
+            return notes;
+        }
+        Set<String> used = new HashSet<>();
+        // false when the template may use a component unseen: then only camel:core is noted
+        boolean inspectable = collectUsed(null, template, used);
+        CamelCatalog catalog = catalog();
+        Set<String> usedArtifacts = new HashSet<>();
+        for (String name : used) {
+            String artifact = artifactOf(catalog, name);
+            if (artifact == null) {
+                // https: is a scheme of the http component, not a component of its own
+                artifact = alternativeSchemes(catalog).get(name);
+            }
+            if (artifact != null) {
+                usedArtifacts.add(artifact);
+            }
+        }
+        for (Node d : deps.getValue()) {
+            String dep = scalar(d);
+            if (dep == null || !dep.startsWith("camel:")) {
+                continue;
+            }
+            String name = dep.substring("camel:".length());
+            if ("core".equals(name)) {
+                // every Camel runtime has camel-core; camel:kamelet is not implied, it runs the template
+                notes.add(EndpointChecks.linePrefix(line(d)) + "spec.dependencies: camel:core is implied, every Camel"
+                          + " runtime has it: remove this line");
+                continue;
+            }
+            if (!inspectable) {
+                continue;
+            }
+            ComponentModel model = catalog.componentModel(name);
+            // only a component is checked: a language or a data format may be used in ways the template does not show
+            if (model == null || catalog.languageModel(name) != null || catalog.dataFormatModel(name) != null
+                    || usedArtifacts.contains(model.getArtifactId()) || delegatedTo(used, name)) {
+                continue;
+            }
+            // what to do first: told only what to list, a model put another dependency on the line
+            notes.add(EndpointChecks.linePrefix(line(d)) + "spec.dependencies: " + dep + " is not used by the template"
+                      + " (it has no " + name + ": endpoint): remove this line; a Kamelet lists only the components,"
+                      + " languages and data formats its template uses");
+        }
+        return notes;
+    }
+
+    /** Components that run on another one the template does not name: cron on quartz, rest-openapi on an http one. */
+    private static final Map<String, Pattern> DELEGATES = Map.of(
+            "cron", Pattern.compile("quartz|spring.*"),
+            "rest", Pattern.compile(".*http.*|undertow|jetty"),
+            "rest-openapi", Pattern.compile(".*http.*|undertow|jetty"));
+
+    private static boolean delegatedTo(Set<String> used, String component) {
+        for (Map.Entry<String, Pattern> e : DELEGATES.entrySet()) {
+            if (used.contains(e.getKey()) && e.getValue().matcher(component).matches()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Adds the keys and the uri schemes of a template to the set; false when the template may use a component in a way
+     * the keys and schemes do not show.
+     */
+    private static boolean collectUsed(String key, Node node, Set<String> used) {
+        if (node instanceof MappingNode map) {
+            for (NodeTuple t : map.getValue()) {
+                String name = scalar(t.getKeyNode());
+                if ("beans".equals(name) || "bean".equals(name) || "method".equals(name)) {
+                    // a class of the Kamelet's own may need the artifact (the Kafka transform actions need camel:kafka)
+                    return false;
+                }
+                if (name != null) {
+                    used.add(name);
+                }
+                if (!collectUsed(name, t.getValueNode(), used)) {
+                    return false;
+                }
+            }
+        } else if (node instanceof SequenceNode seq) {
+            for (Node n : seq.getValue()) {
+                if (!collectUsed(key, n, used)) {
+                    return false;
+                }
+            }
+        } else if (node instanceof ScalarNode s) {
+            String v = s.getValue().trim();
+            if (v.contains("#class:") || v.contains("#type:")
+                    || v.startsWith("{{") && ("uri".equals(key) || ENDPOINT_KEYS.contains(key))) {
+                // a bean of a class, or an endpoint whose scheme is a property
+                return false;
+            }
+            Matcher m = URI_SCHEME.matcher(v);
+            if (m.find()) {
+                used.add(m.group(1));
+            } else if ("uri".equals(key) || ENDPOINT_KEYS.contains(key)) {
+                // uri: aws2-sqs with the options under parameters:, as the canonical form writes it
+                used.add(v.contains("?") ? v.substring(0, v.indexOf('?')) : v);
+            }
+        }
+        return true;
+    }
+
+    private static volatile Map<String, String> alternativeSchemes;
+
+    /** The alternative schemes of the components (https of http), each with the artifact of its component. */
+    private static Map<String, String> alternativeSchemes(CamelCatalog catalog) {
+        Map<String, String> answer = alternativeSchemes;
+        if (answer == null) {
+            answer = new HashMap<>();
+            for (String n : catalog.findComponentNames()) {
+                ComponentModel model = catalog.componentModel(n);
+                if (model != null && model.getAlternativeSchemes() != null) {
+                    for (String scheme : model.getAlternativeSchemes().split(",")) {
+                        answer.putIfAbsent(scheme.trim(), model.getArtifactId());
+                    }
+                }
+            }
+            alternativeSchemes = answer;
+        }
+        return answer;
+    }
+
+    private static CamelCatalog catalog() {
+        CamelCatalog catalog = dependencyCatalog;
+        if (catalog == null) {
+            catalog = new DefaultCamelCatalog();
+            dependencyCatalog = catalog;
+        }
+        return catalog;
     }
 
     private static volatile CamelCatalog dependencyCatalog;

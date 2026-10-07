@@ -531,16 +531,30 @@ public final class AuthoringTools {
         result.put("file", file);
         result.put("errors", new JsonArray(errors));
         putKameletGuide(result, file, errors);
+        putKameletNotes(result, file, content);
         // the problems whose fix is certain, as edits an agent can apply (camel_edit_file find/replace)
         JsonArray fixes = new JsonArray();
         String[] lines = content.split("\n", -1);
-        for (String error : errors) {
+        List<String> problems = new ArrayList<>(errors);
+        if (result.get("notes") instanceof JsonArray notes) {
+            for (Object note : notes) {
+                problems.add(String.valueOf(note));
+            }
+        }
+        for (String error : problems) {
             int line = lineOf(error);
             QuickFixes.Fix fix = line > 0 && line <= lines.length ? QuickFixes.fixFor(error, lines[line - 1]) : null;
             if (fix != null) {
                 JsonObject jo = new JsonObject();
                 jo.put("line", line);
-                jo.put("find", fix.oldText());
+                String find = fix.oldText();
+                if (fix.removesLine()) {
+                    // the line goes with its line break, and the key above it when it was its only item
+                    int[] range = QuickFixes.linesToRemove(List.of(lines), line - 1);
+                    find = String.join("\n", List.of(lines).subList(range[0], range[1] + 1))
+                           + (range[1] + 1 < lines.length ? "\n" : "");
+                }
+                jo.put("find", find);
                 jo.put("replace", fix.newText());
                 jo.put("fix", fix.label());
                 fixes.add(jo);
@@ -923,6 +937,20 @@ public final class AuthoringTools {
         return message != null ? message.replaceFirst("^Line \\d+: ", "") : "";
     }
 
+    /**
+     * What a Kamelet file does that works but is not right, which does not refuse a write: a camel: dependency its
+     * template does not use (CAMEL-25403).
+     */
+    private static void putKameletNotes(JsonObject result, String file, String content) {
+        String name = file != null ? file.toLowerCase(Locale.ROOT) : "";
+        if (name.endsWith(".kamelet.yaml") || name.endsWith(".kamelet.yml")) {
+            List<String> notes = KameletChecks.unusedDependencies(content);
+            if (!notes.isEmpty()) {
+                result.put("notes", new JsonArray(notes));
+            }
+        }
+    }
+
     /** Writes a file after validating it, as {@code camel_write_file} does; no confirmation is asked here. */
     public static JsonObject writeFile(ToolContext ctx, Path dir, String file, String content, boolean validate) {
         Path path = resolveFile(dir, file);
@@ -980,6 +1008,9 @@ public final class AuthoringTools {
         if (!problemsBefore.isEmpty()) {
             // written with problems the file already had: said, so they are not taken for fixed
             result.put("existingProblems", new JsonArray(problemsBefore));
+        }
+        if (validate) {
+            putKameletNotes(result, file, content);
         }
         if (watch) {
             JsonObject reload = ReloadOutcome.await(ctx.pid(), processName, sinceKey, RELOAD_WAIT_MILLIS);

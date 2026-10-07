@@ -49,6 +49,23 @@ class SecurityUtilsTest {
     }
 
     @Test
+    void testHostnameVerificationOptionsAreRegistered() {
+        // every option that turns off TLS hostname verification must reach this map, otherwise
+        // camel.main.profile=prod cannot refuse it (CAMEL-25409)
+        assertTrue(SecurityUtils.isInsecureValue("camel.component.mongodb.tlsAllowInvalidHostnames", true));
+        assertFalse(SecurityUtils.isInsecureValue("camel.component.mongodb.tlsAllowInvalidHostnames", false));
+        assertTrue(SecurityUtils.isInsecureValue(
+                "camel.component.debezium-mongodb.mongodbSslInvalidHostnameAllowed", true));
+        assertFalse(SecurityUtils.isInsecureValue(
+                "camel.component.debezium-mongodb.mongodbSslInvalidHostnameAllowed", false));
+        // hostnameVerification is the inverse: it is the off value that is insecure
+        assertTrue(SecurityUtils.isInsecureValue("camel.component.netty-http.hostnameVerification", false));
+        assertFalse(SecurityUtils.isInsecureValue("camel.component.netty-http.hostnameVerification", true));
+        assertTrue(SecurityUtils.isInsecureValue("camel.component.splunk-hec.skipTlsVerify", true));
+        assertFalse(SecurityUtils.isInsecureValue("camel.component.splunk-hec.skipTlsVerify", false));
+    }
+
+    @Test
     void testIsPlainTextSecret() {
         // plain text values should be detected
         assertTrue(SecurityUtils.isPlainTextSecret("mypassword123"));

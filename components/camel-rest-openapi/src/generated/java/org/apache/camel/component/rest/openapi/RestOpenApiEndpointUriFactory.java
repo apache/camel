@@ -62,7 +62,7 @@ public class RestOpenApiEndpointUriFactory extends org.apache.camel.support.comp
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "specificationUri", "openapi.json", false, copy);
         uri = buildPathParameter(syntax, uri, "operationId", null, false, copy);

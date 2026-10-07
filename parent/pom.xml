@@ -86,7 +86,7 @@
         <asn1bean-version>1.14.0</asn1bean-version>
         <assertj-version>3.27.7</assertj-version>
         <asterisk-java-version>3.42.2</asterisk-java-version>
-        <atlassian-fugue-version>7.0.1</atlassian-fugue-version>
+        <atlassian-fugue-version>6.1.5</atlassian-fugue-version>
         <atmosphere-version>3.1.0</atmosphere-version>
         <avro-version>1.12.2</avro-version>
         <avro-ipc-jetty-version>1.12.2</avro-ipc-jetty-version>
@@ -183,7 +183,7 @@
         <fory-version>1.7.6</fory-version>
         <ph-ubl-version>10.2.0</ph-ubl-version>
         <j8583-version>3.0.1</j8583-version>
-        <jtoon-version>2.0.4</jtoon-version>
+        <jtoon-version>2.0.5</jtoon-version>
         <jakarta-jms-api-version>3.1.0</jakarta-jms-api-version>
         <jakarta-persistence-api-version>3.2.0</jakarta-persistence-api-version>
         <jakarta-json-api-version>2.1.3</jakarta-json-api-version>
@@ -196,7 +196,7 @@
         <jaxb-xjc-version>4.0.9</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.9</jaxb-jxc-version>
         <gmavenplus-plugin-version>5.1.0</gmavenplus-plugin-version>
-        <google-auth-library-oauth2-http-version>1.53.0</google-auth-library-oauth2-http-version>
+        <google-auth-library-oauth2-http-version>1.54.0</google-auth-library-oauth2-http-version>
         <google-api-client-version>2.9.1</google-api-client-version>
         <google-api-services-drive-version>v3-rev20251210-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20251207-2.0.0</google-api-services-calendar-version>
@@ -206,7 +206,7 @@
         <google-cloud-bigquery-version>2.73.0</google-cloud-bigquery-version>
         <google-cloud-core-version>2.77.0</google-cloud-core-version>
         <google-cloud-firestore-version>3.49.0</google-cloud-firestore-version>
-        <google-cloud-functions-version>2.86.0</google-cloud-functions-version>
+        <google-cloud-functions-version>2.87.0</google-cloud-functions-version>
         <google-cloud-http-client-version>2.2.0</google-cloud-http-client-version>
         <google-cloud-pubsub-version>1.157.0</google-cloud-pubsub-version>
         <google-cloud-secretmanager-version>2.99.0</google-cloud-secretmanager-version>
@@ -215,7 +215,7 @@
         <google-cloud-vision-version>3.97.0</google-cloud-vision-version>
         <google-cloud-speech-version>4.94.0</google-cloud-speech-version>
         <google-cloud-texttospeech-version>2.100.0</google-cloud-texttospeech-version>
-        <google-genai-version>1.73.0</google-genai-version>
+        <google-genai-version>1.75.0</google-genai-version>
         <graalvm-version>25.2.4</graalvm-version>
         <graphql-java-version>26.1</graphql-java-version>
         <greenmail-version>2.1.14</greenmail-version>
@@ -238,7 +238,7 @@
         <hazelcast-version>5.4.0</hazelcast-version>
         <hdrhistrogram-version>2.2.2</hdrhistrogram-version>
         <hibernate-validator-version>9.1.4.Final</hibernate-validator-version>
-        <hibernate-version>7.4.11.Final</hibernate-version>
+        <hibernate-version>7.4.12.Final</hibernate-version>
         <hivemq-mqtt-client-version>1.4.0</hivemq-mqtt-client-version>
         <hsqldb-version>2.7.4</hsqldb-version>
         <mariadb-version>3.5.10</mariadb-version>
@@ -315,7 +315,7 @@
         <jira-sal-api-version>7.2.1</jira-sal-api-version>
         <jline-version>4.4.6</jline-version>
         <libthrift-version>0.25.0</libthrift-version>
-        <jodatime2-version>2.14.4</jodatime2-version>
+        <jodatime2-version>2.15.0</jodatime2-version>
         <jolokia-version>2.6.3</jolokia-version>
         <jolt-version>1.3.0</jolt-version>
         <jool-version>0.9.15</jool-version>
@@ -350,7 +350,7 @@
         <jython-version>2.7.4</jython-version>
         <kafka-version>4.3.1</kafka-version>
         <keycloak-client-version>26.0.12</keycloak-client-version>
-        <keycloak-version>26.7.4</keycloak-version>
+        <keycloak-version>26.8.0</keycloak-version>
         <kubernetes-client-version>7.9.0</kubernetes-client-version>
         <kudu-version>1.18.1</kudu-version>
         <langchain4j-version>1.21.0</langchain4j-version>
@@ -497,7 +497,7 @@
         <smbj-version>0.15.0</smbj-version>
         <smooks-version>2.2.1</smooks-version>
         <snakeyaml-version>2.7</snakeyaml-version>
-        <snakeyaml-engine-version>3.1.1</snakeyaml-engine-version>
+        <snakeyaml-engine-version>3.2</snakeyaml-engine-version>
         <snmp4j-version>3.13.1</snmp4j-version>
         <solr-version>10.0.0</solr-version>
         <splunk-version>1.9.5_1</splunk-version>
@@ -518,13 +518,13 @@
         <squareup-wire-version>6.4.7</squareup-wire-version>
         <sshd-version>2.20.0</sshd-version>
         <stompjms-version>1.19</stompjms-version>
-        <stripe-java-version>33.4.2</stripe-java-version>
+        <stripe-java-version>34.0.0</stripe-java-version>
         <swagger-java-version>1.6.10</swagger-java-version>
         <swagger-openapi3-version>2.2.36</swagger-openapi3-version>
         <swagger-java-parser-version>1.0.65</swagger-java-parser-version>
         <swagger-openapi3-java-parser-version>2.1.48</swagger-openapi3-java-parser-version>
         <swagger-request-validator-version>2.46.1</swagger-request-validator-version>
-        <swagger-ui-version>5.32.15</swagger-ui-version>
+        <swagger-ui-version>5.33.1</swagger-ui-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
         <tahu-version>1.0.21</tahu-version>
         <tamboui-version>0.5.0</tamboui-version>
@@ -534,7 +534,7 @@
         <twilio-version>13.0.2</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
         <undertow-servlet-version>2.3.26.Final</undertow-servlet-version>
-        <undertow-version>2.4.3.Final</undertow-version>
+        <undertow-version>2.4.4.Final</undertow-version>
         <univocity-parsers-version>2.10.2</univocity-parsers-version>
         <velocity-tools-version>3.1</velocity-tools-version>
         <velocity-version>2.4.1</velocity-version>
@@ -2053,6 +2053,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-kafka</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-kafka-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

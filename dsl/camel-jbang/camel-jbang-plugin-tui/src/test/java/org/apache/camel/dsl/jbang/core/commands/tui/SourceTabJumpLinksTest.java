@@ -89,6 +89,58 @@ class SourceTabJumpLinksTest {
     }
 
     @Test
+    void aKameletUsedByTwoRoutesLinksToAPopupOfItsCallers() throws Exception {
+        // CAMEL-25411: the template of a Kamelet is the route of kamelet:<its name>
+        Path kamelet = Files.writeString(dir.resolve("tag-order-action.kamelet.yaml"), """
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: tag-order-action
+                spec:
+                  template:
+                    from:
+                      uri: kamelet:source
+                      steps:
+                        - setBody:
+                            simple: "${body} [{{tag}}]"
+                """);
+        Path orders = Files.writeString(dir.resolve("orders.camel.yaml"), """
+                - route:
+                    id: orders
+                    from:
+                      uri: timer:orders
+                      steps:
+                        - to:
+                            uri: kamelet:tag-order-action
+                """);
+        SourceTab tab = newTab();
+        assertThat(tab.loadDirectory(dir)).isTrue();
+        // the route links to the Kamelet, and one caller is linked from the template
+        assertThat(tab.computeJumpLinks(orders).get(6).routeId()).isEqualTo("tag-order-action");
+        assertThat(tab.computeJumpLinks(kamelet).get(6).routeId()).isEqualTo("orders");
+
+        Files.writeString(dir.resolve("refunds.camel.yaml"), """
+                - route:
+                    id: refunds
+                    from:
+                      uri: timer:refunds
+                      steps:
+                        - to:
+                            uri: kamelet:tag-order-action
+                """);
+        assertThat(tab.loadDirectory(dir)).isTrue();
+        SourceViewer.JumpLink link = tab.computeJumpLinks(kamelet).get(6);
+        assertThat(link.routeId()).isEqualTo("2 callers");
+        assertThat(link.callersOf()).isEqualTo("kamelet:tag-order-action");
+        assertThat(tab.callersOf("kamelet:tag-order-action"))
+                .extracting(GotoRoutePopup.RouteItem::routeId).containsExactlyInAnyOrder("orders", "refunds");
+        // the usages popup opened on the from: line of the template does not list that line itself
+        List<GotoRoutePopup.RouteItem> usages = SourceTab.withoutLine(
+                tab.usagesOf("kamelet:tag-order-action"), kamelet.toString(), 6);
+        assertThat(usages).extracting(GotoRoutePopup.RouteItem::routeId).containsExactlyInAnyOrder("orders", "refunds");
+    }
+
+    @Test
     void javaRoutesLinkToAndFromYamlRoutes() throws Exception {
         Path orders = Files.writeString(dir.resolve("Orders.java"), """
                 import org.apache.camel.builder.RouteBuilder;
@@ -122,10 +174,12 @@ class SourceTabJumpLinksTest {
         assertThat(links.get(5).filePath()).isEqualTo(billing.toString());
         assertThat(links.get(9).routeId()).isEqualTo("billing");
 
-        // and back: the from: line of the YAML route links to a Java caller
+        // and back: the from: line of the YAML route has two Java callers, to choose from in a popup (CAMEL-25411)
         SourceViewer.JumpLink back = tab.computeJumpLinks(billing).get(2);
-        assertThat(back.filePath()).isEqualTo(orders.toString());
-        assertThat(back.routeId()).isEqualTo("file:inbox");
+        assertThat(back.routeId()).isEqualTo("2 callers");
+        assertThat(back.callersOf()).isEqualTo("direct:billing");
+        assertThat(tab.callersOf("direct:billing")).extracting(GotoRoutePopup.RouteItem::filePath)
+                .containsOnly(orders.toString());
     }
 
     @Test

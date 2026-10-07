@@ -6,7 +6,7 @@
 :since: 4.15
 :supportlevel: Stable
 :tabs-sync-option:
-:component-header: Only producer is supported
+:component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: AI
 
@@ -1217,6 +1217,49 @@ YAML::
         - process:
             ref: "doclingDocumentProcessor"
 ----
+====
+
+== Consuming asynchronous conversions
+
+Instead of submitting a conversion with `SUBMIT_ASYNC_CONVERSION` and then polling `CHECK_CONVERSION_STATUS` by hand, a
+`docling:` consumer can emit each async conversion event-driven, as soon as it finishes:
+
+[source,java]
+----
+// submit conversions asynchronously; each returns a task id and runs in the background
+from("direct:submit")
+    .to("docling:convert?useDoclingServe=true&operation=SUBMIT_ASYNC_CONVERSION");
+
+// the consumer emits one exchange per completed task; the path ("onComplete") is still the required operationId,
+// but the consumer ignores the operation — it always drains the component's completed tasks
+from("docling:onComplete?useDoclingServe=true&delay=5000")
+    .to("mock:done");
+----
+
+The consumer scans the tasks submitted via `SUBMIT_ASYNC_CONVERSION` on the same component and emits one exchange as
+each task completes:
+
+- a successful conversion carries the converted content as the message body — extracted in the `outputFormat` the task
+  was *submitted* with (the `CamelDoclingOutputFormat` header, or the submitting endpoint's `outputFormat`), because
+  docling-serve returns only the requested format — and the task id in the `CamelDoclingTaskId` header;
+- a failed conversion completes the exchange with the underlying exception, so the route's `onException` machinery
+  applies.
+
+It is a scheduled polling consumer, so the poll interval and the other scheduler options (`delay`, `initialDelay`,
+`useFixedDelay`, ...) are configured on the endpoint as usual.
+
+[NOTE]
+====
+The consumer drains the tasks of the *whole component*, whatever endpoint, path or options submitted them. Run at most
+one consumer per `docling` component — a second consumer competes for the same tasks, and each completed task is emitted
+by whichever consumer claims it first.
+
+Because the consumer removes each completed task from the shared registry, do not mix it with manual
+`CHECK_CONVERSION_STATUS` polling on the same component: once the consumer has claimed a task, a later status check for
+that id no longer finds it locally and falls back to the server, which does not know the local task id.
+
+Pending tasks live in an in-memory map on the component, visible only to the same `CamelContext`. They are not
+persisted — they are lost on restart, and stopping the context cancels any conversions still in flight.
 ====
 
 == Error Handling

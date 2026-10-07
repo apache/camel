@@ -3020,7 +3020,7 @@ public abstract class BaseMainSupport extends BaseService {
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
             Map<String, String> env = MainHelper
-                    .filterEnvVariables(new String[] { "camel.component.", "camel.dataformat.", "camel.language." });
+                    .filterEnvVariables(new String[] { "CAMEL_COMPONENT_", "CAMEL_DATAFORMAT_", "CAMEL_LANGUAGE_" });
             LOG.debug("Gathered {} ENV variables to configure components, dataformats, languages", env.size());
 
             // special configuration when using ENV variables as we need to extract the ENV variables

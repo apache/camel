@@ -11941,8 +11941,8 @@
         "displayName" : "Require Class Registration",
         "kind" : "attribute",
         "index" : 2,
-        "group" : "advanced",
-        "label" : "advanced"
+        "group" : "security",
+        "label" : "security"
       }, {
         "name" : "threadSafe",
         "type" : "boolean",

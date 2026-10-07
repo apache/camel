@@ -80,7 +80,7 @@ public class CassandraEndpointUriFactory extends org.apache.camel.support.compon
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "beanRef", null, false, copy);
         uri = buildPathParameter(syntax, uri, "hosts", null, false, copy);

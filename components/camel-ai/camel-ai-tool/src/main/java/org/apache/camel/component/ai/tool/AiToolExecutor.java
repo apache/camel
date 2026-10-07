@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,7 +149,7 @@ public final class AiToolExecutor {
 
             if (exchange.getException() != null) {
                 Exception routeError = exchange.getException();
-                AiToolResult denied = authorizationDenied(toolName, routeError);
+                AiToolResult denied = authorizationDenied(toolName, routeError, exchange);
                 if (denied != null) {
                     return denied;
                 }
@@ -161,7 +162,7 @@ public final class AiToolExecutor {
             LOG.debug("Tool '{}' execution completed successfully", toolName);
             return buildSuccessResult(spec, exchange, result);
         } catch (Exception e) {
-            AiToolResult denied = authorizationDenied(toolName, e);
+            AiToolResult denied = authorizationDenied(toolName, e, exchange);
             if (denied != null) {
                 return denied;
             }
@@ -176,15 +177,42 @@ public final class AiToolExecutor {
      * present in its cause chain (the route's {@link org.apache.camel.spi.AuthorizationPolicy} rejected the call).
      * Returns a caller-safe {@link AiToolResult.AuthorizationDenied} refusal that does not leak the policy's internal
      * message, or {@code null} when the error is not an authorization denial.
+     * <p>
+     * On a denial it also logs at {@code WARN} and emits an {@link AiToolAuthorizationDeniedEvent} so operators can
+     * observe and alert on denials; neither affects the refusal returned to the model.
      */
-    private static AiToolResult authorizationDenied(String toolName, Throwable error) {
+    private static AiToolResult authorizationDenied(String toolName, Throwable error, Exchange exchange) {
         CamelAuthorizationException denial = findAuthorizationException(error);
         if (denial == null) {
             return null;
         }
         LOG.warn("Tool '{}' call denied by authorization policy: {}", toolName, denial.getMessage());
+        fireAuthorizationDeniedEvent(exchange, toolName, denial);
         return new AiToolResult.AuthorizationDenied(
                 String.format("Access denied: not authorized to call tool '%s'", toolName), denial);
+    }
+
+    /**
+     * Emits an {@link AiToolAuthorizationDeniedEvent} for the denied tool call. The policy guards the route's outer
+     * processor, so a denial never runs the route's unit of work and fires no exchange-lifecycle event or route span;
+     * this event is the observable signal. Best-effort: when no {@code EventNotifier} is registered nothing is emitted,
+     * and a failure to notify is swallowed so it never affects the refusal returned to the model.
+     */
+    private static void fireAuthorizationDeniedEvent(Exchange exchange, String toolName, CamelAuthorizationException denial) {
+        ManagementStrategy management = exchange.getContext().getManagementStrategy();
+        if (management.getEventNotifiers().isEmpty()) {
+            return;
+        }
+        try {
+            management.notify(new AiToolAuthorizationDeniedEvent(exchange, toolName, denial));
+        } catch (Throwable e) {
+            // ManagementStrategy.notify() does not isolate a failing notifier (unlike EventHelper.doNotifyEvent), so a
+            // notifier throwing anything - including an Error such as AssertionError - would otherwise escape and turn
+            // the denial into a propagating failure. Swallow it here (as EventHelper does) so a broken notifier never
+            // changes the AuthorizationDenied refusal returned to the model.
+            LOG.warn("Notifying {} for tool '{}' failed and was ignored; the authorization denial is unaffected",
+                    AiToolAuthorizationDeniedEvent.class.getSimpleName(), toolName, e);
+        }
     }
 
     private static CamelAuthorizationException findAuthorizationException(Throwable error) {

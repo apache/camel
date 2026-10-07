@@ -24,7 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
  * Process documents using Docling library for parsing and conversion.
@@ -32,8 +32,8 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "4.15.0", scheme = "docling",
              title = "Docling",
              syntax = "docling:operationId",
-             category = { Category.TRANSFORMATION, Category.AI }, headersClass = DoclingHeaders.class, producerOnly = true)
-public class DoclingEndpoint extends DefaultEndpoint {
+             category = { Category.TRANSFORMATION, Category.AI }, headersClass = DoclingHeaders.class)
+public class DoclingEndpoint extends ScheduledPollEndpoint {
 
     @Metadata(required = true)
     @UriPath(description = "The operation identifier")
@@ -55,7 +55,9 @@ public class DoclingEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Consumer not supported for Docling component");
+        DoclingConsumer consumer = new DoclingConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public String getOperationId() {

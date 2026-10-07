@@ -24,10 +24,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.management.JMException;
+import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
@@ -53,6 +57,7 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.debugger.BacklogTracer;
 import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
+import org.apache.camel.management.InstrumentationInterceptStrategy.WrappedProcessor;
 import org.apache.camel.management.mbean.ManagedAsyncProcessorAwaitManager;
 import org.apache.camel.management.mbean.ManagedBacklogDebugger;
 import org.apache.camel.management.mbean.ManagedBacklogTracer;
@@ -66,6 +71,7 @@ import org.apache.camel.management.mbean.ManagedEndpointServiceRegistry;
 import org.apache.camel.management.mbean.ManagedErrorRegistry;
 import org.apache.camel.management.mbean.ManagedExchangeFactoryManager;
 import org.apache.camel.management.mbean.ManagedInflightRepository;
+import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducerCache;
 import org.apache.camel.management.mbean.ManagedRestRegistry;
 import org.apache.camel.management.mbean.ManagedRoute;
@@ -103,6 +109,7 @@ import org.apache.camel.spi.ErrorRegistry;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementAgent;
@@ -126,7 +133,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.support.task.TaskManagerRegistry;
 import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
-import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,8 +149,9 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
     // the wrapped processors is for performance counters, which are in use for the created routes
     // when a route is removed, we should remove the associated processors from this map
-    private final Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor<?>>> wrappedProcessors = new HashMap<>();
-    // the managed object of a processor (by its definition), which is reused when its route is started again
+    private final Map<Processor, WrappedProcessor> wrappedProcessors = new HashMap<>();
+    // the managed object of a processor (by its definition), which is reused when its route is started again,
+    // and shared by the routes that use the same definition (such as the outputs of a context scoped onException)
     private final Map<NamedNode, Object> managedProcessors = new HashMap<>();
     private final List<java.util.function.Consumer<JmxManagementLifecycleStrategy>> preServices = new ArrayList<>();
     private final TimerListenerManager loadTimer = new ManagedLoadTimer();
@@ -156,6 +163,12 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     private final Map<BacklogTracer, ManagedBacklogTracer> managedBacklogTracers = new HashMap<>();
     private final Map<DefaultBacklogDebugger, ManagedBacklogDebugger> managedBacklogDebuggers = new HashMap<>();
     private final Map<Object, Object> managedThreadPools = new HashMap<>();
+    // the endpoint whose MBean is registered with the given name, as endpoints that only differ in a masked secret
+    // (such as a password) get the same name, and removing one of them must not unregister the MBean of the other
+    private final Map<ObjectName, Endpoint> managedEndpoints = new ConcurrentHashMap<>();
+    // held while an endpoint MBean is registered or unregistered together with the change to managedEndpoints, so that
+    // endpoints with the same name that are added or removed at the same time agree on the endpoint that owns the MBean
+    private final Lock managedEndpointsLock = new ReentrantLock();
     // route group MBean is shared by all routes in the same group, so its performance counters
     // aggregate the statistics across all the member routes
     private final Map<String, ManagedRouteGroup> managedRouteGroups = new HashMap<>();
@@ -199,13 +212,20 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         if (managementName == null) {
             managementName = context.getManagementNameStrategy().getName();
         }
+        String sanitized = sanitizeManagementName(managementName);
+        if (sanitized != null && !sanitized.equals(managementName)) {
+            LOG.warn("The management name of CamelContext({}) contains characters that cannot be used in a JMX ObjectName."
+                     + " The management name: {} is used instead.",
+                    name, sanitized);
+            managementName = sanitized;
+        }
 
         try {
             boolean done = false;
             while (!done) {
                 ObjectName on = getManagementStrategy().getManagementObjectNameStrategy()
                         .getObjectNameForCamelContext(managementName, name);
-                boolean exists = getManagementStrategy().isManagedName(on);
+                boolean exists = isManagedContextName(on);
                 if (!exists) {
                     done = true;
                 } else {
@@ -301,15 +321,58 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         String newName = null;
         while (!done) {
             // compute the next name
-            newName = strategy.getNextName();
+            newName = sanitizeManagementName(strategy.getNextName());
             ObjectName on
                     = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(newName, name);
-            done = !getManagementStrategy().isManagedName(on);
+            done = !isManagedContextName(on);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Using name: {} in ObjectName[{}] exists? {}", name, on, done);
             }
         }
         return newName;
+    }
+
+    /**
+     * The management name is the value of the (unquoted) context key in every object name, so it must not contain a
+     * character that an unquoted value cannot have, or that makes the name a pattern: such characters are replaced with
+     * an underscore.
+     */
+    private static String sanitizeManagementName(String managementName) {
+        if (managementName == null) {
+            return null;
+        }
+        StringBuilder sb = null;
+        for (int i = 0; i < managementName.length(); i++) {
+            char ch = managementName.charAt(i);
+            if (ch == ',' || ch == '=' || ch == ':' || ch == '"' || ch == '*' || ch == '?' || ch == '\n') {
+                if (sb == null) {
+                    sb = new StringBuilder(managementName);
+                }
+                sb.setCharAt(i, '_');
+            }
+        }
+        return sb != null ? sb.toString() : managementName;
+    }
+
+    /**
+     * Whether the context object name is registered, or another CamelContext already uses the same context key (with
+     * another name), as the object names of its routes, processors etc. would then clash.
+     */
+    private boolean isManagedContextName(ObjectName on) throws MalformedObjectNameException {
+        if (getManagementStrategy().isManagedName(on)) {
+            return true;
+        }
+        String key = on.getKeyProperty(DefaultManagementObjectNameStrategy.KEY_CONTEXT);
+        String type = on.getKeyProperty(DefaultManagementObjectNameStrategy.KEY_TYPE);
+        MBeanServer server = getManagementStrategy().getManagementAgent() != null
+                ? getManagementStrategy().getManagementAgent().getMBeanServer() : null;
+        if (key == null || type == null || server == null) {
+            return false;
+        }
+        ObjectName query = new ObjectName(
+                on.getDomain() + ":" + DefaultManagementObjectNameStrategy.KEY_CONTEXT + "=" + key + ","
+                                          + DefaultManagementObjectNameStrategy.KEY_TYPE + "=" + type + ",*");
+        return !server.queryNames(query, null).isEmpty();
     }
 
     /**
@@ -386,6 +449,10 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             preServices.add(lf -> lf.onComponentAdd(name, component));
             return;
         }
+        // but not with mbeansLevel=ContextOnly, which only registers the CamelContext
+        if (!getManagementStrategy().getManagementAgent().getMBeansLevel().isRoutes()) {
+            return;
+        }
         try {
             Object mc = getManagementObjectStrategy().getManagedObjectForComponent(camelContext, component, name);
             manageObject(mc);
@@ -433,7 +500,17 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 // endpoint should not be managed
                 return;
             }
-            manageObject(me);
+            ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectName(me);
+            managedEndpointsLock.lock();
+            try {
+                boolean exists = on != null && getManagementStrategy().isManagedName(on);
+                manageObject(me);
+                if (on != null && !exists) {
+                    managedEndpoints.put(on, originalEndpoint(endpoint));
+                }
+            } finally {
+                managedEndpointsLock.unlock();
+            }
         } catch (Exception e) {
             LOG.warn("Could not register Endpoint MBean for endpoint: {}. This exception will be ignored.", endpoint, e);
         }
@@ -448,10 +525,45 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
         try {
             Object me = getManagementObjectStrategy().getManagedObjectForEndpoint(camelContext, endpoint);
-            unmanageObject(me);
+            ObjectName on = me != null ? getManagementStrategy().getManagementObjectNameStrategy().getObjectName(me) : null;
+            managedEndpointsLock.lock();
+            try {
+                if (on != null) {
+                    Endpoint owner = managedEndpoints.get(on);
+                    if (owner != null && owner != originalEndpoint(endpoint) && isEndpointRegistered(owner)) {
+                        // the MBean belongs to another endpoint with the same name (only differs in a masked secret)
+                        LOG.debug("Not unregistering Endpoint MBean: {} as it belongs to another endpoint", on);
+                        return;
+                    }
+                    managedEndpoints.remove(on);
+                }
+                unmanageObject(me);
+            } finally {
+                managedEndpointsLock.unlock();
+            }
         } catch (Exception e) {
             LOG.warn("Could not unregister Endpoint MBean for endpoint: {}. This exception will be ignored.", endpoint, e);
         }
+    }
+
+    private boolean isEndpointRegistered(Endpoint endpoint) {
+        // the endpoint may have been replaced in the registry (addEndpoint) without being removed
+        for (Endpoint registered : camelContext.getEndpoints()) {
+            if (originalEndpoint(registered) == endpoint) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Endpoint originalEndpoint(Endpoint endpoint) {
+        // the endpoint registry may hold an intercepting endpoint (interceptSendToEndpoint, mock endpoints) that wraps
+        // the endpoint whose MBean was registered
+        Endpoint answer = endpoint;
+        while (answer instanceof InterceptSendToEndpoint intercept) {
+            answer = intercept.getOriginalEndpoint();
+        }
+        return answer;
     }
 
     @Override
@@ -513,6 +625,13 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
         Object managedObject = getManagedObjectForService(context, service, route);
         if (managedObject != null) {
+            Map.Entry<Processor, WrappedProcessor> other
+                    = service instanceof Processor processor ? getProcessorOfOtherRoute(processor) : null;
+            if (other != null) {
+                // the definition is shared with another route that still uses the mbean, so keep it
+                reattachProcessor(managedObject, other);
+                return;
+            }
             try {
                 unmanageObject(managedObject);
             } catch (Exception e) {
@@ -520,9 +639,58 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             }
         }
         if (service instanceof Processor processor) {
-            KeyValueHolder<NamedNode, InstrumentationProcessor<?>> holder = wrappedProcessors.get(processor);
+            WrappedProcessor holder = wrappedProcessors.get(processor);
             if (holder != null) {
-                managedProcessors.remove(holder.getKey());
+                managedProcessors.remove(holder.definition());
+            }
+        }
+    }
+
+    /**
+     * Gets a processor of another route that is created from the same definition as the given processor, such as the
+     * outputs of a context scoped onException, which is the same definition in every route.
+     */
+    private Map.Entry<Processor, WrappedProcessor> getProcessorOfOtherRoute(Processor processor) {
+        WrappedProcessor holder = wrappedProcessors.get(processor);
+        if (holder == null || isRouteDefinition(holder)) {
+            return null;
+        }
+        String routeId = holder.route().getId();
+        for (Map.Entry<Processor, WrappedProcessor> entry : wrappedProcessors.entrySet()) {
+            WrappedProcessor other = entry.getValue();
+            if (other.definition() == holder.definition() && !routeId.equals(other.route().getId())) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Whether the definition of the wrapped processor belongs to the route of the processor (and not to several routes)
+     */
+    private static boolean isRouteDefinition(WrappedProcessor holder) {
+        RouteDefinition def = ProcessorDefinitionHelper.getRoute(holder.definition());
+        return def != null && holder.route().getId().equals(def.getId());
+    }
+
+    /**
+     * Attaches the managed object of a processor, whose route is being removed, to the processor of another route that
+     * uses the same definition.
+     */
+    private void reattachProcessor(Object managedObject, Map.Entry<Processor, WrappedProcessor> other) {
+        if (managedObject instanceof ManagedProcessor mp) {
+            mp.setProcessor(other.getKey());
+            Route route = other.getValue().route();
+            if (mp.getRoute() != route) {
+                // register the mbean again so it shows (and is listed under) the route that still uses it
+                try {
+                    unmanageObject(mp);
+                    mp.setRoute(route);
+                    manageObject(mp);
+                } catch (Exception e) {
+                    LOG.warn("Could not register processor: {} as Processor MBean of route: {}", mp.getProcessorId(),
+                            route.getId(), e);
+                }
             }
         }
     }
@@ -638,7 +806,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         // a bit of magic here as the processors we want to manage have already been registered
         // in the wrapped processors map when Camel have instrumented the route on route initialization
         // so the idea is now to only manage the processors from the map
-        KeyValueHolder<NamedNode, InstrumentationProcessor<?>> holder = wrappedProcessors.get(processor);
+        WrappedProcessor holder = wrappedProcessors.get(processor);
         if (holder == null) {
             // skip as it's not a well known processor we want to manage anyway, such as Channel/UnitOfWork/Pipeline etc.
             return null;
@@ -646,20 +814,21 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
         // reuse the managed object of the processor, as it is already registered when its route is started again
         // (otherwise the statistics would be counted on a new object that is not the registered MBean)
-        Object managedObject = managedProcessors.get(holder.getKey());
+        Object managedObject = managedProcessors.get(holder.definition());
         if (managedObject == null) {
             // get the managed object as it can be a specialized type such as a Delayer/Throttler etc.
             managedObject
-                    = getManagementObjectStrategy().getManagedObjectForProcessor(context, processor, holder.getKey(), route);
+                    = getManagementObjectStrategy().getManagedObjectForProcessor(context, processor, holder.definition(),
+                            route);
             if (managedObject != null) {
-                managedProcessors.put(holder.getKey(), managedObject);
+                managedProcessors.put(holder.definition(), managedObject);
             }
         }
         // only manage if we have a name for it as otherwise we do not want to manage it anyway
         if (managedObject != null) {
             // is it a performance counter then we need to set our counter
             if (managedObject instanceof PerformanceCounter) {
-                InstrumentationProcessor<?> counter = holder.getValue();
+                InstrumentationProcessor<?> counter = holder.instrumentationProcessor();
                 if (counter != null) {
                     // change counter to us
                     counter.setCounter(managedObject);
@@ -930,7 +1099,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
         // set this managed intercept strategy that executes the JMX instrumentation for performance metrics
         // so our registered counters can be used for fine-grained performance instrumentation
-        route.setManagementInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters, wrappedProcessors));
+        route.setManagementInterceptStrategy(
+                new InstrumentationInterceptStrategy(registeredCounters, wrappedProcessors, route));
     }
 
     /**
@@ -942,17 +1112,30 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
      */
     private void removeWrappedProcessorsForRoutes(Collection<Route> routes) {
         // loop the routes, and remove the route associated wrapped processors, as they are no longer in use
+        // (by the route they were created for, as a definition can be shared by several routes, such as the outputs
+        // of a context scoped onException, whose parent is not a route)
         for (Route route : routes) {
             String id = route.getId();
 
-            Iterator<KeyValueHolder<NamedNode, InstrumentationProcessor<?>>> it = wrappedProcessors.values().iterator();
+            Set<NamedNode> shared = new HashSet<>();
+            Iterator<WrappedProcessor> it = wrappedProcessors.values().iterator();
             while (it.hasNext()) {
-                KeyValueHolder<NamedNode, InstrumentationProcessor<?>> holder = it.next();
-                RouteDefinition def = ProcessorDefinitionHelper.getRoute(holder.getKey());
-                if (def != null && id.equals(def.getId())) {
-                    managedProcessors.remove(holder.getKey());
+                WrappedProcessor holder = it.next();
+                if (id.equals(holder.route().getId())) {
+                    if (isRouteDefinition(holder)) {
+                        managedProcessors.remove(holder.definition());
+                    } else {
+                        shared.add(holder.definition());
+                    }
                     it.remove();
                 }
+            }
+            // keep the managed object of a shared definition that is still in use by another route
+            if (!shared.isEmpty()) {
+                for (WrappedProcessor holder : wrappedProcessors.values()) {
+                    shared.remove(holder.definition());
+                }
+                shared.forEach(managedProcessors::remove);
             }
         }
     }
@@ -1179,6 +1362,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         managedBacklogTracers.clear();
         managedBacklogDebuggers.clear();
         managedThreadPools.clear();
+        managedEndpoints.clear();
         managedRouteGroups.clear();
     }
 

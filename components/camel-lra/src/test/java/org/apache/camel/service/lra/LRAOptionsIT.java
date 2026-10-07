@@ -35,7 +35,7 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
         complete.expectedHeaderReceived("name", "Nicola");
         complete.expectedMessagesMatches(ex -> ex.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION) != null);
 
-        template.sendBodyAndHeader("direct:workflow", "Hello", "myname", "Nicola");
+        template.sendBodyAndHeader("direct:options-workflow", "Hello", "myname", "Nicola");
 
         complete.assertIsSatisfied();
     }
@@ -50,7 +50,7 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
         compensate.expectedMessagesMatches(ex -> ex.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION) != null);
 
         assertThrows(Exception.class,
-                () -> template.sendBodyAndHeader("direct:workflow", "compensate", "myname", "Nicola"));
+                () -> template.sendBodyAndHeader("direct:options-workflow", "compensate", "myname", "Nicola"));
 
         compensate.assertIsSatisfied();
     }
@@ -58,7 +58,7 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
     @Test
     public void testRouteDoesNotHangOnOptionError() {
         assertThrows(RuntimeCamelException.class,
-                () -> template.sendBody("direct:wrong-expression", "Hello"));
+                () -> template.sendBody("direct:options-wrong-expression", "Hello"));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
             @Override
             public void configure() {
 
-                from("direct:workflow")
+                from("direct:options-workflow")
                         .saga()
                         .option("id", constant("myheader"))
                         .option("name", header("myname"))
@@ -84,7 +84,7 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
                         .setHeader("name", constant("TryToOverride"))
                         .to("mock:endpoint");
 
-                from("direct:wrong-expression")
+                from("direct:options-wrong-expression")
                         .saga()
                         .option("id", simple("${body.pippo.pluto}"))
                         .to("log:info");

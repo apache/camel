@@ -209,7 +209,9 @@ public interface LifecycleStrategy {
      * @param camelContext        the camel context
      * @param threadPool          the thread pool
      * @param id                  id of the thread pool
-     * @param sourceId            id of the source creating the thread pool (can be null in special cases)
+     * @param sourceId            id of the source creating the thread pool, or the name of the thread pool when the id
+     *                            of the thread pool is derived from the source instance, as such a source can create
+     *                            several thread pools (can be null in special cases)
      * @param routeId             id of the route for the source (is null if no source)
      * @param threadPoolProfileId id of the thread pool profile, if used for creating this thread pool (can be null)
      */
@@ -232,7 +234,9 @@ public interface LifecycleStrategy {
      * @param camelContext        the camel context
      * @param executorService     the executor service
      * @param id                  id of the thread pool
-     * @param sourceId            id of the source creating the thread pool (can be null in special cases)
+     * @param sourceId            id of the source creating the thread pool, or the name of the thread pool when the id
+     *                            of the thread pool is derived from the source instance, as such a source can create
+     *                            several thread pools (can be null in special cases)
      * @param routeId             id of the route for the source (is null if no source)
      * @param threadPoolProfileId id of the thread pool profile, if used for creating this thread pool (can be null)
      */

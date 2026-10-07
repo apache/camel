@@ -265,7 +265,7 @@ public interface Aws2TranscribeComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param trustAllCertificates the value to set

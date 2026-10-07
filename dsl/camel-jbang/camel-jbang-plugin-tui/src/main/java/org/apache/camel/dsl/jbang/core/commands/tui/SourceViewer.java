@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -125,7 +126,15 @@ class SourceViewer {
         Set<Integer> scan(List<JsonObject> codeData);
     }
 
-    record JumpLink(String routeId, String filePath, int targetLine) {
+    /**
+     * A link on a line to where it leads; callersOf is the endpoint of a route sent to from more than one place, whose
+     * link opens a popup to choose one (CAMEL-25411), else null.
+     */
+    record JumpLink(String routeId, String filePath, int targetLine, String callersOf) {
+
+        JumpLink(String routeId, String filePath, int targetLine) {
+            this(routeId, filePath, targetLine, null);
+        }
     }
 
     /**
@@ -215,6 +224,11 @@ class SourceViewer {
     private PropertiesValidator propertiesValidator;
     private EndpointValidator endpointValidator;
     private EndpointValidator simpleValidator;
+    // the Kamelet checks of a YAML file (CAMEL-25411): its problems, and the notes that do not block a save
+    private EndpointValidator kameletValidator;
+    private EndpointValidator kameletNotes;
+    // the lines whose problem is a note, not an error: marked as a warning and counted apart (CAMEL-25411)
+    private Set<Integer> noteLines = Set.of();
     private EndpointValidator routeValidator;
     private LiveRunData liveRunData;
     private LineFailures lineFailures;
@@ -311,6 +325,23 @@ class SourceViewer {
 
     void setSimpleValidator(EndpointValidator simpleValidator) {
         this.simpleValidator = simpleValidator;
+    }
+
+    /**
+     * The Kamelet checks of a YAML file (CAMEL-25411): the shape of a Kamelet file, and the kamelet: endpoints of a
+     * route against the catalog and the project's own Kamelets. Their problems are marked and keep the file from being
+     * saved, as the other problems of a YAML file.
+     */
+    void setKameletValidator(EndpointValidator kameletValidator) {
+        this.kameletValidator = kameletValidator;
+    }
+
+    /**
+     * What a Kamelet file does that works but is not right (a camel: dependency its template does not use): marked and
+     * said when saved, but not blocking the save.
+     */
+    void setKameletNotes(EndpointValidator kameletNotes) {
+        this.kameletNotes = kameletNotes;
     }
 
     /**
@@ -523,6 +554,9 @@ class SourceViewer {
         propertiesValidator = null;
         endpointValidator = null;
         simpleValidator = null;
+        kameletValidator = null;
+        kameletNotes = null;
+        noteLines = Set.of();
         routeValidator = null;
         uriCompletion = null;
         simpleCompletion = null;
@@ -568,6 +602,9 @@ class SourceViewer {
         propertiesValidator = null;
         endpointValidator = null;
         simpleValidator = null;
+        kameletValidator = null;
+        kameletNotes = null;
+        noteLines = Set.of();
         routeValidator = null;
         uriCompletion = null;
         simpleCompletion = null;
@@ -1804,7 +1841,7 @@ class SourceViewer {
                 List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
                 if (items != null && !items.isEmpty()) {
                     autocompletePopup = new AutocompletePopup(items, filter, filter);
-                    autocompletePopup.setTitlePrefix(ctx.component() + " options");
+                    autocompletePopup.setTitlePrefix(optionsTitle(ctx.component(), ctx.uri()));
                 }
             }
             return;
@@ -2050,10 +2087,21 @@ class SourceViewer {
                     msgs.addAll(simpleErrors);
                 }
             }
+            addAll(msgs, kameletValidator, content);
+            noteLines = Set.of();
             if (!msgs.isEmpty()) {
                 validationErrors = msgs;
                 validationErrorScroll = 0;
                 inlineErrors = buildInlineErrors(msgs, content);
+                return;
+            }
+            List<String> notes = new ArrayList<>();
+            addAll(notes, kameletNotes, content);
+            if (!notes.isEmpty()) {
+                // marked, and said when saved, but not blocking the save
+                routeProblems = notes;
+                inlineErrors = buildInlineErrors(notes, content);
+                noteLines = new HashSet<>(inlineErrors.keySet());
                 return;
             }
         } else if (validateOnSave && isPropertiesFile() && propertiesValidator != null) {
@@ -2195,6 +2243,19 @@ class SourceViewer {
         if (fixed == null) {
             return;
         }
+        if (fix.removesLine()) {
+            // an unused dependency of a Kamelet: the line goes, as with Ctrl+K, and the dependencies: key above it
+            // when it was the last one
+            int[] range = QuickFixes.linesToRemove(editLines(), row);
+            List<String> kept = new ArrayList<>(editLines());
+            kept.subList(range[0], range[1] + 1).clear();
+            applyBlockEdit(new YamlBlockEditor.EditResult(kept, Math.min(range[0], Math.max(0, kept.size() - 1)), 0));
+            dirty = true;
+            lineStatuses = null;
+            lastBackgroundValidationTime = 0;
+            notifySave("Fixed: " + fix.label(), false);
+            return;
+        }
         recordEditChange();
         editState.moveCursorToLineStart();
         for (int i = 0; i < line.length(); i++) {
@@ -2255,6 +2316,7 @@ class SourceViewer {
     /** The problems the checks of the file type (Camel YAML, properties, Java or XML routes) find in the content. */
     private List<String> validateContent(String content) {
         List<String> msgs = new ArrayList<>();
+        noteLines = Set.of();
         if (isCamelYamlFile()) {
             if (endpointValidator != null) {
                 List<String> endpointErrors = endpointValidator.validate(content);
@@ -2268,6 +2330,18 @@ class SourceViewer {
                     msgs.addAll(simpleErrors);
                 }
             }
+            addAll(msgs, kameletValidator, content);
+            List<String> notes = new ArrayList<>();
+            addAll(notes, kameletNotes, content);
+            if (!notes.isEmpty()) {
+                // a line with an error is marked as an error
+                Set<Integer> lines = new HashSet<>(buildInlineErrors(notes, content).keySet());
+                if (!msgs.isEmpty()) {
+                    lines.removeAll(buildInlineErrors(msgs, content).keySet());
+                }
+                noteLines = lines;
+                msgs.addAll(notes);
+            }
         } else if (isPropertiesFile() && propertiesValidator != null) {
             msgs.addAll(validateProperties(content));
         } else if (routeValidator != null) {
@@ -2277,6 +2351,53 @@ class SourceViewer {
             }
         }
         return msgs;
+    }
+
+    /**
+     * The title of the options popup of an endpoint: the component, or for a kamelet: endpoint the Kamelet it names,
+     * whose properties the list starts with (CAMEL-25411).
+     */
+    static String optionsTitle(String component, String uri) {
+        if ("kamelet".equals(component) && uri != null && uri.startsWith("kamelet:")) {
+            String name = uri.substring("kamelet:".length()).split("[?/]", 2)[0].trim();
+            if (!name.isEmpty()) {
+                return name + " options";
+            }
+        }
+        return component + " options";
+    }
+
+    /** The title spans counting the problems of the lines: the errors, and apart from them the notes. */
+    private List<Span> problemCounts(Map<Integer, String> problems, Style errorStyle) {
+        List<Span> spans = new ArrayList<>();
+        int notes = 0;
+        for (Integer line : problems.keySet()) {
+            if (noteLines.contains(line)) {
+                notes++;
+            }
+        }
+        int errors = problems.size() - notes;
+        if (errors > 0) {
+            spans.add(Span.styled(" errors: " + errors + " ", errorStyle));
+        }
+        if (notes > 0) {
+            spans.add(Span.styled(" notes: " + notes + " ", Theme.warning()));
+        }
+        return spans;
+    }
+
+    /** Package-private for tests: the lines, from 0, whose problem is a note. */
+    Set<Integer> noteLines() {
+        return noteLines;
+    }
+
+    private static void addAll(List<String> msgs, EndpointValidator validator, String content) {
+        if (validator != null) {
+            List<String> found = validator.validate(content);
+            if (found != null) {
+                msgs.addAll(found);
+            }
+        }
     }
 
     /** The problems of the file just loaded, by line; none when the checks fail or do not apply. */
@@ -2631,12 +2752,15 @@ class SourceViewer {
             String problem = viewErrors.get(selectedLine);
             if (problem != null) {
                 // the problem of the line goes before its documentation, as the Error panel of the editor shows it
-                int remaining = Math.max(0, viewDocArea.width() - " Error ".length() - 3);
+                boolean note = noteLines.contains(selectedLine);
+                Style problemStyle = note ? Theme.warning() : Theme.error();
+                String kind = note ? " Note " : " Error ";
+                int remaining = Math.max(0, viewDocArea.width() - kind.length() - 3);
                 docLines.add(Line.from(
-                        Span.styled("───", Theme.error()),
-                        Span.styled(" Error ", Theme.error().bold()),
-                        Span.styled("─".repeat(remaining), Theme.error())));
-                docLines.add(Line.from(Span.styled(problem, Theme.error())));
+                        Span.styled("───", problemStyle),
+                        Span.styled(kind, problemStyle.bold()),
+                        Span.styled("─".repeat(remaining), problemStyle)));
+                docLines.add(Line.from(Span.styled(problem, problemStyle)));
                 docLines.add(Line.from(Span.styled("F4 edit   F9 next problem", Style.EMPTY.dim())));
             } else if (titleText != null) {
                 String prefix = "─── ";
@@ -2681,7 +2805,7 @@ class SourceViewer {
         if (!diffOverlay && !visibleErrors.isEmpty()) {
             // a block has one title at the top: the error count goes on the line of the file name, not instead of it
             Style errorStyle = Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
-            titleSpans.add(Span.styled(" errors: " + visibleErrors.size() + " ", errorStyle));
+            titleSpans.addAll(problemCounts(visibleErrors, errorStyle));
         }
         Title posTitle;
         if (diffOverlay) {
@@ -2835,8 +2959,11 @@ class SourceViewer {
             for (int r = 0; r < editorArea.height(); r++) {
                 int lineIdx = editState.scrollRow() + r;
                 if (visibleErrors.containsKey(lineIdx)) {
+                    // a note on dark amber, an error on dark red
                     Style errorBg = Style.EMPTY.fg(dev.tamboui.style.Color.WHITE)
-                            .bg(dev.tamboui.style.Color.rgb(0x8B, 0x00, 0x00));
+                            .bg(noteLines.contains(lineIdx)
+                                    ? dev.tamboui.style.Color.rgb(0x80, 0x60, 0x00)
+                                    : dev.tamboui.style.Color.rgb(0x8B, 0x00, 0x00));
                     int screenY = editorArea.top() + r;
                     for (int x = textAreaRect.left(); x < textAreaRect.left() + gutterWidth; x++) {
                         dev.tamboui.buffer.Cell cell = frame.buffer().get(x, screenY);
@@ -2853,7 +2980,7 @@ class SourceViewer {
             List<Line> docLines = new ArrayList<>();
             String titleText = null;
             if (cursorError != null) {
-                titleText = "Error";
+                titleText = noteLines.contains(editState.cursorRow()) ? "Note" : "Error";
             } else if (editDocEntries != null && !editDocEntries.isEmpty()) {
                 titleText = editDocEntries.get(0).title();
             }
@@ -2861,7 +2988,9 @@ class SourceViewer {
                 String prefix = "─── ";
                 String suffix = " ";
                 int remaining = Math.max(0, docArea.width() - prefix.length() - titleText.length() - suffix.length());
-                Style errorDim = Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
+                Style errorDim = noteLines.contains(editState.cursorRow())
+                        ? Theme.warning()
+                        : Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
                 docLines.add(Line.from(
                         Span.styled(prefix, errorDim),
                         Span.styled(titleText, errorDim.bold()),
@@ -3699,9 +3828,10 @@ class SourceViewer {
         }
         if (currentRouteId == null) {
             if (!viewErrors.isEmpty()) {
-                return Title.from(Line.from(
-                        Span.styled(" Source [" + info + "] ", ts),
-                        Span.styled(" errors: " + viewErrors.size() + " ", Theme.error())));
+                List<Span> spans = new ArrayList<>();
+                spans.add(Span.styled(" Source [" + info + "] ", ts));
+                spans.addAll(problemCounts(viewErrors, Theme.error()));
+                return Title.from(Line.from(spans));
             }
             return Title.from(Span.styled(" Source [" + info + "] ", ts));
         }
@@ -3902,7 +4032,8 @@ class SourceViewer {
             spans.add(Span.styled(">> ", focused ? Theme.label().bold() : Theme.label().dim()));
             if (!prefix.isEmpty()) {
                 Style numberStyle = viewErrors.containsKey(lineIndex)
-                        ? Theme.error().bold() : focused ? Theme.label().bold() : Theme.label().dim();
+                        ? (noteLines.contains(lineIndex) ? Theme.warning().bold() : Theme.error().bold())
+                        : focused ? Theme.label().bold() : Theme.label().dim();
                 spans.add(Span.styled(prefix, numberStyle.patch(selBg)));
             }
             addLiveColumn(spans, lineIndex, selBg);
@@ -3911,7 +4042,9 @@ class SourceViewer {
             }
         } else {
             if (viewErrors.containsKey(lineIndex)) {
-                spans.add(Span.styled(" ✗ ", Theme.error().bold()));
+                spans.add(noteLines.contains(lineIndex)
+                        ? Span.styled(" ⚠ ", Theme.warning().bold())
+                        : Span.styled(" ✗ ", Theme.error().bold()));
             } else {
                 spans.add(isDeprecated
                         ? Span.styled(" ⚠ ", Theme.warning())

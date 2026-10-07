@@ -55,7 +55,7 @@ public class WorkdayEndpointUriFactory extends org.apache.camel.support.componen
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "entity", null, true, copy);
         uri = buildPathParameter(syntax, uri, "path", null, true, copy);

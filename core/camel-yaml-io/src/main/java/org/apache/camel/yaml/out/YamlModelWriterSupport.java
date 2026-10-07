@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -322,7 +321,8 @@ public abstract class YamlModelWriterSupport {
 
     /**
      * The options as Camel builds the uri from them: the path options first in the order of the syntax, then the others
-     * sorted, with a secret option in RAW() as the YAML DSL wraps it. So a normalized file normalizes to itself.
+     * in the order they are written, with a secret option in RAW() as the YAML DSL wraps it. So a normalized file
+     * normalizes to itself.
      */
     static Map<String, String> asCamelBuildsThem(RuntimeCamelCatalog catalog, String scheme, Map<String, String> params) {
         JsonObject schema = componentSchema(catalog, scheme);
@@ -336,7 +336,7 @@ public abstract class YamlModelWriterSupport {
                 answer.put(e.getKey(), params.get(e.getKey()));
             }
         }
-        new TreeMap<>(params).forEach(answer::putIfAbsent);
+        params.forEach(answer::putIfAbsent);
         for (Map.Entry<String, String> e : answer.entrySet()) {
             Object option = props.get(e.getKey());
             String v = e.getValue();

@@ -88,7 +88,7 @@ public class KubernetesHPAEndpointUriFactory extends org.apache.camel.support.co
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "masterUrl", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
