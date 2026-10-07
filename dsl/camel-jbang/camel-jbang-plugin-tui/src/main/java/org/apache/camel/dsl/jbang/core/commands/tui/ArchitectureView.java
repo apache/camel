@@ -657,7 +657,7 @@ final class ArchitectureView {
             case ProjectCapabilities.UTILITY -> g.ai() ? "plumbing, partly " + IntegrationSummary.AI_MARK : "plumbing";
             case SYSTEM_IN -> "external: messages come in";
             case SYSTEM_OUT -> "external: messages go out";
-            default -> "not grouped yet: /overview groups it";
+            default -> "not grouped yet: the AI project overview groups the routes (F8, then /overview)";
         };
     }
 
