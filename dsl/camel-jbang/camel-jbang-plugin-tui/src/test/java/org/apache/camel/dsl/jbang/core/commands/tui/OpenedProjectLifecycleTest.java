@@ -93,6 +93,23 @@ class OpenedProjectLifecycleTest {
     }
 
     @Test
+    void aProjectWhoseRunEndedWithoutAnAppIsStoppedAtOnce() throws Exception {
+        IntegrationInfo project = new IntegrationInfo();
+        project.name = "orders";
+        project.sourceDir = "/work/orders";
+        project.startingSince = System.currentTimeMillis();
+        // camel run pom.xml ended (its Maven build failed) before the app showed up
+        Process run = new ProcessBuilder("true").start();
+        run.waitFor();
+        project.launchedProcess = run.toHandle();
+        ctx.addPhantom(project);
+
+        merge();
+
+        assertEquals(0, project.startingSince);
+    }
+
+    @Test
     void aProjectIsStartingUntilItsAppShowsUp() {
         IntegrationInfo project = new IntegrationInfo();
         project.name = "metrics";

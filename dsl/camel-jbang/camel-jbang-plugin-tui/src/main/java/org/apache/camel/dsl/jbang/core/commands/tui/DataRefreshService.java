@@ -437,6 +437,10 @@ class DataRefreshService {
                     ctx.selectedPid = phantom.pid;
                 }
                 phantom.linkedPid = null;
+                if (phantom.startingSince > 0 && phantom.launchedProcess != null && !phantom.launchedProcess.isAlive()) {
+                    // its run ended before its app showed up: the project is Stopped, not Starting for minutes
+                    phantom.startingSince = 0;
+                }
                 infos.add(phantom);
             }
         }
