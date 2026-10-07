@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.infinispan.remote.spring;
 
+import java.util.Properties;
 import java.util.UUID;
 
 import org.apache.camel.component.infinispan.remote.InfinispanRemoteTestSupport;
@@ -46,10 +47,11 @@ public abstract class SpringInfinispanRemoteIdempotentRepositoryTestSupport exte
         clientBuilder
                 .forceReturnValues(true);
 
-        // add server from the test infra service
+        // add server from the test infra service; normalise "localhost" to "127.0.0.1" so the
+        // JVM does not resolve it to the IPv6 loopback (::1), which the server does not bind to.
         clientBuilder
                 .addServer()
-                .host(service.host())
+                .host(InfinispanRemoteTestSupport.resolvedHost(service.host()))
                 .port(service.port());
 
         // add security info
@@ -63,6 +65,13 @@ public abstract class SpringInfinispanRemoteIdempotentRepositoryTestSupport exte
                 .serverName("infinispan")
                 .saslMechanism("SCRAM-SHA-512")
                 .realm("default");
+
+        // Always use BASIC intelligence to prevent the client from following server topology
+        // and reconnecting to an address that may resolve to IPv6 (::1) on Podman/Linux,
+        // where the Infinispan server only listens on IPv4.
+        Properties intelligenceProps = new Properties();
+        intelligenceProps.put("infinispan.client.hotrod.client_intelligence", "BASIC");
+        clientBuilder.withProperties(intelligenceProps);
 
         RemoteCacheManager manager = new RemoteCacheManager(clientBuilder.create());
         MarshallerRegistration.init(MarshallerUtil.getSerializationContext(manager));
