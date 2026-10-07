@@ -118,6 +118,68 @@ class SourceKameletValidationTest {
     }
 
     @Test
+    void theParametersOfAKameletEndpointCompleteItsProperties() throws Exception {
+        Files.writeString(tempDir.resolve("tag-order-action.kamelet.yaml"), KAMELET, StandardCharsets.UTF_8);
+        SourceEditAssist assist = new SourceEditAssist(
+                new MonitorContext(
+                        new AtomicReference<>(List.of()), new AtomicReference<>(List.of())));
+        List<AutocompletePopup.CompletionItem> items
+                = assist.provideYamlKeyCompletions("yaml:kamelet:producer|kamelet:tag-order-action", tempDir);
+        // the property of the Kamelet first, then the options of the kamelet component
+        assertThat(items.get(0).key()).isEqualTo("tag");
+        assertThat(items.get(0).required()).isTrue();
+        assertThat(items.get(0).group()).isEqualTo("kamelet tag-order-action");
+        assertThat(items).extracting(AutocompletePopup.CompletionItem::key).contains("routeId", "timeout");
+        // a property already given is not offered again
+        assertThat(assist.provideYamlKeyCompletions("yaml:kamelet:producer:tag|kamelet:tag-order-action", tempDir))
+                .extracting(AutocompletePopup.CompletionItem::key).doesNotContain("tag");
+        // a Kamelet of the catalog, in the query of the uri
+        assertThat(assist.provideYamlKeyCompletions("yaml:kamelet:consumer|kamelet:timer-source?period=1000", tempDir))
+                .extracting(AutocompletePopup.CompletionItem::key).startsWith("message");
+    }
+
+    @Test
+    void theOptionsPopupIsNamedAfterTheKamelet() {
+        assertThat(SourceViewer.optionsTitle("kamelet", "kamelet:tag-order-action")).isEqualTo("tag-order-action options");
+        assertThat(SourceViewer.optionsTitle("kamelet", "kamelet:timer-source?period=1000"))
+                .isEqualTo("timer-source options");
+        assertThat(SourceViewer.optionsTitle("kamelet", null)).isEqualTo("kamelet options");
+        assertThat(SourceViewer.optionsTitle("timer", "timer:tick")).isEqualTo("timer options");
+    }
+
+    @Test
+    void aDividerSetsTheKameletComponentOptionsApart() throws Exception {
+        Files.writeString(tempDir.resolve("tag-order-action.kamelet.yaml"), KAMELET, StandardCharsets.UTF_8);
+        SourceEditAssist assist = new SourceEditAssist(
+                new MonitorContext(
+                        new AtomicReference<>(List.of()), new AtomicReference<>(List.of())));
+        List<AutocompletePopup.CompletionItem> items
+                = assist.provideYamlKeyCompletions("yaml:kamelet:producer|kamelet:tag-order-action", tempDir);
+        // tag above the divider, the options of the kamelet component below it
+        assertThat(new AutocompletePopup(items, "", "").dividerAt()).isEqualTo(1);
+        // filtering keeps the property of the Kamelet above: "t" matches tag and timeout
+        AutocompletePopup filtered = new AutocompletePopup(items, "t", "t");
+        assertThat(filtered.dividerAt()).isEqualTo(1);
+        // only the Kamelet's properties left, or none: no divider
+        assertThat(new AutocompletePopup(items, "tag", "tag").dividerAt()).isEqualTo(-1);
+        assertThat(new AutocompletePopup(items, "routeId", "routeId").dividerAt()).isEqualTo(-1);
+        // a Kamelet without properties: only the options of the component, no divider
+        String noProperties = KAMELET.replace("""
+                    required:
+                      - tag
+                    properties:
+                      tag:
+                        title: Tag
+                        type: string
+                """, "").replace("{{tag}}", "tagged");
+        Files.writeString(tempDir.resolve("tag-order-action.kamelet.yaml"), noProperties, StandardCharsets.UTF_8);
+        List<AutocompletePopup.CompletionItem> none
+                = assist.provideYamlKeyCompletions("yaml:kamelet:producer|kamelet:tag-order-action", tempDir);
+        assertThat(none).isNotEmpty();
+        assertThat(new AutocompletePopup(none, "", "").dividerAt()).isEqualTo(-1);
+    }
+
+    @Test
     void aKameletFileWithAProblemIsMarkedOnLoadAndNotSaved() throws Exception {
         Path file = tempDir.resolve("tag-order-action.kamelet.yaml");
         String self = KAMELET.replace("uri: kamelet:source", "uri: kamelet:tag-order-action");
@@ -143,6 +205,8 @@ class SourceKameletValidationTest {
         viewer.loadFile(file);
         int timerLine = lineOf(timer, "\"camel:timer\"");
         assertThat(viewer.viewErrors()).containsOnlyKeys(timerLine);
+        // a note, marked as a warning and counted apart from the errors
+        assertThat(viewer.noteLines()).containsOnly(timerLine);
 
         viewer.enterEditMode();
         appendSpaceToLine(viewer, 1);
@@ -151,6 +215,42 @@ class SourceKameletValidationTest {
         assertThat(lastNotification.get()).startsWith("Saved: tag-order-action.kamelet.yaml with 1 Camel problem: ")
                 .contains("camel:timer is not used by the template");
         assertThat(viewer.inlineErrors()).containsOnlyKeys(timerLine);
+        assertThat(viewer.noteLines()).containsOnly(timerLine);
+    }
+
+    @Test
+    void shiftF9RemovesAnUnusedDependency() throws Exception {
+        Path file = tempDir.resolve("tag-order-action.kamelet.yaml");
+        // camel:timer the only dependency, as the model wrote it: the dependencies: key goes with it
+        String timer = KAMELET.replace("    - \"camel:kamelet\"\n", "    - \"camel:timer\"\n");
+        Files.writeString(file, timer, StandardCharsets.UTF_8);
+        SourceViewer viewer = viewer(file);
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+        for (int i = 0; i < lineOf(timer, "\"camel:timer\""); i++) {
+            viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        }
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F9, KeyModifiers.SHIFT));
+        assertThat(viewer.editText()).doesNotContain("camel:timer").doesNotContain("dependencies:")
+                .contains("  template:");
+        assertThat(lastNotification.get()).isEqualTo("Fixed: remove camel:timer");
+    }
+
+    @Test
+    void anErrorIsNotANote() throws Exception {
+        Path file = tempDir.resolve("tag-order-action.kamelet.yaml");
+        String self = KAMELET.replace("uri: kamelet:source", "uri: kamelet:tag-order-action");
+        Files.writeString(file, self, StandardCharsets.UTF_8);
+        SourceViewer viewer = viewer(file);
+        viewer.loadFile(file);
+        assertThat(viewer.viewErrors()).isNotEmpty();
+        assertThat(viewer.noteLines()).isEmpty();
+    }
+
+    @Test
+    void theTemplateOfAKameletIsNamedAfterIt() {
+        assertThat(SourceTab.kameletName(List.of(KAMELET.split("\n")))).isEqualTo("tag-order-action");
+        assertThat(SourceTab.kameletName(List.of(ROUTE.split("\n")))).isNull();
     }
 
     private SourceViewer viewer(Path file) {

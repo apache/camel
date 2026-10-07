@@ -230,10 +230,15 @@ class SyntaxHighlighter {
             return Language.PLAIN;
         }
         ext = ext.toLowerCase();
+        // the last extension: a Kamelet is name.kamelet.yaml, which onlyExt gives as kamelet.yaml (CAMEL-25411)
+        int dot = ext.lastIndexOf('.');
+        if (dot >= 0) {
+            ext = ext.substring(dot + 1);
+        }
         return switch (ext) {
             case "java" -> Language.JAVA;
-            case "yaml", "yml", "camel.yaml", "camel.yml" -> Language.YAML;
-            case "xml", "camel.xml" -> Language.XML;
+            case "yaml", "yml" -> Language.YAML;
+            case "xml" -> Language.XML;
             case "properties" -> Language.PROPERTIES;
             default -> Language.PLAIN;
         };

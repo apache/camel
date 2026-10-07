@@ -321,6 +321,37 @@ class KameletChecksTest {
     }
 
     @Test
+    void anUnusedDependencyIsFixedByRemovingItsLine() {
+        // told only what to list, a local model replaced camel:timer with kamelet:source: the note says to remove it,
+        // and the fix removes the line
+        String content = withDependencies(TAG_KAMELET.formatted("${body} [{{tag}}]"), "camel:kamelet", "camel:timer");
+        String note = KameletChecks.unusedDependencies(content).get(0);
+        assertThat(note).contains("camel:timer is not used by the template").contains("remove this line");
+        QuickFixes.Fix fix = QuickFixes.fixFor(note, "    - \"camel:timer\"");
+        assertThat(fix).isNotNull();
+        assertThat(fix.removesLine()).isTrue();
+        assertThat(fix.label()).isEqualTo("remove camel:timer");
+        assertThat(QuickFixes.fixFor("spec.dependencies: camel:core is implied, every Camel runtime has it: remove this line",
+                "    - camel:core").removesLine()).isTrue();
+        // the fix as camel_validate_source gives it: the line and its line break go
+        JsonObject result = AuthoringTools.validate(new ToolContext(), "tag-order-action.kamelet.yaml", content);
+        assertThat(result.toJson()).contains("\"find\":\"    - \\\"camel:timer\\\"\\n\"").contains("\"replace\":\"\"");
+    }
+
+    @Test
+    void theLastDependencyGoesWithTheDependenciesKey() {
+        List<String> lines = List.of("spec:", "  dependencies:", "    - \"camel:timer\"", "  template:");
+        assertThat(QuickFixes.linesToRemove(lines, 2)).containsExactly(1, 2);
+        List<String> two = List.of("spec:", "  dependencies:", "    - \"camel:timer\"", "    - \"camel:kamelet\"");
+        assertThat(QuickFixes.linesToRemove(two, 2)).containsExactly(2, 2);
+        assertThat(QuickFixes.linesToRemove(two, 3)).containsExactly(3, 3);
+        // the model's Kamelet, whose only dependency was camel:timer
+        String content = withDependencies(TAG_KAMELET.formatted("${body} [{{tag}}]"), "camel:timer");
+        JsonObject result = AuthoringTools.validate(new ToolContext(), "tag-order-action.kamelet.yaml", content);
+        assertThat(result.toJson()).contains("\"find\":\"  dependencies:\\n    - \\\"camel:timer\\\"\\n\"");
+    }
+
+    @Test
     void theDependenciesTheTemplateUsesAreNotNoted() {
         String source = """
                 apiVersion: camel.apache.org/v1

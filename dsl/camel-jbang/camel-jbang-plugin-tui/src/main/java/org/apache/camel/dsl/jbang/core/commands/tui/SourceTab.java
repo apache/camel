@@ -907,7 +907,9 @@ class SourceTab extends AbstractTab {
             sourceViewer.setQuickDocProvider(assist::provideCamelQuickDocs);
             sourceViewer.setDeprecatedLineScanner(null);
             if (SourceEditAssist.isYamlFile(filePath)) {
-                sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
+                // the options of a kamelet: endpoint start with the properties of its Kamelet (CAMEL-25411)
+                sourceViewer.setAutocompleteProvider(
+                        c -> assist.provideYamlKeyCompletions(c, filePath.toAbsolutePath().getParent()));
                 sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
                 sourceViewer.setEndpointValidator(assist::validateYamlEndpoints);
                 // in a Kamelet's template, a property written as ${header.tag} is said to be the placeholder {{tag}}
@@ -1388,6 +1390,8 @@ class SourceTab extends AbstractTab {
         }
 
         String filePath = file.toString();
+        // the template of a Kamelet is the route of kamelet:<its name>, named after it (CAMEL-25411)
+        String kamelet = SourceEditAssist.isKameletFile(file) ? kameletName(lines) : null;
         String currentRouteId = null;
         int routeIdIndent = -1;
         int pendingFromLine = -1;
@@ -1425,7 +1429,8 @@ class SourceTab extends AbstractTab {
                 linkableBlockIndent = -1;
                 String inlineUri = extractInlineUri(trimmed, "from");
                 if (inlineUri != null) {
-                    emitRouteEntry(fromEntries, currentRouteId, inlineUri, filePath, i);
+                    emitRouteEntry(fromEntries, kameletRouteId(kamelet, currentRouteId), kameletFromUri(kamelet, inlineUri),
+                            filePath, i);
                 } else {
                     pendingFromLine = i;
                 }
@@ -1436,7 +1441,8 @@ class SourceTab extends AbstractTab {
             if (pendingFromLine >= 0 && trimmed.startsWith("uri:")) {
                 String uri = extractYamlValue(trimmed, "uri");
                 if (uri != null) {
-                    emitRouteEntry(fromEntries, currentRouteId, uri, filePath, pendingFromLine);
+                    emitRouteEntry(fromEntries, kameletRouteId(kamelet, currentRouteId), kameletFromUri(kamelet, uri),
+                            filePath, pendingFromLine);
                 }
                 pendingFromLine = -1;
                 continue;
@@ -1487,6 +1493,33 @@ class SourceTab extends AbstractTab {
                 }
             }
         }
+    }
+
+    /** The metadata.name of a Kamelet file, or null. */
+    static String kameletName(List<String> lines) {
+        boolean metadata = false;
+        for (String line : lines) {
+            if (line.isBlank() || line.trim().startsWith("#")) {
+                continue;
+            }
+            if (lineIndent(line) == 0) {
+                metadata = line.trim().equals("metadata:");
+            } else if (metadata && line.trim().startsWith("name:")) {
+                String name = extractYamlValue(line.trim(), "name");
+                return name != null && !name.isEmpty() ? name : null;
+            }
+        }
+        return null;
+    }
+
+    private static String kameletRouteId(String kamelet, String routeId) {
+        return kamelet != null && (routeId == null || routeId.isEmpty()) ? kamelet : routeId;
+    }
+
+    /** An action or a sink is entered from kamelet:source: the routes reach it as kamelet:<its name>. */
+    private static String kameletFromUri(String kamelet, String uri) {
+        return kamelet != null && (uri.equals("kamelet:source") || uri.startsWith("kamelet:source?"))
+                ? "kamelet:" + kamelet : uri;
     }
 
     private void emitRouteEntry(List<RouteEntry> index, String routeId, String fromUri, String filePath, int fromLine) {
@@ -1685,23 +1718,23 @@ class SourceTab extends AbstractTab {
         return result;
     }
 
-    /** Reverse links: a from line to a route that sends to it (jumps to the caller's to line). */
+    /**
+     * Reverse links: a from line to the route that sends to it (jumps to the caller's to line), or when several do, to
+     * a popup to choose one of them: a Kamelet or a direct: route used by more than one route.
+     */
     private void addReverseLinks(String currentFilePath, Map<Integer, SourceViewer.JumpLink> result) {
         for (RouteEntry re : routeIndex) {
             if (!currentFilePath.equals(re.filePath())) {
                 continue;
             }
-            for (ToEntry te : toIndex) {
-                if (te.routeId().equals(re.routeId())) {
-                    continue;
-                }
-                if (re.fromUri().equals(te.toUri())) {
-                    // add jump link on the from: line pointing to the caller
-                    String callerRouteId = te.routeId().isEmpty() ? "route" : te.routeId();
-                    result.putIfAbsent(re.fromLine(),
-                            new SourceViewer.JumpLink(callerRouteId, te.filePath(), te.toLine()));
-                    break;
-                }
+            List<ToEntry> callers = callers(re);
+            if (callers.size() == 1) {
+                ToEntry te = callers.get(0);
+                String callerRouteId = te.routeId().isEmpty() ? "route" : te.routeId();
+                result.putIfAbsent(re.fromLine(), new SourceViewer.JumpLink(callerRouteId, te.filePath(), te.toLine()));
+            } else if (callers.size() > 1) {
+                result.putIfAbsent(re.fromLine(),
+                        new SourceViewer.JumpLink(callers.size() + " callers", null, -1, re.fromUri()));
             }
         }
     }
@@ -1741,7 +1774,27 @@ class SourceTab extends AbstractTab {
             }
             return;
         }
-        gotoRoutePopup.openItems(usagesOf(uri), "Usages of " + uri);
+        // the line the popup is opened on is not one of the places to go to
+        List<GotoRoutePopup.RouteItem> items = withoutLine(usagesOf(uri),
+                sourceViewer.getCurrentFilePath(), sourceViewer.getSelectedLine());
+        if (items.isEmpty()) {
+            if (ctx.notificationCallback != null) {
+                ctx.notificationCallback.accept(uri + " is used only here", false);
+            }
+            return;
+        }
+        gotoRoutePopup.openItems(items, "Usages of " + uri);
+    }
+
+    /** The places without the one at the line of the file. */
+    static List<GotoRoutePopup.RouteItem> withoutLine(List<GotoRoutePopup.RouteItem> items, String file, int line) {
+        List<GotoRoutePopup.RouteItem> answer = new ArrayList<>();
+        for (GotoRoutePopup.RouteItem item : items) {
+            if (!(item.filePath().equals(file) && item.fromLine() == line)) {
+                answer.add(item);
+            }
+        }
+        return answer;
     }
 
     /** The routes that consume from the endpoint and the steps that send to it. */
@@ -1795,7 +1848,38 @@ class SourceTab extends AbstractTab {
     }
 
     private void handleJumpLink(SourceViewer.JumpLink link) {
+        if (link.callersOf() != null) {
+            // sent to from more than one place: choose which
+            gotoRoutePopup.openItems(callersOf(link.callersOf()), "Callers of " + link.callersOf());
+            return;
+        }
         openFileAt(link.filePath(), link.targetLine());
+    }
+
+    /** The steps of other routes that send to the endpoint a route consumes from. */
+    List<GotoRoutePopup.RouteItem> callersOf(String uri) {
+        List<GotoRoutePopup.RouteItem> items = new ArrayList<>();
+        for (RouteEntry re : routeIndex) {
+            if (uri.equals(re.fromUri())) {
+                for (ToEntry te : callers(re)) {
+                    String routeId = te.routeId().isEmpty() ? "route" : te.routeId();
+                    items.add(new GotoRoutePopup.RouteItem(routeId, "to " + uri, te.filePath(), te.toLine()));
+                }
+                break;
+            }
+        }
+        return items;
+    }
+
+    /** The steps of the other routes that send to the route. */
+    private List<ToEntry> callers(RouteEntry re) {
+        List<ToEntry> answer = new ArrayList<>();
+        for (ToEntry te : toIndex) {
+            if (!te.routeId().equals(re.routeId()) && re.fromUri().equals(te.toUri())) {
+                answer.add(te);
+            }
+        }
+        return answer;
     }
 
     /** A uri: line, also as the first key of a list item: - uri: direct:billing in the cases of a switch. */
