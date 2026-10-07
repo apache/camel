@@ -79,6 +79,9 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
             return exception.getClass().getCanonicalName();
         } else if (ref != null) {
             return "ref:" + ref;
+        } else if (exceptionType != null) {
+            // as the DSLs declare it: the type, and the message when there is one
+            return message != null ? exceptionType + ": " + message : exceptionType;
         } else {
             return "";
         }
