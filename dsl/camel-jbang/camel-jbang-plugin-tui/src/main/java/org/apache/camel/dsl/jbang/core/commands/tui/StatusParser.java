@@ -201,6 +201,8 @@ final class StatusParser {
             Map<String, ?> reloadStats = (Map<String, ?>) stats.get("reload");
             if (reloadStats != null) {
                 info.reloaded = (int) objToLong(reloadStats.get("reloaded"));
+                Map<String, ?> lastError = (Map<String, ?>) reloadStats.get("lastError");
+                info.reloadError = lastError != null ? (String) lastError.get("message") : null;
             }
         }
     }

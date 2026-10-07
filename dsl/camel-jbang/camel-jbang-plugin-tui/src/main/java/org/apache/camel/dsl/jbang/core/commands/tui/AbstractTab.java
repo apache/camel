@@ -142,6 +142,7 @@ abstract class AbstractTab implements MonitorTab {
         if (tableArea == null || table == null || tableState == null || scrollState == null) {
             return;
         }
+        clampTableOffset(table, tableArea, tableState, rowCount);
         int visibleRows = table.viewportHeight(tableArea);
         if (visibleRows <= 0 || rowCount <= visibleRows) {
             return;
@@ -156,6 +157,21 @@ abstract class AbstractTab implements MonitorTab {
         scrollState.viewportContentLength(visibleRows);
         scrollState.position(tableState.offset());
         frame.renderStatefulWidget(Scrollbar.builder().build(), scrollRect, scrollState);
+    }
+
+    /**
+     * Pulls the scroll offset of a table back when rows went away, so the rows fill the view. The table only scrolls to
+     * keep the selected row in view: when the list shrinks (apps stopped, projects closed), rows that fit could stay
+     * above the top, and a running app looked gone.
+     */
+    static void clampTableOffset(Table table, Rect tableArea, TableState tableState, int rowCount) {
+        if (tableArea == null || table == null || tableState == null) {
+            return;
+        }
+        int maxOffset = Math.max(0, rowCount - Math.max(0, table.viewportHeight(tableArea)));
+        if (tableState.offset() > maxOffset) {
+            tableState.setOffset(maxOffset);
+        }
     }
 
     protected static boolean handleTableClick(MouseEvent me, Rect tableArea, TableState tableState, int rowCount) {

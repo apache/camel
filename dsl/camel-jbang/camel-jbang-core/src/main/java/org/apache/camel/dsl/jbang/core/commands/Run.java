@@ -536,7 +536,8 @@ public class Run extends CamelCommand {
     }
 
     private int runBundledExample(JsonObject entry) throws Exception {
-        Path tempDir = ExampleHelper.extractBundledExample(entry);
+        // an example run in the background outlives this JVM, so its files must stay (CAMEL-25425)
+        Path tempDir = ExampleHelper.extractBundledExample(entry, !background);
         return runExampleIn(entry, tempDir);
     }
 
@@ -549,7 +550,7 @@ public class Run extends CamelCommand {
 
         Path tempDir;
         try {
-            tempDir = ExampleHelper.downloadGithubExample(entry);
+            tempDir = ExampleHelper.downloadGithubExample(entry, !background);
         } catch (Exception e) {
             printer().printErr("Failed to fetch example from GitHub: " + e.getMessage());
             printer().printErr("This example requires an internet connection.");

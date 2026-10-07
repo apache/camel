@@ -53,6 +53,32 @@ class StatusParserTest {
     }
 
     @Test
+    void aFailedReloadIsReadAsCamelPsReadsIt() {
+        JsonObject root = new JsonObject();
+        JsonObject context = new JsonObject();
+        context.put("name", "routes");
+        JsonObject stats = new JsonObject();
+        JsonObject reload = new JsonObject();
+        reload.put("reloaded", 2);
+        reload.put("failed", 1);
+        JsonObject lastError = new JsonObject();
+        lastError.put("message", "Greeter.java does not exist");
+        reload.put("lastError", lastError);
+        stats.put("reload", reload);
+        context.put("statistics", stats);
+        root.put("context", context);
+
+        IntegrationInfo info = StatusParser.parseIntegration(ProcessHandle.current(), root);
+
+        assertEquals(2, info.reloaded);
+        assertEquals("Greeter.java does not exist", info.reloadError);
+
+        // a reload that succeeds again clears it
+        reload.remove("lastError");
+        assertNull(StatusParser.parseIntegration(ProcessHandle.current(), root).reloadError);
+    }
+
+    @Test
     void parseIntegrationReturnsNullWhenNoContext() {
         JsonObject root = new JsonObject();
         ProcessHandle ph = ProcessHandle.current();

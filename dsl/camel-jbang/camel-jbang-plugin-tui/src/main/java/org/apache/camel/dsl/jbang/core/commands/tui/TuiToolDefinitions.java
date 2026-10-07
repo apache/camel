@@ -529,6 +529,8 @@ final class TuiToolDefinitions {
                 "Launches a named bundled example as a background process. "
                                    + "Bypasses the F2 menu entirely — no UI navigation needed. "
                                    + "Automatically starts required infra services (Docker containers) if needed. "
+                                   + "Waits up to 30 seconds for the example to start: status started, failed (with "
+                                   + "the end of its log), starting, or starting_infra. "
                                    + "Use tui_list_examples to discover available example names.",
                 Map.of("name", propDef("string",
                         "Example name from the catalog (e.g. 'quick-start/timer-log')"),

@@ -23,12 +23,17 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -38,6 +43,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonObject;
 
 class LaunchManager {
@@ -84,6 +90,29 @@ class LaunchManager {
      * tracked and monitored like an example started from the F2 Actions menu. Output is redirected to a temporary log
      * file. Used by the AI panel's {@code /run} and {@code /infra run} slash commands.
      */
+    // the folders of the examples started here, with the process that runs each (camel run, which waits for the app)
+    private final Map<Path, Process> exampleDirs = new ConcurrentHashMap<>();
+
+    /**
+     * Deletes the folders of the examples that are no longer running: those started here, and those left behind in the
+     * temporary directory for an hour or more (by an earlier session, or a run that was killed). The folder of an
+     * example that still runs is kept, with the files it reads, as the example keeps running when the TUI quits.
+     *
+     * @param runningDirs the directories of the running integrations
+     */
+    void deleteExampleDirs(Collection<Path> runningDirs) {
+        Set<Path> unused = new HashSet<>(ExampleHelper.staleExampleDirs(runningDirs, Duration.ZERO));
+        exampleDirs.forEach((dir, process) -> {
+            // an example that is still being built (exported and packaged by Maven) is not running yet
+            if (!process.isAlive() && unused.contains(dir)) {
+                FileUtil.removeDir(dir.toFile());
+            }
+        });
+        for (Path dir : ExampleHelper.staleExampleDirs(runningDirs, Duration.ofHours(1))) {
+            FileUtil.removeDir(dir.toFile());
+        }
+    }
+
     void launchDetached(String displayName, List<String> extraArgs) throws IOException {
         JsonObject example = exampleOf(extraArgs);
         if (example == null) {
@@ -94,8 +123,11 @@ class LaunchManager {
         // where camel run --example would run in the directory of the TUI; a GitHub example is downloaded first
         Thread t = new Thread(() -> {
             try {
+                // the example keeps running when the TUI quits, so its folder is not deleted on exit (CAMEL-25425):
+                // deleteExampleDirs removes it once the example has stopped
                 Path dir = ExampleHelper.isBundled(example)
-                        ? ExampleHelper.extractBundledExample(example) : ExampleHelper.downloadGithubExample(example);
+                        ? ExampleHelper.extractBundledExample(example, false)
+                        : ExampleHelper.downloadGithubExample(example, false);
                 start(displayName, exampleArgs(extraArgs, example), dir);
             } catch (Exception e) {
                 notify("Failed to start: " + displayName + " - " + e.getMessage(), true);
@@ -117,6 +149,9 @@ class LaunchManager {
         pb.redirectErrorStream(true);
         pb.redirectOutput(outputFile.toFile());
         Process process = pb.start();
+        if (dir != null) {
+            exampleDirs.put(dir, process);
+        }
         addPendingLaunch(displayName, process, outputFile);
     }
 
@@ -173,10 +208,6 @@ class LaunchManager {
         launched.clear();
     }
 
-    void addPendingLaunchNoAutoSelect(String name, Process process, Path outputFile) {
-        pendingLaunches.add(new PendingLaunch(name, process, outputFile, System.currentTimeMillis()));
-    }
-
     void tick(long now) {
         monitorPendingLaunches(now);
         checkDeferredLaunch(now);
@@ -216,23 +247,52 @@ class LaunchManager {
     }
 
     /**
-     * Starts an infra service in the background via {@code camel infra run <alias> --background}, where the alias may
-     * name the implementation too ({@code aws sqs}). The launch is monitored like any other, so a failure surfaces
-     * through the failure log callback.
+     * Starts an infra service via {@code camel infra run <alias>}, where the alias may name the implementation too
+     * ({@code aws sqs}). It runs in a process of its own, which outlives the TUI, as {@code --background} would start
+     * it; but the TUI keeps its output, so a service that fails to start (its port taken, its image not pulled) shows
+     * why through the failure log callback, where {@code --background} would lose it.
      */
     void startInfra(String alias) throws IOException {
+        startInfra(alias, null);
+    }
+
+    /** Starts an infra service as {@link #startInfra(String)} does, on the given port (none: its default). */
+    void startInfra(String alias, String port) throws IOException {
         List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
         cmd.add("infra");
         cmd.add("run");
         cmd.addAll(Arrays.asList(alias.trim().split("\\s+")));
-        cmd.add("--background");
+        if (port != null && !port.isBlank()) {
+            cmd.add("--port=" + port.trim());
+        }
+        launchInfra(alias, cmd);
+    }
+
+    /** Runs the command that starts the given infra service, and watches it until the service is up. */
+    void launchInfra(String alias, List<String> cmd) throws IOException {
         Path outputFile = createSecureTempFile("camel-infra-", ".log");
         outputFile.toFile().deleteOnExit();
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.redirectErrorStream(true);
         pb.redirectOutput(outputFile.toFile());
         Process process = pb.start();
-        pendingLaunches.add(new PendingLaunch(alias, process, outputFile, System.currentTimeMillis()));
+        PendingLaunch pl = new PendingLaunch(alias, process, outputFile, System.currentTimeMillis());
+        pl.infraAlias = serviceOf(alias);
+        pendingLaunches.add(pl);
+    }
+
+    /**
+     * Whether an infra service of the given ones is still starting: its camel infra run lives, and it is not up yet.
+     */
+    private boolean infraStarting(List<String> aliases) {
+        Set<String> services = aliases.stream().map(LaunchManager::serviceOf).collect(Collectors.toSet());
+        return pendingLaunches.stream()
+                .anyMatch(pl -> pl.infraAlias != null && services.contains(pl.infraAlias) && pl.process.isAlive());
+    }
+
+    /** Runs the launch once the given infra services are up, or drops it when they fail to start. */
+    void deferUntilInfra(List<String> infra, String displayName, Runnable launchAction) {
+        deferredLaunch = new DeferredLaunch(displayName, infra, System.currentTimeMillis(), launchAction);
     }
 
     void startMissingInfraAndDefer(List<String> missingInfra, String displayName, Runnable launchAction) {
@@ -244,7 +304,7 @@ class LaunchManager {
                 return;
             }
         }
-        deferredLaunch = new DeferredLaunch(displayName, missingInfra, System.currentTimeMillis(), launchAction);
+        deferUntilInfra(missingInfra, displayName, launchAction);
         if (infraCatalogClearer != null) {
             infraCatalogClearer.run();
         }
@@ -358,7 +418,13 @@ class LaunchManager {
                 DeferredLaunch dl = deferredLaunch;
                 deferredLaunch = null;
                 dl.launchAction.run();
-            } else if (now - deferredLaunch.startTime > 120_000) {
+            } else if (!infraStarting(deferredLaunch.requiredInfra)) {
+                // the infra failed to start: the failure log says why
+                DeferredLaunch dl = deferredLaunch;
+                deferredLaunch = null;
+                notify("Not started: " + dl.displayName() + " (its infra services failed to start)", true);
+            } else if (now - deferredLaunch.startTime > INFRA_WATCH_MS) {
+                // a first start pulls the container image, which can take minutes: wait while the infra is starting
                 deferredLaunch = null;
                 notify("Timeout waiting for infra services to start", true);
             }
@@ -366,30 +432,59 @@ class LaunchManager {
     }
 
     private void monitorPendingLaunches(long now) {
+        Set<String> runningAliases = null;
         Iterator<PendingLaunch> it = pendingLaunches.iterator();
         while (it.hasNext()) {
             PendingLaunch pl = it.next();
+            if (pl.infraAlias != null && !pl.started) {
+                if (runningAliases == null) {
+                    runningAliases = infraServices.get().stream()
+                            .filter(i -> i.alive).map(i -> i.alias).collect(Collectors.toSet());
+                }
+                // an infra service has started when it is up
+                if (runningAliases.contains(pl.infraAlias)) {
+                    pl.started = true;
+                    notify("Started: " + pl.name, false);
+                    pl.announced = true;
+                }
+            }
             if (!pl.process.isAlive()) {
                 int exitCode = pl.process.exitValue();
-                if (exitCode == 0 || pl.started) {
+                boolean ok = pl.infraAlias != null ? pl.started : exitCode == 0 || pl.started;
+                if (ok) {
                     if (!pl.announced) {
                         notify("Started: " + pl.name, false);
                     }
-                } else if (failureLogCallback != null) {
-                    failureLogCallback.accept(pl.name, pl.outputFile);
+                    outcomes.put(pl.name, LaunchOutcome.started());
+                } else {
+                    outcomes.put(pl.name, LaunchOutcome.failed(pl.outputFile));
+                    if (failureLogCallback != null) {
+                        failureLogCallback.accept(pl.name, pl.outputFile);
+                    }
                 }
                 it.remove();
             } else if (pl.started) {
                 // up and running: a stop or a failure from now on is not a failed start
+                outcomes.put(pl.name, LaunchOutcome.started());
                 it.remove();
             } else if (pl.startFailed()) {
                 // the app gave up starting (port in use, build failure) but its JVM lives on: stop it, and show why
                 pl.process.descendants().forEach(ProcessHandle::destroy);
                 pl.process.destroy();
+                outcomes.put(pl.name, LaunchOutcome.failed(pl.outputFile));
                 if (failureLogCallback != null) {
                     failureLogCallback.accept(pl.name, pl.outputFile);
                 }
                 it.remove();
+            } else if (pl.infraAlias != null) {
+                if (now - pl.startTime > INFRA_WATCH_MS) {
+                    // not up after the longest an image pull should take: a failed start, as the other ends record
+                    outcomes.put(pl.name, LaunchOutcome.failed(pl.outputFile));
+                    if (failureLogCallback != null) {
+                        failureLogCallback.accept(pl.name, pl.outputFile);
+                    }
+                    it.remove();
+                }
             } else {
                 if (!pl.announced && now - pl.startTime > 8000) {
                     notify("Started: " + pl.name, false);
@@ -414,6 +509,49 @@ class LaunchManager {
      */
     static final long WATCH_MS = 5 * 60_000;
 
+    // how the latest launch of each name went, for an agent that asks (tui_run_example waits for it)
+    private final Map<String, LaunchOutcome> outcomes = new ConcurrentHashMap<>();
+
+    /**
+     * How a launch went: started (Camel said so), or failed with the end of its output; null while it is starting.
+     */
+    record LaunchOutcome(boolean ok, String log) {
+
+        private static final Pattern ANSI = Pattern.compile("\u001B\\[[0-9;]*m");
+
+        static LaunchOutcome started() {
+            return new LaunchOutcome(true, null);
+        }
+
+        static LaunchOutcome failed(Path outputFile) {
+            String tail = null;
+            try {
+                // without colors and stack frames: the messages and their causes are what tell why
+                List<String> lines = Files.readAllLines(outputFile, StandardCharsets.UTF_8).stream()
+                        .map(l -> ANSI.matcher(l).replaceAll(""))
+                        .filter(l -> !l.stripLeading().startsWith("at ") && !l.stripLeading().startsWith("... "))
+                        .toList();
+                tail = String.join("\n", lines.subList(Math.max(0, lines.size() - 30), lines.size()));
+            } catch (Exception e) {
+                // no output to show
+            }
+            return new LaunchOutcome(false, tail);
+        }
+    }
+
+    /** Forgets how the last launch of the given name went, before it is launched again. */
+    void clearOutcome(String name) {
+        outcomes.remove(name);
+    }
+
+    /** How the latest launch of the given name went, or null while it is still starting. */
+    LaunchOutcome outcome(String name) {
+        return outcomes.get(name);
+    }
+
+    /** How long an infra service may take to start: the first start pulls its container image. */
+    static final long INFRA_WATCH_MS = 15 * 60_000;
+
     /** What a runtime prints when it gives up starting, while its JVM may stay up. */
     static final List<String> START_FAILURES = List.of(
             "APPLICATION FAILED TO START", "[ERROR] BUILD FAILURE", "Failed to start application");
@@ -427,6 +565,8 @@ class LaunchManager {
         final Process process;
         final Path outputFile;
         final long startTime;
+        // the service of an infra launch: it has started once the service is up; null for an integration
+        String infraAlias;
         boolean announced;
         // Camel said it started: the launch is no longer watched for a failed start
         boolean started;

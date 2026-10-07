@@ -29,7 +29,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
@@ -1549,8 +1548,15 @@ class McpFacade {
         if (nameOrPid != null && !nameOrPid.isBlank()) {
             String pid = findPidByNameOrPid(nameOrPid.trim());
             if (pid == null) {
-                String names = data.get().stream().filter(i -> !i.vanishing)
-                        .map(i -> i.name + " (pid " + i.pid + ")").collect(Collectors.joining(", "));
+                List<String> known = new ArrayList<>();
+                data.get().stream().filter(i -> !i.vanishing).forEach(i -> known.add(i.name + " (pid " + i.pid + ")"));
+                List<InfraInfo> infras = ctx.infraData != null ? ctx.infraData.get() : null;
+                if (infras != null) {
+                    // infra services can be named too
+                    infras.stream().filter(i -> !i.vanishing)
+                            .forEach(i -> known.add(i.alias + " (infra, pid " + i.pid + ")"));
+                }
+                String names = String.join(", ", known);
                 return "Error: no integration with name or pid " + nameOrPid
                        + (names.isEmpty() ? "; none is running" : ". Known: " + names);
             }

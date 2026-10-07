@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,67 @@ class LaunchManagerInfraTest {
 
         running.add(infra("aws"));
         assertThat(lm.findMissingInfraServices(example)).containsExactly("kafka");
+    }
+
+    @Test
+    void aLaunchWaitsWhileItsInfraIsStartingAndRunsOnceItIsUp() throws Exception {
+        List<String> notices = new ArrayList<>();
+        lm.setNotificationCallback((msg, error) -> notices.add(msg));
+        AtomicBoolean launched = new AtomicBoolean();
+        // a first start pulls the image: the infra takes a while
+        lm.launchInfra("kafka", List.of("sleep", "30"));
+        lm.deferUntilInfra(List.of("kafka"), "kafka-orders", () -> launched.set(true));
+
+        lm.tick(System.currentTimeMillis());
+        assertThat(launched).isFalse();
+        assertThat(notices).isEmpty();
+
+        running.add(infra("kafka"));
+        lm.tick(System.currentTimeMillis());
+        assertThat(launched).isTrue();
+        assertThat(notices).contains("Started: kafka");
+        ProcessHandle.current().children()
+                .filter(p -> p.info().command().map(c -> c.endsWith("sleep")).orElse(false))
+                .forEach(ProcessHandle::destroy);
+    }
+
+    @Test
+    void aLaunchThatNeedsAServiceWithItsImplementationRunsOnceTheServiceIsUp() throws Exception {
+        AtomicBoolean launched = new AtomicBoolean();
+        // camel infra run aws sqs runs as the aws service
+        lm.launchInfra("aws sqs", List.of("sleep", "30"));
+        lm.deferUntilInfra(List.of("aws sqs"), "aws-sqs", () -> launched.set(true));
+
+        lm.tick(System.currentTimeMillis());
+        assertThat(launched).isFalse();
+
+        running.add(infra("aws"));
+        lm.tick(System.currentTimeMillis());
+        assertThat(launched).isTrue();
+        ProcessHandle.current().children()
+                .filter(p -> p.info().command().map(c -> c.endsWith("sleep")).orElse(false))
+                .forEach(ProcessHandle::destroy);
+    }
+
+    @Test
+    void aLaunchIsDroppedWhenItsInfraFailsToStart() throws Exception {
+        List<String> notices = new ArrayList<>();
+        List<String> failures = new ArrayList<>();
+        lm.setNotificationCallback((msg, error) -> notices.add(msg));
+        lm.setFailureLogCallback((name, log) -> failures.add(name));
+        AtomicBoolean launched = new AtomicBoolean();
+        // the container cannot bind its port: camel infra run ends with an error
+        lm.launchInfra("mosquitto", List.of("sh", "-c", "echo port is already allocated; exit 1"));
+        lm.deferUntilInfra(List.of("mosquitto"), "mqtt", () -> launched.set(true));
+        long deadline = System.currentTimeMillis() + 10_000;
+        while (failures.isEmpty() && System.currentTimeMillis() < deadline) {
+            lm.tick(System.currentTimeMillis());
+            Thread.sleep(50);
+        }
+
+        assertThat(launched).isFalse();
+        assertThat(failures).containsExactly("mosquitto");
+        assertThat(notices).contains("Not started: mqtt (its infra services failed to start)");
     }
 
     private static InfraInfo infra(String alias) {
