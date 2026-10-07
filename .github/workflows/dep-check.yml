@@ -15,30 +15,16 @@
 # limitations under the License.
 #
 
+# Temporarily disabled: the job was failing (pilot-plugin 0.4.0 crashing on
+# bom-generator-maven-plugin which has test-scoped deps but no src/test/java)
+# while still showing green due to continue-on-error: true, wasting ~20 min
+# per PR with no actionable output.
+# To be replaced by a step in the main pr-build-main.yml workflow.
+
 name: 'Dependency Analysis'
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - .claude-plugin/**
-      - .idea/**
-      - .github/**
-      - .oss-ai-helper-rules/**
-      - AGENTS.md
-      - README.md
-      - SECURITY.md
-      - Jenkinsfile
-      - Jenkinsfile.*
-      - NOTICE.txt
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
-permissions:
-  contents: read
+  workflow_dispatch:
 
 jobs:
   dep-check:
@@ -51,7 +37,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 1
 
       - name: Set up JDK 21
