@@ -676,9 +676,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
                         backlogTracer.getBodyMaxChars());
 
+                // the time the exchange entered this route: when it was created in the route it started in, now in
+                // a route it is sent to later (direct, seda), so the history does not go back in time
+                long entered = routeId != null && !routeId.equals(fromRouteId) ? System.currentTimeMillis() : created;
                 DefaultBacklogTracerEventMessage first = new DefaultBacklogTracerEventMessage(
                         camelContext,
-                        true, false, backlogTracer.incrementTraceCounter(), created, source, fromRouteId, routeId,
+                        true, false, backlogTracer.incrementTraceCounter(), entered, source, fromRouteId, routeId,
                         input.getId(),
                         null, null, null,
                         input.getShortName(), input.getLabel(),
@@ -698,7 +701,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         public void after(Exchange exchange, DefaultBacklogTracerEventMessage first) throws Exception {
             if (first != null) {
 
-                final long created = exchange.getClock().getCreated();
                 NamedNode input = routeDefinition.getInput();
                 String source = LoggerHelper.getLineNumberLoggerName(input);
                 String exchangeId = exchange.getExchangeId();
@@ -715,9 +717,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
                         backlogTracer.getBodyMaxChars());
 
+                // stamped with the time the route was entered, as the first event: the elapsed time set below makes
+                // the time it was left (a reader adds the two), also for a route called later by the same exchange
                 DefaultBacklogTracerEventMessage last = new DefaultBacklogTracerEventMessage(
                         camelContext,
-                        false, true, backlogTracer.incrementTraceCounter(), created, source, fromRouteId, routeId,
+                        false, true, backlogTracer.incrementTraceCounter(), first.getTimestamp(), source,
+                        fromRouteId, routeId,
                         input.getId(),
                         null, null, null,
                         input.getShortName(), input.getLabel(),
@@ -829,7 +834,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         @Override
         public void after(Exchange exchange, DefaultBacklogTracerEventMessage first) throws Exception {
             if (first != null) {
-                final long created = exchange.getClock().getCreated();
                 String source = LoggerHelper.getLineNumberLoggerName(processorDefinition);
                 String exchangeId = exchange.getExchangeId();
                 String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
@@ -845,9 +849,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
                         backlogTracer.getBodyMaxChars());
 
+                // stamped with the time the route was entered, as the first event: the elapsed time set below makes
+                // the time it was left (a reader adds the two), also for a route called later by the same exchange
                 DefaultBacklogTracerEventMessage last = new DefaultBacklogTracerEventMessage(
                         camelContext,
-                        false, true, backlogTracer.incrementTraceCounter(), created, source, fromRouteId, routeId,
+                        false, true, backlogTracer.incrementTraceCounter(), first.getTimestamp(), source,
+                        fromRouteId, routeId,
                         processorDefinition.getId(),
                         null, null, null,
                         processorDefinition.getShortName(), processorDefinition.getLabel(),
