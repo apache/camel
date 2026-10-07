@@ -116,11 +116,16 @@ public final class RunHelper {
 
     /** The value with a ${name} property of the pom resolved, as Maven would; as written when the pom has none. */
     static String resolveProperty(Model model, String value) {
-        if (value != null && value.startsWith("${") && value.endsWith("}") && model.getProperties() != null) {
-            String resolved = model.getProperties().getProperty(value.substring(2, value.length() - 1));
-            if (resolved != null) {
-                return resolveProperty(model, resolved);
+        // a few levels of ${a} -> ${b} -> value; a property that refers to itself (or a cycle) stops there
+        for (int i = 0; i < 10; i++) {
+            if (value == null || !value.startsWith("${") || !value.endsWith("}") || model.getProperties() == null) {
+                return value;
             }
+            String resolved = model.getProperties().getProperty(value.substring(2, value.length() - 1));
+            if (resolved == null) {
+                return value;
+            }
+            value = resolved;
         }
         return value;
     }

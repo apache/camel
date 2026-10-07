@@ -106,6 +106,26 @@ class RunHelperDetectRuntimeTest {
     }
 
     @Test
+    void aPropertyThatRefersToItselfDoesNotLoop() throws Exception {
+        Path pom = pom("""
+                <properties>
+                    <a>${b}</a>
+                    <b>${a}</b>
+                </properties>
+                <dependencyManagement>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.example</groupId>
+                            <artifactId>${a}</artifactId>
+                            <version>1.0</version>
+                        </dependency>
+                    </dependencies>
+                </dependencyManagement>
+                """);
+        assertThat(RunHelper.detectRuntimeFromPom(pom)).isNull();
+    }
+
+    @Test
     void plainProject() throws Exception {
         Path pom = pom("""
                 <dependencies>
