@@ -29,6 +29,8 @@ dev mode or explicit enablement, the tab is empty.
 The top panel shows aggregated statistics: total / OK / failed exchange counts, total sends,
 p50 / p95 / max elapsed times, and the time window of the visible entries.
 
+image::jbang/camel-tui-observe-activity.png[The Activity tab: the last exchanges of three Kafka routes and a file route, with the summary on top]
+
 Select an exchange to see its details below: exchange ID, route, elapsed time, the remote endpoints
 called during the exchange with individual timings, and exception details if the exchange failed.
 
@@ -264,12 +266,16 @@ When your integration includes a DataSource, two SQL tabs appear under More > Da
 * *SQL Trace* -- captures and displays SQL statements executed by your routes in real-time,
   showing query text, execution time, and the route that triggered them.
 
+image::jbang/camel-tui-observe-sql-query.png[A query in the SQL Query tab against the DataSource of the integration, with the key column marked]
+
 === Memory Leak Detection
 
 The Memory Leak tab (under More > JVM) uses Java Flight Recorder (JFR) to diagnose memory leaks
 in your running integration. It runs two sequential recordings and compares object retention trends,
 classifying each class as growing, stable, shrinking, new, or gone. This is lightweight and safe
 for production use.
+
+image::jbang/camel-tui-observe-memory-leak.png[Two recordings compared: byte arrays grow 133% and are flagged as a leak, with the line of code that allocates them]
 
 === JFR Runtime Profiling
 
