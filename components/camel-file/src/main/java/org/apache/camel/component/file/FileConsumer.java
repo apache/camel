@@ -54,6 +54,8 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     private ResumeStrategy resumeStrategy;
     private final String endpointPath;
     private Set<String> extendedAttributes;
+    // the starting directory with its symbolic links resolved, computed once per poll
+    private volatile Path resolvedStartingDirectory;
 
     public FileConsumer(FileEndpoint endpoint, Processor processor, GenericFileOperations<File> operations,
                         GenericFileProcessStrategy<File> processStrategy) {
@@ -73,6 +75,25 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             file.bindToExchange(exchange, getEndpoint().isProbeContentType());
         }
         return exchange;
+    }
+
+    @Override
+    protected boolean isWithinStartingDirectory(String absoluteFilePath) {
+        // a local listing entry is a single path segment, but it can be a symbolic link to a file or to a directory
+        // (entered with recursive) whose target lies outside the starting directory, so compare the resolved paths
+        try {
+            Path startingDirectory = resolvedStartingDirectory;
+            if (startingDirectory == null) {
+                startingDirectory = GenericFileHelper.resolveExistingPathSegments(getEndpoint().getFile().toPath());
+                resolvedStartingDirectory = startingDirectory;
+            }
+            return GenericFileHelper.resolveExistingPathSegments(Path.of(absoluteFilePath)).startsWith(startingDirectory);
+        } catch (IOException e) {
+            // such as a dangling symbolic link
+            LOG.debug("Cannot resolve file: {} against the starting directory due to: {}", absoluteFilePath,
+                    e.getMessage());
+            return false;
+        }
     }
 
     private boolean pollDirectory(Exchange dynamic, File directory, List<GenericFile<File>> fileList, int depth) {
@@ -200,6 +221,9 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     @Override
     protected boolean pollDirectory(Exchange dynamic, String fileName, List<GenericFile<File>> fileList, int depth) {
         LOG.trace("pollDirectory from fileName: {}", fileName);
+
+        // resolved again on the first check of this poll, as the starting directory can be replaced between polls
+        resolvedStartingDirectory = null;
 
         File directory = new File(fileName);
         if (!directory.exists() || !directory.isDirectory()) {
