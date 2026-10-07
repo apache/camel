@@ -51,21 +51,6 @@ public interface OpenfeatureComponentBuilderFactory {
     interface OpenfeatureComponentBuilder extends ComponentBuilder<OpenFeatureComponent> {
     
         /**
-         * Path to the TLS certificate for the remote flagd connection.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param certPath the value to set
-         * @return the dsl builder
-         */
-        default OpenfeatureComponentBuilder certPath(java.lang.String certPath) {
-            doSetProperty("certPath", certPath);
-            return this;
-        }
-    
-        /**
          * Default configuration shared by OpenFeature endpoints.
          * 
          * The option is a:
@@ -255,23 +240,6 @@ public interface OpenfeatureComponentBuilderFactory {
     
         
         /**
-         * Whether to use TLS for the remote flagd connection.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param tls the value to set
-         * @return the dsl builder
-         */
-        default OpenfeatureComponentBuilder tls(boolean tls) {
-            doSetProperty("tls", tls);
-            return this;
-        }
-    
-        
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -332,6 +300,38 @@ public interface OpenfeatureComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * Path to the TLS certificate for the remote flagd connection.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param certPath the value to set
+         * @return the dsl builder
+         */
+        default OpenfeatureComponentBuilder certPath(java.lang.String certPath) {
+            doSetProperty("certPath", certPath);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to use TLS for the remote flagd connection.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default OpenfeatureComponentBuilder tls(boolean tls) {
+            doSetProperty("tls", tls);
+            return this;
+        }
     }
 
     class OpenfeatureComponentBuilderImpl
@@ -353,7 +353,6 @@ public interface OpenfeatureComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "certPath": getOrCreateConfiguration((OpenFeatureComponent) component).setCertPath((java.lang.String) value); return true;
             case "configuration": ((OpenFeatureComponent) component).setConfiguration((org.apache.camel.component.openfeature.OpenFeatureConfiguration) value); return true;
             case "contextFromBody": getOrCreateConfiguration((OpenFeatureComponent) component).setContextFromBody((boolean) value); return true;
             case "deadline": getOrCreateConfiguration((OpenFeatureComponent) component).setDeadline((int) value); return true;
@@ -365,10 +364,11 @@ public interface OpenfeatureComponentBuilderFactory {
             case "host": getOrCreateConfiguration((OpenFeatureComponent) component).setHost((java.lang.String) value); return true;
             case "port": getOrCreateConfiguration((OpenFeatureComponent) component).setPort((int) value); return true;
             case "provider": getOrCreateConfiguration((OpenFeatureComponent) component).setProvider((java.lang.String) value); return true;
-            case "tls": getOrCreateConfiguration((OpenFeatureComponent) component).setTls((boolean) value); return true;
             case "lazyStartProducer": ((OpenFeatureComponent) component).setLazyStartProducer((boolean) value); return true;
             case "resultProperty": getOrCreateConfiguration((OpenFeatureComponent) component).setResultProperty((java.lang.String) value); return true;
             case "autowiredEnabled": ((OpenFeatureComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "certPath": getOrCreateConfiguration((OpenFeatureComponent) component).setCertPath((java.lang.String) value); return true;
+            case "tls": getOrCreateConfiguration((OpenFeatureComponent) component).setTls((boolean) value); return true;
             default: return false;
             }
         }

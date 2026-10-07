@@ -348,7 +348,7 @@ class OpenFeatureProducerTest extends CamelTestSupport {
                 @Override
                 public void configure() {
                     from("direct:bad-endpoint")
-                            .to("openfeature:shared?flagKey=enrichment-enabled&provider=#nonexistent");
+                            .to("openfeature:shared-bad?flagKey=enrichment-enabled&provider=#nonexistent");
                 }
             });
         } catch (Exception e) {

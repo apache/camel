@@ -45,20 +45,6 @@ public interface OpenFeatureEndpointBuilderFactory {
         }
 
         /**
-         * Path to the TLS certificate for the remote flagd connection.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param certPath the value to set
-         * @return the dsl builder
-         */
-        default OpenFeatureEndpointBuilder certPath(String certPath) {
-            doSetProperty("certPath", certPath);
-            return this;
-        }
-        /**
          * When true, a Map message body is used as the evaluation context. When
          * false (default), the body is not used as context. The
          * CamelOpenFeatureEvaluationContext header is always used regardless of
@@ -248,12 +234,41 @@ public interface OpenFeatureEndpointBuilderFactory {
             return this;
         }
         /**
+         * Store the evaluation result in this exchange property, preserving the
+         * original message body.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param resultProperty the value to set
+         * @return the dsl builder
+         */
+        default OpenFeatureEndpointBuilder resultProperty(String resultProperty) {
+            doSetProperty("resultProperty", resultProperty);
+            return this;
+        }
+        /**
+         * Path to the TLS certificate for the remote flagd connection.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certPath the value to set
+         * @return the dsl builder
+         */
+        default OpenFeatureEndpointBuilder certPath(String certPath) {
+            doSetProperty("certPath", certPath);
+            return this;
+        }
+        /**
          * Whether to use TLS for the remote flagd connection.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param tls the value to set
          * @return the dsl builder
@@ -268,28 +283,13 @@ public interface OpenFeatureEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param tls the value to set
          * @return the dsl builder
          */
         default OpenFeatureEndpointBuilder tls(String tls) {
             doSetProperty("tls", tls);
-            return this;
-        }
-        /**
-         * Store the evaluation result in this exchange property, preserving the
-         * original message body.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param resultProperty the value to set
-         * @return the dsl builder
-         */
-        default OpenFeatureEndpointBuilder resultProperty(String resultProperty) {
-            doSetProperty("resultProperty", resultProperty);
             return this;
         }
     }
