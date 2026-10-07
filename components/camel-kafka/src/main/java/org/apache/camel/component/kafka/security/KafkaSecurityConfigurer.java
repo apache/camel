@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
-import org.apache.camel.component.kafka.KafkaConfiguration;
+import org.apache.camel.component.kafka.KafkaClientConfiguration;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.common.config.SaslConfigs;
@@ -398,15 +398,15 @@ public class KafkaSecurityConfigurer {
     }
 
     /**
-     * Applies this security configuration to a KafkaConfiguration instance.
+     * Applies this security configuration to a Kafka client configuration.
      * <p>
      * This method sets the {@code securityProtocol}, {@code saslMechanism}, and {@code saslJaasConfig} properties on
      * the provided configuration object.
      * </p>
      *
-     * @param configuration the KafkaConfiguration to configure
+     * @param configuration the Kafka client configuration to configure
      */
-    public void configure(KafkaConfiguration configuration) {
+    public void configure(KafkaClientConfiguration configuration) {
         configuration.setSecurityProtocol(getSecurityProtocol());
 
         if (authType.isSasl()) {

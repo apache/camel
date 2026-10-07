@@ -17,18 +17,13 @@
 package org.apache.camel.component.kafka;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedStartupListener;
-import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
@@ -36,26 +31,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component("kafka")
-public class KafkaComponent extends HealthCheckComponent implements SSLContextParametersAware, ExtendedStartupListener {
+public class KafkaComponent extends AbstractKafkaComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaComponent.class);
 
-    private final List<Runnable> pendingConsumers = new CopyOnWriteArrayList<>();
-
     @Metadata
     private KafkaConfiguration configuration = new KafkaConfiguration();
-    @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSslContextParameters;
     @Metadata(autowired = true, label = "consumer,advanced")
     private KafkaManualCommitFactory kafkaManualCommitFactory;
-    @Metadata(autowired = true, label = "advanced")
-    private KafkaClientFactory kafkaClientFactory;
-    @Metadata(autowired = true, label = "consumer,advanced")
-    private PollExceptionStrategy pollExceptionStrategy;
-    @Metadata(label = "consumer,advanced")
-    private int createConsumerBackoffMaxAttempts;
-    @Metadata(label = "consumer,advanced", defaultValue = "5000")
-    private long createConsumerBackoffInterval = 5000;
     @Deprecated
     @Metadata(label = "consumer,advanced")
     private int subscribeConsumerBackoffMaxAttempts;
@@ -112,10 +95,6 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
         return endpoint;
     }
 
-    void pendingConsumer(Runnable task) {
-        pendingConsumers.add(task);
-    }
-
     public KafkaConfiguration getConfiguration() {
         return configuration;
     }
@@ -125,19 +104,6 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
      */
     public void setConfiguration(KafkaConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    @Override
-    public boolean isUseGlobalSslContextParameters() {
-        return this.useGlobalSslContextParameters;
-    }
-
-    /**
-     * Enable usage of global SSL context parameters.
-     */
-    @Override
-    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
-        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public KafkaManualCommitFactory getKafkaManualCommitFactory() {
@@ -151,62 +117,6 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
      */
     public void setKafkaManualCommitFactory(KafkaManualCommitFactory kafkaManualCommitFactory) {
         this.kafkaManualCommitFactory = kafkaManualCommitFactory;
-    }
-
-    public KafkaClientFactory getKafkaClientFactory() {
-        return kafkaClientFactory;
-    }
-
-    /**
-     * Factory to use for creating {@link org.apache.kafka.clients.consumer.KafkaConsumer} and
-     * {@link org.apache.kafka.clients.producer.KafkaProducer} instances. This allows configuring a custom factory to
-     * create instances with logic that extends the vanilla Kafka clients.
-     */
-    public void setKafkaClientFactory(KafkaClientFactory kafkaClientFactory) {
-        this.kafkaClientFactory = kafkaClientFactory;
-    }
-
-    public PollExceptionStrategy getPollExceptionStrategy() {
-        return pollExceptionStrategy;
-    }
-
-    /**
-     * To use a custom strategy with the consumer to control how to handle exceptions thrown from the Kafka broker while
-     * pooling messages.
-     */
-    public void setPollExceptionStrategy(PollExceptionStrategy pollExceptionStrategy) {
-        this.pollExceptionStrategy = pollExceptionStrategy;
-    }
-
-    public int getCreateConsumerBackoffMaxAttempts() {
-        return createConsumerBackoffMaxAttempts;
-    }
-
-    /**
-     * Maximum attempts to create the kafka consumer (kafka-client), before eventually giving up and failing.
-     *
-     * Error during creating the consumer may be fatal due to invalid configuration and as such recovery is not
-     * possible. However, one part of the validation is DNS resolution of the bootstrap broker hostnames. This may be a
-     * temporary networking problem, and could potentially be recoverable. While other errors are fatal, such as some
-     * invalid kafka configurations. Unfortunately, kafka-client does not separate this kind of errors.
-     *
-     * Camel will by default retry forever, and therefore never give up. If you want to give up after many attempts then
-     * set this option and Camel will then when giving up terminate the consumer. To try again, you can manually restart
-     * the consumer by stopping, and starting the route.
-     */
-    public void setCreateConsumerBackoffMaxAttempts(int createConsumerBackoffMaxAttempts) {
-        this.createConsumerBackoffMaxAttempts = createConsumerBackoffMaxAttempts;
-    }
-
-    public long getCreateConsumerBackoffInterval() {
-        return createConsumerBackoffInterval;
-    }
-
-    /**
-     * The delay in millis seconds to wait before trying again to create the kafka consumer (kafka-client).
-     */
-    public void setCreateConsumerBackoffInterval(long createConsumerBackoffInterval) {
-        this.createConsumerBackoffInterval = createConsumerBackoffInterval;
     }
 
     /**
@@ -278,36 +188,9 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
     }
 
     @Override
-    public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
-        if (alreadyStarted) {
-            startPendingConsumers();
-        }
-    }
-
-    @Override
-    public void onCamelContextFullyStarted(CamelContext context, boolean alreadyStarted) throws Exception {
-        startPendingConsumers();
-    }
-
-    private void startPendingConsumers() {
-        if (!pendingConsumers.isEmpty()) {
-            LOG.info("Starting {} pending Kafka consumers as CamelContext is fully started", pendingConsumers.size());
-            pendingConsumers.forEach(Runnable::run);
-            pendingConsumers.clear();
-        }
-    }
-
-    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
-        // if a factory was not autowired then create a default factory
-        // NOTE: must be done in doStart() rather than doInit(), because when a component is
-        // registered via addComponent() (the path used by Spring Boot), doInit() runs before
-        // the autowiring lifecycle strategy has a chance to inject a custom factory.
-        if (kafkaClientFactory == null) {
-            kafkaClientFactory = new DefaultKafkaClientFactory();
-        }
         if (configuration.isAllowManualCommit() && kafkaManualCommitFactory == null) {
             LOG.warn("The component was setup for allowing manual commits, but a manual commit factory was not set");
         }
@@ -316,12 +199,6 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
         // resolve parameter values from the values (#bean / #class etc)
         PropertyBindingSupport.bindProperties(getCamelContext(), map, configuration.getAdditionalProperties());
         configuration.setAdditionalProperties(map);
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-        pendingConsumers.clear();
     }
 
 }
