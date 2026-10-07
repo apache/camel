@@ -135,7 +135,7 @@ class HeapHistogramTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No data", 4));
+            rows.add(emptyRow("No data", 4, 1));
         }
 
         long visibleInstances = 0;

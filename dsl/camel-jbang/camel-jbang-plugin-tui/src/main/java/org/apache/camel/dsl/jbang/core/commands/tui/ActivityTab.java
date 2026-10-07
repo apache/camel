@@ -155,7 +155,7 @@ class ActivityTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No activity captured", 7));
+            rows.add(emptyRow("No activity captured", 7, 6));
         }
 
         ActivityEntry selectedEntry = null;

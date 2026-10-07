@@ -194,7 +194,7 @@ class ThreadsTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No threads", 5));
+            rows.add(emptyRow("No threads", 5, 1));
         }
 
         String title = String.format(" Threads [%d/%d] peak:%d filter:%s ",
