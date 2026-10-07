@@ -29,6 +29,10 @@ the application will resume from the last recorded offset,
 which may result in receiving duplicate events immediately after the restart.
 Therefore, your downstream routes should be tolerant enough of such a case and deduplicate events if needed.
 
+Before the engine starts polling, the consumer health check reports the configured initial state
+(`DOWN` by default). It reports `UP` once the connector tasks have started and the engine enters its polling phase,
+even if no change events have arrived. This does not indicate that an initial snapshot has completed.
+
 If the embedded engine stops with an error, for example because the connector cannot reach the database or
 the offset store cannot be read, it is not restarted: the route stays started but receives no further events.
 The failure is reported to the consumer exception handler and turns the route health check `DOWN`, so it can

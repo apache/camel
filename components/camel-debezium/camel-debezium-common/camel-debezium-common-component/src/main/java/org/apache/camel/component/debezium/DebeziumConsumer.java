@@ -42,6 +42,7 @@ public class DebeziumConsumer extends DefaultConsumer {
     private DebeziumEngine<ChangeEvent<SourceRecord, SourceRecord>> dbzEngine;
     private volatile Throwable engineFailure;
     private volatile boolean engineStopped;
+    private volatile boolean engineReady;
 
     public DebeziumConsumer(DebeziumEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -59,6 +60,7 @@ public class DebeziumConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
+        engineReady = false;
         super.doStart();
 
         engineFailure = null;
@@ -115,10 +117,20 @@ public class DebeziumConsumer extends DefaultConsumer {
         return engineFailure;
     }
 
+    boolean isEngineReady() {
+        return engineReady;
+    }
+
     private DebeziumEngine<ChangeEvent<SourceRecord, SourceRecord>> createDbzEngine() {
         return DebeziumEngine.create(Connect.class)
                 .using(configuration.createDebeziumConfiguration().asProperties())
                 .using(this::onEngineCompleted)
+                .using(new DebeziumEngine.ConnectorCallback() {
+                    @Override
+                    public void pollingStarted() {
+                        engineReady = true;
+                    }
+                })
                 .notifying(this::onEventListener)
                 .build();
     }
