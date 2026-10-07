@@ -215,6 +215,9 @@ class SourceViewer {
     private PropertiesValidator propertiesValidator;
     private EndpointValidator endpointValidator;
     private EndpointValidator simpleValidator;
+    // the Kamelet checks of a YAML file (CAMEL-25411): its problems, and the notes that do not block a save
+    private EndpointValidator kameletValidator;
+    private EndpointValidator kameletNotes;
     private EndpointValidator routeValidator;
     private LiveRunData liveRunData;
     private LineFailures lineFailures;
@@ -311,6 +314,23 @@ class SourceViewer {
 
     void setSimpleValidator(EndpointValidator simpleValidator) {
         this.simpleValidator = simpleValidator;
+    }
+
+    /**
+     * The Kamelet checks of a YAML file (CAMEL-25411): the shape of a Kamelet file, and the kamelet: endpoints of a
+     * route against the catalog and the project's own Kamelets. Their problems are marked and keep the file from being
+     * saved, as the other problems of a YAML file.
+     */
+    void setKameletValidator(EndpointValidator kameletValidator) {
+        this.kameletValidator = kameletValidator;
+    }
+
+    /**
+     * What a Kamelet file does that works but is not right (a camel: dependency its template does not use): marked and
+     * said when saved, but not blocking the save.
+     */
+    void setKameletNotes(EndpointValidator kameletNotes) {
+        this.kameletNotes = kameletNotes;
     }
 
     /**
@@ -523,6 +543,8 @@ class SourceViewer {
         propertiesValidator = null;
         endpointValidator = null;
         simpleValidator = null;
+        kameletValidator = null;
+        kameletNotes = null;
         routeValidator = null;
         uriCompletion = null;
         simpleCompletion = null;
@@ -568,6 +590,8 @@ class SourceViewer {
         propertiesValidator = null;
         endpointValidator = null;
         simpleValidator = null;
+        kameletValidator = null;
+        kameletNotes = null;
         routeValidator = null;
         uriCompletion = null;
         simpleCompletion = null;
@@ -2050,10 +2074,19 @@ class SourceViewer {
                     msgs.addAll(simpleErrors);
                 }
             }
+            addAll(msgs, kameletValidator, content);
             if (!msgs.isEmpty()) {
                 validationErrors = msgs;
                 validationErrorScroll = 0;
                 inlineErrors = buildInlineErrors(msgs, content);
+                return;
+            }
+            List<String> notes = new ArrayList<>();
+            addAll(notes, kameletNotes, content);
+            if (!notes.isEmpty()) {
+                // marked, and said when saved, but not blocking the save
+                routeProblems = notes;
+                inlineErrors = buildInlineErrors(notes, content);
                 return;
             }
         } else if (validateOnSave && isPropertiesFile() && propertiesValidator != null) {
@@ -2268,6 +2301,8 @@ class SourceViewer {
                     msgs.addAll(simpleErrors);
                 }
             }
+            addAll(msgs, kameletValidator, content);
+            addAll(msgs, kameletNotes, content);
         } else if (isPropertiesFile() && propertiesValidator != null) {
             msgs.addAll(validateProperties(content));
         } else if (routeValidator != null) {
@@ -2277,6 +2312,15 @@ class SourceViewer {
             }
         }
         return msgs;
+    }
+
+    private static void addAll(List<String> msgs, EndpointValidator validator, String content) {
+        if (validator != null) {
+            List<String> found = validator.validate(content);
+            if (found != null) {
+                msgs.addAll(found);
+            }
+        }
     }
 
     /** The problems of the file just loaded, by line; none when the checks fail or do not apply. */
