@@ -66,7 +66,8 @@ class ActionsPopup {
         MCP_SUBMENU,
         BACK,
         SCREENSHOT,
-        TOGGLE_THEME,
+        // the next theme of the list (each step is saved to the user config); toggle-theme still works
+        NEXT_THEME,
         THEMES_SUBMENU,
         RESET_SCREEN,
         TAPE_RECORDING,
@@ -758,7 +759,7 @@ class ActionsPopup {
                     if (resetScreenAction != null) {
                         resetScreenAction.run();
                     }
-                } else if (action == Action.TOGGLE_THEME) {
+                } else if (action == Action.NEXT_THEME) {
                     Theme.toggle();
                     refreshTheme();
                     showActionsMenu = false;
@@ -1458,6 +1459,10 @@ class ActionsPopup {
             return false;
         }
         String normalized = name.strip().replace("-", "_").toUpperCase(Locale.ROOT);
+        if ("TOGGLE_THEME".equals(normalized)) {
+            // the earlier name: it never toggled between two, it steps through all themes
+            normalized = "NEXT_THEME";
+        }
         Action action;
         try {
             action = Action.valueOf(normalized);
@@ -1478,7 +1483,7 @@ class ActionsPopup {
                     resetScreenAction.run();
                 }
             }
-            case TOGGLE_THEME -> {
+            case NEXT_THEME -> {
                 Theme.toggle();
                 refreshTheme();
             }
