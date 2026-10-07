@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -232,7 +233,35 @@ final class SchemaHints {
                                 "a plain value (%s) found, an expression expected: write %s: {constant: {expression: \"%s\"}} for a fixed value, or %s: {simple: {expression: \"...\"}} for a dynamic one",
                                 value, m.name(), value, m.name());
                     },
+                    "type", "expression"),
+            // split: {expression: "${body}"}, setHeader: {expression: constant 404}: the expression: key of an EIP
+            // holds a language map, not the text
+            replace("type", ".*/expression",
+                    m -> {
+                        JsonNode instance = m.error().getInstanceNode();
+                        return instance != null && instance.isValueNode() && m.message().contains("object expected");
+                    },
+                    m -> expressionKeyHint(m.error().getInstanceNode().asText()),
                     "type", "expression"));
+
+    /** The languages a model writes in front of the text, as in expression: constant 404. */
+    private static final Pattern LANGUAGE_PREFIX = Pattern.compile(
+            "(constant|simple|header|exchangeProperty|variable|jq|jsonpath|xpath|groovy|tokenize|method|ref)\\s+(.+)",
+            Pattern.DOTALL);
+
+    static String expressionKeyHint(String value) {
+        String language = value.contains("${") ? "simple" : "constant";
+        String text = value;
+        Matcher prefix = LANGUAGE_PREFIX.matcher(value.trim());
+        if (prefix.matches()) {
+            language = prefix.group(1);
+            text = prefix.group(2).trim();
+        }
+        return String.format(
+                "a plain value (%s) found, a language expected: expression: holds the language as its key, write"
+                             + " expression: {%s: {expression: \"%s\"}}",
+                value, language, text.replace("\"", "\\\""));
+    }
 
     // -------------------------------------------------------------------------------------------------------------
     // list hints
