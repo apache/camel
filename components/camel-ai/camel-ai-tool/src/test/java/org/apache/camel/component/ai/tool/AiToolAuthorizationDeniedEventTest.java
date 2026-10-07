@@ -179,6 +179,28 @@ class AiToolAuthorizationDeniedEventTest extends CamelTestSupport {
         assertThat(events).isEmpty();
     }
 
+    @Test
+    void aNotifierThrowingAnErrorDoesNotBreakTheRefusal() {
+        // ManagementStrategy.notify does not isolate a failing notifier, so without a Throwable guard a notifier that
+        // throws an Error would escape and turn the denial into a propagating failure. The refusal must survive.
+        context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) {
+                if (event instanceof AiToolAuthorizationDeniedEvent) {
+                    throw new AssertionError("broken notifier");
+                }
+            }
+        });
+
+        AiToolSpec spec = findSpec("guarded");
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setProperty("subject", "mallory");
+
+        AiToolResult result = AiToolExecutor.execute(spec, Map.of(), exchange);
+
+        assertThat(result).isInstanceOf(AiToolResult.AuthorizationDenied.class);
+    }
+
     private AiToolSpec findSpec(String toolName) {
         return AiToolRegistry.getOrCreate(context).getToolsByTag("test").stream()
                 .filter(s -> toolName.equals(s.getName()))

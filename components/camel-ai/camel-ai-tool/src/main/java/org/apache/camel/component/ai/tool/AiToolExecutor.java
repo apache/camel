@@ -205,11 +205,13 @@ public final class AiToolExecutor {
         }
         try {
             management.notify(new AiToolAuthorizationDeniedEvent(exchange, toolName, denial));
-        } catch (Exception e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Unable to notify {} for tool '{}'",
-                        AiToolAuthorizationDeniedEvent.class.getSimpleName(), toolName, e);
-            }
+        } catch (Throwable e) {
+            // ManagementStrategy.notify() does not isolate a failing notifier (unlike EventHelper.doNotifyEvent), so a
+            // notifier throwing anything - including an Error such as AssertionError - would otherwise escape and turn
+            // the denial into a propagating failure. Swallow it here (as EventHelper does) so a broken notifier never
+            // changes the AuthorizationDenied refusal returned to the model.
+            LOG.warn("Notifying {} for tool '{}' failed and was ignored; the authorization denial is unaffected",
+                    AiToolAuthorizationDeniedEvent.class.getSimpleName(), toolName, e);
         }
     }
 
