@@ -17,6 +17,7 @@
 package org.apache.camel.processor.saga;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -110,10 +111,21 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
         if (this.completionMode == SagaCompletionMode.AUTO) {
             if (exchange.getException() != null) {
                 if (coordinator != null) {
-                    coordinator.compensate(exchange).whenComplete((done, ex) -> ifNotException(ex, exchange, callback, () -> {
-                        setCurrentSagaCoordinator(exchange, previousCoordinator);
-                        callback.done(false);
-                    }));
+                    final Exception cause = exchange.getException();
+                    coordinator.compensate(exchange).whenComplete((done, ex) -> {
+                        if (ex != null) {
+                            // keep the exception that caused the compensation, and attach the compensation failure to it
+                            cause.addSuppressed(
+                                    ex instanceof CompletionException && ex.getCause() != null ? ex.getCause() : ex);
+                            exchange.setException(cause);
+                            callback.done(false);
+                        } else {
+                            ifNotException(null, exchange, callback, () -> {
+                                setCurrentSagaCoordinator(exchange, previousCoordinator);
+                                callback.done(false);
+                            });
+                        }
+                    });
                 } else {
                     // No coordinator available, so no saga available.
                     callback.done(false);
