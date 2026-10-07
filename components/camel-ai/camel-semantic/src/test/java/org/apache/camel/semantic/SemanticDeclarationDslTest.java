@@ -54,7 +54,7 @@ class SemanticDeclarationDslTest {
     @BeforeEach
     void setup() throws Exception {
         context = new DefaultCamelContext();
-        context.getRegistry().bind("adapter", new SemanticAdapter() {
+        context.getRegistry().bind("adapter", new TestSemanticAdapter() {
             @Override
             public void validate(SemanticQuestion question) {
             }
@@ -62,11 +62,12 @@ class SemanticDeclarationDslTest {
             @Override
             public SemanticResult evaluate(SemanticQuestion question, Object state) {
                 states.add(state);
-                return switch (question.getType()) {
+                return applyPolicy(question, switch (question.getType()) {
                     case BOOLEAN -> new SemanticResult(null, 0.82, null, null, null);
                     case CHOICE -> new SemanticResult("billing", null, null, null, null);
                     case SCORE -> new SemanticResult(1.2, null, null, null, null);
-                };
+                    default -> throw new IllegalArgumentException("Unsupported fixture operation");
+                });
             }
         });
         ((SemanticLanguage) context.resolveLanguage("semantic")).setAdapter("adapter");
@@ -199,20 +200,21 @@ class SemanticDeclarationDslTest {
         return Stream.of(
                 Arguments.of(question + question, "Duplicate semantic question"),
                 Arguments.of(question.replace("name=\"q\"", "name=\" \""), "nonblank name"),
-                Arguments.of(question.replace("type=\"boolean\"", ""), "type is required"),
-                Arguments.of(question.replace("boolean", "unknown"), "Invalid semantic question"),
-                Arguments.of(question.replace("Valid?", " "), "instructions must not be blank"),
-                Arguments.of(question.replace("type=\"boolean\"", "type=\"choice\" threshold=\"0.8\""), "require a boolean"),
+                Arguments.of(question.replace("type=\"boolean\"", ""), "operation is required"),
+                Arguments.of(question.replace("boolean", "unknown"), "Unknown operation"),
+                Arguments.of(question.replace("Valid?", " "), "Parameter 'instructions' is outside its size constraints"),
+                Arguments.of(question.replace("type=\"boolean\"", "type=\"choice\" threshold=\"0.8\""),
+                        "Unknown parameter 'threshold'"),
                 Arguments.of(
                         question.replace("</question>",
                                 "<criterion key=\"true\" value=\"A\"/><criterion key=\"true\" value=\"B\"/></question>"),
                         "Duplicate semantic criterion"),
-                Arguments.of(question.replace("type=\"boolean\"", "type=\"score\""), "score needs ordered levels"),
-                Arguments.of(question.replace("type=\"boolean\"", "type=\"boolean\" threshold=\"NaN\""), "within [0,1]"),
+                Arguments.of(question.replace("type=\"boolean\"", "type=\"score\""), "Parameter 'criteria' is required"),
+                Arguments.of(question.replace("type=\"boolean\"", "type=\"boolean\" threshold=\"NaN\""), "numeric constraints"),
                 Arguments.of(question.replace("type=\"boolean\"", "type=\"boolean\" threshold=\"abc\""),
-                        "Invalid semantic question 'q': threshold must be a valid number: abc"),
+                        "Invalid semantic question 'q': Parameter 'threshold' must be a valid number"),
                 Arguments.of(question.replace("type=\"boolean\"", "type=\"boolean\" uncertainty=\"abc\""),
-                        "Invalid semantic question 'q': uncertainty must be a valid number: abc"),
+                        "Invalid semantic question 'q': Parameter 'uncertainty' must be a valid number"),
                 Arguments.of(question.replace("type=\"boolean\"", "type=\"boolean\" state=\" \""),
                         "state selector must not be blank"),
                 Arguments.of(question.replace("name=\"q\"", "unknown=\"q\""), "Unexpected attribute"));
@@ -318,8 +320,8 @@ class SemanticDeclarationDslTest {
                   <instructions>Urgent?</instructions>
                 </question></semantic>
                 """)))
-                .hasMessageContaining("Invalid semantic question 'invalid': threshold must be a valid number")
-                .hasRootCauseInstanceOf(NumberFormatException.class);
+                .hasMessageContaining("Invalid semantic question 'invalid': Parameter 'threshold' must be a valid number")
+                .hasRootCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -330,7 +332,7 @@ class SemanticDeclarationDslTest {
         assertThatThrownBy(() -> loader.loadRoutes(List.of(
                 ResourceHelper.fromString("first.xml", document("routes", xmlQuestions())),
                 ResourceHelper.fromString("second.xml", document("routes", second.replace("boolean", "unknown"))))))
-                .hasMessageContaining("Invalid semantic question");
+                .hasMessageContaining("Unknown operation");
         loader.loadRoutes(List.of(
                 ResourceHelper.fromString("first.xml",
                         document("routes", xmlQuestions().replace("header.myState", "header.new"))),
@@ -429,7 +431,8 @@ class SemanticDeclarationDslTest {
         }
         context.addRoutes(new Questions("Urgent?"));
         var previous = SemanticQuestions.get(context).get("urgent");
-        assertThatThrownBy(() -> context.addRoutes(new Questions(" "))).hasMessageContaining("instructions must not be blank");
+        assertThatThrownBy(() -> context.addRoutes(new Questions(" ")))
+                .hasMessageContaining("Parameter 'instructions' is outside its size constraints");
         assertThat(SemanticQuestions.get(context).get("urgent")).isSameAs(previous);
         assertThat(SemanticQuestions.get(context).get("other")).isNotNull();
     }

@@ -16,20 +16,26 @@
  */
 package org.apache.camel.semantic;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Set;
 
-/**
- * Immutable question definition. Probabilities and thresholds are provider-specific evidence, not accuracy guarantees.
- */
+/** Immutable evaluation declaration. The expert defines the operation, parameter vocabulary and result semantics. */
 public final class SemanticQuestion {
+    private static final Set<Class<?>> NUMBER_TYPES = Set.of(Byte.class, Short.class, Integer.class, Long.class,
+            Float.class, Double.class, BigInteger.class, BigDecimal.class);
+
     public enum Type {
         BOOLEAN,
         CHOICE,
-        SCORE
+        SCORE,
+        CLASSIFICATION
     }
 
     public enum UncertaintyPolicy {
@@ -37,97 +43,151 @@ public final class SemanticQuestion {
         NON_MATCH
     }
 
-    private final Type type;
+    private final String operation;
     private final String expert;
-    private final String instructions;
     private final String state;
-    private final Map<String, String> criteria;
-    private final List<String> levels;
-    private final double threshold;
-    private final double uncertainty;
-    private final UncertaintyPolicy uncertaintyPolicy;
+    private final Map<String, Object> parameters;
 
+    public SemanticQuestion(String operation, String expert, String state, Map<String, ?> parameters) {
+        if (operation == null || operation.isBlank()) {
+            throw new IllegalArgumentException("Evaluation operation is required");
+        }
+        if (expert != null && expert.isBlank()) {
+            throw new IllegalArgumentException("Evaluation expert must not be blank");
+        }
+        if (state != null && state.isBlank()) {
+            throw new IllegalArgumentException("Evaluation state selector must not be blank");
+        }
+        this.operation = operation;
+        this.expert = expert;
+        this.state = state;
+        this.parameters = immutableMap(parameters == null ? Map.of() : parameters);
+    }
+
+    /** Convenience declaration for instruction-driven operations named boolean, choice or score. */
     public SemanticQuestion(Type type, String instructions, String state, Map<String, String> criteria,
-                            List<String> levels, double threshold, double uncertainty, UncertaintyPolicy uncertaintyPolicy) {
-        this(type, instructions, state, criteria, levels, threshold, uncertainty, uncertaintyPolicy, null);
+                            List<String> levels, double threshold, double uncertainty, UncertaintyPolicy policy) {
+        this(type, instructions, state, criteria, levels, threshold, uncertainty, policy, null);
     }
 
     public SemanticQuestion(Type type, String instructions, String state, Map<String, String> criteria,
-                            List<String> levels, double threshold, double uncertainty, UncertaintyPolicy uncertaintyPolicy,
+                            List<String> levels, double threshold, double uncertainty, UncertaintyPolicy policy,
                             String expert) {
-        this.type = Objects.requireNonNull(type, "Question type is required");
-        if (expert != null && expert.isBlank()) {
-            throw new IllegalArgumentException("Question expert must not be blank");
+        this(type.name().toLowerCase(Locale.ROOT), expert, state,
+             instructionParameters(type, instructions, criteria, levels, threshold, uncertainty, policy));
+    }
+
+    private static Map<String, Object> instructionParameters(
+            Type type, String instructions, Map<String, String> criteria,
+            List<String> levels, double threshold, double uncertainty,
+            UncertaintyPolicy policy) {
+        Map<String, Object> values = new LinkedHashMap<>();
+        if (instructions != null) {
+            values.put("instructions", instructions);
         }
-        this.expert = expert;
-        if (instructions != null && instructions.isBlank()) {
-            throw new IllegalArgumentException("Question instructions must not be blank");
+        if (criteria != null && !criteria.isEmpty()) {
+            values.put("criteria", criteria);
         }
-        if (state != null && state.isBlank()) {
-            throw new IllegalArgumentException("Question state selector must not be blank");
+        if (levels != null && !levels.isEmpty()) {
+            values.put("criteria", levels);
         }
-        this.instructions = instructions;
-        this.state = state;
-        this.criteria = criteria == null ? Map.of() : Collections.unmodifiableMap(new LinkedHashMap<>(criteria));
-        this.levels = levels == null ? List.of() : List.copyOf(levels);
-        this.criteria.forEach((key, value) -> {
-            if (key == null || key.isBlank() || value == null || value.isBlank()) {
-                throw new IllegalArgumentException("Question criteria require nonblank keys and descriptions");
+        if (type == Type.BOOLEAN) {
+            values.put("threshold", threshold);
+            values.put("uncertainty", uncertainty);
+            values.put("uncertaintyPolicy", policy == UncertaintyPolicy.NON_MATCH ? "non-match" : "fail");
+        }
+        return values;
+    }
+
+    static Map<String, Object> immutableMap(Map<String, ?> values) {
+        Map<String, Object> copy = new LinkedHashMap<>();
+        values.forEach((name, value) -> {
+            if (name == null || name.isBlank()) {
+                throw new IllegalArgumentException("Parameter names must not be blank");
             }
+            copy.put(name, immutableValue(value));
         });
-        if (this.levels.stream().anyMatch(String::isBlank)) {
-            throw new IllegalArgumentException("Question score levels must not be blank");
+        return Collections.unmodifiableMap(copy);
+    }
+
+    private static Object immutableValue(Object value) {
+        if (value instanceof Map<?, ?> map) {
+            Map<String, Object> copy = new LinkedHashMap<>();
+            map.forEach((key, entry) -> {
+                if (!(key instanceof String name)) {
+                    throw new IllegalArgumentException("Parameter maps require string keys");
+                }
+                copy.put(name, entry);
+            });
+            return immutableMap(copy);
         }
-        if (type == Type.CHOICE && this.criteria.isEmpty() || type == Type.SCORE && this.levels.isEmpty()
-                || type != Type.SCORE && !this.levels.isEmpty() || type == Type.SCORE && !this.criteria.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Choice needs criteria, score needs ordered levels, boolean accepts true/false criteria");
+        if (value instanceof List<?> list) {
+            List<Object> copy = new ArrayList<>();
+            list.forEach(entry -> copy.add(immutableValue(entry)));
+            return Collections.unmodifiableList(copy);
         }
-        if (type == Type.BOOLEAN && this.criteria.keySet().stream().anyMatch(k -> !k.equals("true") && !k.equals("false"))) {
-            throw new IllegalArgumentException("Boolean criteria keys must be true or false");
+        if (value == null || value instanceof String || value instanceof Boolean
+                || NUMBER_TYPES.contains(value.getClass())) {
+            return value;
         }
-        if (!Double.isFinite(threshold) || !Double.isFinite(uncertainty) || uncertainty < 0
-                || threshold - uncertainty < 0 || threshold + uncertainty > 1) {
-            throw new IllegalArgumentException("Boolean threshold and uncertainty band must be within [0,1]");
-        }
-        this.threshold = threshold;
-        this.uncertainty = uncertainty;
-        this.uncertaintyPolicy = Objects.requireNonNull(uncertaintyPolicy, "Uncertainty policy is required");
+        throw new IllegalArgumentException("Parameters require immutable scalar, map or list values");
+    }
+
+    public String getOperation() {
+        return operation;
     }
 
     public String getExpert() {
         return expert;
     }
 
-    public Type getType() {
-        return type;
-    }
-
-    public String getInstructions() {
-        return instructions;
-    }
-
     public String getState() {
         return state;
     }
 
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    /**
+     * Instruction-driven operation kind; custom operations have their result type in the expert contract.
+     *
+     * @throws IllegalArgumentException if the operation is not a built-in instruction-driven kind
+     */
+    public Type getType() {
+        return Type.valueOf(operation.toUpperCase(Locale.ROOT));
+    }
+
+    public String getInstructions() {
+        return (String) parameters.get("instructions");
+    }
+
+    @SuppressWarnings("unchecked")
     public Map<String, String> getCriteria() {
-        return criteria;
+        return parameters.get("criteria") instanceof Map<?, ?> map ? (Map<String, String>) map : Map.of();
     }
 
+    @SuppressWarnings("unchecked")
     public List<String> getLevels() {
-        return levels;
+        return parameters.get("criteria") instanceof List<?> list ? (List<String>) list : List.of();
     }
 
-    public double getThreshold() {
-        return threshold;
+    /** Requested threshold, or null when omitted. Defaults belong to the expert. */
+    public Double getThreshold() {
+        return parameters.get("threshold") instanceof Number number ? number.doubleValue() : null;
     }
 
-    public double getUncertainty() {
-        return uncertainty;
+    /** Requested uncertainty band, or null when omitted. Defaults belong to the expert. */
+    public Double getUncertainty() {
+        return parameters.get("uncertainty") instanceof Number number ? number.doubleValue() : null;
     }
 
+    /** Requested instruction-driven policy, or null when omitted. Custom policies remain available in parameters. */
     public UncertaintyPolicy getUncertaintyPolicy() {
-        return uncertaintyPolicy;
+        Object policy = parameters.get("uncertaintyPolicy");
+        if (policy == null) {
+            return null;
+        }
+        return UncertaintyPolicy.valueOf(policy.toString().toUpperCase(Locale.ROOT).replace('-', '_'));
     }
 }

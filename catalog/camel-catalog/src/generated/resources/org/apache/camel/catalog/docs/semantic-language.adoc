@@ -2,16 +2,17 @@
 :doctitle: Semantic Evaluation
 :shortname: semantic
 :artifactid: camel-semantic
-:description: Evaluate named questions about message content to produce boolean decisions, categories and scores through provider adapters
+:description: Evaluate named questions about message content to produce boolean decisions, categories, scores and label sets through provider adapters
 :since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:
 
 *Since Camel {since}*
 
-The Semantic language evaluates named questions through a provider-independent adapter.
-Boolean questions produce decisions, choice questions produce category strings, and score
-questions produce numbers on an ordered rubric. Calls are synchronous and may block while
+The Semantic language invokes named evaluations through provider-independent experts.
+Each expert owns its operations, accepted inputs, evaluation parameters and result meaning.
+Boolean evaluations produce decisions, choice evaluations produce category strings, score
+evaluations produce numbers, and classification evaluations produce sets of labels. Calls are synchronous and may block while
 inference runs. Provider errors propagate through normal Camel error handling.
 
 == Dependencies and providers
@@ -48,50 +49,185 @@ The catalog describes the generic `language` expression model; it does not provi
 semantic Spring Boot configuration class. Configure the language bean explicitly in Spring Boot
 until generic-language starter configuration is available.
 
-== Fixed and instruction-driven experts
+== Expert-owned evaluations
 
-Instructions are optional in the common declaration model. The selected expert decides whether
-they are required, optional or unsupported. TypeSafe AI still requires nonblank instructions.
-A fixed detector can reject instructions and caller-defined criteria because its model already
-defines the question it answers. Unsupported result types, instructions, criteria and decision
-policies fail during initialization, before inference. Replacements for declarations already referenced
-by initialized expressions are validated before publication; failed replacements retain the previous definitions.
+An expert is a registry bean implementing `SemanticAdapter`, annotated with `@SemanticExpert`.
+The class annotation defines its operations. Each operation declares its accepted input shapes,
+parameters, result type and meaning, and any optional probabilities or confidence. A configured
+instance cannot redefine this contract. Endpoint addresses, credentials and model deployment
+settings remain bean configuration, separate from evaluation parameters.
 
-For example, given registered instances `security` (a fixed injection detector) and `general`
-(an instruction-driven expert):
+Register the beans with Camel Main or Camel JBang, for example:
+
+[source,properties]
+----
+camel.beans.security=#class:com.example.SecurityExpert
+camel.beans.decisions=#class:org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter
+----
+
+`SecurityExpert` below is an illustrative application-provided expert exposing `injection` and
+`classify`; these names and its taxonomy are defined by that expert. The instruction-driven
+`decisions` bean uses the TypeSafe AI component configuration.
 
 [source,yaml]
 ----
 - semantic:
-    question:
+    expert: security
+    state: "${body}"
+    evaluation:
       injection:
-        expert: security
-        type: boolean
-        state: "${body}"
-        threshold: "{{security.injection.threshold}}"
-        uncertainty: "{{security.injection.uncertainty}}"
-        uncertaintyPolicy: fail
+        operation: injection
+      categories:
+        operation: classify
       department:
-        expert: general
+        expert: decisions
         type: choice
-        instructions: Which department should handle this message?
-        criteria:
-          billing: Invoices, payments and refunds
-          technical: Bugs, outages and technical problems
+        parameters:
+          instructions: Which department should handle this message?
+          criteria:
+            billing: Payments, invoices and refunds
+            technical: Errors, outages and technical questions
+            sales: Product and purchasing questions
 ----
 
-Use `ref:injection` and `ref:department` in ordinary semantic expressions. Expert names can contain
-property placeholders, resolved during runtime selection. Java uses `.expert("security")`;
-XML uses `<question name="injection" type="boolean" expert="security"/>`. An omitted instruction
-stays absent in all three DSLs; an explicitly blank instruction is invalid.
+The block supplies default `expert` and `state` values; individual evaluations can override them.
+Evaluation names belong to the application, while operation names belong to the expert.
+`type: choice` is shorthand for the expert operation named `choice`; it does not let the route
+change an operation's result type. Specify exactly one of `operation` and `type`.
+Declaring an evaluation does not execute it.
 
-The selected text is data. A fixed injection detector must not prepend a synthetic instruction.
-Its boolean `probability` is the score for the positive class (INJECTION), even when BENIGN wins.
-Threshold and uncertainty policies produce the decision. A negative result means this evaluation
-did not detect injection; it does not establish general safety or grant authorization.
-Probability is distinct from a rubric SCORE and from optional provider confidence. Missing optional
-metadata remains absent, and invalid output or provider failure remains an error. Continue,
-quarantine and review are application decisions expressed using Camel EIPs.
+`parameters` can contain strings, booleans, numbers, nested maps and lists. Camel copies them
+into immutable declarations. Java, YAML and XML builders resolve property placeholders in string
+parameter values, including nested list and map values; map keys stay literal. Resolved strings
+remain strings: generic numeric parameters require numbers, while the `threshold` and `uncertainty`
+shorthand options also accept numeric placeholders. Direct `SemanticQuestion` construction takes
+already resolved parameter values and requires no Camel context. Omitted parameters stay absent: their behaviour belongs to the
+expert, and Camel does not insert threshold or confidence defaults. Parameter contracts use
+`String`, `Boolean`, `Number`, `Map` and `List` data shapes. Use `Number` with `integer = true`
+for whole-number parameters; do not use JVM numeric wrapper classes such as `Integer` in a
+contract. A provider consumes numeric values through `Number` across all DSLs.
+
+Camel validates recognised parameter names, required values, types and declared constraints.
+The expert checks operation-specific combinations and compatibility with its bean configuration.
+Startup validates all declarations, including unused evaluations, without inference. Route
+resource replacements also validate before publication, retaining previous declarations on failure.
+The low-level `SemanticQuestions.replace(String, Map)` API also validates new and changed
+unused declarations before publishing them on a started context.
+
+=== Calling an evaluation
+
+Use the Simple function `${semantic('evaluationName')}` or a semantic-language expression
+`ref:evaluationName`. Both return the operation's typed value, preserve the body, and publish the
+detailed `SemanticResult` in the `CamelSemanticResult` exchange property. Every occurrence invokes
+the expert; there is no implicit result caching. Retain a value in a Camel variable when it must
+be reused without another call.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:incoming
+      steps:
+        - choice:
+            when:
+              - simple: "${semantic('injection')}"
+                steps:
+                  - to: direct:security-review
+            otherwise:
+              steps:
+                - switch:
+                    selector:
+                      simple: "${semantic('department')}"
+                    case:
+                      - value: billing
+                        uri: direct:billing
+                      - value: technical
+                        uri: direct:technical
+                      - value: sales
+                        uri: direct:sales
+                    otherwise:
+                      uri: direct:manual-review
+----
+
+Switch consumes scalar results. Classification returns a `Set<String>`, including an empty set
+when no labels apply. Use collections in predicates, for example
+`${semantic('categories')} contains 'privacy'`; labels are not numeric scores.
+The category and the meaning of a Boolean verdict must come from the selected expert's contract.
+A negative detection does not establish general safety or grant authorization.
+
+=== Structured input and specialised experts
+
+A specialised moderation expert can accept a map containing a user prompt, an assistant response,
+and supporting documents. Camel evaluates the state selector and passes that same object unchanged.
+It does not flatten a conversation into text, create prompts, or impose a universal conversation
+schema. The expert validates the content and must not modify the original state.
+
+For an application-provided `moderation` expert with operations `response_safety` and `categories`:
+
+[source,yaml]
+----
+- semantic:
+    expert: moderation
+    state: "${body}"
+    evaluation:
+      responseSafety:
+        operation: response_safety
+      safetyCategories:
+        operation: categories
+        parameters:
+          policy:
+            labels: [privacy, unsafe]
+            threshold: 0.8
+----
+
+Here `policy` is an illustrative nested expert parameter. The expert owns both its interpretation
+and any threshold filtering. The body might be a map with `prompt`, `response` and `documents` keys.
+A missing required response fails before inference; malformed provider output and operational
+failures follow normal Camel error handling, rather than becoming benign decisions.
+
+=== Equivalent Java and XML declarations
+
+Java uses the same declaration model and validation path:
+
+[source,java]
+----
+import static org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions;
+
+semanticQuestions(this).expert("moderation").state("${body}")
+    .evaluation("responseSafety").operation("response_safety").end()
+    .evaluation("safetyCategories").operation("categories")
+        .parameter("policy", Map.of("labels", List.of("privacy", "unsafe"), "threshold", 0.8))
+    .register();
+----
+
+XML uses explicit typed values. A parameter and a map entry each contain exactly one value:
+`string`, `number`, `boolean`, `null`, `list` or `map`. Null is supported inside nested maps and
+lists when permitted by the expert. Top-level parameters must have their declared type; omit a
+parameter to request the expert's omission behaviour.
+
+[source,xml]
+----
+<semantic xmlns="http://camel.apache.org/schema/semantic" expert="moderation" state="${body}">
+  <evaluation name="responseSafety" operation="response_safety"/>
+  <evaluation name="safetyCategories" operation="categories">
+    <parameters>
+      <parameter name="policy">
+        <map>
+          <entry key="labels"><list><string>privacy</string><string>unsafe</string></list></entry>
+          <entry key="threshold"><number>0.8</number></entry>
+        </map>
+      </parameter>
+    </parameters>
+  </evaluation>
+</semantic>
+----
+
+== Instruction-driven shorthand
+
+The `question` syntax and Java convenience methods below target instruction-driven operations
+named `boolean`, `choice` and `score`. Their fields become expert parameters and are validated by
+the selected expert. TypeSafe AI implements these operations and requires nonblank instructions.
+Specialised operations normally use `evaluation` and `parameters` as shown above.
 
 == Named questions
 
@@ -158,8 +294,9 @@ Existing expressions resolve the current definition on their next evaluation.
 Reload validates the candidate declaration snapshot for initialized expressions before publishing
 it, including expert capabilities, boolean predicate types, Simple state selectors, and compatible
 batch selectors across resources. Failed validation leaves the previous declarations available.
-Unused declarations are validated when first referenced, as at startup. Removed declarations
-remain removable; an expression that still references a removed name fails when evaluated.
+Startup validates unused declarations as well. Resource reload validates new and changed declarations
+before publishing them, including unused evaluations. Removed declarations remain removable; an
+expression that still references a removed name fails when evaluated.
 Validation registrations are weakly held: the registry does not keep expressions or their providers
 alive. Constraints can remain until an unused expression is garbage-collected; stopping a route
 does not necessarily release an expression that is still referenced elsewhere.
@@ -172,18 +309,11 @@ question declarations so the expressions compile against the replacement bean.
 
 === YAML reload and expert bean preparation
 
-YAML declarations are registered during the loader's existing pre-parse phase, before beans in
-the resource set are prepared. On initial loading, expert validation waits until expressions
-initialize, after bean preparation. On reload, replacements for initialized expressions are
-validated during pre-parsing, so the selected expert must already be registered.
-
-For example, changing an existing question to `expert: newSecurity` and introducing a
-`newSecurity` bean in the same reload fails if that bean is not yet in the registry. Keep expert
-beans registered outside the reloaded resource, prepare the new bean before reloading the
-declarations, or restart the application when changing both together. XML declaration loading
-runs after resource-set bean preparation; Java helpers validate when `register()` is called.
-The three DSLs share declaration fields and validation rules, but this YAML bean-order constraint
-remains because the existing resolver hook runs before bean preparation.
+YAML declarations are registered after all resources in the load operation have prepared their
+beans and before routes are constructed. This applies both at startup and on reload, so an expert
+bean and its evaluations can be introduced together, including in separate resources of the same
+load operation. XML declaration loading follows the same preparation order; Java helpers validate
+when `register()` is called.
 
 === Java declarations
 
@@ -341,12 +471,16 @@ in semantic evaluation, and Java applications using `camel-semantic` do not pull
 == Results and policy
 
 Only boolean questions can be predicates. A category string is never implicitly a boolean.
-A probability-based boolean uses an inclusive threshold (default `0.5`). A nonzero
+A direct `semantic` predicate rejects other result types at initialization. Simple's bare or negated
+`${semantic('name')}` predicate rejects them before inference when it is matched; comparisons and
+membership tests can consume their typed values.
+Decision policy is expert-owned. Camel never derives a Boolean from probability or applies a
+second threshold to the expert's returned value. The TypeSafe AI adapter uses an inclusive
+Boolean probability threshold (default `0.5`). A nonzero
 `uncertainty` defines an inclusive band around that threshold. `fail` (the default) raises
-an error within the band; `non-match` returns false. An already-boolean provider supports the
-default policy without inventing a probability. Additional policy requirements must be
-supported by the provider. Choice results must name a declared criterion. Scores range from
-zero to the last rubric index and may be fractional.
+an error within the band; `non-match` returns false. Its Choice results must name a supplied
+criterion, and its scores range from zero to the last rubric index and may be fractional.
+Other experts declare their own policy parameters, labels and score ranges in their contracts.
 
 Probabilities, provider confidence and selected values are separate. Missing optional fields
 remain absent. Results can retain provider/model identity and usage metadata. These fields
@@ -407,7 +541,7 @@ For example, replace the route above with:
 
 A result might contain `actionable -> true`, `department -> "billing"` and `urgency -> 1.2`.
 Reading the stored map does not invoke the provider again. Each question retains its own
-threshold and uncertainty policy. There is no implicit AND/OR: batch expressions, including
+expert-owned threshold and uncertainty policy. There is no implicit AND/OR: batch expressions, including
 a batch containing one boolean question, cannot be used as predicates.
 
 `CamelSemanticResults` holds an immutable map of the detailed `SemanticResult` objects,
@@ -436,7 +570,7 @@ from resource reload. Questions that need a previous answer require separate eva
 
 `SemanticAdapter.evaluateBatch(Map<String, SemanticQuestion>, Object)` has a default
 implementation that invokes the existing single-question method sequentially, preserving
-compatibility with existing adapters. Questions are grouped by the resolved expert instance,
+experts that do not implement a provider-specific batch optimisation. Questions are grouped by the resolved expert instance,
 and each group is passed to that instance's batch method. Two instances of the same class remain
 separate groups. Each group must return exactly its assigned names. Camel validates the complete
 combined result before publishing decisions or diagnostics, preserving the original reference order.
@@ -645,35 +779,52 @@ the action. The example's threshold is a decision policy, not an accuracy guaran
 This pattern uses Validate and existing authorization services. It does not add a semantic
 `AuthorizationPolicy` implementation or replace a component's internal guardrail interfaces.
 
-== Expert capabilities
+== Static operation contracts
 
-`SemanticAdapter.capabilities()` describes accepted text or structured input, supported result
-types, instruction and criteria support, optional probability/confidence semantics, and known limits.
-The default reads `@SemanticExpert` from the provider class. Unannotated legacy adapters report
-`known=false`, with no claimed capabilities. The language still requires instructions for these
-legacy adapters before calling their existing `validate` method. Providers that accept absent
-instructions must explicitly advertise optional or unsupported instructions.
-An adapter can override capabilities for its configured model using the named builder:
+Read `SemanticCapabilities.from(MyExpert.class)` to inspect a contract without constructing an
+expert, loading a model or contacting a service. The runtime uses the same cached class contract.
+The returned operation
+and parameter maps, supported labels and input shapes are immutable.
+
+For example, an expert can declare a fixed detection operation:
 
 [source,java]
 ----
-@Override
-public SemanticCapabilities capabilities() {
-    return SemanticAdapter.super.capabilities().toBuilder()
-            .maxChoices(32)
-            .build();
+@SemanticExpert(name = "detector", description = "Text injection detector",
+    provider = "example", artifactId = "example-expert",
+    operations = @SemanticOperation(name = "injection", description = "Detect injection",
+        inputTypes = SemanticExpert.InputType.TEXT,
+        inputRequirements = "Text to assess",
+        resultType = SemanticExpert.ResultType.BOOLEAN,
+        resultMeaning = "True means injection was detected",
+        probability = true, probabilityMeaning = "Probability of injection",
+        parameters = @SemanticParameter(name = "threshold", description = "Detection threshold",
+            type = Number.class, minimum = 0, maximum = 1,
+            omission = "Use the service's configured threshold")))
+public class SecurityExpert implements SemanticAdapter {
+    // validate, validateInput and evaluate implement this declared contract.
 }
 ----
 
-This example narrows an annotated adapter's limits. `SemanticCapabilities.builder()` creates an
-explicit descriptor from scratch; input and result sets are empty until supplied. Descriptors
-are immutable. Capability reporting and declaration validation must not perform inference or
-load models. Runtime input and response validation still apply.
+Each operation declares a result type and its meaning. Score operations document their scale and
+can declare numeric bounds. Choice and classification operations can declare a fixed label set;
+an instruction-driven expert validates its application-supplied vocabulary itself. Optional
+probability, per-label probability and confidence fields must declare their meaning. Camel does
+not manufacture confidence from a verdict, nor require optional information on every response.
+It rejects information the contract did not declare, malformed numeric values, wrong result types
+and results outside declared common constraints.
 
-Providers declare static capabilities with `org.apache.camel.semantic.SemanticExpert` from
-`camel-semantic`. The annotation describes the implementation; it neither selects an expert nor
-describes application bean names. Runtime capabilities and `validate` remain authoritative for
-configured instances. No dedicated expert catalog model or discovery API is provided.
+An expert applies explicitly requested policy exactly once, either in its service or its adapter.
+It preserves service defaults when parameters are absent. If requested policy needs unavailable
+confidence or probability, the expert rejects the declaration when known statically, or fails that
+evaluation when the absence is response-dependent. It must not silently ignore the request.
+Uncertain outcomes use an operation's documented values or an error; Camel has no universal
+uncertainty sentinel. Classification filtering, including per-label thresholds, also belongs to
+the expert. TypeSafe AI's `uncertaintyPolicy` supports `fail` or `non-match`; other experts need not
+support that vocabulary.
+
+Generated expert descriptors, expert-specific offline validation and Catalog API extensions are
+separate work. This contract does not add a new Camel Catalog model.
 
 == Implementing an adapter
 
@@ -691,8 +842,11 @@ Discovery checks the declarations for ambiguity before resolving the implementat
 explicit selection. Only the selected adapter is constructed, through Camel's `Injector`.
 Explicit bean or class selection also works when packaging does not expose discovery resources.
 
-The language checks known capabilities and then calls `validate` for model-specific restrictions
-before traffic. Providers should also validate when their SPI is called directly. `evaluate`
+The language checks the static operation contract and then calls `validate` for operation-specific
+parameter combinations and bean configuration before traffic. `validateInput` checks detailed
+message requirements before evaluation. All input checks in a batch run before any expert is invoked.
+`evaluate` returns a typed `SemanticResult` after applying the expert's policy. A probability-only
+Boolean result is invalid: the expert must supply its Boolean verdict. Providers should also validate when their SPI is called directly. `evaluate`
 must be thread-safe, bound time and resource consumption, honor interruption and propagate
 operational failures without disclosing input or credentials. Implement `CamelContextAware`
 for context injection and Camel `Service` interfaces when the adapter owns resources.

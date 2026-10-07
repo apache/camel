@@ -30,6 +30,8 @@ import org.apache.camel.spi.Resource;
 /** Fluent declarations for use inside an ordinary {@link RouteBuilder#configure()}. */
 public final class SemanticQuestionsBuilder {
     private static final String LIFECYCLE = SemanticQuestionsBuilder.class.getName();
+    private String expert;
+    private String state;
     private final CamelContext context;
     private final RouteBuilder builder;
     private final Resource resource;
@@ -53,6 +55,28 @@ public final class SemanticQuestionsBuilder {
     /** Start one group of declarations, then call {@link #register()} before using its references. */
     public static SemanticQuestionsBuilder semanticQuestions(RouteBuilder builder) {
         return new SemanticQuestionsBuilder(builder);
+    }
+
+    public SemanticQuestionsBuilder expert(String expert) {
+        this.expert = expert;
+        return this;
+    }
+
+    public SemanticQuestionsBuilder state(String state) {
+        this.state = state;
+        return this;
+    }
+
+    String getExpert() {
+        return expert;
+    }
+
+    String getState() {
+        return state;
+    }
+
+    public SemanticQuestionBuilder evaluation(String name) {
+        return question(name);
     }
 
     /** Add a named question. Names must be unique across the context. */

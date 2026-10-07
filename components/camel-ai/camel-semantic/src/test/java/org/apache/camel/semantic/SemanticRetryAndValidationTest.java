@@ -52,7 +52,7 @@ class SemanticRetryAndValidationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                context.getRegistry().bind("evaluator", new SemanticAdapter() {
+                context.getRegistry().bind("evaluator", new TestSemanticAdapter() {
                     @Override
                     public void validate(SemanticQuestion question) {
                     }
@@ -65,7 +65,7 @@ class SemanticRetryAndValidationTest extends CamelTestSupport {
                         }
                         return malformedResult
                                 ? new SemanticResult("unexpected category", null, null, null, null)
-                                : new SemanticResult(null, probability, null, null, null);
+                                : applyPolicy(question, new SemanticResult(null, probability, null, null, null));
                     }
                 });
                 SemanticLanguage language = (SemanticLanguage) context.resolveLanguage("semantic");
@@ -274,7 +274,7 @@ class SemanticRetryAndValidationTest extends CamelTestSupport {
             case "timeout" -> assertThat(ObjectHelper.getException(TimeoutException.class, exception))
                     .hasMessage("Evaluation timed out");
             case "malformed" -> assertThat(ObjectHelper.getException(IllegalArgumentException.class, exception))
-                    .hasMessage("Semantic result does not support the question and its decision policy");
+                    .hasMessage("Semantic result does not match BOOLEAN contract");
             case "uncertain" -> assertThat(ObjectHelper.getException(IllegalStateException.class, exception))
                     .hasMessage("Semantic boolean decision is uncertain");
             default -> throw new IllegalArgumentException(failure);

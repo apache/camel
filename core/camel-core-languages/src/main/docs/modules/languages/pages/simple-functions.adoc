@@ -660,6 +660,14 @@ to call the `safeQuote` function as shown below:
 ----
 
 
+=== Semantic Functions
+
+[width="100%",cols="2,1,7",options="header"]
+|===
+|Function |Type |Description
+|`semantic(name)` | `Object` | Invokes a named xref:semantic-language.adoc[Semantic evaluation], for example `${semantic('injection')}`. Returns its typed result, preserves the body, and publishes `CamelSemanticResult`. Each occurrence invokes the expert. Requires camel-semantic.
+|===
+
 === XML & JSON Functions
 
 Functions to work with XML and JSON payloads.

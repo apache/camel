@@ -28,6 +28,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.UnaryOperatorType;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -102,10 +103,7 @@ public class UnaryExpression extends BaseSimpleNode {
 
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                Object value = exp.evaluate(exchange, Object.class);
-                // the same rule the language uses for a predicate on its own, where ${body} is true and a missing
-                // header is false, so !${body} and !${header.foo} answer the opposite of those (CAMEL-24984)
-                boolean matches = ObjectHelper.evaluateValuePredicate(value);
+                boolean matches = ExpressionToPredicateAdapter.toPredicate(exp).matches(exchange);
                 return camelContext.getTypeConverter().convertTo(type, exchange, !matches);
             }
 

@@ -14,31 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.typesafeai;
+package org.apache.camel.semantic;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.semantic.SemanticAdapter;
-import org.apache.camel.semantic.SemanticCapabilities;
-import org.apache.camel.semantic.SemanticExpert;
 import org.apache.camel.semantic.SemanticExpert.InputType;
 import org.apache.camel.semantic.SemanticExpert.ResultType;
-import org.apache.camel.semantic.SemanticOperation;
-import org.apache.camel.semantic.SemanticParameter;
-import org.apache.camel.semantic.SemanticQuestion;
-import org.apache.camel.semantic.SemanticResult;
-import org.apache.camel.spi.annotations.JdkService;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.support.service.ServiceSupport;
 
-/** Maps common questions to TypeSafe AI using the component's configured, managed transport. */
-@JdkService("semantic-adapter")
-@SemanticExpert(name = "typesafe-ai", provider = "typesafe-ai", artifactId = "camel-typesafe-ai",
-                description = "Instruction-driven decisions using TypeSafe AI",
+@SemanticExpert(name = "fixture", provider = "test", artifactId = "test",
+                description = "Deterministic instruction-driven test expert",
                 operations = {
                         @SemanticOperation(name = "boolean", description = "Instruction-driven boolean evaluation",
                                            inputTypes = { InputType.TEXT, InputType.STRUCTURED },
@@ -47,6 +33,8 @@ import org.apache.camel.util.json.JsonObject;
                                            resultMeaning = "True means the supplied instructions and criteria hold",
                                            probability = true,
                                            probabilityMeaning = "Probability that the supplied instructions and criteria hold",
+                                           confidence = true,
+                                           confidenceMeaning = "Optional confidence reported by the provider",
                                            parameters = {
                                                    @SemanticParameter(name = "instructions",
                                                                       description = "Instructions to evaluate against the state",
@@ -86,8 +74,7 @@ import org.apache.camel.util.json.JsonObject;
                                            inputRequirements = "Text or structured application state",
                                            resultType = ResultType.SCORE,
                                            resultMeaning = "A score from zero to the number of supplied levels minus one",
-                                           minimum = 0, maximum = 9, probabilities = true,
-                                           probabilityMeaning = "Probability of each supplied score level",
+                                           minimum = 0, maximum = 9,
                                            confidence = true,
                                            confidenceMeaning = "Optional confidence reported by the provider",
                                            parameters = {
@@ -97,137 +84,27 @@ import org.apache.camel.util.json.JsonObject;
                                                    @SemanticParameter(name = "criteria", description = "Ordered score levels",
                                                                       type = List.class, itemType = String.class,
                                                                       required = true, minSize = 1, maxSize = 10) }) })
-public class TypeSafeAiSemanticAdapter implements SemanticAdapter, CamelContextAware {
-    private CamelContext camelContext;
-    private volatile TypeSafeAiEndpoint endpoint;
-
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
+abstract class TestSemanticAdapter extends ServiceSupport implements SemanticAdapter {
     @Override
     public void validate(SemanticQuestion question) {
         SemanticCapabilities.from(getClass()).validate(question);
-        if (question.getCriteria().entrySet().stream().anyMatch(entry -> entry.getKey().isBlank() || entry.getValue().isBlank())
-                || question.getLevels().stream().anyMatch(String::isBlank)) {
-            throw new IllegalArgumentException("Parameter 'criteria' requires nonblank names and descriptions");
+    }
+
+    // This fixture models an expert that owns its probability policy.
+    static SemanticResult applyPolicy(SemanticQuestion question, SemanticResult result) {
+        if (question.getType() != SemanticQuestion.Type.BOOLEAN || result.getProbability() == null) {
+            return result;
         }
-        if (question.getType() == SemanticQuestion.Type.BOOLEAN) {
-            if (question.getCriteria().keySet().stream().anyMatch(key -> !key.equals("true") && !key.equals("false"))) {
-                throw new IllegalArgumentException("Parameter 'criteria' requires true or false keys");
-            }
-            double threshold = threshold(question);
-            double uncertainty = uncertainty(question);
-            if (threshold - uncertainty < 0 || threshold + uncertainty > 1) {
-                throw new IllegalArgumentException("Parameters 'threshold' and 'uncertainty' must keep the band within [0,1]");
-            }
-        }
-    }
-
-    private TypeSafeAiEndpoint endpoint() {
-        if (endpoint == null) {
-            synchronized (this) {
-                if (endpoint == null) {
-                    if (camelContext == null) {
-                        throw new IllegalStateException("TypeSafe AI semantic adapter requires a CamelContext");
-                    }
-                    endpoint = camelContext.getEndpoint("typesafe-ai:semantic", TypeSafeAiEndpoint.class);
-                }
-            }
-        }
-        return endpoint;
-    }
-
-    @Override
-    public SemanticResult evaluate(SemanticQuestion question, Object state) throws Exception {
-        return evaluateBatch(Map.of("question", question), state).get("question");
-    }
-
-    @Override
-    public Map<String, SemanticResult> evaluateBatch(Map<String, SemanticQuestion> questions, Object state) throws Exception {
-        Map<String, Object> definitions = new LinkedHashMap<>();
-        questions.forEach((name, question) -> definitions.put(name, definition(question)));
-        JsonObject response = endpoint().evaluate(Map.of("state", state, "questions", definitions));
-        Map<String, SemanticResult> results = new LinkedHashMap<>();
-        questions.forEach((name, question) -> results.put(name,
-                result(question, response.getJsonObject("answers").getJsonObject(name), response)));
-        return results;
-    }
-
-    private Map<String, Object> definition(SemanticQuestion question) {
-        validate(question);
-        Map<String, Object> definition = new HashMap<>();
-        definition.put("instructions", question.getInstructions());
-        definition.put("type", type(question));
-        if (question.getType() == SemanticQuestion.Type.SCORE) {
-            definition.put("criteria", question.getLevels());
-        } else if (!question.getCriteria().isEmpty()) {
-            definition.put("criteria", question.getCriteria());
-        }
-        return definition;
-    }
-
-    private String type(SemanticQuestion question) {
-        return switch (question.getType()) {
-            case BOOLEAN -> "noul";
-            case CHOICE -> "choice";
-            case SCORE -> "score";
-            default -> throw new IllegalArgumentException("Unsupported TypeSafe AI operation");
-        };
-    }
-
-    private SemanticResult result(SemanticQuestion question, JsonObject answer, JsonObject response) {
-        Map<String, Double> probabilities = new HashMap<>();
-        if (answer.get("probabilities") instanceof Map<?, ?> values) {
-            values.forEach((key, value) -> probabilities.put((String) key, ((Number) value).doubleValue()));
-        }
-        Double probability = question.getType() == SemanticQuestion.Type.BOOLEAN ? answer.getDouble("noul") : null;
-        Object value = switch (question.getType()) {
-            case BOOLEAN -> booleanDecision(question, probability);
-            case SCORE -> answer.getDouble("score");
-            default -> answer.get(type(question));
-        };
-        SemanticResult result = new SemanticResult(
-                value,
-                probability,
-                probabilities, answer.get("confidence") == null ? null : answer.getDouble("confidence"),
-                Map.of("provider", "typesafe-ai", "model", response.get("model"), "usage", response.get("usage")));
-        SemanticCapabilities.from(getClass()).operation(question.getOperation()).validateResult(result);
-        if (question.getType() == SemanticQuestion.Type.CHOICE
-                && (!question.getCriteria().containsKey(value)
-                        || !probabilities.isEmpty() && !probabilities.keySet().equals(question.getCriteria().keySet()))) {
-            throw new IllegalArgumentException("TypeSafe AI choice result must match the supplied criteria");
-        }
-        if (question.getType() == SemanticQuestion.Type.SCORE
-                && ((Number) value).doubleValue() > question.getLevels().size() - 1) {
-            throw new IllegalArgumentException("TypeSafe AI score result must be within the supplied levels");
-        }
-        return result;
-    }
-
-    private static double threshold(SemanticQuestion question) {
-        return ((Number) question.getParameters().getOrDefault("threshold", 0.5)).doubleValue();
-    }
-
-    private static double uncertainty(SemanticQuestion question) {
-        return ((Number) question.getParameters().getOrDefault("uncertainty", 0.0)).doubleValue();
-    }
-
-    private static boolean booleanDecision(SemanticQuestion question, double probability) {
-        double threshold = threshold(question);
-        double uncertainty = uncertainty(question);
+        double probability = result.getProbability();
+        double threshold = ((Number) question.getParameters().getOrDefault("threshold", 0.5)).doubleValue();
+        double uncertainty = ((Number) question.getParameters().getOrDefault("uncertainty", 0.0)).doubleValue();
+        boolean value = probability >= threshold;
         if (uncertainty > 0 && probability >= threshold - uncertainty && probability <= threshold + uncertainty) {
             if (!"non-match".equals(question.getParameters().get("uncertaintyPolicy"))) {
                 throw new IllegalStateException("Semantic boolean decision is uncertain");
             }
-            return false;
+            value = false;
         }
-        return probability >= threshold;
+        return new SemanticResult(value, probability, result.getProbabilities(), result.getConfidence(), result.getMetadata());
     }
 }

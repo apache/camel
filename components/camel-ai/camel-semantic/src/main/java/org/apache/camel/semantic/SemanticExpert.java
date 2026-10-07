@@ -24,7 +24,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Static semantic expert capabilities, available without constructing providers or loading models.
+ * Static expert contract. Reading it never constructs an expert or contacts a service. Configured instances may reject
+ * incompatible configurations, but cannot redefine these operations or their semantics.
  *
  * @since 4.23
  */
@@ -41,13 +42,8 @@ public @interface SemanticExpert {
     enum ResultType {
         BOOLEAN,
         CHOICE,
-        SCORE
-    }
-
-    enum Instructions {
-        REQUIRED,
-        OPTIONAL,
-        UNSUPPORTED
+        SCORE,
+        CLASSIFICATION
     }
 
     String name();
@@ -58,29 +54,5 @@ public @interface SemanticExpert {
 
     String artifactId();
 
-    InputType[] inputTypes();
-
-    ResultType[] resultTypes();
-
-    Instructions instructions();
-
-    boolean callerDefinedCriteria();
-
-    boolean booleanProbability() default false;
-
-    boolean choiceProbabilities() default false;
-
-    ResultType[] confidenceTypes() default {};
-
-    String probabilityMeaning() default "";
-
-    String confidenceMeaning() default "";
-
-    String trueMeaning() default "";
-
-    /** Zero means no statically known limit. */
-    int maxChoices() default 0;
-
-    /** Zero means no statically known limit. */
-    int maxScoreLevels() default 0;
+    SemanticOperation[] operations();
 }

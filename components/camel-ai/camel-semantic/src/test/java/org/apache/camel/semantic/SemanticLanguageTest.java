@@ -42,7 +42,6 @@ import org.apache.camel.impl.engine.DefaultInjector;
 import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,7 +68,7 @@ class SemanticLanguageTest {
         language.setCamelContext(context);
         language.setAdapter(CountingAdapter.class.getName());
         context.getRegistry().bind("semantic", language);
-        context.start();
+        context.init();
         questions(question(SemanticQuestion.Type.BOOLEAN, null, 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL));
     }
 
@@ -424,7 +423,8 @@ class SemanticLanguageTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "${header.broken", "{{missing.selector}}" })
-    void reloadRejectsInvalidStateSelectorsBeforePublication(String selector) {
+    void reloadRejectsInvalidStateSelectorsBeforePublication(String selector) throws Exception {
+        context.start();
         Expression expression = language.createExpression("ref:q");
         SemanticQuestion previous = SemanticQuestions.get(context).get("q");
         assertThatThrownBy(() -> questions(
@@ -495,7 +495,7 @@ class SemanticLanguageTest {
         assertThat(expression.evaluate(exchange, String.class)).isEqualTo("billing");
     }
 
-    public static class CountingAdapter extends ServiceSupport implements SemanticAdapter {
+    public static class CountingAdapter extends TestSemanticAdapter {
         static final AtomicInteger constructed = new AtomicInteger();
         static final AtomicInteger started = new AtomicInteger();
         static final AtomicInteger stopped = new AtomicInteger();
@@ -517,7 +517,7 @@ class SemanticLanguageTest {
             if (failure != null) {
                 throw failure;
             }
-            return answer;
+            return applyPolicy(question, answer);
         }
 
         @Override
@@ -554,7 +554,7 @@ class SemanticLanguageTest {
         }
     }
 
-    public static class LabelAdapter implements SemanticAdapter {
+    public static class LabelAdapter extends TestSemanticAdapter {
         @Override
         public void validate(SemanticQuestion question) {
             if (question.getType() != SemanticQuestion.Type.CHOICE) {

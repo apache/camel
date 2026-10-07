@@ -44,7 +44,7 @@ public final class SimpleSyntaxHints {
             "substringBetween", "contains", "pad", "concat", "val", "length", "size", "empty", "newEmpty", "iif",
             "hash", "convertTo", "throwException", "assert", "load", "uuid", "env", "sys", "sysenv", "ref", "bean",
             "properties", "propertiesExist", "type", "messageAs", "messageHistory", "logExchange", "pretty",
-            "toJson", "toPrettyJson", "jq", "jsonpath", "xpath", "simpleJsonpath", "function", "list", "map",
+            "toJson", "toPrettyJson", "jq", "jsonpath", "xpath", "simpleJsonpath", "semantic", "function", "list", "map",
             "range", "split", "sort", "distinct", "reverse", "shuffle", "forEach", "filter", "listAdd", "listRemove",
             "mapAdd", "mapRemove", "setHeader", "setVariable", "uppercase", "lowercase", "trim", "capitalize",
             "normalizeWhitespace", "quote", "unquote", "safeQuote", "escape", "isEmpty", "isAlpha", "isAlphaNumeric",
@@ -57,7 +57,7 @@ public final class SimpleSyntaxHints {
      * Functions that delegate to another language, all of them written {@code ${name(exp)}}. Unlike {@code bean:} or
      * {@code date:} they take no colon form, which is the mistake CAMEL-24845 is about.
      */
-    static final Set<String> QUERY_FUNCTIONS = Set.of("jq", "jsonpath", "xpath", "simpleJsonpath");
+    static final Set<String> QUERY_FUNCTIONS = Set.of("jq", "jsonpath", "xpath", "simpleJsonpath", "semantic");
 
     /** Names from older Camel versions or other languages that a model still writes. */
     static final Map<String, String> ALIASES = Map.ofEntries(
@@ -373,7 +373,7 @@ public final class SimpleSyntaxHints {
             return bare + " is a language, not a simple function: another language cannot be nested inside ${...}; write"
                    + " the expression with its own key, for example " + bare + ": \"...\"";
         }
-        // ${jsonpath:$.status}: written the way bean: and date: are, but these four take parentheses (CAMEL-24845)
+        // ${jsonpath:$.status}: written the way bean: and date: are, but these functions take parentheses (CAMEL-24845)
         int colon = function.indexOf(':');
         if (colon > 0 && QUERY_FUNCTIONS.contains(function.substring(0, colon))) {
             return parentheses(function.substring(0, colon), function.substring(colon + 1));
@@ -421,6 +421,9 @@ public final class SimpleSyntaxHints {
 
     /** The did-you-mean for a function whose argument was written after a colon instead of in parentheses. */
     private static String parentheses(String name, String argument) {
+        if ("semantic".equals(name)) {
+            argument = "'" + ("exp".equals(argument) ? "evaluationName" : argument) + "'";
+        }
         return "the argument goes in parentheses: did you mean ${" + name + "(" + argument + ")}?";
     }
 

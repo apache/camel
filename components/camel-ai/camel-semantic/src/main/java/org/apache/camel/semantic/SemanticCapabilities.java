@@ -16,110 +16,58 @@
  */
 package org.apache.camel.semantic;
 
+import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.apache.camel.semantic.SemanticExpert.InputType;
-import org.apache.camel.semantic.SemanticExpert.Instructions;
 import org.apache.camel.semantic.SemanticExpert.ResultType;
 
-/**
- * Immutable capabilities of a configured expert. Unknown legacy capabilities are not a claim of support. Providers may
- * override their static annotation with effective capabilities for the configured model. Probability/confidence flags
- * describe availability, not guarantees that every response includes optional metadata.
- */
+/** Immutable static expert contract. It is read from the class, never supplied by a configured instance. */
 public final class SemanticCapabilities {
-    private final boolean known;
+    private static final ClassValue<SemanticCapabilities> CONTRACTS = new ClassValue<>() {
+        @Override
+        protected SemanticCapabilities computeValue(Class<?> type) {
+            return from(type.getAnnotation(SemanticExpert.class));
+        }
+    };
     private final String name;
     private final String description;
     private final String provider;
     private final String artifactId;
-    private final Set<InputType> inputTypes;
-    private final Set<ResultType> resultTypes;
-    private final Instructions instructions;
-    private final boolean callerDefinedCriteria;
-    private final boolean booleanProbability;
-    private final boolean choiceProbabilities;
-    private final Set<ResultType> confidenceTypes;
-    private final String probabilityMeaning;
-    private final String confidenceMeaning;
-    private final String trueMeaning;
-    private final int maxChoices;
-    private final int maxScoreLevels;
+    private final Map<String, Operation> operations;
 
-    private SemanticCapabilities(boolean known, Builder builder) {
-        this.known = known;
-        this.name = builder.name;
-        this.description = builder.description;
-        this.provider = builder.provider;
-        this.artifactId = builder.artifactId;
-        this.inputTypes = immutableSet(InputType.class, builder.inputTypes);
-        this.resultTypes = immutableSet(ResultType.class, builder.resultTypes);
-        this.instructions = Objects.requireNonNull(builder.instructions, "Instruction support is required");
-        this.callerDefinedCriteria = builder.callerDefinedCriteria;
-        this.booleanProbability = builder.booleanProbability;
-        this.choiceProbabilities = builder.choiceProbabilities;
-        this.confidenceTypes = immutableSet(ResultType.class, builder.confidenceTypes);
-        this.probabilityMeaning = builder.probabilityMeaning;
-        this.confidenceMeaning = builder.confidenceMeaning;
-        this.trueMeaning = builder.trueMeaning;
-        this.maxChoices = builder.maxChoices;
-        this.maxScoreLevels = builder.maxScoreLevels;
-    }
-
-    private static <E extends Enum<E>> Set<E> immutableSet(Class<E> type, Set<E> values) {
-        EnumSet<E> copy = EnumSet.noneOf(type);
-        copy.addAll(values);
-        return Collections.unmodifiableSet(copy);
-    }
-
-    /** Build explicit capabilities using named attributes. Empty input/result sets claim no support. */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
-     * Start an explicit capability declaration from this descriptor, for example to narrow a configured model's limits.
-     */
-    public Builder toBuilder() {
-        return new Builder(this);
-    }
-
-    public static SemanticCapabilities unknown() {
-        return new SemanticCapabilities(false, new Builder());
-    }
-
-    /** Reads static capabilities without loading a model or transport. */
-    public static SemanticCapabilities from(SemanticExpert expert) {
+    private SemanticCapabilities(SemanticExpert expert) {
         if (expert == null) {
-            return unknown();
+            throw new IllegalArgumentException("Semantic adapter requires a @SemanticExpert contract");
         }
-        return builder()
-                .name(expert.name())
-                .description(expert.description())
-                .provider(expert.provider())
-                .artifactId(expert.artifactId())
-                .inputTypes(expert.inputTypes())
-                .resultTypes(expert.resultTypes())
-                .instructions(expert.instructions())
-                .callerDefinedCriteria(expert.callerDefinedCriteria())
-                .booleanProbability(expert.booleanProbability())
-                .choiceProbabilities(expert.choiceProbabilities())
-                .confidenceTypes(expert.confidenceTypes())
-                .probabilityMeaning(expert.probabilityMeaning())
-                .confidenceMeaning(expert.confidenceMeaning())
-                .trueMeaning(expert.trueMeaning())
-                .maxChoices(expert.maxChoices())
-                .maxScoreLevels(expert.maxScoreLevels())
-                .build();
+        name = required(expert.name(), "Expert name");
+        description = required(expert.description(), "Expert description");
+        provider = required(expert.provider(), "Expert provider");
+        artifactId = required(expert.artifactId(), "Expert artifactId");
+        Map<String, Operation> values = new LinkedHashMap<>();
+        for (SemanticOperation operation : expert.operations()) {
+            Operation contract = new Operation(operation);
+            if (values.putIfAbsent(contract.getName(), contract) != null) {
+                throw new IllegalArgumentException("Duplicate semantic operation: " + contract.getName());
+            }
+        }
+        if (values.isEmpty()) {
+            throw new IllegalArgumentException("Semantic expert must declare operations");
+        }
+        operations = Collections.unmodifiableMap(values);
     }
 
-    public boolean isKnown() {
-        return known;
+    public static SemanticCapabilities from(Class<?> expertClass) {
+        return CONTRACTS.get(expertClass);
+    }
+
+    public static SemanticCapabilities from(SemanticExpert expert) {
+        return new SemanticCapabilities(expert);
     }
 
     public String getName() {
@@ -138,221 +86,309 @@ public final class SemanticCapabilities {
         return artifactId;
     }
 
-    public Set<InputType> getInputTypes() {
-        return inputTypes;
+    public Map<String, Operation> getOperations() {
+        return operations;
     }
 
-    public Set<ResultType> getResultTypes() {
-        return resultTypes;
-    }
-
-    public Instructions getInstructions() {
-        return instructions;
-    }
-
-    public boolean isCallerDefinedCriteria() {
-        return callerDefinedCriteria;
-    }
-
-    public boolean isBooleanProbability() {
-        return booleanProbability;
-    }
-
-    public boolean isChoiceProbabilities() {
-        return choiceProbabilities;
-    }
-
-    public Set<ResultType> getConfidenceTypes() {
-        return confidenceTypes;
-    }
-
-    public String getProbabilityMeaning() {
-        return probabilityMeaning;
-    }
-
-    public String getConfidenceMeaning() {
-        return confidenceMeaning;
-    }
-
-    public String getTrueMeaning() {
-        return trueMeaning;
-    }
-
-    public int getMaxChoices() {
-        return maxChoices;
-    }
-
-    public int getMaxScoreLevels() {
-        return maxScoreLevels;
-    }
-
-    /** Validate the common contract before the provider checks any model-specific restrictions. */
-    public void validate(SemanticQuestion question) {
-        if ((!known || instructions == Instructions.REQUIRED) && question.getInstructions() == null) {
-            throw new IllegalArgumentException("Question instructions are required");
-        }
-        if (!known) {
-            return;
-        }
-        if (!resultTypes.contains(ResultType.valueOf(question.getType().name()))) {
+    public Operation operation(String name) {
+        Operation result = operations.get(name);
+        if (result == null) {
             throw new IllegalArgumentException(
-                    "Requires " + question.getType() + "; supports " + resultTypes + ": " + description);
+                    "Unknown operation '" + name + "'; supported operations: " + operations.keySet());
         }
-        if (instructions == Instructions.UNSUPPORTED && question.getInstructions() != null) {
-            throw new IllegalArgumentException("Instructions are unsupported by this fixed expert");
+        return result;
+    }
+
+    public void validate(SemanticQuestion evaluation) {
+        operation(evaluation.getOperation()).validate(evaluation.getParameters());
+    }
+
+    private static String required(String value, String field) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(field + " is required");
         }
-        if (!callerDefinedCriteria && (!question.getCriteria().isEmpty() || !question.getLevels().isEmpty())) {
-            throw new IllegalArgumentException("Caller-defined criteria and score levels are unsupported by this fixed expert");
+        return value;
+    }
+
+    private static boolean withinBounds(Number number, double minimum, double maximum) {
+        if (minimum == Double.POSITIVE_INFINITY || maximum == Double.NEGATIVE_INFINITY) {
+            return false;
         }
-        if (question.getType() == SemanticQuestion.Type.CHOICE && maxChoices > 0
-                && question.getCriteria().size() > maxChoices) {
-            throw new IllegalArgumentException("Supports at most " + maxChoices + " choice criteria");
-        }
-        if (question.getType() == SemanticQuestion.Type.SCORE && maxScoreLevels > 0
-                && question.getLevels().size() > maxScoreLevels) {
-            throw new IllegalArgumentException("Supports at most " + maxScoreLevels + " score levels");
-        }
-        if (question.getType() == SemanticQuestion.Type.BOOLEAN && !booleanProbability
-                && (question.getThreshold() != 0.5 || question.getUncertainty() != 0
-                        || question.getUncertaintyPolicy() != SemanticQuestion.UncertaintyPolicy.FAIL)) {
-            throw new IllegalArgumentException("Boolean decision policy requires positive-class probability support");
+        try {
+            // Preserve decimal precision, including values just outside a declared boundary.
+            BigDecimal value = new BigDecimal(number.toString());
+            return (minimum == Double.NEGATIVE_INFINITY || value.compareTo(BigDecimal.valueOf(minimum)) >= 0)
+                    && (maximum == Double.POSITIVE_INFINITY || value.compareTo(BigDecimal.valueOf(maximum)) <= 0);
+        } catch (NumberFormatException invalid) {
+            return false;
         }
     }
 
-    /** Input shape can only be checked once the state selector has been evaluated. */
-    public void validateInput(Object state) {
-        if (known && !(state instanceof String && inputTypes.contains(InputType.TEXT)
-                || (state instanceof Map<?, ?> || state instanceof List<?>) && inputTypes.contains(InputType.STRUCTURED))) {
-            throw new IllegalArgumentException("Unsupported selected state; accepts " + inputTypes + " input");
+    /** Operation metadata and common validation, independent of any expert instance. */
+    public static final class Operation {
+        private final SemanticOperation declaration;
+        private final Set<InputType> inputTypes;
+        private final Set<String> labels;
+        private final Map<String, Parameter> parameters;
+
+        private Operation(SemanticOperation declaration) {
+            this.declaration = declaration;
+            required(declaration.name(), "Operation name");
+            required(declaration.description(), "Operation description");
+            required(declaration.inputRequirements(), "Operation input requirements");
+            required(declaration.resultMeaning(), "Operation result meaning");
+            inputTypes = Set.copyOf(List.of(declaration.inputTypes()));
+            labels = Collections.unmodifiableSet(new LinkedHashSet<>(List.of(declaration.labels())));
+            if (inputTypes.isEmpty() || Double.isNaN(declaration.minimum()) || Double.isNaN(declaration.maximum())
+                    || declaration.minimum() > declaration.maximum() || labels.stream().anyMatch(String::isBlank)) {
+                throw new IllegalArgumentException("Invalid operation contract: " + declaration.name());
+            }
+            if (declaration.probability() || declaration.probabilities()) {
+                required(declaration.probabilityMeaning(), "Probability meaning");
+            }
+            if (declaration.confidence()) {
+                required(declaration.confidenceMeaning(), "Confidence meaning");
+            }
+            Map<String, Parameter> values = new LinkedHashMap<>();
+            for (SemanticParameter parameter : declaration.parameters()) {
+                Parameter contract = new Parameter(parameter);
+                if (values.putIfAbsent(contract.getName(), contract) != null) {
+                    throw new IllegalArgumentException("Duplicate parameter: " + contract.getName());
+                }
+            }
+            parameters = Collections.unmodifiableMap(values);
+        }
+
+        public String getName() {
+            return declaration.name();
+        }
+
+        public String getDescription() {
+            return declaration.description();
+        }
+
+        public Set<InputType> getInputTypes() {
+            return inputTypes;
+        }
+
+        public String getInputRequirements() {
+            return declaration.inputRequirements();
+        }
+
+        public Map<String, Parameter> getParameters() {
+            return parameters;
+        }
+
+        public ResultType getResultType() {
+            return declaration.resultType();
+        }
+
+        public String getResultMeaning() {
+            return declaration.resultMeaning();
+        }
+
+        public Set<String> getLabels() {
+            return labels;
+        }
+
+        public double getMinimum() {
+            return declaration.minimum();
+        }
+
+        public double getMaximum() {
+            return declaration.maximum();
+        }
+
+        public boolean isProbability() {
+            return declaration.probability();
+        }
+
+        public boolean isProbabilities() {
+            return declaration.probabilities();
+        }
+
+        public String getProbabilityMeaning() {
+            return declaration.probabilityMeaning();
+        }
+
+        public boolean isConfidence() {
+            return declaration.confidence();
+        }
+
+        public String getConfidenceMeaning() {
+            return declaration.confidenceMeaning();
+        }
+
+        public void validate(Map<String, Object> values) {
+            for (String name : values.keySet()) {
+                if (!parameters.containsKey(name)) {
+                    throw new IllegalArgumentException("Unknown parameter '" + name + "' for operation '" + getName() + "'");
+                }
+            }
+            parameters.forEach((name, parameter) -> parameter.validate(values.get(name), values.containsKey(name)));
+        }
+
+        public void validateInput(Object state) {
+            if (!(state instanceof String && inputTypes.contains(InputType.TEXT)
+                    || (state instanceof Map<?, ?> || state instanceof List<?>) && inputTypes.contains(InputType.STRUCTURED))) {
+                throw new IllegalArgumentException("Unsupported selected state; accepts " + inputTypes + " input");
+            }
+        }
+
+        /** Validate the typed answer; decision policy has already been applied by the expert. */
+        public Object validateResult(SemanticResult result) {
+            if (result == null) {
+                throw new IllegalArgumentException("Missing semantic result");
+            }
+            Object value = result.getValue();
+            boolean valid = switch (getResultType()) {
+                case BOOLEAN -> value instanceof Boolean;
+                case CHOICE -> value instanceof String text && !text.isBlank() && (labels.isEmpty() || labels.contains(text));
+                case SCORE -> value instanceof Number number && withinBounds(number, getMinimum(), getMaximum());
+                case CLASSIFICATION ->
+                    value instanceof Set<?> set && set.stream().allMatch(label -> label instanceof String text
+                            && !text.isBlank() && (labels.isEmpty() || labels.contains(text)));
+            };
+            if (!valid) {
+                throw new IllegalArgumentException("Semantic result does not match " + getResultType() + " contract");
+            }
+            if (result.getProbability() != null && !isProbability()
+                    || !result.getProbabilities().isEmpty() && !isProbabilities()
+                    || result.getConfidence() != null && !isConfidence()) {
+                throw new IllegalArgumentException("Semantic result contains undeclared probability or confidence information");
+            }
+            if (!labels.isEmpty() && !labels.containsAll(result.getProbabilities().keySet())) {
+                throw new IllegalArgumentException("Semantic result probabilities contain unknown labels");
+            }
+            return value;
         }
     }
 
-    /** Named construction of an immutable, explicitly supported contract. */
-    public static final class Builder {
-        private String name;
-        private String description;
-        private String provider;
-        private String artifactId;
-        private Set<InputType> inputTypes = Set.of();
-        private Set<ResultType> resultTypes = Set.of();
-        private Instructions instructions = Instructions.REQUIRED;
-        private boolean callerDefinedCriteria;
-        private boolean booleanProbability;
-        private boolean choiceProbabilities;
-        private Set<ResultType> confidenceTypes = Set.of();
-        private String probabilityMeaning;
-        private String confidenceMeaning;
-        private String trueMeaning;
-        private int maxChoices;
-        private int maxScoreLevels;
+    /** Immutable parameter metadata. Values are checked without coercion or inclusion in diagnostics. */
+    public static final class Parameter {
+        private final SemanticParameter declaration;
+        private final Set<String> values;
 
-        private Builder() {
+        private Parameter(SemanticParameter declaration) {
+            this.declaration = declaration;
+            Set<Class<?>> types = Set.of(String.class, Boolean.class, Number.class, Map.class, List.class);
+            if (!types.contains(declaration.type())
+                    || declaration.itemType() != Object.class && !types.contains(declaration.itemType())) {
+                throw new IllegalArgumentException(
+                        "Parameter types must be String, Boolean, Number, Map or List; use Number for numeric values");
+            }
+            if (declaration.integer() && declaration.type() != Number.class) {
+                throw new IllegalArgumentException("Integer constraint requires a Number parameter");
+            }
+            required(declaration.name(), "Parameter name");
+            required(declaration.description(), "Parameter description");
+            if (!declaration.required()) {
+                required(declaration.omission(), "Parameter omission behaviour");
+            }
+            if (Double.isNaN(declaration.minimum()) || Double.isNaN(declaration.maximum())
+                    || declaration.minimum() > declaration.maximum()
+                    || declaration.minSize() < 0 || declaration.minSize() > declaration.maxSize()) {
+                throw new IllegalArgumentException("Invalid constraints for parameter '" + declaration.name() + "'");
+            }
+            values = Set.copyOf(List.of(declaration.values()));
+            if (!values.isEmpty() && declaration.type() != String.class) {
+                throw new IllegalArgumentException("Allowed values require a String parameter");
+            }
         }
 
-        private Builder(SemanticCapabilities capabilities) {
-            this.name = capabilities.name;
-            this.description = capabilities.description;
-            this.provider = capabilities.provider;
-            this.artifactId = capabilities.artifactId;
-            this.inputTypes = capabilities.inputTypes;
-            this.resultTypes = capabilities.resultTypes;
-            this.instructions = capabilities.instructions;
-            this.callerDefinedCriteria = capabilities.callerDefinedCriteria;
-            this.booleanProbability = capabilities.booleanProbability;
-            this.choiceProbabilities = capabilities.choiceProbabilities;
-            this.confidenceTypes = capabilities.confidenceTypes;
-            this.probabilityMeaning = capabilities.probabilityMeaning;
-            this.confidenceMeaning = capabilities.confidenceMeaning;
-            this.trueMeaning = capabilities.trueMeaning;
-            this.maxChoices = capabilities.maxChoices;
-            this.maxScoreLevels = capabilities.maxScoreLevels;
+        public String getName() {
+            return declaration.name();
         }
 
-        public Builder name(String name) {
-            this.name = name;
-            return this;
+        public String getDescription() {
+            return declaration.description();
         }
 
-        public Builder description(String description) {
-            this.description = description;
-            return this;
+        public Class<?> getType() {
+            return declaration.type();
         }
 
-        public Builder provider(String provider) {
-            this.provider = provider;
-            return this;
+        public boolean isInteger() {
+            return declaration.integer();
         }
 
-        public Builder artifactId(String artifactId) {
-            this.artifactId = artifactId;
-            return this;
+        public Class<?> getItemType() {
+            return declaration.itemType();
         }
 
-        public Builder inputTypes(InputType... inputTypes) {
-            this.inputTypes = EnumSet.noneOf(InputType.class);
-            Collections.addAll(this.inputTypes, inputTypes);
-            return this;
+        public boolean isRequired() {
+            return declaration.required();
         }
 
-        public Builder resultTypes(ResultType... resultTypes) {
-            this.resultTypes = EnumSet.noneOf(ResultType.class);
-            Collections.addAll(this.resultTypes, resultTypes);
-            return this;
+        public String getOmission() {
+            return declaration.omission();
         }
 
-        public Builder instructions(Instructions instructions) {
-            this.instructions = instructions;
-            return this;
+        public double getMinimum() {
+            return declaration.minimum();
         }
 
-        public Builder callerDefinedCriteria(boolean callerDefinedCriteria) {
-            this.callerDefinedCriteria = callerDefinedCriteria;
-            return this;
+        public double getMaximum() {
+            return declaration.maximum();
         }
 
-        public Builder booleanProbability(boolean booleanProbability) {
-            this.booleanProbability = booleanProbability;
-            return this;
+        public int getMinSize() {
+            return declaration.minSize();
         }
 
-        public Builder choiceProbabilities(boolean choiceProbabilities) {
-            this.choiceProbabilities = choiceProbabilities;
-            return this;
+        public int getMaxSize() {
+            return declaration.maxSize();
         }
 
-        public Builder confidenceTypes(ResultType... confidenceTypes) {
-            this.confidenceTypes = EnumSet.noneOf(ResultType.class);
-            Collections.addAll(this.confidenceTypes, confidenceTypes);
-            return this;
+        public Set<String> getValues() {
+            return values;
         }
 
-        public Builder probabilityMeaning(String probabilityMeaning) {
-            this.probabilityMeaning = probabilityMeaning;
-            return this;
+        private void validate(Object value, boolean present) {
+            if (!present) {
+                if (isRequired()) {
+                    throw invalid("is required");
+                }
+                return;
+            }
+            if (value == null) {
+                throw invalid("must not be null; omit it to use the expert's omission behavior");
+            }
+            if (!getType().isInstance(value)) {
+                throw invalid("must be " + getType().getSimpleName());
+            }
+            if (value instanceof Number number && !withinBounds(number, getMinimum(), getMaximum())) {
+                throw invalid("is outside its numeric constraints");
+            }
+            if (isInteger() && new BigDecimal(value.toString()).stripTrailingZeros().scale() > 0) {
+                throw invalid("must be an integer");
+            }
+            int size = -1;
+            if (value instanceof String text) {
+                size = text.strip().length();
+            } else if (value instanceof Map<?, ?> map) {
+                size = map.size();
+                map.values().forEach(this::validateItem);
+            } else if (value instanceof List<?> list) {
+                size = list.size();
+                list.forEach(this::validateItem);
+            }
+            if (size >= 0 && (size < getMinSize() || size > getMaxSize())) {
+                throw invalid("is outside its size constraints");
+            }
+            if (!values.isEmpty() && !values.contains(value)) {
+                throw invalid("is not an allowed value");
+            }
         }
 
-        public Builder confidenceMeaning(String confidenceMeaning) {
-            this.confidenceMeaning = confidenceMeaning;
-            return this;
+        private void validateItem(Object value) {
+            if (getItemType() != Object.class && !getItemType().isInstance(value)) {
+                throw invalid("items must be " + getItemType().getSimpleName());
+            }
         }
 
-        public Builder trueMeaning(String trueMeaning) {
-            this.trueMeaning = trueMeaning;
-            return this;
-        }
-
-        public Builder maxChoices(int maxChoices) {
-            this.maxChoices = maxChoices;
-            return this;
-        }
-
-        public Builder maxScoreLevels(int maxScoreLevels) {
-            this.maxScoreLevels = maxScoreLevels;
-            return this;
-        }
-
-        public SemanticCapabilities build() {
-            return new SemanticCapabilities(true, this);
+        private IllegalArgumentException invalid(String reason) {
+            return new IllegalArgumentException("Parameter '" + getName() + "' " + reason);
         }
     }
 }

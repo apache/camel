@@ -29,7 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.language.semantic.SemanticLanguage;
-import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,7 +38,7 @@ class SemanticInitializationTest {
     void initializationDoesNotAcquirePublicContextOrRegistryMonitors() throws Exception {
         ExecutorService callers = Executors.newSingleThreadExecutor();
         try (var context = new DefaultCamelContext()) {
-            context.start();
+            context.init();
             synchronized (context) {
                 var questions = callers.submit(() -> SemanticQuestions.get(context));
                 assertThat(questions.get(10, TimeUnit.SECONDS)).isSameAs(SemanticQuestions.get(context));
@@ -85,7 +84,7 @@ class SemanticInitializationTest {
         CountingAdapter.started.set(0);
         CountingAdapter.stopped.set(0);
         try (var context = new DefaultCamelContext()) {
-            context.start();
+            context.init();
             var first = language(context, CountingAdapter.class);
             var second = language(context, CountingAdapter.class);
             List<Future<String>> results = new ArrayList<>();
@@ -120,8 +119,8 @@ class SemanticInitializationTest {
         BlockingAdapter.entered = new CountDownLatch(1);
         BlockingAdapter.release = new CountDownLatch(1);
         try (var first = new DefaultCamelContext(); var second = new DefaultCamelContext()) {
-            first.start();
-            second.start();
+            first.init();
+            second.init();
             var blocked = language(first, BlockingAdapter.class);
             var independent = language(second, Adapter.class);
             Future<?> creation = callers.submit(() -> blocked.createExpression("ref:q"));
@@ -150,7 +149,7 @@ class SemanticInitializationTest {
         return language;
     }
 
-    public static class Adapter extends ServiceSupport implements SemanticAdapter {
+    public static class Adapter extends TestSemanticAdapter {
         @Override
         public void validate(SemanticQuestion question) {
         }

@@ -22,19 +22,19 @@ import java.util.Map;
 /**
  * Provider-independent semantic evaluation. Implementations must support concurrent calls, bound evaluation time and
  * resource use, honor interruption, and release outstanding work on shutdown. Exceptions must not expose state or
- * credentials. Validation must not perform inference. Provider configuration belongs to the provider component.
+ * credentials. Validation must not perform inference or contact external services. Provider configuration belongs to
+ * the provider component.
  *
  * Adapters created by the language receive the Camel context when CamelContextAware and are managed when Service.
  * Referenced registry beans retain their existing lifecycle owner.
  */
 public interface SemanticAdapter {
-    /** Static defaults, or unknown for legacy adapters. This method must not load models or contact services. */
-    default SemanticCapabilities capabilities() {
-        return SemanticCapabilities.from(getClass().getAnnotation(SemanticExpert.class));
-    }
-
     /** Reject unsupported question kinds, criteria, decision policies or input selectors before traffic starts. */
     void validate(SemanticQuestion question);
+
+    /** Validate message-dependent requirements before any operation in a batch performs inference. */
+    default void validateInput(SemanticQuestion evaluation, Object state) {
+    }
 
     /** Synchronous, potentially blocking evaluation. Operational errors must be thrown, never returned as decisions. */
     SemanticResult evaluate(SemanticQuestion question, Object state) throws Exception;
@@ -42,7 +42,8 @@ public interface SemanticAdapter {
     /**
      * Evaluate named questions against the same selected state, returning exactly one result per name. The default
      * implementation calls the single-question method sequentially; providers may override it to use one request.
-     * Operational errors must be thrown, never returned as partial results. The language applies each decision policy.
+     * Operational errors must be thrown, never returned as partial results. The expert applies any requested decision
+     * policy exactly once.
      */
     default Map<String, SemanticResult> evaluateBatch(Map<String, SemanticQuestion> questions, Object state) throws Exception {
         Map<String, SemanticResult> results = new LinkedHashMap<>();

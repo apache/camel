@@ -18,8 +18,10 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.language.simple.MiscExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.StringHelper;
@@ -33,12 +35,37 @@ import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWith
  * All four functions support an optional input-source qualifier so the language operates on a header, exchange
  * property, or variable rather than the body: e.g. {@code ${jq(header:myHeader,.name)}}.
  * <p>
+ * {@code ${semantic('name')}} delegates to a named evaluation whose declaration selects the input.
  */
 public final class QueryLanguageFunctionFactory implements SimpleLanguageFunctionFactory {
 
     @Override
     public Expression createFunction(CamelContext camelContext, String function, int index) {
         String remainder;
+
+        remainder = ifStartsWithReturnRemainder("semantic(", function);
+        if (remainder != null) {
+            if (!remainder.endsWith(")")) {
+                throw new SimpleParserException("Valid syntax: ${semantic('evaluationName')}", index);
+            }
+            String argument = remainder.substring(0, remainder.length() - 1).strip();
+            if (argument.length() < 3 || !(argument.startsWith("'") && argument.endsWith("'")
+                    || argument.startsWith("\"") && argument.endsWith("\""))) {
+                throw new SimpleParserException("Semantic requires one quoted evaluation name", index);
+            }
+            String name = argument.substring(1, argument.length() - 1);
+            if (name.isBlank() || name.indexOf(argument.charAt(0)) >= 0) {
+                throw new SimpleParserException("Semantic requires one quoted evaluation name", index);
+            }
+            Language semantic;
+            try {
+                semantic = camelContext.resolveLanguage("semantic");
+            } catch (NoSuchLanguageException missing) {
+                throw new SimpleParserException(
+                        "The semantic function requires camel-semantic on the classpath", index);
+            }
+            return semantic.createExpression("ref:" + name);
+        }
 
         remainder = ifStartsWithReturnRemainder("jq(", function);
         if (remainder != null) {

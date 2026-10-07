@@ -34,6 +34,14 @@ public class SemanticReloadPlugin implements ContextServicePlugin {
         installXmlLoader(context);
         lifecycle = new LifecycleStrategySupport() {
             @Override
+            public void onContextStarting(CamelContext camelContext) {
+                SemanticQuestions questions = camelContext.getCamelContextExtension().getContextPlugin(SemanticQuestions.class);
+                if (questions != null) {
+                    questions.validate();
+                }
+            }
+
+            @Override
             public void onContextInitializing(CamelContext camelContext) {
                 // Applications can replace the registry after the context's eager build phase.
                 installXmlLoader(camelContext);

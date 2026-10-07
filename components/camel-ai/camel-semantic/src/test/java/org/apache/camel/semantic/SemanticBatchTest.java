@@ -328,10 +328,11 @@ class SemanticBatchTest {
             case CHOICE -> new SemanticResult(
                     "billing", null, Map.of("billing", 0.9, "technical", 0.1), 0.8, Map.of("provider", "fixture"));
             case SCORE -> new SemanticResult(1.2, null, null, 0.7, Map.of("provider", "fixture"));
+            default -> throw new IllegalArgumentException("Unsupported fixture operation");
         };
     }
 
-    private static class RecordingAdapter implements SemanticAdapter {
+    private static class RecordingAdapter extends TestSemanticAdapter {
         final List<SemanticQuestion.Type> calls = new ArrayList<>();
         final List<Object> states = new ArrayList<>();
 
@@ -343,7 +344,7 @@ class SemanticBatchTest {
         public SemanticResult evaluate(SemanticQuestion question, Object state) throws Exception {
             calls.add(question.getType());
             states.add(state);
-            return result(question.getType());
+            return applyPolicy(question, result(question.getType()));
         }
     }
 }

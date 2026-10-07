@@ -16,40 +16,50 @@
  */
 package org.apache.camel.semantic.yaml;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
-import org.apache.camel.dsl.yaml.common.exception.InvalidEnumException;
 import org.apache.camel.dsl.yaml.common.exception.InvalidNodeTypeException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.semantic.SemanticQuestion;
+import org.apache.camel.semantic.SemanticQuestionBuilder;
 import org.apache.camel.semantic.SemanticQuestions;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
 import org.snakeyaml.engine.v2.api.ConstructNode;
+import org.snakeyaml.engine.v2.api.LoadSettings;
+import org.snakeyaml.engine.v2.constructor.StandardConstructor;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 import org.snakeyaml.engine.v2.nodes.SequenceNode;
+import org.snakeyaml.engine.v2.nodes.Tag;
 
 /** Named semantic declarations are installed in a resource-wide pass before route references are resolved. */
 @YamlIn
 @YamlType(nodes = "semantic", properties = {
-        @YamlProperty(name = "question",
-                      type = "map:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionSchema",
-                      required = true)
+        @YamlProperty(name = "__oneOf",
+                      type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionBlockSchema",
+                      oneOf = "declarations", required = true),
+        @YamlProperty(name = "__oneOf",
+                      type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationBlockSchema",
+                      oneOf = "declarations", required = true)
 })
 public class SemanticDefinitionDeserializer extends YamlDeserializerSupport implements ConstructNode, YamlDeserializerResolver {
     private static final Set<String> FIELDS
-            = Set.of("type", "expert", "instructions", "state", "criteria", "threshold", "uncertainty", "uncertaintyPolicy");
+            = Set.of("type", "operation", "expert", "parameters", "instructions", "state", "criteria", "threshold",
+                    "uncertainty", "uncertaintyPolicy");
 
     @Override
     public ConstructNode resolve(String id) {
@@ -101,17 +111,33 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
 
     private static Map<String, SemanticQuestion> read(CamelContext context, Node node) {
         Map<String, Node> semantic = fields(node, "semantic declaration");
-        if (!semantic.keySet().equals(Set.of("question"))) {
-            throw new YamlDeserializationException(node, "Semantic declaration requires only question");
+        for (String field : semantic.keySet()) {
+            if (!Set.of("question", "evaluation", "expert", "state").contains(field)) {
+                throw new YamlDeserializationException(
+                        semantic.get(field), "Unknown property '" + field + "' in semantic declaration");
+            }
         }
+        if (semantic.containsKey("question") == semantic.containsKey("evaluation")) {
+            throw new YamlDeserializationException(node, "Semantic declaration requires exactly one of question or evaluation");
+        }
+        String declaration = semantic.containsKey("evaluation") ? "evaluation" : "question";
         Map<String, SemanticQuestion> result = new LinkedHashMap<>();
-        fields(semantic.get("question"), "semantic questions").forEach((name, definition) -> {
+        fields(semantic.get(declaration), "semantic evaluations").forEach((name, definition) -> {
             if (name.isBlank()) {
                 throw new YamlDeserializationException(definition, "Semantic question requires a nonblank name");
             }
             Map<String, Node> values = fields(definition, "semantic question '" + name + "'");
-            String expert = values.containsKey("expert") ? asText(values.get("expert")) : "default/automatic";
+            for (String common : List.of("expert", "state")) {
+                if (!values.containsKey(common) && semantic.containsKey(common)) {
+                    values.put(common, semantic.get(common));
+                }
+            }
+            String expert = "default/automatic";
             try {
+                if (values.containsKey("expert")) {
+                    expert = "invalid expert reference";
+                    expert = asText(values.get("expert"));
+                }
                 result.put(name, readQuestion(context, name, expert, definition, values));
             } catch (IllegalArgumentException | InvalidNodeTypeException e) {
                 throw new YamlDeserializationException(
@@ -133,63 +159,71 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
                         value, "Unknown property '" + field + "' in " + description + expertContext);
             }
         });
-        if (!values.containsKey("type")) {
-            throw new YamlDeserializationException(definition, "Semantic question type is required: " + name + expertContext);
+        if (values.containsKey("type") == values.containsKey("operation")) {
+            throw new YamlDeserializationException(
+                    definition, "Specify exactly one operation or type: " + name + expertContext);
         }
-        SemanticQuestion.Type type = enumeration(values.get("type"), name, expert, "type", SemanticQuestion.Type.class);
-        Map<String, String> criteria = new LinkedHashMap<>();
-        List<String> levels = List.of();
-        if (values.containsKey("criteria")) {
-            if (type == SemanticQuestion.Type.SCORE) {
-                levels = asSequenceNode(values.get("criteria")).getValue().stream().map(YamlDeserializerSupport::asText)
-                        .toList();
-            } else {
-                fields(values.get("criteria"), "criteria for " + description + expertContext)
-                        .forEach((key, value) -> criteria.put(key, asText(value)));
+        String operation = values.containsKey("operation")
+                ? asText(values.get("operation"))
+                : asText(values.get("type")).toLowerCase(Locale.ROOT);
+        SemanticQuestionBuilder builder = new SemanticQuestionBuilder().operation(operation)
+                .expert(asText(values.get("expert"))).state(asText(values.get("state")));
+        if (values.containsKey("parameters")) {
+            fields(values.get("parameters"), "evaluation parameters")
+                    .forEach((key, value) -> builder.parameter(key, value(value)));
+        }
+        for (String field : List.of("instructions", "criteria", "threshold", "uncertainty", "uncertaintyPolicy")) {
+            Node node = values.get(field);
+            if (node == null) {
+                continue;
+            }
+            switch (field) {
+                case "instructions" -> builder.instructions(asText(node));
+                case "threshold", "uncertainty" -> {
+                    try {
+                        builder.parameter(field, Double.valueOf(context.resolvePropertyPlaceholders(asText(node))));
+                    } catch (NumberFormatException invalid) {
+                        throw new YamlDeserializationException(
+                                node,
+                                "Invalid numeric value for '" + field + "' in " + description + expertContext);
+                    }
+                }
+                case "uncertaintyPolicy" -> builder.uncertaintyPolicy(asText(node));
+                case "criteria" -> {
+                    if (node instanceof MappingNode) {
+                        Map<String, String> criteria = new LinkedHashMap<>();
+                        fields(node, "criteria").forEach((key, child) -> criteria.put(key, asText(child)));
+                        builder.parameter(field, criteria);
+                    } else if (node instanceof SequenceNode sequence) {
+                        builder.parameter(field,
+                                sequence.getValue().stream().map(SemanticDefinitionDeserializer::asText).toList());
+                    } else {
+                        builder.parameter(field, value(node));
+                    }
+                }
+                default -> throw new IllegalStateException(field);
             }
         }
-        if (type != SemanticQuestion.Type.BOOLEAN && (values.containsKey("threshold") || values.containsKey("uncertainty")
-                || values.containsKey("uncertaintyPolicy"))) {
-            throw new YamlDeserializationException(
-                    definition, "Threshold and uncertainty policy require a boolean question: " + name + expertContext);
-        }
-        SemanticQuestion.UncertaintyPolicy policy = values.containsKey("uncertaintyPolicy")
-                ? enumeration(values.get("uncertaintyPolicy"), name, expert, "uncertaintyPolicy",
-                        SemanticQuestion.UncertaintyPolicy.class)
-                : SemanticQuestion.UncertaintyPolicy.FAIL;
-        return new SemanticQuestion(
-                type, asText(values.get("instructions")), asText(values.get("state")),
-                criteria, levels, number(context, values, name, expert, "threshold", 0.5),
-                number(context, values, name, expert, "uncertainty", 0), policy, asText(values.get("expert")));
+        return builder.build(context);
     }
 
-    private static <T extends Enum<T>> T enumeration(Node node, String question, String expert, String field, Class<T> type) {
-        try {
-            return asEnum(node, type);
-        } catch (InvalidEnumException e) {
-            throw new YamlDeserializationException(
-                    node, "Invalid value for '" + field + "' in semantic question '" + question + "': " + asText(node)
-                          + " (expert '" + expert + "')",
-                    e);
+    private static Object value(Node node) {
+        if (node instanceof MappingNode) {
+            Map<String, Object> result = new LinkedHashMap<>();
+            fields(node, "parameter map").forEach((key, child) -> result.put(key, value(child)));
+            return result;
         }
-    }
-
-    private static double number(
-            CamelContext context, Map<String, Node> values, String question, String expert, String name, double fallback) {
-        if (!values.containsKey(name)) {
-            return fallback;
+        if (node instanceof SequenceNode sequence) {
+            return sequence.getValue().stream().map(SemanticDefinitionDeserializer::value).toList();
         }
-        Node node = values.get(name);
-        String raw = asText(node);
-        try {
-            return Double.parseDouble(context.resolvePropertyPlaceholders(raw));
-        } catch (NumberFormatException e) {
-            throw new YamlDeserializationException(
-                    node,
-                    "Invalid numeric value for '" + name + "' in semantic question '" + question + "': " + raw
-                          + " (expert '" + expert + "')",
-                    e);
+        if (Tag.FLOAT.equals(node.getTag())) {
+            try {
+                return new BigDecimal(asText(node));
+            } catch (NumberFormatException invalid) {
+                throw new YamlDeserializationException(node, "Invalid numeric parameter");
+            }
         }
+        return new StandardConstructor(LoadSettings.builder().build()).constructSingleDocument(Optional.of(node));
     }
 
     private static Map<String, Node> fields(Node node, String description) {
@@ -204,49 +238,57 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
     }
 
     @YamlType(properties = {
-            @YamlProperty(name = "__oneOf",
-                          type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$BooleanSchema",
-                          oneOf = "kind", required = true),
-            @YamlProperty(name = "__oneOf",
-                          type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ChoiceSchema",
-                          oneOf = "kind", required = true),
-            @YamlProperty(name = "__oneOf",
-                          type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ScoreSchema",
-                          oneOf = "kind", required = true)
+            @YamlProperty(name = "expert", type = "string"),
+            @YamlProperty(name = "state", type = "string")
     })
-    public static class QuestionSchema {
+    public static class BlockSchema {
     }
 
     @YamlType(properties = {
-            @YamlProperty(name = "type", type = "enum:boolean", required = true),
+            @YamlProperty(name = "question",
+                          type = "map:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema",
+                          required = true)
+    })
+    public static class QuestionBlockSchema extends BlockSchema {
+    }
+
+    @YamlType(properties = {
+            @YamlProperty(name = "evaluation",
+                          type = "map:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema",
+                          required = true)
+    })
+    public static class EvaluationBlockSchema extends BlockSchema {
+    }
+
+    @YamlType(properties = {
+            @YamlProperty(name = "__oneOf",
+                          type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$MapCriteriaSchema",
+                          oneOf = "criteria", required = true),
+            @YamlProperty(name = "__oneOf",
+                          type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ListCriteriaSchema",
+                          oneOf = "criteria", required = true)
+    })
+    public static class EvaluationSchema {
+    }
+
+    @YamlType(properties = {
+            @YamlProperty(name = "operation", type = "string"),
+            @YamlProperty(name = "type", type = "string"),
             @YamlProperty(name = "expert", type = "string"),
-            @YamlProperty(name = "instructions", type = "string"),
             @YamlProperty(name = "state", type = "string"),
+            @YamlProperty(name = "parameters", type = "object"),
+            @YamlProperty(name = "instructions", type = "string"),
             @YamlProperty(name = "criteria", type = "map:string"),
             @YamlProperty(name = "threshold", type = "number"),
             @YamlProperty(name = "uncertainty", type = "number"),
-            @YamlProperty(name = "uncertaintyPolicy", type = "enum:fail,non-match")
+            @YamlProperty(name = "uncertaintyPolicy", type = "string")
     })
-    public static class BooleanSchema {
+    public static class MapCriteriaSchema {
     }
 
     @YamlType(properties = {
-            @YamlProperty(name = "type", type = "enum:choice", required = true),
-            @YamlProperty(name = "expert", type = "string"),
-            @YamlProperty(name = "instructions", type = "string"),
-            @YamlProperty(name = "state", type = "string"),
-            @YamlProperty(name = "criteria", type = "map:string", required = true)
-    })
-    public static class ChoiceSchema {
-    }
-
-    @YamlType(properties = {
-            @YamlProperty(name = "type", type = "enum:score", required = true),
-            @YamlProperty(name = "expert", type = "string"),
-            @YamlProperty(name = "instructions", type = "string"),
-            @YamlProperty(name = "state", type = "string"),
             @YamlProperty(name = "criteria", type = "array:string", required = true)
     })
-    public static class ScoreSchema {
+    public static class ListCriteriaSchema extends MapCriteriaSchema {
     }
 }
