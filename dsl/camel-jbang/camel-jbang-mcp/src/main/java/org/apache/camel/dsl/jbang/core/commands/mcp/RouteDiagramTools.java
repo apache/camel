@@ -60,13 +60,15 @@ public class RouteDiagramTools {
             @ToolArg(description = "Optional filter to limit the diagram to routes whose route id or source filename "
                                    + "matches the given pattern (supports wildcards)",
                      required = false) String filter,
-            @ToolArg(description = "Image width in pixels; 0 (or unset) = auto (only used for image themes)") Integer width,
+            @ToolArg(description = "Image width in pixels; 0 (or unset) = auto (only used for image themes)",
+                     required = false) Integer width,
             @ToolArg(description = "Font size in logical pixels for node text (default 12)", required = false) Integer fontSize,
             @ToolArg(description = "Node box width in logical pixels (default 180)", required = false) Integer boxWidth,
             @ToolArg(description = "What text to display in diagram nodes: 'code' (default), 'description' (prefer "
                                    + "description over code if available), or 'both' (show description and code)",
                      required = false) String nodeLabel,
-            @ToolArg(description = "Whether to ignore route loading and compilation errors (use with care)") Boolean ignoreLoadingError) {
+            @ToolArg(description = "Whether to ignore route loading and compilation errors (use with care)",
+                     required = false) Boolean ignoreLoadingError) {
 
         if (sourceFile == null || sourceFile.isBlank()) {
             throw new ToolCallException("'sourceFile' parameter is required", null);

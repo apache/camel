@@ -204,7 +204,7 @@ public class RuntimeTools {
           description = "Dump route definitions in XML, YAML, or Java DSL format.")
     public JsonObject camel_runtime_route_dump(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
-            @ToolArg(description = "Route ID to dump (use * for all routes)") String routeId,
+            @ToolArg(description = "Route ID to dump (use * for all routes)", required = false) String routeId,
             @ToolArg(description = "Output format: xml, yaml, or java (default: yaml)", required = false) String format) {
         Map<String, String> args = new HashMap<>();
         args.put("routeId", routeId != null ? routeId : "*");
@@ -216,7 +216,7 @@ public class RuntimeTools {
           description = "Show the route structure as a tree of processors.")
     public JsonObject camel_runtime_route_structure(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
-            @ToolArg(description = "Route ID to inspect (use * for all routes)") String routeId) {
+            @ToolArg(description = "Route ID to inspect (use * for all routes)", required = false) String routeId) {
         return delegateToRegistry("get_route_structure", nameOrPid,
                 Map.of("routeId", routeId != null ? routeId : "*"));
     }
@@ -229,8 +229,9 @@ public class RuntimeTools {
                   for each EIP option and component endpoint option.""")
     public JsonObject camel_runtime_processor_detail(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
-            @ToolArg(description = "Route ID to inspect (use * for all routes)") String routeId,
-            @ToolArg(description = "If true, enrich each processor's options with documentation from the Camel catalog") Boolean includeDocs) {
+            @ToolArg(description = "Route ID to inspect (use * for all routes)", required = false) String routeId,
+            @ToolArg(description = "If true, enrich each processor's options with documentation from the Camel catalog",
+                     required = false) Boolean includeDocs) {
         Map<String, String> args = new HashMap<>();
         args.put("routeId", routeId != null ? routeId : "*");
         if (includeDocs != null && includeDocs) {
@@ -268,8 +269,9 @@ public class RuntimeTools {
     public JsonObject camel_runtime_send(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Endpoint URI to send to (e.g., direct:myRoute, seda:queue)") String endpoint,
-            @ToolArg(description = "Message body to send") String body,
-            @ToolArg(description = "Message headers as key=value pairs separated by newlines") String headers) {
+            @ToolArg(description = "Message body to send", required = false) String body,
+            @ToolArg(description = "Message headers as key=value pairs separated by newlines",
+                     required = false) String headers) {
         if (endpoint == null || endpoint.isBlank()) {
             throw new ToolCallException("endpoint is required", null);
         }
@@ -328,8 +330,10 @@ public class RuntimeTools {
                   and to external endpoints. Returns nodes and edges describing the route graph.""")
     public JsonObject camel_runtime_route_topology(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
-            @ToolArg(description = "Include live metrics (message counts, throughput) on nodes and edges") Boolean metric,
-            @ToolArg(description = "Include external systems (databases, messaging brokers, etc.) as nodes") Boolean external) {
+            @ToolArg(description = "Include live metrics (message counts, throughput) on nodes and edges",
+                     required = false) Boolean metric,
+            @ToolArg(description = "Include external systems (databases, messaging brokers, etc.) as nodes",
+                     required = false) Boolean external) {
         Map<String, String> args = new HashMap<>();
         args.put("metric", metric == null || metric ? "true" : "false");
         args.put("external", external == null || external ? "true" : "false");
@@ -398,12 +402,14 @@ public class RuntimeTools {
     public JsonObject camel_runtime_memory_leak(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Command: start, stop, status, or query") String command,
-            @ToolArg(description = "Recording duration in seconds (only for start command, default 60, use 0 for manual stop)") String duration,
+            @ToolArg(description = "Recording duration in seconds (only for start command, default 60, use 0 for manual stop)",
+                     required = false) String duration,
             @ToolArg(description = "Recording mode: dual (default, two recordings at Xs and 2Xs with trend comparison) or single (one recording)",
                      required = false) String mode,
             @ToolArg(description = "Include allocation stack traces in results (default false, set true for detailed analysis)",
                      required = false) String stacktrace,
-            @ToolArg(description = "Minimum total size in bytes to include a sample (e.g. 1024 for 1KB). Filters out small allocations to reduce noise. Default 1024 (1KB) in dual mode") String minSize) {
+            @ToolArg(description = "Minimum total size in bytes to include a sample (e.g. 1024 for 1KB). Filters out small allocations to reduce noise. Default 1024 (1KB) in dual mode",
+                     required = false) String minSize) {
         if (command == null || command.isBlank()) {
             throw new ToolCallException("command is required (start, stop, status, or query)", null);
         }

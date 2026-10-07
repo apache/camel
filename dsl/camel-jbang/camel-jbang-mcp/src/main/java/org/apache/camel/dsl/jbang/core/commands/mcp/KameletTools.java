@@ -48,7 +48,7 @@ public class KameletTools {
     public KameletListResult camel_catalog_kamelets(
             @ToolArg(description = "Filter kamelets by name or description (case-insensitive substring match)",
                      required = false) String filter,
-            @ToolArg(description = "Filter by type: source, sink, or action") String type,
+            @ToolArg(description = "Filter by type: source, sink, or action", required = false) String type,
             @ToolArg(description = "Maximum number of results to return (default: 50)", required = false) Integer limit,
             @ToolArg(description = "Apache Camel Kamelets version. If not specified, uses the default version.",
                      required = false) String kameletsVersion) {

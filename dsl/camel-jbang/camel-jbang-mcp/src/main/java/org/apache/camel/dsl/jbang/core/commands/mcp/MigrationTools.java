@@ -115,7 +115,7 @@ public class MigrationTools {
             @ToolArg(description = "Current Camel version (e.g., 3.20.0)") String currentVersion,
             @ToolArg(description = "Target Camel version (e.g., 4.18.0)") String targetVersion,
             @ToolArg(description = ToolArgDocs.RUNTIME_REQUIRED) String runtime,
-            @ToolArg(description = "Current Java version (e.g., 11, 17, 21)") String javaVersion) {
+            @ToolArg(description = "Current Java version (e.g., 11, 17, 21)", required = false) String javaVersion) {
 
         if (camelComponents == null || camelComponents.isBlank()) {
             throw new ToolCallException("camelComponents is required", null);
@@ -215,7 +215,7 @@ public class MigrationTools {
             @ToolArg(description = ToolArgDocs.RUNTIME_REQUIRED, required = false) String runtime,
             @ToolArg(description = "Current Camel version (e.g., 4.4.0)") String currentVersion,
             @ToolArg(description = "Target Camel version (e.g., 4.18.0)") String targetVersion,
-            @ToolArg(description = "Current Java version (e.g., 11, 17)") String javaVersion,
+            @ToolArg(description = "Current Java version (e.g., 11, 17)", required = false) String javaVersion,
             @ToolArg(description = "If true, perform a dry run without making changes (default: true)",
                      required = false) Boolean dryRun) {
 

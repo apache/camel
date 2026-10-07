@@ -60,7 +60,8 @@ public class DependencyCheckTools {
                                    + "IMPORTANT: Avoid including sensitive data such as passwords, tokens, or API keys. "
                                    + "Sensitive content is automatically detected and masked.") String pomContent,
             @ToolArg(description = "Route definitions (YAML, XML, or Java DSL) to check for missing component dependencies. "
-                                   + "Multiple routes can be provided concatenated.") String routes,
+                                   + "Multiple routes can be provided concatenated.",
+                     required = false) String routes,
             @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
             @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
             @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom,
