@@ -1518,7 +1518,8 @@ class SourceTab extends AbstractTab {
 
     /** An action or a sink is entered from kamelet:source: the routes reach it as kamelet:<its name>. */
     private static String kameletFromUri(String kamelet, String uri) {
-        return kamelet != null && uri.startsWith("kamelet:source") ? "kamelet:" + kamelet : uri;
+        return kamelet != null && (uri.equals("kamelet:source") || uri.startsWith("kamelet:source?"))
+                ? "kamelet:" + kamelet : uri;
     }
 
     private void emitRouteEntry(List<RouteEntry> index, String routeId, String fromUri, String filePath, int fromLine) {

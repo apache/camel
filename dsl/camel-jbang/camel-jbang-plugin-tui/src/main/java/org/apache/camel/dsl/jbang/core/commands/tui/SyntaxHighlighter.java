@@ -237,8 +237,8 @@ class SyntaxHighlighter {
         }
         return switch (ext) {
             case "java" -> Language.JAVA;
-            case "yaml", "yml", "camel.yaml", "camel.yml" -> Language.YAML;
-            case "xml", "camel.xml" -> Language.XML;
+            case "yaml", "yml" -> Language.YAML;
+            case "xml" -> Language.XML;
             case "properties" -> Language.PROPERTIES;
             default -> Language.PLAIN;
         };
