@@ -156,7 +156,7 @@ public class OpenFeatureLanguage extends LanguageSupport {
                         ctx = (Map<String, Object>) ctxHeader;
                     }
                 }
-                return endpoint.evaluate(exchange, flagKey, evalType, tk, ctx);
+                return endpoint.evaluate(flagKey, evalType, tk, ctx);
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
