@@ -164,29 +164,31 @@ class AiLogPopup {
 
     private void renderDetail(Frame frame, Rect area) {
         AiPanel.LogEntry entry = entries.get(selected);
+        String content = entry.detail();
+        if (content != null && !content.isBlank()
+                && entry.level() != AiPanel.LogLevel.TOOL && entry.level() != AiPanel.LogLevel.RESULT) {
+            // an answer or a prompt is Markdown: shown as the AI panel shows it (bold, code, lists), wrapped
+            Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Detail ").build();
+            frame.renderWidget(dev.tamboui.markdown.MarkdownView.builder()
+                    .source(content)
+                    .scroll(detailScroll)
+                    .block(block)
+                    .styles(Theme.chatMarkdownStyles())
+                    .syntaxTheme(Theme.syntaxTheme())
+                    .build(), area);
+            return;
+        }
         List<Line> lines = new ArrayList<>();
-        // the text is wrapped to the panel here, as the scroll counts lines: a long line was cut at the right edge
-        int wrapWidth = Math.max(10, area.width() - 4);
 
         String detail = entry.detail();
         if (detail != null && !detail.isBlank()) {
-            if (entry.level() == AiPanel.LogLevel.TOOL || entry.level() == AiPanel.LogLevel.RESULT) {
-                lines.add(Line.from(Span.styled(
-                        entry.level() == AiPanel.LogLevel.TOOL
-                                ? TuiIcons.ARROW_RIGHT + " Arguments"
-                                : TuiIcons.ARROW_LEFT + " Result",
-                        (entry.level() == AiPanel.LogLevel.TOOL ? Theme.warning() : Theme.success()).bold())));
-                addJsonLines(lines, detail);
-            } else {
-                lines.add(Line.from(Span.styled(TuiIcons.ARROW_RIGHT + " Content",
-                        Style.EMPTY.fg(Theme.accent()).bold())));
-                for (String line : detail.split("\n", -1)) {
-                    List<String> parts = line.isEmpty() ? List.of("") : TuiHelper.wrapWords(line, wrapWidth);
-                    for (String part : parts) {
-                        lines.add(Line.from(Span.styled("  " + part, Style.EMPTY.dim())));
-                    }
-                }
-            }
+            // a tool call or its result (an answer or a prompt is shown as Markdown above)
+            lines.add(Line.from(Span.styled(
+                    entry.level() == AiPanel.LogLevel.TOOL
+                            ? TuiIcons.ARROW_RIGHT + " Arguments"
+                            : TuiIcons.ARROW_LEFT + " Result",
+                    (entry.level() == AiPanel.LogLevel.TOOL ? Theme.warning() : Theme.success()).bold())));
+            addJsonLines(lines, detail);
         } else {
             lines.add(Line.from(Span.styled("(no detail data)", Style.EMPTY.dim())));
         }
