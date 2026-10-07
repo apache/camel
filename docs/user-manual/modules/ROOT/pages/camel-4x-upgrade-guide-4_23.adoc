@@ -1906,6 +1906,13 @@ through camel-http; set `componentName=vertx-http` to keep the Vert.x client. An
 is not affected. The Camel CLI (`camel run`) now adds camel-http, not camel-vertx-http, for a rest-openapi producer
 without `componentName`.
 
+=== camel-rest-openapi - path parameters are decoded
+
+The headers of the path parameters of a contract-first (`rest-openapi` consumer) operation now hold the decoded
+value, as with the Rest DSL: `/items/caf%C3%A9` sets the `id` header to `café`, not `caf%C3%A9`. Each path segment is
+decoded on its own (an encoded `/` stays in its parameter) and a `+` stays a `+`. A value with a malformed escape is
+kept as it is. Routes that decoded these headers themselves must no longer do so.
+
 === camel-jbang
 
 The `--runtime` option of `camel run` has a new default value `jbang`, which is the existing in-process

@@ -19,6 +19,7 @@ package org.apache.camel.component.rest.openapi;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -139,8 +140,11 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
                 consumerPath = consumerPath.substring(1);
             }
 
-            // map path-parameters from operation to camel headers
-            HttpHelper.evalPlaceholders(exchange.getMessage().getHeaders(), path, consumerPath);
+            // map path-parameters from operation to camel headers (the path is not decoded, so decode the value of
+            // each parameter after the path has been split, so an encoded / stays in its parameter)
+            Map<String, Object> headers = exchange.getMessage().getHeaders();
+            HttpHelper.evalPlaceholders((k, v) -> headers.put(k, HttpHelper.decodePathParameter(v.toString())), path,
+                    consumerPath);
 
             if (restRegistry != null) {
                 restRegistry.hit(verb, basePath, consumerPath);
