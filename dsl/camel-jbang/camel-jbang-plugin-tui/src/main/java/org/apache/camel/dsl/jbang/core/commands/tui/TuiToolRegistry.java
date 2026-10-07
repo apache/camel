@@ -1910,14 +1910,37 @@ class TuiToolRegistry {
         }
 
         List<String> camelArgs = buildExampleArgs(name, args);
+        lm.clearOutcome(name);
         lm.launchDetached(name, camelArgs);
 
+        // an example can fail a few seconds after it is launched (a missing API key, a bad route): wait for Camel to
+        // say it started, or for the failure, so the agent learns how it went
+        LaunchManager.LaunchOutcome outcome = null;
+        long deadline = System.currentTimeMillis() + RUN_EXAMPLE_WAIT_MS;
+        while ((outcome = lm.outcome(name)) == null && System.currentTimeMillis() < deadline) {
+            Thread.sleep(250);
+        }
         JsonObject result = new JsonObject();
-        result.put("status", "started");
-        result.put("message", "Started: " + name);
         result.put("name", name);
+        if (outcome == null) {
+            result.put("status", "starting");
+            result.put("message", "Still starting: " + name + " (a first run downloads its dependencies); "
+                                  + "tui_get_options lists it once it runs");
+        } else if (outcome.ok()) {
+            result.put("status", "started");
+            result.put("message", "Started: " + name);
+        } else {
+            result.put("status", "failed");
+            result.put("message", "Failed to start: " + name);
+            if (outcome.log() != null) {
+                result.put("log", outcome.log());
+            }
+        }
         return Jsoner.serialize(result);
     }
+
+    // how long tui_run_example waits for an example to start or fail
+    static final long RUN_EXAMPLE_WAIT_MS = 30_000;
 
     private static List<String> buildExampleArgs(String name, Map<String, Object> args) {
         List<String> camelArgs = new ArrayList<>();

@@ -455,17 +455,23 @@ class LaunchManager {
                     if (!pl.announced) {
                         notify("Started: " + pl.name, false);
                     }
-                } else if (failureLogCallback != null) {
-                    failureLogCallback.accept(pl.name, pl.outputFile);
+                    outcomes.put(pl.name, LaunchOutcome.started());
+                } else {
+                    outcomes.put(pl.name, LaunchOutcome.failed(pl.outputFile));
+                    if (failureLogCallback != null) {
+                        failureLogCallback.accept(pl.name, pl.outputFile);
+                    }
                 }
                 it.remove();
             } else if (pl.started) {
                 // up and running: a stop or a failure from now on is not a failed start
+                outcomes.put(pl.name, LaunchOutcome.started());
                 it.remove();
             } else if (pl.startFailed()) {
                 // the app gave up starting (port in use, build failure) but its JVM lives on: stop it, and show why
                 pl.process.descendants().forEach(ProcessHandle::destroy);
                 pl.process.destroy();
+                outcomes.put(pl.name, LaunchOutcome.failed(pl.outputFile));
                 if (failureLogCallback != null) {
                     failureLogCallback.accept(pl.name, pl.outputFile);
                 }
@@ -497,6 +503,46 @@ class LaunchManager {
      * then finds that its port is in use.
      */
     static final long WATCH_MS = 5 * 60_000;
+
+    // how the latest launch of each name went, for an agent that asks (tui_run_example waits for it)
+    private final Map<String, LaunchOutcome> outcomes = new ConcurrentHashMap<>();
+
+    /**
+     * How a launch went: started (Camel said so), or failed with the end of its output; null while it is starting.
+     */
+    record LaunchOutcome(boolean ok, String log) {
+
+        private static final Pattern ANSI = Pattern.compile("\u001B\\[[0-9;]*m");
+
+        static LaunchOutcome started() {
+            return new LaunchOutcome(true, null);
+        }
+
+        static LaunchOutcome failed(Path outputFile) {
+            String tail = null;
+            try {
+                // without colors and stack frames: the messages and their causes are what tell why
+                List<String> lines = Files.readAllLines(outputFile, StandardCharsets.UTF_8).stream()
+                        .map(l -> ANSI.matcher(l).replaceAll(""))
+                        .filter(l -> !l.stripLeading().startsWith("at ") && !l.stripLeading().startsWith("... "))
+                        .toList();
+                tail = String.join("\n", lines.subList(Math.max(0, lines.size() - 30), lines.size()));
+            } catch (Exception e) {
+                // no output to show
+            }
+            return new LaunchOutcome(false, tail);
+        }
+    }
+
+    /** Forgets how the last launch of the given name went, before it is launched again. */
+    void clearOutcome(String name) {
+        outcomes.remove(name);
+    }
+
+    /** How the latest launch of the given name went, or null while it is still starting. */
+    LaunchOutcome outcome(String name) {
+        return outcomes.get(name);
+    }
 
     /** How long an infra service may take to start: the first start pulls its container image. */
     static final long INFRA_WATCH_MS = 15 * 60_000;
