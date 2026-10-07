@@ -327,7 +327,8 @@ class FolderInputPopup {
     }
 
     private void renderInput(Frame frame, Rect area) {
-        int popupW = Math.min(70, area.width() - 4);
+        // wide enough for a folder path, so a remembered folder is not cut at its start
+        int popupW = Math.min(100, area.width() - 4);
         Rect popup = DialogHelper.centered(area, popupW, DialogHelper.INPUT_HEIGHT);
 
         frame.renderWidget(Clear.INSTANCE, popup);
