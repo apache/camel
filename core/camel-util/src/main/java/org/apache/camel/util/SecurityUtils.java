@@ -80,6 +80,7 @@ public final class SecurityUtils {
         map.put("ignoresslverification", new SecurityOption(INSECURE_SSL, "true"));
         map.put("ignoresslwarnings", new SecurityOption(INSECURE_SSL, "true"));
         map.put("knownhostsresource", new SecurityOption(INSECURE_SSL, ""));
+        map.put("mongodbsslinvalidhostnameallowed", new SecurityOption(INSECURE_SSL, "true"));
         map.put("nested", new SecurityOption(INSECURE_DEV, "true"));
         map.put("objectcodecpattern", new SecurityOption(INSECURE_SERIALIZATION, ""));
         map.put("objectmessageenabled", new SecurityOption(INSECURE_SERIALIZATION, "true"));
@@ -173,6 +174,8 @@ public final class SecurityUtils {
                 "component:oaipmh"));
         owners.put("knownhostsresource", Set.of(
                 "component:ssh"));
+        owners.put("mongodbsslinvalidhostnameallowed", Set.of(
+                "component:debeziummongodb"));
         owners.put("nested", Set.of(
                 "language:file",
                 "language:simple"));
