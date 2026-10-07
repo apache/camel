@@ -535,13 +535,26 @@ public final class AuthoringTools {
         // the problems whose fix is certain, as edits an agent can apply (camel_edit_file find/replace)
         JsonArray fixes = new JsonArray();
         String[] lines = content.split("\n", -1);
-        for (String error : errors) {
+        List<String> problems = new ArrayList<>(errors);
+        if (result.get("notes") instanceof JsonArray notes) {
+            for (Object note : notes) {
+                problems.add(String.valueOf(note));
+            }
+        }
+        for (String error : problems) {
             int line = lineOf(error);
             QuickFixes.Fix fix = line > 0 && line <= lines.length ? QuickFixes.fixFor(error, lines[line - 1]) : null;
             if (fix != null) {
                 JsonObject jo = new JsonObject();
                 jo.put("line", line);
-                jo.put("find", fix.oldText());
+                String find = fix.oldText();
+                if (fix.removesLine()) {
+                    // the line goes with its line break, and the key above it when it was its only item
+                    int[] range = QuickFixes.linesToRemove(List.of(lines), line - 1);
+                    find = String.join("\n", List.of(lines).subList(range[0], range[1] + 1))
+                           + (range[1] + 1 < lines.length ? "\n" : "");
+                }
+                jo.put("find", find);
                 jo.put("replace", fix.newText());
                 jo.put("fix", fix.label());
                 fixes.add(jo);

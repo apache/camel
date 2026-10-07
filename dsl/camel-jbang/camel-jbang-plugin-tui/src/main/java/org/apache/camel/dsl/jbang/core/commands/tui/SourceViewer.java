@@ -2235,6 +2235,19 @@ class SourceViewer {
         if (fixed == null) {
             return;
         }
+        if (fix.removesLine()) {
+            // an unused dependency of a Kamelet: the line goes, as with Ctrl+K, and the dependencies: key above it
+            // when it was the last one
+            int[] range = QuickFixes.linesToRemove(editLines(), row);
+            List<String> kept = new ArrayList<>(editLines());
+            kept.subList(range[0], range[1] + 1).clear();
+            applyBlockEdit(new YamlBlockEditor.EditResult(kept, Math.min(range[0], Math.max(0, kept.size() - 1)), 0));
+            dirty = true;
+            lineStatuses = null;
+            lastBackgroundValidationTime = 0;
+            notifySave("Fixed: " + fix.label(), false);
+            return;
+        }
         recordEditChange();
         editState.moveCursorToLineStart();
         for (int i = 0; i < line.length(); i++) {

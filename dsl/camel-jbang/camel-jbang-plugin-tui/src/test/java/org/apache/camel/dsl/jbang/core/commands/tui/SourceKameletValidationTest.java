@@ -219,6 +219,24 @@ class SourceKameletValidationTest {
     }
 
     @Test
+    void shiftF9RemovesAnUnusedDependency() throws Exception {
+        Path file = tempDir.resolve("tag-order-action.kamelet.yaml");
+        // camel:timer the only dependency, as the model wrote it: the dependencies: key goes with it
+        String timer = KAMELET.replace("    - \"camel:kamelet\"\n", "    - \"camel:timer\"\n");
+        Files.writeString(file, timer, StandardCharsets.UTF_8);
+        SourceViewer viewer = viewer(file);
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+        for (int i = 0; i < lineOf(timer, "\"camel:timer\""); i++) {
+            viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        }
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F9, KeyModifiers.SHIFT));
+        assertThat(viewer.editText()).doesNotContain("camel:timer").doesNotContain("dependencies:")
+                .contains("  template:");
+        assertThat(lastNotification.get()).isEqualTo("Fixed: remove camel:timer");
+    }
+
+    @Test
     void anErrorIsNotANote() throws Exception {
         Path file = tempDir.resolve("tag-order-action.kamelet.yaml");
         String self = KAMELET.replace("uri: kamelet:source", "uri: kamelet:tag-order-action");

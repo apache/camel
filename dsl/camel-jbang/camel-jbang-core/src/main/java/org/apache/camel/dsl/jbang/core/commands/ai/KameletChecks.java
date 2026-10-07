@@ -421,7 +421,7 @@ public final class KameletChecks {
             if ("core".equals(name)) {
                 // every Camel runtime has camel-core; camel:kamelet is not implied, it runs the template
                 notes.add(EndpointChecks.linePrefix(line(d)) + "spec.dependencies: camel:core is implied, every Camel"
-                          + " runtime has it: leave it out");
+                          + " runtime has it: remove this line");
                 continue;
             }
             if (!inspectable) {
@@ -433,9 +433,10 @@ public final class KameletChecks {
                     || usedArtifacts.contains(model.getArtifactId()) || delegatedTo(used, name)) {
                 continue;
             }
+            // what to do first: told only what to list, a model put another dependency on the line
             notes.add(EndpointChecks.linePrefix(line(d)) + "spec.dependencies: " + dep + " is not used by the template"
-                      + " (it has no " + name + ": endpoint): list only the components, languages and data formats the"
-                      + " template uses");
+                      + " (it has no " + name + ": endpoint): remove this line; a Kamelet lists only the components,"
+                      + " languages and data formats its template uses");
         }
         return notes;
     }
