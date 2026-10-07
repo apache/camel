@@ -165,6 +165,8 @@ class AiLogPopup {
     private void renderDetail(Frame frame, Rect area) {
         AiPanel.LogEntry entry = entries.get(selected);
         List<Line> lines = new ArrayList<>();
+        // the text is wrapped to the panel here, as the scroll counts lines: a long line was cut at the right edge
+        int wrapWidth = Math.max(10, area.width() - 4);
 
         String detail = entry.detail();
         if (detail != null && !detail.isBlank()) {
@@ -179,7 +181,10 @@ class AiLogPopup {
                 lines.add(Line.from(Span.styled(TuiIcons.ARROW_RIGHT + " Content",
                         Style.EMPTY.fg(Theme.accent()).bold())));
                 for (String line : detail.split("\n", -1)) {
-                    lines.add(Line.from(Span.styled("  " + line, Style.EMPTY.dim())));
+                    List<String> parts = line.isEmpty() ? List.of("") : TuiHelper.wrapWords(line, wrapWidth);
+                    for (String part : parts) {
+                        lines.add(Line.from(Span.styled("  " + part, Style.EMPTY.dim())));
+                    }
                 }
             }
         } else {
