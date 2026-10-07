@@ -17,6 +17,7 @@
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +27,9 @@ import java.util.ServiceLoader;
 
 import javax.net.ssl.SSLContext;
 
+import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.accesslog.AccessLogReceiver;
+import io.undertow.util.StatusCodes;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -476,6 +479,43 @@ public class UndertowEndpoint extends DefaultEndpoint
 
     public void setAllowedRoles(String allowedRoles) {
         this.allowedRoles = allowedRoles;
+    }
+
+    /**
+     * The allowed roles of this endpoint, or of the component when the endpoint does not configure any.
+     */
+    public List<String> computeAllowedRoles() {
+        String allowedRolesString = allowedRoles != null ? allowedRoles : getComponent().getAllowedRoles();
+        return allowedRolesString == null ? null : Arrays.asList(allowedRolesString.split("\\s*,\\s*"));
+    }
+
+    /**
+     * Whether requests to this endpoint are checked by the {@link UndertowSecurityProvider} or restricted to the
+     * allowed roles.
+     */
+    public boolean requiresAuthentication() {
+        List<String> roles = computeAllowedRoles();
+        return securityProvider != null || roles != null && !roles.isEmpty();
+    }
+
+    /**
+     * Applies the {@link UndertowSecurityProvider} and the allowed roles of this endpoint to a request.
+     *
+     * @return {@link StatusCodes#OK} if the request is allowed, otherwise the status code to reject it with
+     */
+    public int authenticate(HttpServerExchange httpExchange) throws Exception {
+        List<String> roles = computeAllowedRoles();
+        if (securityProvider != null) {
+            // security provider decides, whether endpoint is accessible
+            return securityProvider.authenticate(httpExchange, roles);
+        }
+        if (roles != null && !roles.isEmpty()) {
+            // this case could happen due to bad configuration
+            // if allowedRoles are present but securityProvider is not, access has to be denied in this case
+            LOG.warn("Illegal state caused by missing securityProvider but existing allowed roles!");
+            return StatusCodes.FORBIDDEN;
+        }
+        return StatusCodes.OK;
     }
 
     @Override
