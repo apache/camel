@@ -160,6 +160,14 @@ class SourceKameletValidationTest {
         // filtering keeps the property of the Kamelet above: "t" matches tag and timeout
         AutocompletePopup filtered = new AutocompletePopup(items, "t", "t");
         assertThat(filtered.dividerAt()).isEqualTo(1);
+        // the title counts the properties of the Kamelet, not the options of the kamelet component
+        AutocompletePopup all = new AutocompletePopup(items, "", "");
+        all.setTitlePrefix("tag-order-action options");
+        assertThat(all.title()).isEqualTo(" tag-order-action options (1) ");
+        // "rout" matches routeId only: none of the Kamelet's properties shown
+        AutocompletePopup component = new AutocompletePopup(items, "rout", "rout");
+        component.setTitlePrefix("tag-order-action options");
+        assertThat(component.title()).isEqualTo(" tag-order-action options (0/1) ");
         // only the Kamelet's properties left, or none: no divider
         assertThat(new AutocompletePopup(items, "tag", "tag").dividerAt()).isEqualTo(-1);
         assertThat(new AutocompletePopup(items, "routeId", "routeId").dividerAt()).isEqualTo(-1);
