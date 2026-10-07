@@ -907,7 +907,9 @@ class SourceTab extends AbstractTab {
             sourceViewer.setQuickDocProvider(assist::provideCamelQuickDocs);
             sourceViewer.setDeprecatedLineScanner(null);
             if (SourceEditAssist.isYamlFile(filePath)) {
-                sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
+                // the options of a kamelet: endpoint start with the properties of its Kamelet (CAMEL-25411)
+                sourceViewer.setAutocompleteProvider(
+                        c -> assist.provideYamlKeyCompletions(c, filePath.toAbsolutePath().getParent()));
                 sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
                 sourceViewer.setEndpointValidator(assist::validateYamlEndpoints);
                 // in a Kamelet's template, a property written as ${header.tag} is said to be the placeholder {{tag}}

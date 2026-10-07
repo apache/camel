@@ -118,6 +118,59 @@ class SourceKameletValidationTest {
     }
 
     @Test
+    void theParametersOfAKameletEndpointCompleteItsProperties() throws Exception {
+        Files.writeString(tempDir.resolve("tag-order-action.kamelet.yaml"), KAMELET, StandardCharsets.UTF_8);
+        SourceEditAssist assist = new SourceEditAssist(
+                new MonitorContext(
+                        new AtomicReference<>(List.of()), new AtomicReference<>(List.of())));
+        List<AutocompletePopup.CompletionItem> items
+                = assist.provideYamlKeyCompletions("yaml:kamelet:producer|kamelet:tag-order-action", tempDir);
+        // the property of the Kamelet first, then the options of the kamelet component
+        assertThat(items.get(0).key()).isEqualTo("tag");
+        assertThat(items.get(0).required()).isTrue();
+        assertThat(items.get(0).group()).isEqualTo("kamelet tag-order-action");
+        assertThat(items).extracting(AutocompletePopup.CompletionItem::key).contains("routeId", "timeout");
+        // a property already given is not offered again
+        assertThat(assist.provideYamlKeyCompletions("yaml:kamelet:producer:tag|kamelet:tag-order-action", tempDir))
+                .extracting(AutocompletePopup.CompletionItem::key).doesNotContain("tag");
+        // a Kamelet of the catalog, in the query of the uri
+        assertThat(assist.provideYamlKeyCompletions("yaml:kamelet:consumer|kamelet:timer-source?period=1000", tempDir))
+                .extracting(AutocompletePopup.CompletionItem::key).startsWith("message");
+    }
+
+    @Test
+    void aDividerSetsTheKameletComponentOptionsApart() throws Exception {
+        Files.writeString(tempDir.resolve("tag-order-action.kamelet.yaml"), KAMELET, StandardCharsets.UTF_8);
+        SourceEditAssist assist = new SourceEditAssist(
+                new MonitorContext(
+                        new AtomicReference<>(List.of()), new AtomicReference<>(List.of())));
+        List<AutocompletePopup.CompletionItem> items
+                = assist.provideYamlKeyCompletions("yaml:kamelet:producer|kamelet:tag-order-action", tempDir);
+        // tag above the divider, the options of the kamelet component below it
+        assertThat(new AutocompletePopup(items, "", "").dividerAt()).isEqualTo(1);
+        // filtering keeps the property of the Kamelet above: "t" matches tag and timeout
+        AutocompletePopup filtered = new AutocompletePopup(items, "t", "t");
+        assertThat(filtered.dividerAt()).isEqualTo(1);
+        // only the Kamelet's properties left, or none: no divider
+        assertThat(new AutocompletePopup(items, "tag", "tag").dividerAt()).isEqualTo(-1);
+        assertThat(new AutocompletePopup(items, "routeId", "routeId").dividerAt()).isEqualTo(-1);
+        // a Kamelet without properties: only the options of the component, no divider
+        String noProperties = KAMELET.replace("""
+                    required:
+                      - tag
+                    properties:
+                      tag:
+                        title: Tag
+                        type: string
+                """, "").replace("{{tag}}", "tagged");
+        Files.writeString(tempDir.resolve("tag-order-action.kamelet.yaml"), noProperties, StandardCharsets.UTF_8);
+        List<AutocompletePopup.CompletionItem> none
+                = assist.provideYamlKeyCompletions("yaml:kamelet:producer|kamelet:tag-order-action", tempDir);
+        assertThat(none).isNotEmpty();
+        assertThat(new AutocompletePopup(none, "", "").dividerAt()).isEqualTo(-1);
+    }
+
+    @Test
     void aKameletFileWithAProblemIsMarkedOnLoadAndNotSaved() throws Exception {
         Path file = tempDir.resolve("tag-order-action.kamelet.yaml");
         String self = KAMELET.replace("uri: kamelet:source", "uri: kamelet:tag-order-action");
