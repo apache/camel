@@ -139,7 +139,9 @@ final class TuiToolDefinitions {
                 List.of("keys"))));
         tools.add(toToolDef(toolDef(
                 "tui_get_options",
-                "Lists every tab with a description of the data it provides, plus the running integrations. "
+                "Lists the tabs with a description of the data they provide, plus the running integrations. "
+                                   + "The tabs are those that apply to the selected integration (SQL Query once it "
+                                   + "reports a data source), or all of them when none is selected. "
                                    + "Use it when unsure which tab holds the data for a question (e.g. 'kafka offset' "
                                    + "-> Kafka tab), then read that tab with tui_get_table.",
                 Map.of())));
