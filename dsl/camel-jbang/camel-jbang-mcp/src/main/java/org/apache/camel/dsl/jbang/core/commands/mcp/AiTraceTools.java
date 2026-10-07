@@ -74,8 +74,9 @@ public class AiTraceTools {
                         + "TensorFlow Serving, HuggingFace). "
                         + "Combines message history with processor statistics filtered to AI steps.")
     public AiTraceResult camel_runtime_ai_trace(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
-            @ToolArg(description = "Route ID filter (exact match or * for all, default: *)") String routeFilter) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "Route ID filter (exact match or * for all, default: *)",
+                     required = false) String routeFilter) {
 
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
         ToolContext ctx = new ToolContext();

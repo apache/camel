@@ -79,8 +79,21 @@ public class CatalogService {
     public CamelCatalog loadCatalog(String runtime, String camelVersion, String platformBom) throws Exception {
         RuntimeType runtimeType = resolveRuntime(runtime);
 
-        boolean hasVersion = camelVersion != null && !camelVersion.isBlank();
+        // "main", "latest", "current" or "default" (what an assistant writes when it means the version in use) is
+        // the default catalog, not a version to download
+        boolean hasVersion = camelVersion != null && !camelVersion.isBlank() && !camelVersion.isEmpty()
+                && Character.isDigit(camelVersion.trim().charAt(0));
+        if (hasVersion && sameAsDefault(camelVersion)) {
+            // the version in use (4.23.0 for a 4.23.0-SNAPSHOT build): nothing to download
+            hasVersion = false;
+        }
         boolean hasBom = platformBom != null && !platformBom.isBlank();
+        if (hasBom && runtimeType == RuntimeType.main && !isCamelGav(platformBom)) {
+            // with the main runtime only a Camel artifact (org.apache.camel:camel-bom:<version>) selects a version: a
+            // Spring Boot or Quarkus platform BOM, or a value that is not a GAV ("none", "n/a"), does not apply to main
+            // and is ignored rather than failing the call; the answer reports the catalog version it used
+            hasBom = false;
+        }
 
         // No version-specific parameters and main runtime -> default catalog
         if (!hasVersion && !hasBom && runtimeType == RuntimeType.main) {
@@ -105,7 +118,7 @@ public class CatalogService {
                 normalizedVersion = platformBomGav.getVersion();
             }
         }
-        if (platformBomGav == null && platformBom != null) {
+        if (platformBomGav == null && hasBom) {
             String[] parts = platformBom.split(":");
             if (parts.length != 3) {
                 throw new ToolCallException(
@@ -121,9 +134,36 @@ public class CatalogService {
             return cached;
         }
 
-        CamelCatalog loaded = doLoadCatalog(runtimeType, camelVersion, platformBomGav);
+        CamelCatalog loaded;
+        try {
+            loaded = doLoadCatalog(runtimeType, camelVersion, platformBomGav);
+        } catch (Exception e) {
+            if (runtimeType == RuntimeType.main && hasVersion && !hasBom) {
+                // a version that cannot be downloaded (not released, no network): answer from the default catalog
+                // rather than fail the tool call
+                return defaultCatalog;
+            }
+            throw e;
+        }
         cache.putIfAbsent(key, loaded);
         return cache.get(key);
+    }
+
+    /** Whether the value is an org.apache.camel groupId:artifactId:version GAV. */
+    static boolean isCamelGav(String gav) {
+        String[] parts = gav.trim().split(":");
+        return parts.length == 3 && "org.apache.camel".equals(parts[0].trim()) && !parts[1].isBlank() && !parts[2].isBlank();
+    }
+
+    /** Whether the version is the default catalog's, with or without a -SNAPSHOT qualifier. */
+    boolean sameAsDefault(String camelVersion) {
+        String mine = defaultCatalog.getCatalogVersion();
+        if (mine == null) {
+            return false;
+        }
+        String v = camelVersion.trim();
+        return v.equals(mine) || v.equals(mine.replace("-SNAPSHOT", ""))
+                || mine.equals(v.replace("-SNAPSHOT", ""));
     }
 
     /**

@@ -48,8 +48,10 @@ public class AiPipelineScaffoldTools {
             @ToolArg(description = "Bedrock model ID (default: Claude Sonnet 4). "
                                    + "Examples: anthropic.claude-sonnet-4-20250514-v1:0, "
                                    + "anthropic.claude-opus-4-20250514-v1:0, "
-                                   + "amazon.nova-pro-v1:0") String modelId,
-            @ToolArg(description = "AWS region for Bedrock and Textract (default: us-east-1)") String region) {
+                                   + "amazon.nova-pro-v1:0",
+                     required = false) String modelId,
+            @ToolArg(description = "AWS region for Bedrock and Textract (default: us-east-1)",
+                     required = false) String region) {
 
         if (pipelineType == null || pipelineType.isBlank()) {
             throw new ToolCallException(

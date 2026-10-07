@@ -71,9 +71,9 @@ public class TransformTools {
     public ValidationResult camel_validate_route(
             @ToolArg(description = "Camel endpoint URI to validate (e.g., 'kafka:myTopic?brokers=localhost:9092')") String uri,
             @ToolArg(description = "YAML route definition to validate") String route,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
         if (uri == null && route == null) {
             throw new ToolCallException("Either 'uri' or 'route' is required", null);

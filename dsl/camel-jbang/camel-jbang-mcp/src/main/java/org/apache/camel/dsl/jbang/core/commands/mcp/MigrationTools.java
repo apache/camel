@@ -58,7 +58,8 @@ public class MigrationTools {
             @ToolArg(description = "The pom.xml file content. "
                                    + "IMPORTANT: Avoid including sensitive data such as passwords, tokens, or API keys. "
                                    + "Sensitive content is automatically detected and masked.") String pomContent,
-            @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials") Boolean sanitizePom) {
+            @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials",
+                     required = false) Boolean sanitizePom) {
 
         if (pomContent == null || pomContent.isBlank()) {
             throw new ToolCallException("pomContent is required", null);
@@ -211,11 +212,12 @@ public class MigrationTools {
                         + "BEFORE running the OpenRewrite recipes. If the project does not compile, fix the build "
                         + "errors first. OpenRewrite requires a compilable project to parse and transform the code.")
     public MigrationRecipesResult camel_migration_recipes(
-            @ToolArg(description = ToolArgDocs.RUNTIME_REQUIRED) String runtime,
+            @ToolArg(description = ToolArgDocs.RUNTIME_REQUIRED, required = false) String runtime,
             @ToolArg(description = "Current Camel version (e.g., 4.4.0)") String currentVersion,
             @ToolArg(description = "Target Camel version (e.g., 4.18.0)") String targetVersion,
             @ToolArg(description = "Current Java version (e.g., 11, 17)") String javaVersion,
-            @ToolArg(description = "If true, perform a dry run without making changes (default: true)") Boolean dryRun) {
+            @ToolArg(description = "If true, perform a dry run without making changes (default: true)",
+                     required = false) Boolean dryRun) {
 
         if (runtime == null || runtime.isBlank()) {
             throw new ToolCallException("runtime is required", null);
@@ -298,7 +300,7 @@ public class MigrationTools {
     public GuideSearchResult camel_migration_guide_search(
             @ToolArg(description = "Search query — component name, API class, method, or keyword "
                                    + "(e.g., direct-vm, getOut, camel-http4, ExchangePattern)") String query,
-            @ToolArg(description = "Maximum number of results to return (default: 3)") Integer limit) {
+            @ToolArg(description = "Maximum number of results to return (default: 3)", required = false) Integer limit) {
 
         if (query == null || query.isBlank()) {
             throw new ToolCallException("query is required", null);

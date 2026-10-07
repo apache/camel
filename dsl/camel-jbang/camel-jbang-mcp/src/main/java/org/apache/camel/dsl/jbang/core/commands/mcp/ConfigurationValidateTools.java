@@ -57,9 +57,9 @@ public class ConfigurationValidateTools {
     public ConfigurationValidateResult camel_configuration_validate(
             @ToolArg(description = "Configuration property lines to validate. Can be a single line "
                                    + "(e.g. \"camel.main.streamCaching=true\") or multiple lines separated by newlines.") String properties,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
         if (properties == null || properties.isBlank()) {
             throw new ToolCallException("properties argument is required", null);
