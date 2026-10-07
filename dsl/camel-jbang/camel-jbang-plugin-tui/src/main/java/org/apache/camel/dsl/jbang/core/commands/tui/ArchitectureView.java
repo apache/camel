@@ -550,7 +550,7 @@ final class ArchitectureView {
         List<Line> lines = GroupPreview.lines(g, capabilities, overview, w - 2, h - 2, r -> RouteKeys.display(dir, r),
                 scheme -> ProjectOverview.isRemote(scheme, catalog()));
         h = Math.min(h, lines.size() + 2);
-        Rect rect = new Rect(area.x() + area.width() - w - 2, area.y() + area.height() - h - 1, w, h);
+        Rect rect = freeCorner(frame, area, w, h);
         frame.renderWidget(Clear.INSTANCE, rect);
         // how messages flow through the group, as the summary's flows between routes: the group's name is on its box
         Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -558,6 +558,38 @@ final class ArchitectureView {
                 .build();
         frame.renderWidget(block, rect);
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), block.inner(rect));
+    }
+
+    /**
+     * Where the Flow panel goes: the first corner of the diagram (bottom right, bottom left, top right, top left) that
+     * the diagram leaves blank, so it does not hide a box; bottom right when none is.
+     */
+    static Rect freeCorner(Frame frame, Rect area, int w, int h) {
+        int left = area.x() + 2;
+        int right = area.x() + area.width() - w - 2;
+        int top = area.y() + 1;
+        int bottom = area.y() + area.height() - h - 1;
+        Rect[] corners = {
+                new Rect(right, bottom, w, h), new Rect(left, bottom, w, h),
+                new Rect(right, top, w, h), new Rect(left, top, w, h) };
+        for (Rect r : corners) {
+            if (isBlank(frame, r)) {
+                return r;
+            }
+        }
+        return corners[0];
+    }
+
+    private static boolean isBlank(Frame frame, Rect r) {
+        for (int y = r.y(); y < r.y() + r.height(); y++) {
+            for (int x = r.x(); x < r.x() + r.width(); x++) {
+                String symbol = frame.buffer().get(x, y).symbol();
+                if (symbol != null && !symbol.isBlank()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private Line title(String integrationName) {
