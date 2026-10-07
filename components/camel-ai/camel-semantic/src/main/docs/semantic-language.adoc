@@ -127,8 +127,8 @@ For example, a nested expert policy can externalise its cutoff without convertin
 ----
 
 String parameters, including prompts, use Camel property placeholder escaping for literal braces.
-For example, YAML `instructions: 'Explain \{{example\}}'` gives the expert `Explain {{example}}`.
-In Java, use `.parameter("instructions", "Explain \\{{example\\}}")` for the same literal text.
+For example, YAML `+instructions: 'Explain \{{example\}}'+` gives the expert `+Explain {{example}}+`.
+In Java, use `+.parameter("instructions", "Explain \\{{example\\}}")+` for the same literal text.
 
 Camel validates recognised parameter names, required values, types and declared constraints.
 The expert checks operation-specific combinations and compatibility with its bean configuration.
