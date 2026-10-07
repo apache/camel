@@ -67,33 +67,33 @@ public class OpenFeatureComponent extends DefaultComponent {
 
     @Override
     protected void doStop() throws Exception {
+        OpenFeatureAPI localApi = api;
         api = null;
-        for (DomainBinding binding : domainBindings.values()) {
-            if (binding.owned) {
-                try {
-                    binding.provider.shutdown();
-                } catch (Exception e) {
-                    LOG.debug("Error shutting down owned provider: {}", e.getMessage(), e);
-                }
+        domainBindings.clear();
+        if (localApi != null) {
+            try {
+                localApi.shutdown();
+            } catch (Exception e) {
+                LOG.debug("Error shutting down OpenFeature API: {}", e.getMessage(), e);
             }
         }
-        domainBindings.clear();
         super.doStop();
     }
 
-    synchronized Client registerEndpoint(String domain, FeatureProvider provider, boolean owned) throws Exception {
+    synchronized boolean hasDomainBinding(String domain) {
+        return domainBindings.containsKey(domain);
+    }
+
+    synchronized Client acquireClient(String domain) {
         DomainBinding existing = domainBindings.get(domain);
-        if (existing != null) {
-            existing.refCount++;
-            if (existing.provider != provider) {
-                LOG.warn("Domain '{}' already has a registered provider; this endpoint's provider settings are ignored.",
-                        domain);
-                if (owned) {
-                    provider.shutdown();
-                }
-            }
-            return api.getClient(domain);
+        if (existing == null) {
+            throw new IllegalStateException("No binding exists for domain '" + domain + "'");
         }
+        existing.refCount++;
+        return api.getClient(domain);
+    }
+
+    synchronized Client registerEndpoint(String domain, FeatureProvider provider, boolean owned) throws Exception {
         api.setProviderAndWait(domain, provider);
         domainBindings.put(domain, new DomainBinding(provider, owned));
         return api.getClient(domain);

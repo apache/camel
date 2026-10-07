@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.openfeature;
 
+import java.util.List;
 import java.util.Map;
 
+import dev.openfeature.sdk.MutableContext;
+import dev.openfeature.sdk.Value;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -239,5 +242,94 @@ class OpenFeatureProducerTest extends CamelTestSupport {
                 .isNotNull();
         assertThat(exchange.getMessage().getHeader(OpenFeatureConstants.EVALUATION_ERROR_CODE))
                 .isNull();
+    }
+
+    @Test
+    void testStaleErrorHeaderClearedOnSuccess() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:stale-header-test")
+                        .to("openfeature:test-stale?flagKey=enrichment-enabled&flagsResource=" + FLAGS_RESOURCE);
+            }
+        });
+
+        Exchange exchange = template.request("direct:stale-header-test", e -> {
+            e.getMessage().setBody("ignored");
+            e.getMessage().setHeader(OpenFeatureConstants.EVALUATION_ERROR_CODE, "FLAG_NOT_FOUND");
+        });
+        assertThat(exchange.getMessage().getBody()).isEqualTo(true);
+        assertThat(exchange.getMessage().getHeader(OpenFeatureConstants.EVALUATION_ERROR_CODE)).isNull();
+    }
+
+    @Test
+    void testToValuePreservesLargeLong() {
+        long largeLong = Long.MAX_VALUE;
+        MutableContext ctx = OpenFeatureEndpoint.buildMutableContext(
+                "user-1", Map.of("signupTs", largeLong));
+        Value value = ctx.getValue("signupTs");
+        assertThat(value).isNotNull();
+        assertThat(value.asLong()).isEqualTo(largeLong);
+    }
+
+    @Test
+    void testToValueHandlesFloat() {
+        MutableContext ctx = OpenFeatureEndpoint.buildMutableContext(
+                "user-1", Map.of("score", 3.14f));
+        Value value = ctx.getValue("score");
+        assertThat(value).isNotNull();
+        assertThat(value.asDouble()).isCloseTo(3.14, org.assertj.core.data.Offset.offset(0.01));
+    }
+
+    @Test
+    void testToValueHandlesNestedMap() {
+        Map<String, Object> nested = Map.of("city", "Berlin", "zip", 10115);
+        MutableContext ctx = OpenFeatureEndpoint.buildMutableContext(
+                "user-1", Map.of("address", nested));
+        Value value = ctx.getValue("address");
+        assertThat(value).isNotNull();
+        assertThat(value.isStructure()).isTrue();
+        assertThat(value.asStructure().getValue("city").asString()).isEqualTo("Berlin");
+        assertThat(value.asStructure().getValue("zip").asInteger()).isEqualTo(10115);
+    }
+
+    @Test
+    void testToValueHandlesList() {
+        MutableContext ctx = OpenFeatureEndpoint.buildMutableContext(
+                "user-1", Map.of("tags", List.of("premium", "beta")));
+        Value value = ctx.getValue("tags");
+        assertThat(value).isNotNull();
+        assertThat(value.isList()).isTrue();
+        assertThat(value.asList()).hasSize(2);
+        assertThat(value.asList().get(0).asString()).isEqualTo("premium");
+    }
+
+    @Test
+    void testFailedEndpointStartDoesNotAffectSharedDomain() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:shared-domain")
+                        .to("openfeature:shared?flagKey=enrichment-enabled&flagsResource=" + FLAGS_RESOURCE);
+            }
+        });
+
+        Object result = template.requestBody("direct:shared-domain", "ignored");
+        assertThat(result).isEqualTo(true);
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:bad-endpoint")
+                            .to("openfeature:shared?flagKey=enrichment-enabled&provider=#nonexistent");
+                }
+            });
+        } catch (Exception e) {
+            // Expected — the provider bean doesn't exist
+        }
+
+        result = template.requestBody("direct:shared-domain", "ignored");
+        assertThat(result).isEqualTo(true);
     }
 }
