@@ -139,7 +139,7 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     //Connection Configuration
     @UriParam(label = "security", defaultValue = "false")
     private boolean tls;
-    @UriParam(label = "security", defaultValue = "false")
+    @UriParam(label = "security", defaultValue = "false", security = "insecure:ssl")
     private boolean tlsAllowInvalidHostnames;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;

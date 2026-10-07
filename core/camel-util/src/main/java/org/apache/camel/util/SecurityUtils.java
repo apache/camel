@@ -91,6 +91,7 @@ public final class SecurityUtils {
         map.put("sslendpointalgorithm", new SecurityOption(INSECURE_SSL, "none"));
         map.put("stricthostkeychecking", new SecurityOption(INSECURE_SSL, ""));
         map.put("tls", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
+        map.put("tlsallowinvalidhostnames", new SecurityOption(INSECURE_SSL, "true"));
         map.put("transferexception", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("transferexchange", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("trustallcertificates", new SecurityOption(INSECURE_SSL, "true"));
@@ -203,6 +204,8 @@ public final class SecurityUtils {
                 "component:sftp"));
         owners.put("tls", Set.of(
                 "component:pinecone"));
+        owners.put("tlsallowinvalidhostnames", Set.of(
+                "component:mongodb"));
         owners.put("transferexception", Set.of(
                 "component:activemq",
                 "component:activemq6",

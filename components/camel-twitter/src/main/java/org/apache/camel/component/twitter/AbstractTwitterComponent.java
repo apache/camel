@@ -39,7 +39,7 @@ public abstract class AbstractTwitterComponent extends HealthCheckComponent {
     private String httpProxyHost;
     @Metadata(label = "proxy")
     private String httpProxyUser;
-    @Metadata(label = "proxy")
+    @Metadata(label = "proxy", security = "secret")
     private String httpProxyPassword;
     @Metadata(label = "proxy")
     private Integer httpProxyPort;

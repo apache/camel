@@ -45,7 +45,7 @@ public class Transcribe2Configuration implements Cloneable, AwsCommonConfigurati
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
-    @UriParam(security = "insecure:ssl", defaultValue = "true")
+    @UriParam(security = "insecure:ssl", defaultValue = "false")
     private boolean trustAllCertificates;
     @UriParam(defaultValue = "false")
     private boolean useDefaultCredentialsProvider;
