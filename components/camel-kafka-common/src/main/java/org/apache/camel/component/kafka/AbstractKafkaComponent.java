@@ -68,7 +68,11 @@ public abstract class AbstractKafkaComponent extends HealthCheckComponent
         super(context);
     }
 
-    void pendingConsumer(Runnable task) {
+    /**
+     * Starts the task once the CamelContext is started, so that a consumer does not process messages before the
+     * CamelContext is fully started.
+     */
+    public void pendingConsumer(Runnable task) {
         pendingConsumers.add(task);
     }
 

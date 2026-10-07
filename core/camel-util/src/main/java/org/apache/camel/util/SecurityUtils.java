@@ -199,6 +199,7 @@ public final class SecurityUtils {
                 "component:hivemq"));
         owners.put("sslendpointalgorithm", Set.of(
                 "component:kafka",
+                "component:kafkashare",
                 "component:llm",
                 "component:openai"));
         owners.put("stricthostkeychecking", Set.of(

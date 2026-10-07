@@ -51,6 +51,11 @@ If you want to send a message to a dynamic topic then use the `CamelKafkaOverrid
 
 == Usage
 
+=== Share groups (queues)
+
+To consume the records of a topic like a queue, with more consumers than partitions and an acknowledgement per record,
+use a share group (KIP-932) with the xref:kafka-share-component.adoc[Kafka Share] component.
+
 === Consumer error handling
 
 While kafka consumer is polling messages from the kafka broker, then errors can happen. This section describes what happens and what

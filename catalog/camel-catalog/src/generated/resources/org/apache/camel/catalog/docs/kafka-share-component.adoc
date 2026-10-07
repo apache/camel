@@ -1,0 +1,218 @@
+= Kafka Share Component
+:doctitle: Kafka Share
+:shortname: kafka-share
+:artifactid: camel-kafka-share
+:description: Consume messages from Apache Kafka topics as a queue, using a share group.
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only consumer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Kafka Share component consumes the records of http://kafka.apache.org/[Apache Kafka] topics through a
+https://cwiki.apache.org/confluence/display/KAFKA/KIP-932%3A+Queues+for+Kafka[share group] (KIP-932, Queues for Kafka).
+
+The consumers of a share group work through the records of a topic like a queue:
+
+* several consumers read the same partition, so the number of consumers is not limited by the number of partitions;
+* every record is acknowledged on its own: a failing record does not hold up the records after it;
+* the broker delivers a released record again, possibly to another consumer, and counts the deliveries of each record.
+
+A share group has no offsets to commit or seek, no ordering guarantee, no transactions and no topic patterns. Use the
+xref:kafka-component.adoc[Kafka] component to produce records, and to consume them in order with a consumer group.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-kafka-share</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+kafka-share:topic[?options]
+----
+
+The topic can be a comma-separated list of topics. The `groupId` option, the name of the share group, is required.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Broker requirements
+
+Share groups need the `share.version` feature of the cluster at level 1. It is enabled by default on a cluster
+created with Kafka 4.2 or newer; a cluster upgraded from an older version enables it with
+`kafka-features.sh --bootstrap-server <broker> upgrade --feature share.version=1`. On a single broker, also set
+`share.coordinator.state.topic.replication.factor=1` and `share.coordinator.state.topic.min.isr=1`, otherwise the
+broker cannot create the internal topic that holds the state of the share groups, and the consumers receive no records.
+
+The broker setting `group.share.delivery.count.limit` (default 5) limits how many times a record is delivered, and
+`group.share.record.lock.duration.ms` (default 30 seconds) limits how long a consumer can hold a record before the
+broker makes it available to another consumer.
+
+A new share group starts with the records produced after it is created. To consume the records already in the topic,
+set the group configuration `share.auto.offset.reset` to `earliest` before the group first consumes, for example with
+`kafka-configs.sh --entity-type groups --entity-name my-group --alter --add-config share.auto.offset.reset=earliest`.
+
+=== Acknowledgements
+
+Each record is acknowledged after its exchange is processed, from the outcome of the exchange:
+
+[cols="2,1"]
+|===
+| Exchange outcome | Acknowledgement
+
+| The route set the `CamelKafkaShareAcknowledge` header (`ACCEPT`, `RELEASE` or `REJECT`)
+| The value of the header
+
+| Completed, or failed with an exception handled by the route (for example `onException(...).handled(true)`)
+| `ACCEPT`
+
+| Failed, or rolled back
+| The `onFailure` option, `RELEASE` by default
+
+| Not processed because the consumer is stopping
+| `RELEASE`
+|===
+
+`ACCEPT`:: The record was processed: it is not delivered again.
+`RELEASE`:: The record was not processed: the broker delivers it again, to this or another consumer, until the
+delivery count limit of the broker is reached.
+`REJECT`:: The record cannot be processed: it is discarded and not delivered again.
+
+The acknowledgements of the records of a poll are committed to the broker after they are processed. With
+`commitMode=SYNC` (default) the consumer waits for the result, and a failure to commit is reported to the exception
+handler; with `commitMode=ASYNC` it does not wait, and a failure is logged. When the acknowledgements cannot be
+committed, the broker delivers the records again.
+
+The `CamelKafkaShareAcknowledge` header starts with `Camel`, so a header with this name in a Kafka record is removed
+by the header filter strategy: only the route can set it.
+
+=== Delivery count and poison records
+
+The `CamelKafkaShareDeliveryCount` header holds how many times the record has been delivered, this delivery included.
+As the broker delivers a released record again, a route can stop retrying a record that keeps failing, and move it
+elsewhere:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+errorHandler(noErrorHandler()); // no local retries: the broker delivers the record again, possibly to another pod
+
+onException(InvalidInvoiceException.class)
+    .handled(true)                                       // handled -> ACCEPT
+    .to("kafka:invoices-invalid?brokers={{kafka.brokers}}");
+
+from("kafka-share:invoices?brokers={{kafka.brokers}}&groupId=invoice-ocr")
+    .filter(header(KafkaShareConstants.DELIVERY_COUNT).isGreaterThanOrEqualTo(4))
+        .setHeader(KafkaShareConstants.ACKNOWLEDGE, constant("REJECT"))
+        .to("kafka:invoices-dlq?brokers={{kafka.brokers}}")
+        .stop()
+    .end()
+    .to("http://ocr-service/extract")
+    .to("kafka:invoices-extracted?brokers={{kafka.brokers}}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka-share:invoices
+      parameters:
+        brokers: "{{kafka.brokers}}"
+        groupId: invoice-ocr
+      steps:
+        - filter:
+            simple: "${header.CamelKafkaShareDeliveryCount} >= 4"
+            steps:
+              - setHeader:
+                  name: CamelKafkaShareAcknowledge
+                  constant: REJECT
+              - to: "kafka:invoices-dlq?brokers={{kafka.brokers}}"
+              - stop: {}
+        - to: "http://ocr-service/extract"
+        - to: "kafka:invoices-extracted?brokers={{kafka.brokers}}"
+----
+====
+
+=== Consumers count
+
+Each consumer (`consumersCount`) runs on its own thread with its own share consumer, as the Kafka client is not thread
+safe. Unlike a consumer group, consumers beyond the number of partitions are not idle: all of them receive records.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// 20 concurrent consumers on a topic with 3 partitions: a slow ticket does not hold up the others
+from("kafka-share:support-tickets?brokers={{kafka.brokers}}&groupId=ticket-triage&consumersCount=20")
+    .to("langchain4j-chat:triage")
+    .to("kafka:tickets-triaged?brokers={{kafka.brokers}}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka-share:support-tickets
+      parameters:
+        brokers: "{{kafka.brokers}}"
+        groupId: ticket-triage
+        consumersCount: 20
+      steps:
+        - to: "langchain4j-chat:triage"
+        - to: "kafka:tickets-triaged?brokers={{kafka.brokers}}"
+----
+====
+
+=== Delivery semantics
+
+Delivery is at-least-once. A record is processed again when:
+
+* its acquisition lock expires while the route processes it (see `group.share.record.lock.duration.ms`);
+* the JVM stops after the route's side effects but before the acknowledgement reaches the broker;
+* the acknowledgements cannot be committed;
+* the route releases a record after a partial side effect.
+
+Use the xref:eips:idempotentConsumer-eip.adoc[Idempotent Consumer] where duplicates matter.
+
+=== Differences from the Kafka component
+
+The options of the Kafka component that are about offsets, consumer group membership and ordering do not apply to a
+share group: `seekTo`, `autoOffsetReset`, `autoCommitEnable`, `allowManualCommit`, `breakOnFirstError`,
+`partitionAssignor`, `groupProtocol`, `groupInstanceId`, `topicIsPattern`, `isolationLevel`, `offsetRepository` and
+`batching`. A share consumer cannot be paused, so suspending a route stops its consumer. The brokers, security,
+deserializer, header and additional properties options are the same as the Kafka component.
+
+The client properties that a share consumer rejects (such as `auto.offset.reset` or `enable.auto.commit`) make the
+consumer fail to start when they are set as `additionalProperties`.
+
+=== Health check
+
+The consumer is ready when all its share consumers are created and subscribed. When a share consumer cannot be created,
+the health check reports it as down, with the error and the `bootstrap.servers`, `group.id`, `client.id`, `route.id`
+and `topic` details.
