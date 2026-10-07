@@ -66,7 +66,10 @@ public class InfinispanRemoteConfigurationIT {
         cacheContConf.put("connection_timeout", "15000");
         configuration.setConfigurationProperties(cacheContConf);
 
-        configuration.setHosts(service.host() + ":" + service.port());
+        // Normalise "localhost" to "127.0.0.1" so the JVM does not resolve it to ::1 (IPv6),
+        // which the server does not bind to in host-network mode on Podman/Linux.
+        String host = InfinispanRemoteTestSupport.resolvedHost(service.host());
+        configuration.setHosts(host + ":" + service.port());
         configuration.setSecure(true);
         configuration.setUsername(service.username());
         configuration.setPassword(service.password());

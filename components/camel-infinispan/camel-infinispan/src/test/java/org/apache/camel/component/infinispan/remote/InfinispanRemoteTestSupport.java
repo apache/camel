@@ -26,13 +26,13 @@ import org.apache.camel.support.task.ForegroundTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.support.task.budget.IterationBoundedBudget;
-import org.apache.camel.test.infra.infinispan.common.InfinispanProperties;
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
 import org.apache.camel.test.infra.infinispan.services.InfinispanServiceFactory;
 import org.awaitility.Awaitility;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.client.hotrod.exceptions.RemoteIllegalLifecycleStateException;
+import org.infinispan.client.hotrod.exceptions.TransportException;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.configuration.cache.CacheMode;
 import org.junit.jupiter.api.Assumptions;
@@ -113,10 +113,11 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
         clientBuilder
                 .forceReturnValues(true);
 
-        // add server from the test infra service
+        // add server from the test infra service; normalise "localhost" to "127.0.0.1" so the
+        // JVM does not resolve it to the IPv6 loopback (::1), which the server does not bind to.
         clientBuilder
                 .addServer()
-                .host(service.host())
+                .host(resolvedHost(service.host()))
                 .port(service.port());
 
         // add security info
@@ -131,12 +132,22 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
                 .saslMechanism("SCRAM-SHA-512")
                 .realm("default");
 
-        if (!Boolean.getBoolean(InfinispanProperties.INFINISPAN_CONTAINER_NETWORK_MODE_HOST)) {
-            Properties properties = new Properties();
-            properties.put("infinispan.client.hotrod.client_intelligence", "BASIC");
-            clientBuilder.withProperties(properties);
-        }
+        // Always use BASIC intelligence to prevent the client from following server topology
+        // and reconnecting to an address that may resolve to IPv6 (::1) on Podman/Linux,
+        // where the Infinispan server only listens on IPv4.
+        Properties properties = new Properties();
+        properties.put("infinispan.client.hotrod.client_intelligence", "BASIC");
+        clientBuilder.withProperties(properties);
         return clientBuilder;
+    }
+
+    /**
+     * Normalises a hostname so that {@code "localhost"} is always returned as {@code "127.0.0.1"}. On Linux with Podman
+     * the JVM resolves {@code "localhost"} to the IPv6 loopback ({@code ::1}) before the IPv4 one, but the Infinispan
+     * server only listens on IPv4 in host-network mode.
+     */
+    public static String resolvedHost(String host) {
+        return "localhost".equalsIgnoreCase(host) ? "127.0.0.1" : host;
     }
 
     @BindToRegistry
@@ -150,7 +161,8 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
         Awaitility.await()
                 .atMost(Duration.ofMillis(timeoutMs))
                 .pollInterval(Duration.ofMillis(250))
-                .ignoreExceptionsMatching(e -> e instanceof RemoteIllegalLifecycleStateException)
+                .ignoreExceptionsMatching(
+                        e -> e instanceof RemoteIllegalLifecycleStateException || e instanceof TransportException)
                 .until(() -> {
                     // Attempt to create/get the cache
                     manager.administration()

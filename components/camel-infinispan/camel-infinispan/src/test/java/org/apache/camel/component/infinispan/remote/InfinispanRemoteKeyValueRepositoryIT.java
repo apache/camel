@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.infra.infinispan.common.InfinispanProperties;
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
 import org.apache.camel.test.infra.infinispan.services.InfinispanServiceFactory;
 import org.infinispan.client.hotrod.RemoteCacheManager;
@@ -282,9 +281,11 @@ class InfinispanRemoteKeyValueRepositoryIT {
 
         clientBuilder.forceReturnValues(true);
 
+        // Normalise "localhost" to "127.0.0.1" so the JVM does not resolve it to ::1 (IPv6),
+        // which the server does not bind to in host-network mode on Podman/Linux.
         clientBuilder
                 .addServer()
-                .host(service.host())
+                .host("localhost".equalsIgnoreCase(service.host()) ? "127.0.0.1" : service.host())
                 .port(service.port());
 
         clientBuilder
@@ -298,11 +299,12 @@ class InfinispanRemoteKeyValueRepositoryIT {
                 .saslMechanism("SCRAM-SHA-512")
                 .realm("default");
 
-        if (!Boolean.getBoolean(InfinispanProperties.INFINISPAN_CONTAINER_NETWORK_MODE_HOST)) {
-            Properties properties = new Properties();
-            properties.put("infinispan.client.hotrod.client_intelligence", "BASIC");
-            clientBuilder.withProperties(properties);
-        }
+        // Always use BASIC intelligence to prevent the client from following server topology
+        // and reconnecting to an address that may resolve to IPv6 (::1) on Podman/Linux,
+        // where the Infinispan server only listens on IPv4.
+        Properties properties = new Properties();
+        properties.put("infinispan.client.hotrod.client_intelligence", "BASIC");
+        clientBuilder.withProperties(properties);
         return clientBuilder;
     }
 }
