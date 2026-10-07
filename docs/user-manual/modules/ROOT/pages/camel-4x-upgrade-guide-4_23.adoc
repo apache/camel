@@ -170,6 +170,21 @@ onCompletion can therefore read a spooled body, also with `parallelProcessing`. 
 an on completion with the order `Ordered.LOWEST` that was added after the onCompletion EIP (for example the close
 of a JPA `EntityManager` used later in the route) used to run before the onCompletion, and now runs after it.
 
+=== camel-core - routeConfiguration named onCompletion fires once per exchange in the Java DSL
+
+In the Java DSL, `routeConfiguration("myconfig").onCompletion()` previously set `routeScoped=false`
+unconditionally, which caused the `onCompletion` to be skipped when the opted-in route was called
+indirectly (for example via `direct:` from a REST DSL consumer route).
+
+The behavior is now corrected: a named route configuration (`routeConfiguration("id")`) keeps
+`routeScoped=true` so that the `onCompletion` fires correctly regardless of which route is the
+actual consumer. A per-exchange deduplication key ensures the `onCompletion` fires exactly once
+per exchange, even when multiple routes opt in to the same named configuration, or when the
+opted-in route is called several times in the same exchange.
+
+If your application relied on the (broken) behavior where `onCompletion` was silently skipped for
+named configurations in indirect call chains, you may now observe it firing where it did not before.
+
 === @PropertyInject - an invalid property value is an error (Breaking change)
 
 When a property injected with `@PropertyInject` has a value that cannot be converted to the type of the field or
