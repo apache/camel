@@ -478,6 +478,8 @@ class LaunchManager {
                 it.remove();
             } else if (pl.infraAlias != null) {
                 if (now - pl.startTime > INFRA_WATCH_MS) {
+                    // not up after the longest an image pull should take: a failed start, as the other ends record
+                    outcomes.put(pl.name, LaunchOutcome.failed(pl.outputFile));
                     it.remove();
                 }
             } else {
