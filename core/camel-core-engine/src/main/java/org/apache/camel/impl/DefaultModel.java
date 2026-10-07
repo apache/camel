@@ -645,13 +645,21 @@ public class DefaultModel implements Model {
         if (group != null) {
             def.setGroup(group);
         }
-        // a route from a template (or a Kamelet) must not replace an existing route with the same id
+        // a route from a template (or a Kamelet) must not replace an existing route with the same id, unless that
+        // route was created from the same template (such as the route of a Kamelet with a route id that is created
+        // again when its parent route is updated)
         String id = def.getId();
-        if (id != null && (getRouteDefinition(id) != null || camelContext.getRoute(id) != null)) {
-            throw new FailedToCreateRouteFromTemplateException(
-                    id, routeTemplateId,
-                    "Route with id: " + id + " already exists. Remove the existing route first or use another route id.");
+        if (id != null) {
+            RouteDefinition existing = getRouteDefinition(id);
+            boolean sameTemplate = existing != null && routeTemplateId.equals(existing.getRouteTemplateId());
+            if (!sameTemplate && (existing != null || camelContext.getRoute(id) != null)) {
+                throw new FailedToCreateRouteFromTemplateException(
+                        id, routeTemplateId,
+                        "Route with id: " + id
+                                             + " already exists. Remove the existing route first or use another route id.");
+            }
         }
+        def.setRouteTemplateId(routeTemplateId);
         def.setTemplateParameters(prop);
         def.setTemplateDefaultParameters(propDefaultValues);
         def.setRouteTemplateContext(routeTemplateContext);

@@ -19,13 +19,15 @@ package org.apache.camel.component.kamelet;
 import org.apache.camel.FailedToCreateRouteFromTemplateException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Two Kamelet endpoints with the same route id must not replace each other's route.
+ * The route of a Kamelet endpoint with a route id must not replace an existing route that was not created from the same
+ * Kamelet, while the route of the same Kamelet is created again when its parent route is updated.
  */
 class KameletExistingRouteIdTest extends CamelTestSupport {
 
@@ -35,7 +37,100 @@ class KameletExistingRouteIdTest extends CamelTestSupport {
     }
 
     @Test
-    void sameRouteIdWithOtherParameters() throws Exception {
+    void routeIdOfRegularRoute() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                routeTemplate("echo")
+                        .templateParameter("prefix")
+                        .from("kamelet:source")
+                        .setBody().simple("{{prefix}}-${body}");
+
+                from("direct:existing").routeId("existing")
+                        .setBody().constant("existing");
+            }
+        });
+        context.start();
+
+        assertThatThrownBy(() -> context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:b").routeId("b").to("kamelet:echo/existing?prefix=b");
+            }
+        })).hasRootCauseInstanceOf(FailedToCreateRouteFromTemplateException.class)
+                .satisfies(e -> assertThat(ObjectHelper.getException(FailedToCreateKameletException.class, e)).isNotNull());
+
+        // the regular route is kept
+        assertThat(context.getRoute("existing").getEndpoint().getEndpointUri()).isEqualTo("direct://existing");
+        assertThat(template.requestBody("direct:existing", "x")).isEqualTo("existing");
+    }
+
+    @Test
+    void routeIdOfRouteFromOtherKamelet() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                routeTemplate("echo")
+                        .templateParameter("prefix")
+                        .from("kamelet:source")
+                        .setBody().simple("{{prefix}}-${body}");
+
+                routeTemplate("shout")
+                        .templateParameter("prefix")
+                        .from("kamelet:source")
+                        .setBody().simple("{{prefix}}-${body.toUpperCase()}");
+            }
+        });
+        context.start();
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:a").routeId("a").to("kamelet:echo/myId?prefix=a");
+            }
+        });
+        assertThat(template.requestBody("direct:a", "x")).isEqualTo("a-x");
+
+        assertThatThrownBy(() -> context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:b").routeId("b").to("kamelet:shout/myId?prefix=b");
+            }
+        })).hasRootCauseInstanceOf(FailedToCreateRouteFromTemplateException.class)
+                .satisfies(e -> assertThat(ObjectHelper.getException(FailedToCreateKameletException.class, e)).isNotNull());
+
+        // the route of the first Kamelet endpoint is kept
+        assertThat(template.requestBody("direct:a", "x")).isEqualTo("a-x");
+    }
+
+    @Test
+    void updateParent() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                routeTemplate("echo")
+                        .templateParameter("prefix")
+                        .from("kamelet:source")
+                        .setBody().simple("{{prefix}}-${body}");
+
+                from("direct:a").routeId("a").to("kamelet:echo/myId?prefix=a");
+            }
+        });
+        context.start();
+        assertThat(template.requestBody("direct:a", "x")).isEqualTo("a-x");
+
+        // as a route reload with removeAllRoutes=false does
+        new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:a").routeId("a").to("kamelet:echo/myId?prefix=b");
+            }
+        }.updateRoutesToCamelContext(context);
+        assertThat(template.requestBody("direct:a", "x")).isEqualTo("b-x");
+    }
+
+    @Test
+    void removeAndReAddParent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -50,19 +145,20 @@ class KameletExistingRouteIdTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a").routeId("a").to("kamelet:echo/same?prefix=a");
+                from("direct:a").routeId("a").to("kamelet:echo/myId?prefix=a");
             }
         });
         assertThat(template.requestBody("direct:a", "x")).isEqualTo("a-x");
 
-        assertThatThrownBy(() -> context.addRoutes(new RouteBuilder() {
+        context.getRouteController().stopRoute("a");
+        context.removeRoute("a");
+
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:b").routeId("b").to("kamelet:echo/same?prefix=b");
+                from("direct:a").routeId("a").to("kamelet:echo/myId?prefix=b");
             }
-        })).hasRootCauseInstanceOf(FailedToCreateRouteFromTemplateException.class);
-
-        // the route of the first Kamelet endpoint is kept
-        assertThat(template.requestBody("direct:a", "x")).isEqualTo("a-x");
+        });
+        assertThat(template.requestBody("direct:a", "x")).isEqualTo("b-x");
     }
 }

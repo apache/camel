@@ -27,7 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * A route created from a template must not replace an existing route with the same id.
+ * A route created from a template must not replace an existing route with the same id, unless that route was created
+ * from the same template.
  */
 class RouteTemplateExistingRouteIdTest extends ContextTestSupport {
 
@@ -45,6 +46,11 @@ class RouteTemplateExistingRouteIdTest extends ContextTestSupport {
                         .templateParameter("foo")
                         .from("direct:{{foo}}")
                         .setBody(simple("template {{foo}}"));
+
+                routeTemplate("otherTemplate")
+                        .templateParameter("foo")
+                        .from("direct:other-{{foo}}")
+                        .setBody(simple("other {{foo}}"));
 
                 from("direct:existing").routeId("existing")
                         .setBody(constant("existing"));
@@ -84,7 +90,19 @@ class RouteTemplateExistingRouteIdTest extends ContextTestSupport {
     void routeIdOfRouteFromSameTemplate() {
         TemplatedRouteBuilder.builder(context, "myTemplate").routeId("mine").parameter("foo", "one").add();
 
-        assertThatThrownBy(() -> TemplatedRouteBuilder.builder(context, "myTemplate")
+        // a route from the same template is replaced (as before), which is how a route from a template is updated
+        TemplatedRouteBuilder.builder(context, "myTemplate").routeId("mine").parameter("foo", "two").add();
+
+        assertThat(context.getRoutes()).hasSize(2);
+        assertThat(context.getRoute("mine").getEndpoint().getEndpointUri()).isEqualTo("direct://two");
+        assertThat(template.requestBody("direct:two", "x")).isEqualTo("template two");
+    }
+
+    @Test
+    void routeIdOfRouteFromOtherTemplate() {
+        TemplatedRouteBuilder.builder(context, "myTemplate").routeId("mine").parameter("foo", "one").add();
+
+        assertThatThrownBy(() -> TemplatedRouteBuilder.builder(context, "otherTemplate")
                 .routeId("mine")
                 .parameter("foo", "two")
                 .add())
@@ -92,7 +110,9 @@ class RouteTemplateExistingRouteIdTest extends ContextTestSupport {
                 .hasMessageContaining("mine");
 
         assertThat(context.getRoutes()).hasSize(2);
+        assertThat(context.getRoute("mine").getEndpoint().getEndpointUri()).isEqualTo("direct://one");
         assertThat(template.requestBody("direct:one", "x")).isEqualTo("template one");
+        assertThat(context.hasEndpoint("direct:other-two")).isNull();
     }
 
     @Test
