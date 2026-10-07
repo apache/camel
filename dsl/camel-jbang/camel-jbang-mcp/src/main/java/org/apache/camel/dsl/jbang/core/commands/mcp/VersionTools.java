@@ -48,7 +48,7 @@ public class VersionTools {
     public VersionListResult camel_version_list(
             @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
             @ToolArg(description = "Only show LTS (Long Term Support) releases (default: false)", required = false) Boolean lts,
-            @ToolArg(description = "Minimum Camel version to include (e.g., 4.0)") String fromVersion,
+            @ToolArg(description = "Minimum Camel version to include (e.g., 4.0)", required = false) String fromVersion,
             @ToolArg(description = "Maximum number of versions to return (default: 10)", required = false) Integer limit) {
 
         try {

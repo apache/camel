@@ -57,7 +57,8 @@ public class DependencySecurityAuditTools {
     public AuditResult camel_dependency_security_audit(
             @ToolArg(description = "The pom.xml file content") String pomContent,
             @ToolArg(description = "Route definitions (YAML, XML, or Java DSL) to determine which components "
-                                   + "are actually used (for reachability analysis)") String routes,
+                                   + "are actually used (for reachability analysis)",
+                     required = false) String routes,
             @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
             @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
             @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom,
