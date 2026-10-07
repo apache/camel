@@ -72,7 +72,7 @@ keeps the message body untouched:
 ----
 from("direct:start")
     .setHeader("CamelOpenFeatureTargetingKey", simple("${body[order_id]}"))
-    .setProperty("routingAlgorithm", language("openfeature", "new-routing-algorithm"))
+    .setProperty("routingAlgorithm").language("openfeature", "new-routing-algorithm")
     .toD("direct:route-${exchangeProperty.routingAlgorithm}");
 ----
 
