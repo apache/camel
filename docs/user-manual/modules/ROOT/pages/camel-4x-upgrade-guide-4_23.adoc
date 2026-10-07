@@ -1751,6 +1751,17 @@ This applies only to `camel-hivemq`: setting `ssl=false` on the other components
 policy check below. To keep `camel.component.hivemq.ssl = false` under a `fail` policy, list it in
 `camel.security.allowedProperties`.
 
+=== camel-mongodb
+
+The `tlsAllowInvalidHostnames` option is now marked `insecure:ssl`. The option turns off TLS hostname
+verification, so setting `camel.component.mongodb.tlsAllowInvalidHostnames = true` in the configuration is
+reported by the xref:security-policy.adoc[security policy] check: a warning by default, and a startup failure
+with the `prod` profile or `camel.security.insecureSslPolicy = fail`.
+
+Only the option of `camel-mongodb` is reported, see the `camel-main` section about the security policy check
+below. To keep `camel.component.mongodb.tlsAllowInvalidHostnames = true` under a `fail` policy, list it in
+`camel.security.allowedProperties`.
+
 === camel-main - security policy check matches component options by component
 
 The xref:security-policy.adoc[security policy] check matched an insecure option by its name only, so an
