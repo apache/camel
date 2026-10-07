@@ -216,7 +216,7 @@ public class CamelCatalogTest {
         assertEquals(List.of("google-pubsub"), catalog.suggestComponentNames("pubsub", 0));
         assertEquals(List.of("azure-servicebus"), catalog.suggestComponentNames("servicebus", 0));
         assertEquals(List.of("azure-servicebus"), catalog.suggestComponentNames("Service-Bus", 0));
-        assertEquals(List.of("kafka", "aws2-msk"), catalog.suggestComponentNames("kafka", 0));
+        assertEquals(List.of("kafka", "aws2-msk", "kafka-share"), catalog.suggestComponentNames("kafka", 0));
         // aliases rank right after the exact scheme, substring matches last
         assertEquals(List.of("activemq", "activemq6", "amqp"), catalog.suggestComponentNames("amq", 0));
         assertEquals(List.of("paho-mqtt5"), catalog.suggestComponentNames("paho-mqtt", 0));
