@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,7 +49,6 @@ import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -493,24 +491,8 @@ class InfraBrowserPopup {
         String portStr = portState != null ? portState.text().trim() : "";
         showPortDialog = false;
         try {
-            List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
-            cmd.add("infra");
-            cmd.add("run");
-            cmd.add(alias);
-            if (impl != null) {
-                cmd.add(impl);
-            }
-            cmd.add("--background");
-            if (!portStr.isEmpty()) {
-                cmd.add("--port=" + portStr);
-            }
-            Path outputFile = LaunchManager.createSecureTempFile("camel-infra-", ".log");
-            outputFile.toFile().deleteOnExit();
-            ProcessBuilder pb = new ProcessBuilder(cmd);
-            pb.redirectErrorStream(true);
-            pb.redirectOutput(outputFile.toFile());
-            Process process = pb.start();
-            launchManager.addPendingLaunchNoAutoSelect(alias, process, outputFile);
+            // a start that fails (its port taken) shows why, as the launcher keeps the output
+            launchManager.startInfra(impl != null ? alias + " " + impl : alias, portStr);
             if (burstCallback != null) {
                 burstCallback.run();
             }

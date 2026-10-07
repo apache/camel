@@ -208,10 +208,6 @@ class LaunchManager {
         launched.clear();
     }
 
-    void addPendingLaunchNoAutoSelect(String name, Process process, Path outputFile) {
-        pendingLaunches.add(new PendingLaunch(name, process, outputFile, System.currentTimeMillis()));
-    }
-
     void tick(long now) {
         monitorPendingLaunches(now);
         checkDeferredLaunch(now);
@@ -251,23 +247,52 @@ class LaunchManager {
     }
 
     /**
-     * Starts an infra service in the background via {@code camel infra run <alias> --background}, where the alias may
-     * name the implementation too ({@code aws sqs}). The launch is monitored like any other, so a failure surfaces
-     * through the failure log callback.
+     * Starts an infra service via {@code camel infra run <alias>}, where the alias may name the implementation too
+     * ({@code aws sqs}). It runs in a process of its own, which outlives the TUI, as {@code --background} would start
+     * it; but the TUI keeps its output, so a service that fails to start (its port taken, its image not pulled) shows
+     * why through the failure log callback, where {@code --background} would lose it.
      */
     void startInfra(String alias) throws IOException {
+        startInfra(alias, null);
+    }
+
+    /** Starts an infra service as {@link #startInfra(String)} does, on the given port (none: its default). */
+    void startInfra(String alias, String port) throws IOException {
         List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
         cmd.add("infra");
         cmd.add("run");
         cmd.addAll(Arrays.asList(alias.trim().split("\\s+")));
-        cmd.add("--background");
+        if (port != null && !port.isBlank()) {
+            cmd.add("--port=" + port.trim());
+        }
+        launchInfra(alias, cmd);
+    }
+
+    /** Runs the command that starts the given infra service, and watches it until the service is up. */
+    void launchInfra(String alias, List<String> cmd) throws IOException {
         Path outputFile = createSecureTempFile("camel-infra-", ".log");
         outputFile.toFile().deleteOnExit();
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.redirectErrorStream(true);
         pb.redirectOutput(outputFile.toFile());
         Process process = pb.start();
-        pendingLaunches.add(new PendingLaunch(alias, process, outputFile, System.currentTimeMillis()));
+        PendingLaunch pl = new PendingLaunch(alias, process, outputFile, System.currentTimeMillis());
+        pl.infraAlias = serviceOf(alias);
+        pendingLaunches.add(pl);
+    }
+
+    /**
+     * Whether an infra service of the given ones is still starting: its camel infra run lives, and it is not up yet.
+     */
+    private boolean infraStarting(List<String> aliases) {
+        Set<String> services = aliases.stream().map(LaunchManager::serviceOf).collect(Collectors.toSet());
+        return pendingLaunches.stream()
+                .anyMatch(pl -> pl.infraAlias != null && services.contains(pl.infraAlias) && pl.process.isAlive());
+    }
+
+    /** Runs the launch once the given infra services are up, or drops it when they fail to start. */
+    void deferUntilInfra(List<String> infra, String displayName, Runnable launchAction) {
+        deferredLaunch = new DeferredLaunch(displayName, infra, System.currentTimeMillis(), launchAction);
     }
 
     void startMissingInfraAndDefer(List<String> missingInfra, String displayName, Runnable launchAction) {
@@ -279,7 +304,7 @@ class LaunchManager {
                 return;
             }
         }
-        deferredLaunch = new DeferredLaunch(displayName, missingInfra, System.currentTimeMillis(), launchAction);
+        deferUntilInfra(missingInfra, displayName, launchAction);
         if (infraCatalogClearer != null) {
             infraCatalogClearer.run();
         }
@@ -393,7 +418,13 @@ class LaunchManager {
                 DeferredLaunch dl = deferredLaunch;
                 deferredLaunch = null;
                 dl.launchAction.run();
-            } else if (now - deferredLaunch.startTime > 120_000) {
+            } else if (!infraStarting(deferredLaunch.requiredInfra)) {
+                // the infra failed to start: the failure log says why
+                DeferredLaunch dl = deferredLaunch;
+                deferredLaunch = null;
+                notify("Not started: " + dl.displayName() + " (its infra services failed to start)", true);
+            } else if (now - deferredLaunch.startTime > INFRA_WATCH_MS) {
+                // a first start pulls the container image, which can take minutes: wait while the infra is starting
                 deferredLaunch = null;
                 notify("Timeout waiting for infra services to start", true);
             }
@@ -401,12 +432,26 @@ class LaunchManager {
     }
 
     private void monitorPendingLaunches(long now) {
+        Set<String> runningAliases = null;
         Iterator<PendingLaunch> it = pendingLaunches.iterator();
         while (it.hasNext()) {
             PendingLaunch pl = it.next();
+            if (pl.infraAlias != null && !pl.started) {
+                if (runningAliases == null) {
+                    runningAliases = infraServices.get().stream()
+                            .filter(i -> i.alive).map(i -> i.alias).collect(Collectors.toSet());
+                }
+                // an infra service has started when it is up
+                if (runningAliases.contains(pl.infraAlias)) {
+                    pl.started = true;
+                    notify("Started: " + pl.name, false);
+                    pl.announced = true;
+                }
+            }
             if (!pl.process.isAlive()) {
                 int exitCode = pl.process.exitValue();
-                if (exitCode == 0 || pl.started) {
+                boolean ok = pl.infraAlias != null ? pl.started : exitCode == 0 || pl.started;
+                if (ok) {
                     if (!pl.announced) {
                         notify("Started: " + pl.name, false);
                     }
@@ -425,6 +470,10 @@ class LaunchManager {
                     failureLogCallback.accept(pl.name, pl.outputFile);
                 }
                 it.remove();
+            } else if (pl.infraAlias != null) {
+                if (now - pl.startTime > INFRA_WATCH_MS) {
+                    it.remove();
+                }
             } else {
                 if (!pl.announced && now - pl.startTime > 8000) {
                     notify("Started: " + pl.name, false);
@@ -449,6 +498,9 @@ class LaunchManager {
      */
     static final long WATCH_MS = 5 * 60_000;
 
+    /** How long an infra service may take to start: the first start pulls its container image. */
+    static final long INFRA_WATCH_MS = 15 * 60_000;
+
     /** What a runtime prints when it gives up starting, while its JVM may stay up. */
     static final List<String> START_FAILURES = List.of(
             "APPLICATION FAILED TO START", "[ERROR] BUILD FAILURE", "Failed to start application");
@@ -462,6 +514,8 @@ class LaunchManager {
         final Process process;
         final Path outputFile;
         final long startTime;
+        // the service of an infra launch: it has started once the service is up; null for an integration
+        String infraAlias;
         boolean announced;
         // Camel said it started: the launch is no longer watched for a failed start
         boolean started;
