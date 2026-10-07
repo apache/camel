@@ -974,7 +974,15 @@ class SourceViewer {
 
     private boolean handleEditKeyEvent(KeyEvent ke) {
         if (validationErrors != null) {
-            if (ke.isCancel() || ke.isKey(KeyCode.ENTER)) {
+            if (ke.isKey(KeyCode.F9) && ke.hasShift()) {
+                // the fix the popup offers: go to its line and apply it, as Shift+F9 does there
+                int row = popupFixRow();
+                if (row >= 0) {
+                    validationErrors = null;
+                    SourceEditorNavigation.positionCursor(editState, row, 0);
+                    applyQuickFix();
+                }
+            } else if (ke.isCancel() || ke.isKey(KeyCode.ENTER)) {
                 validationErrors = null;
             } else if (ke.isUp()) {
                 validationErrorScroll = Math.max(0, validationErrorScroll - 1);
@@ -2147,6 +2155,18 @@ class SourceViewer {
         }
     }
 
+    /** The first line with a problem that has a fix, for the popup of a save it blocked; -1 for none. */
+    private int popupFixRow() {
+        for (Map.Entry<Integer, String> e : new java.util.TreeMap<>(visibleInlineErrors()).entrySet()) {
+            int row = e.getKey();
+            if (row >= 0 && row < editState.lineCount()
+                    && QuickFixes.fixFor(e.getValue(), editState.getLine(row)) != null) {
+                return row;
+            }
+        }
+        return -1;
+    }
+
     /** The fix of the problem on the line of the cursor, when the problem says it; null otherwise. */
     private QuickFixes.Fix cursorFix() {
         int row = editState.cursorRow();
@@ -3126,7 +3146,15 @@ class SourceViewer {
             wrapText(msg, innerW, allLines);
         }
         allLines.add(Line.empty());
-        allLines.add(TuiHelper.hintLine("Esc", "close"));
+        int fixRow = popupFixRow();
+        if (fixRow >= 0) {
+            // the fix the editor knows, offered here too: the panel at the bottom says it only after the popup
+            QuickFixes.Fix fix = QuickFixes.fixFor(visibleInlineErrors().get(fixRow), editState.getLine(fixRow));
+            allLines.add(TuiHelper.hintLine("Shift+F9", "fix line " + (fixRow + 1) + ": " + fix.label(),
+                    "Esc", "close"));
+        } else {
+            allLines.add(TuiHelper.hintLine("Esc", "close"));
+        }
 
         int contentH = allLines.size();
         int popupH = Math.min(contentH + 2, area.height() - 4);
