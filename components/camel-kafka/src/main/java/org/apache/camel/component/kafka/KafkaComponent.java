@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -24,7 +23,6 @@ import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.slf4j.Logger;
@@ -74,17 +72,7 @@ public class KafkaComponent extends AbstractKafkaComponent {
 
         setProperties(endpoint, parameters);
 
-        if (endpoint.getConfiguration().getSslContextParameters() == null) {
-            endpoint.getConfiguration().setSslContextParameters(retrieveGlobalSslContextParameters());
-        }
-
-        if (!endpointAdditionalProperties.isEmpty()) {
-            Map<String, Object> map = new HashMap<>();
-            // resolve parameter values from the values (#bean / #class etc)
-            PropertyBindingSupport.bindProperties(getCamelContext(), map, endpointAdditionalProperties);
-            // overwrite the additional properties from the endpoint
-            endpoint.getConfiguration().getAdditionalProperties().putAll(map);
-        }
+        configureEndpoint(endpoint.getConfiguration(), endpointAdditionalProperties);
 
         // If a topic is not defined in the KafkaConfiguration (set as option parameter) but only in the uri,
         // it can happen that it is not set correctly in the configuration of the endpoint.
@@ -217,10 +205,7 @@ public class KafkaComponent extends AbstractKafkaComponent {
             LOG.warn("The component was setup for allowing manual commits, but a manual commit factory was not set");
         }
 
-        Map<String, Object> map = new HashMap<>();
-        // resolve parameter values from the values (#bean / #class etc)
-        PropertyBindingSupport.bindProperties(getCamelContext(), map, configuration.getAdditionalProperties());
-        configuration.setAdditionalProperties(map);
+        bindAdditionalProperties(configuration);
     }
 
 }

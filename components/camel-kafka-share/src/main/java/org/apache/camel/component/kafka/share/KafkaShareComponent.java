@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.kafka.share;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.kafka.AbstractKafkaComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 
@@ -58,17 +56,7 @@ public class KafkaShareComponent extends AbstractKafkaComponent {
 
         setProperties(endpoint, parameters);
 
-        if (endpoint.getConfiguration().getSslContextParameters() == null) {
-            endpoint.getConfiguration().setSslContextParameters(retrieveGlobalSslContextParameters());
-        }
-
-        if (!endpointAdditionalProperties.isEmpty()) {
-            Map<String, Object> map = new HashMap<>();
-            // resolve parameter values from the values (#bean / #class etc)
-            PropertyBindingSupport.bindProperties(getCamelContext(), map, endpointAdditionalProperties);
-            // overwrite the additional properties from the endpoint
-            endpoint.getConfiguration().getAdditionalProperties().putAll(map);
-        }
+        configureEndpoint(endpoint.getConfiguration(), endpointAdditionalProperties);
 
         // the topic from the uri, unless it is set as an option
         if (endpoint.getConfiguration().getTopic() == null) {
@@ -110,9 +98,6 @@ public class KafkaShareComponent extends AbstractKafkaComponent {
             kafkaShareClientFactory = new DefaultKafkaShareClientFactory();
         }
 
-        Map<String, Object> map = new HashMap<>();
-        // resolve parameter values from the values (#bean / #class etc)
-        PropertyBindingSupport.bindProperties(getCamelContext(), map, configuration.getAdditionalProperties());
-        configuration.setAdditionalProperties(map);
+        bindAdditionalProperties(configuration);
     }
 }

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
@@ -24,6 +26,7 @@ import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +69,37 @@ public abstract class AbstractKafkaComponent extends HealthCheckComponent
 
     protected AbstractKafkaComponent(CamelContext context) {
         super(context);
+    }
+
+    /**
+     * Completes the configuration of a new endpoint: sets the global SSL context parameters when the endpoint has none,
+     * and adds the additional properties of the endpoint uri, with their values resolved (#bean / #class etc).
+     *
+     * @param configuration                the configuration of the endpoint
+     * @param endpointAdditionalProperties the properties of the endpoint uri with the additionalProperties. prefix
+     */
+    protected void configureEndpoint(
+            KafkaClientConfiguration configuration, Map<String, Object> endpointAdditionalProperties) {
+        if (configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
+        if (!endpointAdditionalProperties.isEmpty()) {
+            Map<String, Object> map = new HashMap<>();
+            // resolve parameter values from the values (#bean / #class etc)
+            PropertyBindingSupport.bindProperties(getCamelContext(), map, endpointAdditionalProperties);
+            // overwrite the additional properties from the endpoint
+            configuration.getAdditionalProperties().putAll(map);
+        }
+    }
+
+    /**
+     * Resolves the values of the additional properties of the component configuration (#bean / #class etc).
+     */
+    protected void bindAdditionalProperties(KafkaClientConfiguration configuration) {
+        Map<String, Object> map = new HashMap<>();
+        PropertyBindingSupport.bindProperties(getCamelContext(), map, configuration.getAdditionalProperties());
+        configuration.setAdditionalProperties(map);
     }
 
     /**

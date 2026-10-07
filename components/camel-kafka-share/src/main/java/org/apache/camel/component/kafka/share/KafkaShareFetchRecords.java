@@ -33,14 +33,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.kafka.KafkaClientConfiguration;
 import org.apache.camel.component.kafka.KafkaConsumerFatalException;
+import org.apache.camel.component.kafka.KafkaReconnectSupport;
 import org.apache.camel.component.kafka.PollOnError;
 import org.apache.camel.component.kafka.TaskHealthState;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.task.BackgroundTask;
 import org.apache.camel.support.task.TaskRunFailureException;
-import org.apache.camel.support.task.Tasks;
-import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
@@ -130,16 +129,8 @@ class KafkaShareFetchRecords implements Runnable {
             reconnectPool = kafkaShareConsumer.getEndpoint().getCamelContext().getExecutorServiceManager()
                     .newSingleThreadScheduledExecutor(this, "KafkaShareReconnect");
         }
-        BackgroundTask task = Tasks.backgroundTask()
-                .withScheduledExecutor(reconnectPool)
-                .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxIterations(maxAttempts)
-                        .withInterval(Duration.ofMillis(currentBackoffInterval))
-                        .withInitialDelay(Duration.ZERO)
-                        .withUnlimitedDuration()
-                        .build())
-                .withName("KafkaShareReconnect-" + configuration.getTopic())
-                .build();
+        BackgroundTask task = KafkaReconnectSupport.createReconnectTask(
+                reconnectPool, "KafkaShareReconnect-" + configuration.getTopic(), maxAttempts, currentBackoffInterval);
         boolean success = task.run(kafkaShareConsumer.getEndpoint().getCamelContext(), this::createConsumer);
         if (!success) {
             String msg = "Gave up creating/subscribing the Kafka share consumer " + threadId + " to " + topics
@@ -196,25 +187,12 @@ class KafkaShareFetchRecords implements Runnable {
     }
 
     private void pollAndProcess() {
-        ArrayDeque<ConsumerRecord<Object, Object>> pending = new ArrayDeque<>();
-        boolean locked = false;
         try {
             // the lock is not held while polling, so that stop() can wake up a poll that waits for records
             ConsumerRecords<Object, Object> records = consumer.poll(Duration.ofMillis(configuration.getPollTimeoutMs()));
-            if (records.isEmpty()) {
-                return;
+            if (!records.isEmpty()) {
+                processRecords(records);
             }
-            lock.lock();
-            locked = true;
-            records.forEach(pending::add);
-            while (!pending.isEmpty()) {
-                ConsumerRecord<Object, Object> record = pending.peekFirst();
-                // when stopping, the records that are not processed are released, so other consumers get them
-                AcknowledgeType type = isRunAllowed() ? process(record) : AcknowledgeType.RELEASE;
-                consumer.acknowledge(record, type);
-                pending.removeFirst();
-            }
-            commit();
         } catch (WakeupException e) {
             // the consumer is stopping
             LOG.trace("The Kafka share consumer was woken up while polling on thread {}", threadId);
@@ -225,10 +203,27 @@ class KafkaShareFetchRecords implements Runnable {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
             handlePollException(e);
+        }
+    }
+
+    private void processRecords(ConsumerRecords<Object, Object> records) {
+        ArrayDeque<ConsumerRecord<Object, Object>> pending = new ArrayDeque<>();
+        records.forEach(pending::add);
+        lock.lock();
+        try {
+            while (!pending.isEmpty()) {
+                ConsumerRecord<Object, Object> record = pending.peekFirst();
+                // when stopping, the records that are not processed are released, so other consumers get them
+                AcknowledgeType type = isRunAllowed() ? process(record) : AcknowledgeType.RELEASE;
+                consumer.acknowledge(record, type);
+                pending.removeFirst();
+            }
+            commit();
         } finally {
-            // explicit acknowledgement: every record of the poll must be acknowledged before the next poll
-            releasePending(pending);
-            if (locked) {
+            try {
+                // explicit acknowledgement: every record of the poll must be acknowledged before the next poll
+                releasePending(pending);
+            } finally {
                 lock.unlock();
             }
         }

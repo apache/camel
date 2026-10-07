@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.kafka.TaskHealthState;
-import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
@@ -40,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Consumes the records of a Kafka share group: runs consumersCount share consumers, each on its own thread.
  */
-public class KafkaShareConsumer extends DefaultConsumer implements HealthCheckAware {
+public class KafkaShareConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaShareConsumer.class);
 
