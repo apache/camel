@@ -221,8 +221,10 @@ class ExampleBrowserPopup {
         }
         // wide: the descriptions are sentences, and a wide terminal should show them on one or two lines
         int popupW = Math.max(80, Math.min(area.width() - 10, 170));
-        int visibleItems = Math.max(10, catalog.size() + 10);
-        int popupH = Math.min(visibleItems, Math.min(22, area.height() - 4));
+        List<ListItem> items = buildListItems(popupW - 4);
+        // as tall as the lines of the list (and its borders), so a short list leaves no empty block below it
+        int lines = items.stream().mapToInt(ListItem::height).sum() + 2;
+        int popupH = Math.min(lines, Math.min(22, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
@@ -230,7 +232,6 @@ class ExampleBrowserPopup {
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
-        List<ListItem> items = buildListItems(popupW - 4);
         String title = currentFolder != null
                 ? " " + ExampleHelper.getGroupTitle(currentFolder) + " (" + folderExampleCount(currentFolder) + ") "
                 : " Run an Example (" + catalog.size() + ") ";
@@ -256,7 +257,7 @@ class ExampleBrowserPopup {
             TuiHelper.hintLast(spans, "Esc", "back");
         } else {
             TuiHelper.hint(spans, "Enter/→", "open");
-            TuiHelper.hint(spans, "1-9", "jump");
+            TuiHelper.hint(spans, "0-9", "jump");
             TuiHelper.hint(spans, "d", "docs");
             TuiHelper.hintLast(spans, "Esc", "close");
         }
