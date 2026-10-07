@@ -34,7 +34,7 @@
     <description>Camel Hibernate Component</description>
 
     <properties>
-        <firstVersion>4.23.0</firstVersion>
+        <firstVersion>4.24.0</firstVersion>
         <label>database</label>
         <hibernate8-version>8.0.0.Beta3</hibernate8-version>
         <jakarta-persistence4-api-version>4.0.0-M7</jakarta-persistence4-api-version>

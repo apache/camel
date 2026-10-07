@@ -277,6 +277,81 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
+    public void testNaturalIdPrefixUriBinding() throws Exception {
+        HibernateComponent comp = createComponent(
+                "naturalIdPrefixDs",
+                "jdbc:h2:mem:naturalidprefixdb;DB_CLOSE_DELAY=-1",
+                HibernateTestEntity.class);
+
+        HibernateEndpoint endpoint = (HibernateEndpoint) comp.createEndpoint(
+                "hibernate:" + HibernateTestEntity.class.getName() + "?naturalId.name=test");
+
+        assertEquals(Map.of("name", "test"), endpoint.getNaturalIdParameters());
+
+        comp.stop();
+    }
+
+    @Test
+    public void testNaturalIdBeanParameter() throws Exception {
+        HibernateComponent comp = createComponent(
+                "naturalIdBeanDs",
+                "jdbc:h2:mem:naturalidbeandb;DB_CLOSE_DELAY=-1",
+                HibernateTestEntity.class);
+
+        context.getRegistry().bind("naturalIdMap", Map.of("name", "test"));
+
+        HibernateEndpoint endpoint = (HibernateEndpoint) comp.createEndpoint(
+                "hibernate:" + HibernateTestEntity.class.getName() + "?naturalIdParameters=#naturalIdMap");
+
+        assertEquals(Map.of("name", "test"), endpoint.getNaturalIdParameters());
+
+        comp.stop();
+    }
+
+    @Test
+    public void testNaturalIdLookupFromMessageHeader() throws Exception {
+        HibernateComponent comp = createComponent(
+                "naturalIdHeaderDs",
+                "jdbc:h2:mem:naturalidheaderdb;DB_CLOSE_DELAY=-1",
+                HibernateTestEntity.class);
+
+        Session session = comp.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+
+        HibernateTestEntity entity = new HibernateTestEntity();
+        entity.setId(1L);
+        entity.setName("test");
+        session.persist(entity);
+
+        transaction.commit();
+        session.close();
+
+        HibernateEndpoint endpoint = new HibernateEndpoint();
+        endpoint.setCamelContext(context);
+        endpoint.setSessionFactory(comp.getSessionFactory());
+        endpoint.setEntityClassName(HibernateTestEntity.class.getName());
+        endpoint.setNaturalIdParameters(Map.of("name", "${header.lookupName}"));
+
+        endpoint.start();
+
+        Exchange exchange = context.getEndpoint("direct:test").createExchange();
+        exchange.getMessage().setHeader("lookupName", "test");
+
+        try (HibernateProducer producer = new HibernateProducer(endpoint)) {
+            producer.process(exchange);
+        }
+
+        HibernateTestEntity result = exchange.getMessage().getBody(HibernateTestEntity.class);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("test", result.getName());
+
+        endpoint.stop();
+        comp.stop();
+    }
+
+    @Test
     public void testSelectionQueryWithFilter() throws Exception {
         HibernateComponent comp = createComponent(
                 "filterDs",
@@ -326,6 +401,23 @@ public class HibernateBootstrapTest extends CamelTestSupport {
     }
 
     @Test
+    public void testFilterPrefixUriBinding() throws Exception {
+        HibernateComponent comp = createComponent(
+                "filterPrefixDs",
+                "jdbc:h2:mem:filterprefixdb;DB_CLOSE_DELAY=-1",
+                HibernateTestEntity.class);
+
+        HibernateEndpoint endpoint = (HibernateEndpoint) comp.createEndpoint(
+                "hibernate:" + HibernateTestEntity.class.getName()
+                                                                             + "?selectionQuery=from%20HibernateTestEntity&filter.nameFilter.name=test");
+
+        assertEquals(Map.of("nameFilter", Map.of("name", "test")), endpoint.getFilters());
+        assertEquals("from HibernateTestEntity", endpoint.getSelectionQuery());
+
+        comp.stop();
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     public void testTenantIdentifierUsedForSession() throws Exception {
         SessionFactory sessionFactory = Mockito.mock(SessionFactory.class);
@@ -341,6 +433,8 @@ public class HibernateBootstrapTest extends CamelTestSupport {
         Mockito.when(session.createSelectionQuery(
                 "from HibernateTestEntity", HibernateTestEntity.class)).thenReturn(query);
         Mockito.when(query.getResultList()).thenReturn(java.util.List.of());
+
+        stubSessionFactoryJta(sessionFactory, false);
 
         HibernateEndpoint endpoint = new HibernateEndpoint();
         endpoint.setCamelContext(context);
@@ -787,6 +881,8 @@ public class HibernateBootstrapTest extends CamelTestSupport {
                 "delete from HibernateTestEntity")).thenReturn(mutationQuery);
         Mockito.when(mutationQuery.execute()).thenReturn(1);
 
+        stubSessionFactoryJta(sessionFactory, false);
+
         HibernateEndpoint consumerEndpoint = new HibernateEndpoint();
         consumerEndpoint.setCamelContext(context);
         consumerEndpoint.setSessionFactory(sessionFactory);
@@ -992,7 +1088,8 @@ public class HibernateBootstrapTest extends CamelTestSupport {
         Mockito.when(session.createSelectionQuery(
                 Mockito.eq("from HibernateTestEntity"),
                 Mockito.eq(HibernateTestEntity.class))).thenReturn(query);
-        Mockito.when(query.getResultList()).thenReturn(List.of());
+        List<HibernateTestEntity> results = List.of();
+        Mockito.when(query.getResultList()).thenReturn(results);
 
         HibernateEndpoint endpoint = new HibernateEndpoint();
         endpoint.setCamelContext(context);
@@ -1009,6 +1106,14 @@ public class HibernateBootstrapTest extends CamelTestSupport {
         } finally {
             endpoint.stop();
         }
+
+        assertEquals(results, exchange.getMessage().getBody());
+        Mockito.verify(session).beginTransaction();
+        Mockito.verify(transaction).commit();
+        Mockito.verify(transaction, Mockito.never()).rollback();
+        Mockito.verify(session).close();
+        Mockito.verify(serviceRegistry, Mockito.times(1))
+                .requireService(TransactionCoordinatorBuilder.class);
     }
 
     @Test
@@ -1151,6 +1256,16 @@ public class HibernateBootstrapTest extends CamelTestSupport {
                 Mockito.eq("from HibernateTestEntity"), Mockito.eq(HibernateTestEntity.class));
         Mockito.verify(consumerSession, Mockito.never()).createSelectionQuery(
                 Mockito.anyString(), Mockito.eq(HibernateTestEntity.class));
+    }
+
+    private void stubSessionFactoryJta(SessionFactory sessionFactory, boolean jta) {
+        SessionFactoryImplementor implementor = Mockito.mock(SessionFactoryImplementor.class);
+        ServiceRegistryImplementor registry = Mockito.mock(ServiceRegistryImplementor.class);
+        TransactionCoordinatorBuilder txBuilder = Mockito.mock(TransactionCoordinatorBuilder.class);
+        Mockito.when(sessionFactory.unwrap(SessionFactoryImplementor.class)).thenReturn(implementor);
+        Mockito.when(implementor.getServiceRegistry()).thenReturn(registry);
+        Mockito.when(registry.requireService(TransactionCoordinatorBuilder.class)).thenReturn(txBuilder);
+        Mockito.when(txBuilder.isJta()).thenReturn(jta);
     }
 
     private HibernateComponent createComponent(String dataSourceName, String url, Class<?>... entityClasses)

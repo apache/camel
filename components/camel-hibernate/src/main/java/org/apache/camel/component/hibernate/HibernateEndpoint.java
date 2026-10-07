@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hibernate;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Category;
@@ -26,10 +27,14 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.util.PropertiesHelper;
 import org.hibernate.SessionFactory;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.resource.transaction.spi.TransactionCoordinatorBuilder;
 
-@UriEndpoint(firstVersion = "4.23.0", scheme = "hibernate", title = "Hibernate", syntax = "hibernate:entityClassName",
+@UriEndpoint(firstVersion = "4.24.0", scheme = "hibernate", title = "Hibernate", syntax = "hibernate:entityClassName",
              category = { Category.DATABASE }, headersClass = HibernateConstants.class)
 public class HibernateEndpoint extends ScheduledPollEndpoint {
 
@@ -43,14 +48,17 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
     @UriParam(description = "The HQL mutation query to execute.", label = "producer")
     private String mutationQuery;
 
-    @UriParam(description = "The natural-id property values used for lookup.", label = "producer")
+    @UriParam(description = "The natural-id property values used for lookup. String values can use Simple expressions from the message.",
+              label = "producer", prefix = "naturalId.", multiValue = true)
+    @Metadata(supportSimpleExpression = true)
     private Map<String, Object> naturalIdParameters;
 
     @UriParam(description = "Whether the Hibernate session and selection query should be read-only.",
               label = "producer,consumer")
     private boolean readOnly;
 
-    @UriParam(description = "Hibernate filters and their parameter values.", label = "producer,consumer")
+    @UriParam(description = "Hibernate filters and their parameter values.", label = "producer,consumer",
+              prefix = "filter.", multiValue = true)
     private Map<String, Map<String, Object>> filters;
 
     @UriParam(description = "The tenant identifier used to create the Hibernate session.",
@@ -81,6 +89,7 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
 
     private Class<?> entityType;
     private SessionFactory sessionFactory;
+    private boolean jta;
 
     public HibernateEndpoint() {
     }
@@ -102,6 +111,19 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
     }
 
     @Override
+    public void configureProperties(Map<String, Object> options) {
+        Map<String, Object> naturalId = PropertiesHelper.extractProperties(options, "naturalId.");
+        if (!naturalId.isEmpty()) {
+            setNaturalIdParameters(naturalId);
+        }
+        Map<String, Object> extractedFilters = PropertiesHelper.extractProperties(options, "filter.");
+        if (!extractedFilters.isEmpty()) {
+            setFilters(adaptFilters(extractedFilters));
+        }
+        super.configureProperties(options);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         if (sessionFactory == null) {
             sessionFactory = ((HibernateComponent) getComponent()).getSessionFactory();
@@ -109,6 +131,11 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
         if (sessionFactory == null) {
             throw new IllegalArgumentException("SessionFactory must be configured or available on HibernateComponent");
         }
+
+        jta = sessionFactory.unwrap(SessionFactoryImplementor.class)
+                .getServiceRegistry()
+                .requireService(TransactionCoordinatorBuilder.class)
+                .isJta();
 
         boolean hasSelectionQuery = selectionQuery != null && !selectionQuery.isBlank();
         boolean hasMutationQuery = mutationQuery != null && !mutationQuery.isBlank();
@@ -174,6 +201,10 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
 
     public SessionFactory getSessionFactory() {
         return sessionFactory;
+    }
+
+    public boolean isJta() {
+        return jta;
     }
 
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -266,5 +297,34 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
 
     public void setConsumeDelete(boolean consumeDelete) {
         this.consumeDelete = consumeDelete;
+    }
+
+    private Map<String, Map<String, Object>> adaptFilters(Map<String, Object> extracted) {
+        Map<String, Map<String, Object>> adapted = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> entry : extracted.entrySet()) {
+            Object value = resolveFilterValue(entry.getValue());
+            if (value instanceof Map<?, ?> nested) {
+                Map<String, Object> parameters = new LinkedHashMap<>();
+                nested.forEach((key, nestedValue) -> parameters.put(String.valueOf(key), nestedValue));
+                adapted.put(entry.getKey(), parameters);
+            } else {
+                String key = entry.getKey();
+                int dot = key.indexOf('.');
+                if (dot < 0) {
+                    adapted.computeIfAbsent(key, ignored -> new LinkedHashMap<>());
+                } else {
+                    adapted.computeIfAbsent(key.substring(0, dot), ignored -> new LinkedHashMap<>())
+                            .put(key.substring(dot + 1), value);
+                }
+            }
+        }
+        return adapted;
+    }
+
+    private Object resolveFilterValue(Object value) {
+        if (value instanceof String str && EndpointHelper.isReferenceParameter(str) && getCamelContext() != null) {
+            return EndpointHelper.resolveReferenceParameter(getCamelContext(), str, Object.class, false);
+        }
+        return value;
     }
 }
