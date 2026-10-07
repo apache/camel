@@ -45,7 +45,8 @@ import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelCLIComm
                      footer = {
                              "%nExamples:",
                              "  camel infra run kafka",
-                             "  camel infra run kafka --background" })
+                             "  camel infra run kafka --background",
+                             "  camel infra run ollama --property ollama.model=qwen2.5:0.5b" })
 public class InfraRun extends InfraBaseCommand {
 
     @CommandLine.Spec
@@ -68,6 +69,10 @@ public class InfraRun extends InfraBaseCommand {
     @CommandLine.Option(names = { "--no-ui" }, defaultValue = "false",
                         description = "Do not start companion UI containers")
     boolean noUi;
+
+    @CommandLine.Option(names = { "--prop", "--property" },
+                        description = "Service properties, ex. --property=ollama.model=qwen2.5:0.5b")
+    List<String> properties = new ArrayList<>();
 
     public InfraRun(CamelJBangMain main) {
         super(main);
@@ -144,6 +149,9 @@ public class InfraRun extends InfraBaseCommand {
             if (noUi) {
                 cmds.add("--no-ui");
             }
+            for (String property : properties) {
+                cmds.add("--property=" + property);
+            }
         }
 
         cmds.remove("--background=true");
@@ -178,6 +186,15 @@ public class InfraRun extends InfraBaseCommand {
         }
         if (noUi) {
             System.setProperty("camel.infra.ui", "false");
+        }
+        // the service resolves its own properties from the system properties first, so they must be set
+        // before it is instantiated
+        List<String> serviceProperties;
+        try {
+            serviceProperties = setServiceProperties();
+        } catch (IllegalArgumentException e) {
+            printer().printErr(e.getMessage());
+            return 1;
         }
         Object actualService = cl.loadClass(serviceImpl).newInstance();
 
@@ -252,7 +269,8 @@ public class InfraRun extends InfraBaseCommand {
 
         AtomicBoolean closed = new AtomicBoolean();
         // use shutdown hook as fallback to shut-down and delete files
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdownInfra(closed, logFile, jsonFile, actualService)));
+        Runtime.getRuntime()
+                .addShutdownHook(new Thread(() -> shutdownInfra(closed, logFile, jsonFile, actualService, serviceProperties)));
 
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -301,12 +319,34 @@ public class InfraRun extends InfraBaseCommand {
             // ignore
         }
 
-        shutdownInfra(closed, logFile, jsonFile, actualService);
+        shutdownInfra(closed, logFile, jsonFile, actualService, serviceProperties);
 
         return 0;
     }
 
-    private static void shutdownInfra(AtomicBoolean closed, Path logFile, Path jsonFile, Object actualService) {
+    /**
+     * Turns the --property options into system properties, which is how a service takes an option the CLI has no flag
+     * of its own for, such as the model of ollama.
+     *
+     * @return the names that were set, to be cleared when the service stops
+     */
+    List<String> setServiceProperties() {
+        List<String> names = new ArrayList<>(properties.size());
+        for (String property : properties) {
+            int separator = property.indexOf('=');
+            if (separator < 1) {
+                throw new IllegalArgumentException(
+                        "Property " + property + " is not in the key=value form, for example ollama.model=qwen2.5:0.5b");
+            }
+            String name = property.substring(0, separator);
+            System.setProperty(name, property.substring(separator + 1));
+            names.add(name);
+        }
+        return names;
+    }
+
+    private static void shutdownInfra(
+            AtomicBoolean closed, Path logFile, Path jsonFile, Object actualService, List<String> serviceProperties) {
         if (closed.compareAndSet(false, true)) {
             try {
                 actualService.getClass().getMethod("shutdown").invoke(actualService);
@@ -326,6 +366,7 @@ public class InfraRun extends InfraBaseCommand {
             System.clearProperty("camel.infra.port");
             System.clearProperty("camel.infra.fixedPort");
             System.clearProperty("camel.infra.ui");
+            serviceProperties.forEach(System::clearProperty);
         }
     }
 
