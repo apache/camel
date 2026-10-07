@@ -162,7 +162,8 @@ public class URISupportTest {
     @Test
     public void testNormalizeValueWithPercentEscapeFormEncodesTheQuery() throws Exception {
         // CAMEL-25188: a value with = or # needs a percent escape, and a uri with % is normalized by the complex
-        // normalizer, so the fast normalizer form-encodes the whole query the same way, whatever the key order
+        // normalizer, so the fast normalizer hands such a uri to the complex normalizer (CAMEL-25345), which
+        // form-encodes the whole query, whatever the key order
         assertThat(URISupport.normalizeUri("log:foo?secretKey=abc/def=="))
                 .isEqualTo("log://foo?secretKey=abc%2Fdef%3D%3D");
         assertThat(URISupport.normalizeUri("log:foo?marker=a#b/c")).isEqualTo("log://foo?marker=a%23b%2Fc");
