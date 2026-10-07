@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -59,6 +60,7 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.commands.RouteDslConverter;
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletChecks;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -908,7 +910,12 @@ class SourceTab extends AbstractTab {
                 sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
                 sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
                 sourceViewer.setEndpointValidator(assist::validateYamlEndpoints);
-                sourceViewer.setSimpleValidator(assist::validateYamlSimple);
+                // in a Kamelet's template, a property written as ${header.tag} is said to be the placeholder {{tag}}
+                sourceViewer.setSimpleValidator(content -> KameletChecks.withTemplateHints(
+                        name.toLowerCase(Locale.ROOT), content, assist.validateYamlSimple(content)));
+                // the shape of a Kamelet file and the kamelet: endpoints of a route (CAMEL-25411)
+                sourceViewer.setKameletValidator(content -> SourceEditAssist.validateKamelets(filePath, content));
+                sourceViewer.setKameletNotes(content -> SourceEditAssist.kameletNotes(filePath, content));
                 sourceViewer.setListItemNodeChecker(assist::isListChildrenNode);
                 sourceViewer.setEditQuickDocProvider(withProjectDocs(assist::provideEditQuickDoc));
             } else {

@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -38,6 +39,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletChecks;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteAssist;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteNodes;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
@@ -1730,6 +1732,32 @@ final class SourceEditAssist {
 
     List<String> validateYamlEndpoints(String content) {
         return SourceValidator.validateYamlEndpoints(content, validationCatalog());
+    }
+
+    /**
+     * The Kamelet checks of a YAML file, as camel_validate_source runs them (CAMEL-25411): the shape of a Kamelet file,
+     * then the kamelet: endpoints against the catalog and the Kamelets of the file's directory. A Kamelet no catalog or
+     * project has yet is not reported, as on a write: it may be the project's own one, not written yet.
+     */
+    static List<String> validateKamelets(Path file, String content) {
+        List<String> msgs = new ArrayList<>();
+        if (isKameletFile(file)) {
+            msgs.addAll(KameletChecks.validateKameletFile(content));
+        }
+        if (msgs.isEmpty()) {
+            msgs.addAll(KameletChecks.validateYaml(content, file.toAbsolutePath().getParent(), false));
+        }
+        return msgs;
+    }
+
+    /** The notes of a Kamelet file (CAMEL-25403): a camel: dependency its template does not use, and camel:core. */
+    static List<String> kameletNotes(Path file, String content) {
+        return isKameletFile(file) ? KameletChecks.unusedDependencies(content) : List.of();
+    }
+
+    static boolean isKameletFile(Path file) {
+        String name = file.getFileName().toString().toLowerCase(Locale.ROOT);
+        return name.endsWith(".kamelet.yaml") || name.endsWith(".kamelet.yml");
     }
 
     /**
