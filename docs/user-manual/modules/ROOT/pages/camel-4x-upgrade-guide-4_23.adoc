@@ -507,6 +507,18 @@ The `org.apache.camel.processor.InterceptSendToEndpointCallback` class is deprec
   the first route are now kept as beans of the caller, so the later routes share these instances instead of each
   getting new ones. Use a new `RouteTemplateContext` per route to get new template beans for each route.
 
+==== A route id that is already used (Breaking change)
+
+Creating a route from a route template (`TemplatedRouteBuilder`, `templatedRoute`, `addRouteFromTemplate`, or a
+Kamelet endpoint with a route id) with the id of an existing route that was not created from the same template (a
+regular route, or a route from another template or Kamelet) now fails with `FailedToCreateRouteFromTemplateException`.
+For a Kamelet endpoint this exception is wrapped in a `FailedToCreateKameletException`. Prior to Camel 4.23 the
+existing route was removed and replaced without notice. To replace such a route, stop and remove it first.
+
+An existing route that was created from the same template is still replaced, as before. This is how the route of a
+Kamelet endpoint with a route id is created again when its parent route is updated (for example by a route reload),
+and how a route from a template is updated with other parameters.
+
 === camel-aws2-ddb
 
 The `aws2-ddb:application-json` data type transformer no longer overwrites a `CamelAwsDdbReturnValues` header that
