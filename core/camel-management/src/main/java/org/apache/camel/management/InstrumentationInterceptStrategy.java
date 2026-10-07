@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.spi.ManagementInterceptStrategy;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * This strategy class wraps targeted processors with a {@link InstrumentationProcessor}. Each InstrumentationProcessor
@@ -52,7 +53,7 @@ public class InstrumentationInterceptStrategy implements ManagementInterceptStra
                                             Map<Processor, WrappedProcessor> wrappedProcessors, Route route) {
         this.registeredCounters = registeredCounters;
         this.wrappedProcessors = wrappedProcessors;
-        this.route = route;
+        this.route = ObjectHelper.notNull(route, "route");
     }
 
     @Override
