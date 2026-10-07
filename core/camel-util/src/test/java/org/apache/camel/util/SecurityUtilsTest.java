@@ -56,8 +56,13 @@ class SecurityUtilsTest {
         assertFalse(SecurityUtils.isInsecureValue("camel.component.mongodb.tlsAllowInvalidHostnames", false));
         assertTrue(SecurityUtils.isInsecureValue(
                 "camel.component.debezium-mongodb.mongodbSslInvalidHostnameAllowed", true));
+        assertFalse(SecurityUtils.isInsecureValue(
+                "camel.component.debezium-mongodb.mongodbSslInvalidHostnameAllowed", false));
+        // hostnameVerification is the inverse: it is the off value that is insecure
         assertTrue(SecurityUtils.isInsecureValue("camel.component.netty-http.hostnameVerification", false));
+        assertFalse(SecurityUtils.isInsecureValue("camel.component.netty-http.hostnameVerification", true));
         assertTrue(SecurityUtils.isInsecureValue("camel.component.splunk-hec.skipTlsVerify", true));
+        assertFalse(SecurityUtils.isInsecureValue("camel.component.splunk-hec.skipTlsVerify", false));
     }
 
     @Test
