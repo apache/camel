@@ -97,6 +97,7 @@ public final class SecurityUtils {
         map.put("transferexchange", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("trustallcertificates", new SecurityOption(INSECURE_SSL, "true"));
         map.put("trustallpackages", new SecurityOption(INSECURE_SERIALIZATION, "true"));
+        map.put("trustcerts", new SecurityOption(INSECURE_SSL, "true"));
         map.put("uploadenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("usejavamailsessionpropertiesfromheaders", new SecurityOption(INSECURE_SSL, "true"));
         map.put("validateauth", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
@@ -273,6 +274,27 @@ public final class SecurityUtils {
         owners.put("trustallpackages", Set.of(
                 "component:activemq",
                 "component:activemq6"));
+        owners.put("trustcerts", Set.of(
+                "component:kubernetesconfigmaps",
+                "component:kubernetescronjob",
+                "component:kubernetescustomresources",
+                "component:kubernetesdeployments",
+                "component:kubernetesevents",
+                "component:kuberneteshpa",
+                "component:kubernetesjob",
+                "component:kubernetesnamespaces",
+                "component:kubernetesnodes",
+                "component:kubernetespersistentvolumes",
+                "component:kubernetespersistentvolumesclaims",
+                "component:kubernetespods",
+                "component:kubernetesreplicationcontrollers",
+                "component:kubernetesresourcesquota",
+                "component:kubernetessecrets",
+                "component:kubernetesserviceaccounts",
+                "component:kubernetesservices",
+                "component:openshiftbuildconfigs",
+                "component:openshiftbuilds",
+                "component:openshiftdeploymentconfigs"));
         owners.put("usejavamailsessionpropertiesfromheaders", Set.of(
                 "component:imap",
                 "component:imaps",
