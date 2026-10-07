@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -42,6 +43,7 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletDefinitions;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -56,7 +58,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
  */
 class CatalogTab extends AbstractTableTab {
 
-    private static final String[] SCOPES = { "all", "component", "dataformat", "language", "other", "eip" };
+    private static final String[] SCOPES = { "all", "component", "dataformat", "language", "other", "eip", "kamelet" };
 
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
@@ -254,7 +256,9 @@ class CatalogTab extends AbstractTableTab {
                     Cell.from(Span.styled(" " + name, nameStyle)),
                     Cell.from(Span.styled(entry.kind, kindStyle)),
                     Cell.from(Span.styled(entry.description, Style.EMPTY.dim())),
-                    Cell.from(Span.styled(entry.label != null ? entry.label : "", Style.EMPTY.dim()))));
+                    Cell.from(entry.project
+                            ? Span.styled(entry.label, Theme.label().bold())
+                            : Span.styled(entry.label != null ? entry.label : "", Style.EMPTY.dim()))));
         }
 
         if (rows.isEmpty() && dataLoaded) {
@@ -322,6 +326,17 @@ class CatalogTab extends AbstractTableTab {
         String title = " " + entry.name + " ";
 
         List<Line> lines = new ArrayList<>();
+        if (entry.kamelet != null) {
+            kameletDetail(lines, entry, area.width());
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(lines))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(title).build())
+                            .build(),
+                    area);
+            return;
+        }
         addDetailField(lines, "Title", entry.title, area.width());
         addDetailField(lines, "Description", entry.description, area.width());
         addDetailField(lines, "Kind", entry.kind, area.width());
@@ -364,32 +379,176 @@ class CatalogTab extends AbstractTableTab {
                 area);
     }
 
-    private void openDocViewer() {
-        if (ctx.openCatalogDocCallback == null || catalog == null) {
-            return;
-        }
+    private CatalogEntry selectedEntry() {
         List<CatalogEntry> sorted = new ArrayList<>(filteredEntries);
         sorted.sort(this::sortEntry);
         Integer sel = tableState.selected();
-        if (sel == null || sel < 0 || sel >= sorted.size()) {
+        return sel == null || sel < 0 || sel >= sorted.size() ? null : sorted.get(sel);
+    }
+
+    private void openDocViewer() {
+        CatalogEntry entry = selectedEntry();
+        if (entry != null && entry.kamelet != null) {
+            openKameletDoc(entry);
             return;
         }
-        CatalogEntry entry = sorted.get(sel);
+        if (ctx.openCatalogDocCallback == null || catalog == null || entry == null) {
+            return;
+        }
         ctx.openCatalogDocCallback.accept(entry.name, entry.kind, catalog);
     }
 
     private void openOptionsViewer() {
-        if (ctx.openOptionsCallback == null || catalog == null) {
+        CatalogEntry entry = selectedEntry();
+        if (entry != null && entry.kamelet != null) {
+            // the options of a Kamelet are its properties, which its doc lists
+            openKameletDoc(entry);
             return;
         }
-        List<CatalogEntry> sorted = new ArrayList<>(filteredEntries);
-        sorted.sort(this::sortEntry);
-        Integer sel = tableState.selected();
-        if (sel == null || sel < 0 || sel >= sorted.size()) {
+        if (ctx.openOptionsCallback == null || catalog == null || entry == null) {
             return;
         }
-        CatalogEntry entry = sorted.get(sel);
         ctx.openOptionsCallback.accept(entry.name, entry.kind, catalog);
+    }
+
+    private void openKameletDoc(CatalogEntry entry) {
+        if (ctx.openMarkdownCallback != null) {
+            ctx.openMarkdownCallback.accept(entry.name, kameletMarkdown(entry.kamelet));
+        }
+    }
+
+    // ---- Kamelets (CAMEL-25416) ----
+
+    private static void kameletDetail(List<Line> lines, CatalogEntry entry, int width) {
+        KameletDefinitions.Definition def = entry.kamelet;
+        lines.add(Line.from(Span.styled("  Kind: ", Style.EMPTY.dim()),
+                Span.styled("kamelet" + (def.type() != null ? " (" + def.type() + ")" : ""), kindStyle("kamelet")),
+                entry.project ? Span.styled("  the project's own", Theme.label().bold()) : Span.raw("")));
+        if (def.title() != null && !def.title().equals(def.name())) {
+            lines.add(Line.from(Span.styled("  Title: ", Style.EMPTY.dim()), Span.raw(def.title())));
+        }
+        if (def.description() != null) {
+            lines.add(Line.from(Span.styled("  Description: ", Style.EMPTY.dim()),
+                    Span.raw(TuiHelper.truncate(def.description(), Math.max(10, width - 18)))));
+        }
+        lines.add(Line.from(Span.styled("  From: ", Style.EMPTY.dim()), Span.raw(def.source())));
+        String props = KameletDefinitions.propertyList(def);
+        lines.add(Line.from(Span.styled("  Properties: ", Style.EMPTY.dim()),
+                Span.raw(props.isEmpty() ? "none" : TuiHelper.truncate(props, Math.max(10, width - 17)))));
+        lines.add(Line.from(Span.styled("  Use: ", Style.EMPTY.dim()),
+                Span.raw(("source".equals(def.type()) ? "from: " : "to: ") + "kamelet:" + def.name()
+                         + ", its properties under parameters:")));
+    }
+
+    /** The doc of a Kamelet: its type, where it comes from, how a route uses it, and its properties. */
+    static String kameletMarkdown(KameletDefinitions.Definition def) {
+        StringBuilder md = new StringBuilder();
+        md.append("# ").append(def.title() != null ? def.title() : def.name()).append("\n\n");
+        if (def.description() != null) {
+            md.append(def.description()).append("\n\n");
+        }
+        md.append("**Kamelet:** `").append(def.name()).append('`');
+        if (def.type() != null) {
+            md.append(" (").append(def.type()).append(')');
+        }
+        md.append("  \n**From:** ").append(def.source()).append("\n\n");
+        md.append("## Usage\n\n```yaml\n");
+        boolean source = "source".equals(def.type());
+        md.append(source ? "from:\n  uri: kamelet:" : "- to:\n    uri: kamelet:").append(def.name()).append('\n');
+        List<KameletDefinitions.Property> required = new ArrayList<>();
+        for (KameletDefinitions.Property p : def.properties()) {
+            if (p.required() && p.defaultValue() == null) {
+                required.add(p);
+            }
+        }
+        if (!required.isEmpty()) {
+            md.append(source ? "  parameters:\n" : "    parameters:\n");
+            for (KameletDefinitions.Property p : required) {
+                md.append(source ? "    " : "      ").append(p.name()).append(": ...\n");
+            }
+        }
+        md.append("```\n\nThe properties go under `parameters:`: they are the Kamelet's, not the options of the"
+                  + " component it uses.\n\n## Properties\n\n");
+        if (def.properties().isEmpty()) {
+            md.append("None.\n");
+        } else {
+            md.append("| Name | Required | Type | Default | Description |\n|---|---|---|---|---|\n");
+            for (KameletDefinitions.Property p : def.properties()) {
+                md.append("| ").append(p.name())
+                        .append(" | ").append(p.required() && p.defaultValue() == null ? "yes" : "")
+                        .append(" | ").append(p.type() != null ? p.type() : "")
+                        .append(" | ").append(p.defaultValue() != null ? p.defaultValue() : "")
+                        .append(" | ")
+                        .append(p.description() != null ? p.description().replace("|", "\\|").replace("\n", " ") : "")
+                        .append(" |\n");
+            }
+        }
+        return md.toString();
+    }
+
+    private static final java.util.regex.Pattern KAMELET_URI
+            = java.util.regex.Pattern.compile("kamelet:([a-z0-9][a-z0-9-]*)");
+
+    /**
+     * The Kamelets of the catalog view: the project's own Kamelet files always, the Kamelets of the catalog its routes
+     * use, and with the full catalog all the Kamelets of the catalog.
+     */
+    static List<CatalogEntry> kameletEntries(
+            Path dir, boolean full, java.util.Map<String, KameletDefinitions.Definition> catalogKamelets) {
+        List<CatalogEntry> entries = new ArrayList<>();
+        java.util.Map<String, KameletDefinitions.Definition> project = KameletDefinitions.projectKamelets(dir);
+        for (KameletDefinitions.Definition def : project.values()) {
+            entries.add(kameletEntry(def, true));
+        }
+        Set<String> used = full ? Set.of() : usedKamelets(dir);
+        for (KameletDefinitions.Definition def : catalogKamelets.values()) {
+            if (!project.containsKey(def.name()) && (full || used.contains(def.name()))) {
+                entries.add(kameletEntry(def, false));
+            }
+        }
+        return entries;
+    }
+
+    private static CatalogEntry kameletEntry(KameletDefinitions.Definition def, boolean project) {
+        CatalogEntry entry = new CatalogEntry();
+        entry.name = def.name();
+        entry.kind = "kamelet";
+        entry.title = def.title() != null ? def.title() : def.name();
+        entry.description = def.description() != null ? def.description() : "";
+        entry.label = project ? "project" : def.type();
+        entry.kamelet = def;
+        entry.project = project;
+        return entry;
+    }
+
+    /** The Kamelets the route files of the directory send to or consume from, kamelet:source and :sink left out. */
+    static Set<String> usedKamelets(Path dir) {
+        Set<String> used = new HashSet<>();
+        if (dir == null || !java.nio.file.Files.isDirectory(dir)) {
+            return used;
+        }
+        try (java.util.stream.Stream<Path> files = java.nio.file.Files.walk(dir, 6)) {
+            files.filter(f -> {
+                String n = f.getFileName().toString();
+                return (n.endsWith(".yaml") || n.endsWith(".yml") || n.endsWith(".java") || n.endsWith(".xml"))
+                        && !f.toString().contains("/target/") && !f.toString().contains("/.");
+            }).forEach(f -> {
+                try {
+                    java.util.regex.Matcher m = KAMELET_URI.matcher(java.nio.file.Files.readString(f));
+                    while (m.find()) {
+                        String name = m.group(1);
+                        if (!"source".equals(name) && !"sink".equals(name)) {
+                            used.add(name);
+                        }
+                    }
+                } catch (Exception e) {
+                    // an unreadable file uses none
+                }
+            });
+        } catch (Exception e) {
+            // no directory listing: none used
+        }
+        return used;
     }
 
     private void addDetailField(List<Line> lines, String label, String value, int width) {
@@ -446,6 +605,10 @@ class CatalogTab extends AbstractTableTab {
     }
 
     private int sortEntry(CatalogEntry a, CatalogEntry b) {
+        if (a.project != b.project) {
+            // the project's own Kamelets first, whatever the sort
+            return a.project ? -1 : 1;
+        }
         int result = switch (sort) {
             case "kind" -> a.kind.compareToIgnoreCase(b.kind);
             case "description" -> a.description.compareToIgnoreCase(b.description);
@@ -460,6 +623,7 @@ class CatalogTab extends AbstractTableTab {
             case "dataformat" -> Theme.success();
             case "language" -> Theme.warning();
             case "eip" -> Theme.info();
+            case "kamelet" -> Theme.label();
             default -> Style.EMPTY.dim();
         };
     }
@@ -505,6 +669,10 @@ class CatalogTab extends AbstractTableTab {
                 collectArtifacts(cat, "language", cat.findLanguageNames(), appArtifacts, entries);
                 collectArtifacts(cat, "other", cat.findOtherNames(), appArtifacts, entries);
                 collectEips(cat, info.pid, full, entries);
+                // the Kamelets: the project's own first, then those of the catalog (CAMEL-25416)
+                Path dir = info.phantom && info.sourceDir != null
+                        ? Path.of(info.sourceDir) : FilesBrowser.resolveSourceDirectory(info);
+                entries.addAll(kameletEntries(dir, full, KameletDefinitions.catalog()));
 
                 entries.sort((a, b) -> a.name.compareToIgnoreCase(b.name));
                 applyResult(entries, cat, null);
@@ -770,5 +938,8 @@ class CatalogTab extends AbstractTableTab {
         boolean deprecated;
         String deprecatedSince;
         String deprecationNote;
+        // a Kamelet: its definition, and whether it is a file of the project
+        KameletDefinitions.Definition kamelet;
+        boolean project;
     }
 }
