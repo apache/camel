@@ -71,4 +71,18 @@ class KafkaShareComponentTest extends CamelTestSupport {
         assertThatThrownBy(() -> context.getRouteController().startRoute("noGroup"))
                 .hasStackTraceContaining("The share group must be configured with the groupId option");
     }
+
+    @Test
+    void consumerFailsToStartWithAConsumerGroupOption() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("kafka-share:orders?brokers=localhost:9092&groupId=workers&additionalProperties.auto.offset.reset=earliest")
+                        .routeId("consumerGroupOption").autoStartup(false).to("mock:result");
+            }
+        });
+
+        assertThatThrownBy(() -> context.getRouteController().startRoute("consumerGroupOption"))
+                .hasStackTraceContaining("The consumer group options [auto.offset.reset] cannot be set on a share consumer");
+    }
 }

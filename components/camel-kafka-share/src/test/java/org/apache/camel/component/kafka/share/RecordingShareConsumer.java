@@ -43,6 +43,9 @@ class RecordingShareConsumer extends MockShareConsumer<Object, Object> {
 
     private final List<Acknowledgement> acknowledgements = Collections.synchronizedList(new ArrayList<>());
     private volatile int commits;
+    private volatile int polls;
+    private volatile boolean closed;
+    private RuntimeException pollFailure;
     private boolean hasRecords;
 
     static ConsumerRecord<Object, Object> record(String topic, long offset, Object key, Object value, short deliveryCount) {
@@ -60,6 +63,12 @@ class RecordingShareConsumer extends MockShareConsumer<Object, Object> {
 
     @Override
     public synchronized ConsumerRecords<Object, Object> poll(Duration timeout) {
+        polls++;
+        if (pollFailure != null) {
+            RuntimeException failure = pollFailure;
+            pollFailure = null;
+            throw failure;
+        }
         if (!hasRecords) {
             try {
                 wait(Math.min(timeout.toMillis(), 100));
@@ -80,6 +89,27 @@ class RecordingShareConsumer extends MockShareConsumer<Object, Object> {
     public synchronized Map<TopicIdPartition, Optional<KafkaException>> commitSync(Duration timeout) {
         commits++;
         return super.commitSync(timeout);
+    }
+
+    @Override
+    public synchronized void close(Duration timeout) {
+        closed = true;
+        super.close(timeout);
+    }
+
+    /**
+     * The next poll throws the exception.
+     */
+    synchronized void failNextPoll(RuntimeException failure) {
+        this.pollFailure = failure;
+    }
+
+    int getPolls() {
+        return polls;
+    }
+
+    boolean isClosed() {
+        return closed;
     }
 
     List<Acknowledgement> getAcknowledgements() {

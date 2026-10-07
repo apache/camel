@@ -45,14 +45,18 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.builder.Builder.body;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * The kafka-share consumer against a Kafka broker with share groups.
+ * The kafka-share consumer against a Kafka broker with share groups. Only the Apache Kafka container, the default, is
+ * configured for share groups.
  */
+@DisabledIfSystemProperty(named = "kafka.instance.type", matches = "(?!local-kafka-container$).+",
+                          disabledReason = "Share groups are only configured on the Apache Kafka container")
 class KafkaShareConsumerIT extends CamelTestSupport {
 
     private static final String WORK_TOPIC = "share-work";

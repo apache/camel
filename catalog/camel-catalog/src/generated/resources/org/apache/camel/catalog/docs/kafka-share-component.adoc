@@ -208,8 +208,10 @@ share group: `seekTo`, `autoOffsetReset`, `autoCommitEnable`, `allowManualCommit
 `batching`. A share consumer cannot be paused, so suspending a route stops its consumer. The brokers, security,
 deserializer, header and additional properties options are the same as the Kafka component.
 
-The client properties that a share consumer rejects (such as `auto.offset.reset` or `enable.auto.commit`) make the
-consumer fail to start when they are set as `additionalProperties`.
+The client properties that a share consumer rejects (`auto.offset.reset`, `enable.auto.commit`, `group.instance.id`,
+`isolation.level`, `partition.assignment.strategy`, `interceptor.classes`, `session.timeout.ms`,
+`heartbeat.interval.ms`, `group.protocol` and `group.remote.assignor`) make the consumer fail to start, with an error
+naming them, when they are set as `additionalProperties`.
 
 === Health check
 

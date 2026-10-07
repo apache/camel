@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka.share;
 
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.camel.component.kafka.KafkaClientConfiguration;
@@ -33,6 +34,21 @@ public class KafkaShareConfiguration extends KafkaClientConfiguration {
      * The value of share.acknowledgement.mode: every record is acknowledged by the consumer.
      */
     static final String EXPLICIT_ACKNOWLEDGEMENT = "explicit";
+
+    /**
+     * The consumer group options that a share consumer rejects (see ShareConsumerConfig in kafka-clients).
+     */
+    static final List<String> SHARE_GROUP_UNSUPPORTED_CONFIGS = List.of(
+            ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,
+            ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG,
+            ConsumerConfig.GROUP_INSTANCE_ID_CONFIG,
+            ConsumerConfig.ISOLATION_LEVEL_CONFIG,
+            ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG,
+            ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG,
+            ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG,
+            ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG,
+            ConsumerConfig.GROUP_PROTOCOL_CONFIG,
+            ConsumerConfig.GROUP_REMOTE_ASSIGNOR_CONFIG);
 
     @UriPath(label = "common")
     @Metadata(required = true)
@@ -114,6 +130,19 @@ public class KafkaShareConfiguration extends KafkaClientConfiguration {
         applyAdditionalProperties(props);
 
         return props;
+    }
+
+    /**
+     * Fails when the properties of a share consumer contain consumer group options, which can only be set as additional
+     * properties. The share consumer would reject them every time it is created.
+     */
+    static void validateShareConsumerProperties(Properties props) {
+        List<String> unsupported = SHARE_GROUP_UNSUPPORTED_CONFIGS.stream().filter(props::containsKey).toList();
+        if (!unsupported.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "The consumer group options " + unsupported + " cannot be set on a share consumer;"
+                                               + " remove them from the additional properties");
+        }
     }
 
     public String getTopic() {

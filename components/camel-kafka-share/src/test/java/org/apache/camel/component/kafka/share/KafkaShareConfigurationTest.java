@@ -16,31 +16,19 @@
  */
 package org.apache.camel.component.kafka.share;
 
-import java.util.List;
 import java.util.Properties;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaShareConsumer;
 import org.apache.kafka.common.config.ConfigException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.FieldSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class KafkaShareConfigurationTest {
-
-    // the consumer group options that a share consumer rejects
-    private static final List<String> SHARE_GROUP_UNSUPPORTED_CONFIGS = List.of(
-            ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,
-            ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG,
-            ConsumerConfig.GROUP_INSTANCE_ID_CONFIG,
-            ConsumerConfig.ISOLATION_LEVEL_CONFIG,
-            ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG,
-            ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG,
-            ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG,
-            ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG,
-            ConsumerConfig.GROUP_PROTOCOL_CONFIG,
-            ConsumerConfig.GROUP_REMOTE_ASSIGNOR_CONFIG);
 
     @Test
     void propertiesUseExplicitAcknowledgementAndNoConsumerGroupOption() {
@@ -55,7 +43,7 @@ class KafkaShareConfigurationTest {
                 .containsEntry(ConsumerConfig.SHARE_ACKNOWLEDGEMENT_MODE_CONFIG, "explicit")
                 .containsEntry(ConsumerConfig.SHARE_ACQUIRE_MODE_CONFIG, "record_limit")
                 .containsEntry(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 10)
-                .doesNotContainKeys(SHARE_GROUP_UNSUPPORTED_CONFIGS.toArray(new String[0]));
+                .doesNotContainKeys(KafkaShareConfiguration.SHARE_GROUP_UNSUPPORTED_CONFIGS.toArray(new String[0]));
     }
 
     @Test
@@ -67,16 +55,21 @@ class KafkaShareConfigurationTest {
         new KafkaShareConsumer<>(props).close();
     }
 
-    @Test
-    void consumerGroupOptionInAdditionalPropertiesIsRejectedByTheShareConsumer() {
+    @ParameterizedTest
+    @FieldSource("org.apache.camel.component.kafka.share.KafkaShareConfiguration#SHARE_GROUP_UNSUPPORTED_CONFIGS")
+    void consumerGroupOptionIsRejectedByTheShareConsumerAndTheValidation(String option) {
         KafkaShareConfiguration configuration = configuration();
-        configuration.getAdditionalProperties().put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        configuration.getAdditionalProperties().put(option, "any");
         Properties props = configuration.createShareConsumerProperties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
 
+        // the list of options must stay in line with the options kafka-clients rejects
         assertThatThrownBy(() -> new KafkaShareConsumer<>(props))
                 .isInstanceOf(ConfigException.class)
-                .hasMessageContaining(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG);
+                .hasMessageContaining(option);
+        assertThatThrownBy(() -> KafkaShareConfiguration.validateShareConsumerProperties(props))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(option);
     }
 
     @Test

@@ -98,6 +98,9 @@ public class KafkaShareConsumer extends DefaultConsumer {
             ClientUtils.parseAndValidateAddresses(List.of(brokers.split(",")), ClientDnsLookup.USE_ALL_DNS_IPS.toString());
         }
 
+        // the share consumer rejects the consumer group options, fail now rather than on every attempt to create it
+        KafkaShareConfiguration.validateShareConsumerProperties(getProps());
+
         executor = endpoint.createExecutor(this);
 
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
