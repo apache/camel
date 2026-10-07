@@ -3886,6 +3886,58 @@ When `camel.opentelemetry.*` properties are configured but OpenTelemetry is disa
 the `camel.opentelemetry2.*` or `camel.telemetryDev.*` properties are now used. Previously they were ignored whenever
 any `camel.opentelemetry.*` property was configured.
 
+=== camel-main - `CAMEL_COMPONENT_*`, `CAMEL_DATAFORMAT_*`, `CAMEL_LANGUAGE_*` environment variables now take effect
+
+Two bugs in `camel-main`'s environment-variable processing were fixed and are now active.
+
+**Bug 1 — variables were silently ignored since Camel 3.9 (CAMEL-16345)**
+
+`filterEnvVariables` uppercases the variable names before comparing them against the supplied prefixes, so the prefixes
+themselves must be uppercase. Before this fix the code passed lowercase prefixes (`camel.component.`, etc.), causing
+every match to fail silently. This has been corrected: `CAMEL_COMPONENT_*`, `CAMEL_DATAFORMAT_*` and `CAMEL_LANGUAGE_*`
+variables are now actually read.
+
+If your deployments intentionally set such variables but relied on them being ignored (for example to pass secrets that
+should not reach the component), remove the variables or set
+`camel.main.autoConfigurationEnvironmentVariablesEnabled=false` to opt out (note: this also disables `CAMEL_MAIN_*`
+and all other ENV-based configuration in `BaseMainSupport`).
+
+Variables that refer to a name not present on the classpath (for example `CAMEL_COMPONENT_KAFKA_BROKERS` in an
+application that does not include camel-kafka) will fail the startup with an `IllegalArgumentException`. Variables with
+an empty value (for example `CAMEL_COMPONENT_SEDA_QUEUE_SIZE=` from an unset compose variable) will fail with
+_value is empty_. There is no per-variable opt-out: rename the variable, remove it, or set
+`camel.main.autoConfigurationEnvironmentVariablesEnabled=false` (note: this also disables `CAMEL_MAIN_*` and all other
+ENV-based configuration in `BaseMainSupport`).
+
+Secrets passed as component environment variables (for example `CAMEL_COMPONENT_AWS2_S3_SECRET_KEY`) will be seen by
+the `prod`-profile security check as plain-text secrets and will fail the startup. The
+`camel.component.aws2-s3.secret-key={{env:CAMEL_COMPONENT_AWS2_S3_SECRET_KEY}}` placeholder form does not help —
+`filterEnvVariables` still picks up the original variable and binds its value directly. To pass a secret without
+triggering the security check, either rename the environment variable to a name that does not match the
+`CAMEL_COMPONENT_*` pattern and reference it with a placeholder (for example
+`camel.component.aws2-s3.secret-key={{env:MY_AWS_SECRET_KEY}}`), configure the value through a vault, or disable
+auto-configuration from environment variables with `camel.main.autoConfigurationEnvironmentVariablesEnabled=false`
+(which also turns off the `CAMEL_MAIN_*` variables).
+
+**Bug 2 — ambiguous name resolution**
+
+When the catalog contained component/dataformat/language pairs whose names were prefixes of each other (such as `netty`
+/ `netty-http`, `js` / `jsonpath`, `avro` / `avroJackson`), the variable was randomly mapped to either name.
+A longest-match strategy now always selects the most specific name.
+
+**Known limitation — `rest` / `rest-api` and custom-named instances**
+
+`CAMEL_COMPONENT_REST_API_DOC=api.json` is matched to `camel.component.rest-api.doc` (the longer match), not to
+`camel.component.rest.apiDoc`. Use `CAMEL_COMPONENT_REST_APIDOC=api.json` instead (option names are matched
+case-insensitively). Note that using `camel.component.rest.apiDoc={{env:CAMEL_COMPONENT_REST_API_DOC}}` does not work
+as a workaround — `filterEnvVariables` still matches the original variable and binds it to `rest-api.doc` in addition
+to the placeholder.
+
+The same limitation affects custom-named component instances whose name starts with a catalog name. For example, with a
+component registered as `kafka-dr`, `CAMEL_COMPONENT_KAFKA_DR_BROKERS` is matched to `kafka` (the catalog entry) and
+becomes `camel.component.kafka.dr-brokers`, an unknown option that fails the startup. Configure such instances through
+`application.properties` instead: `camel.component.kafka-dr.brokers={{env:KAFKA_DR_BROKERS}}`.
+
 === camel-seda - stopping a suspended route does not wait for its pending messages
 
 Stopping a suspended SEDA route, or stopping the CamelContext while such a route is suspended, no longer waits for the
