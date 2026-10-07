@@ -409,6 +409,9 @@ class DataRefreshService {
                 .collect(Collectors.toMap(i -> i.directory, i -> i, (a, b) -> a.vanishing ? b : a));
         for (IntegrationInfo phantom : phantoms) {
             IntegrationInfo live = phantom.sourceDir != null ? liveDirs.get(phantom.sourceDir) : null;
+            if (live == null) {
+                live = launchedApp(phantom, infos);
+            }
             if (live != null) {
                 if (phantom.pid.equals(ctx.selectedPid) && !live.vanishing) {
                     ctx.selectedPid = live.pid;
@@ -426,6 +429,27 @@ class DataRefreshService {
                 infos.add(phantom);
             }
         }
+    }
+
+    /**
+     * The app F10 launched for the project: the launched process or a descendant of it. A folder of route files runs
+     * from the working directory of the monitor, or from a copy in .camel-jbang-run when a runtime is chosen, so its
+     * app does not report the project folder as its directory (CAMEL-25417).
+     */
+    static IntegrationInfo launchedApp(IntegrationInfo phantom, List<IntegrationInfo> infos) {
+        ProcessHandle launched = phantom.launchedProcess;
+        if (launched == null) {
+            return null;
+        }
+        java.util.Set<String> pids = new java.util.HashSet<>();
+        pids.add(Long.toString(launched.pid()));
+        launched.descendants().forEach(p -> pids.add(Long.toString(p.pid())));
+        for (IntegrationInfo info : infos) {
+            if (!info.phantom && info.pid != null && pids.contains(info.pid)) {
+                return info;
+            }
+        }
+        return null;
     }
 
     private void mergePhantoms(List<IntegrationInfo> infos) {

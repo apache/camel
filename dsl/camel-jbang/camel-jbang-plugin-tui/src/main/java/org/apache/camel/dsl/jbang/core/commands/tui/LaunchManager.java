@@ -284,8 +284,10 @@ class LaunchManager {
     /**
      * Runs an existing Maven project via {@code camel run pom.xml}, which detects the runtime, injects the CLI
      * connector, and logs to a file in {@code ~/.camel} that the Log tab reads (the same for all runtimes).
+     *
+     * @return the launched process, or null when it did not start
      */
-    void launchMavenProject(String dir, String projectType, String displayName, List<String> extraArgs) {
+    ProcessHandle launchMavenProject(String dir, String projectType, String displayName, List<String> extraArgs) {
         try {
             List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
             cmd.add("run");
@@ -300,12 +302,19 @@ class LaunchManager {
             Process process = pb.start();
             addPendingLaunch(displayName, process, outputFile);
             notify("Starting: " + displayName + " (" + projectType + ")", false);
+            return process.toHandle();
         } catch (Exception e) {
             notify("Failed to start Maven project: " + e.getMessage(), true);
+            return null;
         }
     }
 
-    void launchCamelRun(String sourceDir, String displayName, List<String> extraArgs) {
+    /**
+     * Runs a folder of route files with camel run --source-dir.
+     *
+     * @return the launched process, or null when it did not start
+     */
+    ProcessHandle launchCamelRun(String sourceDir, String displayName, List<String> extraArgs) {
         try {
             List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
             cmd.add("run");
@@ -320,8 +329,10 @@ class LaunchManager {
             Process process = pb.start();
             addPendingLaunch(displayName, process, outputFile);
             notify("Starting: " + displayName, false);
+            return process.toHandle();
         } catch (Exception e) {
             notify("Failed to start: " + sourceDir + " - " + e.getMessage(), true);
+            return null;
         }
     }
 
