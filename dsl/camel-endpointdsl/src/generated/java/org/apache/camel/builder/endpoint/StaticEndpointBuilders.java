@@ -7542,7 +7542,7 @@ public class StaticEndpointBuilders {
      * Camel Hibernate Component
      * 
      * Category: database
-     * Since: 4.23
+     * Since: 4.24
      * Maven coordinates: org.apache.camel:camel-hibernate
      * 
      * Syntax: <code>hibernate:entityClassName</code>
@@ -7561,7 +7561,7 @@ public class StaticEndpointBuilders {
      * Camel Hibernate Component
      * 
      * Category: database
-     * Since: 4.23
+     * Since: 4.24
      * Maven coordinates: org.apache.camel:camel-hibernate
      * 
      * Syntax: <code>hibernate:entityClassName</code>

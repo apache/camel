@@ -20,7 +20,8 @@ import org.apache.camel.spi.Metadata;
 
 public final class HibernateConstants {
 
-    @Metadata(description = "Map of named parameters to bind to the Hibernate query.", label = "producer")
+    @Metadata(description = "Map of named parameters to bind to the Hibernate query, or to override natural-id lookup values.",
+              label = "producer")
     public static final String HIBERNATE_PARAMETERS = "CamelHibernateParameters";
 
     static final String HIBERNATE_SESSION_CONTEXT = "CamelHibernateSessionContext";

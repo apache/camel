@@ -16,15 +16,20 @@
  */
 package org.apache.camel.component.hibernate;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.component.hibernate.entity.HibernateTestEntity;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.hibernate.SessionFactory;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.resource.transaction.spi.TransactionCoordinatorBuilder;
+import org.hibernate.service.spi.ServiceRegistryImplementor;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class HibernateEndpointTest {
@@ -113,11 +118,45 @@ class HibernateEndpointTest {
         assertThrows(IllegalArgumentException.class, endpoint::start);
     }
 
+    @Test
+    void shouldBindNaturalIdPrefixParameters() {
+        HibernateEndpoint endpoint = createEndpoint();
+        Map<String, Object> options = new LinkedHashMap<>();
+        options.put("naturalId.name", "test");
+
+        endpoint.configureProperties(options);
+
+        assertEquals(Map.of("name", "test"), endpoint.getNaturalIdParameters());
+    }
+
+    @Test
+    void shouldBindFilterPrefixParameters() {
+        HibernateEndpoint endpoint = createEndpoint();
+        Map<String, Object> options = new LinkedHashMap<>();
+        options.put("filter.nameFilter.name", "test");
+
+        endpoint.configureProperties(options);
+
+        assertEquals(Map.of("nameFilter", Map.of("name", "test")), endpoint.getFilters());
+    }
+
     private HibernateEndpoint createEndpoint() {
         HibernateEndpoint endpoint = new HibernateEndpoint();
         endpoint.setCamelContext(new DefaultCamelContext());
-        endpoint.setSessionFactory(Mockito.mock(SessionFactory.class));
+        endpoint.setSessionFactory(mockResourceLocalSessionFactory());
         endpoint.setEntityType(HibernateTestEntity.class);
         return endpoint;
+    }
+
+    private SessionFactory mockResourceLocalSessionFactory() {
+        SessionFactory sessionFactory = Mockito.mock(SessionFactory.class);
+        SessionFactoryImplementor implementor = Mockito.mock(SessionFactoryImplementor.class);
+        ServiceRegistryImplementor registry = Mockito.mock(ServiceRegistryImplementor.class);
+        TransactionCoordinatorBuilder txBuilder = Mockito.mock(TransactionCoordinatorBuilder.class);
+        Mockito.when(sessionFactory.unwrap(SessionFactoryImplementor.class)).thenReturn(implementor);
+        Mockito.when(implementor.getServiceRegistry()).thenReturn(registry);
+        Mockito.when(registry.requireService(TransactionCoordinatorBuilder.class)).thenReturn(txBuilder);
+        Mockito.when(txBuilder.isJta()).thenReturn(false);
+        return sessionFactory;
     }
 }

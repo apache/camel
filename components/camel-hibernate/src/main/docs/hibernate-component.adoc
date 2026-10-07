@@ -3,7 +3,7 @@
 :shortname: hibernate
 :artifactid: camel-hibernate
 :description: Camel Hibernate Component
-:since: 4.23
+:since: 4.24
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
@@ -176,7 +176,17 @@ The mutation update count is placed in the message body.
 
 ==== Natural-id lookup
 
-Hibernate entities that define a natural identifier can be looked up using `naturalIdParameters`.
+Hibernate entities that define a natural identifier can be looked up using `naturalId.` URI parameters
+(`naturalIdParameters` in Java, including `#bean`).
+
+String values are evaluated with Simple, so the natural-id can come from the message. Values can also be
+passed or overridden with the `CamelHibernateParameters` header.
+
+[source,java]
+----
+from("direct:findByEmail")
+    .to("hibernate:com.example.User?naturalId.email=${header.email}");
+----
 
 The lookup uses Hibernate's native natural-id functionality rather than constructing an HQL query.
 
@@ -198,7 +208,14 @@ Hibernate filters can be configured through the `filters` endpoint option.
 
 The configuration contains the filter name and its parameter values. The component enables the configured filters on the Hibernate `Session` before executing the operation.
 
-For example, an application can configure a filter named `tenantFilter` with a tenant parameter:
+URI parameters use the `filter.` prefix:
+
+[source,text]
+----
+hibernate:com.example.MyEntity?selectionQuery=from MyEntity&filter.tenantFilter.tenantId=tenant-a
+----
+
+Java and `#bean` configuration is also supported:
 
 [source,java]
 ----

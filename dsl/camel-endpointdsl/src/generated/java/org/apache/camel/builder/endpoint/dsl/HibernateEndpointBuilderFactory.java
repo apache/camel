@@ -813,34 +813,44 @@ public interface HibernateEndpointBuilderFactory {
             return this;
         }
         /**
-         * The natural-id property values used for lookup.
+         * The natural-id property values used for lookup. String values can use
+         * Simple expressions from the message. This is a multi-value option
+         * with prefix: naturalId.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * naturalIdParameters(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: producer
          * 
-         * @param naturalIdParameters the value to set
+         * @param key the option key
+         * @param value the option value
          * @return the dsl builder
          */
-        default HibernateEndpointProducerBuilder naturalIdParameters(Map<java.lang.String, java.lang.Object> naturalIdParameters) {
-            doSetProperty("naturalIdParameters", naturalIdParameters);
+        default HibernateEndpointProducerBuilder naturalIdParameters(String key, Object value) {
+            doSetMultiValueProperty("naturalIdParameters", "naturalId." + key, value);
             return this;
         }
         /**
-         * The natural-id property values used for lookup.
+         * The natural-id property values used for lookup. String values can use
+         * Simple expressions from the message. This is a multi-value option
+         * with prefix: naturalId.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * naturalIdParameters(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: producer
          * 
-         * @param naturalIdParameters the value to set
+         * @param values the values
          * @return the dsl builder
          */
-        default HibernateEndpointProducerBuilder naturalIdParameters(String naturalIdParameters) {
-            doSetProperty("naturalIdParameters", naturalIdParameters);
+        default HibernateEndpointProducerBuilder naturalIdParameters(Map values) {
+            doSetMultiValueProperties("naturalIdParameters", "naturalId.", values);
             return this;
         }
         /**
@@ -993,7 +1003,7 @@ public interface HibernateEndpointBuilderFactory {
          * Camel Hibernate Component
          * 
          * Category: database
-         * Since: 4.23
+         * Since: 4.24
          * Maven coordinates: org.apache.camel:camel-hibernate
          * 
          * @return the dsl builder for the headers' name.
@@ -1006,7 +1016,7 @@ public interface HibernateEndpointBuilderFactory {
          * Camel Hibernate Component
          * 
          * Category: database
-         * Since: 4.23
+         * Since: 4.24
          * Maven coordinates: org.apache.camel:camel-hibernate
          * 
          * Syntax: <code>hibernate:entityClassName</code>
@@ -1025,7 +1035,7 @@ public interface HibernateEndpointBuilderFactory {
          * Camel Hibernate Component
          * 
          * Category: database
-         * Since: 4.23
+         * Since: 4.24
          * Maven coordinates: org.apache.camel:camel-hibernate
          * 
          * Syntax: <code>hibernate:entityClassName</code>
@@ -1054,7 +1064,8 @@ public interface HibernateEndpointBuilderFactory {
         public static final HibernateHeaderNameBuilder INSTANCE = new HibernateHeaderNameBuilder();
 
         /**
-         * Map of named parameters to bind to the Hibernate query.
+         * Map of named parameters to bind to the Hibernate query, or to
+         * override natural-id lookup values.
          * 
          * The option is a: {@code } type.
          * 
