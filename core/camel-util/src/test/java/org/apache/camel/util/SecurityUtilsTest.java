@@ -54,6 +54,8 @@ class SecurityUtilsTest {
         // camel.main.profile=prod cannot refuse it (CAMEL-25409)
         assertTrue(SecurityUtils.isInsecureValue("camel.component.mongodb.tlsAllowInvalidHostnames", true));
         assertFalse(SecurityUtils.isInsecureValue("camel.component.mongodb.tlsAllowInvalidHostnames", false));
+        assertTrue(SecurityUtils.isInsecureValue(
+                "camel.component.debezium-mongodb.mongodbSslInvalidHostnameAllowed", true));
         assertTrue(SecurityUtils.isInsecureValue("camel.component.netty-http.hostnameVerification", false));
         assertTrue(SecurityUtils.isInsecureValue("camel.component.splunk-hec.skipTlsVerify", true));
     }
