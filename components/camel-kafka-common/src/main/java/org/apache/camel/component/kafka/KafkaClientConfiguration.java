@@ -328,8 +328,10 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
                             + " in Camel configurations), the properties have to be prefixed with additionalProperties., e.g.:"
                             + " additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://lo"
                             + "calhost:8811/avro. If the properties are set in the application.properties file, they must be "
-                            + "prefixed with camel.component.kafka.additional-properties followed by the property name "
-                            + "enclosed in square brackets, for example the delivery.timeout.ms property in square brackets.")
+                            + "prefixed with camel.component.kafka.additional-properties "
+                            + "(camel.component.kafka-share.additional-properties for the Kafka Share component) followed by "
+                            + "the property name enclosed in square brackets, for example the delivery.timeout.ms property in "
+                            + "square brackets.")
     private Map<String, Object> additionalProperties = new HashMap<>();
     @UriParam(label = "common", defaultValue = "30000",
               description = "Timeout in milliseconds to wait gracefully for the consumer or producer to shut down and "
@@ -1267,7 +1269,8 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
      * properties have to be prefixed with `additionalProperties.`., e.g.:
      * `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`.
      * If the properties are set in the `application.properties` file, they must be prefixed with
-     * `camel.component.kafka.additional-properties` and the property enclosed in square brackets, like this example:
+     * `camel.component.kafka.additional-properties` (`camel.component.kafka-share.additional-properties` for the Kafka
+     * Share component) and the property enclosed in square brackets, like this example:
      * `camel.component.kafka.additional-properties[delivery.timeout.ms]=15000`.
      */
     public void setAdditionalProperties(Map<String, Object> additionalProperties) {

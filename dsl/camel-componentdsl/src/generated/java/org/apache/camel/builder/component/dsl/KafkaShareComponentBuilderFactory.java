@@ -56,8 +56,8 @@ public interface KafkaShareComponentBuilderFactory {
          * producer in case they can't be set directly on the camel
          * configurations (e.g.: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
-         * additionalProperties.., e.g.:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. If the properties are set in the application.properties file, they must be prefixed with camel.component.kafka.additional-properties and the property enclosed in square brackets, like this example: camel.component.kafka.additional-propertiesdelivery.timeout.ms=15000. This is a multi-value option with prefix: additionalProperties.
+         * additionalProperties., e.g.:
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. If the properties are set in the application.properties file, they must be prefixed with camel.component.kafka.additional-properties (camel.component.kafka-share.additional-properties for the Kafka Share component) followed by the property name enclosed in square brackets, for example the delivery.timeout.ms property in square brackets. This is a multi-value option with prefix: additionalProperties.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
@@ -834,7 +834,7 @@ public interface KafkaShareComponentBuilderFactory {
     
         /**
          * To use a custom strategy with the consumer to control how to handle
-         * exceptions thrown from the Kafka broker while pooling messages.
+         * exceptions thrown from the Kafka broker while polling messages.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.kafka.PollExceptionStrategy&lt;/code&gt; type.
