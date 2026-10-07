@@ -27,7 +27,9 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.LongSupplier;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
@@ -218,6 +220,10 @@ class McpFacade {
     // the F2 menu's launcher: starts examples (tui_run_example) and infra services (tui_infra start). It is held
     // here, not in the tool registry, so the AI panel's registry and the MCP server's registry both see it.
     private volatile LaunchManager launchManager;
+    // asks the data refresh for a scan of every integration, and counts the scans done: on the other tabs only the
+    // selected integration is refreshed, so the Overview rows of the others go stale while an agent reads them
+    private volatile Runnable fullScanRequest;
+    private volatile LongSupplier fullScansDone;
 
     McpFacade(
               MonitorContext ctx,
@@ -259,6 +265,34 @@ class McpFacade {
 
     void setLaunchManager(LaunchManager launchManager) {
         this.launchManager = launchManager;
+    }
+
+    void setFullScan(Runnable request, LongSupplier done) {
+        this.fullScanRequest = request;
+        this.fullScansDone = done;
+    }
+
+    /**
+     * Brings the data of every integration up to date before an agent reads the Overview from another tab, waiting at
+     * most a few seconds for the next scan.
+     */
+    void awaitFullScan() {
+        Runnable request = fullScanRequest;
+        LongSupplier done = fullScansDone;
+        if (request == null || done == null) {
+            return;
+        }
+        long before = done.getAsLong();
+        request.run();
+        long deadline = System.currentTimeMillis() + FULL_SCAN_TIMEOUT_MS;
+        while (done.getAsLong() <= before && System.currentTimeMillis() < deadline) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
     }
 
     LaunchManager getLaunchManager() {
@@ -666,9 +700,14 @@ class McpFacade {
 
     /** How long a table read waits for a tab that loads its data on demand. The connector action timeout is 5s. */
     static final long ON_DEMAND_LOAD_TIMEOUT_MS = 8_000;
+    // a full scan runs at most every 2 seconds, on the next refresh
+    static final long FULL_SCAN_TIMEOUT_MS = 4_000;
 
     JsonObject getTableData(String tabName) {
         MonitorTab tab = resolveTab(tabName);
+        if (tab != null && tab == tabRegistry.overviewTab() && bridge != null && bridge.activeTab() != tab) {
+            awaitFullScan();
+        }
         return tab != null ? awaitTableData(tab, ON_DEMAND_LOAD_TIMEOUT_MS) : null;
     }
 
@@ -1050,6 +1089,24 @@ class McpFacade {
             result.put("upToDate", false);
         }
         return result;
+    }
+
+    /** The pid of the integration, or else the infra service, with the given name (alias) or pid. */
+    private String findPidByNameOrPid(String nameOrPid) {
+        for (IntegrationInfo info : data.get()) {
+            if (!info.vanishing && (nameOrPid.equals(info.name) || nameOrPid.equals(info.pid))) {
+                return info.pid;
+            }
+        }
+        List<InfraInfo> infras = ctx.infraData != null ? ctx.infraData.get() : null;
+        if (infras != null) {
+            for (InfraInfo info : infras) {
+                if (!info.vanishing && (nameOrPid.equals(info.alias) || nameOrPid.equals(info.pid))) {
+                    return info.pid;
+                }
+            }
+        }
+        return null;
     }
 
     private IntegrationInfo findIntegration(String name) {
@@ -1474,12 +1531,35 @@ class McpFacade {
     }
 
     String controlIntegration(String action) {
+        return controlIntegration(action, null);
+    }
+
+    /**
+     * Controls the integration with the given name or pid, which becomes the selected one, so the screen shows what the
+     * agent acts on (CAMEL-25424). Without a name: the selected integration, or the only one running.
+     */
+    String controlIntegration(String action, String nameOrPid) {
         if (action == null || action.isBlank()) {
             return "Error: action is required";
         }
         if ("stop-all".equals(action)) {
             bridge.stopAll();
             return "Stopping all processes";
+        }
+        if (nameOrPid != null && !nameOrPid.isBlank()) {
+            String pid = findPidByNameOrPid(nameOrPid.trim());
+            if (pid == null) {
+                String names = data.get().stream().filter(i -> !i.vanishing)
+                        .map(i -> i.name + " (pid " + i.pid + ")").collect(Collectors.joining(", "));
+                return "Error: no integration with name or pid " + nameOrPid
+                       + (names.isEmpty() ? "; none is running" : ". Known: " + names);
+            }
+            ctx.selectedPid = pid;
+        } else if (ctx.selectedPid == null) {
+            List<IntegrationInfo> running = data.get().stream().filter(i -> !i.vanishing && !i.phantom).toList();
+            if (running.size() == 1) {
+                ctx.selectedPid = running.get(0).pid;
+            }
         }
         if ("close".equals(action)) {
             if (ctx.selectedPid == null) {
@@ -1494,7 +1574,7 @@ class McpFacade {
             return "Closed project: " + info.name;
         }
         if (ctx.selectedPid == null) {
-            return "Error: no integration selected";
+            return "Error: no integration selected; give its name or pid";
         }
         String name = ctx.selectedName();
         return switch (action) {

@@ -1448,7 +1448,7 @@ class TuiToolRegistry {
         if (action == null || action.isBlank()) {
             return "Error: action is required";
         }
-        return facade.controlIntegration(action);
+        return facade.controlIntegration(action, (String) args.get("name"));
     }
 
     private String callOpenProject(Map<String, Object> args) {
