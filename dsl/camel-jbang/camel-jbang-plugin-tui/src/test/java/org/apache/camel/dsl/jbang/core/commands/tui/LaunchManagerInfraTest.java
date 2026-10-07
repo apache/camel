@@ -74,6 +74,24 @@ class LaunchManagerInfraTest {
     }
 
     @Test
+    void aLaunchThatNeedsAServiceWithItsImplementationRunsOnceTheServiceIsUp() throws Exception {
+        AtomicBoolean launched = new AtomicBoolean();
+        // camel infra run aws sqs runs as the aws service
+        lm.launchInfra("aws sqs", List.of("sleep", "30"));
+        lm.deferUntilInfra(List.of("aws sqs"), "aws-sqs", () -> launched.set(true));
+
+        lm.tick(System.currentTimeMillis());
+        assertThat(launched).isFalse();
+
+        running.add(infra("aws"));
+        lm.tick(System.currentTimeMillis());
+        assertThat(launched).isTrue();
+        ProcessHandle.current().children()
+                .filter(p -> p.info().command().map(c -> c.endsWith("sleep")).orElse(false))
+                .forEach(ProcessHandle::destroy);
+    }
+
+    @Test
     void aLaunchIsDroppedWhenItsInfraFailsToStart() throws Exception {
         List<String> notices = new ArrayList<>();
         List<String> failures = new ArrayList<>();

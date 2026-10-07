@@ -83,6 +83,18 @@ class McpFacadeControlTest {
     }
 
     @Test
+    void anUnknownNameAlsoListsTheInfraServices() {
+        integration("orders", "100");
+        InfraInfo kafka = new InfraInfo();
+        kafka.alias = "kafka";
+        kafka.pid = "300";
+        infra.get().add(kafka);
+
+        assertThat(facade.controlIntegration("stop", "kafak"))
+                .contains("orders (pid 100)").contains("kafka (infra, pid 300)");
+    }
+
+    @Test
     void withoutANameTheOnlyOneRunningIsUsed() {
         integration("orders", "100");
 
