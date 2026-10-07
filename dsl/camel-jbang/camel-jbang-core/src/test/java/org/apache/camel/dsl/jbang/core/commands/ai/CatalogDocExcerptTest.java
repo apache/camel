@@ -87,12 +87,12 @@ class CatalogDocExcerptTest {
 
     @Test
     public void testALanguageCarriesWhatItsOptionsCannotSay() throws Exception {
-        // CAMEL-25235: the semantic language is configured by named questions, which are not options at all, so its
+        // CAMEL-25235: the semantic language is configured by named evaluations, which are not options at all, so its
         // option list (id, language, expression) says nothing about how to use it
         JsonObject answer = catalogDoc(Map.of("name", "semantic", "kind", "language"));
         String documentation = answer.getString("documentation");
         assertNotNull(documentation, "no documentation in: " + answer.toJson());
-        for (String needed : new String[] { "question", "instructions", "criteria", "threshold" }) {
+        for (String needed : new String[] { "evaluation", "expert", "operation", "parameters", "state" }) {
             assertTrue(documentation.contains(needed), needed + " is not in the excerpt:\n" + documentation);
         }
         assertNotNull(answer.getString("documentationHint"));
