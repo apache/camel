@@ -303,6 +303,8 @@ same checks, and more that are particular to Kamelets:
 top, with their type, default and description. Below a divider come the options of the kamelet component itself
 (`routeId`, `timeout`...), which are for special uses only.
 
+image::jbang/camel-tui-source-kamelet-completion.png[Tab under the parameters of a kamelet: endpoint lists the properties of the Kamelet first]
+
 The template of a Kamelet is a route of the project: *g* lists it under the name of the Kamelet, a route's
 `to: kamelet:name` has a jump link to it, and the `from` of the template links back to the routes that use it.
 
