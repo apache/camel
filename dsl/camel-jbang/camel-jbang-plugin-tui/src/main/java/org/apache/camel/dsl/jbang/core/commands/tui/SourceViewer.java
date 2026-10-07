@@ -625,6 +625,11 @@ class SourceViewer {
         return dirty;
     }
 
+    /** Whether the text differs from what was last loaded or saved. */
+    private boolean changedSinceSave() {
+        return originalEditText == null || !originalEditText.equals(editState.text());
+    }
+
     /** Package-private for tests that drive the edit buffer directly. */
     TextAreaState editState() {
         return editState;
@@ -1026,7 +1031,8 @@ class SourceViewer {
         }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('z') && !ke.hasShift()) {
             if (editHistory.undo(editState)) {
-                dirty = true;
+                // undone back to the saved text: not modified any more
+                dirty = changedSinceSave();
                 lineStatuses = null;
                 refreshEditFindMatches();
             }
@@ -1034,7 +1040,7 @@ class SourceViewer {
         }
         if (ke.hasCtrl() && (ke.isCharIgnoreCase('y') || (ke.isCharIgnoreCase('z') && ke.hasShift()))) {
             if (editHistory.redo(editState)) {
-                dirty = true;
+                dirty = changedSinceSave();
                 lineStatuses = null;
                 refreshEditFindMatches();
             }
@@ -2031,6 +2037,7 @@ class SourceViewer {
             }
             Files.writeString(editableFile, content, StandardCharsets.UTF_8);
             dirty = false;
+            originalEditText = content;
             Path path = editableFile;
             boolean restoreMarkdownMode = markdownModeBeforeEdit;
             int cursorRow = editState.cursorRow();

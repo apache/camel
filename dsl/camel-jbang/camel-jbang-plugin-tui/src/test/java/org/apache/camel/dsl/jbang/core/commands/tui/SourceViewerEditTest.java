@@ -103,6 +103,21 @@ class SourceViewerEditTest {
     }
 
     @Test
+    void undoingEveryChangeLeavesTheFileUnmodified() {
+        viewer.loadFile(sourceFile);
+        viewer.enterEditMode();
+        viewer.handleKeyEvent(KeyEvent.ofChar('x', KeyModifiers.NONE));
+        assertThat(viewer.isDirty()).isTrue();
+
+        viewer.handleKeyEvent(KeyEvent.ofChar('z', KeyModifiers.CTRL));
+
+        assertThat(viewer.isDirty()).isFalse();
+        // redo brings the change back
+        viewer.handleKeyEvent(KeyEvent.ofChar('y', KeyModifiers.CTRL));
+        assertThat(viewer.isDirty()).isTrue();
+    }
+
+    @Test
     void typingInEditModeDoesNotCloseViewer() {
         viewer.loadFile(sourceFile);
         viewer.enterEditMode();
