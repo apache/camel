@@ -57,14 +57,18 @@ public final class SemanticEvaluations {
     }
 
     public static SemanticEvaluations get(CamelContext context) {
-        synchronized (CREATION_LOCK) {
-            SemanticEvaluations answer = context.getCamelContextExtension().getContextPlugin(SemanticEvaluations.class);
-            if (answer == null) {
-                answer = new SemanticEvaluations(context);
-                context.getCamelContextExtension().addContextPlugin(SemanticEvaluations.class, answer);
+        var extension = context.getCamelContextExtension();
+        SemanticEvaluations answer = extension.getContextPlugin(SemanticEvaluations.class);
+        if (answer == null) {
+            synchronized (CREATION_LOCK) {
+                answer = extension.getContextPlugin(SemanticEvaluations.class);
+                if (answer == null) {
+                    answer = new SemanticEvaluations(context);
+                    extension.addContextPlugin(SemanticEvaluations.class, answer);
+                }
             }
-            return answer;
         }
+        return answer;
     }
 
     /**

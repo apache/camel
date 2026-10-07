@@ -77,6 +77,38 @@ class SemanticInitializationTest {
     }
 
     @Test
+    void cachedRegistryLookupDoesNotWaitForAnotherContext() throws Exception {
+        ExecutorService callers = Executors.newFixedThreadPool(2);
+        CountDownLatch entered = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        try (var creating = new DefaultCamelContext(); var cached = new DefaultCamelContext()) {
+            var expected = SemanticEvaluations.get(cached);
+            creating.getCamelContextExtension().lazyAddContextPlugin(SemanticEvaluations.class, () -> {
+                entered.countDown();
+                try {
+                    assertThat(release.await(30, TimeUnit.SECONDS)).isTrue();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException(e);
+                }
+                return null;
+            });
+            var creation = callers.submit(() -> SemanticEvaluations.get(creating));
+            try {
+                assertThat(entered.await(10, TimeUnit.SECONDS)).isTrue();
+                var lookup = callers.submit(() -> SemanticEvaluations.get(cached));
+                assertThat(lookup.get(10, TimeUnit.SECONDS)).isSameAs(expected);
+            } finally {
+                release.countDown();
+                assertThat(creation.get(10, TimeUnit.SECONDS)).isNotNull();
+            }
+        } finally {
+            release.countDown();
+            callers.shutdownNow();
+        }
+    }
+
+    @Test
     void concurrentLanguagesCannotOverwriteTheAdapterOwner() throws Exception {
         ExecutorService callers = Executors.newFixedThreadPool(2);
         CyclicBarrier start = new CyclicBarrier(2);
