@@ -531,6 +531,7 @@ public final class AuthoringTools {
         result.put("file", file);
         result.put("errors", new JsonArray(errors));
         putKameletGuide(result, file, errors);
+        putKameletNotes(result, file, content);
         // the problems whose fix is certain, as edits an agent can apply (camel_edit_file find/replace)
         JsonArray fixes = new JsonArray();
         String[] lines = content.split("\n", -1);
@@ -923,6 +924,20 @@ public final class AuthoringTools {
         return message != null ? message.replaceFirst("^Line \\d+: ", "") : "";
     }
 
+    /**
+     * What a Kamelet file does that works but is not right, which does not refuse a write: a camel: dependency its
+     * template does not use (CAMEL-25403).
+     */
+    private static void putKameletNotes(JsonObject result, String file, String content) {
+        String name = file != null ? file.toLowerCase(Locale.ROOT) : "";
+        if (name.endsWith(".kamelet.yaml") || name.endsWith(".kamelet.yml")) {
+            List<String> notes = KameletChecks.unusedDependencies(content);
+            if (!notes.isEmpty()) {
+                result.put("notes", new JsonArray(notes));
+            }
+        }
+    }
+
     /** Writes a file after validating it, as {@code camel_write_file} does; no confirmation is asked here. */
     public static JsonObject writeFile(ToolContext ctx, Path dir, String file, String content, boolean validate) {
         Path path = resolveFile(dir, file);
@@ -980,6 +995,9 @@ public final class AuthoringTools {
         if (!problemsBefore.isEmpty()) {
             // written with problems the file already had: said, so they are not taken for fixed
             result.put("existingProblems", new JsonArray(problemsBefore));
+        }
+        if (validate) {
+            putKameletNotes(result, file, content);
         }
         if (watch) {
             JsonObject reload = ReloadOutcome.await(ctx.pid(), processName, sinceKey, RELOAD_WAIT_MILLIS);
