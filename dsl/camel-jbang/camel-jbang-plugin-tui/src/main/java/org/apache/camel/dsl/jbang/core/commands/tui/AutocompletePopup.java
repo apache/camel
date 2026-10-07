@@ -382,12 +382,7 @@ class AutocompletePopup {
             renderState.select(sel + 2 + (dividerAt >= 0 && sel >= dividerAt ? 1 : 0));
         }
 
-        int total = allItems.size();
-        int shown = filteredItems.size();
-        String label = titlePrefix != null ? titlePrefix : "Completions";
-        String title = shown == total
-                ? " " + label + " (" + total + ") "
-                : " " + label + " (" + shown + "/" + total + ") ";
+        String title = title();
 
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
@@ -595,6 +590,22 @@ class AutocompletePopup {
             }
         }
         listState.select(filteredItems.isEmpty() ? null : 0);
+    }
+
+    /**
+     * The title of the list with its count. When the list has the properties of a Kamelet, the count is of those: the
+     * options of the kamelet component below the divider are for special uses, and not what the title names
+     * (CAMEL-25411).
+     */
+    String title() {
+        String label = titlePrefix != null ? titlePrefix : "Completions";
+        boolean kamelet = allItems.stream().anyMatch(AutocompletePopup::isKameletProperty);
+        long total = kamelet ? allItems.stream().filter(AutocompletePopup::isKameletProperty).count() : allItems.size();
+        long shown = kamelet
+                ? filteredItems.stream().filter(AutocompletePopup::isKameletProperty).count() : filteredItems.size();
+        return shown == total
+                ? " " + label + " (" + total + ") "
+                : " " + label + " (" + shown + "/" + total + ") ";
     }
 
     private static boolean isKameletProperty(CompletionItem item) {
