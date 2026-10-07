@@ -39,6 +39,8 @@ public class KafkaComponent extends AbstractKafkaComponent {
     private KafkaConfiguration configuration = new KafkaConfiguration();
     @Metadata(autowired = true, label = "consumer,advanced")
     private KafkaManualCommitFactory kafkaManualCommitFactory;
+    @Metadata(autowired = true, label = "advanced")
+    private KafkaClientFactory kafkaClientFactory;
     @Deprecated
     @Metadata(label = "consumer,advanced")
     private int subscribeConsumerBackoffMaxAttempts;
@@ -119,6 +121,19 @@ public class KafkaComponent extends AbstractKafkaComponent {
         this.kafkaManualCommitFactory = kafkaManualCommitFactory;
     }
 
+    public KafkaClientFactory getKafkaClientFactory() {
+        return kafkaClientFactory;
+    }
+
+    /**
+     * Factory to use for creating {@link org.apache.kafka.clients.consumer.KafkaConsumer} and
+     * {@link org.apache.kafka.clients.producer.KafkaProducer} instances. This allows configuring a custom factory to
+     * create instances with logic that extends the vanilla Kafka clients.
+     */
+    public void setKafkaClientFactory(KafkaClientFactory kafkaClientFactory) {
+        this.kafkaClientFactory = kafkaClientFactory;
+    }
+
     /**
      * @deprecated Use {@link #getCreateConsumerBackoffMaxAttempts()} instead. Since Camel 4.22, the consumer creation
      *             and subscription are handled by a single reconnection task that uses the createConsumerBackoff*
@@ -190,6 +205,14 @@ public class KafkaComponent extends AbstractKafkaComponent {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // if a factory was not autowired then create a default factory
+        // NOTE: must be done in doStart() rather than doInit(), because when a component is
+        // registered via addComponent() (the path used by Spring Boot), doInit() runs before
+        // the autowiring lifecycle strategy has a chance to inject a custom factory.
+        if (kafkaClientFactory == null) {
+            kafkaClientFactory = new DefaultKafkaClientFactory();
+        }
 
         if (configuration.isAllowManualCommit() && kafkaManualCommitFactory == null) {
             LOG.warn("The component was setup for allowing manual commits, but a manual commit factory was not set");

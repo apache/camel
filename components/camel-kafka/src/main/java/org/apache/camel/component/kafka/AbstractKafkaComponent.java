@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Base class for the Kafka components, holding the component options that are not tied to a specific Kafka client: the
- * client factory, the poll exception strategy, the backoff used when creating a consumer, and the deferred start of
- * consumers until the CamelContext is started.
+ * poll exception strategy, the backoff used when creating a consumer, global SSL, and the deferred start of consumers
+ * until the CamelContext is started.
  */
 public abstract class AbstractKafkaComponent extends HealthCheckComponent
         implements SSLContextParametersAware, ExtendedStartupListener {
@@ -41,8 +41,6 @@ public abstract class AbstractKafkaComponent extends HealthCheckComponent
 
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    @Metadata(autowired = true, label = "advanced")
-    private KafkaClientFactory kafkaClientFactory;
     @Metadata(autowired = true, label = "consumer,advanced")
     private PollExceptionStrategy pollExceptionStrategy;
     @Metadata(label = "consumer,advanced")
@@ -72,19 +70,6 @@ public abstract class AbstractKafkaComponent extends HealthCheckComponent
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
-    }
-
-    public KafkaClientFactory getKafkaClientFactory() {
-        return kafkaClientFactory;
-    }
-
-    /**
-     * Factory to use for creating {@link org.apache.kafka.clients.consumer.KafkaConsumer} and
-     * {@link org.apache.kafka.clients.producer.KafkaProducer} instances. This allows configuring a custom factory to
-     * create instances with logic that extends the vanilla Kafka clients.
-     */
-    public void setKafkaClientFactory(KafkaClientFactory kafkaClientFactory) {
-        this.kafkaClientFactory = kafkaClientFactory;
     }
 
     public PollExceptionStrategy getPollExceptionStrategy() {
@@ -147,19 +132,6 @@ public abstract class AbstractKafkaComponent extends HealthCheckComponent
             LOG.info("Starting {} pending Kafka consumers as CamelContext is fully started", pendingConsumers.size());
             pendingConsumers.forEach(Runnable::run);
             pendingConsumers.clear();
-        }
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        // if a factory was not autowired then create a default factory
-        // NOTE: must be done in doStart() rather than doInit(), because when a component is
-        // registered via addComponent() (the path used by Spring Boot), doInit() runs before
-        // the autowiring lifecycle strategy has a chance to inject a custom factory.
-        if (kafkaClientFactory == null) {
-            kafkaClientFactory = new DefaultKafkaClientFactory();
         }
     }
 
