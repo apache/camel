@@ -19,7 +19,7 @@ package org.apache.camel.component.kafka.consumer.support;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.kafka.KafkaConfiguration;
+import org.apache.camel.component.kafka.KafkaClientConfiguration;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -54,7 +54,7 @@ public abstract class KafkaRecordProcessor {
     }
 
     protected void propagateHeaders(
-            KafkaConfiguration configuration, ConsumerRecord<Object, Object> consumerRecord, Exchange exchange) {
+            KafkaClientConfiguration configuration, ConsumerRecord<Object, Object> consumerRecord, Exchange exchange) {
 
         HeaderFilterStrategy headerFilterStrategy = configuration.getHeaderFilterStrategy();
         KafkaHeaderDeserializer headerDeserializer = configuration.getHeaderDeserializer();

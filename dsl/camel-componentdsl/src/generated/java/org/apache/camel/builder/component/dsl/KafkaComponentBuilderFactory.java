@@ -123,6 +123,24 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Close idle connections after the number of milliseconds specified by
+         * this config.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 540000
+         * Group: common
+         * 
+         * @param connectionMaxIdleMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder connectionMaxIdleMs(java.lang.Integer connectionMaxIdleMs) {
+            doSetProperty("connectionMaxIdleMs", connectionMaxIdleMs);
+            return this;
+        }
+    
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
@@ -160,6 +178,76 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * A list of classes to use as metrics reporters. Implementing the
+         * MetricReporter interface allows plugging in classes that will be
+         * notified of new metric creation. The JmxReporter is always included
+         * to register JMX statistics.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param metricReporters the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder metricReporters(java.lang.String metricReporters) {
+            doSetProperty("metricReporters", metricReporters);
+            return this;
+        }
+    
+        
+        /**
+         * The window of time a metrics sample is computed over.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: common
+         * 
+         * @param metricsSampleWindowMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder metricsSampleWindowMs(java.lang.Integer metricsSampleWindowMs) {
+            doSetProperty("metricsSampleWindowMs", metricsSampleWindowMs);
+            return this;
+        }
+    
+        
+        /**
+         * The number of samples maintained to compute metrics.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 2
+         * Group: common
+         * 
+         * @param noOfMetricsSample the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder noOfMetricsSample(java.lang.Integer noOfMetricsSample) {
+            doSetProperty("noOfMetricsSample", noOfMetricsSample);
+            return this;
+        }
+    
+        
+        /**
+         * The size of the TCP receive buffer (SO_RCVBUF) to use when reading
+         * data.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 65536
+         * Group: common
+         * 
+         * @param receiveBufferBytes the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder receiveBufferBytes(java.lang.Integer receiveBufferBytes) {
+            doSetProperty("receiveBufferBytes", receiveBufferBytes);
+            return this;
+        }
+    
         
         /**
          * The maximum amount of time in milliseconds to wait when reconnecting
@@ -178,6 +266,26 @@ public interface KafkaComponentBuilderFactory {
          */
         default KafkaComponentBuilder reconnectBackoffMaxMs(java.lang.Integer reconnectBackoffMaxMs) {
             doSetProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
+            return this;
+        }
+    
+        
+        /**
+         * The amount of time to wait before attempting to reconnect to a given
+         * host. This avoids repeatedly connecting to a host in a tight loop.
+         * This backoff applies to all requests sent by the consumer to the
+         * broker.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 50
+         * Group: common
+         * 
+         * @param reconnectBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder reconnectBackoffMs(java.lang.Integer reconnectBackoffMs) {
+            doSetProperty("reconnectBackoffMs", reconnectBackoffMs);
             return this;
         }
     
@@ -225,6 +333,23 @@ public interface KafkaComponentBuilderFactory {
          */
         default KafkaComponentBuilder retryBackoffMs(java.lang.Integer retryBackoffMs) {
             doSetProperty("retryBackoffMs", retryBackoffMs);
+            return this;
+        }
+    
+        
+        /**
+         * Socket write buffer size.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 131072
+         * Group: common
+         * 
+         * @param sendBufferBytes the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder sendBufferBytes(java.lang.Integer sendBufferBytes) {
+            doSetProperty("sendBufferBytes", sendBufferBytes);
             return this;
         }
     
@@ -1208,24 +1333,6 @@ public interface KafkaComponentBuilderFactory {
     
         
         /**
-         * Close idle connections after the number of milliseconds specified by
-         * this config.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 540000
-         * Group: producer
-         * 
-         * @param connectionMaxIdleMs the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder connectionMaxIdleMs(java.lang.Integer connectionMaxIdleMs) {
-            doSetProperty("connectionMaxIdleMs", connectionMaxIdleMs);
-            return this;
-        }
-    
-        
-        /**
          * An upper bound on the time to report success or failure after a call
          * to send() returns. This limits the total time that a record will be
          * delayed prior to sending, the time to await acknowledgement from the
@@ -1451,58 +1558,6 @@ public interface KafkaComponentBuilderFactory {
         }
     
         /**
-         * A list of classes to use as metrics reporters. Implementing the
-         * MetricReporter interface allows plugging in classes that will be
-         * notified of new metric creation. The JmxReporter is always included
-         * to register JMX statistics.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param metricReporters the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder metricReporters(java.lang.String metricReporters) {
-            doSetProperty("metricReporters", metricReporters);
-            return this;
-        }
-    
-        
-        /**
-         * The window of time a metrics sample is computed over.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 30000
-         * Group: producer
-         * 
-         * @param metricsSampleWindowMs the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder metricsSampleWindowMs(java.lang.Integer metricsSampleWindowMs) {
-            doSetProperty("metricsSampleWindowMs", metricsSampleWindowMs);
-            return this;
-        }
-    
-        
-        /**
-         * The number of samples maintained to compute metrics.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 2
-         * Group: producer
-         * 
-         * @param noOfMetricsSample the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder noOfMetricsSample(java.lang.Integer noOfMetricsSample) {
-            doSetProperty("noOfMetricsSample", noOfMetricsSample);
-            return this;
-        }
-    
-        /**
          * The partitioner class for partitioning messages amongst sub-topics.
          * The default partitioner is based on the hash of the key.
          * 
@@ -1601,44 +1656,6 @@ public interface KafkaComponentBuilderFactory {
     
         
         /**
-         * The size of the TCP receive buffer (SO_RCVBUF) to use when reading
-         * data.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 65536
-         * Group: producer
-         * 
-         * @param receiveBufferBytes the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder receiveBufferBytes(java.lang.Integer receiveBufferBytes) {
-            doSetProperty("receiveBufferBytes", receiveBufferBytes);
-            return this;
-        }
-    
-        
-        /**
-         * The amount of time to wait before attempting to reconnect to a given
-         * host. This avoids repeatedly connecting to a host in a tight loop.
-         * This backoff applies to all requests sent by the consumer to the
-         * broker.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 50
-         * Group: producer
-         * 
-         * @param reconnectBackoffMs the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder reconnectBackoffMs(java.lang.Integer reconnectBackoffMs) {
-            doSetProperty("reconnectBackoffMs", reconnectBackoffMs);
-            return this;
-        }
-    
-        
-        /**
          * The number of acknowledgments the producer requires the leader to
          * have received before considering a request complete. This controls
          * the durability of records that are sent. The following settings are
@@ -1721,23 +1738,6 @@ public interface KafkaComponentBuilderFactory {
          */
         default KafkaComponentBuilder retries(java.lang.Integer retries) {
             doSetProperty("retries", retries);
-            return this;
-        }
-    
-        
-        /**
-         * Socket write buffer size.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 131072
-         * Group: producer
-         * 
-         * @param sendBufferBytes the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder sendBufferBytes(java.lang.Integer sendBufferBytes) {
-            doSetProperty("sendBufferBytes", sendBufferBytes);
             return this;
         }
     
@@ -2637,11 +2637,18 @@ public interface KafkaComponentBuilderFactory {
             case "brokers": getOrCreateConfiguration((KafkaComponent) component).setBrokers((java.lang.String) value); return true;
             case "clientId": getOrCreateConfiguration((KafkaComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((KafkaComponent) component).setConfiguration((org.apache.camel.component.kafka.KafkaConfiguration) value); return true;
+            case "connectionMaxIdleMs": getOrCreateConfiguration((KafkaComponent) component).setConnectionMaxIdleMs((java.lang.Integer) value); return true;
             case "headerFilterStrategy": getOrCreateConfiguration((KafkaComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "metadataMaxAgeMs": getOrCreateConfiguration((KafkaComponent) component).setMetadataMaxAgeMs((java.lang.Integer) value); return true;
+            case "metricReporters": getOrCreateConfiguration((KafkaComponent) component).setMetricReporters((java.lang.String) value); return true;
+            case "metricsSampleWindowMs": getOrCreateConfiguration((KafkaComponent) component).setMetricsSampleWindowMs((java.lang.Integer) value); return true;
+            case "noOfMetricsSample": getOrCreateConfiguration((KafkaComponent) component).setNoOfMetricsSample((java.lang.Integer) value); return true;
+            case "receiveBufferBytes": getOrCreateConfiguration((KafkaComponent) component).setReceiveBufferBytes((java.lang.Integer) value); return true;
             case "reconnectBackoffMaxMs": getOrCreateConfiguration((KafkaComponent) component).setReconnectBackoffMaxMs((java.lang.Integer) value); return true;
+            case "reconnectBackoffMs": getOrCreateConfiguration((KafkaComponent) component).setReconnectBackoffMs((java.lang.Integer) value); return true;
             case "retryBackoffMaxMs": getOrCreateConfiguration((KafkaComponent) component).setRetryBackoffMaxMs((java.lang.Integer) value); return true;
             case "retryBackoffMs": getOrCreateConfiguration((KafkaComponent) component).setRetryBackoffMs((java.lang.Integer) value); return true;
+            case "sendBufferBytes": getOrCreateConfiguration((KafkaComponent) component).setSendBufferBytes((java.lang.Integer) value); return true;
             case "shutdownTimeout": getOrCreateConfiguration((KafkaComponent) component).setShutdownTimeout((int) value); return true;
             case "allowManualCommit": getOrCreateConfiguration((KafkaComponent) component).setAllowManualCommit((boolean) value); return true;
             case "autoCommitEnable": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitEnable((boolean) value); return true;
@@ -2689,7 +2696,6 @@ public interface KafkaComponentBuilderFactory {
             case "batchWithIndividualHeaders": getOrCreateConfiguration((KafkaComponent) component).setBatchWithIndividualHeaders((boolean) value); return true;
             case "bufferMemorySize": getOrCreateConfiguration((KafkaComponent) component).setBufferMemorySize((java.lang.Integer) value); return true;
             case "compressionCodec": getOrCreateConfiguration((KafkaComponent) component).setCompressionCodec((java.lang.String) value); return true;
-            case "connectionMaxIdleMs": getOrCreateConfiguration((KafkaComponent) component).setConnectionMaxIdleMs((java.lang.Integer) value); return true;
             case "deliveryTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setDeliveryTimeoutMs((java.lang.Integer) value); return true;
             case "enableIdempotence": getOrCreateConfiguration((KafkaComponent) component).setEnableIdempotence((boolean) value); return true;
             case "headerSerializer": getOrCreateConfiguration((KafkaComponent) component).setHeaderSerializer((org.apache.camel.component.kafka.serde.KafkaHeaderSerializer) value); return true;
@@ -2700,20 +2706,14 @@ public interface KafkaComponentBuilderFactory {
             case "maxBlockMs": getOrCreateConfiguration((KafkaComponent) component).setMaxBlockMs((java.lang.Integer) value); return true;
             case "maxInFlightRequest": getOrCreateConfiguration((KafkaComponent) component).setMaxInFlightRequest((java.lang.Integer) value); return true;
             case "maxRequestSize": getOrCreateConfiguration((KafkaComponent) component).setMaxRequestSize((java.lang.Integer) value); return true;
-            case "metricReporters": getOrCreateConfiguration((KafkaComponent) component).setMetricReporters((java.lang.String) value); return true;
-            case "metricsSampleWindowMs": getOrCreateConfiguration((KafkaComponent) component).setMetricsSampleWindowMs((java.lang.Integer) value); return true;
-            case "noOfMetricsSample": getOrCreateConfiguration((KafkaComponent) component).setNoOfMetricsSample((java.lang.Integer) value); return true;
             case "partitioner": getOrCreateConfiguration((KafkaComponent) component).setPartitioner((java.lang.String) value); return true;
             case "partitionerIgnoreKeys": getOrCreateConfiguration((KafkaComponent) component).setPartitionerIgnoreKeys((boolean) value); return true;
             case "partitionKey": getOrCreateConfiguration((KafkaComponent) component).setPartitionKey((java.lang.Integer) value); return true;
             case "producerBatchSize": getOrCreateConfiguration((KafkaComponent) component).setProducerBatchSize((java.lang.Integer) value); return true;
             case "queueBufferingMaxMessages": getOrCreateConfiguration((KafkaComponent) component).setQueueBufferingMaxMessages((java.lang.Integer) value); return true;
-            case "receiveBufferBytes": getOrCreateConfiguration((KafkaComponent) component).setReceiveBufferBytes((java.lang.Integer) value); return true;
-            case "reconnectBackoffMs": getOrCreateConfiguration((KafkaComponent) component).setReconnectBackoffMs((java.lang.Integer) value); return true;
             case "requestRequiredAcks": getOrCreateConfiguration((KafkaComponent) component).setRequestRequiredAcks((java.lang.String) value); return true;
             case "requestTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setRequestTimeoutMs((java.lang.Integer) value); return true;
             case "retries": getOrCreateConfiguration((KafkaComponent) component).setRetries((java.lang.Integer) value); return true;
-            case "sendBufferBytes": getOrCreateConfiguration((KafkaComponent) component).setSendBufferBytes((java.lang.Integer) value); return true;
             case "transacted": getOrCreateConfiguration((KafkaComponent) component).setTransacted((boolean) value); return true;
             case "transactionalId": getOrCreateConfiguration((KafkaComponent) component).setTransactionalId((java.lang.String) value); return true;
             case "useIterator": getOrCreateConfiguration((KafkaComponent) component).setUseIterator((boolean) value); return true;
