@@ -811,9 +811,9 @@ class SourceTab extends AbstractTab {
                     TuiHelper.copyToClipboard(entry.path());
                     notify("Copied path to clipboard", false);
                 }
-                case CONVERT_YAML -> convert(entry, "yaml");
-                case CONVERT_XML -> convert(entry, "xml");
-                case CONVERT_JAVA -> convert(entry, "java");
+                case CONVERT_YAML -> convert(entry, "yaml", FileActionsPopup.REPLACE.equals(req.name()));
+                case CONVERT_XML -> convert(entry, "xml", FileActionsPopup.REPLACE.equals(req.name()));
+                case CONVERT_JAVA -> convert(entry, "java", FileActionsPopup.REPLACE.equals(req.name()));
             }
         } catch (Exception e) {
             notify(e.getMessage() != null ? e.getMessage() : e.toString(), true);
@@ -830,7 +830,7 @@ class SourceTab extends AbstractTab {
      * Converts the route file to another DSL without running it (CAMEL-25254), into a new file next to it which opens;
      * what does not carry over is said at the top of the new file. An existing file is not overwritten.
      */
-    private void convert(FilesBrowser.FileEntry entry, String format) throws IOException {
+    private void convert(FilesBrowser.FileEntry entry, String format, boolean replace) throws IOException {
         if (entry == null) {
             return;
         }
@@ -845,13 +845,21 @@ class SourceTab extends AbstractTab {
             return;
         }
         Files.writeString(target, RouteDslConverter.withNotes(r.content(), r.notes(), format), StandardCharsets.UTF_8);
+        if (replace) {
+            // the converted file takes the place of the original, so the routes are not defined twice (CAMEL-25426)
+            SourceFileOps.delete(Path.of(entry.path()));
+        }
         if (loadDirectory(currentDir, r.fileName())) {
             openSelectedEntry();
         }
-        // the original stays, so the folder now has the same routes twice: the next run fails with duplicate route ids
-        notify("Converted to " + r.fileName() + (r.notes().isEmpty() ? "" : ", see the notes at its top")
-               + ". " + entry.name() + " defines the same routes: delete or rename one of them before the next run",
-                true);
+        String notes = r.notes().isEmpty() ? "" : ", see the notes at its top";
+        if (replace) {
+            notify("Replaced " + entry.name() + " with " + r.fileName() + notes, false);
+        } else {
+            // both stay, so the folder has the same routes twice: the next run fails with duplicate route ids
+            notify("Converted to " + r.fileName() + notes + ". " + entry.name()
+                   + " defines the same routes: delete or rename one of them before the next run", true);
+        }
     }
 
     private void openSelectedEntry() {
