@@ -197,9 +197,10 @@ public class OnCompletionProcessor extends BaseProcessorSupport
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (processor != null) {
-            // For named route configurations, register the route that owns this processor
-            // so that BeforeConsumer can determine whether to defer to the consumer route.
-            if (configurationId != null) {
+            // For named route configurations with BeforeConsumer mode, register the route that owns this
+            // processor so that BeforeConsumer can determine whether to defer to the consumer route.
+            // (AfterConsumer does not use this map, so we skip the allocation to keep the hot path clean.)
+            if (!afterConsumer && configurationId != null) {
                 @SuppressWarnings("unchecked")
                 Map<String, Set<String>> registeredRoutes
                         = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_CONFIG_REGISTERED_ROUTES, Map.class);
@@ -547,7 +548,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport
                 // onCompleteOnly and onFailureOnly blocks in the same config dedup independently.
                 if (configurationId != null) {
                     Set<String> firedIds
-                            = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_CONFIG_IDS, Set.class);
+                            = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_IDS, Set.class);
                     if (firedIds != null && firedIds.contains(OnCompletionProcessor.this.id)) {
                         return true;
                     }
@@ -570,10 +571,10 @@ public class OnCompletionProcessor extends BaseProcessorSupport
         private void recordFired(Exchange exchange) {
             if (configurationId != null) {
                 Set<String> firedIds
-                        = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_CONFIG_IDS, Set.class);
+                        = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_IDS, Set.class);
                 if (firedIds == null) {
                     firedIds = new HashSet<>();
-                    exchange.setProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_CONFIG_IDS, firedIds);
+                    exchange.setProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_IDS, firedIds);
                 }
                 firedIds.add(OnCompletionProcessor.this.id);
             }
@@ -674,7 +675,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport
                     if (routeScoped && configurationId != null) {
                         @SuppressWarnings("unchecked")
                         Set<String> firedIds
-                                = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_CONFIG_IDS, Set.class);
+                                = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_IDS, Set.class);
                         if (firedIds != null && firedIds.contains(OnCompletionProcessor.this.id)) {
                             return; // already fired for this definition
                         }
@@ -697,10 +698,10 @@ public class OnCompletionProcessor extends BaseProcessorSupport
                     if (configurationId != null) {
                         @SuppressWarnings("unchecked")
                         Set<String> firedIds
-                                = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_CONFIG_IDS, Set.class);
+                                = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_IDS, Set.class);
                         if (firedIds == null) {
                             firedIds = new HashSet<>();
-                            exchange.setProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_CONFIG_IDS, firedIds);
+                            exchange.setProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_IDS, firedIds);
                         }
                         firedIds.add(OnCompletionProcessor.this.id);
                     }

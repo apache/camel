@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,6 +25,7 @@ import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RoutesConfigurationOnCompletionTest extends ContextTestSupport {
 
@@ -304,16 +307,25 @@ public class RoutesConfigurationOnCompletionTest extends ContextTestSupport {
 
                 from("direct:start2")
                         .to("mock:result2");
+
+                // multi-route exchange: start3 calls sub; must fire mock:global exactly once
+                from("direct:start3")
+                        .to("direct:sub");
+
+                from("direct:sub")
+                        .to("mock:sub");
             }
         });
         context.start();
 
-        getMockEndpoint("mock:global").expectedMessageCount(2);
+        getMockEndpoint("mock:global").expectedMessageCount(3); // one per exchange, not per route
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result2").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:sub").expectedBodiesReceived("Two-Hop World");
 
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start2", "Bye World");
+        template.sendBody("direct:start3", "Two-Hop World");
 
         assertMockEndpointsSatisfied();
     }
@@ -354,29 +366,33 @@ public class RoutesConfigurationOnCompletionTest extends ContextTestSupport {
         getMockEndpoint("mock:complete").expectedMessageCount(0);
         getMockEndpoint("mock:failure").expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:fail", "Boom");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class, () -> template.sendBody("direct:fail", "Boom"));
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testLocalConfigurationBeforeConsumerFiringCount() throws Exception {
-        // BeforeConsumer mode, both routes opt in. onCompletion should fire only once.
+        // BeforeConsumer mode, both routes opt in. onCompletion should fire only once
+        // and the consumer route should own the firing (so onCompletion sees state set
+        // by the consumer after the direct:processor call returns).
+        AtomicInteger counter = new AtomicInteger();
         context.addRoutes(new RouteConfigurationBuilder() {
             @Override
             public void configuration() {
                 routeConfiguration("myconfig").onCompletion().modeBeforeConsumer()
-                        .setHeader("count", constant(1));
+                        .process(e -> counter.incrementAndGet())
+                        .setHeader("done", constant("yes"));
             }
         });
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
+                // consumer sets a header AFTER the sub-route call;
+                // since BeforeConsumer defers to the consumer route, it fires last
+                // and sees this header on the exchange (validated via the reply).
                 from("direct:consumer").routeConfigurationId("myconfig")
-                        .to("direct:processor");
+                        .to("direct:processor")
+                        .setHeader("fromConsumer", constant("yes"));
 
                 from("direct:processor").routeConfigurationId("myconfig")
                         .to("mock:result");
@@ -390,8 +406,13 @@ public class RoutesConfigurationOnCompletionTest extends ContextTestSupport {
                 e -> e.getMessage().setBody("Hello World"));
 
         assertMockEndpointsSatisfied();
-        // The count header should be 1 (fired once, not twice)
-        assertEquals(1, result.getMessage().getHeader("count"));
+        // onCompletion must fire exactly once (not once per opted-in route)
+        assertEquals(1, counter.get(), "onCompletion should fire exactly once");
+        // deferral: onCompletion fires after consumer route runs, so it sees the header
+        assertEquals("yes", result.getMessage().getHeader("fromConsumer"),
+                "consumer-set header should be visible to BeforeConsumer onCompletion");
+        // onCompletion itself sets the 'done' header; it should be visible on the reply
+        assertEquals("yes", result.getMessage().getHeader("done"));
     }
 
 }

@@ -256,11 +256,11 @@ public interface Exchange extends VariableAware {
     String ON_COMPLETION = "CamelOnCompletion";
     String ON_COMPLETION_ROUTE_IDS = "CamelOnCompletionRouteIds";
     /**
-     * Exchange property key for tracking which named route configuration IDs have already fired their onCompletion
-     * handler for this exchange. Used to ensure a named route configuration's onCompletion fires at most once per
-     * exchange, even when multiple opted-in routes are traversed in the same exchange.
+     * Exchange property key for tracking which OnCompletionProcessor instances (by processor id) have already fired
+     * their onCompletion handler for this exchange. Used to ensure a named route configuration's onCompletion fires
+     * at most once per exchange, even when multiple opted-in routes are traversed in the same exchange.
      */
-    String ON_COMPLETION_FIRED_CONFIG_IDS = "CamelOnCompletionFiredConfigIds";
+    String ON_COMPLETION_FIRED_IDS = "CamelOnCompletionFiredIds";
     /**
      * Exchange property key for tracking which routes have registered a synchronization for each named route
      * configuration ID. Used to defer BeforeConsumer firing from an inner route when the consumer route also opted in.

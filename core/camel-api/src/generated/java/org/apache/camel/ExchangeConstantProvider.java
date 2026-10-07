@@ -131,7 +131,7 @@ public class ExchangeConstantProvider {
         map.put("OFFSET", "CamelOffset");
         map.put("ON_COMPLETION", "CamelOnCompletion");
         map.put("ON_COMPLETION_CONFIG_REGISTERED_ROUTES", "CamelOnCompletionConfigRegisteredRoutes");
-        map.put("ON_COMPLETION_FIRED_CONFIG_IDS", "CamelOnCompletionFiredConfigIds");
+        map.put("ON_COMPLETION_FIRED_IDS", "CamelOnCompletionFiredIds");
         map.put("ON_COMPLETION_ROUTE_IDS", "CamelOnCompletionRouteIds");
         map.put("OTEL_ACTIVE_SPAN", "OpenTracing.activeSpan");
         map.put("OTEL_CLOSE_CLIENT_SCOPE", "OpenTracing.closeClientScope");
