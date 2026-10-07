@@ -120,7 +120,7 @@ properties:
 | 0 | `String` | Endpoint URI (default: `openfeature:flags`)
 | 1 | `String` | Targeting key
 | 2 | `Map<String, Object>` | Evaluation context key-value pairs
-| 3 | `String` | Evaluation type: `boolean` or `variant` (default: `boolean` for createPredicate, `variant` for createExpression)
+| 3 | `String` | Evaluation type: `boolean`, `isEnabled`, or `variant` (default: `boolean` for createPredicate, `variant` for createExpression)
 |===
 
 `createPredicate` defaults to boolean evaluation and returns a `Predicate`:

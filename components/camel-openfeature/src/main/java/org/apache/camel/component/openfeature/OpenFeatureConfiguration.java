@@ -32,10 +32,11 @@ public class OpenFeatureConfiguration implements Cloneable {
                             + " selects boolean evaluation, any other value selects string evaluation.")
     private String defaultValue = "false";
 
-    @UriParam(label = "common", enums = "boolean,variant",
-              description = "The evaluation type. When set to 'boolean', boolean evaluation is used (getBooleanValue)."
-                            + " When set to 'variant', string evaluation is used (getStringValue)."
-                            + " When not set, the type is inferred from defaultValue.")
+    @UriParam(label = "common", enums = "boolean,variant,isEnabled",
+              description = "The evaluation type. 'boolean' and 'isEnabled' use boolean evaluation (getBooleanValue)."
+                            + " 'variant' uses string evaluation (getStringValue)."
+                            + " When not set, the type is inferred from defaultValue."
+                            + " Can also be set as a path parameter in the endpoint URI, which takes precedence.")
     private String evaluationType;
 
     @UriParam(label = "producer",

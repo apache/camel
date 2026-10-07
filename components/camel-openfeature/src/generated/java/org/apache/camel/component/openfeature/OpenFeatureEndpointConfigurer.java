@@ -30,8 +30,6 @@ public class OpenFeatureEndpointConfigurer extends PropertyConfigurerSupport imp
         case "deadline": target.getConfiguration().setDeadline(property(camelContext, int.class, value)); return true;
         case "defaultvalue":
         case "defaultValue": target.getConfiguration().setDefaultValue(property(camelContext, java.lang.String.class, value)); return true;
-        case "evaluationtype":
-        case "evaluationType": target.getConfiguration().setEvaluationType(property(camelContext, java.lang.String.class, value)); return true;
         case "flagkey":
         case "flagKey": target.getConfiguration().setFlagKey(property(camelContext, java.lang.String.class, value)); return true;
         case "flags": target.getConfiguration().setFlags(property(camelContext, java.lang.String.class, value)); return true;
@@ -59,8 +57,6 @@ public class OpenFeatureEndpointConfigurer extends PropertyConfigurerSupport imp
         case "deadline": return int.class;
         case "defaultvalue":
         case "defaultValue": return java.lang.String.class;
-        case "evaluationtype":
-        case "evaluationType": return java.lang.String.class;
         case "flagkey":
         case "flagKey": return java.lang.String.class;
         case "flags": return java.lang.String.class;
@@ -89,8 +85,6 @@ public class OpenFeatureEndpointConfigurer extends PropertyConfigurerSupport imp
         case "deadline": return target.getConfiguration().getDeadline();
         case "defaultvalue":
         case "defaultValue": return target.getConfiguration().getDefaultValue();
-        case "evaluationtype":
-        case "evaluationType": return target.getConfiguration().getEvaluationType();
         case "flagkey":
         case "flagKey": return target.getConfiguration().getFlagKey();
         case "flags": return target.getConfiguration().getFlags();

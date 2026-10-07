@@ -57,11 +57,15 @@ class OpenFeatureProducerTest extends CamelTestSupport {
                             + "&contextFromBody=true");
 
                 from("direct:variant-type")
-                        .to("openfeature:test-variant?flagKey=new-routing-algorithm&evaluationType=variant&flagsResource="
+                        .to("openfeature:test-variant/variant?flagKey=new-routing-algorithm&flagsResource="
                             + FLAGS_RESOURCE);
 
                 from("direct:boolean-type-explicit")
-                        .to("openfeature:test-bool-type?flagKey=enrichment-enabled&evaluationType=boolean&flagsResource="
+                        .to("openfeature:test-bool-type/boolean?flagKey=enrichment-enabled&flagsResource="
+                            + FLAGS_RESOURCE);
+
+                from("direct:is-enabled")
+                        .to("openfeature:test-is-enabled/isEnabled?flagKey=enrichment-enabled&flagsResource="
                             + FLAGS_RESOURCE);
 
                 from("direct:targeted-boolean")
@@ -178,6 +182,28 @@ class OpenFeatureProducerTest extends CamelTestSupport {
     void testExplicitBooleanEvaluationType() {
         Object result = template.requestBody("direct:boolean-type-explicit", "ignored");
         assertThat(result).isEqualTo(true);
+    }
+
+    @Test
+    void testIsEnabledEvaluationType() {
+        Object result = template.requestBody("direct:is-enabled", "ignored");
+        assertThat(result).isInstanceOf(Boolean.class);
+        assertThat(result).isEqualTo(true);
+    }
+
+    @Test
+    void testIsEnabledDisabledFlag() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:is-enabled-disabled")
+                        .to("openfeature:test-is-enabled-off/isEnabled?flagKey=disabled-flag&flagsResource="
+                            + FLAGS_RESOURCE);
+            }
+        });
+        Object result = template.requestBody("direct:is-enabled-disabled", "ignored");
+        assertThat(result).isInstanceOf(Boolean.class);
+        assertThat(result).isEqualTo(false);
     }
 
     @Test

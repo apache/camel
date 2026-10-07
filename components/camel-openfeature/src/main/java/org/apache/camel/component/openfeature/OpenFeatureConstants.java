@@ -32,7 +32,7 @@ public final class OpenFeatureConstants {
               javaType = "java.util.Map", applicableFor = "openfeature")
     public static final String EVALUATION_CONTEXT = "CamelOpenFeatureEvaluationContext";
 
-    @Metadata(description = "Sets the evaluation type (boolean, variant) for the OpenFeature evaluation.",
+    @Metadata(description = "Sets the evaluation type (boolean, variant, isEnabled) for the OpenFeature evaluation.",
               javaType = "String", applicableFor = "openfeature")
     public static final String EVALUATION_TYPE = "CamelOpenFeatureEvaluationType";
 
