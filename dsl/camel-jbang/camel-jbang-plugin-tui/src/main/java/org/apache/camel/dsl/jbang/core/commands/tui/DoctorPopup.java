@@ -393,7 +393,8 @@ class DoctorPopup {
                     Span.raw(" " + icon)));
             String models = OllamaDoctorSupport.formatModels(status.models());
             result.add(Line.from(Span.styled(
-                    "                    models: " + TuiHelper.truncate(models, 34),
+                    // as wide as the rows above it, which end with their status
+                    "                    models: " + TuiHelper.truncate(models, 22),
                     Style.EMPTY.dim())));
             if (allSmall) {
                 result.add(Line.from(Span.styled(
