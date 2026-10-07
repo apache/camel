@@ -110,10 +110,17 @@ abstract class AbstractTab implements MonitorTab {
     }
 
     protected static Row emptyRow(String message, int columnCount) {
+        return emptyRow(message, columnCount, 0);
+    }
+
+    /**
+     * A row that says the table is empty, with the message in the given column: a table whose first column is narrow
+     * puts it in its widest column, so it is not cut ("No infligh").
+     */
+    protected static Row emptyRow(String message, int columnCount, int column) {
         Cell[] cells = new Cell[columnCount];
-        cells[0] = Cell.from(Span.styled(message, Style.EMPTY.dim()));
-        for (int i = 1; i < columnCount; i++) {
-            cells[i] = Cell.from("");
+        for (int i = 0; i < columnCount; i++) {
+            cells[i] = i == column ? Cell.from(Span.styled(message, Style.EMPTY.dim())) : Cell.from("");
         }
         return Row.from(cells);
     }

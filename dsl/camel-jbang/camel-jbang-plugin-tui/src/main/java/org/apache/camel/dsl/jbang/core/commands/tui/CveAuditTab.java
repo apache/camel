@@ -251,7 +251,7 @@ class CveAuditTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty() && dataLoaded) {
-            rows.add(emptyRow("No matching vulnerabilities", 5));
+            rows.add(emptyRow("No matching vulnerabilities", 5, 4));
         }
 
         String title = buildTitle();
