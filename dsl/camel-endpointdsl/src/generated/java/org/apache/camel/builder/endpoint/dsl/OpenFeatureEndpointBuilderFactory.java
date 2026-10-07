@@ -143,23 +143,6 @@ public interface OpenFeatureEndpointBuilderFactory {
             return this;
         }
         /**
-         * The evaluation type. When set to 'boolean', boolean evaluation is
-         * used (getBooleanValue). When set to 'variant', string evaluation is
-         * used (getStringValue). When not set, the type is inferred from
-         * defaultValue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param evaluationType the value to set
-         * @return the dsl builder
-         */
-        default OpenFeatureEndpointBuilder evaluationType(String evaluationType) {
-            doSetProperty("evaluationType", evaluationType);
-            return this;
-        }
-        /**
          * The feature flag key to evaluate. Can be overridden per message via
          * the CamelOpenFeatureFlagKey header.
          * 
@@ -191,7 +174,8 @@ public interface OpenFeatureEndpointBuilderFactory {
         }
         /**
          * Camel resource URI pointing to a feature flag definition file in
-         * flagd format. Mutually exclusive with flags and provider.
+         * flagd format. Mutually exclusive with flags. When provider is also
+         * set, the provider takes precedence.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -392,12 +376,19 @@ public interface OpenFeatureEndpointBuilderFactory {
          * Since: 4.23
          * Maven coordinates: org.apache.camel:camel-openfeature
          * 
-         * Syntax: <code>openfeature:domain</code>
+         * Syntax: <code>openfeature:domain/evaluationType</code>
          * 
          * Path parameter: domain (required)
          * The OpenFeature domain to bind the provider to.
          * 
-         * @param path domain
+         * Path parameter: evaluationType
+         * The evaluation type. 'boolean' and 'isEnabled' use boolean evaluation
+         * (getBooleanValue). 'variant' uses string evaluation (getStringValue).
+         * When not set, the type is inferred from defaultValue.
+         * There are 3 enums and the value can be one of: boolean, variant,
+         * isEnabled
+         * 
+         * @param path domain/evaluationType
          * @return the dsl builder
          */
         default OpenFeatureEndpointBuilder openfeature(String path) {
@@ -412,14 +403,21 @@ public interface OpenFeatureEndpointBuilderFactory {
          * Since: 4.23
          * Maven coordinates: org.apache.camel:camel-openfeature
          * 
-         * Syntax: <code>openfeature:domain</code>
+         * Syntax: <code>openfeature:domain/evaluationType</code>
          * 
          * Path parameter: domain (required)
          * The OpenFeature domain to bind the provider to.
          * 
+         * Path parameter: evaluationType
+         * The evaluation type. 'boolean' and 'isEnabled' use boolean evaluation
+         * (getBooleanValue). 'variant' uses string evaluation (getStringValue).
+         * When not set, the type is inferred from defaultValue.
+         * There are 3 enums and the value can be one of: boolean, variant,
+         * isEnabled
+         * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path domain
+         * @param path domain/evaluationType
          * @return the dsl builder
          */
         default OpenFeatureEndpointBuilder openfeature(String componentName, String path) {
@@ -474,8 +472,8 @@ public interface OpenFeatureEndpointBuilderFactory {
             return "CamelOpenFeatureEvaluationContext";
         }
         /**
-         * Sets the evaluation type (boolean, variant) for the OpenFeature
-         * evaluation.
+         * Sets the evaluation type (boolean, variant, isEnabled) for the
+         * OpenFeature evaluation.
          * 
          * The option is a: {@code String} type.
          * 

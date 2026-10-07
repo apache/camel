@@ -67,7 +67,7 @@ public class OpenFeatureConfiguration implements Cloneable {
 
     @UriParam(label = "common",
               description = "Camel resource URI pointing to a feature flag definition file in flagd format."
-                            + " Mutually exclusive with flags and provider.")
+                            + " Mutually exclusive with flags. When provider is also set, the provider takes precedence.")
     private String flagsResource;
 
     @UriParam(label = "common",
@@ -182,8 +182,8 @@ public class OpenFeatureConfiguration implements Cloneable {
     }
 
     /**
-     * Camel resource URI pointing to a feature flag definition file in flagd format. Mutually exclusive with flags and
-     * provider.
+     * Camel resource URI pointing to a feature flag definition file in flagd format. Mutually exclusive with flags.
+     * When provider is also set, the provider takes precedence.
      */
     public void setFlagsResource(String flagsResource) {
         this.flagsResource = flagsResource;
