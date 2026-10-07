@@ -99,7 +99,7 @@ public class DoclingEndpointUriFactory extends org.apache.camel.support.componen
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "operationId", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);

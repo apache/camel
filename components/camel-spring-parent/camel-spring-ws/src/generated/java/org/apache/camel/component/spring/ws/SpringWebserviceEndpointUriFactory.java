@@ -67,7 +67,7 @@ public class SpringWebserviceEndpointUriFactory extends org.apache.camel.support
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "type", null, false, copy);
         uri = buildPathParameter(syntax, uri, "lookupKey", null, false, copy);

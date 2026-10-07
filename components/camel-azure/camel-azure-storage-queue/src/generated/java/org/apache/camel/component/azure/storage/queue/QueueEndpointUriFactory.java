@@ -79,7 +79,7 @@ public class QueueEndpointUriFactory extends org.apache.camel.support.component.
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "accountName", null, false, copy);
         uri = buildPathParameter(syntax, uri, "queueName", null, false, copy);

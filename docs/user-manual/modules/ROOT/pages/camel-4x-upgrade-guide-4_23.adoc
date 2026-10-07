@@ -2052,6 +2052,17 @@ now reports a top-level `from:` with the form to write, the way it reports the o
 form as well; a Kamelet's `template:` keeps its `from:`, which is the Kamelet spec's shape. The classic schema and `camel run` are unchanged: the file keeps working,
 with the compact notation warning `camel run` already logged for it.
 
+=== camel-yaml-dsl - endpoint parameters keep the order they are written in
+
+The endpoint uri of a YAML DSL endpoint written with `parameters:` has its query options in the order they are
+written, where it had them sorted by name: `uri: seda` with `name: foo`, `size: 1234` and `multipleConsumers: true`
+is now `seda:foo?size=1234&multipleConsumers=true`. Route dumps in YAML keep that order as well. The options of an
+endpoint are the same, and the endpoint resolved is the same, as Camel sorts the options when it normalizes the uri.
+
+The same applies to `EndpointUriFactory.buildUri` and the catalog `asEndpointUri` given an ordered map such as a
+`LinkedHashMap`: the options are in the order of the map. A map without an order, such as a `HashMap`, has its options
+sorted as before.
+
 === camel-yaml-dsl - Pipe (kind: Pipe) support is deprecated
 
 Loading Camel K `kind: Pipe` resources (formerly `KameletBinding`), typically from a `.pipe.yaml` file, is

@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -1011,6 +1012,9 @@ public abstract class AbstractCamelCatalog {
             throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
         }
 
+        // the uri options are in the order of the properties when they have one (a LinkedHashMap), otherwise sorted
+        boolean ordered = properties instanceof LinkedHashMap || properties instanceof SortedMap;
+
         // do any properties filtering which can be needed for some special components
         properties = filterProperties(scheme, properties);
 
@@ -1024,8 +1028,8 @@ public abstract class AbstractCamelCatalog {
             originalSyntax = StringHelper.after(originalSyntax, ":");
         }
 
-        // build at first according to syntax (use a tree map as we want the uri options sorted)
-        Map<String, String> copy = new TreeMap<>(properties);
+        // build at first according to syntax
+        Map<String, String> copy = ordered ? new LinkedHashMap<>(properties) : new TreeMap<>(properties);
 
         Matcher syntaxMatcher = COMPONENT_SYNTAX_PARSER.matcher(originalSyntax);
         StringBuilder sb = new StringBuilder();

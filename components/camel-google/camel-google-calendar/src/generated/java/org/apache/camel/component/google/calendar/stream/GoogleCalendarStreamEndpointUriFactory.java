@@ -87,7 +87,7 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "index", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);

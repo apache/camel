@@ -133,7 +133,7 @@ public class ${className} extends ${psn} implements EndpointUriFactory {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
     #foreach( $option in $model.endpointPathOptions )
         #if ( $option.defaultValue )

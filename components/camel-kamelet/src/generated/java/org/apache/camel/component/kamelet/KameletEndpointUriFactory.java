@@ -52,7 +52,7 @@ public class KameletEndpointUriFactory extends org.apache.camel.support.componen
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "templateId", null, true, copy);
         uri = buildPathParameter(syntax, uri, "routeId", null, false, copy);

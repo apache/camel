@@ -79,7 +79,7 @@ public class GoogleCloudStorageEndpointUriFactory extends org.apache.camel.suppo
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "bucketName", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
