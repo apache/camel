@@ -305,6 +305,10 @@ The Catalog tab (under More > Project) lets you browse the full Camel component 
 the TUI. Search for components by name, view their documentation, options, and supported headers --
 useful when building routes and you need to check what options a component supports.
 
+It lists Kamelets too: the project's own Kamelet files first, marked `project`, and the Kamelets of the catalog that the
+routes use (all of them with the full catalog, *a*). *f* cycles the kind, `kamelet` included, and *d* shows the
+properties of a Kamelet: required, type, default and description.
+
 == Keyboard Shortcuts
 
 === Inspect Tab
