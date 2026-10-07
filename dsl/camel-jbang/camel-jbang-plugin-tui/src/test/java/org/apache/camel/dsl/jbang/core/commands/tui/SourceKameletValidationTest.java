@@ -139,6 +139,15 @@ class SourceKameletValidationTest {
     }
 
     @Test
+    void theOptionsPopupIsNamedAfterTheKamelet() {
+        assertThat(SourceViewer.optionsTitle("kamelet", "kamelet:tag-order-action")).isEqualTo("tag-order-action options");
+        assertThat(SourceViewer.optionsTitle("kamelet", "kamelet:timer-source?period=1000"))
+                .isEqualTo("timer-source options");
+        assertThat(SourceViewer.optionsTitle("kamelet", null)).isEqualTo("kamelet options");
+        assertThat(SourceViewer.optionsTitle("timer", "timer:tick")).isEqualTo("timer options");
+    }
+
+    @Test
     void aDividerSetsTheKameletComponentOptionsApart() throws Exception {
         Files.writeString(tempDir.resolve("tag-order-action.kamelet.yaml"), KAMELET, StandardCharsets.UTF_8);
         SourceEditAssist assist = new SourceEditAssist(

@@ -1828,7 +1828,7 @@ class SourceViewer {
                 List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
                 if (items != null && !items.isEmpty()) {
                     autocompletePopup = new AutocompletePopup(items, filter, filter);
-                    autocompletePopup.setTitlePrefix(ctx.component() + " options");
+                    autocompletePopup.setTitlePrefix(optionsTitle(ctx.component(), ctx.uri()));
                 }
             }
             return;
@@ -2312,6 +2312,20 @@ class SourceViewer {
             }
         }
         return msgs;
+    }
+
+    /**
+     * The title of the options popup of an endpoint: the component, or for a kamelet: endpoint the Kamelet it names,
+     * whose properties the list starts with (CAMEL-25411).
+     */
+    static String optionsTitle(String component, String uri) {
+        if ("kamelet".equals(component) && uri != null && uri.startsWith("kamelet:")) {
+            String name = uri.substring("kamelet:".length()).split("[?/]", 2)[0].trim();
+            if (!name.isEmpty()) {
+                return name + " options";
+            }
+        }
+        return component + " options";
     }
 
     private static void addAll(List<String> msgs, EndpointValidator validator, String content) {
