@@ -89,6 +89,7 @@ level by default.
 Note that JGroups deserializes the payload inside its own receive path, so this check is a
 defense-in-depth allow-list on the resulting body type. The JVM-wide `jdk.serialFilter`, together
 with a channel secured with `AUTH` and encryption, remain the primary mitigations.
+
 === camel-undertow - WebSocket endpoints apply the security provider, allowed roles and handlers
 
 WebSocket endpoints (`ws://` and `wss://`) now apply the `UndertowSecurityProvider` (the `securityConfiguration` or
