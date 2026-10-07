@@ -719,6 +719,15 @@ should be reviewed.
 `InflightRepository.InflightExchange` and `AsyncProcessorAwaitManager.AwaitThread` gained a `getNodeSource()` method
 for the same value. Both are `default` methods returning `null`, so existing implementations continue to compile.
 
+A CamelContext name (or management name) with `, = : " * ?` or a line feed made the CamelContext fail to start with
+JMX. These characters are now replaced with `_` in the management name, the `context` key of the object names (the
+`CamelId` attribute keeps the name). A CamelContext whose management name is already the `context` key of another
+CamelContext now gets the next free management name, or fails to start with a fixed management name pattern; before,
+both started and the second one had no MBeans for its routes, processors and services. A fixed management name
+pattern is a pattern without `#counter#` set on the `ManagementNameStrategy` (such as the `managementNamePattern` of
+`<camelContext>` in Spring XML); the `jmxManagementNamePattern` option of camel-main and Spring Boot (default `#name#`)
+is the pattern of the management agent, and with it the next free management name is used.
+
 The `Redeliveries` statistic now also counts a redelivery attempt that succeeds, and it is only counted where the
 redelivery happened. For a processor it is the number of redelivery attempts of that processor. For a route it is the
 number of exchanges that were redelivered by a processor of that route, and for the CamelContext the number of

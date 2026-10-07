@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.management.JMException;
+import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
@@ -199,13 +200,20 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         if (managementName == null) {
             managementName = context.getManagementNameStrategy().getName();
         }
+        String sanitized = sanitizeManagementName(managementName);
+        if (sanitized != null && !sanitized.equals(managementName)) {
+            LOG.warn("The management name of CamelContext({}) contains characters that cannot be used in a JMX ObjectName."
+                     + " The management name: {} is used instead.",
+                    name, sanitized);
+            managementName = sanitized;
+        }
 
         try {
             boolean done = false;
             while (!done) {
                 ObjectName on = getManagementStrategy().getManagementObjectNameStrategy()
                         .getObjectNameForCamelContext(managementName, name);
-                boolean exists = getManagementStrategy().isManagedName(on);
+                boolean exists = isManagedContextName(on);
                 if (!exists) {
                     done = true;
                 } else {
@@ -301,15 +309,58 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         String newName = null;
         while (!done) {
             // compute the next name
-            newName = strategy.getNextName();
+            newName = sanitizeManagementName(strategy.getNextName());
             ObjectName on
                     = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(newName, name);
-            done = !getManagementStrategy().isManagedName(on);
+            done = !isManagedContextName(on);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Using name: {} in ObjectName[{}] exists? {}", name, on, done);
             }
         }
         return newName;
+    }
+
+    /**
+     * The management name is the value of the (unquoted) context key in every object name, so it must not contain a
+     * character that an unquoted value cannot have, or that makes the name a pattern: such characters are replaced with
+     * an underscore.
+     */
+    private static String sanitizeManagementName(String managementName) {
+        if (managementName == null) {
+            return null;
+        }
+        StringBuilder sb = null;
+        for (int i = 0; i < managementName.length(); i++) {
+            char ch = managementName.charAt(i);
+            if (ch == ',' || ch == '=' || ch == ':' || ch == '"' || ch == '*' || ch == '?' || ch == '\n') {
+                if (sb == null) {
+                    sb = new StringBuilder(managementName);
+                }
+                sb.setCharAt(i, '_');
+            }
+        }
+        return sb != null ? sb.toString() : managementName;
+    }
+
+    /**
+     * Whether the context object name is registered, or another CamelContext already uses the same context key (with
+     * another name), as the object names of its routes, processors etc. would then clash.
+     */
+    private boolean isManagedContextName(ObjectName on) throws MalformedObjectNameException {
+        if (getManagementStrategy().isManagedName(on)) {
+            return true;
+        }
+        String key = on.getKeyProperty(DefaultManagementObjectNameStrategy.KEY_CONTEXT);
+        String type = on.getKeyProperty(DefaultManagementObjectNameStrategy.KEY_TYPE);
+        MBeanServer server = getManagementStrategy().getManagementAgent() != null
+                ? getManagementStrategy().getManagementAgent().getMBeanServer() : null;
+        if (key == null || type == null || server == null) {
+            return false;
+        }
+        ObjectName query = new ObjectName(
+                on.getDomain() + ":" + DefaultManagementObjectNameStrategy.KEY_CONTEXT + "=" + key + ","
+                                          + DefaultManagementObjectNameStrategy.KEY_TYPE + "=" + type + ",*");
+        return !server.queryNames(query, null).isEmpty();
     }
 
     /**
