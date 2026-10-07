@@ -68,6 +68,8 @@ class IntegrationInfo {
     String sinceLastCompleted;
     String sinceLastFailed;
     int reloaded;
+    // why the last reload failed (dev mode), until a reload succeeds again; camel ps shows it as Error
+    String reloadError;
     String rootLogLevel;
     int routeStarted;
     int routeTotal;

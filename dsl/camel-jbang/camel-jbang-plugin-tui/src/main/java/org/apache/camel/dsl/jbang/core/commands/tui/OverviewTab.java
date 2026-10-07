@@ -569,9 +569,13 @@ class OverviewTab extends AbstractTab {
                 } else if ("Running".equals(stateText) && info.routeStarted == 0 && info.routeTotal > 0) {
                     stateText = "Stopped";
                 }
+                if (info.reloadError != null && !"Stopping".equals(stateText)) {
+                    // its last reload failed, as camel ps shows it; the info panel says why
+                    stateText = "Error";
+                }
                 Style statusStyle = switch (stateText) {
                     case "Started", "Running" -> Theme.success();
-                    case "Stopped" -> Theme.error();
+                    case "Stopped", "Error" -> Theme.error();
                     default -> Theme.warning();
                 };
 
@@ -985,6 +989,11 @@ class OverviewTab extends AbstractTab {
                     profileSpans.add(Span.raw(String.valueOf(sel.reloaded)));
                 }
                 lines.add(Line.from(profileSpans));
+            }
+            if (sel.reloadError != null) {
+                // the old routes keep running; the next save that loads reloads them
+                lines.add(Line.from(Span.styled(
+                        TuiHelper.truncate("Reload failed: " + sel.reloadError, inner.width()), Theme.error())));
             }
             lines.add(Line.from(Span.raw("")));
             if (sel.javaVersion != null) {
@@ -1446,6 +1455,9 @@ class OverviewTab extends AbstractTab {
             row.put("camelVersion", info.camelVersion);
             row.put("platform", info.platform);
             row.put("state", info.state);
+            if (info.reloadError != null) {
+                row.put("reloadError", info.reloadError);
+            }
             row.put("ready", info.ready);
             // info.uptime holds the process start time (epoch millis), which the screen shows as an elapsed
             // duration; export the same duration plus the raw values with unambiguous names so an AI reading

@@ -823,7 +823,16 @@ class DataRefreshService {
     // ---- Helpers ----
 
     private void detectReload(IntegrationInfo info) {
-        if (info.pid == null || info.reloaded <= 0) {
+        if (info.pid == null) {
+            return;
+        }
+        // a reload that fails (a file with an error, a file that is gone) leaves the old routes running: say so
+        String prevError = lastReloadError.put(info.pid, info.reloadError != null ? info.reloadError : "");
+        if (info.reloadError != null && !info.reloadError.equals(prevError)) {
+            String label = info.name != null ? info.name : info.pid;
+            reloadFailedNotification = label + " reload failed: " + info.reloadError;
+        }
+        if (info.reloaded <= 0) {
             return;
         }
         Integer prev = lastReloadCount.put(info.pid, info.reloaded);
@@ -831,6 +840,16 @@ class DataRefreshService {
             String label = info.name != null ? info.name : info.pid;
             reloadNotification = label + " reloaded";
         }
+    }
+
+    private final Map<String, String> lastReloadError = new ConcurrentHashMap<>();
+    private volatile String reloadFailedNotification;
+
+    /** Why the latest reload failed, once: the old routes keep running, and nothing else says so. */
+    String consumeReloadFailedNotification() {
+        String msg = reloadFailedNotification;
+        reloadFailedNotification = null;
+        return msg;
     }
 
     String consumeReloadNotification() {

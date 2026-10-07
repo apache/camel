@@ -2075,6 +2075,10 @@ public class CamelMonitor extends CamelCommand {
         if (reloadMsg != null) {
             setNotification(reloadMsg, false);
         }
+        String reloadFailed = dataService.consumeReloadFailedNotification();
+        if (reloadFailed != null) {
+            setNotification(reloadFailed, true);
+        }
 
         Rect contentArea;
         if (canvasOverlay.isVisible()) {
