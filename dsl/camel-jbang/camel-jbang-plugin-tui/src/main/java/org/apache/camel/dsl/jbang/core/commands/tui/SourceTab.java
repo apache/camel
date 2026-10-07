@@ -1390,6 +1390,8 @@ class SourceTab extends AbstractTab {
         }
 
         String filePath = file.toString();
+        // the template of a Kamelet is the route of kamelet:<its name>, named after it (CAMEL-25411)
+        String kamelet = SourceEditAssist.isKameletFile(file) ? kameletName(lines) : null;
         String currentRouteId = null;
         int routeIdIndent = -1;
         int pendingFromLine = -1;
@@ -1427,7 +1429,8 @@ class SourceTab extends AbstractTab {
                 linkableBlockIndent = -1;
                 String inlineUri = extractInlineUri(trimmed, "from");
                 if (inlineUri != null) {
-                    emitRouteEntry(fromEntries, currentRouteId, inlineUri, filePath, i);
+                    emitRouteEntry(fromEntries, kameletRouteId(kamelet, currentRouteId), kameletFromUri(kamelet, inlineUri),
+                            filePath, i);
                 } else {
                     pendingFromLine = i;
                 }
@@ -1438,7 +1441,8 @@ class SourceTab extends AbstractTab {
             if (pendingFromLine >= 0 && trimmed.startsWith("uri:")) {
                 String uri = extractYamlValue(trimmed, "uri");
                 if (uri != null) {
-                    emitRouteEntry(fromEntries, currentRouteId, uri, filePath, pendingFromLine);
+                    emitRouteEntry(fromEntries, kameletRouteId(kamelet, currentRouteId), kameletFromUri(kamelet, uri),
+                            filePath, pendingFromLine);
                 }
                 pendingFromLine = -1;
                 continue;
@@ -1489,6 +1493,32 @@ class SourceTab extends AbstractTab {
                 }
             }
         }
+    }
+
+    /** The metadata.name of a Kamelet file, or null. */
+    static String kameletName(List<String> lines) {
+        boolean metadata = false;
+        for (String line : lines) {
+            if (line.isBlank() || line.trim().startsWith("#")) {
+                continue;
+            }
+            if (lineIndent(line) == 0) {
+                metadata = line.trim().equals("metadata:");
+            } else if (metadata && line.trim().startsWith("name:")) {
+                String name = extractYamlValue(line.trim(), "name");
+                return name != null && !name.isEmpty() ? name : null;
+            }
+        }
+        return null;
+    }
+
+    private static String kameletRouteId(String kamelet, String routeId) {
+        return kamelet != null && (routeId == null || routeId.isEmpty()) ? kamelet : routeId;
+    }
+
+    /** An action or a sink is entered from kamelet:source: the routes reach it as kamelet:<its name>. */
+    private static String kameletFromUri(String kamelet, String uri) {
+        return kamelet != null && uri.startsWith("kamelet:source") ? "kamelet:" + kamelet : uri;
     }
 
     private void emitRouteEntry(List<RouteEntry> index, String routeId, String fromUri, String filePath, int fromLine) {

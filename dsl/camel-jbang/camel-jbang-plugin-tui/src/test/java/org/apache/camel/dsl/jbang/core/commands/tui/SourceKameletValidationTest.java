@@ -205,6 +205,8 @@ class SourceKameletValidationTest {
         viewer.loadFile(file);
         int timerLine = lineOf(timer, "\"camel:timer\"");
         assertThat(viewer.viewErrors()).containsOnlyKeys(timerLine);
+        // a note, marked as a warning and counted apart from the errors
+        assertThat(viewer.noteLines()).containsOnly(timerLine);
 
         viewer.enterEditMode();
         appendSpaceToLine(viewer, 1);
@@ -213,6 +215,24 @@ class SourceKameletValidationTest {
         assertThat(lastNotification.get()).startsWith("Saved: tag-order-action.kamelet.yaml with 1 Camel problem: ")
                 .contains("camel:timer is not used by the template");
         assertThat(viewer.inlineErrors()).containsOnlyKeys(timerLine);
+        assertThat(viewer.noteLines()).containsOnly(timerLine);
+    }
+
+    @Test
+    void anErrorIsNotANote() throws Exception {
+        Path file = tempDir.resolve("tag-order-action.kamelet.yaml");
+        String self = KAMELET.replace("uri: kamelet:source", "uri: kamelet:tag-order-action");
+        Files.writeString(file, self, StandardCharsets.UTF_8);
+        SourceViewer viewer = viewer(file);
+        viewer.loadFile(file);
+        assertThat(viewer.viewErrors()).isNotEmpty();
+        assertThat(viewer.noteLines()).isEmpty();
+    }
+
+    @Test
+    void theTemplateOfAKameletIsNamedAfterIt() {
+        assertThat(SourceTab.kameletName(List.of(KAMELET.split("\n")))).isEqualTo("tag-order-action");
+        assertThat(SourceTab.kameletName(List.of(ROUTE.split("\n")))).isNull();
     }
 
     private SourceViewer viewer(Path file) {
