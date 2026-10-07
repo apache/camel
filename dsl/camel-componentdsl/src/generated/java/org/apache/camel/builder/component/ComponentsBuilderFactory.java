@@ -2336,7 +2336,7 @@ public interface ComponentsBuilderFactory {
      * Camel Hibernate Component
      * 
      * Category: database
-     * Since: 4.23
+     * Since: 4.24
      * Maven coordinates: org.apache.camel:camel-hibernate
      * 
      * @return the dsl builder

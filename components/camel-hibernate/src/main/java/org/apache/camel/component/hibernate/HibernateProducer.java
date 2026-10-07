@@ -16,29 +16,36 @@
  */
 package org.apache.camel.component.hibernate;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.hibernate.KeyType;
 import org.hibernate.Session;
 import org.hibernate.StatelessSession;
 import org.hibernate.Transaction;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.query.MutationQuery;
 import org.hibernate.query.SelectionQuery;
-import org.hibernate.resource.transaction.spi.TransactionCoordinatorBuilder;
 
 public class HibernateProducer extends DefaultProducer {
 
     private final HibernateEndpoint endpoint;
+    private Language simple;
 
     public HibernateProducer(HibernateEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        simple = getEndpoint().getCamelContext().resolveLanguage("simple");
     }
 
     @Override
@@ -48,16 +55,9 @@ public class HibernateProducer extends DefaultProducer {
                     "streaming=true is not supported inside a transacted exchange because streams can outlive route transactions.");
         }
 
-        if (exchange.isTransacted()) {
-            boolean isJta = endpoint.getSessionFactory()
-                    .unwrap(SessionFactoryImplementor.class)
-                    .getServiceRegistry()
-                    .requireService(TransactionCoordinatorBuilder.class)
-                    .isJta();
-            if (!isJta) {
-                throw new IllegalStateException(
-                        "Hibernate producer does not support transacted() exchanges with a resource-local SessionFactory.");
-            }
+        if (exchange.isTransacted() && !endpoint.isJta()) {
+            throw new IllegalStateException(
+                    "Hibernate producer does not support transacted() exchanges with a resource-local SessionFactory.");
         }
 
         if (endpoint.getStatelessOperation() != null) {
@@ -107,7 +107,7 @@ public class HibernateProducer extends DefaultProducer {
             if (endpoint.getNaturalIdParameters() != null) {
                 Object entity = activeSession.find(
                         endpoint.getEntityType(),
-                        endpoint.getNaturalIdParameters(),
+                        resolveNaturalIdParameters(exchange, parameters),
                         KeyType.NATURAL);
 
                 exchange.getMessage().setBody(entity);
@@ -187,6 +187,28 @@ public class HibernateProducer extends DefaultProducer {
             }
             throw e;
         }
+    }
+
+    private Map<String, Object> resolveNaturalIdParameters(Exchange exchange, Map<String, Object> headerParameters) {
+        Map<String, Object> resolved = new LinkedHashMap<>(endpoint.getNaturalIdParameters());
+        if (headerParameters != null) {
+            resolved.putAll(headerParameters);
+        }
+        Language language = simple();
+        resolved.replaceAll((key, value) -> {
+            if (value instanceof String str) {
+                return language.createExpression(str).evaluate(exchange, Object.class);
+            }
+            return value;
+        });
+        return resolved;
+    }
+
+    private Language simple() {
+        if (simple == null) {
+            simple = getEndpoint().getCamelContext().resolveLanguage("simple");
+        }
+        return simple;
     }
 
     private void closeStreamingSession(
