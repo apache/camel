@@ -287,6 +287,105 @@ class KameletChecksTest {
                             expression: "%s"
             """;
 
+    // CAMEL-25403: a camel: dependency the template does not use, as the model copied camel:timer from the source sample
+
+    private static String withDependencies(String kamelet, String... deps) {
+        StringBuilder sb = new StringBuilder("  dependencies:\n");
+        for (String d : deps) {
+            sb.append("    - \"").append(d).append("\"\n");
+        }
+        return kamelet.replace("  template:\n", sb + "  template:\n");
+    }
+
+    @Test
+    void aDependencyTheTemplateDoesNotUseIsANote() {
+        String content = withDependencies(TAG_KAMELET.formatted("${body} [{{tag}}]"), "camel:timer");
+        assertThat(KameletChecks.unusedDependencies(content)).singleElement().asString()
+                .contains("camel:timer is not used by the template")
+                .contains("no timer: endpoint");
+        // a note, not an error: the Kamelet works, so the write is not refused
+        assertThat(KameletChecks.validateKameletFile(content)).isEmpty();
+    }
+
+    @Test
+    void theDependenciesTheTemplateUsesAreNotNoted() {
+        String source = """
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: order-source
+                  labels:
+                    camel.apache.org/kamelet.type: source
+                spec:
+                  definition:
+                    title: Order Source
+                    properties:
+                      period:
+                        title: Period
+                        type: integer
+                        default: 5000
+                  dependencies:
+                    - "camel:timer"
+                    - "camel:jq"
+                    - "camel:http"
+                    - "camel:kamelet"
+                    - "mvn:org.example:orders:1.0"
+                  template:
+                    from:
+                      uri: timer:orders
+                      parameters:
+                        period: "{{period}}"
+                      steps:
+                        - setBody:
+                            expression:
+                              jq:
+                                expression: '.'
+                        - to:
+                            uri: https://example.com/orders
+                        - to:
+                            uri: kamelet:sink
+                """;
+        assertThat(KameletChecks.unusedDependencies(source)).isEmpty();
+    }
+
+    @Test
+    void aTemplateThatMayUseAComponentUnseenIsNotNoted() {
+        String placeholderScheme = withDependencies(TAG_KAMELET.formatted("${body}"), "camel:kafka")
+                .replace("uri: kamelet:source", "uri: \"{{scheme}}:orders\"");
+        assertThat(KameletChecks.unusedDependencies(placeholderScheme)).isEmpty();
+        String bean = withDependencies(TAG_KAMELET.formatted("${body}"), "camel:kafka")
+                .replace("    from:\n",
+                        "    beans:\n      - name: client\n        type: \"#class:org.example.Client\"\n    from:\n");
+        assertThat(KameletChecks.unusedDependencies(bean)).isEmpty();
+        // the Kafka transform actions of the catalog call a class that needs camel:kafka
+        String beanStep = withDependencies(TAG_KAMELET.formatted("${body}"), "camel:kafka")
+                .replace("        - setBody:\n",
+                        "        - bean:\n            beanType: org.example.HoistField\n        - setBody:\n");
+        assertThat(KameletChecks.unusedDependencies(beanStep)).isEmpty();
+    }
+
+    @Test
+    void aComponentThatRunsOnAnotherIsNotNoted() {
+        // cron runs on quartz, rest-openapi sends with an http component: neither is named by the template
+        String cron = withDependencies(TAG_KAMELET.formatted("${body}"), "camel:cron", "camel:quartz")
+                .replace("uri: kamelet:source", "uri: \"cron:tick?schedule=0/3+*+*+*+*+?\"");
+        assertThat(KameletChecks.unusedDependencies(cron)).isEmpty();
+        String rest = withDependencies(TAG_KAMELET.formatted("${body}"), "camel:rest-openapi", "camel:http")
+                .replace("        - setBody:\n", "        - to:\n            uri: rest-openapi\n        - setBody:\n");
+        assertThat(KameletChecks.unusedDependencies(rest)).isEmpty();
+    }
+
+    @Test
+    void writingAKameletReportsTheNotes(@TempDir Path dir) {
+        String content = withDependencies(TAG_KAMELET.formatted("${body} [{{tag}}]"), "camel:timer");
+        JsonObject result = AuthoringTools.writeFile(new ToolContext(), dir, "tag-order-action.kamelet.yaml", content, true);
+        assertThat(result.getString("status")).isEqualTo("created");
+        assertThat(result.toJson()).contains("camel:timer is not used by the template");
+        JsonObject clean = AuthoringTools.writeFile(new ToolContext(), dir, "tag-order-action.kamelet.yaml",
+                TAG_KAMELET.formatted("${body} [{{tag}}]"), true);
+        assertThat(clean.containsKey("notes")).isFalse();
+    }
+
     @Test
     void aRightKameletFileIsValid(@TempDir Path dir) {
         String content = TAG_KAMELET.formatted("${body} [{{tag}}]");
