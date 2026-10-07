@@ -132,6 +132,33 @@ class ManagedCamelContextNameObjectNameTest {
     }
 
     @Test
+    void testManagementNamePatternOfTheAgentPicksFreeName() throws Exception {
+        // camel-main and Spring Boot set jmxManagementNamePattern (default #name#) on the management agent, not on the
+        // management name strategy: a clash still gets the next free name instead of a veto
+        CamelContext camel1 = createCamelContext("foo", null);
+        CamelContext camel2 = createCamelContext("foo", null);
+        camel1.getManagementStrategy().getManagementAgent().setManagementNamePattern("#name#");
+        camel2.getManagementStrategy().getManagementAgent().setManagementNamePattern("#name#");
+        camel1.start();
+        camel2.start();
+
+        assertEquals("foo", camel1.getManagementName());
+        assertSeparateMBeans(camel1, camel2);
+    }
+
+    @Test
+    void testManagementNamePatternOfTheStrategyWithoutCounterVetoes() throws Exception {
+        // a pattern without #counter# set on the management name strategy (such as managementNamePattern of the XML
+        // camelContext) is fixed: there is no next free name
+        CamelContext camel1 = createCamelContext("foo", "#name#");
+        CamelContext camel2 = createCamelContext("foo", "#name#");
+        camel1.start();
+
+        Exception e = assertThrows(Exception.class, camel2::start);
+        assertTrue(e.getCause().getMessage().contains("is already registered"), e.getCause().getMessage());
+    }
+
+    @Test
     void testFixedManagementNameUsedByAnotherCamelContext() throws Exception {
         CamelContext camel1 = createCamelContext("foo", "myFoo");
         CamelContext camel2 = createCamelContext("bar", "myFoo");
