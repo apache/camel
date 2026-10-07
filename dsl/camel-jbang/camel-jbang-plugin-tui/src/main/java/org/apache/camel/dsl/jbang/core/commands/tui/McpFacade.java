@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
@@ -1052,6 +1053,24 @@ class McpFacade {
         return result;
     }
 
+    /** The pid of the integration, or else the infra service, with the given name (alias) or pid. */
+    private String findPidByNameOrPid(String nameOrPid) {
+        for (IntegrationInfo info : data.get()) {
+            if (!info.vanishing && (nameOrPid.equals(info.name) || nameOrPid.equals(info.pid))) {
+                return info.pid;
+            }
+        }
+        List<InfraInfo> infras = ctx.infraData != null ? ctx.infraData.get() : null;
+        if (infras != null) {
+            for (InfraInfo info : infras) {
+                if (!info.vanishing && (nameOrPid.equals(info.alias) || nameOrPid.equals(info.pid))) {
+                    return info.pid;
+                }
+            }
+        }
+        return null;
+    }
+
     private IntegrationInfo findIntegration(String name) {
         if (name != null && !name.isEmpty()) {
             for (IntegrationInfo info : data.get()) {
@@ -1474,12 +1493,35 @@ class McpFacade {
     }
 
     String controlIntegration(String action) {
+        return controlIntegration(action, null);
+    }
+
+    /**
+     * Controls the integration with the given name or pid, which becomes the selected one, so the screen shows what the
+     * agent acts on (CAMEL-25424). Without a name: the selected integration, or the only one running.
+     */
+    String controlIntegration(String action, String nameOrPid) {
         if (action == null || action.isBlank()) {
             return "Error: action is required";
         }
         if ("stop-all".equals(action)) {
             bridge.stopAll();
             return "Stopping all processes";
+        }
+        if (nameOrPid != null && !nameOrPid.isBlank()) {
+            String pid = findPidByNameOrPid(nameOrPid.trim());
+            if (pid == null) {
+                String names = data.get().stream().filter(i -> !i.vanishing)
+                        .map(i -> i.name + " (pid " + i.pid + ")").collect(Collectors.joining(", "));
+                return "Error: no integration with name or pid " + nameOrPid
+                       + (names.isEmpty() ? "; none is running" : ". Known: " + names);
+            }
+            ctx.selectedPid = pid;
+        } else if (ctx.selectedPid == null) {
+            List<IntegrationInfo> running = data.get().stream().filter(i -> !i.vanishing && !i.phantom).toList();
+            if (running.size() == 1) {
+                ctx.selectedPid = running.get(0).pid;
+            }
         }
         if ("close".equals(action)) {
             if (ctx.selectedPid == null) {
@@ -1494,7 +1536,7 @@ class McpFacade {
             return "Closed project: " + info.name;
         }
         if (ctx.selectedPid == null) {
-            return "Error: no integration selected";
+            return "Error: no integration selected; give its name or pid";
         }
         String name = ctx.selectedName();
         return switch (action) {
