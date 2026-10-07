@@ -23,12 +23,17 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -38,6 +43,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonObject;
 
 class LaunchManager {
@@ -84,6 +90,29 @@ class LaunchManager {
      * tracked and monitored like an example started from the F2 Actions menu. Output is redirected to a temporary log
      * file. Used by the AI panel's {@code /run} and {@code /infra run} slash commands.
      */
+    // the folders of the examples started here, with the process that runs each (camel run, which waits for the app)
+    private final Map<Path, Process> exampleDirs = new ConcurrentHashMap<>();
+
+    /**
+     * Deletes the folders of the examples that are no longer running: those started here, and those left behind in the
+     * temporary directory for an hour or more (by an earlier session, or a run that was killed). The folder of an
+     * example that still runs is kept, with the files it reads, as the example keeps running when the TUI quits.
+     *
+     * @param runningDirs the directories of the running integrations
+     */
+    void deleteExampleDirs(Collection<Path> runningDirs) {
+        Set<Path> unused = new HashSet<>(ExampleHelper.staleExampleDirs(runningDirs, Duration.ZERO));
+        exampleDirs.forEach((dir, process) -> {
+            // an example that is still being built (exported and packaged by Maven) is not running yet
+            if (!process.isAlive() && unused.contains(dir)) {
+                FileUtil.removeDir(dir.toFile());
+            }
+        });
+        for (Path dir : ExampleHelper.staleExampleDirs(runningDirs, Duration.ofHours(1))) {
+            FileUtil.removeDir(dir.toFile());
+        }
+    }
+
     void launchDetached(String displayName, List<String> extraArgs) throws IOException {
         JsonObject example = exampleOf(extraArgs);
         if (example == null) {
@@ -94,8 +123,11 @@ class LaunchManager {
         // where camel run --example would run in the directory of the TUI; a GitHub example is downloaded first
         Thread t = new Thread(() -> {
             try {
+                // the example keeps running when the TUI quits, so its folder is not deleted on exit (CAMEL-25425):
+                // deleteExampleDirs removes it once the example has stopped
                 Path dir = ExampleHelper.isBundled(example)
-                        ? ExampleHelper.extractBundledExample(example) : ExampleHelper.downloadGithubExample(example);
+                        ? ExampleHelper.extractBundledExample(example, false)
+                        : ExampleHelper.downloadGithubExample(example, false);
                 start(displayName, exampleArgs(extraArgs, example), dir);
             } catch (Exception e) {
                 notify("Failed to start: " + displayName + " - " + e.getMessage(), true);
@@ -117,6 +149,9 @@ class LaunchManager {
         pb.redirectErrorStream(true);
         pb.redirectOutput(outputFile.toFile());
         Process process = pb.start();
+        if (dir != null) {
+            exampleDirs.put(dir, process);
+        }
         addPendingLaunch(displayName, process, outputFile);
     }
 
