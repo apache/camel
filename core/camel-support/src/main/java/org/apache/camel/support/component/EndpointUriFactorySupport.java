@@ -100,6 +100,10 @@ public abstract class EndpointUriFactorySupport implements EndpointUriFactory {
      * as the parameters of a route in the YAML DSL, which then keep the order they are written in), otherwise sorted.
      */
     protected static Map<String, Object> copyParameters(Map<String, Object> parameters) {
+        if (parameters instanceof SortedMap) {
+            // stay sorted, so buildQueryParameters also sorts the flattened multi value options (as before)
+            return new TreeMap<>(parameters);
+        }
         if (isOrdered(parameters)) {
             return new LinkedHashMap<>(parameters);
         }

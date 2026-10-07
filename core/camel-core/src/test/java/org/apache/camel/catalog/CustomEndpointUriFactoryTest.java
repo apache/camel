@@ -320,6 +320,27 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
     }
 
     @Test
+    public void testJmsMultiValuedUnorderedGenerated() throws Exception {
+        EndpointUriFactory assembler = new MyGeneratedJmsxAssembler();
+        assembler.setCamelContext(context);
+
+        Map<String, Object> tags = new HashMap<>();
+        tags.put("foo", 123);
+        tags.put("bar", 456);
+
+        // a map without an order is sorted, the flattened multi valued options as well (tag.foo sorts before tagline,
+        // which sorts before the tags option)
+        Map<String, Object> params = new HashMap<>();
+        params.put("destinationName", "foo");
+        params.put("tags", tags);
+        params.put("tagline", "hello");
+        params.put("deliveryPersistent", true);
+
+        String uri = assembler.buildUri("jmsx", params);
+        Assertions.assertEquals("jmsx:foo?deliveryPersistent=true&tag.bar=456&tag.foo=123&tagline=hello", uri);
+    }
+
+    @Test
     public void testJmsMultiValuedInsertionOrder() throws Exception {
         EndpointUriFactory assembler = new MyJmsxAssembler();
         assembler.setCamelContext(context);
@@ -508,6 +529,17 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
             return false;
         }
 
+    }
+
+    /**
+     * Builds the uri as the generated factories do: from a copy of the properties.
+     */
+    private static class MyGeneratedJmsxAssembler extends MyJmsxAssembler {
+
+        @Override
+        public String buildUri(String scheme, Map<String, Object> properties, boolean encode) {
+            return super.buildUri(scheme, copyParameters(properties), encode);
+        }
     }
 
     private static class MyCQLAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
