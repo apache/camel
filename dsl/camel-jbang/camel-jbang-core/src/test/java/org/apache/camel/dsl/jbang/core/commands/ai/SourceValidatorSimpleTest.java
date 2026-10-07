@@ -256,6 +256,42 @@ class SourceValidatorSimpleTest {
     }
 
     @Test
+    void semanticExpressionsAndPredicatesDoNotRequireTheRuntimeDependency() {
+        assertThat(catalog.validateLanguageExpression(null, "simple", "${semantic('department')}").getShortError())
+                .isEqualTo("The semantic function requires camel-semantic on the classpath");
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:start
+                    steps:
+                      - setBody:
+                          simple: "${semantic('department')}"
+                      - filter:
+                          simple: "${semantic('allowed')}"
+                          steps:
+                            - log: accepted
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void invalidSemanticArgumentsAreStillReportedWithoutTheRuntimeDependency() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:start
+                    steps:
+                      - setBody:
+                          simple: "${semantic(department)}"
+                      - filter:
+                          simple: "${semantic('allowed', 'other')}"
+                          steps:
+                            - log: accepted
+                """, catalog);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs).allSatisfy(msg -> assertThat(msg)
+                .contains("Simple syntax error", "Semantic requires one quoted evaluation name"));
+    }
+
+    @Test
     void thePredicateEipsComeFromTheCatalog() {
         // the same text is a predicate (error: no ${}) where the catalog marks the option asPredicate, and a
         // literal expression elsewhere
