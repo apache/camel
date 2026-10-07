@@ -437,6 +437,10 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             preServices.add(lf -> lf.onComponentAdd(name, component));
             return;
         }
+        // but not with mbeansLevel=ContextOnly, which only registers the CamelContext
+        if (!getManagementStrategy().getManagementAgent().getMBeansLevel().isRoutes()) {
+            return;
+        }
         try {
             Object mc = getManagementObjectStrategy().getManagedObjectForComponent(camelContext, component, name);
             manageObject(mc);
