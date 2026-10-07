@@ -62,129 +62,225 @@ import org.apache.kafka.common.security.auth.SecurityProtocol;
 @UriParams
 public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilterStrategyAware {
 
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "URL of the Kafka brokers to use. The format is host1:port1,host2:port2, and the list can be a "
+                            + "subset of brokers or a VIP pointing to a subset of brokers. This option is known as "
+                            + "bootstrap.servers in the Kafka documentation.")
     private String brokers;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The client id is a user-specified string sent in each request to help trace calls. It should "
+                            + "logically identify the application making the request.")
     private String clientId;
     @UriParam(label = "common",
               description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy = new KafkaHeaderFilterStrategy();
-    @UriParam(label = "common", defaultValue = "100")
+    @UriParam(label = "common", defaultValue = "100",
+              description = "The amount of time to wait before attempting to retry a failed request to a given topic "
+                            + "partition. This avoids repeatedly sending requests in a tight loop under some failure "
+                            + "scenarios. This value is the initial backoff value and will increase exponentially for each "
+                            + "failed request, up to the retry.backoff.max.ms value.")
     private Integer retryBackoffMs = 100;
-    @UriParam(label = "common", defaultValue = "1000")
+    @UriParam(label = "common", defaultValue = "1000",
+              description = "The maximum amount of time in milliseconds to wait when retrying a request to the broker that "
+                            + "has repeatedly failed. If provided, the backoff per client will increase exponentially for each"
+                            + " failed request, up to this maximum. To prevent all clients from being synchronized upon retry,"
+                            + " a randomized jitter with a factor of 0.2 will be applied to the backoff, resulting in the "
+                            + "backoff falling within a range between 20% below and 20% above the computed value. If "
+                            + "retry.backoff.ms is set to be higher than retry.backoff.max.ms, then retry.backoff.max.ms will "
+                            + "be used as a constant backoff from the beginning without any exponential increase")
     private Integer retryBackoffMaxMs = 1000;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "Whether to eager validate that broker host:port is valid and can be DNS resolved to known host "
+                            + "during starting this consumer. If the validation fails, then an exception is thrown, which "
+                            + "makes Camel fail fast. Disabling this will postpone the validation after the consumer is "
+                            + "started, and Camel will keep re-connecting in case of validation or DNS resolution error.")
     private boolean preValidateHostAndPort = true;
     @UriParam(label = "consumer", description = "To use a custom KafkaHeaderDeserializer to deserialize kafka headers values")
     private KafkaHeaderDeserializer headerDeserializer = new DefaultKafkaHeaderDeserializer();
     // key.deserializer
-    @UriParam(label = "consumer", defaultValue = KafkaConstants.KAFKA_DEFAULT_DESERIALIZER)
+    @UriParam(label = "consumer", defaultValue = KafkaConstants.KAFKA_DEFAULT_DESERIALIZER,
+              description = "Deserializer class for the key that implements the Deserializer interface.")
     private String keyDeserializer = KafkaConstants.KAFKA_DEFAULT_DESERIALIZER;
     // value.deserializer
-    @UriParam(label = "consumer", defaultValue = KafkaConstants.KAFKA_DEFAULT_DESERIALIZER)
+    @UriParam(label = "consumer", defaultValue = KafkaConstants.KAFKA_DEFAULT_DESERIALIZER,
+              description = "Deserializer class for value that implements the Deserializer interface.")
     private String valueDeserializer = KafkaConstants.KAFKA_DEFAULT_DESERIALIZER;
     // connections.max.idle.ms
-    @UriParam(label = "common", defaultValue = "540000")
+    @UriParam(label = "common", defaultValue = "540000",
+              description = "Close idle connections after the number of milliseconds specified by this config.")
     private Integer connectionMaxIdleMs = 540000;
     // receive.buffer.bytes
-    @UriParam(label = "common", defaultValue = "65536")
+    @UriParam(label = "common", defaultValue = "65536",
+              description = "The size of the TCP receive buffer (SO_RCVBUF) to use when reading data.")
     private Integer receiveBufferBytes = 65536;
     // send.buffer.bytes
-    @UriParam(label = "common", defaultValue = "131072")
+    @UriParam(label = "common", defaultValue = "131072", description = "Socket write buffer size")
     private Integer sendBufferBytes = 131072;
     // metadata.max.age.ms
-    @UriParam(label = "common", defaultValue = "300000")
+    @UriParam(label = "common", defaultValue = "300000",
+              description = "The period of time in milliseconds after which we force a refresh of metadata even if we "
+                            + "haven't seen any partition leadership changes to proactively discover any new brokers or "
+                            + "partitions.")
     private Integer metadataMaxAgeMs = 300000;
     // metric.reporters
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "A list of classes to use as metrics reporters. Implementing the MetricReporter interface allows"
+                            + " plugging in classes that will be notified of new metric creation. The JmxReporter is always "
+                            + "included to register JMX statistics.")
     private String metricReporters;
     // metrics.num.samples
-    @UriParam(label = "common", defaultValue = "2")
+    @UriParam(label = "common", defaultValue = "2", description = "The number of samples maintained to compute metrics.")
     private Integer noOfMetricsSample = 2;
     // metrics.sample.window.ms
-    @UriParam(label = "common", defaultValue = "30000")
+    @UriParam(label = "common", defaultValue = "30000", description = "The window of time a metrics sample is computed over.")
     private Integer metricsSampleWindowMs = 30000;
     // reconnect.backoff.ms
-    @UriParam(label = "common", defaultValue = "50")
+    @UriParam(label = "common", defaultValue = "50",
+              description = "The amount of time to wait before attempting to reconnect to a given host. This avoids "
+                            + "repeatedly connecting to a host in a tight loop. This backoff applies to all requests sent by "
+                            + "the consumer to the broker.")
     private Integer reconnectBackoffMs = 50;
     // reconnect.backoff.max.ms
-    @UriParam(label = "common", defaultValue = "1000")
+    @UriParam(label = "common", defaultValue = "1000",
+              description = "The maximum amount of time in milliseconds to wait when reconnecting to a broker that has "
+                            + "repeatedly failed to connect. If provided, the backoff per host will increase exponentially for"
+                            + " each consecutive connection failure, up to this maximum. After calculating the backoff "
+                            + "increase, 20% random jitter is added to avoid connection storms.")
     private Integer reconnectBackoffMaxMs = 1000;
     // SSL
-    @UriParam(label = "common,security")
+    @UriParam(label = "common,security",
+              description = "SSL configuration using a Camel SSLContextParameters object. If configured, it's applied before"
+                            + " the other SSL endpoint parameters. NOTE: Kafka only supports loading keystore from file "
+                            + "locations, so prefix the location with file: in the KeyStoreParameters.resource option.")
     private SSLContextParameters sslContextParameters;
     // SSL
     // ssl.key.password
-    @UriParam(label = "common,security", security = "secret")
+    @UriParam(label = "common,security", security = "secret",
+              description = "The password of the private key in the key store file or the PEM key specified in "
+                            + "sslKeystoreKey. This is required for clients only if two-way authentication is configured.")
     private String sslKeyPassword;
     // ssl.keystore.location
-    @UriParam(label = "common,security")
+    @UriParam(label = "common,security",
+              description = "The location of the key store file. This is optional for the client and can be used for two-way"
+                            + " authentication for the client.")
     private String sslKeystoreLocation;
     // ssl.keystore.password
-    @UriParam(label = "common,security", security = "secret")
+    @UriParam(label = "common,security", security = "secret",
+              description = "The store password for the key store file. This is optional for the client and only needed if "
+                            + "sslKeystoreLocation is configured. Key store password is not supported for PEM format.")
     private String sslKeystorePassword;
     // ssl.truststore.location
-    @UriParam(label = "common,security")
+    @UriParam(label = "common,security", description = "The location of the trust store file.")
     private String sslTruststoreLocation;
     // ssl.truststore.password
-    @UriParam(label = "common,security", security = "secret")
+    @UriParam(label = "common,security", security = "secret",
+              description = "The password for the trust store file. If a password is not set, trust store file configured "
+                            + "will still be used, but integrity checking is disabled. Trust store password is not supported "
+                            + "for PEM format.")
     private String sslTruststorePassword;
     // SSL
     // ssl.enabled.protocols
-    @UriParam(label = "common,security")
+    @UriParam(label = "common,security",
+              description = "The list of protocols enabled for SSL connections. The default is TLSv1.2,TLSv1.3 when running "
+                            + "with Java 11 or newer, TLSv1.2 otherwise. With the default value for Java 11, clients and "
+                            + "servers will prefer TLSv1.3 if both support it and fallback to TLSv1.2 otherwise (assuming both"
+                            + " support at least TLSv1.2). This default should be fine for most cases. Also see the config "
+                            + "documentation for SslProtocol.")
     private String sslEnabledProtocols = SslConfigs.DEFAULT_SSL_ENABLED_PROTOCOLS;
     // ssl.keystore.type
-    @UriParam(label = "common,security", defaultValue = SslConfigs.DEFAULT_SSL_KEYSTORE_TYPE)
+    @UriParam(label = "common,security", defaultValue = SslConfigs.DEFAULT_SSL_KEYSTORE_TYPE,
+              description = "The file format of the key store file. This is optional for the client. The default value is "
+                            + "JKS")
     private String sslKeystoreType = SslConfigs.DEFAULT_SSL_KEYSTORE_TYPE;
     // ssl.protocol
-    @UriParam(label = "common,security")
+    @UriParam(label = "common,security",
+              description = "The SSL protocol used to generate the SSLContext. The default is TLSv1.3 when running with Java"
+                            + " 11 or newer, TLSv1.2 otherwise. This value should be fine for most use cases. Allowed values "
+                            + "in recent JVMs are TLSv1.2 and TLSv1.3. TLS, TLSv1.1, SSL, SSLv2 and SSLv3 may be supported in "
+                            + "older JVMs, but their usage is discouraged due to known security vulnerabilities. With the "
+                            + "default value for this config and sslEnabledProtocols, clients will downgrade to TLSv1.2 if the"
+                            + " server does not support TLSv1.3. If this config is set to TLSv1.2, clients will not use "
+                            + "TLSv1.3 even if it is one of the values in sslEnabledProtocols and the server only supports "
+                            + "TLSv1.3.")
     private String sslProtocol = SslConfigs.DEFAULT_SSL_PROTOCOL;
     // ssl.provider
-    @UriParam(label = "common,security")
+    @UriParam(label = "common,security",
+              description = "The name of the security provider used for SSL connections. Default value is the default "
+                            + "security provider of the JVM.")
     private String sslProvider;
     // ssl.truststore.type
-    @UriParam(label = "common,security", defaultValue = SslConfigs.DEFAULT_SSL_TRUSTSTORE_TYPE)
+    @UriParam(label = "common,security", defaultValue = SslConfigs.DEFAULT_SSL_TRUSTSTORE_TYPE,
+              description = "The file format of the trust store file. The default value is JKS.")
     private String sslTruststoreType = SslConfigs.DEFAULT_SSL_TRUSTSTORE_TYPE;
     // SSL
     // ssl.cipher.suites
-    @UriParam(label = "common,security")
+    @UriParam(label = "common,security",
+              description = "A list of cipher suites. This is a named combination of authentication, encryption, MAC and key"
+                            + " exchange algorithm used to negotiate the security settings for a network connection using TLS "
+                            + "or SSL network protocol. By default, all the available cipher suites are supported.")
     private String sslCipherSuites;
     // ssl.endpoint.identification.algorithm
-    @UriParam(label = "common,security", defaultValue = "https", security = "insecure:ssl", insecureValue = "none")
+    @UriParam(label = "common,security", defaultValue = "https", security = "insecure:ssl", insecureValue = "none",
+              description = "The endpoint identification algorithm to validate server hostname using server certificate. Use"
+                            + " none or false to disable server hostname verification.")
     private String sslEndpointAlgorithm = SslConfigs.DEFAULT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM;
     // ssl.keymanager.algorithm
-    @UriParam(label = "common,security", defaultValue = "SunX509")
+    @UriParam(label = "common,security", defaultValue = "SunX509",
+              description = "The algorithm used by key manager factory for SSL connections. Default value is the key manager"
+                            + " factory algorithm configured for the Java Virtual Machine.")
     private String sslKeymanagerAlgorithm = "SunX509";
     // ssl.trustmanager.algorithm
-    @UriParam(label = "common,security", defaultValue = "PKIX")
+    @UriParam(label = "common,security", defaultValue = "PKIX",
+              description = "The algorithm used by trust manager factory for SSL connections. Default value is the trust "
+                            + "manager factory algorithm configured for the Java Virtual Machine.")
     private String sslTrustmanagerAlgorithm = "PKIX";
     // SASL & sucurity Protocol
     // sasl.kerberos.service.name
-    @UriParam(label = "common,security")
+    @UriParam(label = "common,security",
+              description = "The Kerberos principal name that Kafka runs as. This can be defined either in Kafka's JAAS "
+                            + "config or in Kafka's config.")
     private String saslKerberosServiceName;
     // security.protocol
-    @UriParam(label = "common,security", defaultValue = CommonClientConfigs.DEFAULT_SECURITY_PROTOCOL)
+    @UriParam(label = "common,security", defaultValue = CommonClientConfigs.DEFAULT_SECURITY_PROTOCOL,
+              description = "Protocol used to communicate with brokers. SASL_PLAINTEXT, PLAINTEXT, SASL_SSL and SSL are "
+                            + "supported")
     private String securityProtocol = CommonClientConfigs.DEFAULT_SECURITY_PROTOCOL;
     // SASL
     // sasl.mechanism
-    @UriParam(label = "common,security", defaultValue = SaslConfigs.DEFAULT_SASL_MECHANISM)
+    @UriParam(label = "common,security", defaultValue = SaslConfigs.DEFAULT_SASL_MECHANISM,
+              description = "The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see "
+                            + "http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml")
     private String saslMechanism = SaslConfigs.DEFAULT_SASL_MECHANISM;
     // sasl.kerberos.kinit.cmd
-    @UriParam(label = "common,security", defaultValue = SaslConfigs.DEFAULT_KERBEROS_KINIT_CMD)
+    @UriParam(label = "common,security", defaultValue = SaslConfigs.DEFAULT_KERBEROS_KINIT_CMD,
+              description = "Kerberos kinit command path. Default is /usr/bin/kinit")
     private String kerberosInitCmd = SaslConfigs.DEFAULT_KERBEROS_KINIT_CMD;
     // sasl.kerberos.min.time.before.relogin
-    @UriParam(label = "common,security", defaultValue = "60000")
+    @UriParam(label = "common,security", defaultValue = "60000",
+              description = "Login thread sleep time between refresh attempts.")
     private Integer kerberosBeforeReloginMinTime = 60000;
     // sasl.kerberos.ticket.renew.jitter
-    @UriParam(label = "common,security", defaultValue = "0.05")
+    @UriParam(label = "common,security", defaultValue = "0.05",
+              description = "Percentage of random jitter added to the renewal time.")
     private Double kerberosRenewJitter = SaslConfigs.DEFAULT_KERBEROS_TICKET_RENEW_JITTER;
     // sasl.kerberos.ticket.renew.window.factor
-    @UriParam(label = "common,security", defaultValue = "0.8")
+    @UriParam(label = "common,security", defaultValue = "0.8",
+              description = "Login thread will sleep until the specified window factor of time from last refresh to ticket's"
+                            + " expiry has been reached, at which time it will try to renew the ticket.")
     private Double kerberosRenewWindowFactor = SaslConfigs.DEFAULT_KERBEROS_TICKET_RENEW_WINDOW_FACTOR;
-    @UriParam(label = "common,security", defaultValue = "DEFAULT")
+    @UriParam(label = "common,security", defaultValue = "DEFAULT",
+              description = "A list of rules for mapping from principal names to short names (typically operating system "
+                            + "usernames). The rules are evaluated in order, and the first rule that matches a principal name "
+                            + "is used to map it to a short name. Any later rules in the list are ignored. By default, "
+                            + "principal names of the form {username}/{hostname}{REALM} are mapped to {username}. For more "
+                            + "details on the format, please see the Security Authorization and ACLs documentation (at the "
+                            + "Apache Kafka project website). Multiple values can be separated by comma")
     // sasl.kerberos.principal.to.local.rules
     private String kerberosPrincipalToLocalRules;
-    @UriParam(label = "common,security", security = "secret")
+    @UriParam(label = "common,security", security = "secret",
+              description = "Expose the kafka sasl.jaas.config parameter Example: "
+                            + "org.apache.kafka.common.security.plain.PlainLoginModule required username=USERNAME "
+                            + "password=PASSWORD;")
     // sasl.jaas.config
     private String saslJaasConfig;
     // Simplified authentication configuration
@@ -215,16 +311,32 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
               description = "OAuth scope. Used when saslAuthType is set to OAUTH.")
     private String oauthScope;
     // Schema registry only options
-    @UriParam(label = "schema")
+    @UriParam(label = "schema",
+              description = "URL of the schema registry servers to use. The format is host1:port1,host2:port2. This is known"
+                            + " as schema.registry.url in multiple Schema registries documentation. This option is only "
+                            + "available externally (not standard Apache Kafka)")
     private String schemaRegistryURL;
-    @UriParam(label = "schema,consumer")
+    @UriParam(label = "schema,consumer",
+              description = "This enables the use of a specific Avro reader for use with the in multiple Schema registries "
+                            + "documentation with Avro Deserializers implementation. This option is only available externally "
+                            + "(not standard Apache Kafka)")
     private boolean specificAvroReader;
     // Additional properties
-    @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true)
+    @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true,
+              description = "Sets additional properties for either kafka consumer or kafka producer in case they can't be "
+                            + "set directly on the camel configurations (e.g.: new Kafka properties that are not reflected yet"
+                            + " in Camel configurations), the properties have to be prefixed with additionalProperties.., "
+                            + "e.g.: additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http"
+                            + "://localhost:8811/avro. If the properties are set in the application.properties file, they must"
+                            + " be prefixed with camel.component.kafka.additional-properties and the property enclosed in "
+                            + "square brackets, like this example: "
+                            + "camel.component.kafka.additional-propertiesdelivery.timeout.ms=15000.")
     private Map<String, Object> additionalProperties = new HashMap<>();
-    @UriParam(label = "common", defaultValue = "30000")
+    @UriParam(label = "common", defaultValue = "30000",
+              description = "Timeout in milliseconds to wait gracefully for the consumer or producer to shut down and "
+                            + "terminate its worker threads.")
     private int shutdownTimeout = 30000;
-    @UriParam(label = "common,security")
+    @UriParam(label = "common,security", description = "Location of the kerberos config file.")
     private String kerberosConfigLocation;
 
     /**

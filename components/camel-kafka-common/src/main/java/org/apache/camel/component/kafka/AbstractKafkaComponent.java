@@ -39,13 +39,26 @@ public abstract class AbstractKafkaComponent extends HealthCheckComponent
 
     private final List<Runnable> pendingConsumers = new CopyOnWriteArrayList<>();
 
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security", defaultValue = "false", description = "Enable usage of global SSL context parameters.")
     private boolean useGlobalSslContextParameters;
-    @Metadata(autowired = true, label = "consumer,advanced")
+    @Metadata(autowired = true, label = "consumer,advanced",
+              description = "To use a custom strategy with the consumer to control how to handle exceptions thrown from the "
+                            + "Kafka broker while pooling messages.")
     private PollExceptionStrategy pollExceptionStrategy;
-    @Metadata(label = "consumer,advanced")
+    @Metadata(label = "consumer,advanced",
+              description = "Maximum attempts to create the kafka consumer (kafka-client), before eventually giving up and "
+                            + "failing. Error during creating the consumer may be fatal due to invalid configuration and as "
+                            + "such recovery is not possible. However, one part of the validation is DNS resolution of the "
+                            + "bootstrap broker hostnames. This may be a temporary networking problem, and could potentially "
+                            + "be recoverable. While other errors are fatal, such as some invalid kafka configurations. "
+                            + "Unfortunately, kafka-client does not separate this kind of errors. Camel will by default retry "
+                            + "forever, and therefore never give up. If you want to give up after many attempts then set this "
+                            + "option and Camel will then when giving up terminate the consumer. To try again, you can "
+                            + "manually restart the consumer by stopping, and starting the route.")
     private int createConsumerBackoffMaxAttempts;
-    @Metadata(label = "consumer,advanced", defaultValue = "5000")
+    @Metadata(label = "consumer,advanced", defaultValue = "5000",
+              description = "The delay in millis seconds to wait before trying again to create the kafka consumer "
+                            + "(kafka-client).")
     private long createConsumerBackoffInterval = 5000;
 
     protected AbstractKafkaComponent() {

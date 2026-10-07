@@ -4124,6 +4124,26 @@ consumed those partitions while the circuit was open; now they stay with this co
 it runs. A suspended consumer also keeps its fetcher thread after a failed poll or a reconnect, and the health check
 reports it as recoverable.
 
+=== camel-kafka - shared client code moved to camel-kafka-common
+
+The Kafka client code that the `kafka` component shares with other Kafka based components has been moved
+from `camel-kafka` into a new `camel-kafka-common` module. This includes `KafkaClientConfiguration` (the base class
+of `KafkaConfiguration`), `AbstractKafkaComponent`, `KafkaConstants`, `KafkaHeaderFilterStrategy`, the header
+serializers and deserializers (`org.apache.camel.component.kafka.serde`), `KafkaSecurityConfigurer` and
+`KafkaAuthType`, `PollExceptionStrategy` and `PollOnError`. The packages and class names are unchanged.
+
+`camel-kafka` depends on `camel-kafka-common`, so nothing changes for applications that depend on `camel-kafka`.
+If you build your classpath without transitive dependencies, add the `camel-kafka-common` dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-kafka-common</artifactId>
+    <version>${camel.version}</version>
+</dependency>
+----
+
 === camel-pulsar - the producer no longer replaces the body with the message id
 
 After sending, the producer used to overwrite the message body with the `MessageId` returned by the
