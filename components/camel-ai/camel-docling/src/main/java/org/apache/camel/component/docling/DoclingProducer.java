@@ -372,7 +372,7 @@ public class DoclingProducer extends DefaultProducer {
 
         // Generate a unique task ID and store the future with timestamp for later status checks
         String taskId = "task-" + taskIdCounter.incrementAndGet();
-        AsyncTaskEntry taskEntry = new AsyncTaskEntry(taskId, asyncResult);
+        AsyncTaskEntry taskEntry = new AsyncTaskEntry(taskId, asyncResult, outputFormat);
         pendingAsyncTasks.put(taskId, taskEntry);
         LOG.debug("Started async conversion with task ID: {} at {}", taskId, taskEntry.getCreatedAtMs());
 
@@ -431,7 +431,7 @@ public class DoclingProducer extends DefaultProducer {
         // Check the local pending tasks map first (tasks submitted via SUBMIT_ASYNC_CONVERSION)
         AsyncTaskEntry taskEntry = pendingAsyncTasks.get(taskId);
         if (taskEntry != null) {
-            return checkLocalAsyncTask(taskId, taskEntry.getFuture());
+            return checkLocalAsyncTask(taskEntry);
         }
 
         // Fall back to server-side task polling
@@ -469,7 +469,9 @@ public class DoclingProducer extends DefaultProducer {
         }
     }
 
-    private ConversionStatus checkLocalAsyncTask(String taskId, CompletableFuture<ConvertDocumentResponse> future) {
+    private ConversionStatus checkLocalAsyncTask(AsyncTaskEntry taskEntry) {
+        String taskId = taskEntry.getTaskId();
+        CompletableFuture<ConvertDocumentResponse> future = taskEntry.getFuture();
         if (!future.isDone()) {
             return new ConversionStatus(taskId, ConversionStatus.Status.IN_PROGRESS);
         }
@@ -491,7 +493,7 @@ public class DoclingProducer extends DefaultProducer {
         pendingAsyncTasks.remove(taskId);
         try {
             ConvertDocumentResponse response = future.join();
-            String result = extractConvertedContent(response, configuration.getOutputFormat());
+            String result = extractConvertedContent(response, taskEntry.getOutputFormat());
             return new ConversionStatus(taskId, ConversionStatus.Status.COMPLETED, result, null, null);
         } catch (Exception e) {
             return new ConversionStatus(taskId, ConversionStatus.Status.FAILED, null, e.getMessage(), null);

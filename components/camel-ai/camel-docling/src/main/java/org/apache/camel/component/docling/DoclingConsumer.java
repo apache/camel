@@ -18,7 +18,6 @@ package org.apache.camel.component.docling;
 
 import java.util.Map;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
 import ai.docling.serve.api.convert.response.ConvertDocumentResponse;
@@ -73,7 +72,7 @@ public class DoclingConsumer extends ScheduledPollConsumer {
             Exchange exchange = createExchange(false);
             try {
                 exchange.getIn().setHeader(DoclingHeaders.TASK_ID, taskId);
-                emitResult(exchange, taskId, task.getFuture());
+                emitResult(exchange, task);
                 getProcessor().process(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
@@ -88,11 +87,13 @@ public class DoclingConsumer extends ScheduledPollConsumer {
         return polled;
     }
 
-    private void emitResult(Exchange exchange, String taskId, CompletableFuture<ConvertDocumentResponse> future) {
+    private void emitResult(Exchange exchange, AsyncTaskEntry task) {
+        String taskId = task.getTaskId();
         try {
-            ConvertDocumentResponse response = future.join();
-            exchange.getIn().setBody(
-                    DoclingContentExtractor.extract(response, getEndpoint().getConfiguration().getOutputFormat()));
+            ConvertDocumentResponse response = task.getFuture().join();
+            // extract with the format the task was submitted with, not this consuming endpoint's: docling-serve only
+            // returns the requested format, so using the consumer's own outputFormat would yield an empty body
+            exchange.getIn().setBody(DoclingContentExtractor.extract(response, task.getOutputFormat()));
             LOG.debug("Emitting completed docling async task {}", taskId);
         } catch (CancellationException | CompletionException e) {
             // the conversion failed (or was evicted); surface the underlying cause on the exchange

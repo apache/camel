@@ -58,7 +58,7 @@ class DoclingConsumerFailureTest extends CamelTestSupport {
 
         CompletableFuture<ConvertDocumentResponse> future = new CompletableFuture<>();
         future.completeExceptionally(new RuntimeException("conversion failed"));
-        pendingAsyncTasks().put("task-failure", new AsyncTaskEntry("task-failure", future));
+        pendingAsyncTasks().put("task-failure", new AsyncTaskEntry("task-failure", future, "markdown"));
 
         MockEndpoint.assertIsSatisfied(context);
         assertTrue(pendingAsyncTasks().isEmpty(), "the failed task should be drained from the pending map");

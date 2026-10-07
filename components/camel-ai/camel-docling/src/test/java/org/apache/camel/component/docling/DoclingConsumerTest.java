@@ -61,9 +61,28 @@ class DoclingConsumerTest extends CamelTestSupport {
                 .document(DocumentResponse.builder().markdownContent("# Converted Document").build())
                 .build();
         pendingAsyncTasks().put("task-success",
-                new AsyncTaskEntry("task-success", CompletableFuture.completedFuture(response)));
+                new AsyncTaskEntry("task-success", CompletableFuture.completedFuture(response), "markdown"));
 
         result.assertIsSatisfied();
         assertTrue(pendingAsyncTasks().isEmpty(), "the completed task should be drained from the pending map");
+    }
+
+    @Test
+    void extractsWithTheSubmittedFormatNotTheConsumerFormat() throws Exception {
+        // the consumer endpoint uses the default outputFormat (markdown), but this task was submitted with html, so
+        // docling-serve returned only html content. The consumer must extract with the task's format, otherwise the
+        // body would be empty (CAMEL-23458 review).
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
+        result.expectedBodiesReceived("<h1>Converted Document</h1>");
+        result.expectedHeaderReceived(DoclingHeaders.TASK_ID, "task-html");
+
+        ConvertDocumentResponse response = InBodyConvertDocumentResponse.builder()
+                .document(DocumentResponse.builder().htmlContent("<h1>Converted Document</h1>").build())
+                .build();
+        pendingAsyncTasks().put("task-html",
+                new AsyncTaskEntry("task-html", CompletableFuture.completedFuture(response), "html"));
+
+        result.assertIsSatisfied();
     }
 }
