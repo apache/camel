@@ -40,6 +40,11 @@
             <artifactId>camel-support</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-vertx-common</artifactId>
+        </dependency>
+
         <!-- Apicurio Registry SDK -->
         <dependency>
             <groupId>io.apicurio</groupId>

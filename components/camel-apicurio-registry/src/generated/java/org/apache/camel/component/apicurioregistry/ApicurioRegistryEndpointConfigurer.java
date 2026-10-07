@@ -59,6 +59,14 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxypassword":
+        case "proxyPassword": target.getConfiguration().setProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyusername":
+        case "proxyUsername": target.getConfiguration().setProxyUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "registryclient":
         case "registryClient": target.setRegistryClient(property(camelContext, io.apicurio.registry.rest.client.RegistryClient.class, value)); return true;
         case "registryurl":
@@ -75,6 +83,8 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
         case "scope": target.getConfiguration().setScope(property(camelContext, java.lang.String.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
@@ -127,6 +137,14 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
         case "password": return java.lang.String.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxypassword":
+        case "proxyPassword": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyusername":
+        case "proxyUsername": return java.lang.String.class;
         case "registryclient":
         case "registryClient": return io.apicurio.registry.rest.client.RegistryClient.class;
         case "registryurl":
@@ -143,6 +161,8 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
         case "scope": return java.lang.String.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "timeunit":
@@ -196,6 +216,14 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
         case "password": return target.getConfiguration().getPassword();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
+        case "proxyhost":
+        case "proxyHost": return target.getConfiguration().getProxyHost();
+        case "proxypassword":
+        case "proxyPassword": return target.getConfiguration().getProxyPassword();
+        case "proxyport":
+        case "proxyPort": return target.getConfiguration().getProxyPort();
+        case "proxyusername":
+        case "proxyUsername": return target.getConfiguration().getProxyUsername();
         case "registryclient":
         case "registryClient": return target.getRegistryClient();
         case "registryurl":
@@ -212,6 +240,8 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
         case "scope": return target.getConfiguration().getScope();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "timeunit":

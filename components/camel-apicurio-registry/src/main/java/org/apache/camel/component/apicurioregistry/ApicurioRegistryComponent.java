@@ -38,6 +38,7 @@ public class ApicurioRegistryComponent extends DefaultComponent {
     private Vertx vertx;
 
     private boolean managedVertx;
+    private Vertx replacedManagedVertx;
 
     public ApicurioRegistryComponent() {
     }
@@ -77,24 +78,40 @@ public class ApicurioRegistryComponent extends DefaultComponent {
     protected void doStop() throws Exception {
         super.doStop();
         Vertx toClose = null;
+        Vertx replaced;
         synchronized (this) {
             if (managedVertx && vertx != null) {
                 toClose = vertx;
                 vertx = null;
                 managedVertx = false;
             }
+            replaced = replacedManagedVertx;
+            replacedManagedVertx = null;
         }
-        if (toClose != null) {
-            toClose.close().toCompletionStage().toCompletableFuture().get(30, TimeUnit.SECONDS);
+        closeVertx(toClose);
+        closeVertx(replaced);
+    }
+
+    private static void closeVertx(Vertx vertx) throws Exception {
+        if (vertx != null) {
+            vertx.close().toCompletionStage().toCompletableFuture().get(30, TimeUnit.SECONDS);
         }
     }
 
-    public Vertx getVertx() {
+    public synchronized Vertx getVertx() {
         return vertx;
     }
 
-    public void setVertx(Vertx vertx) {
+    /**
+     * Sets the Vert.x instance to use. The component never closes a Vert.x instance set here. If the component had
+     * already created its own instance, that one is still closed when the component stops.
+     */
+    public synchronized void setVertx(Vertx vertx) {
+        if (managedVertx && this.vertx != null && this.vertx != vertx) {
+            replacedManagedVertx = this.vertx;
+        }
         this.vertx = vertx;
+        this.managedVertx = false;
     }
 
     public ApicurioRegistryConfiguration getConfiguration() {

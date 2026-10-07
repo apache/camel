@@ -28,6 +28,7 @@ import io.apicurio.registry.rest.client.RegistryClient;
 import io.apicurio.registry.rest.client.groups.item.artifacts.ArtifactsRequestBuilder;
 import io.apicurio.registry.rest.client.models.ArtifactMetaData;
 import io.apicurio.registry.rest.client.models.ArtifactSearchResults;
+import io.apicurio.registry.rest.client.models.ArtifactSortBy;
 import io.apicurio.registry.rest.client.models.CreateArtifact;
 import io.apicurio.registry.rest.client.models.CreateArtifactResponse;
 import io.apicurio.registry.rest.client.models.CreateGroup;
@@ -37,6 +38,7 @@ import io.apicurio.registry.rest.client.models.IfArtifactExists;
 import io.apicurio.registry.rest.client.models.ProblemDetails;
 import io.apicurio.registry.rest.client.models.RuleViolationProblemDetails;
 import io.apicurio.registry.rest.client.models.SearchedVersion;
+import io.apicurio.registry.rest.client.models.SortOrder;
 import io.apicurio.registry.rest.client.models.VersionMetaData;
 import io.apicurio.registry.rest.client.models.VersionSearchResults;
 import org.apache.camel.BindToRegistry;
@@ -270,6 +272,72 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
 
         Object result = template.requestBody("direct:searchArtifacts", (Object) null);
         assertThat(result).isSameAs(mockResults);
+    }
+
+    @Test
+    void testSearchArtifactsAppliesFiltersAndPaging() throws Exception {
+        injectMockClient(
+                "apicurio-registry:testGroup?registryUrl=http://localhost:8080/apis/registry/v3&operation=searchArtifacts");
+        ArtifactSearchResults mockResults = new ArtifactSearchResults();
+        when(mockClient.search().artifacts().get(any())).thenAnswer(call -> {
+            io.apicurio.registry.rest.client.search.artifacts.ArtifactsRequestBuilder builder = mockClient.search().artifacts();
+            var config = builder.new GetRequestConfiguration();
+            Consumer<io.apicurio.registry.rest.client.search.artifacts.ArtifactsRequestBuilder.GetRequestConfiguration> configurer
+                    = call.getArgument(0);
+            configurer.accept(config);
+            var query = config.queryParameters;
+            assertThat(query.groupId).isEqualTo("testGroup");
+            assertThat(query.artifactId).isEqualTo("orders");
+            assertThat(query.name).isEqualTo("Orders");
+            assertThat(query.artifactType).isEqualTo("AVRO");
+            assertThat(query.labels).containsExactly("team:payments", "env:prod");
+            assertThat(query.offset).isEqualTo(40);
+            assertThat(query.limit).isEqualTo(50);
+            assertThat(query.order).isEqualTo(SortOrder.Desc);
+            assertThat(query.orderby).isEqualTo(ArtifactSortBy.CreatedOn);
+            return mockResults;
+        });
+
+        Object result = template.requestBodyAndHeaders("direct:searchArtifacts", null, Map.of(
+                ApicurioRegistryConstants.HEADER_ARTIFACT_ID, "orders",
+                ApicurioRegistryConstants.HEADER_ARTIFACT_NAME, "Orders",
+                ApicurioRegistryConstants.HEADER_ARTIFACT_TYPE, "AVRO",
+                ApicurioRegistryConstants.HEADER_LABELS, "team:payments, env:prod",
+                ApicurioRegistryConstants.HEADER_SEARCH_OFFSET, 40,
+                ApicurioRegistryConstants.HEADER_SEARCH_LIMIT, "50",
+                ApicurioRegistryConstants.HEADER_SEARCH_ORDER, "desc",
+                ApicurioRegistryConstants.HEADER_SEARCH_ORDER_BY, "createdOn"));
+        assertThat(result).isSameAs(mockResults);
+    }
+
+    @Test
+    void testSearchArtifactsRejectsUnknownSort() throws Exception {
+        injectMockClient(
+                "apicurio-registry:testGroup?registryUrl=http://localhost:8080/apis/registry/v3&operation=searchArtifacts");
+        when(mockClient.search().artifacts().get(any())).thenAnswer(call -> {
+            io.apicurio.registry.rest.client.search.artifacts.ArtifactsRequestBuilder builder = mockClient.search().artifacts();
+            Consumer<io.apicurio.registry.rest.client.search.artifacts.ArtifactsRequestBuilder.GetRequestConfiguration> configurer
+                    = call.getArgument(0);
+            configurer.accept(builder.new GetRequestConfiguration());
+            return new ArtifactSearchResults();
+        });
+
+        assertThatThrownBy(() -> template.requestBodyAndHeader("direct:searchArtifacts", null,
+                ApicurioRegistryConstants.HEADER_SEARCH_ORDER_BY, "size"))
+                .hasCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("Unsupported value 'size' for header CamelApicurioRegistrySearchOrderBy");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "getArtifactMetadata", "deleteArtifact", "listVersions", "validate" })
+    void testMissingArtifactIdFailsClearly(String operation) throws Exception {
+        injectMockClient(
+                "apicurio-registry:testGroup?registryUrl=http://localhost:8080/apis/registry/v3&operation=searchArtifacts");
+        assertThatThrownBy(() -> template.requestBodyAndHeader("direct:searchArtifacts", "{}",
+                ApicurioRegistryConstants.HEADER_OPERATION, operation))
+                .hasCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("The " + operation + " operation requires the artifactId: set it in the endpoint path"
+                                     + " or the CamelApicurioRegistryArtifactId header");
     }
 
     @Test

@@ -258,6 +258,66 @@ public interface ApicurioRegistryComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * The proxy host to use for registry (and OAuth2 token) requests.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+    
+        /**
+         * The password for proxy authentication.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPassword the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryComponentBuilder proxyPassword(java.lang.String proxyPassword) {
+            doSetProperty("proxyPassword", proxyPassword);
+            return this;
+        }
+    
+        /**
+         * The proxy port.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+    
+        /**
+         * The username for proxy authentication.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyUsername the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryComponentBuilder proxyUsername(java.lang.String proxyUsername) {
+            doSetProperty("proxyUsername", proxyUsername);
+            return this;
+        }
+    
         
         /**
          * The authentication type to use.
@@ -336,6 +396,24 @@ public interface ApicurioRegistryComponentBuilderFactory {
         }
     
         /**
+         * To configure TLS, such as a trust store for a registry with a private
+         * CA or a client certificate (mTLS), using the Camel JSSE
+         * configuration. Also applies to the OAuth2 token endpoint.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryComponentBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+    
+        /**
          * OAuth2 token endpoint URL.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -396,11 +474,16 @@ public interface ApicurioRegistryComponentBuilderFactory {
             case "autowiredEnabled": ((ApicurioRegistryComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((ApicurioRegistryComponent) component).setConfiguration((org.apache.camel.component.apicurioregistry.ApicurioRegistryConfiguration) value); return true;
             case "vertx": ((ApicurioRegistryComponent) component).setVertx((io.vertx.core.Vertx) value); return true;
+            case "proxyHost": getOrCreateConfiguration((ApicurioRegistryComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPassword": getOrCreateConfiguration((ApicurioRegistryComponent) component).setProxyPassword((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((ApicurioRegistryComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyUsername": getOrCreateConfiguration((ApicurioRegistryComponent) component).setProxyUsername((java.lang.String) value); return true;
             case "authType": getOrCreateConfiguration((ApicurioRegistryComponent) component).setAuthType((java.lang.String) value); return true;
             case "clientId": getOrCreateConfiguration((ApicurioRegistryComponent) component).setClientId((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((ApicurioRegistryComponent) component).setClientSecret((java.lang.String) value); return true;
             case "password": getOrCreateConfiguration((ApicurioRegistryComponent) component).setPassword((java.lang.String) value); return true;
             case "scope": getOrCreateConfiguration((ApicurioRegistryComponent) component).setScope((java.lang.String) value); return true;
+            case "sslContextParameters": getOrCreateConfiguration((ApicurioRegistryComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "tokenEndpoint": getOrCreateConfiguration((ApicurioRegistryComponent) component).setTokenEndpoint((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((ApicurioRegistryComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;

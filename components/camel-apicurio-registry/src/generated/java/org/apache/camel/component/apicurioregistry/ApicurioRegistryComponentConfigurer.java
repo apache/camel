@@ -53,9 +53,19 @@ public class ApicurioRegistryComponentConfigurer extends PropertyConfigurerSuppo
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, java.lang.String.class, value)); return true;
         case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxypassword":
+        case "proxyPassword": getOrCreateConfiguration(target).setProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": getOrCreateConfiguration(target).setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyusername":
+        case "proxyUsername": getOrCreateConfiguration(target).setProxyUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "registryurl":
         case "registryUrl": getOrCreateConfiguration(target).setRegistryUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "scope": getOrCreateConfiguration(target).setScope(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": getOrCreateConfiguration(target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "tokenendpoint":
         case "tokenEndpoint": getOrCreateConfiguration(target).setTokenEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
@@ -95,9 +105,19 @@ public class ApicurioRegistryComponentConfigurer extends PropertyConfigurerSuppo
         case "lazyStartProducer": return boolean.class;
         case "operation": return java.lang.String.class;
         case "password": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxypassword":
+        case "proxyPassword": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyusername":
+        case "proxyUsername": return java.lang.String.class;
         case "registryurl":
         case "registryUrl": return java.lang.String.class;
         case "scope": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "tokenendpoint":
         case "tokenEndpoint": return java.lang.String.class;
         case "username": return java.lang.String.class;
@@ -133,9 +153,19 @@ public class ApicurioRegistryComponentConfigurer extends PropertyConfigurerSuppo
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return getOrCreateConfiguration(target).getOperation();
         case "password": return getOrCreateConfiguration(target).getPassword();
+        case "proxyhost":
+        case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
+        case "proxypassword":
+        case "proxyPassword": return getOrCreateConfiguration(target).getProxyPassword();
+        case "proxyport":
+        case "proxyPort": return getOrCreateConfiguration(target).getProxyPort();
+        case "proxyusername":
+        case "proxyUsername": return getOrCreateConfiguration(target).getProxyUsername();
         case "registryurl":
         case "registryUrl": return getOrCreateConfiguration(target).getRegistryUrl();
         case "scope": return getOrCreateConfiguration(target).getScope();
+        case "sslcontextparameters":
+        case "sslContextParameters": return getOrCreateConfiguration(target).getSslContextParameters();
         case "tokenendpoint":
         case "tokenEndpoint": return getOrCreateConfiguration(target).getTokenEndpoint();
         case "username": return getOrCreateConfiguration(target).getUsername();

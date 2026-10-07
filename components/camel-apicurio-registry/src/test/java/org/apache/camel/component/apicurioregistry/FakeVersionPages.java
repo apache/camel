@@ -40,6 +40,7 @@ final class FakeVersionPages {
 
     final List<SearchedVersion> versions = new ArrayList<>();
     final List<Integer> requestedOffsets = new ArrayList<>();
+    final List<Integer> requestedLimits = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
     FakeVersionPages(VersionsRequestBuilder builder) {
@@ -60,6 +61,11 @@ final class FakeVersionPages {
         for (long globalId : globalIds) {
             versions.add(version(globalId));
         }
+        return this;
+    }
+
+    FakeVersionPages add(SearchedVersion version) {
+        versions.add(version);
         return this;
     }
 
@@ -84,6 +90,7 @@ final class FakeVersionPages {
         int offset = config.queryParameters.offset != null ? config.queryParameters.offset : 0;
         int limit = config.queryParameters.limit != null ? config.queryParameters.limit : REGISTRY_DEFAULT_LIMIT;
         requestedOffsets.add(offset);
+        requestedLimits.add(limit);
         VersionSearchResults results = new VersionSearchResults();
         results.setCount(sorted.size());
         results.setVersions(sorted.subList(Math.min(offset, sorted.size()), Math.min(offset + limit, sorted.size())));

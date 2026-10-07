@@ -28,7 +28,12 @@ import io.apicurio.registry.client.common.RegistryClientOptions;
 import io.apicurio.registry.rest.client.RegistryClient;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.ext.web.client.WebClient;
+import io.vertx.ext.web.client.WebClientOptions;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -103,16 +108,27 @@ class ApicurioRegistryEndpointTest {
     }
 
     @Test
-    void testEndpointsShareComponentVertxClosedWithComponent() throws Exception {
+    void testEndpointsShareComponentVertxAndCloseTheirWebClients() throws Exception {
         Vertx vertx = mock(Vertx.class);
         when(vertx.close()).thenReturn(Future.succeededFuture());
         List<Vertx> clientVertx = new ArrayList<>();
+        List<WebClient> clientWebClients = new ArrayList<>();
+        List<WebClient> created = new ArrayList<>();
         try (MockedStatic<Vertx> vertxFactory = mockStatic(Vertx.class);
+             MockedStatic<WebClient> webClientFactory = mockStatic(WebClient.class);
              MockedStatic<RegistryClientFactory> clientFactory = mockStatic(RegistryClientFactory.class);
              DefaultCamelContext context = new DefaultCamelContext()) {
             vertxFactory.when(Vertx::vertx).thenReturn(vertx);
+            webClientFactory.when(() -> WebClient.create(any(Vertx.class), any(WebClientOptions.class))).thenAnswer(call -> {
+                assertThat(call.getArgument(0, Vertx.class)).isSameAs(vertx);
+                WebClient webClient = mock(WebClient.class);
+                created.add(webClient);
+                return webClient;
+            });
             clientFactory.when(() -> RegistryClientFactory.create(any())).thenAnswer(call -> {
-                clientVertx.add(call.getArgument(0, RegistryClientOptions.class).getVertx());
+                RegistryClientOptions options = call.getArgument(0, RegistryClientOptions.class);
+                clientVertx.add(options.getVertx());
+                clientWebClients.add(options.getWebClient());
                 return mock(RegistryClient.class);
             });
             context.start();
@@ -123,16 +139,23 @@ class ApicurioRegistryEndpointTest {
             first.start();
             second.start();
             assertThat(clientVertx).containsExactly(vertx, vertx);
+            assertThat(clientWebClients).containsExactlyElementsOf(created);
             vertxFactory.verify(Vertx::vertx, times(1));
 
-            // stopping and restarting an endpoint recreates its client but keeps the shared Vert.x instance
+            // stopping an endpoint closes its WebClient, but keeps the shared Vert.x instance
             first.stop();
             assertThat(first.getRegistryClient()).isNull();
+            verify(created.get(0)).close();
+            verify(created.get(1), never()).close();
             first.start();
             assertThat(first.getRegistryClient()).isNotNull();
+            assertThat(created).hasSize(3);
             verify(vertx, never()).close();
             vertxFactory.verify(Vertx::vertx, times(1));
 
+            second.stop();
+            first.stop();
+            created.forEach(webClient -> verify(webClient).close());
             context.getComponent("apicurio-registry").stop();
             verify(vertx).close();
         }
@@ -142,8 +165,11 @@ class ApicurioRegistryEndpointTest {
     void testProvidedVertxIsNotClosed() throws Exception {
         Vertx vertx = mock(Vertx.class);
         try (MockedStatic<Vertx> vertxFactory = mockStatic(Vertx.class);
+             MockedStatic<WebClient> webClientFactory = mockStatic(WebClient.class);
              MockedStatic<RegistryClientFactory> clientFactory = mockStatic(RegistryClientFactory.class);
              DefaultCamelContext context = new DefaultCamelContext()) {
+            webClientFactory.when(() -> WebClient.create(any(Vertx.class), any(WebClientOptions.class)))
+                    .thenAnswer(call -> mock(WebClient.class));
             clientFactory.when(() -> RegistryClientFactory.create(any())).thenAnswer(call -> {
                 assertThat(call.getArgument(0, RegistryClientOptions.class).getVertx()).isSameAs(vertx);
                 return mock(RegistryClient.class);
@@ -156,6 +182,54 @@ class ApicurioRegistryEndpointTest {
             context.stop();
             vertxFactory.verify(Vertx::vertx, never());
             verify(vertx, never()).close();
+        }
+    }
+
+    @Test
+    void testVertxSetAfterComponentCreatedOneIsNotClosed() throws Exception {
+        Vertx managed = mock(Vertx.class);
+        when(managed.close()).thenReturn(Future.succeededFuture());
+        Vertx provided = mock(Vertx.class);
+        try (MockedStatic<Vertx> vertxFactory = mockStatic(Vertx.class);
+             DefaultCamelContext context = new DefaultCamelContext()) {
+            vertxFactory.when(Vertx::vertx).thenReturn(managed);
+            ApicurioRegistryComponent component = context.getComponent("apicurio-registry", ApicurioRegistryComponent.class);
+            context.start();
+            assertThat(component.getOrCreateVertx()).isSameAs(managed);
+
+            component.setVertx(provided);
+            assertThat(component.getOrCreateVertx()).isSameAs(provided);
+            component.stop();
+            verify(provided, never()).close();
+            // the instance the component created itself is still closed
+            verify(managed).close();
+        }
+    }
+
+    @Test
+    void testTlsAndProxyOptions() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            SSLContextParameters ssl = new SSLContextParameters();
+            KeyStoreParameters trustStore = new KeyStoreParameters();
+            trustStore.setResource("classpath:truststore.p12");
+            trustStore.setType("PKCS12");
+            trustStore.setPassword("changeit");
+            TrustManagersParameters trustManagers = new TrustManagersParameters();
+            trustManagers.setKeyStore(trustStore);
+            ssl.setTrustManagers(trustManagers);
+            context.getRegistry().bind("ssl", ssl);
+            ApicurioRegistryEndpoint endpoint = context.getEndpoint(
+                    "apicurio-registry:g/a?registryUrl=https://registry:8443/apis/registry/v3&sslContextParameters=#ssl"
+                                                                    + "&proxyHost=proxy&proxyPort=3128&proxyUsername=user&proxyPassword=pass",
+                    ApicurioRegistryEndpoint.class);
+
+            WebClientOptions options = endpoint.createWebClientOptions();
+            assertThat(options.isSsl()).isTrue();
+            assertThat(options.getTrustOptions()).isNotNull();
+            assertThat(options.getProxyOptions().getHost()).isEqualTo("proxy");
+            assertThat(options.getProxyOptions().getPort()).isEqualTo(3128);
+            assertThat(options.getProxyOptions().getUsername()).isEqualTo("user");
+            assertThat(options.getProxyOptions().getPassword()).isEqualTo("pass");
         }
     }
 

@@ -123,6 +123,77 @@ public interface ApicurioRegistryEndpointBuilderFactory {
             return this;
         }
         /**
+         * The proxy host to use for registry (and OAuth2 token) requests.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointConsumerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * The password for proxy authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPassword the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointConsumerBuilder proxyPassword(String proxyPassword) {
+            doSetProperty("proxyPassword", proxyPassword);
+            return this;
+        }
+        /**
+         * The proxy port.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointConsumerBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The proxy port.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointConsumerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The username for proxy authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyUsername the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointConsumerBuilder proxyUsername(String proxyUsername) {
+            doSetProperty("proxyUsername", proxyUsername);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
@@ -651,6 +722,40 @@ public interface ApicurioRegistryEndpointBuilderFactory {
             return this;
         }
         /**
+         * To configure TLS, such as a trust store for a registry with a private
+         * CA or a client certificate (mTLS), using the Camel JSSE
+         * configuration. Also applies to the OAuth2 token endpoint.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointConsumerBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * To configure TLS, such as a trust store for a registry with a private
+         * CA or a client certificate (mTLS), using the Camel JSSE
+         * configuration. Also applies to the OAuth2 token endpoint.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointConsumerBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
          * OAuth2 token endpoint URL.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -976,6 +1081,77 @@ public interface ApicurioRegistryEndpointBuilderFactory {
             return this;
         }
         /**
+         * The proxy host to use for registry (and OAuth2 token) requests.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointProducerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * The password for proxy authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPassword the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointProducerBuilder proxyPassword(String proxyPassword) {
+            doSetProperty("proxyPassword", proxyPassword);
+            return this;
+        }
+        /**
+         * The proxy port.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointProducerBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The proxy port.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointProducerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The username for proxy authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyUsername the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointProducerBuilder proxyUsername(String proxyUsername) {
+            doSetProperty("proxyUsername", proxyUsername);
+            return this;
+        }
+        /**
          * The authentication type to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1044,6 +1220,40 @@ public interface ApicurioRegistryEndpointBuilderFactory {
          */
         default ApicurioRegistryEndpointProducerBuilder scope(String scope) {
             doSetProperty("scope", scope);
+            return this;
+        }
+        /**
+         * To configure TLS, such as a trust store for a registry with a private
+         * CA or a client certificate (mTLS), using the Camel JSSE
+         * configuration. Also applies to the OAuth2 token endpoint.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointProducerBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * To configure TLS, such as a trust store for a registry with a private
+         * CA or a client certificate (mTLS), using the Camel JSSE
+         * configuration. Also applies to the OAuth2 token endpoint.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointProducerBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1189,6 +1399,77 @@ public interface ApicurioRegistryEndpointBuilderFactory {
             return this;
         }
         /**
+         * The proxy host to use for registry (and OAuth2 token) requests.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * The password for proxy authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPassword the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointBuilder proxyPassword(String proxyPassword) {
+            doSetProperty("proxyPassword", proxyPassword);
+            return this;
+        }
+        /**
+         * The proxy port.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The proxy port.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The username for proxy authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyUsername the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointBuilder proxyUsername(String proxyUsername) {
+            doSetProperty("proxyUsername", proxyUsername);
+            return this;
+        }
+        /**
          * The authentication type to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1257,6 +1538,40 @@ public interface ApicurioRegistryEndpointBuilderFactory {
          */
         default ApicurioRegistryEndpointBuilder scope(String scope) {
             doSetProperty("scope", scope);
+            return this;
+        }
+        /**
+         * To configure TLS, such as a trust store for a registry with a private
+         * CA or a client certificate (mTLS), using the Camel JSSE
+         * configuration. Also applies to the OAuth2 token endpoint.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * To configure TLS, such as a trust store for a registry with a private
+         * CA or a client certificate (mTLS), using the Camel JSSE
+         * configuration. Also applies to the OAuth2 token endpoint.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryEndpointBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1576,6 +1891,69 @@ public interface ApicurioRegistryEndpointBuilderFactory {
          */
         public String apicurioRegistryValidationErrors() {
             return "CamelApicurioRegistryValidationErrors";
+        }
+        /**
+         * Labels to filter searchArtifacts by, as key:value pairs. Either a
+         * comma-separated String or a collection.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ApicurioRegistryLabels}.
+         */
+        public String apicurioRegistryLabels() {
+            return "CamelApicurioRegistryLabels";
+        }
+        /**
+         * The number of results to skip in searchArtifacts. Defaults to 0.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ApicurioRegistrySearchOffset}.
+         */
+        public String apicurioRegistrySearchOffset() {
+            return "CamelApicurioRegistrySearchOffset";
+        }
+        /**
+         * The maximum number of results returned by searchArtifacts. The
+         * registry defaults to 20.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ApicurioRegistrySearchLimit}.
+         */
+        public String apicurioRegistrySearchLimit() {
+            return "CamelApicurioRegistrySearchLimit";
+        }
+        /**
+         * The sort order for searchArtifacts: asc or desc.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ApicurioRegistrySearchOrder}.
+         */
+        public String apicurioRegistrySearchOrder() {
+            return "CamelApicurioRegistrySearchOrder";
+        }
+        /**
+         * The field to sort searchArtifacts by: groupId, artifactId, createdOn,
+         * modifiedOn, artifactType or name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ApicurioRegistrySearchOrderBy}.
+         */
+        public String apicurioRegistrySearchOrderBy() {
+            return "CamelApicurioRegistrySearchOrderBy";
         }
     }
     static ApicurioRegistryEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -61,10 +61,10 @@ the `CamelApicurioRegistryOperation` header:
 
 | `createArtifact` | Create a new artifact. Body contains the artifact content.
 | `updateArtifact` | Create a new version of an existing artifact. Body contains the new content.
-| `deleteArtifact` | Delete an artifact.
+| `deleteArtifact` | Delete an artifact. Apicurio Registry 3.x disables artifact deletion by default; the registry must run with `apicurio.rest.deletion.artifact.enabled=true` (environment variable `APICURIO_REST_DELETION_ARTIFACT_ENABLED=true`), otherwise the operation fails with HTTP 405.
 | `getArtifactContent` | Retrieve the content of an artifact version.
 | `getArtifactMetadata` | Retrieve artifact metadata.
-| `searchArtifacts` | Search for artifacts using filter headers.
+| `searchArtifacts` | Search for artifacts. See the "Searching artifacts" section below.
 | `listVersions` | List all versions of an artifact, ordered by global ID. The component follows the registry's pagination and returns every page.
 | `createGroup` | Create a new group.
 | `testCompatibility` | Test schema compatibility (dry run). Returns `true`/`false` in the body.
@@ -87,6 +87,35 @@ when a check fails and clear any previous value before checking. Both set
 `CamelApicurioRegistryValidationResult`; `testCompatibility` also returns the boolean result
 in the body, while `validate` preserves the body.
 
+Operations that act on a specific group or artifact fail with an `IllegalArgumentException`
+when the group or artifact ID is set neither in the endpoint path nor in a header.
+
+=== Searching artifacts
+
+`searchArtifacts` filters by group ID and artifact ID (endpoint path or headers), and by the
+`CamelApicurioRegistryArtifactName`, `CamelApicurioRegistryArtifactDescription`,
+`CamelApicurioRegistryArtifactType` and `CamelApicurioRegistryLabels` headers. The body is an
+`ArtifactSearchResults` holding one page of results and the total `count`.
+
+Results are paged: the registry returns at most 20 artifacts unless you set
+`CamelApicurioRegistrySearchLimit`. Use `CamelApicurioRegistrySearchOffset` to request further
+pages, and `CamelApicurioRegistrySearchOrder` (`asc` or `desc`) and
+`CamelApicurioRegistrySearchOrderBy` (`groupId`, `artifactId`, `createdOn`, `modifiedOn`,
+`artifactType` or `name`) to sort them.
+
+=== Headers from a consumer
+
+The consumer sets the group, artifact and version headers on every exchange, and producers give
+these headers precedence over their endpoint path. When a route forwards consumed versions to
+another registry endpoint, remove them first so the producer uses its own path:
+
+[source,java]
+----
+from("apicurio-registry:dev/orders?registryUrl={{dev.registry}}&fetchContent=true")
+    .removeHeaders("CamelApicurioRegistry*")
+    .to("apicurio-registry:prod/orders?registryUrl={{prod.registry}}&operation=updateArtifact");
+----
+
 == Consumer
 
 The consumer polls the registry for new versions of the specified artifact. It tracks the last
@@ -97,15 +126,28 @@ On first start, all existing versions of the artifact are emitted as exchanges. 
 only deliver versions created after the consumer started. The watermark is held in memory and
 resets on route/context restart.
 
-The consumer requests versions newest first, one page at a time, and stops at the first
-version it has already seen, so artifacts with many versions are handled without loading
-every page on each poll.
+Once it has a watermark, each poll first asks only for the newest version, so an idle poll
+transfers a single entry. When there is something new, the consumer requests versions newest
+first, one page at a time, and stops at the first version it has already seen. Paging is
+offset-based: if a version is deleted while the consumer is reading pages, an older new version
+can move to a page that was already read and be skipped.
+
+All version states are listed, so `DRAFT` versions are delivered as soon as they appear. If the
+registry allows changing the content of a version, a version is not delivered again after its
+content changes. With `fetchContent=true`, `DISABLED` versions are skipped, as are versions whose
+content is no longer available (HTTP 404), because the registry does not return their content.
 
 If fetching content fails, or the route fails to process a version (including failures
 handled by the error handler without being rethrown, such as with the default error handler),
-the consumer reports the error through its exception handler and stops the current poll
-without advancing the watermark. The failed version and any newer ones are delivered again
-on the next poll.
+the consumer stops the current poll without advancing the watermark. The failed version and any
+newer ones are delivered again on the next poll. A version that always fails therefore blocks
+newer versions. To skip such a version, mark the failure as handled, which lets the consumer
+advance past it:
+
+[source,java]
+----
+onException(MyPermanentException.class).handled(true).to("log:skipped");
+----
 
 When `fetchContent=true`, the consumer fetches the version content and sets it as a `byte[]` exchange body,
 closing the SDK response stream before processing the exchange.
@@ -212,7 +254,7 @@ from("direct:validateSchema")
     .end();
 ----
 
-== Authentication
+== Connection settings
 
 All endpoints of the component share a single Vert.x instance for their SDK clients. The
 component creates it on first use and closes it when the component stops. To reuse an existing
@@ -221,6 +263,12 @@ the component does not close a Vert.x instance it did not create.
 
 A client supplied through `registryClient` remains caller-owned;
 the caller is responsible for its underlying HTTP resources.
+
+For HTTPS registries that use a private CA or require client certificates (mTLS), configure
+`sslContextParameters`. Use `proxyHost`, `proxyPort`, `proxyUsername` and `proxyPassword` to go
+through an HTTP proxy. Both settings also apply to the OAuth2 token endpoint.
+
+== Authentication
 
 The component supports three authentication modes via the `authType` option:
 

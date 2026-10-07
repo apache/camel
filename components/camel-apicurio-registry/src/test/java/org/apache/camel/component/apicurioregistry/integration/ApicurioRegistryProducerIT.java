@@ -18,6 +18,7 @@ package org.apache.camel.component.apicurioregistry.integration;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -169,44 +170,60 @@ class ApicurioRegistryProducerIT extends ApicurioRegistryTestSupport {
     @Test
     void testSearchArtifacts() throws Exception {
         String groupId = "search-group-" + UUID.randomUUID();
-        String artifactId = "search-artifact-" + UUID.randomUUID();
+        String suffix = UUID.randomUUID().toString();
+        List<String> artifactIds = List.of("a-" + suffix, "b-" + suffix, "c-" + suffix);
 
-        // Create group first
-        Map<String, Object> groupHeaders = new HashMap<>();
-        groupHeaders.put(ApicurioRegistryConstants.HEADER_OPERATION, ApicurioRegistryConstants.OPERATION_CREATE_GROUP);
-        groupHeaders.put(ApicurioRegistryConstants.HEADER_GROUP_ID, groupId);
-        template.request("direct:operation", exchange -> exchange.getIn().setHeaders(groupHeaders));
+        operation(ApicurioRegistryConstants.OPERATION_CREATE_GROUP, groupId, null, null);
+        for (String artifactId : artifactIds) {
+            Exchange created = operation(ApicurioRegistryConstants.OPERATION_CREATE_ARTIFACT, groupId, artifactId,
+                    Map.of(ApicurioRegistryConstants.HEADER_ARTIFACT_TYPE, "JSON"));
+            assertThat(created.getException()).isNull();
+        }
 
-        // Create artifact
-        Map<String, Object> createHeaders = new HashMap<>();
-        createHeaders.put(ApicurioRegistryConstants.HEADER_OPERATION, ApicurioRegistryConstants.OPERATION_CREATE_ARTIFACT);
-        createHeaders.put(ApicurioRegistryConstants.HEADER_GROUP_ID, groupId);
-        createHeaders.put(ApicurioRegistryConstants.HEADER_ARTIFACT_ID, artifactId);
-        createHeaders.put(ApicurioRegistryConstants.HEADER_ARTIFACT_TYPE, "JSON");
-        template.request("direct:operation", exchange -> {
-            exchange.getIn().setHeaders(createHeaders);
-            exchange.getIn().setBody(JSON_SCHEMA);
+        // the artifact ID filter is applied
+        ArtifactSearchResults byId = search(groupId, artifactIds.get(1), Map.of());
+        assertThat(byId.getArtifacts()).extracting("artifactId").containsExactly(artifactIds.get(1));
+
+        // results are paged and sorted
+        Map<String, Object> firstPageHeaders = Map.of(
+                ApicurioRegistryConstants.HEADER_SEARCH_LIMIT, 2,
+                ApicurioRegistryConstants.HEADER_SEARCH_ORDER_BY, "artifactId",
+                ApicurioRegistryConstants.HEADER_SEARCH_ORDER, "asc");
+        ArtifactSearchResults firstPage = search(groupId, null, firstPageHeaders);
+        assertThat(firstPage.getCount()).isEqualTo(3);
+        assertThat(firstPage.getArtifacts()).extracting("artifactId").containsExactlyElementsOf(artifactIds.subList(0, 2));
+
+        Map<String, Object> secondPageHeaders = new HashMap<>(firstPageHeaders);
+        secondPageHeaders.put(ApicurioRegistryConstants.HEADER_SEARCH_OFFSET, 2);
+        ArtifactSearchResults secondPage = search(groupId, null, secondPageHeaders);
+        assertThat(secondPage.getArtifacts()).extracting("artifactId").containsExactly(artifactIds.get(2));
+
+        for (String artifactId : artifactIds) {
+            Exchange deleted = operation(ApicurioRegistryConstants.OPERATION_DELETE_ARTIFACT, groupId, artifactId, null);
+            assertThat(deleted.getException()).isNull();
+        }
+    }
+
+    private ArtifactSearchResults search(String groupId, String artifactId, Map<String, Object> extraHeaders) {
+        Exchange result = operation(ApicurioRegistryConstants.OPERATION_SEARCH_ARTIFACTS, groupId, artifactId, extraHeaders);
+        assertThat(result.getException()).isNull();
+        return result.getIn().getBody(ArtifactSearchResults.class);
+    }
+
+    private Exchange operation(String operation, String groupId, String artifactId, Map<String, Object> extraHeaders) {
+        return template.request("direct:operation", exchange -> {
+            exchange.getIn().setHeader(ApicurioRegistryConstants.HEADER_OPERATION, operation);
+            exchange.getIn().setHeader(ApicurioRegistryConstants.HEADER_GROUP_ID, groupId);
+            if (artifactId != null) {
+                exchange.getIn().setHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_ID, artifactId);
+            }
+            if (extraHeaders != null) {
+                extraHeaders.forEach(exchange.getIn()::setHeader);
+            }
+            if (ApicurioRegistryConstants.OPERATION_CREATE_ARTIFACT.equals(operation)) {
+                exchange.getIn().setBody(JSON_SCHEMA);
+            }
         });
-
-        // Search
-        Map<String, Object> searchHeaders = new HashMap<>();
-        searchHeaders.put(ApicurioRegistryConstants.HEADER_OPERATION, ApicurioRegistryConstants.OPERATION_SEARCH_ARTIFACTS);
-        searchHeaders.put(ApicurioRegistryConstants.HEADER_GROUP_ID, groupId);
-        searchHeaders.put(ApicurioRegistryConstants.HEADER_ARTIFACT_ID, artifactId);
-        Exchange searchResult = template.request("direct:operation", exchange -> {
-            exchange.getIn().setHeaders(searchHeaders);
-        });
-        assertThat(searchResult.getException()).isNull();
-        ArtifactSearchResults results = searchResult.getIn().getBody(ArtifactSearchResults.class);
-        assertThat(results.getArtifacts()).extracting("artifactId").containsExactly(artifactId);
-
-        // Cleanup
-        Map<String, Object> deleteHeaders = new HashMap<>();
-        deleteHeaders.put(ApicurioRegistryConstants.HEADER_OPERATION, ApicurioRegistryConstants.OPERATION_DELETE_ARTIFACT);
-        deleteHeaders.put(ApicurioRegistryConstants.HEADER_GROUP_ID, groupId);
-        deleteHeaders.put(ApicurioRegistryConstants.HEADER_ARTIFACT_ID, artifactId);
-        Exchange deleted = template.request("direct:operation", exchange -> exchange.getIn().setHeaders(deleteHeaders));
-        assertThat(deleted.getException()).isNull();
     }
 
     @ParameterizedTest
