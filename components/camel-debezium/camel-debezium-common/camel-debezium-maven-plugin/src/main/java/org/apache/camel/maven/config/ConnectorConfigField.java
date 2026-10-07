@@ -27,8 +27,8 @@ import org.apache.kafka.common.config.ConfigDef;
 public class ConnectorConfigField {
 
     /**
-     * Debezium options that control a security-relevant setting, mapped to the category the Camel security policy
-     * uses (see design/security.adoc). Keyed by the raw Debezium option name.
+     * Debezium options that control a security-relevant setting, mapped to the category the Camel security policy uses
+     * (see design/security.adoc). Keyed by the raw Debezium option name.
      */
     private static final Map<String, String> SECURITY_CATEGORIES = Map.of(
             "mongodb.ssl.invalid.hostname.allowed", "insecure:ssl");
@@ -122,9 +122,9 @@ public class ConnectorConfigField {
     /**
      * The security category of this option, or null when it is not security sensitive.
      * <p>
-     * The connector metadata says nothing about this, so the options are listed explicitly rather than matched on
-     * their name: a new connector option must not inherit a category, and a renamed one must show up as a missing
-     * entry here rather than silently losing its marking.
+     * The connector metadata says nothing about this, so the options are listed explicitly rather than matched on their
+     * name: a new connector option must not inherit a category, and a renamed one must show up as a missing entry here
+     * rather than silently losing its marking.
      */
     public String getSecurityCategory() {
         return SECURITY_CATEGORIES.get(fieldDef.name);
