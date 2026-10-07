@@ -3916,6 +3916,10 @@ reported.
 
 === camel-core - doTry, doCatch and doFinally
 
+Route dumps now retain `doCatch` and `doFinally` blocks declared as properties of a `doTry` in YAML.
+Previously these blocks ran correctly but were omitted from the dumped route. If you compare or process
+route dumps, account for the previously missing exception-handling blocks in the output.
+
 A `doTry` must have one or more `doCatch` or `doFinally` blocks, otherwise the route fails to start with
 `doTry must have one or more doCatch or doFinally blocks`. Previously such a `doTry` was accepted (which turned off
 the route error handler for its steps).

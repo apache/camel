@@ -114,6 +114,8 @@ import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.apache.camel.util.IOHelper.stripLineComments;
 
@@ -681,8 +683,9 @@ public class YamlModelWriterTest {
         Assertions.assertEquals(expected, out);
     }
 
-    @Test
-    public void testTryCatchFinally() throws Exception {
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    public void testTryCatchFinally(boolean propertyClauses) throws Exception {
         YamlModelWriter writer = new YamlModelWriter();
 
         RouteDefinition route = new RouteDefinition();
@@ -695,11 +698,19 @@ public class YamlModelWriterTest {
         CatchDefinition catchDef = new CatchDefinition();
         catchDef.getExceptions().add("java.io.IOException");
         catchDef.addOutput(new ToDefinition("mock:catch"));
-        tryDef.addOutput(catchDef);
+        if (propertyClauses) {
+            tryDef.setCatchClauses(List.of(catchDef));
+        } else {
+            tryDef.addOutput(catchDef);
+        }
 
         FinallyDefinition finallyDef = new FinallyDefinition();
         finallyDef.addOutput(new ToDefinition("mock:finally"));
-        tryDef.addOutput(finallyDef);
+        if (propertyClauses) {
+            tryDef.setFinallyClause(finallyDef);
+        } else {
+            tryDef.addOutput(finallyDef);
+        }
 
         route.addOutput(tryDef);
 
