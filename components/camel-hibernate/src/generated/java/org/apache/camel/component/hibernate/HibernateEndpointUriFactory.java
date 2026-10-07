@@ -60,7 +60,9 @@ public class HibernateEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
-        Map<String, String> prefixes = new HashMap<>(1);
+        Map<String, String> prefixes = new HashMap<>(3);
+        prefixes.put("filters", "filter.");
+        prefixes.put("naturalIdParameters", "naturalId.");
         prefixes.put("schedulerProperties", "scheduler.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
@@ -75,7 +77,7 @@ public class HibernateEndpointUriFactory extends org.apache.camel.support.compon
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "entityClassName", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
