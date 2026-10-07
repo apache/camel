@@ -1326,11 +1326,10 @@ class ActionsPopup {
         // the project stays listed (Starting) until its app shows up and stands in for it
         phantom.startingSince = System.currentTimeMillis();
 
-        if (phantom.projectType != null) {
-            launchManager.launchMavenProject(phantom.sourceDir, phantom.projectType, displayName, extraArgs);
-        } else {
-            launchManager.launchCamelRun(phantom.sourceDir, displayName, extraArgs);
-        }
+        // the app is found by the process it runs in: a folder runs from elsewhere, and reports another directory
+        phantom.launchedProcess = phantom.projectType != null
+                ? launchManager.launchMavenProject(phantom.sourceDir, phantom.projectType, displayName, extraArgs)
+                : launchManager.launchCamelRun(phantom.sourceDir, displayName, extraArgs);
     }
 
     // ---- Name Input ----

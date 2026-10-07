@@ -39,6 +39,8 @@ class IntegrationInfo {
     String openedAs;
     // an opened project: when it was asked to run, until its app shows up (or the launch fails)
     long startingSince;
+    // the process F10 launched for an opened project: its app is that process or a descendant of it (CAMEL-25417)
+    ProcessHandle launchedProcess;
     String projectType;
     String sourceDir;
     String ready;

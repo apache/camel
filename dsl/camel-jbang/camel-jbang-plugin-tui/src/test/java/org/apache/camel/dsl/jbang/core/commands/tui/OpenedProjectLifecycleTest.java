@@ -67,6 +67,32 @@ class OpenedProjectLifecycleTest {
     }
 
     @Test
+    void aFolderRunWithF10IsFoundByItsProcess() {
+        // CAMEL-25417: a folder of route files runs from the working directory of the monitor (or from a copy in
+        // .camel-jbang-run), so its app does not report the project folder: it is found by the launched process
+        IntegrationInfo project = new IntegrationInfo();
+        project.name = "custom-kamelet";
+        project.sourceDir = "/work/custom-kamelet";
+        project.startingSince = System.currentTimeMillis();
+        project.launchedProcess = ProcessHandle.current();
+        ctx.addPhantom(project);
+        ctx.selectedPid = project.pid;
+
+        IntegrationInfo app = running(Long.toString(ProcessHandle.current().pid()), "custom-kamelet",
+                "/home/me/.camel-jbang-run/1791375674390");
+        List<IntegrationInfo> infos = merge(app);
+        assertFalse(infos.contains(project));
+        assertEquals(app.pid, ctx.selectedPid);
+        assertEquals("custom-kamelet", app.openedAs);
+        assertEquals(0, project.startingSince);
+
+        // another app with the same name, not launched for the project, does not stand in for it
+        IntegrationInfo other = running("4242", "custom-kamelet", "/elsewhere");
+        project.launchedProcess = null;
+        assertTrue(merge(other).contains(project));
+    }
+
+    @Test
     void aProjectIsStartingUntilItsAppShowsUp() {
         IntegrationInfo project = new IntegrationInfo();
         project.name = "metrics";
