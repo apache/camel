@@ -134,6 +134,10 @@ class SourceTabJumpLinksTest {
         assertThat(link.callersOf()).isEqualTo("kamelet:tag-order-action");
         assertThat(tab.callersOf("kamelet:tag-order-action"))
                 .extracting(GotoRoutePopup.RouteItem::routeId).containsExactlyInAnyOrder("orders", "refunds");
+        // the usages popup opened on the from: line of the template does not list that line itself
+        List<GotoRoutePopup.RouteItem> usages = SourceTab.withoutLine(
+                tab.usagesOf("kamelet:tag-order-action"), kamelet.toString(), 6);
+        assertThat(usages).extracting(GotoRoutePopup.RouteItem::routeId).containsExactlyInAnyOrder("orders", "refunds");
     }
 
     @Test

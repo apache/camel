@@ -1774,7 +1774,27 @@ class SourceTab extends AbstractTab {
             }
             return;
         }
-        gotoRoutePopup.openItems(usagesOf(uri), "Usages of " + uri);
+        // the line the popup is opened on is not one of the places to go to
+        List<GotoRoutePopup.RouteItem> items = withoutLine(usagesOf(uri),
+                sourceViewer.getCurrentFilePath(), sourceViewer.getSelectedLine());
+        if (items.isEmpty()) {
+            if (ctx.notificationCallback != null) {
+                ctx.notificationCallback.accept(uri + " is used only here", false);
+            }
+            return;
+        }
+        gotoRoutePopup.openItems(items, "Usages of " + uri);
+    }
+
+    /** The places without the one at the line of the file. */
+    static List<GotoRoutePopup.RouteItem> withoutLine(List<GotoRoutePopup.RouteItem> items, String file, int line) {
+        List<GotoRoutePopup.RouteItem> answer = new ArrayList<>();
+        for (GotoRoutePopup.RouteItem item : items) {
+            if (!(item.filePath().equals(file) && item.fromLine() == line)) {
+                answer.add(item);
+            }
+        }
+        return answer;
     }
 
     /** The routes that consume from the endpoint and the steps that send to it. */
