@@ -47,9 +47,9 @@ class SemanticPropertiesTest {
         main.addProperty("camel.language.semantic.default-state", "${header.selected}");
         main.configure().addRoutesBuilder(new RouteBuilder() {
             public void configure() {
-                SemanticQuestions.get(getContext()).replace("test", Map.of("q",
-                        SemanticLanguageTest.question(SemanticQuestion.Type.CHOICE, null, 0.5, 0,
-                                SemanticQuestion.UncertaintyPolicy.FAIL)));
+                SemanticEvaluations.get(getContext()).replace("test", Map.of("q",
+                        SemanticLanguageTest.evaluation("choice", null, 0.5, 0,
+                                "fail")));
                 from("direct:start").setHeader("answer").language("semantic", "ref:q");
             }
         });
@@ -83,9 +83,9 @@ class SemanticPropertiesTest {
         main.addProperty("camel.language.semantic.adapter", WrongType.class.getName());
         main.configure().addRoutesBuilder(new RouteBuilder() {
             public void configure() {
-                SemanticQuestions.get(getContext()).replace("test", Map.of("q",
-                        SemanticLanguageTest.question(SemanticQuestion.Type.CHOICE, null, 0.5, 0,
-                                SemanticQuestion.UncertaintyPolicy.FAIL)));
+                SemanticEvaluations.get(getContext()).replace("test", Map.of("q",
+                        SemanticLanguageTest.evaluation("choice", null, 0.5, 0,
+                                "fail")));
                 from("direct:start").setHeader("answer").language("semantic", "ref:q");
             }
         });

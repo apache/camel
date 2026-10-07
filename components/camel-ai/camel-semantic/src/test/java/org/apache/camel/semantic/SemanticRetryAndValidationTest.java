@@ -54,25 +54,25 @@ class SemanticRetryAndValidationTest extends CamelTestSupport {
             public void configure() {
                 context.getRegistry().bind("evaluator", new TestSemanticAdapter() {
                     @Override
-                    public void validate(SemanticQuestion question) {
+                    public void validate(SemanticEvaluation evaluation) {
                     }
 
                     @Override
-                    public SemanticResult evaluate(SemanticQuestion question, Object state) throws Exception {
+                    public SemanticResult evaluate(SemanticEvaluation evaluation, Object state) throws Exception {
                         evaluatedStates.add(state);
                         if (evaluationFailure != null) {
                             throw evaluationFailure;
                         }
                         return malformedResult
                                 ? new SemanticResult("unexpected category", null, null, null, null)
-                                : applyPolicy(question, new SemanticResult(null, probability, null, null, null));
+                                : applyPolicy(evaluation, new SemanticResult(null, probability, null, null, null));
                     }
                 });
                 SemanticLanguage language = (SemanticLanguage) context.resolveLanguage("semantic");
                 language.setAdapter("evaluator");
-                SemanticQuestions.get(context).replace("test", Map.of(
-                        "retryable", question("Is another attempt worthwhile?", "${exchangeProperty.retryState}"),
-                        "withinScope", question("Does the proposed action serve the approved task?", "${body}")));
+                SemanticEvaluations.get(context).replace("test", Map.of(
+                        "retryable", evaluation("Is another attempt worthwhile?", "${exchangeProperty.retryState}"),
+                        "withinScope", evaluation("Does the proposed action serve the approved task?", "${body}")));
                 Predicate retryable = language.createPredicate("ref:retryable");
 
                 errorHandler(defaultErrorHandler().maximumRedeliveries(0).logExhausted(false));
@@ -115,10 +115,10 @@ class SemanticRetryAndValidationTest extends CamelTestSupport {
         };
     }
 
-    private static SemanticQuestion question(String instructions, String state) {
-        return new SemanticQuestion(
-                SemanticQuestion.Type.BOOLEAN, instructions, state, null, null,
-                0.8, 0.05, SemanticQuestion.UncertaintyPolicy.FAIL);
+    private static SemanticEvaluation evaluation(String instructions, String state) {
+        return new SemanticEvaluation(
+                "boolean", null, state,
+                Map.of("instructions", instructions, "threshold", 0.8, "uncertainty", 0.05, "uncertaintyPolicy", "fail"));
     }
 
     @Test

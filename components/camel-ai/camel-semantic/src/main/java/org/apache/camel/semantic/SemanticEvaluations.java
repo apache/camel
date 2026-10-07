@@ -28,40 +28,40 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.spi.Resource;
 
-/** Context-local named questions, replaced atomically per source when a route resource is reloaded. */
-public final class SemanticQuestions {
+/** Context-local named evaluations, replaced atomically per source when a route resource is reloaded. */
+public final class SemanticEvaluations {
     private static final Object CREATION_LOCK = new Object();
     private final CamelContext context;
-    private final Map<String, Map<String, SemanticQuestion>> sources = new HashMap<>();
+    private final Map<String, Map<String, SemanticEvaluation>> sources = new HashMap<>();
     private final Map<String, Resource> resources = new HashMap<>();
-    private volatile Map<String, SemanticQuestion> questions = Map.of();
-    private final ThreadLocal<Map<String, SemanticQuestion>> candidate = new ThreadLocal<>();
-    private final Map<Consumer<Map<String, SemanticQuestion>>, List<String>> validators = new WeakHashMap<>();
+    private volatile Map<String, SemanticEvaluation> evaluations = Map.of();
+    private final ThreadLocal<Map<String, SemanticEvaluation>> candidate = new ThreadLocal<>();
+    private final Map<Consumer<Map<String, SemanticEvaluation>>, List<String>> validators = new WeakHashMap<>();
 
-    private SemanticQuestions(CamelContext context) {
+    private SemanticEvaluations(CamelContext context) {
         this.context = context;
     }
 
     /** Validate every declaration, including evaluations not referenced by a route. */
     public void validate() {
-        if (!questions.isEmpty()) {
-            ((SemanticLanguage) context.resolveLanguage("semantic")).validateDeclarations(questions);
+        if (!evaluations.isEmpty()) {
+            ((SemanticLanguage) context.resolveLanguage("semantic")).validateDeclarations(evaluations);
         }
     }
 
     /** Validate current declarations and weakly track a callback owned by its initialized expression. */
-    public synchronized void setValidator(List<String> names, Consumer<Map<String, SemanticQuestion>> validator) {
+    public synchronized void setValidator(List<String> names, Consumer<Map<String, SemanticEvaluation>> validator) {
         // A replacement may have occurred between the expression's initial compilation and registration.
         validator.accept(get(names));
         validators.put(validator, List.copyOf(names));
     }
 
-    public static SemanticQuestions get(CamelContext context) {
+    public static SemanticEvaluations get(CamelContext context) {
         synchronized (CREATION_LOCK) {
-            SemanticQuestions answer = context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class);
+            SemanticEvaluations answer = context.getCamelContextExtension().getContextPlugin(SemanticEvaluations.class);
             if (answer == null) {
-                answer = new SemanticQuestions(context);
-                context.getCamelContextExtension().addContextPlugin(SemanticQuestions.class, answer);
+                answer = new SemanticEvaluations(context);
+                context.getCamelContextExtension().addContextPlugin(SemanticEvaluations.class, answer);
             }
             return answer;
         }
@@ -74,22 +74,22 @@ public final class SemanticQuestions {
      * are validated before publication, including unused evaluations. A validation failure preserves the previous
      * source.
      */
-    public synchronized void replace(String source, Map<String, SemanticQuestion> definitions) {
-        Map<String, SemanticQuestion> replacement = new HashMap<>();
+    public synchronized void replace(String source, Map<String, SemanticEvaluation> definitions) {
+        Map<String, SemanticEvaluation> replacement = new HashMap<>();
         sources.forEach((location, entries) -> {
             if (!location.equals(source)) {
                 replacement.putAll(entries);
             }
         });
-        definitions.forEach((name, question) -> {
-            if (name == null || name.isBlank() || question == null) {
-                throw new IllegalArgumentException("Semantic question requires a name and definition");
+        definitions.forEach((name, evaluation) -> {
+            if (name == null || name.isBlank() || evaluation == null) {
+                throw new IllegalArgumentException("Semantic evaluation requires a name and definition");
             }
-            if (replacement.putIfAbsent(name, question) != null) {
-                throw new IllegalArgumentException("Duplicate semantic question: " + name);
+            if (replacement.putIfAbsent(name, evaluation) != null) {
+                throw new IllegalArgumentException("Duplicate semantic evaluation: " + name);
             }
         });
-        Map<String, SemanticQuestion> previous = candidate.get();
+        Map<String, SemanticEvaluation> previous = candidate.get();
         candidate.set(Map.copyOf(replacement));
         try {
             if (context.isStarted() && !definitions.isEmpty()) {
@@ -97,12 +97,12 @@ public final class SemanticQuestions {
             }
             validators.forEach((validator, names) -> {
                 if (!Collections.disjoint(names, definitions.keySet())) {
-                    Map<String, SemanticQuestion> selected = new LinkedHashMap<>();
+                    Map<String, SemanticEvaluation> selected = new LinkedHashMap<>();
                     names.forEach(name -> {
-                        SemanticQuestion question = replacement.get(name);
+                        SemanticEvaluation evaluation = replacement.get(name);
                         // Removed declarations remain removable; their existing expressions fail if evaluated again.
-                        if (question != null) {
-                            selected.put(name, question);
+                        if (evaluation != null) {
+                            selected.put(name, evaluation);
                         }
                     });
                     validator.accept(Collections.unmodifiableMap(selected));
@@ -121,15 +121,15 @@ public final class SemanticQuestions {
             sources.put(source, Map.copyOf(definitions));
         }
         resources.remove(source);
-        questions = Map.copyOf(replacement);
+        evaluations = Map.copyOf(replacement);
     }
 
     /** Track a route resource so deleted files can be discarded before development-mode reload. */
-    public synchronized void replace(Resource source, Map<String, SemanticQuestion> definitions) {
+    public synchronized void replace(Resource source, Map<String, SemanticEvaluation> definitions) {
         replace(source.getLocation(), source, definitions);
     }
 
-    synchronized void replace(String location, Resource source, Map<String, SemanticQuestion> definitions) {
+    synchronized void replace(String location, Resource source, Map<String, SemanticEvaluation> definitions) {
         removeDeletedResources();
         replace(location, definitions);
         if (source != null && !definitions.isEmpty() && "file".equals(source.getScheme())) {
@@ -148,36 +148,36 @@ public final class SemanticQuestions {
         }
     }
 
-    /** Whether any named questions have been registered. */
+    /** Whether any named evaluations have been registered. */
     public boolean isEmpty() {
-        return questions.isEmpty();
+        return evaluations.isEmpty();
     }
 
-    public SemanticQuestion get(String name) {
-        SemanticQuestion question = snapshot().get(name);
-        if (question == null) {
-            throw new IllegalArgumentException("Unknown semantic question: " + name);
+    public SemanticEvaluation get(String name) {
+        SemanticEvaluation evaluation = snapshot().get(name);
+        if (evaluation == null) {
+            throw new IllegalArgumentException("Unknown semantic evaluation: " + name);
         }
-        return question;
+        return evaluation;
     }
 
     /** Resolve all requested names from one immutable snapshot, preserving reference order. */
-    public Map<String, SemanticQuestion> get(List<String> names) {
-        Map<String, SemanticQuestion> snapshot = snapshot();
-        Map<String, SemanticQuestion> selected = new LinkedHashMap<>();
+    public Map<String, SemanticEvaluation> get(List<String> names) {
+        Map<String, SemanticEvaluation> snapshot = snapshot();
+        Map<String, SemanticEvaluation> selected = new LinkedHashMap<>();
         for (String name : names) {
-            SemanticQuestion question = snapshot.get(name);
-            if (question == null) {
-                throw new IllegalArgumentException("Unknown semantic question: " + name);
+            SemanticEvaluation evaluation = snapshot.get(name);
+            if (evaluation == null) {
+                throw new IllegalArgumentException("Unknown semantic evaluation: " + name);
             }
-            selected.put(name, question);
+            selected.put(name, evaluation);
         }
         return Collections.unmodifiableMap(selected);
     }
 
-    private Map<String, SemanticQuestion> snapshot() {
-        Map<String, SemanticQuestion> validation = candidate.get();
-        return validation != null ? validation : questions;
+    private Map<String, SemanticEvaluation> snapshot() {
+        Map<String, SemanticEvaluation> validation = candidate.get();
+        return validation != null ? validation : evaluations;
     }
 
 }

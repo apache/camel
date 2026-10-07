@@ -35,9 +35,10 @@ public class SemanticReloadPlugin implements ContextServicePlugin {
         lifecycle = new LifecycleStrategySupport() {
             @Override
             public void onContextStarting(CamelContext camelContext) {
-                SemanticQuestions questions = camelContext.getCamelContextExtension().getContextPlugin(SemanticQuestions.class);
-                if (questions != null) {
-                    questions.validate();
+                SemanticEvaluations evaluations
+                        = camelContext.getCamelContextExtension().getContextPlugin(SemanticEvaluations.class);
+                if (evaluations != null) {
+                    evaluations.validate();
                 }
             }
 
@@ -96,9 +97,9 @@ public class SemanticReloadPlugin implements ContextServicePlugin {
         if (xmlLoader != null) {
             xmlLoader.resetLoaderDiscovery();
         }
-        SemanticQuestions questions = context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class);
-        if (questions != null) {
-            questions.removeDeletedResources();
+        SemanticEvaluations evaluations = context.getCamelContextExtension().getContextPlugin(SemanticEvaluations.class);
+        if (evaluations != null) {
+            evaluations.removeDeletedResources();
         }
     }
 }

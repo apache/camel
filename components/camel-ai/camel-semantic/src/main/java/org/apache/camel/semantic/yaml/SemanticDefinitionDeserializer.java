@@ -30,9 +30,9 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.dsl.yaml.common.exception.InvalidNodeTypeException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
-import org.apache.camel.semantic.SemanticQuestion;
-import org.apache.camel.semantic.SemanticQuestionBuilder;
-import org.apache.camel.semantic.SemanticQuestions;
+import org.apache.camel.semantic.SemanticEvaluation;
+import org.apache.camel.semantic.SemanticEvaluationBuilder;
+import org.apache.camel.semantic.SemanticEvaluations;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
@@ -49,14 +49,14 @@ import org.snakeyaml.engine.v2.nodes.Tag;
 /** Named semantic declarations are installed in a resource-wide pass before route references are resolved. */
 @YamlIn
 @YamlType(nodes = "semantic", properties = {
-        @YamlProperty(name = "__oneOf",
-                      type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionBlockSchema",
-                      oneOf = "declarations", required = true),
-        @YamlProperty(name = "__oneOf",
-                      type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationBlockSchema",
-                      oneOf = "declarations", required = true)
+        @YamlProperty(name = "expert", type = "string"),
+        @YamlProperty(name = "state", type = "string"),
+        @YamlProperty(name = "evaluation",
+                      type = "map:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema",
+                      required = true)
 })
 public class SemanticDefinitionDeserializer extends YamlDeserializerSupport implements ConstructNode, YamlDeserializerResolver {
+    private static final Tag NUMBER = new Tag("!number");
     private static final Set<String> FIELDS
             = Set.of("type", "operation", "expert", "parameters", "instructions", "state", "criteria", "threshold",
                     "uncertainty", "uncertaintyPolicy");
@@ -79,54 +79,53 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
         if (!(root instanceof SequenceNode sequence)) {
             return;
         }
-        Map<String, SemanticQuestion> definitions = new LinkedHashMap<>();
+        Map<String, SemanticEvaluation> definitions = new LinkedHashMap<>();
         for (Node node : sequence.getValue()) {
             if (!(node instanceof MappingNode mapping)) {
-                // Leave malformed entries to the route loader without replacing the resource's questions.
+                // Leave malformed entries to the route loader without replacing the resource's evaluations.
                 return;
             }
             for (NodeTuple tuple : mapping.getValue()) {
                 if ("semantic".equals(asText(tuple.getKeyNode()))) {
-                    read(dc.getCamelContext(), tuple.getValueNode()).forEach((name, question) -> {
-                        if (definitions.putIfAbsent(name, question) != null) {
+                    read(dc.getCamelContext(), tuple.getValueNode()).forEach((name, evaluation) -> {
+                        if (definitions.putIfAbsent(name, evaluation) != null) {
                             throw new YamlDeserializationException(
-                                    tuple.getValueNode(), "Duplicate semantic question: " + name);
+                                    tuple.getValueNode(), "Duplicate semantic evaluation: " + name);
                         }
                     });
                 }
             }
         }
         CamelContext context = dc.getCamelContext();
-        SemanticQuestions questions = definitions.isEmpty()
-                ? context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class)
-                : SemanticQuestions.get(context);
-        if (questions != null) {
+        SemanticEvaluations evaluations = definitions.isEmpty()
+                ? context.getCamelContextExtension().getContextPlugin(SemanticEvaluations.class)
+                : SemanticEvaluations.get(context);
+        if (evaluations != null) {
             try {
-                questions.replace(dc.getResource(), definitions);
+                evaluations.replace(dc.getResource(), definitions);
             } catch (IllegalArgumentException e) {
                 throw new YamlDeserializationException(root, e.getMessage(), e);
             }
         }
     }
 
-    private static Map<String, SemanticQuestion> read(CamelContext context, Node node) {
+    private static Map<String, SemanticEvaluation> read(CamelContext context, Node node) {
         Map<String, Node> semantic = fields(node, "semantic declaration");
         for (String field : semantic.keySet()) {
-            if (!Set.of("question", "evaluation", "expert", "state").contains(field)) {
+            if (!Set.of("evaluation", "expert", "state").contains(field)) {
                 throw new YamlDeserializationException(
                         semantic.get(field), "Unknown property '" + field + "' in semantic declaration");
             }
         }
-        if (semantic.containsKey("question") == semantic.containsKey("evaluation")) {
-            throw new YamlDeserializationException(node, "Semantic declaration requires exactly one of question or evaluation");
+        if (!semantic.containsKey("evaluation")) {
+            throw new YamlDeserializationException(node, "Semantic declaration requires evaluation");
         }
-        String declaration = semantic.containsKey("evaluation") ? "evaluation" : "question";
-        Map<String, SemanticQuestion> result = new LinkedHashMap<>();
-        fields(semantic.get(declaration), "semantic evaluations").forEach((name, definition) -> {
+        Map<String, SemanticEvaluation> result = new LinkedHashMap<>();
+        fields(semantic.get("evaluation"), "semantic evaluations").forEach((name, definition) -> {
             if (name.isBlank()) {
-                throw new YamlDeserializationException(definition, "Semantic question requires a nonblank name");
+                throw new YamlDeserializationException(definition, "Semantic evaluation requires a nonblank name");
             }
-            Map<String, Node> values = fields(definition, "semantic question '" + name + "'");
+            Map<String, Node> values = fields(definition, "semantic evaluation '" + name + "'");
             for (String common : List.of("expert", "state")) {
                 if (!values.containsKey(common) && semantic.containsKey(common)) {
                     values.put(common, semantic.get(common));
@@ -138,10 +137,10 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
                     expert = "invalid expert reference";
                     expert = asText(values.get("expert"));
                 }
-                result.put(name, readQuestion(context, name, expert, definition, values));
+                result.put(name, readEvaluation(context, name, expert, definition, values));
             } catch (IllegalArgumentException | InvalidNodeTypeException e) {
                 throw new YamlDeserializationException(
-                        definition, "Invalid semantic question '" + name + "': " + e.getMessage()
+                        definition, "Invalid semantic evaluation '" + name + "': " + e.getMessage()
                                     + " (expert '" + expert + "')",
                         e);
             }
@@ -149,9 +148,9 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
         return result;
     }
 
-    private static SemanticQuestion readQuestion(
+    private static SemanticEvaluation readEvaluation(
             CamelContext context, String name, String expert, Node definition, Map<String, Node> values) {
-        String description = "semantic question '" + name + "'";
+        String description = "semantic evaluation '" + name + "'";
         String expertContext = " (expert '" + expert + "')";
         values.forEach((field, value) -> {
             if (!FIELDS.contains(field)) {
@@ -166,11 +165,11 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
         String operation = values.containsKey("operation")
                 ? asText(values.get("operation"))
                 : asText(values.get("type")).toLowerCase(Locale.ROOT);
-        SemanticQuestionBuilder builder = new SemanticQuestionBuilder().operation(operation)
+        SemanticEvaluationBuilder builder = new SemanticEvaluationBuilder().operation(operation)
                 .expert(asText(values.get("expert"))).state(asText(values.get("state")));
         if (values.containsKey("parameters")) {
             fields(values.get("parameters"), "evaluation parameters")
-                    .forEach((key, value) -> builder.parameter(key, value(value)));
+                    .forEach((key, value) -> builder.parameter(key, value(context, value)));
         }
         for (String field : List.of("instructions", "criteria", "threshold", "uncertainty", "uncertaintyPolicy")) {
             Node node = values.get(field);
@@ -198,7 +197,7 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
                         builder.parameter(field,
                                 sequence.getValue().stream().map(SemanticDefinitionDeserializer::asText).toList());
                     } else {
-                        builder.parameter(field, value(node));
+                        builder.parameter(field, value(context, node));
                     }
                 }
                 default -> throw new IllegalStateException(field);
@@ -207,18 +206,18 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
         return builder.build(context);
     }
 
-    private static Object value(Node node) {
+    private static Object value(CamelContext context, Node node) {
         if (node instanceof MappingNode) {
             Map<String, Object> result = new LinkedHashMap<>();
-            fields(node, "parameter map").forEach((key, child) -> result.put(key, value(child)));
+            fields(node, "parameter map").forEach((key, child) -> result.put(key, value(context, child)));
             return result;
         }
         if (node instanceof SequenceNode sequence) {
-            return sequence.getValue().stream().map(SemanticDefinitionDeserializer::value).toList();
+            return sequence.getValue().stream().map(child -> value(context, child)).toList();
         }
-        if (Tag.FLOAT.equals(node.getTag())) {
+        if (Tag.FLOAT.equals(node.getTag()) || NUMBER.equals(node.getTag())) {
             try {
-                return new BigDecimal(asText(node));
+                return new BigDecimal(context.resolvePropertyPlaceholders(asText(node)));
             } catch (NumberFormatException invalid) {
                 throw new YamlDeserializationException(node, "Invalid numeric parameter");
             }
@@ -235,29 +234,6 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
             }
         }
         return result;
-    }
-
-    @YamlType(properties = {
-            @YamlProperty(name = "expert", type = "string"),
-            @YamlProperty(name = "state", type = "string")
-    })
-    public static class BlockSchema {
-    }
-
-    @YamlType(properties = {
-            @YamlProperty(name = "question",
-                          type = "map:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema",
-                          required = true)
-    })
-    public static class QuestionBlockSchema extends BlockSchema {
-    }
-
-    @YamlType(properties = {
-            @YamlProperty(name = "evaluation",
-                          type = "map:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema",
-                          required = true)
-    })
-    public static class EvaluationBlockSchema extends BlockSchema {
     }
 
     @YamlType(properties = {

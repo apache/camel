@@ -50,26 +50,26 @@ class FixedSemanticExpert implements SemanticAdapter {
     final List<Object> states = new ArrayList<>();
 
     @Override
-    public void validate(SemanticQuestion question) {
-        SemanticCapabilities.from(getClass()).validate(question);
+    public void validate(SemanticEvaluation evaluation) {
+        SemanticCapabilities.from(getClass()).validate(evaluation);
     }
 
     @Override
-    public SemanticResult evaluate(SemanticQuestion question, Object state) {
+    public SemanticResult evaluate(SemanticEvaluation evaluation, Object state) {
         calls++;
         states.add(state);
         if (fail) {
             throw new IllegalStateException("provider unavailable");
         }
-        return TestSemanticAdapter.applyPolicy(question,
+        return TestSemanticAdapter.applyPolicy(evaluation,
                 new SemanticResult(null, probability, null, null, Map.of("provider", "fixed")));
     }
 
     @Override
-    public Map<String, SemanticResult> evaluateBatch(Map<String, SemanticQuestion> questions, Object state)
+    public Map<String, SemanticResult> evaluateBatch(Map<String, SemanticEvaluation> evaluations, Object state)
             throws Exception {
-        batches.add(List.copyOf(questions.keySet()));
-        return SemanticAdapter.super.evaluateBatch(questions, state);
+        batches.add(List.copyOf(evaluations.keySet()));
+        return SemanticAdapter.super.evaluateBatch(evaluations, state);
     }
 
     @Override

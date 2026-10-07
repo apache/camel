@@ -40,8 +40,8 @@ class SemanticInitializationTest {
         try (var context = new DefaultCamelContext()) {
             context.init();
             synchronized (context) {
-                var questions = callers.submit(() -> SemanticQuestions.get(context));
-                assertThat(questions.get(10, TimeUnit.SECONDS)).isSameAs(SemanticQuestions.get(context));
+                var evaluations = callers.submit(() -> SemanticEvaluations.get(context));
+                assertThat(evaluations.get(10, TimeUnit.SECONDS)).isSameAs(SemanticEvaluations.get(context));
             }
             var language = language(context, Adapter.class);
             synchronized (context.getRegistry()) {
@@ -54,15 +54,15 @@ class SemanticInitializationTest {
     }
 
     @Test
-    void concurrentQuestionRegistryCreationReturnsOneInstance() throws Exception {
+    void concurrentEvaluationRegistryCreationReturnsOneInstance() throws Exception {
         ExecutorService callers = Executors.newFixedThreadPool(4);
         CountDownLatch start = new CountDownLatch(1);
         try (var context = new DefaultCamelContext()) {
-            List<Future<SemanticQuestions>> results = new ArrayList<>();
+            List<Future<SemanticEvaluations>> results = new ArrayList<>();
             for (int i = 0; i < 8; i++) {
                 results.add(callers.submit(() -> {
                     assertThat(start.await(10, TimeUnit.SECONDS)).isTrue();
-                    return SemanticQuestions.get(context);
+                    return SemanticEvaluations.get(context);
                 }));
             }
             start.countDown();
@@ -139,10 +139,10 @@ class SemanticInitializationTest {
     }
 
     private static SemanticLanguage language(DefaultCamelContext context, Class<? extends SemanticAdapter> type) {
-        SemanticQuestions.get(context).replace("test", Map.of("q",
-                new SemanticQuestion(
-                        SemanticQuestion.Type.BOOLEAN, "Is this valid?", null, null, null, 0.5, 0,
-                        SemanticQuestion.UncertaintyPolicy.FAIL)));
+        SemanticEvaluations.get(context).replace("test", Map.of("q",
+                new SemanticEvaluation(
+                        "boolean", null, null, Map.of("instructions", "Is this valid?", "threshold", 0.5, "uncertainty", 0.0,
+                                "uncertaintyPolicy", "fail"))));
         SemanticLanguage language = new SemanticLanguage();
         language.setCamelContext(context);
         language.setAdapter(type.getName());
@@ -151,11 +151,11 @@ class SemanticInitializationTest {
 
     public static class Adapter extends TestSemanticAdapter {
         @Override
-        public void validate(SemanticQuestion question) {
+        public void validate(SemanticEvaluation evaluation) {
         }
 
         @Override
-        public SemanticResult evaluate(SemanticQuestion question, Object state) {
+        public SemanticResult evaluate(SemanticEvaluation evaluation, Object state) {
             return new SemanticResult(true, null, null, null, null);
         }
     }

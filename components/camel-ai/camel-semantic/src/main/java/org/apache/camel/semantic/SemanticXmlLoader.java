@@ -91,10 +91,10 @@ final class SemanticXmlLoader extends RoutesBuilderLoaderSupport {
             builder.addLifecycleInterceptor(new RouteBuilderLifecycleStrategy() {
                 @Override
                 public void afterConfigure(RouteBuilder routeBuilder) {
-                    SemanticQuestions questions
-                            = getCamelContext().getCamelContextExtension().getContextPlugin(SemanticQuestions.class);
-                    if (questions != null) {
-                        questions.remove(resource.getLocation());
+                    SemanticEvaluations evaluations
+                            = getCamelContext().getCamelContextExtension().getContextPlugin(SemanticEvaluations.class);
+                    if (evaluations != null) {
+                        evaluations.remove(resource.getLocation());
                     }
                 }
             });
@@ -161,7 +161,7 @@ final class SemanticXmlLoader extends RoutesBuilderLoaderSupport {
                             if ("semantic".equals(reader.getLocalName())) {
                                 return true;
                             }
-                            // Only direct children can declare questions. Consume nested route content without
+                            // Only direct children can declare evaluations. Consume nested route content without
                             // inspecting names or namespaces, then continue looking for declarations after routes.
                             skipSubtree(reader);
                             depth--;

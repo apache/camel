@@ -27,7 +27,7 @@ For Boolean evaluations it applies the requested `threshold`, `uncertainty` and 
 once and returns both the typed verdict and the provider probability. Omitted policy parameters
 use this adapter's defaults: threshold `0.5`, no uncertainty band, and failure for uncertain results.
 The semantic runtime validates the result and does not apply a second policy.
-Named boolean, choice and score questions use the common contract and inherit this component's
+Named boolean, choice and score evaluations use the common contract and inherit this component's
 credentials, model and transport settings without requiring a TypeSafe AI endpoint in the route.
 
 [source,xml]

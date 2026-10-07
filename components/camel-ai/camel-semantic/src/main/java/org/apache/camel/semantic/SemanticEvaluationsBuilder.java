@@ -28,24 +28,24 @@ import org.apache.camel.builder.RouteBuilderLifecycleStrategy;
 import org.apache.camel.spi.Resource;
 
 /** Fluent declarations for use inside an ordinary {@link RouteBuilder#configure()}. */
-public final class SemanticQuestionsBuilder {
-    private static final String LIFECYCLE = SemanticQuestionsBuilder.class.getName();
+public final class SemanticEvaluationsBuilder {
+    private static final String LIFECYCLE = SemanticEvaluationsBuilder.class.getName();
     private String expert;
     private String state;
     private final CamelContext context;
     private final RouteBuilder builder;
     private final Resource resource;
     private final String source;
-    private final Map<String, SemanticQuestionBuilder> questions = new LinkedHashMap<>();
+    private final Map<String, SemanticEvaluationBuilder> evaluations = new LinkedHashMap<>();
 
-    private SemanticQuestionsBuilder(RouteBuilder builder) {
+    private SemanticEvaluationsBuilder(RouteBuilder builder) {
         this(builder.getContext(), builder.getResource(), builder.getResource() == null
                 ? "java:" + builder.getContext().getUuidGenerator().generateUuid()
                 : "java:" + builder.getResource().getLocation(),
              builder);
     }
 
-    SemanticQuestionsBuilder(CamelContext context, Resource resource, String source, RouteBuilder builder) {
+    SemanticEvaluationsBuilder(CamelContext context, Resource resource, String source, RouteBuilder builder) {
         this.context = context;
         this.resource = resource;
         this.source = source;
@@ -53,16 +53,16 @@ public final class SemanticQuestionsBuilder {
     }
 
     /** Start one group of declarations, then call {@link #register()} before using its references. */
-    public static SemanticQuestionsBuilder semanticQuestions(RouteBuilder builder) {
-        return new SemanticQuestionsBuilder(builder);
+    public static SemanticEvaluationsBuilder semanticEvaluations(RouteBuilder builder) {
+        return new SemanticEvaluationsBuilder(builder);
     }
 
-    public SemanticQuestionsBuilder expert(String expert) {
+    public SemanticEvaluationsBuilder expert(String expert) {
         this.expert = expert;
         return this;
     }
 
-    public SemanticQuestionsBuilder state(String state) {
+    public SemanticEvaluationsBuilder state(String state) {
         this.state = state;
         return this;
     }
@@ -75,35 +75,31 @@ public final class SemanticQuestionsBuilder {
         return state;
     }
 
-    public SemanticQuestionBuilder evaluation(String name) {
-        return question(name);
-    }
-
-    /** Add a named question. Names must be unique across the context. */
-    public SemanticQuestionBuilder question(String name) {
+    /** Add a named evaluation. Names must be unique across the context. */
+    public SemanticEvaluationBuilder evaluation(String name) {
         if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Semantic question requires a nonblank name");
+            throw new IllegalArgumentException("Semantic evaluation requires a nonblank name");
         }
-        SemanticQuestionBuilder question = new SemanticQuestionBuilder(this);
-        if (questions.putIfAbsent(name, question) != null) {
-            throw new IllegalArgumentException("Duplicate semantic question: " + name);
+        SemanticEvaluationBuilder evaluation = new SemanticEvaluationBuilder(this);
+        if (evaluations.putIfAbsent(name, evaluation) != null) {
+            throw new IllegalArgumentException("Duplicate semantic evaluation: " + name);
         }
-        return question;
+        return evaluation;
     }
 
-    /** Validate all declarations and atomically replace this source's questions. An empty group removes them. */
+    /** Validate all declarations and atomically replace this source's evaluations. An empty group removes them. */
     public void register() {
-        Map<String, SemanticQuestion> definitions = new LinkedHashMap<>();
-        questions.forEach((name, question) -> {
+        Map<String, SemanticEvaluation> definitions = new LinkedHashMap<>();
+        evaluations.forEach((name, evaluation) -> {
             try {
-                definitions.put(name, question.build(context));
+                definitions.put(name, evaluation.build(context));
             } catch (IllegalArgumentException e) {
-                String expert = question.getExpert() != null ? question.getExpert() : "default/automatic";
+                String expert = evaluation.getExpert() != null ? evaluation.getExpert() : "default/automatic";
                 throw new IllegalArgumentException(
-                        "Invalid semantic question '" + name + "': " + e.getMessage() + " (expert '" + expert + "')", e);
+                        "Invalid semantic evaluation '" + name + "': " + e.getMessage() + " (expert '" + expert + "')", e);
             }
         });
-        SemanticQuestions registry = SemanticQuestions.get(context);
+        SemanticEvaluations registry = SemanticEvaluations.get(context);
         synchronized (registry) {
             registry.replace(source, resource, definitions);
             DeclarationsLifecycle lifecycle = context.getRegistry().lookupByNameAndType(LIFECYCLE, DeclarationsLifecycle.class);
@@ -119,19 +115,19 @@ public final class SemanticQuestionsBuilder {
 
     // A resource may remove the helper entirely on reload. The existing builder lifecycle detects that case.
     private static final class DeclarationsLifecycle implements RouteBuilderLifecycleStrategy {
-        private final SemanticQuestions questions;
+        private final SemanticEvaluations evaluations;
         private final Set<RouteBuilder> registered = Collections.newSetFromMap(new WeakHashMap<>());
 
-        private DeclarationsLifecycle(SemanticQuestions questions) {
-            this.questions = questions;
+        private DeclarationsLifecycle(SemanticEvaluations evaluations) {
+            this.evaluations = evaluations;
         }
 
         @Override
         public void afterConfigure(RouteBuilder builder) {
-            synchronized (questions) {
-                questions.removeDeletedResources();
+            synchronized (evaluations) {
+                evaluations.removeDeletedResources();
                 if (!registered.remove(builder) && builder.getResource() != null) {
-                    questions.remove("java:" + builder.getResource().getLocation());
+                    evaluations.remove("java:" + builder.getResource().getLocation());
                 }
             }
         }

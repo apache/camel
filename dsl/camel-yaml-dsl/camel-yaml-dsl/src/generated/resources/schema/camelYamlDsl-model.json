@@ -20526,34 +20526,6 @@
     "semantic" : {
       "isListItem" : true,
       "children" : [ {
-        "name" : "expert",
-        "type" : "string"
-      }, {
-        "name" : "question",
-        "type" : "map",
-        "ref" : "semanticDefinitionDeserializer$EvaluationSchema",
-        "required" : true
-      }, {
-        "name" : "state",
-        "type" : "string"
-      }, {
-        "name" : "evaluation",
-        "type" : "map",
-        "ref" : "semanticDefinitionDeserializer$EvaluationSchema",
-        "required" : true
-      } ]
-    },
-    "semanticDefinitionDeserializer$BlockSchema" : {
-      "children" : [ {
-        "name" : "expert",
-        "type" : "string"
-      }, {
-        "name" : "state",
-        "type" : "string"
-      } ]
-    },
-    "semanticDefinitionDeserializer$EvaluationBlockSchema" : {
-      "children" : [ {
         "name" : "evaluation",
         "type" : "map",
         "ref" : "semanticDefinitionDeserializer$EvaluationSchema",
@@ -20663,20 +20635,6 @@
         "type" : "number"
       }, {
         "name" : "uncertaintyPolicy",
-        "type" : "string"
-      } ]
-    },
-    "semanticDefinitionDeserializer$QuestionBlockSchema" : {
-      "children" : [ {
-        "name" : "expert",
-        "type" : "string"
-      }, {
-        "name" : "question",
-        "type" : "map",
-        "ref" : "semanticDefinitionDeserializer$EvaluationSchema",
-        "required" : true
-      }, {
-        "name" : "state",
         "type" : "string"
       } ]
     }

@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class SemanticExpertYamlTest {
     private static final String DECLARATIONS = """
             - semantic:
-                question:
+                evaluation:
                   injection:
                     expert: "{{security.expert:security}}"
                     type: boolean
@@ -51,9 +51,9 @@ class SemanticExpertYamlTest {
             var exchange = new DefaultExchange(context);
             exchange.getMessage().setBody("text");
             assertThat(expression.evaluate(exchange, Boolean.class)).isFalse();
-            var question = SemanticQuestions.get(context).get("injection");
-            assertThat(question.getExpert()).isEqualTo("{{security.expert:security}}");
-            assertThat(question.getInstructions()).isNull();
+            var evaluation = SemanticEvaluations.get(context).get("injection");
+            assertThat(evaluation.getExpert()).isEqualTo("{{security.expert:security}}");
+            assertThat(evaluation.getParameters().get("instructions")).isNull();
             assertThat(expert.calls).isEqualTo(1);
         }
     }
@@ -66,18 +66,18 @@ class SemanticExpertYamlTest {
             preParse(context, DECLARATIONS);
             context.start();
             var expression = context.resolveLanguage("semantic").createExpression("ref:injection");
-            var question = SemanticQuestions.get(context).get("injection");
+            var evaluation = SemanticEvaluations.get(context).get("injection");
             assertThatThrownBy(() -> preParse(context,
                     DECLARATIONS.replace("type: boolean", "type: boolean\n        instructions: unsupported")))
                     .isInstanceOfSatisfying(YamlDeserializationException.class, error -> {
                         assertThat(error).hasMessageContaining("injection").hasMessageContaining("security")
                                 .hasMessageContaining("Unknown parameter 'instructions'");
                         assertThat(error.getProblemMark()).hasValueSatisfying(mark -> {
-                            assertThat(mark.getName()).isEqualTo("questions.yaml");
+                            assertThat(mark.getName()).isEqualTo("evaluations.yaml");
                             assertThat(mark.getLine()).isZero();
                         });
                     });
-            assertThat(SemanticQuestions.get(context).get("injection")).isSameAs(question);
+            assertThat(SemanticEvaluations.get(context).get("injection")).isSameAs(evaluation);
             assertThat(expert.calls).isZero();
             preParse(context, DECLARATIONS.replace("threshold: \"{{security.threshold:0.9}}\"", "threshold: 0.7"));
             var exchange = new DefaultExchange(context);
@@ -113,11 +113,11 @@ class SemanticExpertYamlTest {
             preParse(context, DECLARATIONS);
             context.start();
             var expression = context.resolveLanguage("semantic").createExpression("ref:injection");
-            var previous = SemanticQuestions.get(context).get("injection");
+            var previous = SemanticEvaluations.get(context).get("injection");
             String replacement = DECLARATIONS.replace("{{security.expert:security}}", "newSecurity");
             assertThatThrownBy(() -> preParse(context, replacement))
                     .isInstanceOf(YamlDeserializationException.class).hasMessageContaining("newSecurity");
-            assertThat(SemanticQuestions.get(context).get("injection")).isSameAs(previous);
+            assertThat(SemanticEvaluations.get(context).get("injection")).isSameAs(previous);
             context.getRegistry().bind("newSecurity", new FixedExpert());
             preParse(context, replacement);
             var exchange = new DefaultExchange(context);
@@ -152,10 +152,10 @@ class SemanticExpertYamlTest {
     }
 
     private void preParse(DefaultCamelContext context, String yaml) throws Exception {
-        var settings = LoadSettings.builder().setLabel("questions.yaml").build();
+        var settings = LoadSettings.builder().setLabel("evaluations.yaml").build();
         try (var deserialization = new YamlDeserializationContext(settings)) {
             deserialization.setCamelContext(context);
-            deserialization.setResource(ResourceHelper.fromString("questions.yaml", yaml));
+            deserialization.setResource(ResourceHelper.fromString("evaluations.yaml", yaml));
             deserialization.start();
             deserialization.preParse(new Compose(settings).composeString(yaml).orElseThrow());
         }

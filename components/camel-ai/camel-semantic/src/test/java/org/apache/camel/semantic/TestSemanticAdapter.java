@@ -86,21 +86,21 @@ import org.apache.camel.support.service.ServiceSupport;
                                                                       required = true, minSize = 1, maxSize = 10) }) })
 abstract class TestSemanticAdapter extends ServiceSupport implements SemanticAdapter {
     @Override
-    public void validate(SemanticQuestion question) {
-        SemanticCapabilities.from(getClass()).validate(question);
+    public void validate(SemanticEvaluation evaluation) {
+        SemanticCapabilities.from(getClass()).validate(evaluation);
     }
 
     // This fixture models an expert that owns its probability policy.
-    static SemanticResult applyPolicy(SemanticQuestion question, SemanticResult result) {
-        if (question.getType() != SemanticQuestion.Type.BOOLEAN || result.getProbability() == null) {
+    static SemanticResult applyPolicy(SemanticEvaluation evaluation, SemanticResult result) {
+        if (!"boolean".equals(evaluation.getOperation()) || result.getProbability() == null) {
             return result;
         }
         double probability = result.getProbability();
-        double threshold = ((Number) question.getParameters().getOrDefault("threshold", 0.5)).doubleValue();
-        double uncertainty = ((Number) question.getParameters().getOrDefault("uncertainty", 0.0)).doubleValue();
+        double threshold = ((Number) evaluation.getParameters().getOrDefault("threshold", 0.5)).doubleValue();
+        double uncertainty = ((Number) evaluation.getParameters().getOrDefault("uncertainty", 0.0)).doubleValue();
         boolean value = probability >= threshold;
         if (uncertainty > 0 && probability >= threshold - uncertainty && probability <= threshold + uncertainty) {
-            if (!"non-match".equals(question.getParameters().get("uncertaintyPolicy"))) {
+            if (!"non-match".equals(evaluation.getParameters().get("uncertaintyPolicy"))) {
                 throw new IllegalStateException("Semantic boolean decision is uncertain");
             }
             value = false;

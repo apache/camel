@@ -17,12 +17,16 @@
 package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchLanguageException;
+import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.MiscExpressionBuilder;
+import org.apache.camel.language.simple.SimplePredicateExpression;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.StringHelper;
 
@@ -64,7 +68,8 @@ public final class QueryLanguageFunctionFactory implements SimpleLanguageFunctio
                 throw new SimpleParserException(
                         "The semantic function requires camel-semantic on the classpath", index);
             }
-            return semantic.createExpression("ref:" + name);
+            Expression expression = semantic.createExpression("ref:" + name);
+            return new SemanticExpression(expression, ExpressionToPredicateAdapter.toPredicate(expression));
         }
 
         remainder = ifStartsWithReturnRemainder("jq(", function);
@@ -128,6 +133,23 @@ public final class QueryLanguageFunctionFactory implements SimpleLanguageFunctio
             }
         }
         return MiscExpressionBuilder.simpleJsonPathExpression(input, exp);
+    }
+
+    private record SemanticExpression(Expression expression, Predicate predicate) implements SimplePredicateExpression {
+        @Override
+        public void init(CamelContext context) {
+            expression.init(context);
+        }
+
+        @Override
+        public <T> T evaluate(Exchange exchange, Class<T> type) {
+            return expression.evaluate(exchange, type);
+        }
+
+        @Override
+        public boolean matches(Exchange exchange) {
+            return predicate.matches(exchange);
+        }
     }
 
     private static boolean hasInputSource(String exp) {
