@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.catalog.LanguageValidationResult;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -256,9 +257,29 @@ class SourceValidatorSimpleTest {
     }
 
     @Test
+    void semanticDependencyDetectionToleratesSurroundingDiagnosticChanges() {
+        CamelCatalog changedDiagnostic = new DefaultCamelCatalog() {
+            @Override
+            public LanguageValidationResult validateLanguageExpression(ClassLoader classLoader, String language, String text) {
+                LanguageValidationResult result = new LanguageValidationResult(text);
+                result.setError("Semantic evaluation requires camel-semantic; add the dependency to use this function");
+                return result;
+            }
+        };
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:start
+                    steps:
+                      - setBody:
+                          simple: "${semantic('department')}"
+                """, changedDiagnostic);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
     void semanticExpressionsAndPredicatesDoNotRequireTheRuntimeDependency() {
         assertThat(catalog.validateLanguageExpression(null, "simple", "${semantic('department')}").getShortError())
-                .isEqualTo("The semantic function requires camel-semantic on the classpath");
+                .contains("requires camel-semantic");
         List<String> msgs = SourceValidator.validateYamlSimple("""
                 - from:
                     uri: direct:start

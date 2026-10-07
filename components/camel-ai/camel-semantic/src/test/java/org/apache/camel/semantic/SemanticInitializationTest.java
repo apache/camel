@@ -91,6 +91,7 @@ class SemanticInitializationTest {
                     Thread.currentThread().interrupt();
                     throw new IllegalStateException(e);
                 }
+                // Leave the plugin absent so get() creates and registers it after this lookup is released.
                 return null;
             });
             var creation = callers.submit(() -> SemanticEvaluations.get(creating));
