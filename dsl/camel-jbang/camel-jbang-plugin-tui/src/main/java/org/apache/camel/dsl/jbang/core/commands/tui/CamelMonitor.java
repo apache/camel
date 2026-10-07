@@ -909,6 +909,7 @@ public class CamelMonitor extends CamelCommand {
         mcpFacade.setSourceValidator(tabRegistry.sourceTab().editAssist()::validateSource);
         mcpFacade.setPropertyLineValidator(tabRegistry.sourceTab().editAssist()::validateSpringBootPropertyLine);
         mcpFacade.setLaunchManager(actionsPopup.getLaunchManager());
+        mcpFacade.setFullScan(dataService::forceFullScan, dataService::fullScansDone);
         aiPanel.setMcpFacade(mcpFacade);
         aiPanel.setOtelSpans(dataService.otelSpans());
         mcpFacade.setAiActivityLog(aiPanel::getActivityLog);
