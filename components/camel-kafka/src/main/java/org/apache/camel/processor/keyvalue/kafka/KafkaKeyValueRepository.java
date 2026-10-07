@@ -20,15 +20,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.time.Duration;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -38,35 +33,18 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.processor.idempotent.kafka.KafkaConsumerUtil;
+import org.apache.camel.processor.idempotent.kafka.KafkaChangelog;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.KeyValueRepositoryHelper;
 import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.TimeUtils;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.PartitionInfo;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
-import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,14 +89,11 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
     private static final byte ACTION_CLEAR = 2;
 
     private CamelContext camelContext;
-    private ExecutorService executorService;
-    private TopicPoller poller;
     private final AtomicLong cacheCounter = new AtomicLong();
 
     // internal state
     private Map<String, CacheEntry> cache;
-    private Consumer<String, byte[]> consumer;
-    private Producer<String, byte[]> producer;
+    private KafkaChangelog<byte[]> changelog;
 
     @Metadata(description = "Custom properties for the Kafka consumer")
     private Properties consumerConfig;
@@ -326,16 +301,9 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
     }
 
     private void broadcastToTopic(String key, byte[] payload) {
-        try {
-            LOG.debug("Broadcasting to topic {} for key {}", topic, key);
-            ObjectHelper.notNull(producer, "producer");
-            producer.send(new ProducerRecord<>(topic, key, payload)).get(); // sync send
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeCamelException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeCamelException(e);
-        }
+        LOG.debug("Broadcasting to topic {} for key {}", topic, key);
+        ObjectHelper.notNull(changelog, "changelog");
+        changelog.send(key, payload);
     }
 
     // -------------------------------------------------------------------------
@@ -405,29 +373,6 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
         }
     }
 
-    private void populateCache() {
-        LOG.debug("Getting partitions of topic {}", topic);
-        List<PartitionInfo> partitionInfos = consumer.partitionsFor(topic);
-        Collection<TopicPartition> partitions = partitionInfos.stream()
-                .map(pi -> new TopicPartition(pi.topic(), pi.partition()))
-                .toList();
-
-        LOG.debug("Assigning consumer to partitions {}", partitions);
-        consumer.assign(partitions);
-
-        LOG.debug("Seeking consumer to beginning of partitions {}", partitions);
-        consumer.seekToBeginning(partitions);
-
-        Map<TopicPartition, Long> endOffsets = consumer.endOffsets(partitions);
-        LOG.debug("Consuming records from partitions {} till end offsets {}", partitions, endOffsets);
-        while (!KafkaConsumerUtil.isReachedOffsets(consumer, endOffsets)) {
-            ConsumerRecords<String, byte[]> consumerRecords = consumer.poll(Duration.ofMillis(pollDurationMs));
-            for (ConsumerRecord<String, byte[]> consumerRecord : consumerRecords) {
-                addToCache(consumerRecord);
-            }
-        }
-    }
-
     private static long toExpiresAt(Duration ttl) {
         if (ttl == null || ttl.isZero() || ttl.isNegative()) {
             return 0;
@@ -461,100 +406,21 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
         // if you need a larger working set to be visible locally.
         this.cache = LRUCacheFactory.newLRUCache(maxCacheSize);
 
-        if (consumerConfig == null) {
-            consumerConfig = new Properties();
-            StringHelper.notEmpty(bootstrapServers, "bootstrapServers");
-            consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-            if (groupId != null) {
-                consumerConfig.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-            }
-        }
-
-        if (producerConfig == null) {
-            producerConfig = new Properties();
-            StringHelper.notEmpty(bootstrapServers, "bootstrapServers");
-            producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        }
-
-        ObjectHelper.notNull(consumerConfig, "consumerConfig");
-        ObjectHelper.notNull(producerConfig, "producerConfig");
-
-        consumerConfig.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, Boolean.FALSE.toString());
-        consumerConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
-
-        consumer = new KafkaConsumer<>(consumerConfig);
-
-        producerConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        producerConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class.getName());
-        producerConfig.putIfAbsent(ProducerConfig.ACKS_CONFIG, "1");
-        producerConfig.putIfAbsent(ProducerConfig.BATCH_SIZE_CONFIG, "0");
-        producer = new KafkaProducer<>(producerConfig);
-
-        poller = new TopicPoller();
-        ServiceHelper.startService(poller);
-        // populate cache on startup
-        StopWatch watch = new StopWatch();
-        LOG.info("Syncing KafkaKeyValueRepository from topic: {} starting", topic);
-        poller.run();
-        LOG.info("Syncing KafkaKeyValueRepository from topic: {} complete: {}", topic,
-                TimeUtils.printDuration(watch.taken(), true));
-
-        if (!startupOnly) {
-            executorService
-                    = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "KafkaKeyValueRepositorySync");
-            LOG.info("Syncing KafkaKeyValueRepository from topic: {} continuously using background thread", topic);
-            executorService.submit(poller);
-        }
+        consumerConfig = KafkaChangelog.consumerConfig(consumerConfig, bootstrapServers, groupId);
+        producerConfig = KafkaChangelog.producerConfig(producerConfig, bootstrapServers);
+        changelog = new KafkaChangelog<>(
+                "KafkaKeyValueRepository", topic, consumerConfig, producerConfig, ByteArrayDeserializer.class,
+                ByteArraySerializer.class, pollDurationMs,
+                startupOnly, this::addToCache);
+        changelog.start(camelContext, this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(poller);
-        if (consumer != null) {
-            consumer.wakeup();
+        if (changelog != null) {
+            changelog.stop();
         }
-        if (executorService != null && camelContext != null) {
-            camelContext.getExecutorServiceManager().shutdownNow(executorService);
-            executorService = null;
-        }
-        IOHelper.close(consumer, "consumer", LOG);
-        IOHelper.close(producer, "producer", LOG);
         LOG.debug("Stopped KafkaKeyValueRepository. Cache counter: {}", cacheCounter.get());
-    }
-
-    // -------------------------------------------------------------------------
-    // TopicPoller inner class
-    // -------------------------------------------------------------------------
-
-    private class TopicPoller extends ServiceSupport implements Runnable {
-
-        private final AtomicBoolean init = new AtomicBoolean();
-
-        @Override
-        public void run() {
-            if (init.compareAndSet(false, true)) {
-                LOG.debug("TopicPoller populating cache on startup");
-                populateCache();
-                LOG.debug("TopicPoller populated cache on startup complete");
-                return;
-            }
-
-            LOG.debug("TopicPoller running");
-            while (isRunAllowed()) {
-                try {
-                    ConsumerRecords<String, byte[]> consumerRecords = consumer.poll(Duration.ofMillis(pollDurationMs));
-                    for (ConsumerRecord<String, byte[]> consumerRecord : consumerRecords) {
-                        addToCache(consumerRecord);
-                    }
-                } catch (WakeupException e) {
-                    LOG.debug("TopicPoller woken up during shutdown");
-                } catch (Exception e) {
-                    LOG.warn("TopicPoller error syncing due to: " + e.getMessage() + ". This exception is ignored.", e);
-                }
-            }
-            LOG.debug("TopicPoller stopping");
-        }
     }
 
     // -------------------------------------------------------------------------
