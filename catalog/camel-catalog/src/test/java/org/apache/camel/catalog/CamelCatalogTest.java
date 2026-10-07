@@ -665,6 +665,19 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testAsEndpointUriInsertionOrder() throws Exception {
+        // an ordered map keeps its order, also when the log component filters the show options
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("loggerName", "foo");
+        map.put("style", "Tab");
+        map.put("showAll", "true");
+        map.put("showBody", "false");
+        map.put("loggerLevel", "WARN");
+
+        assertEquals("log:foo?style=Tab&showAll=true&loggerLevel=WARN", catalog.asEndpointUri("log", map, false));
+    }
+
+    @Test
     public void testAsEndpointUriLog() throws Exception {
         Map<String, String> map = new HashMap<>();
         map.put("loggerName", "foo");
