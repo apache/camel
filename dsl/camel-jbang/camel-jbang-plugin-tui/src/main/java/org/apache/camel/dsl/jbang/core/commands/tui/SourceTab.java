@@ -1718,23 +1718,23 @@ class SourceTab extends AbstractTab {
         return result;
     }
 
-    /** Reverse links: a from line to a route that sends to it (jumps to the caller's to line). */
+    /**
+     * Reverse links: a from line to the route that sends to it (jumps to the caller's to line), or when several do, to
+     * a popup to choose one of them: a Kamelet or a direct: route used by more than one route.
+     */
     private void addReverseLinks(String currentFilePath, Map<Integer, SourceViewer.JumpLink> result) {
         for (RouteEntry re : routeIndex) {
             if (!currentFilePath.equals(re.filePath())) {
                 continue;
             }
-            for (ToEntry te : toIndex) {
-                if (te.routeId().equals(re.routeId())) {
-                    continue;
-                }
-                if (re.fromUri().equals(te.toUri())) {
-                    // add jump link on the from: line pointing to the caller
-                    String callerRouteId = te.routeId().isEmpty() ? "route" : te.routeId();
-                    result.putIfAbsent(re.fromLine(),
-                            new SourceViewer.JumpLink(callerRouteId, te.filePath(), te.toLine()));
-                    break;
-                }
+            List<ToEntry> callers = callers(re);
+            if (callers.size() == 1) {
+                ToEntry te = callers.get(0);
+                String callerRouteId = te.routeId().isEmpty() ? "route" : te.routeId();
+                result.putIfAbsent(re.fromLine(), new SourceViewer.JumpLink(callerRouteId, te.filePath(), te.toLine()));
+            } else if (callers.size() > 1) {
+                result.putIfAbsent(re.fromLine(),
+                        new SourceViewer.JumpLink(callers.size() + " callers", null, -1, re.fromUri()));
             }
         }
     }
@@ -1828,7 +1828,38 @@ class SourceTab extends AbstractTab {
     }
 
     private void handleJumpLink(SourceViewer.JumpLink link) {
+        if (link.callersOf() != null) {
+            // sent to from more than one place: choose which
+            gotoRoutePopup.openItems(callersOf(link.callersOf()), "Callers of " + link.callersOf());
+            return;
+        }
         openFileAt(link.filePath(), link.targetLine());
+    }
+
+    /** The steps of other routes that send to the endpoint a route consumes from. */
+    List<GotoRoutePopup.RouteItem> callersOf(String uri) {
+        List<GotoRoutePopup.RouteItem> items = new ArrayList<>();
+        for (RouteEntry re : routeIndex) {
+            if (uri.equals(re.fromUri())) {
+                for (ToEntry te : callers(re)) {
+                    String routeId = te.routeId().isEmpty() ? "route" : te.routeId();
+                    items.add(new GotoRoutePopup.RouteItem(routeId, "to " + uri, te.filePath(), te.toLine()));
+                }
+                break;
+            }
+        }
+        return items;
+    }
+
+    /** The steps of the other routes that send to the route. */
+    private List<ToEntry> callers(RouteEntry re) {
+        List<ToEntry> answer = new ArrayList<>();
+        for (ToEntry te : toIndex) {
+            if (!te.routeId().equals(re.routeId()) && re.fromUri().equals(te.toUri())) {
+                answer.add(te);
+            }
+        }
+        return answer;
     }
 
     /** A uri: line, also as the first key of a list item: - uri: direct:billing in the cases of a switch. */

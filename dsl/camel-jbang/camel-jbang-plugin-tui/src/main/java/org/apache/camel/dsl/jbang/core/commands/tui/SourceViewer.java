@@ -126,7 +126,15 @@ class SourceViewer {
         Set<Integer> scan(List<JsonObject> codeData);
     }
 
-    record JumpLink(String routeId, String filePath, int targetLine) {
+    /**
+     * A link on a line to where it leads; callersOf is the endpoint of a route sent to from more than one place, whose
+     * link opens a popup to choose one (CAMEL-25411), else null.
+     */
+    record JumpLink(String routeId, String filePath, int targetLine, String callersOf) {
+
+        JumpLink(String routeId, String filePath, int targetLine) {
+            this(routeId, filePath, targetLine, null);
+        }
     }
 
     /**

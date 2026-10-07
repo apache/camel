@@ -406,7 +406,7 @@ class AutocompletePopup {
             scrollbarState
                     .contentLength(listRows())
                     .viewportContentLength(visibleRows)
-                    .position(sel != null ? sel : 0);
+                    .position(sel != null ? sel + (dividerAt >= 0 && sel >= dividerAt ? 1 : 0) : 0);
             frame.renderStatefulWidget(Scrollbar.builder().build(), listRect, scrollbarState);
         }
     }
