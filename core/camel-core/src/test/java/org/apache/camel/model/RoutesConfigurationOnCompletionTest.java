@@ -287,4 +287,111 @@ public class RoutesConfigurationOnCompletionTest extends ContextTestSupport {
         assertEquals("yes", result.getMessage().getHeader("done"));
     }
 
+    @Test
+    public void testGlobalStarConfiguration() throws Exception {
+        // routeConfiguration("*") is treated as global: fires once per exchange for all routes
+        context.addRoutes(new RouteConfigurationBuilder() {
+            @Override
+            public void configuration() {
+                routeConfiguration("*").onCompletion().to("mock:global");
+            }
+        });
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start")
+                        .to("mock:result");
+
+                from("direct:start2")
+                        .to("mock:result2");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:global").expectedMessageCount(2);
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result2").expectedBodiesReceived("Bye World");
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start2", "Bye World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testOnCompleteOnlyAndOnFailureOnlyInSameNamedConfig() throws Exception {
+        // One named config with onCompleteOnly + onFailureOnly: they must not dedup-block each other.
+        context.addRoutes(new RouteConfigurationBuilder() {
+            @Override
+            public void configuration() {
+                RouteConfigurationDefinition rc = routeConfiguration("myconfig");
+                rc.onCompletion().onCompleteOnly().to("mock:complete");
+                rc.onCompletion().onFailureOnly().to("mock:failure");
+            }
+        });
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").routeConfigurationId("myconfig")
+                        .to("mock:result");
+
+                from("direct:fail").routeConfigurationId("myconfig")
+                        .throwException(new IllegalArgumentException("Boom"));
+            }
+        });
+        context.start();
+
+        // success case
+        getMockEndpoint("mock:complete").expectedMessageCount(1);
+        getMockEndpoint("mock:failure").expectedMessageCount(0);
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();
+
+        // failure case
+        resetMocks();
+        getMockEndpoint("mock:complete").expectedMessageCount(0);
+        getMockEndpoint("mock:failure").expectedMessageCount(1);
+
+        try {
+            template.sendBody("direct:fail", "Boom");
+        } catch (Exception e) {
+            // expected
+        }
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testLocalConfigurationBeforeConsumerFiringCount() throws Exception {
+        // BeforeConsumer mode, both routes opt in. onCompletion should fire only once.
+        context.addRoutes(new RouteConfigurationBuilder() {
+            @Override
+            public void configuration() {
+                routeConfiguration("myconfig").onCompletion().modeBeforeConsumer()
+                        .setHeader("count", constant(1));
+            }
+        });
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:consumer").routeConfigurationId("myconfig")
+                        .to("direct:processor");
+
+                from("direct:processor").routeConfigurationId("myconfig")
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        Exchange result = template.request("direct:consumer",
+                e -> e.getMessage().setBody("Hello World"));
+
+        assertMockEndpointsSatisfied();
+        // The count header should be 1 (fired once, not twice)
+        assertEquals(1, result.getMessage().getHeader("count"));
+    }
+
 }

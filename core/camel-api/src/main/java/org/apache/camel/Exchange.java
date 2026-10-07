@@ -261,6 +261,11 @@ public interface Exchange extends VariableAware {
      * exchange, even when multiple opted-in routes are traversed in the same exchange.
      */
     String ON_COMPLETION_FIRED_CONFIG_IDS = "CamelOnCompletionFiredConfigIds";
+    /**
+     * Exchange property key for tracking which routes have registered a synchronization for each named route
+     * configuration ID. Used to defer BeforeConsumer firing from an inner route when the consumer route also opted in.
+     */
+    String ON_COMPLETION_CONFIG_REGISTERED_ROUTES = "CamelOnCompletionConfigRegisteredRoutes";
     String OFFSET = "CamelOffset";
     String OVERRULE_FILE_NAME = "CamelOverruleFileName";
 

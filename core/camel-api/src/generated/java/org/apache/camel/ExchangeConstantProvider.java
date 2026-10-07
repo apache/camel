@@ -17,7 +17,7 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(159);
+        Map<String, String> map = new HashMap<>(160);
         map.put("ACTIVITY_SPAN_TAGS", "CamelActivitySpanTags");
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
@@ -130,6 +130,7 @@ public class ExchangeConstantProvider {
         map.put("MULTICAST_INDEX", "CamelMulticastIndex");
         map.put("OFFSET", "CamelOffset");
         map.put("ON_COMPLETION", "CamelOnCompletion");
+        map.put("ON_COMPLETION_CONFIG_REGISTERED_ROUTES", "CamelOnCompletionConfigRegisteredRoutes");
         map.put("ON_COMPLETION_FIRED_CONFIG_IDS", "CamelOnCompletionFiredConfigIds");
         map.put("ON_COMPLETION_ROUTE_IDS", "CamelOnCompletionRouteIds");
         map.put("OTEL_ACTIVE_SPAN", "OpenTracing.activeSpan");
