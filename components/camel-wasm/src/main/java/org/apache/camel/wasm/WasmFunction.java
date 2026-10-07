@@ -16,24 +16,30 @@
  */
 package org.apache.camel.wasm;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import run.endive.runtime.ExportFunction;
 import run.endive.runtime.Instance;
 import run.endive.wasm.WasmModule;
 
 public class WasmFunction implements AutoCloseable {
+    private static final Logger LOG = LoggerFactory.getLogger(WasmFunction.class);
+
     private final Lock lock;
 
     private final WasmModule module;
     private final String functionName;
 
-    private final Instance instance;
-    private final ExportFunction function;
-    private final ExportFunction alloc;
-    private final ExportFunction dealloc;
+    // guarded by lock; null after a failed call until the next call creates a new instance
+    private Instance instance;
+    private ExportFunction function;
+    private ExportFunction alloc;
+    private ExportFunction dealloc;
 
     public WasmFunction(WasmModule module, String functionName) {
         this.lock = new ReentrantLock();
@@ -41,19 +47,15 @@ public class WasmFunction implements AutoCloseable {
         this.module = Objects.requireNonNull(module);
         this.functionName = Objects.requireNonNull(functionName);
 
-        this.instance = Instance.builder(this.module).build();
-        this.function = this.instance.export(this.functionName);
-        this.alloc = this.instance.export(Wasm.FN_ALLOC);
-        this.dealloc = this.instance.export(Wasm.FN_DEALLOC);
+        createInstance();
     }
 
     public byte[] run(byte[] in) throws Exception {
         Objects.requireNonNull(in);
 
-        int inPtr = -1;
-        int inSize = in.length;
-        int outPtr = -1;
-        int outSize = 0;
+        final int inSize = in.length;
+        final byte[] out;
+        final boolean error;
 
         //
         // Wasm execution is not thread safe so we must put a
@@ -61,41 +63,70 @@ public class WasmFunction implements AutoCloseable {
         //
         lock.lock();
         try {
+            if (instance == null) {
+                createInstance();
+            }
+
             try {
-                inPtr = (int) alloc.apply(inSize)[0];
+                int inPtr = (int) alloc.apply(inSize)[0];
                 instance.memory().write(inPtr, in);
 
                 long[] results = function.apply(inPtr, inSize);
                 long ptrAndSize = results[0];
 
-                outPtr = (int) (ptrAndSize >> 32);
-                outSize = (int) ptrAndSize;
+                int outPtr = (int) (ptrAndSize >> 32);
+                int outSize = (int) ptrAndSize;
 
                 // assume the max output is 31 bit, leverage the first bit for
                 // error detection
-                if (isError(outSize)) {
-                    int errSize = errSize(outSize);
-                    String errData = instance.memory().readString(outPtr, errSize);
-
-                    throw new RuntimeException(errData);
+                error = isError(outSize);
+                if (error) {
+                    outSize = errSize(outSize);
                 }
 
-                return instance.memory().readBytes(outPtr, outSize);
-            } finally {
-                if (inPtr != -1) {
-                    dealloc.apply(inPtr, inSize);
-                }
-                if (outPtr != -1) {
-                    dealloc.apply(outPtr, outSize);
-                }
+                out = instance.memory().readBytes(outPtr, outSize);
+
+                dealloc.apply(inPtr, inSize);
+                dealloc.apply(outPtr, outSize);
+            } catch (RuntimeException | Error e) {
+                // The guest trapped, was interrupted or failed otherwise: its memory and globals are left as the
+                // failed call left them, and whatever it allocated before the failure can never be released.
+                // Discard the instance instead of calling into it again, so the original exception is propagated
+                // as is, and create a new one on the next call.
+                discardInstance(e);
+                throw e;
             }
         } finally {
             lock.unlock();
         }
+
+        if (error) {
+            throw new RuntimeException(new String(out, StandardCharsets.UTF_8));
+        }
+
+        return out;
     }
 
     @Override
     public void close() throws Exception {
+    }
+
+    private void createInstance() {
+        Instance newInstance = Instance.builder(this.module).build();
+
+        this.function = newInstance.export(this.functionName);
+        this.alloc = newInstance.export(Wasm.FN_ALLOC);
+        this.dealloc = newInstance.export(Wasm.FN_DEALLOC);
+        this.instance = newInstance;
+    }
+
+    private void discardInstance(Throwable cause) {
+        LOG.debug("Discarding the Wasm instance of function {} after a failed call: {}", functionName, cause.getMessage());
+
+        this.instance = null;
+        this.function = null;
+        this.alloc = null;
+        this.dealloc = null;
     }
 
     private static boolean isError(int number) {

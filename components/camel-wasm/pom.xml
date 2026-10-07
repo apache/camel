@@ -74,6 +74,12 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>run.endive</groupId>
+            <artifactId>wabt</artifactId>
+            <version>${endive-version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
