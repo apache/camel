@@ -39,10 +39,12 @@ for this component:
 == URI format
 
 ----
-openfeature:domain[?options]
+openfeature:domain[/evaluationType][?options]
 ----
 
-Where *domain* is the OpenFeature domain to bind the provider to.
+Where *domain* is the OpenFeature domain to bind the provider to and
+*evaluationType* is an optional path parameter that selects the evaluation
+type (`boolean`, `variant`, or `isEnabled`).
 
 // component-configure options: START
 // component-configure options: END
@@ -69,13 +71,26 @@ The component resolves the feature flag provider in this order:
 
 == Evaluation type
 
-The evaluation type (boolean or string) is determined by the `evaluationType`
-option when set:
+The evaluation type (boolean or string) can be set as a path parameter in
+the endpoint URI or as a query parameter / component property:
 
-* `evaluationType=boolean` — boolean evaluation (`getBooleanValue`)
-* `evaluationType=variant` — string evaluation (`getStringValue`)
+* `boolean` — boolean evaluation (`getBooleanValue`)
+* `isEnabled` — same as `boolean`, semantically indicates a feature toggle check
+* `variant` — string evaluation (`getStringValue`)
 
-When `evaluationType` is not set, the type is inferred from `defaultValue`:
+When `evaluationType` appears both as a path parameter and as a query
+parameter or component property, the path parameter takes precedence.
+
+Examples:
+
+----
+openfeature:flags/boolean?flagKey=enrichment-enabled
+openfeature:flags/isEnabled?flagKey=enrichment-enabled
+openfeature:flags/variant?flagKey=checkout-banner
+openfeature:flags?flagKey=enrichment-enabled&evaluationType=boolean
+----
+
+When `evaluationType` is not set at all, the type is inferred from `defaultValue`:
 
 * When `defaultValue` is `"true"` or `"false"` (case-insensitive),
   boolean evaluation is used.
@@ -172,8 +187,9 @@ Boolean evaluation is the default (`evaluationType` is unset and
 
 === Variant flag (string evaluation)
 
-A variant flag returns a string value rather than a boolean. Use
-`evaluationType=variant` to select string evaluation:
+A variant flag returns a string value rather than a boolean. Set
+`evaluationType` to `variant` — either as a path parameter or query
+parameter:
 
 [source,json]
 ----
@@ -194,7 +210,7 @@ A variant flag returns a string value rather than a boolean. Use
 [source,java]
 ----
 from("direct:start")
-    .to("openfeature:flags?flagKey=checkout-banner&evaluationType=variant&resultProperty=banner")
+    .to("openfeature:flags/variant?flagKey=checkout-banner&resultProperty=banner")
     .log("Banner: ${exchangeProperty.banner}");
 ----
 
@@ -236,7 +252,7 @@ to the same variant:
 ----
 from("direct:start")
     .setHeader("CamelOpenFeatureTargetingKey", simple("${header.orderId}"))
-    .to("openfeature:flags?flagKey=routing-algorithm&evaluationType=variant&resultProperty=algorithm")
+    .to("openfeature:flags/variant?flagKey=routing-algorithm&resultProperty=algorithm")
     .toD("direct:route-${exchangeProperty.algorithm}");
 ----
 
@@ -274,7 +290,7 @@ The route stores the result in an exchange property and routes dynamically:
 [source,java]
 ----
 from("direct:start")
-    .to("openfeature:flags?flagKey=order-compliance-v2&evaluationType=variant&resultProperty=orderVariant")
+    .to("openfeature:flags/variant?flagKey=order-compliance-v2&resultProperty=orderVariant")
     .toD("direct:orders-${exchangeProperty.orderVariant}");
 ----
 
@@ -287,7 +303,7 @@ from("direct:start")
     .setHeader("CamelOpenFeatureTargetingKey", constant("order-123"))
     .setHeader("CamelOpenFeatureEvaluationContext",
         constant(Map.of("customer_tier", "ENTERPRISE")))
-    .to("openfeature:flags?flagKey=order-compliance-v2&evaluationType=variant&resultProperty=orderVariant")
+    .to("openfeature:flags/variant?flagKey=order-compliance-v2&resultProperty=orderVariant")
     .toD("direct:orders-${exchangeProperty.orderVariant}");
 ----
 
@@ -297,7 +313,7 @@ evaluation context:
 [source,java]
 ----
 from("direct:start")
-    .to("openfeature:flags?flagKey=order-compliance-v2&evaluationType=variant"
+    .to("openfeature:flags/variant?flagKey=order-compliance-v2"
         + "&resultProperty=orderVariant&contextFromBody=true")
     .toD("direct:orders-${exchangeProperty.orderVariant}");
 ----

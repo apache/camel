@@ -54,7 +54,17 @@ public class OpenFeatureComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        OpenFeatureEndpoint endpoint = new OpenFeatureEndpoint(uri, this, remaining, configuration.copy());
+        String domain = remaining;
+        String evaluationType = null;
+        int idx = remaining.indexOf('/');
+        if (idx >= 0) {
+            domain = remaining.substring(0, idx);
+            String pathValue = remaining.substring(idx + 1);
+            if (!pathValue.isBlank()) {
+                evaluationType = pathValue;
+            }
+        }
+        OpenFeatureEndpoint endpoint = new OpenFeatureEndpoint(uri, this, domain, evaluationType, configuration.copy());
         setProperties(endpoint, parameters);
         return endpoint;
     }

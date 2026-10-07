@@ -51,7 +51,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Evaluate feature flags using the OpenFeature specification with flagd. */
-@UriEndpoint(firstVersion = "4.23.0", scheme = "openfeature", title = "OpenFeature", syntax = "openfeature:domain",
+@UriEndpoint(firstVersion = "4.23.0", scheme = "openfeature", title = "OpenFeature",
+             syntax = "openfeature:domain/evaluationType",
              producerOnly = true, category = { Category.CLOUD }, headersClass = OpenFeatureConstants.class)
 public class OpenFeatureEndpoint extends DefaultEndpoint {
 
@@ -59,8 +60,14 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
     private static final String DEFAULT_PROVIDER_BEAN = "flags";
 
     @UriPath
-    @Metadata(required = true)
+    @Metadata(required = true, description = "The OpenFeature domain to bind the provider to.")
     private String domain;
+
+    @UriPath(enums = "boolean,variant,isEnabled",
+             description = "The evaluation type. 'boolean' and 'isEnabled' use boolean evaluation (getBooleanValue)."
+                           + " 'variant' uses string evaluation (getStringValue)."
+                           + " When not set, the type is inferred from defaultValue.")
+    private String evaluationType;
 
     @UriParam
     private OpenFeatureConfiguration configuration;
@@ -69,10 +76,11 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
     private volatile File tempFlagFile;
     private volatile boolean ownedProvider;
 
-    public OpenFeatureEndpoint(String uri, OpenFeatureComponent component, String domain,
+    public OpenFeatureEndpoint(String uri, OpenFeatureComponent component, String domain, String evaluationType,
                                OpenFeatureConfiguration configuration) {
         super(uri, component);
         this.domain = domain;
+        this.evaluationType = evaluationType;
         this.configuration = configuration;
     }
 
@@ -284,13 +292,16 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
             evalType = exchange.getProperty(OpenFeatureConstants.EVALUATION_TYPE, String.class);
         }
         if (evalType == null) {
+            evalType = evaluationType;
+        }
+        if (evalType == null) {
             evalType = configuration.getEvaluationType();
         }
         return evalType;
     }
 
     private boolean isBooleanEvaluation(String evalType) {
-        if ("boolean".equalsIgnoreCase(evalType)) {
+        if ("boolean".equalsIgnoreCase(evalType) || "isEnabled".equalsIgnoreCase(evalType)) {
             return true;
         }
         if ("variant".equalsIgnoreCase(evalType)) {

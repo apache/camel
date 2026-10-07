@@ -17,7 +17,7 @@ import org.apache.camel.spi.EndpointUriFactory;
 @Generated("org.apache.camel.maven.packaging.GenerateEndpointUriFactoryMojo")
 public class OpenFeatureEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":domain";
+    private static final String BASE = ":domain/evaluationType";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
@@ -59,6 +59,7 @@ public class OpenFeatureEndpointUriFactory extends org.apache.camel.support.comp
         Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "domain", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "evaluationType", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

@@ -79,7 +79,7 @@ class OpenFeatureLanguageTest extends CamelTestSupport {
                         .filter().language("openfeature", "enrichment-enabled")
                             .to("mock:lang-filtered")
                         .end()
-                        .to("openfeature:flags?flagKey=hazmat-compliance-v2&evaluationType=variant&resultProperty=variant");
+                        .to("openfeature:flags/variant?flagKey=hazmat-compliance-v2&resultProperty=variant");
             }
         };
     }
