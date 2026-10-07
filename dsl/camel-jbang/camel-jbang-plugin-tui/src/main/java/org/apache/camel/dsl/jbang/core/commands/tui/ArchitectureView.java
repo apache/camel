@@ -502,6 +502,11 @@ final class ArchitectureView {
     // ---- rendering ----
 
     void render(Frame frame, Rect area, String integrationName) {
+        render(frame, area, integrationName, List.of());
+    }
+
+    /** Renders the view, with the given spans (the levels of the Diagram tab) after its title. */
+    void render(Frame frame, Rect area, String integrationName, List<Span> titleSuffix) {
         checkForChanges();
         // the AI's groups come and go with its hints (the ai view setting, the AI overview setting)
         Capabilities want = IntegrationSummaryHints.enabled() ? aiCapabilities : factCapabilities;
@@ -520,6 +525,13 @@ final class ArchitectureView {
             return;
         }
         Line title = title(integrationName);
+        if (!titleSuffix.isEmpty()) {
+            // in the Diagram tab the levels after the title name the level
+            List<Span> spans = new ArrayList<>(title.spans());
+            spans.set(0, Span.raw(" Diagram"));
+            spans.addAll(titleSuffix);
+            title = Line.from(spans);
+        }
         Group selected = selectedGroup();
         if (selected != null && area.width() > 70) {
             List<Rect> chunks = Layout.horizontal()
