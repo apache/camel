@@ -20,6 +20,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 @UriParams
 public class ApicurioRegistryConfiguration implements Cloneable {
@@ -43,7 +44,7 @@ public class ApicurioRegistryConfiguration implements Cloneable {
     @UriParam(label = "security", description = "Username for basic authentication")
     private String username;
 
-    @UriParam(label = "security", secret = true, description = "Password for basic authentication")
+    @UriParam(label = "security", security = "secret", description = "Password for basic authentication")
     private String password;
 
     @UriParam(label = "security", description = "OAuth2 token endpoint URL")
@@ -52,7 +53,7 @@ public class ApicurioRegistryConfiguration implements Cloneable {
     @UriParam(label = "security", description = "OAuth2 client ID")
     private String clientId;
 
-    @UriParam(label = "security", secret = true, description = "OAuth2 client secret")
+    @UriParam(label = "security", security = "secret", description = "OAuth2 client secret")
     private String clientSecret;
 
     @UriParam(label = "security", description = "OAuth2 scope")
@@ -73,6 +74,64 @@ public class ApicurioRegistryConfiguration implements Cloneable {
               description = "Whether to throw an exception on validation failure (validate operation). When false, sets result headers instead.",
               defaultValue = "true")
     private boolean failOnValidation = true;
+
+    @UriParam(label = "security",
+              description = "To configure TLS, such as a trust store for a registry with a private CA or a client"
+                            + " certificate (mTLS), using the Camel JSSE configuration. Also applies to the OAuth2"
+                            + " token endpoint.")
+    private SSLContextParameters sslContextParameters;
+
+    @UriParam(label = "proxy", description = "The proxy host to use for registry (and OAuth2 token) requests")
+    private String proxyHost;
+
+    @UriParam(label = "proxy", description = "The proxy port")
+    private Integer proxyPort;
+
+    @UriParam(label = "proxy", description = "The username for proxy authentication")
+    private String proxyUsername;
+
+    @UriParam(label = "proxy", security = "secret", description = "The password for proxy authentication")
+    private String proxyPassword;
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    public String getProxyUsername() {
+        return proxyUsername;
+    }
+
+    public void setProxyUsername(String proxyUsername) {
+        this.proxyUsername = proxyUsername;
+    }
+
+    public String getProxyPassword() {
+        return proxyPassword;
+    }
+
+    public void setProxyPassword(String proxyPassword) {
+        this.proxyPassword = proxyPassword;
+    }
 
     public String getRegistryUrl() {
         return registryUrl;

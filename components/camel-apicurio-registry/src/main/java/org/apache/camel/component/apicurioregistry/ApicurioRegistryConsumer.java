@@ -23,18 +23,24 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import io.apicurio.registry.rest.client.RegistryClient;
+import io.apicurio.registry.rest.client.models.ProblemDetails;
 import io.apicurio.registry.rest.client.models.SearchedVersion;
 import io.apicurio.registry.rest.client.models.SortOrder;
 import io.apicurio.registry.rest.client.models.VersionSearchResults;
 import io.apicurio.registry.rest.client.models.VersionSortBy;
+import io.apicurio.registry.rest.client.models.VersionState;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
 
     static final int PAGE_SIZE = 100;
+
+    private static final Logger LOG = LoggerFactory.getLogger(ApicurioRegistryConsumer.class);
 
     private final ApicurioRegistryEndpoint endpoint;
     private final ApicurioRegistryConfiguration configuration;
@@ -51,60 +57,81 @@ public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         String groupId = endpoint.getGroupId();
         String artifactId = endpoint.getArtifactId();
-
-        if (groupId == null || artifactId == null) {
-            throw new IllegalArgumentException(
-                    "Both groupId and artifactId are required for the consumer");
-        }
-
         RegistryClient client = endpoint.getRegistryClient();
-        List<SearchedVersion> versions = fetchNewVersions(client, groupId, artifactId);
 
         int count = 0;
-        for (SearchedVersion version : versions) {
+        for (SearchedVersion version : fetchNewVersions(client, groupId, artifactId)) {
             Long globalId = version.getGlobalId();
-            if (lastSeenGlobalId == null || globalId > lastSeenGlobalId) {
-                Exchange exchange = createExchange(false);
-                try {
-                    Message message = exchange.getIn();
+            if (configuration.isFetchContent() && version.getState() == VersionState.DISABLED) {
+                // the registry answers 404 for the content of a disabled version, so it can never be delivered
+                LOG.debug("Skipping disabled artifact version {} (globalId {})", version.getVersion(), globalId);
+                lastSeenGlobalId = globalId;
+                continue;
+            }
+            Exchange exchange = createExchange(false);
+            try {
+                Message message = exchange.getIn();
+                message.setHeader(ApicurioRegistryConstants.HEADER_GROUP_ID, groupId);
+                message.setHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_ID, artifactId);
+                message.setHeader(ApicurioRegistryConstants.HEADER_VERSION, version.getVersion());
+                message.setHeader(ApicurioRegistryConstants.HEADER_GLOBAL_ID, globalId);
+                message.setHeader(ApicurioRegistryConstants.HEADER_CONTENT_ID, version.getContentId());
+                message.setHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_TYPE, version.getArtifactType());
+                if (version.getState() != null) {
+                    message.setHeader(ApicurioRegistryConstants.HEADER_VERSION_STATE, version.getState().getValue());
+                }
 
-                    message.setHeader(ApicurioRegistryConstants.HEADER_GROUP_ID, groupId);
-                    message.setHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_ID, artifactId);
-                    message.setHeader(ApicurioRegistryConstants.HEADER_VERSION, version.getVersion());
-                    message.setHeader(ApicurioRegistryConstants.HEADER_GLOBAL_ID, globalId);
-                    message.setHeader(ApicurioRegistryConstants.HEADER_CONTENT_ID, version.getContentId());
-                    message.setHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_TYPE, version.getArtifactType());
-                    if (version.getState() != null) {
-                        message.setHeader(ApicurioRegistryConstants.HEADER_VERSION_STATE,
-                                version.getState().getValue());
+                if (configuration.isFetchContent()) {
+                    byte[] content = fetchContent(client, groupId, artifactId, version);
+                    if (content == null) {
+                        lastSeenGlobalId = globalId;
+                        continue;
                     }
+                    message.setBody(content);
+                } else {
+                    message.setBody(version);
+                }
 
-                    if (configuration.isFetchContent()) {
-                        try (InputStream content = client.groups().byGroupId(groupId).artifacts()
-                                .byArtifactId(artifactId).versions()
-                                .byVersionExpression(version.getVersion()).content().get()) {
-                            message.setBody(content.readAllBytes());
-                        }
+                getProcessor().process(exchange);
+                if (exchange.getException() != null) {
+                    // do not advance the watermark so the version is retried on the next poll
+                    if (exchange.getExchangeExtension().isErrorHandlerHandledSet()) {
+                        // the error handler has already logged the failure
+                        LOG.debug("Artifact version with globalId {} failed and will be retried on the next poll", globalId);
                     } else {
-                        message.setBody(version);
-                    }
-
-                    getProcessor().process(exchange);
-                    if (exchange.getException() != null) {
-                        // do not advance the watermark so the version is retried on the next poll
                         getExceptionHandler().handleException(
                                 "Error processing artifact version with globalId " + globalId, exchange,
                                 exchange.getException());
-                        break;
                     }
-                    lastSeenGlobalId = globalId;
-                    count++;
-                } finally {
-                    releaseExchange(exchange, false);
+                    break;
                 }
+                lastSeenGlobalId = globalId;
+                count++;
+            } finally {
+                releaseExchange(exchange, false);
             }
         }
         return count;
+    }
+
+    /**
+     * Fetches the content of a version, or returns null if the version no longer has retrievable content (it was
+     * disabled or deleted after the version list was read).
+     */
+    private static byte[] fetchContent(
+            RegistryClient client, String groupId, String artifactId, SearchedVersion version)
+            throws Exception {
+        try (InputStream content = client.groups().byGroupId(groupId).artifacts().byArtifactId(artifactId)
+                .versions().byVersionExpression(version.getVersion()).content().get()) {
+            return content.readAllBytes();
+        } catch (ProblemDetails e) {
+            if (e.getStatus() != null && e.getStatus() == 404) {
+                LOG.debug("Skipping artifact version {} (globalId {}) whose content is no longer available: {}",
+                        version.getVersion(), version.getGlobalId(), e.getDetail());
+                return null;
+            }
+            throw e;
+        }
     }
 
     /**
@@ -114,6 +141,20 @@ public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
     private List<SearchedVersion> fetchNewVersions(RegistryClient client, String groupId, String artifactId) {
         // keyed by globalId: a version created between page requests shifts the pages and may repeat one entry
         Map<Long, SearchedVersion> answer = new TreeMap<>();
+        if (lastSeenGlobalId != null) {
+            // cheap probe so that an idle poll only transfers the newest version
+            VersionSearchResults newest = client.groups().byGroupId(groupId).artifacts().byArtifactId(artifactId)
+                    .versions().get(config -> {
+                        config.queryParameters.orderby = VersionSortBy.GlobalId;
+                        config.queryParameters.order = SortOrder.Desc;
+                        config.queryParameters.offset = 0;
+                        config.queryParameters.limit = 1;
+                    });
+            if (newest == null || newest.getVersions() == null || newest.getVersions().isEmpty()
+                    || newest.getVersions().get(0).getGlobalId() <= lastSeenGlobalId) {
+                return List.of();
+            }
+        }
         int offset = 0;
         while (true) {
             final int pageOffset = offset;
