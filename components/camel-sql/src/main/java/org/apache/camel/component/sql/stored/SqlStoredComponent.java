@@ -22,14 +22,16 @@ import javax.sql.DataSource;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.SecretRotationAware;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DataSourceHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.PropertiesHelper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @Component("sql-stored")
-public class SqlStoredComponent extends DefaultComponent {
+public class SqlStoredComponent extends DefaultComponent implements SecretRotationAware {
 
     @Metadata(autowired = true)
     private DataSource dataSource;
@@ -110,6 +112,16 @@ public class SqlStoredComponent extends DefaultComponent {
      */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
+
+    @Override
+    public void onSecretRotation(Object source) throws Exception {
+        DataSourceHelper.evictComponentDataSources(
+                this.dataSource,
+                getCamelContext().getEndpoints(),
+                this,
+                ep -> ep instanceof SqlStoredEndpoint ? ((SqlStoredEndpoint) ep).getDataSource() : null,
+                source);
     }
 
 }
