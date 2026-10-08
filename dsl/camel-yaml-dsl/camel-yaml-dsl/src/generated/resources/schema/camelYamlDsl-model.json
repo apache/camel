@@ -3878,6 +3878,17 @@
         "index" : 6,
         "group" : "common"
       }, {
+        "name" : "allowNullBody",
+        "type" : "boolean",
+        "description" : "Indicates whether a null body is skipped instead of marshalled. By default the data format marshals the null, and what that gives depends on the data format (JSON gives the text null). When true, a null body is not marshalled and the body stays null.",
+        "title" : "Allow Null Body",
+        "default" : "false",
+        "displayName" : "Allow Null Body",
+        "kind" : "attribute",
+        "index" : 7,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
         "name" : "asn1",
         "type" : "object",
         "ref" : "aSN1"

@@ -2088,6 +2088,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteProcessorDefinitionAttributes(sb, def);
         doWriteAttribute(sb, "variableSend", def.getVariableSend(), null);
         doWriteAttribute(sb, "variableReceive", def.getVariableReceive(), null);
+        doWriteAttribute(sb, "allowNullBody", def.getAllowNullBody(), "false");
         if (def.getDataFormatType() != null) {
             switch (def.getDataFormatType().getClass().getSimpleName()) {
                 case "ASN1DataFormat" -> doWriteChildElement(sb, "asn1", (ASN1DataFormat) def.getDataFormatType(), this::doWriteASN1DataFormat);

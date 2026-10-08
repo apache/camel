@@ -2849,6 +2849,95 @@
         "description" : "Serializes the message body into a specific data format such as JSON, XML, CSV, or Protobuf for transmission or storage",
         "type" : "object",
         "additionalProperties" : false,
+        "properties" : {
+          "allowNullBody" : {
+            "type" : "boolean",
+            "title" : "Allow Null Body",
+            "description" : "Indicates whether a null body is skipped instead of marshalled. By default the data format marshals the null, and what that gives depends on the data format (JSON gives the text null). When true, a null body is not marshalled and the body stays null.",
+            "default" : false
+          },
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "The description for this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
+            "default" : false
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "The note for this node"
+          },
+          "variableReceive" : {
+            "type" : "string",
+            "title" : "Variable Receive",
+            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
+          },
+          "variableSend" : {
+            "type" : "string",
+            "title" : "Variable Send",
+            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
+          },
+          "asn1" : { },
+          "avro" : { },
+          "barcode" : { },
+          "base64" : { },
+          "beanio" : { },
+          "bindy" : { },
+          "cbor" : { },
+          "crypto" : { },
+          "csv" : { },
+          "custom" : { },
+          "dfdl" : { },
+          "fhirJson" : { },
+          "fhirXml" : { },
+          "flatpack" : { },
+          "fory" : { },
+          "grok" : { },
+          "groovyJson" : { },
+          "groovyXml" : { },
+          "gzipDeflater" : { },
+          "hl7" : { },
+          "ical" : { },
+          "iso8583" : { },
+          "jacksonXml" : { },
+          "jaxb" : { },
+          "json" : { },
+          "jsonApi" : { },
+          "lzf" : { },
+          "mimeMultipart" : { },
+          "ocsf" : { },
+          "parquetAvro" : { },
+          "pgp" : { },
+          "pqc" : { },
+          "protobuf" : { },
+          "rss" : { },
+          "smooks" : { },
+          "soap" : { },
+          "swiftMt" : { },
+          "swiftMx" : { },
+          "syslog" : { },
+          "tarFile" : { },
+          "thrift" : { },
+          "toon" : { },
+          "ubl" : { },
+          "univocityCsv" : { },
+          "univocityFixed" : { },
+          "univocityTsv" : { },
+          "xmlSecurity" : { },
+          "yaml" : { },
+          "zipDeflater" : { },
+          "zipFile" : { }
+        },
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
@@ -3251,90 +3340,7 @@
               }
             }
           } ]
-        } ],
-        "properties" : {
-          "description" : {
-            "type" : "string",
-            "title" : "Description",
-            "description" : "The description for this node"
-          },
-          "disabled" : {
-            "type" : "boolean",
-            "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
-            "default" : false
-          },
-          "id" : {
-            "type" : "string",
-            "title" : "Id",
-            "description" : "The id of this node"
-          },
-          "note" : {
-            "type" : "string",
-            "title" : "Note",
-            "description" : "The note for this node"
-          },
-          "variableReceive" : {
-            "type" : "string",
-            "title" : "Variable Receive",
-            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
-          },
-          "variableSend" : {
-            "type" : "string",
-            "title" : "Variable Send",
-            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
-          },
-          "asn1" : { },
-          "avro" : { },
-          "barcode" : { },
-          "base64" : { },
-          "beanio" : { },
-          "bindy" : { },
-          "cbor" : { },
-          "crypto" : { },
-          "csv" : { },
-          "custom" : { },
-          "dfdl" : { },
-          "fhirJson" : { },
-          "fhirXml" : { },
-          "flatpack" : { },
-          "fory" : { },
-          "grok" : { },
-          "groovyJson" : { },
-          "groovyXml" : { },
-          "gzipDeflater" : { },
-          "hl7" : { },
-          "ical" : { },
-          "iso8583" : { },
-          "jacksonXml" : { },
-          "jaxb" : { },
-          "json" : { },
-          "jsonApi" : { },
-          "lzf" : { },
-          "mimeMultipart" : { },
-          "ocsf" : { },
-          "parquetAvro" : { },
-          "pgp" : { },
-          "pqc" : { },
-          "protobuf" : { },
-          "rss" : { },
-          "smooks" : { },
-          "soap" : { },
-          "swiftMt" : { },
-          "swiftMx" : { },
-          "syslog" : { },
-          "tarFile" : { },
-          "thrift" : { },
-          "toon" : { },
-          "ubl" : { },
-          "univocityCsv" : { },
-          "univocityFixed" : { },
-          "univocityTsv" : { },
-          "xmlSecurity" : { },
-          "yaml" : { },
-          "zipDeflater" : { },
-          "zipFile" : { }
-        }
+        } ]
       },
       "org.apache.camel.model.MulticastDefinition" : {
         "title" : "Multicast",
