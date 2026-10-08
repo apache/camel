@@ -25,6 +25,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -236,6 +237,59 @@ class SemanticContractTest {
             assertThat(context.resolveLanguage("semantic").createExpression("ref:nested")
                     .evaluate(exchange, Boolean.class)).isFalse();
             assertThat(current.evaluate(exchange, Boolean.class)).isTrue();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void latePredicatesValidatePendingReplacement(boolean compatible) throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var registry = SemanticEvaluations.get(context);
+            var original = new SemanticEvaluation("detect", "content", null, Map.of());
+            var candidate = new SemanticEvaluation("detect", "content", "${header.candidate}", Map.of());
+            var expert = new ContentExpert() {
+                int candidateValidations;
+                boolean attempted;
+                Predicate latePredicate;
+
+                @Override
+                public void validate(SemanticEvaluation evaluation) {
+                    // First validate the declaration; then enter the already-copied expression validators.
+                    if (evaluation == candidate && ++candidateValidations == 2) {
+                        attempted = true;
+                        assertThat(registry.get("target")).isSameAs(original);
+                        latePredicate = context.resolveLanguage("semantic").createPredicate("ref:target");
+                    }
+                }
+            };
+            context.getRegistry().bind("content", expert);
+            registry.replace("test", Map.of("outer", original, "target", original));
+            context.start();
+            var language = context.resolveLanguage("semantic");
+            var outer = language.createExpression("ref:outer");
+            var target = compatible
+                    ? new SemanticEvaluation("detect", "content", null, Map.of("threshold", 0.9))
+                    : new SemanticEvaluation("rank", "content", null, Map.of());
+            Map<String, SemanticEvaluation> replacement = Map.of("outer", candidate, "target", target);
+            var exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody("published state");
+            exchange.getMessage().setHeader("candidate", "replacement state");
+            if (compatible) {
+                registry.replace("test", replacement);
+                assertThat(registry.get("target")).isSameAs(target);
+                assertThat(expert.latePredicate.matches(exchange)).isFalse();
+            } else {
+                assertThatThrownBy(() -> registry.replace("test", replacement))
+                        .hasMessageContaining("Semantic predicate requires a boolean evaluation: target");
+                assertThat(registry.get("outer")).isSameAs(original);
+                assertThat(registry.get("target")).isSameAs(original);
+                assertThat(expert.latePredicate).isNull();
+            }
+            assertThat(expert.attempted).isTrue();
+            assertThat(outer.evaluate(exchange, Boolean.class)).isTrue();
+            // Both success and failure must clear the pending replacement before later registrations.
+            registry.replace("test", Map.of("outer", original, "target", original));
+            assertThat(language.createPredicate("ref:target").matches(exchange)).isTrue();
         }
     }
 

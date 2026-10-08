@@ -321,6 +321,7 @@ public class SemanticLanguage extends LanguageSupport {
 
     private <T> T validationOnly(Map<String, SemanticEvaluation> snapshot, Supplier<T> action) {
         Validation previous = validation.get();
+        // An explicit snapshot overrides the scope; nested calls without one inherit the outer validation scope.
         validation.set(snapshot != null || previous == null ? new Validation(snapshot) : previous);
         try {
             return action.get();

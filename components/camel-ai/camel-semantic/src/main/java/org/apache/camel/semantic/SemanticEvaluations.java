@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
@@ -36,6 +37,8 @@ public final class SemanticEvaluations {
     private final Map<String, Resource> resources = new HashMap<>();
     private volatile Map<String, SemanticEvaluation> evaluations = Map.of();
     private final Map<Consumer<Map<String, SemanticEvaluation>>, List<String>> validators = new WeakHashMap<>();
+    // Accessed only under this registry's monitor, including reentrant validator registration.
+    private PendingReplacement pendingReplacement;
 
     private SemanticEvaluations(CamelContext context) {
         this.context = context;
@@ -51,11 +54,16 @@ public final class SemanticEvaluations {
     /**
      * Validate current declarations and weakly track a callback owned by its initialized expression. The callback
      * receives the complete immutable snapshot so nested references can be validated against the same replacement.
+     * Registrations made during replacement validation must also accept the pending replacement.
      */
     public synchronized void setValidator(List<String> names, Consumer<Map<String, SemanticEvaluation>> validator) {
         // A replacement may have occurred between the expression's initial compilation and registration.
         get(names);
+        // Reentrant registration first checks published definitions; the replacement is not visible until it succeeds.
         validator.accept(evaluations);
+        if (pendingReplacement != null && !Collections.disjoint(names, pendingReplacement.changedNames)) {
+            validator.accept(pendingReplacement.snapshot);
+        }
         validators.put(validator, List.copyOf(names));
     }
 
@@ -97,15 +105,21 @@ public final class SemanticEvaluations {
             }
         });
         Map<String, SemanticEvaluation> snapshot = Map.copyOf(replacement);
-        if (context.isStarted() && !definitions.isEmpty()) {
-            ((SemanticLanguage) context.resolveLanguage("semantic")).validateDeclarations(definitions, snapshot);
-        }
-        // Expert callbacks may initialize expressions and register additional validators reentrantly.
-        new LinkedHashMap<>(validators).forEach((validator, names) -> {
-            if (!Collections.disjoint(names, definitions.keySet())) {
-                validator.accept(snapshot);
+        PendingReplacement previous = pendingReplacement;
+        pendingReplacement = new PendingReplacement(snapshot, Set.copyOf(definitions.keySet()));
+        try {
+            if (context.isStarted() && !definitions.isEmpty()) {
+                ((SemanticLanguage) context.resolveLanguage("semantic")).validateDeclarations(definitions, snapshot);
             }
-        });
+            // Expert callbacks may initialize expressions and register additional validators reentrantly.
+            new LinkedHashMap<>(validators).forEach((validator, names) -> {
+                if (!Collections.disjoint(names, definitions.keySet())) {
+                    validator.accept(snapshot);
+                }
+            });
+        } finally {
+            pendingReplacement = previous;
+        }
         if (definitions.isEmpty()) {
             sources.remove(source);
         } else {
@@ -172,6 +186,9 @@ public final class SemanticEvaluations {
             selected.put(name, evaluation);
         }
         return Collections.unmodifiableMap(selected);
+    }
+
+    private record PendingReplacement(Map<String, SemanticEvaluation> snapshot, Set<String> changedNames) {
     }
 
 }
