@@ -300,6 +300,10 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
         if ("variant".equalsIgnoreCase(evalType)) {
             return false;
         }
+        if (evalType != null && !evalType.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Unknown evaluationType '" + evalType + "'. Supported values: boolean, variant, isEnabled");
+        }
         String dv = configuration.getDefaultValue();
         return "true".equalsIgnoreCase(dv) || "false".equalsIgnoreCase(dv);
     }

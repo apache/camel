@@ -27,6 +27,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OpenFeatureProducerTest extends CamelTestSupport {
 
@@ -204,6 +205,16 @@ class OpenFeatureProducerTest extends CamelTestSupport {
         Object result = template.requestBody("direct:is-enabled-disabled", "ignored");
         assertThat(result).isInstanceOf(Boolean.class);
         assertThat(result).isEqualTo(false);
+    }
+
+    @Test
+    void testUnknownEvaluationTypeHeaderThrows() {
+        assertThatThrownBy(() -> template.requestBodyAndHeader(
+                "direct:boolean-flag", "ignored",
+                OpenFeatureConstants.EVALUATION_TYPE, "booleen"))
+                .rootCause()
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Unknown evaluationType 'booleen'");
     }
 
     @Test
