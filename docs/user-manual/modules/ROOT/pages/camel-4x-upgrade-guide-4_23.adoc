@@ -4877,3 +4877,13 @@ In both cases the exception is thrown at expression-creation time (route startup
 processing time. Users who relied on the previous lenient behaviour must fix the malformed or
 unconvertible expressions. Scripts with unsupported DataWeave constructs must be rewritten in
 DataSonnet directly, or moved to a `.ds` file.
+
+=== camel-jbang - `camel transform dataweave` no longer aborts on parse errors in directory mode
+
+The `camel transform dataweave` CLI command previously let a `DataWeaveConversionException` propagate
+out of `converter.convert()`, which caused the entire batch to stop at the first file that triggered
+a parse error (e.g. a file using conditional object elements or XML attribute syntax that the parser
+does not yet model). The command now catches the exception per file, prints
+`<filename>: <error message>` to standard output, continues with the remaining files, and exits
+non-zero when at least one file failed. Files that convert successfully are still written to the
+output directory.
