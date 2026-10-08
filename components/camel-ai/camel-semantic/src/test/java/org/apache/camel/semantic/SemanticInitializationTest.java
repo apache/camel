@@ -101,7 +101,8 @@ class SemanticInitializationTest {
                 assertThat(lookup.get(10, TimeUnit.SECONDS)).isSameAs(expected);
             } finally {
                 release.countDown();
-                assertThat(creation.get(10, TimeUnit.SECONDS)).isNotNull();
+                assertThat(creation.get(10, TimeUnit.SECONDS))
+                        .as("registry created after the lazy lookup returns no plugin").isNotNull();
             }
         } finally {
             release.countDown();

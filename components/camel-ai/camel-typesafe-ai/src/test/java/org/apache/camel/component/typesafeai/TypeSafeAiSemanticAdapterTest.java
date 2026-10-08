@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.typesafeai;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -83,6 +84,31 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
         assertThatThrownBy(() -> adapter.validate(question)).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("band within [0,1]");
         assertThat(requests).isEmpty();
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "probability, Expected a number",
+            "answer, Answer names must match question names",
+            "answers, Expected an object"
+    })
+    void missingBooleanResponseFieldsFailBeforeAdapterMapping(String missing, String message) throws Exception {
+        JsonObject response = TypeSafeAiJson.parse(result(Map.of("question", Map.of("type", "noul", "noul", 0.9))));
+        JsonObject answers = response.getJsonObject("answers");
+        switch (missing) {
+            case "probability" -> answers.getJsonObject("question").remove("noul");
+            case "answer" -> answers.remove("question");
+            case "answers" -> response.remove("answers");
+            default -> throw new IllegalArgumentException(missing);
+        }
+        respond = request -> response.toJson();
+        var adapter = new TypeSafeAiSemanticAdapter();
+        adapter.setCamelContext(context);
+        var evaluation = new SemanticEvaluation("boolean", null, null, Map.of("instructions", "Classify"));
+        assertThatThrownBy(() -> adapter.evaluate(evaluation, "private-input"))
+                .isExactlyInstanceOf(IOException.class)
+                .hasMessage("Invalid TypeSafe AI response: " + message);
+        assertThat(requests).hasSize(1);
     }
 
     @Test

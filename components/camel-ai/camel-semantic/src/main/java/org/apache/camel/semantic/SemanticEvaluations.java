@@ -35,7 +35,6 @@ public final class SemanticEvaluations {
     private final Map<String, Map<String, SemanticEvaluation>> sources = new HashMap<>();
     private final Map<String, Resource> resources = new HashMap<>();
     private volatile Map<String, SemanticEvaluation> evaluations = Map.of();
-    private final ThreadLocal<Map<String, SemanticEvaluation>> candidate = new ThreadLocal<>();
     private final Map<Consumer<Map<String, SemanticEvaluation>>, List<String>> validators = new WeakHashMap<>();
 
     private SemanticEvaluations(CamelContext context) {
@@ -49,10 +48,14 @@ public final class SemanticEvaluations {
         }
     }
 
-    /** Validate current declarations and weakly track a callback owned by its initialized expression. */
+    /**
+     * Validate current declarations and weakly track a callback owned by its initialized expression. The callback
+     * receives the complete immutable snapshot so nested references can be validated against the same replacement.
+     */
     public synchronized void setValidator(List<String> names, Consumer<Map<String, SemanticEvaluation>> validator) {
         // A replacement may have occurred between the expression's initial compilation and registration.
-        validator.accept(get(names));
+        get(names);
+        validator.accept(evaluations);
         validators.put(validator, List.copyOf(names));
     }
 
@@ -93,39 +96,23 @@ public final class SemanticEvaluations {
                 throw new IllegalArgumentException("Duplicate semantic evaluation: " + name);
             }
         });
-        Map<String, SemanticEvaluation> previous = candidate.get();
-        candidate.set(Map.copyOf(replacement));
-        try {
-            if (context.isStarted() && !definitions.isEmpty()) {
-                ((SemanticLanguage) context.resolveLanguage("semantic")).validateDeclarations(definitions);
-            }
-            validators.forEach((validator, names) -> {
-                if (!Collections.disjoint(names, definitions.keySet())) {
-                    Map<String, SemanticEvaluation> selected = new LinkedHashMap<>();
-                    names.forEach(name -> {
-                        SemanticEvaluation evaluation = replacement.get(name);
-                        // Removed declarations remain removable; their existing expressions fail if evaluated again.
-                        if (evaluation != null) {
-                            selected.put(name, evaluation);
-                        }
-                    });
-                    validator.accept(Collections.unmodifiableMap(selected));
-                }
-            });
-        } finally {
-            if (previous == null) {
-                candidate.remove();
-            } else {
-                candidate.set(previous);
-            }
+        Map<String, SemanticEvaluation> snapshot = Map.copyOf(replacement);
+        if (context.isStarted() && !definitions.isEmpty()) {
+            ((SemanticLanguage) context.resolveLanguage("semantic")).validateDeclarations(definitions, snapshot);
         }
+        // Expert callbacks may initialize expressions and register additional validators reentrantly.
+        new LinkedHashMap<>(validators).forEach((validator, names) -> {
+            if (!Collections.disjoint(names, definitions.keySet())) {
+                validator.accept(snapshot);
+            }
+        });
         if (definitions.isEmpty()) {
             sources.remove(source);
         } else {
             sources.put(source, Map.copyOf(definitions));
         }
         resources.remove(source);
-        evaluations = Map.copyOf(replacement);
+        evaluations = snapshot;
     }
 
     /** Track a route resource so deleted files can be discarded before development-mode reload. */
@@ -157,17 +144,25 @@ public final class SemanticEvaluations {
         return evaluations.isEmpty();
     }
 
+    /**
+     * Resolve a named evaluation from the published snapshot, including when called during replacement validation.
+     * Candidate definitions become visible only after validation succeeds.
+     */
     public SemanticEvaluation get(String name) {
-        SemanticEvaluation evaluation = snapshot().get(name);
+        SemanticEvaluation evaluation = evaluations.get(name);
         if (evaluation == null) {
             throw new IllegalArgumentException("Unknown semantic evaluation: " + name);
         }
         return evaluation;
     }
 
-    /** Resolve all requested names from one immutable snapshot, preserving reference order. */
+    /**
+     * Resolve all requested names from one immutable published snapshot, preserving reference order. This also reads
+     * the published snapshot during replacement validation; candidate definitions become visible only after validation
+     * succeeds.
+     */
     public Map<String, SemanticEvaluation> get(List<String> names) {
-        Map<String, SemanticEvaluation> snapshot = snapshot();
+        Map<String, SemanticEvaluation> snapshot = evaluations;
         Map<String, SemanticEvaluation> selected = new LinkedHashMap<>();
         for (String name : names) {
             SemanticEvaluation evaluation = snapshot.get(name);
@@ -177,11 +172,6 @@ public final class SemanticEvaluations {
             selected.put(name, evaluation);
         }
         return Collections.unmodifiableMap(selected);
-    }
-
-    private Map<String, SemanticEvaluation> snapshot() {
-        Map<String, SemanticEvaluation> validation = candidate.get();
-        return validation != null ? validation : evaluations;
     }
 
 }

@@ -24,6 +24,8 @@ import org.apache.camel.Predicate;
  * Opts a Simple function into using its predicate contract for negation, including any validation in
  * {@link #matches(org.apache.camel.Exchange)}. Existing expressions retain value-based truthiness, even when they also
  * implement {@link Predicate}.
+ *
+ * @since 4.23
  */
 public interface SimplePredicateExpression extends Expression, Predicate {
     @Override

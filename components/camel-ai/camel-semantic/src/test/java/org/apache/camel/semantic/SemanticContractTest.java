@@ -36,6 +36,7 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.lowlevel.Compose;
@@ -158,6 +159,8 @@ class SemanticContractTest {
                 @Override
                 public void validate(SemanticEvaluation evaluation) {
                     if (evaluation == candidate) {
+                        assertThat(registry.get("q")).as("callback reads published evaluation").isSameAs(original);
+                        assertThat(registry.get(List.of("q"))).containsEntry("q", original);
                         entered.countDown();
                         try {
                             assertThat(release.await(10, TimeUnit.SECONDS)).isTrue();
@@ -182,6 +185,110 @@ class SemanticContractTest {
         } finally {
             release.countDown();
             callers.shutdownNow();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void expertCallbacksDoNotInheritValidationScope(boolean fail) throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var registry = SemanticEvaluations.get(context);
+            var original = new SemanticEvaluation("detect", "content", null, Map.of());
+            var candidate = new SemanticEvaluation("detect", "content", "${semantic('added')} ready", Map.of());
+            var nested = new SemanticEvaluation("detect", "content", null, Map.of("threshold", 0.9));
+            var expert = new ContentExpert() {
+                boolean checked;
+
+                @Override
+                public void validate(SemanticEvaluation evaluation) {
+                    if (evaluation == candidate) {
+                        checked = true;
+                        var exchange = new DefaultExchange(context);
+                        exchange.getMessage().setBody("published state");
+                        var language = context.resolveLanguage("semantic");
+                        assertThat(language.createExpression("ref:nested").evaluate(exchange, Boolean.class)).isTrue();
+                        // Reentrant validation must restore the outer replacement's candidate snapshot.
+                        registry.validate();
+                        if (fail) {
+                            throw new IllegalArgumentException("Reject replacement");
+                        }
+                    }
+                }
+            };
+            context.getRegistry().bind("content", expert);
+            registry.replace("test", Map.of("q", original, "nested", original));
+            context.start();
+            var current = context.resolveLanguage("semantic").createExpression("ref:q");
+            Map<String, SemanticEvaluation> replacement = Map.of("q", candidate, "nested", nested, "added", original);
+            if (fail) {
+                assertThatThrownBy(() -> registry.replace("test", replacement)).hasMessageContaining("Reject replacement");
+                assertThat(registry.get("q")).isSameAs(original);
+                assertThatThrownBy(() -> registry.get("added")).hasMessageContaining("Unknown semantic evaluation");
+            } else {
+                registry.replace("test", replacement);
+                assertThat(registry.get("q")).isSameAs(candidate);
+            }
+            assertThat(expert.checked).isTrue();
+            // A later successful replacement and runtime compilation must not retain either validation scope.
+            registry.replace("test", Map.of("q", original, "nested", nested));
+            var exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody("published state");
+            assertThat(context.resolveLanguage("semantic").createExpression("ref:nested")
+                    .evaluate(exchange, Boolean.class)).isFalse();
+            assertThat(current.evaluate(exchange, Boolean.class)).isTrue();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "${semantic('inner')} ready",
+            "${semantic('inner')} ? 'yes' : 'no'" })
+    void nestedSimpleFunctionsValidateCandidateReferences(String selector) throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            context.getRegistry().bind("content", new ContentExpert());
+            var registry = SemanticEvaluations.get(context);
+            var inner = new SemanticEvaluation("detect", "content", null, Map.of());
+            registry.replace("test", Map.of("inner", inner));
+            context.start();
+            var outer = new SemanticEvaluation("detect", "content", selector, Map.of());
+            registry.replace("test", Map.of("inner", inner, "outer", outer));
+            var exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody("content");
+            var expression = context.resolveLanguage("semantic").createExpression("ref:outer");
+            assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
+            assertThatThrownBy(() -> registry.replace("test", Map.of("outer", outer)))
+                    .hasMessageContaining("Unknown semantic evaluation: inner");
+            assertThat(registry.get("inner")).isSameAs(inner);
+            assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "${not(${semantic('inner')})} ready | false ready | true ready",
+            "${iif(${semantic('inner')},yes,no)} | yes | no" })
+    void lazyNestedSimpleFunctionsReadPublishedReplacements(String selector, String before, String after) throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var expert = new ContentExpert();
+            context.getRegistry().bind("content", expert);
+            var registry = SemanticEvaluations.get(context);
+            var inner = new SemanticEvaluation("detect", "content", null, Map.of());
+            var outer = new SemanticEvaluation("detect", "content", selector, Map.of());
+            registry.replace("test", Map.of("inner", inner, "outer", outer));
+            context.start();
+            var exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody("content");
+            var expression = context.resolveLanguage("semantic").createExpression("ref:outer");
+            assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
+            assertThat(expert.state).isEqualTo(before);
+            registry.replace("test", Map.of("inner",
+                    new SemanticEvaluation("detect", "content", null, Map.of("threshold", 0.9)), "outer", outer));
+            assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
+            assertThat(expert.state).isEqualTo(after);
+            // Simple compiles these composite functions lazily, when they are evaluated.
+            registry.replace("test", Map.of("outer", outer));
+            assertThatThrownBy(() -> expression.evaluate(exchange, Boolean.class))
+                    .hasMessageContaining("Unknown semantic evaluation: inner");
         }
     }
 

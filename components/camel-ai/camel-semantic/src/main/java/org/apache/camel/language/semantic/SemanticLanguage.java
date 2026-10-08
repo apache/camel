@@ -68,7 +68,9 @@ public class SemanticLanguage extends LanguageSupport {
     public static final String ADAPTER_FACTORY = "semantic-adapter";
     public static final String ADAPTER_RESOURCE = FactoryFinder.DEFAULT_PATH + ADAPTER_FACTORY;
 
-    private final ThreadLocal<Boolean> validating = new ThreadLocal<>();
+    // Nested Simple functions re-enter the language while compiling state selectors. Keep that scope private to
+    // compilation; registry reads and expert callbacks must always observe published declarations.
+    private final ThreadLocal<Validation> validation = new ThreadLocal<>();
     private String adapter;
     private String defaultExpert;
     private String defaultState = "${body}";
@@ -225,9 +227,6 @@ public class SemanticLanguage extends LanguageSupport {
     }
 
     private synchronized void startAdapter(List<Group> groups) {
-        if (Boolean.TRUE.equals(validating.get())) {
-            return;
-        }
         ManagedAdapter owned = managedAdapter;
         if (owned == null || groups.stream().noneMatch(group -> group.expert.provider == owned.instance)) {
             return;
@@ -299,7 +298,13 @@ public class SemanticLanguage extends LanguageSupport {
 
     /** Validate declarations, including unused evaluations, without starting managed expert resources. */
     public void validateDeclarations(Map<String, SemanticEvaluation> declarations) {
-        validationOnly(() -> {
+        validateDeclarations(declarations, null);
+    }
+
+    /** Validate changed declarations against the complete candidate snapshot without publishing it. */
+    public void validateDeclarations(
+            Map<String, SemanticEvaluation> declarations, Map<String, SemanticEvaluation> snapshot) {
+        validationOnly(snapshot, () -> {
             declarations.forEach((name, evaluation) -> {
                 expert(name, evaluation);
                 String selector = evaluation.getState() != null ? evaluation.getState() : defaultState;
@@ -314,21 +319,33 @@ public class SemanticLanguage extends LanguageSupport {
         });
     }
 
-    private <T> T validationOnly(Supplier<T> action) {
-        Boolean previous = validating.get();
-        validating.set(true);
+    private <T> T validationOnly(Map<String, SemanticEvaluation> snapshot, Supplier<T> action) {
+        Validation previous = validation.get();
+        validation.set(snapshot != null || previous == null ? new Validation(snapshot) : previous);
         try {
             return action.get();
         } finally {
             if (previous == null) {
-                validating.remove();
+                validation.remove();
             } else {
-                validating.set(previous);
+                validation.set(previous);
             }
         }
     }
 
     private ResolvedExpert expert(String name, SemanticEvaluation evaluation) {
+        Validation previous = validation.get();
+        validation.remove();
+        try {
+            return resolveExpert(name, evaluation);
+        } finally {
+            if (previous != null) {
+                validation.set(previous);
+            }
+        }
+    }
+
+    private ResolvedExpert resolveExpert(String name, SemanticEvaluation evaluation) {
         String reference = evaluation.getExpert() != null ? evaluation.getExpert() : defaultExpert;
         String label = reference != null ? reference : adapter != null ? adapter : "automatic";
         try {
@@ -431,7 +448,7 @@ public class SemanticLanguage extends LanguageSupport {
         private final List<String> names;
         private final boolean batch;
         private final boolean predicate;
-        private final Consumer<Map<String, SemanticEvaluation>> validator = this::prepare;
+        private final Consumer<Map<String, SemanticEvaluation>> validator = this::validateReplacement;
         private volatile Compiled compiled;
         private volatile SemanticEvaluations evaluations;
 
@@ -445,9 +462,11 @@ public class SemanticLanguage extends LanguageSupport {
         public void init(CamelContext context) {
             super.init(context);
             evaluations = SemanticEvaluations.get(context);
-            Map<String, SemanticEvaluation> selected = evaluations.get(names);
+            Validation scope = validation.get();
+            Map<String, SemanticEvaluation> selected = scope != null && scope.snapshot != null
+                    ? select(scope.snapshot, true) : evaluations.get(names);
             compile(selected);
-            if (!Boolean.TRUE.equals(validating.get())) {
+            if (scope == null) {
                 evaluations.setValidator(names, validator);
             }
         }
@@ -459,7 +478,7 @@ public class SemanticLanguage extends LanguageSupport {
         }
 
         private synchronized Compiled compile(Map<String, SemanticEvaluation> selected) {
-            if (Boolean.TRUE.equals(validating.get())) {
+            if (validation.get() != null) {
                 // Revisit cached nested selectors against the candidate snapshot without publishing compilation state.
                 return prepare(selected);
             }
@@ -472,7 +491,25 @@ public class SemanticLanguage extends LanguageSupport {
         }
 
         private Compiled prepare(Map<String, SemanticEvaluation> selected) {
-            return validationOnly(() -> prepareDeclarations(selected));
+            return validationOnly(null, () -> prepareDeclarations(selected));
+        }
+
+        private void validateReplacement(Map<String, SemanticEvaluation> snapshot) {
+            validationOnly(snapshot, () -> prepareDeclarations(select(snapshot, false)));
+        }
+
+        private Map<String, SemanticEvaluation> select(Map<String, SemanticEvaluation> snapshot, boolean required) {
+            Map<String, SemanticEvaluation> selected = new LinkedHashMap<>();
+            for (String name : names) {
+                SemanticEvaluation evaluation = snapshot.get(name);
+                // Removed declarations remain removable; their existing expressions fail if evaluated again.
+                if (evaluation != null) {
+                    selected.put(name, evaluation);
+                } else if (required) {
+                    throw new IllegalArgumentException("Unknown semantic evaluation: " + name);
+                }
+            }
+            return Collections.unmodifiableMap(selected);
         }
 
         private Compiled prepareDeclarations(Map<String, SemanticEvaluation> selected) {
@@ -641,6 +678,9 @@ public class SemanticLanguage extends LanguageSupport {
         public String toString() {
             return "semantic[" + (batch ? "refs:" : "ref:") + String.join(",", names) + "]";
         }
+    }
+
+    private record Validation(Map<String, SemanticEvaluation> snapshot) {
     }
 
     private record ResolvedExpert(SemanticAdapter provider, SemanticCapabilities capabilities, String reference) {
