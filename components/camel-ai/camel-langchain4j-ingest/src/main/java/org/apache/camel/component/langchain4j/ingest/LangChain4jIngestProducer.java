@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.langchain4j.ingest;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
@@ -279,7 +283,7 @@ public class LangChain4jIngestProducer extends DefaultProducer {
      * {@link IngestService}) needs the text - both run after the dedup claim, unlike the id patterns.
      */
     private IngestResult ingestUnlessFiltered(Exchange exchange, String documentId, String mimeType, ContentType medium)
-            throws InvalidPayloadException {
+            throws InvalidPayloadException, IOException {
         Predicate filter = configuration.getDocumentFilter();
         if (filter != null && !filter.matches(exchange)) {
             return filtered(documentId);
@@ -290,15 +294,64 @@ public class LangChain4jIngestProducer extends DefaultProducer {
             if (announced != null) {
                 mediaService.checkSize(documentId, announced);
             }
-            // bytes, not a String - a charset conversion would corrupt them. A null body stays
-            // EMPTY; anything else must convert, so a wrong body type (a POJO, say) fails as an
-            // InvalidPayloadException instead of being answered EMPTY by a silent null conversion
-            byte[] bytes = exchange.getMessage().getBody() == null
-                    ? null
-                    : exchange.getMessage().getMandatoryBody(byte[].class);
-            return mediaService.ingest(documentId, bytes, mimeType, medium);
+            return mediaService.ingest(documentId, mediaBody(exchange), mimeType, medium);
         }
-        return textService.ingest(documentId, exchange.getMessage().getBody(String.class));
+        return textService.ingest(documentId, textBody(exchange));
+    }
+
+    /**
+     * The media body as bytes, not a String - a charset conversion would corrupt them. A null body stays EMPTY;
+     * anything else must convert, so a wrong body type (a POJO, say) fails as an InvalidPayloadException instead of
+     * being answered EMPTY by a silent null conversion. With maxDocumentSize set, a body not yet in memory is read only
+     * one byte past the cap, enough for the size check to refuse it.
+     */
+    private byte[] mediaBody(Exchange exchange) throws InvalidPayloadException, IOException {
+        Object body = exchange.getMessage().getBody();
+        int limit = readLimit();
+        InputStream stream = body == null || body instanceof byte[] || limit < 0
+                ? null : exchange.getMessage().getBody(InputStream.class);
+        if (stream == null) {
+            return body == null ? null : exchange.getMessage().getMandatoryBody(byte[].class);
+        }
+        try (stream) {
+            return stream.readNBytes(limit);
+        }
+    }
+
+    /**
+     * The text body. With maxDocumentSize set, a body not yet a String is read only one character past the cap, enough
+     * for the size check to refuse it.
+     */
+    private String textBody(Exchange exchange) throws IOException {
+        Object body = exchange.getMessage().getBody();
+        int limit = readLimit();
+        Reader reader = body == null || body instanceof String || limit < 0
+                ? null : readerOf(exchange);
+        if (reader == null) {
+            return exchange.getMessage().getBody(String.class);
+        }
+        try (reader) {
+            StringBuilder text = new StringBuilder();
+            char[] chunk = new char[8192];
+            int read;
+            while (text.length() < limit
+                    && (read = reader.read(chunk, 0, Math.min(chunk.length, limit - text.length()))) != -1) {
+                text.append(chunk, 0, read);
+            }
+            return text.toString();
+        }
+    }
+
+    /** The body as a Reader, or null; a File or a Path converts to a BufferedReader, not to a Reader. */
+    private static Reader readerOf(Exchange exchange) {
+        Reader reader = exchange.getMessage().getBody(Reader.class);
+        return reader != null ? reader : exchange.getMessage().getBody(BufferedReader.class);
+    }
+
+    /** How far a body is read: one unit past maxDocumentSize, so an oversized one shows; -1 without a cap. */
+    private int readLimit() {
+        int max = configuration.getMaxDocumentSize();
+        return max <= 0 ? -1 : max == Integer.MAX_VALUE ? max : max + 1;
     }
 
     private IngestResult filtered(String documentId) {

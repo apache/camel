@@ -16,8 +16,14 @@
  */
 package org.apache.camel.component.langchain4j.ingest;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -31,6 +37,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -73,6 +80,9 @@ class LangChain4jIngestProducerTest extends CamelTestSupport {
                             + "&documentSplitter=#bean:pipeSplitter");
                 from("direct:capped")
                         .to("langchain4j-ingest:capped?documentIdHeader=MyDocId&maxDocumentSize=20");
+                // without stream caching, which would read the whole stream before the endpoint does
+                from("direct:capped-stream").noStreamCaching()
+                        .to("langchain4j-ingest:capped-stream?documentIdHeader=MyDocId&maxDocumentSize=20");
                 from("direct:empty-splitter")
                         .to("langchain4j-ingest:empty-splitter?documentIdHeader=MyDocId"
                             + "&documentSplitter=#bean:emptySplitter");
@@ -194,9 +204,65 @@ class LangChain4jIngestProducerTest extends CamelTestSupport {
                 .isInstanceOf(CamelExecutionException.class)
                 .hasStackTraceContaining("exceeds maxDocumentSize")
                 .hasStackTraceContaining("characters");
+        // the cap is checked before the blank check: an oversized blank document fails, not EMPTY
+        assertThatThrownBy(() -> template.requestBodyAndHeader("direct:capped",
+                " ".repeat(30), "MyDocId", "doc-oversized-blank"))
+                .isInstanceOf(CamelExecutionException.class)
+                .hasStackTraceContaining("exceeds maxDocumentSize (30 > 20 characters)");
 
         IngestResult result = template.requestBodyAndHeader("direct:capped",
                 "twenty characters ok", "MyDocId", "doc-at-cap", IngestResult.class);
+        assertThat(result.outcome()).isEqualTo(IngestResult.Outcome.INGESTED);
+    }
+
+    @Test
+    void oversizedStreamIsReadOnlyPastTheCap() {
+        // 10 MB of text is refused after one character past the cap; a blank start does not make
+        // it EMPTY, the rest being unread
+        for (char content : new char[] { 'a', ' ' }) {
+            AtomicLong read = new AtomicLong();
+            assertThatThrownBy(() -> template.requestBodyAndHeader("direct:capped-stream",
+                    stream(10_000_000, content, read), "MyDocId", "doc-stream"))
+                    .isInstanceOf(CamelExecutionException.class)
+                    .hasStackTraceContaining("exceeds maxDocumentSize (21 > 20 characters)");
+            // the reader buffers ahead, but nowhere near the whole stream
+            assertThat(read.get()).isLessThan(100_000);
+        }
+
+        IngestResult result = template.requestBodyAndHeader("direct:capped-stream",
+                new ByteArrayInputStream("twenty characters ok".getBytes(StandardCharsets.UTF_8)), "MyDocId",
+                "doc-stream-at-cap", IngestResult.class);
+        assertThat(result.outcome()).isEqualTo(IngestResult.Outcome.INGESTED);
+    }
+
+    /** A stream of the given number of bytes of one character, counting how many are read. */
+    private static InputStream stream(long size, char content, AtomicLong read) {
+        return new InputStream() {
+            @Override
+            public int read() {
+                if (read.get() >= size) {
+                    return -1;
+                }
+                read.incrementAndGet();
+                return content;
+            }
+        };
+    }
+
+    @Test
+    void oversizedFileIsReadOnlyPastTheCap(@TempDir Path directory) throws Exception {
+        // a File or a Path, as the file-watch consumer delivers, is read one character past the
+        // cap as well: the reported size is what was read, not the whole file
+        Path big = Files.writeString(directory.resolve("big.txt"), "a".repeat(10_000));
+        for (Object body : new Object[] { big.toFile(), big }) {
+            assertThatThrownBy(() -> template.requestBodyAndHeader("direct:capped", body, "MyDocId", "doc-file"))
+                    .isInstanceOf(CamelExecutionException.class)
+                    .hasStackTraceContaining("exceeds maxDocumentSize (21 > 20 characters)");
+        }
+
+        Path atCap = Files.writeString(directory.resolve("ok.txt"), "twenty characters ok");
+        IngestResult result = template.requestBodyAndHeader("direct:capped", atCap.toFile(), "MyDocId",
+                "doc-file-at-cap", IngestResult.class);
         assertThat(result.outcome()).isEqualTo(IngestResult.Outcome.INGESTED);
     }
 
