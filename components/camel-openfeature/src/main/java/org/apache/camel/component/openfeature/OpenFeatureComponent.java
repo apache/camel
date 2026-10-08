@@ -128,6 +128,7 @@ public class OpenFeatureComponent extends DefaultComponent {
             binding.shutdown();
         }
         domainBindings.clear();
+        domainLocks.clear();
         if (localApi != null) {
             try {
                 localApi.shutdown();
