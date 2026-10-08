@@ -88,6 +88,8 @@ public final class RootObject {
 
     /**
      * The variables of the exchange (exchange-scoped only; global and route variables are not in this map).
+     *
+     * @see #getVariable(String) to look up a global or route variable by its prefixed name
      */
     public Map<String, Object> getVariables() {
         return exchange.getVariables();
