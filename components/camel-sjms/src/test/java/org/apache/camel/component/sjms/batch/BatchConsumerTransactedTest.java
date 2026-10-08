@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.sjms.batch;
 
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
@@ -24,9 +27,12 @@ import org.junit.jupiter.api.Test;
 import static java.lang.String.format;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.BATCH_ROUTEBUILDER_MOCK_FINISH;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.BATCH_ROUTEBUILDER_MOCK_START;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.DEFAULT_MESSAGE_TEXT;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.assertBatchSizesInOrder;
-import static org.apache.camel.component.sjms.batch.BatchTestHelper.createRoute;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.batchBodiesAsList;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.createBatchRoute;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessages;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BatchConsumerTransactedTest extends JmsTestSupport {
 
@@ -49,6 +55,7 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         assertBatchSizesInOrder(mockFinish, 5);
+        assertEquals(Collections.nCopies(5, DEFAULT_MESSAGE_TEXT), batchBodiesAsList(mockFinish.getExchanges().get(0)));
     }
 
     @Test
@@ -65,6 +72,7 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         assertBatchSizesInOrder(mockFinish, 5);
+        assertEquals(Collections.nCopies(5, DEFAULT_MESSAGE_TEXT), batchBodiesAsList(mockFinish.getExchanges().get(0)));
     }
 
     @Test
@@ -84,20 +92,18 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new org.apache.camel.RoutesBuilder[] {
-                createRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, true, 5,
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, 5,
                         1000,
                         true, null, 1, new ThrowExceptionProcessor()),
-                createRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX,
-                        true,
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX,
                         5, 1000, false, "CLIENT_ACKNOWLEDGE", 1, new ThrowExceptionProcessor()),
-                createRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK_NO_TX,
-                        true, 5, 1000, false,
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK_NO_TX, 5, 1000, false,
                         "AUTO_ACKNOWLEDGE", 1, new ThrowExceptionProcessor())
         };
     }
 
     private static class ThrowExceptionProcessor implements org.apache.camel.Processor {
-        private final java.util.concurrent.atomic.AtomicInteger counter = new java.util.concurrent.atomic.AtomicInteger();
+        private final AtomicInteger counter = new AtomicInteger();
 
         @Override
         public void process(org.apache.camel.Exchange exchange) {

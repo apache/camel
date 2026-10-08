@@ -303,6 +303,16 @@ use TemporaryQueue destinations or use a unique reply to
 destination per InOut producer endpoint. The producer handles message
 correlation is handled, not with message selectors at the broker.
 
+[NOTE]
+====
+You should only use queues as reply-to destination types, topics are not recommended or fully supported.
+====
+
+Currently, the only correlation strategy is to use the `JMSCorrelationId`.
+The _InOut_ Consumer uses this strategy as well ensuring that all
+response messages to the included `JMSReplyTo` destination also have the
+`JMSCorrelationId` copied from the request as well.
+
 === Batch consuming
 
 The consumer can be configured to receive messages in batches instead of one at a time, by setting
@@ -322,12 +332,3 @@ Commit/acknowledgement happens once per batch rather than once per message. With
 before routing — so a failed batch cannot be redelivered. Use `transacted=true` or
 `acknowledgementMode=CLIENT_ACKNOWLEDGE` if the whole batch should be redelivered together on failure.
 
-[NOTE]
-====
-You should only use queues as reply-to destination types, topics are not recommended or fully supported.
-====
-
-Currently, the only correlation strategy is to use the `JMSCorrelationId`.
-The _InOut_ Consumer uses this strategy as well ensuring that all
-response messages to the included `JMSReplyTo` destination also have the
-`JMSCorrelationId` copied from the request as well.

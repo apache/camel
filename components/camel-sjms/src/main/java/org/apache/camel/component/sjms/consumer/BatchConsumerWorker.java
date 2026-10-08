@@ -175,4 +175,8 @@ public class BatchConsumerWorker implements Runnable {
         return Math.max(JMS_CONSUMER_RECEIVE_MIN_TIMEOUT,
                 Math.min(remainingMillis, JMS_CONSUMER_RECEIVE_WAKE_INTERVAL_TIMEOUT));
     }
+
+    void handleException(String message, Throwable t) {
+        endpoint.getExceptionHandler().handleException(message, t);
+    }
 }

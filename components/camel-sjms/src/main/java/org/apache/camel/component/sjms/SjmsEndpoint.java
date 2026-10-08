@@ -301,7 +301,7 @@ public class SjmsEndpoint extends DefaultEndpoint
     @UriParam(defaultValue = "1000", label = "consumer,batch", javaType = "java.time.Duration",
               description = "Time in millis, measured from the first message received into a new batch, after which "
                             + "the batch is dispatched even if batchSize has not been reached — comparable to the Aggregator "
-                            + "EIP's completionInterval. Default is 1000 ms, that is 1 second. Interval should be a postive value. Set to 0 for unlimited (not recommended).")
+                            + "EIP's completionInterval. Default is 1000 ms, that is 1 second. Interval should be a positive value. Set to 0 for unlimited (not recommended).")
     private long batchInterval = 1000;
 
     private JmsObjectFactory jmsObjectFactory = new Jms11ObjectFactory();
@@ -505,7 +505,7 @@ public class SjmsEndpoint extends DefaultEndpoint
         }
 
         if (getBatchSize() <= 0) {
-            throw new IllegalArgumentException("batchSize must greater than 0");
+            throw new IllegalArgumentException("batchSize must be greater than 0");
         }
 
         if (isBatching() && !isTransacted()

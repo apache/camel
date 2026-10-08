@@ -39,12 +39,10 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
     private ExecutorService workerExecutorService;
     private final ReentrantLock workersLock = new ReentrantLock();
     private final List<BatchConsumerWorker> workers = new ArrayList<>();
-    private volatile boolean stopping;
 
     public BatchMessageListenerContainer(SjmsEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.stopping = false;
     }
 
     public void setBatchListener(BatchEndpointMessageListener batchListener) {
@@ -91,12 +89,11 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
 
     @Override
     protected void doStop() throws Exception {
-        this.stopping = true;
         shutdownWorkers();
         // shutdown scheduled executor after all in-flight exchanges have completed
         if (workerExecutorService != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(workerExecutorService);
-            LOG.debug("BatchConsumerWorker excecutor service shutdown");
+            LOG.debug("BatchConsumerWorker executor service shutdown");
             workerExecutorService = null;
         }
 
@@ -133,7 +130,7 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
             return;
         }
 
-        if (stopping || worker.isShutdownRequested()) {
+        if (isStopping() || worker.isShutdownRequested()) {
             return;
         }
 

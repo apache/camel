@@ -17,9 +17,11 @@
 package org.apache.camel.component.sjms.batch;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.*;
+import java.util.stream.Collectors;
 
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
@@ -30,8 +32,11 @@ import jakarta.jms.JMSException;
 import org.apache.activemq.artemis.core.server.ActiveMQServer;
 import org.apache.activemq.artemis.core.server.ServerConsumer;
 import org.apache.activemq.artemis.core.server.ServerSession;
-import org.apache.camel.*;
-import org.apache.camel.builder.*;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsConstants;
 import org.apache.camel.component.sjms.SjmsConsumer;
@@ -48,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SuppressWarnings("unchecked")
 public final class BatchTestHelper {
 
+    static final String DEFAULT_MESSAGE_TEXT = "Hello World!";
     static final String BATCH_ROUTEBUILDER_MOCK_START = "mock:%s.start";
     static final String BATCH_ROUTEBUILDER_MOCK_FINISH = "mock:%s.complete";
 
@@ -55,7 +61,7 @@ public final class BatchTestHelper {
     }
 
     static void sendMessages(ProducerTemplate template, String endpoint, int count) {
-        sendMessagesWithText(template, endpoint, count, "Hello World!");
+        sendMessagesWithText(template, endpoint, count, DEFAULT_MESSAGE_TEXT);
     }
 
     static void sendMessagesWithText(ProducerTemplate template, String endpoint, int count, String text) {
@@ -103,13 +109,13 @@ public final class BatchTestHelper {
         }
     }
 
-    static RouteBuilder createRoute(
-            String queueName, String id, Boolean batching, int batchSize, int batchInterval, Boolean transacted,
+    static RouteBuilder createBatchRoute(
+            String queueName, String id, int batchSize, int batchInterval, Boolean transacted,
             String acknowledgementMode,
             int concurrentConsumers, Processor processor) {
 
         Map<String, Object> params = new LinkedHashMap<>();
-        params.put("batching", batching);
+        params.put("batching", true);
         params.put("batchSize", batchSize);
         params.put("batchInterval", batchInterval);
         params.put("transacted", transacted);

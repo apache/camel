@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import static java.lang.String.format;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.BATCH_ROUTEBUILDER_MOCK_FINISH;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.batchBodiesAsList;
-import static org.apache.camel.component.sjms.batch.BatchTestHelper.createRoute;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.createBatchRoute;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.getBatch;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessagesWithText;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.triggerConnectionFailure;
@@ -172,14 +172,12 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
 
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                createRoute(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, true, 5,
+                createBatchRoute(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, 5,
                         10000,
                         true, null, 1, new BatchTestHelper.DoNothingProcessor()),
-                createRoute(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX,
-                        true,
+                createBatchRoute(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX,
                         5, 10000, false, "CLIENT_ACKNOWLEDGE", 1, new BatchTestHelper.DoNothingProcessor()),
-                createRoute(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK_NO_TX,
-                        true, 5, 10000, false,
+                createBatchRoute(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK_NO_TX, 5, 10000, false,
                         "AUTO_ACKNOWLEDGE", 1, new BatchTestHelper.DoNothingProcessor())
         };
     }

@@ -85,6 +85,7 @@ public class BatchConsumerRecoveryTest extends JmsExclusiveTestSupport {
 
         // we want to test with 1 complete (incl. the messages prior to reconnect) and 1 incomplete batch
         mock.expectedMessageCount(2);
+        mock.setResultWaitTime(15000);
         sendMessagesWithText(template, SJMS_QUEUE_NAME, 7, "After!");
 
         mock.assertIsSatisfied();

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms.batch;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
@@ -25,7 +27,7 @@ import static java.lang.String.format;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.BATCH_ROUTEBUILDER_MOCK_FINISH;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.BATCH_ROUTEBUILDER_MOCK_START;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.assertBatchSizesInOrder;
-import static org.apache.camel.component.sjms.batch.BatchTestHelper.createRoute;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.createBatchRoute;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessages;
 
 public class BatchConsumerRollbackOnlyTest extends JmsTestSupport {
@@ -69,17 +71,16 @@ public class BatchConsumerRollbackOnlyTest extends JmsTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new org.apache.camel.RoutesBuilder[] {
-                createRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, true, 5,
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, 5,
                         1000,
                         true, null, 1, new MarkRollBackProcessor()),
-                createRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX,
-                        true,
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX,
                         5, 1000, false, "CLIENT_ACKNOWLEDGE", 1, new MarkRollBackProcessor())
         };
     }
 
     private static class MarkRollBackProcessor implements org.apache.camel.Processor {
-        private final java.util.concurrent.atomic.AtomicInteger counter = new java.util.concurrent.atomic.AtomicInteger();
+        private final AtomicInteger counter = new AtomicInteger();
 
         @Override
         public void process(org.apache.camel.Exchange exchange) {
