@@ -138,6 +138,12 @@ linked route's diagram.
 Navigation history is maintained as a stack: pressing `Esc` goes
 back to the previous route, and eventually back to the topology view.
 
+The route shows its own steps (the happy path). Its error handling,
+the onException clauses (a global one is in every route) and where
+its failures go, is in a frame below the route when `x` is on. The
+history view always shows the onException clauses, so a replay can
+step into them.
+
 ## Route Structure Preview
 
 A compact tree structure preview appears in the bottom-right corner
@@ -181,6 +187,7 @@ you an at-a-glance view of where you are in the route.
 - `Enter` — jump to linked route (when `↵` indicator shown)
 - `c` — show source code at selected node
 - `d` — toggle EIP detail panel (shows configured options)
+- `x` — show or hide the route's error handling, in a frame below it
 - `g` — go to node (fuzzy search popup)
 - `Esc` — go back (previous route or topology)
 - `t` — jump back to topology view
