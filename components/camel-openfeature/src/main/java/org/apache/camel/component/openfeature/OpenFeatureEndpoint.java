@@ -392,16 +392,22 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
     private OpenFeatureComponent.ProviderRegistration createFileProviderFromContent(String flagContent)
             throws IOException {
         File tmp = Files.createTempFile("camel-openfeature-", ".json").toFile();
-        Files.writeString(tmp.toPath(), flagContent, StandardCharsets.UTF_8);
+        try {
+            Files.writeString(tmp.toPath(), flagContent, StandardCharsets.UTF_8);
 
-        FlagdOptions options = FlagdOptions.builder()
-                .resolverType(Config.Resolver.FILE)
-                .offlineFlagSourcePath(tmp.getAbsolutePath())
-                .build();
-        FlagdProvider provider = new FlagdProvider(options);
-        OpenFeatureComponent.ProviderRegistration reg = new OpenFeatureComponent.ProviderRegistration(provider, true);
-        reg.tempFlagFile = tmp;
-        return reg;
+            FlagdOptions options = FlagdOptions.builder()
+                    .resolverType(Config.Resolver.FILE)
+                    .offlineFlagSourcePath(tmp.getAbsolutePath())
+                    .build();
+            FlagdProvider provider = new FlagdProvider(options);
+            OpenFeatureComponent.ProviderRegistration reg
+                    = new OpenFeatureComponent.ProviderRegistration(provider, true);
+            reg.tempFlagFile = tmp;
+            return reg;
+        } catch (Exception e) {
+            Files.deleteIfExists(tmp.toPath());
+            throw e;
+        }
     }
 
     private String loadResource(String location) throws IOException {
