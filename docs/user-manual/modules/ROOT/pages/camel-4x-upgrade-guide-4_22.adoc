@@ -860,6 +860,16 @@ and `Files.copy()` instead of `FileChannel`-based streaming. The `forceWrites` f
 The default value has been changed from `true` to `false` to reflect the actual behavior. The option will
 be removed in a future release.
 
+=== camel-file - jailStartingDirectory resolves symbolic links
+
+With `jailStartingDirectory` enabled (the default), the file consumer and producer now resolve symbolic links when
+checking that a file stays within the starting directory. The consumer skips a file or (with `recursive=true`) a
+directory that is a link resolving outside of it, and the producer fails to write through such a link or a dangling
+link. Links resolving inside the starting directory work as before. Set `jailStartingDirectory=false` to keep following
+links to other directories (this also turns off the check of `../` in producer file names). A skipped file is logged
+at WARN the first time and at DEBUG on later polls; this log-level change also applies to the remote file consumers,
+which keep their existing lexical check.
+
 === camel-mail - MimeMultipartDataFormat inbound header filtering
 
 When unmarshalling a MIME message with `headersInline=true`, the `mime-multipart` data format now applies a
