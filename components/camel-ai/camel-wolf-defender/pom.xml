@@ -72,6 +72,12 @@
             <artifactId>camel-main</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-wolf-defender</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -79,6 +85,22 @@
             <activation>
                 <property>
                     <name>wolfDefender.modelDirectory</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-yaml-dsl</artifactId>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>wolf-defender-download-test</id>
+            <activation>
+                <property>
+                    <name>wolfDefender.download</name>
+                    <value>true</value>
                 </property>
             </activation>
             <dependencies>
