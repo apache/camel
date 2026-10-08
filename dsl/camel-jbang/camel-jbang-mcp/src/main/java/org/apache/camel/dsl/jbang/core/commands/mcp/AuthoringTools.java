@@ -230,7 +230,7 @@ public class AuthoringTools {
         return call("camel_get_errors", args("name", name));
     }
 
-    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = "Evaluates an expression: in the running integration when there is one, else locally, in any "
                         + "language (jsonpath, jq, xpath, groovy: its component is downloaded when needed). Returns "
                         + "the value (true/false for a predicate) or the syntax error, so check an expression before "

@@ -83,13 +83,14 @@ class AuthoringToolsTest {
             assertFalse(td.description().isBlank(), td.name());
             assertNotNull(td.executor(), td.name());
         }
-        // what changes something is not read-only, so an access filter or a permission handler can tell
-        for (String mutating : List.of("camel_write_file", "camel_run", "camel_control", "camel_save_project_summary")) {
+        // what changes something or runs code is not read-only, so an access filter or a permission handler can tell
+        for (String mutating : List.of("camel_write_file", "camel_run", "camel_control", "camel_save_project_summary",
+                "camel_eval_expression")) {
             assertFalse(ToolRegistry.findTool(mutating).isReadOnly(), mutating);
         }
         for (String reading : List.of("camel_catalog_doc", "camel_catalog_sample", "camel_get_files", "camel_get_log",
                 "camel_get_errors",
-                "camel_eval_expression", "camel_dependency_for_class", "camel_error_diagnose", "camel_validate_source",
+                "camel_dependency_for_class", "camel_error_diagnose", "camel_validate_source",
                 "camel_project_overview")) {
             assertTrue(ToolRegistry.findTool(reading).isReadOnly(), reading);
         }

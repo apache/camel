@@ -240,8 +240,8 @@ class TuiToolRegistry {
     /**
      * Tools that only return information and never change the TUI, the integration or its data. The ACP permission
      * handler approves calls to these without asking; anything else, including camel_control, tui_send_message and
-     * tui_execute_sql, is put in front of the user. camel_eval_expression is read-only because it evaluates an
-     * expression against a scratch exchange and sends nothing through a route.
+     * tui_execute_sql and camel_eval_expression, is put in front of the user. camel_eval_expression evaluates an
+     * expression in any language (downloading the language's component on demand), so it is not auto-approved.
      */
     static final Set<String> READ_ONLY_TOOLS = Stream.concat(
             READ_ONLY_TUI_TOOLS.stream(),

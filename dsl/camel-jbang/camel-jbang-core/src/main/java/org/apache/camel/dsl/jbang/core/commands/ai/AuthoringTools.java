@@ -336,6 +336,7 @@ public final class AuthoringTools {
                 .param("language", "string", "simple (default), jsonpath, xpath, jq", false)
                 .param("body", "string", "Message body", false)
                 .param("name", "string", NAME_DESC, false)
+                .readOnly(false)
                 .core(true)
                 .executor((ctx, args) -> {
                     String name = args.get("name");

@@ -25,6 +25,7 @@ import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -36,7 +37,8 @@ class TuiToolRegistryEvalExpressionTest {
     @Test
     void evalIsACoreToolAndFallsBackToALocalContextWithoutASelectedIntegration() throws Exception {
         assertTrue(TuiToolRegistry.CORE_TOOLS.contains("camel_eval_expression"), "local models get it too");
-        assertTrue(TuiToolRegistry.READ_ONLY_TOOLS.contains("camel_eval_expression"));
+        assertFalse(TuiToolRegistry.READ_ONLY_TOOLS.contains("camel_eval_expression"),
+                "eval evaluates code in any language, so it must not be auto-approved as read-only");
         assertTrue(new TuiToolRegistry(null).getToolDefinitions().stream()
                 .anyMatch(def -> "camel_eval_expression".equals(def.name())));
         MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of()), new AtomicReference<>(List.of()));

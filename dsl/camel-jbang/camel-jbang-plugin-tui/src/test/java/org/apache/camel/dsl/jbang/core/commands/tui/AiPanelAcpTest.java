@@ -588,13 +588,15 @@ class AiPanelAcpTest {
     }
 
     @Test
-    void evalExpressionIsReadOnly() throws Exception {
+    void evalExpressionAsksForPermission() throws Exception {
         AiPanel panel = acpPanel();
         askPermissionDuringPrompt(permissionParams("mcp__camel-tui__camel_eval_expression", "camel_eval_expression"));
         ask(panel, "hi");
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
         awaitIdle(panel);
-        assertFalse(panel.isPermissionPopupVisibleForTesting());
-        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-always)"));
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"),
+                "eval evaluates code in any language, so it is no longer auto-approved as read-only");
     }
 
     @Test
