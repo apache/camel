@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "wolf-defender",
+    "title": "Wolf Defender",
+    "description": "Detect prompt injection in text using local Wolf-Defender inference",
+    "deprecated": false,
+    "firstVersion": "4.23.0",
+    "label": "ai",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-wolf-defender",
+    "version": "4.23.0-SNAPSHOT"
+  }
+}
