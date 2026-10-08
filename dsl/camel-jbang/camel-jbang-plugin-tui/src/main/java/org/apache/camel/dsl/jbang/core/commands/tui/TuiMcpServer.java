@@ -77,6 +77,9 @@ class TuiMcpServer {
     private HttpServer server;
     private volatile String clientName;
     private volatile long lastActivity;
+    // a client said initialize and has not closed its session (an HTTP DELETE); it stays connected while idle, as an
+    // MCP client over HTTP only sends a request when it uses a tool
+    private volatile boolean sessionOpen;
     private volatile long lastToolCallTime;
     private final AtomicInteger toolCallCount = new AtomicInteger();
     private final List<LogEntry> activityLog = new ArrayList<>();
@@ -138,17 +141,34 @@ class TuiMcpServer {
         return toolCallCount.get();
     }
 
+    /**
+     * The client connected to the server: one that said initialize, until it closes its session, idle or not; or, for a
+     * client that never says initialize, one that sent a request in the last minute. Null when there is none.
+     */
     String getConnectedClient() {
-        if (System.currentTimeMillis() - lastActivity < CLIENT_TIMEOUT_MS) {
+        if (sessionOpen || System.currentTimeMillis() - lastActivity < CLIENT_TIMEOUT_MS) {
             return clientName != null ? clientName : "connected";
         }
         return null;
+    }
+
+    /** For tests: as if the last request came that many milliseconds ago. */
+    void idleFor(long millis) {
+        lastActivity = System.currentTimeMillis() - millis;
     }
 
     private void handleMcp(HttpExchange exchange) throws IOException {
         try {
             lastActivity = System.currentTimeMillis();
             String method = exchange.getRequestMethod();
+            if ("DELETE".equals(method)) {
+                // the client closes its session: it is gone
+                sessionOpen = false;
+                clientName = null;
+                lastActivity = 0;
+                exchange.sendResponseHeaders(200, -1);
+                return;
+            }
             if (!"POST".equals(method)) {
                 exchange.sendResponseHeaders(405, -1);
                 return;
@@ -257,6 +277,7 @@ class TuiMcpServer {
                 clientName = (String) clientInfo.get("name");
             }
         }
+        sessionOpen = true;
         repeatedCalls.reset();
 
         JsonObject result = new JsonObject();
