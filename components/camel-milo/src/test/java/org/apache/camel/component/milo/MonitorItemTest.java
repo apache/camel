@@ -57,7 +57,7 @@ public class MonitorItemTest extends AbstractMiloServerTest {
                                                         + "&requestedPublishingInterval=2000&samplingInterval=100&queueSize=4"
                                                         + "&allowedSecurityPolicies=None&overrideHost=true";
 
-    // second client endpoint with modified dataChangeFilterTrigger to verify that they are inmdependent on same client
+    // second client endpoint with modified dataChangeFilterTrigger to verify that they are independent on same client
     private static final String MILO_CLIENT_ITEM_C1_2 = "milo-client:opc.tcp://foo:bar@localhost:@@port@@?node="
                                                         + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI,
                                                                 "myitem1")
@@ -120,11 +120,6 @@ public class MonitorItemTest extends AbstractMiloServerTest {
         };
     }
 
-    private static @NonNull Processor getLogProcessor(String prefix) {
-        return e -> System.out
-                .println(prefix + ": " + Instant.now().truncatedTo(ChronoUnit.MILLIS) + " - " + e.getMessage().getBody());
-    }
-
     @BeforeEach
     public void setup(TestInfo testInfo) {
         final var displayName = testInfo.getDisplayName();
@@ -166,7 +161,7 @@ public class MonitorItemTest extends AbstractMiloServerTest {
          * so it will get the 3rd update from the first set of 4 which does not change the value.
          */
         test2Endpoint.reset();
-        test2Endpoint.setMinimumExpectedMessageCount(12);    // the first 3, plus at least 8 more from rest (if they fall to 2 periods)
+        test2Endpoint.setMinimumExpectedMessageCount(12);    // the first 4, plus at least 8 more from rest (if they fall to 2 periods)
         test2Endpoint.setAssertPeriod(3000);
 
         /*
@@ -208,7 +203,7 @@ public class MonitorItemTest extends AbstractMiloServerTest {
         this.producer1.sendBody("Bar");
         await().pollDelay(time, TimeUnit.MILLISECONDS).untilAsserted(() -> {
         });
-        // This update will only be catched on MILO_CLIENT_ITEM_C1_2 because of dataChangeFilterTrigger=StatusValueTimestamp
+        // This update will only be caught on MILO_CLIENT_ITEM_C1_2 because of dataChangeFilterTrigger=StatusValueTimestamp
         this.producer1.sendBody("Bar");
         await().pollDelay(time, TimeUnit.MILLISECONDS).untilAsserted(() -> {
         });
