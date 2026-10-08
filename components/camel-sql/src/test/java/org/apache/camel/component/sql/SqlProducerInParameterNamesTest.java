@@ -53,9 +53,9 @@ class SqlProducerInParameterNamesTest extends CamelTestSupport {
 
     @Test
     void testNameIsStartOfLaterName() {
-        Map<String, Object> headers = Map.of("project", List.of("Camel", "AMQ"), "projectLicense", List.of("ASF", "XXX"));
+        Map<String, Object> headers = Map.of("project", List.of("Camel"), "projectLicense", List.of("ASF", "XXX", "YYY"));
         List<?> rows = template.requestBodyAndHeaders("direct:prefix", null, headers, List.class);
-        assertEquals(4, rows.size());
+        assertEquals(3, rows.size());
     }
 
     @Test
