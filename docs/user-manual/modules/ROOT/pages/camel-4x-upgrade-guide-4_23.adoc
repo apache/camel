@@ -13,12 +13,12 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
-=== camel-management - Route group exchange counters count once per exchange
+=== camel-management - Route group exchange counters count once per entry into the group
 
 The route group MBean (`ManagedRouteGroupMBean`) exchange counters and processing times now count
-each exchange once per group, even when the exchange is routed through several member routes of the
-group. In 4.22.1, a regression (CAMEL-24590) caused them to count once per member route instead.
-This is now consistent with how the `CamelContext` MBean counts exchanges.
+each exchange once per entry into the group: calls nested inside another route of the same group
+are not counted again. In 4.22.1, a regression (CAMEL-24590) caused them to count once per member
+route instead.
 
 === camel-core - Rest DSL response Content-Type
 
