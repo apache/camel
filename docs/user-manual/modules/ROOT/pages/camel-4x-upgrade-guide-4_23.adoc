@@ -376,6 +376,10 @@ Only options whose value is a placeholder are affected, and only when running wi
 Camel Quarkus. If a component must not be stopped on reload, configure it programmatically rather than with a
 placeholder based property.
 
+Components implementing `SecretRotationAware`, such as `camel-jdbc`, `camel-sql`, and `camel-sql-stored`, will now soft-evict their
+connection pool(s) on every context reload — not only on vault-detected secret rotations. This includes
+JMX-triggered reloads, `camel cmd reload`, and dev-mode file-watcher reloads.
+
 === Languages - less than with two null values, and a source from a variable
 
 - The `<` operator (in the Simple language and the Java DSL `isLessThan`) is now `false` when both sides are `null`,
