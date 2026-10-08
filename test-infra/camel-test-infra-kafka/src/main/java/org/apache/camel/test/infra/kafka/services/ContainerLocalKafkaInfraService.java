@@ -74,7 +74,7 @@ public class ContainerLocalKafkaInfraService implements KafkaInfraService, Conta
             }
         }
 
-        KafkaContainer container = new TestInfraKafkaContainer(fixedPort);
+        KafkaContainer container = withShareGroups(new TestInfraKafkaContainer(fixedPort));
 
         if (ContainerEnvironmentUtil.isWithUi()) {
             uiNetwork = Network.newNetwork();
@@ -161,6 +161,17 @@ public class ContainerLocalKafkaInfraService implements KafkaInfraService, Conta
                         DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA_IMAGE_NAME))
                                 .asCompatibleSubstituteFor("apache/kafka"));
 
-        return new ContainerLocalKafkaInfraService(container);
+        return new ContainerLocalKafkaInfraService(withShareGroups(container));
+    }
+
+    /**
+     * A single broker can only create the share group state topic with a replication factor of 1. The broker
+     * configuration of the image sets it, but it is not used when the container is configured with environment
+     * variables, and the default of 3 leaves the share groups without records.
+     */
+    protected static KafkaContainer withShareGroups(KafkaContainer container) {
+        return container
+                .withEnv("KAFKA_SHARE_COORDINATOR_STATE_TOPIC_REPLICATION_FACTOR", "1")
+                .withEnv("KAFKA_SHARE_COORDINATOR_STATE_TOPIC_MIN_ISR", "1");
     }
 }

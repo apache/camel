@@ -249,6 +249,7 @@
 ** xref:jt400-component.adoc[JT400]
 ** xref:jte-component.adoc[JTE]
 ** xref:kafka-component.adoc[Kafka]
+** xref:kafka-share-component.adoc[Kafka Share]
 ** xref:kamelet-component.adoc[Kamelet]
 ** xref:keycloak-component.adoc[Keycloak]
 ** xref:knative-component.adoc[Knative]

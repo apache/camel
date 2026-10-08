@@ -9725,6 +9725,50 @@ public class StaticEndpointBuilders {
         return KafkaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Kafka Share (camel-kafka-share)
+     * Consume messages from Apache Kafka topics as a queue, using a share
+     * group.
+     * 
+     * Category: messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-kafka-share
+     * 
+     * Syntax: <code>kafka-share:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * Name of the topic to consume from. Use comma to separate multiple topics.
+     * Topic patterns are not supported by share groups.
+     * 
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static KafkaShareEndpointBuilderFactory.KafkaShareEndpointBuilder kafkaShare(String path) {
+        return kafkaShare("kafka-share", path);
+    }
+    /**
+     * Kafka Share (camel-kafka-share)
+     * Consume messages from Apache Kafka topics as a queue, using a share
+     * group.
+     * 
+     * Category: messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-kafka-share
+     * 
+     * Syntax: <code>kafka-share:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * Name of the topic to consume from. Use comma to separate multiple topics.
+     * Topic patterns are not supported by share groups.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static KafkaShareEndpointBuilderFactory.KafkaShareEndpointBuilder kafkaShare(String componentName, String path) {
+        return KafkaShareEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Kamelet (camel-kamelet)
      * To call Kamelets
      * 

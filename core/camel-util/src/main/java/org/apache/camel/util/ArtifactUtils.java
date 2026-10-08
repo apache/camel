@@ -256,6 +256,7 @@ public final class ArtifactUtils {
             Map.entry("jt400", "camel-jt400"),
             Map.entry("jte", "camel-jte"),
             Map.entry("kafka", "camel-kafka"),
+            Map.entry("kafka-share", "camel-kafka-share"),
             Map.entry("kamelet", "camel-kamelet"),
             Map.entry("keycloak", "camel-keycloak"),
             Map.entry("knative", "camel-knative"),

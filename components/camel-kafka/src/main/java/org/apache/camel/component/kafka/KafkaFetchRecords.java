@@ -46,8 +46,6 @@ import org.apache.camel.component.kafka.consumer.support.subcription.TopicInfo;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.task.BackgroundTask;
 import org.apache.camel.support.task.TaskRunFailureException;
-import org.apache.camel.support.task.Tasks;
-import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.TimeUtils;
@@ -143,7 +141,6 @@ public class KafkaFetchRecords implements Runnable {
                     }
 
                     // background task that creates and subscribes the kafka consumer
-                    // this stays registered in the internal task registry for visibility via management (TUI/CLI/Hawtio)
                     currentBackoffInterval
                             = kafkaConsumer.getEndpoint().getComponent().getCreateConsumerBackoffInterval();
                     int maxAttempts
@@ -152,16 +149,8 @@ public class KafkaFetchRecords implements Runnable {
                         reconnectPool = kafkaConsumer.getEndpoint().getCamelContext().getExecutorServiceManager()
                                 .newSingleThreadScheduledExecutor(this, "KafkaReconnect");
                     }
-                    BackgroundTask task = Tasks.backgroundTask()
-                            .withScheduledExecutor(reconnectPool)
-                            .withBudget(Budgets.iterationTimeBudget()
-                                    .withMaxIterations(maxAttempts)
-                                    .withInterval(Duration.ofMillis(currentBackoffInterval))
-                                    .withInitialDelay(Duration.ZERO)
-                                    .withUnlimitedDuration()
-                                    .build())
-                            .withName("KafkaReconnect-" + getPrintableTopic())
-                            .build();
+                    BackgroundTask task = KafkaReconnectSupport.createReconnectTask(
+                            reconnectPool, "KafkaReconnect-" + getPrintableTopic(), maxAttempts, currentBackoffInterval);
                     boolean success
                             = task.run(kafkaConsumer.getEndpoint().getCamelContext(), this::reconnectTask);
                     if (!success) {
