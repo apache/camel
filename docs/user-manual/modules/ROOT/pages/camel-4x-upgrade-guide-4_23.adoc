@@ -4975,6 +4975,12 @@ unchanged, but fail the conversion. The converted scripts use the new `dataweave
 `camel-datasonnet`, so DataSonnet scripts generated with `camel transform dataweave` need
 `camel-datasonnet` 4.23 or newer.
 
+=== camel-datasonnet - `c.sortBy` sorts arrays of numbers and strings by the key function
+
+The `c.sortBy(arr, f)` function of `camel.libsonnet` ignored the key function `f` for an array of numbers or
+strings, and sorted the values themselves. It now sorts by the key function, as documented (for example
+`c.sortBy([1, 3, 2], function(x) -x)` gives `[3, 2, 1]`). Arrays of objects are sorted as before.
+
 === camel-jbang - `camel transform dataweave` no longer aborts on parse errors in directory mode
 
 The `camel transform dataweave` CLI command previously let a `DataWeaveConversionException` propagate

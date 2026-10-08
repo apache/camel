@@ -227,7 +227,7 @@
                   local g = dw.str(f(a[i], i));
                   acc { [g]: (if std.objectHas(acc, g) then acc[g] else []) + [a[i]] },
                 indexes(a), {}),
-  // a stable sort by key (std.sort of DataSonnet ignores keyF)
+  // a stable sort by key (std.sort of DataSonnet ignores keyF for an array of numbers or strings)
   local sortBy(xs, key) =
     local keyed = [{ k: key(x), x: x } for x in xs];
     std.flattenArrays([[e.x for e in keyed if e.k == k] for k in std.set([e.k for e in keyed])]),
