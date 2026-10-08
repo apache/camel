@@ -360,8 +360,9 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             // last update failed, so we need to update all previous sources to ensure we go back
             // to the last working set
             previousSources.forEach(rs -> {
-                // remember all the sources of the current routes (except the updated)
-                if (rs != null && !equalResourceLocation(resources, rs) && !equalResourceLocation(sources, rs)) {
+                // remember all the sources of the current routes (except the updated, and those whose file is gone)
+                if (rs != null && !isDeletedFile(rs) && !equalResourceLocation(resources, rs)
+                        && !equalResourceLocation(sources, rs)) {
                     sources.add(rs);
                 }
             });
@@ -373,9 +374,12 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 // remember all the sources of the current routes (except the updated)
                 // (a file with several routes is one source: adding it once per route would load it several
                 // times and fail on a duplicate route id, CAMEL-24866)
+                // (the file of a route may have been removed since it loaded: on-demand reload only passes the files
+                // that exist, so its routes are removed like those of a changed file, CAMEL-25427)
                 getCamelContext().getRoutes().forEach(r -> {
                     Resource rs = r.getSourceResource();
-                    if (rs != null && !equalResourceLocation(resources, rs) && !equalResourceLocation(sources, rs)) {
+                    if (rs != null && !isDeletedFile(rs) && !equalResourceLocation(resources, rs)
+                            && !equalResourceLocation(sources, rs)) {
                         sources.add(rs);
                     }
                 });
@@ -556,7 +560,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         }
         List<Resource> restore = new ArrayList<>();
         for (Resource rs : previousSources) {
-            if (rs != null && (failed == null || !equalResourceLocation(failed, rs))) {
+            if (rs != null && !isDeletedFile(rs) && (failed == null || !equalResourceLocation(failed, rs))) {
                 restore.add(rs);
             }
         }
@@ -594,6 +598,18 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                      + " without routes until the file is fixed",
                     e.getMessage(), e);
         }
+    }
+
+    /**
+     * Whether the resource is a file that no longer exists. Only the location is looked at: a source restored from its
+     * last loaded content is kept in memory and always exists, but its file may have been removed since (CAMEL-25427).
+     */
+    private static boolean isDeletedFile(Resource resource) {
+        String loc = resource.getLocation();
+        if (loc == null || !loc.startsWith("file:")) {
+            return false;
+        }
+        return !Files.exists(Paths.get(loc.substring(5)));
     }
 
     /**
