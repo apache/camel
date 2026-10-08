@@ -4857,14 +4857,23 @@ The `kubernetes-configmaps` developer console now reports the config map names a
 Its text output labels the list `Config maps in use:` instead of `Secrets in use:`.
 Both Kubernetes vault consoles return empty lists when no resource names are configured.
 
-=== camel-datasonnet - DataWeave auto-conversion now fails fast on unsupported constructs
+=== camel-datasonnet - DataWeave auto-conversion now fails fast on unsupported or malformed scripts
 
 `camel-datasonnet` can auto-convert DataWeave 2.0 expressions to DataSonnet at route startup.
-Previously, when the DataWeave expression contained constructs that could not be auto-converted,
-the language emitted a `WARN` log and continued, yielding a partially-converted (and likely broken)
-expression. Starting with this release, such expressions throw `DataWeaveConversionException` at
-expression-creation time, failing the route startup with a clear error message.
+Two aspects of that conversion are now stricter:
 
-Users who relied on the previous best-effort behaviour (accepting `null` or incomplete results for
-unconvertible constructs) must rewrite those constructs in DataSonnet directly, or move the
-DataWeave logic to a `.ds` file.
+* **Unsupported semantic constructs:** Previously, when the DataWeave expression contained
+constructs that could not be auto-converted, the language emitted a `WARN` log and continued,
+yielding a partially-converted (and likely broken) expression. Starting with this release, such
+expressions throw `DataWeaveConversionException` at expression-creation time, failing the route
+startup with a clear error message.
+
+* **Syntactically malformed scripts:** Previously, a DataWeave script with syntax errors (e.g. a
+missing `}`) could pass the parser and produce a garbled or partial AST, leading to unpredictable
+runtime behaviour. The parser now throws `DataWeaveConversionException` for any syntactically
+invalid input, failing fast at startup instead of silently tolerating malformed scripts.
+
+In both cases the exception is thrown at expression-creation time (route startup), not at message
+processing time. Users who relied on the previous lenient behaviour must fix the malformed or
+unconvertible expressions. Scripts with unsupported DataWeave constructs must be rewritten in
+DataSonnet directly, or moved to a `.ds` file.
