@@ -16,14 +16,11 @@
  */
 package org.apache.camel.component.milo;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
@@ -31,7 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
-import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -249,7 +245,7 @@ public class MonitorItemTest extends AbstractMiloServerTest {
         int count3 = this.test3Endpoint.getReceivedCounter();
         assertTrue(count3 <= 6, "Not enough messages have been dropped, but should because of queueSize");
 
-        // The fourth client should get no more than 14 messages, because it is very sensible on the timing we allow 1 more
+        // The fourth client should get no more than 14 messages, because it is very sensitive on the timing we allow 1 more
         int count4 = this.test4Endpoint.getReceivedCounter();
         assertTrue(count4 <= 15, "Not enough messages have been dropped, but should because of queueSize");
     }
