@@ -729,6 +729,17 @@ The `route-topology` developer console (used by `camel cmd route-topology` and t
 includes routes created by Kamelets, as these are an implementation detail of the Kamelet and were already hidden
 from the route console. Set the `kamelets=true` option (or `--kamelets` on the CLI) to include them.
 
+The route topology no longer reports a send from an `onException` clause as a call between routes. Such a send, and the
+dead letter uri of a dead letter channel, is now an error path: each edge has a `kind` field, `call` as before or
+`error`, and an error path also says what sends (`via`: `errorHandler` or `onException`) and what happens to the failure
+(`handling`: `handled`, the message ends there as with a dead letter channel; `continued`, the route goes on after it;
+or `notHandled`, the failure goes on to the caller). Error paths come only from routes whose error handler handles the
+failure: a route with `noErrorHandler` has none, as its failure goes back to the calling route. Before, a global
+`onException` that sent to another route showed up as a call from every route, the target route itself included. The
+diagrams (the Camel TUI, camel-diagram) draw the calls only, and the text output of the console and of `camel cmd
+route-topology` lists the error paths with `..>`. The `RouteTopologyDumper.TopologyEdge` record has the new `kind`,
+`via` and `handling` components; its four-argument constructor is kept and creates a `call` edge.
+
 The `inflight` and `blocked` developer consoles now carry a `nodeSource` field per entry, saying where the node the
 exchange sits at is in the source (such as `orders.camel.yaml:18`). It is `null` when message history or source
 location is disabled. Existing fields are unchanged.
