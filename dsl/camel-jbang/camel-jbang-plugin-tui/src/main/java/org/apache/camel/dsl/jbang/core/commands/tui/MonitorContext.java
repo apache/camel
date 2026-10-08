@@ -184,6 +184,36 @@ class MonitorContext {
         }
     }
 
+    /** How long the jvm answer of an integration is kept for the tabs that need its classpath. */
+    static final long JVM_INFO_TTL_MS = 30_000;
+    private final ConcurrentHashMap<String, CachedAnswer> jvmInfo = new ConcurrentHashMap<>();
+
+    private record CachedAnswer(JsonObject answer, long time) {
+    }
+
+    /**
+     * The jvm answer of an integration (its classpath and JVM details), shared by the tabs that need it (Classpath, CVE
+     * Audit, Maven Dependencies, Heap Histogram): an action takes a second of the integration, so it is asked once, not
+     * once per tab.
+     */
+    JsonObject jvmInfo(String pid, long timeoutMs) {
+        Object lock = actionLocks.computeIfAbsent(pid, k -> new Object());
+        synchronized (lock) {
+            CachedAnswer cached = jvmInfo.get(pid);
+            long now = System.currentTimeMillis();
+            if (cached != null && now - cached.time() < JVM_INFO_TTL_MS) {
+                return cached.answer();
+            }
+            JsonObject request = new JsonObject();
+            request.put("action", "jvm");
+            JsonObject answer = executeAction(pid, request, timeoutMs);
+            if (answer != null) {
+                jvmInfo.put(pid, new CachedAnswer(answer, now));
+            }
+            return answer;
+        }
+    }
+
     JsonObject executeAction(String pid, JsonObject request, long timeoutMs) {
         Object lock = actionLocks.computeIfAbsent(pid, k -> new Object());
         synchronized (lock) {

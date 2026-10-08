@@ -120,10 +120,7 @@ class CatalogTab extends AbstractTableTab {
         errorMessage = null;
         dataLoaded = false;
         loading.set(false);
-        if (ctx.selectedPid != null) {
-            lastPid = ctx.selectedPid;
-            loadCatalogData();
-        }
+        // loaded when the tab is shown (onTabSelected): a hidden tab must not hold up the one the user looks at
     }
 
     boolean isFilterInputActive() {
