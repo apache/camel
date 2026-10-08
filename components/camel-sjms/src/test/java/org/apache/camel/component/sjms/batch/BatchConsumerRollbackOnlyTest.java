@@ -18,6 +18,7 @@ package org.apache.camel.component.sjms.batch;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
@@ -79,7 +80,7 @@ public class BatchConsumerRollbackOnlyTest extends JmsTestSupport {
         };
     }
 
-    private static class MarkRollBackProcessor implements org.apache.camel.Processor {
+    private static class MarkRollBackProcessor implements Processor {
         private final AtomicInteger counter = new AtomicInteger();
 
         @Override

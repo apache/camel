@@ -81,7 +81,7 @@ public class BatchConcurrentConsumerTest extends JmsTestSupport {
                                 barrier.await(15, TimeUnit.SECONDS);
                             }
                             workerThreads.add(Thread.currentThread().getName());
-                            List<Exchange> batch = BatchTestHelper.getBatch(e);
+                            List<Exchange> batch = BatchTestHelper.getBatchExchanges(e);
                             batchSizes.add(batch.size());
                             assertEquals(batch.size(),
                                     e.getIn().getHeader(SjmsConstants.SJMS_BATCH_SIZE_HEADER, Integer.class));

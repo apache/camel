@@ -30,8 +30,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.sjms.batch.BatchTestHelper.batchBodiesAsList;
-import static org.apache.camel.component.sjms.batch.BatchTestHelper.getBatch;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.getBatchBodiesAsString;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.getBatchExchanges;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessagesWithText;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.triggerConnectionFailure;
 import static org.awaitility.Awaitility.await;
@@ -90,12 +90,12 @@ public class BatchConsumerRecoveryTest extends JmsExclusiveTestSupport {
 
         mock.assertIsSatisfied();
         // fist batch
-        assertEquals(5, getBatch(mock.getExchanges().get(0)).size());
+        assertEquals(5, getBatchExchanges(mock.getExchanges().get(0)).size());
         assertEquals(List.of("Before!", "Before!", "After!", "After!", "After!"),
-                batchBodiesAsList(mock.getExchanges().get(0)));
+                getBatchBodiesAsString(mock.getExchanges().get(0)));
         // second batch
-        assertEquals(4, getBatch(mock.getExchanges().get(1)).size());
-        assertEquals(List.of("After!", "After!", "After!", "After!"), batchBodiesAsList(mock.getExchanges().get(1)));
+        assertEquals(4, getBatchExchanges(mock.getExchanges().get(1)).size());
+        assertEquals(List.of("After!", "After!", "After!", "After!"), getBatchBodiesAsString(mock.getExchanges().get(1)));
         assertEquals(connectionsBefore + 1, countingFactory.getCreateCount());
     }
 

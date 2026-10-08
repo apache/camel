@@ -34,9 +34,9 @@ import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.BATCH_ROUTEBUILDER_MOCK_FINISH;
-import static org.apache.camel.component.sjms.batch.BatchTestHelper.batchBodiesAsList;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.createBatchRoute;
-import static org.apache.camel.component.sjms.batch.BatchTestHelper.getBatch;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.getBatchBodiesAsString;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.getBatchExchanges;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessagesWithText;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.triggerConnectionFailure;
 import static org.awaitility.Awaitility.await;
@@ -94,8 +94,8 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
                 .until(() -> countingFactory.getCreateCount() > connectionsBefore);
 
         mock.assertIsSatisfied();
-        assertEquals(2, getBatch(mock.getExchanges().get(0)).size());
-        assertEquals(List.of("Before!", "Before!"), batchBodiesAsList(mock.getExchanges().get(0)));
+        assertEquals(2, getBatchExchanges(mock.getExchanges().get(0)).size());
+        assertEquals(List.of("Before!", "Before!"), getBatchBodiesAsString(mock.getExchanges().get(0)));
 
         mock.reset();
 
@@ -105,8 +105,8 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
         sendMessagesWithText(template, endpointUri, 3, "After!");
 
         mock.assertIsSatisfied();
-        assertEquals(3, getBatch(mock.getExchanges().get(0)).size());
-        assertEquals(List.of("After!", "After!", "After!"), batchBodiesAsList(mock.getExchanges().get(0)));
+        assertEquals(3, getBatchExchanges(mock.getExchanges().get(0)).size());
+        assertEquals(List.of("After!", "After!", "After!"), getBatchBodiesAsString(mock.getExchanges().get(0)));
     }
 
     @Test
@@ -134,12 +134,12 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
 
         mock.assertIsSatisfied();
         // fist batch
-        assertEquals(5, getBatch(mock.getExchanges().get(0)).size());
+        assertEquals(5, getBatchExchanges(mock.getExchanges().get(0)).size());
         assertEquals(List.of("Before!", "Before!", "After!", "After!", "After!"),
-                batchBodiesAsList(mock.getExchanges().get(0)));
+                getBatchBodiesAsString(mock.getExchanges().get(0)));
         // second batch
-        assertEquals(4, getBatch(mock.getExchanges().get(1)).size());
-        assertEquals(List.of("After!", "After!", "After!", "After!"), batchBodiesAsList(mock.getExchanges().get(1)));
+        assertEquals(4, getBatchExchanges(mock.getExchanges().get(1)).size());
+        assertEquals(List.of("After!", "After!", "After!", "After!"), getBatchBodiesAsString(mock.getExchanges().get(1)));
     }
 
     @Test
@@ -165,9 +165,9 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
         sendMessagesWithText(template, endpointUri, 3, "After!");
 
         mock.assertIsSatisfied();
-        assertEquals(5, getBatch(mock.getExchanges().get(0)).size());
+        assertEquals(5, getBatchExchanges(mock.getExchanges().get(0)).size());
         assertEquals(List.of("Before!", "Before!", "After!", "After!", "After!"),
-                batchBodiesAsList(mock.getExchanges().get(0)));
+                getBatchBodiesAsString(mock.getExchanges().get(0)));
     }
 
     protected RoutesBuilder[] createRouteBuilders() {

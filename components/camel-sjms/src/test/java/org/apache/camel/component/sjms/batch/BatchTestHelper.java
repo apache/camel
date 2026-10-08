@@ -70,14 +70,14 @@ public final class BatchTestHelper {
         }
     }
 
-    static List<String> batchBodiesAsList(Exchange batchExchange) {
-        return BatchTestHelper.getBatch(batchExchange).stream()
+    static List<String> getBatchBodiesAsString(Exchange batchExchange) {
+        return BatchTestHelper.getBatchExchanges(batchExchange).stream()
                 .map(e -> e.getIn().getBody(String.class))
                 .toList();
     }
 
     /** Extracts the batch body as a List<Exchange> from a batch Exchange, asserting the type. */
-    static List<Exchange> getBatch(Exchange batchExchange) {
+    static List<Exchange> getBatchExchanges(Exchange batchExchange) {
         List<Exchange> body = batchExchange.getIn().getBody(List.class);
         assertNotNull(body, "batch exchange body was null");
         for (Object o : body) {
@@ -88,7 +88,7 @@ public final class BatchTestHelper {
 
     /** Asserts a single batch exchange has exactly the given number of messages. */
     static void assertBatchSize(Exchange batchExchange, int expectedSize) {
-        List<Exchange> batch = getBatch(batchExchange);
+        List<Exchange> batch = getBatchExchanges(batchExchange);
         assertEquals(expectedSize, batch.size(), "unexpected batch size");
         assertEquals(expectedSize,
                 batchExchange.getIn().getHeader(SjmsConstants.SJMS_BATCH_SIZE_HEADER, Integer.class),
@@ -146,7 +146,7 @@ public final class BatchTestHelper {
      * message has that body, so a typo in the body cannot make the assertion pass vacuously.
      */
     static void assertBatchRedelivered(Exchange batchExchange, String body, boolean expectedRedelivered) {
-        List<Exchange> matching = getBatch(batchExchange).stream()
+        List<Exchange> matching = getBatchExchanges(batchExchange).stream()
                 .filter(e -> body.equals(e.getIn().getBody(String.class)))
                 .toList();
 

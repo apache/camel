@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms.batch;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
@@ -29,8 +30,8 @@ import static org.apache.camel.component.sjms.batch.BatchTestHelper.BATCH_ROUTEB
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.BATCH_ROUTEBUILDER_MOCK_START;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.DEFAULT_MESSAGE_TEXT;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.assertBatchSizesInOrder;
-import static org.apache.camel.component.sjms.batch.BatchTestHelper.batchBodiesAsList;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.createBatchRoute;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.getBatchBodiesAsString;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessages;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -55,7 +56,7 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         assertBatchSizesInOrder(mockFinish, 5);
-        assertEquals(Collections.nCopies(5, DEFAULT_MESSAGE_TEXT), batchBodiesAsList(mockFinish.getExchanges().get(0)));
+        assertEquals(Collections.nCopies(5, DEFAULT_MESSAGE_TEXT), getBatchBodiesAsString(mockFinish.getExchanges().get(0)));
     }
 
     @Test
@@ -72,7 +73,7 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         assertBatchSizesInOrder(mockFinish, 5);
-        assertEquals(Collections.nCopies(5, DEFAULT_MESSAGE_TEXT), batchBodiesAsList(mockFinish.getExchanges().get(0)));
+        assertEquals(Collections.nCopies(5, DEFAULT_MESSAGE_TEXT), getBatchBodiesAsString(mockFinish.getExchanges().get(0)));
     }
 
     @Test
@@ -102,7 +103,7 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
         };
     }
 
-    private static class ThrowExceptionProcessor implements org.apache.camel.Processor {
+    private static class ThrowExceptionProcessor implements Processor {
         private final AtomicInteger counter = new AtomicInteger();
 
         @Override
