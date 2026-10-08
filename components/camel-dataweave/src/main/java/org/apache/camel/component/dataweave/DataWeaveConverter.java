@@ -149,6 +149,17 @@ public class DataWeaveConverter {
             return emitNode(ia.object()) + "[" + emitNode(ia.index()) + "]";
         } else if (node instanceof MultiValueSelector mv) {
             return emitMultiValueSelector(mv);
+        } else if (node instanceof AttributeAccess aa) {
+            return emitAttributeAccess(aa);
+        } else if (node instanceof ExistenceCheck ec) {
+            return emitExistenceCheck(ec);
+        } else if (node instanceof DoubleDollar) {
+            // $$ means accumulator only inside reduce. In map/filter/mapObject/pluck it means index or key.
+            // Outside the reduce-shorthand emitter this context is unknown, so emit a TODO.
+            todoCount++;
+            return includeComments
+                    ? "/* TODO: manual conversion needed -- $$ outside reduce context */" + "\nnull"
+                    : "null";
         } else if (node instanceof ObjectLit obj) {
             return emitObjectLit(obj);
         } else if (node instanceof ArrayLit arr) {
@@ -214,8 +225,24 @@ public class DataWeaveConverter {
     }
 
     private String emitStringLit(StringLit s) {
-        // The lexer preserves escape sequences as-is, so don't double-escape
-        return "\"" + s.value().replace("\"", "\\\"") + "\"";
+        String value = s.value();
+        // Jsonnet has no in-string interpolation. DataWeave uses "Hello $(expr)" but there is
+        // no faithful automated conversion (the sub-expression must be re-emitted through the AST).
+        // Emit as a TODO comment and a placeholder so the converter output is syntactically valid.
+        if (value.contains("$(")) {
+            todoCount++;
+            String escapedInterp = value.replaceAll("(?<!\\\\)\"", "\\\\\"");
+            return includeComments
+                    ? "/* TODO: manual conversion needed -- string interpolation: \"" + value.replace("*/", "* /") + "\"*/\n\""
+                      + escapedInterp + "\""
+                    : "\"" + escapedInterp + "\"";
+        }
+        // The lexer preserves escape sequences verbatim (e.g. \" is stored as \").
+        // When the source was a single-quoted DataWeave string, bare double-quote characters
+        // in the value would make the output invalid Jsonnet. Re-escape any unescaped " chars.
+        // Strategy: replace every " that is NOT already preceded by a backslash with \".
+        String escaped = value.replaceAll("(?<!\\\\)\"", "\\\\\"");
+        return "\"" + escaped + "\"";
     }
 
     private String emitIdentifier(Identifier id) {
@@ -254,7 +281,34 @@ public class DataWeaveConverter {
 
     private String emitMultiValueSelector(MultiValueSelector mv) {
         String collection = emitNode(mv.object());
+        // DataWeave .*field collects all values for key 'field' from each element of the collection.
+        // In DataSonnet/Jsonnet: std.map(function(x) x.<field>, collection).
+        // Note: camel.libsonnet has no multiValue helper, so we emit directly.
         return "std.map(function(x) x." + mv.field() + ", " + collection + ")";
+    }
+
+    private String emitAttributeAccess(AttributeAccess aa) {
+        // DataWeave .@attr accesses an XML attribute; in DataSonnet XML attributes are exposed
+        // as object keys prefixed with '@', e.g. body.Order['@id'].
+        return emitNode(aa.object()) + "[\"@" + aa.attribute() + "\"]";
+    }
+
+    private String emitExistenceCheck(ExistenceCheck ec) {
+        // DataWeave expr? (key-present selector) returns true/false.
+        // In Jsonnet, accessing a missing field raises an error, so we cannot simply wrap the expression.
+        // For FieldAccess and AttributeAccess we can use std.objectHas(obj, "key") safely.
+        // For other shapes the semantics cannot be faithfully reproduced without a helper; emit as TODO.
+        if (ec.expr() instanceof FieldAccess fa) {
+            return "std.objectHas(" + emitNode(fa.object()) + ", \"" + fa.field() + "\")";
+        }
+        if (ec.expr() instanceof AttributeAccess aa) {
+            return "std.objectHas(" + emitNode(aa.object()) + ", \"@" + aa.attribute() + "\")";
+        }
+        todoCount++;
+        return includeComments
+                ? "/* TODO: manual conversion needed -- existence check on non-field expression: "
+                  + emitNode(ec.expr()).replace("*/", "* /") + " */\nfalse"
+                : "false";
     }
 
     private String emitObjectLit(ObjectLit obj) {
@@ -352,7 +406,7 @@ public class DataWeaveConverter {
             case "Boolean" -> "cml.toBoolean(" + expr + ")";
             default -> {
                 todoCount++;
-                yield expr + (includeComments ? " // TODO: manual conversion needed -- as " + tc.type() : "");
+                yield expr + (includeComments ? " /* TODO: manual conversion needed -- as " + tc.type() + " */" : "");
             }
         };
     }
@@ -410,9 +464,9 @@ public class DataWeaveConverter {
                 yield "c.max(" + argStr + ")";
             }
             case "read" -> "std.parseJson(" + argStr + ")"
-                           + (includeComments ? " // NOTE: assumes JSON input -- DW read() supports multiple formats" : "");
+                           + (includeComments ? " /* NOTE: assumes JSON input -- DW read() supports multiple formats */" : "");
             case "write" -> "std.manifestJsonEx(" + argStr + ", \"  \")"
-                            + (includeComments ? " // NOTE: outputs JSON -- DW write() supports multiple formats" : "");
+                            + (includeComments ? " /* NOTE: outputs JSON -- DW write() supports multiple formats */" : "");
             default -> fc.name() + "(" + argStr + ")";
         };
     }
@@ -479,7 +533,110 @@ public class DataWeaveConverter {
                        + collection + ", " + init + ")";
             }
         }
-        return "std.foldl(" + emitNode(re.lambda()) + ", " + collection + ", null)";
+        // Shorthand form: payload.items reduce ($$ + $.price)
+        // $$ is the accumulator ($$ -> acc) and $ is the current item ($ -> item).
+        // DataWeave shorthand without an explicit initial value uses the first element
+        // as the starting accumulator: std.foldl(function(acc, item) body, arr[1:], arr[0]).
+        String body = emitReduceShorthandBody(re.lambda());
+        return "(local _arr = " + collection + ";\n"
+               + "if std.length(_arr) == 0 then null else std.foldl(function(acc, item) " + body + ", _arr[1:], _arr[0]))";
+    }
+
+    /**
+     * Emit a reduce shorthand body, rewriting {@code $$} to {@code acc} and {@code $} (optionally with field access) to
+     * {@code item} or {@code item.field}. Falls back to normal {@code emitNode} for any sub-expression that doesn't
+     * contain shorthand references.
+     */
+    private String emitReduceShorthandBody(DataWeaveAst node) {
+        if (node instanceof DoubleDollar) {
+            return "acc";
+        }
+        if (node instanceof LambdaShorthand ls) {
+            if (ls.fields().isEmpty()) {
+                return "item";
+            }
+            return "item." + String.join(".", ls.fields());
+        }
+        if (node instanceof BinaryOp op) {
+            String left = emitReduceShorthandBody(op.left());
+            String right = emitReduceShorthandBody(op.right());
+            return switch (op.op()) {
+                case "++" -> left + " + " + right;
+                case "and" -> left + " && " + right;
+                case "or" -> left + " || " + right;
+                default -> left + " " + op.op() + " " + right;
+            };
+        }
+        if (node instanceof Parens p) {
+            return "(" + emitReduceShorthandBody(p.expr()) + ")";
+        }
+        if (node instanceof FieldAccess fa) {
+            return emitReduceShorthandBody(fa.object()) + "." + fa.field();
+        }
+        if (node instanceof IndexAccess ia) {
+            return emitReduceShorthandBody(ia.object()) + "[" + emitReduceShorthandBody(ia.index()) + "]";
+        }
+        if (node instanceof UnaryOp op) {
+            return switch (op.op()) {
+                case "not" -> "!" + emitReduceShorthandBody(op.operand());
+                default -> op.op() + emitReduceShorthandBody(op.operand());
+            };
+        }
+        // For anything else: if the sub-expression contains a shorthand reference ($ or $$)
+        // that emitNode cannot rewrite, emit a TODO to avoid silently producing wrong code.
+        // Pure literals and identifiers without shorthand references are safe to emit normally.
+        if (containsShorthand(node)) {
+            todoCount++;
+            return includeComments
+                    ? "/* TODO: manual conversion needed -- reduce shorthand in unsupported context: "
+                      + node.getClass().getSimpleName() + " */\nnull"
+                    : "null";
+        }
+        return emitNode(node);
+    }
+
+    /**
+     * Returns true if the given AST node or any of its children contain a LambdaShorthand ($) or DoubleDollar ($$) that
+     * would be emitted incorrectly by the normal emitNode path in a reduce shorthand context.
+     */
+    private boolean containsShorthand(DataWeaveAst node) {
+        if (node == null) {
+            return false;
+        }
+        if (node instanceof LambdaShorthand || node instanceof DoubleDollar) {
+            return true;
+        }
+        if (node instanceof BinaryOp op) {
+            return containsShorthand(op.left()) || containsShorthand(op.right());
+        }
+        if (node instanceof UnaryOp op) {
+            return containsShorthand(op.operand());
+        }
+        if (node instanceof Parens p) {
+            return containsShorthand(p.expr());
+        }
+        if (node instanceof FieldAccess fa) {
+            return containsShorthand(fa.object());
+        }
+        if (node instanceof FunctionCall fc) {
+            return fc.args().stream().anyMatch(this::containsShorthand);
+        }
+        if (node instanceof DefaultExpr def) {
+            return containsShorthand(def.expr()) || containsShorthand(def.fallback());
+        }
+        if (node instanceof IfElse ie) {
+            return containsShorthand(ie.condition()) || containsShorthand(ie.thenExpr()) || containsShorthand(ie.elseExpr());
+        }
+        if (node instanceof IndexAccess ia) {
+            return containsShorthand(ia.object()) || containsShorthand(ia.index());
+        }
+        // Unknown node type: default to true (conservative — prevents silent wrong output).
+        // Only return false for nodes known to never contain shorthand (literals, Identifier).
+        if (node instanceof NumberLit || node instanceof StringLit || node instanceof BooleanLit
+                || node instanceof NullLit || node instanceof Identifier) {
+            return false;
+        }
+        return true;
     }
 
     private String emitFlatMap(FlatMapExpr fme) {
@@ -510,9 +667,12 @@ public class DataWeaveConverter {
         if (gbe.lambda() instanceof Lambda lam) {
             List<String> paramNames = lambdaParamNames(lam);
             String body = emitNode(lam.body());
-            return "c.groupBy(" + collection + ", function(" + paramNames.get(0) + ") " + body + ")";
+            // Jsonnet object keys must be strings. DataWeave allows any type as a groupBy key,
+            // so we wrap with std.toString() unconditionally to ensure valid Jsonnet output.
+            // If the key expression is already a string, std.toString() is a no-op.
+            return "c.groupBy(" + collection + ", function(" + paramNames.get(0) + ") std.toString(" + body + "))";
         }
-        return "c.groupBy(" + collection + ", " + emitNode(gbe.lambda()) + ")";
+        return "c.groupBy(" + collection + ", function(x) std.toString((" + emitNode(gbe.lambda()) + ")(x)))";
     }
 
     private String emitOrderBy(OrderByExpr obe) {
@@ -593,7 +753,8 @@ public class DataWeaveConverter {
         todoCount++;
         convertedCount--;
         return includeComments
-                ? "// TODO: manual conversion needed -- " + u.reason() + ": " + u.originalText() + "\nnull"
+                ? "/* TODO: manual conversion needed -- " + u.reason().replace("*/", "* /") + ": "
+                  + u.originalText().replace("*/", "* /") + " */\nnull"
                 : "null";
     }
 

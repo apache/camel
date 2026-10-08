@@ -36,9 +36,13 @@ public class DataWeaveParser {
     }
 
     public DataWeaveAst parse() {
-        DataWeaveAst.Header header = parseHeader();
+        HeaderResult hr = parseHeader();
         DataWeaveAst body = parseExpression();
-        return new DataWeaveAst.Script(header, body);
+        // Wrap header var/fun declarations around the body if present
+        if (!hr.declarations().isEmpty()) {
+            body = new DataWeaveAst.Block(hr.declarations(), body);
+        }
+        return new DataWeaveAst.Script(hr.header(), body);
     }
 
     public DataWeaveAst parseExpressionOnly() {
@@ -47,10 +51,15 @@ public class DataWeaveParser {
 
     // -- Header parsing --
 
-    private DataWeaveAst.Header parseHeader() {
+    /** Internal record carrying both the header directives and any var/fun declarations found in the header section. */
+    private record HeaderResult(DataWeaveAst.Header header, List<DataWeaveAst> declarations) {
+    }
+
+    private HeaderResult parseHeader() {
         String version = "2.0";
         String outputType = null;
         List<DataWeaveAst.InputDecl> inputs = new ArrayList<>();
+        List<DataWeaveAst> declarations = new ArrayList<>();
 
         // Only parse header if it starts with %dw or a known header directive
         boolean hasHeader = (check(TokenType.PERCENT) && peekAhead(1) != null && "dw".equals(peekAhead(1).value()))
@@ -58,7 +67,7 @@ public class DataWeaveParser {
 
         if (!hasHeader) {
             // No header section -- skip directly to body
-            return new DataWeaveAst.Header(version, null, inputs);
+            return new HeaderResult(new DataWeaveAst.Header(version, null, inputs), declarations);
         }
 
         // Check for %dw directive
@@ -85,9 +94,52 @@ public class DataWeaveParser {
             } else if (checkIdentifier("import")) {
                 // Skip import directives
                 while (!check(TokenType.EOF) && !checkIdentifier("output") && !checkIdentifier("input")
+                        && !checkIdentifier("var") && !checkIdentifier("fun")
                         && !check(TokenType.HEADER_SEPARATOR)) {
                     advance();
                 }
+            } else if (checkIdentifier("var")) {
+                // var declaration in header: emit as local binding in body
+                advance(); // var
+                String name = current().value();
+                advance(); // name
+                // Skip optional type annotation: var rate: Number = 0.08
+                if (check(TokenType.COLON)) {
+                    advance(); // :
+                    skipTypeExpression();
+                }
+                expect(TokenType.ASSIGN); // =
+                DataWeaveAst value = parseExpression();
+                declarations.add(new DataWeaveAst.VarDecl(name, value, null));
+            } else if (checkIdentifier("fun")) {
+                // fun declaration in header: emit as local function in body
+                advance(); // fun
+                String name = current().value();
+                advance(); // name
+                expect(TokenType.LPAREN);
+                List<String> params = new ArrayList<>();
+                while (!check(TokenType.RPAREN) && !check(TokenType.EOF)) {
+                    String paramName = current().value();
+                    advance();
+                    // Skip type annotation: fun f(a: Number) or (a: Array<Number>) -> skip to next param
+                    if (check(TokenType.COLON)) {
+                        advance(); // :
+                        skipTypeExpression(); // type expression (simple, generic, or union)
+                    }
+                    params.add(paramName);
+                    if (check(TokenType.COMMA)) {
+                        advance();
+                    }
+                }
+                expect(TokenType.RPAREN);
+                // Optional return type annotation: fun f(a): Number = ...
+                if (check(TokenType.COLON)) {
+                    advance(); // :
+                    skipTypeExpression(); // return type
+                }
+                expect(TokenType.ASSIGN); // =
+                DataWeaveAst funBody = parseExpression();
+                declarations.add(new DataWeaveAst.FunDecl(name, params, funBody, null));
             } else {
                 advance(); // skip unknown header tokens
             }
@@ -97,7 +149,7 @@ public class DataWeaveParser {
             advance(); // ---
         }
 
-        return new DataWeaveAst.Header(version, outputType, inputs);
+        return new HeaderResult(new DataWeaveAst.Header(version, outputType, inputs), declarations);
     }
 
     private String parseMediaType() {
@@ -159,13 +211,24 @@ public class DataWeaveParser {
         expect(TokenType.LPAREN);
         List<String> params = new ArrayList<>();
         while (!check(TokenType.RPAREN) && !check(TokenType.EOF)) {
-            params.add(current().value());
+            String paramName = current().value();
             advance();
+            // Skip type annotation: fun f(a: Number) or (a: Array<Number>) -> skip to next param
+            if (check(TokenType.COLON)) {
+                advance(); // :
+                skipTypeExpression(); // type expression (simple, generic, or union)
+            }
+            params.add(paramName);
             if (check(TokenType.COMMA)) {
                 advance();
             }
         }
         expect(TokenType.RPAREN);
+        // Optional return type annotation: fun f(a): Number = ...
+        if (check(TokenType.COLON)) {
+            advance(); // :
+            skipTypeExpression(); // return type
+        }
         expect(TokenType.ASSIGN); // =
         DataWeaveAst funBody = parseExpression();
         DataWeaveAst next = null;
@@ -353,11 +416,21 @@ public class DataWeaveParser {
                     String field = current().value();
                     advance();
                     expr = new DataWeaveAst.MultiValueSelector(expr, field);
+                } else if (check(TokenType.AT)) {
+                    // .@attrName — XML attribute selector
+                    advance(); // @
+                    String attr = current().value();
+                    advance();
+                    expr = new DataWeaveAst.AttributeAccess(expr, attr);
                 } else if (check(TokenType.IDENTIFIER)) {
                     String field = current().value();
                     advance();
                     expr = new DataWeaveAst.FieldAccess(expr, field);
                 }
+            } else if (check(TokenType.QUESTION)) {
+                // expr? — existence check
+                advance(); // ?
+                expr = new DataWeaveAst.ExistenceCheck(expr);
             } else if (check(TokenType.LBRACKET)) {
                 advance(); // [
                 DataWeaveAst index = parseExpression();
@@ -489,6 +562,10 @@ public class DataWeaveParser {
         if (check(TokenType.DOLLAR)) {
             return parseDollarShorthand();
         }
+        if (check(TokenType.DOLLAR_DOLLAR)) {
+            advance(); // $$
+            return new DataWeaveAst.DoubleDollar();
+        }
         return parsePrimary();
     }
 
@@ -503,8 +580,17 @@ public class DataWeaveParser {
 
         List<DataWeaveAst.LambdaParam> params = new ArrayList<>();
         while (!check(TokenType.RPAREN) && !check(TokenType.ARROW) && !check(TokenType.EOF)) {
+            // Only accept identifiers as parameter names; if we see something else, this is not a lambda
+            if (!check(TokenType.IDENTIFIER)) {
+                throw new IllegalStateException("Expected identifier for lambda parameter, got: " + current());
+            }
             String paramName = current().value();
             advance();
+            // Skip type annotation: (a: Number) or (a: Array<Number>) -> skip to next param
+            if (check(TokenType.COLON)) {
+                advance(); // :
+                skipTypeExpression(); // type expression (simple, generic, or union)
+            }
             DataWeaveAst defaultValue = null;
             if (check(TokenType.ASSIGN)) {
                 advance();
@@ -565,6 +651,11 @@ public class DataWeaveParser {
 
         if (check(TokenType.DOLLAR)) {
             return parseDollarShorthand();
+        }
+
+        if (check(TokenType.DOLLAR_DOLLAR)) {
+            advance(); // $$
+            return new DataWeaveAst.DoubleDollar();
         }
 
         if (check(TokenType.LPAREN)) {
@@ -718,6 +809,54 @@ public class DataWeaveParser {
     }
 
     // -- Token helpers --
+
+    /**
+     * Skip a DataWeave type expression after a colon. Handles: - Simple: {@code Number} - Generic:
+     * {@code Array<Number>}, {@code Array<String | Null>} - Union: {@code String | Null} - Object type: {@code {name:
+     * String}} Stops when it encounters a {@code ,}, {@code )}, {@code =} or EOF at depth 0.
+     */
+    private void skipTypeExpression() {
+        // Skip the leading type name (or opening brace/bracket for object types)
+        if (!check(TokenType.EOF)) {
+            if (check(TokenType.LBRACE)) {
+                // Object type: {name: String} — skip balanced braces
+                int depth = 1;
+                advance(); // {
+                while (depth > 0 && !check(TokenType.EOF)) {
+                    if (check(TokenType.LBRACE)) {
+                        depth++;
+                    } else if (check(TokenType.RBRACE)) {
+                        depth--;
+                    }
+                    advance();
+                }
+                return; // object type is self-contained, no trailing < or |
+            }
+            advance(); // consume base type name / '['
+        }
+        // Now handle trailing generic parameters '<...>' and union '|'
+        while (!check(TokenType.EOF)) {
+            if (check(TokenType.LT)) {
+                // Generic type params: skip balanced < ... >
+                int depth = 1;
+                advance(); // <
+                while (depth > 0 && !check(TokenType.EOF)) {
+                    if (check(TokenType.LT)) {
+                        depth++;
+                    } else if (check(TokenType.GT)) {
+                        depth--;
+                    }
+                    advance();
+                }
+            } else if (check(TokenType.PIPE)) {
+                // Union type: skip '|' and the next type expression
+                advance(); // |
+                skipTypeExpression();
+            } else {
+                break;
+            }
+        }
+    }
 
     private Token current() {
         return pos < tokens.size() ? tokens.get(pos) : tokens.get(tokens.size() - 1);

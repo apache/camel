@@ -473,6 +473,7 @@ class DataWeaveConverterTest {
         String result = converter.convertExpression("payload.items.*name");
         assertEquals("std.map(function(x) x.name, body.items)", result);
         assertEquals(0, converter.getTodoCount());
+        assertFalse(converter.needsCamelLib());
     }
 
     // -- Escape handling --
@@ -483,7 +484,252 @@ class DataWeaveConverterTest {
         assertTrue(result.contains("\"\\n\""), "Newline escape should be preserved, got: " + result);
     }
 
+    // -- CAMEL-25324 fixes --
+
+    @Test
+    void testDoubleQuoteNoDoubleEscape() {
+        // DW: "say \"hi\"" -- the lexer stores the backslash-quote verbatim; do NOT double-escape on emit
+        String result = converter.convertExpression("\"say \\\"hi\\\"\"");
+        assertEquals("\"say \\\"hi\\\"\"", result);
+    }
+
+    @Test
+    void testStringInterpolation() {
+        // DW: "Hello $(payload.name)" -- Jsonnet has no string interpolation, emit as TODO
+        String result = converter.convertExpression("\"Hello $(payload.name)\"");
+        assertTrue(result.contains("TODO"), "String interpolation should be a TODO, got: " + result);
+        assertTrue(converter.getTodoCount() > 0);
+    }
+
+    @Test
+    void testAttributeAccess() {
+        // DW: payload.Order.@id -> DS: body.Order["@id"]
+        String result = converter.convertExpression("payload.Order.@id");
+        assertEquals("body.Order[\"@id\"]", result);
+    }
+
+    @Test
+    void testExistenceCheck() {
+        // DW: payload.a? -> DS: std.objectHas(body, "a") -- using std.objectHas for FieldAccess
+        String result = converter.convertExpression("payload.a?");
+        assertEquals("std.objectHas(body, \"a\")", result);
+        assertFalse(converter.needsCamelLib());
+    }
+
+    @Test
+    void testDoubleDollarInReduce() {
+        // DW: payload.items reduce ((item, acc = 0) -> acc + item.price) -- explicit lambda
+        String result = converter.convertExpression("payload.items reduce ((item, acc = 0) -> acc + item.price)");
+        assertTrue(result.contains("std.foldl"), "Should use std.foldl, got: " + result);
+        assertTrue(result.contains("function(acc, item)"), "acc and item should be swapped for foldl, got: " + result);
+    }
+
+    @Test
+    void testDoubleDollarOutsideReduce() {
+        // $$ outside a reduce shorthand context is ambiguous (index in map, key in mapObject).
+        // The converter emits a TODO rather than silently binding 'acc'.
+        String result = converter.convertExpression("$$");
+        assertTrue(result.contains("null"), "Should emit null placeholder, got: " + result);
+        assertEquals(1, converter.getTodoCount(), "$$ outside reduce should count as TODO");
+    }
+
+    @Test
+    void testVarDeclarationInHeader() {
+        // DW header var declarations must survive as local bindings in the body
+        String dw = """
+                %dw 2.0
+                output application/json
+                var rate = 0.08
+                ---
+                payload.price * rate
+                """;
+        String result = converter.convert(dw);
+        assertTrue(result.contains("local rate = 0.08"), "var rate must emit as local rate, got: " + result);
+        assertTrue(result.contains("body.price * rate"), "body expression must reference rate, got: " + result);
+    }
+
+    @Test
+    void testFunDeclarationInHeader() {
+        // DW header fun declarations must survive as local functions in the body
+        String dw = """
+                %dw 2.0
+                output application/json
+                fun double(x) = x * 2
+                ---
+                double(payload.value)
+                """;
+        String result = converter.convert(dw);
+        assertTrue(result.contains("local double(x) ="), "fun double must emit as local function, got: " + result);
+        assertTrue(result.contains("double(body.value)"), "body expression must call double, got: " + result);
+    }
+
+    @Test
+    void testTypedFunParams() {
+        // DW: fun f(a: Number): Number = a * 2  -- type annotations must be stripped
+        String result = converter.convertExpression("fun f(a: Number) = a * 2\nf(payload.x)");
+        assertTrue(result.contains("local f(a) ="), "typed param should be stripped, got: " + result);
+        assertFalse(result.contains("Number"), "type annotation must not appear in output, got: " + result);
+    }
+
+    @Test
+    void testGroupByKeyStringified() {
+        // DW: payload.items groupBy ((i) -> i.qty) -- groupBy key must be stringified
+        String result = converter.convertExpression("payload.items groupBy ((i) -> i.qty)");
+        assertTrue(result.contains("c.groupBy("), "Should use c.groupBy, got: " + result);
+        assertTrue(result.contains("std.toString("), "groupBy key must be stringified, got: " + result);
+    }
+
+    @Test
+    void testGroupByShorthand() {
+        // DW: payload.items groupBy $.qty -- shorthand (non-Lambda) branch
+        // The emitted lambda function must be parenthesized before being called with (x),
+        // otherwise (x) binds to the field access rather than invoking the whole function.
+        String result = converter.convertExpression("payload.items groupBy $.qty");
+        assertTrue(result.contains("c.groupBy("), "Should use c.groupBy, got: " + result);
+        assertTrue(result.contains("std.toString("), "groupBy key must be stringified, got: " + result);
+        // The function must be called on x: (function(x) ...)(x), not function(x) ...(x)
+        assertTrue(result.contains(")(x)"), "Emitted lambda must be parenthesized before (x) call, got: " + result);
+    }
+
+    @Test
+    void testMultiValueSelectorXmlChildren() {
+        // DW: payload.Order.Items.*Item -> DS: std.map(function(x) x.Item, body.Order.Items)
+        String result = converter.convertExpression("payload.Order.Items.*Item");
+        assertEquals("std.map(function(x) x.Item, body.Order.Items)", result);
+        assertFalse(converter.needsCamelLib());
+    }
+
     // -- Helpers --
+
+    @Test
+    void testDoubleQuotedStringWithEscapedQuote() {
+        // DW: "say \"hi\"" (double-quoted string with escaped quotes inside)
+        // The lexer stores the value with the escapes resolved: say "hi"
+        // emitStringLit must re-escape the " to produce valid Jsonnet: "say \"hi\""
+        DataWeaveConverter c2 = new DataWeaveConverter();
+        // Pass a double-quoted DW string with escaped quotes to verify no double-escape
+        String result = c2.convertExpression("\"say \\\"hi\\\"\"");
+        assertEquals("\"say \\\"hi\\\"\"", result, "Double-quoted string with \\\" must not double-escape");
+    }
+
+    @Test
+    void testSingleQuotedStringWithDoubleQuote() {
+        // DW: 'say "hi"' (single-quoted string containing a bare double-quote)
+        // The lexer stores the value without surrounding quotes: say "hi" (with bare ")
+        // emitStringLit must re-escape the bare " to produce valid Jsonnet: "say \"hi\""
+        DataWeaveConverter c2 = new DataWeaveConverter();
+        String result = c2.convertExpression("'say \"hi\"'");
+        assertEquals("\"say \\\"hi\\\"\"", result, "Single-quoted string: bare \" must be escaped to \\\" in output");
+    }
+
+    @Test
+    void testExistenceCheckOnAttribute() {
+        // DW: payload.Order.@id? -> DS: std.objectHas(body.Order, "@id")
+        String result = converter.convertExpression("payload.Order.@id?");
+        assertEquals("std.objectHas(body.Order, \"@id\")", result);
+        assertFalse(converter.needsCamelLib());
+    }
+
+    @Test
+    void testTypedFunParamsCompound() {
+        // DW: fun f(a: Array<Number>): Number = a[0]  -- compound type annotations must be stripped
+        String result = converter.convertExpression("fun f(a: Array<Number>) = a[0]\nf(payload.x)");
+        assertTrue(result.contains("local f(a) ="), "typed compound param should be stripped, got: " + result);
+        assertFalse(result.contains("Array"), "compound type annotation must not appear in output, got: " + result);
+        assertFalse(result.contains("Number"), "type name must not appear in output, got: " + result);
+    }
+
+    @Test
+    void testTypedFunParamsUnion() {
+        // DW: fun f(a: String | Null) = a  -- union type annotation with | must be stripped
+        // Before this fix, '|' was silently dropped by the lexer and 'Null' leaked into the body.
+        String result = converter.convertExpression("fun f(a: String | Null) = a\nf(payload.x)");
+        assertTrue(result.contains("local f(a) ="), "union type param should be stripped, got: " + result);
+        // 'Null' must not appear as a null-literal emitted into the body
+        assertFalse(result.contains("null\n"), "union type token 'Null' must not leak into body, got: " + result);
+    }
+
+    @Test
+    void testReduceShorthandAccumulatorPlusField() {
+        // DW: payload.items reduce ($$ + $.price)
+        // Shorthand: $$ = accumulator, $ = current item (optionally .field)
+        // Expected: std.foldl using first element as initial accumulator
+        String result = converter.convertExpression("payload.items reduce ($$ + $.price)");
+        assertTrue(result.contains("std.foldl("), "Should use std.foldl, got: " + result);
+        assertTrue(result.contains("function(acc, item)"), "Should have acc, item params, got: " + result);
+        assertTrue(result.contains("acc + item.price"),
+                "Body should rewrite $$ -> acc and $.price -> item.price, got: " + result);
+        assertEquals(0, converter.getTodoCount(), "Reduce shorthand should not produce TODOs, got: " + result);
+    }
+
+    @Test
+    void testReduceShorthandConcatItems() {
+        // DW: payload.items reduce ($$ ++ $)
+        // $$ = accumulator, $ = whole item (no field access)
+        String result = converter.convertExpression("payload.items reduce ($$ ++ $)");
+        assertTrue(result.contains("std.foldl("), "Should use std.foldl, got: " + result);
+        assertTrue(result.contains("function(acc, item)"), "Should have acc, item params, got: " + result);
+        assertTrue(result.contains("acc + item"), "Body should rewrite $$ -> acc and $ -> item, got: " + result);
+        assertEquals(0, converter.getTodoCount(), "Reduce shorthand should not produce TODOs, got: " + result);
+    }
+
+    @Test
+    void testReduceShorthandEmptyArrayGuard() {
+        // DW: payload.items reduce ($$ + $.price) -- the emitted foldl must guard against empty arrays.
+        // DataWeave's reduce without an initial value on an empty list returns null;
+        // Jsonnet's _arr[0] would throw "Array index 0 out of bounds".
+        String result = converter.convertExpression("payload.items reduce ($$ + $.price)");
+        assertTrue(result.contains("std.length(_arr) == 0"), "Empty-array guard missing, got: " + result);
+        assertTrue(result.contains("then null"), "Null fallback for empty array missing, got: " + result);
+    }
+
+    @Test
+    void testReduceShorthandIndexAccess() {
+        // DW: payload.items reduce ($$ + $[0]) -- shorthand body with index access on $
+        // containsShorthand must recurse into IndexAccess, and emitReduceShorthandBody must handle it.
+        // Expected body: acc + item[0]  (not emitNode's function(x) x[0])
+        String result = converter.convertExpression("payload.items reduce ($$ + $[0])");
+        assertTrue(result.contains("std.foldl("), "Should use std.foldl, got: " + result);
+        assertTrue(result.contains("item[0]"), "IndexAccess shorthand body must emit item[0], got: " + result);
+        assertFalse(result.contains("function(x)"),
+                "emitNode fallback must not be used for shorthand IndexAccess, got: " + result);
+        assertEquals(0, converter.getTodoCount(), "Reduce shorthand index access should not produce TODOs, got: " + result);
+    }
+
+    @Test
+    void testHeaderVarComplexValue() {
+        // DW header var with a complex value (if/else) — parseExpression() handles if/else,
+        // parseOr() does not. Before the fix, the if/else would be truncated.
+        String dw = """
+                %dw 2.0
+                output application/json
+                var label = if (true) "yes" else "no"
+                ---
+                label
+                """;
+        String result = converter.convert(dw);
+        assertTrue(result.contains("local label ="), "var label must emit as local binding, got: " + result);
+        // The if/else must appear in the var value, not be cut off
+        assertTrue(result.contains("\"yes\"") && result.contains("\"no\""),
+                "Complex var value (if/else) must be fully emitted, got: " + result);
+    }
+
+    @Test
+    void testHeaderFunComplexBody() {
+        // DW header fun with an if/else body — parseExpression() handles if/else, parseOr() does not.
+        String dw = """
+                %dw 2.0
+                output application/json
+                fun toUpper(x) = if (x != null) upper(x) else ""
+                ---
+                toUpper(payload.name)
+                """;
+        String result = converter.convert(dw);
+        assertTrue(result.contains("local toUpper(x) ="), "fun toUpper must emit as local function, got: " + result);
+        // The if/else body must be present in the output
+        assertTrue(result.contains("\"\"") || result.contains("else"),
+                "Complex fun body (if/else) must be fully emitted, got: " + result);
+    }
 
     private String loadResource(String path) throws IOException {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {
