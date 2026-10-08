@@ -110,7 +110,8 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
 
         client.postAbs(this.uri)
                 .putHeaders(headers)
-                .sendBuffer(Buffer.buffer(payload), response -> {
+                .sendBuffer(Buffer.buffer(payload))
+                .onComplete(response -> {
                     if (response.succeeded()) {
                         HttpResponse<Buffer> result = response.result();
                         Message answer = exchange.getMessage();

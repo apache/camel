@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.typesafeai;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,8 +25,9 @@ import java.util.stream.IntStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.language.semantic.SemanticLanguage;
-import org.apache.camel.semantic.SemanticQuestion;
-import org.apache.camel.semantic.SemanticQuestions;
+import org.apache.camel.semantic.SemanticCapabilities;
+import org.apache.camel.semantic.SemanticEvaluation;
+import org.apache.camel.semantic.SemanticEvaluations;
 import org.apache.camel.semantic.SemanticResult;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PluginHelper;
@@ -33,21 +35,134 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
+    @ParameterizedTest
+    @CsvSource({ "0.25, fail", "0.5, fail", "0.75, fail", "0.25, non-match", "0.5, non-match", "0.75, non-match" })
+    void inclusiveUncertaintyBandIsAppliedByTheAdapter(double probability, String policy) throws Exception {
+        respond = request -> result(Map.of("question", Map.of("type", "noul", "noul", probability)));
+        var adapter = new TypeSafeAiSemanticAdapter();
+        adapter.setCamelContext(context);
+        var question = new SemanticEvaluation(
+                "boolean", null, null, Map.of(
+                        "instructions", "Classify", "threshold", 0.5, "uncertainty", 0.25, "uncertaintyPolicy", policy));
+        if (policy.equals("fail")) {
+            assertThatThrownBy(() -> adapter.evaluate(question, "text"))
+                    .isInstanceOf(IllegalStateException.class).hasMessageContaining("uncertain");
+        } else {
+            var result = adapter.evaluate(question, "text");
+            assertThat(result.getValue()).isEqualTo(false);
+            assertThat(result.getProbability()).isEqualTo(probability);
+        }
+        assertThat(requests).hasSize(1);
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "0.249, false", "0.751, true" })
+    void outsideUncertaintyBandUsesThreshold(double probability, boolean expected) throws Exception {
+        respond = request -> result(Map.of("question", Map.of("type", "noul", "noul", probability)));
+        var adapter = new TypeSafeAiSemanticAdapter();
+        adapter.setCamelContext(context);
+        var question = new SemanticEvaluation(
+                "boolean", null, null,
+                Map.of("instructions", "Classify", "threshold", 0.5, "uncertainty", 0.25));
+        assertThat(adapter.evaluate(question, "text").getValue()).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = { 0.1, 0.9 })
+    void invalidUncertaintyBandFailsWithoutTransport(double threshold) {
+        var adapter = new TypeSafeAiSemanticAdapter();
+        var question = new SemanticEvaluation(
+                "boolean", null, null,
+                Map.of("instructions", "Classify", "threshold", threshold, "uncertainty", 0.25));
+        assertThatThrownBy(() -> adapter.validate(question)).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("band within [0,1]");
+        assertThat(requests).isEmpty();
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "probability, Expected a number",
+            "answer, Answer names must match question names",
+            "answers, Expected an object"
+    })
+    void missingBooleanResponseFieldsFailBeforeAdapterMapping(String missing, String message) throws Exception {
+        JsonObject response = TypeSafeAiJson.parse(result(Map.of("question", Map.of("type", "noul", "noul", 0.9))));
+        JsonObject answers = response.getJsonObject("answers");
+        switch (missing) {
+            case "probability" -> answers.getJsonObject("question").remove("noul");
+            case "answer" -> answers.remove("question");
+            case "answers" -> response.remove("answers");
+            default -> throw new IllegalArgumentException(missing);
+        }
+        respond = request -> response.toJson();
+        var adapter = new TypeSafeAiSemanticAdapter();
+        adapter.setCamelContext(context);
+        var evaluation = new SemanticEvaluation("boolean", null, null, Map.of("instructions", "Classify"));
+        assertThatThrownBy(() -> adapter.evaluate(evaluation, "private-input"))
+                .isExactlyInstanceOf(IOException.class)
+                .hasMessage("Invalid TypeSafe AI response: " + message);
+        assertThat(requests).hasSize(1);
+    }
+
+    @Test
+    void omittedPolicyUsesAdapterDefaults() throws Exception {
+        respond = request -> result(Map.of("question", Map.of("type", "noul", "noul", 0.5)));
+        var adapter = new TypeSafeAiSemanticAdapter();
+        adapter.setCamelContext(context);
+        var question = new SemanticEvaluation("boolean", null, null, Map.of("instructions", "Classify"));
+        assertThat(adapter.evaluate(question, "text").getValue()).isEqualTo(true);
+        assertThat(question.getParameters()).containsOnlyKeys("instructions");
+    }
+
+    @Test
+    void advertisesCapabilitiesAndRequiresInstructionsWithoutTransport() {
+        TypeSafeAiSemanticAdapter adapter = new TypeSafeAiSemanticAdapter();
+        var capabilities = SemanticCapabilities.from(adapter.getClass());
+        assertThat(capabilities.getName()).isEqualTo("typesafe-ai");
+        assertThat(capabilities.getArtifactId()).isEqualTo("camel-typesafe-ai");
+        assertThat(capabilities.operation("choice").getParameters().get("criteria").getMaxSize()).isEqualTo(255);
+        assertThat(capabilities.operation("score").getParameters().get("criteria").getMaxSize()).isEqualTo(10);
+        assertThat(capabilities.getOperations()).containsOnlyKeys("boolean", "choice", "score");
+        assertThat(capabilities.operation("boolean").isProbability()).isTrue();
+        assertThat(capabilities.operation("boolean").isConfidence()).isFalse();
+        SemanticEvaluation fixed = new SemanticEvaluation(
+                "boolean", null, null, Map.of("threshold", 0.5, "uncertainty", 0.0, "uncertaintyPolicy", "fail"));
+        assertThatThrownBy(() -> adapter.validate(fixed)).hasMessageContaining("Parameter 'instructions' is required");
+        assertThat(requests).isEmpty();
+    }
+
+    @Test
+    void subclassesRetainCapabilitiesAndProviderValidation() {
+        TypeSafeAiSemanticAdapter subclass = new TypeSafeAiSemanticAdapter() {
+        };
+        assertThat(SemanticCapabilities.from(subclass.getClass())).usingRecursiveComparison()
+                .isEqualTo(SemanticCapabilities.from(TypeSafeAiSemanticAdapter.class));
+        SemanticEvaluation missing = new SemanticEvaluation(
+                "boolean", null, null, Map.of("threshold", 0.5, "uncertainty", 0.0, "uncertaintyPolicy", "fail"));
+        assertThatThrownBy(() -> subclass.validate(missing)).hasMessageContaining("Parameter 'instructions' is required");
+        SemanticEvaluation score = new SemanticEvaluation(
+                "score", null, null,
+                Map.of("instructions", "Score", "criteria", IntStream.range(0, 11).mapToObj(i -> "Level " + i).toList()));
+        assertThatThrownBy(() -> subclass.validate(score))
+                .hasMessageContaining("Parameter 'criteria' is outside its size constraints");
+    }
+
     @Test
     void directEvaluationInitializesTransportWithoutPriorValidation() throws Exception {
         respond = request -> result(Map.of("question", Map.of("type", "noul", "noul", 0.9)));
         TypeSafeAiSemanticAdapter adapter = new TypeSafeAiSemanticAdapter();
         adapter.setCamelContext(context);
-        SemanticQuestion question = new SemanticQuestion(
-                SemanticQuestion.Type.BOOLEAN, "Classify", null,
-                Map.of(), List.of(), 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
-        assertThat(adapter.evaluate(question, "original").decision(question)).isEqualTo(true);
+        SemanticEvaluation question = new SemanticEvaluation(
+                "boolean", null, null,
+                Map.of("instructions", "Classify", "threshold", 0.5, "uncertainty", 0.0, "uncertaintyPolicy", "fail"));
+        assertThat(adapter.evaluate(question, "original").getValue()).isEqualTo(true);
         assertThat(requests).hasSize(1);
         assertThat(authorization).containsExactly("Bearer test-key");
     }
@@ -57,34 +172,34 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
         TypeSafeAiSemanticAdapter adapter = new TypeSafeAiSemanticAdapter();
         Map<String, String> criteria = IntStream.range(0, 256).boxed()
                 .collect(Collectors.toMap(Object::toString, i -> "Criterion " + i));
-        SemanticQuestion choice = new SemanticQuestion(
-                SemanticQuestion.Type.CHOICE, "Classify", null,
-                criteria, List.of(), 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
-        SemanticQuestion score = new SemanticQuestion(
-                SemanticQuestion.Type.SCORE, "Score", null,
-                Map.of(), IntStream.range(0, 11).mapToObj(i -> "Level " + i).toList(), 0.5, 0,
-                SemanticQuestion.UncertaintyPolicy.FAIL);
+        SemanticEvaluation choice
+                = new SemanticEvaluation("choice", null, null, Map.of("instructions", "Classify", "criteria", criteria));
+        SemanticEvaluation score = new SemanticEvaluation(
+                "score", null, null,
+                Map.of("instructions", "Score", "criteria", IntStream.range(0, 11).mapToObj(i -> "Level " + i).toList()));
         assertThatThrownBy(() -> adapter.validate(choice)).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("255 choice criteria");
+                .hasMessageContaining("Parameter 'criteria' is outside its size constraints");
         assertThatThrownBy(() -> adapter.evaluate(score, "original")).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("10 score levels");
+                .hasMessageContaining("Parameter 'criteria' is outside its size constraints");
         assertThat(requests).isEmpty();
     }
 
-    private Expression expression(SemanticQuestion.Type type) {
-        SemanticQuestion question = new SemanticQuestion(
-                type, "Classify", null,
-                type == SemanticQuestion.Type.CHOICE ? Map.of("billing", "Payments", "technical", "Bugs") : Map.of(),
-                type == SemanticQuestion.Type.SCORE ? List.of("low", "high") : List.of(),
-                0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
-        SemanticQuestions.get(context).replace("test", Map.of("q", question));
+    private Expression expression(String type) {
+        SemanticEvaluation question = new SemanticEvaluation(type, null, null, switch (type) {
+            case "boolean" -> Map.of("instructions", "Classify", "threshold", 0.5,
+                    "uncertainty", 0.0, "uncertaintyPolicy", "fail");
+            case "choice" -> Map.of("instructions", "Classify", "criteria", Map.of("billing", "Payments", "technical", "Bugs"));
+            case "score" -> Map.of("instructions", "Classify", "criteria", List.of("low", "high"));
+            default -> throw new IllegalArgumentException("Unknown fixture operation");
+        });
+        SemanticEvaluations.get(context).replace("test", Map.of("q", question));
         return context.resolveLanguage("semantic").createExpression("ref:q");
     }
 
     @Test
     void autoDiscoversAndUsesConfiguredComponentWithoutProviderRoute() {
         respond = request -> result(Map.of("question", Map.of("type", "noul", "noul", 0.9)));
-        Expression expression = expression(SemanticQuestion.Type.BOOLEAN);
+        Expression expression = expression("boolean");
         assertThat(requests).isEmpty();
         var exchange = new DefaultExchange(context);
         exchange.getMessage().setBody("original");
@@ -105,13 +220,13 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
                 "confidence", 0.6, "probabilities", Map.of("billing", 0.1, "technical", 0.9))));
         var exchange = new DefaultExchange(context);
         exchange.getMessage().setBody("outage");
-        assertThat(expression(SemanticQuestion.Type.CHOICE).evaluate(exchange, String.class)).isEqualTo("technical");
+        assertThat(expression("choice").evaluate(exchange, String.class)).isEqualTo("technical");
         SemanticResult choice = exchange.getProperty(SemanticLanguage.RESULT, SemanticResult.class);
         assertThat(choice.getConfidence()).isEqualTo(0.6);
         assertThat(choice.getProbabilities()).containsEntry("technical", 0.9);
         respond = request -> result(Map.of("question", Map.of("type", "score", "score", 0.7,
                 "confidence", 0.4, "probabilities", Map.of("0", 0.3, "1", 0.7), "legend", Map.of("0", "low", "1", "high"))));
-        assertThat(expression(SemanticQuestion.Type.SCORE).evaluate(exchange, Double.class)).isEqualTo(0.7);
+        assertThat(expression("score").evaluate(exchange, Double.class)).isEqualTo(0.7);
     }
 
     private Expression batchExpression() {
@@ -120,17 +235,21 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
     }
 
     private void batchQuestions() {
-        SemanticQuestions.get(context).replace("test", Map.of(
-                "refund", new SemanticQuestion(
-                        SemanticQuestion.Type.BOOLEAN, "Refund requested?", null,
-                        Map.of(), List.of(), 0.95, 0, SemanticQuestion.UncertaintyPolicy.FAIL),
-                "department", new SemanticQuestion(
-                        SemanticQuestion.Type.CHOICE, "Which department?", null,
-                        Map.of("billing", "Refunds", "technical", "Faults", "other", "Anything else"), List.of(),
-                        0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL),
-                "urgency", new SemanticQuestion(
-                        SemanticQuestion.Type.SCORE, "How urgent?", null,
-                        Map.of(), List.of("Routine", "Urgent", "Critical"), 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL)));
+        SemanticEvaluations.get(context).replace("test", Map.of(
+                "refund",
+                new SemanticEvaluation(
+                        "boolean", null, null,
+                        Map.of("instructions", "Refund requested?", "threshold", 0.95, "uncertainty", 0.0, "uncertaintyPolicy",
+                                "fail")),
+                "department",
+                new SemanticEvaluation(
+                        "choice", null, null,
+                        Map.of("instructions", "Which department?", "criteria",
+                                Map.of("billing", "Refunds", "technical", "Faults", "other", "Anything else"))),
+                "urgency",
+                new SemanticEvaluation(
+                        "score", null, null,
+                        Map.of("instructions", "How urgent?", "criteria", List.of("Routine", "Urgent", "Critical")))));
     }
 
     @Test
@@ -227,7 +346,7 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
     void providerErrorsClearPreviousResult(boolean batch) {
-        Expression expression = batch ? batchExpression() : expression(SemanticQuestion.Type.BOOLEAN);
+        Expression expression = batch ? batchExpression() : expression("boolean");
         var exchange = new DefaultExchange(context);
         exchange.getMessage().setBody("private-input");
         exchange.setProperty(SemanticLanguage.RESULT, "old");
@@ -242,7 +361,7 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
     void componentTimeoutBoundsSemanticEvaluation(boolean batch) {
         context.getComponent("typesafe-ai", TypeSafeAiComponent.class).getConfiguration().setRequestTimeout(100);
         holdHeaders = true;
-        Expression expression = batch ? batchExpression() : expression(SemanticQuestion.Type.BOOLEAN);
+        Expression expression = batch ? batchExpression() : expression("boolean");
         var exchange = new DefaultExchange(context);
         exchange.getMessage().setBody("private-input");
         assertThatThrownBy(() -> expression.evaluate(exchange, Object.class))

@@ -231,7 +231,8 @@ documentation, so the agent can check an endpoint before it answers or writes it
 
 With `/write live` the change is not shown as a diff but replayed in the Source tab's editor: the AI
 panel hides so the editor has the whole screen, the file opens in edit mode, the cursor jumps to the
-first change, removed lines disappear and added lines are typed at a readable pace. The AI panel comes
+first change, removed lines disappear and added lines are typed at a readable pace. A large change is typed
+faster, so no single change takes longer than a few seconds. The AI panel comes
 back once you have saved or discarded. This is meant for learning Camel and the YAML DSL: you see the edit land in
 the full, syntax-highlighted file and can look up what the new lines mean. Every change is its own step,
 even when changes sit a line apart, and between them the replay pauses: *Enter* continues with the next change, *Esc* stops (what was typed stays in the editor), any
@@ -240,17 +241,21 @@ so you can edit yourself; *F9* then continues with the remaining changes. Those 
 so your own edits elsewhere in the file shift them rather than break them; a change whose surroundings
 you edited is skipped and reported to the agent. When the replay is over you review with *F7* and
 save with *Ctrl+S* or *F5*, which is the confirmation, or discard with *Esc*. The agent waits until then
-and is told what was applied, what was skipped, and the content of the saved file if you changed it.
+and is told what was applied, what was skipped, and the content of the saved file if you changed it. If you take
+longer than five minutes, the agent stops waiting and ends its turn; the edit stays in the editor, and the agent is
+told what became of it with your next question.
 
 An edit (`camel_edit_file`, which the agent uses to change a file without rewriting it) goes the same way: the
 snippet is replaced in the file's content and the result is confirmed or replayed like any write, so what you see
 in the editor is the finished file either way.
 
 While the replay pauses you can also ask the agent about the change it just made: *F8* opens the AI panel
-with the question prefilled (`About edit 2 of 3:`), you complete it and press *Enter*. The waiting
+with the question prefilled (`About edit 2 of 3:`), in a compact panel that leaves the edit in view (*Shift+F8*
+sizes it), you complete it and press *Enter*. The waiting
 `camel_write_file` call returns to the agent with the question, the edits applied so far and the editor's
 content, and the agent answers in the same turn -- nothing is written meanwhile. Close the panel with *F8*
-(or *Esc* to leave without asking) and the pause continues where it was. If your question makes the agent
+(or *Esc* to leave without asking) and the pause continues where it was; while the panel is open, the
+keys stay with it and do not reach the editor beneath. If your question makes the agent
 revise the change, its next `camel_write_file` of the same file continues in the editor from the current
 content instead of starting over. If you save or discard without the agent being involved again, it is
 told what became of the edit with your next question.

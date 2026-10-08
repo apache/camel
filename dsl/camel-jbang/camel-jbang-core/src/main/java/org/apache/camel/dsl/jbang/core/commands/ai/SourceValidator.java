@@ -121,6 +121,18 @@ public final class SourceValidator {
             // route: read it, so that a GET operation is known to carry no body (CAMEL-24844)
             List<String> msgs = validateCamelYaml(content, catalog, schemaValidator,
                     directory != null ? OpenApiVerbs.bodylessEndpoints(content, directory) : Set.of());
+            if (name.endsWith(".kamelet.yaml") || name.endsWith(".kamelet.yml")) {
+                // the shape of a Kamelet file, which the schema of a route file does not know
+                List<String> shape = KameletChecks.validateKameletFile(content);
+                if (!shape.isEmpty()) {
+                    msgs = new ArrayList<>(msgs);
+                    msgs.addAll(shape);
+                }
+            }
+            if (msgs.isEmpty()) {
+                // the kamelet: endpoints against the Kamelet catalog and the project's own Kamelets
+                msgs = new ArrayList<>(KameletChecks.validateYaml(content, directory, checkConsumers));
+            }
             if (directory != null && msgs.isEmpty()) {
                 msgs = new ArrayList<>(msgs);
                 BeanDeclarations declarations = BeanDeclarations.scan(directory, fileName);
@@ -132,7 +144,7 @@ public final class SourceValidator {
                     msgs.addAll(EndpointConsumerChecks.validateYamlConsumers(content, directory, fileName, catalog));
                 }
             }
-            return msgs;
+            return KameletChecks.withTemplateHints(name, content, msgs);
         }
         if (name.endsWith(".properties")) {
             return validateProperties(content, catalog, extraPropertyLine);
@@ -357,7 +369,17 @@ public final class SourceValidator {
                 return NONE;
             }
             try (var stream = Files.list(directory)) {
-                for (Path p : stream.filter(Files::isRegularFile).toList()) {
+                List<Path> files = new ArrayList<>(stream.filter(Files::isRegularFile).toList());
+                // a class of the project may also sit in the Maven layout, src/main/java/<package>/<Class>.java, which
+                // camel run --source-dir compiles too: without it a bean of that class was refused as not found
+                Path mavenSources = directory.resolve("src/main/java");
+                if (Files.isDirectory(mavenSources)) {
+                    try (var walk = Files.walk(mavenSources)) {
+                        walk.filter(Files::isRegularFile).filter(q -> q.getFileName().toString().endsWith(".java"))
+                                .forEach(files::add);
+                    }
+                }
+                for (Path p : files) {
                     String fn = p.getFileName().toString();
                     if (fn.equals(excludeFile)) {
                         continue;

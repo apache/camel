@@ -122,13 +122,48 @@ that are not registered in the xref:manual::registry.adoc[Registry].
 Camel can instantiate the bean of a given type and invoke the method
 or invoke the method on an already existing instance.
 
-._Java-only: invoking a bean by class type_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:topic:OrdersTopic")
   .filter().method(MyBean.class, "isGoldCustomer")
   .to("activemq:BigSpendersQueue");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:topic:OrdersTopic"/>
+  <filter>
+    <method beanType="com.foo.MyBean" method="isGoldCustomer"/>
+    <to uri="activemq:BigSpendersQueue"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:topic:OrdersTopic
+      steps:
+        - filter:
+            expression:
+              method:
+                beanType: com.foo.MyBean
+                method: isGoldCustomer
+            steps:
+              - to:
+                  uri: activemq:BigSpendersQueue
+----
+====
 
 The first parameter can also be an existing instance of a Bean such as:
 

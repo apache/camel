@@ -37,6 +37,10 @@ public class ToolDescriptor {
     private boolean readOnly = true;
     private boolean destructive = false;
     private boolean core = false;
+    private boolean deterministic = false;
+    private String deterministicWhen;
+    private String[] deterministicUnless = new String[0];
+    private String repeatHint;
 
     public record Param(String name, String type, String description, boolean required) {
     }
@@ -82,6 +86,33 @@ public class ToolDescriptor {
         return this;
     }
 
+    /**
+     * Marks the tool as deterministic: the same arguments always give the same answer, as a catalog lookup does. A tool
+     * that reads the running integration, the files or the clock is not. Repeating such a call cannot tell an agent
+     * anything new, see {@link RepeatedToolCalls}.
+     */
+    public ToolDescriptor deterministic(boolean v) {
+        deterministic = v;
+        return this;
+    }
+
+    /**
+     * Marks the tool as deterministic when the given argument is passed and none of the unless arguments is: validating
+     * the given content always gives the same answer, while validating the file on disk, or content checked against the
+     * other files of a directory, does not (CAMEL-25371).
+     */
+    public ToolDescriptor deterministicWhen(String param, String... unless) {
+        deterministicWhen = param;
+        deterministicUnless = unless != null ? unless : new String[0];
+        return this;
+    }
+
+    /** What the note of a repeated call adds for this tool: what to do instead of asking again. */
+    public ToolDescriptor repeatHint(String hint) {
+        repeatHint = hint;
+        return this;
+    }
+
     public ToolDescriptor executor(ToolExecutor exec) {
         this.executor = exec;
         return this;
@@ -111,6 +142,43 @@ public class ToolDescriptor {
 
     public boolean isCore() {
         return core;
+    }
+
+    public boolean isDeterministic() {
+        return deterministic;
+    }
+
+    /**
+     * Whether this call gives the same answer each time: the tool is deterministic, or the argument that makes it so is
+     * passed without the ones that make it read other files.
+     */
+    public boolean isDeterministic(Map<String, ?> args) {
+        if (deterministic) {
+            return true;
+        }
+        if (deterministicWhen == null || !hasValue(args, deterministicWhen)) {
+            return false;
+        }
+        for (String unless : deterministicUnless) {
+            if (hasValue(args, unless)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** The argument that makes a call deterministic, or null when the tool is always or never deterministic. */
+    public String deterministicWhen() {
+        return deterministicWhen;
+    }
+
+    private static boolean hasValue(Map<String, ?> args, String name) {
+        Object v = args != null ? args.get(name) : null;
+        return v != null && !v.toString().isBlank();
+    }
+
+    public String repeatHint() {
+        return repeatHint;
     }
 
     /**

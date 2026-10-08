@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -377,6 +378,30 @@ public final class ExampleHelper {
         return slash > 0 ? name.substring(slash + 1) : name != null ? name : "";
     }
 
+    /**
+     * The arguments of a camel run of an example, for a process started in the folder of the example: --example=name
+     * (or --example name) replaced by the files of the example, and its name unless one is given (CAMEL-25236).
+     */
+    public static List<String> runArgs(List<String> args, JsonObject example) {
+        List<String> answer = new ArrayList<>();
+        boolean named = args.stream().anyMatch(a -> a.equals("--name") || a.startsWith("--name="));
+        for (int i = 0; i < args.size(); i++) {
+            String a = args.get(i);
+            if (a.equals("--example") || a.startsWith("--example=")) {
+                if (a.equals("--example") && i + 1 < args.size()) {
+                    i++; // its value
+                }
+                answer.addAll(getFiles(example));
+                if (!named) {
+                    answer.add("--name=" + getShortName(example));
+                }
+            } else {
+                answer.add(a);
+            }
+        }
+        return answer;
+    }
+
     public static boolean isBundled(JsonObject entry) {
         Boolean bundled = entry.getBoolean("bundled");
         return bundled != null && bundled;
@@ -393,6 +418,19 @@ public final class ExampleHelper {
     public static boolean hasCitrusTests(JsonObject entry) {
         Boolean citrus = entry.getBoolean("hasCitrusTests");
         return citrus != null && citrus;
+    }
+
+    /**
+     * What an example needs beyond its infra services, for the user to do before the run (a model to pull, an API key
+     * to set, another example to run first), as plain text; null when it needs nothing else.
+     */
+    public static String getNeeds(JsonObject entry) {
+        String needs = entry.getString("needs");
+        if (needs == null || needs.isBlank()) {
+            return null;
+        }
+        // the catalog writes it as Markdown for the README tables: `ollama pull granite4:3b`
+        return needs.replace("`", "").trim();
     }
 
     @SuppressWarnings("unchecked")
@@ -413,10 +451,23 @@ public final class ExampleHelper {
         return new ArrayList<>(files);
     }
 
+    /** The name prefix of the temporary folder an example runs in. */
+    public static final String EXAMPLE_DIR_PREFIX = "camel-example-";
+
     public static Path extractBundledExample(JsonObject entry) throws Exception {
+        return extractBundledExample(entry, true);
+    }
+
+    /**
+     * Extracts a bundled example to a temporary folder of its own.
+     *
+     * @param deleteOnExit whether the folder is deleted when this JVM exits; false when the example may outlive it, as
+     *                     the examples the monitor starts do (they keep running when it quits)
+     */
+    public static Path extractBundledExample(JsonObject entry, boolean deleteOnExit) throws Exception {
         String name = entry.getString("name");
         List<String> fileNames = getFiles(entry);
-        Path tempDir = Files.createTempDirectory("camel-example-");
+        Path tempDir = Files.createTempDirectory(EXAMPLE_DIR_PREFIX);
 
         for (String fileName : fileNames) {
             String resourcePath = "examples/" + name + "/" + fileName;
@@ -427,20 +478,29 @@ public final class ExampleHelper {
                     // create parent dirs for nested files like input/account.xml
                     Files.createDirectories(targetFile.getParent());
                     Files.writeString(targetFile, content);
-                    targetFile.toFile().deleteOnExit();
-                    targetFile.getParent().toFile().deleteOnExit();
                 }
             }
         }
 
-        tempDir.toFile().deleteOnExit();
+        if (deleteOnExit) {
+            deleteOnExit(tempDir);
+        }
         return tempDir;
     }
 
     public static Path downloadGithubExample(JsonObject entry) throws Exception {
+        return downloadGithubExample(entry, true);
+    }
+
+    /**
+     * Downloads an example from GitHub to a temporary folder of its own.
+     *
+     * @param deleteOnExit whether the folder is deleted when this JVM exits; false when the example may outlive it
+     */
+    public static Path downloadGithubExample(JsonObject entry, boolean deleteOnExit) throws Exception {
         String name = entry.getString("name");
         List<String> fileNames = getFiles(entry);
-        Path tempDir = Files.createTempDirectory("camel-example-");
+        Path tempDir = Files.createTempDirectory(EXAMPLE_DIR_PREFIX);
 
         HttpClient hc = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
         for (String fileName : fileNames) {
@@ -452,13 +512,58 @@ public final class ExampleHelper {
                 Path targetFile = tempDir.resolve(fileName);
                 Files.createDirectories(targetFile.getParent());
                 Files.writeString(targetFile, res.body());
-                targetFile.toFile().deleteOnExit();
-                targetFile.getParent().toFile().deleteOnExit();
             }
         }
 
-        tempDir.toFile().deleteOnExit();
+        if (deleteOnExit) {
+            deleteOnExit(tempDir);
+        }
         return tempDir;
+    }
+
+    /**
+     * Deletes the folder of an example, with what the example wrote in it (out/, a done folder), when this JVM exits.
+     * File.deleteOnExit leaves the folder behind once anything else is in it.
+     */
+    private static void deleteOnExit(Path dir) {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> FileUtil.removeDir(dir.toFile()), "CamelExampleCleanup"));
+    }
+
+    /**
+     * The folders of examples in the temporary directory that are older than the given age and that none of the given
+     * folders (those of running integrations) is in: left behind by runs that ended, or by a process that was killed.
+     */
+    public static List<Path> staleExampleDirs(Collection<Path> inUse, Duration minAge) {
+        return staleExampleDirs(Path.of(System.getProperty("java.io.tmpdir")), inUse, minAge);
+    }
+
+    static List<Path> staleExampleDirs(Path tmp, Collection<Path> inUse, Duration minAge) {
+        List<Path> answer = new ArrayList<>();
+        List<Path> used = inUse.stream().map(ExampleHelper::realPath).toList();
+        long cutoff = System.currentTimeMillis() - minAge.toMillis();
+        try (var dirs = Files.newDirectoryStream(tmp, EXAMPLE_DIR_PREFIX + "*")) {
+            for (Path dir : dirs) {
+                if (!Files.isDirectory(dir) || Files.getLastModifiedTime(dir).toMillis() > cutoff) {
+                    continue;
+                }
+                Path real = realPath(dir);
+                if (used.stream().noneMatch(u -> u.startsWith(real))) {
+                    answer.add(dir);
+                }
+            }
+        } catch (Exception e) {
+            // the temporary directory cannot be listed: nothing to clean
+        }
+        return answer;
+    }
+
+    // on macOS the temporary directory is reached through a link (/var is /private/var)
+    private static Path realPath(Path p) {
+        try {
+            return p.toRealPath();
+        } catch (Exception e) {
+            return p.toAbsolutePath().normalize();
+        }
     }
 
     public static String getGithubUrl(JsonObject entry) {

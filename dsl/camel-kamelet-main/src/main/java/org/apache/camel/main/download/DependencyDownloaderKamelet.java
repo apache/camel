@@ -178,10 +178,14 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
         private void downloadDependencies(List<String> dependencies) {
             final List<String> gavs = new ArrayList<>();
             for (String dep : dependencies) {
+                if ("camel:core".equals(dep) || "camel-core".equals(dep)
+                        || "camel:kamelet".equals(dep) || "camel-kamelet".equals(dep)) {
+                    continue;
+                }
                 String gav = dep;
-                if (dep.startsWith("camel:")) {
-                    // it's a known camel component
-                    gav = "org.apache.camel:camel-" + dep.substring("camel:".length()) + ":" + camelContext.getVersion();
+                if (CatalogDependencyResolver.isCamelShorthand(dep)) {
+                    MavenGav resolved = CatalogDependencyResolver.resolve(dep, camelContext.getVersion());
+                    gav = resolved.getGroupId() + ":" + resolved.getArtifactId() + ":" + resolved.getVersion();
                 } else if (dep.startsWith("camel-kamelets:")) {
                     // it's a known camel kamelets dependency
                     gav = "org.apache.camel.kamelets:camel-kamelets-" + dep.substring("camel-kamelets:".length()) + ":"
@@ -194,7 +198,7 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
 
             if (!gavs.isEmpty()) {
                 for (String gav : gavs) {
-                    MavenGav mg = MavenGav.parseGav(gav, camelContext.getVersion());
+                    MavenGav mg = CatalogDependencyResolver.resolve(gav, camelContext.getVersion());
                     downloader.downloadDependency(mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
                     downloaded.add(gav);
                 }
@@ -212,7 +216,7 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
                 return false;
             }
 
-            MavenGav mg = MavenGav.parseGav(gav, camelContext.getVersion());
+            MavenGav mg = CatalogDependencyResolver.resolve(gav, camelContext.getVersion());
             boolean exists = downloader.alreadyOnClasspath(mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
             // valid if not already on classpath
             return !exists;

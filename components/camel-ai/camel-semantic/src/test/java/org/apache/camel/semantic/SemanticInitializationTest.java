@@ -27,10 +27,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.language.semantic.SemanticLanguage;
-import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,10 +38,10 @@ class SemanticInitializationTest {
     void initializationDoesNotAcquirePublicContextOrRegistryMonitors() throws Exception {
         ExecutorService callers = Executors.newSingleThreadExecutor();
         try (var context = new DefaultCamelContext()) {
-            context.start();
+            context.init();
             synchronized (context) {
-                var questions = callers.submit(() -> SemanticQuestions.get(context));
-                assertThat(questions.get(10, TimeUnit.SECONDS)).isSameAs(SemanticQuestions.get(context));
+                var evaluations = callers.submit(() -> SemanticEvaluations.get(context));
+                assertThat(evaluations.get(10, TimeUnit.SECONDS)).isSameAs(SemanticEvaluations.get(context));
             }
             var language = language(context, Adapter.class);
             synchronized (context.getRegistry()) {
@@ -56,15 +54,15 @@ class SemanticInitializationTest {
     }
 
     @Test
-    void concurrentQuestionRegistryCreationReturnsOneInstance() throws Exception {
+    void concurrentEvaluationRegistryCreationReturnsOneInstance() throws Exception {
         ExecutorService callers = Executors.newFixedThreadPool(4);
         CountDownLatch start = new CountDownLatch(1);
         try (var context = new DefaultCamelContext()) {
-            List<Future<SemanticQuestions>> results = new ArrayList<>();
+            List<Future<SemanticEvaluations>> results = new ArrayList<>();
             for (int i = 0; i < 8; i++) {
                 results.add(callers.submit(() -> {
                     assertThat(start.await(10, TimeUnit.SECONDS)).isTrue();
-                    return SemanticQuestions.get(context);
+                    return SemanticEvaluations.get(context);
                 }));
             }
             start.countDown();
@@ -79,6 +77,40 @@ class SemanticInitializationTest {
     }
 
     @Test
+    void cachedRegistryLookupDoesNotWaitForAnotherContext() throws Exception {
+        ExecutorService callers = Executors.newFixedThreadPool(2);
+        CountDownLatch entered = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        try (var creating = new DefaultCamelContext(); var cached = new DefaultCamelContext()) {
+            var expected = SemanticEvaluations.get(cached);
+            creating.getCamelContextExtension().lazyAddContextPlugin(SemanticEvaluations.class, () -> {
+                entered.countDown();
+                try {
+                    assertThat(release.await(30, TimeUnit.SECONDS)).isTrue();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException(e);
+                }
+                // Leave the plugin absent so get() creates and registers it after this lookup is released.
+                return null;
+            });
+            var creation = callers.submit(() -> SemanticEvaluations.get(creating));
+            try {
+                assertThat(entered.await(10, TimeUnit.SECONDS)).isTrue();
+                var lookup = callers.submit(() -> SemanticEvaluations.get(cached));
+                assertThat(lookup.get(10, TimeUnit.SECONDS)).isSameAs(expected);
+            } finally {
+                release.countDown();
+                assertThat(creation.get(10, TimeUnit.SECONDS))
+                        .as("registry created after the lazy lookup returns no plugin").isNotNull();
+            }
+        } finally {
+            release.countDown();
+            callers.shutdownNow();
+        }
+    }
+
+    @Test
     void concurrentLanguagesCannotOverwriteTheAdapterOwner() throws Exception {
         ExecutorService callers = Executors.newFixedThreadPool(2);
         CyclicBarrier start = new CyclicBarrier(2);
@@ -86,7 +118,7 @@ class SemanticInitializationTest {
         CountingAdapter.started.set(0);
         CountingAdapter.stopped.set(0);
         try (var context = new DefaultCamelContext()) {
-            context.start();
+            context.init();
             var first = language(context, CountingAdapter.class);
             var second = language(context, CountingAdapter.class);
             List<Future<String>> results = new ArrayList<>();
@@ -96,7 +128,7 @@ class SemanticInitializationTest {
                     try {
                         language.createExpression("ref:q");
                         return "created";
-                    } catch (RuntimeCamelException e) {
+                    } catch (IllegalArgumentException e) {
                         assertThat(e).hasRootCauseInstanceOf(IllegalArgumentException.class)
                                 .hasRootCauseMessage(
                                         "Semantic adapter registry name is already bound: " + SemanticLanguage.ADAPTER_NAME);
@@ -121,8 +153,8 @@ class SemanticInitializationTest {
         BlockingAdapter.entered = new CountDownLatch(1);
         BlockingAdapter.release = new CountDownLatch(1);
         try (var first = new DefaultCamelContext(); var second = new DefaultCamelContext()) {
-            first.start();
-            second.start();
+            first.init();
+            second.init();
             var blocked = language(first, BlockingAdapter.class);
             var independent = language(second, Adapter.class);
             Future<?> creation = callers.submit(() -> blocked.createExpression("ref:q"));
@@ -141,23 +173,23 @@ class SemanticInitializationTest {
     }
 
     private static SemanticLanguage language(DefaultCamelContext context, Class<? extends SemanticAdapter> type) {
-        SemanticQuestions.get(context).replace("test", Map.of("q",
-                new SemanticQuestion(
-                        SemanticQuestion.Type.BOOLEAN, "Is this valid?", null, null, null, 0.5, 0,
-                        SemanticQuestion.UncertaintyPolicy.FAIL)));
+        SemanticEvaluations.get(context).replace("test", Map.of("q",
+                new SemanticEvaluation(
+                        "boolean", null, null, Map.of("instructions", "Is this valid?", "threshold", 0.5, "uncertainty", 0.0,
+                                "uncertaintyPolicy", "fail"))));
         SemanticLanguage language = new SemanticLanguage();
         language.setCamelContext(context);
         language.setAdapter(type.getName());
         return language;
     }
 
-    public static class Adapter extends ServiceSupport implements SemanticAdapter {
+    public static class Adapter extends TestSemanticAdapter {
         @Override
-        public void validate(SemanticQuestion question) {
+        public void validate(SemanticEvaluation evaluation) {
         }
 
         @Override
-        public SemanticResult evaluate(SemanticQuestion question, Object state) {
+        public SemanticResult evaluate(SemanticEvaluation evaluation, Object state) {
             return new SemanticResult(true, null, null, null, null);
         }
     }

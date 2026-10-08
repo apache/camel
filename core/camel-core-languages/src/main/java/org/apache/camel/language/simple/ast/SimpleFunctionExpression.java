@@ -25,6 +25,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.FileExpressionBuilder;
 import org.apache.camel.language.simple.SimpleFunctionDispatcher;
 import org.apache.camel.language.simple.SimpleFunctionHelper;
+import org.apache.camel.language.simple.SimplePredicateExpression;
 import org.apache.camel.language.simple.SimplePredicateParser;
 import org.apache.camel.language.simple.SimpleSyntaxHints;
 import org.apache.camel.language.simple.functions.DirectFunctionFactory;
@@ -140,6 +141,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
     private Expression createNegatedExpression(CamelContext camelContext, String function) {
         final String name = function.substring(1).trim();
         final Expression exp = doCreateSimpleExpression(camelContext, name);
+        // Preserve the value-based rule for existing functions: ${body} is true and a missing header is false
+        // (CAMEL-24984). Only functions opting in explicitly use their predicate contract under negation.
+        final Predicate predicate = exp instanceof SimplePredicateExpression p
+                ? p : exchange -> ObjectHelper.evaluateValuePredicate(exp.evaluate(exchange, Object.class));
         return new Expression() {
             @Override
             public void init(CamelContext context) {
@@ -148,9 +153,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                Object value = exp.evaluate(exchange, Object.class);
-                // the same rule the language uses for a predicate on its own (CAMEL-24984)
-                boolean matches = ObjectHelper.evaluateValuePredicate(value);
+                boolean matches = predicate.matches(exchange);
                 return exchange.getContext().getTypeConverter().convertTo(type, exchange, !matches);
             }
 

@@ -17,11 +17,13 @@
 package org.apache.camel.semantic;
 
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
- * A provider answer. Value is Boolean, a category String, or a numeric score. A boolean provider may supply only
- * probability; the question then defines the decision policy. Missing probabilities/confidence remain absent. Metadata
- * may contain provider/model identity, revision and usage. It must not contain credentials or input state.
+ * An expert answer after applying its policy. Value is Boolean, a category String, a numeric score, or a set of
+ * classification labels. Missing probabilities/confidence remain absent. Metadata may contain provider/model identity,
+ * revision and usage. It must not contain credentials or input state.
  */
 public final class SemanticResult {
     private final Object value;
@@ -32,7 +34,10 @@ public final class SemanticResult {
 
     public SemanticResult(Object value, Double probability, Map<String, Double> probabilities,
                           Double confidence, Map<String, Object> metadata) {
-        this.value = value;
+        if (value instanceof Set<?> labels && labels.stream().anyMatch(Objects::isNull)) {
+            throw new IllegalArgumentException("Semantic classification labels must not be null");
+        }
+        this.value = value instanceof Set<?> labels ? Set.copyOf(labels) : value;
         this.probability = probability;
         this.probabilities = probabilities == null ? Map.of() : Map.copyOf(probabilities);
         this.confidence = confidence;
@@ -46,44 +51,6 @@ public final class SemanticResult {
         if (value != null && (!Double.isFinite(value) || value < 0 || value > 1)) {
             throw new IllegalArgumentException("Semantic probabilities and confidence must be within [0,1]");
         }
-    }
-
-    public Object decision(SemanticQuestion question) {
-        switch (question.getType()) {
-            case BOOLEAN:
-                if (probability != null) {
-                    double threshold = question.getThreshold();
-                    double uncertainty = question.getUncertainty();
-                    if (uncertainty > 0 && probability >= threshold - uncertainty && probability <= threshold + uncertainty) {
-                        if (question.getUncertaintyPolicy() == SemanticQuestion.UncertaintyPolicy.FAIL) {
-                            throw new IllegalStateException("Semantic boolean decision is uncertain");
-                        }
-                        return false;
-                    }
-                    return probability >= threshold;
-                }
-                if (value instanceof Boolean && question.getUncertainty() == 0 && question.getThreshold() == 0.5) {
-                    return value;
-                }
-                break;
-            case CHOICE:
-                if (value instanceof String && question.getCriteria().containsKey(value)) {
-                    if (!probabilities.isEmpty() && !probabilities.keySet().equals(question.getCriteria().keySet())) {
-                        throw new IllegalArgumentException("Semantic choice probabilities must cover every criterion");
-                    }
-                    return value;
-                }
-                break;
-            case SCORE:
-                if (value instanceof Number number && Double.isFinite(number.doubleValue()) && number.doubleValue() >= 0
-                        && number.doubleValue() <= question.getLevels().size() - 1) {
-                    return number.doubleValue();
-                }
-                break;
-            default:
-                break;
-        }
-        throw new IllegalArgumentException("Semantic result does not support the question and its decision policy");
     }
 
     public Object getValue() {

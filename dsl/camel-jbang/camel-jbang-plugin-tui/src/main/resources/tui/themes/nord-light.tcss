@@ -52,3 +52,14 @@ $nord-fg: #2E3440;
 #diagram-action  { color: #B48EAD; }
 #diagram-eip     { color: #5E81AC; }
 #diagram-default { color: #7B88A1; }
+
+/*
+ * Syntax tokens (optional), after Nord has no light editor scheme: Nord's hues darkened to read on the light base.
+ */
+#syntax-comment  { color: #7B88A1; }
+#syntax-string   { color: #5E8045; }
+#syntax-keyword  { color: #5E81AC; }
+#syntax-function { color: #3B7A8A; }
+#syntax-type     { color: #4C7A79; }
+#syntax-constant { color: #8F5C88; }
+#syntax-text     { color: $nord-fg; }

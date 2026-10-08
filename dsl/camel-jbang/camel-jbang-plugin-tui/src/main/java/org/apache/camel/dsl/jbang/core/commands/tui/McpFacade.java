@@ -27,6 +27,7 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.LongSupplier;
 import java.util.function.Supplier;
 
 import dev.tamboui.buffer.Buffer;
@@ -139,10 +140,23 @@ class McpFacade {
      * still holds the applied hunks ({@code content} is the buffer, not the file), {@code remaining} hunks wait.
      */
     record ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content, String question,
-            int remaining) {
+            int remaining, boolean undecided) {
+
+        ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content, String question,
+                      int remaining) {
+            this(saved, applied, skipped, content, question, remaining, false);
+        }
 
         ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content) {
-            this(saved, applied, skipped, content, null, 0);
+            this(saved, applied, skipped, content, null, 0, false);
+        }
+
+        /**
+         * The user has neither saved nor discarded the replayed edit for a long while: the tool call returns, the edit
+         * stays in the editor, and what the user does with it is told with the next question.
+         */
+        static ReplayOutcome undecidedOutcome() {
+            return new ReplayOutcome(false, 0, List.of(), null, null, 0, true);
         }
 
         boolean paused() {
@@ -205,6 +219,10 @@ class McpFacade {
     // the F2 menu's launcher: starts examples (tui_run_example) and infra services (tui_infra start). It is held
     // here, not in the tool registry, so the AI panel's registry and the MCP server's registry both see it.
     private volatile LaunchManager launchManager;
+    // asks the data refresh for a scan of every integration, and counts the scans done: on the other tabs only the
+    // selected integration is refreshed, so the Overview rows of the others go stale while an agent reads them
+    private volatile Runnable fullScanRequest;
+    private volatile LongSupplier fullScansDone;
 
     McpFacade(
               MonitorContext ctx,
@@ -246,6 +264,34 @@ class McpFacade {
 
     void setLaunchManager(LaunchManager launchManager) {
         this.launchManager = launchManager;
+    }
+
+    void setFullScan(Runnable request, LongSupplier done) {
+        this.fullScanRequest = request;
+        this.fullScansDone = done;
+    }
+
+    /**
+     * Brings the data of every integration up to date before an agent reads the Overview from another tab, waiting at
+     * most a few seconds for the next scan.
+     */
+    void awaitFullScan() {
+        Runnable request = fullScanRequest;
+        LongSupplier done = fullScansDone;
+        if (request == null || done == null) {
+            return;
+        }
+        long before = done.getAsLong();
+        request.run();
+        long deadline = System.currentTimeMillis() + FULL_SCAN_TIMEOUT_MS;
+        while (done.getAsLong() <= before && System.currentTimeMillis() < deadline) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
     }
 
     LaunchManager getLaunchManager() {
@@ -329,6 +375,28 @@ class McpFacade {
         }
         IntegrationInfo info = ctx.findSelectedIntegration();
         return info != null ? info.name : null;
+    }
+
+    /** How often the selected integration has reloaded its routes, 0 when nothing is selected. */
+    int getSelectedReloadCount() {
+        if (ctx == null) {
+            return 0;
+        }
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.reloaded : 0;
+    }
+
+    /** The status document of the selected integration, null when nothing is selected or it has none yet. */
+    JsonObject readSelectedStatus() {
+        if (ctx == null || ctx.selectedPid == null) {
+            return null;
+        }
+        try {
+            return RuntimeHelper.readStatus(Long.parseLong(ctx.selectedPid));
+        } catch (RuntimeException e) {
+            // not a pid, or a status that cannot be read: no tool groups, the core set is still offered
+            return null;
+        }
     }
 
     String getSelectedCamelVersion() {
@@ -631,9 +699,14 @@ class McpFacade {
 
     /** How long a table read waits for a tab that loads its data on demand. The connector action timeout is 5s. */
     static final long ON_DEMAND_LOAD_TIMEOUT_MS = 8_000;
+    // a full scan runs at most every 2 seconds, on the next refresh
+    static final long FULL_SCAN_TIMEOUT_MS = 4_000;
 
     JsonObject getTableData(String tabName) {
         MonitorTab tab = resolveTab(tabName);
+        if (tab != null && tab == tabRegistry.overviewTab() && bridge != null && bridge.activeTab() != tab) {
+            awaitFullScan();
+        }
         return tab != null ? awaitTableData(tab, ON_DEMAND_LOAD_TIMEOUT_MS) : null;
     }
 
@@ -1017,6 +1090,24 @@ class McpFacade {
         return result;
     }
 
+    /** The pid of the integration, or else the infra service, with the given name (alias) or pid. */
+    private String findPidByNameOrPid(String nameOrPid) {
+        for (IntegrationInfo info : data.get()) {
+            if (!info.vanishing && (nameOrPid.equals(info.name) || nameOrPid.equals(info.pid))) {
+                return info.pid;
+            }
+        }
+        List<InfraInfo> infras = ctx.infraData != null ? ctx.infraData.get() : null;
+        if (infras != null) {
+            for (InfraInfo info : infras) {
+                if (!info.vanishing && (nameOrPid.equals(info.alias) || nameOrPid.equals(info.pid))) {
+                    return info.pid;
+                }
+            }
+        }
+        return null;
+    }
+
     private IntegrationInfo findIntegration(String name) {
         if (name != null && !name.isEmpty()) {
             for (IntegrationInfo info : data.get()) {
@@ -1335,6 +1426,14 @@ class McpFacade {
         result.put("file", file);
         JsonArray skipped = new JsonArray();
         skipped.addAll(outcome.skipped());
+        if (outcome.undecided()) {
+            result.put("status", "pending");
+            result.put("message", "The change is in the user's editor, replayed as a live edit, but the user has not"
+                                  + " saved or discarded it yet; the file on disk is unchanged. End your turn now:"
+                                  + " do not write " + file + " again and do not say it is saved. Your next message"
+                                  + " tells you what the user did with it.");
+            return result;
+        }
         if (outcome.paused()) {
             result.put("status", "paused");
             result.put("appliedHunks", outcome.applied());
@@ -1431,12 +1530,42 @@ class McpFacade {
     }
 
     String controlIntegration(String action) {
+        return controlIntegration(action, null);
+    }
+
+    /**
+     * Controls the integration with the given name or pid, which becomes the selected one, so the screen shows what the
+     * agent acts on (CAMEL-25424). Without a name: the selected integration, or the only one running.
+     */
+    String controlIntegration(String action, String nameOrPid) {
         if (action == null || action.isBlank()) {
             return "Error: action is required";
         }
         if ("stop-all".equals(action)) {
             bridge.stopAll();
             return "Stopping all processes";
+        }
+        if (nameOrPid != null && !nameOrPid.isBlank()) {
+            String pid = findPidByNameOrPid(nameOrPid.trim());
+            if (pid == null) {
+                List<String> known = new ArrayList<>();
+                data.get().stream().filter(i -> !i.vanishing).forEach(i -> known.add(i.name + " (pid " + i.pid + ")"));
+                List<InfraInfo> infras = ctx.infraData != null ? ctx.infraData.get() : null;
+                if (infras != null) {
+                    // infra services can be named too
+                    infras.stream().filter(i -> !i.vanishing)
+                            .forEach(i -> known.add(i.alias + " (infra, pid " + i.pid + ")"));
+                }
+                String names = String.join(", ", known);
+                return "Error: no integration with name or pid " + nameOrPid
+                       + (names.isEmpty() ? "; none is running" : ". Known: " + names);
+            }
+            ctx.selectedPid = pid;
+        } else if (ctx.selectedPid == null) {
+            List<IntegrationInfo> running = data.get().stream().filter(i -> !i.vanishing && !i.phantom).toList();
+            if (running.size() == 1) {
+                ctx.selectedPid = running.get(0).pid;
+            }
         }
         if ("close".equals(action)) {
             if (ctx.selectedPid == null) {
@@ -1451,7 +1580,7 @@ class McpFacade {
             return "Closed project: " + info.name;
         }
         if (ctx.selectedPid == null) {
-            return "Error: no integration selected";
+            return "Error: no integration selected; give its name or pid";
         }
         String name = ctx.selectedName();
         return switch (action) {

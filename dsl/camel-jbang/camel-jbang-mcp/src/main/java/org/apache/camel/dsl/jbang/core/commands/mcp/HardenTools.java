@@ -67,7 +67,7 @@ public class HardenTools {
                         "Use this context to provide security hardening recommendations for the route.")
     public HardenContextResult camel_route_harden_context(
             @ToolArg(description = "The Camel route content (YAML, XML, or Java DSL)") String route,
-            @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)") String format,
+            @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)", required = false) String format,
             @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
             @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
             @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {

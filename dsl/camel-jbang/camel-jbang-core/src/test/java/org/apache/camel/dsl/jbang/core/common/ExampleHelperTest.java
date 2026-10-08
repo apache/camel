@@ -28,6 +28,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExampleHelperTest {
 
     @Test
+    void theNeedsOfAnExampleAreItsPlainText() {
+        // the catalog writes them as Markdown for the README tables
+        JsonObject entry = new JsonObject();
+        entry.put("needs", "a local model: `ollama pull granite4:3b`");
+        assertEquals("a local model: ollama pull granite4:3b", ExampleHelper.getNeeds(entry));
+        assertNull(ExampleHelper.getNeeds(new JsonObject()));
+
+        // and the bundled catalog has them for the examples that need something
+        List<JsonObject> catalog = ExampleHelper.loadCatalog();
+        JsonObject client = ExampleHelper.findExample(catalog, "contracts/openapi-client");
+        assertNotNull(client);
+        assertEquals("contracts/openapi-server running first", ExampleHelper.getNeeds(client));
+    }
+
+    @Test
     void shouldLoadCatalog() {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
         assertFalse(catalog.isEmpty());
@@ -248,5 +263,30 @@ class ExampleHelperTest {
         assertTrue(names.contains("circuit-breaker"));
         assertTrue(names.contains("mqtt"));
         assertTrue(names.contains("aws-sqs"));
+    }
+
+    @Test
+    void runArgsOfAnExample() {
+        JsonObject example = ExampleHelper.findExample(ExampleHelper.loadCatalog(), "route/content-based-router");
+        List<String> files = ExampleHelper.getFiles(example);
+
+        // --example=name: its files and its short name, the other options kept
+        List<String> args = ExampleHelper.runArgs(List.of("run", "--example=route/content-based-router", "--dev"), example);
+        assertEquals("run", args.get(0));
+        assertTrue(args.containsAll(files));
+        assertTrue(args.contains("--name=content-based-router"));
+        assertTrue(args.contains("--dev"));
+        assertFalse(args.stream().anyMatch(a -> a.startsWith("--example")));
+
+        // --example name: the value goes too
+        args = ExampleHelper.runArgs(List.of("run", "--example", "route/content-based-router", "--dev"), example);
+        assertFalse(args.contains("route/content-based-router"));
+        assertTrue(args.containsAll(files));
+        assertTrue(args.contains("--dev"));
+
+        // a name given is kept as the only one
+        args = ExampleHelper.runArgs(List.of("run", "--example=content-based-router", "--name", "cbr"), example);
+        assertTrue(args.contains("cbr"));
+        assertFalse(args.contains("--name=content-based-router"));
     }
 }

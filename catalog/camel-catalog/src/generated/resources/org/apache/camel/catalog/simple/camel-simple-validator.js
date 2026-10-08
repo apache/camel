@@ -88,6 +88,7 @@ const FUNCTIONS = {
   'isEmpty': true,
   'isNumeric': true,
   'jq': true,
+  'semantic': true,
   'jsonpath': true,
   'join': true,
   'length': true,

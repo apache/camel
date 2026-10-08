@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.yaml.common;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -105,12 +107,39 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     public void warnCompactNotationOnce(Logger log) {
         if (compactNotationWarn && !compactNotationWarned) {
             compactNotationWarned = true;
+            if (isKameletCatalog(resource)) {
+                // a Kamelet of the Kamelet catalog (camel-kamelets): not the user's file to normalize
+                return;
+            }
             String loc = resource != null ? resource.getLocation() : "unknown";
             log.warn("YAML DSL compact notation detected in: {}."
                      + " It is recommended to use canonical/normalized YAML DSL notation"
                      + " which is more tooling and AI friendly."
                      + " Use Camel CLI to normalize: camel validate normalize <file>",
                     loc);
+        }
+    }
+
+    private static final Pattern KAMELET_CATALOG = Pattern.compile("/camel-kamelets-[^/!]*\\.jar!/kamelets/");
+
+    /**
+     * Whether the resource is a Kamelet of the Kamelet catalog: under kamelets/ in a camel-kamelets jar, however it was
+     * loaded (classpath:kamelets/..., a scan of the jar, a jar nested in a Spring Boot jar). Asked only when the
+     * warning is about to be logged.
+     */
+    static boolean isKameletCatalog(Resource resource) {
+        if (resource == null) {
+            return false;
+        }
+        String location = resource.getLocation();
+        if (location != null && KAMELET_CATALOG.matcher(location).find()) {
+            return true;
+        }
+        try {
+            URI uri = resource.getURI();
+            return uri != null && KAMELET_CATALOG.matcher(uri.toString()).find();
+        } catch (Exception e) {
+            return false;
         }
     }
 

@@ -64,7 +64,7 @@ public class SecurityScanTools {
                         + "and CVE advisories.")
     public SecurityScanResult camel_security_scan(
             @ToolArg(description = "The Camel route content (YAML, XML, or Java DSL)") String route,
-            @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)") String format) {
+            @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)", required = false) String format) {
 
         if (route == null || route.isBlank()) {
             throw new ToolCallException("Route content is required", null);
@@ -145,6 +145,12 @@ public class SecurityScanTools {
             int idx = normalized.indexOf(optionKey, from);
             if (idx < 0) {
                 return null;
+            }
+            // require a token boundary before the key, so a longer identifier that merely ends in the key
+            // (isNested, unnested, an unrelated ...nested field) is not treated as this option
+            if (idx > 0 && Character.isLetterOrDigit(normalized.charAt(idx - 1))) {
+                from = idx + 1;
+                continue;
             }
             int after = idx + optionKey.length();
             // a quoted key ("key":value) leaves a closing quote before the separator

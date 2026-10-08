@@ -39,9 +39,27 @@ public class CamelSpringCronService implements CamelCronService, CamelContextAwa
         SpringCronEndpoint cronEndpoint = new SpringCronEndpoint(uri, cronComponent);
         Map<String, Object> options = new HashMap<>();
         options.put("scheduler", "spring");
-        options.put("scheduler.cron", configuration.getSchedule());
+        String schedule = configuration.getSchedule();
+        String[] parts = schedule.split("\\s");
+        if (parts.length == 5) {
+            // Unix cron syntax: a day of month and a day of week both given match either day (Spring: both days), and
+            // */n in the day of week counts from Sunday (Spring: from Monday), so such schedules are not converted
+            if ((!isAnyDay(parts[2]) && !isAnyDay(parts[4])) || parts[4].startsWith("*/")) {
+                throw new IllegalArgumentException(
+                        "The five-part schedule " + schedule + " would fire on other days with the spring cron service:"
+                                                   + " use * or ? in the day of month or in the day of week, and no */n"
+                                                   + " in the day of week, or a schedule with seconds");
+            }
+            // the seconds are optional in the cron component but mandatory in Spring
+            schedule = "0 " + schedule;
+        }
+        options.put("scheduler.cron", schedule);
         cronEndpoint.configureProperties(options);
         return cronEndpoint;
+    }
+
+    private static boolean isAnyDay(String field) {
+        return "*".equals(field) || "?".equals(field);
     }
 
     @Override

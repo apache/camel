@@ -164,7 +164,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         completionCandidates = ClusterTypeCompletionCandidates.class,
                         converter = ClusterTypeConverter.class,
                         description = "The target cluster type (${COMPLETION-CANDIDATES}). Special configurations may be applied to different cluster types such as Kind or Minikube.")
-    String clusterType = "Kubernetes";
+    String clusterType;
 
     @CommandLine.Option(names = { "--image-build" }, defaultValue = "true",
                         description = "Whether to build container image as part of the run.")
@@ -807,22 +807,27 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private void detectCluster() {
-        if (!disableAuto) {
+        if (!disableAuto && clusterType == null) {
             if (verbose) {
                 printer().print("Automatic Kubernetes cluster detection... ");
             }
-            ClusterType cluster = KubernetesHelper.discoverClusterType();
-            this.clusterType = cluster.name();
-            if (ClusterType.MINIKUBE == cluster) {
+            this.clusterType = KubernetesHelper.discoverClusterType().name();
+            if (verbose) {
+                printer().println(this.clusterType);
+            }
+        }
+        if (clusterType == null) {
+            this.clusterType = ClusterType.KUBERNETES.name();
+        }
+        if (!disableAuto) {
+            // Apply per-cluster defaults for the resolved cluster type (explicit or detected)
+            if (ClusterType.MINIKUBE.isEqualTo(clusterType)) {
                 this.imageBuilder = "docker";
                 this.imagePush = false;
-            } else if (ClusterType.OPENSHIFT == cluster) {
+            } else if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
                 if (ObjectHelper.isEmpty(imageGroup)) {
                     this.imageGroup = client().getNamespace();
                 }
-            }
-            if (verbose) {
-                printer().println(this.clusterType);
             }
         }
     }

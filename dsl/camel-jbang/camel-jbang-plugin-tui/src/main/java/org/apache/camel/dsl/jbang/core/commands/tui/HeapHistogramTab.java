@@ -135,7 +135,7 @@ class HeapHistogramTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No data", 4));
+            rows.add(emptyRow("No data", 4, 1));
         }
 
         long visibleInstances = 0;
@@ -479,10 +479,7 @@ class HeapHistogramTab extends AbstractTableTab {
     }
 
     private List<ClasspathTab.JarEntry> loadClasspathEntries(String pid) {
-        JsonObject action = new JsonObject();
-        action.put("action", "jvm");
-
-        JsonObject response = ctx.executeAction(pid, action, 5000);
+        JsonObject response = ctx.jvmInfo(pid, 5000);
 
         if (response == null) {
             return Collections.emptyList();

@@ -58,6 +58,8 @@ class MonitorContext {
     boolean ratePerMinute;
     boolean confirmActions;
     boolean validateOnSave = true;
+    // whether the source editor shows the route tree at first (the Route Tree setting)
+    boolean routeTree;
     /** True while the shell (F6) or AI (F8) panel is open and owns keyboard focus. */
     boolean bottomPanelFocused;
     /** Shell/AI panel opens at the top of the content area instead of the bottom. */
@@ -182,6 +184,36 @@ class MonitorContext {
         }
     }
 
+    /** How long the jvm answer of an integration is kept for the tabs that need its classpath. */
+    static final long JVM_INFO_TTL_MS = 30_000;
+    private final ConcurrentHashMap<String, CachedAnswer> jvmInfo = new ConcurrentHashMap<>();
+
+    private record CachedAnswer(JsonObject answer, long time) {
+    }
+
+    /**
+     * The jvm answer of an integration (its classpath and JVM details), shared by the tabs that need it (Classpath, CVE
+     * Audit, Maven Dependencies, Heap Histogram): an action takes a second of the integration, so it is asked once, not
+     * once per tab.
+     */
+    JsonObject jvmInfo(String pid, long timeoutMs) {
+        Object lock = actionLocks.computeIfAbsent(pid, k -> new Object());
+        synchronized (lock) {
+            CachedAnswer cached = jvmInfo.get(pid);
+            long now = System.currentTimeMillis();
+            if (cached != null && now - cached.time() < JVM_INFO_TTL_MS) {
+                return cached.answer();
+            }
+            JsonObject request = new JsonObject();
+            request.put("action", "jvm");
+            JsonObject answer = executeAction(pid, request, timeoutMs);
+            if (answer != null) {
+                jvmInfo.put(pid, new CachedAnswer(answer, now));
+            }
+            return answer;
+        }
+    }
+
     JsonObject executeAction(String pid, JsonObject request, long timeoutMs) {
         Object lock = actionLocks.computeIfAbsent(pid, k -> new Object());
         synchronized (lock) {
@@ -209,9 +241,28 @@ class MonitorContext {
         return CommandLineHelper.getCamelDir().resolve(pid + "-trace.json");
     }
 
-    /** Asks the AI to fix a problem of a source file. */
+    Path getErrorFile(String pid) {
+        return CommandLineHelper.getCamelDir().resolve(pid + "-error.json");
+    }
+
+    /** Asks the AI to fix a problem of a source file, or a line that fails at runtime. */
     @FunctionalInterface
     interface AskAi {
         void fixProblem(Path file, int line, String problem, String lineText);
+
+        /**
+         * Asks the AI to fix a line whose processors fail at runtime (Shift+F8 on a line with failures in the live run
+         * data): the failure says how many exchanges failed and the exception of the last one.
+         */
+        default void fixFailure(Path file, int line, String failure, String lineText) {
+            fixProblem(file, line, failure, lineText);
+        }
+
+        /**
+         * Asks the AI about an ERROR of the log whose source line is not known (Shift+F8 in the Log tab): the error
+         * line, the exception and its causes.
+         */
+        default void explainLogError(String error) {
+        }
     }
 }

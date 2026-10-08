@@ -58,7 +58,7 @@ public class TypeSafeAiEndpointUriFactory extends org.apache.camel.support.compo
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "name", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);

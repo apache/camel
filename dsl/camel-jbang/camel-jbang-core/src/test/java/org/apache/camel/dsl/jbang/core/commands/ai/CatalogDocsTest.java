@@ -22,9 +22,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
@@ -474,5 +477,74 @@ class CatalogDocsTest {
             assertTrue(groovy.containsKey("message") && groovy.containsKey("attachments") && groovy.containsKey("log"),
                     "the groovy extras");
         }
+    }
+
+    /** CAMEL-25370: an element that is one of several kinds says to write the kind as the key. */
+    @Test
+    void errorHandlerTypeIsWrittenAsItsKind() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        var doc = CatalogDocs.catalogDoc(catalog, "errorHandler", null, "eip", null, null, false, false, null);
+        JsonObject type = ((JsonArray) doc.get("options")).stream().map(JsonObject.class::cast)
+                .filter(o -> "errorHandlerType".equals(o.getString("name"))).findFirst().orElseThrow();
+        assertTrue(((JsonArray) type.get("oneOf")).contains("noErrorHandler"), type.toJson());
+        assertTrue(type.getString("yaml").contains("not 'errorHandlerType'"), type.toJson());
+    }
+
+    /** CAMEL-25370: a filter that matches no option of onException finds the one of its redeliveryPolicy. */
+    @Test
+    void optionsFilterFindsTheRedeliveryPolicyOptions() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        var doc = CatalogDocs.catalogDoc(catalog, "onException", null, "eip", "logStackTrace", null, false, false, null);
+        JsonArray nested = (JsonArray) doc.get("nestedOptions");
+        assertTrue(nested != null && !nested.isEmpty(), doc.toJson());
+        JsonObject first = (JsonObject) nested.get(0);
+        assertTrue("redeliveryPolicy".equals(first.getString("under")), first.toJson());
+        assertTrue(first.getString("name").toLowerCase().contains("logstacktrace"), first.toJson());
+        assertTrue(doc.getString("nestedHint").contains("redeliveryPolicy: {"), doc.toJson());
+    }
+
+    /**
+     * CAMEL-25370: the kind hint is only for a single element written as one of its kinds: not for outputs (written
+     * under steps:), setHeaders' headers (written as headers:) or choice's when (its kind is its own name).
+     */
+    @Test
+    void elementsThatAreNotWrittenAsTheirKindHaveNoKindHint() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        assertNoKindHint(catalog, "filter", "outputs");
+        assertNoKindHint(catalog, "setHeaders", "headers");
+        assertNoKindHint(catalog, "choice", "when");
+        assertNoKindHint(catalog, "doTry", "doCatch");
+    }
+
+    private static void assertNoKindHint(CamelCatalog catalog, String eip, String option) {
+        var doc = CatalogDocs.catalogDoc(catalog, eip, null, "eip", option, "all", false, false, null);
+        JsonObject o = ((JsonArray) doc.get("options")).stream().map(JsonObject.class::cast)
+                .filter(j -> option.equals(j.getString("name"))).findFirst().orElseThrow();
+        assertFalse(o.containsKey("oneOf"), o.toJson());
+        assertFalse(o.containsKey("yaml"), o.toJson());
+    }
+
+    /** CAMEL-25370: an element named like another model is not searched (templatedRoute.bean is not the bean EIP). */
+    @Test
+    void theNestedSearchOnlyFollowsTheModelTheElementHolds() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        var doc = CatalogDocs.catalogDoc(catalog, "templatedRoute", null, "eip", "method", null, false, false, null);
+        JsonArray nested = (JsonArray) doc.get("nestedOptions");
+        assertTrue(nested == null || nested.stream().map(JsonObject.class::cast)
+                .noneMatch(o -> "bean".equals(o.getString("under"))), doc.toJson());
+    }
+
+    /** CAMEL-25370: the nested search is only for a filter none of the EIP's own options match, in any scope. */
+    @Test
+    void theNestedSearchKeepsTheScope() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        // redelivery matches options of onException itself, which the required scope leaves out
+        var doc = CatalogDocs.catalogDoc(catalog, "onException", null, "eip", "redelivery", "required", false, false,
+                null);
+        assertFalse(doc.containsKey("nestedOptions"), doc.toJson());
+        // logStackTrace matches no option of onException, and no required option of its redeliveryPolicy
+        doc = CatalogDocs.catalogDoc(catalog, "onException", null, "eip", "logStackTrace", "required", false, false,
+                null);
+        assertFalse(doc.containsKey("nestedOptions"), doc.toJson());
     }
 }

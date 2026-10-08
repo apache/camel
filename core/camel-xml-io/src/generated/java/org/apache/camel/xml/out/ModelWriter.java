@@ -22,6 +22,7 @@ package org.apache.camel.xml.out;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import javax.annotation.processing.Generated;
@@ -1987,7 +1988,23 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteTryDefinition(String name, TryDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
+        List<ProcessorDefinition<?>> outputs = new ArrayList<>(def.getOutputs());
+        for (CatchDefinition clause : def.getCatchClauses()) {
+            if (!outputs.contains(clause)) {
+                int index = outputs.size();
+                for (int i = 0; i < outputs.size(); i++) {
+                    if (outputs.get(i) instanceof FinallyDefinition) {
+                        index = i;
+                        break;
+                    }
+                }
+                outputs.add(index, clause);
+            }
+        }
+        if (def.getFinallyClause() != null && !outputs.contains(def.getFinallyClause())) {
+            outputs.add(def.getFinallyClause());
+        }
+        doWriteList(null, null, outputs, this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
     protected void doWriteUnmarshalDefinition(String name, UnmarshalDefinition def) throws IOException {
@@ -3279,6 +3296,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("apiContextPath", def.getApiContextPath(), null);
         doWriteAttribute("routeId", def.getRouteId(), null);
         doWriteAttribute("missingOperation", def.getMissingOperation(), "fail");
+        doWriteAttribute("unmatchedRequestHandling", def.getUnmatchedRequestHandling(), "platform");
         doWriteAttribute("mockIncludePattern", def.getMockIncludePattern(), "classpath:camel-mock/**");
         endElement(name);
     }

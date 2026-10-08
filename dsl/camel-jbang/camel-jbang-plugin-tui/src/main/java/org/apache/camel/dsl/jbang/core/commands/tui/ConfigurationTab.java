@@ -43,6 +43,7 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.process.ListProperties;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -158,12 +159,23 @@ class ConfigurationTab extends AbstractTableTab {
         result.sort((a, b) -> {
             int cmp = switch (sort) {
                 case "value" -> compareStr(a.value, b.value);
-                case "source" -> compareStr(a.source, b.source);
+                case "source" -> compareStr(sourceOf(a), sourceOf(b));
                 default -> compareCamelFirst(a, b);
             };
             return sortReversed ? -cmp : cmp;
         });
         return result;
+    }
+
+    /**
+     * Where a property comes from: the source it was resolved from, or else the location it was loaded from (a property
+     * that no placeholder has used yet has no source).
+     */
+    static String sourceOf(ConfigProperty p) {
+        if (p.source != null && !p.source.isEmpty()) {
+            return FileUtil.stripPath(p.source);
+        }
+        return ListProperties.sanitizeLocation(p.location);
     }
 
     private void renderTable(Frame frame, Rect area, List<ConfigProperty> props) {
@@ -173,10 +185,7 @@ class ConfigurationTab extends AbstractTableTab {
             String value = p.value != null ? p.value : "";
             Style valStyle = secret ? SECRET_STYLE : Style.EMPTY;
 
-            String source = "";
-            if (p.source != null && !p.source.isEmpty()) {
-                source = FileUtil.stripPath(p.source);
-            }
+            String source = sourceOf(p);
 
             rows.add(Row.from(
                     Cell.from(Span.styled(p.key, Style.EMPTY.fg(Theme.accent()))),
@@ -202,7 +211,8 @@ class ConfigurationTab extends AbstractTableTab {
                 .widths(
                         Constraint.percentage(35),
                         Constraint.fill(),
-                        Constraint.length(20))
+                        // wide enough for file:application.properties and OS Environment Variable
+                        Constraint.length(28))
                 .highlightStyle(detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -274,8 +284,9 @@ class ConfigurationTab extends AbstractTableTab {
         String value = prop.value != null ? prop.value : "";
         boolean secret = "xxxxxx".equals(value);
         addDetailField(lines, "Current value", secret ? "xxxxxx (masked)" : value, area.width());
-        if (prop.source != null && !prop.source.isEmpty()) {
-            addDetailField(lines, "Source", FileUtil.stripPath(prop.source), area.width());
+        String source = sourceOf(prop);
+        if (!source.isEmpty()) {
+            addDetailField(lines, "Source", source, area.width());
         }
 
         if (option == null) {

@@ -61,4 +61,17 @@ public sealed interface AiToolResult {
      */
     record ExecutionError(String message, Exception cause) implements AiToolResult {
     }
+
+    /**
+     * The route's {@link org.apache.camel.spi.AuthorizationPolicy} denied the call: the caller is not authorized to
+     * invoke this tool. Framework adapters should return {@link #message()} to the model as a short refusal it can
+     * relay, rather than rethrowing or failing the exchange — a denial is expected control flow, not a tool error, so
+     * it is not subject to the tool-execution error strategy. {@link #message()} is a generic, caller-safe refusal and
+     * must not be enriched with the cause before returning it to the model.
+     *
+     * @param message a short, caller-safe refusal message (no internal policy detail)
+     * @param cause   the underlying {@link org.apache.camel.CamelAuthorizationException}
+     */
+    record AuthorizationDenied(String message, Exception cause) implements AiToolResult {
+    }
 }

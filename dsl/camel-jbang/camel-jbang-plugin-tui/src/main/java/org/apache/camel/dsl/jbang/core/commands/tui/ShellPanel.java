@@ -48,6 +48,7 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.CamelShellCommandRegistry;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.jline.builtins.InteractiveCommandGroup;
@@ -488,13 +489,7 @@ class ShellPanel {
 
     private void runShell(LineDisciplineTerminal terminal, CommandLine commandLine) {
         try {
-            // TODO: replace with new PicocliCommandRegistry(commandLine, "Camel") when JLine merges #1947
-            PicocliCommandRegistry registry = new PicocliCommandRegistry(commandLine) {
-                @Override
-                public String name() {
-                    return "Camel";
-                }
-            };
+            PicocliCommandRegistry registry = new CamelShellCommandRegistry(commandLine);
             // Redirect command output (printer()) through the virtual terminal
             // so it renders in the shell panel instead of the TUI's real terminal
             CamelJBangMain main = (CamelJBangMain) commandLine.getCommand();

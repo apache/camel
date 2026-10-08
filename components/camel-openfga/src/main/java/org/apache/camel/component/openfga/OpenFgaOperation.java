@@ -53,6 +53,22 @@ public enum OpenFgaOperation {
     listUsers,
 
     /**
+     * Read the stored relationship tuples, optionally filtered by the configured user, relation and object. Paged.
+     */
+    readTuples,
+
+    /**
+     * Read the store's change log, so a route can keep an external projection in step with the graph. Paged.
+     */
+    readChanges,
+
+    /**
+     * Expand a relation on an object into its userset tree. An introspection aid: this is what you reach for when a
+     * check answered something surprising and you need to see how it got there.
+     */
+    expand,
+
+    /**
      * Grant access by writing relationship tuples.
      */
     writeTuples,

@@ -11941,8 +11941,8 @@
         "displayName" : "Require Class Registration",
         "kind" : "attribute",
         "index" : 2,
-        "group" : "advanced",
-        "label" : "advanced"
+        "group" : "security",
+        "label" : "security"
       }, {
         "name" : "threadSafe",
         "type" : "boolean",
@@ -16118,8 +16118,8 @@
         "displayName" : "Nested",
         "kind" : "attribute",
         "index" : 4,
-        "group" : "advanced",
-        "label" : "advanced"
+        "group" : "security",
+        "label" : "advanced,security"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -17799,6 +17799,17 @@
         "index" : 7,
         "group" : "common"
       }, {
+        "name" : "unmatchedRequestHandling",
+        "type" : "enum",
+        "enum" : [ "platform", "camel" ],
+        "description" : "Who answers requests that match no operation in the OpenAPI specification: the HTTP layer (platform) or Camel via the unmatched request handler (camel).",
+        "title" : "Unmatched Request Handling",
+        "default" : "platform",
+        "displayName" : "Unmatched Request Handling",
+        "kind" : "attribute",
+        "index" : 8,
+        "group" : "common"
+      }, {
         "name" : "mockIncludePattern",
         "type" : "string",
         "description" : "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.",
@@ -17806,7 +17817,7 @@
         "default" : "classpath:camel-mock/**",
         "displayName" : "Mock Include Pattern",
         "kind" : "attribute",
-        "index" : 8,
+        "index" : 9,
         "group" : "advanced",
         "label" : "advanced"
       } ]
@@ -17876,7 +17887,6 @@
         "description" : "Sets the parameter type such as body, form, header, path, or query.",
         "title" : "Type",
         "default" : "path",
-        "required" : true,
         "displayName" : "Type",
         "kind" : "attribute",
         "index" : 2,
@@ -20516,67 +20526,34 @@
     "semantic" : {
       "isListItem" : true,
       "children" : [ {
-        "name" : "question",
+        "name" : "evaluation",
         "type" : "map",
-        "ref" : "semanticDefinitionDeserializer$QuestionSchema",
+        "ref" : "semanticDefinitionDeserializer$EvaluationSchema",
         "required" : true
-      } ]
-    },
-    "semanticDefinitionDeserializer$BooleanSchema" : {
-      "children" : [ {
-        "name" : "criteria",
-        "type" : "object"
       }, {
-        "name" : "instructions",
-        "type" : "string",
-        "required" : true
+        "name" : "expert",
+        "type" : "string"
       }, {
         "name" : "state",
         "type" : "string"
-      }, {
-        "name" : "threshold",
-        "type" : "number"
-      }, {
-        "name" : "type",
-        "type" : "enum",
-        "enum" : [ "boolean" ],
-        "required" : true
-      }, {
-        "name" : "uncertainty",
-        "type" : "number"
-      }, {
-        "name" : "uncertaintyPolicy",
-        "type" : "enum",
-        "enum" : [ "fail", "non-match" ]
       } ]
     },
-    "semanticDefinitionDeserializer$ChoiceSchema" : {
-      "children" : [ {
-        "name" : "criteria",
-        "type" : "object",
-        "required" : true
-      }, {
-        "name" : "instructions",
-        "type" : "string",
-        "required" : true
-      }, {
-        "name" : "state",
-        "type" : "string"
-      }, {
-        "name" : "type",
-        "type" : "enum",
-        "enum" : [ "choice" ],
-        "required" : true
-      } ]
-    },
-    "semanticDefinitionDeserializer$QuestionSchema" : {
+    "semanticDefinitionDeserializer$EvaluationSchema" : {
       "children" : [ {
         "name" : "criteria",
         "type" : "any"
       }, {
+        "name" : "expert",
+        "type" : "string"
+      }, {
         "name" : "instructions",
-        "type" : "string",
-        "required" : true
+        "type" : "string"
+      }, {
+        "name" : "operation",
+        "type" : "string"
+      }, {
+        "name" : "parameters",
+        "type" : "object"
       }, {
         "name" : "state",
         "type" : "string"
@@ -20585,35 +20562,80 @@
         "type" : "number"
       }, {
         "name" : "type",
-        "type" : "enum",
-        "enum" : [ "boolean", "choice", "score" ],
-        "required" : true
+        "type" : "string"
       }, {
         "name" : "uncertainty",
         "type" : "number"
       }, {
         "name" : "uncertaintyPolicy",
-        "type" : "enum",
-        "enum" : [ "fail", "non-match" ]
+        "type" : "string"
       } ]
     },
-    "semanticDefinitionDeserializer$ScoreSchema" : {
+    "semanticDefinitionDeserializer$ListCriteriaSchema" : {
       "children" : [ {
         "name" : "criteria",
         "type" : "array",
         "required" : true
       }, {
+        "name" : "expert",
+        "type" : "string"
+      }, {
         "name" : "instructions",
-        "type" : "string",
-        "required" : true
+        "type" : "string"
+      }, {
+        "name" : "operation",
+        "type" : "string"
+      }, {
+        "name" : "parameters",
+        "type" : "object"
       }, {
         "name" : "state",
         "type" : "string"
       }, {
+        "name" : "threshold",
+        "type" : "number"
+      }, {
         "name" : "type",
-        "type" : "enum",
-        "enum" : [ "score" ],
-        "required" : true
+        "type" : "string"
+      }, {
+        "name" : "uncertainty",
+        "type" : "number"
+      }, {
+        "name" : "uncertaintyPolicy",
+        "type" : "string"
+      } ]
+    },
+    "semanticDefinitionDeserializer$MapCriteriaSchema" : {
+      "children" : [ {
+        "name" : "criteria",
+        "type" : "object"
+      }, {
+        "name" : "expert",
+        "type" : "string"
+      }, {
+        "name" : "instructions",
+        "type" : "string"
+      }, {
+        "name" : "operation",
+        "type" : "string"
+      }, {
+        "name" : "parameters",
+        "type" : "object"
+      }, {
+        "name" : "state",
+        "type" : "string"
+      }, {
+        "name" : "threshold",
+        "type" : "number"
+      }, {
+        "name" : "type",
+        "type" : "string"
+      }, {
+        "name" : "uncertainty",
+        "type" : "number"
+      }, {
+        "name" : "uncertaintyPolicy",
+        "type" : "string"
       } ]
     }
   }

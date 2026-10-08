@@ -355,8 +355,9 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                         }
                     } catch (Throwable e) {
                         // an error (such as ExceptionInInitializerError when compiling a route) must not stop watching
+                        // an error such as StackOverflowError has no message: name it rather than print null
                         LOG.warn("Error reloading files in directory: {} due to: {}. This exception is ignored.", folder,
-                                e.getMessage(), e);
+                                e.getMessage() != null ? e.getMessage() : e.getClass().getName(), e);
                     }
                 }
             } finally {

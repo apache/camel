@@ -18,8 +18,11 @@ package org.apache.camel.semantic;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.XMLConstants;
@@ -51,13 +54,8 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
     }
 
     @Override
-    public void preParseRoute(Resource resource) throws Exception {
-        // Register before any consuming route (including another DSL/resource) is configured.
-        parse(resource);
-    }
-
-    @Override
     public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
+        // Resource-set bean preparation is complete; declarations still precede every route configuration.
         RoutesDefinition routes = parse(resource);
         RouteBuilder builder = new RouteBuilder(getCamelContext()) {
             @Override
@@ -87,11 +85,11 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
         if (!NAMESPACES.contains(namespace)) {
             throw new IllegalArgumentException("Unsupported semantic XML namespace: " + namespace);
         }
-        SemanticQuestionsBuilder questions
-                = new SemanticQuestionsBuilder(getCamelContext(), resource, resource.getLocation(), null);
+        SemanticEvaluationsBuilder evaluations
+                = new SemanticEvaluationsBuilder(getCamelContext(), resource, resource.getLocation(), null);
         RoutesDefinition routes = new RoutesDefinition();
         if ("semantic".equals(root.getLocalName())) {
-            declarations(root, questions);
+            declarations(root, evaluations);
         } else if ("routes".equals(root.getLocalName())) {
             boolean found = false;
             for (Element child : children(root)) {
@@ -100,7 +98,7 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
                         throw new IllegalArgumentException("Only one semantic declaration block is allowed");
                     }
                     found = true;
-                    declarations(child, questions);
+                    declarations(child, evaluations);
                 } else if (!"route".equals(child.getLocalName())) {
                     throw new IllegalArgumentException("Unexpected element in routes: " + child.getTagName());
                 }
@@ -112,8 +110,8 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
         } else {
             throw new IllegalArgumentException("Expected semantic or routes root element");
         }
-        // Parse the complete document and validate every question before publishing any definitions.
-        questions.register();
+        // Parse the complete document and validate every evaluation before publishing any definitions.
+        evaluations.register();
         return routes;
     }
 
@@ -141,55 +139,146 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
         }
     }
 
-    private static void declarations(Element semantic, SemanticQuestionsBuilder questions) {
-        attributes(semantic, Set.of());
+    private void declarations(Element semantic, SemanticEvaluationsBuilder evaluations) {
+        attributes(semantic, Set.of("expert", "state"));
+        if (semantic.hasAttribute("expert")) {
+            evaluations.expert(semantic.getAttribute("expert"));
+        }
+        if (semantic.hasAttribute("state")) {
+            evaluations.state(semantic.getAttribute("state"));
+        }
         for (Element element : children(semantic)) {
-            if (!"question".equals(element.getLocalName())) {
+            if (!"evaluation".equals(element.getLocalName())) {
                 throw new IllegalArgumentException("Unexpected semantic element: " + element.getTagName());
             }
-            attributes(element, Set.of("name", "type", "state", "threshold", "uncertainty", "uncertaintyPolicy"));
-            SemanticQuestionBuilder question = questions.question(element.getAttribute("name"));
-            if (element.hasAttribute("type")) {
-                question.type(element.getAttribute("type"));
-            }
-            if (element.hasAttribute("state")) {
-                question.state(element.getAttribute("state"));
-            }
-            if (element.hasAttribute("threshold")) {
-                question.threshold(element.getAttribute("threshold"));
-            }
-            if (element.hasAttribute("uncertainty")) {
-                question.uncertainty(element.getAttribute("uncertainty"));
-            }
-            if (element.hasAttribute("uncertaintyPolicy")) {
-                question.uncertaintyPolicy(element.getAttribute("uncertaintyPolicy"));
-            }
-            boolean instructions = false;
-            for (Element child : children(element)) {
-                switch (child.getLocalName()) {
-                    case "instructions" -> {
-                        if (instructions) {
-                            throw new IllegalArgumentException("Duplicate instructions for semantic question");
-                        }
-                        instructions = true;
-                        attributes(child, Set.of());
-                        question.instructions(text(child));
-                    }
-                    case "criterion" -> {
-                        attributes(child, Set.of("key", "value"));
-                        if (!children(child).isEmpty()) {
-                            throw new IllegalArgumentException("Semantic criterion must not contain elements");
-                        }
-                        question.criterion(child.getAttribute("key"), child.getAttribute("value"));
-                    }
-                    case "level" -> {
-                        attributes(child, Set.of());
-                        question.level(text(child));
-                    }
-                    default -> throw new IllegalArgumentException("Unexpected question element: " + child.getTagName());
-                }
+            try {
+                evaluation(element, evaluations);
+            } catch (IllegalArgumentException e) {
+                String expert = element.hasAttribute("expert") ? element.getAttribute("expert")
+                        : evaluations.getExpert() != null ? evaluations.getExpert() : "default/automatic";
+                throw new IllegalArgumentException(
+                        "Invalid semantic evaluation '" + element.getAttribute("name") + "': " + e.getMessage()
+                                                   + " (expert '" + expert + "')",
+                        e);
             }
         }
+    }
+
+    private void evaluation(Element element, SemanticEvaluationsBuilder evaluations) {
+        attributes(element,
+                Set.of("name", "type", "operation", "expert", "state", "threshold", "uncertainty", "uncertaintyPolicy"));
+        SemanticEvaluationBuilder evaluation = evaluations.evaluation(element.getAttribute("name"));
+        if (element.hasAttribute("type") && element.hasAttribute("operation")) {
+            throw new IllegalArgumentException("Specify exactly one operation or type");
+        }
+        if (element.hasAttribute("operation")) {
+            evaluation.operation(element.getAttribute("operation"));
+        }
+        if (element.hasAttribute("type")) {
+            evaluation.type(element.getAttribute("type"));
+        }
+        if (element.hasAttribute("expert")) {
+            evaluation.expert(element.getAttribute("expert"));
+        }
+        if (element.hasAttribute("state")) {
+            evaluation.state(element.getAttribute("state"));
+        }
+        if (element.hasAttribute("threshold")) {
+            evaluation.threshold(element.getAttribute("threshold"));
+        }
+        if (element.hasAttribute("uncertainty")) {
+            evaluation.uncertainty(element.getAttribute("uncertainty"));
+        }
+        if (element.hasAttribute("uncertaintyPolicy")) {
+            evaluation.uncertaintyPolicy(element.getAttribute("uncertaintyPolicy"));
+        }
+        boolean instructions = false;
+        for (Element child : children(element)) {
+            switch (child.getLocalName()) {
+                case "parameters" -> {
+                    attributes(child, Set.of());
+                    for (Element parameter : children(child)) {
+                        if (!"parameter".equals(parameter.getLocalName())) {
+                            throw new IllegalArgumentException("Expected parameter element");
+                        }
+                        attributes(parameter, Set.of("name"));
+                        evaluation.parameter(parameter.getAttribute("name"), parameterValue(parameter));
+                    }
+                }
+                case "instructions" -> {
+                    if (instructions) {
+                        throw new IllegalArgumentException("Duplicate instructions for semantic evaluation");
+                    }
+                    instructions = true;
+                    attributes(child, Set.of());
+                    evaluation.instructions(text(child));
+                }
+                case "criterion" -> {
+                    attributes(child, Set.of("key", "value"));
+                    if (!children(child).isEmpty()) {
+                        throw new IllegalArgumentException("Semantic criterion must not contain elements");
+                    }
+                    evaluation.criterion(child.getAttribute("key"), child.getAttribute("value"));
+                }
+                case "level" -> {
+                    attributes(child, Set.of());
+                    evaluation.level(text(child));
+                }
+                default -> throw new IllegalArgumentException("Unexpected evaluation element: " + child.getTagName());
+            }
+        }
+    }
+
+    private Object parameterValue(Element parent) {
+        List<Element> values = children(parent);
+        if (values.size() != 1) {
+            throw new IllegalArgumentException("Parameter or map entry requires exactly one typed value");
+        }
+        return value(values.get(0));
+    }
+
+    private Object value(Element element) {
+        attributes(element, Set.of());
+        return switch (element.getLocalName()) {
+            case "string" -> text(element);
+            case "null" -> {
+                if (!text(element).isBlank()) {
+                    throw new IllegalArgumentException("Null parameter value must be empty");
+                }
+                yield null;
+            }
+            case "number" -> {
+                try {
+                    yield new BigDecimal(getCamelContext().resolvePropertyPlaceholders(text(element)).strip());
+                } catch (NumberFormatException invalid) {
+                    throw new IllegalArgumentException("Invalid numeric parameter");
+                }
+            }
+            case "boolean" -> {
+                String text = text(element).strip();
+                if (!"true".equals(text) && !"false".equals(text)) {
+                    throw new IllegalArgumentException("Invalid boolean parameter");
+                }
+                yield Boolean.valueOf(text);
+            }
+            case "list" -> children(element).stream().map(this::value).toList();
+            case "map" -> {
+                Map<String, Object> map = new LinkedHashMap<>();
+                for (Element entry : children(element)) {
+                    if (!"entry".equals(entry.getLocalName())) {
+                        throw new IllegalArgumentException("Expected map entry");
+                    }
+                    attributes(entry, Set.of("key"));
+                    String key = entry.getAttribute("key");
+                    if (map.containsKey(key)) {
+                        throw new IllegalArgumentException("Duplicate parameter map key: " + key);
+                    }
+                    map.put(key, parameterValue(entry));
+                }
+                yield map;
+            }
+            default -> throw new IllegalArgumentException("Unknown parameter value type: " + element.getLocalName());
+        };
     }
 
     private static String text(Element element) {

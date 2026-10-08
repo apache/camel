@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "semantic",
     "title": "Semantic Evaluation",
-    "description": "Evaluate named questions about message content to produce boolean decisions, categories and scores through provider adapters",
+    "description": "Invoke named evaluations of message content to produce boolean decisions, categories, scores and label sets through provider adapters",
     "deprecated": false,
     "firstVersion": "4.23.0",
     "label": "language,ai",

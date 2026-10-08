@@ -1,0 +1,33 @@
+# Reshape the shop's order for the warehouse: jq builds the pick list the warehouse wants, jsonpath
+# picks single values out of the order.
+- route:
+    id: json-transform
+    from:
+      uri: timer
+      parameters:
+        timerName: order
+        repeatCount: 1
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: "resource:file:order.json"
+        - setHeader:
+            name: orderId
+            expression:
+              jsonpath:
+                expression: "$.orderId"
+        - setHeader:
+            name: itemCount
+            expression:
+              jsonpath:
+                expression: "$.lines.length()"
+        - log:
+            message: "Order ${header.orderId} with ${header.itemCount} lines: ${body}"
+        - transform:
+            expression:
+              jq:
+                expression: "{order: .orderId, country: .country, pick: [.lines[] | {sku: .sku, qty: .qty}]}"
+                resultType: java.lang.String
+        - log:
+            message: "Pick list for the warehouse: ${body}"

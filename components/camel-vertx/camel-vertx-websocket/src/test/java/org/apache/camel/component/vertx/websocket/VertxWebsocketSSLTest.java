@@ -16,10 +16,19 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
+import java.util.concurrent.TimeUnit;
+
+import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpClientOptions;
+import io.vertx.core.http.HttpClientRequest;
+import io.vertx.core.http.HttpClientResponse;
+import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.HttpServerOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.vertx.common.VertxHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
@@ -28,6 +37,8 @@ import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
 
@@ -205,6 +216,45 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
 
             mockEndpoint.assertIsSatisfied();
         } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    void testServerNameIndication() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                fromF("vertx-websocket:localhost:%d/echo?sslContextParameters=#serverSSLParameters&serverOptions=#serverOptions",
+                        port.getPort())
+                        .to("mock:result");
+            }
+        });
+
+        context.getRegistry().bind("serverSSLParameters", serverSSLParameters);
+        context.getRegistry().bind("serverOptions", new HttpServerOptions().setSni(true));
+
+        context.start();
+        Vertx vertx = Vertx.vertx();
+        try {
+            // The JDK does not indicate a server name for localhost, so make the client do it
+            HttpClientOptions clientOptions = new HttpClientOptions().setForceSni(true);
+            VertxHelper.setupSSLOptions(context, clientSSLParameters, clientOptions);
+
+            // A request that is not a WebSocket upgrade is rejected, which can only happen once the TLS handshake
+            // has succeeded with the key material of the SSLContextParameters on both sides
+            int statusCode = vertx.createHttpClient(clientOptions)
+                    .request(HttpMethod.GET, port.getPort(), "localhost", "/echo")
+                    .compose(HttpClientRequest::send)
+                    .map(HttpClientResponse::statusCode)
+                    .toCompletionStage()
+                    .toCompletableFuture()
+                    .get(10, TimeUnit.SECONDS);
+
+            assertEquals(400, statusCode);
+        } finally {
+            vertx.close();
             context.stop();
         }
     }

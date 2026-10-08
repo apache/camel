@@ -98,6 +98,13 @@ class AutocompletePopup {
     private Rect popupRect;
     private String titlePrefix;
     private boolean fullKeys;
+    // the row of the filtered list a divider is drawn above, -1 for none: the properties of a Kamelet above it, the
+    // options of the kamelet component itself, for special uses only, below it (CAMEL-25411)
+    private int dividerAt = -1;
+    private String dividerLabel = KAMELET_COMPONENT_OPTIONS;
+
+    static final String KAMELET_GROUP = "kamelet ";
+    static final String KAMELET_COMPONENT_OPTIONS = "kamelet component options";
 
     AutocompletePopup(List<CompletionItem> items, String initialPrefix, String lineKeyText) {
         this(items, initialPrefix, lineKeyText, false);
@@ -224,11 +231,16 @@ class AutocompletePopup {
         if (me.isClick()) {
             if (popupRect != null && popupRect.contains(me.x(), me.y())) {
                 int idx = TuiHelper.listItemAt(popupRect, 0,
-                        (filteredItems != null ? filteredItems.size() : 0) + 2,
+                        (filteredItems != null ? listRows() : 0) + 2,
                         me.x(), me.y());
-                if (idx >= 2 && filteredItems != null && idx - 2 < filteredItems.size()) {
-                    listState.select(idx - 2);
-                    selectedItem = filteredItems.get(idx - 2);
+                int row = idx - 2;
+                if (dividerAt >= 0 && row >= dividerAt) {
+                    // the divider is not an item
+                    row = row == dividerAt ? -1 : row - 1;
+                }
+                if (row >= 0 && filteredItems != null && row < filteredItems.size()) {
+                    listState.select(row);
+                    selectedItem = filteredItems.get(row);
                     return Result.CLOSED;
                 }
                 return Result.CONSUMED;
@@ -244,7 +256,7 @@ class AutocompletePopup {
         }
 
         int popupW = Math.max(70, area.width() - 4);
-        int contentH = filteredItems.size() + 2;
+        int contentH = listRows() + 2;
         int maxH = area.height() - 2;
         int popupH = Math.min(contentH + 2, maxH);
         popupH = Math.max(popupH, 12);
@@ -314,7 +326,13 @@ class AutocompletePopup {
         Style dimStyle = Style.EMPTY.dim();
         Style deprecatedStyle = Style.EMPTY.dim().crossedOut();
 
-        for (CompletionItem ci : filteredItems) {
+        for (int row = 0; row < filteredItems.size(); row++) {
+            CompletionItem ci = filteredItems.get(row);
+            if (row == dividerAt) {
+                String text = "── " + dividerLabel + " ";
+                items.add(ListItem.from(Line.from(Span.styled(
+                        text + "─".repeat(Math.max(1, listRect.width() - 2 - text.length())), dimStyle))));
+            }
             List<Span> spans = new ArrayList<>();
 
             if (ci.deprecated()) {
@@ -362,15 +380,10 @@ class AutocompletePopup {
         ListState renderState = new ListState();
         Integer sel = listState.selected();
         if (sel != null) {
-            renderState.select(sel + 2);
+            renderState.select(sel + 2 + (dividerAt >= 0 && sel >= dividerAt ? 1 : 0));
         }
 
-        int total = allItems.size();
-        int shown = filteredItems.size();
-        String label = titlePrefix != null ? titlePrefix : "Completions";
-        String title = shown == total
-                ? " " + label + " (" + total + ") "
-                : " " + label + " (" + shown + "/" + total + ") ";
+        String title = title();
 
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
@@ -385,11 +398,11 @@ class AutocompletePopup {
         frame.renderStatefulWidget(list, listRect, renderState);
 
         int visibleRows = Math.max(1, listRect.height() - 2);
-        if (shown + 2 > visibleRows) {
+        if (listRows() + 2 > visibleRows) {
             scrollbarState
-                    .contentLength(shown)
+                    .contentLength(listRows())
                     .viewportContentLength(visibleRows)
-                    .position(sel != null ? sel : 0);
+                    .position(sel != null ? sel + (dividerAt >= 0 && sel >= dividerAt ? 1 : 0) : 0);
             frame.renderStatefulWidget(Scrollbar.builder().build(), listRect, scrollbarState);
         }
     }
@@ -565,7 +578,67 @@ class AutocompletePopup {
             // what was typed exactly first, then what starts with it: seda before hazelcast-seda
             filteredItems.sort(Comparator.comparingInt(item -> rank(item.key(), f)));
         }
+        dividerAt = -1;
+        dividerLabel = KAMELET_COMPONENT_OPTIONS;
+        boolean kamelet = filteredItems.stream().anyMatch(AutocompletePopup::isKameletProperty);
+        if (kamelet && !filteredItems.stream().allMatch(AutocompletePopup::isKameletProperty)) {
+            // the properties of the Kamelet stay above the divider while filtering (the sort is stable)
+            filteredItems.sort(Comparator.comparing(item -> !isKameletProperty(item)));
+            for (int i = 0; i < filteredItems.size(); i++) {
+                if (!isKameletProperty(filteredItems.get(i))) {
+                    dividerAt = i;
+                    break;
+                }
+            }
+        } else if (filteredItems.stream().anyMatch(AutocompletePopup::isAdvanced)
+                && !filteredItems.stream().allMatch(AutocompletePopup::isAdvanced)) {
+            // the common options first, the advanced ones (the catalog's "advanced" groups) below a divider, as an
+            // alphabetical list put bridgeErrorHandler and exceptionHandler before delay and period (CAMEL-25426)
+            filteredItems.sort(Comparator.comparing(AutocompletePopup::isAdvanced));
+            dividerLabel = "advanced";
+            for (int i = 0; i < filteredItems.size(); i++) {
+                if (isAdvanced(filteredItems.get(i))) {
+                    dividerAt = i;
+                    break;
+                }
+            }
+        }
         listState.select(filteredItems.isEmpty() ? null : 0);
+    }
+
+    /**
+     * The title of the list with its count. When the list has the properties of a Kamelet, the count is of those: the
+     * options of the kamelet component below the divider are for special uses, and not what the title names
+     * (CAMEL-25411).
+     */
+    /** An option of an advanced group of the catalog: "advanced", "consumer (advanced)", "producer (advanced)". */
+    static boolean isAdvanced(CompletionItem item) {
+        return item.group() != null && item.group().contains("advanced");
+    }
+
+    String title() {
+        String label = titlePrefix != null ? titlePrefix : "Completions";
+        boolean kamelet = allItems.stream().anyMatch(AutocompletePopup::isKameletProperty);
+        long total = kamelet ? allItems.stream().filter(AutocompletePopup::isKameletProperty).count() : allItems.size();
+        long shown = kamelet
+                ? filteredItems.stream().filter(AutocompletePopup::isKameletProperty).count() : filteredItems.size();
+        return shown == total
+                ? " " + label + " (" + total + ") "
+                : " " + label + " (" + shown + "/" + total + ") ";
+    }
+
+    private static boolean isKameletProperty(CompletionItem item) {
+        return item.group() != null && item.group().startsWith(KAMELET_GROUP);
+    }
+
+    /** Package-private for tests: the row of the filtered list the divider is drawn above, -1 for none. */
+    int dividerAt() {
+        return dividerAt;
+    }
+
+    /** The rows of the list: the items and the divider. */
+    private int listRows() {
+        return filteredItems.size() + (dividerAt >= 0 ? 1 : 0);
     }
 
     private static int rank(String key, String filter) {

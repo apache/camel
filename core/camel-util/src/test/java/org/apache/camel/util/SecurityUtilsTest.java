@@ -49,6 +49,23 @@ class SecurityUtilsTest {
     }
 
     @Test
+    void testHostnameVerificationOptionsAreRegistered() {
+        // every option that turns off TLS hostname verification must reach this map, otherwise
+        // camel.main.profile=prod cannot refuse it (CAMEL-25409)
+        assertTrue(SecurityUtils.isInsecureValue("camel.component.mongodb.tlsAllowInvalidHostnames", true));
+        assertFalse(SecurityUtils.isInsecureValue("camel.component.mongodb.tlsAllowInvalidHostnames", false));
+        assertTrue(SecurityUtils.isInsecureValue(
+                "camel.component.debezium-mongodb.mongodbSslInvalidHostnameAllowed", true));
+        assertFalse(SecurityUtils.isInsecureValue(
+                "camel.component.debezium-mongodb.mongodbSslInvalidHostnameAllowed", false));
+        // hostnameVerification is the inverse: it is the off value that is insecure
+        assertTrue(SecurityUtils.isInsecureValue("camel.component.netty-http.hostnameVerification", false));
+        assertFalse(SecurityUtils.isInsecureValue("camel.component.netty-http.hostnameVerification", true));
+        assertTrue(SecurityUtils.isInsecureValue("camel.component.splunk-hec.skipTlsVerify", true));
+        assertFalse(SecurityUtils.isInsecureValue("camel.component.splunk-hec.skipTlsVerify", false));
+    }
+
+    @Test
     void testIsPlainTextSecret() {
         // plain text values should be detected
         assertTrue(SecurityUtils.isPlainTextSecret("mypassword123"));
@@ -266,6 +283,39 @@ class SecurityUtilsTest {
         assertNotNull(SecurityUtils.getSecurityOption("camel.beans.myClient.trustAllCertificates"));
         // camel-main options have no owning component
         assertNotNull(SecurityUtils.getSecurityOption("camel.main.devConsoleEnabled"));
+    }
+
+    @Test
+    void testLanguageOptionMatchesOnlyItsOwnLanguage() {
+        // nested is declared only by the simple and file languages
+        assertTrue(SecurityUtils.isInsecureValue("camel.language.simple.nested", "true"));
+        assertTrue(SecurityUtils.isInsecureValue("camel.language.file.nested", "true"));
+        assertNull(SecurityUtils.getSecurityOption("camel.language.xpath.nested"));
+        // the bare option name, as the security scanner checks an expression in a route, still matches
+        assertTrue(SecurityUtils.isInsecureValue("nested", "true"));
+        // any other configuration key that merely ends with the same name is not the language option
+        assertNull(SecurityUtils.getSecurityOption("camel.beans.foo.nested"));
+        assertNull(SecurityUtils.getSecurityOption("camel.main.nested"));
+        assertNull(SecurityUtils.getSecurityOption("camel.kamelet.myKamelet.nested"));
+        // component options keep matching such keys by name, as camel.beans.* can configure a component bean
+        assertNotNull(SecurityUtils.getSecurityOption("camel.beans.myClient.trustAllCertificates"));
+    }
+
+    @Test
+    void testDetectViolationsIgnoresBeanPropertyNamedLikeALanguageOption() {
+        Map<String, Object> properties = new LinkedHashMap<>();
+        properties.put("camel.beans.foo.nested", "true");
+        properties.put("camel.language.simple.nested", "true");
+
+        List<SecurityViolation> violations = SecurityUtils.detectViolations(
+                properties,
+                (k, v) -> false,
+                category -> "fail",
+                Set.of());
+
+        assertEquals(1, violations.size());
+        assertEquals("camel.language.simple.nested", violations.get(0).propertyKey());
+        assertEquals(SecurityUtils.INSECURE_DEV, violations.get(0).category());
     }
 
     @Test

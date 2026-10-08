@@ -71,9 +71,17 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
         boolean afterConsumer = definition.getMode() == null
                 || parse(OnCompletionMode.class, definition.getMode()) == OnCompletionMode.AfterConsumer;
 
+        // Determine the route configuration id for named (route-scoped) onCompletion dedup.
+        // When multiple routes share the same named configuration, each gets its own
+        // OnCompletionProcessor, but they should fire only once per exchange total.
+        String configurationId = null;
+        if (definition.isRouteScoped() && definition.getRouteConfiguration() != null) {
+            configurationId = definition.getRouteConfiguration().getId();
+        }
+
         OnCompletionProcessor answer = new OnCompletionProcessor(
                 camelContext, target, threadPool, shutdownThreadPool, isOnCompleteOnly, isOnFailureOnly, when,
-                original, afterConsumer, definition.isRouteScoped());
+                original, afterConsumer, definition.isRouteScoped(), configurationId);
         answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
     }

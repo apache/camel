@@ -174,6 +174,14 @@ a YAML or XML file); **Enter** goes to its declaration.
   node in the source editor. Type a **line number** (e.g. `47`) and press
   **Enter** to jump directly to that line.
 
+## Route Tree
+- **Ctrl+T** — show or hide the route tree at the top right of the source:
+  the route the cursor is in, from its `from` through each step, with the
+  branches indented and the step under the cursor marked with ▶. It follows
+  the cursor as you move and edit, for YAML, XML and Java routes, also when
+  the route does not run. The **Route Tree** setting (F2 → Settings) says
+  whether it is shown at first. It needs an editor of 90 columns or more.
+
 ## General
 - **Tab** — toggle focus between file list and source viewer
 - The focused panel title is highlighted; the unfocused panel dims
@@ -183,17 +191,20 @@ a YAML or XML file); **Enter** goes to its declaration.
 
 With `/write live` in the AI panel (`F8`), a change the AI makes is replayed
 here instead of shown as a diff: the AI panel hides, the file opens in edit
-mode and the change is typed hunk by hunk so you can follow it in context.
+mode and the change is typed hunk by hunk so you can follow it in context
+(a large change is typed faster, a few seconds at most).
 
 - **Enter** — continue with the next change
 - **any other key** — finish the current change at once
 - **F4** — edit yourself; the remaining changes wait
 - **F9** — continue the AI changes after editing yourself (a change whose
   surrounding lines you edited is skipped and reported to the AI)
-- **F8** — ask the AI about the current change: the AI panel opens with the
-  question prefilled ("About edit 2 of 3: ..."), the answer comes back in the
+- **F8** — ask the AI about the current change: a compact AI panel opens with
+  the question prefilled ("About edit 2 of 3: ..."), the answer comes back in the
   same turn, and closing the panel (`F8` or `Esc`) returns to the pause; if
   the AI revises the change it continues in the editor from where it is
 - **Esc** — stop; what was typed stays in the editor
 - then **Ctrl+S** / **F5** saves (this is the confirmation, dev mode reloads),
   **F7** shows the diff, **Esc** discards; the AI panel comes back afterwards
+- after five minutes without saving or discarding, the AI stops waiting; the
+  edit stays here and the AI is told what you did with it next time you ask

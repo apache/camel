@@ -64,11 +64,28 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCustomAssembleUnsorted() throws Exception {
+    public void testCustomAssembleInsertionOrder() throws Exception {
         EndpointUriFactory assembler = new MyAssembler();
         assembler.setCamelContext(context);
 
+        // an ordered map keeps its order (such as the parameters of a route in the YAML DSL)
         Map<String, Object> params = new LinkedHashMap<>();
+        params.put("name", "foo");
+        params.put("verbose", false);
+        params.put("port", 4444);
+        params.put("amount", "123");
+
+        String uri = assembler.buildUri("acme", params);
+        Assertions.assertEquals("acme:foo:4444?verbose=false&amount=123", uri);
+    }
+
+    @Test
+    public void testCustomAssembleUnordered() throws Exception {
+        EndpointUriFactory assembler = new MyAssembler();
+        assembler.setCamelContext(context);
+
+        // a map without an order is sorted
+        Map<String, Object> params = new HashMap<>();
         params.put("name", "foo");
         params.put("verbose", false);
         params.put("port", 4444);
@@ -106,7 +123,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         params.put("amount", "123");
 
         String uri = assembler.buildUri("acme", params);
-        Assertions.assertEquals("acme:bar?amount=123&verbose=false", uri);
+        Assertions.assertEquals("acme:bar?verbose=false&amount=123", uri);
     }
 
     @Test
@@ -121,7 +138,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         params.put("amount", "123");
 
         String uri = assembler.buildUri("acme2", params);
-        Assertions.assertEquals("acme2:bar/moes?amount=123&verbose=true", uri);
+        Assertions.assertEquals("acme2:bar/moes?verbose=true&amount=123", uri);
     }
 
     @Test
@@ -137,7 +154,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         params.put("amount", "123");
 
         String uri = assembler.buildUri("acme2", params);
-        Assertions.assertEquals("acme2:bar/moes:4444?amount=123&verbose=true", uri);
+        Assertions.assertEquals("acme2:bar/moes:4444?verbose=true&amount=123", uri);
     }
 
     @Test
@@ -152,7 +169,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         params.put("amount", "123");
 
         String uri = assembler.buildUri("acme2", params);
-        Assertions.assertEquals("acme2:bar:4444?amount=123&verbose=true", uri);
+        Assertions.assertEquals("acme2:bar:4444?verbose=true&amount=123", uri);
     }
 
     @Test
@@ -166,7 +183,28 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         params.put("amount", "123");
 
         String uri = assembler.buildUri("acme2", params);
-        Assertions.assertEquals("acme2:bar?amount=123&verbose=true", uri);
+        Assertions.assertEquals("acme2:bar?verbose=true&amount=123", uri);
+    }
+
+    @Test
+    public void testValueWithTheNameOfAnUnsetOptionalPathParameter() throws Exception {
+        // CAMEL-25383: removing the unset optional path and port found their names inside the value of name
+        EndpointUriFactory assembler = new MySecondAssembler();
+        assembler.setCamelContext(context);
+
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("name", "{{path}}");
+        params.put("verbose", true);
+        Assertions.assertEquals("acme2:{{path}}?verbose=true", assembler.buildUri("acme2", params));
+
+        params = new LinkedHashMap<>();
+        params.put("name", "files/path-port");
+        Assertions.assertEquals("acme2:files/path-port", assembler.buildUri("acme2", params));
+
+        params = new LinkedHashMap<>();
+        params.put("name", "{{shareName}}/{{path}}");
+        params.put("port", "4444");
+        Assertions.assertEquals("acme2:{{shareName}}/{{path}}:4444", assembler.buildUri("acme2", params));
     }
 
     @Test
@@ -264,7 +302,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         params.put("password", "pwd");
 
         String uri = assembler.buildUri("jmsx", params);
-        Assertions.assertEquals("jmsx:foo?deliveryPersistent=true&password=RAW(pwd)&username=RAW(usr)", uri);
+        Assertions.assertEquals("jmsx:foo?deliveryPersistent=true&username=RAW(usr)&password=RAW(pwd)", uri);
     }
 
     @Test
@@ -279,6 +317,46 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
 
         String uri = assembler.buildUri("jmsx", params);
         Assertions.assertEquals("jmsx:foo?deliveryPersistent=true&tag.bar=456&tag.baz=cheese&tag.foo=123", uri);
+    }
+
+    @Test
+    public void testJmsMultiValuedUnorderedGenerated() throws Exception {
+        EndpointUriFactory assembler = new MyGeneratedJmsxAssembler();
+        assembler.setCamelContext(context);
+
+        Map<String, Object> tags = new HashMap<>();
+        tags.put("foo", 123);
+        tags.put("bar", 456);
+
+        // a map without an order is sorted, the flattened multi valued options as well (tag.foo sorts before tagline,
+        // which sorts before the tags option)
+        Map<String, Object> params = new HashMap<>();
+        params.put("destinationName", "foo");
+        params.put("tags", tags);
+        params.put("tagline", "hello");
+        params.put("deliveryPersistent", true);
+
+        String uri = assembler.buildUri("jmsx", params);
+        Assertions.assertEquals("jmsx:foo?deliveryPersistent=true&tag.bar=456&tag.foo=123&tagline=hello", uri);
+    }
+
+    @Test
+    public void testJmsMultiValuedInsertionOrder() throws Exception {
+        EndpointUriFactory assembler = new MyJmsxAssembler();
+        assembler.setCamelContext(context);
+
+        Map<String, Object> tags = new LinkedHashMap<>();
+        tags.put("foo", 123);
+        tags.put("bar", 456);
+
+        // the options of the multi valued map are where the map is, in the order of the map
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("destinationName", "foo");
+        params.put("tags", tags);
+        params.put("deliveryPersistent", true);
+
+        String uri = assembler.buildUri("jmsx", params);
+        Assertions.assertEquals("jmsx:foo?tag.foo=123&tag.bar=456&deliveryPersistent=true", uri);
     }
 
     private static class MyAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
@@ -451,6 +529,17 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
             return false;
         }
 
+    }
+
+    /**
+     * Builds the uri as the generated factories do: from a copy of the properties.
+     */
+    private static class MyGeneratedJmsxAssembler extends MyJmsxAssembler {
+
+        @Override
+        public String buildUri(String scheme, Map<String, Object> properties, boolean encode) {
+            return super.buildUri(scheme, copyParameters(properties), encode);
+        }
     }
 
     private static class MyCQLAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {

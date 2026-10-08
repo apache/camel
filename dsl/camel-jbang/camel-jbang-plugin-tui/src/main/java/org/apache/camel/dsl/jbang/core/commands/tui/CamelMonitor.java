@@ -35,7 +35,9 @@ import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import dev.tamboui.buffer.Buffer;
@@ -202,6 +204,11 @@ public class CamelMonitor extends CamelCommand {
     private EditReplay.Editor activeReplayEditor;
     // null while the replay is parked: the tool call returned early with the user's question about the edit
     private volatile CompletableFuture<McpFacade.ReplayOutcome> activeReplayOutcome;
+    /**
+     * How long a live edit's tool call waits for the user to save or discard; after that the AI's turn goes on and the
+     * edit stays parked in the editor.
+     */
+    static final long REPLAY_WAIT_MINUTES = 5;
     private volatile String pendingEditQuestion;
     // the AI panel overlays the editor, so it is hidden while an edit is replayed and shown again afterwards
     private boolean replayHidAiPanel;
@@ -495,18 +502,39 @@ public class CamelMonitor extends CamelCommand {
     }
 
     /**
+     * Opens the AI panel with a question for the Source editor's fix with AI (Shift+F8), made from the directory of the
+     * selected integration's sources.
+     */
+    private void openAiWithQuestion(Function<Path, String> question) {
+        if (shellPanel.isOpen()) {
+            shellPanel.close();
+        }
+        Path dir = mcpFacade != null ? mcpFacade.getSelectedSourceDirectory() : null;
+        aiPanel.openWithQuestion(question.apply(dir));
+    }
+
+    /**
      * Wires the shared MonitorContext callbacks and connects the shell and AI panels.
      */
     private void wireContextCallbacks() {
         ctx.notificationCallback = (msg, error) -> setNotification(msg, error);
         ctx.openMarkdownCallback = actionsPopup::openMarkdown;
         ctx.openMarkdownAtCallback = actionsPopup::openMarkdownAt;
-        ctx.askAiCallback = (file, line, problem, lineText) -> {
-            if (shellPanel.isOpen()) {
-                shellPanel.close();
+        ctx.askAiCallback = new MonitorContext.AskAi() {
+            @Override
+            public void fixProblem(Path file, int line, String problem, String lineText) {
+                openAiWithQuestion(dir -> AiFixPrompt.of(dir, file, line, problem, lineText));
             }
-            Path dir = mcpFacade != null ? mcpFacade.getSelectedSourceDirectory() : null;
-            aiPanel.openWithQuestion(AiFixPrompt.of(dir, file, line, problem, lineText));
+
+            @Override
+            public void fixFailure(Path file, int line, String failure, String lineText) {
+                openAiWithQuestion(dir -> AiFixPrompt.ofFailure(dir, file, line, failure, lineText));
+            }
+
+            @Override
+            public void explainLogError(String error) {
+                openAiWithQuestion(dir -> AiFixPrompt.ofLogError(error));
+            }
         };
         ctx.projectOverviewCallback = () -> {
             if (shellPanel.isOpen()) {
@@ -551,6 +579,22 @@ public class CamelMonitor extends CamelCommand {
             }
         } else {
             runner.quit();
+        }
+    }
+
+    /**
+     * Deletes the folders of the examples that no longer run; an example that still runs keeps its folder and the files
+     * it reads (CAMEL-25425).
+     */
+    private void deleteExampleDirs() {
+        try {
+            List<Path> runningDirs = ctx.data.get().stream()
+                    .filter(i -> !i.vanishing && i.directory != null)
+                    .map(i -> Path.of(i.directory))
+                    .toList();
+            actionsPopup.getLaunchManager().deleteExampleDirs(runningDirs);
+        } catch (Exception e) {
+            // best effort: what is left is removed by a later session
         }
     }
 
@@ -821,8 +865,20 @@ public class CamelMonitor extends CamelCommand {
                         pendingReplayOutcome = outcome;
                         pendingReplay = request;
                         try {
-                            // the user decides when this ends (save or discard); give up after a long while
-                            return outcome.get(30, TimeUnit.MINUTES);
+                            // the user decides when this ends (save or discard)
+                            return outcome.get(REPLAY_WAIT_MINUTES, TimeUnit.MINUTES);
+                        } catch (TimeoutException e) {
+                            if (pendingReplay == request) {
+                                // never started in the editor: nothing was replayed, nothing is pending
+                                pendingReplay = null;
+                                pendingReplayOutcome = null;
+                                return new McpFacade.ReplayOutcome(false, 0, List.of(), null);
+                            }
+                            // the user has not decided for a long while: the AI's turn goes on without it; the edit
+                            // stays parked in the editor and the AI is told what became of it with the next question.
+                            // complete() is atomic: a save at the same moment wins
+                            McpFacade.ReplayOutcome undecided = McpFacade.ReplayOutcome.undecidedOutcome();
+                            return outcome.complete(undecided) ? undecided : outcome.join();
                         } catch (Exception e) {
                             pendingReplay = null;
                             editReplay.abort();
@@ -869,6 +925,7 @@ public class CamelMonitor extends CamelCommand {
         mcpFacade.setSourceValidator(tabRegistry.sourceTab().editAssist()::validateSource);
         mcpFacade.setPropertyLineValidator(tabRegistry.sourceTab().editAssist()::validateSpringBootPropertyLine);
         mcpFacade.setLaunchManager(actionsPopup.getLaunchManager());
+        mcpFacade.setFullScan(dataService::forceFullScan, dataService::fullScansDone);
         aiPanel.setMcpFacade(mcpFacade);
         aiPanel.setOtelSpans(dataService.otelSpans());
         mcpFacade.setAiActivityLog(aiPanel::getActivityLog);
@@ -893,6 +950,10 @@ public class CamelMonitor extends CamelCommand {
         }
         if (activeReplay == null) {
             return;
+        }
+        if (activeReplayOutcome != null && activeReplayOutcome.isDone()) {
+            // the tool call stopped waiting (the user took long to decide): the replay is parked
+            activeReplayOutcome = null;
         }
         String question = pendingEditQuestion;
         if (question != null) {
@@ -1104,6 +1165,7 @@ public class CamelMonitor extends CamelCommand {
                 webServer.stop();
             }
             deleteMcpJson(mcpJsonFile);
+            deleteExampleDirs();
             this.runner = null;
             if (record != null) {
                 // Only the session that set the properties clears them again
@@ -1242,6 +1304,7 @@ public class CamelMonitor extends CamelCommand {
         TuiSettings settings = TuiSettings.load();
         ctx.confirmActions = settings.isConfirmActions();
         ctx.validateOnSave = settings.isValidateOnSave();
+        ctx.routeTree = settings.isRouteTree();
         ctx.panelTop = settings.isPanelTop();
         ctx.panelOverlay = settings.isPanelOverlay();
     }
@@ -1308,6 +1371,14 @@ public class CamelMonitor extends CamelCommand {
                     return true;
                 }
                 if (aiPanel.handleKeyEvent(ke)) {
+                    return true;
+                }
+                if (editReplay.isAsking() && !ke.isCtrlC()) {
+                    // asking about a paused live edit: the keys the panel does not take stay away from the editor
+                    // beneath (its Esc would discard the edit); Esc and F8 go back to the edit
+                    if (ke.isCancel() || ke.isKey(KeyCode.F8)) {
+                        aiPanel.close();
+                    }
                     return true;
                 }
             }
@@ -2005,6 +2076,10 @@ public class CamelMonitor extends CamelCommand {
         if (reloadMsg != null) {
             setNotification(reloadMsg, false);
         }
+        String reloadFailed = dataService.consumeReloadFailedNotification();
+        if (reloadFailed != null) {
+            setNotification(reloadFailed, true);
+        }
 
         Rect contentArea;
         if (canvasOverlay.isVisible()) {
@@ -2035,7 +2110,7 @@ public class CamelMonitor extends CamelCommand {
             renderSidePanel(frame, contentArea, shellPanel.panelHeight(), shellPanel::render);
         } else if (aiPanel.isOpen()) {
             aiPanel.initHeight(contentArea.height());
-            renderSidePanel(frame, contentArea, aiPanel.panelHeight(), aiPanel::render);
+            renderSidePanel(frame, contentArea, aiPanel.panelHeight(contentArea.height()), aiPanel::render);
         } else if (logPinned && tabRegistry.selectedTabIndex() != TAB_LOG) {
             logPinAnim.initHeight(contentArea.height());
             int ph = logPinAnim.panelHeight();
@@ -2899,7 +2974,7 @@ public class CamelMonitor extends CamelCommand {
             rightWidth = 0;
             minGap = 0;
             // Drop secondary F-key hints (F2/F3/F6) before tab-specific action hints.
-            hintsWidth = dropFKeyHints(spans, fKeyTotal, hintsWidth, area.width());
+            hintsWidth = dropFKeyHints(spans, fKeyTotal, tabFKeySpans, hintsWidth, area.width());
             // Then drop tab-specific hints from the tail, keeping at least 4 spans
             while (spans.size() > 4 && hintsWidth > area.width()) {
                 Span labelSpan = spans.remove(spans.size() - 1);
@@ -2918,6 +2993,9 @@ public class CamelMonitor extends CamelCommand {
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
     }
 
+    // how many of the F-key hint spans of the footer are the screen's own (after F1/F2/F10)
+    private int tabFKeySpans;
+
     private int insertFKeyHints(List<Span> spans) {
         int insertPos = Math.min(2, spans.size());
         List<Span> fKeySpans = new ArrayList<>();
@@ -2928,9 +3006,11 @@ public class CamelMonitor extends CamelCommand {
         }
         hint(fKeySpans, "F2", "actions");
         hint(fKeySpans, "F10", "run");
+        int globalFKeys = fKeySpans.size();
         if (tab != null) {
             tab.renderFKeyHints(fKeySpans);
         }
+        tabFKeySpans = fKeySpans.size() - globalFKeys;
         spans.addAll(insertPos, fKeySpans);
         // Return total F-key span count. The footer drop loop uses this to remove pairs from
         // the tail, stopping before the first pair (F1 help when present).
@@ -2949,7 +3029,27 @@ public class CamelMonitor extends CamelCommand {
      * @return            the rendered width of {@code spans} after dropping
      */
     static int dropFKeyHints(List<Span> spans, int fKeyTotal, int hintsWidth, int available) {
-        while (fKeyTotal > 2 && hintsWidth > available) {
+        return dropFKeyHints(spans, fKeyTotal, 0, hintsWidth, available);
+    }
+
+    /**
+     * As {@link #dropFKeyHints(List, int, int, int)}, with the screen's own F-key hints (such as Shift+F8 fix with AI
+     * or F12 file actions) after the global ones: the global F2/F10 are dropped first, as they are the same on every
+     * screen, and then the screen's own from the tail.
+     *
+     * @param tabFKeys how many of the F-key spans are the screen's own, at the end of the F-key spans
+     */
+    static int dropFKeyHints(List<Span> spans, int fKeyTotal, int tabFKeys, int hintsWidth, int available) {
+        int globalTotal = fKeyTotal - Math.max(0, tabFKeys);
+        while (globalTotal > 2 && hintsWidth > available) {
+            // the last global pair: its key span is at index globalTotal (the F-keys start at 2)
+            Span labelSpan = spans.remove(globalTotal + 1);
+            Span keySpan = spans.remove(globalTotal);
+            hintsWidth -= keySpan.width() + labelSpan.width();
+            globalTotal -= 2;
+            fKeyTotal -= 2;
+        }
+        while (fKeyTotal > Math.max(2, globalTotal) && hintsWidth > available) {
             Span labelSpan = spans.remove(fKeyTotal + 1);
             Span keySpan = spans.remove(fKeyTotal);
             hintsWidth -= keySpan.width() + labelSpan.width();

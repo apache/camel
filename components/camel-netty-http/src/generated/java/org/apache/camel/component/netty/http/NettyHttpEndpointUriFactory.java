@@ -137,7 +137,7 @@ public class NettyHttpEndpointUriFactory extends org.apache.camel.support.compon
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "protocol", null, true, copy);
         uri = buildPathParameter(syntax, uri, "host", null, true, copy);

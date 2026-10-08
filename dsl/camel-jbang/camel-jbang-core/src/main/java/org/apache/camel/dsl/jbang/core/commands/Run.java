@@ -311,7 +311,7 @@ public class Run extends CamelCommand {
                           " (ex. /path/to/file.properties,/path/to/other.properties")
     public String propertiesFiles;
 
-    @Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
+    @Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)")
     public String[] property;
 
     @Option(names = { "--stub" }, description = "Stubs all the matching endpoint uri with the given component name or pattern."
@@ -478,6 +478,12 @@ public class Run extends CamelCommand {
             if (!infra.isEmpty()) {
                 printer().println(pad + "needs: camel infra run " + String.join(" ", infra));
             }
+            String needs = ExampleHelper.getNeeds(entry);
+            if (needs != null) {
+                for (String line : ExampleHelper.wrap("needs: " + needs, width - indent)) {
+                    printer().println(pad + line);
+                }
+            }
             String teaches = ExampleHelper.getTeachesSummary(entry);
             for (String line : ExampleHelper.wrap(teaches, width - indent)) {
                 printer().println(pad + line);
@@ -536,31 +542,13 @@ public class Run extends CamelCommand {
     }
 
     private int runBundledExample(JsonObject entry) throws Exception {
-        String eName = entry.getString("name");
-        Path tempDir = ExampleHelper.extractBundledExample(entry);
-        List<String> exampleFiles = ExampleHelper.getFiles(entry);
-
-        printer().println("Running example: " + eName);
-        for (String f : exampleFiles) {
-            files.add(tempDir.resolve(f).toString());
-        }
-        if ("CamelJBang".equals(name)) {
-            name = eName;
-        }
-
-        // use the temp dir as base so run() loads the example's application.properties
-        exportBaseDir = tempDir;
-
-        if (!exportRun) {
-            printConfigurationValues("Running integration with the following configuration:");
-        }
-        return run();
+        // an example run in the background outlives this JVM, so its files must stay (CAMEL-25425)
+        Path tempDir = ExampleHelper.extractBundledExample(entry, !background);
+        return runExampleIn(entry, tempDir);
     }
 
     private int runGithubExample(JsonObject entry) throws Exception {
         String eName = entry.getString("name");
-        List<String> exampleFiles = ExampleHelper.getFiles(entry);
-
         printer().println("Fetching example from GitHub: " + eName);
         if (ExampleHelper.requiresDocker(entry)) {
             printer().println("Note: this example requires Docker/Podman");
@@ -568,26 +556,63 @@ public class Run extends CamelCommand {
 
         Path tempDir;
         try {
-            tempDir = ExampleHelper.downloadGithubExample(entry);
+            tempDir = ExampleHelper.downloadGithubExample(entry, !background);
         } catch (Exception e) {
             printer().printErr("Failed to fetch example from GitHub: " + e.getMessage());
             printer().printErr("This example requires an internet connection.");
             return 1;
         }
+        return runExampleIn(entry, tempDir);
+    }
 
-        for (String f : exampleFiles) {
-            files.add(tempDir.resolve(f).toString());
+    /**
+     * Runs the example in its folder. A JVM cannot change its working directory, so the example runs in a JVM of its
+     * own started in that folder: its routes read and write files relative to it (file:orders, out/), wherever camel
+     * run is started (CAMEL-25236). Exporting and transforming do not run the routes, and stay in this JVM.
+     */
+    private int runExampleIn(JsonObject entry, Path dir) throws Exception {
+        String eName = entry.getString("name");
+        printer().println("Running example: " + eName);
+        String needs = ExampleHelper.getNeeds(entry);
+        if (needs != null) {
+            // what the example needs that the run does not do (a model to pull, a key to set): the user does it
+            printer().println("Needs: " + needs);
         }
-        if ("CamelJBang".equals(name)) {
-            name = eName;
+        if (exportRun || transformRun || spec == null) {
+            for (String f : ExampleHelper.getFiles(entry)) {
+                files.add(dir.resolve(f).toString());
+            }
+            if ("CamelJBang".equals(name)) {
+                name = ExampleHelper.getShortName(entry);
+            }
+            // use the folder as base so run() loads the example's application.properties
+            exportBaseDir = dir;
+            return run();
         }
 
-        exportBaseDir = tempDir;
-
-        if (!exportRun) {
-            printConfigurationValues("Running integration with the following configuration:");
+        printer().println("Example folder: " + dir + " (the files it reads and writes are there)");
+        List<String> cmds = ExampleHelper.runArgs(spec.commandLine().getParseResult().originalArgs(), entry);
+        RunHelper.addCamelCLICommand(cmds);
+        if (verbose) {
+            printer().println(String.join(" ", cmds));
         }
-        return run();
+        ProcessBuilder pb = new ProcessBuilder(cmds);
+        pb.directory(dir.toFile());
+        pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        Process p = pb.start();
+        this.spawnPid = p.pid();
+        // the example stops with this JVM (Ctrl+C reaches both, a kill of this one only this one)
+        Thread hook = new Thread(p::destroy, "CamelExampleStop");
+        Runtime.getRuntime().addShutdownHook(hook);
+        try {
+            return p.waitFor();
+        } finally {
+            try {
+                Runtime.getRuntime().removeShutdownHook(hook);
+            } catch (IllegalStateException e) {
+                // shutting down already
+            }
+        }
     }
 
     // the logback configuration of an existing Spring Boot project run, in a temp file
@@ -724,6 +749,16 @@ public class Run extends CamelCommand {
         return prop;
     }
 
+    /**
+     * Whether a directory given as the only file (camel run . or camel run dirName) runs as --source-dir. A Maven
+     * project keeps running its files, and so do the Spring Boot and Quarkus runtimes, which export the files to run
+     * them.
+     */
+    boolean runsDirectoryAsSourceDir(Path dir) {
+        return (RuntimeType.jbang == runtime || RuntimeType.main == runtime)
+                && !Files.exists(dir.resolve("pom.xml"));
+    }
+
     private int run() throws Exception {
         if (!empty && !files.isEmpty() && sourceDir != null) {
             // cannot have both files and source dir at the same time
@@ -740,7 +775,13 @@ public class Run extends CamelCommand {
                 Path first = Path.of(name);
                 if (Files.isDirectory(first)) {
                     baseDir = first;
-                    RunHelper.dirToFiles(name, files);
+                    if (runsDirectoryAsSourceDir(first)) {
+                        // run the directory as --source-dir, so dev mode watches it: changed and new files are reloaded
+                        sourceDir = name;
+                        files.clear();
+                    } else {
+                        RunHelper.dirToFiles(name, files);
+                    }
                 }
             }
         }
@@ -1901,7 +1942,8 @@ public class Run extends CamelCommand {
 
         pb = new ProcessBuilder();
         pb.command(javaCmd);
-        pb.directory(runDirPath.toFile());
+        // run in the current directory (not the export folder), so the routes read and write files relative to
+        // where camel run is started, as with JBang: file:orders in an example reads its orders folder (CAMEL-25423)
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
         p = pb.start();
         processRef.set(p);
@@ -2421,6 +2463,9 @@ public class Run extends CamelCommand {
         if (springBootRunJvmArgs != null) {
             mvnCmd.add("-Dspring-boot.run.jvmArguments=" + springBootRunJvmArgs);
         }
+        // run in the current directory, not the export folder, so the routes read and write files relative to where
+        // camel run is started (CAMEL-25423)
+        mvnCmd.add("-Dspring-boot.run.workingDirectory=" + Paths.get(".").toAbsolutePath().normalize());
         mvnCmd.add("spring-boot:run");
         pb.command(mvnCmd);
 

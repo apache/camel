@@ -164,17 +164,16 @@ class RouteDslConverterTest {
 
         String java = """
                 import org.apache.camel.builder.RouteBuilder;
-                import static org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions;
+                import static org.apache.camel.semantic.SemanticEvaluationsBuilder.semanticEvaluations;
                 public class SemanticRoute extends RouteBuilder {
                     public void configure() {
-                        semanticQuestions(this).question("urgent").type("boolean").register();
+                        semanticEvaluations(this).evaluation("urgent").type("boolean").register();
                         from("direct:input").log("Hello");
                     }
                 }
                 """;
-        // the parser cannot read the declaration: refused at its line, not dropped
-        assertThat(convert("SemanticRoute.java", java, "yaml").refused()).contains("SemanticRoute.java:5",
-                "cannot be converted without running it");
+        // refused for the same reason as in YAML, not dropped
+        assertThat(convert("SemanticRoute.java", java, "yaml").refused()).contains("semantic declarations");
     }
 
     @Test

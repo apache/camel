@@ -110,10 +110,17 @@ abstract class AbstractTab implements MonitorTab {
     }
 
     protected static Row emptyRow(String message, int columnCount) {
+        return emptyRow(message, columnCount, 0);
+    }
+
+    /**
+     * A row that says the table is empty, with the message in the given column: a table whose first column is narrow
+     * puts it in its widest column, so it is not cut ("No infligh").
+     */
+    protected static Row emptyRow(String message, int columnCount, int column) {
         Cell[] cells = new Cell[columnCount];
-        cells[0] = Cell.from(Span.styled(message, Style.EMPTY.dim()));
-        for (int i = 1; i < columnCount; i++) {
-            cells[i] = Cell.from("");
+        for (int i = 0; i < columnCount; i++) {
+            cells[i] = i == column ? Cell.from(Span.styled(message, Style.EMPTY.dim())) : Cell.from("");
         }
         return Row.from(cells);
     }
@@ -142,6 +149,7 @@ abstract class AbstractTab implements MonitorTab {
         if (tableArea == null || table == null || tableState == null || scrollState == null) {
             return;
         }
+        clampTableOffset(table, tableArea, tableState, rowCount);
         int visibleRows = table.viewportHeight(tableArea);
         if (visibleRows <= 0 || rowCount <= visibleRows) {
             return;
@@ -156,6 +164,21 @@ abstract class AbstractTab implements MonitorTab {
         scrollState.viewportContentLength(visibleRows);
         scrollState.position(tableState.offset());
         frame.renderStatefulWidget(Scrollbar.builder().build(), scrollRect, scrollState);
+    }
+
+    /**
+     * Pulls the scroll offset of a table back when rows went away, so the rows fill the view. The table only scrolls to
+     * keep the selected row in view: when the list shrinks (apps stopped, projects closed), rows that fit could stay
+     * above the top, and a running app looked gone.
+     */
+    static void clampTableOffset(Table table, Rect tableArea, TableState tableState, int rowCount) {
+        if (tableArea == null || table == null || tableState == null) {
+            return;
+        }
+        int maxOffset = Math.max(0, rowCount - Math.max(0, table.viewportHeight(tableArea)));
+        if (tableState.offset() > maxOffset) {
+            tableState.setOffset(maxOffset);
+        }
     }
 
     protected static boolean handleTableClick(MouseEvent me, Rect tableArea, TableState tableState, int rowCount) {

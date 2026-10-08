@@ -233,8 +233,18 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
     public OnCompletionDefinition onCompletion() {
         OnCompletionDefinition answer = new OnCompletionDefinition();
         answer.setRouteConfiguration(this);
-        // is global scoped by default
-        answer.setRouteScoped(false);
+        if (getId() == null || "*".equals(getId())) {
+            // route configuration with no id (or wildcard id "*") applies globally to all routes,
+            // so the onCompletion must not be route-scoped: the de-duplication
+            // in OnCompletionProcessor.shouldSkip() relies on routeScoped=false
+            // to fire only once per exchange (for the consumer route).
+            answer.setRouteScoped(false);
+        }
+        // named route configurations keep routeScoped=true (the model default) so that
+        // OnCompletionProcessor uses the route-visit tracking mechanism and fires correctly
+        // even when the opted-in route is called indirectly from a consumer route
+        // (e.g. REST DSL → direct:). A per-configuration dedup key prevents double-firing
+        // when multiple routes share the same named configuration.
         onCompletions.add(answer);
         return answer;
     }

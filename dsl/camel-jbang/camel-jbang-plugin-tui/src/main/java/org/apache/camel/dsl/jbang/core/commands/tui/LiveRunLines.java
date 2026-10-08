@@ -55,30 +55,39 @@ final class LiveRunLines {
 
     /** Adds what a processor did to its line: totals and failures summed, the mean time weighted by the exchanges. */
     private static void add(Map<Integer, long[]> sums, String name, String source, long total, long failed, long mean) {
-        if (source == null) {
+        int line = lineOf(source, name);
+        if (line < 0) {
             return;
         }
-        int colon = source.lastIndexOf(':');
-        if (colon <= 0 || !name.equals(nameOf(source.substring(0, colon)))) {
-            return;
-        }
-        int line;
-        try {
-            line = Integer.parseInt(source.substring(colon + 1).trim());
-        } catch (NumberFormatException e) {
-            return;
-        }
-        if (line <= 0) {
-            return;
-        }
-        long[] s = sums.computeIfAbsent(line - 1, k -> new long[3]);
+        long[] s = sums.computeIfAbsent(line, k -> new long[3]);
         s[0] += total;
         s[1] += failed;
         s[2] += Math.max(0, mean) * total;
     }
 
+    /**
+     * The 0-based line of a source location (file:line) in the file of the given name, or -1 when the location is of
+     * another file or has no line.
+     */
+    static int lineOf(String source, String name) {
+        if (source == null || name == null) {
+            return -1;
+        }
+        int colon = source.lastIndexOf(':');
+        if (colon <= 0 || !name.equals(nameOf(source.substring(0, colon)))) {
+            return -1;
+        }
+        int line;
+        try {
+            line = Integer.parseInt(source.substring(colon + 1).trim());
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+        return line > 0 ? line - 1 : -1;
+    }
+
     /** The file name of a location: file:/work/OrderRoute.java, classpath:OrderRoute.java and OrderRoute.java alike. */
-    private static String nameOf(String location) {
+    static String nameOf(String location) {
         if (location == null || location.isBlank()) {
             return null;
         }

@@ -98,6 +98,36 @@ public class SourceValidatorBeanRefsTest {
     }
 
     @Test
+    void aClassOfTheProjectInTheMavenLayoutIsFound(@TempDir Path dir) throws IOException {
+        // camel run --source-dir compiles src/main/java/<package>/<Class>.java too, so a bean of that class is no error
+        // another class of the project, so the directory is known and the check judges; a name that is not on the test
+        // classpath (camel.example.OrderNumber is, for the bundled example tests)
+        Files.writeString(dir.resolve("Other.java"), "public class Other {}\n");
+        String beans = """
+                - beans:
+                  - name: shipmentNumber
+                    type: "#class:com.acme.shop.ShipmentNumber"
+                """;
+        assertThat(
+                SourceValidator.validate("beans.yaml", beans, CATALOG, null, dir))
+                .anyMatch(m -> m.contains("class com.acme.shop.ShipmentNumber was not found"));
+
+        Path pkg = Files.createDirectories(dir.resolve("src/main/java/com/acme/shop"));
+        Files.writeString(pkg.resolve("ShipmentNumber.java"), """
+                package com.acme.shop;
+
+                public class ShipmentNumber {
+                    public String next() {
+                        return "ORD-1001";
+                    }
+                }
+                """);
+        assertThat(
+                SourceValidator.validate("beans.yaml", beans, CATALOG, null, dir))
+                .isEmpty();
+    }
+
+    @Test
     void classReferencesPlaceholdersAndUnknownDirectoryAreLeftAlone(@TempDir Path dir) {
         String yaml = ROUTE.replace("aggregationStrategy: myAggregator",
                 "aggregationStrategy: \"#class:com.example.MyAggregator\"");

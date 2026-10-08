@@ -86,16 +86,20 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
 
         Exchange exchange = createOnAcceptAlertNotificationExchange(alertNotification);
         try {
-            processor.process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
-        }
+            try {
+                processor.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
 
-        if (exchange.getException() != null) {
-            exceptionHandler.handleException("Cannot process exchange. This exception will be ignored.", exchange,
-                    exchange.getException());
+            if (exchange.getException() != null) {
+                exceptionHandler.handleException("Cannot process exchange. This exception will be ignored.", exchange,
+                        exchange.getException());
+            }
+        } finally {
+            // in a finally so that a custom exception handler that throws cannot cost the release
+            consumer.releaseExchange(exchange, false);
         }
-        consumer.releaseExchange(exchange, false);
     }
 
     @Override
@@ -110,24 +114,28 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
 
         Exchange exchange;
         try {
-            exchange = endpoint.createOnAcceptDeliverSmExchange(deliverSm);
+            exchange = createOnAcceptDeliverSmExchange(deliverSm);
         } catch (Exception e) {
             exceptionHandler.handleException("Cannot create exchange. This exception will be ignored.", e);
             return;
         }
 
         try {
-            processor.process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
-        }
-
-        if (exchange.getException() != null) {
-            ProcessRequestException pre = exchange.getException(ProcessRequestException.class);
-            if (pre == null) {
-                pre = new ProcessRequestException(exchange.getException().getMessage(), 255, exchange.getException());
+            try {
+                processor.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
             }
-            throw pre;
+
+            if (exchange.getException() != null) {
+                ProcessRequestException pre = exchange.getException(ProcessRequestException.class);
+                if (pre == null) {
+                    pre = new ProcessRequestException(exchange.getException().getMessage(), 255, exchange.getException());
+                }
+                throw pre;
+            }
+        } finally {
+            consumer.releaseExchange(exchange, false);
         }
     }
 
@@ -142,26 +150,80 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
         LOG.debug("Received a dataSm {}", dataSm);
 
         MessageId newMessageId = messageIDGenerator.newMessageId();
-        Exchange exchange = endpoint.createOnAcceptDataSm(dataSm, newMessageId.getValue());
+        Exchange exchange = createOnAcceptDataSmExchange(dataSm, newMessageId.getValue());
         try {
-            processor.process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
-        }
-
-        if (exchange.getException() != null) {
-            ProcessRequestException pre = exchange.getException(ProcessRequestException.class);
-            if (pre == null) {
-                pre = new ProcessRequestException(exchange.getException().getMessage(), 255, exchange.getException());
+            try {
+                processor.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
             }
-            throw pre;
-        }
 
-        return new DataSmResult(newMessageId, dataSm.getOptionalParameters());
+            if (exchange.getException() != null) {
+                ProcessRequestException pre = exchange.getException(ProcessRequestException.class);
+                if (pre == null) {
+                    pre = new ProcessRequestException(exchange.getException().getMessage(), 255, exchange.getException());
+                }
+                throw pre;
+            }
+
+            return new DataSmResult(newMessageId, dataSm.getOptionalParameters());
+        } finally {
+            consumer.releaseExchange(exchange, false);
+        }
     }
 
     public void setMessageIDGenerator(MessageIDGenerator messageIDGenerator) {
         this.messageIDGenerator = messageIDGenerator;
+    }
+
+    /**
+     * Creates the exchange for a received {@code deliver_sm}.
+     * <p/>
+     * Built through {@link Consumer#createExchange(boolean)} rather than on the endpoint, as
+     * {@link org.apache.camel.Endpoint#createExchange()} instructs: an exchange a consumer received a message for has
+     * to come from the configured {@code ExchangeFactory}, or pooling never applies to it and its {@code fromRouteId}
+     * is left unset.
+     *
+     * @param  deliverSm the received message from the SMSC
+     * @return           a new exchange
+     */
+    private Exchange createOnAcceptDeliverSmExchange(DeliverSm deliverSm) throws Exception {
+        Exchange exchange = consumer.createExchange(false);
+        try {
+            // the pattern has to be set explicitly: in transceiver mode the consumer belongs to the receiver route,
+            // not to this SMPP endpoint, so the factory would otherwise stamp that endpoint's pattern on the exchange
+            exchange.setPattern(endpoint.getExchangePattern());
+            exchange.setProperty(Exchange.BINDING, endpoint.getBinding());
+            exchange.setIn(endpoint.getBinding().createSmppMessage(endpoint.getCamelContext(), deliverSm));
+            return exchange;
+        } catch (Exception e) {
+            // the exchange is already out of the ExchangeFactory, and the caller's variable is still unassigned,
+            // so its finally cannot release it - a failed decode would otherwise cost a pooled exchange
+            consumer.releaseExchange(exchange, false);
+            throw e;
+        }
+    }
+
+    /**
+     * Creates the exchange for a received {@code data_sm}, through the consumer for the same reason as
+     * {@link #createOnAcceptDeliverSmExchange(DeliverSm)}.
+     *
+     * @param  dataSm        the received message from the SMSC
+     * @param  smppMessageId the smpp message id which will be used in the response
+     * @return               a new exchange
+     */
+    private Exchange createOnAcceptDataSmExchange(DataSm dataSm, String smppMessageId) {
+        Exchange exchange = consumer.createExchange(false);
+        try {
+            // see createOnAcceptDeliverSmExchange: the pattern cannot be left to the factory in transceiver mode
+            exchange.setPattern(endpoint.getExchangePattern());
+            exchange.setProperty(Exchange.BINDING, endpoint.getBinding());
+            exchange.setIn(endpoint.getBinding().createSmppMessage(endpoint.getCamelContext(), dataSm, smppMessageId));
+            return exchange;
+        } catch (Exception e) {
+            consumer.releaseExchange(exchange, false);
+            throw e;
+        }
     }
 
     /**
@@ -173,9 +235,14 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
      */
     public Exchange createOnAcceptAlertNotificationExchange(AlertNotification alertNotification) {
         Exchange exchange = consumer.createExchange(false);
-        exchange.setProperty(Exchange.BINDING, endpoint.getBinding());
-        exchange.setIn(endpoint.getBinding().createSmppMessage(endpoint.getCamelContext(), alertNotification));
-        return exchange;
+        try {
+            exchange.setProperty(Exchange.BINDING, endpoint.getBinding());
+            exchange.setIn(endpoint.getBinding().createSmppMessage(endpoint.getCamelContext(), alertNotification));
+            return exchange;
+        } catch (Exception e) {
+            consumer.releaseExchange(exchange, false);
+            throw e;
+        }
     }
 
 }

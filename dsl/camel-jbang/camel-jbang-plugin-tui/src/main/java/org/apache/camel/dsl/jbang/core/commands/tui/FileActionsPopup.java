@@ -72,6 +72,10 @@ class FileActionsPopup {
 
     private boolean visible;
     private Phase phase = Phase.MENU;
+    // what the confirm step is for: DELETE, or a conversion (replace the original, or keep both)
+    private Action confirmAction;
+    static final String REPLACE = "replace";
+    static final String KEEP = "keep";
 
     private String targetName;
     private boolean hasTarget;
@@ -191,8 +195,16 @@ class FileActionsPopup {
             case NEW_FOLDER -> startInput(action, "New folder", "");
             case RENAME -> startInput(action, "Rename", targetName);
             case DUPLICATE -> startInput(action, "Duplicate", SourceFileOps.suggestDuplicateName(targetName));
-            case DELETE -> phase = Phase.CONFIRM;
-            case COPY_PATH, CONVERT_YAML, CONVERT_XML, CONVERT_JAVA -> {
+            case DELETE -> {
+                confirmAction = action;
+                phase = Phase.CONFIRM;
+            }
+            // the converted file has the same routes: replace the original, or keep both (and rename one later)
+            case CONVERT_YAML, CONVERT_XML, CONVERT_JAVA -> {
+                confirmAction = action;
+                phase = Phase.CONFIRM;
+            }
+            case COPY_PATH -> {
                 result = new Request(action, null);
                 close();
             }
@@ -246,8 +258,13 @@ class FileActionsPopup {
     private boolean handleConfirmKey(KeyEvent ke) {
         // Delete is a destructive action: only an explicit "y" confirms it. Enter must NOT delete. Esc (or "n")
         // returns to the menu; any other key is swallowed so a stray keystroke neither deletes nor dismisses.
+        if (confirmAction != Action.DELETE && ke.code() == KeyCode.CHAR && "k".equalsIgnoreCase(ke.string())) {
+            result = new Request(confirmAction, KEEP);
+            close();
+            return true;
+        }
         if (ke.code() == KeyCode.CHAR && "y".equalsIgnoreCase(ke.string())) {
-            result = new Request(Action.DELETE, null);
+            result = new Request(confirmAction, confirmAction == Action.DELETE ? null : REPLACE);
             close();
             return true;
         }
@@ -314,6 +331,13 @@ class FileActionsPopup {
 
     private void renderConfirm(Frame frame, Rect area) {
         // Deleting a file is irreversible, so this dialog is error-styled and deliberately accepts "y" only.
+        if (confirmAction != Action.DELETE) {
+            String dsl = confirmAction == Action.CONVERT_XML ? "XML" : confirmAction == Action.CONVERT_YAML ? "YAML" : "Java";
+            this.popupRect = DialogHelper.renderConfirm(frame, area, TuiIcons.CONVERT + " Convert to " + dsl,
+                    "Replace " + targetName + " with the " + dsl + " file?",
+                    "Keeping both leaves the same routes twice in the folder", "y", "replace", "k", "keep both");
+            return;
+        }
         this.popupRect = DialogHelper.renderConfirm(frame, area, TuiIcons.DELETE + " Delete file?",
                 "Delete " + targetName + "?", true, "y", "delete");
     }
@@ -332,7 +356,12 @@ class FileActionsPopup {
                 TuiHelper.hintLast(spans, "Esc", "back");
             }
             case CONFIRM -> {
-                TuiHelper.hint(spans, "y", "delete");
+                if (confirmAction != Action.DELETE) {
+                    TuiHelper.hint(spans, "y", "replace");
+                    TuiHelper.hint(spans, "k", "keep both");
+                } else {
+                    TuiHelper.hint(spans, "y", "delete");
+                }
                 TuiHelper.hintLast(spans, "Esc", "cancel");
             }
             default -> {

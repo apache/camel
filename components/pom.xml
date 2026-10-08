@@ -205,6 +205,7 @@
         <module>camel-jt400</module>
         <module>camel-jta</module>
         <module>camel-jte</module>
+        <module>camel-kafka-common</module>
         <module>camel-kafka</module>
         <module>camel-kamelet</module>
         <module>camel-keycloak</module>
@@ -242,6 +243,7 @@
         <module>camel-oauth</module>
         <module>camel-observation</module>
         <module>camel-ocsf</module>
+        <module>camel-odata</module>
         <module>camel-ognl</module>
         <module>camel-olingo2</module>
         <module>camel-olingo4</module>

@@ -16,11 +16,17 @@
  */
 package org.apache.camel.component.nats.integration;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.nats.NatsConstants;
+import org.apache.camel.component.nats.NatsConsumer;
 import org.junit.jupiter.api.Test;
+
+import static org.awaitility.Awaitility.await;
 
 public class NatsConsumerIT extends NatsITSupport {
 
@@ -32,9 +38,15 @@ public class NatsConsumerIT extends NatsITSupport {
         mockResultEndpoint.expectedBodiesReceived("Hello World");
         mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "test");
 
+        // Wait for the NATS consumer to be subscribed before sending messages,
+        // since core NATS does not persist messages for inactive subscribers
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> context.getRoutes().stream()
+                        .map(Route::getConsumer)
+                        .anyMatch(c -> c instanceof NatsConsumer nc && nc.isActive()));
+
         template.sendBody("direct:send", "Hello World");
 
-        mockResultEndpoint.setAssertPeriod(5000);
         mockResultEndpoint.assertIsSatisfied();
     }
 

@@ -286,6 +286,7 @@
                                 <route-template>routeTemplate</route-template>
                                 <route-configuration>routeConfiguration</route-configuration>
                                 <exception-clause>onException</exception-clause>
+                                <error-handler>errorHandler</error-handler>
                                 <oncompletion>onCompletion</oncompletion>
                                 <try-catch-finally>doTry</try-catch-finally>
                             </pages>

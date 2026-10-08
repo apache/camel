@@ -66,7 +66,8 @@ class ActionsPopup {
         MCP_SUBMENU,
         BACK,
         SCREENSHOT,
-        TOGGLE_THEME,
+        // the next theme of the list (each step is saved to the user config); toggle-theme still works
+        NEXT_THEME,
         THEMES_SUBMENU,
         RESET_SCREEN,
         TAPE_RECORDING,
@@ -758,7 +759,7 @@ class ActionsPopup {
                     if (resetScreenAction != null) {
                         resetScreenAction.run();
                     }
-                } else if (action == Action.TOGGLE_THEME) {
+                } else if (action == Action.NEXT_THEME) {
                     Theme.toggle();
                     refreshTheme();
                     showActionsMenu = false;
@@ -1326,11 +1327,10 @@ class ActionsPopup {
         // the project stays listed (Starting) until its app shows up and stands in for it
         phantom.startingSince = System.currentTimeMillis();
 
-        if (phantom.projectType != null) {
-            launchManager.launchMavenProject(phantom.sourceDir, phantom.projectType, displayName, extraArgs);
-        } else {
-            launchManager.launchCamelRun(phantom.sourceDir, displayName, extraArgs);
-        }
+        // the app is found by the process it runs in: a folder runs from elsewhere, and reports another directory
+        phantom.launchedProcess = phantom.projectType != null
+                ? launchManager.launchMavenProject(phantom.sourceDir, phantom.projectType, displayName, extraArgs)
+                : launchManager.launchCamelRun(phantom.sourceDir, displayName, extraArgs);
     }
 
     // ---- Name Input ----
@@ -1459,6 +1459,10 @@ class ActionsPopup {
             return false;
         }
         String normalized = name.strip().replace("-", "_").toUpperCase(Locale.ROOT);
+        if ("TOGGLE_THEME".equals(normalized)) {
+            // the earlier name: it never toggled between two, it steps through all themes
+            normalized = "NEXT_THEME";
+        }
         Action action;
         try {
             action = Action.valueOf(normalized);
@@ -1479,7 +1483,7 @@ class ActionsPopup {
                     resetScreenAction.run();
                 }
             }
-            case TOGGLE_THEME -> {
+            case NEXT_THEME -> {
                 Theme.toggle();
                 refreshTheme();
             }

@@ -97,8 +97,10 @@ public class SecretsDevConsole extends AbstractDevConsole {
             if (kubernetes != null) {
                 sb.append("\n\nSecrets in use:");
 
-                sorted = new ArrayList<>(List.of(kubernetes.getSecrets().split(",")));
-                Collections.sort(sorted);
+                if (kubernetes.getSecrets() != null && !kubernetes.getSecrets().isEmpty()) {
+                    sorted = new ArrayList<>(List.of(kubernetes.getSecrets().split(",")));
+                    Collections.sort(sorted);
+                }
             }
 
             for (String sec : sorted) {
@@ -133,10 +135,11 @@ public class SecretsDevConsole extends AbstractDevConsole {
             }
         }
 
-        // NOTE: kubernetes is dereferenced unconditionally here, same as the original code - preserved
-        // as-is rather than fixed, since this migration is about the response contract
-        List<String> sorted = new ArrayList<>(List.of(kubernetes.getSecrets().split(",")));
-        Collections.sort(sorted);
+        List<String> sorted = new ArrayList<>();
+        if (kubernetes != null && kubernetes.getSecrets() != null && !kubernetes.getSecrets().isEmpty()) {
+            sorted.addAll(List.of(kubernetes.getSecrets().split(",")));
+            Collections.sort(sorted);
+        }
 
         List<SecretEntry> secrets = new ArrayList<>();
         for (String sec : sorted) {

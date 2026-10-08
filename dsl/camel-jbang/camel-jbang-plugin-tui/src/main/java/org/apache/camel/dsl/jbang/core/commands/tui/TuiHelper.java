@@ -163,6 +163,31 @@ final class TuiHelper {
         }
     }
 
+    /**
+     * The spans cut to the given display width, ending with an ellipsis where text is cut, so a cell that is too narrow
+     * says so instead of losing its end silently.
+     */
+    static Line fitLine(List<Span> spans, int max) {
+        List<Span> answer = new ArrayList<>();
+        int used = 0;
+        for (Span span : spans) {
+            int w = CharWidth.of(span.content());
+            if (used + w <= max) {
+                answer.add(span);
+                used += w;
+            } else {
+                int room = max - used;
+                if (room > 0) {
+                    answer.add(Span.styled(
+                            CharWidth.truncateWithEllipsis(span.content(), room, CharWidth.TruncatePosition.END),
+                            span.style()));
+                }
+                break;
+            }
+        }
+        return Line.from(answer);
+    }
+
     static String truncate(String s, int max) {
         if (s == null) {
             return "";

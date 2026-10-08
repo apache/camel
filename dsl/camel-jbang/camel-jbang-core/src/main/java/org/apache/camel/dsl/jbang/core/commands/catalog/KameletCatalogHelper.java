@@ -101,7 +101,7 @@ public final class KameletCatalogHelper {
 
     private static String getPropertyExample(Object prop) throws Exception {
         Method m = prop.getClass().getMethod("getExample");
-        Object en = ObjectHelper.invokeMethod(m, prop);
+        Object en = unwrap(ObjectHelper.invokeMethod(m, prop));
         if (en != null) {
             String t = en.toString();
             return StringHelper.removeLeadingAndEndingQuotes(t);
@@ -111,12 +111,27 @@ public final class KameletCatalogHelper {
 
     private static String getPropertyDefaultValue(Object prop) throws Exception {
         Method m = prop.getClass().getMethod("get_default");
-        Object dn = ObjectHelper.invokeMethod(m, prop);
+        Object dn = unwrap(ObjectHelper.invokeMethod(m, prop));
         if (dn != null) {
             String t = dn.toString();
             return StringHelper.removeLeadingAndEndingQuotes(t);
         }
         return null;
+    }
+
+    /**
+     * The value of a default, example or enum value of the Kamelet model, which wraps it in an AnyType whose toString
+     * is AnyType(value=1000): the docs showed that instead of 1000.
+     */
+    private static Object unwrap(Object value) {
+        if (value != null && value.getClass().getSimpleName().equals("AnyType")) {
+            try {
+                return ObjectHelper.invokeMethod(value.getClass().getMethod("getValue"), value);
+            } catch (Exception e) {
+                // not the AnyType we know: its text
+            }
+        }
+        return value;
     }
 
     private static List<String> getPropertyEnum(Object prop) throws Exception {
@@ -125,7 +140,7 @@ public final class KameletCatalogHelper {
         List<Object> list = (List<Object>) ObjectHelper.invokeMethod(m, prop);
         if (list != null && !list.isEmpty()) {
             for (var en : list) {
-                String t = en.toString();
+                String t = String.valueOf(unwrap(en));
                 t = StringHelper.removeLeadingAndEndingQuotes(t);
                 answer.add(t);
             }

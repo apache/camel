@@ -31,6 +31,16 @@ public class VertxConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxConsumer.class);
 
+    /**
+     * The failure code of the reply when the exchange failed.
+     */
+    static final int FAILURE_CODE = 500;
+
+    /**
+     * The failure message of the reply when the exchange failed: the exception of the route is not sent to the sender.
+     */
+    static final String FAILURE_MESSAGE = "Exchange processing failed";
+
     private final VertxEndpoint endpoint;
     private transient MessageConsumer<?> messageConsumer;
 
@@ -54,8 +64,15 @@ public class VertxConsumer extends DefaultConsumer {
                 @Override
                 public void done(boolean doneSync) {
                     if (reply) {
-                        Object body = exchange.getMessage().getBody();
-                        if (body != null) {
+                        Exception cause = exchange.getException();
+                        if (cause != null) {
+                            // let the sender know that the request failed, instead of replying with the message body,
+                            // without sending the exception of the route
+                            LOG.debug("Sending failure reply to: {} due to: {}", event.replyAddress(), cause.getMessage());
+                            event.fail(FAILURE_CODE, FAILURE_MESSAGE);
+                        } else {
+                            // always reply (also with no body) so the sender does not wait until its timeout
+                            Object body = exchange.getMessage().getBody();
                             LOG.debug("Sending reply to: {} with body: {}", event.replyAddress(), body);
                             event.reply(body);
                         }

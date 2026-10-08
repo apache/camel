@@ -113,6 +113,24 @@ public class CatalogSamplesTest {
     }
 
     @Test
+    void callingAServiceIsTheHttpComponentNotEnrich() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        for (String term : List.of("call service", "http call", "Call API")) {
+            JsonObject o = CatalogSamples.sample(catalog, term, 2);
+            assertThat(o.getString("name")).as(term).isEqualTo("http");
+            assertThat(o.getString("note")).as(term).contains("to:", "toD:");
+            assertThat(((JsonObject) ((JsonArray) o.get("samples")).get(0)).getString("yaml")).contains("uri: http");
+        }
+        // calling an API by its contract: the rest-openapi producer
+        JsonObject o = CatalogSamples.sample(catalog, "openapi client", 5);
+        assertThat(o.getString("name")).isEqualTo("rest-openapi");
+        assertThat(((JsonArray) o.get("samples")).stream().map(s -> ((JsonObject) s).getString("yaml")))
+                .anyMatch(y -> y.contains("operationId: getPetById"));
+        // asked for an EIP: no component
+        assertThat(CatalogSamples.sample(catalog, "eip", "call service", 1).getString("name")).isNotEqualTo("http");
+    }
+
+    @Test
     void unknownNameGetsSuggestions() {
         JsonObject o = CatalogSamples.sample("aggregat", 2);
         assertThat(o.getString("error")).contains("aggregat");
@@ -231,8 +249,10 @@ public class CatalogSamplesTest {
     void restOpenApiShowsTheConsumerEndpointAndTheContractFirstRest() {
         CamelCatalog catalog = new DefaultCamelCatalog();
         JsonObject o = CatalogSamples.sample(catalog, "component", "rest-openapi", 2);
-        assertThat(yaml(o, 0)).contains("rest-openapi:");
-        assertThat(yaml(o, 1)).contains("openApi:").contains("direct:getPetById");
+        // the contract-first Rest DSL counts as a use of rest-openapi and keeps its place, first on the page, ahead of
+        // the examples of a rest-openapi consumer (such as the one for unmatched requests)
+        assertThat(yaml(o, 0)).contains("openApi:").contains("direct:getPetById");
+        assertThat(yaml(o, 1)).contains("rest-openapi:");
     }
 
     @Test
@@ -357,5 +377,35 @@ public class CatalogSamplesTest {
         assertThat(bindy.getString("kind")).isEqualTo("dataformat");
         assertThat((Integer) bindy.get("count")).isZero();
         assertThat(bindy.getString("hint")).contains("no YAML route example");
+    }
+
+    /** CAMEL-25370: the error handler has samples, both of its places, and its kinds resolve to it. */
+    @Test
+    void errorHandlerHasSamplesAndItsTwoPlaces() {
+        JsonObject o = CatalogSamples.sample("errorHandler", 5);
+        assertThat(o.getString("name")).isEqualTo("errorHandler");
+        assertThat(o.getString("placement")).contains("top-level").contains("under one route").contains("never a step");
+        JsonArray samples = (JsonArray) o.get("samples");
+        assertThat(samples).isNotEmpty();
+        assertThat(samples.stream().map(s -> ((JsonObject) s).getString("yaml")))
+                .anyMatch(y -> y.contains("errorHandler:") && y.contains("noErrorHandler"));
+
+        o = CatalogSamples.sample("noErrorHandler", 1);
+        assertThat(o.getString("name")).isEqualTo("errorHandler");
+        assertThat(o.getString("partOf")).isEqualTo("errorHandler");
+
+        o = CatalogSamples.sample("deadLetterChannel", 1);
+        assertThat(o.getString("placement")).contains("never a step").contains("routeConfiguration");
+        assertThat(o.getString("note")).contains("the sample shows it in place");
+    }
+
+    /** CAMEL-25370: a kind the samples do not show is not said to be shown; where it goes and its options are. */
+    @Test
+    void anErrorHandlerKindTheSamplesDoNotShow() {
+        JsonObject o = CatalogSamples.sample("refErrorHandler", 5);
+        assertThat(o.getString("partOf")).isEqualTo("errorHandler");
+        assertThat(o.getString("note")).doesNotContain("the sample shows it in place")
+                .contains("write refErrorHandler where they write theirs")
+                .contains("camel_catalog_doc refErrorHandler");
     }
 }

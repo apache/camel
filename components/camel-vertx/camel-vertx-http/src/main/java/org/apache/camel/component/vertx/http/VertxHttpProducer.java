@@ -74,7 +74,7 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
 
             Object body = message.getBody();
             if (body == null) {
-                request.send(resultHandler);
+                request.send().onComplete(resultHandler);
             } else {
                 String contentType = MessageHelper.getContentType(message);
                 boolean multipart = getEndpoint().getConfiguration().isMultipartUpload();
@@ -82,16 +82,16 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
 
                 // Handle vertx specific body first
                 if (body instanceof MultiMap mm) {
-                    request.sendForm(mm, resultHandler);
+                    request.sendForm(mm).onComplete(resultHandler);
                     return false;
                 } else if (body instanceof MultipartForm mf) {
-                    request.sendMultipartForm(mf, resultHandler);
+                    request.sendMultipartForm(mf).onComplete(resultHandler);
                     return false;
                 } else if (body instanceof ReadStream rs) {
-                    request.sendStream(rs, resultHandler);
+                    request.sendStream(rs).onComplete(resultHandler);
                     return false;
                 } else if (body instanceof Buffer buf) {
-                    request.sendBuffer(buf, resultHandler);
+                    request.sendBuffer(buf).onComplete(resultHandler);
                     return false;
                 }
 
@@ -117,9 +117,9 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                             type = "application/octet-stream"; // default binary
                         }
                         MultipartForm form = MultipartForm.create().binaryFileUpload(multipartName, fileName, buf, type);
-                        request.sendMultipartForm(form, resultHandler);
+                        request.sendMultipartForm(form).onComplete(resultHandler);
                     } else {
-                        request.sendBuffer(buf, resultHandler);
+                        request.sendBuffer(buf).onComplete(resultHandler);
                     }
                 } else if (body instanceof String str) {
                     // Try to extract URL encoded form data from the message body
@@ -127,11 +127,11 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                         MultiMap map = MultiMap.caseInsensitiveMultiMap();
                         Map<String, Object> formParams = URISupport.parseQuery(str);
                         formParams.forEach((key, o) -> map.add(key, String.valueOf(o)));
-                        request.sendForm(map, resultHandler);
+                        request.sendForm(map).onComplete(resultHandler);
                     } else {
                         // Fallback to send as Buffer
                         Buffer buffer = VertxBufferConverter.toBuffer(str, exchange);
-                        request.sendBuffer(buffer, resultHandler);
+                        request.sendBuffer(buffer).onComplete(resultHandler);
                     }
                 } else {
                     // Handle x-java-serialized-object Content-Type
@@ -144,11 +144,11 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                             Serializable serializable = message.getMandatoryBody(Serializable.class);
                             VertxHttpHelper.writeObjectToStream(baos, serializable);
-                            request.sendBuffer(Buffer.buffer(baos.toByteArray()), resultHandler);
+                            request.sendBuffer(Buffer.buffer(baos.toByteArray())).onComplete(resultHandler);
                         }
                     } else {
                         Buffer buffer = message.getMandatoryBody(Buffer.class);
-                        request.sendBuffer(buffer, resultHandler);
+                        request.sendBuffer(buffer).onComplete(resultHandler);
                     }
                 }
             }

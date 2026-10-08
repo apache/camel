@@ -1,0 +1,84 @@
+# Payment for the web shop orders. The payment provider is flaky for one order
+# and declines another; the error handler retries the first and parks both.
+- errorHandler:
+    deadLetterChannel:
+      deadLetterUri: direct:parked
+      redeliveryPolicy:
+        maximumRedeliveries: 2
+        redeliveryDelay: 1000
+        retryAttemptedLogLevel: WARN
+
+# A declined card is final: no retry, park it at once
+- onException:
+    exception:
+      - java.lang.IllegalStateException
+    redeliveryPolicy:
+      maximumRedeliveries: 0
+    handled:
+      constant:
+        expression: "true"
+    steps:
+      - log:
+          message: "Payment for ${body[orderId]} declined: ${exception.message}"
+      - to:
+          uri: direct:parked
+
+- route:
+    id: checkout
+    from:
+      uri: file
+      parameters:
+        directoryName: orders
+        noop: true
+        sortBy: "file:name"
+      steps:
+        - unmarshal:
+            json:
+              library: Jackson
+        - to:
+            uri: direct:charge
+        - log:
+            message: "Payment for ${body[orderId]} charged, ${body[lines].size()} line(s) to the warehouse"
+
+# The payment provider. No error handler here, so its failures reach the caller,
+# which retries the whole call as it would with a remote service.
+- route:
+    id: payment-provider
+    errorHandler:
+      noErrorHandler: {}
+    from:
+      uri: direct:charge
+      steps:
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body[orderId]} == 'ORD-1002' && ${header.CamelRedeliveryCounter} != 2"
+                steps:
+                  - throwException:
+                      exceptionType: java.net.ConnectException
+                      message: "payment provider did not answer"
+              - expression:
+                  simple:
+                    expression: "${body[orderId]} == 'ORD-1003'"
+                steps:
+                  - throwException:
+                      exceptionType: java.lang.IllegalStateException
+                      message: "card declined"
+
+# Parked orders are written as files for someone to look at
+- route:
+    id: parked
+    from:
+      uri: direct:parked
+      steps:
+        - log:
+            message: "Order ${body[orderId]} parked for manual review: ${exception.message}"
+        - marshal:
+            json:
+              library: Jackson
+        - to:
+            uri: file
+            parameters:
+              directoryName: parked
+              fileName: "${header.CamelFileName}"

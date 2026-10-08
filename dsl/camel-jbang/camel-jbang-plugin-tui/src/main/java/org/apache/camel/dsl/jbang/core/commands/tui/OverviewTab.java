@@ -31,6 +31,7 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -326,7 +327,7 @@ class OverviewTab extends AbstractTab {
             vSplit.clearBorderPos();
         }
 
-        TableSpec spec = topMode ? buildTopModeTable(infos) : buildOverviewTable(infos);
+        TableSpec spec = topMode ? buildTopModeTable(infos) : buildOverviewTable(infos, area.width());
 
         String integrationTitle = infraCount > 0 ? " Integrations " : " Overview ";
         Style intBorderStyle = ctx.paneBorder(!infraFocused);
@@ -346,6 +347,7 @@ class OverviewTab extends AbstractTab {
 
         lastTableArea = chunks.get(0);
         TableState renderState = infraFocused ? new TableState() : tableState;
+        clampTableOffset(table, chunks.get(0), renderState, integrationCount);
         frame.renderStatefulWidget(table, chunks.get(0), renderState);
         renderTableScrollbar(frame, lastTableArea, table, tableState, tableScrollState, integrationCount);
 
@@ -511,7 +513,7 @@ class OverviewTab extends AbstractTab {
     /**
      * Rows, header and column widths for the integrations table in the default overview mode.
      */
-    private TableSpec buildOverviewTable(List<IntegrationInfo> infos) {
+    private TableSpec buildOverviewTable(List<IntegrationInfo> infos, int areaWidth) {
         List<Row> rows = new ArrayList<>();
         int rowIndex = 0;
         boolean hasPercentiles = infos.stream().anyMatch(i -> i.p50Time >= 0);
@@ -523,6 +525,25 @@ class OverviewTab extends AbstractTab {
         int totalColWidth = 14;
         int failColWidth = 14;
         for (IntegrationInfo info : infos) {
+            if (!info.phantom && !info.vanishing) {
+                int since = info.sinceLastCompleted != null ? CharWidth.of(info.sinceLastCompleted) + 3 : 0;
+                int failSince = info.sinceLastFailed != null ? CharWidth.of(info.sinceLastFailed) + 3 : 0;
+                totalColWidth = Math.max(totalColWidth, tw + since + 1);
+                failColWidth = Math.max(failColWidth, fw + failSince + 1);
+            }
+        }
+        // NAME tells the apps apart, so it is the column that stays: on a narrow screen the timings go first, then
+        // the rate and the version, so NAME keeps room for a name
+        int[] fixed = { 8, 16, 7, 10, 7, 8, totalColWidth, failColWidth, 20 };
+        int nameWidth = overviewNameWidth(areaWidth, fixed);
+        for (int drop : new int[] { 8, 5, 1 }) {
+            if (nameWidth >= MIN_NAME_WIDTH) {
+                break;
+            }
+            fixed[drop] = 0;
+            nameWidth = overviewNameWidth(areaWidth, fixed);
+        }
+        for (IntegrationInfo info : infos) {
             boolean isEven = (rowIndex++ % 2 == 0);
             Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
 
@@ -531,7 +552,7 @@ class OverviewTab extends AbstractTab {
                 String nameText = platformIcon + " " + (info.name != null ? info.name : "");
                 rows.add(Row.from(
                         Cell.from(Span.styled("-", Theme.muted())),
-                        Cell.from(Span.styled(nameText, Theme.info())),
+                        Cell.from(Span.styled(TuiHelper.truncate(nameText, nameWidth), Theme.info())),
                         Cell.from(Span.styled("", Theme.muted())),
                         Cell.from(Span.styled("", Theme.muted())),
                         Cell.from(projectStatus(info, System.currentTimeMillis())),
@@ -569,9 +590,13 @@ class OverviewTab extends AbstractTab {
                 } else if ("Running".equals(stateText) && info.routeStarted == 0 && info.routeTotal > 0) {
                     stateText = "Stopped";
                 }
+                if (info.reloadError != null && !"Stopping".equals(stateText)) {
+                    // its last reload failed, as camel ps shows it; the info panel says why
+                    stateText = "Error";
+                }
                 Style statusStyle = switch (stateText) {
                     case "Started", "Running" -> Theme.success();
-                    case "Stopped" -> Theme.error();
+                    case "Stopped", "Error" -> Theme.error();
                     default -> Theme.warning();
                 };
 
@@ -595,7 +620,7 @@ class OverviewTab extends AbstractTab {
                 if (hasDoc) {
                     nameSpans.add(Span.styled(" " + TuiIcons.README, Style.EMPTY));
                 }
-                Line nameLine = Line.from(nameSpans);
+                Line nameLine = TuiHelper.fitLine(nameSpans, nameWidth);
                 String throughputDisplay = info.throughput;
                 if (throughputDisplay == null || "0.00".equals(throughputDisplay)) {
                     LinkedList<Long> tpHist = throughputHistory.get(info.pid);
@@ -627,8 +652,6 @@ class OverviewTab extends AbstractTab {
                         ? Line.from(Span.styled(String.format("%" + fw + "d", info.failed), failStyle),
                                 Span.styled(" (" + info.sinceLastFailed + ")", Theme.muted()))
                         : Line.from(Span.styled(String.format("%" + fw + "d", info.failed), failStyle));
-                totalColWidth = Math.max(totalColWidth, totalCell.width() + 1);
-                failColWidth = Math.max(failColWidth, failCell.width() + 1);
 
                 rows.add(Row.from(
                         Cell.from(info.pid),
@@ -660,19 +683,32 @@ class OverviewTab extends AbstractTab {
                 Cell.from(""));
 
         Constraint[] widths = new Constraint[] {
-                Constraint.length(8),
+                Constraint.length(fixed[0]),
                 Constraint.fill(),
-                Constraint.length(16),
-                Constraint.length(7),
-                Constraint.length(10),
-                Constraint.length(7),
-                Constraint.length(8),
-                Constraint.length(totalColWidth),
-                Constraint.length(failColWidth),
-                Constraint.min(20),
+                Constraint.length(fixed[1]),
+                Constraint.length(fixed[2]),
+                Constraint.length(fixed[3]),
+                Constraint.length(fixed[4]),
+                Constraint.length(fixed[5]),
+                Constraint.length(fixed[6]),
+                Constraint.length(fixed[7]),
+                // fixed, so NAME gets the rest of the width, as overviewNameWidth counts it
+                Constraint.length(fixed[8]),
                 Constraint.length(0)
         };
         return new TableSpec(rows, header, widths);
+    }
+
+    // the narrowest NAME before other columns give way: room for an icon and a name
+    static final int MIN_NAME_WIDTH = 20;
+
+    /** The width the NAME column gets beside the other columns: the table's borders, ">> " and 1 between columns. */
+    static int overviewNameWidth(int areaWidth, int[] fixed) {
+        int used = 2 + 3 + 10;
+        for (int w : fixed) {
+            used += w;
+        }
+        return Math.max(0, areaWidth - used);
     }
 
     /**
@@ -986,6 +1022,11 @@ class OverviewTab extends AbstractTab {
                 }
                 lines.add(Line.from(profileSpans));
             }
+            if (sel.reloadError != null) {
+                // the old routes keep running; the next save that loads reloads them
+                lines.add(Line.from(Span.styled(
+                        TuiHelper.truncate("Reload failed: " + sel.reloadError, inner.width()), Theme.error())));
+            }
             lines.add(Line.from(Span.raw("")));
             if (sel.javaVersion != null) {
                 lines.add(Line.from(
@@ -1035,12 +1076,12 @@ class OverviewTab extends AbstractTab {
                 lines.add(Line.from(Span.styled("Load (1m/5m/15m):", dim)));
                 if (cpu != null) {
                     lines.add(Line.from(
-                            Span.styled("CPU:  ", dim),
+                            Span.styled("CPU:      ", dim),
                             Span.raw(cpu.format("%.1f / %.1f / %.1f %%"))));
                 }
                 if (hasInfl) {
                     lines.add(Line.from(
-                            Span.styled("Infl: ", dim),
+                            Span.styled("Inflight: ", dim),
                             Span.raw(sel.inflightLoad01 + " / " + sel.inflightLoad05 + " / " + sel.inflightLoad15)));
                 }
             }
@@ -1446,6 +1487,9 @@ class OverviewTab extends AbstractTab {
             row.put("camelVersion", info.camelVersion);
             row.put("platform", info.platform);
             row.put("state", info.state);
+            if (info.reloadError != null) {
+                row.put("reloadError", info.reloadError);
+            }
             row.put("ready", info.ready);
             // info.uptime holds the process start time (epoch millis), which the screen shows as an elapsed
             // duration; export the same duration plus the raw values with unambiguous names so an AI reading

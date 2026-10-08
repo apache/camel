@@ -29,6 +29,8 @@ dev mode or explicit enablement, the tab is empty.
 The top panel shows aggregated statistics: total / OK / failed exchange counts, total sends,
 p50 / p95 / max elapsed times, and the time window of the visible entries.
 
+image::jbang/camel-tui-observe-activity.png[The Activity tab: the last exchanges of three Kafka routes and a file route, with the summary on top]
+
 Select an exchange to see its details below: exchange ID, route, elapsed time, the remote endpoints
 called during the exchange with individual timings, and exception details if the exchange failed.
 
@@ -129,6 +131,20 @@ Inspect tab):
 
 This combination of error details + visual diagram replay gives you a complete picture of
 what went wrong and why -- without leaving the terminal.
+
+Press *Shift+F8* on an error to ask the AI to fix it: the AI panel opens with the source line of the processor the
+error happened at, and its exception, the same question as *Shift+F8* on a failing line in the
+xref:camel-jbang-tui-source-editor.adoc#_fix_with_ai[Source editor].
+
+image::jbang/camel-tui-errors-fix-with-ai.png[Shift+F8 on an error writes the question for the AI]
+
+The Log tab has the same key. *Shift+F8* asks the AI about the ERROR on the screen: for a failed exchange, the step that
+failed comes from its Message History, so the AI is asked to fix that line of the route; for a `log` with
+`loggingLevel: ERROR`, the logger names the source line. Any other ERROR is explained, and fixed when the cause is in the
+project. When different ERRORs are on the screen, a list comes up to pick one, newest first; the same error repeated is
+listed once.
+
+image::jbang/camel-tui-log-fix-with-ai-pick.png[Shift+F8 in the Log tab with two different ERRORs on the screen]
 
 image::jbang/camel-tui-observe-error-diagram.png[A failed order: the path from checkout to payment-provider, and the onException handler that parked it]
 
@@ -250,12 +266,16 @@ When your integration includes a DataSource, two SQL tabs appear under More > Da
 * *SQL Trace* -- captures and displays SQL statements executed by your routes in real-time,
   showing query text, execution time, and the route that triggered them.
 
+image::jbang/camel-tui-observe-sql-query.png[A query in the SQL Query tab against the DataSource of the integration, with the key column marked]
+
 === Memory Leak Detection
 
 The Memory Leak tab (under More > JVM) uses Java Flight Recorder (JFR) to diagnose memory leaks
 in your running integration. It runs two sequential recordings and compares object retention trends,
 classifying each class as growing, stable, shrinking, new, or gone. This is lightweight and safe
 for production use.
+
+image::jbang/camel-tui-observe-memory-leak.png[Two recordings compared: byte arrays grow 133% and are flagged as a leak, with the line of code that allocates them]
 
 === JFR Runtime Profiling
 
@@ -290,6 +310,10 @@ again at any time to see updated statistics as more messages flow through the sy
 The Catalog tab (under More > Project) lets you browse the full Camel component catalog from within
 the TUI. Search for components by name, view their documentation, options, and supported headers --
 useful when building routes and you need to check what options a component supports.
+
+It lists Kamelets too: the project's own Kamelet files first, marked `project`, and the Kamelets of the catalog that the
+routes use (all of them with the full catalog, *a*). *f* cycles the kind, `kamelet` included, and *d* shows the
+properties of a Kamelet: required, type, default and description.
 
 == Keyboard Shortcuts
 

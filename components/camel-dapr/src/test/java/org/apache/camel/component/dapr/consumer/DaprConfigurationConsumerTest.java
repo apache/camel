@@ -23,6 +23,7 @@ import io.dapr.client.DaprClient;
 import io.dapr.client.domain.ConfigurationItem;
 import io.dapr.client.domain.SubscribeConfigurationRequest;
 import io.dapr.client.domain.SubscribeConfigurationResponse;
+import io.dapr.client.domain.UnsubscribeConfigurationResponse;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -39,12 +40,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
+import reactor.core.publisher.Mono;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -85,6 +89,8 @@ public class DaprConfigurationConsumerTest extends CamelTestSupport {
         final FluxSink<SubscribeConfigurationResponse>[] sinkHolder = new FluxSink[1];
         Flux<SubscribeConfigurationResponse> flux = Flux.create(sink -> sinkHolder[0] = sink);
         when(mockClient.subscribeConfiguration(any())).thenReturn(flux);
+        when(mockClient.unsubscribeConfiguration(anyString(), anyString()))
+                .thenReturn(Mono.just(new UnsubscribeConfigurationResponse(true, "")));
 
         consumer.doStart();
 
@@ -108,7 +114,8 @@ public class DaprConfigurationConsumerTest extends CamelTestSupport {
         assertEquals(mockBody, exchange.getIn().getBody());
 
         consumer.doStop();
-        verify(mockClient).unsubscribeConfiguration(any(), any());
-        verify(mockClient).close();
+        verify(mockClient).unsubscribeConfiguration("mySubId", "myStore");
+        // the client belongs to the endpoint: it is not closed
+        verify(mockClient, never()).close();
     }
 }

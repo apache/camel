@@ -36,6 +36,9 @@ updates:
       - dependency-name: "org.eclipse.m2e:lifecycle-mapping"
       # Managed manually - gencode version must be <= the lowest runtime version across Spring Boot and Quarkus
       - dependency-name: "com.google.protobuf:*"
+      # fugue 7 is compiled for Java 25 and breaks camel-jira on Java 17 and 21 (CAMEL-25401): revisit when Camel's minimum Java is 25
+      - dependency-name: "io.atlassian.fugue:fugue"
+        update-types: ["version-update:semver-major"]
     groups:
       Aliyun:
         patterns: ["com.aliyun:*","com.aliyun.openservices:*","com.aliyun.mns:*"]

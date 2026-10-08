@@ -52,3 +52,15 @@ $solar-fg: #657B83;
 #diagram-action  { color: #D33682; }
 #diagram-eip     { color: #6C71C4; }
 #diagram-default { color: #93A1A1; }
+
+/*
+ * Syntax tokens (optional), after Solarized: green keywords, cyan strings, blue functions, yellow types, magenta numbers.
+ * Lifted to a 3:1 contrast on this background: comment, string, keyword, type.
+ */
+#syntax-comment  { color: #7F8F8F; }
+#syntax-string   { color: #289B92; }
+#syntax-keyword  { color: #819400; }
+#syntax-function { color: #268BD2; }
+#syntax-type     { color: #B08500; }
+#syntax-constant { color: #D33682; }
+#syntax-text     { color: $solar-fg; }

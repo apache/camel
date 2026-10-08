@@ -275,6 +275,27 @@ class McpFacadeWriteFileTest {
     }
 
     @Test
+    void liveModeReturnsWhenTheUserTakesLongToDecideAndTheEditStaysInTheEditor(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), "- route: {}\n");
+        ConfirmingBridge bridge = new ConfirmingBridge(true) {
+            @Override
+            public McpFacade.ReplayOutcome replayFileWrite(McpFacade.FileWrite request) {
+                return McpFacade.ReplayOutcome.undecidedOutcome();
+            }
+        };
+        McpFacade facade = facade(dir, true, bridge);
+        facade.setWriteMode(McpFacade.WriteMode.LIVE);
+
+        JsonObject result = facade.writeFile("demo", "demo.camel.yaml", "- route:\n    id: typed\n", true);
+
+        assertEquals("pending", result.getString("status"));
+        assertTrue(result.getString("message").contains("End your turn"));
+        assertTrue(result.getString("message").contains("do not write demo.camel.yaml again"));
+        assertEquals(0, bridge.asked, "no confirm dialog: the edit is still in the editor");
+        assertEquals("- route: {}\n", Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8));
+    }
+
+    @Test
     void liveModeDefersOtherFilesWhileAnEditIsParkedInTheEditor(@TempDir Path dir) throws IOException {
         Files.writeString(dir.resolve("demo.camel.yaml"), "- route: {}\n");
         Files.writeString(dir.resolve("application.properties"), "a=1\n");

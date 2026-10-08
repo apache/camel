@@ -47,7 +47,7 @@ public class JGroupsConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jgroups:" + clusterName).to(mockEndpoint);
+                from("jgroups:" + clusterName + "?acceptAllObjects=true").to(mockEndpoint);
             }
         };
     }

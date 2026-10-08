@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.component.kubernetes.properties.ConfigMapPropertiesFunction;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PeriodTaskScheduler;
@@ -32,7 +33,6 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.vault.KubernetesConfigMapVaultConfiguration;
-import org.apache.camel.vault.KubernetesVaultConfiguration;
 
 @DevConsole(name = "kubernetes-configmaps", displayName = "Kubernetes Config Maps",
             description = "Kubernetes Cluster Config Maps")
@@ -80,10 +80,13 @@ public class ConfigmapsDevConsole extends AbstractDevConsole {
 
         if (propertiesFunction != null) {
             sb.append("Kubernetes Config maps Cluster:");
-            sb.append(String.format("%n    Master Url: %s", propertiesFunction.getClient().getMasterUrl()));
-            sb.append("\n    Login: OAuth Token");
-            KubernetesVaultConfiguration kubernetes
-                    = getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
+            KubernetesClient client = propertiesFunction.getClient();
+            if (client != null && client.getMasterUrl() != null) {
+                sb.append(String.format("%n    Master Url: %s", client.getMasterUrl().toString()));
+                sb.append("\n    Login: OAuth Token");
+            }
+            KubernetesConfigMapVaultConfiguration kubernetes
+                    = getCamelContext().getVaultConfiguration().getKubernetesConfigMapVaultConfiguration();
             if (kubernetes != null) {
                 sb.append(String.format("%n    Refresh Enabled: %s", kubernetes.isRefreshEnabled()));
             }
@@ -94,10 +97,12 @@ public class ConfigmapsDevConsole extends AbstractDevConsole {
             }
             List<String> sorted = new ArrayList<>();
             if (kubernetes != null) {
-                sb.append("\n\nSecrets in use:");
+                sb.append("\n\nConfig maps in use:");
 
-                sorted = new ArrayList<>(List.of(kubernetes.getSecrets().split(",")));
-                Collections.sort(sorted);
+                if (kubernetes.getConfigmaps() != null && !kubernetes.getConfigmaps().isEmpty()) {
+                    sorted = new ArrayList<>(List.of(kubernetes.getConfigmaps().split(",")));
+                    Collections.sort(sorted);
+                }
             }
 
             for (String sec : sorted) {
@@ -113,11 +118,15 @@ public class ConfigmapsDevConsole extends AbstractDevConsole {
         String masterUrl = null;
         String login = null;
         if (propertiesFunction != null) {
-            masterUrl = propertiesFunction.getClient().getMasterUrl().toString();
-            login = "OAuth Token";
+            KubernetesClient client = propertiesFunction.getClient();
+            if (client != null && client.getMasterUrl() != null) {
+                masterUrl = client.getMasterUrl().toString();
+                login = "OAuth Token";
+            }
         }
 
-        KubernetesVaultConfiguration kubernetes = getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
+        KubernetesConfigMapVaultConfiguration kubernetes
+                = getCamelContext().getVaultConfiguration().getKubernetesConfigMapVaultConfiguration();
         Boolean refreshEnabled = kubernetes != null ? kubernetes.isRefreshEnabled() : null;
 
         Long startCheckTimestamp = null;
@@ -128,10 +137,11 @@ public class ConfigmapsDevConsole extends AbstractDevConsole {
             }
         }
 
-        // NOTE: kubernetes is dereferenced unconditionally here, same as the original code -
-        // preserved as-is rather than fixed, since this migration is about the response contract
-        List<String> sorted = new ArrayList<>(List.of(kubernetes.getSecrets().split(",")));
-        Collections.sort(sorted);
+        List<String> sorted = new ArrayList<>();
+        if (kubernetes != null && kubernetes.getConfigmaps() != null && !kubernetes.getConfigmaps().isEmpty()) {
+            sorted.addAll(List.of(kubernetes.getConfigmaps().split(",")));
+            Collections.sort(sorted);
+        }
 
         List<ConfigMapEntry> configmaps = new ArrayList<>();
         for (String sec : sorted) {

@@ -56,29 +56,29 @@ public class ThriftMethodHandler implements MethodHandler {
                 exchange.getIn().setHeader(ThriftConstants.THRIFT_METHOD_NAME_HEADER, thisMethod.getName());
 
                 consumer.process(exchange, doneSync -> {
-                    Message message = null;
-                    Object response = null;
-                    Exception exception = exchange.getException();
-
-                    if (exception != null) {
-                        callback.onError(exception);
-                    }
-
-                    message = exchange.getMessage();
-
-                    if (message != null) {
-                        Class returnType = ThriftUtils.findMethodReturnType(args[args.length - 1].getClass(), "onComplete");
-                        if (returnType != null) {
-                            response = message.getBody(returnType);
-                        } else {
-                            callback.onError(new TException("Unable to detect method return type"));
+                    // complete the call exactly once: with the error of the exchange, or with its response
+                    try {
+                        Exception exception = exchange.getException();
+                        if (exception != null) {
+                            callback.onError(exception);
+                            return;
                         }
-                    } else {
-                        callback.onError(new TException("Unable process null message"));
-                    }
 
-                    consumer.releaseExchange(exchange, false);
-                    callback.onComplete(response);
+                        Message message = exchange.getMessage();
+                        if (message == null) {
+                            callback.onError(new TException("Unable process null message"));
+                            return;
+                        }
+
+                        Class returnType = ThriftUtils.findMethodReturnType(args[args.length - 1].getClass(), "onComplete");
+                        if (returnType == null) {
+                            callback.onError(new TException("Unable to detect method return type"));
+                            return;
+                        }
+                        callback.onComplete(message.getBody(returnType));
+                    } finally {
+                        consumer.releaseExchange(exchange, false);
+                    }
                 });
             } else {
                 Object responseBody = null;
@@ -88,6 +88,10 @@ public class ThriftMethodHandler implements MethodHandler {
                     exchange.getIn().setHeader(ThriftConstants.THRIFT_METHOD_NAME_HEADER, thisMethod.getName());
 
                     consumer.getProcessor().process(exchange);
+                    if (exchange.getException() != null) {
+                        // let the server send the error to the client (a declared exception as such)
+                        throw exchange.getException();
+                    }
                     responseBody = exchange.getIn().getBody(thisMethod.getReturnType());
                 } finally {
                     consumer.releaseExchange(exchange, false);

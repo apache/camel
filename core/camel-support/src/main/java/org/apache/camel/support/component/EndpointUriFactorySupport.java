@@ -16,7 +16,9 @@
  */
 package org.apache.camel.support.component;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
@@ -41,16 +43,18 @@ public abstract class EndpointUriFactorySupport implements EndpointUriFactory {
     }
 
     private static int indexOfPathParameter(String uri, String name) {
-        // skip the scheme
-        int idx = uri.indexOf(name, uri.indexOf(':') + 1);
-        while (idx != -1) {
+        // the last match after the scheme: the path parameters are built in the order of the syntax, so the values
+        // of those before this one are before its name, and may contain it as a word ({{name}}) (CAMEL-25383)
+        int scheme = uri.indexOf(':');
+        int idx = uri.lastIndexOf(name);
+        while (idx > scheme) {
             int end = idx + name.length();
             boolean start = idx == 0 || !Character.isLetterOrDigit(uri.charAt(idx - 1));
             boolean stop = end == uri.length() || !Character.isLetterOrDigit(uri.charAt(end));
             if (start && stop) {
                 return idx;
             }
-            idx = uri.indexOf(name, idx + 1);
+            idx = uri.lastIndexOf(name, idx - 1);
         }
         return -1;
     }
@@ -91,10 +95,28 @@ public abstract class EndpointUriFactorySupport implements EndpointUriFactory {
         return uri;
     }
 
+    /**
+     * A copy of the parameters to build the uri from: in their order when they have one (a {@link LinkedHashMap} such
+     * as the parameters of a route in the YAML DSL, which then keep the order they are written in), otherwise sorted.
+     */
+    protected static Map<String, Object> copyParameters(Map<String, Object> parameters) {
+        if (parameters instanceof SortedMap) {
+            // stay sorted, so buildQueryParameters also sorts the flattened multi value options (as before)
+            return new TreeMap<>(parameters);
+        }
+        if (isOrdered(parameters)) {
+            return new LinkedHashMap<>(parameters);
+        }
+        return new TreeMap<>(parameters);
+    }
+
+    private static boolean isOrdered(Map<?, ?> map) {
+        return map instanceof LinkedHashMap || map instanceof SortedMap;
+    }
+
     protected String buildQueryParameters(String uri, Map<String, Object> parameters, boolean encode) {
 
-        // we want sorted parameters
-        Map<String, Object> map = new TreeMap<>(parameters);
+        Map<String, Object> map = copyParameters(parameters);
 
         // automatic use RAW(value) for secret options
         for (String secretParameter : secretPropertyNames()) {
@@ -106,21 +128,26 @@ public abstract class EndpointUriFactorySupport implements EndpointUriFactory {
             }
         }
 
-        // flatten all multiValue=true maps into parameters with prefix
-        for (var multi : multiValuePrefixes().entrySet()) {
-            Object val = map.get(multi.getKey());
-            String prefix = multi.getValue();
-            if (val instanceof Map<?, ?> m) {
-                for (var k : m.keySet()) {
+        // flatten all multiValue=true maps into parameters with prefix, where the map option is
+        Map<String, String> prefixes = multiValuePrefixes();
+        if (!prefixes.isEmpty()) {
+            Map<String, Object> flat = map instanceof SortedMap ? new TreeMap<>() : new LinkedHashMap<>();
+            for (Map.Entry<String, Object> e : map.entrySet()) {
+                String prefix = prefixes.get(e.getKey());
+                if (prefix != null && e.getValue() instanceof Map<?, ?> m) {
                     // each entry in map becomes a new option with the prefix key
-                    String key = prefix + k;
-                    val = m.get(k);
-                    if (val != null) {
-                        map.put(key, val);
-                    }
+                    Map<String, Object> options = isOrdered(m) ? new LinkedHashMap<>() : new TreeMap<>();
+                    m.forEach((k, v) -> {
+                        if (v != null) {
+                            options.put(prefix + k, v);
+                        }
+                    });
+                    flat.putAll(options);
+                } else {
+                    flat.put(e.getKey(), e.getValue());
                 }
-                map.remove(multi.getKey());
             }
+            map = flat;
         }
 
         String query = URISupport.createQueryString(map, encode);

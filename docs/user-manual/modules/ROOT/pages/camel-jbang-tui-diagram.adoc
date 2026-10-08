@@ -95,6 +95,8 @@ routes grouped by what they do for the business, one box per group, so a project
 reads as a handful of boxes. The view reads the source files of the selected integration, not the
 running routes.
 
+image::jbang/camel-tui-diagram-architecture.png[The Architecture level after the AI overview: four capabilities of an order flow and how they talk]
+
 Each route has one role:
 
 * *route group* -- the routes that set `group` in the source. The source always wins, and these

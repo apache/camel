@@ -100,7 +100,7 @@ public class VertxWebsocketHost {
                     request.pause();
                 }
                 // upgrade
-                request.toWebSocket(toWebSocket -> {
+                request.toWebSocket().onComplete(toWebSocket -> {
                     if (toWebSocket.succeeded()) {
                         // resume the parsing
                         if (!parseEnded) {
@@ -200,7 +200,7 @@ public class VertxWebsocketHost {
             }
 
             CompletableFuture<Void> future = new CompletableFuture<>();
-            server.requestHandler(router).listen(hostKey.getPort(), hostKey.getHost(), result -> {
+            server.requestHandler(router).listen(hostKey.getPort(), hostKey.getHost()).onComplete(result -> {
                 if (!result.failed()) {
                     port = result.result().actualPort();
                     future.complete(null);
@@ -221,7 +221,7 @@ public class VertxWebsocketHost {
             LOG.info("Stopping server");
             try {
                 CompletableFuture<Void> future = new CompletableFuture<>();
-                server.close(result -> {
+                server.close().onComplete(result -> {
                     if (result.failed()) {
                         future.completeExceptionally(result.cause());
                         return;

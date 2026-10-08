@@ -67,7 +67,7 @@ public class DigitalSignatureEndpointUriFactory extends org.apache.camel.support
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(properties);
+        Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "cryptoOperation", null, true, copy);
         uri = buildPathParameter(syntax, uri, "name", null, true, copy);

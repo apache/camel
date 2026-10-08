@@ -17,10 +17,12 @@
 package org.apache.camel.telemetrydev;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -29,8 +31,11 @@ import org.apache.camel.telemetry.TagConstants;
 
 public class DevSpanAdapter implements Span {
 
-    private List<LogEntry> logEntries = new ArrayList<>();
-    private final Map<String, String> tags = new HashMap<>();
+    // ConcurrentHashMap: tags (including isDone) are written from exchange threads and read
+    // from the collector thread without explicit synchronization.
+    private final Map<String, String> tags = new ConcurrentHashMap<>();
+    // synchronizedList: log() is called from exchange threads; getLogEntries() copies under the lock.
+    private List<LogEntry> logEntries = Collections.synchronizedList(new ArrayList<>());
 
     public static long nowMicros() {
         return System.currentTimeMillis() * 1000;
@@ -47,7 +52,9 @@ public class DevSpanAdapter implements Span {
 
     @Override
     public void setComponent(String component) {
-        this.tags.put(TagConstants.COMPONENT, component);
+        if (component != null) {
+            this.tags.put(TagConstants.COMPONENT, component);
+        }
     }
 
     @Override
@@ -58,7 +65,9 @@ public class DevSpanAdapter implements Span {
     @JsonAnySetter
     @Override
     public void setTag(String key, String value) {
-        this.tags.put(key, value);
+        if (key != null && value != null) {
+            this.tags.put(key, value);
+        }
     }
 
     public String getTag(String key) {
@@ -71,11 +80,13 @@ public class DevSpanAdapter implements Span {
     }
 
     public List<LogEntry> getLogEntries() {
-        return new ArrayList<>(this.logEntries);
+        synchronized (logEntries) {
+            return new ArrayList<>(this.logEntries);
+        }
     }
 
     public void setLogEntries(List<LogEntry> logEntries) {
-        this.logEntries = logEntries;
+        this.logEntries = Collections.synchronizedList(new ArrayList<>(logEntries));
     }
 
     public static final class LogEntry {

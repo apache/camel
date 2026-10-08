@@ -19,6 +19,7 @@ package org.apache.camel.main;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -42,6 +43,7 @@ import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
 import org.apache.camel.impl.engine.PrototypeExchangeFactory;
 import org.apache.camel.impl.engine.PrototypeProcessorExchangeFactory;
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
@@ -77,6 +79,7 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -303,6 +306,20 @@ public final class DefaultConfigurationConfigurer {
                     config.getRoutesReloadDirectory(), config.isRoutesReloadDirectoryRecursive());
             reloader.setPattern(config.getRoutesReloadPattern());
             reloader.setRemoveAllRoutes(config.isRoutesReloadRemoveAllRoutes());
+            // the files that declare beans, so a bean is created again when its Java class changes
+            reloader.setBeanResources(() -> {
+                Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
+                if (model == null) {
+                    return null;
+                }
+                Set<Resource> answer = new LinkedHashSet<>();
+                for (BeanFactoryDefinition<?> bean : model.getCustomBeans()) {
+                    if (bean.getResource() != null) {
+                        answer.add(bean.getResource());
+                    }
+                }
+                return answer;
+            });
             camelContext.addService(reloader);
             // disable contentCache on resource-based components so that resource files (e.g. XSLT
             // stylesheets, templates) are reloaded live without restarting routes

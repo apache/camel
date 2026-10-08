@@ -83,13 +83,13 @@ public final class AuthoringTools {
     /** Registers the authoring tools; called once by the {@link ToolRegistry}. */
     static void register(Consumer<ToolDescriptor> registry) {
         registry.accept(tool("camel_catalog_doc",
-                "Catalog documentation of a component, data format, language, EIP, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI.")
+                "Catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI.")
                 .param("name", "string",
                         "Name, e.g. kafka, json (a data format by its YAML name or artifact), simple, timer, choice, split, Exchange",
                         false)
                 .param("endpoint", "string", "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092", false)
                 .param("kind", "string",
-                        "component, dataformat, language, eip, bean or api (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it; api is the Java API to call from a bean or script before writing it: Exchange, Message, CamelContext, Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter, or the variables of groovy, js, python, java scripts)",
+                        "component, dataformat, language, eip, kamelet, bean or api (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it; api is the Java API to call from a bean or script before writing it: Exchange, Message, CamelContext, Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter, or the variables of groovy, js, python, java scripts)",
                         false)
                 .param("includeOptions", "string",
                         "common (default: no deprecated or advanced), required, all or false", false)
@@ -97,9 +97,12 @@ public final class AuthoringTools {
                 .param("includeDoc", "boolean", "Include the full AsciiDoc page (default false)", false)
                 .param("docPage", "string", "simple doc sub-page to return as text (functions, operators, ognl, advanced)",
                         false)
-                .param("optionsFilter", "string", "Keyword to match in option names or descriptions", false)
+                .param("optionsFilter", "string",
+                        "Keyword to match in option names or descriptions; for an EIP whose own options do not match, the options of its elements are searched (nestedOptions)",
+                        false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
+                .deterministic(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogDocs.catalogDoc(ctx.catalog(), args.get("name"), args.get("endpoint"),
@@ -109,17 +112,18 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_catalog_find",
-                "Finds Camel components, data formats, languages and EIPs by a protocol, product, alias or other term "
+                "Finds Camel components, data formats, languages, EIPs and Kamelets by a protocol, product, alias or other term "
                                                    + "that is not the exact name (mqtt, s3, snowflake, csv, fan-out, dedup): best "
                                                    + "match first with title and description. camel_catalog_doc then gives the "
                                                    + "options of one.")
                 .param("term", "string", "What to look for, e.g. mqtt, s3, database, csv, fan-out", true)
                 .param("kind", "string",
-                        "component, dataformat, language, eip or bean (default: all); bean with an interface name such as AggregationStrategy lists the built-in implementations",
+                        "component, dataformat, language, eip, kamelet or bean (default: all); bean with an interface name such as AggregationStrategy lists the built-in implementations",
                         false)
                 .param("limit", "integer", "Maximum matches per kind (default 10)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
+                .deterministic(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogDocs.find(ctx.catalog(), args.get("term"), args.get("kind"),
@@ -141,6 +145,7 @@ public final class AuthoringTools {
                 .param("limit", "integer", "Maximum samples to return (default 2, max 5)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
+                .deterministic(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogSamples.sample(ctx.catalog(), args.get("kind"), args.get("name"),
@@ -157,6 +162,11 @@ public final class AuthoringTools {
                 .param("content", "string", "The source to validate", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
+                // the same content gets the same answer: a model that validates it again and again is stuck
+                // (CAMEL-25371). Not with a directory: the checks then read the other files, which a fix can change.
+                .deterministicWhen("content", "directory")
+                .repeatHint("The content is the same each time, so the answer is too: change the line the error names,"
+                            + " then validate the changed content, or write it with camel_write_file.")
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     String file = required(args, "file");
@@ -171,8 +181,16 @@ public final class AuthoringTools {
                             throw new ToolExecutionException("No such file in the directory: " + file);
                         }
                         content = read(path);
+                        return validate(ctx, dir, file, content).toJson();
                     }
-                    return validate(ctx, dir, file, content).toJson();
+                    JsonObject result = validate(ctx, dir, file, content);
+                    if (sameAsOnDisk(ctx, directory, file, content)) {
+                        // a model that meant to change the file validates the old version: say so (CAMEL-25371)
+                        result.put("sameAsFile", true);
+                        result.put("note", "This content is the same as " + file + " on disk: if you meant to change"
+                                           + " the file, that change is not in this content.");
+                    }
+                    return result.toJson();
                 }));
 
         registry.accept(tool("camel_get_files",
@@ -284,17 +302,18 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_get_log",
-                "Recent log records of a running integration, newest first, with optional filtering; a stack trace "
-                                              + "comes as one record with a detail block.")
+                "Recent log records of a running integration, newest first, with optional filtering; stack traces "
+                                              + "only with details.")
                 .param("name", "string", NAME_DESC, false)
                 .param("limit", "integer", "Maximum records to return (default 50)", false)
                 .param("filter", "string", "Case-insensitive substring filter on the message", false)
                 .param("level", "string", "Only this log level (INFO, WARN, ERROR, DEBUG, TRACE)", false)
+                .param("details", "boolean", "Include the stack traces (default false)", false)
                 .core(true)
                 .executor((ctx, args) -> {
                     RuntimeHelper.ProcessInfo p = selectProcess(ctx, args);
                     return LogFileReader.read(ctx.pid(), p != null ? p.name() : null, integer(args, "limit", 50),
-                            args.get("filter"), args.get("level")).toJson();
+                            args.get("filter"), args.get("level"), bool(args, "details", false)).toJson();
                 }));
 
         registry.accept(tool("camel_get_errors",
@@ -354,6 +373,7 @@ public final class AuthoringTools {
                 .param("error", "string", "The stack trace or error message", true)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
+                .deterministic(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return ErrorDiagnoser.diagnose(required(args, "error"), ctx.catalog()).toJson();
@@ -473,6 +493,17 @@ public final class AuthoringTools {
         return sb.toString();
     }
 
+    /** Where the shape of a Kamelet file is explained, said where an agent gets one wrong (CAMEL-25283). */
+    static final String KAMELET_GUIDE = "How to write a Kamelet (the file, and the source, sink and action kinds): "
+                                        + "camel_catalog_doc name=kamelet docPage=custom";
+
+    private static void putKameletGuide(JsonObject result, String file, List<String> errors) {
+        String name = file != null ? file.toLowerCase(Locale.ROOT) : "";
+        if (!errors.isEmpty() && (name.endsWith(".kamelet.yaml") || name.endsWith(".kamelet.yml"))) {
+            result.put("guide", KAMELET_GUIDE);
+        }
+    }
+
     private static String commaLines(String list) {
         return list == null ? null : list.replace(',', '\n');
     }
@@ -499,16 +530,31 @@ public final class AuthoringTools {
         result.put("valid", errors.isEmpty());
         result.put("file", file);
         result.put("errors", new JsonArray(errors));
+        putKameletGuide(result, file, errors);
+        putKameletNotes(result, file, content);
         // the problems whose fix is certain, as edits an agent can apply (camel_edit_file find/replace)
         JsonArray fixes = new JsonArray();
         String[] lines = content.split("\n", -1);
-        for (String error : errors) {
+        List<String> problems = new ArrayList<>(errors);
+        if (result.get("notes") instanceof JsonArray notes) {
+            for (Object note : notes) {
+                problems.add(String.valueOf(note));
+            }
+        }
+        for (String error : problems) {
             int line = lineOf(error);
             QuickFixes.Fix fix = line > 0 && line <= lines.length ? QuickFixes.fixFor(error, lines[line - 1]) : null;
             if (fix != null) {
                 JsonObject jo = new JsonObject();
                 jo.put("line", line);
-                jo.put("find", fix.oldText());
+                String find = fix.oldText();
+                if (fix.removesLine()) {
+                    // the line goes with its line break, and the key above it when it was its only item
+                    int[] range = QuickFixes.linesToRemove(List.of(lines), line - 1);
+                    find = String.join("\n", List.of(lines).subList(range[0], range[1] + 1))
+                           + (range[1] + 1 < lines.length ? "\n" : "");
+                }
+                jo.put("find", find);
                 jo.put("replace", fix.newText());
                 jo.put("fix", fix.label());
                 fixes.add(jo);
@@ -891,6 +937,20 @@ public final class AuthoringTools {
         return message != null ? message.replaceFirst("^Line \\d+: ", "") : "";
     }
 
+    /**
+     * What a Kamelet file does that works but is not right, which does not refuse a write: a camel: dependency its
+     * template does not use (CAMEL-25403).
+     */
+    private static void putKameletNotes(JsonObject result, String file, String content) {
+        String name = file != null ? file.toLowerCase(Locale.ROOT) : "";
+        if (name.endsWith(".kamelet.yaml") || name.endsWith(".kamelet.yml")) {
+            List<String> notes = KameletChecks.unusedDependencies(content);
+            if (!notes.isEmpty()) {
+                result.put("notes", new JsonArray(notes));
+            }
+        }
+    }
+
     /** Writes a file after validating it, as {@code camel_write_file} does; no confirmation is asked here. */
     public static JsonObject writeFile(ToolContext ctx, Path dir, String file, String content, boolean validate) {
         Path path = resolveFile(dir, file);
@@ -919,6 +979,7 @@ public final class AuthoringTools {
                 result.put("errors", new JsonArray(errors));
                 result.put("message", "The file was not written: the content has validation errors. Fix them and"
                                       + " call camel_write_file again.");
+                putKameletGuide(result, file, errors);
                 return result;
             }
         }
@@ -947,6 +1008,9 @@ public final class AuthoringTools {
         if (!problemsBefore.isEmpty()) {
             // written with problems the file already had: said, so they are not taken for fixed
             result.put("existingProblems", new JsonArray(problemsBefore));
+        }
+        if (validate) {
+            putKameletNotes(result, file, content);
         }
         if (watch) {
             JsonObject reload = ReloadOutcome.await(ctx.pid(), processName, sinceKey, RELOAD_WAIT_MILLIS);
@@ -1371,4 +1435,15 @@ public final class AuthoringTools {
         }
         return errors;
     }
+
+    /** Whether the content is exactly the file's content on disk; false when there is no such file. */
+    static boolean sameAsOnDisk(ToolContext ctx, String directory, String file, String content) {
+        try {
+            Path path = resolveFile(ctx.resolveDirectory(directory), file);
+            return Files.isRegularFile(path) && read(path).strip().equals(content.strip());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

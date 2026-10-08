@@ -22,7 +22,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -125,7 +127,15 @@ class SourceViewer {
         Set<Integer> scan(List<JsonObject> codeData);
     }
 
-    record JumpLink(String routeId, String filePath, int targetLine) {
+    /**
+     * A link on a line to where it leads; callersOf is the endpoint of a route sent to from more than one place, whose
+     * link opens a popup to choose one (CAMEL-25411), else null.
+     */
+    record JumpLink(String routeId, String filePath, int targetLine, String callersOf) {
+
+        JumpLink(String routeId, String filePath, int targetLine) {
+            this(routeId, filePath, targetLine, null);
+        }
     }
 
     /**
@@ -139,6 +149,12 @@ class SourceViewer {
     @FunctionalInterface
     interface LiveRunData {
         Map<Integer, LiveLine> lines(String filePath);
+    }
+
+    /** The last runtime failure of a line of a file, by its path and 0-based line: the exception, or null. */
+    @FunctionalInterface
+    interface LineFailures {
+        String lastFailure(String filePath, int line);
     }
 
     private boolean visible;
@@ -205,12 +221,21 @@ class SourceViewer {
     private AutocompletePopup autocompletePopup;
     private RefactorPopup refactorPopup;
     private boolean validateOnSave = true;
+    // the tree of the route the cursor is in, at the top right (Ctrl+T); the setting gives the default
+    private boolean routeTreeShown;
+    private final RouteTreePanel routeTree = new RouteTreePanel();
     private org.apache.camel.dsl.yaml.validator.YamlValidator yamlValidator;
     private PropertiesValidator propertiesValidator;
     private EndpointValidator endpointValidator;
     private EndpointValidator simpleValidator;
+    // the Kamelet checks of a YAML file (CAMEL-25411): its problems, and the notes that do not block a save
+    private EndpointValidator kameletValidator;
+    private EndpointValidator kameletNotes;
+    // the lines whose problem is a note, not an error: marked as a warning and counted apart (CAMEL-25411)
+    private Set<Integer> noteLines = Set.of();
     private EndpointValidator routeValidator;
     private LiveRunData liveRunData;
+    private LineFailures lineFailures;
     private Map<Integer, LiveLine> liveLines = Collections.emptyMap();
     private long liveLinesTime;
     private int liveTotalWidth;
@@ -238,6 +263,8 @@ class SourceViewer {
      */
     private Map<Integer, String> viewErrors = Collections.emptyMap();
     private boolean editInitialScroll;
+    /** The top line of the view when F4 was pressed, so the editor opens on the same screen; -1 when not known. */
+    private int editStartTop = -1;
     private long lastBackgroundValidationTime;
     private String lastBackgroundValidationContent;
     private static final long BACKGROUND_VALIDATION_INTERVAL_MS = 2000;
@@ -288,6 +315,14 @@ class SourceViewer {
         this.listItemNodeChecker = checker;
     }
 
+    void setRouteTreeShown(boolean routeTreeShown) {
+        this.routeTreeShown = routeTreeShown;
+    }
+
+    boolean isRouteTreeShown() {
+        return routeTreeShown;
+    }
+
     void setValidateOnSave(boolean validateOnSave) {
         this.validateOnSave = validateOnSave;
     }
@@ -305,6 +340,23 @@ class SourceViewer {
     }
 
     /**
+     * The Kamelet checks of a YAML file (CAMEL-25411): the shape of a Kamelet file, and the kamelet: endpoints of a
+     * route against the catalog and the project's own Kamelets. Their problems are marked and keep the file from being
+     * saved, as the other problems of a YAML file.
+     */
+    void setKameletValidator(EndpointValidator kameletValidator) {
+        this.kameletValidator = kameletValidator;
+    }
+
+    /**
+     * What a Kamelet file does that works but is not right (a camel: dependency its template does not use): marked and
+     * said when saved, but not blocking the save.
+     */
+    void setKameletNotes(EndpointValidator kameletNotes) {
+        this.kameletNotes = kameletNotes;
+    }
+
+    /**
      * The Camel checks of a Java or XML DSL route file (CAMEL-25208): its problems are marked on their lines while
      * editing. An XML file with problems is not saved, as a YAML file; a Java file is saved and the problems are said,
      * as a Java file is the application's code, and what the checks cannot know must never keep it from being saved.
@@ -315,6 +367,37 @@ class SourceViewer {
      */
     void setLiveRunData(LiveRunData liveRunData) {
         this.liveRunData = liveRunData;
+    }
+
+    void setLineFailures(LineFailures lineFailures) {
+        this.lineFailures = lineFailures;
+    }
+
+    /**
+     * The runtime failure of a 0-based line for fix with AI (Shift+F8): how many exchanges failed on the line in the
+     * live run data, and the exception of the last one when known; null when nothing failed on it, or when the file is
+     * edited and not saved (the live run data is of the saved file).
+     */
+    String runtimeFailure(int row) {
+        if (!failsAtRuntime(row)) {
+            return null;
+        }
+        LiveLine live = liveLines().get(row);
+        String answer = live.failed() + (live.failed() == 1 ? " exchange" : " exchanges") + " failed on this line";
+        String last = lineFailures != null && loadedFilePath != null ? lineFailures.lastFailure(loadedFilePath, row) : null;
+        return last != null ? answer + ", the last with " + last : answer;
+    }
+
+    /**
+     * Whether processors on a 0-based line failed in the live run data, while the file is not edited (cheap: the hint
+     * of each frame asks it; the exception is only read on Shift+F8).
+     */
+    private boolean failsAtRuntime(int row) {
+        if (dirty || row < 0) {
+            return false;
+        }
+        LiveLine live = liveLines().get(row);
+        return live != null && live.failed() > 0;
     }
 
     /**
@@ -483,6 +566,9 @@ class SourceViewer {
         propertiesValidator = null;
         endpointValidator = null;
         simpleValidator = null;
+        kameletValidator = null;
+        kameletNotes = null;
+        noteLines = Set.of();
         routeValidator = null;
         uriCompletion = null;
         simpleCompletion = null;
@@ -528,6 +614,9 @@ class SourceViewer {
         propertiesValidator = null;
         endpointValidator = null;
         simpleValidator = null;
+        kameletValidator = null;
+        kameletNotes = null;
+        noteLines = Set.of();
         routeValidator = null;
         uriCompletion = null;
         simpleCompletion = null;
@@ -546,6 +635,11 @@ class SourceViewer {
 
     boolean isDirty() {
         return dirty;
+    }
+
+    /** Whether the text differs from what was last loaded or saved. */
+    private boolean changedSinceSave() {
+        return originalEditText == null || !originalEditText.equals(editState.text());
     }
 
     /** Package-private for tests that drive the edit buffer directly. */
@@ -710,6 +804,10 @@ class SourceViewer {
         if (!visible) {
             return false;
         }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('t') && !markdownMode) {
+            routeTreeShown = !routeTreeShown;
+            return true;
+        }
         if (editMode) {
             return handleEditKeyEvent(ke);
         }
@@ -738,6 +836,11 @@ class SourceViewer {
         }
         if (ke.isKey(KeyCode.F9) && !ke.hasShift() && !viewErrors.isEmpty()) {
             goToNextProblem(viewErrors, selectedLine);
+            return true;
+        }
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            // fix with AI: the problem of the selected line, or what fails on it at runtime
+            askAiToFix();
             return true;
         }
         if (isMarkdownFile && ke.isChar(' ')) {
@@ -887,7 +990,15 @@ class SourceViewer {
 
     private boolean handleEditKeyEvent(KeyEvent ke) {
         if (validationErrors != null) {
-            if (ke.isCancel() || ke.isKey(KeyCode.ENTER)) {
+            if (ke.isKey(KeyCode.F9) && ke.hasShift()) {
+                // the fix the popup offers: go to its line and apply it, as Shift+F9 does there
+                int row = popupFixRow();
+                if (row >= 0) {
+                    validationErrors = null;
+                    SourceEditorNavigation.positionCursor(editState, row, 0);
+                    applyQuickFix();
+                }
+            } else if (ke.isCancel() || ke.isKey(KeyCode.ENTER)) {
                 validationErrors = null;
             } else if (ke.isUp()) {
                 validationErrorScroll = Math.max(0, validationErrorScroll - 1);
@@ -944,7 +1055,8 @@ class SourceViewer {
         }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('z') && !ke.hasShift()) {
             if (editHistory.undo(editState)) {
-                dirty = true;
+                // undone back to the saved text: not modified any more
+                dirty = changedSinceSave();
                 lineStatuses = null;
                 refreshEditFindMatches();
             }
@@ -952,7 +1064,7 @@ class SourceViewer {
         }
         if (ke.hasCtrl() && (ke.isCharIgnoreCase('y') || (ke.isCharIgnoreCase('z') && ke.hasShift()))) {
             if (editHistory.redo(editState)) {
-                dirty = true;
+                dirty = changedSinceSave();
                 lineStatuses = null;
                 refreshEditFindMatches();
             }
@@ -1134,6 +1246,7 @@ class SourceViewer {
         }
         editState.moveCursorToLineStart();
         editInitialScroll = true;
+        editStartTop = markdownMode ? -1 : scrollY;
         markdownModeBeforeEdit = markdownMode;
         markdownMode = false;
         quickDocEnabled = false;
@@ -1206,6 +1319,8 @@ class SourceViewer {
 
     private void exitEditMode() {
         boolean wasEditing = editMode;
+        int cursorRow = editState.cursorRow();
+        int top = editState.scrollRow();
         editMode = false;
         editState.clear();
         editHistory.clear();
@@ -1223,6 +1338,29 @@ class SourceViewer {
             markdownMode = markdownModeBeforeEdit;
         }
         markdownModeBeforeEdit = false;
+        editStartTop = -1;
+        if (wasEditing) {
+            keepEditorPosition(cursorRow, top);
+        }
+    }
+
+    /** The top line the editor opens on: the top line of the view, moved only as far as the cursor must stay seen. */
+    static int editorTopKeepingCursor(int viewTop, int cursorRow, int viewportHeight) {
+        int top = Math.min(Math.max(0, viewTop), cursorRow);
+        return Math.max(top, cursorRow - Math.max(1, viewportHeight) + 1);
+    }
+
+    /**
+     * The view continues where the editor was: the cursor line is selected and the same line is at the top, so leaving
+     * the editor does not move the code on the screen.
+     */
+    private void keepEditorPosition(int cursorRow, int top) {
+        if (lines.isEmpty()) {
+            return;
+        }
+        selectedLine = Math.min(Math.max(0, cursorRow), lines.size() - 1);
+        scrollY = Math.min(Math.max(0, top), selectedLine);
+        pendingScroll = false;
     }
 
     private boolean isPropertiesFile() {
@@ -1733,7 +1871,7 @@ class SourceViewer {
                 List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
                 if (items != null && !items.isEmpty()) {
                     autocompletePopup = new AutocompletePopup(items, filter, filter);
-                    autocompletePopup.setTitlePrefix(ctx.component() + " options");
+                    autocompletePopup.setTitlePrefix(optionsTitle(ctx.component(), ctx.uri()));
                 }
             }
             return;
@@ -1923,13 +2061,18 @@ class SourceViewer {
             }
             Files.writeString(editableFile, content, StandardCharsets.UTF_8);
             dirty = false;
+            originalEditText = content;
             Path path = editableFile;
             boolean restoreMarkdownMode = markdownModeBeforeEdit;
+            int cursorRow = editState.cursorRow();
+            int top = editState.scrollRow();
             notifySaved(editableFile);
             editMode = false;
             editState.clear();
             markdownModeBeforeEdit = false;
+            editStartTop = -1;
             loadFile(path);
+            keepEditorPosition(cursorRow, top);
             if (isMarkdownFile) {
                 markdownMode = restoreMarkdownMode;
             }
@@ -1975,10 +2118,21 @@ class SourceViewer {
                     msgs.addAll(simpleErrors);
                 }
             }
+            addAll(msgs, kameletValidator, content);
+            noteLines = Set.of();
             if (!msgs.isEmpty()) {
                 validationErrors = msgs;
                 validationErrorScroll = 0;
                 inlineErrors = buildInlineErrors(msgs, content);
+                return;
+            }
+            List<String> notes = new ArrayList<>();
+            addAll(notes, kameletNotes, content);
+            if (!notes.isEmpty()) {
+                // marked, and said when saved, but not blocking the save
+                routeProblems = notes;
+                inlineErrors = buildInlineErrors(notes, content);
+                noteLines = new HashSet<>(inlineErrors.keySet());
                 return;
             }
         } else if (validateOnSave && isPropertiesFile() && propertiesValidator != null) {
@@ -2017,6 +2171,18 @@ class SourceViewer {
         }
     }
 
+    /** The first line with a problem that has a fix, for the popup of a save it blocked; -1 for none. */
+    private int popupFixRow() {
+        for (Map.Entry<Integer, String> e : new java.util.TreeMap<>(visibleInlineErrors()).entrySet()) {
+            int row = e.getKey();
+            if (row >= 0 && row < editState.lineCount()
+                    && QuickFixes.fixFor(e.getValue(), editState.getLine(row)) != null) {
+                return row;
+            }
+        }
+        return -1;
+    }
+
     /** The fix of the problem on the line of the cursor, when the problem says it; null otherwise. */
     private QuickFixes.Fix cursorFix() {
         int row = editState.cursorRow();
@@ -2025,14 +2191,24 @@ class SourceViewer {
     }
 
     /**
-     * Asks the AI to fix the problem of the cursor line (Shift+F8): the file is saved as it is in the editor, which the
-     * AI is about to change, edit mode left so the editor shows what the AI sees, and the AI panel opened with the
-     * question in its input, for the user to send with Enter or change first.
+     * Asks the AI to fix the problem of the cursor line (Shift+F8), or when it has none, the line whose processors fail
+     * at runtime: the file is saved as it is in the editor, which the AI is about to change, edit mode left so the
+     * editor shows what the AI sees, and the AI panel opened with the question in its input, for the user to send with
+     * Enter or change first.
      */
     private void askAiToFix() {
+        if (askAi == null || editableFile == null) {
+            return;
+        }
+        if (!editMode) {
+            askAiToFixInView();
+            return;
+        }
         int row = editState.cursorRow();
         String problem = visibleInlineErrors().get(row);
-        if (askAi == null || editableFile == null || problem == null) {
+        // a runtime failure is only known for the saved file (null while dirty), so it needs no save
+        String failure = problem == null ? runtimeFailure(row) : null;
+        if (problem == null && failure == null) {
             return;
         }
         String lineText = editState.getLine(row);
@@ -2049,7 +2225,52 @@ class SourceViewer {
         exitEditMode();
         loadFile(file);
         goToLine(row);
-        askAi.fixProblem(file, row + 1, problem, lineText);
+        if (problem != null) {
+            askAi.fixProblem(file, row + 1, problem, lineText);
+        } else {
+            askAi.fixFailure(file, row + 1, failure, lineText);
+        }
+    }
+
+    /**
+     * Shift+F8 in the view, as in the editor: the problem of the selected line, or else its runtime failure, while the
+     * view shows the file's own source (not the route converted to another DSL).
+     */
+    private void askAiToFixInView() {
+        int row = selectedLine;
+        if (row < 0 || row >= lines.size() || !showsOwnSource()) {
+            return;
+        }
+        // the view renders the lines (line numbers, live data), so the text comes from the file, which the view shows
+        String lineText = RuntimeFailures.lineText(editableFile, row);
+        String problem = viewErrors.get(row);
+        if (problem != null) {
+            askAi.fixProblem(editableFile, row + 1, problem, lineText);
+            return;
+        }
+        String failure = runtimeFailure(row);
+        if (failure != null) {
+            askAi.fixFailure(editableFile, row + 1, failure, lineText);
+        }
+    }
+
+    /** Whether the view shows the file's own source, and not its route converted to another DSL (Space). */
+    private boolean showsOwnSource() {
+        return !markdownMode && (currentFormat == null || currentFormat.equals(originalFormat));
+    }
+
+    /**
+     * Whether the view shows the fix with AI hint (Shift+F8) for the selected line: the Source tab puts it with the
+     * global F-keys.
+     */
+    boolean showsFixWithAiHint() {
+        return visible && !editMode && showsOwnSource() && canAskAiToFix(selectedLine, viewErrors);
+    }
+
+    /** Whether Shift+F8 (fix with AI) has something to ask about on a 0-based line: a problem, or a runtime failure. */
+    private boolean canAskAiToFix(int row, Map<Integer, String> problems) {
+        return askAi != null && editableFile != null && row >= 0
+                && (problems.containsKey(row) || failsAtRuntime(row));
     }
 
     /** Applies the fix of the problem on the line of the cursor (Shift+F9), and checks the content again right away. */
@@ -2063,6 +2284,19 @@ class SourceViewer {
         String line = editState.getLine(row);
         String fixed = fix.apply(line);
         if (fixed == null) {
+            return;
+        }
+        if (fix.removesLine()) {
+            // an unused dependency of a Kamelet: the line goes, as with Ctrl+K, and the dependencies: key above it
+            // when it was the last one
+            int[] range = QuickFixes.linesToRemove(editLines(), row);
+            List<String> kept = new ArrayList<>(editLines());
+            kept.subList(range[0], range[1] + 1).clear();
+            applyBlockEdit(new YamlBlockEditor.EditResult(kept, Math.min(range[0], Math.max(0, kept.size() - 1)), 0));
+            dirty = true;
+            lineStatuses = null;
+            lastBackgroundValidationTime = 0;
+            notifySave("Fixed: " + fix.label(), false);
             return;
         }
         recordEditChange();
@@ -2125,6 +2359,7 @@ class SourceViewer {
     /** The problems the checks of the file type (Camel YAML, properties, Java or XML routes) find in the content. */
     private List<String> validateContent(String content) {
         List<String> msgs = new ArrayList<>();
+        noteLines = Set.of();
         if (isCamelYamlFile()) {
             if (endpointValidator != null) {
                 List<String> endpointErrors = endpointValidator.validate(content);
@@ -2138,6 +2373,18 @@ class SourceViewer {
                     msgs.addAll(simpleErrors);
                 }
             }
+            addAll(msgs, kameletValidator, content);
+            List<String> notes = new ArrayList<>();
+            addAll(notes, kameletNotes, content);
+            if (!notes.isEmpty()) {
+                // a line with an error is marked as an error
+                Set<Integer> lines = new HashSet<>(buildInlineErrors(notes, content).keySet());
+                if (!msgs.isEmpty()) {
+                    lines.removeAll(buildInlineErrors(msgs, content).keySet());
+                }
+                noteLines = lines;
+                msgs.addAll(notes);
+            }
         } else if (isPropertiesFile() && propertiesValidator != null) {
             msgs.addAll(validateProperties(content));
         } else if (routeValidator != null) {
@@ -2147,6 +2394,53 @@ class SourceViewer {
             }
         }
         return msgs;
+    }
+
+    /**
+     * The title of the options popup of an endpoint: the component, or for a kamelet: endpoint the Kamelet it names,
+     * whose properties the list starts with (CAMEL-25411).
+     */
+    static String optionsTitle(String component, String uri) {
+        if ("kamelet".equals(component) && uri != null && uri.startsWith("kamelet:")) {
+            String name = uri.substring("kamelet:".length()).split("[?/]", 2)[0].trim();
+            if (!name.isEmpty()) {
+                return name + " options";
+            }
+        }
+        return component + " options";
+    }
+
+    /** The title spans counting the problems of the lines: the errors, and apart from them the notes. */
+    private List<Span> problemCounts(Map<Integer, String> problems, Style errorStyle) {
+        List<Span> spans = new ArrayList<>();
+        int notes = 0;
+        for (Integer line : problems.keySet()) {
+            if (noteLines.contains(line)) {
+                notes++;
+            }
+        }
+        int errors = problems.size() - notes;
+        if (errors > 0) {
+            spans.add(Span.styled(" errors: " + errors + " ", errorStyle));
+        }
+        if (notes > 0) {
+            spans.add(Span.styled(" notes: " + notes + " ", Theme.warning()));
+        }
+        return spans;
+    }
+
+    /** Package-private for tests: the lines, from 0, whose problem is a note. */
+    Set<Integer> noteLines() {
+        return noteLines;
+    }
+
+    private static void addAll(List<String> msgs, EndpointValidator validator, String content) {
+        if (validator != null) {
+            List<String> found = validator.validate(content);
+            if (found != null) {
+                msgs.addAll(found);
+            }
+        }
     }
 
     /** The problems of the file just loaded, by line; none when the checks fail or do not apply. */
@@ -2318,6 +2612,23 @@ class SourceViewer {
     }
 
     void render(Frame frame, Rect area) {
+        renderContent(frame, area);
+        if (routeTreeShown && !markdownMode && !diffOverlay) {
+            if (editMode) {
+                List<String> text = Arrays.asList(editState.text().split("\n", -1));
+                String name = editableFile != null ? editableFile.getFileName().toString() : title;
+                routeTree.render(frame, area, text, name, editState.cursorRow());
+            } else {
+                String name = currentRouteId != null ? "route." + currentFormat : title;
+                // the code without the line numbers of the view
+                List<String> code = codeData != null
+                        ? codeData.stream().map(c -> c.getStringOrDefault("code", "")).toList() : List.of();
+                routeTree.render(frame, area, code, name, selectedLine);
+            }
+        }
+    }
+
+    private void renderContent(Frame frame, Rect area) {
         if (editMode) {
             renderEditMode(frame, area);
             return;
@@ -2501,12 +2812,15 @@ class SourceViewer {
             String problem = viewErrors.get(selectedLine);
             if (problem != null) {
                 // the problem of the line goes before its documentation, as the Error panel of the editor shows it
-                int remaining = Math.max(0, viewDocArea.width() - " Error ".length() - 3);
+                boolean note = noteLines.contains(selectedLine);
+                Style problemStyle = note ? Theme.warning() : Theme.error();
+                String kind = note ? " Note " : " Error ";
+                int remaining = Math.max(0, viewDocArea.width() - kind.length() - 3);
                 docLines.add(Line.from(
-                        Span.styled("───", Theme.error()),
-                        Span.styled(" Error ", Theme.error().bold()),
-                        Span.styled("─".repeat(remaining), Theme.error())));
-                docLines.add(Line.from(Span.styled(problem, Theme.error())));
+                        Span.styled("───", problemStyle),
+                        Span.styled(kind, problemStyle.bold()),
+                        Span.styled("─".repeat(remaining), problemStyle)));
+                docLines.add(Line.from(Span.styled(problem, problemStyle)));
                 docLines.add(Line.from(Span.styled("F4 edit   F9 next problem", Style.EMPTY.dim())));
             } else if (titleText != null) {
                 String prefix = "─── ";
@@ -2551,7 +2865,7 @@ class SourceViewer {
         if (!diffOverlay && !visibleErrors.isEmpty()) {
             // a block has one title at the top: the error count goes on the line of the file name, not instead of it
             Style errorStyle = Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
-            titleSpans.add(Span.styled(" errors: " + visibleErrors.size() + " ", errorStyle));
+            titleSpans.addAll(problemCounts(visibleErrors, errorStyle));
         }
         Title posTitle;
         if (diffOverlay) {
@@ -2626,14 +2940,19 @@ class SourceViewer {
                 .showLineNumbers(!plainMode)
                 .lineNumberStyle(Style.EMPTY.dim())
                 .build();
-        // on first render, position cursor at 2/3 of viewport before TextArea renders
+        // on first render, keep the top line of the view (F4), else position the cursor at 2/3 of the viewport
         if (editInitialScroll) {
             editInitialScroll = false;
             int viewportH = textAreaRect.height();
-            int twoThirds = viewportH * 2 / 3;
-            int targetScroll = Math.max(0, editState.cursorRow() - twoThirds);
-            if (targetScroll > 0) {
-                editState.scrollDown(targetScroll, viewportH);
+            int targetScroll = editStartTop >= 0
+                    ? editorTopKeepingCursor(editStartTop, editState.cursorRow(), viewportH)
+                    : Math.max(0, editState.cursorRow() - viewportH * 2 / 3);
+            editStartTop = -1;
+            int delta = targetScroll - editState.scrollRow();
+            if (delta > 0) {
+                editState.scrollDown(delta, viewportH);
+            } else if (delta < 0) {
+                editState.scrollUp(-delta);
             }
         }
 
@@ -2700,8 +3019,11 @@ class SourceViewer {
             for (int r = 0; r < editorArea.height(); r++) {
                 int lineIdx = editState.scrollRow() + r;
                 if (visibleErrors.containsKey(lineIdx)) {
+                    // a note on dark amber, an error on dark red
                     Style errorBg = Style.EMPTY.fg(dev.tamboui.style.Color.WHITE)
-                            .bg(dev.tamboui.style.Color.rgb(0x8B, 0x00, 0x00));
+                            .bg(noteLines.contains(lineIdx)
+                                    ? dev.tamboui.style.Color.rgb(0x80, 0x60, 0x00)
+                                    : dev.tamboui.style.Color.rgb(0x8B, 0x00, 0x00));
                     int screenY = editorArea.top() + r;
                     for (int x = textAreaRect.left(); x < textAreaRect.left() + gutterWidth; x++) {
                         dev.tamboui.buffer.Cell cell = frame.buffer().get(x, screenY);
@@ -2718,7 +3040,7 @@ class SourceViewer {
             List<Line> docLines = new ArrayList<>();
             String titleText = null;
             if (cursorError != null) {
-                titleText = "Error";
+                titleText = noteLines.contains(editState.cursorRow()) ? "Note" : "Error";
             } else if (editDocEntries != null && !editDocEntries.isEmpty()) {
                 titleText = editDocEntries.get(0).title();
             }
@@ -2726,7 +3048,9 @@ class SourceViewer {
                 String prefix = "─── ";
                 String suffix = " ";
                 int remaining = Math.max(0, docArea.width() - prefix.length() - titleText.length() - suffix.length());
-                Style errorDim = Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
+                Style errorDim = noteLines.contains(editState.cursorRow())
+                        ? Theme.warning()
+                        : Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
                 docLines.add(Line.from(
                         Span.styled(prefix, errorDim),
                         Span.styled(titleText, errorDim.bold()),
@@ -2855,7 +3179,15 @@ class SourceViewer {
             wrapText(msg, innerW, allLines);
         }
         allLines.add(Line.empty());
-        allLines.add(TuiHelper.hintLine("Esc", "close"));
+        int fixRow = popupFixRow();
+        if (fixRow >= 0) {
+            // the fix the editor knows, offered here too: the panel at the bottom says it only after the popup
+            QuickFixes.Fix fix = QuickFixes.fixFor(visibleInlineErrors().get(fixRow), editState.getLine(fixRow));
+            allLines.add(TuiHelper.hintLine("Shift+F9", "fix line " + (fixRow + 1) + ": " + fix.label(),
+                    "Esc", "close"));
+        } else {
+            allLines.add(TuiHelper.hintLine("Esc", "close"));
+        }
 
         int contentH = allLines.size();
         int popupH = Math.min(contentH + 2, area.height() - 4);
@@ -2947,7 +3279,7 @@ class SourceViewer {
             if (cursorFix() != null) {
                 TuiHelper.hint(spans, "Shift+F9", "fix");
             }
-            if (askAi != null && visibleInlineErrors().containsKey(editState.cursorRow())) {
+            if (canAskAiToFix(editState.cursorRow(), visibleInlineErrors())) {
                 TuiHelper.hint(spans, "Shift+F8", "fix with AI");
             }
             if (isCamelYamlFile()) {
@@ -3564,9 +3896,10 @@ class SourceViewer {
         }
         if (currentRouteId == null) {
             if (!viewErrors.isEmpty()) {
-                return Title.from(Line.from(
-                        Span.styled(" Source [" + info + "] ", ts),
-                        Span.styled(" errors: " + viewErrors.size() + " ", Theme.error())));
+                List<Span> spans = new ArrayList<>();
+                spans.add(Span.styled(" Source [" + info + "] ", ts));
+                spans.addAll(problemCounts(viewErrors, Theme.error()));
+                return Title.from(Line.from(spans));
             }
             return Title.from(Span.styled(" Source [" + info + "] ", ts));
         }
@@ -3767,7 +4100,8 @@ class SourceViewer {
             spans.add(Span.styled(">> ", focused ? Theme.label().bold() : Theme.label().dim()));
             if (!prefix.isEmpty()) {
                 Style numberStyle = viewErrors.containsKey(lineIndex)
-                        ? Theme.error().bold() : focused ? Theme.label().bold() : Theme.label().dim();
+                        ? (noteLines.contains(lineIndex) ? Theme.warning().bold() : Theme.error().bold())
+                        : focused ? Theme.label().bold() : Theme.label().dim();
                 spans.add(Span.styled(prefix, numberStyle.patch(selBg)));
             }
             addLiveColumn(spans, lineIndex, selBg);
@@ -3776,7 +4110,9 @@ class SourceViewer {
             }
         } else {
             if (viewErrors.containsKey(lineIndex)) {
-                spans.add(Span.styled(" ✗ ", Theme.error().bold()));
+                spans.add(noteLines.contains(lineIndex)
+                        ? Span.styled(" ⚠ ", Theme.warning().bold())
+                        : Span.styled(" ✗ ", Theme.error().bold()));
             } else {
                 spans.add(isDeprecated
                         ? Span.styled(" ⚠ ", Theme.warning())

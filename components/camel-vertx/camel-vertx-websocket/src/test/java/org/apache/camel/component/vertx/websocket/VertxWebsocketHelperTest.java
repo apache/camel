@@ -19,6 +19,7 @@ package org.apache.camel.component.vertx.websocket;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxWebsocketHelperTest {
@@ -105,5 +106,75 @@ public class VertxWebsocketHelperTest {
         String hostPath = null;
         String targetPath = null;
         assertFalse(VertxWebsocketHelper.webSocketHostPathMatches(hostPath, targetPath));
+    }
+
+    @Test
+    void webSocketHostPathWithDotSegmentsMatches() {
+        String hostPath = "/foo/bar/cheese/wine";
+        String targetPath = "/foo/./bar/beer/../cheese/wine";
+        assertTrue(VertxWebsocketHelper.webSocketHostPathMatches(hostPath, targetPath));
+    }
+
+    @Test
+    void webSocketHostPathWithTrailingDotSegmentMatches() {
+        String hostPath = "/foo/bar/cheese/wine";
+        String targetPath = "/foo/bar/cheese/wine/beer/..";
+        assertTrue(VertxWebsocketHelper.webSocketHostPathMatches(hostPath, targetPath));
+    }
+
+    @Test
+    void webSocketHostPathWithDotSegmentsNotMatches() {
+        String hostPath = "/foo/bar/cheese/wine";
+        String targetPath = "/foo/bar/cheese/wine/../beer";
+        assertFalse(VertxWebsocketHelper.webSocketHostPathMatches(hostPath, targetPath));
+    }
+
+    @Test
+    void webSocketHostWildcardPathWithDotSegmentsNotMatches() {
+        String hostPath = "/foo/bar*";
+        String targetPath = "/foo/bar/../../cheese/wine";
+        assertFalse(VertxWebsocketHelper.webSocketHostPathMatches(hostPath, targetPath));
+    }
+
+    @Test
+    void webSocketHostPathWithEncodedDotSegmentsNotMatches() {
+        String hostPath = "/foo/bar*";
+        String targetPath = "/foo/bar/%2E%2E/%2e%2e/cheese/wine";
+        assertFalse(VertxWebsocketHelper.webSocketHostPathMatches(hostPath, targetPath));
+    }
+
+    @Test
+    void webSocketHostPathWithEncodedUnreservedCharactersMatches() {
+        String hostPath = "/foo/bar/cheese/wine";
+        String targetPath = "/foo/%62%61%72/cheese/wine";
+        assertTrue(VertxWebsocketHelper.webSocketHostPathMatches(hostPath, targetPath));
+    }
+
+    @Test
+    void webSocketHostPathWithEncodedReservedCharactersNotMatches() {
+        String hostPath = "/foo/bar/cheese/wine";
+        String targetPath = "/foo/bar%2Fcheese/wine";
+        assertFalse(VertxWebsocketHelper.webSocketHostPathMatches(hostPath, targetPath));
+    }
+
+    @Test
+    void webSocketHostPathWithoutLeadingSlashMatches() {
+        String hostPath = "/foo/bar/cheese/wine";
+        String targetPath = "foo/bar/cheese/wine";
+        assertTrue(VertxWebsocketHelper.webSocketHostPathMatches(hostPath, targetPath));
+    }
+
+    @Test
+    void webSocketHostPathWithMultipleSlashesMatches() {
+        String hostPath = "/foo/bar/cheese/wine";
+        String targetPath = "//foo///bar/cheese//wine";
+        assertTrue(VertxWebsocketHelper.webSocketHostPathMatches(hostPath, targetPath));
+    }
+
+    @Test
+    void webSocketHostPathWithInvalidEscapeSequenceThrows() {
+        String hostPath = "/foo/bar";
+        assertThrows(IllegalArgumentException.class,
+                () -> VertxWebsocketHelper.webSocketHostPathMatches(hostPath, "/foo/%zz"));
     }
 }

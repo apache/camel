@@ -13,6 +13,31 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.18.4 to 4.18.5
 
+=== camel-netty-http - the roles of a security constraint are matched by role name
+
+The roles of a `SecurityConstraintMapping` inclusion are a comma-separated list of role names, and an authenticated
+user is now accepted only when one of their roles is equal to one of those names. The comparison is case-sensitive,
+whitespace around each name and blank entries are ignored, and a value of `*` still accepts any role. A roles value
+that uses another separator, such as `admin;guest` or `admin guest`, must be changed to `admin,guest`.
+
+=== camel-azure-eventhubs
+
+The producer now leaves the Camel-internal headers (`Camel*`) out of the `EventData` application properties by
+default. The 4.18.4 upgrade guide already announced this, but the filter was not installed, so 4.18.4 and earlier 4.18
+releases still copied every header. Configure a custom `headerFilterStrategy` on the component
+to change which headers are sent.
+
+A route that consumes from one Event Hub and produces to another no longer fails, or ignores the producer
+configuration, because of the `CamelAzureEventHubsPartitionKey` and `CamelAzureEventHubsPartitionId` headers that the
+consumer sets. Such a route used to fail with `Both partitionKey and partitionId are set` for every event with a
+partition key, and for every event when `partitionKey` was configured, and a configured `partitionId` was replaced by
+the partition the event was received from. The producer now picks the partition from, in this order: a partition
+header set by the route, the `partitionKey` or `partitionId` endpoint option, and the partition key of the received
+event. It no longer reuses the partition id of the received event, so an event without a partition key is no longer
+sent to the partition with the same id in the target Event Hub. To keep doing so, for example when mirroring between
+Event Hubs that have the same partitions, remove the `CamelAzureEventHubsReceivedPartitionId` exchange property before
+the producer.
+
 === camel-zipfile, camel-tarfile - a maxDecompressedSize of 2 GiB or more is now enforced
 
 The `maxDecompressedSize` option of the Zip File and Tar File data formats (and of `ZipSplitter`) was not
@@ -47,6 +72,29 @@ message.
 Other SOAP response header attributes and elements are mapped as before, and the raw SOAP header is still
 available in the `CamelSpringWebserviceSoapHeader` header. A route that relies on the previous behaviour can supply a
 custom `headerFilterStrategy` on the `spring-ws` endpoint.
+
+=== camel-spring-ws - internal Camel headers are no longer written into SOAP headers
+
+The default `messageFilter` of the `spring-ws` component, `BasicMessageFilter`, now applies the endpoint's
+`headerFilterStrategy` before it writes a message header into the SOAP header, both on the request sent by the
+producer and on the response returned by the consumer. With the default `SpringWebserviceHeaderFilterStrategy`,
+message headers whose names start with `Camel` or `camel` (case-insensitively) are no longer written into the SOAP
+header. Other message headers are written as before.
+
+A `BasicMessageFilter` created in application code applies a `SpringWebserviceHeaderFilterStrategy` unless it is
+created with another strategy. A route that relies on the previous behaviour can supply a custom
+`headerFilterStrategy` on the `spring-ws` endpoint.
+
+=== camel-http-common, camel-platform-http-vertx - fileNameExtWhitelist entries are matched exactly
+
+`fileNameExtWhitelist` is now checked the same way everywhere, by one shared check in `camel-http-base`. Two
+places still matched each extension as a substring of the whitelist, so for example a whitelist of `txt`
+accepted an upload named `evil.x`: the `camel-platform-http-vertx` consumer, and `DefaultHttpBinding` in
+`camel-http-common` for uploads that arrive as request attributes, which also replaced the configured
+`fileNameExtWhitelist` with its lower-cased value. Both now compare each comma-separated entry exactly and
+case-insensitively. `*` still accepts every file, a file name without an extension is still accepted, and the
+configured value is left unchanged. An upload whose extension only matched as part of a longer entry is now
+rejected.
 
 === camel-core - masking of sensitive values in endpoint URIs
 
@@ -99,6 +147,12 @@ It is unset by default, which keeps the previous behaviour of accepting any path
 Additionally, a local input path that does not exist is now reported as a `File not found` `IOException`
 before Docling is invoked. Previously the size check silently skipped a path that resolved to nothing and
 the failure surfaced later, from the Docling process or API call.
+
+The `CamelDoclingOutputFilePath` header, which selects the CLI output directory, is now normalized lexically
+(redundant separators and `.`/`..` segments are resolved) before it is passed to Docling; a header value
+without such segments is still used as given. A new `outputBaseDirectory` option additionally confines the
+header the same way `inputBaseDirectory` confines input paths - when set, an output path that resolves outside
+it, including an absolute path, is rejected with an `IOException`. `outputBaseDirectory` is unset by default.
 
 === camel-dynamic-router
 
@@ -349,6 +403,23 @@ coap://0.0.0.0:5683/my/resource?muteException=false
 
 For the Rest DSL, set it with `restConfiguration().endpointProperty("muteException", "false")`.
 
+=== camel-undertow - WebSocket endpoints apply the security provider, allowed roles and handlers
+
+WebSocket endpoints (`ws://` and `wss://`) now apply the `UndertowSecurityProvider` (the `securityConfiguration` or
+`securityProvider` option), the `allowedRoles` option, and the `handlers` and `accessLog` options, as HTTP endpoints
+do. Previously these options had no effect on WebSocket endpoints. They apply to the upgrade request: a client that
+the security provider rejects, or that connects to an endpoint with `allowedRoles` but no security provider, now gets
+the same status code as on an HTTP endpoint (for example `403`) and no connection is opened. The headers that the
+security provider adds are set on the exchanges of the connection.
+
+All the endpoints of a WebSocket path share its connections. The settings of the consumer apply to the path,
+including the messages sent by producers on that path, and keep applying while the consumer is stopped; a path that
+only has producers applies their settings. A connection that was opened before these settings applied does not
+receive the messages of the producers, and it is closed when it sends a message.
+
+A WebSocket client that connected without satisfying the configured security provider or allowed roles is now
+rejected: it must authenticate, or the option must be removed from the WebSocket endpoint.
+
 == Upgrading from 4.18.3 to 4.18.4
 
 === camel-core - Multicast EIP honors UseOriginalAggregationStrategy
@@ -426,6 +497,9 @@ case-insensitively) are no longer forwarded to Azure Event Hubs, consistent with
 filtering performed by other components.
 
 Ordinary application headers are unaffected.
+
+NOTE: The filter was not installed in 4.18.4, so the producer still copied every header. It is applied from
+4.18.5, see the 4.18.5 entry for `camel-azure-eventhubs` (CAMEL-25227).
 
 === camel-atmosphere-websocket - potential breaking change
 

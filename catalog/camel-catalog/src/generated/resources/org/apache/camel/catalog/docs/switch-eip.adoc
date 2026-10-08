@@ -169,7 +169,7 @@ handling routes shown above.
 [source,yaml]
 ----
 - semantic:
-    question:
+    evaluation:
       department:
         type: choice
         instructions: Which department should handle this message?

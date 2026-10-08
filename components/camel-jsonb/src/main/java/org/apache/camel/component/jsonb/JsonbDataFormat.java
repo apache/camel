@@ -31,10 +31,12 @@ import jakarta.json.bind.config.PropertyOrderStrategy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.JsonPayloadHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
@@ -181,6 +183,14 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) {
+        // a body that already is the JSON text is written as it is (CAMEL-25329)
+        try {
+            if (JsonPayloadHelper.writeIfAlreadyJson(exchange, graph, stream) >= 0) {
+                return;
+            }
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
         objectMapper.toJson(graph, stream);
     }
 

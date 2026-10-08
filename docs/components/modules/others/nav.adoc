@@ -38,6 +38,7 @@
 ** xref:jfr.adoc[JFR]
 ** xref:jsoup.adoc[Jsoup]
 ** xref:jta.adoc[JTA]
+** xref:kamelet-custom.adoc[Kamelet - Writing a custom Kamelet]
 ** xref:keycloak-consumer.adoc[Keycloak Consumer Operations]
 ** xref:keycloak-producer.adoc[Keycloak Producer Operations]
 ** xref:keycloak-security.adoc[Keycloak Security Policies]

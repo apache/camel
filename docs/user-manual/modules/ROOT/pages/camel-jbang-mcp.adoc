@@ -282,7 +282,10 @@ project `directory` as an argument, the runtime tools take the integration `name
   `includeOptions` picks the options listed: `common` (the default) leaves out the deprecated and advanced
   ones and says how many with `omittedOptions`, `required` lists the required ones, `all` everything, `false`
   none; `optionsFilter` matches a keyword in the option names, descriptions and groups and searches all
-  options.
+  options. When it matches none of an EIP's own options, the options of the EIP's elements are searched and
+  listed under `nestedOptions` with the element they go under (`logStackTrace` of `onException` is an option
+  of its `redeliveryPolicy`). An element written as one of several kinds has `oneOf` with the kinds and a
+  `yaml` hint: the kind is the key (`errorHandler: {deadLetterChannel: ...}`, not `errorHandlerType:`).
   With `kind=api` (or a class name such as `Exchange`) it answers with the compact API reference of the core
   classes a bean or script calls: `Exchange`, `Message`, `CamelContext`, `Registry`, `ProducerTemplate`,
   `Processor`, `AggregationStrategy`, `Predicate`, `Expression` and `TypeConverter`, one line per method with
@@ -321,7 +324,8 @@ project `directory` as an argument, the runtime tools take the integration `name
   misspelled option such as `logLevel` instead of `loggingLevel`), endpoint URIs, simple expressions, and
   `camel.*` options. The routes of a Java or XML file are read into the Camel model without compiling them and
   get the same checks (the endpoint DSL and constants resolved, a `to` that needs `toD`); what the parser could
-  not read is listed under `notChecked`.
+  not read is listed under `notChecked`. When the `content` is the same as the file on disk, the answer has
+  `sameAsFile: true` and a `note`: an edit the agent meant to make may not be in what it validated.
   Takes the content, or reads the file from the project directory. With `camelVersion` (or the version of the
   selected integration in the TUI) the catalog and the YAML DSL schema of that Camel version answer, the schema
   read from its `camel-yaml-dsl` jar; without it the CLI's own, with nothing to download.
@@ -352,7 +356,13 @@ project `directory` as an argument, the runtime tools take the integration `name
 | Starts an integration from a project directory with `camel run --source-dir` in a separate process, in dev
   mode by default: the directory is watched, so a changed or added file (a route, a bean file, a Java class) is
   reloaded. Name files to run only those, for a directory that holds several apps. Returns the pid, name and
-  log file once the integration is up.
+  log file once the integration is up. When an integration already runs from the directory, or one started
+  earlier is still starting, no second copy is started: the answer is that one (`status: running` with its
+  pid, name and log file, or `status: starting`), with what dev mode and `camel_control restart` do for it.
+  When the start fails, the answer has the cause from the console output: each log record with its exception
+  lines (also a message over several lines, such as the diagnostics of a Java class that does not compile) and
+  the first line of the user's code, without the stack frames. A failed `camel_control restart` answers the
+  same way.
 
 | `camel_control`
 | Controls a running integration: `stop`, `kill`, `restart` (picks up edited files without dev mode),
@@ -360,8 +370,13 @@ project `directory` as an argument, the runtime tools take the integration `name
   `stop-routes`, `start-routes`, `reset-stats`.
 
 | `camel_get_log`
-| Recent log records of a running integration, newest first, filtered by level or text; a stack trace comes
-  as one record with a `detail` block.
+| Recent log records of a running integration, newest first, filtered by level or text. An error keeps its
+  first line, which names the route, the source line and the exception; its stack trace is left out, with the
+  number of lines left out in `detailLines`, the exception as `cause` when the first line does not name it, and
+  as `at` the first frame of the user's own code, looked for from the root cause up (a bean, a processor, a
+  script), so a `NullPointerException` without a message still says where it happened.
+  `details=true` returns the stack traces; `camel_get_errors` has them for every failed exchange. Other
+  multi-line text, such as a pretty-printed body, stays as a `detail` block.
 
 | `camel_get_errors`
 | The failed exchanges of a running integration: route, exchange, exception with stack trace, body and headers.
@@ -401,6 +416,27 @@ project `directory` as an argument, the runtime tools take the integration `name
   are marked, so people and tools can tell them apart from what the sources say. Route sources are not changed.
   See xref:camel-jbang-ai.adoc#_project_overview[Project overview].
 |===
+
+==== Repeated calls
+
+The catalog lookups `camel_catalog_doc`, `camel_catalog_find`, `camel_catalog_sample` and `camel_error_diagnose`
+are deterministic: the same arguments always give the same answer. Both servers mark them in the tool listing
+with `"_meta": {"camel.apache.org/deterministic": true}`, so a client can notice repeats itself.
+
+An agent asking one of them the same question again and again gets nothing new, and a small local model can get
+stuck doing that until its tool call budget is spent. So the first two identical calls of a session are answered
+in full, and from the third the answer is a short note instead: that the call was already answered and how many
+times it was asked. The changed answer helps the agent break the loop, and the context is not filled with copies.
+`camel_validate_source` counts the same way when it is given `content` and no `directory`: the same source gets
+the same answer, and the note also says to change the line the error names. Validating a file on disk, or
+`content` with a `directory` (the checks then read the other files of the project, which a fix can change), is
+always answered in full.
+
+Calls with other arguments, and the tools that read files, logs or the running integration, are always answered
+in full, so re-reading a file after an edit or polling a log keeps working.
+
+A session is an MCP connection of `camel mcp`, and for `camel tui --mcp` the time from one `initialize` of the
+client to the next.
 
 === Catalog Exploration
 
@@ -574,7 +610,10 @@ The advisories are also browseable as MCP resources: `camel://security/advisorie
 | Tool | Description
 
 | `camel_transform_route`
-| Assists with route DSL format transformation between YAML and XML.
+| Converts routes between the YAML, XML and Java DSLs, as `camel transform route` does, without running them:
+  routes, rests, route templates, route configurations and beans. The result is read back and compared with the
+  source, and what differs or is not carried over is returned in `notes`. A route that cannot be converted without
+  running it (such as a processor lambda) is refused with the reason.
 
 | `camel_configuration_validate`
 | Validate Camel configuration property lines (e.g., from `application.properties`). Detects misspelled option
@@ -774,6 +813,20 @@ process is running).
   the update count otherwise. Lets the model look at the data a route reads or writes, or try a statement
   before putting it in a route.
 
+| `camel_runtime_http_endpoints`
+| The HTTP endpoints the application serves (Rest DSL and platform-http): method, path, consumes/produces, route
+  and OpenAPI operation, the server's base URL and the contract. With `includeSpec=true` the OpenAPI contract
+  itself is added (cut at 12000 characters).
+
+| `camel_runtime_http_request`
+| Sends an HTTP request (method, path, headers, body) to the application's own server on localhost and its port,
+  and returns the status, the headers and the body (cut at 6000 characters, the answer says when). Any other host
+  is refused, and redirects are not followed.
+
+| `camel_runtime_tool_groups`
+| Which runtime tool groups (`sql`, `tracing`, `resilience`, `http`) the application needs, from what its status shows.
+  See <<_tool_groups_for_local_models>>.
+
 | `camel_runtime_datasources`
 | Datasource connection pool status: active, idle and total connections, max pool size and waiting threads.
 
@@ -794,7 +847,7 @@ process is running).
 | OpenTelemetry spans with trace IDs, durations, route IDs and status (requires `--observe`).
 
 | `camel_runtime_startup_steps`
-| Startup recorder steps with duration, level and type (requires `camel.main.startup-recorder=true`).
+| Startup recorder steps with duration, level and type (requires `camel.main.startup-recorder=backlog`).
 
 | `camel_runtime_route_analysis`
 | Anti-pattern and structure analysis per route: error handling, complexity, component usage.
@@ -802,6 +855,44 @@ process is running).
 | `camel_runtime_config_drift`
 | Compares the running route definitions with the source files to detect configuration drift.
 |===
+
+==== Tool groups for local models
+
+A client that drives a small local model pays for every tool schema on every request. Rather than listing every
+runtime tool, it can offer the core tools plus the groups the selected application needs, which
+`camel_runtime_tool_groups` works out from the application's status:
+
+[cols="1,2,2",options="header"]
+|===
+| Group | Loads when the application has | Tools
+
+| `sql`
+| a datasource, a `sql`, `sql-stored`, `jdbc`, `spring-jdbc` or `jpa` endpoint, or traced SQL statements
+| `camel_runtime_sql`, `camel_runtime_datasources`, `camel_runtime_sql_trace`
+
+| `tracing`
+| OpenTelemetry, enabled message tracing, or Micrometer
+| `camel_runtime_trace`, plus `camel_runtime_spans` with OpenTelemetry and `camel_runtime_metrics` with Micrometer
+
+| `resilience`
+| a circuit breaker in a route, or circuit breakers in the Resilience4j or Fault Tolerance status
+| `camel_runtime_circuit_breakers`
+
+| `http`
+| Rest DSL services or platform-http endpoints, or a `platform-http`, `rest` or `rest-openapi` consumer
+| `camel_runtime_http_endpoints`, `camel_runtime_http_request`
+|===
+
+The answer names the application and its pid, lists the `core` tools (the shared `camel_*` tools a small model
+should always get), each loaded group with its tools and one line of guidance for the system prompt (for example
+`SQL: datasource(s) orders (HikariCP), used by sql endpoints. Table names come from the SQL trace
+(camel_runtime_sql_trace); don't guess a schema.`), and the `signals` in the status that loaded each group. Its
+`fingerprint` stays the same as long as the groups, the datasources and the HTTP base URL do,
+so a client calls the tool when the user selects an application or the application reloads, and rebuilds its
+tool list and prompt only when the fingerprint changes; the prompt then stays the same and a local model keeps
+its prompt cache. A status written by an older Camel version may lack some of the keys, which just loads fewer
+groups. The Camel TUI does the same for its AI panel, see
+xref:camel-jbang-tui-local-models.adoc#_tool_groups_from_the_selected_integration[Tool groups from the selected integration].
 
 ==== Configuration and Registry
 

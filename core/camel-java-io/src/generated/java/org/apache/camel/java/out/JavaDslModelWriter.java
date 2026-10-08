@@ -20,6 +20,7 @@
  */
 package org.apache.camel.java.out;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -2719,7 +2720,23 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteTryDefinition(StringBuilder sb, TryDefinition def) {
         doWriteProcessorDefinitionAttributes(sb, def);
-        doWriteOutputs(sb, def.getOutputs(), this::doWriteProcessorDefinitionRef);
+        List<ProcessorDefinition<?>> outputs = new ArrayList<>(def.getOutputs());
+        for (CatchDefinition clause : def.getCatchClauses()) {
+            if (!outputs.contains(clause)) {
+                int index = outputs.size();
+                for (int i = 0; i < outputs.size(); i++) {
+                    if (outputs.get(i) instanceof FinallyDefinition) {
+                        index = i;
+                        break;
+                    }
+                }
+                outputs.add(index, clause);
+            }
+        }
+        if (def.getFinallyClause() != null && !outputs.contains(def.getFinallyClause())) {
+            outputs.add(def.getFinallyClause());
+        }
+        doWriteOutputs(sb, outputs, this::doWriteProcessorDefinitionRef);
     }
     protected void doWriteUnmarshalDefinition(StringBuilder sb, UnmarshalDefinition def) {
         doWriteProcessorDefinitionAttributes(sb, def);
@@ -3765,6 +3782,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "apiContextPath", def.getApiContextPath(), null);
         doWriteAttribute(sb, "routeId", def.getRouteId(), null);
         doWriteAttribute(sb, "missingOperation", def.getMissingOperation(), "fail");
+        doWriteAttribute(sb, "unmatchedRequestHandling", def.getUnmatchedRequestHandling(), "platform");
         doWriteAttribute(sb, "mockIncludePattern", def.getMockIncludePattern(), "classpath:camel-mock/**");
     }
     protected void doWriteOpenIdConnectDefinition(StringBuilder sb, OpenIdConnectDefinition def) {

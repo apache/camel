@@ -339,6 +339,16 @@
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - enrich:\n            expression:\n              simple:\n                expression: \"http:myserver\/${header.orderId}\/order\"\n        - to:\n            uri: mock:result\n"
     }
   ],
+  "errorHandler": [
+    {
+      "source": "error-handler.adoc",
+      "yaml": "- route:\n    errorHandler:\n      deadLetterChannel:\n        deadLetterUri: mock:dead\n        redeliveryPolicy:\n          maximumRedeliveries: 3\n          redeliveryDelay: 250\n    from:\n      uri: direct:in\n      steps:\n        - process:\n            ref: myFailureProcessor\n        - to:\n            uri: mock:result\n"
+    },
+    {
+      "source": "error-handler.adoc",
+      "yaml": "- onException:\n    # in case of io exception then try to redeliver up till 2 times\n    # (do not use any delay due faster unit testing)\n    exception:\n      - java.io.IOException\n    redeliveryPolicy:\n      maximumRedeliveries: 2\n      redeliveryDelay: 0\n- route:\n    from:\n      uri: direct:start\n      steps:\n        - to:\n            uri: mock:a\n        - to:\n            uri: direct:sub\n        - to:\n            uri: mock:c\n- route:\n    errorHandler:\n      noErrorHandler: {}\n    from:\n      uri: direct:sub\n      steps:\n        - to:\n            uri: mock:b\n        - process:\n            ref: myProcessor\n"
+    }
+  ],
   "eventDrivenConsumer": [
     {
       "source": "eventDrivenConsumer-eip.adoc",
@@ -972,7 +982,7 @@
     },
     {
       "source": "rest-dsl.adoc",
-      "yaml": "- rest:\n    path: \"\/customers\/\"\n    get:\n      - path: \"\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+      "yaml": "- rest:\n    path: \/stock\n    get:\n      - path: \"\/{sku}\"\n        to: direct:one-sku\n- route:\n    from:\n      uri: direct:one-sku\n      steps:\n        - choice:\n            when:\n              - expression:\n                  simple:\n                    expression: \"${header.sku} == 'CAMEL-MUG'\"\n                steps:\n                  - setBody:\n                      expression:\n                        constant:\n                          expression: '{\"sku\": \"CAMEL-MUG\", \"qty\": 42}'\n            otherwise:\n              steps:\n                - setHeader:\n                    name: CamelHttpResponseCode\n                    expression:\n                      constant:\n                        expression: \"404\"\n                - setBody:\n                    expression:\n                      simple:\n                        expression: '{\"error\": \"unknown SKU ${header.sku}\"}'\n"
     },
     {
       "source": "rest-dsl-openapi.adoc",
@@ -980,11 +990,19 @@
     },
     {
       "source": "rest-dsl.adoc",
-      "yaml": "- rest:\n    get:\n      - path: \"\/customers\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+      "yaml": "- rest:\n    path: \"\/customers\/\"\n    get:\n      - path: \"\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
     },
     {
       "source": "rest-dsl-openapi.adoc",
       "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n      missingOperation: ignore\n"
+    },
+    {
+      "source": "rest-dsl.adoc",
+      "yaml": "- rest:\n    get:\n      - path: \"\/customers\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+    },
+    {
+      "source": "rest-dsl-openapi.adoc",
+      "yaml": "- rest:\n    openApi:\n      specification: petstore-v3.json\n      missingOperation: ignore\n      unmatchedRequestHandling: camel\n"
     },
     {
       "source": "rest-dsl.adoc",
@@ -996,7 +1014,7 @@
     },
     {
       "source": "rest-dsl.adoc",
-      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    get:\n      - path: \"\/customers\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    get:\n      - path: \"\/customers\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
     },
     {
       "source": "rest-dsl.adoc",
@@ -1004,11 +1022,11 @@
     },
     {
       "source": "rest-dsl.adoc",
-      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    path: \"\/customers\/\"\n    get:\n      - path: \"\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/neworder\"\n        to: \"direct:customerNewOrder\"\n- route:\n    from:\n      uri: direct:customerNewOrder\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n- route:\n    from:\n      uri: direct:commonCustomerNewOrder\n      steps:\n        - log:\n            message: Created new order\n- route:\n    from:\n      uri: kafka:new-order\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n"
+      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    path: \"\/customers\/\"\n    get:\n      - path: \"\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/neworder\"\n        to: \"direct:customerNewOrder\"\n- route:\n    from:\n      uri: direct:customerNewOrder\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n- route:\n    from:\n      uri: direct:commonCustomerNewOrder\n      steps:\n        - log:\n            message: Created new order\n- route:\n    from:\n      uri: kafka:new-order\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n"
     },
     {
       "source": "rest-dsl.adoc",
-      "yaml": "- rest:\n    get:\n      - path: \"\/customers\/{id}}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders}\"\n        to: \"direct:customerOrders\"\n        disabled: \"{{ordersEnabled}}\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n        disabled: \"true\"\n"
+      "yaml": "- rest:\n    get:\n      - path: \"\/customers\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n        disabled: \"{{ordersEnabled}}\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n        disabled: \"true\"\n"
     }
   ],
   "returnAddress": [
@@ -1426,7 +1444,7 @@
     },
     {
       "source": "switch-eip.adoc",
-      "yaml": "- semantic:\n    question:\n      department:\n        type: choice\n        instructions: Which department should handle this message?\n        criteria:\n          billing: Invoices, payments and refunds\n          technical: Bugs, outages and technical problems\n          other: Any other request\n- route:\n    from:\n      uri: direct:classify\n      steps:\n        - switch:\n            selector:\n              language:\n                language: semantic\n                expression: ref:department\n            case:\n              - value: billing\n                uri: direct:billing\n              - value: technical\n                uri: direct:technical\n            otherwise:\n              uri: direct:review\n"
+      "yaml": "- semantic:\n    evaluation:\n      department:\n        type: choice\n        instructions: Which department should handle this message?\n        criteria:\n          billing: Invoices, payments and refunds\n          technical: Bugs, outages and technical problems\n          other: Any other request\n- route:\n    from:\n      uri: direct:classify\n      steps:\n        - switch:\n            selector:\n              language:\n                language: semantic\n                expression: ref:department\n            case:\n              - value: billing\n                uri: direct:billing\n              - value: technical\n                uri: direct:technical\n            otherwise:\n              uri: direct:review\n"
     }
   ],
   "threads": [
@@ -1486,11 +1504,11 @@
     },
     {
       "source": "to-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: file:messages\/foo\n      steps:\n        - toD:\n            uri: \"freemarker:\/\/templateHome\/${body.templateName}.ftl\"\n        - to:\n            uri: jms:queue:foo\n"
+      "yaml": "- route:\n    from:\n      uri: file:messages\/foo\n      steps:\n        - toD:\n            uri: \"freemarker:\/\/templateHome\/${header.templateName}.ftl\"\n        - to:\n            uri: jms:queue:foo\n"
     },
     {
       "source": "to-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: file:messages\/foo\n      steps:\n        - recipientList:\n            expression:\n              simple:\n                expression: \"freemarker:\/\/templateHome\/${body.templateName}.ftl\"\n        - to:\n            uri: jms:queue:foo\n"
+      "yaml": "- route:\n    from:\n      uri: file:messages\/foo\n      steps:\n        - recipientList:\n            expression:\n              simple:\n                expression: \"freemarker:\/\/templateHome\/${header.templateName}.ftl\"\n        - to:\n            uri: jms:queue:foo\n"
     }
   ],
   "toD": [

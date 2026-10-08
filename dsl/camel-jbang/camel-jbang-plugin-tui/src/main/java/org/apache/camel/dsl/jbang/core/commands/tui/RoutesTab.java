@@ -27,6 +27,7 @@ import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -564,7 +565,7 @@ class RoutesTab extends AbstractTab {
                 .split(area);
 
         // Routes table
-        Table routeTable = routeTopMode ? buildRouteTopTable(sortedRoutes) : buildRouteTable(sortedRoutes);
+        Table routeTable = routeTopMode ? buildRouteTopTable(sortedRoutes) : buildRouteTable(sortedRoutes, area.width());
 
         lastRouteTableArea = chunks.get(0);
         vSplit.setBorderPos(chunks.get(1).y());
@@ -681,7 +682,7 @@ class RoutesTab extends AbstractTab {
 
             routeRows.add(Row.from(
                     Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Theme.accent()))),
-                    routeFromCell(route, aiDescriptions),
+                    routeFromCell(route, aiDescriptions, Integer.MAX_VALUE),
                     rightCell(route.total > 0 ? formatDurationMs(route.meanTime) : "", 8,
                             topTimeStyle(route.meanTime)),
                     rightCell(route.total > 0 ? formatDurationMs(route.maxTime) : "", 8,
@@ -767,13 +768,24 @@ class RoutesTab extends AbstractTab {
     /**
      * The routes table in the default mode (status, counters, timing).
      */
-    private Table buildRouteTable(List<RouteInfo> sortedRoutes) {
+    private Table buildRouteTable(List<RouteInfo> sortedRoutes, int areaWidth) {
         boolean hasPercentiles = sortedRoutes.stream().anyMatch(r -> r.p50Time >= 0);
 
         long maxTotal = sortedRoutes.stream().mapToLong(r -> r.total).max().orElse(0);
         long maxFailed = sortedRoutes.stream().mapToLong(r -> r.failed).max().orElse(0);
         int tw = Math.max(numWidth(maxTotal), 6);
         int fw = Math.max(numWidth(maxFailed), 6);
+        // TOTAL and FAIL are as wide as the longest "count (since last)", so the closing parenthesis is not cut
+        int totalColWidth = 14;
+        int failColWidth = 14;
+        for (RouteInfo route : sortedRoutes) {
+            int since = route.sinceLastCompleted != null ? CharWidth.of(route.sinceLastCompleted) + 3 : 0;
+            int failSince = route.sinceLastFailed != null ? CharWidth.of(route.sinceLastFailed) + 3 : 0;
+            totalColWidth = Math.max(totalColWidth, tw + since + 1);
+            failColWidth = Math.max(failColWidth, fw + failSince + 1);
+        }
+        // FROM gets the rest of the width: the borders, ">> ", 7 gaps and the other columns
+        int fromWidth = Math.max(0, areaWidth - 2 - 3 - 7 - (24 + 10 + 10 + totalColWidth + failColWidth + 20 + 12));
 
         List<Row> routeRows = new ArrayList<>();
         Map<String, String> aiDescriptions = aiDescriptions();
@@ -807,8 +819,8 @@ class RoutesTab extends AbstractTab {
                     : Line.from(Span.styled(String.format("%" + fw + "d", route.failed), failStyle));
 
             routeRows.add(Row.from(
-                    Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Theme.accent()))),
-                    routeFromCell(route, aiDescriptions),
+                    Cell.from(Span.styled(TuiHelper.truncate(route.routeId, 24), Style.EMPTY.fg(Theme.accent()))),
+                    routeFromCell(route, aiDescriptions, fromWidth),
                     Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
                     rightCell(formatThroughput(route.throughput), 8),
                     Cell.from(totalCell),
@@ -858,9 +870,9 @@ class RoutesTab extends AbstractTab {
                         Constraint.fill(),
                         Constraint.length(10),
                         Constraint.length(10),
-                        Constraint.length(14),
-                        Constraint.length(14),
-                        Constraint.min(20),
+                        Constraint.length(totalColWidth),
+                        Constraint.length(failColWidth),
+                        Constraint.length(20),
                         Constraint.length(12))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
@@ -969,14 +981,16 @@ class RoutesTab extends AbstractTab {
      * The from or description cell. A route without a description of its own shows the one the AI project overview
      * suggested, marked and styled as AI-assisted so it is not taken for what the route says (CAMEL-25143).
      */
-    private Cell routeFromCell(RouteInfo route, Map<String, String> aiDescriptions) {
+    private Cell routeFromCell(RouteInfo route, Map<String, String> aiDescriptions, int width) {
         if (showDescription && (route.description == null || route.description.isBlank())) {
             String ai = route.routeId != null ? aiDescriptions.get(route.routeId) : null;
             if (ai != null) {
-                return Cell.from(Span.styled(IntegrationSummaryHints.MARK + ai, Theme.aiAssisted()));
+                return Cell.from(Span.styled(TuiHelper.truncate(IntegrationSummaryHints.MARK + ai, width),
+                        Theme.aiAssisted()));
             }
         }
-        return Cell.from(routeFromLabel(route));
+        // a long URI ends with an ellipsis where it is cut, so it does not read as the whole URI
+        return Cell.from(TuiHelper.truncate(routeFromLabel(route), width));
     }
 
     /** The AI-assisted descriptions of the selected integration's project, read once per table. */
@@ -1138,9 +1152,13 @@ class RoutesTab extends AbstractTab {
             } else {
                 routeTimingCol = "";
             }
+            // PROCESSOR gets the rest of the width: the borders, ">> ", 7 gaps and the other columns; a long URI
+            // ends with an ellipsis where it is cut
+            int procWidth = Math.max(0, area.width() - 2 - 3 - 7 - (20 + 10 + 8 + 6 + 8 + 20 + 12));
             rows.add(Row.from(
                     Cell.from("   route"),
-                    Cell.from(Span.styled(route.from != null ? TuiHelper.displayUri(route.from) : route.routeId,
+                    Cell.from(Span.styled(TuiHelper.truncate(
+                            route.from != null ? TuiHelper.displayUri(route.from) : route.routeId, procWidth),
                             routeStyle)),
                     rightCell(formatThroughput(route.throughput), 8),
                     rightCell(String.valueOf(route.total), 8),
@@ -1167,7 +1185,8 @@ class RoutesTab extends AbstractTab {
 
                 rows.add(Row.from(
                         Cell.from("   " + (proc.processor != null ? proc.processor : "")),
-                        Cell.from(Span.styled(indent + (proc.id != null ? proc.id : ""), nameStyle)),
+                        Cell.from(Span.styled(TuiHelper.truncate(indent + (proc.id != null ? proc.id : ""), procWidth),
+                                nameStyle)),
                         rightCell(formatThroughput(proc.throughput), 8),
                         rightCell(String.valueOf(proc.total), 8),
                         rightCell(String.valueOf(proc.failed), 6,
@@ -1196,7 +1215,7 @@ class RoutesTab extends AbstractTab {
                             Constraint.length(8),
                             Constraint.length(6),
                             Constraint.length(8),
-                            Constraint.min(20),
+                            Constraint.length(20),
                             Constraint.length(12))
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                             .title(" Processors [" + route.routeId + "] ")

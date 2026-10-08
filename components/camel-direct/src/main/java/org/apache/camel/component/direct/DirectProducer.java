@@ -30,8 +30,9 @@ public class DirectProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DirectProducer.class);
 
-    private volatile DirectConsumer consumer;
-    private int stateCounter;
+    // the consumer and the state counter of the component when the consumer was looked up, kept together as several
+    // threads can send with this producer at the same time
+    private volatile CachedConsumer cachedConsumer;
 
     private final DirectEndpoint endpoint;
     private final DirectComponent component;
@@ -50,10 +51,7 @@ public class DirectProducer extends DefaultAsyncProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        if (consumer == null || stateCounter != component.getStateCounter()) {
-            stateCounter = component.getStateCounter();
-            consumer = component.getConsumer(key, block, timeout);
-        }
+        DirectConsumer consumer = getConsumer();
         if (consumer == null) {
             if (endpoint.isFailIfNoConsumers()) {
                 throw new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
@@ -74,10 +72,7 @@ public class DirectProducer extends DefaultAsyncProducer {
                 callback.done(true);
                 return true;
             }
-            if (consumer == null || stateCounter != component.getStateCounter()) {
-                stateCounter = component.getStateCounter();
-                consumer = component.getConsumer(key, block, timeout);
-            }
+            DirectConsumer consumer = getConsumer();
             if (consumer == null) {
                 if (endpoint.isFailIfNoConsumers()) {
                     exchange.setException(new DirectConsumerNotAvailableException(
@@ -104,9 +99,21 @@ public class DirectProducer extends DefaultAsyncProducer {
                 }
             }
         } catch (InterruptedException e) {
-            LOG.info("Interrupted while processing the exchange");
+            // the only wait here is for a consumer to appear (block=true), and what interrupts it is a forced shutdown,
+            // such as a dev mode reload that adds the consumer in the same edit (CAMEL-25365)
+            LOG.info("Interrupted while waiting for a consumer on {}: the route is being stopped or reloaded",
+                    endpoint.getEndpointUri());
             Thread.currentThread().interrupt();
-            exchange.setException(e);
+            DirectConsumerNotAvailableException cause = new DirectConsumerNotAvailableException(
+                    "No consumers available on endpoint: " + endpoint
+                                                                                                + " (interrupted while waiting for one, as the route is being stopped or reloaded)",
+                    exchange);
+            // keep the interruption as the cause, so onException(InterruptedException.class) still matches
+            cause.initCause(e);
+            exchange.setException(cause);
+            // stay marked as interrupted, as setException(InterruptedException) did, so the error handler stops
+            // routing instead of handling a failure (onException, redelivery, dead letter channel, the ERROR log)
+            exchange.getExchangeExtension().setInterrupted(true);
             callback.done(true);
             return true;
         } catch (Exception e) {
@@ -116,4 +123,22 @@ public class DirectProducer extends DefaultAsyncProducer {
         }
     }
 
+    /**
+     * Gets the consumer, which is looked up again when it has been added or removed (such as when its route is
+     * suspended or stopped) since it was looked up last.
+     */
+    private DirectConsumer getConsumer() throws InterruptedException {
+        CachedConsumer cached = cachedConsumer;
+        // read the counter before the lookup, so a change during the lookup makes the next exchange look up again
+        int stateCounter = component.getStateCounter();
+        if (cached == null || cached.consumer() == null || cached.stateCounter() != stateCounter) {
+            DirectConsumer consumer = component.getConsumer(key, block, timeout);
+            cachedConsumer = new CachedConsumer(consumer, stateCounter);
+            return consumer;
+        }
+        return cached.consumer();
+    }
+
+    private record CachedConsumer(DirectConsumer consumer, int stateCounter) {
+    }
 }

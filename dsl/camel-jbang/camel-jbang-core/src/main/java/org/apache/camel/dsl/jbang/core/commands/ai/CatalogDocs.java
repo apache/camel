@@ -19,10 +19,13 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -187,6 +190,13 @@ public final class CatalogDocs {
             return error("'name' or 'endpoint' parameter is required");
         }
         String page = docPage != null ? docPage.trim().toLowerCase(Locale.ROOT) : null;
+        if ("kamelet".equals(kind) && !KameletDefinitions.catalog().containsKey(name)
+                && ("kamelet".equals(name) || page != null)) {
+            // the kamelet component's own docs, such as how to write a Kamelet (docPage=custom): a model asks for
+            // them with kind=kamelet, which is the kind of the catalog's Kamelets
+            kind = null;
+            name = "kamelet";
+        }
         String lowerFilter = optionsFilter != null && !optionsFilter.isBlank() ? optionsFilter.toLowerCase() : null;
         OptionScope scope = OptionScope.parse(includeOptions);
         if (scope == null) {
@@ -197,9 +207,21 @@ public final class CatalogDocs {
             ComponentModel cm = catalog.componentModel(name);
             if (cm != null) {
                 String adoc = catalog.asciiDoc(name + "-component");
+                List<JsonObject> pages = componentDocPages(cm.getScheme(), adoc);
+                if (page != null && !page.isEmpty()) {
+                    // a sub-page the component page links to, such as how to write a custom Kamelet
+                    String sub = pages.stream().anyMatch(p -> page.equals(p.getString("page")))
+                            ? catalog.asciiDoc(cm.getScheme() + "-" + page) : null;
+                    if (sub == null) {
+                        JsonObject err = error("No doc page '" + page + "' for component " + name);
+                        err.put("docPages", new JsonArray(pages));
+                        return err;
+                    }
+                    return componentDoc(cm, lowerFilter, OptionScope.NONE, false, sub, null, pages);
+                }
                 // the whole page when it was asked for, else its first section, which the options cannot say
                 return componentDoc(cm, lowerFilter, scope, includeHeaders, includeDoc ? adoc : null,
-                        includeDoc ? null : docExcerpt(adoc, DOC_EXCERPT_BUDGET));
+                        includeDoc ? null : docExcerpt(adoc, DOC_EXCERPT_BUDGET), pages);
             }
             JsonObject group = mainOptionsGroup(catalog, name);
             if (group != null) {
@@ -294,6 +316,19 @@ public final class CatalogDocs {
                 return notFound("Bean", name, findBeans(catalog, name).stream().map(PojoBeanModel::getName).limit(5).toList());
             }
         }
+        if (kind == null || "kamelet".equals(kind)) {
+            KameletDefinitions.Definition def = KameletDefinitions.catalog().get(name);
+            if (def != null) {
+                return kameletDoc(def);
+            }
+            if (kind != null) {
+                JsonObject err = notFound("Kamelet", name,
+                        KameletDefinitions.suggest(name, KameletDefinitions.catalog().keySet(), 5));
+                // a Kamelet of the project is not in the catalog: how to write one
+                err.put("guide", AuthoringTools.KAMELET_GUIDE);
+                return err;
+            }
+        }
         JsonObject group = mainOptionsGroup(catalog, name);
         if (group != null) {
             return group;
@@ -308,7 +343,81 @@ public final class CatalogDocs {
         suggestions.addAll(catalog.suggestLanguageNames(name, 3));
         suggestions.addAll(catalog.suggestEipNames(name, 3));
         suggestions.addAll(findBeans(catalog, name).stream().map(PojoBeanModel::getName).limit(3).toList());
-        return notFound("Artifact", name, suggestions);
+        suggestions.addAll(KameletDefinitions.suggest(name, KameletDefinitions.catalog().keySet(), 3));
+        JsonObject answer = notFound("Artifact", name, suggestions);
+        if (name.toLowerCase(Locale.ROOT).contains("kamelet")) {
+            // kamelet-custom, custom-kamelet: how to write one
+            answer.put("guide", AuthoringTools.KAMELET_GUIDE);
+        }
+        return answer;
+    }
+
+    /** The Kamelets of the catalog whose name has the term, then those whose description has it. */
+    private static List<KameletDefinitions.Definition> kameletsMatching(String lowerTerm) {
+        List<KameletDefinitions.Definition> byName = new ArrayList<>();
+        List<KameletDefinitions.Definition> byDescription = new ArrayList<>();
+        String dashed = lowerTerm.trim().replace(' ', '-');
+        for (KameletDefinitions.Definition def : KameletDefinitions.catalog().values()) {
+            if (def.name().contains(dashed)) {
+                byName.add(def);
+            } else if (def.description() != null && def.description().toLowerCase(Locale.ROOT).contains(lowerTerm)) {
+                byDescription.add(def);
+            }
+        }
+        byName.sort((a, b) -> Integer.compare(a.name().length(), b.name().length()));
+        byName.addAll(byDescription);
+        return byName;
+    }
+
+    /**
+     * A Kamelet of the catalog: its properties, which go under parameters of the kamelet: endpoint, and how to write
+     * it. A model writes the options of the component a Kamelet wraps instead (brokers on kafka-sink, which has
+     * bootstrapServers), as it knows those from years of examples.
+     */
+    public static JsonObject kameletDoc(KameletDefinitions.Definition def) {
+        JsonObject result = new JsonObject();
+        result.put("kind", "kamelet");
+        result.put("name", def.name());
+        if (def.type() != null) {
+            result.put("type", def.type());
+        }
+        if (def.description() != null) {
+            result.put("description", def.description());
+        }
+        result.put("from", def.source());
+        StringBuilder params = new StringBuilder();
+        for (KameletDefinitions.Property p : def.properties()) {
+            if (p.required() && p.defaultValue() == null) {
+                params.append(params.isEmpty() ? "" : ", ").append(p.name()).append(": <").append(p.name()).append(">");
+            }
+        }
+        String endpoint = "{uri: kamelet:" + def.name() + (params.isEmpty() ? "" : ", parameters: {" + params + "}") + "}";
+        result.put("yaml", ("source".equals(def.type()) ? "from: " : "- to: ") + endpoint
+                           + " (its properties go under parameters: they are the Kamelet's, not the options of the"
+                           + " component it uses)");
+        JsonArray props = new JsonArray();
+        for (KameletDefinitions.Property p : def.properties()) {
+            JsonObject o = new JsonObject();
+            o.put("name", p.name());
+            if (p.required() && p.defaultValue() == null) {
+                o.put("required", true);
+            }
+            if (p.type() != null) {
+                o.put("type", p.type());
+            }
+            if (p.defaultValue() != null) {
+                o.put("defaultValue", p.defaultValue());
+            }
+            if (!p.enumValues().isEmpty()) {
+                o.put("enum", new JsonArray(p.enumValues()));
+            }
+            if (p.description() != null) {
+                o.put("description", p.description());
+            }
+            props.add(o);
+        }
+        result.put("properties", props);
+        return result;
     }
 
     /**
@@ -330,10 +439,68 @@ public final class CatalogDocs {
             String matchedTerm) {
         String doc = includeDoc ? catalog.asciiDoc(model.getName() + "-eip") : null;
         JsonObject result = eipDoc(model, filter, scope, doc);
+        // only when the filter matched none of the EIP's own options, also none the scope left out
+        if (filter != null && scope != OptionScope.NONE && result.getIntegerOrDefault("matchedOptions", 0) == 0
+                && result.getIntegerOrDefault("omittedOptions", 0) == 0) {
+            putNestedOptions(catalog, model, filter, scope, result);
+        }
         if (matchedTerm != null) {
             result.put("matchedTerm", matchedTerm);
         }
         return result;
+    }
+
+    /**
+     * The options of the elements of an EIP that match the filter, when none of its own do: logStackTrace is an option
+     * of the redeliveryPolicy of onException, and a filter on onException found nothing (CAMEL-25370).
+     */
+    private static void putNestedOptions(
+            CamelCatalog catalog, EipModel model, String filter, OptionScope scope, JsonObject result) {
+        JsonArray nested = new JsonArray();
+        String example = null;
+        for (BaseOptionModel opt : model.getOptions()) {
+            if (!"element".equals(opt.getKind())) {
+                continue;
+            }
+            EipModel element = catalog.eipModel(opt.getName());
+            // the option must hold that model, not one that only shares its name (templatedRoute.bean is a bean
+            // factory, not the bean EIP)
+            if (element == null || element.getOptions() == null || !holds(opt, element)) {
+                continue;
+            }
+            boolean list = "array".equals(opt.getType());
+            for (BaseOptionModel inner : element.getOptions()) {
+                if (matchesOptionFilter(inner, filter) && scope.accepts(inner, filter)) {
+                    JsonObject o = optionToJson(inner, null);
+                    o.put("under", opt.getName());
+                    nested.add(o);
+                    if (example == null) {
+                        example = opt.getName() + ": " + (list ? "[{" : "{") + inner.getName() + ": ..." + (list ? "}]" : "}");
+                    }
+                }
+            }
+        }
+        if (!nested.isEmpty()) {
+            result.put("nestedOptions", nested);
+            result.put("nestedHint", "options of an element of " + model.getName() + ": write them under that element,"
+                                     + " for example " + example);
+        }
+    }
+
+    /** Whether the element option holds the given model: its java type, inside List&lt;...&gt; and without generics. */
+    private static boolean holds(BaseOptionModel opt, EipModel element) {
+        String type = opt.getJavaType();
+        if (type == null || element.getJavaType() == null) {
+            return false;
+        }
+        if (type.startsWith("java.util.List<") && type.endsWith(">")) {
+            type = type.substring("java.util.List<".length(), type.length() - 1);
+        }
+        int generic = type.indexOf('<');
+        if (generic > 0) {
+            type = type.substring(0, generic);
+        }
+        return type.equals(element.getJavaType());
     }
 
     /**
@@ -458,6 +625,24 @@ public final class CatalogDocs {
                 if (bean.getInterfaceType() != null) {
                     o.put("interfaceType", bean.getInterfaceType());
                 }
+                matches.add(o);
+            }
+        }
+        if (kind == null || "kamelet".equals(kind)) {
+            // the Kamelets whose name or description has the term: a few next to the components, all when asked for
+            int n = 0;
+            int maxKamelets = kind == null ? Math.min(max, 5) : max;
+            String lower = term.toLowerCase(Locale.ROOT);
+            for (KameletDefinitions.Definition def : kameletsMatching(lower)) {
+                if (n++ >= maxKamelets) {
+                    break;
+                }
+                JsonObject o = summary("kamelet", def.name(), def.title() != null ? def.title() : def.name(),
+                        def.description(), null);
+                if (def.type() != null) {
+                    o.put("type", def.type());
+                }
+                o.put("uri", "kamelet:" + def.name());
                 matches.add(o);
             }
         }
@@ -946,6 +1131,28 @@ public final class CatalogDocs {
         }
     }
 
+    /**
+     * The hint naming each doc page with the call that returns it: a model given docPage=<page> asked for the page by
+     * another name instead (kamelet-custom for how to write a Kamelet).
+     */
+    private static String pagesHint(List<JsonObject> docPages, String key) {
+        // key is the field of a page with its name
+        StringBuilder sb = new StringBuilder();
+        for (JsonObject p : docPages) {
+            String page = p.getString(key);
+            if (page == null) {
+                continue;
+            }
+            sb.append(sb.isEmpty() ? "" : "; ").append("docPage=").append(page);
+            if (p.getString("title") != null) {
+                sb.append(": ").append(p.getString("title"));
+            }
+        }
+        return sb.isEmpty()
+                ? "docPage=<" + key + "> returns that documentation page as text"
+                : sb + " (each returned as text)";
+    }
+
     private static JsonObject error(String message) {
         JsonObject err = new JsonObject();
         err.put("error", message);
@@ -1032,7 +1239,7 @@ public final class CatalogDocs {
 
     private static JsonObject componentDoc(
             ComponentModel model, String filter, OptionScope scope, boolean includeHeaders, String doc,
-            String docExcerpt) {
+            String docExcerpt, List<JsonObject> docPages) {
         JsonObject result = new JsonObject();
         result.put("kind", "component");
         result.put("name", model.getScheme());
@@ -1114,7 +1321,36 @@ public final class CatalogDocs {
             result.put("documentation", docExcerpt);
             result.put("documentationHint", "the start of the component's documentation page; includeDoc=true for all of it");
         }
+        if (!docPages.isEmpty()) {
+            // named with their titles, so a model can tell which one answers its question
+            result.put("docPages", new JsonArray(docPages));
+            result.put("docPagesHint", pagesHint(docPages, "page"));
+        }
         return result;
+    }
+
+    /**
+     * The sub-pages of a component's documentation, found from the links of its page to them
+     * ({@code xref:others:kamelet-custom.adoc[Writing a custom Kamelet]}): the page name to ask for with
+     * {@code docPage}, and its title.
+     */
+    static List<JsonObject> componentDocPages(String scheme, String adoc) {
+        List<JsonObject> pages = new ArrayList<>();
+        if (adoc == null || scheme == null) {
+            return pages;
+        }
+        Matcher m = Pattern.compile("xref:others:" + Pattern.quote(scheme) + "-([a-z0-9][a-z0-9-]*)\\.adoc\\[([^\\]]+)]")
+                .matcher(adoc);
+        Set<String> seen = new HashSet<>();
+        while (m.find()) {
+            if (seen.add(m.group(1))) {
+                JsonObject jo = new JsonObject();
+                jo.put("page", m.group(1));
+                jo.put("title", m.group(2));
+                pages.add(jo);
+            }
+        }
+        return pages;
     }
 
     private static JsonObject dataFormatDoc(
@@ -1490,6 +1726,17 @@ public final class CatalogDocs {
             JsonArray enums = new JsonArray();
             enums.addAll(opt.getEnums());
             o.put("enumValues", enums);
+        }
+        if ("element".equals(opt.getKind()) && "object".equals(opt.getType()) && opt.getOneOfs() != null
+                && !opt.getOneOfs().isEmpty() && !opt.getOneOfs().contains(opt.getName())) {
+            // a single element that is one of several kinds is written as that kind, not under its own name: the
+            // error handler is errorHandler: {deadLetterChannel: {...}}, never errorHandlerType: (CAMEL-25370). Not
+            // a list such as outputs (written under steps:), nor an element whose kind is its own name (when).
+            JsonArray oneOf = new JsonArray();
+            oneOf.addAll(opt.getOneOfs());
+            o.put("oneOf", oneOf);
+            o.put("yaml", "write one of oneOf as the key, not '" + opt.getName() + "': for example "
+                          + opt.getOneOfs().get(0) + ": {...}");
         }
         return o;
     }

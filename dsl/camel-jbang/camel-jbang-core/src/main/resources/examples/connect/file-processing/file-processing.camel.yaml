@@ -1,0 +1,56 @@
+# The courier's billing system drops invoices into the inbox. Each invoice
+# is checked, archived by month and moved to done; a bad one goes to failed.
+# The courier route plays the courier: it copies the samples into the inbox.
+- onException:
+    exception:
+      - org.apache.camel.support.processor.PredicateValidationException
+    redeliveryPolicy:
+      logStackTrace: false
+      logExhaustedMessageHistory: false
+    steps:
+      - log:
+          loggingLevel: WARN
+          message: "Invoice ${file:name} rejected: ${exception.message}"
+
+- route:
+    id: courier
+    from:
+      uri: file
+      parameters:
+        directoryName: samples
+        noop: true
+        sortBy: "file:name"
+      steps:
+        - to:
+            uri: file
+            parameters:
+              directoryName: inbox
+
+- route:
+    id: invoices
+    from:
+      uri: file
+      parameters:
+        directoryName: inbox
+        include: ".*\\.json"
+        move: done
+        moveFailed: failed
+        sortBy: "file:name"
+      steps:
+        - unmarshal:
+            json:
+              library: Jackson
+        - validate:
+            expression:
+              simple:
+                expression: "${body[amount]} > 0"
+        - log:
+            message: "Invoice ${body[invoiceId]} for ${body[orderId]}: ${body[amount]} EUR, archived as ${date:now:yyyy-MM}/${file:name}"
+        - marshal:
+            json:
+              library: Jackson
+        - to:
+            uri: file
+            parameters:
+              directoryName: archive
+              fileName: "${date:now:yyyy-MM}/${file:name}"

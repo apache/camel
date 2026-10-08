@@ -208,15 +208,15 @@ public interface VertxComponentBuilderFactory {
         /**
          * To use a custom VertxFactory implementation.
          * 
-         * The option is a:
-         * &lt;code&gt;io.vertx.core.impl.VertxBuilder&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;io.vertx.core.VertxBuilder&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
          * 
          * @param vertxFactory the value to set
          * @return the dsl builder
          */
-        default VertxComponentBuilder vertxFactory(io.vertx.core.impl.VertxBuilder vertxFactory) {
+        default VertxComponentBuilder vertxFactory(io.vertx.core.VertxBuilder vertxFactory) {
             doSetProperty("vertxFactory", vertxFactory);
             return this;
         }
@@ -243,7 +243,7 @@ public interface VertxComponentBuilderFactory {
             case "bridgeErrorHandler": ((VertxComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((VertxComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((VertxComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "vertxFactory": ((VertxComponent) component).setVertxFactory((io.vertx.core.impl.VertxBuilder) value); return true;
+            case "vertxFactory": ((VertxComponent) component).setVertxFactory((io.vertx.core.VertxBuilder) value); return true;
             default: return false;
             }
         }

@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.kamelet;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +63,9 @@ import static org.apache.camel.component.kamelet.Kamelet.PARAM_UUID;
  */
 @Component(Kamelet.SCHEME)
 public class KameletComponent extends DefaultComponent {
+
+    /** The Kamelets whose route this thread is creating, innermost first: to find a Kamelet that uses itself. */
+    private static final ThreadLocal<Deque<String>> CREATING = ThreadLocal.withInitial(ArrayDeque::new);
 
     private static final Logger LOG = LoggerFactory.getLogger(KameletComponent.class);
 
@@ -474,11 +479,41 @@ public class KameletComponent extends DefaultComponent {
 
         protected void doCreateRouteForEndpoint(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId)
                 throws Exception {
+            final String templateId = endpoint.getTemplateId();
+            final String loc = endpoint.getLocation() != null ? endpoint.getLocation() : getLocation();
+            // creating a Kamelet's route creates the Kamelets its template uses, on this thread: one that is already
+            // being created is a cycle, which created routes until the stack overflowed (CAMEL-25387)
+            Deque<String> creating = CREATING.get();
+            if (creating.contains(templateId)) {
+                List<String> cycle = new ArrayList<>(creating);
+                Collections.reverse(cycle);
+                cycle = cycle.subList(cycle.indexOf(templateId), cycle.size());
+                cycle.add(templateId);
+                String msg = cycle.size() == 2
+                        ? "Kamelet " + templateId + " uses itself: its template uses kamelet:" + templateId
+                          + ", which creates the Kamelet again while creating it. The template of an action or a sink"
+                          + " starts from kamelet:source, the message the route sends to the Kamelet"
+                        : "Kamelets use each other in a cycle: " + String.join(" -> ", cycle)
+                          + ". Creating one creates the next, endlessly";
+                throw new FailedToCreateKameletException(templateId, loc, new IllegalArgumentException(msg));
+            }
+            creating.push(templateId);
+            try {
+                doCreateRouteForEndpoint(endpoint, parentRouteId, parentProcessorId, templateId, loc);
+            } finally {
+                creating.pop();
+                if (creating.isEmpty()) {
+                    CREATING.remove();
+                }
+            }
+        }
+
+        private void doCreateRouteForEndpoint(
+                KameletEndpoint endpoint, String parentRouteId, String parentProcessorId, String templateId, String loc)
+                throws Exception {
 
             final ModelCamelContext context = (ModelCamelContext) getCamelContext();
-            final String templateId = endpoint.getTemplateId();
             final String routeId = endpoint.getRouteId();
-            final String loc = endpoint.getLocation() != null ? endpoint.getLocation() : getLocation();
             final String uuid = (String) endpoint.getKameletProperties().get(PARAM_UUID);
 
             if (context.getRouteTemplateDefinition(templateId) == null && loc != null) {

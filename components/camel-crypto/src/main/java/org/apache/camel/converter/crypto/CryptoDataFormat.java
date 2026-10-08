@@ -206,7 +206,9 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
                         // shouldAppendHMAC=false nothing is authenticating, so calling it an authentication failure
                         // would misdescribe a plain padding error and drop its cause.
                         LOG.debug("Reporting cipher failure as an authentication failure", e);
-                        throw new IllegalStateException(HMACAccumulator.AUTHENTICATION_FAILED);
+                        // Still finalize and compare the MAC, as a bad MAC does, so the two failures also take the
+                        // same final work and cannot be told apart by timing. This always throws.
+                        hmac.validate(true);
                     }
                     throw e;
                 }

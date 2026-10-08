@@ -26,6 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.Jsoner;
 
+import static org.apache.camel.support.http.RestUtil.isAcceptedMediaType;
 import static org.apache.camel.support.http.RestUtil.isValidOrAcceptedContentType;
 
 public class DefaultRestClientRequestValidator implements RestClientRequestValidator {
@@ -40,7 +41,7 @@ public class DefaultRestClientRequestValidator implements RestClientRequestValid
         }
         // check if what is produces is accepted by the client
         String accept = exchange.getMessage().getHeader("Accept", String.class);
-        if (!isValidOrAcceptedContentType(validationContext.produces(), accept)) {
+        if (!isAcceptedMediaType(validationContext.produces(), accept)) {
             return new ValidationError(406, null);
         }
         // check for required query parameters

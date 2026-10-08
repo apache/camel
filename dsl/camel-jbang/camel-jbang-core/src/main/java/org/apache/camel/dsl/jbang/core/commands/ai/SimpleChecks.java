@@ -223,6 +223,7 @@ final class SimpleChecks {
 
     static boolean isMissingDependency(String error) {
         return error.startsWith("No language could be found for:")
+                || error.contains("requires camel-semantic")
                 || error.startsWith("No " + SimpleLanguageFunctionFactory.FACTORY + "/")
                         && error.contains("service could be found in the classpath");
     }

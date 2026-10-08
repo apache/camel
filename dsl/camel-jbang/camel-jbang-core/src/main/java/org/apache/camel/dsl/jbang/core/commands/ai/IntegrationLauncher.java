@@ -21,14 +21,19 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -40,6 +45,18 @@ public final class IntegrationLauncher {
 
     /** How long a started integration is given to publish its status file before the call returns without a pid. */
     static final long STARTUP_TIMEOUT_MS = 30_000;
+
+    /** The last log records of a failed start that are returned. */
+    static final int FAILURE_RECORDS = 15;
+
+    /** A stack frame, or the count of the frames a cause shares with the exception it caused. */
+    private static final Pattern FRAME = Pattern.compile("^\\s*(at \\S.*|\\.\\.\\. \\d+ (more|common frames omitted))$");
+
+    /**
+     * The processes this JVM started from a directory with --source-dir, so a copy that has not written its status file
+     * yet (still starting, or started by a concurrent call) is seen by the guard too.
+     */
+    private static final Map<Path, ProcessHandle> LAUNCHED = new ConcurrentHashMap<>();
 
     private IntegrationLauncher() {
     }
@@ -72,22 +89,33 @@ public final class IntegrationLauncher {
             return result;
         }
         result.put("directory", directory.toString());
-        result.put("command", String.join(" ", cmd));
         Path output;
         Process process;
-        try {
-            Files.createDirectories(CommandLineHelper.getCamelDir());
-            output = Files.createTempFile(CommandLineHelper.getCamelDir(), "camel-launch-", ".log");
-            output.toFile().deleteOnExit();
-            ProcessBuilder pb = new ProcessBuilder(cmd);
-            pb.directory(directory.toFile());
-            pb.redirectErrorStream(true);
-            pb.redirectOutput(output.toFile());
-            process = pb.start();
-        } catch (IOException e) {
-            result.put("status", "failed");
-            result.put("error", "Cannot start camel run: " + e.getMessage());
-            return result;
+        // one check and start at a time, so two calls in flight do not both start a copy
+        synchronized (LAUNCHED) {
+            if (sourceDir && alreadyRunning(directory, result)) {
+                // the whole directory is the app: one already running from it is that app, and a second copy only
+                // fights it for ports and files and makes its name ambiguous to the other tools
+                return result;
+            }
+            result.put("command", String.join(" ", cmd));
+            try {
+                Files.createDirectories(CommandLineHelper.getCamelDir());
+                output = Files.createTempFile(CommandLineHelper.getCamelDir(), "camel-launch-", ".log");
+                output.toFile().deleteOnExit();
+                ProcessBuilder pb = new ProcessBuilder(cmd);
+                pb.directory(directory.toFile());
+                pb.redirectErrorStream(true);
+                pb.redirectOutput(output.toFile());
+                process = pb.start();
+            } catch (IOException e) {
+                result.put("status", "failed");
+                result.put("error", "Cannot start camel run: " + e.getMessage());
+                return result;
+            }
+            if (sourceDir) {
+                LAUNCHED.put(key(directory), process.toHandle());
+            }
         }
         long pid = process.pid();
         long deadline = System.currentTimeMillis() + STARTUP_TIMEOUT_MS;
@@ -95,7 +123,7 @@ public final class IntegrationLauncher {
             if (!process.isAlive()) {
                 result.put("status", "failed");
                 result.put("exitCode", process.exitValue());
-                result.put("output", readTail(output));
+                result.put("output", failureOutput(output));
                 result.put("message", "camel run exited before the integration started; the output has the reason");
                 return result;
             }
@@ -218,9 +246,153 @@ public final class IntegrationLauncher {
         return null;
     }
 
+    /**
+     * The console output of a run that failed to start, as camel_get_log shows a log (CAMEL-25364): each record keeps
+     * its message, the lines of its exceptions (the exception, its causes, and a message over several lines such as the
+     * diagnostics of a Java class that does not compile) and the first line of the user's code, and the stack frames
+     * are left out. The end of the raw output is mostly frames of the runtime, and the line that says what went wrong
+     * is above them. This is the only copy the agent gets, as the console capture is deleted. Output without log
+     * records (a launcher that fails before logging) is returned as it is, its end kept.
+     */
+    static String failureOutput(Path output) {
+        List<String> lines;
+        try {
+            lines = readText(output).lines().toList();
+        } catch (IOException e) {
+            return readTail(output).strip();
+        }
+        if (lines.size() > 5000) {
+            lines = lines.subList(lines.size() - 5000, lines.size());
+        }
+        lines = lines.stream().filter(l -> !l.isBlank()).toList();
+        // folded for the first line of the user's code, and once more without the frames for the exception lines
+        JsonArray rows = (JsonArray) LogFileReader.build(lines, FAILURE_RECORDS, null, null, false, new JsonObject())
+                .get("lines");
+        if (rows == null || rows.isEmpty()
+                || rows.stream().allMatch(r -> ((JsonObject) r).getStringOrDefault("time", "").isEmpty())) {
+            // no log records: a launcher that failed before logging prints its error at the end
+            return readTail(output).strip();
+        }
+        List<String> withoutFrames = lines.stream().filter(l -> !FRAME.matcher(l).matches()).toList();
+        JsonArray exceptions = (JsonArray) LogFileReader
+                .build(withoutFrames, FAILURE_RECORDS, null, null, true, new JsonObject()).get("lines");
+        boolean aligned = exceptions != null && exceptions.size() == rows.size();
+        StringBuilder sb = new StringBuilder();
+        // newest first in the log tool; oldest first here, so it reads as the console did
+        for (int i = rows.size() - 1; i >= 0; i--) {
+            JsonObject r = (JsonObject) rows.get(i);
+            String level = r.getStringOrDefault("time", "").isEmpty() ? "" : r.getStringOrDefault("level", "") + " ";
+            sb.append(level).append(r.getStringOrDefault("message", ""));
+            if (r.get("detailLines") != null) {
+                String detail = aligned ? ((JsonObject) exceptions.get(i)).getString("detail") : null;
+                if (detail != null) {
+                    // the exception, its causes and a message over several lines (compiler diagnostics)
+                    detail.lines().forEach(l -> sb.append("\n  ").append(l.strip()));
+                } else if (r.get("cause") != null) {
+                    sb.append("\n  cause: ").append(r.getString("cause"));
+                }
+                if (r.get("at") != null) {
+                    sb.append("\n  at: ").append(r.getString("at"));
+                }
+                sb.append("\n  (stack frames left out)");
+            } else if (r.get("detail") != null) {
+                sb.append("\n").append(r.getString("detail"));
+            }
+            sb.append("\n");
+        }
+        return sb.toString().strip();
+    }
+
+    /**
+     * Whether an integration already runs from the directory, or is still starting from it, filling in the result for
+     * it: status running or starting, its pid, and what dev mode and a restart do for it.
+     */
+    static boolean alreadyRunning(Path directory, JsonObject result) {
+        RuntimeHelper.ProcessInfo running = runningFrom(directory);
+        if (running != null) {
+            String runningName = running.contextName() != null && !running.contextName().isBlank()
+                    ? running.contextName() : running.name();
+            result.put("status", "running");
+            result.put("pid", running.pid());
+            result.put("name", runningName);
+            result.put("log", LogFileReader.logFile(running.pid(), running.name()).toString());
+            result.put("message", runningMessage(runningName, running.pid()));
+            return true;
+        }
+        ProcessHandle starting = LAUNCHED.get(key(directory));
+        if (starting != null && starting.isAlive()) {
+            result.put("status", "starting");
+            result.put("pid", starting.pid());
+            result.put("message", "pid " + starting.pid() + " started earlier from this directory is still starting"
+                                  + " (dependencies may be downloading); a second copy was not started."
+                                  + " list_processes shows it once it is up.");
+            return true;
+        }
+        return false;
+    }
+
+    /** What the agent can do with the integration that runs from the directory, by how it was started. */
+    private static String runningMessage(String name, long pid) {
+        String prefix = name + " (pid " + pid + ") already runs from this directory; a second copy was not started.";
+        List<String> args = ProcessHandle.of(pid).flatMap(ph -> ph.info().arguments()).map(Arrays::asList).orElse(null);
+        if (args == null) {
+            return prefix + " camel_control stop stops it, then camel_run starts the directory again.";
+        }
+        boolean sourceDir = args.stream().anyMatch(a -> a.startsWith("--source-dir"));
+        boolean dev = args.contains("--dev");
+        if (!sourceDir) {
+            // started with its own files: dev mode watches those only, and a restart runs the same files again
+            return prefix + " It was started with its own files, not the whole directory, so a file added to the"
+                   + " directory, such as a Java class, is not part of it, also not after camel_control restart: stop it"
+                   + " with camel_control stop, then camel_run runs the whole directory.";
+        }
+        return prefix + (dev
+                ? " In dev mode a changed or added file is reloaded; camel_control restart restarts it, for example"
+                  + " after adding a Java class."
+                : " It is not in dev mode: camel_control restart picks up a changed or added file.");
+    }
+
+    /** The integration that runs with this directory as its working directory, or null. */
+    private static RuntimeHelper.ProcessInfo runningFrom(Path directory) {
+        Path wanted = directory.toAbsolutePath().normalize();
+        for (RuntimeHelper.ProcessInfo p : RuntimeHelper.discoverProcesses()) {
+            Path dir = workingDirectory(p.pid());
+            if (dir != null && sameDirectory(dir, wanted)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Whether two paths are the same directory: the process reports its symlink-resolved working directory, and the
+     * caller may pass a path through a symlink (every directory under /tmp on macOS).
+     */
+    private static boolean sameDirectory(Path a, Path b) {
+        try {
+            return Files.isSameFile(a, b);
+        } catch (IOException e) {
+            return a.toAbsolutePath().normalize().equals(b.toAbsolutePath().normalize());
+        }
+    }
+
+    /** The key of a directory in {@link #LAUNCHED}: its real path, the same through any symlink. */
+    private static Path key(Path directory) {
+        try {
+            return directory.toRealPath();
+        } catch (IOException e) {
+            return directory.toAbsolutePath().normalize();
+        }
+    }
+
+    /** The console output, decoded leniently: console output is not always UTF-8 (Windows uses the code page). */
+    private static String readText(Path output) throws IOException {
+        return new String(Files.readAllBytes(output), StandardCharsets.UTF_8);
+    }
+
     private static String readTail(Path output) {
         try {
-            String text = Files.readString(output, StandardCharsets.UTF_8);
+            String text = readText(output);
             return text.length() > 4000 ? "..." + text.substring(text.length() - 4000) : text;
         } catch (IOException e) {
             return "";
@@ -324,7 +496,8 @@ public final class IntegrationLauncher {
             }
             if (!p.isAlive()) {
                 return "Restart of " + (name != null ? name : "pid " + pid) + " failed with exit code "
-                       + p.exitValue() + ":\n" + readTail(output);
+                       + p.exitValue() + ", so it is stopped now: fix the cause below, then camel_run starts it again.\n"
+                       + failureOutput(output);
             }
             return "Restarting " + (name != null ? name : "pid " + pid) + " as pid " + p.pid()
                    + " (still starting)";

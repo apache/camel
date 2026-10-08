@@ -41,6 +41,14 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
     }
 
     @Test
+    public void testSemanticFunctionHints() {
+        assertThat(expressionError("${sematic('q')}")).contains("${semantic('q')}");
+        assertThat(expressionError("${semantic:q}")).contains("${semantic('q')}");
+        assertThat(expressionError("${semantic}")).contains("${semantic('evaluationName')}");
+        assertThat(expressionError("${semantic('q')}")).contains("requires camel-semantic");
+    }
+
+    @Test
     public void testFunctionWithoutDollarBraces() {
         assertThat(predicateError("body == 'Hello World'"))
                 .contains("text outside ${...} is a literal")
@@ -177,7 +185,17 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         Exception e = assertThrows(Exception.class,
                 () -> context.resolveLanguage("simple").createExpression("${body.typo}").evaluate(exchange,
                         String.class));
-        assertThat(e.getMessage()).contains("the value is a Map: a key is read with [typo], as in ${body[typo]}");
+        // CAMEL-25322: the dot reads a key, so the hint says the key is missing and which keys there are
+        assertThat(e.getMessage()).contains("(the Map has no key typo; its keys are: type)");
+    }
+
+    @Test
+    public void testOgnlDotOnAnEmptyMapSaysItIsEmpty() {
+        exchange.getIn().setBody(new java.util.LinkedHashMap<>());
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.orderId}").evaluate(exchange,
+                        String.class));
+        assertThat(e.getMessage()).contains("(the Map has no key orderId; it is empty)");
     }
 
     @Test

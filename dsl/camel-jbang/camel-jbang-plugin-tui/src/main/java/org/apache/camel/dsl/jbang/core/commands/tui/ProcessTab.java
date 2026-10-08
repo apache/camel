@@ -55,7 +55,12 @@ class ProcessTab extends AbstractTab {
 
     @Override
     public String description() {
-        return "OS process information (PID, CPU, memory, file descriptors)";
+        return "The OS process: PID, user, Camel and Java versions, directory, uptime and command line";
+    }
+
+    @Override
+    public String getHelpText() {
+        return DocHelper.loadHelpText("process");
     }
 
     @Override

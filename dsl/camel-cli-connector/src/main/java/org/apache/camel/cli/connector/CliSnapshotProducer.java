@@ -37,6 +37,15 @@ public interface CliSnapshotProducer {
     JsonObject status() throws Exception;
 
     /**
+     * The runtime section of the status (pid, platform, Java), cheap to collect.
+     *
+     * @since 4.23
+     */
+    default JsonObject runtime() throws Exception {
+        return status().getMap("runtime");
+    }
+
+    /**
      * Traced messages (<tt>traces</tt> array, each with a <tt>uid</tt>).
      */
     JsonObject trace() throws Exception;

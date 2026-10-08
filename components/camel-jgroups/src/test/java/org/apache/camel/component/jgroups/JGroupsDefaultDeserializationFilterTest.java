@@ -32,9 +32,9 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Verifies the default deserialization filter applied when the {@code deserializationFilter} option is not configured:
- * the shared Camel default allow-list denies {@code java.net.**}, and {@code deserializationFilter=*} opts out of the
- * check.
+ * Verifies the post-read class check applied once the start-up guard is satisfied (here by the
+ * {@code jgroups.deserialization.filter} system property): the shared Camel default allow-list denies
+ * {@code java.net.**}, and {@code deserializationFilter=*} opts out of the check and accepts any type.
  */
 public class JGroupsDefaultDeserializationFilterTest extends CamelTestSupport {
 
@@ -63,7 +63,7 @@ public class JGroupsDefaultDeserializationFilterTest extends CamelTestSupport {
                 // no deserializationFilter configured, so the shared Camel default allow-list applies
                 from("jgroups:" + defaultFilterCluster + "?exceptionHandler=#filterExceptionHandler")
                         .to(defaultFilterMock);
-                // opt out of the class check
+                // deserializationFilter=* opts out of the post-read class check
                 from("jgroups:" + noFilterCluster + "?deserializationFilter=*").to(noFilterMock);
             }
         };
@@ -72,6 +72,9 @@ public class JGroupsDefaultDeserializationFilterTest extends CamelTestSupport {
     @Override
     protected void doPreSetup() throws Exception {
         super.doPreSetup();
+        // a pre-read control is required for the consumer to start; use the JGroups-native filter property so the
+        // Camel post-read check is what is exercised here
+        System.setProperty("jgroups.deserialization.filter", "*");
         defaultFilterChannel = new JChannel();
         defaultFilterChannel.connect(defaultFilterCluster);
         noFilterChannel = new JChannel();
@@ -80,6 +83,7 @@ public class JGroupsDefaultDeserializationFilterTest extends CamelTestSupport {
 
     @Override
     public void doPostTearDown() {
+        System.clearProperty("jgroups.deserialization.filter");
         if (defaultFilterChannel != null) {
             defaultFilterChannel.close();
         }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.infra.microprofile.lra.services;
 
-import com.github.dockerjava.api.model.Network;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
@@ -128,18 +127,37 @@ public class MicroprofileLRALocalContainerInfraService
 
     @Override
     public String callbackHost() {
-        // Get host ip address from container
-        Network bridgeNetwork = this.container.getDockerClient()
-                .inspectNetworkCmd()
-                .withNetworkId("bridge")
-                .exec();
-
-        String networkGateway = bridgeNetwork.getIpam().getConfig().stream()
-                .filter(config -> config.getGateway() != null)
-                .findAny()
-                .map(Network.Ipam.Config::getGateway)
-                .orElseThrow(() -> new IllegalStateException("Gateway cannot be found in the bridge network"));
-
-        return networkGateway;
+        // Rootless Podman (netavark/pasta) injects "host.containers.internal" into
+        // every container's /etc/hosts pointing to the host via the pasta tap
+        // interface (169.254.1.2).  The gateway of the container network (10.88.x.1)
+        // exists only inside the container namespace and is NOT reachable from the
+        // host JVM, so using it as localParticipantUrl makes the coordinator's
+        // callbacks go to an unreachable address.
+        //
+        // Docker (and rootful Podman with the bridge driver) does not inject that
+        // hostname; the bridge gateway (e.g. 172.17.0.1) is the correct host address.
+        //
+        // Strategy: if the container's /etc/hosts contains "host.containers.internal"
+        // use that hostname — always routable from inside the container to the host JVM
+        // regardless of Podman network driver.  Otherwise fall back to the gateway of
+        // the first connected network (the Docker bridge case).
+        try {
+            String hosts = container.execInContainer("cat", "/etc/hosts").getStdout();
+            if (hosts != null && hosts.contains("host.containers.internal")) {
+                return "host.containers.internal";
+            }
+        } catch (Exception e) {
+            LOG.debug("Could not read /etc/hosts from container, falling back to gateway", e);
+        }
+        return container.getContainerInfo()
+                .getNetworkSettings()
+                .getNetworks()
+                .values()
+                .stream()
+                .filter(n -> n.getGateway() != null && !n.getGateway().isEmpty())
+                .findFirst()
+                .map(n -> n.getGateway())
+                .orElseThrow(() -> new IllegalStateException(
+                        "No network with a gateway found for the LRA coordinator container"));
     }
 }

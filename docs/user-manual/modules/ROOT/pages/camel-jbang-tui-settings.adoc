@@ -23,20 +23,24 @@ Press *F2* to open the actions menu with quick access to common operations:
 |===
 | Action | Description
 
+| Go to... (Shift+F2) | Jump to a tab by name.
+| Switch Integration (F3) | Select another running integration.
 | Send Message | Send a test message to any route with custom body, headers, and exchange pattern.
-| Run an example... | Browse and launch built-in Camel examples from the catalog.
+| Run an Example... | Browse and launch built-in Camel examples from the catalog.
 | Open Project... | Open a project directory in the Source tab for browsing and editing. Run with F10.
-| Run from folder... | Run routes from a local directory.
 | Run Dev/Infra Service... | Start infrastructure services (Kafka, databases, etc.) in Docker.
-| Browse Files | Browse the integration's source files with syntax highlighting.
-| Run Doctor | Check your environment: Java version, JBang, Maven, Docker, port conflicts, disk space.
+| Browse Files... | Browse the integration's source files with syntax highlighting.
+| Run Doctor | Check your environment: Java, JBang, Maven, Docker, Ollama, AI and MCP, port conflicts, disk space.
 | Reset Stats | Reset all statistics and metrics for the selected integration.
 | Stop All | Stop running integrations and/or infrastructure services.
+| Screen... | Take a screenshot (SVG, text, or ANSI art), record the session as a `.tape` file, show keystrokes, or add a caption, for demos.
 | Settings... | Change the theme, the starting tab, and the default run-from-folder.
-| Take Screenshot | Export the current screen as SVG, text, or ANSI art.
-| Start/Stop Tape Recording | Record your session as a `.tape` file for demos.
+| AI & MCP... | AI Prompt, Setup AI and AI Log (see xref:camel-jbang-tui-ai.adoc[AI]), and MCP Info and MCP Log: the MCP server of the session and the calls agents made to it. Called AI... when the MCP server is off.
+| Shell (F6) | Open the embedded Camel CLI shell.
 | Quit | Quit the TUI, with the same confirmation as pressing *q*. The last entry of the menu, so quitting is one menu away on tabs and in input fields where *q* is taken by something else. Integrations started from the TUI keep running after it quits (until the terminal closes); when some do, the confirmation says how many, and *s* stops them and quits.
 |===
+
+image::jbang/camel-tui-actions-menu.png[The F2 actions menu over the Overview]
 
 === Sending Test Messages
 
@@ -62,12 +66,14 @@ The Doctor checks your development environment and reports issues:
 * JBang installation
 * Maven repository connectivity
 * Docker/Podman availability
+* Ollama: whether it runs, and the models it has (the AI panel needs one of 14B or more)
+* AI and MCP: the AI provider and model set up, and the MCP server of the session
 * Common port conflicts (8080, 8443, 9090)
 * Disk space in temp directory
 
 == Embedded Shell (F6)
 
-Press *F6* to open an embedded Camel JBang shell at the bottom (or top) of the screen. Any `camel`
+Press *F6* to open an embedded Camel CLI shell at the bottom (or top) of the screen. Any `camel`
 command can be run there -- `camel run`, `camel infra run kafka`, `camel cmd send`, `camel get` and
 so on -- without leaving the dashboard, and the tabs keep updating while the command runs. Press
 *F6* again to close the panel, *Shift+F6* to cycle its height, *PgUp*/*PgDn* to scroll the output
@@ -96,12 +102,32 @@ warning, error) and borders adapt for readability on each palette. A few themes 
 the brand accent for their own identity: Monochrome, CRT and Turbo Pascal. The Turbo
 Pascal theme recreates Borland's IDE (yellow text on the blue editor field, cyan window
 frames, grey menu bar) and also restyles source code the way that editor did: reserved
-words in white, code in yellow, comments in grey. Other themes highlight code with a
-fixed Monokai (dark) or GitHub-inspired (light) palette.
+words in white, code in yellow, comments in grey.
+
+Source code in the *Source* tab and in code blocks of AI answers is colored to match the
+theme. Themes based on an editor color scheme (Dracula, Nord, Solarized, Gruvbox,
+Catppuccin, Tokyo Night, Rosé Pine, Kanagawa and Everforest) use that scheme's own colors
+for keywords, strings, comments and so on. Where a scheme's color is too faint to read on
+the TUI background, it is made slightly lighter (or darker on light themes). Dark
+highlights code with the Monokai palette, and Light with a GitHub-inspired palette.
+
+Monochrome and CRT have no colors to spare, so they tell code apart by brightness and
+weight. Monochrome shows keywords in bold white and comments in italic grey. CRT looks
+like a green phosphor terminal of the 1980s: keywords in bold high intensity, strings in
+the bright glow, comments in the darker half intensity green.
 
 Your choice is remembered: it is saved as `camel.tui.theme` in `.camel-cli.properties`
 and restored the next time you open the TUI.
 
+=== Theme examples
+
+.Nord: a YAML route in the *Source* tab with the scheme's own code colors
+image::jbang/camel-tui-theme-nord-source.png[A YAML route in the Source tab with the Nord theme's code colors]
+
+.CRT: a green phosphor terminal of the 1980s, code told apart by brightness and bold
+image::jbang/camel-tui-theme-crt-source.png[A YAML route in the Source tab with the CRT theme]
+
+.Catppuccin Latte: a light theme on the *Overview* tab
 image::jbang/camel-tui-theme-latte.png[The Overview in the Catppuccin Latte theme]
 
 == Settings

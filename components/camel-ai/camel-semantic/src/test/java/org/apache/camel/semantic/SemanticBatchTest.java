@@ -55,10 +55,10 @@ class SemanticBatchTest {
         context.start();
         exchange = new DefaultExchange(context);
         exchange.getMessage().setBody("original");
-        SemanticQuestions.get(context).replace("test", Map.of(
-                "urgent", question(SemanticQuestion.Type.BOOLEAN, null, 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL),
-                "department", question(SemanticQuestion.Type.CHOICE, null, 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL),
-                "priority", question(SemanticQuestion.Type.SCORE, null, 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL)));
+        SemanticEvaluations.get(context).replace("test", Map.of(
+                "urgent", evaluation("boolean", null, 0.5, 0, "fail"),
+                "department", evaluation("choice", null, 0.5, 0, "fail"),
+                "priority", evaluation("score", null, 0.5, 0, "fail")));
     }
 
     @AfterEach
@@ -66,27 +66,29 @@ class SemanticBatchTest {
         context.stop();
     }
 
-    private static SemanticQuestion question(
-            SemanticQuestion.Type type, String state, double threshold,
-            double uncertainty, SemanticQuestion.UncertaintyPolicy policy) {
-        return new SemanticQuestion(
-                type, "Classify", state,
-                type == SemanticQuestion.Type.CHOICE ? Map.of("billing", "Payments", "technical", "Bugs") : Map.of(),
-                type == SemanticQuestion.Type.SCORE ? List.of("low", "medium", "high") : List.of(),
-                threshold, uncertainty, policy);
+    private static SemanticEvaluation evaluation(
+            String type, String state, double threshold,
+            double uncertainty, String policy) {
+        return new SemanticEvaluation(type, null, state, switch (type) {
+            case "boolean" -> Map.of("instructions", "Classify", "threshold", threshold,
+                    "uncertainty", uncertainty, "uncertaintyPolicy", policy);
+            case "choice" -> Map.of("instructions", "Classify", "criteria", Map.of("billing", "Payments", "technical", "Bugs"));
+            case "score" -> Map.of("instructions", "Classify", "criteria", List.of("low", "medium", "high"));
+            default -> throw new IllegalArgumentException("Unknown fixture operation");
+        });
     }
 
     @Test
-    void existingAdapterEvaluatesMixedQuestionsSequentiallyAndRetainsDetails() {
+    void existingAdapterEvaluatesMixedEvaluationsSequentiallyAndRetainsDetails() {
         Expression expression = language.createExpression("refs: urgent, department, priority ");
         assertThat(adapter.calls).isEmpty();
         assertThat(expression.evaluate(exchange, Map.class))
                 .containsAllEntriesOf(Map.of("urgent", true, "department", "billing", "priority", 1.2));
         Map<String, Object> decisions = expression.evaluate(exchange, Map.class);
         assertThat(new ArrayList<>(decisions.keySet())).containsExactly("urgent", "department", "priority");
-        assertThat(adapter.calls).containsExactly(SemanticQuestion.Type.BOOLEAN, SemanticQuestion.Type.CHOICE,
-                SemanticQuestion.Type.SCORE, SemanticQuestion.Type.BOOLEAN, SemanticQuestion.Type.CHOICE,
-                SemanticQuestion.Type.SCORE);
+        assertThat(adapter.calls).containsExactly("boolean", "choice",
+                "score", "boolean", "choice",
+                "score");
         assertThat(adapter.states).containsOnly("original");
         assertThat(exchange.getMessage().getBody()).isEqualTo("original");
         Map<?, ?> details = exchange.getProperty(SemanticLanguage.RESULTS, Map.class);
@@ -111,13 +113,13 @@ class SemanticBatchTest {
 
     @Test
     void singleReferenceStillAcceptsNamesContainingCommas() {
-        SemanticQuestions.get(context).replace("comma", Map.of("a,b", SemanticQuestions.get(context).get("urgent")));
+        SemanticEvaluations.get(context).replace("comma", Map.of("a,b", SemanticEvaluations.get(context).get("urgent")));
         assertThat(language.createExpression("ref:a,b").evaluate(exchange, Boolean.class)).isTrue();
         assertThatThrownBy(() -> language.createExpression("refs:a,b")).hasMessageContaining("Unknown");
     }
 
     @Test
-    void batchesCannotBePredicatesEvenWithOneBooleanQuestion() {
+    void batchesCannotBePredicatesEvenWithOneBooleanEvaluation() {
         assertThatThrownBy(() -> language.validatePredicate("refs:urgent")).hasMessageContaining("cannot be predicates");
         assertThatThrownBy(() -> language.createPredicate("refs:urgent")).hasMessageContaining("cannot be predicates");
         Expression expression = language.createExpression("refs:urgent");
@@ -152,9 +154,9 @@ class SemanticBatchTest {
         properties.setProperty("selected", "${header.selected}");
         context.getPropertiesComponent().setInitialProperties(properties);
         language.setDefaultState("{{selected}}");
-        SemanticQuestions.get(context).replace("explicit", Map.of("other",
-                question(SemanticQuestion.Type.BOOLEAN, "${header.selected}", 0.5, 0,
-                        SemanticQuestion.UncertaintyPolicy.FAIL)));
+        SemanticEvaluations.get(context).replace("explicit", Map.of("other",
+                evaluation("boolean", "${header.selected}", 0.5, 0,
+                        "fail")));
         exchange.getMessage().setHeader("selected", Map.of("text", "invoice"));
         Expression expression = language.createExpression("refs:urgent,other");
         expression.evaluate(exchange, Map.class);
@@ -166,7 +168,7 @@ class SemanticBatchTest {
     }
 
     @Test
-    void batchUsesTheSameEmptyPlaceholderStateAsSingleQuestions() {
+    void batchUsesTheSameEmptyPlaceholderStateAsSingleEvaluations() {
         Properties properties = new Properties();
         properties.setProperty("selected", "");
         context.getPropertiesComponent().setInitialProperties(properties);
@@ -178,15 +180,15 @@ class SemanticBatchTest {
 
     @Test
     void incompatibleSelectorsAndUnsupportedCapabilitiesFailBeforeInference() {
-        SemanticQuestions.get(context).replace("other", Map.of("other",
-                question(SemanticQuestion.Type.BOOLEAN, "${header.other}", 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL)));
+        SemanticEvaluations.get(context).replace("other", Map.of("other",
+                evaluation("boolean", "${header.other}", 0.5, 0, "fail")));
         assertThatThrownBy(() -> language.createExpression("refs:urgent,other"))
                 .hasMessageContaining("same effective state selector");
         context.getRegistry().unbind("adapter");
         context.getRegistry().bind("adapter", new RecordingAdapter() {
             @Override
-            public void validate(SemanticQuestion question) {
-                if (question.getType() == SemanticQuestion.Type.SCORE) {
+            public void validate(SemanticEvaluation evaluation) {
+                if ("score".equals(evaluation.getOperation())) {
                     throw new IllegalArgumentException("Unsupported score");
                 }
             }
@@ -200,17 +202,17 @@ class SemanticBatchTest {
     }
 
     @Test
-    void eachQuestionKeepsItsDecisionPolicyAndFailureClearsAllDiagnostics() {
-        SemanticQuestion negative
-                = question(SemanticQuestion.Type.BOOLEAN, null, 0.95, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
-        SemanticQuestion uncertain
-                = question(SemanticQuestion.Type.BOOLEAN, null, 0.9, 0.05, SemanticQuestion.UncertaintyPolicy.NON_MATCH);
-        SemanticQuestions.get(context).replace("policy", Map.of("negative", negative, "uncertain", uncertain));
+    void eachEvaluationKeepsItsDecisionPolicyAndFailureClearsAllDiagnostics() {
+        SemanticEvaluation negative
+                = evaluation("boolean", null, 0.95, 0, "fail");
+        SemanticEvaluation uncertain
+                = evaluation("boolean", null, 0.9, 0.05, "non-match");
+        SemanticEvaluations.get(context).replace("policy", Map.of("negative", negative, "uncertain", uncertain));
         Expression expression = language.createExpression("refs:urgent,negative,uncertain");
         assertThat(expression.evaluate(exchange, Map.class)).containsEntry("urgent", true)
                 .containsEntry("negative", false).containsEntry("uncertain", false);
-        SemanticQuestions.get(context).replace("policy", Map.of("negative", negative, "uncertain",
-                question(SemanticQuestion.Type.BOOLEAN, null, 0.9, 0.05, SemanticQuestion.UncertaintyPolicy.FAIL)));
+        SemanticEvaluations.get(context).replace("policy", Map.of("negative", negative, "uncertain",
+                evaluation("boolean", null, 0.9, 0.05, "fail")));
         exchange.setProperty(SemanticLanguage.RESULT, "stale");
         assertThatThrownBy(() -> expression.evaluate(exchange, Map.class)).hasMessageContaining("uncertain");
         assertThat(exchange.getProperty(SemanticLanguage.RESULTS)).isNull();
@@ -223,19 +225,19 @@ class SemanticBatchTest {
         context.getRegistry().unbind("adapter");
         context.getRegistry().bind("adapter", new RecordingAdapter() {
             @Override
-            public Map<String, SemanticResult> evaluateBatch(Map<String, SemanticQuestion> questions, Object state) {
+            public Map<String, SemanticResult> evaluateBatch(Map<String, SemanticEvaluation> evaluations, Object state) {
                 if (failure.equals("failure")) {
                     throw new IllegalStateException("provider failed");
                 }
                 Map<String, SemanticResult> results = new LinkedHashMap<>();
-                results.put("urgent", result(SemanticQuestion.Type.BOOLEAN));
+                results.put("urgent", result("boolean"));
                 if (!failure.equals("missing")) {
                     results.put("department", failure.equals("null") ? null
                             : failure.equals("invalid") ? new SemanticResult("undeclared", null, null, null, null)
-                            : result(SemanticQuestion.Type.CHOICE));
+                            : result("choice"));
                 }
                 if (failure.equals("extra")) {
-                    results.put("extra", result(SemanticQuestion.Type.BOOLEAN));
+                    results.put("extra", result("boolean"));
                 }
                 return results;
             }
@@ -249,39 +251,55 @@ class SemanticBatchTest {
     }
 
     @Test
-    void reloadDuringValidationOrEvaluationCannotMixQuestionDefinitions() {
-        SemanticQuestion old = SemanticQuestions.get(context).get("urgent");
-        SemanticQuestion updated
-                = question(SemanticQuestion.Type.BOOLEAN, null, 0.95, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
-        SemanticQuestions questions = SemanticQuestions.get(context);
-        questions.replace("test", Map.of("first", old, "second", old));
+    void reloadDuringValidationOrEvaluationCannotMixEvaluationDefinitions() {
+        SemanticEvaluation old = SemanticEvaluations.get(context).get("urgent");
+        SemanticEvaluation updated
+                = evaluation("boolean", null, 0.95, 0, "fail");
+        SemanticEvaluations evaluations = SemanticEvaluations.get(context);
+        evaluations.replace("test", Map.of("first", old, "second", old));
         AtomicInteger validations = new AtomicInteger();
         context.getRegistry().unbind("adapter");
         context.getRegistry().bind("adapter", new RecordingAdapter() {
             @Override
-            public void validate(SemanticQuestion question) {
+            public void validate(SemanticEvaluation evaluation) {
                 if (validations.incrementAndGet() == 1) {
-                    questions.replace("test", Map.of("first", updated, "second", updated));
+                    evaluations.replace("test", Map.of("first", updated, "second", updated));
                 }
             }
 
             @Override
-            public SemanticResult evaluate(SemanticQuestion question, Object state) throws Exception {
-                questions.replace("test", Map.of("first", old, "second", old));
-                return super.evaluate(question, state);
+            public SemanticResult evaluate(SemanticEvaluation evaluation, Object state) throws Exception {
+                evaluations.replace("test", Map.of("first", old, "second", old));
+                return super.evaluate(evaluation, state);
             }
         });
         Expression expression = language.createExpression("refs:first,second");
         assertThat(expression.evaluate(exchange, Map.class)).containsEntry("first", false).containsEntry("second", false);
         assertThat(expression.evaluate(exchange, Map.class)).containsEntry("first", true).containsEntry("second", true);
-        questions.replace("test", Map.of("first", old));
+        evaluations.replace("test", Map.of("first", old));
         assertThatThrownBy(() -> expression.evaluate(exchange, Map.class))
-                .hasMessageContaining("Unknown semantic question: second");
+                .hasMessageContaining("Unknown semantic evaluation: second");
         assertThat(exchange.getProperty(SemanticLanguage.RESULTS)).isNull();
-        questions.replace("test", Map.of("first", old, "second",
-                question(SemanticQuestion.Type.BOOLEAN, "${header.changed}", 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL)));
-        assertThatThrownBy(() -> expression.evaluate(exchange, Map.class))
+        assertThatThrownBy(() -> evaluations.replace("test", Map.of("first", old, "second",
+                evaluation("boolean", "${header.changed}", 0.5, 0, "fail"))))
                 .hasMessageContaining("same effective state selector");
+        assertThat(evaluations.get("first")).isSameAs(old);
+        assertThatThrownBy(() -> evaluations.get("second")).hasMessageContaining("Unknown semantic evaluation");
+        assertThatThrownBy(() -> expression.evaluate(exchange, Map.class)).hasMessageContaining("Unknown semantic evaluation");
+    }
+
+    @Test
+    void reloadChecksBatchSelectorsAcrossResourcesAndRetainsThePreviousSnapshot() {
+        SemanticEvaluations evaluations = SemanticEvaluations.get(context);
+        SemanticEvaluation original = evaluations.get("urgent");
+        evaluations.replace("other", Map.of("other", original));
+        Expression expression = language.createExpression("refs:urgent,other");
+        assertThatThrownBy(() -> evaluations.replace("other", Map.of("other",
+                evaluation("boolean", "${header.changed}", 0.5, 0, "fail"))))
+                .hasMessageContaining("same effective state selector");
+        assertThat(adapter.calls).isEmpty();
+        assertThat(evaluations.get("other")).isSameAs(original);
+        assertThat(expression.evaluate(exchange, Map.class)).containsEntry("urgent", true).containsEntry("other", true);
     }
 
     @Test
@@ -290,7 +308,7 @@ class SemanticBatchTest {
         context.getRegistry().unbind("adapter");
         context.getRegistry().bind("adapter", new RecordingAdapter() {
             @Override
-            public SemanticResult evaluate(SemanticQuestion question, Object state) throws Exception {
+            public SemanticResult evaluate(SemanticEvaluation evaluation, Object state) throws Exception {
                 invocations.incrementAndGet();
                 throw new InterruptedException("interrupted");
             }
@@ -306,28 +324,29 @@ class SemanticBatchTest {
         }
     }
 
-    private static SemanticResult result(SemanticQuestion.Type type) {
+    private static SemanticResult result(String type) {
         return switch (type) {
-            case BOOLEAN -> new SemanticResult(null, 0.9, null, null, Map.of("provider", "fixture"));
-            case CHOICE -> new SemanticResult(
+            case "boolean" -> new SemanticResult(null, 0.9, null, null, Map.of("provider", "fixture"));
+            case "choice" -> new SemanticResult(
                     "billing", null, Map.of("billing", 0.9, "technical", 0.1), 0.8, Map.of("provider", "fixture"));
-            case SCORE -> new SemanticResult(1.2, null, null, 0.7, Map.of("provider", "fixture"));
+            case "score" -> new SemanticResult(1.2, null, null, 0.7, Map.of("provider", "fixture"));
+            default -> throw new IllegalArgumentException("Unsupported fixture operation");
         };
     }
 
-    private static class RecordingAdapter implements SemanticAdapter {
-        final List<SemanticQuestion.Type> calls = new ArrayList<>();
+    private static class RecordingAdapter extends TestSemanticAdapter {
+        final List<String> calls = new ArrayList<>();
         final List<Object> states = new ArrayList<>();
 
         @Override
-        public void validate(SemanticQuestion question) {
+        public void validate(SemanticEvaluation evaluation) {
         }
 
         @Override
-        public SemanticResult evaluate(SemanticQuestion question, Object state) throws Exception {
-            calls.add(question.getType());
+        public SemanticResult evaluate(SemanticEvaluation evaluation, Object state) throws Exception {
+            calls.add(evaluation.getOperation());
             states.add(state);
-            return result(question.getType());
+            return applyPolicy(evaluation, result(evaluation.getOperation()));
         }
     }
 }

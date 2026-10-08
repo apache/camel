@@ -57,13 +57,7 @@ public class Shell extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        // TODO: replace with new PicocliCommandRegistry(commandLine, "Camel") when JLine merges #1947
-        PicocliCommandRegistry registry = new PicocliCommandRegistry(CamelJBangMain.getCommandLine()) {
-            @Override
-            public String name() {
-                return "Camel";
-            }
-        };
+        PicocliCommandRegistry registry = new CamelShellCommandRegistry(CamelJBangMain.getCommandLine());
 
         String homeDir = HomeHelper.resolveHomeDir();
         Path history = Paths.get(homeDir, ".camel-jbang-history");

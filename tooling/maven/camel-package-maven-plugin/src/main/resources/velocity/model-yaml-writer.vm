@@ -145,7 +145,27 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                         #if( $list )
                             #set( $yamlKey = $yamlKeys.get("${clazz.simpleName}.${member.name}") )
                             #if( $member.name == "outputs" )
+                            #if( $clazz.simpleName == "TryDefinition" )
+        List<ProcessorDefinition<?>> outputs = new ArrayList<>(def.getOutputs());
+        for (CatchDefinition clause : def.getCatchClauses()) {
+            if (!outputs.contains(clause)) {
+                int index = outputs.size();
+                for (int i = 0; i < outputs.size(); i++) {
+                    if (outputs.get(i) instanceof FinallyDefinition) {
+                        index = i;
+                        break;
+                    }
+                }
+                outputs.add(index, clause);
+            }
+        }
+        if (def.getFinallyClause() != null && !outputs.contains(def.getFinallyClause())) {
+            outputs.add(def.getFinallyClause());
+        }
+        doWriteOutputs(jo, outputs, this::doWrite${root.simpleName}Ref);
+                            #else
         doWriteOutputs(jo, def.${member.getter}(), this::doWrite${root.simpleName}Ref);
+                            #end
                             #elseif( $clazz.simpleName == "RestDefinition" && $member.name == "verbs" )
         doWriteVerbs(jo, def.${member.getter}(), this::doWrite${root.simpleName});
                             #elseif( $yamlKey )

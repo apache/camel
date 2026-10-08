@@ -404,6 +404,24 @@ $ camel transform message --body=file:daltons.csv --dataformat=csv --option=capt
 
 NOTE: Some data formats require complex options that cannot be set from the command line.
 
+== Converting DataWeave to DataSonnet
+
+Migrating from MuleSoft? `camel transform dataweave` converts DataWeave (`.dwl`) scripts to
+xref:components:languages:datasonnet-language.adoc[DataSonnet], so you can review and keep the result:
+
+[source,bash]
+----
+camel transform dataweave --input=script.dwl --output=script.ds
+camel transform dataweave --input=src/dataweave --output=src/datasonnet
+camel transform dataweave --expression='payload.name'
+----
+
+A directory converts every `.dwl` file in it. Without `--output` the result is printed. Notes about the
+conversion are added as comments (turn them off with `--include-comments=false`).
+
+TIP: Camel can also run `.dwl` scripts as they are, converting them when they are loaded,
+see xref:components:languages:datasonnet-language.adoc#_dataweave_support[DataWeave Support].
+
 == Evaluating expressions
 
 Quickly evaluate a Camel expression without writing a route:

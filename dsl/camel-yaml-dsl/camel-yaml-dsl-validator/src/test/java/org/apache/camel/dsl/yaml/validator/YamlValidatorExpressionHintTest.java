@@ -91,6 +91,59 @@ public class YamlValidatorExpressionHintTest {
     }
 
     @Test
+    public void testSplitExpressionAsText() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - split:
+                            expression: "${body}"
+                            steps:
+                              - log:
+                                  message: "${body}"
+                """;
+        assertLanguageHint(yaml, "expression: {simple: {expression: \"${body}\"}}");
+    }
+
+    @Test
+    public void testSetHeaderExpressionWithLanguagePrefix() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setHeader:
+                            name: CamelHttpResponseCode
+                            expression: constant 404
+                """;
+        assertLanguageHint(yaml, "expression: {constant: {expression: \"404\"}}");
+    }
+
+    @Test
+    public void testExpressionKeyWithLanguageIsAccepted() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - split:
+                            expression:
+                              simple:
+                                expression: "${body}"
+                            steps:
+                              - setHeader:
+                                  name: CamelHttpResponseCode
+                                  expression:
+                                    constant:
+                                      expression: "404"
+                """;
+        for (YamlValidator validator : List.of(classic, canonical)) {
+            assertThat(validate(validator, yaml)).isEmpty();
+        }
+    }
+
+    @Test
     public void testExpressionFormIsAccepted() {
         // explicit form, so that it is valid in canonical mode too
         String yaml = """
@@ -126,6 +179,18 @@ public class YamlValidatorExpressionHintTest {
             assertThat(errors.stream().filter(e -> e.getMessage().contains("an expression expected")).count())
                     .as("%s mode must report the hint once", mode)
                     .isEqualTo(1);
+            assertThat(errors).noneMatch(e -> e.getMessage().contains("object expected"));
+        }
+    }
+
+    private void assertLanguageHint(String yaml, String expected) {
+        for (YamlValidator validator : List.of(classic, canonical)) {
+            String mode = validator.isCanonical() ? "canonical" : "classic";
+            List<Error> errors = validate(validator, yaml);
+            assertThat(errors.stream().filter(e -> e.getMessage().contains("a language expected")))
+                    .as("%s mode must report the hint once:\n%s", mode, errors)
+                    .hasSize(1)
+                    .allMatch(e -> e.getMessage().contains(expected));
             assertThat(errors).noneMatch(e -> e.getMessage().contains("object expected"));
         }
     }

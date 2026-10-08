@@ -154,6 +154,7 @@ public class ExampleTools {
                 tags != null ? new ArrayList<>(tags) : List.of(),
                 ExampleHelper.getTeaches(entry),
                 ExampleHelper.getInfraServices(entry),
+                ExampleHelper.getNeeds(entry),
                 ExampleHelper.isBundled(entry),
                 ExampleHelper.requiresDocker(entry),
                 ExampleHelper.getFiles(entry));
@@ -169,7 +170,8 @@ public class ExampleTools {
 
     public record ExampleInfo(String name, String title, String description, String level, Integer order,
             List<String> tags, Map<String, List<String>> teaches, List<String> infraServices,
-            boolean bundled, boolean requiresDocker, List<String> files) {
+            // what the user does before the run, beyond the infra services: a model to pull, a key to set
+            String needs, boolean bundled, boolean requiresDocker, List<String> files) {
     }
 
     public record ExampleFileResult(String example, String file, String content, String githubUrl) {

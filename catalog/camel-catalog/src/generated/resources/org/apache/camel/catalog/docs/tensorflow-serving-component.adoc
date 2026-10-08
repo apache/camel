@@ -190,10 +190,14 @@ YAML::
       steps:
         - setHeader:
             name: CamelTensorFlowServingModelName
-            constant: half_plus_two
+            expression:
+              constant:
+                expression: half_plus_two
         - setHeader:
             name: CamelTensorFlowServingModelVersion
-            constant: 123
+            expression:
+              constant:
+                expression: 123
         - to:
             uri: tensorflow-serving:model-status
         - log:
@@ -290,10 +294,14 @@ YAML::
       steps:
         - setHeader:
             name: CamelTensorFlowServingModelName
-            constant: half_plus_two
+            expression:
+              constant:
+                expression: half_plus_two
         - setHeader:
             name: CamelTensorFlowServingModelVersion
-            constant: 123
+            expression:
+              constant:
+                expression: 123
         - to:
             uri: tensorflow-serving:model-metadata
         - log:

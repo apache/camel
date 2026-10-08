@@ -63,6 +63,19 @@ public class RestJettyContentTypeTest extends BaseJettyTest {
     }
 
     @Test
+    public void testJettyProducerContentTypeMediaRangeInvalid() {
+        FluentProducerTemplate requestTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/*")
+                .withHeader(Exchange.HTTP_METHOD, "post")
+                .withBody("{ \"name\": \"Donald Duck\" }")
+                .to("http://localhost:" + getPort() + "/users/123/update");
+
+        Exception ex = assertThrows(CamelExecutionException.class, () -> requestTemplate.request(String.class));
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
+        assertEquals(415, cause.getStatusCode());
+    }
+
+    @Test
     public void testJettyMultiProducerContentTypeValid() {
         String out = fluentTemplate.withHeader("Accept", "application/csv")
                 .withHeader(Exchange.HTTP_METHOD, "get")

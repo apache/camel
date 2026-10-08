@@ -33,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -75,6 +76,7 @@ import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
+import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.util.json.JsonObject;
@@ -200,6 +202,9 @@ class AiPanel {
     // set while the user asks about a paused live edit (F8 at the pause): input is accepted although a tool call is
     // still running, and Enter hands the question to the waiting call (true) or sends it as a normal question (false)
     private volatile Predicate<String> editQuestionHandler;
+    // asking about a paused live edit: the panel stays compact, so the edit in the editor stays in view, until it
+    // closes or the user sizes it
+    private boolean editCompact;
     // what became of a parked live edit; told to the model with the next question
     private volatile String pendingNote;
     private String initError;
@@ -298,12 +303,31 @@ class AiPanel {
         AcpAgentClient create(AiProviderSelector.AcpPreset preset, Path cwd) throws IOException;
     }
 
+    /** The selected integration as the tool groups see it; replaced in tests. */
+    interface AppStatusSource {
+        /** The selected pid, null when none. */
+        String selectedPid();
+
+        /** How often it reloaded its routes. */
+        int reloadCount();
+
+        /** What it has, read from its status. */
+        AppFeatures features();
+    }
+
     // MCP facade for TUI tool access from the AI panel
     private McpFacade mcpFacade;
     // /write: confirm (dialog per write), auto (the model may skip it with confirm=false) or live (the edit is replayed
     // in the source editor and the user saves or discards it)
     private McpFacade.WriteMode writeMode = McpFacade.WriteMode.CONFIRM;
     private TuiToolRegistry toolRegistry;
+    // CAMEL-24834: the tool groups (SQL, tracing, resilience) of the selected integration that the core set gets, see
+    // refreshToolGroups()
+    private volatile AppStatusSource appStatusSource;
+    private volatile String toolGroupsPid;
+    private volatile int toolGroupsReloads = -1;
+    private volatile AppFeatures toolGroupsFeatures = AppFeatures.none();
+    private volatile TuiToolGroups.Selection toolGroups = TuiToolGroups.Selection.none();
     private boolean mcpServerActive;
     private int mcpServerPort;
 
@@ -485,6 +509,17 @@ class AiPanel {
         return anim.panelHeight();
     }
 
+    /** The height to render at: compact while asking about a paused live edit, else the panel's own height. */
+    int panelHeight(int contentHeight) {
+        int h = anim.panelHeight();
+        return editCompact ? Math.min(h, editQuestionHeight(contentHeight)) : h;
+    }
+
+    /** A quarter of the content, at least 10 rows: the question, a short answer and the hints. */
+    static int editQuestionHeight(int contentHeight) {
+        return Math.min(contentHeight, Math.max(10, contentHeight / 4));
+    }
+
     boolean isAnimating() {
         return anim.isAnimating();
     }
@@ -514,10 +549,12 @@ class AiPanel {
     }
 
     void cycleHeight(int contentHeight) {
+        editCompact = false;
         anim.cycleHeight(contentHeight);
     }
 
     void setPanelHeight(int height) {
+        editCompact = false;
         anim.setPanelHeight(height);
     }
 
@@ -594,6 +631,7 @@ class AiPanel {
     void close() {
         visible = false;
         editQuestionHandler = null;
+        editCompact = false;
         providerSwitchPopup.close();
     }
 
@@ -612,6 +650,7 @@ class AiPanel {
         scrollOffset = 0;
         replaceInputBuffer(prefill);
         editQuestionHandler = handler;
+        editCompact = true;
     }
 
     /**
@@ -1543,6 +1582,7 @@ class AiPanel {
         if (!testingClientInjected) {
             toolMode = normalizeToolMode(TuiSettings.load().getAiTools());
         }
+        refreshToolGroups();
         tools = buildTuiToolDefinitions();
         String systemPrompt = buildSystemPrompt();
 
@@ -3310,7 +3350,61 @@ class AiPanel {
             sb.append("\nThe TUI MCP server is available at http://localhost:")
                     .append(mcpServerPort).append("/mcp for external AI agents.");
         }
+        // last, so the prefix above stays cached when the groups change
+        if (useCoreTools() && !toolGroups.guidance().isEmpty()) {
+            sb.append(mcpServerActive ? "\n" : "").append("\nThe selected integration:\n");
+            toolGroups.guidance().forEach(line -> sb.append("- ").append(line).append('\n'));
+        }
         return sb.toString();
+    }
+
+    /**
+     * Loads the tool groups of the selected integration for the core set (CAMEL-24834): the SQL tools when it has a
+     * database, the guidance for its tracing and circuit breakers. Read again only when another integration is selected
+     * or the selected one reloaded (the groups then only grow: what it had before still counts), so the tools and the
+     * prompt stay the same from question to question and a local model's prompt cache keeps working. While an
+     * integration has no groups yet its status is read again, since one that just started may not have written it
+     * completely. The full set is not affected.
+     */
+    private void refreshToolGroups() {
+        if (!useCoreTools()) {
+            return;
+        }
+        AppStatusSource source = appStatusSource != null ? appStatusSource : facadeStatusSource();
+        String pid = source != null ? source.selectedPid() : null;
+        int reloads = source != null ? source.reloadCount() : 0;
+        boolean samePid = Objects.equals(pid, toolGroupsPid);
+        if (samePid && reloads == toolGroupsReloads && !toolGroups.groups().isEmpty()) {
+            return;
+        }
+        AppFeatures read = pid != null ? source.features() : AppFeatures.none();
+        toolGroupsFeatures = samePid ? toolGroupsFeatures.merge(read) : read;
+        toolGroupsPid = pid;
+        toolGroupsReloads = reloads;
+        toolGroups = TuiToolGroups.select(toolGroupsFeatures);
+    }
+
+    private AppStatusSource facadeStatusSource() {
+        McpFacade facade = mcpFacade;
+        if (facade == null) {
+            return null;
+        }
+        return new AppStatusSource() {
+            @Override
+            public String selectedPid() {
+                return facade.getSelectedPid();
+            }
+
+            @Override
+            public int reloadCount() {
+                return facade.getSelectedReloadCount();
+            }
+
+            @Override
+            public AppFeatures features() {
+                return AppFeatures.fromStatus(facade.readSelectedStatus());
+            }
+        };
     }
 
     /**
@@ -3350,11 +3444,18 @@ class AiPanel {
             return "no tools available";
         }
         int total = toolRegistry.getToolDefinitions().size();
-        int active = useCoreTools() ? toolRegistry.getCoreToolDefinitions().size() : total;
+        int active = useCoreTools() ? toolRegistry.getCoreToolDefinitions(toolGroups.tools()).size() : total;
         String mode = toolMode == null ? TOOL_MODE_AUTO : toolMode;
         String detail = TOOL_MODE_AUTO.equals(mode)
                 ? (useCoreTools() ? " (local provider)" : " (hosted provider)") : "";
-        return (useCoreTools() ? "core" : "full") + " (" + active + " of " + total + " tools), mode " + mode + detail;
+        String groups = "";
+        if (useCoreTools()) {
+            groups = toolGroups.groups().isEmpty()
+                    ? "; groups: none loaded"
+                    : "; groups: " + toolGroups.groupIds() + " (from the selected integration)";
+        }
+        return (useCoreTools() ? "core" : "full") + " (" + active + " of " + total + " tools), mode " + mode + detail
+               + groups;
     }
 
     private List<LlmClient.ToolDef> buildTuiToolDefinitions() {
@@ -3362,8 +3463,8 @@ class AiPanel {
             return List.of();
         }
         List<LlmClient.ToolDef> defs = new ArrayList<>();
-        List<TuiToolRegistry.ToolDef> source
-                = useCoreTools() ? toolRegistry.getCoreToolDefinitions() : toolRegistry.getToolDefinitions();
+        List<TuiToolRegistry.ToolDef> source = useCoreTools()
+                ? toolRegistry.getCoreToolDefinitions(toolGroups.tools()) : toolRegistry.getToolDefinitions();
         for (TuiToolRegistry.ToolDef td : source) {
             defs.add(new LlmClient.ToolDef(td.name(), td.description(), td.inputSchema()));
         }
@@ -3955,6 +4056,18 @@ class AiPanel {
 
     String systemPromptForTesting() {
         return buildSystemPrompt();
+    }
+
+    void setAppStatusSourceForTesting(AppStatusSource source) {
+        this.appStatusSource = source;
+    }
+
+    void refreshToolGroupsForTesting() {
+        refreshToolGroups();
+    }
+
+    TuiToolGroups.Selection toolGroupsForTesting() {
+        return toolGroups;
     }
 
     List<LlmClient.ToolDef> toolDefinitionsForTesting() {

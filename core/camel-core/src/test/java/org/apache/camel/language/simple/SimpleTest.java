@@ -19,6 +19,7 @@ package org.apache.camel.language.simple;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -677,6 +678,15 @@ public class SimpleTest extends LanguageTestSupport {
                 "Should have thrown an exception");
 
         assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
+    }
+
+    @Test
+    public void testBodyAsBigDecimal() {
+        exchange.getIn().setBody("1000.01");
+        assertExpression("${bodyAs(java.math.BigDecimal)}", new BigDecimal("1000.01"));
+        assertExpression("${convertTo(${body}, java.math.BigDecimal)}", new BigDecimal("1000.01"));
+        Expression expression = context.resolveLanguage("simple").createExpression("${body}");
+        assertEquals(new BigDecimal("1000.01"), expression.evaluate(exchange, BigDecimal.class));
     }
 
     @Test

@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.catalog.LanguageValidationResult;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -253,6 +254,62 @@ class SourceValidatorSimpleTest {
                           message: "Agent replied: ${a2a:text}"
                 """, catalog);
         assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void semanticDependencyDetectionToleratesSurroundingDiagnosticChanges() {
+        CamelCatalog changedDiagnostic = new DefaultCamelCatalog() {
+            @Override
+            public LanguageValidationResult validateLanguageExpression(ClassLoader classLoader, String language, String text) {
+                LanguageValidationResult result = new LanguageValidationResult(text);
+                result.setError("Semantic evaluation requires camel-semantic; add the dependency to use this function");
+                return result;
+            }
+        };
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:start
+                    steps:
+                      - setBody:
+                          simple: "${semantic('department')}"
+                """, changedDiagnostic);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void semanticExpressionsAndPredicatesDoNotRequireTheRuntimeDependency() {
+        assertThat(catalog.validateLanguageExpression(null, "simple", "${semantic('department')}").getShortError())
+                .contains("requires camel-semantic");
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:start
+                    steps:
+                      - setBody:
+                          simple: "${semantic('department')}"
+                      - filter:
+                          simple: "${semantic('allowed')}"
+                          steps:
+                            - log: accepted
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void invalidSemanticArgumentsAreStillReportedWithoutTheRuntimeDependency() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:start
+                    steps:
+                      - setBody:
+                          simple: "${semantic(department)}"
+                      - filter:
+                          simple: "${semantic('allowed', 'other')}"
+                          steps:
+                            - log: accepted
+                """, catalog);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs).allSatisfy(msg -> assertThat(msg)
+                .contains("Simple syntax error", "Semantic requires one quoted evaluation name"));
     }
 
     @Test

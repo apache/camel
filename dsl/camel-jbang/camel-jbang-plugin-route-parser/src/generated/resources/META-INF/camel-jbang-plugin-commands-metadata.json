@@ -1,0 +1,5 @@
+{
+  "commands": [
+    { "name": "route-parser", "fullName": "route-parser", "description": "Parses Java route and dumps route structure", "sourceClass": "org.apache.camel.dsl.jbang.core.commands.parser.RouteParserCommand", "plugin": "route-parser", "options": [ { "names": "--raw", "description": "To output raw without metadata", "javaType": "boolean", "type": "boolean" }, { "names": "--watch", "description": "Execute periodically and showing output fullscreen", "javaType": "boolean", "type": "boolean" }, { "names": "-h,--help", "description": "Display the help and sub-commands", "javaType": "boolean", "type": "boolean" } ] }
+  ]
+}
