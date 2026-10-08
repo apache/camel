@@ -477,6 +477,11 @@ class LaunchManager {
                 }
                 it.remove();
             } else if (pl.infraAlias != null) {
+                // a first start pulls the image, which can take minutes: show how far it got
+                if (pl.pullProgress != null && !pl.pullProgress.equals(pl.shownPullProgress)) {
+                    notify("Pulling image of " + pl.name + ": " + pl.pullProgress, false);
+                    pl.shownPullProgress = pl.pullProgress;
+                }
                 if (now - pl.startTime > INFRA_WATCH_MS) {
                     // not up after the longest an image pull should take: a failed start, as the other ends record
                     outcomes.put(pl.name, LaunchOutcome.failed(pl.outputFile));
@@ -559,6 +564,57 @@ class LaunchManager {
     /** What Camel prints when it has started, whatever the runtime: the start did not fail. */
     static final Pattern STARTED = Pattern.compile("Apache Camel \\S+ \\(.*\\) started in");
 
+    /** What camel infra run prints while it pulls the image of a service (the pull progress of Testcontainers). */
+    static final Pattern PULL_PROGRESS = Pattern.compile(
+            "Pulling image layers:\\s*(\\d+) pending,\\s*(\\d+) downloaded,\\s*\\d+ extracted, \\((.+?)/(.+?)\\)");
+    private static final Pattern SIZE = Pattern.compile("(\\d+(?:\\.\\d+)?) (bytes|KB|MB|GB|TB)");
+
+    /**
+     * The progress of an image pull in the given output, from its last progress line, such as {@code 2 of 4 layers,
+     * 22 MB}, or {@code 2 of 4 layers, 1 GB of 3 GB (33%)} once the total is known: Docker reports the size of a layer
+     * only when it starts on it. Null when the output has no progress, or the pull has completed since.
+     */
+    static String pullProgress(String text) {
+        var m = PULL_PROGRESS.matcher(text);
+        String answer = null;
+        int last = -1;
+        while (m.find()) {
+            last = m.start();
+            int pending = Integer.parseInt(m.group(1));
+            int downloaded = Integer.parseInt(m.group(2));
+            String done = m.group(3).trim();
+            String total = m.group(4).trim();
+            if (pending + downloaded == 0) {
+                // no layer reported yet
+                continue;
+            }
+            StringBuilder sb = new StringBuilder();
+            sb.append(downloaded).append(" of ").append(pending + downloaded).append(" layers, ").append(done);
+            long doneBytes = bytes(done);
+            long totalBytes = bytes(total);
+            if (doneBytes >= 0 && totalBytes > 0) {
+                sb.append(" of ").append(total).append(" (").append(Math.min(100, doneBytes * 100 / totalBytes))
+                        .append("%)");
+            }
+            answer = sb.toString();
+        }
+        if (answer != null && text.lastIndexOf("Pull complete") > last) {
+            return null;
+        }
+        return answer;
+    }
+
+    /** The bytes of a size as Testcontainers prints it (such as 22 MB), or -1 when it is not known (? MB). */
+    private static long bytes(String size) {
+        var m = SIZE.matcher(size);
+        if (!m.matches()) {
+            return -1;
+        }
+        double n = Double.parseDouble(m.group(1));
+        int power = List.of("bytes", "KB", "MB", "GB", "TB").indexOf(m.group(2));
+        return (long) (n * Math.pow(1024, power));
+    }
+
     /** A started process, watched until it is up for a while, ends, or fails to start. */
     static final class PendingLaunch {
         final String name;
@@ -570,6 +626,9 @@ class LaunchManager {
         boolean announced;
         // Camel said it started: the launch is no longer watched for a failed start
         boolean started;
+        // the progress of pulling the image of an infra service, and the one last shown
+        String pullProgress;
+        String shownPullProgress;
         private long offset;
 
         PendingLaunch(String name, Process process, Path outputFile, long startTime) {
@@ -600,6 +659,12 @@ class LaunchManager {
                     return true;
                 }
                 started |= STARTED.matcher(text).find();
+                if (text.contains("Pull")) {
+                    String progress = pullProgress(text);
+                    if (progress != null || text.contains("Pull complete")) {
+                        pullProgress = progress;
+                    }
+                }
                 return false;
             } catch (IOException e) {
                 return false;
