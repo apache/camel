@@ -32,7 +32,7 @@ public class MailUsernameWithAtSignTest extends CamelTestSupport {
 
     @Test
     public void testMailUsingAtSignInUsername() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(jamesAtSign);
 
         String body = "Hello Claus.\r\nYes it does.\r\n\r\nRegards James.\r\n";
         template.sendBody("direct:a", body);

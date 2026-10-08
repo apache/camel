@@ -63,7 +63,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
     @Override
     protected void doPostSetup() {
-        Mailbox.clearAll();
+        Mailbox.clearAll(james, default_, suffix);
         resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
         resultEndpoint.setResultWaitTime(TimeUnit.SECONDS.toMillis(5));

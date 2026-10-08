@@ -37,7 +37,7 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
 
     @Test
     public void testSendWithMultipleRecipientsInHeader() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(claus, willem, hadrian, tracy);
 
         // START SNIPPET: e1
         Map<String, Object> headers = new HashMap<>();
@@ -59,7 +59,7 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
 
     @Test
     public void testSendWithMultipleRecipientsPreConfigured() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(claus, willem, hadrian, tracy);
 
         assertMailbox("claus");
         assertMailbox("willem");

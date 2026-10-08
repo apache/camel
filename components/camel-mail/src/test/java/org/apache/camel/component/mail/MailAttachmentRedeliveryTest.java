@@ -50,7 +50,7 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
     @Test
     public void testSendAndReceiveMailWithAttachmentsRedelivery() throws Exception {
         // clear mailbox
-        Mailbox.clearAll();
+        Mailbox.clearAll(james);
 
         // create an exchange with a normal body and attachment to be produced as email
         Endpoint endpoint = context.getEndpoint(james.uriPrefix(Protocol.smtp));

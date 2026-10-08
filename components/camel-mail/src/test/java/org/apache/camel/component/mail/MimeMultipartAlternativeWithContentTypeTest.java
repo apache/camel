@@ -43,7 +43,7 @@ public class MimeMultipartAlternativeWithContentTypeTest extends CamelTestSuppor
     private String htmlBody = "<html><body><h1>Hello</h1>World</body></html>";
 
     private void sendMultipartEmail() {
-        Mailbox.clearAll();
+        Mailbox.clearAll(sachin);
 
         // create an exchange with a normal body and attachment to be produced as email
         MailEndpoint endpoint = context.getEndpoint(

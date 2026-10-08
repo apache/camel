@@ -35,7 +35,7 @@ public class MailReplyToTest extends CamelTestSupport {
 
     @Test
     public void testMailReplyTo() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(christian);
 
         String body = "The Camel riders";
 
@@ -57,7 +57,7 @@ public class MailReplyToTest extends CamelTestSupport {
 
     @Test
     public void testMailReplyTo2() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(christian);
 
         String body = "The Camel riders";
 

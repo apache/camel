@@ -47,7 +47,7 @@ public class MailAttachmentPollEnrichTest extends CamelTestSupport {
     @Test
     public void testPollEnrichMailWithAttachments() throws Exception {
         // clear mailbox
-        Mailbox.clearAll();
+        Mailbox.clearAll(james);
 
         // START SNIPPET: e1
 
