@@ -348,6 +348,7 @@ class OpenFeatureProducerTest extends CamelTestSupport {
                 @Override
                 public void configure() {
                     from("direct:bad-endpoint")
+                            // Distinct domain so the failure exercises the provider-lookup path
                             .to("openfeature:shared-bad?flagKey=enrichment-enabled&provider=#nonexistent");
                 }
             });

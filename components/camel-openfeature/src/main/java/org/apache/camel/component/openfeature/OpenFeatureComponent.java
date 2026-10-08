@@ -182,8 +182,8 @@ public class OpenFeatureComponent extends DefaultComponent {
                 binding.refCount--;
                 if (binding.refCount <= 0) {
                     domainBindings.remove(domain);
-                    domainLocks.remove(domain);
                     binding.shutdown();
+                    domainLocks.remove(domain);
                 }
             }
         }
