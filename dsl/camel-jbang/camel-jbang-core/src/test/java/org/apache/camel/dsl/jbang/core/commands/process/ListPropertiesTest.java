@@ -145,6 +145,32 @@ class ListPropertiesTest extends ProcessCommandTestSupport {
         }
     }
 
+    @Test
+    void testPropertiesFileLocationShown() throws Exception {
+        JsonObject root = new JsonObject();
+        root.put("context", contextObj());
+        root.put("properties", propertyContainer("properties",
+                property("greeting", "Hello", "Hello", false, null, "application.properties")));
+        writeStatusFile(TEST_PID, root);
+
+        ListProperties command = new ListProperties(new CamelJBangMain().withPrinter(printer));
+        command.sort = "pid";
+        command.jsonOutput = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            int exit = command.doCall();
+
+            assertEquals(0, exit);
+            assertTrue(printer.getOutput().contains("\"location\":\"application.properties\""),
+                    "The properties file should be shown as the location");
+        }
+    }
+
     private static JsonObject contextObj() {
         JsonObject ctx = new JsonObject();
         ctx.put("name", "myApp");
