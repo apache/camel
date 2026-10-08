@@ -52,10 +52,10 @@ public class ExplainTools {
                         "Use this context to understand and explain the route.")
     public RouteContextResult camel_route_context(
             @ToolArg(description = "The Camel route content (YAML, XML, or Java DSL)") String route,
-            @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)") String format,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+            @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)", required = false) String format,
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
         if (route == null || route.isBlank()) {
             throw new ToolCallException("Route content is required", null);

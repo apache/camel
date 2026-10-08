@@ -219,7 +219,7 @@ class CatalogToolsTest {
     void platformBomInvalidFormatThrows() {
         CatalogTools tools = createTools(null);
 
-        assertThatThrownBy(() -> tools.camel_catalog_components(null, null, 5, null, null, "invalid-format"))
+        assertThatThrownBy(() -> tools.camel_catalog_components(null, null, 5, "spring-boot", null, "invalid-format"))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("GAV format");
     }
@@ -228,9 +228,40 @@ class CatalogToolsTest {
     void platformBomInvalidFormatTwoPartsThrows() {
         CatalogTools tools = createTools(null);
 
-        assertThatThrownBy(() -> tools.camel_catalog_components(null, null, 5, null, null, "group:artifact"))
+        assertThatThrownBy(() -> tools.camel_catalog_components(null, null, 5, "spring-boot", null, "group:artifact"))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("GAV format");
+    }
+
+    @Test
+    void platformBomThatIsNotACamelGavIsIgnoredForMain() {
+        CatalogTools tools = createTools(null);
+
+        assertThat(tools.camel_catalog_components(null, null, 5, null, null, "invalid-format").camelVersion())
+                .isEqualTo(BUILTIN_VERSION);
+        assertThat(tools.camel_catalog_components(null, null, 5, "main", null, "group:artifact").camelVersion())
+                .isEqualTo(BUILTIN_VERSION);
+        assertThat(tools.camel_catalog_components(null, null, 5, "main", null, "io.quarkus.platform:quarkus-camel-bom:3.31.3")
+                .camelVersion())
+                .isEqualTo(BUILTIN_VERSION);
+    }
+
+    @Test
+    void docToolWithBlankPlatformBomAndMainRuntime() {
+        // what an assistant sends when the schema made every argument mandatory: runtime main, a version, an empty BOM
+        CatalogTools tools = createTools(null);
+
+        assertThat(tools.camel_catalog_language_doc("simple", "main", BUILTIN_VERSION, "")).isNotNull();
+        assertThat(tools.camel_catalog_language_doc("simple", "main", null, null)).isNotNull();
+    }
+
+    @Test
+    void camelVersionThatIsNotAVersionIsTheDefaultCatalog() {
+        CatalogTools tools = createTools(null);
+
+        assertThat(tools.camel_catalog_components(null, null, 5, null, "main", null).camelVersion()).isEqualTo(BUILTIN_VERSION);
+        assertThat(tools.camel_catalog_components(null, null, 5, null, "latest", null).camelVersion())
+                .isEqualTo(BUILTIN_VERSION);
     }
 
     @Test

@@ -43,9 +43,11 @@ public class ExampleTools {
                         + "Use filter to search by name, description, or tag. "
                         + "Use level to filter by difficulty (beginner, intermediate, advanced).")
     public ExampleListResult camel_catalog_examples(
-            @ToolArg(description = "Filter examples by name, description, or tag (case-insensitive substring match)") String filter,
-            @ToolArg(description = "Filter by difficulty level: beginner, intermediate, or advanced") String level,
-            @ToolArg(description = "Maximum number of results to return (default: 50)") Integer limit) {
+            @ToolArg(description = "Filter examples by name, description, or tag (case-insensitive substring match)",
+                     required = false) String filter,
+            @ToolArg(description = "Filter by difficulty level: beginner, intermediate, or advanced",
+                     required = false) String level,
+            @ToolArg(description = "Maximum number of results to return (default: 50)", required = false) Integer limit) {
 
         int maxResults = limit != null ? limit : 50;
 
