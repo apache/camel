@@ -298,7 +298,9 @@ class ExampleBrowserPopup {
             if (burstCallback != null) {
                 burstCallback.run();
             }
-            notify("Starting: " + displayName, false);
+            JsonObject example = catalog != null ? ExampleHelper.findExample(catalog, exampleName) : null;
+            String needs = example != null ? ExampleHelper.getNeeds(example) : null;
+            notify("Starting: " + displayName + (needs != null ? " (needs " + needs + ")" : ""), false);
         } catch (Exception e) {
             notify("Failed to start: " + exampleName + " - " + e.getMessage(), true);
         }
@@ -556,7 +558,8 @@ class ExampleBrowserPopup {
         int descCol = Math.max(10, width - prefix.length());
 
         Style style = bundled ? Style.EMPTY : Style.EMPTY.dim();
-        if (desc.length() <= descCol) {
+        String needs = ExampleHelper.getNeeds(ex);
+        if (desc.length() <= descCol && needs == null) {
             items.add(ListItem.from(prefix + desc).style(style));
             heights.add(1);
         } else {
@@ -567,8 +570,14 @@ class ExampleBrowserPopup {
             for (int w = 1; w < wrapped.size(); w++) {
                 lines.add(Line.from(indent + wrapped.get(w)));
             }
+            if (needs != null) {
+                // what the user does before the run (a model to pull, a key to set): the run does not do it
+                for (String w : TuiHelper.wrapWords("needs: " + needs, descCol)) {
+                    lines.add(Line.from(Span.raw(indent), Span.styled(w, Theme.warning())));
+                }
+            }
             items.add(ListItem.from(Text.from(lines.toArray(Line[]::new))).style(style));
-            heights.add(wrapped.size());
+            heights.add(lines.size());
         }
         data.add(ex);
     }

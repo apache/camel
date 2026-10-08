@@ -90,7 +90,7 @@
         "infraServices": [
             "ollama"
         ],
-        "needs": "a local model",
+        "needs": "a local model: `ollama pull granite4:3b`",
         "ciSkip": true,
         "order": 1
     },
@@ -167,7 +167,7 @@
             "pii-redaction.camel.yaml",
             "pii.schema.json"
         ],
-        "needs": "an OpenAI-compatible API",
+        "needs": "an OpenAI-compatible API: set `OPENAI_API_KEY`",
         "ciSkip": true,
         "order": 3
     },
@@ -704,6 +704,7 @@
             "orders/order-1003.json",
             "stock-api.json"
         ],
+        "needs": "`contracts/openapi-server` running first",
         "order": 2
     },
     {
