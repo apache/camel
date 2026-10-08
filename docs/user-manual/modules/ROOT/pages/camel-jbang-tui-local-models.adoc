@@ -168,6 +168,8 @@ running integration: it finds Ollama at `localhost:11434`, at the address of `ca
 or at the endpoint the AI panel (*F8*) is using. The tab is listed only while an Ollama server answers;
 the TUI checks every ten seconds, so it appears shortly after `ollama serve` starts.
 
+image::jbang/camel-tui-ollama-tab.png[The Ollama tab with qwen3.6 loaded: throughput, context, host and the last question]
+
 * *Model* -- the loaded model with its family, parameters, quantization, layers, experts (and how many
   are active per token for a mixture-of-experts model), how much of it sits in GPU memory, the
   allocated context length and when Ollama will unload it. With no model loaded, the installed models

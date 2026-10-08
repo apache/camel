@@ -38,6 +38,8 @@ camel tui
 . Browse the example catalog -- type to filter by name
 . Press *Enter* to launch the selected example
 
+image::jbang/camel-tui-example-browser.png[The Quick start group of the example browser, with the legend of the icons]
+
 Before launching, a run options form lets you choose the *runtime*: Camel Main (standalone),
 Spring Boot, Quarkus, or JBang. This makes it easy to try any example on all three runtimes without
 changing a single line of code. The first three run the example in a separate JVM that only
