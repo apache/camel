@@ -160,13 +160,13 @@ class DataWeaveExecutedCorpusTest extends CamelTestSupport {
 
     @Test
     void testUnsupportedConstructFailsFast() {
-        // DataWeave 'match' is not auto-convertible; DatasonnetLanguage.convertDataWeave()
+        // The DataWeave update operator is not auto-convertible; DatasonnetLanguage.convertDataWeave()
         // must reject the expression with a clear DataWeaveConversionException rather than
         // silently emitting null and letting the route start.
-        String withMatch = "%dw 2.0\noutput application/json\n---\npayload.status match { case \"a\" -> true else -> false }";
+        String withUpdate = "%dw 2.0\noutput application/json\n---\npayload update { case .name -> upper($) }";
         assertThrows(DataWeaveConversionException.class,
                 () -> context.resolveLanguage("datasonnet")
-                        .createExpression(withMatch, new Object[] {
+                        .createExpression(withUpdate, new Object[] {
                                 String.class, null,
                                 MediaTypes.APPLICATION_JSON_VALUE, MediaTypes.APPLICATION_JSON_VALUE }));
     }

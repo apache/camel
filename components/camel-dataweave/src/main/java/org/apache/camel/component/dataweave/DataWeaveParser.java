@@ -17,15 +17,73 @@
 package org.apache.camel.component.dataweave;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.camel.component.dataweave.DataWeaveAst.ArrayLit;
+import org.apache.camel.component.dataweave.DataWeaveAst.AttributeAccess;
+import org.apache.camel.component.dataweave.DataWeaveAst.BinaryOp;
+import org.apache.camel.component.dataweave.DataWeaveAst.Block;
+import org.apache.camel.component.dataweave.DataWeaveAst.BooleanLit;
+import org.apache.camel.component.dataweave.DataWeaveAst.DefaultExpr;
+import org.apache.camel.component.dataweave.DataWeaveAst.DescendantSelector;
+import org.apache.camel.component.dataweave.DataWeaveAst.Dollar;
+import org.apache.camel.component.dataweave.DataWeaveAst.ExistenceCheck;
+import org.apache.camel.component.dataweave.DataWeaveAst.FieldAccess;
+import org.apache.camel.component.dataweave.DataWeaveAst.FilterSelector;
+import org.apache.camel.component.dataweave.DataWeaveAst.FunDecl;
+import org.apache.camel.component.dataweave.DataWeaveAst.FunctionCall;
+import org.apache.camel.component.dataweave.DataWeaveAst.Header;
+import org.apache.camel.component.dataweave.DataWeaveAst.Identifier;
+import org.apache.camel.component.dataweave.DataWeaveAst.IfElse;
+import org.apache.camel.component.dataweave.DataWeaveAst.IndexAccess;
+import org.apache.camel.component.dataweave.DataWeaveAst.InputDecl;
+import org.apache.camel.component.dataweave.DataWeaveAst.Interpolation;
+import org.apache.camel.component.dataweave.DataWeaveAst.Lambda;
+import org.apache.camel.component.dataweave.DataWeaveAst.LambdaParam;
+import org.apache.camel.component.dataweave.DataWeaveAst.Match;
+import org.apache.camel.component.dataweave.DataWeaveAst.MatchCase;
+import org.apache.camel.component.dataweave.DataWeaveAst.MultiValueSelector;
+import org.apache.camel.component.dataweave.DataWeaveAst.NullLit;
+import org.apache.camel.component.dataweave.DataWeaveAst.NumberLit;
+import org.apache.camel.component.dataweave.DataWeaveAst.ObjectEntry;
+import org.apache.camel.component.dataweave.DataWeaveAst.ObjectLit;
+import org.apache.camel.component.dataweave.DataWeaveAst.Parens;
+import org.apache.camel.component.dataweave.DataWeaveAst.Range;
+import org.apache.camel.component.dataweave.DataWeaveAst.RegexLit;
+import org.apache.camel.component.dataweave.DataWeaveAst.Script;
+import org.apache.camel.component.dataweave.DataWeaveAst.StringLit;
+import org.apache.camel.component.dataweave.DataWeaveAst.TemporalLit;
+import org.apache.camel.component.dataweave.DataWeaveAst.TypeCheck;
+import org.apache.camel.component.dataweave.DataWeaveAst.TypeCoercion;
+import org.apache.camel.component.dataweave.DataWeaveAst.UnaryOp;
+import org.apache.camel.component.dataweave.DataWeaveAst.Unsupported;
+import org.apache.camel.component.dataweave.DataWeaveAst.VarDecl;
 import org.apache.camel.component.dataweave.DataWeaveLexer.Token;
 import org.apache.camel.component.dataweave.DataWeaveLexer.TokenType;
 
 /**
  * Recursive descent parser for DataWeave 2.0 scripts producing {@link DataWeaveAst} nodes.
+ * <p>
+ * Operator precedence follows DataWeave, from lowest to highest: lambda ({@code (x) -> body}, where the body extends as
+ * far as possible), {@code if/else} and {@code unless/otherwise}, infix functions ({@code map}, {@code filter},
+ * {@code ++}, {@code contains}, ... and any other function called as {@code a f b}; left associative), {@code default},
+ * {@code or}, {@code and}, equality, relational and {@code is}, additive, multiplicative, unary ({@code -},
+ * {@code not}), {@code as}, and selectors.
+ * <p>
+ * The parser fails with a {@link DataWeaveConversionException} on any syntax it does not understand, including input
+ * left over after the expression, so a script is never converted partially.
  */
 public class DataWeaveParser {
+
+    // Identifiers that are keywords, and so never the name of an infix function
+    private static final Set<String> KEYWORDS = Set.of(
+            "if", "else", "unless", "otherwise", "default", "as", "is", "with", "case", "do", "using", "var", "fun",
+            "import", "ns", "type", "output", "input", "from", "to", "match", "update");
+
+    private static final Set<String> HEADER_DIRECTIVES = Set.of("var", "fun", "type", "import", "ns", "output", "input");
 
     private final List<Token> tokens;
     private int pos;
@@ -35,271 +93,317 @@ public class DataWeaveParser {
         this.pos = 0;
     }
 
+    /**
+     * Parses a complete script: an optional header (directives and declarations ending with {@code ---}) and the body.
+     */
     public DataWeaveAst parse() {
-        HeaderResult hr = parseHeader();
-        DataWeaveAst body = parseExpression();
-        // Wrap header var/fun declarations around the body if present
-        if (!hr.declarations().isEmpty()) {
-            body = new DataWeaveAst.Block(hr.declarations(), body);
+        Header header = new Header("2.0", null, Map.of(), List.of(), List.of());
+        List<DataWeaveAst> declarations = new ArrayList<>();
+        if (hasHeaderSeparator()) {
+            header = parseHeader(declarations);
         }
-        return new DataWeaveAst.Script(hr.header(), body);
+        DataWeaveAst body = parseExpression();
+        expectEnd();
+        if (!declarations.isEmpty()) {
+            body = new Block(declarations, body);
+        }
+        return new Script(header, body);
     }
 
+    /**
+     * Parses an expression without header (declarations are in a header or a {@code do} block).
+     */
     public DataWeaveAst parseExpressionOnly() {
-        return parseExpression();
+        DataWeaveAst body = parseExpression();
+        expectEnd();
+        return body;
     }
 
-    // -- Header parsing --
+    // -- Header
 
-    /** Internal record carrying both the header directives and any var/fun declarations found in the header section. */
-    private record HeaderResult(DataWeaveAst.Header header, List<DataWeaveAst> declarations) {
+    private boolean hasHeaderSeparator() {
+        int depth = 0;
+        for (Token t : tokens) {
+            switch (t.type()) {
+                case LPAREN, LBRACE, LBRACKET -> depth++;
+                case RPAREN, RBRACE, RBRACKET -> depth--;
+                case HEADER_SEPARATOR -> {
+                    if (depth == 0) {
+                        return true;
+                    }
+                }
+                default -> {
+                    // continue
+                }
+            }
+        }
+        return false;
     }
 
-    private HeaderResult parseHeader() {
+    private Header parseHeader(List<DataWeaveAst> declarations) {
         String version = "2.0";
         String outputType = null;
-        List<DataWeaveAst.InputDecl> inputs = new ArrayList<>();
-        List<DataWeaveAst> declarations = new ArrayList<>();
+        Map<String, String> outputProperties = new LinkedHashMap<>();
+        List<InputDecl> inputs = new ArrayList<>();
+        List<String> imports = new ArrayList<>();
 
-        // Only parse header if it starts with %dw or a known header directive
-        boolean hasHeader = (check(TokenType.PERCENT) && peekAhead(1) != null && "dw".equals(peekAhead(1).value()))
-                || checkIdentifier("output") || checkIdentifier("input");
-
-        if (!hasHeader) {
-            // No header section -- skip directly to body
-            return new HeaderResult(new DataWeaveAst.Header(version, null, inputs), declarations);
-        }
-
-        // Check for %dw directive
-        if (check(TokenType.PERCENT) && peekAhead(1) != null && "dw".equals(peekAhead(1).value())) {
-            advance(); // %
-            advance(); // dw
-            if (check(TokenType.NUMBER)) {
-                version = current().value();
+        while (!check(TokenType.HEADER_SEPARATOR)) {
+            Token start = current();
+            if (check(TokenType.PERCENT)) {
                 advance();
-            }
-        }
-
-        // Parse directives before ---
-        while (!check(TokenType.HEADER_SEPARATOR) && !check(TokenType.EOF)) {
-            if (checkIdentifier("output")) {
-                advance(); // output
+                if (!checkIdentifier("dw")) {
+                    throw error("expected %dw directive");
+                }
+                advance();
+                version = expect(TokenType.NUMBER).value();
+            } else if (checkIdentifier("output")) {
+                advance();
                 outputType = parseMediaType();
+                outputProperties.putAll(parseDirectiveProperties(start.line()));
             } else if (checkIdentifier("input")) {
-                advance(); // input
-                String name = current().value();
                 advance();
+                String name = expectName();
                 String mediaType = parseMediaType();
-                inputs.add(new DataWeaveAst.InputDecl(name, mediaType));
+                parseDirectiveProperties(start.line());
+                inputs.add(new InputDecl(name, mediaType));
             } else if (checkIdentifier("import")) {
-                // Skip import directives
-                while (!check(TokenType.EOF) && !checkIdentifier("output") && !checkIdentifier("input")
-                        && !checkIdentifier("var") && !checkIdentifier("fun")
-                        && !check(TokenType.HEADER_SEPARATOR)) {
+                imports.add(parseImport());
+            } else if (checkIdentifier("ns")) {
+                StringBuilder text = new StringBuilder();
+                while (current().line() == start.line() && !check(TokenType.EOF)) {
+                    text.append(current().value()).append(' ');
                     advance();
                 }
-            } else if (checkIdentifier("var")) {
-                // var declaration in header: emit as local binding in body
-                advance(); // var
-                String name = current().value();
-                advance(); // name
-                // Skip optional type annotation: var rate: Number = 0.08
-                if (check(TokenType.COLON)) {
-                    advance(); // :
-                    skipTypeExpression();
-                }
-                expect(TokenType.ASSIGN); // =
-                DataWeaveAst value = parseExpression();
-                declarations.add(new DataWeaveAst.VarDecl(name, value, null));
-            } else if (checkIdentifier("fun")) {
-                // fun declaration in header: emit as local function in body
-                advance(); // fun
-                String name = current().value();
-                advance(); // name
-                expect(TokenType.LPAREN);
-                List<String> params = new ArrayList<>();
-                while (!check(TokenType.RPAREN) && !check(TokenType.EOF)) {
-                    String paramName = current().value();
-                    advance();
-                    // Skip type annotation: fun f(a: Number) or (a: Array<Number>) -> skip to next param
-                    if (check(TokenType.COLON)) {
-                        advance(); // :
-                        skipTypeExpression(); // type expression (simple, generic, or union)
-                    }
-                    params.add(paramName);
-                    if (check(TokenType.COMMA)) {
-                        advance();
-                    }
-                }
-                expect(TokenType.RPAREN);
-                // Optional return type annotation: fun f(a): Number = ...
-                if (check(TokenType.COLON)) {
-                    advance(); // :
-                    skipTypeExpression(); // return type
-                }
-                expect(TokenType.ASSIGN); // =
-                DataWeaveAst funBody = parseExpression();
-                declarations.add(new DataWeaveAst.FunDecl(name, params, funBody, null));
+                declarations.add(new Unsupported(text.toString().trim(), "XML namespace declaration"));
+            } else if (checkIdentifier("type")) {
+                skipTypeDeclaration();
+            } else if (checkIdentifier("var") || checkIdentifier("fun")) {
+                declarations.add(parseDeclaration());
             } else {
-                advance(); // skip unknown header tokens
+                throw error("unexpected " + describe(current()) + " in the header");
             }
         }
-
-        if (check(TokenType.HEADER_SEPARATOR)) {
-            advance(); // ---
-        }
-
-        return new HeaderResult(new DataWeaveAst.Header(version, outputType, inputs), declarations);
+        advance(); // ---
+        return new Header(version, outputType, outputProperties, inputs, imports);
     }
 
     private String parseMediaType() {
-        StringBuilder sb = new StringBuilder();
-        // e.g., application/json or application/xml
-        if (check(TokenType.IDENTIFIER)) {
+        // application/json, application/xml, text/plain, application/x-www-form-urlencoded, json, ...
+        StringBuilder sb = new StringBuilder(expectName());
+        while ((check(TokenType.SLASH) || check(TokenType.MINUS) || check(TokenType.PLUS) || check(TokenType.DOT))
+                && isAdjacent()) {
             sb.append(current().value());
             advance();
-            if (check(TokenType.SLASH)) {
-                sb.append("/");
+            if (check(TokenType.IDENTIFIER) && isAdjacent()) {
+                sb.append(current().value());
                 advance();
-                if (check(TokenType.IDENTIFIER)) {
-                    sb.append(current().value());
-                    advance();
-                }
             }
         }
         return sb.toString();
     }
 
-    // -- Expression parsing (precedence climbing) --
-
-    private DataWeaveAst parseExpression() {
-        // Handle var/fun declarations at expression level
-        if (checkIdentifier("var")) {
-            return parseVarDecl();
-        }
-        if (checkIdentifier("fun")) {
-            return parseFunDecl();
-        }
-        if (checkIdentifier("do")) {
-            return parseDoBlock();
-        }
-        if (checkIdentifier("using")) {
-            return parseUsingBlock();
-        }
-        return parseIfElse();
-    }
-
-    private DataWeaveAst parseVarDecl() {
-        advance(); // var
-        String name = current().value();
-        advance(); // name
-        expect(TokenType.ASSIGN); // =
-        DataWeaveAst value = parseExpression();
-        // The body follows after the var declaration (next expression in sequence)
-        DataWeaveAst body = null;
-        if (!check(TokenType.EOF) && !check(TokenType.RPAREN) && !check(TokenType.RBRACE)
-                && !check(TokenType.RBRACKET)) {
-            body = parseExpression();
-        }
-        return new DataWeaveAst.VarDecl(name, value, body);
-    }
-
-    private DataWeaveAst parseFunDecl() {
-        advance(); // fun
-        String name = current().value();
-        advance(); // name
-        expect(TokenType.LPAREN);
-        List<String> params = new ArrayList<>();
-        while (!check(TokenType.RPAREN) && !check(TokenType.EOF)) {
-            String paramName = current().value();
-            advance();
-            // Skip type annotation: fun f(a: Number) or (a: Array<Number>) -> skip to next param
-            if (check(TokenType.COLON)) {
-                advance(); // :
-                skipTypeExpression(); // type expression (simple, generic, or union)
-            }
-            params.add(paramName);
-            if (check(TokenType.COMMA)) {
-                advance();
-            }
-        }
-        expect(TokenType.RPAREN);
-        // Optional return type annotation: fun f(a): Number = ...
-        if (check(TokenType.COLON)) {
-            advance(); // :
-            skipTypeExpression(); // return type
-        }
-        expect(TokenType.ASSIGN); // =
-        DataWeaveAst funBody = parseExpression();
-        DataWeaveAst next = null;
-        if (!check(TokenType.EOF) && !check(TokenType.RPAREN) && !check(TokenType.RBRACE)) {
-            next = parseExpression();
-        }
-        return new DataWeaveAst.FunDecl(name, params, funBody, next);
-    }
-
-    private DataWeaveAst parseDoBlock() {
-        advance(); // do
-        expect(TokenType.LBRACE);
-        List<DataWeaveAst> declarations = new ArrayList<>();
-        while ((checkIdentifier("var") || checkIdentifier("fun")) && !check(TokenType.EOF)) {
-            if (checkIdentifier("var")) {
-                advance(); // var
-                String name = current().value();
-                advance();
-                expect(TokenType.ASSIGN);
-                DataWeaveAst value = parseExpression();
-                declarations.add(new DataWeaveAst.VarDecl(name, value, null));
-            } else {
-                declarations.add(parseFunDecl());
-            }
-        }
-        // Parse the expression part
-        if (check(TokenType.HEADER_SEPARATOR)) {
-            advance(); // ---
-        }
-        DataWeaveAst body = parseExpression();
-        expect(TokenType.RBRACE);
-        return new DataWeaveAst.Block(declarations, body);
-    }
-
-    private DataWeaveAst parseUsingBlock() {
-        advance(); // using
-        expect(TokenType.LPAREN);
-        List<DataWeaveAst> declarations = new ArrayList<>();
-        while (!check(TokenType.RPAREN) && !check(TokenType.EOF)) {
+    // Writer and reader properties after the media type: output application/csv header=false, separator=";"
+    private Map<String, String> parseDirectiveProperties(int line) {
+        Map<String, String> properties = new LinkedHashMap<>();
+        while (current().line() == line && check(TokenType.IDENTIFIER)) {
             String name = current().value();
             advance();
             expect(TokenType.ASSIGN);
-            DataWeaveAst value = parseOr();
-            declarations.add(new DataWeaveAst.VarDecl(name, value, null));
+            properties.put(name, parseStringValue());
             if (check(TokenType.COMMA)) {
                 advance();
             }
         }
-        expect(TokenType.RPAREN);
-        DataWeaveAst body = parseExpression();
-        return new DataWeaveAst.Block(declarations, body);
+        return properties;
     }
 
-    private DataWeaveAst parseIfElse() {
-        if (checkIdentifier("if")) {
-            advance(); // if
-            boolean hasParen = check(TokenType.LPAREN);
-            if (hasParen) {
+    private String parseImport() {
+        // import dw::core::Strings | import * from dw::core::Strings | import camelize, dasherize from dw::core::Strings
+        // | import dw::core::Strings as Str
+        int line = current().line();
+        advance(); // import
+        StringBuilder module = new StringBuilder();
+        while (current().line() == line && !check(TokenType.EOF) && !check(TokenType.HEADER_SEPARATOR)) {
+            if (checkIdentifier("as")) {
+                advance(); // as
+                advance(); // alias
+                continue;
+            }
+            if (checkIdentifier("from") || check(TokenType.COMMA) || check(TokenType.STAR)) {
+                module.setLength(0);
+            } else if (check(TokenType.IDENTIFIER) || check(TokenType.DOUBLE_COLON)) {
+                module.append(current().value());
+            }
+            advance();
+        }
+        return module.toString();
+    }
+
+    private void skipTypeDeclaration() {
+        // type Name = <type expression>, possibly over several lines; it ends at the next directive or ---
+        advance(); // type
+        while (!check(TokenType.EOF) && !check(TokenType.HEADER_SEPARATOR)) {
+            if (isFirstOnLine() && check(TokenType.IDENTIFIER) && HEADER_DIRECTIVES.contains(current().value())) {
+                return;
+            }
+            advance();
+        }
+    }
+
+    private boolean isFirstOnLine() {
+        return pos == 0 || tokens.get(pos - 1).line() < current().line();
+    }
+
+    // -- Declarations
+
+    private DataWeaveAst parseDeclaration() {
+        if (checkIdentifier("var")) {
+            advance(); // var
+            String name = expectName();
+            if (check(TokenType.COLON)) {
                 advance();
+                skipTypeExpression();
             }
-            DataWeaveAst condition = parseOr();
-            if (hasParen) {
-                expect(TokenType.RPAREN);
+            expect(TokenType.ASSIGN);
+            return new VarDecl(name, parseExpression());
+        }
+        advance(); // fun
+        String name = expectName();
+        if (check(TokenType.LT)) {
+            skipGenerics();
+        }
+        expect(TokenType.LPAREN);
+        List<LambdaParam> params = parseParams();
+        if (check(TokenType.COLON)) {
+            advance();
+            skipTypeExpression(); // return type
+        }
+        expect(TokenType.ASSIGN);
+        return new FunDecl(name, params, parseExpression());
+    }
+
+    // The parameters after the opening parenthesis, up to and including the closing one: (a, b: Number, c = 1)
+    private List<LambdaParam> parseParams() {
+        List<LambdaParam> params = new ArrayList<>();
+        while (!check(TokenType.RPAREN)) {
+            String name = expectName();
+            if (check(TokenType.COLON)) {
+                advance();
+                skipTypeExpression();
             }
+            DataWeaveAst defaultValue = null;
+            if (check(TokenType.ASSIGN)) {
+                advance();
+                defaultValue = parseExpression();
+            }
+            params.add(new LambdaParam(name, defaultValue));
+            if (!check(TokenType.RPAREN)) {
+                expect(TokenType.COMMA);
+            }
+        }
+        expect(TokenType.RPAREN);
+        return params;
+    }
+
+    // -- Expressions
+
+    private DataWeaveAst parseExpression() {
+        if (check(TokenType.LPAREN) && isLambdaAhead()) {
+            return parseLambda();
+        }
+        return parseConditional();
+    }
+
+    private boolean isLambdaAhead() {
+        // ( ... ) -> with balanced parentheses
+        int depth = 0;
+        for (int i = pos; i < tokens.size(); i++) {
+            TokenType type = tokens.get(i).type();
+            if (type == TokenType.LPAREN || type == TokenType.LBRACKET || type == TokenType.LBRACE) {
+                depth++;
+            } else if (type == TokenType.RPAREN || type == TokenType.RBRACKET || type == TokenType.RBRACE) {
+                depth--;
+                if (depth == 0) {
+                    return i + 1 < tokens.size() && tokens.get(i + 1).type() == TokenType.ARROW;
+                }
+            } else if (type == TokenType.EOF) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private Lambda parseLambda() {
+        expect(TokenType.LPAREN);
+        List<LambdaParam> params = parseParams();
+        expect(TokenType.ARROW);
+        return new Lambda(params, parseExpression());
+    }
+
+    private DataWeaveAst parseConditional() {
+        if (checkIdentifier("if")) {
+            advance();
+            DataWeaveAst condition = parseCondition();
             DataWeaveAst thenExpr = parseExpression();
             DataWeaveAst elseExpr = null;
             if (checkIdentifier("else")) {
                 advance();
                 elseExpr = parseExpression();
             }
-            return new DataWeaveAst.IfElse(condition, thenExpr, elseExpr);
+            return new IfElse(condition, thenExpr, elseExpr);
+        }
+        if (checkIdentifier("unless")) {
+            // unless (cond) a otherwise b  is  if (cond) b else a
+            advance();
+            DataWeaveAst condition = parseCondition();
+            DataWeaveAst unlessExpr = parseExpression();
+            expectIdentifier("otherwise");
+            return new IfElse(condition, parseExpression(), unlessExpr);
+        }
+        return parseInfix();
+    }
+
+    private DataWeaveAst parseCondition() {
+        expect(TokenType.LPAREN);
+        DataWeaveAst condition = parseExpression();
+        expect(TokenType.RPAREN);
+        return condition;
+    }
+
+    private DataWeaveAst parseInfix() {
+        DataWeaveAst left = parseDefault();
+        while (true) {
+            if (check(TokenType.PLUSPLUS)) {
+                advance();
+                left = new BinaryOp("++", left, parseDefault());
+            } else if (check(TokenType.MINUSMINUS)) {
+                advance();
+                left = new BinaryOp("--", left, parseDefault());
+            } else if (checkIdentifier("to")) {
+                advance();
+                left = new Range(left, parseDefault());
+            } else if (checkIdentifier("match")) {
+                advance();
+                left = parseMatch(left);
+            } else if (checkIdentifier("update")) {
+                left = new Unsupported(skipBlock("update"), "update operator");
+            } else if (checkIdentifier("replace")) {
+                advance();
+                DataWeaveAst target = parseInfixOperand();
+                expectIdentifier("with");
+                left = new FunctionCall("replace", List.of(left, target, parseInfixOperand()));
+            } else if (check(TokenType.IDENTIFIER) && !KEYWORDS.contains(current().value())) {
+                String name = parseQualifiedName();
+                left = new FunctionCall(name, List.of(left, parseInfixOperand()));
+            } else {
+                return left;
+            }
+        }
+    }
+
+    private DataWeaveAst parseInfixOperand() {
+        if (check(TokenType.LPAREN) && isLambdaAhead()) {
+            return parseLambda();
         }
         return parseDefault();
     }
@@ -308,8 +412,7 @@ public class DataWeaveParser {
         DataWeaveAst expr = parseOr();
         while (checkIdentifier("default")) {
             advance();
-            DataWeaveAst fallback = parseOr();
-            expr = new DataWeaveAst.DefaultExpr(expr, fallback);
+            expr = new DefaultExpr(expr, parseOr());
         }
         return expr;
     }
@@ -318,62 +421,62 @@ public class DataWeaveParser {
         DataWeaveAst left = parseAnd();
         while (check(TokenType.OR)) {
             advance();
-            DataWeaveAst right = parseAnd();
-            left = new DataWeaveAst.BinaryOp("or", left, right);
+            left = new BinaryOp("or", left, parseAnd());
         }
         return left;
     }
 
     private DataWeaveAst parseAnd() {
-        DataWeaveAst left = parseComparison();
+        DataWeaveAst left = parseEquality();
         while (check(TokenType.AND)) {
             advance();
-            DataWeaveAst right = parseComparison();
-            left = new DataWeaveAst.BinaryOp("and", left, right);
+            left = new BinaryOp("and", left, parseEquality());
         }
         return left;
     }
 
-    private DataWeaveAst parseComparison() {
-        DataWeaveAst left = parseConcat();
-        while (check(TokenType.EQ) || check(TokenType.NEQ) || check(TokenType.GT) || check(TokenType.GE)
-                || check(TokenType.LT) || check(TokenType.LE)) {
+    private DataWeaveAst parseEquality() {
+        DataWeaveAst left = parseRelational();
+        while (check(TokenType.EQ) || check(TokenType.NEQ) || check(TokenType.SIMILAR)) {
             String op = current().value();
             advance();
-            DataWeaveAst right = parseConcat();
-            left = new DataWeaveAst.BinaryOp(op, left, right);
+            left = new BinaryOp(op, left, parseRelational());
         }
         return left;
     }
 
-    private DataWeaveAst parseConcat() {
-        DataWeaveAst left = parseAddition();
-        while (check(TokenType.PLUSPLUS)) {
-            advance();
-            DataWeaveAst right = parseAddition();
-            left = new DataWeaveAst.BinaryOp("++", left, right);
+    private DataWeaveAst parseRelational() {
+        DataWeaveAst left = parseAdditive();
+        while (true) {
+            if (check(TokenType.GT) || check(TokenType.GE) || check(TokenType.LT) || check(TokenType.LE)) {
+                String op = current().value();
+                advance();
+                left = new BinaryOp(op, left, parseAdditive());
+            } else if (checkIdentifier("is")) {
+                advance();
+                left = new TypeCheck(left, parseTypeName());
+            } else {
+                return left;
+            }
         }
-        return left;
     }
 
-    private DataWeaveAst parseAddition() {
-        DataWeaveAst left = parseMultiplication();
+    private DataWeaveAst parseAdditive() {
+        DataWeaveAst left = parseMultiplicative();
         while (check(TokenType.PLUS) || check(TokenType.MINUS)) {
             String op = current().value();
             advance();
-            DataWeaveAst right = parseMultiplication();
-            left = new DataWeaveAst.BinaryOp(op, left, right);
+            left = new BinaryOp(op, left, parseMultiplicative());
         }
         return left;
     }
 
-    private DataWeaveAst parseMultiplication() {
+    private DataWeaveAst parseMultiplicative() {
         DataWeaveAst left = parseUnary();
         while (check(TokenType.STAR) || check(TokenType.SLASH)) {
             String op = current().value();
             advance();
-            DataWeaveAst right = parseUnary();
-            left = new DataWeaveAst.BinaryOp(op, left, right);
+            left = new BinaryOp(op, left, parseUnary());
         }
         return left;
     }
@@ -381,280 +484,658 @@ public class DataWeaveParser {
     private DataWeaveAst parseUnary() {
         if (check(TokenType.NOT)) {
             advance();
-            DataWeaveAst operand = parseUnary();
-            return new DataWeaveAst.UnaryOp("not", operand);
+            return new UnaryOp("not", parseUnary());
         }
-        if (check(TokenType.MINUS) && !isPreviousValueLike()) {
+        if (check(TokenType.MINUS)) {
             advance();
-            DataWeaveAst operand = parseUnary();
-            return new DataWeaveAst.UnaryOp("-", operand);
+            return new UnaryOp("-", parseUnary());
         }
-        return parsePostfix();
+        return parseCoercion();
     }
 
-    private boolean isPreviousValueLike() {
-        if (pos == 0) {
-            return false;
-        }
-        Token prev = tokens.get(pos - 1);
-        return prev.type() == TokenType.IDENTIFIER || prev.type() == TokenType.NUMBER
-                || prev.type() == TokenType.STRING || prev.type() == TokenType.RPAREN
-                || prev.type() == TokenType.RBRACKET || prev.type() == TokenType.BOOLEAN;
-    }
-
-    private DataWeaveAst parsePostfix() {
-        DataWeaveAst expr = parsePrimary();
-        return parsePostfixOps(expr);
-    }
-
-    private DataWeaveAst parsePostfixOps(DataWeaveAst expr) {
-        while (true) {
-            if (check(TokenType.DOT)) {
-                advance(); // .
-                if (check(TokenType.STAR)) {
-                    advance(); // *
-                    String field = current().value();
-                    advance();
-                    expr = new DataWeaveAst.MultiValueSelector(expr, field);
-                } else if (check(TokenType.AT)) {
-                    // .@attrName — XML attribute selector
-                    advance(); // @
-                    String attr = current().value();
-                    advance();
-                    expr = new DataWeaveAst.AttributeAccess(expr, attr);
-                } else if (check(TokenType.IDENTIFIER)) {
-                    String field = current().value();
-                    advance();
-                    expr = new DataWeaveAst.FieldAccess(expr, field);
-                }
-            } else if (check(TokenType.QUESTION)) {
-                // expr? — existence check
-                advance(); // ?
-                expr = new DataWeaveAst.ExistenceCheck(expr);
-            } else if (check(TokenType.LBRACKET)) {
-                advance(); // [
-                DataWeaveAst index = parseExpression();
-                expect(TokenType.RBRACKET);
-                expr = new DataWeaveAst.IndexAccess(expr, index);
-            } else if (checkIdentifier("map")) {
+    private DataWeaveAst parseCoercion() {
+        DataWeaveAst expr = parsePostfix(parsePrimary());
+        while (checkIdentifier("as")) {
+            advance();
+            String type = parseTypeName();
+            Map<String, String> properties = new LinkedHashMap<>();
+            if (check(TokenType.LBRACE)) {
                 advance();
-                DataWeaveAst lambda = parseLambdaOrShorthand();
-                expr = new DataWeaveAst.MapExpr(expr, lambda);
-            } else if (checkIdentifier("filter")) {
-                advance();
-                DataWeaveAst lambda = parseLambdaOrShorthand();
-                expr = new DataWeaveAst.FilterExpr(expr, lambda);
-            } else if (checkIdentifier("reduce")) {
-                advance();
-                DataWeaveAst lambda = parseLambdaOrShorthand();
-                expr = new DataWeaveAst.ReduceExpr(expr, lambda);
-            } else if (checkIdentifier("flatMap")) {
-                advance();
-                DataWeaveAst lambda = parseLambdaOrShorthand();
-                expr = new DataWeaveAst.FlatMapExpr(expr, lambda);
-            } else if (checkIdentifier("distinctBy")) {
-                advance();
-                DataWeaveAst lambda = parseLambdaOrShorthand();
-                expr = new DataWeaveAst.DistinctByExpr(expr, lambda);
-            } else if (checkIdentifier("groupBy")) {
-                advance();
-                DataWeaveAst lambda = parseLambdaOrShorthand();
-                expr = new DataWeaveAst.GroupByExpr(expr, lambda);
-            } else if (checkIdentifier("orderBy")) {
-                advance();
-                DataWeaveAst lambda = parseLambdaOrShorthand();
-                expr = new DataWeaveAst.OrderByExpr(expr, lambda);
-            } else if (checkIdentifier("as")) {
-                advance(); // as
-                String type = current().value();
-                advance();
-                String format = null;
-                if (check(TokenType.LBRACE)) {
-                    advance(); // {
-                    if (checkIdentifier("format")) {
-                        advance(); // format
-                        expect(TokenType.COLON);
-                        format = current().value();
-                        advance();
-                    }
-                    expect(TokenType.RBRACE);
-                }
-                expr = new DataWeaveAst.TypeCoercion(expr, type, format);
-            } else if (checkIdentifier("is")) {
-                advance(); // is
-                String type = current().value();
-                advance();
-                expr = new DataWeaveAst.TypeCheck(expr, type);
-            } else if (checkIdentifier("contains")) {
-                advance();
-                DataWeaveAst sub = parsePrimary();
-                expr = new DataWeaveAst.ContainsExpr(expr, sub);
-            } else if (checkIdentifier("startsWith")) {
-                advance();
-                DataWeaveAst prefix = parsePrimary();
-                expr = new DataWeaveAst.StartsWithExpr(expr, prefix);
-            } else if (checkIdentifier("endsWith")) {
-                advance();
-                DataWeaveAst suffix = parsePrimary();
-                expr = new DataWeaveAst.EndsWithExpr(expr, suffix);
-            } else if (checkIdentifier("splitBy")) {
-                advance();
-                DataWeaveAst sep = parsePrimary();
-                expr = new DataWeaveAst.SplitByExpr(expr, sep);
-            } else if (checkIdentifier("joinBy")) {
-                advance();
-                DataWeaveAst sep = parsePrimary();
-                expr = new DataWeaveAst.JoinByExpr(expr, sep);
-            } else if (checkIdentifier("replace")) {
-                advance();
-                DataWeaveAst target = parsePrimary();
-                if (checkIdentifier("with")) {
-                    advance();
-                }
-                DataWeaveAst replacement = parsePrimary();
-                expr = new DataWeaveAst.ReplaceExpr(expr, target, replacement);
-            } else if (checkIdentifier("match")) {
-                advance(); // match
-                // Capture the match block as unsupported -- skip braces
-                StringBuilder matchText = new StringBuilder("match ");
-                if (check(TokenType.LBRACE)) {
-                    int depth = 1;
-                    matchText.append("{");
-                    advance();
-                    while (depth > 0 && !check(TokenType.EOF)) {
-                        if (check(TokenType.LBRACE)) {
-                            depth++;
-                        } else if (check(TokenType.RBRACE)) {
-                            depth--;
-                        }
-                        matchText.append(current().value());
-                        if (depth > 0) {
-                            matchText.append(" ");
-                        }
-                        advance();
+                while (!check(TokenType.RBRACE)) {
+                    String name = expectName();
+                    expect(TokenType.COLON);
+                    properties.put(name, parseStringValue());
+                    if (!check(TokenType.RBRACE)) {
+                        expect(TokenType.COMMA);
                     }
                 }
-                expr = new DataWeaveAst.Unsupported(matchText.toString().trim(), "match expression");
-            } else {
-                break;
+                advance(); // }
             }
+            expr = new TypeCoercion(expr, type, properties);
         }
         return expr;
     }
 
-    private DataWeaveAst parseLambdaOrShorthand() {
-        // Lambda forms:
-        // ((item) -> expr)
-        // ((item, index) -> expr)
-        // ((item, acc = 0) -> expr)   (for reduce)
-        // $.field                      (shorthand)
-        // ($ -> expr)
-        if (check(TokenType.LPAREN)) {
-            int savedPos = pos;
-            try {
-                return parseLambda();
-            } catch (Exception e) {
-                // If lambda parsing fails, restore and try as expression
-                pos = savedPos;
-                return parsePrimary();
-            }
+    private String parseStringValue() {
+        Token token = current();
+        if (token.type() == TokenType.STRING) {
+            advance();
+            return unescape(token.value(), token);
         }
-        if (check(TokenType.DOLLAR)) {
-            return parseDollarShorthand();
+        if (token.type() == TokenType.NUMBER || token.type() == TokenType.BOOLEAN
+                || token.type() == TokenType.IDENTIFIER) {
+            advance();
+            return token.value();
         }
-        if (check(TokenType.DOLLAR_DOLLAR)) {
-            advance(); // $$
-            return new DataWeaveAst.DoubleDollar();
-        }
-        return parsePrimary();
+        throw error("expected a literal value but found " + describe(token));
     }
 
-    private DataWeaveAst parseLambda() {
-        expect(TokenType.LPAREN);
-
-        // Inner parens for parameter list: ((item) -> expr) or ((item, idx) -> expr)
-        boolean innerParens = check(TokenType.LPAREN);
-        if (innerParens) {
+    private String parseTypeName() {
+        String type = expectName();
+        while (check(TokenType.DOUBLE_COLON)) {
             advance();
+            type = expectName();
         }
-
-        List<DataWeaveAst.LambdaParam> params = new ArrayList<>();
-        while (!check(TokenType.RPAREN) && !check(TokenType.ARROW) && !check(TokenType.EOF)) {
-            // Only accept identifiers as parameter names; if we see something else, this is not a lambda
-            if (!check(TokenType.IDENTIFIER)) {
-                throw new IllegalStateException("Expected identifier for lambda parameter, got: " + current());
-            }
-            String paramName = current().value();
-            advance();
-            // Skip type annotation: (a: Number) or (a: Array<Number>) -> skip to next param
-            if (check(TokenType.COLON)) {
-                advance(); // :
-                skipTypeExpression(); // type expression (simple, generic, or union)
-            }
-            DataWeaveAst defaultValue = null;
-            if (check(TokenType.ASSIGN)) {
-                advance();
-                defaultValue = parseOr();
-            }
-            params.add(new DataWeaveAst.LambdaParam(paramName, defaultValue));
-            if (check(TokenType.COMMA)) {
-                advance();
-            }
+        if (check(TokenType.LT)) {
+            skipGenerics();
         }
-
-        if (innerParens) {
-            expect(TokenType.RPAREN);
-        }
-
-        expect(TokenType.ARROW);
-        DataWeaveAst body = parseExpression();
-        expect(TokenType.RPAREN);
-        return new DataWeaveAst.Lambda(params, body);
+        return type;
     }
 
-    private DataWeaveAst parseDollarShorthand() {
-        advance(); // $
-        List<String> fields = new ArrayList<>();
-        while (check(TokenType.DOT) && isTokenAhead(1, TokenType.IDENTIFIER)) {
-            advance(); // .
-            fields.add(current().value());
-            advance();
-        }
-        DataWeaveAst expr = new DataWeaveAst.LambdaShorthand(fields);
-        // Selectors that belong to the shorthand itself ($.@id, $.*Item, $.a?, $[0], $.@id.x).
-        // They are parsed here so they bind to $ also where the shorthand is a lambda argument
-        // (payload map $.@id), which is not followed by the general postfix operators.
+    // -- Selectors
+
+    private DataWeaveAst parsePostfix(DataWeaveAst expr) {
         while (true) {
-            if (check(TokenType.DOT) && isTokenAhead(1, TokenType.AT)) {
+            if (check(TokenType.DOT) && isTokenAhead(1, TokenType.DOT)) {
                 advance(); // .
-                advance(); // @
-                String attr = current().value();
-                advance();
-                expr = new DataWeaveAst.AttributeAccess(expr, attr);
-            } else if (check(TokenType.DOT) && isTokenAhead(1, TokenType.STAR)) {
                 advance(); // .
-                advance(); // *
-                String field = current().value();
-                advance();
-                expr = new DataWeaveAst.MultiValueSelector(expr, field);
-            } else if (check(TokenType.DOT) && isTokenAhead(1, TokenType.IDENTIFIER)) {
-                // a field after another selector, such as $.@id.x
+                if (check(TokenType.STAR) || check(TokenType.AT)) {
+                    expr = new Unsupported(".." + current().value(), "descendants selector ..* / ..@");
+                    advance();
+                } else {
+                    expr = new DescendantSelector(expr, expectSelectorName());
+                }
+            } else if (check(TokenType.DOT)) {
                 advance(); // .
-                String field = current().value();
-                advance();
-                expr = new DataWeaveAst.FieldAccess(expr, field);
-            } else if (check(TokenType.QUESTION)) {
-                advance(); // ?
-                expr = new DataWeaveAst.ExistenceCheck(expr);
+                expr = parseDotSelector(expr);
             } else if (check(TokenType.LBRACKET)) {
                 advance(); // [
-                DataWeaveAst index = parseExpression();
-                expect(TokenType.RBRACKET);
-                expr = new DataWeaveAst.IndexAccess(expr, index);
+                if (check(TokenType.QUESTION)) {
+                    advance(); // ?
+                    expect(TokenType.LPAREN);
+                    DataWeaveAst condition = parseExpression();
+                    expect(TokenType.RPAREN);
+                    expect(TokenType.RBRACKET);
+                    expr = new FilterSelector(expr, condition);
+                } else if (check(TokenType.AT) || check(TokenType.STAR) || check(TokenType.CARET)
+                        || check(TokenType.AND)) {
+                    expr = new Unsupported(skipBracket(), "selector");
+                } else {
+                    DataWeaveAst index = parseExpression();
+                    expect(TokenType.RBRACKET);
+                    expr = new IndexAccess(expr, index);
+                }
+            } else if (check(TokenType.QUESTION)) {
+                advance();
+                expr = new ExistenceCheck(expr);
+            } else if (check(TokenType.NOT) && "!".equals(current().value()) && isAdjacent()) {
+                // the assert-present selector payload.a! fails when the value is missing; otherwise the same value
+                advance();
             } else {
                 return expr;
             }
         }
+    }
+
+    private DataWeaveAst parseDotSelector(DataWeaveAst expr) {
+        if (check(TokenType.AT)) {
+            advance(); // @
+            if (check(TokenType.IDENTIFIER) || check(TokenType.STRING)) {
+                return new AttributeAccess(expr, expectSelectorName());
+            }
+            return new Unsupported(".@", "all attributes selector .@");
+        }
+        if (check(TokenType.STAR)) {
+            advance(); // *
+            if (check(TokenType.AT)) {
+                advance();
+                return new Unsupported(".*@", "multi-value attribute selector .*@");
+            }
+            return new MultiValueSelector(expr, expectSelectorName());
+        }
+        if (check(TokenType.CARET)) {
+            advance(); // ^
+            String name = expectName();
+            return new Unsupported(".^" + name, "metadata selector .^");
+        }
+        if (check(TokenType.HASH)) {
+            advance(); // #
+            return new Unsupported(".#", "namespace selector .#");
+        }
+        if (check(TokenType.IDENTIFIER) && isTokenAhead(1, TokenType.HASH)) {
+            String prefix = expectName();
+            advance(); // #
+            return new Unsupported("." + prefix + "#" + expectSelectorName(), "XML namespace selector");
+        }
+        return new FieldAccess(expr, expectSelectorName());
+    }
+
+    private String expectSelectorName() {
+        Token token = current();
+        if (token.type() == TokenType.STRING) {
+            advance();
+            return unescape(token.value(), token);
+        }
+        return expectName();
+    }
+
+    // -- Primary
+
+    private DataWeaveAst parsePrimary() {
+        Token token = current();
+        switch (token.type()) {
+            case STRING -> {
+                advance();
+                return parseString(token);
+            }
+            case NUMBER -> {
+                advance();
+                return new NumberLit(token.value());
+            }
+            case BOOLEAN -> {
+                advance();
+                return new BooleanLit("true".equals(token.value()));
+            }
+            case NULL_LIT -> {
+                advance();
+                return new NullLit();
+            }
+            case REGEX -> {
+                advance();
+                return new RegexLit(token.value());
+            }
+            case TEMPORAL -> {
+                advance();
+                return new TemporalLit(token.value());
+            }
+            case DOLLAR -> {
+                advance();
+                return new Dollar(1);
+            }
+            case DOLLAR_DOLLAR -> {
+                advance();
+                return new Dollar(2);
+            }
+            case DOLLAR_DOLLAR_DOLLAR -> {
+                advance();
+                return new Dollar(3);
+            }
+            case LPAREN -> {
+                if (isLambdaAhead()) {
+                    return parseLambda();
+                }
+                advance();
+                DataWeaveAst expr = parseExpression();
+                expect(TokenType.RPAREN);
+                return expr instanceof Lambda ? expr : new Parens(expr);
+            }
+            case LBRACE -> {
+                return parseObject();
+            }
+            case LBRACKET -> {
+                return parseArray();
+            }
+            case IDENTIFIER -> {
+                return parseIdentifier();
+            }
+            default -> throw error("unexpected " + describe(token));
+        }
+    }
+
+    private DataWeaveAst parseIdentifier() {
+        String name = current().value();
+        if ("do".equals(name) && isTokenAhead(1, TokenType.LBRACE)) {
+            return parseDoBlock();
+        }
+        if ("using".equals(name) && isTokenAhead(1, TokenType.LPAREN)) {
+            return parseUsing();
+        }
+        if ("if".equals(name) || "unless".equals(name)) {
+            return parseConditional();
+        }
+        name = parseQualifiedName();
+        // f(x) is a call, also with a space before the parenthesis unless that starts a lambda
+        if (check(TokenType.LPAREN) && (isAdjacent() || !isLambdaAhead())) {
+            advance(); // (
+            List<DataWeaveAst> args = new ArrayList<>();
+            while (!check(TokenType.RPAREN)) {
+                args.add(parseExpression());
+                if (!check(TokenType.RPAREN)) {
+                    expect(TokenType.COMMA);
+                }
+            }
+            advance(); // )
+            return new FunctionCall(name, args);
+        }
+        return new Identifier(name);
+    }
+
+    // Strings::camelize is camelize (the converter knows the functions of the DataWeave modules by name)
+    private String parseQualifiedName() {
+        String name = expectName();
+        while (check(TokenType.DOUBLE_COLON)) {
+            advance();
+            name = expectName();
+        }
+        return name;
+    }
+
+    private DataWeaveAst parseDoBlock() {
+        advance(); // do
+        expect(TokenType.LBRACE);
+        List<DataWeaveAst> declarations = new ArrayList<>();
+        while (!check(TokenType.HEADER_SEPARATOR)) {
+            if (checkIdentifier("var") || checkIdentifier("fun")) {
+                declarations.add(parseDeclaration());
+            } else if (checkIdentifier("type")) {
+                skipTypeDeclaration();
+            } else if (declarations.isEmpty()) {
+                // do { expr } without declarations
+                DataWeaveAst body = parseExpression();
+                expect(TokenType.RBRACE);
+                return new Parens(body);
+            } else {
+                throw error("expected --- in do block but found " + describe(current()));
+            }
+        }
+        advance(); // ---
+        DataWeaveAst body = parseExpression();
+        expect(TokenType.RBRACE);
+        return new Block(declarations, body);
+    }
+
+    private DataWeaveAst parseUsing() {
+        advance(); // using
+        expect(TokenType.LPAREN);
+        List<DataWeaveAst> declarations = new ArrayList<>();
+        while (!check(TokenType.RPAREN)) {
+            String name = expectName();
+            expect(TokenType.ASSIGN);
+            declarations.add(new VarDecl(name, parseExpression()));
+            if (!check(TokenType.RPAREN)) {
+                expect(TokenType.COMMA);
+            }
+        }
+        advance(); // )
+        return new Block(declarations, parseExpression());
+    }
+
+    private DataWeaveAst parseObject() {
+        expect(TokenType.LBRACE);
+        List<ObjectEntry> entries = new ArrayList<>();
+        while (!check(TokenType.RBRACE)) {
+            if (check(TokenType.LPAREN) && isConditionalEntriesAhead()) {
+                // (key: value, ...) if condition
+                advance(); // (
+                List<ObjectEntry> group = new ArrayList<>();
+                while (!check(TokenType.RPAREN)) {
+                    group.add(parseObjectEntry());
+                    if (!check(TokenType.RPAREN)) {
+                        expect(TokenType.COMMA);
+                    }
+                }
+                advance(); // )
+                DataWeaveAst condition = parseEntryCondition();
+                for (ObjectEntry entry : group) {
+                    entries.add(new ObjectEntry(entry.key(), entry.value(), entry.dynamic(), condition));
+                }
+            } else if (check(TokenType.LPAREN)) {
+                // (expr): value is a dynamic key, and (expr) alone an object spread
+                advance(); // (
+                DataWeaveAst expr = parseExpression();
+                expect(TokenType.RPAREN);
+                if (check(TokenType.AT)) {
+                    entries.add(unsupportedEntry(skipAttributes(), "XML attributes"));
+                    expect(TokenType.COLON);
+                    parseExpression();
+                } else if (check(TokenType.COLON)) {
+                    advance();
+                    entries.add(new ObjectEntry(expr, parseExpression(), true, null));
+                } else {
+                    entries.add(new ObjectEntry(null, expr, false, parseEntryCondition()));
+                }
+            } else {
+                entries.add(parseObjectEntry());
+            }
+            if (!check(TokenType.RBRACE)) {
+                expect(TokenType.COMMA);
+            }
+        }
+        advance(); // }
+        return new ObjectLit(entries);
+    }
+
+    private DataWeaveAst parseEntryCondition() {
+        if (checkIdentifier("if")) {
+            advance();
+            return parseInfix();
+        }
+        return null;
+    }
+
+    // ( key : ... at the start of a parenthesised group of entries
+    private boolean isConditionalEntriesAhead() {
+        Token key = peekAhead(1);
+        Token next = peekAhead(2);
+        if (key == null || next == null) {
+            return false;
+        }
+        boolean keyLike = key.type() == TokenType.IDENTIFIER || key.type() == TokenType.STRING
+                || key.type() == TokenType.BOOLEAN || key.type() == TokenType.NULL_LIT;
+        return keyLike && (next.type() == TokenType.COLON || next.type() == TokenType.HASH
+                || next.type() == TokenType.AT);
+    }
+
+    private ObjectEntry parseObjectEntry() {
+        Token token = current();
+        DataWeaveAst key;
+        boolean dynamic = false;
+        if (token.type() == TokenType.STRING) {
+            advance();
+            key = parseString(token);
+            dynamic = key instanceof Interpolation;
+        } else if (token.type() == TokenType.LPAREN) {
+            advance();
+            key = parseExpression();
+            expect(TokenType.RPAREN);
+            dynamic = true;
+        } else {
+            key = new StringLit(expectName());
+        }
+        if (check(TokenType.HASH)) {
+            advance(); // #
+            String name = expectName();
+            expect(TokenType.COLON);
+            parseExpression();
+            return unsupportedEntry(token.value() + "#" + name, "XML namespace prefix");
+        }
+        if (check(TokenType.AT)) {
+            String attributes = skipAttributes();
+            expect(TokenType.COLON);
+            parseExpression();
+            return unsupportedEntry(token.value() + " " + attributes, "XML attributes");
+        }
+        expect(TokenType.COLON);
+        return new ObjectEntry(key, parseExpression(), dynamic, null);
+    }
+
+    private static ObjectEntry unsupportedEntry(String text, String reason) {
+        return new ObjectEntry(null, new Unsupported(text, reason), false, null);
+    }
+
+    private String skipAttributes() {
+        advance(); // @
+        StringBuilder text = new StringBuilder("@");
+        if (check(TokenType.LPAREN)) {
+            int depth = 0;
+            do {
+                if (check(TokenType.LPAREN)) {
+                    depth++;
+                } else if (check(TokenType.RPAREN)) {
+                    depth--;
+                } else if (check(TokenType.EOF)) {
+                    throw error("unterminated attributes");
+                }
+                text.append(current().value());
+                advance();
+            } while (depth > 0);
+        }
+        return text.toString();
+    }
+
+    private DataWeaveAst parseArray() {
+        expect(TokenType.LBRACKET);
+        List<DataWeaveAst> elements = new ArrayList<>();
+        while (!check(TokenType.RBRACKET)) {
+            elements.add(parseExpression());
+            if (!check(TokenType.RBRACKET)) {
+                expect(TokenType.COMMA);
+            }
+        }
+        advance(); // ]
+        return new ArrayLit(elements);
+    }
+
+    private DataWeaveAst parseMatch(DataWeaveAst expr) {
+        expect(TokenType.LBRACE);
+        List<MatchCase> cases = new ArrayList<>();
+        while (!check(TokenType.RBRACE)) {
+            if (checkIdentifier("else")) {
+                advance();
+                expect(TokenType.ARROW);
+                cases.add(new MatchCase(null, null, null, null, null, parseExpression(), true));
+                continue;
+            }
+            expectIdentifier("case");
+            String binding = null;
+            DataWeaveAst literal = null;
+            String type = null;
+            String regex = null;
+            if (check(TokenType.IDENTIFIER) && !KEYWORDS.contains(current().value())
+                    && !"matches".equals(current().value())) {
+                binding = current().value();
+                advance();
+                if (check(TokenType.COLON)) {
+                    // case x: "literal" -> binds the matched literal
+                    advance();
+                    literal = parseInfix();
+                }
+            }
+            if (checkIdentifier("is")) {
+                advance();
+                type = parseTypeName();
+            } else if (checkIdentifier("matches")) {
+                advance();
+                regex = expect(TokenType.REGEX).value();
+            } else if (check(TokenType.REGEX)) {
+                regex = current().value();
+                advance();
+            } else if (binding == null) {
+                literal = parseInfix();
+            }
+            DataWeaveAst guard = null;
+            if (checkIdentifier("if")) {
+                advance();
+                guard = parseInfix();
+            }
+            expect(TokenType.ARROW);
+            cases.add(new MatchCase(binding, literal, type, regex, guard, parseExpression(), false));
+        }
+        advance(); // }
+        return new Match(expr, cases);
+    }
+
+    // -- String literals
+
+    private DataWeaveAst parseString(Token token) {
+        String raw = token.value();
+        if (!raw.contains("$(")) {
+            return new StringLit(unescape(raw, token));
+        }
+        List<DataWeaveAst> parts = new ArrayList<>();
+        StringBuilder text = new StringBuilder();
+        int i = 0;
+        while (i < raw.length()) {
+            char ch = raw.charAt(i);
+            if (ch == '\\' && i + 1 < raw.length()) {
+                text.append(ch).append(raw.charAt(i + 1));
+                i += 2;
+            } else if (ch == '$' && i + 1 < raw.length() && raw.charAt(i + 1) == '(') {
+                int end = findInterpolationEnd(raw, i + 1, token);
+                if (!text.isEmpty()) {
+                    parts.add(new StringLit(unescape(text.toString(), token)));
+                    text.setLength(0);
+                }
+                String inner = raw.substring(i + 2, end);
+                parts.add(new DataWeaveParser(new DataWeaveLexer(inner).tokenize()).parseExpressionOnly());
+                i = end + 1;
+            } else {
+                text.append(ch);
+                i++;
+            }
+        }
+        if (!text.isEmpty()) {
+            parts.add(new StringLit(unescape(text.toString(), token)));
+        }
+        return new Interpolation(parts);
+    }
+
+    private static int findInterpolationEnd(String raw, int open, Token token) {
+        int depth = 0;
+        char quote = 0;
+        for (int i = open; i < raw.length(); i++) {
+            char ch = raw.charAt(i);
+            if (quote != 0) {
+                if (ch == '\\') {
+                    i++;
+                } else if (ch == quote) {
+                    quote = 0;
+                }
+            } else if (ch == '"' || ch == '\'') {
+                quote = ch;
+            } else if (ch == '(') {
+                depth++;
+            } else if (ch == ')' && --depth == 0) {
+                return i;
+            }
+        }
+        throw errorAt(token, "unterminated string interpolation");
+    }
+
+    private static String unescape(String raw, Token token) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < raw.length(); i++) {
+            char ch = raw.charAt(i);
+            if (ch != '\\' || i + 1 >= raw.length()) {
+                sb.append(ch);
+                continue;
+            }
+            char next = raw.charAt(++i);
+            switch (next) {
+                case 'n' -> sb.append('\n');
+                case 't' -> sb.append('\t');
+                case 'r' -> sb.append('\r');
+                case 'b' -> sb.append('\b');
+                case 'f' -> sb.append('\f');
+                case 'u' -> {
+                    if (i + 4 >= raw.length()) {
+                        throw errorAt(token, "invalid unicode escape in string");
+                    }
+                    sb.append((char) Integer.parseInt(raw.substring(i + 1, i + 5), 16));
+                    i += 4;
+                }
+                default -> sb.append(next); // \" \' \\ \$ \/ \`
+            }
+        }
+        return sb.toString();
+    }
+
+    // -- Type expressions (skipped: they do not change the converted result)
+
+    private void skipTypeExpression() {
+        if (check(TokenType.LBRACE)) {
+            skipBalanced(TokenType.LBRACE, TokenType.RBRACE);
+        } else if (check(TokenType.LPAREN)) {
+            // a function type: (a: String) -> Number
+            skipBalanced(TokenType.LPAREN, TokenType.RPAREN);
+            if (check(TokenType.ARROW)) {
+                advance();
+                skipTypeExpression();
+            }
+        } else {
+            parseTypeName();
+        }
+        if (check(TokenType.PIPE)) {
+            advance();
+            skipTypeExpression();
+        }
+    }
+
+    private void skipGenerics() {
+        int depth = 0;
+        do {
+            if (check(TokenType.LT)) {
+                depth++;
+            } else if (check(TokenType.GT)) {
+                depth--;
+            } else if (check(TokenType.EOF)) {
+                throw error("unterminated type parameters");
+            }
+            advance();
+        } while (depth > 0);
+    }
+
+    private void skipBalanced(TokenType open, TokenType close) {
+        int depth = 0;
+        do {
+            if (check(open)) {
+                depth++;
+            } else if (check(close)) {
+                depth--;
+            } else if (check(TokenType.EOF)) {
+                throw error("unbalanced " + open);
+            }
+            advance();
+        } while (depth > 0);
+    }
+
+    private String skipBlock(String keyword) {
+        StringBuilder text = new StringBuilder(keyword).append(' ');
+        advance(); // keyword
+        if (!check(TokenType.LBRACE)) {
+            throw error("expected { after " + keyword);
+        }
+        int depth = 0;
+        do {
+            if (check(TokenType.LBRACE)) {
+                depth++;
+            } else if (check(TokenType.RBRACE)) {
+                depth--;
+            } else if (check(TokenType.EOF)) {
+                throw error("unterminated " + keyword + " block");
+            }
+            text.append(current().value()).append(' ');
+            advance();
+        } while (depth > 0);
+        return text.toString().trim();
+    }
+
+    private String skipBracket() {
+        StringBuilder text = new StringBuilder("[");
+        while (!check(TokenType.RBRACKET)) {
+            if (check(TokenType.EOF)) {
+                throw error("unterminated selector");
+            }
+            text.append(current().value());
+            advance();
+        }
+        advance(); // ]
+        return text.append(']').toString();
+    }
+
+    // -- Token helpers
+
+    private Token current() {
+        return tokens.get(pos);
+    }
+
+    private Token previous() {
+        return tokens.get(Math.max(0, pos - 1));
+    }
+
+    private Token peekAhead(int offset) {
+        int idx = pos + offset;
+        return idx < tokens.size() ? tokens.get(idx) : null;
     }
 
     private boolean isTokenAhead(int offset, TokenType type) {
@@ -662,252 +1143,11 @@ public class DataWeaveParser {
         return token != null && token.type() == type;
     }
 
-    private DataWeaveAst parsePrimary() {
-        if (check(TokenType.STRING)) {
-            String value = current().value();
-            advance();
-            return new DataWeaveAst.StringLit(value, false);
-        }
-
-        if (check(TokenType.NUMBER)) {
-            String value = current().value();
-            advance();
-            return new DataWeaveAst.NumberLit(value);
-        }
-
-        if (check(TokenType.BOOLEAN)) {
-            boolean value = "true".equals(current().value());
-            advance();
-            return new DataWeaveAst.BooleanLit(value);
-        }
-
-        if (check(TokenType.NULL_LIT)) {
-            advance();
-            return new DataWeaveAst.NullLit();
-        }
-
-        if (check(TokenType.DOLLAR)) {
-            return parseDollarShorthand();
-        }
-
-        if (check(TokenType.DOLLAR_DOLLAR)) {
-            advance(); // $$
-            return new DataWeaveAst.DoubleDollar();
-        }
-
-        if (check(TokenType.LPAREN)) {
-            advance(); // (
-            DataWeaveAst expr = parseExpression();
-            expect(TokenType.RPAREN);
-            return new DataWeaveAst.Parens(expr);
-        }
-
-        if (check(TokenType.LBRACE)) {
-            return parseObjectLiteral();
-        }
-
-        if (check(TokenType.LBRACKET)) {
-            return parseArrayLiteral();
-        }
-
-        if (check(TokenType.IDENTIFIER)) {
-            return parseIdentifierOrCall();
-        }
-
-        if (check(TokenType.MINUS)) {
-            advance();
-            DataWeaveAst operand = parsePrimary();
-            return new DataWeaveAst.UnaryOp("-", operand);
-        }
-
-        // Unknown token — return an Unsupported node so best-effort callers (e.g. the CLI
-        // `camel transform dataweave` command) can continue processing the rest of the file.
-        // The language layer (DatasonnetLanguage) will detect the Unsupported node via
-        // getTodoCount() and throw DataWeaveConversionException there, giving strict behaviour
-        // at the language level while keeping the parser usable as a best-effort migration tool.
+    // True if the current token directly follows the previous one, without whitespace
+    private boolean isAdjacent() {
+        Token prev = previous();
         Token cur = current();
-        String tokenText = cur.value() != null && !cur.value().isEmpty() ? cur.value() : cur.type().name();
-        advance();
-        return new DataWeaveAst.Unsupported(
-                tokenText, "unexpected token " + cur.type() + " at " + cur.line() + ":" + cur.col());
-    }
-
-    private DataWeaveAst parseIdentifierOrCall() {
-        String name = current().value();
-        advance();
-
-        // Built-in function calls
-        if (check(TokenType.LPAREN)) {
-            return switch (name) {
-                case "sizeOf", "upper", "lower", "trim", "capitalize", "now", "uuid", "p",
-                        "isEmpty", "isBlank", "abs", "ceil", "floor", "round",
-                        "log", "sqrt", "sum", "avg", "min", "max",
-                        "read", "write", "typeOf" ->
-                    parseFunctionCall(name);
-                default -> {
-                    // Could be a custom function call or lambda
-                    // Check if it looks like a function call
-                    if (isLikelyFunctionCall()) {
-                        yield parseFunctionCall(name);
-                    }
-                    yield new DataWeaveAst.Identifier(name);
-                }
-            };
-        }
-
-        return new DataWeaveAst.Identifier(name);
-    }
-
-    private boolean isLikelyFunctionCall() {
-        // Look ahead to determine if this LPAREN starts a function call
-        // vs a lambda in a postfix operation
-        if (!check(TokenType.LPAREN)) {
-            return false;
-        }
-        int depth = 0;
-        int look = pos;
-        while (look < tokens.size()) {
-            Token t = tokens.get(look);
-            if (t.type() == TokenType.LPAREN) {
-                depth++;
-            } else if (t.type() == TokenType.RPAREN) {
-                depth--;
-                if (depth == 0) {
-                    // Check what follows the closing paren
-                    // If it's an arrow, this is a lambda, not a function call
-                    return look + 1 >= tokens.size() || tokens.get(look + 1).type() != TokenType.ARROW;
-                }
-            } else if (t.type() == TokenType.ARROW && depth == 1) {
-                // Arrow inside first level of parens = lambda
-                return false;
-            }
-            look++;
-        }
-        return true;
-    }
-
-    private DataWeaveAst parseFunctionCall(String name) {
-        expect(TokenType.LPAREN);
-        List<DataWeaveAst> args = new ArrayList<>();
-        while (!check(TokenType.RPAREN) && !check(TokenType.EOF)) {
-            args.add(parseExpression());
-            if (check(TokenType.COMMA)) {
-                advance();
-            }
-        }
-        expect(TokenType.RPAREN);
-        return new DataWeaveAst.FunctionCall(name, args);
-    }
-
-    private DataWeaveAst parseObjectLiteral() {
-        expect(TokenType.LBRACE);
-        List<DataWeaveAst.ObjectEntry> entries = new ArrayList<>();
-
-        while (!check(TokenType.RBRACE) && !check(TokenType.EOF)) {
-            // Check for dynamic key: (expr): value
-            boolean dynamic = false;
-            DataWeaveAst key;
-            if (check(TokenType.LPAREN)) {
-                advance();
-                key = parseExpression();
-                expect(TokenType.RPAREN);
-                dynamic = true;
-            } else if (check(TokenType.IDENTIFIER)) {
-                String name = current().value();
-                advance();
-                key = new DataWeaveAst.Identifier(name);
-            } else if (check(TokenType.STRING)) {
-                key = new DataWeaveAst.StringLit(current().value(), false);
-                advance();
-            } else {
-                break;
-            }
-
-            expect(TokenType.COLON);
-            DataWeaveAst value = parseExpression();
-            entries.add(new DataWeaveAst.ObjectEntry(key, value, dynamic));
-
-            if (check(TokenType.COMMA)) {
-                advance();
-            }
-        }
-
-        expect(TokenType.RBRACE);
-        return new DataWeaveAst.ObjectLit(entries);
-    }
-
-    private DataWeaveAst parseArrayLiteral() {
-        expect(TokenType.LBRACKET);
-        List<DataWeaveAst> elements = new ArrayList<>();
-
-        while (!check(TokenType.RBRACKET) && !check(TokenType.EOF)) {
-            elements.add(parseExpression());
-            if (check(TokenType.COMMA)) {
-                advance();
-            }
-        }
-
-        expect(TokenType.RBRACKET);
-        return new DataWeaveAst.ArrayLit(elements);
-    }
-
-    // -- Token helpers --
-
-    /**
-     * Skip a DataWeave type expression after a colon. Handles: - Simple: {@code Number} - Generic:
-     * {@code Array<Number>}, {@code Array<String | Null>} - Union: {@code String | Null} - Object type: {@code {name:
-     * String}} Stops when it encounters a {@code ,}, {@code )}, {@code =} or EOF at depth 0.
-     */
-    private void skipTypeExpression() {
-        // Skip the leading type name (or opening brace/bracket for object types)
-        if (!check(TokenType.EOF)) {
-            if (check(TokenType.LBRACE)) {
-                // Object type: {name: String} — skip balanced braces
-                int depth = 1;
-                advance(); // {
-                while (depth > 0 && !check(TokenType.EOF)) {
-                    if (check(TokenType.LBRACE)) {
-                        depth++;
-                    } else if (check(TokenType.RBRACE)) {
-                        depth--;
-                    }
-                    advance();
-                }
-                return; // object type is self-contained, no trailing < or |
-            }
-            advance(); // consume base type name / '['
-        }
-        // Now handle trailing generic parameters '<...>' and union '|'
-        while (!check(TokenType.EOF)) {
-            if (check(TokenType.LT)) {
-                // Generic type params: skip balanced < ... >
-                int depth = 1;
-                advance(); // <
-                while (depth > 0 && !check(TokenType.EOF)) {
-                    if (check(TokenType.LT)) {
-                        depth++;
-                    } else if (check(TokenType.GT)) {
-                        depth--;
-                    }
-                    advance();
-                }
-            } else if (check(TokenType.PIPE)) {
-                // Union type: skip '|' and the next type expression
-                advance(); // |
-                skipTypeExpression();
-            } else {
-                break;
-            }
-        }
-    }
-
-    private Token current() {
-        return pos < tokens.size() ? tokens.get(pos) : tokens.get(tokens.size() - 1);
-    }
-
-    private Token peekAhead(int offset) {
-        int idx = pos + offset;
-        return idx < tokens.size() ? tokens.get(idx) : null;
+        return prev.line() == cur.line() && prev.col() + prev.value().length() == cur.col();
     }
 
     private boolean check(TokenType type) {
@@ -924,15 +1164,50 @@ public class DataWeaveParser {
         }
     }
 
-    private void expect(TokenType type) {
-        if (check(type)) {
-            advance();
-        } else {
-            Token cur = current();
-            throw new DataWeaveConversionException(
-                    "DataWeave parse error at " + cur.line() + ":" + cur.col()
-                                                   + ": expected " + type + " but found " + cur.type()
-                                                   + " ('" + cur.value() + "')");
+    private Token expect(TokenType type) {
+        Token token = current();
+        if (token.type() != type) {
+            throw error("expected " + type + " but found " + describe(token));
         }
+        advance();
+        return token;
+    }
+
+    private void expectIdentifier(String name) {
+        if (!checkIdentifier(name)) {
+            throw error("expected '" + name + "' but found " + describe(current()));
+        }
+        advance();
+    }
+
+    // A name: an identifier, or a word with its own token type (such as a field named "null" or "and")
+    private String expectName() {
+        Token token = current();
+        if (token.type() == TokenType.IDENTIFIER || token.type() == TokenType.BOOLEAN
+                || token.type() == TokenType.NULL_LIT || token.type() == TokenType.AND || token.type() == TokenType.OR
+                || token.type() == TokenType.NOT && !"!".equals(token.value())) {
+            advance();
+            return token.value();
+        }
+        throw error("expected a name but found " + describe(token));
+    }
+
+    private void expectEnd() {
+        if (!check(TokenType.EOF)) {
+            throw error("unexpected " + describe(current()) + " after the end of the expression");
+        }
+    }
+
+    private static String describe(Token token) {
+        return token.type() == TokenType.EOF ? "end of script" : token.type() + " ('" + token.value() + "')";
+    }
+
+    private DataWeaveConversionException error(String message) {
+        return errorAt(current(), message);
+    }
+
+    private static DataWeaveConversionException errorAt(Token token, String message) {
+        return new DataWeaveConversionException(
+                "DataWeave parse error at " + token.line() + ":" + token.col() + ": " + message);
     }
 }

@@ -17,23 +17,52 @@
 package org.apache.camel.component.dataweave;
 
 import java.util.List;
+import java.util.Map;
 
 /**
- * AST node types for DataWeave 2.0 expressions.
+ * AST node types for DataWeave 2.0 scripts.
+ * <p>
+ * DataWeave functions are represented by {@link FunctionCall} whether they are called as prefix functions
+ * ({@code upper(x)}, {@code map(xs, f)}) or as infix (binary) functions ({@code xs map f}, {@code s splitBy ","}).
  */
 public sealed interface DataWeaveAst {
+
+    // -- Script structure
 
     record Script(Header header, DataWeaveAst body) implements DataWeaveAst {
     }
 
-    record Header(String version, String outputType, List<InputDecl> inputs) implements DataWeaveAst {
+    /**
+     * The header directives. {@code outputProperties} are the writer properties of the output directive (such as
+     * {@code skipNullOn}), and {@code imports} the imported module paths (such as {@code dw::core::Strings}).
+     */
+    record Header(String version, String outputType, Map<String, String> outputProperties, List<InputDecl> inputs,
+            List<String> imports)
+            implements
+                DataWeaveAst {
     }
 
     record InputDecl(String name, String mediaType) implements DataWeaveAst {
     }
 
-    // Literals
-    record StringLit(String value, boolean singleQuoted) implements DataWeaveAst {
+    /** Declarations ({@link VarDecl}, {@link FunDecl}) in scope of an expression: the header, a do block or using. */
+    record Block(List<DataWeaveAst> declarations, DataWeaveAst expr) implements DataWeaveAst {
+    }
+
+    record VarDecl(String name, DataWeaveAst value) implements DataWeaveAst {
+    }
+
+    record FunDecl(String name, List<LambdaParam> params, DataWeaveAst body) implements DataWeaveAst {
+    }
+
+    // -- Literals
+
+    /** A string literal; the value has the escape sequences of the DataWeave source resolved. */
+    record StringLit(String value) implements DataWeaveAst {
+    }
+
+    /** A string with interpolated expressions ({@code "Hello $(name)"}): string literals and expressions. */
+    record Interpolation(List<DataWeaveAst> parts) implements DataWeaveAst {
     }
 
     record NumberLit(String value) implements DataWeaveAst {
@@ -45,39 +74,77 @@ public sealed interface DataWeaveAst {
     record NullLit() implements DataWeaveAst {
     }
 
-    // Expressions
-    record Identifier(String name) implements DataWeaveAst {
+    /** A regular expression literal {@code /pattern/} (Java regular expression syntax). */
+    record RegexLit(String pattern) implements DataWeaveAst {
     }
 
-    record FieldAccess(DataWeaveAst object, String field) implements DataWeaveAst {
-    }
-
-    record IndexAccess(DataWeaveAst object, DataWeaveAst index) implements DataWeaveAst {
-    }
-
-    record MultiValueSelector(DataWeaveAst object, String field) implements DataWeaveAst {
-    }
-
-    // XML attribute access: expr.@attrName
-    record AttributeAccess(DataWeaveAst object, String attribute) implements DataWeaveAst {
-    }
-
-    // Existence check: expr?
-    record ExistenceCheck(DataWeaveAst expr) implements DataWeaveAst {
-    }
-
-    // $$ (reduce accumulator) reference inside lambda body
-    record DoubleDollar() implements DataWeaveAst {
+    /** A date, time or period literal such as {@code |2020-01-31|} or {@code |P1D|} (without the bars). */
+    record TemporalLit(String value) implements DataWeaveAst {
+        public boolean isPeriod() {
+            return value.startsWith("P") || value.startsWith("-P");
+        }
     }
 
     record ObjectLit(List<ObjectEntry> entries) implements DataWeaveAst {
     }
 
-    record ObjectEntry(DataWeaveAst key, DataWeaveAst value, boolean dynamic) implements DataWeaveAst {
+    /**
+     * An object entry {@code key: value}, where a {@code dynamic} key is an expression ({@code (expr): value}). A
+     * {@code null} key is an object spread {@code (expr)}, which adds the entries of an object (or array of objects).
+     * The {@code condition} of a conditional entry {@code (key: value) if cond} is null for an unconditional entry.
+     */
+    record ObjectEntry(DataWeaveAst key, DataWeaveAst value, boolean dynamic, DataWeaveAst condition)
+            implements
+                DataWeaveAst {
     }
 
     record ArrayLit(List<DataWeaveAst> elements) implements DataWeaveAst {
     }
+
+    // -- References
+
+    record Identifier(String name) implements DataWeaveAst {
+    }
+
+    /** The parameters of an implicit lambda: {@code $} (level 1), {@code $$} (level 2) and {@code $$$} (level 3). */
+    record Dollar(int level) implements DataWeaveAst {
+    }
+
+    // -- Selectors
+
+    /** Single-value selector {@code .field} (or {@code ."field"}). */
+    record FieldAccess(DataWeaveAst object, String field) implements DataWeaveAst {
+    }
+
+    /** Attribute selector {@code .@attr}. */
+    record AttributeAccess(DataWeaveAst object, String attribute) implements DataWeaveAst {
+    }
+
+    /** Multi-value selector {@code .*field}. */
+    record MultiValueSelector(DataWeaveAst object, String field) implements DataWeaveAst {
+    }
+
+    /** Descendants selector {@code ..field}. */
+    record DescendantSelector(DataWeaveAst object, String field) implements DataWeaveAst {
+    }
+
+    /** Index or dynamic key selector {@code [expr]}; the index is a {@link Range} for {@code [a to b]}. */
+    record IndexAccess(DataWeaveAst object, DataWeaveAst index) implements DataWeaveAst {
+    }
+
+    /** Filter selector {@code [?(condition)]}. */
+    record FilterSelector(DataWeaveAst object, DataWeaveAst condition) implements DataWeaveAst {
+    }
+
+    /** Key-present selector {@code expr?}. */
+    record ExistenceCheck(DataWeaveAst expr) implements DataWeaveAst {
+    }
+
+    /** A range {@code from to to}. */
+    record Range(DataWeaveAst from, DataWeaveAst to) implements DataWeaveAst {
+    }
+
+    // -- Operators and expressions
 
     record BinaryOp(String op, DataWeaveAst left, DataWeaveAst right) implements DataWeaveAst {
     }
@@ -91,7 +158,11 @@ public sealed interface DataWeaveAst {
     record DefaultExpr(DataWeaveAst expr, DataWeaveAst fallback) implements DataWeaveAst {
     }
 
-    record TypeCoercion(DataWeaveAst expr, String type, String format) implements DataWeaveAst {
+    /** Type coercion {@code expr as Type {properties}}, where the properties are such as {@code format}. */
+    record TypeCoercion(DataWeaveAst expr, String type, Map<String, String> properties) implements DataWeaveAst {
+    }
+
+    record TypeCheck(DataWeaveAst expr, String type) implements DataWeaveAst {
     }
 
     record FunctionCall(String name, List<DataWeaveAst> args) implements DataWeaveAst {
@@ -103,70 +174,26 @@ public sealed interface DataWeaveAst {
     record LambdaParam(String name, DataWeaveAst defaultValue) implements DataWeaveAst {
     }
 
-    record LambdaShorthand(List<String> fields) implements DataWeaveAst {
+    record Match(DataWeaveAst expr, List<MatchCase> cases) implements DataWeaveAst {
     }
 
-    // Collection operations
-    record MapExpr(DataWeaveAst collection, DataWeaveAst lambda) implements DataWeaveAst {
+    /**
+     * A case of a match expression. The pattern is a literal ({@code case "A"}), a type ({@code case is String}), a
+     * regular expression ({@code case matches /re/}) or none (a binding, optionally with a guard:
+     * {@code case x if x > 3}). The {@code binding} is the name the matched value (for a regular expression: the
+     * matched groups) is bound to, if any. {@code otherwise} is true for the {@code else} case.
+     */
+    record MatchCase(
+            String binding, DataWeaveAst literal, String type, String regex, DataWeaveAst guard, DataWeaveAst body,
+            boolean otherwise)
+            implements
+                DataWeaveAst {
     }
 
-    record FilterExpr(DataWeaveAst collection, DataWeaveAst lambda) implements DataWeaveAst {
-    }
-
-    record ReduceExpr(DataWeaveAst collection, DataWeaveAst lambda) implements DataWeaveAst {
-    }
-
-    record FlatMapExpr(DataWeaveAst collection, DataWeaveAst lambda) implements DataWeaveAst {
-    }
-
-    record DistinctByExpr(DataWeaveAst collection, DataWeaveAst lambda) implements DataWeaveAst {
-    }
-
-    record GroupByExpr(DataWeaveAst collection, DataWeaveAst lambda) implements DataWeaveAst {
-    }
-
-    record OrderByExpr(DataWeaveAst collection, DataWeaveAst lambda) implements DataWeaveAst {
-    }
-
-    // String postfix operations
-    record ContainsExpr(DataWeaveAst string, DataWeaveAst substring) implements DataWeaveAst {
-    }
-
-    record StartsWithExpr(DataWeaveAst string, DataWeaveAst prefix) implements DataWeaveAst {
-    }
-
-    record EndsWithExpr(DataWeaveAst string, DataWeaveAst suffix) implements DataWeaveAst {
-    }
-
-    record SplitByExpr(DataWeaveAst string, DataWeaveAst separator) implements DataWeaveAst {
-    }
-
-    record JoinByExpr(DataWeaveAst array, DataWeaveAst separator) implements DataWeaveAst {
-    }
-
-    record ReplaceExpr(DataWeaveAst string, DataWeaveAst target, DataWeaveAst replacement) implements DataWeaveAst {
-    }
-
-    // Variable and function declarations
-    record VarDecl(String name, DataWeaveAst value, DataWeaveAst body) implements DataWeaveAst {
-    }
-
-    record FunDecl(String name, List<String> params, DataWeaveAst funBody, DataWeaveAst next) implements DataWeaveAst {
-    }
-
-    // Type check
-    record TypeCheck(DataWeaveAst expr, String type) implements DataWeaveAst {
-    }
-
-    // Unsupported construct (kept as raw text)
+    /** A construct the parser recognises but the converter cannot convert. */
     record Unsupported(String originalText, String reason) implements DataWeaveAst {
     }
 
-    // Parenthesized expression (for preserving grouping)
     record Parens(DataWeaveAst expr) implements DataWeaveAst {
-    }
-
-    // Block of local declarations followed by an expression
-    record Block(List<DataWeaveAst> declarations, DataWeaveAst expr) implements DataWeaveAst {
     }
 }
