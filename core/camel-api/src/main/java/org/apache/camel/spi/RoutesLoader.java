@@ -110,7 +110,7 @@ public interface RoutesLoader extends CamelContextAware {
      * If a route is loaded with a route id for an existing route, then the existing route is stopped and remove, so it
      * can be updated.
      *
-     * The default implementation runs concurrent calls one at a time, see {@link #updateRoutes(Collection)}.
+     * Camel's {@code DefaultRoutesLoader} runs concurrent calls one at a time, see {@link #updateRoutes(Collection)}.
      *
      * @param  resources the resources to be loaded or updated.
      * @return           route ids for the routes that was loaded or updated.
@@ -126,8 +126,8 @@ public interface RoutesLoader extends CamelContextAware {
      * If a route is loaded with a route id for an existing route, then the existing route is stopped and remove, so it
      * can be updated.
      *
-     * The default implementation runs concurrent calls of the {@code updateRoutes} methods one at a time, so they can
-     * be called from several threads. They are not serialized with other ways of adding routes, such as
+     * Camel's {@code DefaultRoutesLoader} runs concurrent calls of the {@code updateRoutes} methods one at a time,
+     * so they can be called from several threads. They are not serialized with other ways of adding routes, such as
      * {@link #loadRoutes(Resource...)}.
      *
      * @param  resources the resources to be loaded or updated.

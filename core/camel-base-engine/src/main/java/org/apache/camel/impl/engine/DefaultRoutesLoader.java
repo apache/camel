@@ -297,7 +297,7 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
             return answer;
         }
 
-        updateLock.lock();
+        updateLock.lockInterruptibly();
         try {
             doUpdateRoutes(resources, answer);
         } finally {
