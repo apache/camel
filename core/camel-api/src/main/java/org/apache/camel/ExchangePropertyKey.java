@@ -81,6 +81,8 @@ public enum ExchangePropertyKey {
     MULTICAST_INDEX(Exchange.MULTICAST_INDEX),
     ON_COMPLETION(Exchange.ON_COMPLETION),
     ON_COMPLETION_ROUTE_IDS(Exchange.ON_COMPLETION_ROUTE_IDS),
+    ON_COMPLETION_FIRED_IDS(Exchange.ON_COMPLETION_FIRED_IDS),
+    ON_COMPLETION_CONFIG_REGISTERED_ROUTES(Exchange.ON_COMPLETION_CONFIG_REGISTERED_ROUTES),
     @Deprecated(since = "4.14.0")
     PARENT_UNIT_OF_WORK(Exchange.PARENT_UNIT_OF_WORK),
     RECEIVED_TIMESTAMP(Exchange.RECEIVED_TIMESTAMP),
@@ -215,6 +217,10 @@ public enum ExchangePropertyKey {
                 return ON_COMPLETION;
             case Exchange.ON_COMPLETION_ROUTE_IDS:
                 return ON_COMPLETION_ROUTE_IDS;
+            case Exchange.ON_COMPLETION_FIRED_IDS:
+                return ON_COMPLETION_FIRED_IDS;
+            case Exchange.ON_COMPLETION_CONFIG_REGISTERED_ROUTES:
+                return ON_COMPLETION_CONFIG_REGISTERED_ROUTES;
             case Exchange.PARENT_UNIT_OF_WORK:
                 return PARENT_UNIT_OF_WORK;
             case Exchange.RECEIVED_TIMESTAMP:

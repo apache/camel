@@ -351,19 +351,21 @@ class ErrorsTab extends AbstractTableTab {
             String shortException = shortExceptionType(ei.exceptionType);
 
             rows.add(Row.from(
-                    Cell.from(ei.exchangeId != null ? ei.exchangeId : ""),
+                    // short, as on the Activity tab, so MESSAGE has room; the detail below has the full id
+                    Cell.from(ActivityTab.shortExchangeId(ei.exchangeId != null ? ei.exchangeId : "")),
                     Cell.from(ago),
                     Cell.from(Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(ei.nodeId != null ? ei.nodeId : ""),
                     Cell.from(Span.styled(handledStr, handledStyle)),
                     Cell.from(ei.repeatCount > 1
-                            ? Span.styled(Long.toString(ei.repeatCount), Theme.error().bold()) : Span.raw("")),
+                            ? Span.styled(Long.toString(ei.repeatCount), Theme.error().bold())
+                            : Span.raw(Long.toString(Math.max(1, ei.repeatCount)))),
                     Cell.from(shortException),
                     Cell.from(ei.exceptionMessage != null ? ei.exceptionMessage : "")));
         }
 
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No errors captured", 8));
+            rows.add(emptyRow("No errors captured", 8, 7));
         }
 
         ErrorInfo selectedError = null;
@@ -390,7 +392,7 @@ class ErrorsTab extends AbstractTableTab {
                         Cell.from(Span.styled(sortLabel("EXCEPTION", "exception"), sortStyle("exception"))),
                         Cell.from(Span.styled("MESSAGE", Style.EMPTY.bold()))))
                 .widths(
-                        Constraint.length(38),
+                        Constraint.length(14),
                         Constraint.length(8),
                         Constraint.length(20),
                         Constraint.length(20),

@@ -139,7 +139,9 @@ final class TuiToolDefinitions {
                 List.of("keys"))));
         tools.add(toToolDef(toolDef(
                 "tui_get_options",
-                "Lists every tab with a description of the data it provides, plus the running integrations. "
+                "Lists the tabs with a description of the data they provide, plus the running integrations. "
+                                   + "The tabs are those that apply to the selected integration (SQL Query once it "
+                                   + "reports a data source), or all of them when none is selected. "
                                    + "Use it when unsure which tab holds the data for a question (e.g. 'kafka offset' "
                                    + "-> Kafka tab), then read that tab with tui_get_table.",
                 Map.of())));
@@ -285,7 +287,7 @@ final class TuiToolDefinitions {
                 "Invokes a TUI action by name or by its F2 menu label (as listed in tui_get_options actions), "
                               + "bypassing fragile key sequences. "
                               + "Names: reset-stats, reset-screen, screenshot, show-keystrokes, "
-                              + "tape-recording, doctor, caption, mcp-info, mcp-log, toggle-theme.",
+                              + "tape-recording, doctor, caption, mcp-info, mcp-log, next-theme.",
                 Map.of("action", propDef("string",
                         "Action name in kebab-case (e.g. 'reset-stats') or menu label (e.g. 'Run Doctor')")),
                 List.of("action"))));
@@ -527,6 +529,8 @@ final class TuiToolDefinitions {
                 "Launches a named bundled example as a background process. "
                                    + "Bypasses the F2 menu entirely — no UI navigation needed. "
                                    + "Automatically starts required infra services (Docker containers) if needed. "
+                                   + "Waits up to 30 seconds for the example to start: status started, failed (with "
+                                   + "the end of its log), starting, or starting_infra. "
                                    + "Use tui_list_examples to discover available example names.",
                 Map.of("name", propDef("string",
                         "Example name from the catalog (e.g. 'quick-start/timer-log')"),

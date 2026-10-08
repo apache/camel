@@ -249,7 +249,7 @@ class EndpointsTab extends AbstractTableTab {
             cells.add(Cell.from(Span.styled(ep.component != null ? ep.component : "", Style.EMPTY.fg(Theme.accent()))));
             cells.add(Cell.from(ep.routeId != null ? ep.routeId : ""));
             cells.add(Cell.from(Span.styled(arrow + dir, dirStyle)));
-            cells.add(rightCell(ep.hits > 0 ? String.valueOf(ep.hits) : "", 8));
+            cells.add(rightCell(String.valueOf(ep.hits), 8));
             if (hasSize) {
                 cells.add(rightCell(FlowHelper.sizeToString(ep.meanBodySize), 10));
                 cells.add(rightCell(FlowHelper.sizeToString(ep.meanHeadersSize), 10));

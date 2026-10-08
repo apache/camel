@@ -583,6 +583,22 @@ public class CamelMonitor extends CamelCommand {
     }
 
     /**
+     * Deletes the folders of the examples that no longer run; an example that still runs keeps its folder and the files
+     * it reads (CAMEL-25425).
+     */
+    private void deleteExampleDirs() {
+        try {
+            List<Path> runningDirs = ctx.data.get().stream()
+                    .filter(i -> !i.vanishing && i.directory != null)
+                    .map(i -> Path.of(i.directory))
+                    .toList();
+            actionsPopup.getLaunchManager().deleteExampleDirs(runningDirs);
+        } catch (Exception e) {
+            // best effort: what is left is removed by a later session
+        }
+    }
+
+    /**
      * Creates the tab registry, initialises all tabs and wires their data refresh callbacks.
      */
     private void createTabRegistry() {
@@ -909,6 +925,7 @@ public class CamelMonitor extends CamelCommand {
         mcpFacade.setSourceValidator(tabRegistry.sourceTab().editAssist()::validateSource);
         mcpFacade.setPropertyLineValidator(tabRegistry.sourceTab().editAssist()::validateSpringBootPropertyLine);
         mcpFacade.setLaunchManager(actionsPopup.getLaunchManager());
+        mcpFacade.setFullScan(dataService::forceFullScan, dataService::fullScansDone);
         aiPanel.setMcpFacade(mcpFacade);
         aiPanel.setOtelSpans(dataService.otelSpans());
         mcpFacade.setAiActivityLog(aiPanel::getActivityLog);
@@ -1148,6 +1165,7 @@ public class CamelMonitor extends CamelCommand {
                 webServer.stop();
             }
             deleteMcpJson(mcpJsonFile);
+            deleteExampleDirs();
             this.runner = null;
             if (record != null) {
                 // Only the session that set the properties clears them again
@@ -1286,6 +1304,7 @@ public class CamelMonitor extends CamelCommand {
         TuiSettings settings = TuiSettings.load();
         ctx.confirmActions = settings.isConfirmActions();
         ctx.validateOnSave = settings.isValidateOnSave();
+        ctx.routeTree = settings.isRouteTree();
         ctx.panelTop = settings.isPanelTop();
         ctx.panelOverlay = settings.isPanelOverlay();
     }
@@ -2056,6 +2075,10 @@ public class CamelMonitor extends CamelCommand {
         String reloadMsg = dataService.consumeReloadNotification();
         if (reloadMsg != null) {
             setNotification(reloadMsg, false);
+        }
+        String reloadFailed = dataService.consumeReloadFailedNotification();
+        if (reloadFailed != null) {
+            setNotification(reloadFailed, true);
         }
 
         Rect contentArea;

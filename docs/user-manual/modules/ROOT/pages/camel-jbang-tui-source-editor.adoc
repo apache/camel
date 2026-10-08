@@ -247,6 +247,9 @@ image::jbang/camel-tui-source-xml-quick-doc.png[The documentation of the logging
 * *Go to node* -- *Ctrl+G* shows the routes of the YAML, Java and XML files and their processors as a tree (the `when`
   and `otherwise` of a choice included). Type to filter by route ID, EIP or label, or type a line number, and *Enter*
   jumps there.
+* *Route tree* -- *Ctrl+T* shows the tree of the route the cursor is in at the top right of the source, from its `from`
+  through each step, with the step under the cursor marked. It follows the cursor as you move and edit, for YAML, XML
+  and Java routes. The *Route Tree* setting says whether it is shown at first (off by default).
 * *Search* -- */* searches the source, *n*/*N* go to the next and previous match, and *h* highlights a text.
 
 image::jbang/camel-tui-source-usages.png[The usages of a seda endpoint: its consumer and the steps sending to it]
@@ -329,6 +332,7 @@ The template of a Kamelet is a route of the project: *g* lists it under the name
 | *p* | Toggle plain mode (borderless)
 | *g* | Go to route
 | *Ctrl+G* | Go to node or line
+| *Ctrl+T* | Show or hide the route tree
 | *u* | Usages of the endpoint of the line
 | *F9* | Next problem
 | *Esc* / *c* | Close source viewer

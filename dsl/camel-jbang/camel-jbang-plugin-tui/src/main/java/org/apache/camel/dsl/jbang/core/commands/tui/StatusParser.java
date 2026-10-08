@@ -201,6 +201,8 @@ final class StatusParser {
             Map<String, ?> reloadStats = (Map<String, ?>) stats.get("reload");
             if (reloadStats != null) {
                 info.reloaded = (int) objToLong(reloadStats.get("reloaded"));
+                Map<String, ?> lastError = (Map<String, ?>) reloadStats.get("lastError");
+                info.reloadError = lastError != null ? (String) lastError.get("message") : null;
             }
         }
     }
@@ -402,7 +404,8 @@ final class StatusParser {
                     ci.id = cj.getString("id");
                     ci.uri = cj.getString("uri");
                     ci.state = cj.getString("state");
-                    ci.className = cj.getString("class");
+                    // the consumers console says clazz (class in older versions)
+                    ci.className = cj.getStringOrDefault("clazz", cj.getString("class"));
                     ci.scheduled = Boolean.TRUE.equals(cj.get("scheduled"));
                     ci.remote = Boolean.TRUE.equals(cj.get("remote"));
                     ci.inflight = cj.getIntegerOrDefault("inflight", 0);
@@ -476,7 +479,7 @@ final class StatusParser {
                     ProducerInfo pi = new ProducerInfo();
                     pi.uri = pj.getString("uri");
                     pi.state = pj.getString("state");
-                    pi.className = pj.getString("class");
+                    pi.className = pj.getStringOrDefault("clazz", pj.getString("class"));
                     pi.routeId = pj.getString("routeId");
                     pi.stepId = pj.getString("stepId");
                     pi.remote = Boolean.TRUE.equals(pj.get("remote"));
@@ -1602,7 +1605,7 @@ final class StatusParser {
         }
         long lastCheck = vo.getLongOrDefault("startCheckTimestamp", 0);
         long lastReload = vo.getLongOrDefault("lastReloadTimestamp", 0);
-        JsonArray arr = (JsonArray) vo.get("configmap");
+        JsonArray arr = (JsonArray) vo.get("configmaps");
         if (arr != null) {
             for (int i = 0; i < arr.size(); i++) {
                 JsonObject jo = (JsonObject) arr.get(i);

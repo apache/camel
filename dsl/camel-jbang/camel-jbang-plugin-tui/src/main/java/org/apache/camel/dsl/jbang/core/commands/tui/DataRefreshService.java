@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -83,6 +84,8 @@ class DataRefreshService {
     // Cached PID list -- full process scan throttled to every 2 seconds (1 second in burst mode)
     private volatile List<Long> cachedPids = Collections.emptyList();
     private volatile long lastFullScanTime;
+    // counts the scans of every integration whose data has been published, so a reader can wait for the next one
+    private final AtomicLong fullScansDone = new AtomicLong();
     private volatile long lastLivenessCheckTime;
     private volatile long forceFullScanUntil;
     private volatile long burstModeUntil;
@@ -167,6 +170,11 @@ class DataRefreshService {
 
     void forceFullScan() {
         forceFullScanUntil = System.currentTimeMillis() + 20_000;
+    }
+
+    /** How many scans of every integration have published their data. */
+    long fullScansDone() {
+        return fullScansDone.get();
     }
 
     boolean isBurstMode() {
@@ -361,6 +369,9 @@ class DataRefreshService {
         mergePhantoms(infos);
         rates.retain(infos.stream().map(i -> i.pid).collect(Collectors.toSet()));
         data.set(infos);
+        if (fullScan) {
+            fullScansDone.incrementAndGet();
+        }
         return fullScan;
     }
 
@@ -426,6 +437,10 @@ class DataRefreshService {
                     ctx.selectedPid = phantom.pid;
                 }
                 phantom.linkedPid = null;
+                if (phantom.startingSince > 0 && phantom.launchedProcess != null && !phantom.launchedProcess.isAlive()) {
+                    // its run ended before its app showed up: the project is Stopped, not Starting for minutes
+                    phantom.startingSince = 0;
+                }
                 infos.add(phantom);
             }
         }
@@ -808,7 +823,16 @@ class DataRefreshService {
     // ---- Helpers ----
 
     private void detectReload(IntegrationInfo info) {
-        if (info.pid == null || info.reloaded <= 0) {
+        if (info.pid == null) {
+            return;
+        }
+        // a reload that fails (a file with an error, a file that is gone) leaves the old routes running: say so
+        String prevError = lastReloadError.put(info.pid, info.reloadError != null ? info.reloadError : "");
+        if (info.reloadError != null && !info.reloadError.equals(prevError)) {
+            String label = info.name != null ? info.name : info.pid;
+            reloadFailedNotification = label + " reload failed: " + info.reloadError;
+        }
+        if (info.reloaded <= 0) {
             return;
         }
         Integer prev = lastReloadCount.put(info.pid, info.reloaded);
@@ -816,6 +840,16 @@ class DataRefreshService {
             String label = info.name != null ? info.name : info.pid;
             reloadNotification = label + " reloaded";
         }
+    }
+
+    private final Map<String, String> lastReloadError = new ConcurrentHashMap<>();
+    private volatile String reloadFailedNotification;
+
+    /** Why the latest reload failed, once: the old routes keep running, and nothing else says so. */
+    String consumeReloadFailedNotification() {
+        String msg = reloadFailedNotification;
+        reloadFailedNotification = null;
+        return msg;
     }
 
     String consumeReloadNotification() {

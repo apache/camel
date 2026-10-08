@@ -489,7 +489,7 @@ class MetricsTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No " + filterType + " metrics", 4));
+            rows.add(emptyRow("No " + filterType + " metrics", 4, 3));
         }
 
         String title = " Metrics";

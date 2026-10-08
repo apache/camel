@@ -57,9 +57,11 @@ public class MigrationWildflyKarafTools {
             @ToolArg(description = "The pom.xml file content of the WildFly/Karaf project. "
                                    + "IMPORTANT: Avoid including sensitive data such as passwords, tokens, or API keys. "
                                    + "Sensitive content is automatically detected and masked.") String pomContent,
-            @ToolArg(description = "Target runtime: spring-boot or quarkus (default: quarkus)") String targetRuntime,
+            @ToolArg(description = "Target runtime: spring-boot or quarkus (default: quarkus)",
+                     required = false) String targetRuntime,
             @ToolArg(description = "Target Camel version (e.g., 4.18.0)") String targetVersion,
-            @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials") Boolean sanitizePom) {
+            @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials",
+                     required = false) Boolean sanitizePom) {
 
         if (pomContent == null || pomContent.isBlank()) {
             throw new ToolCallException("pomContent is required", null);

@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.infra;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.logging.log4j.core.config.Configurator;
 import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelCLICommand;
@@ -197,6 +199,12 @@ public class InfraRun extends InfraBaseCommand {
         }
 
         if (!jsonOutput) {
+            // show the progress of pulling the container image, which can take minutes the first time
+            // (logging may have started already with the default configuration, so reconfigure it)
+            URL logConfig = InfraRun.class.getClassLoader().getResource("log4j2-infra.properties");
+            if (logConfig != null) {
+                Configurator.reconfigure(logConfig.toURI());
+            }
             String prefix = "";
             if (testServiceImplementation != null) {
                 prefix = " with implementation " + testServiceImplementation;

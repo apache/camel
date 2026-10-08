@@ -278,7 +278,7 @@ class GotoSourceNodePopup {
         }
     }
 
-    private static String buildTreePrefix(
+    static String buildTreePrefix(
             List<YamlRouteNodeScanner.NodeEntry> entries, int idx, YamlRouteNodeScanner.NodeEntry entry) {
         // Normalize indent to sequential depth within the route group
         int depth = normalizeDepth(entries, idx, entry);

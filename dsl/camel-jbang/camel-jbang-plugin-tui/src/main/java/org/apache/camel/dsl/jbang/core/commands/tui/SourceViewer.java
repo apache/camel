@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -220,6 +221,9 @@ class SourceViewer {
     private AutocompletePopup autocompletePopup;
     private RefactorPopup refactorPopup;
     private boolean validateOnSave = true;
+    // the tree of the route the cursor is in, at the top right (Ctrl+T); the setting gives the default
+    private boolean routeTreeShown;
+    private final RouteTreePanel routeTree = new RouteTreePanel();
     private org.apache.camel.dsl.yaml.validator.YamlValidator yamlValidator;
     private PropertiesValidator propertiesValidator;
     private EndpointValidator endpointValidator;
@@ -309,6 +313,14 @@ class SourceViewer {
 
     void setListItemNodeChecker(java.util.function.Predicate<String> checker) {
         this.listItemNodeChecker = checker;
+    }
+
+    void setRouteTreeShown(boolean routeTreeShown) {
+        this.routeTreeShown = routeTreeShown;
+    }
+
+    boolean isRouteTreeShown() {
+        return routeTreeShown;
     }
 
     void setValidateOnSave(boolean validateOnSave) {
@@ -625,6 +637,11 @@ class SourceViewer {
         return dirty;
     }
 
+    /** Whether the text differs from what was last loaded or saved. */
+    private boolean changedSinceSave() {
+        return originalEditText == null || !originalEditText.equals(editState.text());
+    }
+
     /** Package-private for tests that drive the edit buffer directly. */
     TextAreaState editState() {
         return editState;
@@ -786,6 +803,10 @@ class SourceViewer {
     boolean handleKeyEvent(KeyEvent ke) {
         if (!visible) {
             return false;
+        }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('t') && !markdownMode) {
+            routeTreeShown = !routeTreeShown;
+            return true;
         }
         if (editMode) {
             return handleEditKeyEvent(ke);
@@ -969,7 +990,15 @@ class SourceViewer {
 
     private boolean handleEditKeyEvent(KeyEvent ke) {
         if (validationErrors != null) {
-            if (ke.isCancel() || ke.isKey(KeyCode.ENTER)) {
+            if (ke.isKey(KeyCode.F9) && ke.hasShift()) {
+                // the fix the popup offers: go to its line and apply it, as Shift+F9 does there
+                int row = popupFixRow();
+                if (row >= 0) {
+                    validationErrors = null;
+                    SourceEditorNavigation.positionCursor(editState, row, 0);
+                    applyQuickFix();
+                }
+            } else if (ke.isCancel() || ke.isKey(KeyCode.ENTER)) {
                 validationErrors = null;
             } else if (ke.isUp()) {
                 validationErrorScroll = Math.max(0, validationErrorScroll - 1);
@@ -1026,7 +1055,8 @@ class SourceViewer {
         }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('z') && !ke.hasShift()) {
             if (editHistory.undo(editState)) {
-                dirty = true;
+                // undone back to the saved text: not modified any more
+                dirty = changedSinceSave();
                 lineStatuses = null;
                 refreshEditFindMatches();
             }
@@ -1034,7 +1064,7 @@ class SourceViewer {
         }
         if (ke.hasCtrl() && (ke.isCharIgnoreCase('y') || (ke.isCharIgnoreCase('z') && ke.hasShift()))) {
             if (editHistory.redo(editState)) {
-                dirty = true;
+                dirty = changedSinceSave();
                 lineStatuses = null;
                 refreshEditFindMatches();
             }
@@ -2031,6 +2061,7 @@ class SourceViewer {
             }
             Files.writeString(editableFile, content, StandardCharsets.UTF_8);
             dirty = false;
+            originalEditText = content;
             Path path = editableFile;
             boolean restoreMarkdownMode = markdownModeBeforeEdit;
             int cursorRow = editState.cursorRow();
@@ -2138,6 +2169,18 @@ class SourceViewer {
                        + (routeProblems.size() > 1 ? "s" : "") + ": " + routeProblems.get(0),
                     true);
         }
+    }
+
+    /** The first line with a problem that has a fix, for the popup of a save it blocked; -1 for none. */
+    private int popupFixRow() {
+        for (Map.Entry<Integer, String> e : new java.util.TreeMap<>(visibleInlineErrors()).entrySet()) {
+            int row = e.getKey();
+            if (row >= 0 && row < editState.lineCount()
+                    && QuickFixes.fixFor(e.getValue(), editState.getLine(row)) != null) {
+                return row;
+            }
+        }
+        return -1;
     }
 
     /** The fix of the problem on the line of the cursor, when the problem says it; null otherwise. */
@@ -2569,6 +2612,23 @@ class SourceViewer {
     }
 
     void render(Frame frame, Rect area) {
+        renderContent(frame, area);
+        if (routeTreeShown && !markdownMode && !diffOverlay) {
+            if (editMode) {
+                List<String> text = Arrays.asList(editState.text().split("\n", -1));
+                String name = editableFile != null ? editableFile.getFileName().toString() : title;
+                routeTree.render(frame, area, text, name, editState.cursorRow());
+            } else {
+                String name = currentRouteId != null ? "route." + currentFormat : title;
+                // the code without the line numbers of the view
+                List<String> code = codeData != null
+                        ? codeData.stream().map(c -> c.getStringOrDefault("code", "")).toList() : List.of();
+                routeTree.render(frame, area, code, name, selectedLine);
+            }
+        }
+    }
+
+    private void renderContent(Frame frame, Rect area) {
         if (editMode) {
             renderEditMode(frame, area);
             return;
@@ -3119,7 +3179,15 @@ class SourceViewer {
             wrapText(msg, innerW, allLines);
         }
         allLines.add(Line.empty());
-        allLines.add(TuiHelper.hintLine("Esc", "close"));
+        int fixRow = popupFixRow();
+        if (fixRow >= 0) {
+            // the fix the editor knows, offered here too: the panel at the bottom says it only after the popup
+            QuickFixes.Fix fix = QuickFixes.fixFor(visibleInlineErrors().get(fixRow), editState.getLine(fixRow));
+            allLines.add(TuiHelper.hintLine("Shift+F9", "fix line " + (fixRow + 1) + ": " + fix.label(),
+                    "Esc", "close"));
+        } else {
+            allLines.add(TuiHelper.hintLine("Esc", "close"));
+        }
 
         int contentH = allLines.size();
         int popupH = Math.min(contentH + 2, area.height() - 4);

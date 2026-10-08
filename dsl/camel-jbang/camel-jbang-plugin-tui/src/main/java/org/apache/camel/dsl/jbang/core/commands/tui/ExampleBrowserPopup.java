@@ -221,8 +221,10 @@ class ExampleBrowserPopup {
         }
         // wide: the descriptions are sentences, and a wide terminal should show them on one or two lines
         int popupW = Math.max(80, Math.min(area.width() - 10, 170));
-        int visibleItems = Math.max(10, catalog.size() + 10);
-        int popupH = Math.min(visibleItems, Math.min(22, area.height() - 4));
+        List<ListItem> items = buildListItems(popupW - 4);
+        // as tall as the lines of the list (and its borders), so a short list leaves no empty block below it
+        int lines = items.stream().mapToInt(ListItem::height).sum() + 2;
+        int popupH = Math.min(lines, Math.min(22, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
@@ -230,7 +232,6 @@ class ExampleBrowserPopup {
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
-        List<ListItem> items = buildListItems(popupW - 4);
         String title = currentFolder != null
                 ? " " + ExampleHelper.getGroupTitle(currentFolder) + " (" + folderExampleCount(currentFolder) + ") "
                 : " Run an Example (" + catalog.size() + ") ";
@@ -256,7 +257,7 @@ class ExampleBrowserPopup {
             TuiHelper.hintLast(spans, "Esc", "back");
         } else {
             TuiHelper.hint(spans, "Enter/→", "open");
-            TuiHelper.hint(spans, "1-9", "jump");
+            TuiHelper.hint(spans, "0-9", "jump");
             TuiHelper.hint(spans, "d", "docs");
             TuiHelper.hintLast(spans, "Esc", "close");
         }
@@ -297,7 +298,9 @@ class ExampleBrowserPopup {
             if (burstCallback != null) {
                 burstCallback.run();
             }
-            notify("Starting: " + displayName, false);
+            JsonObject example = catalog != null ? ExampleHelper.findExample(catalog, exampleName) : null;
+            String needs = example != null ? ExampleHelper.getNeeds(example) : null;
+            notify("Starting: " + displayName + (needs != null ? " (needs " + needs + ")" : ""), false);
         } catch (Exception e) {
             notify("Failed to start: " + exampleName + " - " + e.getMessage(), true);
         }
@@ -555,7 +558,8 @@ class ExampleBrowserPopup {
         int descCol = Math.max(10, width - prefix.length());
 
         Style style = bundled ? Style.EMPTY : Style.EMPTY.dim();
-        if (desc.length() <= descCol) {
+        String needs = ExampleHelper.getNeeds(ex);
+        if (desc.length() <= descCol && needs == null) {
             items.add(ListItem.from(prefix + desc).style(style));
             heights.add(1);
         } else {
@@ -566,8 +570,14 @@ class ExampleBrowserPopup {
             for (int w = 1; w < wrapped.size(); w++) {
                 lines.add(Line.from(indent + wrapped.get(w)));
             }
+            if (needs != null) {
+                // what the user does before the run (a model to pull, a key to set): the run does not do it
+                for (String w : TuiHelper.wrapWords("needs: " + needs, descCol)) {
+                    lines.add(Line.from(Span.raw(indent), Span.styled(w, Theme.warning())));
+                }
+            }
             items.add(ListItem.from(Text.from(lines.toArray(Line[]::new))).style(style));
-            heights.add(wrapped.size());
+            heights.add(lines.size());
         }
         data.add(ex);
     }

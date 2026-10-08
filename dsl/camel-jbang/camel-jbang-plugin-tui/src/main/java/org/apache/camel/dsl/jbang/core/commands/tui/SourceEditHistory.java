@@ -55,9 +55,11 @@ final class SourceEditHistory {
         if (undo.size() <= 1) {
             return false;
         }
+        // the snapshot taken just before the latest change: restoring the one under it undid two changes at once,
+        // and put the cursor where the one before them was (line 1 for the first)
+        Snapshot before = undo.pop();
         redo.push(capture(state));
-        undo.pop();
-        restore(state, undo.peek());
+        restore(state, before);
         return true;
     }
 

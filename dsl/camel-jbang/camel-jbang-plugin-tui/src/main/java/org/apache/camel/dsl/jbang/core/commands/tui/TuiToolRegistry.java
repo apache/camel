@@ -1084,7 +1084,7 @@ class TuiToolRegistry {
         }
         return "Unknown or unsupported action: " + action
                + ". Use a name (reset-stats, reset-screen, screenshot, show-keystrokes, "
-               + "tape-recording, doctor, caption, mcp-info, mcp-log, toggle-theme) "
+               + "tape-recording, doctor, caption, mcp-info, mcp-log, next-theme) "
                + "or a menu label from tui_get_options actions";
     }
 
@@ -1448,7 +1448,7 @@ class TuiToolRegistry {
         if (action == null || action.isBlank()) {
             return "Error: action is required";
         }
-        return facade.controlIntegration(action);
+        return facade.controlIntegration(action, (String) args.get("name"));
     }
 
     private String callOpenProject(Map<String, Object> args) {
@@ -1851,6 +1851,7 @@ class TuiToolRegistry {
                 ex.put("bundled", ExampleHelper.isBundled(entry));
                 ex.put("requiresDocker", ExampleHelper.requiresDocker(entry));
                 ex.put("infraServices", toJsonArray(ExampleHelper.getInfraServices(entry)));
+                putNeeds(ex, entry);
                 examples.add(ex);
             }
         }
@@ -1904,20 +1905,53 @@ class TuiToolRegistry {
                     });
             JsonObject result = new JsonObject();
             result.put("status", "starting_infra");
+            putNeeds(result, example);
             result.put("message", "Starting infra: " + String.join(", ", missing) + " → then: " + displayName);
             result.put("infraServices", toJsonArray(missing));
             return Jsoner.serialize(result);
         }
 
         List<String> camelArgs = buildExampleArgs(name, args);
+        lm.clearOutcome(name);
         lm.launchDetached(name, camelArgs);
 
+        // an example can fail a few seconds after it is launched (a missing API key, a bad route): wait for Camel to
+        // say it started, or for the failure, so the agent learns how it went
+        LaunchManager.LaunchOutcome outcome = null;
+        long deadline = System.currentTimeMillis() + RUN_EXAMPLE_WAIT_MS;
+        while ((outcome = lm.outcome(name)) == null && System.currentTimeMillis() < deadline) {
+            Thread.sleep(250);
+        }
         JsonObject result = new JsonObject();
-        result.put("status", "started");
-        result.put("message", "Started: " + name);
         result.put("name", name);
+        putNeeds(result, example);
+        if (outcome == null) {
+            result.put("status", "starting");
+            result.put("message", "Still starting: " + name + " (a first run downloads its dependencies); "
+                                  + "tui_get_options lists it once it runs");
+        } else if (outcome.ok()) {
+            result.put("status", "started");
+            result.put("message", "Started: " + name);
+        } else {
+            result.put("status", "failed");
+            result.put("message", "Failed to start: " + name);
+            if (outcome.log() != null) {
+                result.put("log", outcome.log());
+            }
+        }
         return Jsoner.serialize(result);
     }
+
+    /** What the example needs that the run does not do, for the agent to tell the user (or do it). */
+    private static void putNeeds(JsonObject result, JsonObject example) {
+        String needs = ExampleHelper.getNeeds(example);
+        if (needs != null) {
+            result.put("needs", needs);
+        }
+    }
+
+    // how long tui_run_example waits for an example to start or fail
+    static final long RUN_EXAMPLE_WAIT_MS = 30_000;
 
     private static List<String> buildExampleArgs(String name, Map<String, Object> args) {
         List<String> camelArgs = new ArrayList<>();

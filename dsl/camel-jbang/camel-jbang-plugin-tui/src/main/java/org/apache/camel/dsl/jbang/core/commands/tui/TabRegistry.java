@@ -379,6 +379,10 @@ class TabRegistry {
         for (MoreTab mt : moreTabs) {
             mt.tab().onIntegrationChanged();
         }
+        // the tabs load their data when shown: the one on screen loads now, for the new integration
+        if (activeMoreTab != null && tabsState.selected() == TAB_MORE) {
+            activeMoreTab.onTabSelected();
+        }
         dataService.otelSpans().set(List.of());
 
         filesBrowser.reset();

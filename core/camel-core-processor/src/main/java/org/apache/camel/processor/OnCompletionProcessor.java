@@ -18,7 +18,10 @@ package org.apache.camel.processor;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -73,6 +76,9 @@ public class OnCompletionProcessor extends BaseProcessorSupport
     private final boolean useOriginalBody;
     private final boolean afterConsumer;
     private final boolean routeScoped;
+    // non-null only for named (route-scoped) route configurations; used to dedup
+    // across multiple OnCompletionProcessor instances sharing the same configuration
+    private final String configurationId;
     private final LongAdder taskCount = new LongAdder();
     // the parallel onCompletion tasks that have been submitted but have not started yet
     private final Set<ParallelTask> pendingTasks = ConcurrentHashMap.newKeySet();
@@ -81,6 +87,14 @@ public class OnCompletionProcessor extends BaseProcessorSupport
                                  boolean shutdownExecutorService,
                                  boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen, boolean useOriginalBody,
                                  boolean afterConsumer, boolean routeScoped) {
+        this(camelContext, processor, executorService, shutdownExecutorService,
+             onCompleteOnly, onFailureOnly, onWhen, useOriginalBody, afterConsumer, routeScoped, null);
+    }
+
+    public OnCompletionProcessor(CamelContext camelContext, Processor processor, ExecutorService executorService,
+                                 boolean shutdownExecutorService,
+                                 boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen, boolean useOriginalBody,
+                                 boolean afterConsumer, boolean routeScoped, String configurationId) {
         notNull(camelContext, "camelContext");
         notNull(processor, "processor");
         this.camelContext = camelContext;
@@ -93,6 +107,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport
         this.useOriginalBody = useOriginalBody;
         this.afterConsumer = afterConsumer;
         this.routeScoped = routeScoped;
+        this.configurationId = configurationId;
     }
 
     @Override
@@ -182,13 +197,29 @@ public class OnCompletionProcessor extends BaseProcessorSupport
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (processor != null) {
+            // For named route configurations with BeforeConsumer mode, register the route that owns this
+            // processor so that BeforeConsumer can determine whether to defer to the consumer route.
+            // (AfterConsumer does not use this map, so we skip the allocation to keep the hot path clean.)
+            if (!afterConsumer && configurationId != null) {
+                @SuppressWarnings("unchecked")
+                Map<String, Set<String>> registeredRoutes
+                        = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_CONFIG_REGISTERED_ROUTES, Map.class);
+                if (registeredRoutes == null) {
+                    registeredRoutes = new HashMap<>();
+                    exchange.setProperty(ExchangePropertyKey.ON_COMPLETION_CONFIG_REGISTERED_ROUTES, registeredRoutes);
+                }
+                registeredRoutes.computeIfAbsent(configurationId, k -> new HashSet<>()).add(getRouteId());
+            }
+
             // register callback
             if (afterConsumer) {
                 exchange.getUnitOfWork()
-                        .addSynchronization(new OnCompletionSynchronizationAfterConsumer(routeScoped, getRouteId()));
+                        .addSynchronization(
+                                new OnCompletionSynchronizationAfterConsumer(routeScoped, getRouteId(), configurationId));
             } else {
                 exchange.getUnitOfWork()
-                        .addSynchronization(new OnCompletionSynchronizationBeforeConsumer(routeScoped, getRouteId()));
+                        .addSynchronization(
+                                new OnCompletionSynchronizationBeforeConsumer(routeScoped, getRouteId(), configurationId));
             }
         }
 
@@ -401,10 +432,12 @@ public class OnCompletionProcessor extends BaseProcessorSupport
 
         private final boolean routeScoped;
         private final String routeId;
+        private final String configurationId;
 
-        public OnCompletionSynchronizationAfterConsumer(boolean routeScoped, String routeId) {
+        public OnCompletionSynchronizationAfterConsumer(boolean routeScoped, String routeId, String configurationId) {
             this.routeScoped = routeScoped;
             this.routeId = routeId;
+            this.configurationId = configurationId;
         }
 
         @Override
@@ -443,6 +476,9 @@ public class OnCompletionProcessor extends BaseProcessorSupport
                 return;
             }
 
+            // record dedup AFTER all checks pass, using processor id as key
+            recordFired(exchange);
+
             // must use a copy as we don't want it to cause side effects of the original exchange
             final Exchange copy = prepareExchange(exchange);
 
@@ -464,6 +500,9 @@ public class OnCompletionProcessor extends BaseProcessorSupport
             if (shouldSkip(exchange, onCompleteOnly)) {
                 return;
             }
+
+            // record dedup AFTER all checks pass, using processor id as key
+            recordFired(exchange);
 
             // must use a copy as we don't want it to cause side effects of the original exchange
             final Exchange copy = prepareExchange(exchange);
@@ -504,6 +543,16 @@ public class OnCompletionProcessor extends BaseProcessorSupport
                 if (routeIds == null || !routeIds.contains(routeId)) {
                     return true;
                 }
+                // named configuration: fire only once per exchange per OnCompletionDefinition.
+                // Use the processor id (unique per definition) as the dedup key so that
+                // onCompleteOnly and onFailureOnly blocks in the same config dedup independently.
+                if (configurationId != null) {
+                    Set<String> firedIds
+                            = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_IDS, Set.class);
+                    if (firedIds != null && firedIds.contains(OnCompletionProcessor.this.id)) {
+                        return true;
+                    }
+                }
             }
 
             if (onCompleteOrOnFailureOnly) {
@@ -516,6 +565,19 @@ public class OnCompletionProcessor extends BaseProcessorSupport
             }
 
             return false;
+        }
+
+        @SuppressWarnings("unchecked")
+        private void recordFired(Exchange exchange) {
+            if (configurationId != null) {
+                Set<String> firedIds
+                        = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_IDS, Set.class);
+                if (firedIds == null) {
+                    firedIds = new HashSet<>();
+                    exchange.setProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_IDS, firedIds);
+                }
+                firedIds.add(OnCompletionProcessor.this.id);
+            }
         }
 
         @Override
@@ -554,10 +616,12 @@ public class OnCompletionProcessor extends BaseProcessorSupport
 
         private final boolean routeScoped;
         private final String routeId;
+        private final String configurationId;
 
-        public OnCompletionSynchronizationBeforeConsumer(boolean routeScoped, String routeId) {
+        public OnCompletionSynchronizationBeforeConsumer(boolean routeScoped, String routeId, String configurationId) {
             this.routeScoped = routeScoped;
             this.routeId = routeId;
+            this.configurationId = configurationId;
         }
 
         @Override
@@ -587,6 +651,36 @@ public class OnCompletionProcessor extends BaseProcessorSupport
                         return;
                     }
 
+                    // named configuration: defer firing to the consumer route when the consumer
+                    // also opted in to the same named configuration (so onCompletion sees state
+                    // set after the sub-route call).
+                    if (routeScoped && configurationId != null) {
+                        String fromRouteId = exchange.getFromRouteId();
+                        if (fromRouteId != null && !routeId.equals(fromRouteId)) {
+                            @SuppressWarnings("unchecked")
+                            Map<String, Set<String>> registeredRoutes = exchange.getProperty(
+                                    ExchangePropertyKey.ON_COMPLETION_CONFIG_REGISTERED_ROUTES, Map.class);
+                            if (registeredRoutes != null) {
+                                Set<String> routes = registeredRoutes.get(configurationId);
+                                if (routes != null && routes.contains(fromRouteId)) {
+                                    // consumer route also opted in; defer to its onAfterRoute
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    // named configuration: fire only once per exchange per OnCompletionDefinition.
+                    // Use the processor id (unique per definition) as the dedup key.
+                    if (routeScoped && configurationId != null) {
+                        @SuppressWarnings("unchecked")
+                        Set<String> firedIds
+                                = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_IDS, Set.class);
+                        if (firedIds != null && firedIds.contains(OnCompletionProcessor.this.id)) {
+                            return; // already fired for this definition
+                        }
+                    }
+
                     if (exchange.isFailed() && onCompleteOnly) {
                         return;
                     }
@@ -598,6 +692,18 @@ public class OnCompletionProcessor extends BaseProcessorSupport
                     if (onWhen != null && !onWhen.matches(exchange)) {
                         // predicate did not match so do not route the onComplete
                         return;
+                    }
+
+                    // record dedup AFTER all checks pass
+                    if (configurationId != null) {
+                        @SuppressWarnings("unchecked")
+                        Set<String> firedIds
+                                = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_IDS, Set.class);
+                        if (firedIds == null) {
+                            firedIds = new HashSet<>();
+                            exchange.setProperty(ExchangePropertyKey.ON_COMPLETION_FIRED_IDS, firedIds);
+                        }
+                        firedIds.add(OnCompletionProcessor.this.id);
                     }
 
                     // must use a copy as we don't want it to cause side effects of the original exchange

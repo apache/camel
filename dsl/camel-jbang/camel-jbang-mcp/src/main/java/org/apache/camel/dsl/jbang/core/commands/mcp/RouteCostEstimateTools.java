@@ -64,10 +64,14 @@ public class RouteCostEstimateTools {
                         + "Cost data is approximate based on published AWS pricing (2025-Q2).")
     public CostEstimateResult camel_route_cost_estimate(
             @ToolArg(description = "The Camel route definition (YAML or XML)") String route,
-            @ToolArg(description = "Expected messages per hour for cost projection (default: 100)") Integer messagesPerHour,
-            @ToolArg(description = "Average document pages per message for Textract/Docling (default: 5)") Integer avgPages,
-            @ToolArg(description = "Average LLM input tokens per request (default: 1000)") Integer avgInputTokens,
-            @ToolArg(description = "Average LLM output tokens per request (default: 500)") Integer avgOutputTokens) {
+            @ToolArg(description = "Expected messages per hour for cost projection (default: 100)",
+                     required = false) Integer messagesPerHour,
+            @ToolArg(description = "Average document pages per message for Textract/Docling (default: 5)",
+                     required = false) Integer avgPages,
+            @ToolArg(description = "Average LLM input tokens per request (default: 1000)",
+                     required = false) Integer avgInputTokens,
+            @ToolArg(description = "Average LLM output tokens per request (default: 500)",
+                     required = false) Integer avgOutputTokens) {
 
         if (route == null || route.isBlank()) {
             throw new ToolCallException("Route content is required", null);

@@ -311,7 +311,7 @@ public class Run extends CamelCommand {
                           " (ex. /path/to/file.properties,/path/to/other.properties")
     public String propertiesFiles;
 
-    @Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
+    @Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)")
     public String[] property;
 
     @Option(names = { "--stub" }, description = "Stubs all the matching endpoint uri with the given component name or pattern."
@@ -478,6 +478,12 @@ public class Run extends CamelCommand {
             if (!infra.isEmpty()) {
                 printer().println(pad + "needs: camel infra run " + String.join(" ", infra));
             }
+            String needs = ExampleHelper.getNeeds(entry);
+            if (needs != null) {
+                for (String line : ExampleHelper.wrap("needs: " + needs, width - indent)) {
+                    printer().println(pad + line);
+                }
+            }
             String teaches = ExampleHelper.getTeachesSummary(entry);
             for (String line : ExampleHelper.wrap(teaches, width - indent)) {
                 printer().println(pad + line);
@@ -536,7 +542,8 @@ public class Run extends CamelCommand {
     }
 
     private int runBundledExample(JsonObject entry) throws Exception {
-        Path tempDir = ExampleHelper.extractBundledExample(entry);
+        // an example run in the background outlives this JVM, so its files must stay (CAMEL-25425)
+        Path tempDir = ExampleHelper.extractBundledExample(entry, !background);
         return runExampleIn(entry, tempDir);
     }
 
@@ -549,7 +556,7 @@ public class Run extends CamelCommand {
 
         Path tempDir;
         try {
-            tempDir = ExampleHelper.downloadGithubExample(entry);
+            tempDir = ExampleHelper.downloadGithubExample(entry, !background);
         } catch (Exception e) {
             printer().printErr("Failed to fetch example from GitHub: " + e.getMessage());
             printer().printErr("This example requires an internet connection.");
@@ -566,6 +573,11 @@ public class Run extends CamelCommand {
     private int runExampleIn(JsonObject entry, Path dir) throws Exception {
         String eName = entry.getString("name");
         printer().println("Running example: " + eName);
+        String needs = ExampleHelper.getNeeds(entry);
+        if (needs != null) {
+            // what the example needs that the run does not do (a model to pull, a key to set): the user does it
+            printer().println("Needs: " + needs);
+        }
         if (exportRun || transformRun || spec == null) {
             for (String f : ExampleHelper.getFiles(entry)) {
                 files.add(dir.resolve(f).toString());
@@ -1930,7 +1942,8 @@ public class Run extends CamelCommand {
 
         pb = new ProcessBuilder();
         pb.command(javaCmd);
-        pb.directory(runDirPath.toFile());
+        // run in the current directory (not the export folder), so the routes read and write files relative to
+        // where camel run is started, as with JBang: file:orders in an example reads its orders folder (CAMEL-25423)
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
         p = pb.start();
         processRef.set(p);
@@ -2450,6 +2463,9 @@ public class Run extends CamelCommand {
         if (springBootRunJvmArgs != null) {
             mvnCmd.add("-Dspring-boot.run.jvmArguments=" + springBootRunJvmArgs);
         }
+        // run in the current directory, not the export folder, so the routes read and write files relative to where
+        // camel run is started (CAMEL-25423)
+        mvnCmd.add("-Dspring-boot.run.workingDirectory=" + Paths.get(".").toAbsolutePath().normalize());
         mvnCmd.add("spring-boot:run");
         pb.command(mvnCmd);
 
