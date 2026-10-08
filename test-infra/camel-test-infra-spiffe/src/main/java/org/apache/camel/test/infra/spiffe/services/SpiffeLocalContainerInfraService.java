@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 
+import com.github.dockerjava.api.model.Info;
 import com.sun.security.auth.module.UnixSystem;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
@@ -28,6 +29,7 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.spiffe.common.SpiffeProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.Container;
 import org.testcontainers.containers.GenericContainer;
@@ -48,8 +50,8 @@ import org.testcontainers.utility.MountableFile;
  * <p>
  * This assumes a Linux Docker host: the host PID namespace, the Unix-socket bind mount and the {@code unix:uid}
  * selector all rely on the test JVM and the containers sharing one Linux kernel. It is not expected to work on Docker
- * Desktop (macOS/Windows, where the daemon runs in a separate VM) or on rootless Podman (uid remapping) - which is also
- * why the component gates these integration tests off non-amd64 CI. It targets a Linux CI/development Docker.
+ * Desktop (macOS/Windows, where the daemon runs in a separate VM). Under rootless Podman the uid is remapped (the host
+ * uid appears as uid 0 inside the container), and this class handles that transparently.
  */
 @InfraService(service = SpiffeInfraService.class,
               description = "SPIFFE/SPIRE server and agent exposing the Workload API",
@@ -65,6 +67,7 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
     private static final String SERVER_ALIAS = "spire-server";
     private static final int SERVER_PORT = 8081;
     private static final String SERVER_BIN = "/opt/spire/bin/spire-server";
+    private static final String AGENT_BIN = "/opt/spire/bin/spire-agent";
     private static final String SERVER_CONF = "/opt/spire/conf/server/server.conf";
     private static final String AGENT_CONF = "/opt/spire/conf/agent/agent.conf";
     private static final String SOCKET_CONTAINER_DIR = "/tmp/spire-agent/public";
@@ -138,6 +141,7 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
         LOG.info("Starting the SPIRE agent container");
         agent.start();
         waitForSocket();
+        waitForAgentHealthy();
 
         socketPath = "unix://" + hostSocketDir.resolve(SOCKET_FILE);
         registerProperties();
@@ -192,9 +196,42 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
     }
 
     private void createWorkloadEntry() {
-        long uid = new UnixSystem().getUid();
+        long uid = resolveWorkloadUid();
+        LOG.info("Registering workload entry for unix:uid:{}", uid);
         exec(server, SERVER_BIN, "entry", "create", "-parentID", AGENT_SPIFFE_ID, "-spiffeID", WORKLOAD_SPIFFE_ID,
                 "-selector", "unix:uid:" + uid);
+    }
+
+    /**
+     * Returns the UID of this JVM process as it will appear to the SPIRE unix workload attestor.
+     * <p>
+     * Under rootless Podman and Docker the container's user namespace maps the host owner uid to container uid 0, so
+     * the agent sees the test process as uid 0 when reading {@code /proc/<pid>/status} through the host PID namespace.
+     * On a standard (root-owned) Docker daemon no such remapping occurs and the real host uid is used.
+     * <p>
+     * Rootless mode is detected via the Docker info API: Podman returns {@code "Rootless": true} in the JSON response
+     * (captured in {@code rawValues} since the docker-java model does not have a typed field for it).
+     */
+    private long resolveWorkloadUid() {
+        Info info = DockerClientFactory.instance().client().infoCmd().exec();
+        if (isPodmanRootless(info) || isDockerRootless(info)) {
+            // Under rootless Podman and Docker the host uid of the container owner (us) is remapped to uid 0 inside every
+            // container, so the agent's unix workload attestor sees the test process as uid 0.
+            LOG.debug("Rootless container runtime detected; using uid 0 for workload entry selector");
+            return 0L;
+        }
+        long uid = new UnixSystem().getUid();
+        LOG.debug("Standard container runtime; using host uid {} for workload entry selector", uid);
+        return uid;
+    }
+
+    private boolean isPodmanRootless(Info info) {
+        Object podmanRootless = info.getRawValues().get("Rootless");
+        return Boolean.TRUE.equals(podmanRootless);
+    }
+
+    private boolean isDockerRootless(Info info) {
+        return info.getSecurityOptions() != null && info.getSecurityOptions().stream().anyMatch(o -> o.contains("rootless"));
     }
 
     private void waitForSocket() {
@@ -207,6 +244,28 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
             sleep(250);
         }
         throw new RuntimeException("The SPIRE agent did not create the Workload API socket at " + socket);
+    }
+
+    private void waitForAgentHealthy() {
+        long deadline = System.currentTimeMillis() + Duration.ofSeconds(60).toMillis();
+        RuntimeException last = null;
+        while (System.currentTimeMillis() < deadline) {
+            try {
+                Container.ExecResult result = agent.execInContainer(AGENT_BIN, "healthcheck",
+                        "-socketPath", SOCKET_CONTAINER_DIR + "/" + SOCKET_FILE);
+                if (result.getExitCode() == 0) {
+                    return;
+                }
+                last = new RuntimeException("agent healthcheck exit " + result.getExitCode() + ": " + result.getStderr());
+            } catch (IOException e) {
+                last = new RuntimeException(e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
+            }
+            sleep(500);
+        }
+        throw new RuntimeException("SPIRE agent did not become healthy in time", last);
     }
 
     private Container.ExecResult exec(GenericContainer<?> container, String... command) {
