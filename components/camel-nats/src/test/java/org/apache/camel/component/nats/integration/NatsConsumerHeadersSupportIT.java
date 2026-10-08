@@ -65,7 +65,7 @@ class NatsConsumerHeadersSupportIT extends NatsITSupport {
 
         final NatsMessage message = NatsMessage.builder()
                 .data("Hello World".getBytes())
-                .subject("test")
+                .subject("consumer-headers")
                 .headers(headers)
                 .build();
 
@@ -80,7 +80,7 @@ class NatsConsumerHeadersSupportIT extends NatsITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                this.from("nats:test").to(NatsConsumerHeadersSupportIT.this.mockResultEndpoint);
+                this.from("nats:consumer-headers").to(NatsConsumerHeadersSupportIT.this.mockResultEndpoint);
             }
         };
     }

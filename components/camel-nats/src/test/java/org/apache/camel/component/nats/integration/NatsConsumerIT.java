@@ -30,7 +30,7 @@ public class NatsConsumerIT extends NatsITSupport {
     @Test
     public void testConsumer() throws Exception {
         mockResultEndpoint.expectedBodiesReceived("Hello World");
-        mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "test");
+        mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "consumer");
 
         waitForNatsConsumers(1);
 
@@ -44,9 +44,9 @@ public class NatsConsumerIT extends NatsITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:send").to("nats:test?flushConnection=true");
+                from("direct:send").to("nats:consumer?flushConnection=true");
 
-                from("nats:test?flushConnection=true").to(mockResultEndpoint);
+                from("nats:consumer?flushConnection=true").to(mockResultEndpoint);
             }
         };
     }
