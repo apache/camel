@@ -24,11 +24,15 @@ import jakarta.jms.Session;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RollbackExchangeException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.sjms.SjmsConstants;
 import org.apache.camel.component.sjms.SjmsConsumer;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 public class BatchEndpointMessageListener {
 
@@ -59,7 +63,7 @@ public class BatchEndpointMessageListener {
         Exchange batchExchange = consumer.createExchange(false);
         batchExchange.getIn().setBody(exchanges);
         batchExchange.setProperty(SjmsConstants.JMS_SESSION, session);
-        batchExchange.getMessage().setHeader(SjmsConstants.SJMS_BATCH_SIZE_HEADER, rawMessages.size());
+        batchExchange.getIn().setHeader(SjmsConstants.SJMS_BATCH_SIZE_HEADER, rawMessages.size());
 
         return batchExchange;
     }
@@ -69,19 +73,34 @@ public class BatchEndpointMessageListener {
 
         LOG.debug("{} consumer received batch message: {}", endpoint, rawMessages);
         Exchange batchExchange = null;
+        RuntimeCamelException rce = null;
         try {
             batchExchange = aggregate(rawMessages, session);
-            processor.process(batchExchange);
-            consumer.releaseExchange(batchExchange, false);
+            try {
+                processor.process(batchExchange);
+            } catch (Exception e) {
+                batchExchange.setException(e);
+            }
+
+            // same evaluation as EndpointMessageListenerAsyncCallback.done(), sync branch only
+            if (batchExchange.isRollbackOnly()) {
+                rce = wrapRuntimeCamelException(new RollbackExchangeException(batchExchange));
+            } else if (batchExchange.isFailed()) {
+                rce = wrapRuntimeCamelException(batchExchange.getException());
+            }
         } catch (Exception e) {
-            batchExchange.setException(e);
+            // aggregate() failed, so there is no exchange to inspect
+            rce = wrapRuntimeCamelException(e);
+        } finally {
+            if (batchExchange != null) {
+                // only after the outcome has been extracted
+                consumer.releaseExchange(batchExchange, false);
+            }
         }
 
-        Exception exception = batchExchange.getException();
-
-        if (exception != null) {
-            LOG.trace("onBatch END throwing exception: {}", exception.getMessage());
-            throw exception;
+        if (rce != null) {
+            LOG.trace("onBatch END throwing exception: {}", rce.getMessage());
+            throw rce;
         }
     }
 }

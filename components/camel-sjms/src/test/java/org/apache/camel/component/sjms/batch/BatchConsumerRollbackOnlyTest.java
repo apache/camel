@@ -28,13 +28,12 @@ import static org.apache.camel.component.sjms.batch.BatchTestHelper.assertBatchS
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.createRoute;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessages;
 
-public class BatchConsumerTransactedTest extends JmsTestSupport {
+public class BatchConsumerRollbackOnlyTest extends JmsTestSupport {
 
-    private static final String QUEUE_NAME_TEMPLATE = "batch.consumer.%s.BatchConsumerTransactedTest";
+    private static final String QUEUE_NAME_TEMPLATE = "batch.consumer.%s.BatchConsumerRollbackOnlyTest";
 
     private static final String ROUTE_ID_SESSION_TX = "tx";
     private static final String ROUTE_ID_CLIENT_ACK_NO_TX = "no-tx-client-ack";
-    private static final String ROUTE_ID_AUTO_ACK_NO_TX = "no-tx-auto";
 
     @Test
     public void testSessionTransacted() throws Exception {
@@ -67,43 +66,26 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
         assertBatchSizesInOrder(mockFinish, 5);
     }
 
-    @Test
-    public void testAutoAcknowledgedNotTransacted() throws Exception {
-        MockEndpoint mockStart = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_START, ROUTE_ID_AUTO_ACK_NO_TX));
-        mockStart.expectedMessageCount(1);
-
-        MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_AUTO_ACK_NO_TX));
-        mockFinish.expectedMessageCount(0);
-
-        sendMessages(template,
-                format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK_NO_TX), 5);
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new org.apache.camel.RoutesBuilder[] {
                 createRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, true, 5,
                         1000,
-                        true, null, 1, new ThrowExceptionProcessor()),
+                        true, null, 1, new MarkRollBackProcessor()),
                 createRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX,
                         true,
-                        5, 1000, false, "CLIENT_ACKNOWLEDGE", 1, new ThrowExceptionProcessor()),
-                createRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK_NO_TX,
-                        true, 5, 1000, false,
-                        "AUTO_ACKNOWLEDGE", 1, new ThrowExceptionProcessor())
+                        5, 1000, false, "CLIENT_ACKNOWLEDGE", 1, new MarkRollBackProcessor())
         };
     }
 
-    private static class ThrowExceptionProcessor implements org.apache.camel.Processor {
+    private static class MarkRollBackProcessor implements org.apache.camel.Processor {
         private final java.util.concurrent.atomic.AtomicInteger counter = new java.util.concurrent.atomic.AtomicInteger();
 
         @Override
         public void process(org.apache.camel.Exchange exchange) {
             int minimumBatchAttempt = 1;
             if (counter.incrementAndGet() <= minimumBatchAttempt) {
-                throw new IllegalArgumentException("Forced rollback");
+                exchange.setRollbackOnly(true);
             }
         }
     }
