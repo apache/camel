@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.ContextTestSupport;
@@ -31,7 +30,6 @@ import org.apache.camel.component.log.ConsumingAppender;
 import org.apache.camel.model.SagaCompletionMode;
 import org.apache.camel.saga.CamelSagaCoordinator;
 import org.apache.camel.saga.InMemorySagaService;
-import org.apache.camel.spi.Registry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -39,7 +37,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -47,16 +44,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * CAMEL-25419: what the saga EIP reports when a compensation cannot be done, and what the in-memory saga service logs
- * when it stops while a compensation is still being retried.
+ * CAMEL-25419: what the saga EIP reports when a compensation or a completion cannot be done, and what the in-memory
+ * saga service logs when it stops with sagas that are not finalized.
  */
 public class SagaCompensationFailureTest extends ContextTestSupport {
 
     private static final String SAGA_SERVICE_LOGGER = InMemorySagaService.class.getName();
 
     private final AtomicReference<CamelSagaCoordinator> coordinator = new AtomicReference<>();
-    private final AtomicReference<String> timeoutSagaId = new AtomicReference<>();
-    private final AtomicInteger flakyCompensationCalls = new AtomicInteger();
+    private final AtomicReference<String> manualSagaId = new AtomicReference<>();
     private final List<String> sagaServiceWarnings = new CopyOnWriteArrayList<>();
 
     @Test
@@ -92,18 +88,25 @@ public class SagaCompensationFailureTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCompensationRetryPendingWhenContextStopsIsLogged() throws Exception {
-        // the saga times out, the first compensation attempt fails, and a retry is scheduled
-        template.sendBody("direct:saga-timeout", "hello");
-        await().atMost(5, TimeUnit.SECONDS).until(() -> flakyCompensationCalls.get() == 1);
+    public void testFailedCompletionIsNotWrapped() {
+        Exchange result = template.send("direct:saga-completion-fails", e -> e.getMessage().setBody("hello"));
 
-        // the in-memory service does not persist sagas: stopping while the retry is pending abandons the saga,
-        // which must be logged
+        // the completion failure is on the exchange as is, not wrapped in a CompletionException
+        Exception ex = result.getException();
+        assertInstanceOf(RuntimeCamelException.class, ex);
+        assertTrue(ex.getMessage().contains("Unable to complete all required steps of the saga"), ex.getMessage());
+    }
+
+    @Test
+    public void testSagaNotFinalizedWhenContextStopsIsLogged() throws Exception {
+        // a saga in MANUAL completion mode that is never completed nor compensated
+        template.sendBody("direct:saga-manual", "hello");
+        String sagaId = manualSagaId.get();
+        assertNotNull(sagaId);
+
+        // the in-memory service does not persist sagas: stopping abandons the saga, which must be logged
         context.stop();
 
-        assertEquals(1, flakyCompensationCalls.get());
-        String sagaId = timeoutSagaId.get();
-        assertNotNull(sagaId);
         assertTrue(sagaServiceWarnings.stream().anyMatch(m -> m.contains(sagaId)),
                 "no warning names the abandoned saga " + sagaId + ": " + sagaServiceWarnings);
     }
@@ -132,42 +135,32 @@ public class SagaCompensationFailureTest extends ContextTestSupport {
             public void configure() throws Exception {
                 InMemorySagaService sagaService = new InMemorySagaService();
                 sagaService.setMaxRetryAttempts(2);
-                sagaService.setRetryDelayInMilliseconds(500);
+                sagaService.setRetryDelayInMilliseconds(100);
                 context.addService(sagaService);
 
                 from("direct:saga-fails")
-                        .saga().compensation("direct:compensation-fails")
+                        .saga().compensation("direct:finalization-fails")
                         .process(e -> coordinator.set(
                                 sagaService.getSaga(e.getExchangeExtension().getSagaLongRunningAction()).get()))
                         .process(e -> {
                             throw new IllegalArgumentException("business failure");
                         });
 
-                from("direct:compensation-fails")
+                from("direct:saga-completion-fails")
+                        .saga().completion("direct:finalization-fails")
+                        .to("mock:end");
+
+                from("direct:finalization-fails")
                         .process(e -> {
-                            throw new IllegalStateException("compensation failure");
+                            throw new IllegalStateException("finalization failure");
                         });
 
-                from("direct:saga-timeout")
-                        .saga().completionMode(SagaCompletionMode.MANUAL).timeout(100, TimeUnit.MILLISECONDS)
-                        .compensation("bean:flakyCompensation")
-                        .process(e -> timeoutSagaId.set(e.getExchangeExtension().getSagaLongRunningAction()))
+                from("direct:saga-manual")
+                        .saga().completionMode(SagaCompletionMode.MANUAL)
+                        .compensation("mock:compensation")
+                        .process(e -> manualSagaId.set(e.getExchangeExtension().getSagaLongRunningAction()))
                         .to("mock:end");
             }
         };
-    }
-
-    @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry registry = super.createCamelRegistry();
-        registry.bind("flakyCompensation", new Object() {
-            @SuppressWarnings("unused")
-            public void compensate() {
-                if (flakyCompensationCalls.incrementAndGet() == 1) {
-                    throw new IllegalStateException("first compensation attempt fails");
-                }
-            }
-        });
-        return registry;
     }
 }

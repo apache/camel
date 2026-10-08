@@ -114,9 +114,10 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
                     final Exception cause = exchange.getException();
                     coordinator.compensate(exchange).whenComplete((done, ex) -> {
                         if (ex != null) {
-                            // keep the exception that caused the compensation, and attach the compensation failure to it
-                            cause.addSuppressed(
-                                    ex instanceof CompletionException && ex.getCause() != null ? ex.getCause() : ex);
+                            // keep the exception that caused the compensation, and attach the compensation failure to it.
+                            // This adds to the exception instance thrown by the route: if a route throws a shared
+                            // instance, its suppressed exceptions grow with every failed compensation
+                            cause.addSuppressed(unwrap(ex));
                             exchange.setException(cause);
                             callback.done(false);
                         } else {
@@ -129,10 +130,11 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
                     callback.done(false);
                 }
             } else {
-                coordinator.complete(exchange).whenComplete((done, ex) -> ifNotException(ex, exchange, callback, () -> {
-                    setCurrentSagaCoordinator(exchange, previousCoordinator);
-                    callback.done(false);
-                }));
+                coordinator.complete(exchange)
+                        .whenComplete((done, ex) -> ifNotException(ex != null ? unwrap(ex) : null, exchange, callback, () -> {
+                            setCurrentSagaCoordinator(exchange, previousCoordinator);
+                            callback.done(false);
+                        }));
             }
         } else if (this.completionMode == SagaCompletionMode.MANUAL) {
             // Completion will be handled manually by the user
@@ -140,6 +142,14 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
         } else {
             throw new IllegalStateException("Unsupported completion mode: " + this.completionMode);
         }
+    }
+
+    /**
+     * The failure of a dependent stage of a {@link CompletableFuture} is wrapped in a {@link CompletionException}: the
+     * exchange gets the actual failure.
+     */
+    private static Throwable unwrap(Throwable ex) {
+        return ex instanceof CompletionException && ex.getCause() != null ? ex.getCause() : ex;
     }
 
     public CamelSagaService getSagaService() {
