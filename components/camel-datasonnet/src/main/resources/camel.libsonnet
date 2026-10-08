@@ -48,7 +48,10 @@
     arr, { keys: [], items: [] }
   ).items,
   flatMap(arr, f):: std.flatMap(f, arr),
-  sortBy(arr, f):: std.sort(arr, keyF=f),
+  // a stable sort by key (std.sort of DataSonnet ignores keyF)
+  sortBy(arr, f)::
+    local keyed = [{ k: f(x), x: x } for x in arr];
+    std.flattenArrays([[e.x for e in keyed if e.k == k] for k in std.set([e.k for e in keyed])]),
   groupBy(arr, f):: std.foldl(
     function(acc, x)
       local k = f(x);
