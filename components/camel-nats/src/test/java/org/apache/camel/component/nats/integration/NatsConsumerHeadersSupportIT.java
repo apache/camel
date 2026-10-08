@@ -54,6 +54,8 @@ class NatsConsumerHeadersSupportIT extends NatsITSupport {
         this.mockResultEndpoint.expectedHeaderReceived(HEADER_KEY_1, HEADER_VALUE_1);
         this.mockResultEndpoint.expectedHeaderReceived(HEADER_KEY_2, secondHeaders);
 
+        waitForNatsConsumers(1);
+
         final Options options = new Options.Builder().server("nats://" + service.getServiceAddress()).build();
         final Connection connection = Nats.connect(options);
 

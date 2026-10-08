@@ -34,4 +34,8 @@ public class NatsAuthITSupport extends CamelTestSupport {
         nats.getConfiguration().setServers(service.getServiceAddress());
         return context;
     }
+
+    protected void waitForNatsConsumers(int count) {
+        NatsITSupport.waitForNatsConsumers(context, count);
+    }
 }

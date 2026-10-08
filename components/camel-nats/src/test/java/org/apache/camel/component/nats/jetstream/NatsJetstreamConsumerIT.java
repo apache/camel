@@ -35,6 +35,8 @@ public class NatsJetstreamConsumerIT extends NatsITSupport {
         mockResultEndpoint.expectedBodiesReceived("Hello World");
         mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "mytopic");
 
+        waitForNatsConsumers(1);
+
         template.sendBody("direct:send", "Hello World");
 
         mockResultEndpoint.setAssertPeriod(5000);

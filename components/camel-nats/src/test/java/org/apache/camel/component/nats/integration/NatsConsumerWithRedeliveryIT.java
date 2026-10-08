@@ -20,14 +20,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.nats.NatsConsumer;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
 
 public class NatsConsumerWithRedeliveryIT extends NatsITSupport {
 
@@ -44,12 +40,7 @@ public class NatsConsumerWithRedeliveryIT extends NatsITSupport {
         mockResultEndpoint.setExpectedMessageCount(1);
         exception.setExpectedMessageCount(1);
 
-        // Wait for the NATS consumer to be subscribed before sending messages,
-        // since core NATS does not persist messages for inactive subscribers
-        await().atMost(10, TimeUnit.SECONDS)
-                .until(() -> context.getRoutes().stream()
-                        .map(Route::getConsumer)
-                        .anyMatch(c -> c instanceof NatsConsumer nc && nc.isActive()));
+        waitForNatsConsumers(1);
 
         template.sendBody("direct:send", "test");
         template.sendBody("direct:send", "golang");

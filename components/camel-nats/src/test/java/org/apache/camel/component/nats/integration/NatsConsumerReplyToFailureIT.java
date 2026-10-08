@@ -19,6 +19,7 @@ package org.apache.camel.component.nats.integration;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
@@ -30,6 +31,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * the failed exchange as if it succeeded, so the requester times out. A failure handled by the route is answered.
  */
 public class NatsConsumerReplyToFailureIT extends NatsITSupport {
+
+    @BeforeEach
+    public void waitForConsumers() {
+        waitForNatsConsumers(2);
+    }
 
     @Test
     public void testNoReplyWhenExchangeFailed() {
