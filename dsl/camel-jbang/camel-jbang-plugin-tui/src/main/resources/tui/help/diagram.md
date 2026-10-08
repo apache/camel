@@ -83,7 +83,8 @@ overview setting; with no summary yet it has the AI write one, as
 `/overview` does), `b` view (business: labels and what capabilities achieve;
 technical: route ids and endpoints), `m` metrics, `e` external, `d`
 detail, `g` group, `u` utility (one setting for the architecture
-and the topology, so both show the same groups). The footer lists
+and the topology, so both show the same groups), `x` errors (the
+error handling in a frame below the routes). The footer lists
 only actions.
 
 ## Architecture View
@@ -159,6 +160,9 @@ you an at-a-glance view of where you are in the route.
 - `g` — show each route's group in the topology, its colour as in
   the architecture, with a legend of the groups at the bottom
 - `u` — show or hide utility routes (as in the architecture)
+- `x` — show or hide the error handling: the routes reached only on
+  error, in a frame below the routes, with the error paths into them
+  and how each failure is handled (needs Camel 4.23+ in the integration)
 - `s` — open the integration summary (camel-summary.md)
 - `Esc` — close diagram
 

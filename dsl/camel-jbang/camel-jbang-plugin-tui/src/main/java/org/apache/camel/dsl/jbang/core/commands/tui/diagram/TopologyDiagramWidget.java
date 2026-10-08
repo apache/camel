@@ -59,6 +59,10 @@ public class TopologyDiagramWidget implements Widget {
     private Map<String, NodeLine> groupTags = Map.of();
     private Map<String, Color> groupColors = Map.of();
     private Style aiStyle = Style.EMPTY.italic();
+    private ErrorLayer errorLayer;
+    // the gutter on the left the error paths go down, when the error layer is shown
+    private int colOffset;
+    private static final int GUTTER = 3;
 
     public record NodeBox(String routeId, int startRow, int endRow, int startCol, int endCol, int layer) {
     }
@@ -163,7 +167,8 @@ public class TopologyDiagramWidget implements Widget {
         } else {
             line1 = node.routeId;
         }
-        NodeLine tag = ext || node.routeId == null ? null : groupTags.get(node.routeId);
+        // a route in the error frame needs no group tag: the frame says what it is
+        NodeLine tag = ext || node.routeId == null || inFrame(node) ? null : groupTags.get(node.routeId);
 
         List<String> lines = new ArrayList<>(wrapText(line1, boxWidth - 4));
         int aiLines = ai != null ? lines.size() : 0;
@@ -231,6 +236,16 @@ public class TopologyDiagramWidget implements Widget {
         return own == null || own.isEmpty() ? null : own.subList(0, Math.min(own.size(), MAX_WRAP_LINES + 1));
     }
 
+    /**
+     * The error handling, drawn in a frame of its own below the routes: the routes reached only on error, the dashed
+     * error paths into them (down a gutter on the left, clear of the routes), and where each one's failures come from.
+     */
+    public TopologyDiagramWidget withErrorLayer(ErrorLayer layer) {
+        this.errorLayer = layer;
+        this.colOffset = layer != null ? GUTTER : 0;
+        return this;
+    }
+
     public List<NodeBox> getNodeBoxes() {
         return nodeBoxes;
     }
@@ -238,6 +253,11 @@ public class TopologyDiagramWidget implements Widget {
     @Override
     public void render(Rect area, Buffer buffer) {
         nodeBoxes.clear();
+
+        if (errorLayer != null) {
+            drawErrorFrame(buffer, area);
+            drawErrorPaths(buffer, area);
+        }
 
         for (TopologyLayoutEdge edge : layout.edges) {
             if (!edge.selfLoop) {
@@ -254,6 +274,148 @@ public class TopologyDiagramWidget implements Widget {
         for (TopologyLayoutNode node : layout.nodes) {
             drawNode(buffer, area, node);
         }
+
+        if (errorLayer != null) {
+            drawErrorLabels(buffer, area);
+        }
+    }
+
+    private Style errorStyle() {
+        return Theme.warning();
+    }
+
+    private boolean inFrame(TopologyLayoutNode node) {
+        return errorLayer != null && node.routeId != null && errorLayer.routeIds().contains(node.routeId);
+    }
+
+    private TopologyLayoutNode nodeOf(String routeId) {
+        for (TopologyLayoutNode n : layout.nodes) {
+            if (routeId != null && routeId.equals(n.routeId)) {
+                return n;
+            }
+        }
+        return null;
+    }
+
+    /** The frame of the error handling: from its top to the bottom of the diagram, as wide as the diagram. */
+    private void drawErrorFrame(Buffer buffer, Rect area) {
+        int top = toRow(errorLayer.frameTopY());
+        int bottom = toRow(layout.totalHeight) - 1;
+        int right = getTotalCols() - 2;
+        Style s = errorStyle().dim();
+        for (int c = 1; c < right; c++) {
+            setChar(buffer, area, top, c, DASH_H, s);
+            setChar(buffer, area, bottom, c, DASH_H, s);
+        }
+        for (int r = top + 1; r < bottom; r++) {
+            setChar(buffer, area, r, 0, DASH_V, s);
+            setChar(buffer, area, r, right, DASH_V, s);
+        }
+        setChar(buffer, area, top, 0, '\u256d', s);
+        setChar(buffer, area, top, right, '\u256e', s);
+        setChar(buffer, area, bottom, 0, '\u2570', s);
+        setChar(buffer, area, bottom, right, '\u256f', s);
+        writeText(buffer, area, top, 2, " Error handling ", errorStyle().bold());
+    }
+
+    /**
+     * The error paths from the routes above into the routes of the frame: out of the left side of the route, down the
+     * gutter, along the channel row of the target, and down into it. A route's own failures coming back to it are not
+     * drawn as a loop; its label says so.
+     */
+    private void drawErrorPaths(Buffer buffer, Rect area) {
+        Style s = errorStyle();
+        int gutter = 1;
+        List<String> targets = new ArrayList<>();
+        for (ErrorLayer.ErrorPath p : errorLayer.paths()) {
+            if (errorLayer.routeIds().contains(p.toRouteId()) && !errorLayer.routeIds().contains(p.fromRouteId())
+                    && !targets.contains(p.toRouteId())) {
+                targets.add(p.toRouteId());
+            }
+        }
+        java.util.Set<String> drawn = new java.util.HashSet<>();
+        for (ErrorLayer.ErrorPath p : errorLayer.paths()) {
+            int t = targets.indexOf(p.toRouteId());
+            TopologyLayoutNode from = nodeOf(p.fromRouteId());
+            TopologyLayoutNode to = nodeOf(p.toRouteId());
+            if (t < 0 || from == null || to == null || inFrame(from)
+                    || !drawn.add(p.fromRouteId() + ">" + p.toRouteId())) {
+                continue;
+            }
+            int srcRow = toRow(from.y) + 1;
+            int srcCol = toCol(from.x) - 1;
+            int channelRow = toRow(errorLayer.channelsY()) + t;
+            int toCx = toCol(to.x + to.width / 2);
+            int toTop = toRow(to.y);
+            for (int c = gutter + 1; c <= srcCol; c++) {
+                plotLine(buffer, area, srcRow, c, DASH_H, s);
+            }
+            setChar(buffer, area, srcRow, gutter, TL, s);
+            for (int r = srcRow + 1; r < channelRow; r++) {
+                plotLine(buffer, area, r, gutter, DASH_V, s);
+            }
+            setChar(buffer, area, channelRow, gutter, BL, s);
+            for (int c = gutter + 1; c < toCx; c++) {
+                plotLine(buffer, area, channelRow, c, DASH_H, s);
+            }
+            setChar(buffer, area, channelRow, toCx, TR, s);
+            for (int r = channelRow + 1; r < toTop - 1; r++) {
+                plotLine(buffer, area, r, toCx, DASH_V, s);
+            }
+            setChar(buffer, area, toTop - 1, toCx, ARROW, s);
+        }
+    }
+
+    /**
+     * The label lines under each route of the frame: where its failures come from and how they are handled, one line
+     * per route that sends there.
+     */
+    private Map<TopologyLayoutNode, List<String>> errorLabels() {
+        Map<TopologyLayoutNode, List<String>> answer = new java.util.LinkedHashMap<>();
+        if (errorLayer == null) {
+            return answer;
+        }
+        for (TopologyLayoutNode node : layout.nodes) {
+            if (!inFrame(node)) {
+                continue;
+            }
+            Map<String, List<String>> bySource = new java.util.LinkedHashMap<>();
+            for (ErrorLayer.ErrorPath p : errorLayer.paths()) {
+                if (node.routeId.equals(p.toRouteId())) {
+                    bySource.computeIfAbsent(p.fromRouteId(), k -> new ArrayList<>()).add(p.label());
+                }
+            }
+            List<String> lines = new ArrayList<>();
+            for (Map.Entry<String, List<String>> e : bySource.entrySet()) {
+                String how = String.join(" \u00b7 ", e.getValue());
+                lines.add(e.getKey().equals(node.routeId)
+                        ? "\u26a0 own failures: " + how
+                        : "\u25c2 " + e.getKey() + ": " + how);
+            }
+            answer.put(node, lines);
+        }
+        return answer;
+    }
+
+    private void drawErrorLabels(Buffer buffer, Rect area) {
+        for (Map.Entry<TopologyLayoutNode, List<String>> e : errorLabels().entrySet()) {
+            int row = toRow(e.getKey().y) + boxHeight(e.getKey());
+            int col = toCol(e.getKey().x);
+            for (String line : e.getValue()) {
+                writeText(buffer, area, row++, col, line, errorStyle());
+            }
+        }
+    }
+
+    /** The column right of the widest label of the error frame, so the frame and the scrolling take it in. */
+    private int errorLabelsRight() {
+        int right = 0;
+        for (Map.Entry<TopologyLayoutNode, List<String>> e : errorLabels().entrySet()) {
+            for (String line : e.getValue()) {
+                right = Math.max(right, toCol(e.getKey().x) + line.length() + 2);
+            }
+        }
+        return right;
     }
 
     public int getTotalRows() {
@@ -261,7 +423,7 @@ public class TopologyDiagramWidget implements Widget {
     }
 
     public int getTotalCols() {
-        return toCol(layout.totalWidth) + boxWidth + 4;
+        return Math.max(toCol(layout.totalWidth) + boxWidth + 4, errorLabelsRight() + 2);
     }
 
     private void drawNode(Buffer buffer, Rect area, TopologyLayoutNode node) {
@@ -500,7 +662,7 @@ public class TopologyDiagramWidget implements Widget {
         if (nodeWidth == 0) {
             return 0;
         }
-        return pixelX * boxWidth / nodeWidth;
+        return pixelX * boxWidth / nodeWidth + colOffset;
     }
 
     private int toRow(int pixelY) {

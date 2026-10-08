@@ -83,7 +83,12 @@ description toggle, does the same. *m* metrics and *e* external systems apply to
 box names its group (a route group, an AI capability marked ✦, shared services or utility), each group
 has the border colour of its box in the architecture, and a legend at the bottom of the topology lists
 the groups in their colours; it is on when the project has groups. *u* shows or hides the utility
-routes, one setting for the architecture and the topology, so both show the same groups. The route
+routes, one setting for the architecture and the topology, so both show the same groups. *x* errors, in
+the topology, draws the error handling in a frame of its own below the routes: the routes reached only while
+handling a failure (such as the target of a dead letter channel), the dashed error paths into them, and
+under each one where its failures come from and how they are handled (handled: the message ends there;
+continued; not handled: the failure goes on to the caller). Off, the topology shows the happy path only.
+It needs Camel 4.23 or newer in the integration; the toggle says *4.23+* for an older one. The route
 boxes widen, within reason, so a label and its group fit on a line, and the Info panel of a route
 names its group (✦ when the AI placed it). The footer lists only actions, such as
 *Enter* drill-down, *c* source and *s* summary.

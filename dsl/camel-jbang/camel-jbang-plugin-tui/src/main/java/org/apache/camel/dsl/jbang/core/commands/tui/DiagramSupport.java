@@ -61,6 +61,7 @@ import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutNode;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.ErrorLayer;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -92,6 +93,14 @@ class DiagramSupport {
     /** Routes left out of the topology (the utility routes when hidden), and what the current layout was made for. */
     private volatile Set<String> hiddenRouteIds = Set.of();
     private Set<String> layoutHidden = Set.of();
+    // the error handling drawn in a frame of its own below the routes (x); off shows the happy path only
+    private volatile boolean showErrorPaths;
+    private boolean layoutShowErrorPaths;
+    private ErrorLayer errorLayer;
+    // the error paths of the topology, shown or not (an agent sees them in tui_get_topology)
+    private List<ErrorLayer.ErrorPath> errorPaths = List.of();
+    // whether the integration reports error paths: its Camel is 4.23 or newer (older ones report calls only)
+    private boolean errorPathsKnown = true;
     private int layoutBoxColumns = DEFAULT_BOX_COLUMNS;
     private int scrollY;
     private int scrollX;
@@ -275,6 +284,24 @@ class DiagramSupport {
             edgesArr.add(e);
         }
         result.put("edges", edgesArr);
+
+        // the error paths, shown in the diagram or not (x): sent to only when a route handles a failure
+        JsonArray errorArr = new JsonArray();
+        for (ErrorLayer.ErrorPath p : errorPaths) {
+            JsonObject e = new JsonObject();
+            e.put("from", p.fromRouteId());
+            e.put("to", p.toRouteId());
+            e.put("via", p.via());
+            if (p.handling() != null) {
+                e.put("handling", p.handling());
+            }
+            errorArr.add(e);
+        }
+        result.put("errorPaths", errorArr);
+        result.put("errorsShown", layoutShowErrorPaths && errorLayer != null);
+        if (!errorPathsKnown) {
+            result.put("errorPathsNote", "the integration runs a Camel before 4.23, which does not report error paths");
+        }
 
         result.put("totalNodes", layout.nodes.size());
         result.put("totalEdges", layout.edges.size());
@@ -902,7 +929,99 @@ class DiagramSupport {
 
     /** Whether the topology was laid out for other hidden routes or another box width, and needs a new load. */
     boolean isTopologyStale() {
-        return !hiddenRouteIds.equals(layoutHidden) || wantedBoxColumns() != layoutBoxColumns;
+        return !hiddenRouteIds.equals(layoutHidden) || wantedBoxColumns() != layoutBoxColumns
+                || showErrorPaths != layoutShowErrorPaths;
+    }
+
+    boolean isShowErrorPaths() {
+        return showErrorPaths;
+    }
+
+    void setShowErrorPaths(boolean show) {
+        this.showErrorPaths = show;
+    }
+
+    /** The error paths of the topology last loaded, whether shown or not. */
+    List<ErrorLayer.ErrorPath> getErrorPaths() {
+        return errorPaths;
+    }
+
+    /** Whether the integration reports error paths: Camel 4.23 or newer. */
+    boolean isErrorPathsKnown() {
+        return errorPathsKnown;
+    }
+
+    /**
+     * The routes reached only on error: a target of an error path that no route calls. They are utility routes when the
+     * error handling is not shown, and the routes of its frame when it is.
+     */
+    static Set<String> errorOnlyRoutes(List<TopologyEdgeInfo> calls, List<TopologyEdgeInfo> errors) {
+        Set<String> called = new HashSet<>();
+        for (TopologyEdgeInfo e : calls) {
+            called.add(e.toRouteId);
+        }
+        Set<String> answer = new java.util.LinkedHashSet<>();
+        for (TopologyEdgeInfo e : errors) {
+            if (e.toRouteId != null && !called.contains(e.toRouteId)) {
+                answer.add(e.toRouteId);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Places the routes reached only on error in a row below the happy path, leaving room above them for the frame
+     * title and one channel row per route an arrow comes into, and returns the layout with them and the error layer.
+     */
+    static PlacedErrors placeErrorRoutes(
+            TopologyLayoutResult happy, List<TopologyNodeInfo> errorNodes, List<ErrorLayer.ErrorPath> paths,
+            Set<String> errorRouteIds, int nodeW, int nodeH) {
+        int bottom = 0;
+        int minX = Integer.MAX_VALUE;
+        int maxLayer = -1;
+        for (TopologyLayoutNode n : happy.nodes) {
+            bottom = Math.max(bottom, n.y + n.height);
+            minX = Math.min(minX, n.x);
+            maxLayer = Math.max(maxLayer, n.layer);
+        }
+        if (minX == Integer.MAX_VALUE) {
+            minX = 0;
+        }
+        int row = 20;
+        int frameTopY = happy.nodes.isEmpty() ? 2 * row : bottom + 3 * row;
+        // one channel row for each route of the frame that a route above sends to
+        Set<String> fromAbove = new java.util.LinkedHashSet<>();
+        for (ErrorLayer.ErrorPath p : paths) {
+            if (errorRouteIds.contains(p.toRouteId()) && !errorRouteIds.contains(p.fromRouteId())) {
+                fromAbove.add(p.toRouteId());
+            }
+        }
+        int channelsY = frameTopY + 2 * row;
+        int boxesY = channelsY + (fromAbove.size() + 1) * row;
+        List<TopologyLayoutNode> nodes = new ArrayList<>(happy.nodes);
+        int x = minX;
+        int step = nodeW + nodeW / 2;
+        for (TopologyNodeInfo info : errorNodes) {
+            TopologyLayoutNode ln = new TopologyLayoutNode(
+                    info.routeId, info.description, info.from, info.nodeType, info.connectionType,
+                    x, boxesY, nodeW, nodeH, maxLayer + 1);
+            ln.exchangesTotal = info.exchangesTotal;
+            ln.exchangesFailed = info.exchangesFailed;
+            nodes.add(ln);
+            x += step;
+        }
+        // room below the boxes for the lines that say where the failures come from
+        int labelLines = 0;
+        for (String id : errorRouteIds) {
+            labelLines = Math.max(labelLines, (int) paths.stream().filter(p -> id.equals(p.toRouteId())).count() + 1);
+        }
+        int totalHeight = Math.max(happy.totalHeight, boxesY + nodeH + (labelLines + 3) * row);
+        int totalWidth = Math.max(happy.totalWidth, x);
+        TopologyLayoutResult result = new TopologyLayoutResult(nodes, happy.edges, totalWidth, totalHeight);
+        return new PlacedErrors(result, new ErrorLayer(frameTopY, errorRouteIds, paths, channelsY));
+    }
+
+    record PlacedErrors(TopologyLayoutResult layout, ErrorLayer layer) {
     }
 
     /** Leaves out the hidden routes, the links to and from them, and external systems only they used. */
@@ -995,7 +1114,8 @@ class DiagramSupport {
                 focusRouteIds, false)
                 .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
                 .withNodeLines(nodeLines)
-                .withGroups(groupTags, groupColors);
+                .withGroups(groupTags, groupColors)
+                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null);
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -1015,7 +1135,8 @@ class DiagramSupport {
                 focusRouteIds, false)
                 .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
                 .withNodeLines(nodeLines)
-                .withGroups(groupTags, groupColors);
+                .withGroups(groupTags, groupColors)
+                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null);
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))
@@ -1938,7 +2059,8 @@ class DiagramSupport {
                 false, showDescription, historyRouteIds, historyFailed)
                 .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
                 .withNodeLines(nodeLines)
-                .withGroups(groupTags, groupColors);
+                .withGroups(groupTags, groupColors)
+                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null);
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -1957,7 +2079,8 @@ class DiagramSupport {
                 false, showDescription, historyRouteIds, historyFailed)
                 .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
                 .withNodeLines(nodeLines)
-                .withGroups(groupTags, groupColors);
+                .withGroups(groupTags, groupColors)
+                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null);
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))
@@ -2138,9 +2261,35 @@ class DiagramSupport {
         List<TopologyLayoutNode> topoNodes = Collections.emptyList();
         List<TopologyLayoutEdge> topoEdges = Collections.emptyList();
 
+        boolean showErrors = showErrorPaths;
+        List<ErrorLayer.ErrorPath> loadedErrorPaths = List.of();
+        ErrorLayer loadedErrorLayer = null;
+        boolean loadedErrorPathsKnown = true;
         if (topoJson != null) {
             List<TopologyNodeInfo> nodes = TopologyHelper.parseNodes(topoJson);
-            List<TopologyEdgeInfo> edges = TopologyHelper.parseEdges(topoJson);
+            List<TopologyEdgeInfo> all = TopologyHelper.parseEdges(topoJson, true);
+            List<TopologyEdgeInfo> edges = new ArrayList<>(all.stream().filter(e -> !e.isErrorPath()).toList());
+            List<TopologyEdgeInfo> errors = all.stream().filter(TopologyEdgeInfo::isErrorPath).toList();
+            // a Camel before 4.23 says no kind of edge: it reports calls only
+            JsonArray rawEdges = topoJson.getCollection("edges");
+            loadedErrorPathsKnown = rawEdges == null || rawEdges.isEmpty()
+                    || rawEdges.stream().anyMatch(o -> o instanceof JsonObject jo && jo.containsKey("kind"));
+            Set<String> errorOnly = errorOnlyRoutes(edges, errors);
+            loadedErrorPaths = errors.stream()
+                    .filter(e -> !hidden.contains(e.fromRouteId) || errorOnly.contains(e.fromRouteId))
+                    .map(e -> new ErrorLayer.ErrorPath(e.fromRouteId, e.toRouteId, e.via, e.handling))
+                    .distinct().toList();
+            // shown, the routes reached only on error are in the frame (whether utility routes are shown or not)
+            List<TopologyNodeInfo> errorNodes = new ArrayList<>();
+            if (showErrors) {
+                for (TopologyNodeInfo n : nodes) {
+                    if (n.routeId != null && errorOnly.contains(n.routeId)) {
+                        errorNodes.add(n);
+                    }
+                }
+                nodes.removeIf(errorNodes::contains);
+                edges.removeIf(e -> errorOnly.contains(e.fromRouteId) || errorOnly.contains(e.toRouteId));
+            }
             if (external) {
                 TopologyHelper.addExternalEndpoints(nodes, edges, topoJson);
             }
@@ -2153,6 +2302,21 @@ class DiagramSupport {
                 topoResult = engine.layout(nodes, edges);
                 normalizeTopologyLayoutY(topoResult);
                 nodeW = engine.getNodeWidth();
+            }
+            if (showErrors && !errorNodes.isEmpty()) {
+                TopologyLayoutEngine engine = engineFor(boxColumns);
+                if (topoResult == null) {
+                    topoResult = new TopologyLayoutResult(new ArrayList<>(), new ArrayList<>(), 0, 0);
+                    nodeW = engine.getNodeWidth();
+                }
+                Set<String> errorIds = new java.util.LinkedHashSet<>();
+                errorNodes.forEach(n -> errorIds.add(n.routeId));
+                PlacedErrors placed = placeErrorRoutes(
+                        topoResult, errorNodes, loadedErrorPaths, errorIds, nodeW, engine.getNodeHeight());
+                topoResult = placed.layout();
+                loadedErrorLayer = placed.layer();
+            }
+            if (topoResult != null) {
                 topoNodes = topoResult.nodes;
                 topoEdges = topoResult.edges;
             }
@@ -2205,9 +2369,16 @@ class DiagramSupport {
         if (ctx.runner == null) {
             return;
         }
+        List<ErrorLayer.ErrorPath> finalErrorPaths = loadedErrorPaths;
+        ErrorLayer finalErrorLayer = loadedErrorLayer;
+        boolean finalErrorPathsKnown = loadedErrorPathsKnown;
         ctx.runner.runOnRenderThread(() -> {
             layoutHidden = hidden;
             layoutBoxColumns = boxColumns;
+            layoutShowErrorPaths = showErrors;
+            errorPaths = finalErrorPaths;
+            errorLayer = finalErrorLayer;
+            errorPathsKnown = finalErrorPathsKnown;
             if (!showDiagram && !preloading) {
                 return;
             }
