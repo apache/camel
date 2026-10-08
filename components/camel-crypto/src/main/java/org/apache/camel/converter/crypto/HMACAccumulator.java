@@ -24,8 +24,6 @@ import java.security.MessageDigest;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import static org.apache.camel.converter.crypto.HexUtils.byteArrayToHexString;
-
 /**
  * <code>HMACAccumulator</code> is used to build Hash Message Authentication Codes. It has two modes, one where all the
  * data acquired is used to build the MAC and a second that assumes that the last n bytes of the acquired data will
@@ -96,15 +94,21 @@ public class HMACAccumulator {
         return appended;
     }
 
+    /**
+     * The single message reported for every authentication failure. Bad padding and a bad MAC must be indistinguishable
+     * to a caller who can submit ciphertext and observe the outcome, because telling them apart is what turns a CBC
+     * decryption into a padding oracle.
+     */
+    static final String AUTHENTICATION_FAILED = "Message authentication failed";
+
     public void validate() {
         byte[] actual = getCalculatedMac();
         byte[] expected = getAppendedMac();
         // Use a constant-time comparison to avoid leaking MAC-match progress through timing (side-channel).
         if (!MessageDigest.isEqual(expected, actual)) {
-            throw new IllegalStateException(
-                    "Expected mac did not match actual mac\nexpected:"
-                                            + byteArrayToHexString(expected) + "\n     actual:"
-                                            + byteArrayToHexString(actual));
+            // The computed MAC is HMAC_k over the plaintext that was just produced, so reporting it hands the
+            // caller a value they could not otherwise compute. Neither MAC belongs in the message.
+            throw new IllegalStateException(AUTHENTICATION_FAILED);
         }
     }
 
