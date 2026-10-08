@@ -4967,12 +4967,19 @@ processing time. Users who relied on the previous lenient behaviour must fix the
 unconvertible expressions. Scripts with unsupported DataWeave constructs must be rewritten in
 DataSonnet directly, or moved to a `.ds` file.
 
+The conversion also follows the DataWeave semantics more closely, which changes the result of some
+scripts that were converted before. For example, a selector on a missing field now gives `null` (as
+in DataWeave) instead of failing, `default` applies to missing fields, and a field selector on an array
+selects the field of every element. Unknown functions and variables are no longer passed through
+unchanged, but fail the conversion. The converted scripts use the new `dataweave.libsonnet` library of
+`camel-datasonnet`, so DataSonnet scripts generated with `camel transform dataweave` need
+`camel-datasonnet` 4.23 or newer.
+
 === camel-jbang - `camel transform dataweave` no longer aborts on parse errors in directory mode
 
 The `camel transform dataweave` CLI command previously let a `DataWeaveConversionException` propagate
 out of `converter.convert()`, which caused the entire batch to stop at the first file that triggered
-a parse error (e.g. a file using conditional object elements or XML attribute syntax that the parser
-does not yet model). The command now catches the exception per file, prints
+a parse error. The command now catches the exception per file, prints
 `<filename>: <error message>` to standard output, continues with the remaining files, and exits
 non-zero when at least one file failed. Files that convert successfully are still written to the
 output directory.
