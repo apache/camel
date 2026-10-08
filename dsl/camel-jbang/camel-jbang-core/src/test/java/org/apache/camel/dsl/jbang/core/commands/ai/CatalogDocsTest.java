@@ -27,6 +27,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -546,5 +547,46 @@ class CatalogDocsTest {
         doc = CatalogDocs.catalogDoc(catalog, "onException", null, "eip", "logStackTrace", "required", false, false,
                 null);
         assertFalse(doc.containsKey("nestedOptions"), doc.toJson());
+    }
+
+    /** CAMEL-25377: a nested option is named under the element's YAML key, not its catalog name. */
+    @Test
+    void theNestedOptionsAreUnderTheYamlKey() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        var doc = CatalogDocs.catalogDoc(catalog, "routeTemplate", null, "eip", "defaultValue", null, false, false, null);
+        JsonArray nested = (JsonArray) doc.get("nestedOptions");
+        assertTrue(nested != null && !nested.isEmpty(), doc.toJson());
+        JsonObject first = (JsonObject) nested.get(0);
+        assertEquals("parameters", first.getString("under"), first.toJson());
+        assertTrue(doc.getString("nestedHint").contains("parameters: [{defaultValue: ...}]"), doc.toJson());
+    }
+
+    /** CAMEL-25377: the error handler's options are found in its kinds, under the kind to write. */
+    @Test
+    void theNestedOptionsOfTheErrorHandlerAreInItsKinds() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        var doc = CatalogDocs.catalogDoc(catalog, "errorHandler", null, "eip", "deadLetterUri", null, false, false, null);
+        JsonArray nested = (JsonArray) doc.get("nestedOptions");
+        assertTrue(nested != null && !nested.isEmpty(), doc.toJson());
+        JsonObject first = (JsonObject) nested.get(0);
+        assertEquals("deadLetterChannel", first.getString("under"), first.toJson());
+        assertEquals("deadLetterUri", first.getString("name"), first.toJson());
+        assertTrue(doc.getString("nestedHint").contains("deadLetterChannel: {deadLetterUri: ...}"), doc.toJson());
+
+        // an option that several kinds have is listed once
+        doc = CatalogDocs.catalogDoc(catalog, "errorHandler", null, "eip", "useOriginalMessage", null, false, false, null);
+        nested = (JsonArray) doc.get("nestedOptions");
+        assertEquals(1, nested.stream().map(JsonObject.class::cast)
+                .filter(o -> "useOriginalMessage".equals(o.getString("name"))).count(), doc.toJson());
+        first = (JsonObject) nested.get(0);
+        assertEquals("useOriginalMessage", first.getString("name"), first.toJson());
+        assertEquals("deadLetterChannel", first.getString("under"), first.toJson());
+        assertTrue(((JsonArray) first.get("alsoUnder")).contains("defaultErrorHandler"), first.toJson());
+    }
+
+    @Test
+    void yamlKeyFallsBackToTheCatalogName() {
+        EipModel element = new DefaultCamelCatalog().eipModel("templateParameter");
+        assertEquals("templateParameter", CatalogDocs.yamlKey(null, "routeTemplate", "templateParameter", element));
     }
 }

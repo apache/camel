@@ -283,8 +283,11 @@ project `directory` as an argument, the runtime tools take the integration `name
   ones and says how many with `omittedOptions`, `required` lists the required ones, `all` everything, `false`
   none; `optionsFilter` matches a keyword in the option names, descriptions and groups and searches all
   options. When it matches none of an EIP's own options, the options of the EIP's elements are searched and
-  listed under `nestedOptions` with the element they go under (`logStackTrace` of `onException` is an option
-  of its `redeliveryPolicy`). An element written as one of several kinds has `oneOf` with the kinds and a
+  listed under `nestedOptions` with the YAML key of the element they go under (`logStackTrace` of `onException`
+  is an option of its `redeliveryPolicy`; the template parameters of `routeTemplate` go under `parameters`). For
+  an element written as one of several kinds, the options of the kinds are searched: `deadLetterUri` of
+  `errorHandler` goes under `deadLetterChannel`, and an option that several kinds have lists the others in
+  `alsoUnder`. An element written as one of several kinds has `oneOf` with the kinds and a
   `yaml` hint: the kind is the key (`errorHandler: {deadLetterChannel: ...}`, not `errorHandlerType:`).
   With `kind=api` (or a class name such as `Exchange`) it answers with the compact API reference of the core
   classes a bean or script calls: `Exchange`, `Message`, `CamelContext`, `Registry`, `ProducerTemplate`,
