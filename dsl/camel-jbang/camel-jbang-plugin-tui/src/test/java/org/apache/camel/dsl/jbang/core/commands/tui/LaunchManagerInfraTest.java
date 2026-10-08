@@ -112,6 +112,50 @@ class LaunchManagerInfraTest {
         assertThat(notices).contains("Not started: mqtt (its infra services failed to start)");
     }
 
+    @Test
+    void thePullProgressOfAnImage() {
+        // the total is not known until Docker has reported the size of every layer
+        assertThat(LaunchManager.pullProgress("""
+                Pulling docker image: mirror.gcr.io/openfga/openfga:v1.21.0. Please be patient
+                Pulling image layers:  0 pending,  0 downloaded,  0 extracted, (0 bytes/0 bytes)
+                Pulling image layers:  2 pending,  2 downloaded,  1 extracted, (21 MB/? MB)
+                """)).isEqualTo("2 of 4 layers, 21 MB");
+        assertThat(LaunchManager.pullProgress(
+                "Pulling image layers:  3 pending,  2 downloaded,  0 extracted, (1.2 GB/3.4 GB)"))
+                .isEqualTo("2 of 5 layers, 1.2 GB of 3.4 GB (35%)");
+        // nothing pulled yet, and a pull that has completed
+        assertThat(LaunchManager.pullProgress(
+                "Pulling image layers:  0 pending,  0 downloaded,  0 extracted, (0 bytes/0 bytes)")).isNull();
+        assertThat(LaunchManager.pullProgress("""
+                Pulling image layers:  1 pending,  3 downloaded,  3 extracted, (22 MB/? MB)
+                Pull complete. 4 layers, pulled in 3s (downloaded 22 MB at 7 MB/s)
+                """)).isNull();
+    }
+
+    @Test
+    void theProgressOfAPullIsShownWhileTheInfraStarts() throws Exception {
+        List<String> notices = new ArrayList<>();
+        lm.setNotificationCallback((msg, error) -> notices.add(msg));
+        lm.launchInfra("ollama", List.of("sh", "-c",
+                "echo 'Pulling image layers:  3 pending,  2 downloaded,  0 extracted, (1.2 GB/3.4 GB)'; sleep 30"));
+        long deadline = System.currentTimeMillis() + 10_000;
+        while (notices.isEmpty() && System.currentTimeMillis() < deadline) {
+            lm.tick(System.currentTimeMillis());
+            Thread.sleep(50);
+        }
+
+        assertThat(notices).containsExactly("Pulling image of ollama: 2 of 5 layers, 1.2 GB of 3.4 GB (35%)");
+        // the same progress is not shown again
+        lm.tick(System.currentTimeMillis());
+        assertThat(notices).hasSize(1);
+        ProcessHandle.current().children()
+                .filter(p -> p.info().command().map(c -> c.endsWith("sh")).orElse(false))
+                .forEach(ph -> {
+                    ph.descendants().forEach(ProcessHandle::destroy);
+                    ph.destroy();
+                });
+    }
+
     private static InfraInfo infra(String alias) {
         InfraInfo info = new InfraInfo();
         info.alias = alias;
