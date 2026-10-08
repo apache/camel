@@ -2011,6 +2011,14 @@ polyglot `Value` itself needs to work with these types instead.
 
 `JavaScriptHelper.newContext()` is deprecated: contexts are created by the language from its shared engine.
 
+=== camel-javascript, camel-python - script variables use the Groovy names
+
+The `js` and `python` languages now bind the script variables with the names the `groovy` language uses:
+`camelContext`, `request`, `header`, `exchangeProperty`, `exchangeProperties` and `exception` are new, next to
+`exchange`, `exchangeId`, `message`, `body`, `headers`, `variable` and `variables`. In `js` and `python` the
+`context` and `properties` variables are deprecated in favour of `camelContext` and `exchangeProperties`; they still
+work. The new `python3` language binds only the Groovy names, and in its default data-only mode only the data variables.
+
 === camel-rest, camel-rest-openapi, camel-jbang - camel-http is the default REST client
 
 When a REST producer (`rest:` in producer mode, or `rest-openapi` calling an operation of a contract) has no
