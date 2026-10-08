@@ -154,7 +154,12 @@ public class DataWeaveConverter {
         } else if (node instanceof ExistenceCheck ec) {
             return emitExistenceCheck(ec);
         } else if (node instanceof DoubleDollar) {
-            return "acc"; // $$ is the reduce accumulator; use the 'acc' name convention
+            // $$ means accumulator only inside reduce. In map/filter/mapObject/pluck it means index or key.
+            // Outside the reduce-shorthand emitter this context is unknown, so emit a TODO.
+            todoCount++;
+            return includeComments
+                    ? "/* TODO: manual conversion needed -- $$ outside reduce context */" + "\nnull"
+                    : "null";
         } else if (node instanceof ObjectLit obj) {
             return emitObjectLit(obj);
         } else if (node instanceof ArrayLit arr) {
@@ -226,10 +231,11 @@ public class DataWeaveConverter {
         // Emit as a TODO comment and a placeholder so the converter output is syntactically valid.
         if (value.contains("$(")) {
             todoCount++;
+            String escapedInterp = value.replaceAll("(?<!\\\\)\"", "\\\\\"");
             return includeComments
                     ? "/* TODO: manual conversion needed -- string interpolation: \"" + value + "\"*/\n\""
-                      + value.replace("\"", "\\\"") + "\""
-                    : "\"" + value.replace("\"", "\\\"") + "\"";
+                      + escapedInterp + "\""
+                    : "\"" + escapedInterp + "\"";
         }
         // The lexer preserves escape sequences verbatim (e.g. \" is stored as \").
         // When the source was a single-quoted DataWeave string, bare double-quote characters
@@ -532,8 +538,8 @@ public class DataWeaveConverter {
         // DataWeave shorthand without an explicit initial value uses the first element
         // as the starting accumulator: std.foldl(function(acc, item) body, arr[1:], arr[0]).
         String body = emitReduceShorthandBody(re.lambda());
-        return "local _arr = " + collection + ";\n"
-               + "if std.length(_arr) == 0 then null else std.foldl(function(acc, item) " + body + ", _arr[1:], _arr[0])";
+        return "(local _arr = " + collection + ";\n"
+               + "if std.length(_arr) == 0 then null else std.foldl(function(acc, item) " + body + ", _arr[1:], _arr[0]))";
     }
 
     /**
@@ -624,7 +630,13 @@ public class DataWeaveConverter {
         if (node instanceof IndexAccess ia) {
             return containsShorthand(ia.object()) || containsShorthand(ia.index());
         }
-        return false;
+        // Unknown node type: default to true (conservative — prevents silent wrong output).
+        // Only return false for nodes known to never contain shorthand (literals, Identifier).
+        if (node instanceof NumberLit || node instanceof StringLit || node instanceof BooleanLit
+                || node instanceof NullLit || node instanceof Identifier) {
+            return false;
+        }
+        return true;
     }
 
     private String emitFlatMap(FlatMapExpr fme) {

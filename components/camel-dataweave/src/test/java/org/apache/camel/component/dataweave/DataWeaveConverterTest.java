@@ -525,10 +525,12 @@ class DataWeaveConverterTest {
     }
 
     @Test
-    void testDoubleDollarLexedCorrectly() {
-        // $$ must lex as DOLLAR_DOLLAR and emit as 'acc' in the converter
+    void testDoubleDollarOutsideReduce() {
+        // $$ outside a reduce shorthand context is ambiguous (index in map, key in mapObject).
+        // The converter emits a TODO rather than silently binding 'acc'.
         String result = converter.convertExpression("$$");
-        assertEquals("acc", result);
+        assertTrue(result.contains("null"), "Should emit null placeholder, got: " + result);
+        assertEquals(1, converter.getTodoCount(), "$$ outside reduce should count as TODO");
     }
 
     @Test

@@ -103,6 +103,11 @@ public class DataWeaveParser {
                 advance(); // var
                 String name = current().value();
                 advance(); // name
+                // Skip optional type annotation: var rate: Number = 0.08
+                if (check(TokenType.COLON)) {
+                    advance(); // :
+                    skipTypeExpression();
+                }
                 expect(TokenType.ASSIGN); // =
                 DataWeaveAst value = parseExpression();
                 declarations.add(new DataWeaveAst.VarDecl(name, value, null));
