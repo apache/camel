@@ -132,8 +132,8 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
         if (Boolean.TRUE.equals(handled)) {
             return HANDLING_HANDLED;
         }
-        boolean decidedAtRuntime = oe.getContinued() != null && continued == null
-                || oe.getHandled() != null && handled == null;
+        boolean decidedAtRuntime = (oe.getContinued() != null && continued == null)
+                || (oe.getHandled() != null && handled == null);
         return decidedAtRuntime ? null : HANDLING_NOT_HANDLED;
     }
 
