@@ -261,9 +261,10 @@ public class FileOperations implements GenericFileOperations<File> {
      * The jailStartingDirectory check of the producer is lexical (see {@code GenericFileProducer.createFileName}), so a
      * symbolic link inside the starting directory (a link to a file, or a directory segment of the name) would redirect
      * the write outside of it. Only paths that are lexically inside the starting directory are checked, so a
-     * tempFileName the route author placed outside of it (such as ../work) keeps working.
+     * tempFileName the route author placed outside of it (such as ../work) keeps working. The producer also calls this
+     * before it creates missing parent directories of the target.
      */
-    private void jailToStartingDirectory(File target) {
+    void jailToStartingDirectory(File target) {
         if (!endpoint.isJailStartingDirectory()) {
             return;
         }

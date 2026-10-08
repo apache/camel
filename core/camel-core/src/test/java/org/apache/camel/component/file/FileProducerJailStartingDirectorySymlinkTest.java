@@ -58,6 +58,16 @@ class FileProducerJailStartingDirectorySymlinkTest extends ContextTestSupport {
     }
 
     @Test
+    void missingDirectoryBelowDirectoryLinkToOutsideIsNotCreated() {
+        // autoCreate (the default) creates the missing parent directories before the file is written
+        createSymbolicLink(out.resolve("link"), elsewhere);
+
+        assertRejected(fileUri(out, ""), "link/new/hello.txt");
+
+        assertFalse(Files.exists(elsewhere.resolve("new")));
+    }
+
+    @Test
     void parentSegmentAfterDirectoryLinkIsRejected() {
         // lexically out/hello.txt, but the filesystem resolves link/.. to the parent of the link target
         createSymbolicLink(out.resolve("link"), elsewhere);
