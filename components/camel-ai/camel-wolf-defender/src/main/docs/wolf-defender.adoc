@@ -192,8 +192,25 @@ DJL_OFFLINE=true RUST_FLAVOR=cpu mvn test-compile exec:java \
 
 Ordinary unit tests use synthetic ONNX graphs and a tiny tokenizer; they need no model download or network inference.
 Their generator is `src/test/python/generate_fixtures.py`. Native tests require a supported runtime platform.
-The opt-in integration test validates exact token IDs and injection probabilities against Python Tokenizers 0.22.2
+The opt-in integration tests use `camel-test-infra-wolf-defender` to provision the pinned model files.
+They validate exact token IDs and injection probabilities against Python Tokenizers 0.22.2
 and ONNX Runtime 1.24.2 reference outputs for the same pinned FP32 artifact. Probability tolerance is `1e-6` absolute.
+Both native unit tests and model integration tests skip platforms without bundled native libraries, including
+`ppc64le` and `s390x`. These tests skip before provisioning model files on those platforms.
+
+To download the pinned model into a persistent cache and run the model tests:
+
+[source,bash]
+----
+DJL_OFFLINE=true RUST_FLAVOR=cpu mvn verify -DwolfDefender.download=true
+----
+
+The default cache is `${user.home}/.camel-test/wolf-defender/<revision>`.
+Set `-DwolfDefender.cacheDirectory=/path/to/cache` to change the cache root. Downloads are checksum-verified,
+published only after verification, and reused across test runs. The service serializes access to the cache
+across threads and processes. Ordinary test runs do not download model files.
+
+To use existing files without downloading or modifying them:
 
 [source,bash]
 ----
@@ -201,8 +218,9 @@ DJL_OFFLINE=true RUST_FLAVOR=cpu mvn verify \
   -Dit.test=WolfDefenderModelIT -DwolfDefender.modelDirectory=/opt/models/wolf-defender-small
 ----
 
-Run this opt-in check from the component directory after building Camel. The model-directory property
+Run these opt-in checks from the component directory after building Camel. Either option
 also enables the YAML test dependency, which is intentionally absent from the normal reactor build.
+An explicit model directory takes precedence over the download option and its files must pass checksum validation.
 The reference inputs cover benign business text, an injection instruction and benign security discussion.
 This establishes adapter/tokenizer parity for those fixtures, not a detection-quality benchmark or performance claim.
 

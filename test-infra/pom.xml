@@ -95,6 +95,7 @@
         <module>camel-test-infra-cli</module>
         <module>camel-test-infra-qdrant</module>
         <module>camel-test-infra-ollama</module>
+        <module>camel-test-infra-wolf-defender</module>
         <module>camel-test-infra-milvus</module>
         <module>camel-test-infra-hazelcast</module>
         <module>camel-test-infra-hivemq</module>
