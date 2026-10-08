@@ -35,6 +35,8 @@ public class NatsConsumerLoadIT extends NatsITSupport {
         Options options = new Options.Builder().server("nats://" + service.getServiceAddress()).build();
         Connection connection = Nats.connect(options);
 
+        waitForNatsConsumers(1);
+
         for (int i = 0; i < 10000; i++) {
             connection.publish("test", ("test" + i).getBytes());
         }

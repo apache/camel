@@ -37,6 +37,8 @@ public class NatsConsumerReplyToIT extends NatsITSupport {
         mockReplyEndpoint.expectedBodiesReceived("Bye World");
         mockReplyEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "myReplyQueue");
 
+        waitForNatsConsumers(2);
+
         template.sendBody("direct:send", "World");
 
         mockResultEndpoint.setAssertPeriod(5000);

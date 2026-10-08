@@ -29,6 +29,9 @@ public class NatsConsumerMaxMessagesIT extends NatsITSupport {
     @Test
     public void testMaxConsumer() throws InterruptedException {
         mockResultEndpoint.setExpectedMessageCount(5);
+
+        waitForNatsConsumers(1);
+
         template.sendBody("direct:send", "test");
         template.sendBody("direct:send", "test1");
         template.sendBody("direct:send", "test2");
