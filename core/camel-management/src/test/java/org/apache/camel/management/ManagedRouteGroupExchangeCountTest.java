@@ -180,7 +180,6 @@ public class ManagedRouteGroupExchangeCountTest extends ManagementTestSupport {
                         .wireTap("direct:wt-target");
                 from("direct:wt-target").routeId("wt-target").routeGroup("g")
                         .to("mock:wt-done");
-
             }
         };
     }
