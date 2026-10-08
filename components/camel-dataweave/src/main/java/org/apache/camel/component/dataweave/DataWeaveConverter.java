@@ -528,13 +528,53 @@ public class DataWeaveConverter {
             }
         }
         // Shorthand form: payload.items reduce ($$ + $.price)
-        // $$ is the accumulator and $ is the current item, but LambdaShorthand cannot be emitted
-        // as a simple reference (it emits as 'function(x) ...' which is wrong inside a reduce body).
-        // Faithful conversion requires a dedicated reduce-body re-emitter; emit as TODO.
-        todoCount++;
-        return includeComments
-                ? "// TODO: manual conversion needed -- reduce shorthand with $$/$ cannot be auto-converted\nnull"
-                : "null";
+        // $$ is the accumulator ($$ -> acc) and $ is the current item ($ -> item).
+        // DataWeave shorthand without an explicit initial value uses the first element
+        // as the starting accumulator: std.foldl(function(acc, item) body, arr[1:], arr[0]).
+        String body = emitReduceShorthandBody(re.lambda());
+        return "local _arr = " + collection + ";\n"
+               + "std.foldl(function(acc, item) " + body + ", _arr[1:], _arr[0])";
+    }
+
+    /**
+     * Emit a reduce shorthand body, rewriting {@code $$} to {@code acc} and {@code $} (optionally with field access) to
+     * {@code item} or {@code item.field}. Falls back to normal {@code emitNode} for any sub-expression that doesn't
+     * contain shorthand references.
+     */
+    private String emitReduceShorthandBody(DataWeaveAst node) {
+        if (node instanceof DoubleDollar) {
+            return "acc";
+        }
+        if (node instanceof LambdaShorthand ls) {
+            if (ls.fields().isEmpty()) {
+                return "item";
+            }
+            return "item." + String.join(".", ls.fields());
+        }
+        if (node instanceof BinaryOp op) {
+            String left = emitReduceShorthandBody(op.left());
+            String right = emitReduceShorthandBody(op.right());
+            return switch (op.op()) {
+                case "++" -> left + " + " + right;
+                case "and" -> left + " && " + right;
+                case "or" -> left + " || " + right;
+                default -> left + " " + op.op() + " " + right;
+            };
+        }
+        if (node instanceof Parens p) {
+            return "(" + emitReduceShorthandBody(p.expr()) + ")";
+        }
+        if (node instanceof FieldAccess fa) {
+            return emitReduceShorthandBody(fa.object()) + "." + fa.field();
+        }
+        if (node instanceof UnaryOp op) {
+            return switch (op.op()) {
+                case "not" -> "!" + emitReduceShorthandBody(op.operand());
+                default -> op.op() + emitReduceShorthandBody(op.operand());
+            };
+        }
+        // For anything else (literals, identifiers, etc.) fall back to normal emission
+        return emitNode(node);
     }
 
     private String emitFlatMap(FlatMapExpr fme) {
@@ -565,7 +605,9 @@ public class DataWeaveConverter {
         if (gbe.lambda() instanceof Lambda lam) {
             List<String> paramNames = lambdaParamNames(lam);
             String body = emitNode(lam.body());
-            // DataSonnet groupBy requires string keys; wrap with std.toString() for safety.
+            // Jsonnet object keys must be strings. DataWeave allows any type as a groupBy key,
+            // so we wrap with std.toString() unconditionally to ensure valid Jsonnet output.
+            // If the key expression is already a string, std.toString() is a no-op.
             return "c.groupBy(" + collection + ", function(" + paramNames.get(0) + ") std.toString(" + body + "))";
         }
         return "c.groupBy(" + collection + ", function(x) std.toString(" + emitNode(gbe.lambda()) + "))";

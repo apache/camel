@@ -618,6 +618,40 @@ class DataWeaveConverterTest {
         assertFalse(result.contains("Number"), "type name must not appear in output, got: " + result);
     }
 
+    @Test
+    void testTypedFunParamsUnion() {
+        // DW: fun f(a: String | Null) = a  -- union type annotation with | must be stripped
+        // Before this fix, '|' was silently dropped by the lexer and 'Null' leaked into the body.
+        String result = converter.convertExpression("fun f(a: String | Null) = a\nf(payload.x)");
+        assertTrue(result.contains("local f(a) ="), "union type param should be stripped, got: " + result);
+        // 'Null' must not appear as a null-literal emitted into the body
+        assertFalse(result.contains("null\n"), "union type token 'Null' must not leak into body, got: " + result);
+    }
+
+    @Test
+    void testReduceShorthandAccumulatorPlusField() {
+        // DW: payload.items reduce ($$ + $.price)
+        // Shorthand: $$ = accumulator, $ = current item (optionally .field)
+        // Expected: std.foldl using first element as initial accumulator
+        String result = converter.convertExpression("payload.items reduce ($$ + $.price)");
+        assertTrue(result.contains("std.foldl("), "Should use std.foldl, got: " + result);
+        assertTrue(result.contains("function(acc, item)"), "Should have acc, item params, got: " + result);
+        assertTrue(result.contains("acc + item.price"),
+                "Body should rewrite $$ -> acc and $.price -> item.price, got: " + result);
+        assertEquals(0, converter.getTodoCount(), "Reduce shorthand should not produce TODOs, got: " + result);
+    }
+
+    @Test
+    void testReduceShorthandConcatItems() {
+        // DW: payload.items reduce ($$ ++ $)
+        // $$ = accumulator, $ = whole item (no field access)
+        String result = converter.convertExpression("payload.items reduce ($$ ++ $)");
+        assertTrue(result.contains("std.foldl("), "Should use std.foldl, got: " + result);
+        assertTrue(result.contains("function(acc, item)"), "Should have acc, item params, got: " + result);
+        assertTrue(result.contains("acc + item"), "Body should rewrite $$ -> acc and $ -> item, got: " + result);
+        assertEquals(0, converter.getTodoCount(), "Reduce shorthand should not produce TODOs, got: " + result);
+    }
+
     private String loadResource(String path) throws IOException {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {
             assertNotNull(is, "Resource not found: " + path);

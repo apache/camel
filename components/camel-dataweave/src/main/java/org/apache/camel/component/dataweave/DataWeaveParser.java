@@ -829,7 +829,7 @@ public class DataWeaveParser {
                     }
                     advance();
                 }
-            } else if (current().value().equals("|")) {
+            } else if (check(TokenType.PIPE)) {
                 // Union type: skip '|' and the next type expression
                 advance(); // |
                 skipTypeExpression();

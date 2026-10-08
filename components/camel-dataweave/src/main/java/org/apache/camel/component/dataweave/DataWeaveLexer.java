@@ -67,6 +67,7 @@ public class DataWeaveLexer {
         // Special
         HEADER_SEPARATOR, // ---
         PERCENT,          // %
+        PIPE,             // |   (type union separator)
         TILDE,            // ~
         EOF
     }
@@ -316,6 +317,7 @@ public class DataWeaveLexer {
             }
             case '@' -> new Token(TokenType.AT, "@", startLine, startCol);
             case '?' -> new Token(TokenType.QUESTION, "?", startLine, startCol);
+            case '|' -> new Token(TokenType.PIPE, "|", startLine, startCol);
             case '%' -> new Token(TokenType.PERCENT, "%", startLine, startCol);
             case '~' -> {
                 if (pos < input.length() && input.charAt(pos) == '=') {
