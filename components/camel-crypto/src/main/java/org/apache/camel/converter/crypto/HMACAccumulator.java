@@ -96,15 +96,32 @@ public class HMACAccumulator {
         return appended;
     }
 
+    /**
+     * The single message reported for every authentication failure. Bad padding and a bad MAC must be indistinguishable
+     * to a caller who can submit ciphertext and observe the outcome, because telling them apart is what turns a CBC
+     * decryption into a padding oracle.
+     */
+    static final String AUTHENTICATION_FAILED = "Message authentication failed";
+
     public void validate() {
+        validate(false);
+    }
+
+    /**
+     * Validates the appended MAC. When the cipher has already failed (bad padding) the MAC is still finalized and
+     * compared before failing, so that a padding failure costs the same final work as a MAC failure and the two cannot
+     * be told apart by timing either.
+     *
+     * @param cipherFailed whether decryption already failed, in which case this always fails
+     */
+    void validate(boolean cipherFailed) {
         byte[] actual = getCalculatedMac();
         byte[] expected = getAppendedMac();
         // Use a constant-time comparison to avoid leaking MAC-match progress through timing (side-channel).
-        if (!MessageDigest.isEqual(expected, actual)) {
-            throw new IllegalStateException(
-                    "Expected mac did not match actual mac\nexpected:"
-                                            + byteArrayToHexString(expected) + "\n     actual:"
-                                            + byteArrayToHexString(actual));
+        if (!MessageDigest.isEqual(expected, actual) || cipherFailed) {
+            // The computed MAC is HMAC_k over the plaintext that was just produced, so reporting it hands the
+            // caller a value they could not otherwise compute. Neither MAC belongs in the message.
+            throw new IllegalStateException(AUTHENTICATION_FAILED);
         }
     }
 

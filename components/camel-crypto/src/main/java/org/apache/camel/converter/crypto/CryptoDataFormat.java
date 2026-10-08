@@ -21,6 +21,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.spec.AlgorithmParameterSpec;
 
@@ -166,8 +167,25 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
                 byte[] buffer = new byte[bufferSize];
                 hmac.attachStream(osb);
                 int read;
-                while ((read = cipherStream.read(buffer)) >= 0) {
-                    hmac.decryptUpdate(buffer, read);
+                try {
+                    while ((read = cipherStream.read(buffer)) >= 0) {
+                        hmac.decryptUpdate(buffer, read);
+                    }
+                } catch (IOException e) {
+                    if (shouldAppendHMAC && e.getCause() instanceof GeneralSecurityException) {
+                        // CipherInputStream surfaces bad padding as an IOException wrapping
+                        // BadPaddingException, while a bad MAC surfaces from validate() below. Reporting the two
+                        // differently is exactly what lets a caller who can submit ciphertext and watch the
+                        // outcome tell them apart, which is the padding-oracle distinguisher. Report the same
+                        // authentication failure for both - but only when a MAC is actually appended: with
+                        // shouldAppendHMAC=false nothing is authenticating, so calling it an authentication failure
+                        // would misdescribe a plain padding error and drop its cause.
+                        LOG.debug("Reporting cipher failure as an authentication failure", e);
+                        // Still finalize and compare the MAC, as a bad MAC does, so the two failures also take the
+                        // same final work and cannot be told apart by timing. This always throws.
+                        hmac.validate(true);
+                    }
+                    throw e;
                 }
                 hmac.validate();
                 return osb.build();
