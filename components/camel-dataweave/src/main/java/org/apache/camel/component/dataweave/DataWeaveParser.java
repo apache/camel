@@ -104,7 +104,7 @@ public class DataWeaveParser {
                 String name = current().value();
                 advance(); // name
                 expect(TokenType.ASSIGN); // =
-                DataWeaveAst value = parseOr();
+                DataWeaveAst value = parseExpression();
                 declarations.add(new DataWeaveAst.VarDecl(name, value, null));
             } else if (checkIdentifier("fun")) {
                 // fun declaration in header: emit as local function in body
@@ -133,7 +133,7 @@ public class DataWeaveParser {
                     skipTypeExpression(); // return type
                 }
                 expect(TokenType.ASSIGN); // =
-                DataWeaveAst funBody = parseOr();
+                DataWeaveAst funBody = parseExpression();
                 declarations.add(new DataWeaveAst.FunDecl(name, params, funBody, null));
             } else {
                 advance(); // skip unknown header tokens

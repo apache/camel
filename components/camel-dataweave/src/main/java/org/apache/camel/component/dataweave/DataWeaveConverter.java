@@ -533,7 +533,7 @@ public class DataWeaveConverter {
         // as the starting accumulator: std.foldl(function(acc, item) body, arr[1:], arr[0]).
         String body = emitReduceShorthandBody(re.lambda());
         return "local _arr = " + collection + ";\n"
-               + "std.foldl(function(acc, item) " + body + ", _arr[1:], _arr[0])";
+               + "if std.length(_arr) == 0 then null else std.foldl(function(acc, item) " + body + ", _arr[1:], _arr[0])";
     }
 
     /**
@@ -566,6 +566,9 @@ public class DataWeaveConverter {
         }
         if (node instanceof FieldAccess fa) {
             return emitReduceShorthandBody(fa.object()) + "." + fa.field();
+        }
+        if (node instanceof IndexAccess ia) {
+            return emitReduceShorthandBody(ia.object()) + "[" + emitReduceShorthandBody(ia.index()) + "]";
         }
         if (node instanceof UnaryOp op) {
             return switch (op.op()) {
@@ -617,6 +620,9 @@ public class DataWeaveConverter {
         }
         if (node instanceof IfElse ie) {
             return containsShorthand(ie.condition()) || containsShorthand(ie.thenExpr()) || containsShorthand(ie.elseExpr());
+        }
+        if (node instanceof IndexAccess ia) {
+            return containsShorthand(ia.object()) || containsShorthand(ia.index());
         }
         return false;
     }

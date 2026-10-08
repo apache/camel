@@ -671,6 +671,64 @@ class DataWeaveConverterTest {
         assertEquals(0, converter.getTodoCount(), "Reduce shorthand should not produce TODOs, got: " + result);
     }
 
+    @Test
+    void testReduceShorthandEmptyArrayGuard() {
+        // DW: payload.items reduce ($$ + $.price) -- the emitted foldl must guard against empty arrays.
+        // DataWeave's reduce without an initial value on an empty list returns null;
+        // Jsonnet's _arr[0] would throw "Array index 0 out of bounds".
+        String result = converter.convertExpression("payload.items reduce ($$ + $.price)");
+        assertTrue(result.contains("std.length(_arr) == 0"), "Empty-array guard missing, got: " + result);
+        assertTrue(result.contains("then null"), "Null fallback for empty array missing, got: " + result);
+    }
+
+    @Test
+    void testReduceShorthandIndexAccess() {
+        // DW: payload.items reduce ($$ + $[0]) -- shorthand body with index access on $
+        // containsShorthand must recurse into IndexAccess, and emitReduceShorthandBody must handle it.
+        // Expected body: acc + item[0]  (not emitNode's function(x) x[0])
+        String result = converter.convertExpression("payload.items reduce ($$ + $[0])");
+        assertTrue(result.contains("std.foldl("), "Should use std.foldl, got: " + result);
+        assertTrue(result.contains("item[0]"), "IndexAccess shorthand body must emit item[0], got: " + result);
+        assertFalse(result.contains("function(x)"),
+                "emitNode fallback must not be used for shorthand IndexAccess, got: " + result);
+        assertEquals(0, converter.getTodoCount(), "Reduce shorthand index access should not produce TODOs, got: " + result);
+    }
+
+    @Test
+    void testHeaderVarComplexValue() {
+        // DW header var with a complex value (if/else) — parseExpression() handles if/else,
+        // parseOr() does not. Before the fix, the if/else would be truncated.
+        String dw = """
+                %dw 2.0
+                output application/json
+                var label = if (true) "yes" else "no"
+                ---
+                label
+                """;
+        String result = converter.convert(dw);
+        assertTrue(result.contains("local label ="), "var label must emit as local binding, got: " + result);
+        // The if/else must appear in the var value, not be cut off
+        assertTrue(result.contains("\"yes\"") && result.contains("\"no\""),
+                "Complex var value (if/else) must be fully emitted, got: " + result);
+    }
+
+    @Test
+    void testHeaderFunComplexBody() {
+        // DW header fun with an if/else body — parseExpression() handles if/else, parseOr() does not.
+        String dw = """
+                %dw 2.0
+                output application/json
+                fun toUpper(x) = if (x != null) upper(x) else ""
+                ---
+                toUpper(payload.name)
+                """;
+        String result = converter.convert(dw);
+        assertTrue(result.contains("local toUpper(x) ="), "fun toUpper must emit as local function, got: " + result);
+        // The if/else body must be present in the output
+        assertTrue(result.contains("\"\"") || result.contains("else"),
+                "Complex fun body (if/else) must be fully emitted, got: " + result);
+    }
+
     private String loadResource(String path) throws IOException {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {
             assertNotNull(is, "Resource not found: " + path);
