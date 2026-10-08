@@ -27,8 +27,9 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * CAMEL-25429: a send from an onException clause or a dead letter channel is an error path, not a call, and only from a
- * route whose error handler acts: a route with no error handler leaves the failure to its caller.
+ * CAMEL-25429: a send from an onException clause or the error handler is an error path, not a call, and only from a
+ * route whose error handler acts: a route with no error handler leaves the failure to its caller. An error path says
+ * what happens to the failure.
  */
 class DefaultRouteTopologyDumperErrorPathTest extends ContextTestSupport {
 
@@ -40,6 +41,9 @@ class DefaultRouteTopologyDumperErrorPathTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("direct:parked").maximumRedeliveries(2));
 
                 onException(IllegalStateException.class).handled(true).to("direct:parked");
+                onException(IllegalArgumentException.class).continued(true).to("direct:audit");
+                onException(UnsupportedOperationException.class).to("direct:alert");
+                onException(ArithmeticException.class).handled(header("handle").isEqualTo("yes")).to("direct:review");
 
                 from("direct:checkout").routeId("checkout")
                         .to("direct:charge");
@@ -47,28 +51,43 @@ class DefaultRouteTopologyDumperErrorPathTest extends ContextTestSupport {
                 from("direct:charge").routeId("payment-provider").errorHandler(noErrorHandler())
                         .throwException(new IllegalStateException("card declined"));
 
-                from("direct:parked").routeId("parked")
-                        .to("mock:parked");
+                from("direct:parked").routeId("parked").to("mock:parked");
+                from("direct:audit").routeId("audit").to("mock:audit");
+                from("direct:alert").routeId("alert").to("mock:alert");
+                from("direct:review").routeId("review").to("mock:review");
             }
         };
     }
 
     @Test
     void errorPathsAreNotCalls() {
-        List<TopologyEdge> edges = new DefaultRouteTopologyDumper().dumpTopology(context).edges();
+        List<TopologyEdge> edges = edges();
 
         assertThat(edges).filteredOn(e -> !e.isErrorPath())
                 .extracting(e -> e.fromRouteId() + "->" + e.toRouteId())
                 .containsExactly("checkout->payment-provider");
-        // the error paths of checkout: its onException and its dead letter channel
-        assertThat(edges).filteredOn(e -> "checkout".equals(e.fromRouteId()) && e.isErrorPath())
-                .extracting(TopologyEdge::kind)
-                .containsExactlyInAnyOrder(RouteTopologyDumper.EDGE_ON_EXCEPTION, RouteTopologyDumper.EDGE_DEAD_LETTER);
         // payment-provider has no error handler: its failure goes back to checkout
-        assertThat(edges).noneMatch(e -> "payment-provider".equals(e.fromRouteId()) && "parked".equals(e.toRouteId()));
+        assertThat(edges).noneMatch(e -> "payment-provider".equals(e.fromRouteId()) && e.isErrorPath());
         // parked is handled by the same error handler: an error path to itself, never a call
         assertThat(edges).filteredOn(e -> "parked".equals(e.fromRouteId()) && "parked".equals(e.toRouteId()))
-                .allMatch(TopologyEdge::isErrorPath);
+                .isNotEmpty().allMatch(TopologyEdge::isErrorPath);
+    }
+
+    @Test
+    void anErrorPathSaysWhatHappensToTheFailure() {
+        List<TopologyEdge> checkout = edges().stream()
+                .filter(e -> "checkout".equals(e.fromRouteId()) && e.isErrorPath()).toList();
+
+        assertThat(checkout).extracting(e -> e.toRouteId() + " " + e.via() + " " + e.handling())
+                .containsExactlyInAnyOrder(
+                        // the dead letter channel and an onException with handled(true): the message ends there
+                        "parked errorHandler handled",
+                        "parked onException handled",
+                        "audit onException continued",
+                        // a side trip: the failure goes on to the caller
+                        "alert onException notHandled",
+                        // a predicate decides at runtime
+                        "review onException null");
     }
 
     @Test
@@ -76,6 +95,12 @@ class DefaultRouteTopologyDumperErrorPathTest extends ContextTestSupport {
         TopologyEdge edge = new TopologyEdge("a", "b", "direct:b", "internal");
 
         assertThat(edge.kind()).isEqualTo(RouteTopologyDumper.EDGE_CALL);
+        assertThat(edge.via()).isNull();
+        assertThat(edge.handling()).isNull();
         assertThat(edge.isErrorPath()).isFalse();
+    }
+
+    private List<TopologyEdge> edges() {
+        return new DefaultRouteTopologyDumper().dumpTopology(context).edges();
     }
 }

@@ -35,11 +35,11 @@ class TopologyHelperErrorPathTest {
     void theErrorPathsAreLeftOutUnlessAskedFor() {
         JsonObject root = new JsonObject();
         JsonArray edges = new JsonArray();
-        edges.add(edge("checkout", "payment-provider", "call"));
-        edges.add(edge("checkout", "parked", "deadLetter"));
-        edges.add(edge("parked", "parked", "onException"));
+        edges.add(edge("checkout", "payment-provider", "call", null, null));
+        edges.add(edge("checkout", "parked", "error", "errorHandler", "handled"));
+        edges.add(edge("parked", "parked", "error", "onException", "notHandled"));
         // an older integration does not say the kind
-        edges.add(edge("legacy", "parked", null));
+        edges.add(edge("legacy", "parked", null, null, null));
         root.put("edges", edges);
 
         List<TopologyEdgeInfo> calls = TopologyHelper.parseEdges(root);
@@ -48,11 +48,11 @@ class TopologyHelperErrorPathTest {
 
         List<TopologyEdgeInfo> all = TopologyHelper.parseEdges(root, true);
         assertThat(all).hasSize(4);
-        assertThat(all).filteredOn(TopologyEdgeInfo::isErrorPath).extracting(e -> e.kind)
-                .containsExactly("deadLetter", "onException");
+        assertThat(all).filteredOn(TopologyEdgeInfo::isErrorPath).extracting(e -> e.via + "/" + e.handling)
+                .containsExactly("errorHandler/handled", "onException/notHandled");
     }
 
-    private static JsonObject edge(String from, String to, String kind) {
+    private static JsonObject edge(String from, String to, String kind, String via, String handling) {
         JsonObject e = new JsonObject();
         e.put("fromRouteId", from);
         e.put("toRouteId", to);
@@ -60,6 +60,12 @@ class TopologyHelperErrorPathTest {
         e.put("connectionType", "internal");
         if (kind != null) {
             e.put("kind", kind);
+        }
+        if (via != null) {
+            e.put("via", via);
+        }
+        if (handling != null) {
+            e.put("handling", handling);
         }
         return e;
     }

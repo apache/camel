@@ -6979,7 +6979,15 @@
 													},
 													"kind": {
 														"type": "string",
-														"description": "How the source route reaches the target: call as it routes a message, or an error path (onException, deadLetter) when it handles a failure"
+														"description": "call when the source route sends as it routes a message, or error when it sends only when it handles a failure (an error path)"
+													},
+													"via": {
+														"type": "string",
+														"description": "For an error path, what sends: errorHandler or onException"
+													},
+													"handling": {
+														"type": "string",
+														"description": "For an error path, what happens to the failure: handled (the message ends there), continued (the route goes on after it) or notHandled (the failure goes on to the caller); absent when a predicate decides it"
 													}
 												}
 											},

@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.model.EndpointRequiredDefinition;
+import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -36,6 +37,7 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
+import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.annotations.JdkService;
@@ -80,15 +82,20 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
                 if (onException && !handlesFailures) {
                     continue;
                 }
-                String kind = onException ? EDGE_ON_EXCEPTION : EDGE_CALL;
+                String kind = onException ? EDGE_ERROR : EDGE_CALL;
+                String via = onException ? VIA_ON_EXCEPTION : null;
+                String handling = onException ? handling((OnExceptionDefinition) output) : null;
                 Collection<EndpointRequiredDefinition> sends
                         = ProcessorDefinitionHelper.filterTypeInOutputs(List.of(output), EndpointRequiredDefinition.class);
                 for (EndpointRequiredDefinition erd : sends) {
-                    addEdges(context, edges, inputUriToRouteIds, rd.getRouteId(), erd.getEndpointUri(), kind);
+                    addEdges(context, edges, inputUriToRouteIds, rd.getRouteId(), erd.getEndpointUri(), kind, via,
+                            handling);
                 }
             }
             if (handlesFailures && eh instanceof DeadLetterChannelDefinition dlc && dlc.getDeadLetterUri() != null) {
-                addEdges(context, edges, inputUriToRouteIds, rd.getRouteId(), dlc.getDeadLetterUri(), EDGE_DEAD_LETTER);
+                // a dead letter channel handles the failure: the message ends at the dead letter uri
+                addEdges(context, edges, inputUriToRouteIds, rd.getRouteId(), dlc.getDeadLetterUri(), EDGE_ERROR,
+                        VIA_ERROR_HANDLER, HANDLING_HANDLED);
             }
         }
 
@@ -100,16 +107,45 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
 
     private static void addEdges(
             CamelContext context, List<TopologyEdge> edges, Map<String, List<String>> inputUriToRouteIds,
-            String fromRouteId, String uri, String kind) {
+            String fromRouteId, String uri, String kind, String via, String handling) {
         String outputUri = normalizeUri(context, uri);
         List<String> targetRouteIds = inputUriToRouteIds.get(outputUri);
         if (targetRouteIds != null) {
             String scheme = extractScheme(outputUri);
             String connType = INTERNAL_SCHEMES.contains(scheme) ? "internal" : "external";
             for (String targetId : targetRouteIds) {
-                edges.add(new TopologyEdge(fromRouteId, targetId, outputUri, connType, kind));
+                edges.add(new TopologyEdge(fromRouteId, targetId, outputUri, connType, kind, via, handling));
             }
         }
+    }
+
+    /**
+     * What an onException clause does with the failure: continued, handled or not handled (a side trip, the failure
+     * goes on to the caller); null when a predicate decides it at runtime.
+     */
+    private static String handling(OnExceptionDefinition oe) {
+        Boolean continued = constant(oe.getContinued());
+        Boolean handled = constant(oe.getHandled());
+        if (Boolean.TRUE.equals(continued)) {
+            return HANDLING_CONTINUED;
+        }
+        if (Boolean.TRUE.equals(handled)) {
+            return HANDLING_HANDLED;
+        }
+        boolean decidedAtRuntime = oe.getContinued() != null && continued == null
+                || oe.getHandled() != null && handled == null;
+        return decidedAtRuntime ? null : HANDLING_NOT_HANDLED;
+    }
+
+    /**
+     * The value of a handled or continued option set as a constant (true or false), or null when it is not set or is a
+     * predicate.
+     */
+    private static Boolean constant(ExpressionSubElementDefinition option) {
+        if (option != null && option.getExpressionType() instanceof ConstantExpression ce) {
+            return Boolean.valueOf(ce.getExpression().trim());
+        }
+        return null;
     }
 
     private List<TopologyExternalEndpoint> computeExternalEndpoints(

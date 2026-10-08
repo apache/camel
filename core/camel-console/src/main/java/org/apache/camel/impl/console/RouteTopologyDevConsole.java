@@ -61,8 +61,12 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
             @Metadata(description = "The target route ID") String toRouteId,
             @Metadata(description = "The endpoint URI connecting the two routes") String endpoint,
             @Metadata(description = "The connection type") String connectionType,
-            @Metadata(description = "How the source route reaches the target: call as it routes a message, or an error"
-                                    + " path (onException, deadLetter) when it handles a failure") String kind) {
+            @Metadata(description = "call when the source route sends as it routes a message, or error when it sends only"
+                                    + " when it handles a failure (an error path)") String kind,
+            @Metadata(description = "For an error path, what sends: errorHandler or onException") String via,
+            @Metadata(description = "For an error path, what happens to the failure: handled (the message ends there),"
+                                    + " continued (the route goes on after it) or notHandled (the failure goes on to the"
+                                    + " caller); absent when a predicate decides it") String handling) {
     }
 
     public record ExternalEndpointEntry(
@@ -126,8 +130,9 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
                 if (edge.fromRouteId().equals(node.routeId())) {
                     if (edge.isErrorPath()) {
                         // sent to only when the route handles a failure
-                        sb.append(String.format("    ..> %s via %s [%s, on failure: %s]%n",
-                                edge.toRouteId(), edge.endpoint(), edge.connectionType(), edge.kind()));
+                        sb.append(String.format("    ..> %s via %s [%s, on failure: %s%s]%n",
+                                edge.toRouteId(), edge.endpoint(), edge.connectionType(), edge.via(),
+                                edge.handling() != null ? ", " + edge.handling() : ""));
                     } else {
                         sb.append(String.format("    --> %s via %s [%s]%n",
                                 edge.toRouteId(), edge.endpoint(), edge.connectionType()));
@@ -180,7 +185,8 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
         List<EdgeEntry> edges = new ArrayList<>();
         for (TopologyEdge edge : result.edges()) {
             edges.add(new EdgeEntry(
-                    edge.fromRouteId(), edge.toRouteId(), edge.endpoint(), edge.connectionType(), edge.kind()));
+                    edge.fromRouteId(), edge.toRouteId(), edge.endpoint(), edge.connectionType(), edge.kind(),
+                    edge.via(), edge.handling()));
         }
 
         List<ExternalEndpointEntry> externalEndpoints = null;

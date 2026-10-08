@@ -68,8 +68,8 @@ public final class TopologyHelper {
     }
 
     /**
-     * The edges of the topology, with the error paths too when asked (their {@code kind} says which: onException or
-     * deadLetter).
+     * The edges of the topology, with the error paths too when asked (their {@code via} says what sends: errorHandler
+     * or onException, and their {@code handling} what happens to the failure).
      */
     public static List<TopologyEdgeInfo> parseEdges(JsonObject jo, boolean includeErrorPaths) {
         List<TopologyEdgeInfo> edges = new ArrayList<>();
@@ -86,6 +86,8 @@ public final class TopologyHelper {
             edge.connectionType = eo.getStringOrDefault("connectionType", "internal");
             // an older integration does not say the kind: all its edges are calls
             edge.kind = eo.getStringOrDefault("kind", "call");
+            edge.via = eo.getString("via");
+            edge.handling = eo.getString("handling");
             if (includeErrorPaths || !edge.isErrorPath()) {
                 edges.add(edge);
             }

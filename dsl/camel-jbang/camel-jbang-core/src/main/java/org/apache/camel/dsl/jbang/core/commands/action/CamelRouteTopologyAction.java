@@ -202,8 +202,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
     }
 
     private static boolean isErrorPath(JsonObject edge) {
-        String kind = edge.getString("kind");
-        return kind != null && !"call".equals(kind);
+        return "error".equals(edge.getString("kind"));
     }
 
     private void printTopology(JsonObject jo) {
@@ -236,11 +235,13 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
                         if (node.getString("routeId").equals(edge.getString("fromRouteId"))) {
                             if (isErrorPath(edge)) {
                                 // sent to only when the route handles a failure
-                                printer().printf("    ..> %s via %s [%s, on failure: %s]%n",
+                                String handling = edge.getString("handling");
+                                printer().printf("    ..> %s via %s [%s, on failure: %s%s]%n",
                                         edge.getString("toRouteId"),
                                         edge.getString("endpoint"),
                                         edge.getString("connectionType"),
-                                        edge.getString("kind"));
+                                        edge.getString("via"),
+                                        handling != null ? ", " + handling : "");
                             } else {
                                 printer().printf("    --> %s via %s [%s]%n",
                                         edge.getString("toRouteId"),
