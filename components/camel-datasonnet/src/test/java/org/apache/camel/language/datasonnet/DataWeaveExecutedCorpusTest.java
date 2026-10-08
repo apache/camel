@@ -23,6 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -63,31 +65,23 @@ class DataWeaveExecutedCorpusTest extends CamelTestSupport {
         JSONAssert.assertEquals("{\"greeting\":\"Hello, John Doe\"}", result, true);
     }
 
-    @Test
-    void testIfElseA() throws Exception {
-        template.sendBody("direct:ifElseA", "{\"score\":95}");
-        MockEndpoint mock = getMockEndpoint("mock:ifElseA");
+    /**
+     * Verifies the if/else branch coverage: score ≥ 90 → A, ≥ 80 → B, otherwise → C.
+     * A single shared {@code ifElse.dwl} script is reused across all three threshold cases.
+     */
+    @ParameterizedTest
+    @CsvSource({
+            "95, A",
+            "85, B",
+            "70, C"
+    })
+    void testIfElse(int score, String expectedLabel) throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:ifElse");
+        mock.reset();
+        template.sendBody("direct:ifElse", "{\"score\":" + score + "}");
         mock.assertExchangeReceived(0);
         String result = mock.getExchanges().get(0).getMessage().getBody(String.class);
-        JSONAssert.assertEquals("{\"label\":\"A\"}", result, true);
-    }
-
-    @Test
-    void testIfElseB() throws Exception {
-        template.sendBody("direct:ifElseB", "{\"score\":85}");
-        MockEndpoint mock = getMockEndpoint("mock:ifElseB");
-        mock.assertExchangeReceived(0);
-        String result = mock.getExchanges().get(0).getMessage().getBody(String.class);
-        JSONAssert.assertEquals("{\"label\":\"B\"}", result, true);
-    }
-
-    @Test
-    void testIfElseC() throws Exception {
-        template.sendBody("direct:ifElseC", "{\"score\":70}");
-        MockEndpoint mock = getMockEndpoint("mock:ifElseC");
-        mock.assertExchangeReceived(0);
-        String result = mock.getExchanges().get(0).getMessage().getBody(String.class);
-        JSONAssert.assertEquals("{\"label\":\"C\"}", result, true);
+        JSONAssert.assertEquals("{\"label\":\"" + expectedLabel + "\"}", result, true);
     }
 
     @Test
@@ -190,21 +184,12 @@ class DataWeaveExecutedCorpusTest extends CamelTestSupport {
                                 MediaTypes.APPLICATION_JSON_VALUE, MediaTypes.APPLICATION_JSON_VALUE))
                         .to("mock:stringConcat");
 
-                // Three separate routes so each test gets its own fresh mock (index 0)
-                from("direct:ifElseA")
-                        .transform(datasonnet("resource:classpath:corpus/ifElseA.dwl", String.class,
+                // Single route shared by all three ifElse threshold cases (score >= 90 → A, >= 80 → B, else → C).
+                // The mock is reset before each @ParameterizedTest iteration to keep assertions independent.
+                from("direct:ifElse")
+                        .transform(datasonnet("resource:classpath:corpus/ifElse.dwl", String.class,
                                 MediaTypes.APPLICATION_JSON_VALUE, MediaTypes.APPLICATION_JSON_VALUE))
-                        .to("mock:ifElseA");
-
-                from("direct:ifElseB")
-                        .transform(datasonnet("resource:classpath:corpus/ifElseB.dwl", String.class,
-                                MediaTypes.APPLICATION_JSON_VALUE, MediaTypes.APPLICATION_JSON_VALUE))
-                        .to("mock:ifElseB");
-
-                from("direct:ifElseC")
-                        .transform(datasonnet("resource:classpath:corpus/ifElseC.dwl", String.class,
-                                MediaTypes.APPLICATION_JSON_VALUE, MediaTypes.APPLICATION_JSON_VALUE))
-                        .to("mock:ifElseC");
+                        .to("mock:ifElse");
 
                 from("direct:mapTransform")
                         .transform(datasonnet("resource:classpath:corpus/mapTransform.dwl", String.class,
