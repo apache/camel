@@ -122,10 +122,7 @@ class MavenDependenciesTab extends AbstractTableTab {
         transitiveLoaded = false;
         transitiveEntries = Collections.emptyList();
         loading.set(false);
-        if (ctx.selectedPid != null) {
-            lastPid = ctx.selectedPid;
-            loadDependencies();
-        }
+        // loaded when the tab is shown (onTabSelected): a hidden tab must not hold up the one the user looks at
     }
 
     @Override

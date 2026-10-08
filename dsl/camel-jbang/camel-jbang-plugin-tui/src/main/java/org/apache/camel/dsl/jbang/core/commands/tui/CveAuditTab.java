@@ -124,10 +124,7 @@ class CveAuditTab extends AbstractTableTab {
         dataLoaded = false;
         detailScroll = 0;
         loading.set(false);
-        if (ctx.selectedPid != null) {
-            lastPid = ctx.selectedPid;
-            loadAndScan();
-        }
+        // loaded when the tab is shown (onTabSelected): a hidden tab must not hold up the one the user looks at
     }
 
     @Override
@@ -488,9 +485,7 @@ class CveAuditTab extends AbstractTableTab {
             Map<String, Path> classpathJars = new HashMap<>();
             String pid = ctx.selectedPid;
             if (pid != null) {
-                JsonObject action = new JsonObject();
-                action.put("action", "jvm");
-                JsonObject response = ctx.executeAction(pid, action, 5000);
+                JsonObject response = ctx.jvmInfo(pid, 5000);
                 if (response != null) {
                     Object cp = response.get("classpath");
                     if (cp instanceof JsonArray arr) {
@@ -558,9 +553,7 @@ class CveAuditTab extends AbstractTableTab {
             if (pid == null) {
                 return Collections.emptyList();
             }
-            JsonObject action = new JsonObject();
-            action.put("action", "jvm");
-            JsonObject response = ctx.executeAction(pid, action, 5000);
+            JsonObject response = ctx.jvmInfo(pid, 5000);
             if (response == null) {
                 return Collections.emptyList();
             }

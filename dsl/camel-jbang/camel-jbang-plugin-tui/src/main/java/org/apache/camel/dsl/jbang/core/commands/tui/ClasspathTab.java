@@ -111,10 +111,7 @@ class ClasspathTab extends AbstractTab {
         errorMessage = null;
         dataLoaded = false;
         loading.set(false);
-        if (ctx.selectedPid != null) {
-            lastPid = ctx.selectedPid;
-            loadClasspath();
-        }
+        // loaded when the tab is shown (onTabSelected): a hidden tab must not hold up the one the user looks at
     }
 
     @Override
@@ -318,10 +315,7 @@ class ClasspathTab extends AbstractTab {
         String pid = ctx.selectedPid;
         ctx.backgroundExecutor.execute(() -> {
             try {
-                JsonObject action = new JsonObject();
-                action.put("action", "jvm");
-
-                JsonObject response = ctx.executeAction(pid, action, 5000);
+                JsonObject response = ctx.jvmInfo(pid, 5000);
 
                 if (response == null) {
                     applyResult(Collections.emptyList(), "No response from integration");
