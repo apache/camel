@@ -74,7 +74,28 @@ public final class GenericFileHelper {
         }
     }
 
-    private static Path resolveExistingPathSegments(Path path) throws IOException {
+    /**
+     * Determines whether a local path stays within a local directory once the existing segments of both are resolved on
+     * the filesystem, following symbolic links. Unlike the lexical {@link #isWithinDirectory(String, String)} this sees
+     * a symbolic link placed inside the directory whose target lies outside of it. The check and a later use of the
+     * path are not atomic.
+     *
+     * @param  target      the local path (need not exist yet)
+     * @param  directory   the directory the path must stay within
+     * @return             {@code true} if the resolved path is the directory itself or a path inside it
+     * @throws IOException if the path cannot be resolved, for example a dangling symbolic link
+     */
+    public static boolean isWithinDirectoryResolvingLinks(Path target, Path directory) throws IOException {
+        return resolveExistingPathSegments(target).startsWith(resolveExistingPathSegments(directory));
+    }
+
+    /**
+     * Resolves the longest existing prefix of the path on the filesystem (following symbolic links) and appends the
+     * remaining, not yet existing, segments.
+     *
+     * @throws IOException if the path cannot be resolved, for example a dangling symbolic link
+     */
+    static Path resolveExistingPathSegments(Path path) throws IOException {
         // Preserve the raw path segments here. Normalizing before resolving links changes the filesystem meaning of
         // paths such as link/../file when link points to another directory.
         final Path absolutePath = path.toAbsolutePath();

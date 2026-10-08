@@ -332,6 +332,11 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
             String directory = file.getParent();
             boolean absolute = FileUtil.isAbsolute(file);
             if (directory != null) {
+                if (operations instanceof FileOperations fileOperations) {
+                    // check before the missing directories are created, as they could otherwise be created through a
+                    // symbolic link outside the starting directory (buildDirectory itself is also used by consumer moves)
+                    fileOperations.jailToStartingDirectory(file);
+                }
                 if (!operations.buildDirectory(directory, absolute)) {
                     LOG.debug("Cannot build directory [{}] (could be because of denied permissions)", directory);
                 }
