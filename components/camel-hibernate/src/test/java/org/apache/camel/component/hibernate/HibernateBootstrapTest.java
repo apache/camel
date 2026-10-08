@@ -384,6 +384,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
                 Map.of("name", "${header.lookupName}"));
 
         try (HibernateProducer producer = new HibernateProducer(endpoint)) {
+            producer.doStart();
             producer.process(exchange);
         } finally {
             endpoint.stop();
