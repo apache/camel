@@ -963,7 +963,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         toNodeParentWhenLabel = mn.getLabel();
                     }
                 }
-                String toNodeLabel = StringHelper.limitLength(processorDefinition.getLabel(), 50);
+                String toNodeLabel = StringHelper.limitLength(processorDefinition.getLabel(), 50, "...");
                 String exchangeId = exchange.getExchangeId();
                 String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
                 String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
