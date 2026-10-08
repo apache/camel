@@ -17,11 +17,14 @@
 package org.apache.camel.processor;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BacklogTracer;
 import org.apache.camel.spi.BacklogTracerEventMessage;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,10 +46,28 @@ class BacklogTracerLongLabelTest extends ContextTestSupport {
         List<BacklogTracerEventMessage> events = tracer.dumpAllTracedMessages();
         BacklogTracerEventMessage setBody = events.stream()
                 .filter(e -> "setBody".equals(e.getToNodeShortName())).findFirst().orElseThrow();
-        assertThat(setBody.getToNodeLabel()).hasSize(53).endsWith("...");
+        assertThat(setBody.getToNodeLabel()).hasSize(50 + "...".length()).endsWith("...");
         BacklogTracerEventMessage log = events.stream()
                 .filter(e -> "log".equals(e.getToNodeShortName())).findFirst().orElseThrow();
         assertThat(log.getToNodeLabel()).doesNotEndWith("...");
+    }
+
+    @Test
+    void aLongLabelAtABreakpointEndsWithAnEllipsis() throws Exception {
+        BacklogDebugger debugger = context.hasService(BacklogDebugger.class);
+        debugger.enableDebugger();
+        debugger.addBreakpoint("long");
+        try {
+            template.asyncSendBody("direct:start", "Hello");
+            Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                    .until(() -> debugger.getSuspendedBreakpointNodeIds().contains("long"));
+
+            BacklogTracerEventMessage suspended = debugger.getSuspendedBreakpointMessage("long");
+            assertThat(suspended.getToNodeLabel()).hasSize(50 + "...".length()).endsWith("...");
+        } finally {
+            debugger.resumeAll();
+            debugger.disableDebugger();
+        }
     }
 
     @Override
@@ -55,9 +76,10 @@ class BacklogTracerLongLabelTest extends ContextTestSupport {
             @Override
             public void configure() {
                 context.setBacklogTracing(true);
+                context.setDebugging(true);
 
                 from("direct:start")
-                        .setBody(simple("${body} and a rather long text that makes the label longer than fifty"))
+                        .setBody(simple("${body} and a rather long text that makes the label longer than fifty")).id("long")
                         .log("short");
             }
         };
