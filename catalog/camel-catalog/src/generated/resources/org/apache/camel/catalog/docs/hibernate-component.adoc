@@ -177,14 +177,14 @@ The mutation update count is placed in the message body.
 ==== Natural-id lookup
 
 Hibernate entities that define a natural identifier can be looked up using `naturalId.` URI parameters
-(`naturalIdParameters` in Java, including `#bean`).
+(`naturalIdParameters` in Java).
 
 String values are evaluated with Simple, so the natural-id can come from the message. Values can also be
 passed or overridden with the `CamelHibernateParameters` header.
 
 [NOTE]
 ====
-Values configured through the `naturalId.` URI prefix are Strings. For non-String natural-id types, such as `Long`, configure the values using Java or `#bean` configuration so the appropriate Java type is preserved.
+Values configured through the `naturalId.` URI prefix are Strings. For non-String natural-id types, such as `Long`, configure the `naturalIdParameters` map using Java or a Camel registry bean so the appropriate Java type is preserved. Individual values in the `naturalId.` URI prefix do not resolve `#bean` references.
 ====
 
 [source,java]
