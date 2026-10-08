@@ -116,10 +116,10 @@ public class DataWeaveParser {
                 while (!check(TokenType.RPAREN) && !check(TokenType.EOF)) {
                     String paramName = current().value();
                     advance();
-                    // Skip type annotation: fun f(a: Number) -> skip ": Number"
+                    // Skip type annotation: fun f(a: Number) or (a: Array<Number>) -> skip to next param
                     if (check(TokenType.COLON)) {
                         advance(); // :
-                        advance(); // type name
+                        skipTypeExpression(); // type expression (simple, generic, or union)
                     }
                     params.add(paramName);
                     if (check(TokenType.COMMA)) {
@@ -130,7 +130,7 @@ public class DataWeaveParser {
                 // Optional return type annotation: fun f(a): Number = ...
                 if (check(TokenType.COLON)) {
                     advance(); // :
-                    advance(); // type name
+                    skipTypeExpression(); // return type
                 }
                 expect(TokenType.ASSIGN); // =
                 DataWeaveAst funBody = parseOr();
@@ -208,10 +208,10 @@ public class DataWeaveParser {
         while (!check(TokenType.RPAREN) && !check(TokenType.EOF)) {
             String paramName = current().value();
             advance();
-            // Skip type annotation: fun f(a: Number) -> skip ": Number"
+            // Skip type annotation: fun f(a: Number) or (a: Array<Number>) -> skip to next param
             if (check(TokenType.COLON)) {
                 advance(); // :
-                advance(); // type name
+                skipTypeExpression(); // type expression (simple, generic, or union)
             }
             params.add(paramName);
             if (check(TokenType.COMMA)) {
@@ -222,7 +222,7 @@ public class DataWeaveParser {
         // Optional return type annotation: fun f(a): Number = ...
         if (check(TokenType.COLON)) {
             advance(); // :
-            advance(); // type name
+            skipTypeExpression(); // return type
         }
         expect(TokenType.ASSIGN); // =
         DataWeaveAst funBody = parseExpression();
@@ -581,10 +581,10 @@ public class DataWeaveParser {
             }
             String paramName = current().value();
             advance();
-            // Skip type annotation: (a: Number) -> skip ": Number"
+            // Skip type annotation: (a: Number) or (a: Array<Number>) -> skip to next param
             if (check(TokenType.COLON)) {
                 advance(); // :
-                advance(); // type name
+                skipTypeExpression(); // type expression (simple, generic, or union)
             }
             DataWeaveAst defaultValue = null;
             if (check(TokenType.ASSIGN)) {
@@ -804,6 +804,40 @@ public class DataWeaveParser {
     }
 
     // -- Token helpers --
+
+    /**
+     * Skip a DataWeave type expression after a colon. Handles: - Simple: {@code Number} - Generic:
+     * {@code Array<Number>}, {@code Array<String | Null>} - Union: {@code String | Null} - Object type: {@code {name:
+     * String}} Stops when it encounters a {@code ,}, {@code )}, {@code =} or EOF at depth 0.
+     */
+    private void skipTypeExpression() {
+        // Skip the leading type name (or opening brace/bracket)
+        if (!check(TokenType.EOF)) {
+            advance(); // consume base type name / '{' / '['
+        }
+        // Now handle trailing generic parameters '<...>' and union '|'
+        while (!check(TokenType.EOF)) {
+            if (check(TokenType.LT)) {
+                // Generic type params: skip balanced < ... >
+                int depth = 1;
+                advance(); // <
+                while (depth > 0 && !check(TokenType.EOF)) {
+                    if (check(TokenType.LT)) {
+                        depth++;
+                    } else if (check(TokenType.GT)) {
+                        depth--;
+                    }
+                    advance();
+                }
+            } else if (current().value().equals("|")) {
+                // Union type: skip '|' and the next type expression
+                advance(); // |
+                skipTypeExpression();
+            } else {
+                break;
+            }
+        }
+    }
 
     private Token current() {
         return pos < tokens.size() ? tokens.get(pos) : tokens.get(tokens.size() - 1);

@@ -220,12 +220,23 @@ public class DataWeaveConverter {
     }
 
     private String emitStringLit(StringLit s) {
+        String value = s.value();
+        // Jsonnet has no in-string interpolation. DataWeave uses "Hello $(expr)" but there is
+        // no faithful automated conversion (the sub-expression must be re-emitted through the AST).
+        // Emit as a TODO comment and a placeholder so the converter output is syntactically valid.
+        if (value.contains("$(")) {
+            todoCount++;
+            return includeComments
+                    ? "// TODO: manual conversion needed -- string interpolation: \"" + value + "\"\n\""
+                      + value.replace("\"", "\\\"") + "\""
+                    : "\"" + value.replace("\"", "\\\"") + "\"";
+        }
         // The lexer preserves escape sequences verbatim (e.g. \" is stored as \").
-        // Wrapping in double-quotes directly is correct; do NOT replace \" with \\\"
-        // as that would double-escape an already-escaped sequence.
-        // DataWeave string interpolation "Hello $(expr)" -> DataSonnet "Hello %(expr)"
-        String value = s.value().replace("$(", "%(");
-        return "\"" + value + "\"";
+        // When the source was a single-quoted DataWeave string, bare double-quote characters
+        // in the value would make the output invalid Jsonnet. Re-escape any unescaped " chars.
+        // Strategy: replace every " that is NOT already preceded by a backslash with \".
+        String escaped = value.replaceAll("(?<!\\\\)\"", "\\\\\"");
+        return "\"" + escaped + "\"";
     }
 
     private String emitIdentifier(Identifier id) {
@@ -263,11 +274,11 @@ public class DataWeaveConverter {
     }
 
     private String emitMultiValueSelector(MultiValueSelector mv) {
-        needsCamelLib = true;
         String collection = emitNode(mv.object());
-        // DataWeave .*field collects all child elements named 'field' (handling one-or-many XML children).
-        // Translated to c.multiValue(collection, 'field') which gracefully handles both cases.
-        return "c.multiValue(" + collection + ", \"" + mv.field() + "\")";
+        // DataWeave .*field collects all values for key 'field' from each element of the collection.
+        // In DataSonnet/Jsonnet: std.map(function(x) x.<field>, collection).
+        // Note: camel.libsonnet has no multiValue helper, so we emit directly.
+        return "std.map(function(x) x." + mv.field() + ", " + collection + ")";
     }
 
     private String emitAttributeAccess(AttributeAccess aa) {
@@ -277,9 +288,21 @@ public class DataWeaveConverter {
     }
 
     private String emitExistenceCheck(ExistenceCheck ec) {
-        // DataWeave expr? returns true/false; DataSonnet: use != null check.
-        needsCamelLib = true;
-        return "c.exists(" + emitNode(ec.expr()) + ")";
+        // DataWeave expr? (key-present selector) returns true/false.
+        // In Jsonnet, accessing a missing field raises an error, so we cannot simply wrap the expression.
+        // For FieldAccess and AttributeAccess we can use std.objectHas(obj, "key") safely.
+        // For other shapes the semantics cannot be faithfully reproduced without a helper; emit as TODO.
+        if (ec.expr() instanceof FieldAccess fa) {
+            return "std.objectHas(" + emitNode(fa.object()) + ", \"" + fa.field() + "\")";
+        }
+        if (ec.expr() instanceof AttributeAccess aa) {
+            return "std.objectHas(" + emitNode(aa.object()) + ", \"@" + aa.attribute() + "\")";
+        }
+        todoCount++;
+        return includeComments
+                ? "// TODO: manual conversion needed -- existence check on non-field expression: "
+                  + emitNode(ec.expr()) + "\nfalse"
+                : "false";
     }
 
     private String emitObjectLit(ObjectLit obj) {
@@ -504,7 +527,14 @@ public class DataWeaveConverter {
                        + collection + ", " + init + ")";
             }
         }
-        return "std.foldl(" + emitNode(re.lambda()) + ", " + collection + ", null)";
+        // Shorthand form: payload.items reduce ($$ + $.price)
+        // $$ is the accumulator and $ is the current item, but LambdaShorthand cannot be emitted
+        // as a simple reference (it emits as 'function(x) ...' which is wrong inside a reduce body).
+        // Faithful conversion requires a dedicated reduce-body re-emitter; emit as TODO.
+        todoCount++;
+        return includeComments
+                ? "// TODO: manual conversion needed -- reduce shorthand with $$/$ cannot be auto-converted\nnull"
+                : "null";
     }
 
     private String emitFlatMap(FlatMapExpr fme) {

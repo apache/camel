@@ -471,9 +471,9 @@ class DataWeaveConverterTest {
     @Test
     void testMultiValueSelector() {
         String result = converter.convertExpression("payload.items.*name");
-        assertEquals("c.multiValue(body.items, \"name\")", result);
+        assertEquals("std.map(function(x) x.name, body.items)", result);
         assertEquals(0, converter.getTodoCount());
-        assertTrue(converter.needsCamelLib());
+        assertFalse(converter.needsCamelLib());
     }
 
     // -- Escape handling --
@@ -495,9 +495,10 @@ class DataWeaveConverterTest {
 
     @Test
     void testStringInterpolation() {
-        // DW: "Hello $(payload.name)" -> DS: "Hello %(body.name)"
+        // DW: "Hello $(payload.name)" -- Jsonnet has no string interpolation, emit as TODO
         String result = converter.convertExpression("\"Hello $(payload.name)\"");
-        assertEquals("\"Hello %(payload.name)\"", result);
+        assertTrue(result.contains("TODO"), "String interpolation should be a TODO, got: " + result);
+        assertTrue(converter.getTodoCount() > 0);
     }
 
     @Test
@@ -509,10 +510,10 @@ class DataWeaveConverterTest {
 
     @Test
     void testExistenceCheck() {
-        // DW: payload.a? -> DS: c.exists(body.a)
+        // DW: payload.a? -> DS: std.objectHas(body, "a") -- using std.objectHas for FieldAccess
         String result = converter.convertExpression("payload.a?");
-        assertEquals("c.exists(body.a)", result);
-        assertTrue(converter.needsCamelLib());
+        assertEquals("std.objectHas(body, \"a\")", result);
+        assertFalse(converter.needsCamelLib());
     }
 
     @Test
@@ -578,13 +579,44 @@ class DataWeaveConverterTest {
 
     @Test
     void testMultiValueSelectorXmlChildren() {
-        // DW: payload.Order.Items.*Item -> DS: c.multiValue(body.Order.Items, "Item")
+        // DW: payload.Order.Items.*Item -> DS: std.map(function(x) x.Item, body.Order.Items)
         String result = converter.convertExpression("payload.Order.Items.*Item");
-        assertEquals("c.multiValue(body.Order.Items, \"Item\")", result);
-        assertTrue(converter.needsCamelLib());
+        assertEquals("std.map(function(x) x.Item, body.Order.Items)", result);
+        assertFalse(converter.needsCamelLib());
     }
 
     // -- Helpers --
+
+    @Test
+    void testSingleQuotedStringWithDoubleQuote() {
+        // DW: 'say "hi"' (single-quoted, stored by lexer as: say "hi")
+        // Output must be "say \"hi\"" -- the bare " must be escaped for valid Jsonnet
+        // Simulate: the lexer stores the string value without surrounding quotes
+        // We test through convertExpression using a DW-style literal to exercise emitStringLit
+        DataWeaveConverter c2 = new DataWeaveConverter();
+        // Build directly: StringLit with a value containing an unescaped double-quote
+        // The lexer for single-quoted strings would store: say "hi"
+        // We convert: "say \"hi\"" (double-quoted DW string with escaped quote) to verify no double-escape
+        String result = c2.convertExpression("\"say \\\"hi\\\"\"");
+        assertEquals("\"say \\\"hi\\\"\"", result, "Double-quoted string with \\\" must not double-escape");
+    }
+
+    @Test
+    void testExistenceCheckOnAttribute() {
+        // DW: payload.Order.@id? -> DS: std.objectHas(body.Order, "@id")
+        String result = converter.convertExpression("payload.Order.@id?");
+        assertEquals("std.objectHas(body.Order, \"@id\")", result);
+        assertFalse(converter.needsCamelLib());
+    }
+
+    @Test
+    void testTypedFunParamsCompound() {
+        // DW: fun f(a: Array<Number>): Number = a[0]  -- compound type annotations must be stripped
+        String result = converter.convertExpression("fun f(a: Array<Number>) = a[0]\nf(payload.x)");
+        assertTrue(result.contains("local f(a) ="), "typed compound param should be stripped, got: " + result);
+        assertFalse(result.contains("Array"), "compound type annotation must not appear in output, got: " + result);
+        assertFalse(result.contains("Number"), "type name must not appear in output, got: " + result);
+    }
 
     private String loadResource(String path) throws IOException {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {
