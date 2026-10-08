@@ -62,8 +62,8 @@ class TransformDataWeaveTest {
         String out = printer.getOutput();
         // the bad file's name should be reported
         assertThat(out).contains("bad.dwl");
-        // the good file should still have been processed (its output lands in the summary)
-        assertThat(out).contains("Converted:");
+        // the good file should still have been processed — multi-file header proves it was converted
+        assertThat(out).contains("// === good.dwl ===");
     }
 
     /**

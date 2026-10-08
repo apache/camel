@@ -43,6 +43,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -204,6 +205,17 @@ class DataWeaveParserTest {
         MapExpr map = assertInstanceOf(MapExpr.class, parseExpr("payload map $.name"));
         LambdaShorthand sh = assertInstanceOf(LambdaShorthand.class, map.lambda());
         assertEquals(List.of("name"), sh.fields());
+    }
+
+    @Test
+    void shouldFallBackToPrimaryWhenLambdaParseFailsInPostfix() {
+        // `payload map ($.price * 2)` — parseLambdaOrShorthand() sees LPAREN and tries parseLambda().
+        // parseLambda() calls expect(ARROW) but finds STAR, so expect() throws DataWeaveConversionException.
+        // The catch block restores pos and calls parsePrimary() instead, yielding a Parens node.
+        // Pin this behaviour: a failed lambda parse must NOT propagate the exception to the caller.
+        DataWeaveAst ast = parseExpr("payload map ($.price * 2)");
+        assertNotNull(ast);
+        assertInstanceOf(MapExpr.class, ast);
     }
 
     // -- Function calls --
