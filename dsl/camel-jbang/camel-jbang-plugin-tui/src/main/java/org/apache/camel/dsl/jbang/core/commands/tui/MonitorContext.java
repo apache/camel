@@ -58,6 +58,8 @@ class MonitorContext {
     boolean ratePerMinute;
     boolean confirmActions;
     boolean validateOnSave = true;
+    // whether the source editor shows the route tree at first (the Route Tree setting)
+    boolean routeTree;
     /** True while the shell (F6) or AI (F8) panel is open and owns keyboard focus. */
     boolean bottomPanelFocused;
     /** Shell/AI panel opens at the top of the content area instead of the bottom. */

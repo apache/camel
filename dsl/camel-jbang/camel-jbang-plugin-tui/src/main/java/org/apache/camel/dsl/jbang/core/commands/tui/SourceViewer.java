@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -220,6 +221,9 @@ class SourceViewer {
     private AutocompletePopup autocompletePopup;
     private RefactorPopup refactorPopup;
     private boolean validateOnSave = true;
+    // the tree of the route the cursor is in, at the top right (Ctrl+T); the setting gives the default
+    private boolean routeTreeShown;
+    private final RouteTreePanel routeTree = new RouteTreePanel();
     private org.apache.camel.dsl.yaml.validator.YamlValidator yamlValidator;
     private PropertiesValidator propertiesValidator;
     private EndpointValidator endpointValidator;
@@ -309,6 +313,14 @@ class SourceViewer {
 
     void setListItemNodeChecker(java.util.function.Predicate<String> checker) {
         this.listItemNodeChecker = checker;
+    }
+
+    void setRouteTreeShown(boolean routeTreeShown) {
+        this.routeTreeShown = routeTreeShown;
+    }
+
+    boolean isRouteTreeShown() {
+        return routeTreeShown;
     }
 
     void setValidateOnSave(boolean validateOnSave) {
@@ -791,6 +803,10 @@ class SourceViewer {
     boolean handleKeyEvent(KeyEvent ke) {
         if (!visible) {
             return false;
+        }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('t') && !markdownMode) {
+            routeTreeShown = !routeTreeShown;
+            return true;
         }
         if (editMode) {
             return handleEditKeyEvent(ke);
@@ -2596,6 +2612,23 @@ class SourceViewer {
     }
 
     void render(Frame frame, Rect area) {
+        renderContent(frame, area);
+        if (routeTreeShown && !markdownMode && !diffOverlay) {
+            if (editMode) {
+                List<String> text = Arrays.asList(editState.text().split("\n", -1));
+                String name = editableFile != null ? editableFile.getFileName().toString() : title;
+                routeTree.render(frame, area, text, name, editState.cursorRow());
+            } else {
+                String name = currentRouteId != null ? "route." + currentFormat : title;
+                // the code without the line numbers of the view
+                List<String> code = codeData != null
+                        ? codeData.stream().map(c -> c.getStringOrDefault("code", "")).toList() : List.of();
+                routeTree.render(frame, area, code, name, selectedLine);
+            }
+        }
+    }
+
+    private void renderContent(Frame frame, Rect area) {
         if (editMode) {
             renderEditMode(frame, area);
             return;

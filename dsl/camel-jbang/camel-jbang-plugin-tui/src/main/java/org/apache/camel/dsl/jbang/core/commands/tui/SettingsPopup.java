@@ -54,19 +54,20 @@ class SettingsPopup {
     private static final int ROW_PANEL_SPACE = 6;
     private static final int ROW_CONFIRM_ACTIONS = 7;
     private static final int ROW_VALIDATE_ON_SAVE = 8;
-    private static final int ROW_FOLDER = 9;
-    private static final int ROW_PROXY_HOST = 10;
-    private static final int ROW_PROXY_PORT = 11;
-    private static final int ROW_SHELL_HISTORY = 12;
-    private static final int ROW_AI_PROVIDER = 13;
-    private static final int ROW_AI_MODEL = 14;
-    private static final int ROW_AI_URL = 15;
-    private static final int ROW_AI_TOOLS = 16;
-    private static final int ROW_AI_OVERVIEW = 17;
-    private static final int ROW_AI_PROMPT_HISTORY = 18;
-    private static final int ROW_AI_ACP_COMMAND = 19;
-    static final int ROW_COUNT = 20;
-    /** Separator lines drawn between the row groups, after rows 2, 6, 9 and 12. */
+    private static final int ROW_ROUTE_TREE = 9;
+    private static final int ROW_FOLDER = 10;
+    private static final int ROW_PROXY_HOST = 11;
+    private static final int ROW_PROXY_PORT = 12;
+    private static final int ROW_SHELL_HISTORY = 13;
+    private static final int ROW_AI_PROVIDER = 14;
+    private static final int ROW_AI_MODEL = 15;
+    private static final int ROW_AI_URL = 16;
+    private static final int ROW_AI_TOOLS = 17;
+    private static final int ROW_AI_OVERVIEW = 18;
+    private static final int ROW_AI_PROMPT_HISTORY = 19;
+    private static final int ROW_AI_ACP_COMMAND = 20;
+    static final int ROW_COUNT = 21;
+    /** Separator lines drawn between the row groups, after rows 2, 6, 10 and 13. */
     static final int DIVIDERS = 4;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
@@ -109,6 +110,7 @@ class SettingsPopup {
     private int panelSpaceIndex;
     private int confirmActionsIndex;
     private int validateOnSaveIndex;
+    private int routeTreeIndex;
     private int aiProviderIndex;
     private int aiToolsIndex;
     private int aiOverviewIndex;
@@ -191,6 +193,7 @@ class SettingsPopup {
 
         confirmActionsIndex = settings.isConfirmActions() ? 1 : 0;
         validateOnSaveIndex = settings.isValidateOnSave() ? 1 : 0;
+        routeTreeIndex = settings.isRouteTree() ? 1 : 0;
 
         folderInput = new TextInputState(settings.getDefaultFolder() != null ? settings.getDefaultFolder() : "");
         proxyHostInput = new TextInputState(settings.getProxyHost() != null ? settings.getProxyHost() : "");
@@ -318,6 +321,12 @@ class SettingsPopup {
             }
             return true;
         }
+        if (selectedRow == ROW_ROUTE_TREE) {
+            if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
+                routeTreeIndex = routeTreeIndex == 0 ? 1 : 0;
+            }
+            return true;
+        }
         if (selectedRow == ROW_FOLDER) {
             handleTextInput(ke, folderInput);
             return true;
@@ -407,6 +416,10 @@ class SettingsPopup {
         settings.setValidateOnSave(validateOnSaveIndex == 1 ? "true" : "false");
         if (monitorContext != null) {
             monitorContext.validateOnSave = validateOnSaveIndex == 1;
+        }
+        settings.setRouteTree(routeTreeIndex == 1 ? "true" : "false");
+        if (monitorContext != null) {
+            monitorContext.routeTree = routeTreeIndex == 1;
         }
         settings.setDefaultFolder(stripControlChars(folderInput.text().trim()));
         settings.setProxyHost(stripControlChars(proxyHostInput.text().trim()));
@@ -518,6 +531,11 @@ class SettingsPopup {
                 selectedRow == ROW_VALIDATE_ON_SAVE);
         rowY++;
 
+        renderLabel(frame, innerX, rowY, labelW, "Route Tree:", selectedRow == ROW_ROUTE_TREE);
+        renderValue(frame, innerX + labelW, rowY, fieldW, routeTreeIndex == 1 ? "on" : "off",
+                selectedRow == ROW_ROUTE_TREE);
+        rowY++;
+
         renderLabel(frame, innerX, rowY, labelW, "Default Folder:", selectedRow == ROW_FOLDER);
         renderFolder(frame, innerX + labelW, rowY, fieldW, selectedRow == ROW_FOLDER);
         rowY++;
@@ -581,6 +599,7 @@ class SettingsPopup {
                 || selectedRow == ROW_LOG_PIN || selectedRow == ROW_RATE_PER
                 || selectedRow == ROW_PANEL_POSITION || selectedRow == ROW_PANEL_SPACE
                 || selectedRow == ROW_CONFIRM_ACTIONS || selectedRow == ROW_VALIDATE_ON_SAVE
+                || selectedRow == ROW_ROUTE_TREE
                 || selectedRow == ROW_AI_PROVIDER || selectedRow == ROW_AI_TOOLS || selectedRow == ROW_AI_OVERVIEW) {
             hint(spans, "Space", "cycle");
         }

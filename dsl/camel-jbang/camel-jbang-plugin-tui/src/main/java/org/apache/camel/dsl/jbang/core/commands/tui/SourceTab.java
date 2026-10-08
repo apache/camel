@@ -256,6 +256,12 @@ class SourceTab extends AbstractTab {
             return true;
         }
 
+        // the route tree beside the source, wherever the focus is, as Ctrl+G
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('t') && sourceViewer.isVisible()) {
+            sourceViewer.setRouteTreeShown(!sourceViewer.isRouteTreeShown());
+            return true;
+        }
+
         if (sourceViewer.isEditMode() && sourceViewer.isVisible()) {
             return sourceViewer.handleKeyEvent(ke);
         }
@@ -1162,7 +1168,14 @@ class SourceTab extends AbstractTab {
         return re.fromUri() != null ? re.fromUri() : "";
     }
 
+    // the Route Tree setting last given to the editor: it is given again only when it changes, so Ctrl+T holds
+    private Boolean routeTreeDefault;
+
     private void renderSourcePanel(Frame frame, Rect area) {
+        if (routeTreeDefault == null || routeTreeDefault != ctx.routeTree) {
+            routeTreeDefault = ctx.routeTree;
+            sourceViewer.setRouteTreeShown(ctx.routeTree);
+        }
         Style sourceTitleStyle = focusOnViewer ? Theme.title() : Style.EMPTY.fg(Theme.accent());
         Style sourceBorderStyle = ctx.paneBorder(focusOnViewer);
         if (sourceViewer.isVisible()) {

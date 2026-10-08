@@ -142,7 +142,8 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(9, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(10, popup.selectedRow());
         popup.handleKeyEvent(KeyEvent.ofChar('/'));
         popup.handleKeyEvent(KeyEvent.ofChar('a'));
         assertEquals("/a", popup.folderText());
@@ -164,7 +165,8 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(9, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(10, popup.selectedRow());
         popup.handleKeyEvent(KeyEvent.ofChar(0x01));
         popup.handleKeyEvent(KeyEvent.ofChar(0x00));
         popup.handleKeyEvent(KeyEvent.ofChar('x'));
@@ -192,7 +194,8 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(13, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(14, popup.selectedRow());
         assertEquals("auto", popup.selectedAiProvider());
         popup.handleKeyEvent(KeyEvent.ofChar(' '));
         assertEquals("ollama", popup.selectedAiProvider());
@@ -225,10 +228,10 @@ class SettingsPopupTest {
         popup.open();
 
         // navigate to AI Tools (row 16)
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 17; i++) {
             popup.handleKeyEvent(key(KeyCode.DOWN));
         }
-        assertEquals(16, popup.selectedRow());
+        assertEquals(17, popup.selectedRow());
         assertEquals("auto", popup.selectedAiTools());
 
         popup.handleKeyEvent(KeyEvent.ofChar(' '));
@@ -248,7 +251,7 @@ class SettingsPopupTest {
         reopened.setTabEntries(tabs());
         reopened.open();
         assertEquals("full", reopened.selectedAiTools());
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 17; i++) {
             reopened.handleKeyEvent(key(KeyCode.DOWN));
         }
         reopened.handleKeyEvent(key(KeyCode.RIGHT));
@@ -265,10 +268,10 @@ class SettingsPopupTest {
         popup.open();
 
         // navigate to AI Overview (row 17)
-        for (int i = 0; i < 17; i++) {
+        for (int i = 0; i < 18; i++) {
             popup.handleKeyEvent(key(KeyCode.DOWN));
         }
-        assertEquals(17, popup.selectedRow());
+        assertEquals(18, popup.selectedRow());
         assertEquals("manual", popup.selectedAiOverview());
         popup.handleKeyEvent(KeyEvent.ofChar(' '));
         assertEquals("auto", popup.selectedAiOverview());
@@ -282,7 +285,7 @@ class SettingsPopupTest {
         reopened.setTabEntries(tabs());
         reopened.open();
         assertEquals("off", reopened.selectedAiOverview());
-        for (int i = 0; i < 17; i++) {
+        for (int i = 0; i < 18; i++) {
             reopened.handleKeyEvent(key(KeyCode.DOWN));
         }
         reopened.handleKeyEvent(key(KeyCode.RIGHT));
@@ -299,10 +302,10 @@ class SettingsPopupTest {
         popup.open();
 
         // navigate to Shell History (row 10)
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 13; i++) {
             popup.handleKeyEvent(key(KeyCode.DOWN));
         }
-        assertEquals(12, popup.selectedRow());
+        assertEquals(13, popup.selectedRow());
         for (char c : "50".toCharArray()) {
             popup.handleKeyEvent(KeyEvent.ofChar(c));
         }
@@ -312,7 +315,7 @@ class SettingsPopupTest {
         for (int i = 0; i < 6; i++) {
             popup.handleKeyEvent(key(KeyCode.DOWN));
         }
-        assertEquals(18, popup.selectedRow());
+        assertEquals(19, popup.selectedRow());
         for (char c : "200".toCharArray()) {
             popup.handleKeyEvent(KeyEvent.ofChar(c));
         }
@@ -349,6 +352,7 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN)); // panel space
         popup.handleKeyEvent(key(KeyCode.DOWN)); // confirm actions
         popup.handleKeyEvent(key(KeyCode.DOWN)); // validate on save
+        popup.handleKeyEvent(key(KeyCode.DOWN)); // route tree
         popup.handleKeyEvent(key(KeyCode.DOWN)); // folder
         for (char c : "/tmp/p".toCharArray()) {
             popup.handleKeyEvent(KeyEvent.ofChar(c));
