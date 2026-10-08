@@ -139,17 +139,22 @@ public class OpenFeatureComponent extends DefaultComponent {
     }
 
     Client acquireOrRegister(String domain, ProviderSupplier providerSupplier) throws Exception {
+        OpenFeatureAPI localApi = api;
+        if (localApi == null) {
+            throw new IllegalStateException("OpenFeature component is not started");
+        }
+
         Object lock = domainLocks.computeIfAbsent(domain, k -> new Object());
         synchronized (lock) {
             DomainBinding existing = domainBindings.get(domain);
             if (existing != null) {
                 existing.refCount++;
-                return api.getClient(domain);
+                return localApi.getClient(domain);
             }
 
             ProviderRegistration reg = providerSupplier.get();
             try {
-                api.setProviderAndWait(domain, reg.provider);
+                localApi.setProviderAndWait(domain, reg.provider);
             } catch (Exception e) {
                 if (reg.owned) {
                     try {
@@ -170,7 +175,7 @@ public class OpenFeatureComponent extends DefaultComponent {
             DomainBinding binding = new DomainBinding(reg.provider, reg.owned);
             binding.tempFlagFile = reg.tempFlagFile;
             domainBindings.put(domain, binding);
-            return api.getClient(domain);
+            return localApi.getClient(domain);
         }
     }
 
@@ -183,7 +188,6 @@ public class OpenFeatureComponent extends DefaultComponent {
                 if (binding.refCount <= 0) {
                     domainBindings.remove(domain);
                     binding.shutdown();
-                    domainLocks.remove(domain);
                 }
             }
         }
