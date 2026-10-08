@@ -518,11 +518,16 @@ The transpiler automatically maps DataWeave constructs to their DataSonnet equiv
 
 - `payload` to `body`, `vars` to `cml.variable()`, `attributes.headers` to `cml.header()`
 - Operators: `++` to `+`, `default` to `cml.defaultVal()`, `as Number/String/Boolean` to `cml.toInteger()/std.toString()/cml.toBoolean()`
-- Collection operations: `map`, `filter`, `reduce`, `flatMap`, `groupBy`, `orderBy`, `distinctBy`
+- Collection operations: `map`, `filter`, `reduce` (including `$$`/`$` shorthand form), `flatMap`, `groupBy`, `orderBy`, `distinctBy`
 - String operations: `contains`, `startsWith`, `endsWith`, `splitBy`, `joinBy`, `replace`
 - Functions: `sizeOf`, `upper`, `lower`, `trim`, `now`, `uuid`, `abs`, `round`, `sqrt`
+- XML selectors: multi-value selector `.*field` (maps all `field` values from a collection), attribute access `.@attr` (maps to `["@attr"]`)
+- Key-present selector `expr?` (maps to `std.objectHas()` for field and attribute expressions)
+- Header `var` and `fun` declarations above `---` are converted to Jsonnet `local` bindings
+- Type annotations (`: Type`, including generics and union types) in function parameters are stripped
+- String literals from single-quoted DataWeave strings are properly re-escaped for Jsonnet
 
-Constructs that cannot be automatically converted (such as `match` expressions) are emitted as `null` for manual review.
+Constructs that cannot be automatically converted (such as `match` expressions, `mapObject`, `pluck`, and `..` descendant selectors) are emitted as a TODO comment and `null` for manual review.
 
 == Dependencies
 
