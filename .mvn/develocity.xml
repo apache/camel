@@ -35,7 +35,7 @@
     </buildScan>
     <buildCache>
         <local>
-            <enabled>#{isFalse(env['GITHUB_ACTIONS'])}</enabled>
+            <enabled>#{isTrue(env['DEVELOCITY_LOCAL_CACHE_ENABLED'])}</enabled>
         </local>
         <remote>
             <enabled>false</enabled>
