@@ -29,6 +29,7 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.component.dataweave.DataWeaveConversionException;
 import org.apache.camel.component.dataweave.DataWeaveConverter;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
@@ -131,11 +132,11 @@ public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
             result = converter.convertExpression(expression);
         }
         if (converter.getTodoCount() > 0) {
-            throw new IllegalArgumentException(
+            throw new DataWeaveConversionException(
                     "DataWeave expression contains " + converter.getTodoCount()
-                                               + " construct(s) that cannot be auto-converted to DataSonnet."
-                                               + " Rewrite those constructs in DataSonnet directly, or use a .ds script instead."
-                                               + " Converted expression was: " + result);
+                                                   + " construct(s) that cannot be auto-converted to DataSonnet."
+                                                   + " Rewrite those constructs in DataSonnet directly, or use a .ds script instead."
+                                                   + " Converted expression was: " + result);
         }
         LOG.debug("Converted DataWeave to DataSonnet: {} expression(s)", converter.getConvertedCount());
         return result;

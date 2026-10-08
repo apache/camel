@@ -17,6 +17,7 @@
 package org.apache.camel.language.datasonnet;
 
 import com.datasonnet.document.MediaTypes;
+import org.apache.camel.component.dataweave.DataWeaveConversionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -143,10 +144,10 @@ class DataWeaveExecutedCorpusTest extends CamelTestSupport {
     @Test
     void testUnsupportedConstructFailsFast() {
         // DataWeave 'match' is not auto-convertible; DatasonnetLanguage.convertDataWeave()
-        // must reject the expression with a clear IllegalArgumentException rather than
+        // must reject the expression with a clear DataWeaveConversionException rather than
         // silently emitting null and letting the route start.
         String withMatch = "%dw 2.0\noutput application/json\n---\npayload.status match { case \"a\" -> true else -> false }";
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(DataWeaveConversionException.class,
                 () -> context.resolveLanguage("datasonnet")
                         .createExpression(withMatch, new Object[] {
                                 String.class, null,
@@ -163,7 +164,7 @@ class DataWeaveExecutedCorpusTest extends CamelTestSupport {
         // must propagate as an exception from DatasonnetLanguage.convertDataWeave()
         // rather than silently producing a garbled AST.
         String malformed = "%dw 2.0\noutput application/json\n---\n{ name: payload.name";
-        assertThrows(Exception.class,
+        assertThrows(DataWeaveConversionException.class,
                 () -> context.resolveLanguage("datasonnet")
                         .createExpression(malformed, new Object[] {
                                 String.class, null,

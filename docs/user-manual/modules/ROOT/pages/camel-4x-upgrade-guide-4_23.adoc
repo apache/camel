@@ -4856,3 +4856,15 @@ The `kubernetes-configmaps` developer console now reports the config map names a
 `camel.vault.kubernetescm` instead of reading the Kubernetes secrets vault configuration.
 Its text output labels the list `Config maps in use:` instead of `Secrets in use:`.
 Both Kubernetes vault consoles return empty lists when no resource names are configured.
+
+=== camel-datasonnet - DataWeave auto-conversion now fails fast on unsupported constructs
+
+`camel-datasonnet` can auto-convert DataWeave 2.0 expressions to DataSonnet at route startup.
+Previously, when the DataWeave expression contained constructs that could not be auto-converted,
+the language emitted a `WARN` log and continued, yielding a partially-converted (and likely broken)
+expression. Starting with this release, such expressions throw `DataWeaveConversionException` at
+expression-creation time, failing the route startup with a clear error message.
+
+Users who relied on the previous best-effort behaviour (accepting `null` or incomplete results for
+unconvertible constructs) must rewrite those constructs in DataSonnet directly, or move the
+DataWeave logic to a `.ds` file.
