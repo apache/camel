@@ -239,7 +239,6 @@
         <hdrhistrogram-version>2.2.2</hdrhistrogram-version>
         <hibernate-validator-version>9.1.4.Final</hibernate-validator-version>
         <hibernate-version>7.4.12.Final</hibernate-version>
-        <hibernate8-version>8.0.0.Beta3</hibernate8-version>
         <hivemq-mqtt-client-version>1.4.0</hivemq-mqtt-client-version>
         <hsqldb-version>2.7.4</hsqldb-version>
         <mariadb-version>3.5.10</mariadb-version>
@@ -1700,6 +1699,12 @@
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-hibernate</artifactId>
                 <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.persistence</groupId>
+                        <artifactId>jakarta.persistence-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
