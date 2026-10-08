@@ -683,10 +683,16 @@ public class DataWeaveParser {
             return new DataWeaveAst.UnaryOp("-", operand);
         }
 
-        // Fallback: skip token
-        String val = current().value();
+        // Unknown token — return an Unsupported node so best-effort callers (e.g. the CLI
+        // `camel transform dataweave` command) can continue processing the rest of the file.
+        // The language layer (DatasonnetLanguage) will detect the Unsupported node via
+        // getTodoCount() and throw DataWeaveConversionException there, giving strict behaviour
+        // at the language level while keeping the parser usable as a best-effort migration tool.
+        Token cur = current();
+        String tokenText = cur.value() != null && !cur.value().isEmpty() ? cur.value() : cur.type().name();
         advance();
-        return new DataWeaveAst.Unsupported(val, "unexpected token");
+        return new DataWeaveAst.Unsupported(
+                tokenText, "unexpected token " + cur.type() + " at " + cur.line() + ":" + cur.col());
     }
 
     private DataWeaveAst parseIdentifierOrCall() {
@@ -884,7 +890,12 @@ public class DataWeaveParser {
     private void expect(TokenType type) {
         if (check(type)) {
             advance();
+        } else {
+            Token cur = current();
+            throw new DataWeaveConversionException(
+                    "DataWeave parse error at " + cur.line() + ":" + cur.col()
+                                                   + ": expected " + type + " but found " + cur.type()
+                                                   + " ('" + cur.value() + "')");
         }
-        // Silently skip if not found (best-effort parsing)
     }
 }
