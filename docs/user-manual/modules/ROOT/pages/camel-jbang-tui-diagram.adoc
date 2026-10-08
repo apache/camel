@@ -12,6 +12,8 @@ See xref:camel-jbang-tui.adoc[Camel TUI] for getting started and the other pages
 * <<_architecture_view,*Architecture view*>> -- the capabilities of the integration and how they connect
 * <<_topology_view,*Topology view*>> -- every route and the endpoints that connect them, with live counts
 * <<_drill_down_into_routes,*Drill-down*>> -- the processors of one route, step by step
+* *Error handling* (*x*) -- the happy path by default; on, the error handling in a frame of its own, in the
+  topology and in a route
 * <<_external_endpoints,*External endpoints*>> -- what the integration consumes from and sends to outside
 * <<_metrics_and_source_code,*Metrics and source*>> -- throughput and timing on the boxes, and the source a box comes from
 
@@ -43,6 +45,10 @@ and EIP node is displayed with its type (colored by category), endpoint URI, and
 Nodes that connect to other routes show a *Enter* indicator -- press *Enter* to jump directly
 to the linked route. Navigation history is maintained as a breadcrumb stack: press *Esc* to go
 back to the previous route, and eventually back to the topology view.
+
+The route shows its own steps. Its onException clauses (a global one is copied into every route) are
+not drawn among them: press *x* to show the route's error handling in a frame below it (see
+<<_diagram_levels,Diagram levels>>).
 
 Press *t* to jump straight back to the topology from any depth.
 
@@ -118,7 +124,8 @@ Each route has one role:
   every group that uses them.
 * *Utility* -- plumbing with little business meaning: a route reached only while handling a failure
   (from a `doCatch`, an `onException` or a dead letter channel), a route that only logs, or one the
-  AI marked as utility. Hidden until you press *u*.
+  AI marked as utility. Hidden until you press *u*; with *x* on, the routes reached only on error are shown
+  in the error handling frame of the topology instead.
 * *Other* -- routes nothing above placed yet; `/overview` groups them.
 
 A box shows how many routes the group has, its entry points (HTTP, schedules, consumers) and the
@@ -183,5 +190,7 @@ Press *e* to cycle through three modes for external endpoints:
 | *v* | Next level: Architecture, Topology, Route
 | *u* | In the architecture and the topology: show or hide the utility routes
 | *g* | In the topology: show each route's group (route group, AI capability, shared services, utility)
+| *x* | In the topology and a route: show or hide the error handling, in a frame of its own (needs Camel 4.23+
+in the integration)
 | *s* | Open the integration summary (`camel-summary.md`) in the document viewer, from any level
 |===

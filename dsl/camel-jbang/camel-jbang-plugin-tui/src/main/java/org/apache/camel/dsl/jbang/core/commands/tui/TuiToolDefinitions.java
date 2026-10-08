@@ -319,7 +319,10 @@ final class TuiToolDefinitions {
                                     + "Each node has: routeId, nodeType (route/external-in/external-out/trigger), "
                                     + "layer, description, from (consumer URI), exchangesTotal, exchangesFailed. "
                                     + "Each edge has: from (routeId), to (routeId), endpoint, connectionType, "
-                                    + "selfLoop, backEdge. "
+                                    + "selfLoop, backEdge (the calls: the happy path). "
+                                    + "errorPaths lists the error paths, sent to only when a route handles a failure: "
+                                    + "from, to, via (errorHandler or onException) and handling (handled, continued, "
+                                    + "notHandled); errorsShown says whether the user sees them (x in the Diagram tab). "
                                     + "Use this instead of tui_get_diagram when you need to reason about "
                                     + "route connectivity programmatically.",
                 Map.of())));
