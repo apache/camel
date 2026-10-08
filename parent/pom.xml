@@ -4522,6 +4522,7 @@
                                     junit.jupiter.execution.parallel.mode.classes.default = concurrent
                                     junit.jupiter.execution.parallel.config.strategy = ${camel.surefire.parallel.strategy}
                                     junit.jupiter.execution.parallel.config.dynamic.factor = ${camel.surefire.parallel.factor}
+                                    junit.jupiter.execution.parallel.config.executor-service = WORKER_THREAD_POOL
                                     junit.jupiter.execution.timeout.default = 10 m
                                 </configurationParameters>
                             </properties>

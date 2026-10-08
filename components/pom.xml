@@ -574,6 +574,7 @@
                                 <junit.jupiter.execution.parallel.mode.classes.default>concurrent</junit.jupiter.execution.parallel.mode.classes.default>
                                 <junit.jupiter.execution.parallel.config.strategy>${camel.failsafe.parallel.strategy}</junit.jupiter.execution.parallel.config.strategy>
                                 <junit.jupiter.execution.parallel.config.dynamic.factor>${camel.failsafe.parallel.factor}</junit.jupiter.execution.parallel.config.dynamic.factor>
+                                <junit.jupiter.execution.parallel.config.executor-service>WORKER_THREAD_POOL</junit.jupiter.execution.parallel.config.executor-service>
                             </systemPropertyVariables>
                         </configuration>
                         <executions>
