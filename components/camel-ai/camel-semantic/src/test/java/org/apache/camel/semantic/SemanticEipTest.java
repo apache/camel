@@ -43,12 +43,12 @@ class SemanticEipTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                context.getRegistry().bind("classifier", new SemanticAdapter() {
-                    public void validate(SemanticQuestion question) {
+                context.getRegistry().bind("classifier", new TestSemanticAdapter() {
+                    public void validate(SemanticEvaluation evaluation) {
                     }
 
-                    public SemanticResult evaluate(SemanticQuestion question, Object state) {
-                        String purpose = question.getInstructions();
+                    public SemanticResult evaluate(SemanticEvaluation evaluation, Object state) {
+                        String purpose = (String) evaluation.getParameters().get("instructions");
                         calls.computeIfAbsent(purpose, k -> new AtomicInteger()).incrementAndGet();
                         String text = state.toString();
                         Object value = switch (purpose) {
@@ -61,18 +61,18 @@ class SemanticEipTest extends CamelTestSupport {
                             }
                             case "unfinished" -> Integer.parseInt(text) < 3;
                             case "urgency" -> text.contains("urgent") ? 2.0 : 0.0;
-                            default -> throw new IllegalArgumentException("Unknown question");
+                            default -> throw new IllegalArgumentException("Unknown evaluation");
                         };
                         return new SemanticResult(value, null, null, null, Map.of("provider", "fixture"));
                     }
                 });
                 ((SemanticLanguage) context.resolveLanguage("semantic")).setAdapter("classifier");
-                SemanticQuestions.get(context).replace("test", Map.of(
-                        "department", question("department", SemanticQuestion.Type.CHOICE),
-                        "actionable", question("actionable", SemanticQuestion.Type.BOOLEAN),
-                        "complete", question("complete", SemanticQuestion.Type.BOOLEAN),
-                        "unfinished", question("unfinished", SemanticQuestion.Type.BOOLEAN),
-                        "urgency", question("urgency", SemanticQuestion.Type.SCORE)));
+                SemanticEvaluations.get(context).replace("test", Map.of(
+                        "department", evaluation("department", "choice"),
+                        "actionable", evaluation("actionable", "boolean"),
+                        "complete", evaluation("complete", "boolean"),
+                        "unfinished", evaluation("unfinished", "boolean"),
+                        "urgency", evaluation("urgency", "score")));
 
                 from("direct:batch").setProperty("decision").language("semantic", "refs:actionable,department,urgency")
                         .setHeader("urgency").simple("${exchangeProperty.decision[urgency]}")
@@ -149,13 +149,15 @@ class SemanticEipTest extends CamelTestSupport {
         return new LanguageExpression("semantic", "ref:" + name);
     }
 
-    private static SemanticQuestion question(String name, SemanticQuestion.Type type) {
-        return new SemanticQuestion(
-                type, name, null,
-                type == SemanticQuestion.Type.CHOICE
-                        ? Map.of("billing", "Payments", "technical", "Bugs", "general", "Other requests") : null,
-                type == SemanticQuestion.Type.SCORE ? List.of("low", "medium", "high") : null,
-                0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
+    private static SemanticEvaluation evaluation(String name, String type) {
+        return new SemanticEvaluation(type, null, null, switch (type) {
+            case "boolean" -> Map.of("instructions", name, "threshold", 0.5,
+                    "uncertainty", 0.0, "uncertaintyPolicy", "fail");
+            case "choice" -> Map.of("instructions", name, "criteria",
+                    Map.of("billing", "Payments", "technical", "Bugs", "general", "Other requests"));
+            case "score" -> Map.of("instructions", name, "criteria", List.of("low", "medium", "high"));
+            default -> throw new IllegalArgumentException("Unknown fixture operation");
+        });
     }
 
     @Test

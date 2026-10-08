@@ -13,6 +13,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== camel-management - Route group exchange counters count once per entry into the group
+
+The route group MBean (`ManagedRouteGroupMBean`) exchange counters and processing times now count
+each exchange once per entry into the group: calls nested inside another route of the same group
+are not counted again. In 4.22.1, a regression (CAMEL-24590) caused them to count once per member
+route instead.
+
 === camel-core - Rest DSL response Content-Type
 
 Under json or xml binding, a response without a Content-Type header again takes it from the `produces` of the rest
@@ -376,6 +383,10 @@ Only options whose value is a placeholder are affected, and only when running wi
 Camel Quarkus. If a component must not be stopped on reload, configure it programmatically rather than with a
 placeholder based property.
 
+Components implementing `SecretRotationAware`, such as `camel-jdbc`, `camel-sql`, and `camel-sql-stored`, will now soft-evict their
+connection pool(s) on every context reload — not only on vault-detected secret rotations. This includes
+JMX-triggered reloads, `camel cmd reload`, and dev-mode file-watcher reloads.
+
 === Languages - less than with two null values, and a source from a variable
 
 - The `<` operator (in the Simple language and the Java DSL `isLessThan`) is now `false` when both sides are `null`,
@@ -728,6 +739,17 @@ agree with that list. This affects consumers of the context status, such as the 
 The `route-topology` developer console (used by `camel cmd route-topology` and the Camel TUI diagram) no longer
 includes routes created by Kamelets, as these are an implementation detail of the Kamelet and were already hidden
 from the route console. Set the `kamelets=true` option (or `--kamelets` on the CLI) to include them.
+
+The route topology no longer reports a send from an `onException` clause as a call between routes. Such a send, and the
+dead letter uri of a dead letter channel, is now an error path: each edge has a `kind` field, `call` as before or
+`error`, and an error path also says what sends (`via`: `errorHandler` or `onException`) and what happens to the failure
+(`handling`: `handled`, the message ends there as with a dead letter channel; `continued`, the route goes on after it;
+or `notHandled`, the failure goes on to the caller). Error paths come only from routes whose error handler handles the
+failure: a route with `noErrorHandler` has none, as its failure goes back to the calling route. Before, a global
+`onException` that sent to another route showed up as a call from every route, the target route itself included. The
+diagrams (the Camel TUI, camel-diagram) draw the calls only, and the text output of the console and of `camel cmd
+route-topology` lists the error paths with `..>`. The `RouteTopologyDumper.TopologyEdge` record has the new `kind`,
+`via` and `handling` components; its four-argument constructor is kept and creates a `call` edge.
 
 The `inflight` and `blocked` developer consoles now carry a `nodeSource` field per entry, saying where the node the
 exchange sits at is in the source (such as `orders.camel.yaml:18`). It is `null` when message history or source
@@ -1444,6 +1466,10 @@ a type converter or fallback type converter is added.
 for a super type. This used to depend on the iteration order of an internal map, which could change
 between JVM restarts. The nearest super type now wins: the type hierarchy is walked breadth-first,
 interfaces are tried before the super class at each level, and `java.lang.Object` is tried last.
+* As a last resort (after the fallback type converters), the registry uses a type converter whose types are
+assignable to or from the requested types. When more than one type converter matched, this also depended on
+the iteration order of the internal map. The nearest one now wins (the fewest levels between its types and the
+requested types), and the class names of its types decide between equally near ones.
 * Converting a `String` to a `Number` now returns an `Integer` for all values within the `Integer` range
 (including `Integer.MAX_VALUE`, which returned a `Long` before), and supports exponent notation such as `1e5`.
 * Converting a `BigDecimal`, or a `double` larger than a `long`, to `BigInteger` no longer loses precision.
@@ -1468,6 +1494,12 @@ in one file left the application without routes. The failed file loads again on 
 A project whose routes are all in one file is covered too: the content that last loaded is kept in memory, so the
 broken save goes back to the version that was running, and the log says how many routes came from it. The file on
 disk is untouched; its next save is loaded as usual.
+
+=== camel-core - RoutesLoader.updateRoutes runs one call at a time
+
+Concurrent `RoutesLoader.updateRoutes` calls on one CamelContext now run one at a time instead of failing with
+`ConcurrentModificationException`. A route whose exchange calls `updateRoutes` while another `updateRoutes` call
+replaces that route now makes the stop wait until the shutdown timeout, after which the route is forced to stop.
 
 === camel-core - the recursive file watcher watches directories created while it runs
 
@@ -1978,6 +2010,14 @@ been closed, and reading it failed. A script now returns a `LinkedHashMap` for a
 polyglot `Value` itself needs to work with these types instead.
 
 `JavaScriptHelper.newContext()` is deprecated: contexts are created by the language from its shared engine.
+
+=== camel-javascript, camel-python - script variables use the Groovy names
+
+The `js` and `python` languages now bind the script variables with the names the `groovy` language uses:
+`camelContext`, `request`, `header`, `exchangeProperty`, `exchangeProperties` and `exception` are new, next to
+`exchange`, `exchangeId`, `message`, `body`, `headers`, `variable` and `variables`. In `js` and `python` the
+`context` and `properties` variables are deprecated in favour of `camelContext` and `exchangeProperties`; they still
+work. The new `python3` language binds only the Groovy names, and in its default data-only mode only the data variables.
 
 === camel-rest, camel-rest-openapi, camel-jbang - camel-http is the default REST client
 
@@ -3579,6 +3619,16 @@ changes.
 Downloads to a configured `localWorkDirectory` now resolve existing filesystem path segments before
 checking that the destination remains inside that directory. Downloads through a symbolic link that
 resolves outside the `localWorkDirectory` are rejected. Valid nested download paths continue to work.
+
+=== camel-file - jailStartingDirectory resolves symbolic links
+
+With `jailStartingDirectory` enabled (the default), the file consumer and producer now resolve symbolic links when
+checking that a file stays within the starting directory. The consumer skips a file or (with `recursive=true`) a
+directory that is a link resolving outside of it, and the producer fails to write through such a link or a dangling
+link. Links resolving inside the starting directory work as before. Set `jailStartingDirectory=false` to keep following
+links to other directories (this also turns off the check of `../` in producer file names). A skipped file is logged
+at WARN the first time and at DEBUG on later polls; this log-level change also applies to the remote file consumers,
+which keep their existing lexical check.
 
 === camel-file, camel-ftp, camel-smb, camel-mina-sftp and camel-azure-files - a file whose download fails is retried by idempotent consumers
 

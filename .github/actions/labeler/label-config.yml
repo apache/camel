@@ -83,6 +83,7 @@ components-kafka:
       - any-glob-to-any-file:
         - components/camel-kafka/**/*
         - components/camel-kafka-common/**/*
+        - components/camel-kafka-share/**/*
 
 components-jms:
   - changed-files:

@@ -58,7 +58,20 @@ public final class TopologyHelper {
         return nodes;
     }
 
+    /**
+     * The edges a route sends along as it routes a message (the happy path), without the error paths: a send from an
+     * onException clause or a dead letter channel is not a call, and drawn as one it reads as if every route called the
+     * error route.
+     */
     public static List<TopologyEdgeInfo> parseEdges(JsonObject jo) {
+        return parseEdges(jo, false);
+    }
+
+    /**
+     * The edges of the topology, with the error paths too when asked (their {@code via} says what sends: errorHandler
+     * or onException, and their {@code handling} what happens to the failure).
+     */
+    public static List<TopologyEdgeInfo> parseEdges(JsonObject jo, boolean includeErrorPaths) {
         List<TopologyEdgeInfo> edges = new ArrayList<>();
         JsonArray arr = jo.getJsonArray("edges");
         if (arr == null) {
@@ -71,7 +84,13 @@ public final class TopologyHelper {
             edge.toRouteId = eo.getString("toRouteId");
             edge.endpoint = eo.getString("endpoint");
             edge.connectionType = eo.getStringOrDefault("connectionType", "internal");
-            edges.add(edge);
+            // an older integration does not say the kind: all its edges are calls
+            edge.kind = eo.getStringOrDefault("kind", "call");
+            edge.via = eo.getString("via");
+            edge.handling = eo.getString("handling");
+            if (includeErrorPaths || !edge.isErrorPath()) {
+                edges.add(edge);
+            }
         }
         return edges;
     }

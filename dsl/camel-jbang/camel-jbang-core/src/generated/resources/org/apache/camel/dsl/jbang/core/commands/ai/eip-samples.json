@@ -621,6 +621,10 @@
     {
       "source": "marshal-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: file:inbox\/xml\n      steps:\n        - unmarshal:\n            jaxb:\n              contextPath: com.acme.order\n        - to:\n            uri: bean:validateOrder\n        - marshal:\n            jaxb:\n              contextPath: com.acme.order\n        - to:\n            uri: jms:queue:order\n"
+    },
+    {
+      "source": "marshal-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:order\n      steps:\n        - to:\n            uri: bean:findOrder\n        - marshal:\n            allowNullBody: true\n            json: {}\n        - to:\n            uri: mock:result\n"
     }
   ],
   "messageBus": [
@@ -1444,7 +1448,7 @@
     },
     {
       "source": "switch-eip.adoc",
-      "yaml": "- semantic:\n    question:\n      department:\n        type: choice\n        instructions: Which department should handle this message?\n        criteria:\n          billing: Invoices, payments and refunds\n          technical: Bugs, outages and technical problems\n          other: Any other request\n- route:\n    from:\n      uri: direct:classify\n      steps:\n        - switch:\n            selector:\n              language:\n                language: semantic\n                expression: ref:department\n            case:\n              - value: billing\n                uri: direct:billing\n              - value: technical\n                uri: direct:technical\n            otherwise:\n              uri: direct:review\n"
+      "yaml": "- semantic:\n    evaluation:\n      department:\n        type: choice\n        instructions: Which department should handle this message?\n        criteria:\n          billing: Invoices, payments and refunds\n          technical: Bugs, outages and technical problems\n          other: Any other request\n- route:\n    from:\n      uri: direct:classify\n      steps:\n        - switch:\n            selector:\n              language:\n                language: semantic\n                expression: ref:department\n            case:\n              - value: billing\n                uri: direct:billing\n              - value: technical\n                uri: direct:technical\n            otherwise:\n              uri: direct:review\n"
     }
   ],
   "threads": [

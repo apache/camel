@@ -2132,6 +2132,12 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "allowNullBody" : {
+            "type" : "boolean",
+            "title" : "Allow Null Body",
+            "description" : "Indicates whether a null body is skipped instead of marshalled. By default the data format marshals the null, and what that gives depends on the data format (JSON gives the text null). When true, a null body is not marshalled and the body stays null.",
+            "default" : false
+          },
           "asn1" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ASN1DataFormat"
           },
@@ -13583,90 +13589,32 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
-          "question" : {
+          "evaluation" : {
             "type" : "object",
             "additionalProperties" : {
-              "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionSchema"
-            }
-          }
-        },
-        "required" : [ "question" ]
-      },
-      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$BooleanSchema" : {
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "criteria" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
+              "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema"
             }
           },
           "expert" : {
             "type" : "string"
           },
-          "instructions" : {
-            "type" : "string"
-          },
           "state" : {
             "type" : "string"
-          },
-          "threshold" : {
-            "type" : "number"
-          },
-          "type" : {
-            "type" : "string",
-            "enum" : [ "boolean" ]
-          },
-          "uncertainty" : {
-            "type" : "number"
-          },
-          "uncertaintyPolicy" : {
-            "type" : "string",
-            "enum" : [ "fail", "non-match" ]
           }
         },
-        "required" : [ "type" ]
+        "required" : [ "evaluation" ]
       },
-      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ChoiceSchema" : {
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "criteria" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "expert" : {
-            "type" : "string"
-          },
-          "instructions" : {
-            "type" : "string"
-          },
-          "state" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "enum" : [ "choice" ]
-          }
-        },
-        "required" : [ "criteria", "type" ]
-      },
-      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionSchema" : {
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema" : {
         "type" : "object",
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$BooleanSchema"
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$MapCriteriaSchema"
           }, {
-            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ChoiceSchema"
-          }, {
-            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ScoreSchema"
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ListCriteriaSchema"
           } ]
         } ]
       },
-      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ScoreSchema" : {
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ListCriteriaSchema" : {
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -13682,15 +13630,68 @@
           "instructions" : {
             "type" : "string"
           },
+          "operation" : {
+            "type" : "string"
+          },
+          "parameters" : {
+            "type" : "object"
+          },
           "state" : {
             "type" : "string"
           },
+          "threshold" : {
+            "type" : "number"
+          },
           "type" : {
-            "type" : "string",
-            "enum" : [ "score" ]
+            "type" : "string"
+          },
+          "uncertainty" : {
+            "type" : "number"
+          },
+          "uncertaintyPolicy" : {
+            "type" : "string"
           }
         },
-        "required" : [ "criteria", "type" ]
+        "required" : [ "criteria" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$MapCriteriaSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "criteria" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "expert" : {
+            "type" : "string"
+          },
+          "instructions" : {
+            "type" : "string"
+          },
+          "operation" : {
+            "type" : "string"
+          },
+          "parameters" : {
+            "type" : "object"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "threshold" : {
+            "type" : "number"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "uncertainty" : {
+            "type" : "number"
+          },
+          "uncertaintyPolicy" : {
+            "type" : "string"
+          }
+        }
       }
     },
     "properties" : {

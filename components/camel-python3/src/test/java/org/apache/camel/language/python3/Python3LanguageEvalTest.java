@@ -92,7 +92,7 @@ class Python3LanguageEvalTest {
         Language language = context.resolveLanguage("python3");
         assertThat(language.createExpression("2 + body").evaluate(exchange, Integer.class)).isEqualTo(9);
         assertThat(language.createExpression("headers['foo']").evaluate(exchange, String.class)).isEqualTo("bar");
-        assertThat(language.createExpression("properties['color']").evaluate(exchange, String.class)).isEqualTo("red");
+        assertThat(language.createExpression("exchangeProperties['color']").evaluate(exchange, String.class)).isEqualTo("red");
         assertThat(language.createExpression("exchangeId").evaluate(exchange, String.class))
                 .isEqualTo(exchange.getExchangeId());
         assertThat(language.createPredicate("body == 7").matches(exchange)).isTrue();

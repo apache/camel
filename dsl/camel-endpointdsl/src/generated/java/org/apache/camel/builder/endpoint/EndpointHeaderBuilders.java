@@ -2308,6 +2308,20 @@ public class EndpointHeaderBuilders {
         return KafkaEndpointBuilderFactory.KafkaHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Kafka Share (camel-kafka-share)
+     * Consume messages from Apache Kafka topics as a queue, using a share
+     * group.
+     * 
+     * Category: messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-kafka-share
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static KafkaShareEndpointBuilderFactory.KafkaShareHeaderNameBuilder kafkaShare() {
+        return KafkaShareEndpointBuilderFactory.KafkaShareHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Keycloak (camel-keycloak)
      * Manage Keycloak instances via Admin API.
      * 

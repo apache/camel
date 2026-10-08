@@ -3878,6 +3878,17 @@
         "index" : 6,
         "group" : "common"
       }, {
+        "name" : "allowNullBody",
+        "type" : "boolean",
+        "description" : "Indicates whether a null body is skipped instead of marshalled. By default the data format marshals the null, and what that gives depends on the data format (JSON gives the text null). When true, a null body is not marshalled and the body stays null.",
+        "title" : "Allow Null Body",
+        "default" : "false",
+        "displayName" : "Allow Null Body",
+        "kind" : "attribute",
+        "index" : 7,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
         "name" : "asn1",
         "type" : "object",
         "ref" : "aSN1"
@@ -20526,64 +20537,19 @@
     "semantic" : {
       "isListItem" : true,
       "children" : [ {
-        "name" : "question",
+        "name" : "evaluation",
         "type" : "map",
-        "ref" : "semanticDefinitionDeserializer$QuestionSchema",
-        "required" : true
-      } ]
-    },
-    "semanticDefinitionDeserializer$BooleanSchema" : {
-      "children" : [ {
-        "name" : "criteria",
-        "type" : "object"
-      }, {
-        "name" : "expert",
-        "type" : "string"
-      }, {
-        "name" : "instructions",
-        "type" : "string"
-      }, {
-        "name" : "state",
-        "type" : "string"
-      }, {
-        "name" : "threshold",
-        "type" : "number"
-      }, {
-        "name" : "type",
-        "type" : "enum",
-        "enum" : [ "boolean" ],
-        "required" : true
-      }, {
-        "name" : "uncertainty",
-        "type" : "number"
-      }, {
-        "name" : "uncertaintyPolicy",
-        "type" : "enum",
-        "enum" : [ "fail", "non-match" ]
-      } ]
-    },
-    "semanticDefinitionDeserializer$ChoiceSchema" : {
-      "children" : [ {
-        "name" : "criteria",
-        "type" : "object",
+        "ref" : "semanticDefinitionDeserializer$EvaluationSchema",
         "required" : true
       }, {
         "name" : "expert",
         "type" : "string"
       }, {
-        "name" : "instructions",
-        "type" : "string"
-      }, {
         "name" : "state",
         "type" : "string"
-      }, {
-        "name" : "type",
-        "type" : "enum",
-        "enum" : [ "choice" ],
-        "required" : true
       } ]
     },
-    "semanticDefinitionDeserializer$QuestionSchema" : {
+    "semanticDefinitionDeserializer$EvaluationSchema" : {
       "children" : [ {
         "name" : "criteria",
         "type" : "any"
@@ -20594,6 +20560,12 @@
         "name" : "instructions",
         "type" : "string"
       }, {
+        "name" : "operation",
+        "type" : "string"
+      }, {
+        "name" : "parameters",
+        "type" : "object"
+      }, {
         "name" : "state",
         "type" : "string"
       }, {
@@ -20601,19 +20573,16 @@
         "type" : "number"
       }, {
         "name" : "type",
-        "type" : "enum",
-        "enum" : [ "boolean", "choice", "score" ],
-        "required" : true
+        "type" : "string"
       }, {
         "name" : "uncertainty",
         "type" : "number"
       }, {
         "name" : "uncertaintyPolicy",
-        "type" : "enum",
-        "enum" : [ "fail", "non-match" ]
+        "type" : "string"
       } ]
     },
-    "semanticDefinitionDeserializer$ScoreSchema" : {
+    "semanticDefinitionDeserializer$ListCriteriaSchema" : {
       "children" : [ {
         "name" : "criteria",
         "type" : "array",
@@ -20625,13 +20594,59 @@
         "name" : "instructions",
         "type" : "string"
       }, {
+        "name" : "operation",
+        "type" : "string"
+      }, {
+        "name" : "parameters",
+        "type" : "object"
+      }, {
         "name" : "state",
         "type" : "string"
       }, {
+        "name" : "threshold",
+        "type" : "number"
+      }, {
         "name" : "type",
-        "type" : "enum",
-        "enum" : [ "score" ],
-        "required" : true
+        "type" : "string"
+      }, {
+        "name" : "uncertainty",
+        "type" : "number"
+      }, {
+        "name" : "uncertaintyPolicy",
+        "type" : "string"
+      } ]
+    },
+    "semanticDefinitionDeserializer$MapCriteriaSchema" : {
+      "children" : [ {
+        "name" : "criteria",
+        "type" : "object"
+      }, {
+        "name" : "expert",
+        "type" : "string"
+      }, {
+        "name" : "instructions",
+        "type" : "string"
+      }, {
+        "name" : "operation",
+        "type" : "string"
+      }, {
+        "name" : "parameters",
+        "type" : "object"
+      }, {
+        "name" : "state",
+        "type" : "string"
+      }, {
+        "name" : "threshold",
+        "type" : "number"
+      }, {
+        "name" : "type",
+        "type" : "string"
+      }, {
+        "name" : "uncertainty",
+        "type" : "number"
+      }, {
+        "name" : "uncertaintyPolicy",
+        "type" : "string"
       } ]
     }
   }

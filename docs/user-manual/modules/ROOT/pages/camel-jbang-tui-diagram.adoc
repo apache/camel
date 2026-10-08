@@ -12,6 +12,8 @@ See xref:camel-jbang-tui.adoc[Camel TUI] for getting started and the other pages
 * <<_architecture_view,*Architecture view*>> -- the capabilities of the integration and how they connect
 * <<_topology_view,*Topology view*>> -- every route and the endpoints that connect them, with live counts
 * <<_drill_down_into_routes,*Drill-down*>> -- the processors of one route, step by step
+* *Error handling* (*x*) -- the happy path by default; on, the error handling in a frame of its own, in the
+  topology and in a route
 * <<_external_endpoints,*External endpoints*>> -- what the integration consumes from and sends to outside
 * <<_metrics_and_source_code,*Metrics and source*>> -- throughput and timing on the boxes, and the source a box comes from
 
@@ -43,6 +45,10 @@ and EIP node is displayed with its type (colored by category), endpoint URI, and
 Nodes that connect to other routes show a *Enter* indicator -- press *Enter* to jump directly
 to the linked route. Navigation history is maintained as a breadcrumb stack: press *Esc* to go
 back to the previous route, and eventually back to the topology view.
+
+The route shows its own steps. Its onException clauses (a global one is copied into every route) are
+not drawn among them: press *x* to show the route's error handling in a frame below it (see
+<<_diagram_levels,Diagram levels>>).
 
 Press *t* to jump straight back to the topology from any depth.
 
@@ -83,7 +89,19 @@ description toggle, does the same. *m* metrics and *e* external systems apply to
 box names its group (a route group, an AI capability marked ✦, shared services or utility), each group
 has the border colour of its box in the architecture, and a legend at the bottom of the topology lists
 the groups in their colours; it is on when the project has groups. *u* shows or hides the utility
-routes, one setting for the architecture and the topology, so both show the same groups. The route
+routes, one setting for the architecture and the topology, so both show the same groups. *x* errors, in
+the topology, draws the error handling in a frame of its own below the routes: the routes reached only while
+handling a failure (such as the target of a dead letter channel), and under each one where its failures come
+from and how they are handled (handled: the message ends there; continued; not handled: the failure goes on
+to the caller). There are no arrows into the frame (with a global error handler every route would have one);
+selecting a route in the frame highlights the routes that send to it. Off, the topology shows the happy path
+only. A route with error handling has a dim ⚡ on its box, in the topology and in the route view, whether the
+error handling is shown or not.
+In the route view *x* does the same for one route: off, the route shows its own steps only, without the
+onException clauses (a global one is in every route); on, a frame below the route lists where its failures
+go and where it is reached on error from, and shows its onException clauses as blocks of their own. The
+history view always shows the onException clauses, so a replay can step into them.
+It needs Camel 4.23 or newer in the integration; the toggle says *4.23+* for an older one. The route
 boxes widen, within reason, so a label and its group fit on a line, and the Info panel of a route
 names its group (✦ when the AI placed it). The footer lists only actions, such as
 *Enter* drill-down, *c* source and *s* summary.
@@ -109,7 +127,8 @@ Each route has one role:
   every group that uses them.
 * *Utility* -- plumbing with little business meaning: a route reached only while handling a failure
   (from a `doCatch`, an `onException` or a dead letter channel), a route that only logs, or one the
-  AI marked as utility. Hidden until you press *u*.
+  AI marked as utility. Hidden until you press *u*; with *x* on, the routes reached only on error are shown
+  in the error handling frame of the topology instead.
 * *Other* -- routes nothing above placed yet; `/overview` groups them.
 
 A box shows how many routes the group has, its entry points (HTTP, schedules, consumers) and the
@@ -174,5 +193,7 @@ Press *e* to cycle through three modes for external endpoints:
 | *v* | Next level: Architecture, Topology, Route
 | *u* | In the architecture and the topology: show or hide the utility routes
 | *g* | In the topology: show each route's group (route group, AI capability, shared services, utility)
+| *x* | In the topology and a route: show or hide the error handling, in a frame of its own (needs Camel 4.23+
+in the integration)
 | *s* | Open the integration summary (`camel-summary.md`) in the document viewer, from any level
 |===

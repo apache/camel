@@ -1198,6 +1198,7 @@ public class ModelWriter extends BaseWriter {
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("variableSend", def.getVariableSend(), null);
         doWriteAttribute("variableReceive", def.getVariableReceive(), null);
+        doWriteAttribute("allowNullBody", def.getAllowNullBody(), "false");
         doWriteElement(null, def.getDataFormatType(), (n, v) -> {
             switch (v.getClass().getSimpleName()) {
                 case "ASN1DataFormat" -> doWriteASN1DataFormat("asn1", (ASN1DataFormat) v);

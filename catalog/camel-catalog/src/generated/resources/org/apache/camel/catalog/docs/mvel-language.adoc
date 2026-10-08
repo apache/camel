@@ -57,12 +57,20 @@ The following Camel related variables are made available:
 |request |Message |the message
 |message |Message |the message
 |headers |Map |the message headers
-|header(name) |Object |the message header by the given name
-|header(name, type) |Type |the message header by the given name as the given type
+|getHeader(name) |Object |the message header by the given name
+|getHeader(name, type) |Type |the message header by the given name as the given type
 |properties |Map |the exchange properties
-|property(name) |Object |the exchange property by the given name
-|property(name, type) |Type |the exchange property by the given name as the given type
+|getProperty(name) |Object |the exchange property by the given name
+|getProperty(name, type) |Type |the exchange property by the given name as the given type
+|variables |Map |the exchange variables
+|getVariable(name) |Object |the exchange variable by the given name
+|getVariable(name, type) |Type |the exchange variable by the given name as the given type
 |=======================================================================
+
+`getHeader`, `getProperty` and `getVariable` are methods on the root object, so they are
+called by their full name, as in `getHeader('foo')` or `getVariable('foo')`. The maps can be
+read as `headers.foo` or `variables['foo']`. `getVariable` also resolves global and route
+variables, such as `getVariable('global:foo')`, which are not in the `variables` map.
 
 == Example
 

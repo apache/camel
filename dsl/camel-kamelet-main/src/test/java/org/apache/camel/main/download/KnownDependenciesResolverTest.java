@@ -31,6 +31,15 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class KnownDependenciesResolverTest {
 
     @Test
+    void semanticExpertDiscoveryDoesNotDownloadAnArbitraryProvider() {
+        KnownDependenciesResolver resolver = new KnownDependenciesResolver(new SimpleCamelContext(), null, null);
+        resolver.loadKnownFactoryFinderDependencies();
+
+        assertNull(resolver.mavenGavForClass("META-INF/services/org/apache/camel/semantic-adapter"));
+        assertGav(resolver, "META-INF/services/org/apache/camel/bean-processor-factory", "org.apache.camel", "camel-bean");
+    }
+
+    @Test
     void camelShorthandMappingsUseCatalogCoordinates() {
         SimpleCamelContext context = new SimpleCamelContext() {
             @Override

@@ -164,10 +164,10 @@ class RouteDslConverterTest {
 
         String java = """
                 import org.apache.camel.builder.RouteBuilder;
-                import static org.apache.camel.semantic.SemanticQuestionsBuilder.semanticQuestions;
+                import static org.apache.camel.semantic.SemanticEvaluationsBuilder.semanticEvaluations;
                 public class SemanticRoute extends RouteBuilder {
                     public void configure() {
-                        semanticQuestions(this).question("urgent").type("boolean").register();
+                        semanticEvaluations(this).evaluation("urgent").type("boolean").register();
                         from("direct:input").log("Hello");
                     }
                 }

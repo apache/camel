@@ -1,0 +1,31 @@
+= Wolf Defender test service
+
+This service supplies the pinned Wolf Defender Small model files for tests that run local inference.
+It implements the test-infra JUnit lifecycle and requires no container runtime.
+
+[source,java]
+----
+@RegisterExtension
+static WolfDefenderService model = new WolfDefenderService();
+----
+
+After initialization, `model.getModelDirectory()` returns the verified model directory.
+
+Use `-DwolfDefender.download=true` to download missing files into
+`${user.home}/.camel-test/wolf-defender/<revision>` and reuse them on later runs.
+The revision and SHA-256 checksums are pinned in the service. Downloads become visible only after verification,
+and a file lock prevents concurrent processes from provisioning the same cache at once.
+Set `-DwolfDefender.cacheDirectory=/path/to/cache` to choose a different cache root.
+Shutdown retains cached files.
+
+Use `-DwolfDefender.modelDirectory=/path/to/model`, or `new WolfDefenderService(path)`, to supply existing files.
+These files are verified but never downloaded or modified, even if the download option is enabled.
+The directory must contain `config.json`, `tokenizer.json`, and `onnx/onnx_fp32/model.onnx` for revision
+`bcab2eff97bcabd7227849639e2d0d7a61b46c92` of
+https://huggingface.co/patronus-studio/wolf-defender-prompt-injection-small[Wolf Defender Small].
+The FP32 model download is approximately 563 MB.
+
+Tests should use `WolfDefenderService.isEnabled()` in their JUnit execution condition to require explicit opt-in,
+together with any native platform checks required by their inference runtime.
+Construction and `isEnabled()` perform no I/O; provisioning happens during `initialize()`.
+The service itself only manages files and has no dependency on ONNX Runtime or DJL Tokenizers.

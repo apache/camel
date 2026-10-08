@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -62,8 +64,9 @@ public class SpringQuartzConsumerTwoAppsClusteredRecoveryTest {
         AbstractXmlApplicationContext app2 = newAppContext("SpringQuartzConsumerRecoveryClusteredAppTwo.xml");
         app2.start();
 
-        // wait long enough until the second app takes it over...
-        Awaitility.await().untilAsserted(() -> {
+        // Quartz only declares app-one failed after its check-in interval plus a fixed 7.5s grace period, so the
+        // recovery alone takes most of Awaitility's 10s default; allow enough time on a loaded CI machine
+        Awaitility.await().atMost(30, TimeUnit.SECONDS).untilAsserted(() -> {
             CamelContext camel2 = app2.getBean("camelContext2-" + getClass().getSimpleName(), CamelContext.class);
 
             MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);

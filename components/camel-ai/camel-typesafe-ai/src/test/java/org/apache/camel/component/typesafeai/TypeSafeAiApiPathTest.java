@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.typesafeai;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
-import org.apache.camel.semantic.SemanticQuestion;
-import org.apache.camel.semantic.SemanticQuestions;
+import org.apache.camel.semantic.SemanticEvaluation;
+import org.apache.camel.semantic.SemanticEvaluations;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -95,9 +94,11 @@ class TypeSafeAiApiPathTest extends TypeSafeAiTestSupport {
             @Override
             public void configure() {
                 if (semantic) {
-                    SemanticQuestions.get(getContext()).replace("test", Map.of("refund", new SemanticQuestion(
-                            SemanticQuestion.Type.BOOLEAN, "Refund requested?", null,
-                            Map.of(), List.of(), 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL)));
+                    SemanticEvaluations.get(getContext()).replace("test",
+                            Map.of("refund",
+                                    new SemanticEvaluation(
+                                            "boolean", null, null, Map.of("instructions", "Refund requested?", "threshold", 0.5,
+                                                    "uncertainty", 0.0, "uncertaintyPolicy", "fail"))));
                     from("direct:request").setBody().language("semantic", "ref:refund");
                 } else {
                     from("direct:request").to("typesafe-ai:configured");

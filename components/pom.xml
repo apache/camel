@@ -207,6 +207,7 @@
         <module>camel-jte</module>
         <module>camel-kafka-common</module>
         <module>camel-kafka</module>
+        <module>camel-kafka-share</module>
         <module>camel-kamelet</module>
         <module>camel-keycloak</module>
         <module>camel-knative</module>

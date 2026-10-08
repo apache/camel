@@ -238,6 +238,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-wolf-defender</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-milvus</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -580,6 +585,12 @@
                                     <dependency>
                                         <groupId>org.apache.camel</groupId>
                                         <artifactId>camel-test-infra-ollama</artifactId>
+                                    </dependency>
+                                </fileSet>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-wolf-defender</artifactId>
                                     </dependency>
                                 </fileSet>
                                 <fileSet>

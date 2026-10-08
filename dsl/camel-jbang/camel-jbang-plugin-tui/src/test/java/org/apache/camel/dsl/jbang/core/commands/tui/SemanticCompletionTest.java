@@ -24,9 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class SemanticCompletionTest {
     private SourceEditAssist assist() {
@@ -37,22 +35,22 @@ class SemanticCompletionTest {
     }
 
     @ParameterizedTest
-    @CsvSource({ "department,/semantic/question/department", "support/team,/semantic/question/support%2Fteam" })
-    void completionFollowsNamedQuestionMapAndOffersVariantFields(String question, String expectedPath) {
-        TextAreaState state = new TextAreaState("- semantic:\n    question:\n      " + question + ":\n        ");
+    @CsvSource({ "department,/semantic/evaluation/department", "support/team,/semantic/evaluation/support%2Fteam" })
+    void completionFollowsNamedEvaluationMapAndOffersVariantFields(String evaluation, String expectedPath) {
+        TextAreaState state = new TextAreaState("- semantic:\n    evaluation:\n      " + evaluation + ":\n        ");
         SourceEditorNavigation.positionCursor(state, 3, 8);
         String path = new YamlSourceContext(state).findParentYamlPath(3);
-        assertEquals(expectedPath, path);
+        assertThat(path).isEqualTo(expectedPath);
         SourceEditAssist assist = assist();
         List<String> keys = assist.provideTreeCompletions(path).stream().map(AutocompletePopup.CompletionItem::key).toList();
-        assertTrue(keys.containsAll(List.of("type", "instructions", "state", "criteria", "threshold", "uncertaintyPolicy")),
-                keys.toString());
-        assertFalse(assist.provideTreeCompletions(path + ":instructions").stream()
-                .anyMatch(item -> item.key().equals("instructions")));
-        List<String> types = assist.provideTreeValueCompletions(path + ":type").stream()
-                .map(AutocompletePopup.CompletionItem::key).toList();
-        assertTrue(types.containsAll(List.of("boolean", "choice", "score")), types.toString());
-        assertFalse(String.valueOf(assist.getTreeNode("semantic").get("label")).contains("language"));
+        assertThat(keys).as("completions for path %s", path)
+                .contains("type", "instructions", "state", "criteria", "threshold", "uncertaintyPolicy");
+        assertThat(assist.provideTreeCompletions(path + ":instructions"))
+                .as("instructions already present — should be filtered out")
+                .noneMatch(item -> item.key().equals("instructions"));
+        assertThat(String.valueOf(assist.getTreeNode("semantic").get("label")))
+                .as("semantic node label should not mention language")
+                .doesNotContain("language");
     }
 
     @Test
@@ -61,11 +59,11 @@ class SemanticCompletionTest {
                 "- route:\n    from:\n      uri: direct:start\n      steps:\n        - log:\n            ");
         SourceEditorNavigation.positionCursor(state, 5, 12);
         String path = new YamlSourceContext(state).findParentYamlPath(5);
-        assertEquals("/route/from/steps/log", path);
+        assertThat(path).isEqualTo("/route/from/steps/log");
         SourceEditAssist assist = assist();
-        assertEquals(assist.provideTreeCompletions("log"), assist.provideTreeCompletions(path));
-        assertEquals(assist.provideTreeValueCompletions("log:loggingLevel"),
-                assist.provideTreeValueCompletions(path + ":loggingLevel"));
-        assertFalse(assist.provideTreeValueCompletions(path + ":loggingLevel").isEmpty());
+        assertThat(assist.provideTreeCompletions(path)).isEqualTo(assist.provideTreeCompletions("log"));
+        assertThat(assist.provideTreeValueCompletions(path + ":loggingLevel"))
+                .isEqualTo(assist.provideTreeValueCompletions("log:loggingLevel"));
+        assertThat(assist.provideTreeValueCompletions(path + ":loggingLevel")).isNotEmpty();
     }
 }

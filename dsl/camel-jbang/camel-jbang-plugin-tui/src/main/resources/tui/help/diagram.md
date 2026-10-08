@@ -83,7 +83,8 @@ overview setting; with no summary yet it has the AI write one, as
 `/overview` does), `b` view (business: labels and what capabilities achieve;
 technical: route ids and endpoints), `m` metrics, `e` external, `d`
 detail, `g` group, `u` utility (one setting for the architecture
-and the topology, so both show the same groups). The footer lists
+and the topology, so both show the same groups), `x` errors (the
+error handling in a frame below the routes). The footer lists
 only actions.
 
 ## Architecture View
@@ -137,6 +138,12 @@ linked route's diagram.
 Navigation history is maintained as a stack: pressing `Esc` goes
 back to the previous route, and eventually back to the topology view.
 
+The route shows its own steps (the happy path). Its error handling,
+the onException clauses (a global one is in every route) and where
+its failures go, is in a frame below the route when `x` is on. The
+history view always shows the onException clauses, so a replay can
+step into them.
+
 ## Route Structure Preview
 
 A compact tree structure preview appears in the bottom-right corner
@@ -159,6 +166,13 @@ you an at-a-glance view of where you are in the route.
 - `g` — show each route's group in the topology, its colour as in
   the architecture, with a legend of the groups at the bottom
 - `u` — show or hide utility routes (as in the architecture)
+- `x` — show or hide the error handling: the routes reached only on
+  error, in a frame below the routes, with where each one's failures
+  come from and how they are handled (select one to highlight the
+  routes that send to it; a route with error handling has a dim ⚡ on
+  its box; needs Camel 4.23+ in the integration);
+  in the route view, the route's onException clauses and where its
+  failures go, in a frame below its steps
 - `s` — open the integration summary (camel-summary.md)
 - `Esc` — close diagram
 
@@ -175,6 +189,7 @@ you an at-a-glance view of where you are in the route.
 - `Enter` — jump to linked route (when `↵` indicator shown)
 - `c` — show source code at selected node
 - `d` — toggle EIP detail panel (shows configured options)
+- `x` — show or hide the route's error handling, in a frame below it
 - `g` — go to node (fuzzy search popup)
 - `Esc` — go back (previous route or topology)
 - `t` — jump back to topology view

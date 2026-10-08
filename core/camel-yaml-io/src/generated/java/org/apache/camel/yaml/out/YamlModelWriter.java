@@ -1192,6 +1192,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteProcessorDefinitionAttributes(jo, def);
         doWriteAttribute(jo, "variableSend", def.getVariableSend(), null);
         doWriteAttribute(jo, "variableReceive", def.getVariableReceive(), null);
+        doWriteAttribute(jo, "allowNullBody", def.getAllowNullBody(), "false");
         if (def.getDataFormatType() != null) {
             switch (def.getDataFormatType().getClass().getSimpleName()) {
                 case "ASN1DataFormat" -> doWriteChildElement(jo, "asn1", (ASN1DataFormat) def.getDataFormatType(), this::doWriteASN1DataFormat);

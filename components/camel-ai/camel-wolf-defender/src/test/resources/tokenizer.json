@@ -1,0 +1,85 @@
+{
+  "version": "1.0",
+  "truncation": {
+    "direction": "Right",
+    "max_length": 4,
+    "strategy": "LongestFirst",
+    "stride": 0
+  },
+  "padding": null,
+  "added_tokens": [],
+  "normalizer": null,
+  "pre_tokenizer": {
+    "type": "Whitespace"
+  },
+  "post_processor": {
+    "type": "TemplateProcessing",
+    "single": [
+      {
+        "SpecialToken": {
+          "id": "<bos>",
+          "type_id": 0
+        }
+      },
+      {
+        "Sequence": {
+          "id": "A",
+          "type_id": 0
+        }
+      },
+      {
+        "SpecialToken": {
+          "id": "<eos>",
+          "type_id": 0
+        }
+      }
+    ],
+    "pair": [
+      {
+        "Sequence": {
+          "id": "A",
+          "type_id": 0
+        }
+      },
+      {
+        "Sequence": {
+          "id": "B",
+          "type_id": 1
+        }
+      }
+    ],
+    "special_tokens": {
+      "<bos>": {
+        "id": "<bos>",
+        "ids": [
+          2
+        ],
+        "tokens": [
+          "<bos>"
+        ]
+      },
+      "<eos>": {
+        "id": "<eos>",
+        "ids": [
+          3
+        ],
+        "tokens": [
+          "<eos>"
+        ]
+      }
+    }
+  },
+  "decoder": null,
+  "model": {
+    "type": "WordLevel",
+    "vocab": {
+      "<unk>": 0,
+      "<pad>": 1,
+      "<bos>": 2,
+      "<eos>": 3,
+      "hello": 4,
+      "attack": 5
+    },
+    "unk_token": "<unk>"
+  }
+}

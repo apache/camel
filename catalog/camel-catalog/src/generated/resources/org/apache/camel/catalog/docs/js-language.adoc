@@ -30,14 +30,30 @@ include::partial$language-options.adoc[]
 |=======================================================================
 |Variable |Type |Description
 |*this* |Exchange |the Exchange is the root object
-|context |CamelContext |the CamelContext
 |exchange |Exchange |the Exchange
+|camelContext |CamelContext |the CamelContext
 |exchangeId |String |the exchange id
 |message |Message |the message
-|body |Message |the message body
+|request |Message |the message (same as `message`)
+|body |Object |the message body
+|header |Map |the message headers (same as `headers`)
 |headers |Map |the message headers
-|properties |Map |the exchange properties
+|exchangeProperty |Map |the exchange properties (same as `exchangeProperties`)
+|exchangeProperties |Map |the exchange properties
+|variable |Map |the exchange variables (same as `variables`)
+|variables |Map |the exchange variables
+|exception |Exception |the exception if the exchange failed (or the caught exception in an error handler), otherwise `null`
+|context |CamelContext |*Deprecated* use `camelContext`
+|properties |Map |*Deprecated* use `exchangeProperties`
 |=======================================================================
+
+The variables have the same names as in the xref:groovy-language.adoc[Groovy] language, except `in`, which is a
+reserved word in JavaScript (use `message` or `request`), and the deprecated `out` and `response`. The deprecated
+`context` and `properties` still work.
+
+The `variable` and `variables` bindings are the exchange-scoped variables (for example set with the
+xref:eips:setVariable-eip.adoc[Set Variable] EIP). Global and route variables, such as `global:foo`,
+are not in this map; use `exchange.getVariable('global:foo')` for those.
 
 
 == Dependencies

@@ -9488,6 +9488,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Serializes the message body into a specific data format such as JSON, XML, CSV, or Protobuf for transmission or storage",
             deprecated = false,
             properties = {
+                    @YamlProperty(name = "allowNullBody", type = "boolean", defaultValue = "false", description = "Indicates whether a null body is skipped instead of marshalled. By default the data format marshals the null, and what that gives depends on the data format (JSON gives the text null). When true, a null body is not marshalled and the body stays null.", displayName = "Allow Null Body"),
                     @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat", required = true, oneOf = "dataFormatType"),
@@ -9561,6 +9562,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
+                case "allowNullBody": {
+                    String val = asText(node);
+                    target.setAllowNullBody(val);
+                    break;
+                }
                 case "dataFormatType": {
                     MappingNode val = asMappingNode(node);
                     setProperties(target, val);

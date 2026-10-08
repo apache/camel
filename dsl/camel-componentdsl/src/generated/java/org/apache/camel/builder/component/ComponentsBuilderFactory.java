@@ -2997,6 +2997,20 @@ public interface ComponentsBuilderFactory {
         return KafkaComponentBuilderFactory.kafka();
     }
     /**
+     * Kafka Share (camel-kafka-share)
+     * Consume messages from Apache Kafka topics as a queue, using a share
+     * group.
+     * 
+     * Category: messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-kafka-share
+     * 
+     * @return the dsl builder
+     */
+    static KafkaShareComponentBuilderFactory.KafkaShareComponentBuilder kafkaShare() {
+        return KafkaShareComponentBuilderFactory.kafkaShare();
+    }
+    /**
      * Kamelet (camel-kamelet)
      * To call Kamelets
      * 

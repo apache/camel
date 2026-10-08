@@ -45,21 +45,23 @@ public class MarshalProcessor extends AsyncProcessorSupport
     private String stepId;
     private CamelContext camelContext;
     private final DataFormat dataFormat;
+    private final boolean allowNullBody;
     private boolean disabled;
     private String variableSend;
     private String variableReceive;
 
     public MarshalProcessor(DataFormat dataFormat) {
+        this(dataFormat, false);
+    }
+
+    public MarshalProcessor(DataFormat dataFormat, boolean allowNullBody) {
         this.dataFormat = dataFormat;
+        this.allowNullBody = allowNullBody;
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         ObjectHelper.notNull(dataFormat, "dataFormat");
-
-        // if stream caching is enabled then use that so we can stream accordingly
-        // for example to overflow to disk for big streams
-        OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
 
         Message in = exchange.getIn();
         final Object originalBody = in.getBody();
@@ -67,6 +69,18 @@ public class MarshalProcessor extends AsyncProcessorSupport
         if (variableSend != null) {
             body = ExchangeHelper.getVariable(exchange, variableSend);
         }
+        if (allowNullBody && body == null) {
+            // the body is null, and it is an allowed value so let's skip the marshalling
+            if (variableReceive != null) {
+                ExchangeHelper.setVariable(exchange, variableReceive, null);
+            }
+            callback.done(true);
+            return true;
+        }
+
+        // if stream caching is enabled then use that so we can stream accordingly
+        // for example to overflow to disk for big streams
+        OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
 
         // lets setup the out message before we invoke the dataFormat
         // so that it can mutate it if necessary

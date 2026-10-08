@@ -415,6 +415,7 @@
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
         <ognl-version>3.4.14</ognl-version>
+        <onnxruntime-version>1.30.0</onnxruntime-version>
         <opa-version>2.1.1</opa-version>
         <opa-wasm-version>1.1.0</opa-wasm-version>
         <openfga-version>0.11.0</openfga-version>
@@ -538,7 +539,7 @@
         <univocity-parsers-version>2.10.2</univocity-parsers-version>
         <velocity-tools-version>3.1</velocity-tools-version>
         <velocity-version>2.4.1</velocity-version>
-        <vertx-version>4.5.34</vertx-version>
+        <vertx-version>4.5.35</vertx-version>
         <weaviate-client-version>6.3.1</weaviate-client-version>
         <web3j-version>5.0.0</web3j-version>
         <web3j-quorum-version>4.10.0</web3j-quorum-version>
@@ -2062,6 +2063,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-kafka-share</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-kamelet</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -3088,6 +3094,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-whatsapp</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-wolf-defender</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

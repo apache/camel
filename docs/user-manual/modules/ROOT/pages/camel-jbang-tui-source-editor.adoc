@@ -83,7 +83,7 @@ image::jbang/camel-tui-source-save-blocked.png[A YAML file with a problem is not
 A Java file is saved anyway and its problems are reported: it is the application's code, and a check cannot know
 everything a Java route computes at runtime.
 
-The checks can be turned off in the Settings (*F2* > Settings).
+The checks can be turned off in the Settings (*F2* > Settings > *Validate on Save*, or `camel.tui.validateOnSave=false`).
 
 == Quick Fixes
 

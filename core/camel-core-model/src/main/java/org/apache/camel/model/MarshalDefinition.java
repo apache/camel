@@ -145,6 +145,12 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
     @XmlAttribute
     @Metadata(description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableReceive;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "Indicates whether a null body is skipped instead of marshalled. By default the data format marshals"
+                            + " the null, and what that gives depends on the data format (JSON gives the text null)."
+                            + " When true, a null body is not marshalled and the body stays null.")
+    private String allowNullBody;
 
     public MarshalDefinition() {
     }
@@ -153,6 +159,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
         super(source);
         this.variableSend = source.variableSend;
         this.variableReceive = source.variableReceive;
+        this.allowNullBody = source.allowNullBody;
         this.dataFormatType = source.dataFormatType != null ? source.dataFormatType.copyDefinition() : null;
     }
 
@@ -210,6 +217,14 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
         this.variableReceive = variableReceive;
     }
 
+    public String getAllowNullBody() {
+        return allowNullBody;
+    }
+
+    public void setAllowNullBody(String allowNullBody) {
+        this.allowNullBody = allowNullBody;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
@@ -235,6 +250,19 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
      */
     public MarshalDefinition variableSend(String variableSend) {
         setVariableSend(variableSend);
+        return this;
+    }
+
+    /**
+     * Indicates whether a {@code null} body is skipped instead of marshalled. By default the data format marshals the
+     * {@code null}, and what that gives depends on the data format (JSON gives the text {@code null}).
+     *
+     * @param  allowNullBody {@code true} to skip marshalling a {@code null} body, so the body stays {@code null},
+     *                       {@code false} to let the data format marshal it
+     * @return               the builder
+     */
+    public MarshalDefinition allowNullBody(boolean allowNullBody) {
+        setAllowNullBody(Boolean.toString(allowNullBody));
         return this;
     }
 

@@ -433,7 +433,7 @@ public final class RouteDslConverter {
     }
 
     private static final Pattern YAML_SEMANTIC = Pattern.compile("(?m)^-\\s+semantic\\s*:");
-    private static final Pattern JAVA_SEMANTIC = Pattern.compile("\\bsemanticQuestions\\s*\\(");
+    private static final Pattern JAVA_SEMANTIC = Pattern.compile("\\bsemanticEvaluations\\s*\\(");
 
     // they live outside the route model the writers export: converting would lose them without a word
     private static final String SEMANTIC_REFUSED

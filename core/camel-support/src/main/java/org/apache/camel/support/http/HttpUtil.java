@@ -29,6 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
@@ -83,7 +84,9 @@ public final class HttpUtil {
                 if (charset.contains(";")) {
                     charset = StringHelper.before(charset, ";");
                 }
-                return IOHelper.normalizeCharset(charset);
+                charset = IOHelper.normalizeCharset(charset);
+                // an empty charset parameter is no charset
+                return ObjectHelper.isEmpty(charset) ? null : charset;
             }
         }
         return null;

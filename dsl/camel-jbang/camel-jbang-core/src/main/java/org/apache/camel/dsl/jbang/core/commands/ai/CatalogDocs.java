@@ -16,10 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -41,6 +44,7 @@ import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * The catalog documentation an AI agent authoring an integration asks for: a component, data format, language or EIP
@@ -457,9 +461,34 @@ public final class CatalogDocs {
     private static void putNestedOptions(
             CamelCatalog catalog, EipModel model, String filter, OptionScope scope, JsonObject result) {
         JsonArray nested = new JsonArray();
-        String example = null;
+        String[] example = new String[1];
+        JsonObject yamlNodes = null;
         for (BaseOptionModel opt : model.getOptions()) {
             if (!"element".equals(opt.getKind())) {
+                continue;
+            }
+            if (isWrittenAsKind(opt)) {
+                // the element is written as one of its kinds, and the options are the ones of the kinds: the error
+                // handler's deadLetterUri is errorHandler: {deadLetterChannel: {deadLetterUri: ...}} (CAMEL-25377).
+                // An option that several kinds have is listed once, with the other kinds in alsoUnder.
+                Map<String, JsonObject> byName = new LinkedHashMap<>();
+                for (String kind : opt.getOneOfs()) {
+                    EipModel element = catalog.eipModel(kind);
+                    if (element == null || element.getOptions() == null) {
+                        continue;
+                    }
+                    JsonArray found = new JsonArray();
+                    addNestedOptions(element, kind, false, filter, scope, found, example);
+                    for (Object f : found) {
+                        JsonObject o = (JsonObject) f;
+                        JsonObject first = byName.putIfAbsent(o.getString("name"), o);
+                        if (first != null) {
+                            JsonArray also = (JsonArray) first.computeIfAbsent("alsoUnder", k -> new JsonArray());
+                            also.add(kind);
+                        }
+                    }
+                }
+                nested.addAll(byName.values());
                 continue;
             }
             EipModel element = catalog.eipModel(opt.getName());
@@ -468,22 +497,88 @@ public final class CatalogDocs {
             if (element == null || element.getOptions() == null || !holds(opt, element)) {
                 continue;
             }
-            boolean list = "array".equals(opt.getType());
-            for (BaseOptionModel inner : element.getOptions()) {
-                if (matchesOptionFilter(inner, filter) && scope.accepts(inner, filter)) {
-                    JsonObject o = optionToJson(inner, null);
-                    o.put("under", opt.getName());
-                    nested.add(o);
-                    if (example == null) {
-                        example = opt.getName() + ": " + (list ? "[{" : "{") + inner.getName() + ": ..." + (list ? "}]" : "}");
-                    }
-                }
+            if (yamlNodes == null) {
+                yamlNodes = yamlDslNodes(catalog);
             }
+            String key = yamlKey(yamlNodes, model.getName(), opt.getName(), element);
+            addNestedOptions(element, key, "array".equals(opt.getType()), filter, scope, nested, example);
         }
         if (!nested.isEmpty()) {
             result.put("nestedOptions", nested);
             result.put("nestedHint", "options of an element of " + model.getName() + ": write them under that element,"
-                                     + " for example " + example);
+                                     + " for example " + example[0]);
+        }
+    }
+
+    private static void addNestedOptions(
+            EipModel element, String under, boolean list, String filter, OptionScope scope, JsonArray nested,
+            String[] example) {
+        for (BaseOptionModel inner : element.getOptions()) {
+            if (matchesOptionFilter(inner, filter) && scope.accepts(inner, filter)) {
+                JsonObject o = optionToJson(inner, null);
+                o.put("under", under);
+                nested.add(o);
+                if (example[0] == null) {
+                    example[0] = under + ": " + (list ? "[{" : "{") + inner.getName() + ": ..." + (list ? "}]" : "}");
+                }
+            }
+        }
+    }
+
+    /**
+     * Whether the option is a single element written as one of its kinds, not under its own name: the error handler is
+     * errorHandler: {deadLetterChannel: {...}}, never errorHandlerType:. Not a list such as outputs (written under
+     * steps:), nor an element whose kind is its own name (when).
+     */
+    private static boolean isWrittenAsKind(BaseOptionModel opt) {
+        return "element".equals(opt.getKind()) && "object".equals(opt.getType()) && opt.getOneOfs() != null
+                && !opt.getOneOfs().isEmpty() && !opt.getOneOfs().contains(opt.getName());
+    }
+
+    /**
+     * The YAML DSL key of an element of an EIP, from the YAML DSL model of the catalog: the catalog names an element
+     * after its model, which is not always its YAML key (routeTemplate's templateParameter is written as parameters:).
+     * The element is the YAML child of that name, else the one whose model has the same title. Falls back to the
+     * catalog name.
+     */
+    static String yamlKey(JsonObject yamlNodes, String eip, String name, EipModel element) {
+        JsonObject node = yamlNodes != null ? (JsonObject) yamlNodes.get(eip) : null;
+        JsonArray children = node != null ? (JsonArray) node.get("children") : null;
+        if (children == null) {
+            return name;
+        }
+        for (Object c : children) {
+            if (name.equals(((JsonObject) c).getString("name"))) {
+                return name;
+            }
+        }
+        for (Object c : children) {
+            JsonObject child = (JsonObject) c;
+            String ref = child.getString("ref");
+            if (ref == null) {
+                continue;
+            }
+            JsonObject refNode = (JsonObject) yamlNodes.get(ref);
+            if (ref.equals(element.getName())
+                    || (refNode != null && element.getTitle() != null
+                            && element.getTitle().equals(refNode.getString("title")))) {
+                return child.getString("name");
+            }
+        }
+        return name;
+    }
+
+    /** The nodes of the YAML DSL model the catalog ships (schemas/camelYamlDsl-model.json), or null if it has none. */
+    private static JsonObject yamlDslNodes(CamelCatalog catalog) {
+        try (InputStream is = catalog.getVersionManager()
+                .getResourceAsStream("org/apache/camel/catalog/schemas/camelYamlDsl-model.json")) {
+            if (is == null) {
+                return null;
+            }
+            JsonObject root = (JsonObject) Jsoner.deserialize(new String(is.readAllBytes(), StandardCharsets.UTF_8));
+            return (JsonObject) root.get("nodes");
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -1727,11 +1822,8 @@ public final class CatalogDocs {
             enums.addAll(opt.getEnums());
             o.put("enumValues", enums);
         }
-        if ("element".equals(opt.getKind()) && "object".equals(opt.getType()) && opt.getOneOfs() != null
-                && !opt.getOneOfs().isEmpty() && !opt.getOneOfs().contains(opt.getName())) {
-            // a single element that is one of several kinds is written as that kind, not under its own name: the
-            // error handler is errorHandler: {deadLetterChannel: {...}}, never errorHandlerType: (CAMEL-25370). Not
-            // a list such as outputs (written under steps:), nor an element whose kind is its own name (when).
+        if (isWrittenAsKind(opt)) {
+            // written as one of its kinds (CAMEL-25370)
             JsonArray oneOf = new JsonArray();
             oneOf.addAll(opt.getOneOfs());
             o.put("oneOf", oneOf);

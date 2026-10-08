@@ -41,6 +41,14 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
     }
 
     @Test
+    public void testSemanticFunctionHints() {
+        assertThat(expressionError("${sematic('q')}")).contains("${semantic('q')}");
+        assertThat(expressionError("${semantic:q}")).contains("${semantic('q')}");
+        assertThat(expressionError("${semantic}")).contains("${semantic('evaluationName')}");
+        assertThat(expressionError("${semantic('q')}")).contains("requires camel-semantic");
+    }
+
+    @Test
     public void testFunctionWithoutDollarBraces() {
         assertThat(predicateError("body == 'Hello World'"))
                 .contains("text outside ${...} is a literal")
