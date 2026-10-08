@@ -599,6 +599,30 @@ public interface RestPostmanComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether a {{variable}} placeholder that neither the collection nor
+         * the variables option defines is resolved from Camel properties, which
+         * by default also cover JVM system properties and OS environment
+         * variables. When not set, this is done for a collection read from the
+         * classpath or the file system, and not for one fetched from the
+         * Postman cloud, over HTTP or through any other resource scheme,
+         * because whoever edits or serves such a collection could otherwise
+         * copy those values into an outgoing request.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param resolveVariablesFromProperties the value to set
+         * @return the dsl builder
+         */
+        default RestPostmanComponentBuilder resolveVariablesFromProperties(java.lang.Boolean resolveVariablesFromProperties) {
+            doSetProperty("resolveVariablesFromProperties", resolveVariablesFromProperties);
+            return this;
+        }
+    
         /**
          * Customize TLS parameters used by the component. If not set defaults
          * to the TLS parameters set in the Camel context. These parameters are
@@ -703,6 +727,7 @@ public interface RestPostmanComponentBuilderFactory {
             case "oauthProfile": getOrCreateConfiguration((RestPostmanComponent) component).setOauthProfile((java.lang.String) value); return true;
             case "postmanApiKey": getOrCreateConfiguration((RestPostmanComponent) component).setPostmanApiKey((java.lang.String) value); return true;
             case "postmanApiKeyHeader": getOrCreateConfiguration((RestPostmanComponent) component).setPostmanApiKeyHeader((java.lang.String) value); return true;
+            case "resolveVariablesFromProperties": getOrCreateConfiguration((RestPostmanComponent) component).setResolveVariablesFromProperties((java.lang.Boolean) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((RestPostmanComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": getOrCreateConfiguration((RestPostmanComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             case "postmanApiUrl": getOrCreateConfiguration((RestPostmanComponent) component).setPostmanApiUrl((java.lang.String) value); return true;

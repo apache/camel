@@ -62,6 +62,15 @@ public class RestPostmanConfiguration implements Cloneable {
                             + " resolved. When false the placeholder is left as-is.")
     private boolean failOnUnresolvedVariable;
 
+    @UriParam(label = "common,security")
+    @Metadata(description = "Whether a {{variable}} placeholder that neither the collection nor the variables option"
+                            + " defines is resolved from Camel properties, which by default also cover JVM system"
+                            + " properties and OS environment variables. When not set, this is done for a collection"
+                            + " read from the classpath or the file system, and not for one fetched from the Postman"
+                            + " cloud, over HTTP or through any other resource scheme, because whoever edits or serves"
+                            + " such a collection could otherwise copy those values into an outgoing request.")
+    private Boolean resolveVariablesFromProperties;
+
     @UriParam(label = "producer")
     @Metadata(description = "Scheme hostname and port to direct the HTTP requests to in the form of"
                             + " `http[s]://hostname[:port]`. If set overrides any value derived from the collection.")
@@ -225,6 +234,14 @@ public class RestPostmanConfiguration implements Cloneable {
 
     public void setFailOnUnresolvedVariable(boolean failOnUnresolvedVariable) {
         this.failOnUnresolvedVariable = failOnUnresolvedVariable;
+    }
+
+    public Boolean getResolveVariablesFromProperties() {
+        return resolveVariablesFromProperties;
+    }
+
+    public void setResolveVariablesFromProperties(Boolean resolveVariablesFromProperties) {
+        this.resolveVariablesFromProperties = resolveVariablesFromProperties;
     }
 
     public String getHost() {

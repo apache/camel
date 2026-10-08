@@ -111,6 +111,37 @@ class PostmanCollectionLoaderTest {
         assertThat(PostmanCollectionLoader.isCloudSource(source, PostmanCollectionLoader.SOURCE_TYPE_AUTO)).isFalse();
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "petstore.json",
+            "classpath:petstore.json",
+            "file:target/petstore.json",
+            "12ece9e1-2abf-4edc-8e34-de66e74114d2.json"
+    })
+    void shouldDetectLocalSources(String source) {
+        assertThat(PostmanCollectionLoader.isLocalSource(source, PostmanCollectionLoader.SOURCE_TYPE_AUTO)).isTrue();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "12ece9e1-2abf-4edc-8e34-de66e74114d2",
+            "http://example.com/petstore.json",
+            "https://example.com/petstore.json",
+            "ref:petstore",
+            "mem:petstore.json"
+    })
+    void shouldDetectSourcesThatAreNotLocal(String source) {
+        assertThat(PostmanCollectionLoader.isLocalSource(source, PostmanCollectionLoader.SOURCE_TYPE_AUTO)).isFalse();
+    }
+
+    @Test
+    void shouldNotTreatACloudSourceAsLocal() {
+        assertThat(PostmanCollectionLoader.isLocalSource("petstore.json", PostmanCollectionLoader.SOURCE_TYPE_CLOUD))
+                .isFalse();
+        assertThat(PostmanCollectionLoader.isLocalSource(
+                "12ece9e1-2abf-4edc-8e34-de66e74114d2", PostmanCollectionLoader.SOURCE_TYPE_RESOURCE)).isTrue();
+    }
+
     @Test
     void shouldHonourAnExplicitSourceType() {
         assertThat(PostmanCollectionLoader.isCloudSource("petstore.json", PostmanCollectionLoader.SOURCE_TYPE_CLOUD))

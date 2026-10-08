@@ -74,6 +74,21 @@ public final class PostmanCollectionLoader {
     }
 
     /**
+     * Whether the source is read from the application's own classpath or file system: a {@code classpath:} or
+     * {@code file:} URI, or a name without a scheme, which is resolved from the classpath. A cloud source, an
+     * {@code http:} or {@code https:} URI and any other scheme are not local.
+     *
+     * @param source     the collection source
+     * @param sourceType {@code auto}, {@code resource} or {@code cloud}
+     */
+    public static boolean isLocalSource(String source, String sourceType) {
+        if (isCloudSource(source, sourceType)) {
+            return false;
+        }
+        return source.startsWith("classpath:") || source.startsWith("file:") || source.indexOf(':') < 0;
+    }
+
+    /**
      * Loads a collection from a resource URI.
      */
     public static PostmanCollection loadFromResource(CamelContext camelContext, String uri) {

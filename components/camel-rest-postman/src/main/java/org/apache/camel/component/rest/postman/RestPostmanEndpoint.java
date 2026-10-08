@@ -58,6 +58,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.processor.RestBindingAdvice;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -354,6 +355,9 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
      * <p>
      * Every option that distinguishes one request from another is part of the URI, because endpoints are cached by URI
      * and two requests differing only in, say, host must not end up sharing one (CAMEL-24113).
+     * <p>
+     * Fails when a {@code {{placeholder}}} is left in it, because the URI is handed to {@code getEndpoint}, which would
+     * resolve it from Camel properties.
      */
     String buildDelegateUri(PostmanRequestBinding binding) {
         String uri = "rest:" + binding.method() + ":" + binding.basePath() + ":" + binding.uriTemplate();
@@ -368,6 +372,15 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
         }
         if (!query.isEmpty()) {
             uri = uri + "?" + query;
+        }
+        // getEndpoint resolves the property placeholders of a URI, functions such as {{env:NAME}} included, so a
+        // placeholder that the collection's variables left unresolved must not reach it
+        if (uri.contains("{{")) {
+            throw new IllegalArgumentException(
+                    "Postman request " + binding.item().describe() + " still contains a {{placeholder}} after variable"
+                                               + " substitution, in its URL, Accept or Content-Type, which would be"
+                                               + " resolved from Camel properties: " + URISupport.sanitizeUri(uri)
+                                               + ". Define it in the collection, or supply it with the variables option.");
         }
         return uri;
     }
@@ -434,7 +447,8 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
 
     private List<PostmanRequestBinding> mapAll(List<PostmanItem> items) {
         PostmanRequestMapper mapper = new PostmanRequestMapper(
-                getCamelContext(), configuration, configuration.variablesAsStrings(), resourceOrigin());
+                getCamelContext(), configuration, configuration.variablesAsStrings(), resourceOrigin(),
+                isResolveVariablesFromProperties());
         List<PostmanRequestBinding> answer = new ArrayList<>(items.size());
         for (PostmanItem item : items) {
             answer.add(mapper.map(item));
@@ -485,6 +499,18 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
             throw new RuntimeCamelException("Cannot create SSLContext for fetching the Postman collection", e);
         }
         return null;
+    }
+
+    /**
+     * Whether placeholders that the collection and the variables option leave undefined are resolved from Camel
+     * properties: as configured, otherwise only for a collection read from the classpath or the file system.
+     */
+    private boolean isResolveVariablesFromProperties() {
+        Boolean configured = configuration.getResolveVariablesFromProperties();
+        if (configured != null) {
+            return configured;
+        }
+        return PostmanCollectionLoader.isLocalSource(collectionSource, configuration.getCollectionSourceType());
     }
 
     /**
