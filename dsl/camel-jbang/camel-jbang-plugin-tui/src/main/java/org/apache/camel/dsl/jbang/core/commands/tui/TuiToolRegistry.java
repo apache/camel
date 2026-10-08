@@ -1851,6 +1851,7 @@ class TuiToolRegistry {
                 ex.put("bundled", ExampleHelper.isBundled(entry));
                 ex.put("requiresDocker", ExampleHelper.requiresDocker(entry));
                 ex.put("infraServices", toJsonArray(ExampleHelper.getInfraServices(entry)));
+                putNeeds(ex, entry);
                 examples.add(ex);
             }
         }
@@ -1904,6 +1905,7 @@ class TuiToolRegistry {
                     });
             JsonObject result = new JsonObject();
             result.put("status", "starting_infra");
+            putNeeds(result, example);
             result.put("message", "Starting infra: " + String.join(", ", missing) + " → then: " + displayName);
             result.put("infraServices", toJsonArray(missing));
             return Jsoner.serialize(result);
@@ -1922,6 +1924,7 @@ class TuiToolRegistry {
         }
         JsonObject result = new JsonObject();
         result.put("name", name);
+        putNeeds(result, example);
         if (outcome == null) {
             result.put("status", "starting");
             result.put("message", "Still starting: " + name + " (a first run downloads its dependencies); "
@@ -1937,6 +1940,14 @@ class TuiToolRegistry {
             }
         }
         return Jsoner.serialize(result);
+    }
+
+    /** What the example needs that the run does not do, for the agent to tell the user (or do it). */
+    private static void putNeeds(JsonObject result, JsonObject example) {
+        String needs = ExampleHelper.getNeeds(example);
+        if (needs != null) {
+            result.put("needs", needs);
+        }
     }
 
     // how long tui_run_example waits for an example to start or fail

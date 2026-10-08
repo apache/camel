@@ -28,6 +28,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExampleHelperTest {
 
     @Test
+    void theNeedsOfAnExampleAreItsPlainText() {
+        // the catalog writes them as Markdown for the README tables
+        JsonObject entry = new JsonObject();
+        entry.put("needs", "a local model: `ollama pull granite4:3b`");
+        assertEquals("a local model: ollama pull granite4:3b", ExampleHelper.getNeeds(entry));
+        assertNull(ExampleHelper.getNeeds(new JsonObject()));
+
+        // and the bundled catalog has them for the examples that need something
+        List<JsonObject> catalog = ExampleHelper.loadCatalog();
+        JsonObject client = ExampleHelper.findExample(catalog, "contracts/openapi-client");
+        assertNotNull(client);
+        assertEquals("contracts/openapi-server running first", ExampleHelper.getNeeds(client));
+    }
+
+    @Test
     void shouldLoadCatalog() {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
         assertFalse(catalog.isEmpty());

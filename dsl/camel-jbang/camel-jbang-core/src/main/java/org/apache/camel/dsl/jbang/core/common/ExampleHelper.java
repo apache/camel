@@ -420,6 +420,19 @@ public final class ExampleHelper {
         return citrus != null && citrus;
     }
 
+    /**
+     * What an example needs beyond its infra services, for the user to do before the run (a model to pull, an API key
+     * to set, another example to run first), as plain text; null when it needs nothing else.
+     */
+    public static String getNeeds(JsonObject entry) {
+        String needs = entry.getString("needs");
+        if (needs == null || needs.isBlank()) {
+            return null;
+        }
+        // the catalog writes it as Markdown for the README tables: `ollama pull granite4:3b`
+        return needs.replace("`", "").trim();
+    }
+
     @SuppressWarnings("unchecked")
     public static List<String> getInfraServices(JsonObject entry) {
         Collection<String> services = (Collection<String>) entry.get("infraServices");

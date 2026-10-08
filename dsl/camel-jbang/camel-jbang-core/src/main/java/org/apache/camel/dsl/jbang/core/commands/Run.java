@@ -478,6 +478,12 @@ public class Run extends CamelCommand {
             if (!infra.isEmpty()) {
                 printer().println(pad + "needs: camel infra run " + String.join(" ", infra));
             }
+            String needs = ExampleHelper.getNeeds(entry);
+            if (needs != null) {
+                for (String line : ExampleHelper.wrap("needs: " + needs, width - indent)) {
+                    printer().println(pad + line);
+                }
+            }
             String teaches = ExampleHelper.getTeachesSummary(entry);
             for (String line : ExampleHelper.wrap(teaches, width - indent)) {
                 printer().println(pad + line);
@@ -567,6 +573,11 @@ public class Run extends CamelCommand {
     private int runExampleIn(JsonObject entry, Path dir) throws Exception {
         String eName = entry.getString("name");
         printer().println("Running example: " + eName);
+        String needs = ExampleHelper.getNeeds(entry);
+        if (needs != null) {
+            // what the example needs that the run does not do (a model to pull, a key to set): the user does it
+            printer().println("Needs: " + needs);
+        }
         if (exportRun || transformRun || spec == null) {
             for (String f : ExampleHelper.getFiles(entry)) {
                 files.add(dir.resolve(f).toString());
