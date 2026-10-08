@@ -959,6 +959,15 @@ gzip-encoded responses (`Content-Encoding: gzip`) are written as before. A clien
 and read such a response as UTF-8 must now use the declared charset, and characters that the declared charset cannot
 represent are written as `?`.
 
+==== A response that is not chunked and has a text Content-Type
+
+A `String` response body that is not chunked (`chunked=false` or the `CamelHttpChunked` header) and has a text
+`Content-Type` (one that contains `text` or `html`) was written in the charset of the exchange, which also replaced the
+charset that the `Content-Type` declared (`text/plain; charset=ISO-8859-1` was sent as `text/plain;charset=UTF-8`).
+Such a body is now written in the charset that the `Content-Type` declares, and the response keeps that charset.
+Responses without a charset in the `Content-Type`, and bodies that are not a `String`, are written as before.
+Characters that the declared charset cannot represent are written as `?`.
+
 === camel-platform-http-vertx - String response in the charset of the Content-Type
 
 A `String` response body was always written as UTF-8, even when the response `Content-Type` declared another

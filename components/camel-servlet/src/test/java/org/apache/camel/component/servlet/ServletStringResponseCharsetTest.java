@@ -18,12 +18,14 @@ package org.apache.camel.component.servlet;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -46,8 +48,26 @@ class ServletStringResponseCharsetTest extends ServletCamelRouterTestSupport {
     }
 
     @Test
-    void notChunkedTextResponse() throws Exception {
-        assertEquals(TEXT, queryAndDecode("/notChunked"));
+    void notChunkedTextResponseInDeclaredCharset() throws Exception {
+        assertResponseInCharset("/notChunked", StandardCharsets.ISO_8859_1);
+    }
+
+    @Test
+    void notChunkedTextResponseWithoutDeclaredCharset() throws Exception {
+        // no charset declared: the charset of the exchange, UTF-8 for a GET request
+        assertResponseInCharset("/notChunkedNoCharset", StandardCharsets.UTF_8);
+    }
+
+    private void assertResponseInCharset(String path, Charset expected) throws Exception {
+        WebResponse response = query(new GetMethodWebRequest(contextUrl + "/services" + path));
+        String contentType = response.getHeaderField("Content-Type");
+        String charset = IOHelper.getCharsetNameFromContentType(contentType);
+        assertEquals(expected, Charset.forName(charset), "charset of the response Content-Type " + contentType);
+        byte[] expectedBytes = TEXT.getBytes(expected);
+        assertEquals(String.valueOf(expectedBytes.length), response.getHeaderField("Content-Length"));
+        try (InputStream is = response.getInputStream()) {
+            assertArrayEquals(expectedBytes, is.readAllBytes());
+        }
     }
 
     private String queryAndDecode(String path) throws Exception {
@@ -75,6 +95,10 @@ class ServletStringResponseCharsetTest extends ServletCamelRouterTestSupport {
 
                 from("servlet:/notChunked?chunked=false")
                         .setHeader(Exchange.CONTENT_TYPE, constant("text/plain; charset=ISO-8859-1"))
+                        .setBody(constant(TEXT));
+
+                from("servlet:/notChunkedNoCharset?chunked=false")
+                        .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))
                         .setBody(constant(TEXT));
             }
         };

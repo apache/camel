@@ -585,10 +585,14 @@ public class DefaultHttpBinding implements HttpBinding {
             }
         } else {
             // not convertable as a stream so fallback as a String
+            // a String body is written in the charset of the content type, other bodies are converted to a String
+            // with the charset of the exchange and written in that charset
+            Charset contentTypeCharset = message.getBody() instanceof String ? getContentTypeCharset(contentType) : null;
             String data = message.getBody(String.class);
             if (data != null) {
                 // set content length and encoding before we write data
-                String charset = ExchangeHelper.getCharsetName(exchange, true);
+                String charset = contentTypeCharset != null
+                        ? contentTypeCharset.name() : ExchangeHelper.getCharsetName(exchange, true);
                 final int dataByteLength = data.getBytes(charset).length;
                 response.setCharacterEncoding(charset);
                 response.setContentLength(dataByteLength);
@@ -611,16 +615,30 @@ public class DefaultHttpBinding implements HttpBinding {
      * then converted with the type converter (the charset of the exchange).
      */
     private static InputStream toInputStreamWithContentTypeCharset(Message message, String contentType) {
-        if (contentType != null && message.getBody() instanceof String text) {
+        if (message.getBody() instanceof String text) {
+            Charset charset = getContentTypeCharset(contentType);
+            if (charset != null) {
+                return new ByteArrayInputStream(text.getBytes(charset));
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the charset that the content type declares, or <tt>null</tt> when it declares none or one that is not
+     * supported.
+     */
+    private static Charset getContentTypeCharset(String contentType) {
+        if (contentType != null) {
             for (String part : contentType.split(";")) {
                 part = part.trim();
                 // the parameter name is case-insensitive (RFC 9110, section 5.6.6)
                 if (part.regionMatches(true, 0, "charset=", 0, 8)) {
                     String charset = IOHelper.normalizeCharset(part.substring(8));
                     try {
-                        return new ByteArrayInputStream(text.getBytes(Charset.forName(charset)));
+                        return Charset.forName(charset);
                     } catch (IllegalArgumentException e) {
-                        // unsupported or illegal charset name: keep the conversion with the exchange charset
+                        // unsupported or illegal charset name: keep the charset of the exchange
                         LOG.debug("Cannot use charset {} of the content type: {}", charset, e.getMessage());
                         return null;
                     }
