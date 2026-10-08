@@ -227,7 +227,7 @@ public class DataWeaveConverter {
         if (value.contains("$(")) {
             todoCount++;
             return includeComments
-                    ? "// TODO: manual conversion needed -- string interpolation: \"" + value + "\"\n\""
+                    ? "/* TODO: manual conversion needed -- string interpolation: \"" + value + "\"*/\n\""
                       + value.replace("\"", "\\\"") + "\""
                     : "\"" + value.replace("\"", "\\\"") + "\"";
         }
@@ -300,8 +300,8 @@ public class DataWeaveConverter {
         }
         todoCount++;
         return includeComments
-                ? "// TODO: manual conversion needed -- existence check on non-field expression: "
-                  + emitNode(ec.expr()) + "\nfalse"
+                ? "/* TODO: manual conversion needed -- existence check on non-field expression: "
+                  + emitNode(ec.expr()) + "*/\nfalse"
                 : "false";
     }
 
@@ -610,7 +610,7 @@ public class DataWeaveConverter {
             // If the key expression is already a string, std.toString() is a no-op.
             return "c.groupBy(" + collection + ", function(" + paramNames.get(0) + ") std.toString(" + body + "))";
         }
-        return "c.groupBy(" + collection + ", function(x) std.toString(" + emitNode(gbe.lambda()) + "))";
+        return "c.groupBy(" + collection + ", function(x) std.toString(" + emitNode(gbe.lambda()) + "(x)))";
     }
 
     private String emitOrderBy(OrderByExpr obe) {

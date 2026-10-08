@@ -588,7 +588,7 @@ class DataWeaveConverterTest {
     // -- Helpers --
 
     @Test
-    void testSingleQuotedStringWithDoubleQuote() {
+    void testDoubleQuotedStringWithEscapedQuote() {
         // DW: 'say "hi"' (single-quoted, stored by lexer as: say "hi")
         // Output must be "say \"hi\"" -- the bare " must be escaped for valid Jsonnet
         // Simulate: the lexer stores the string value without surrounding quotes
