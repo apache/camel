@@ -28,8 +28,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * The script variables have the names {@code ExchangeHelper.populateVariableMap} gives Groovy: default mode binds only
- * the data names, trusted host access also the host objects. The older {@code properties} and {@code context} still
- * work as deprecated names.
+ * the data names, trusted host access also the host objects. python3 is new, so the deprecated {@code properties} and
+ * {@code context} of the js and python languages are not bound in either mode.
  */
 @DisabledIfSystemProperty(named = "os.arch", matches = "(?i)(s390x|ppc64le)")
 class Python3BindingNamesTest extends CamelTestSupport {
@@ -59,11 +59,12 @@ class Python3BindingNamesTest extends CamelTestSupport {
     }
 
     @Test
-    void defaultModeKeepsDeprecatedProperties() {
+    void defaultModeDoesNotBindDeprecatedNames() {
         Language language = context.resolveLanguage("python3");
         Exchange exchange = sampleExchange();
 
-        assertThat(evaluate(language, exchange, "properties['color']")).isEqualTo("red");
+        assertNameError(language, exchange, "properties");
+        assertNameError(language, exchange, "context");
     }
 
     @Test
@@ -105,15 +106,15 @@ class Python3BindingNamesTest extends CamelTestSupport {
     }
 
     @Test
-    void trustedModeKeepsDeprecatedNames() {
+    void trustedModeDoesNotBindDeprecatedNames() {
         Python3Language trusted = Python3Language.createWithHostAccess();
         trusted.setCamelContext(context);
         trusted.start();
         try {
             Exchange exchange = sampleExchange();
 
-            assertThat(evaluate(trusted, exchange, "context.getName()")).isEqualTo(context.getName());
-            assertThat(evaluate(trusted, exchange, "properties['color']")).isEqualTo("red");
+            assertNameError(trusted, exchange, "context");
+            assertNameError(trusted, exchange, "properties");
         } finally {
             trusted.stop();
         }

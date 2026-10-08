@@ -39,7 +39,6 @@ The following variables are bound by default:
 |variable |Map |the exchange variables (same as `variables`)
 |variables |Map |the exchange variables
 |exchangeId |String |the exchange id
-|properties |Map |*Deprecated* use `exchangeProperties`
 |=======================================================================
 
 The variables have the same names as in the xref:groovy-language.adoc[Groovy] language. In default mode only the
@@ -58,7 +57,7 @@ go through `Exchange.setVariable`, so `variables['global:foo'] = 1` sets an exch
 variable named `global:foo`, not a global one. Setting a variable to `None` fails,
 because the variables map does not accept null values.
 
-`exchange`, `camelContext`, `message`, `request`, `exception` and `context` are not
+`exchange`, `camelContext`, `message`, `request` and `exception` are not
 bound in default mode. Scripts that refer to them raise a Python `NameError`. Those
 variables are available only when you opt in to trusted host access, as described in
 <<_trusted_host_access>>.
@@ -108,7 +107,6 @@ In this mode the default variables above remain available, plus:
 |message |Message |the message
 |request |Message |the message (same as `message`)
 |exception |Exception |the exception if the exchange failed (or the caught exception in an error handler), otherwise `None`
-|context |CamelContext |*Deprecated* use `camelContext`
 |=======================================================================
 
 [source,java]

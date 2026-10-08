@@ -53,11 +53,10 @@ import org.graalvm.polyglot.Value;
  *
  * <p>
  * Default scripts see only data bindings: {@code body}, {@code header}/{@code headers},
- * {@code exchangeProperty}/{@code exchangeProperties}, {@code variable}/{@code variables}, {@code exchangeId} and the
- * deprecated {@code properties}. The host objects ({@code exchange}, {@code camelContext}, {@code message},
- * {@code request}, {@code exception} and the deprecated {@code context}) are intentionally absent so they resolve as
- * Python {@code NameError} rather than opaque objects with no usable API. Binding them by default would also become a
- * privilege escalation if host access were later widened.
+ * {@code exchangeProperty}/{@code exchangeProperties}, {@code variable}/{@code variables} and {@code exchangeId}. The
+ * host objects ({@code exchange}, {@code camelContext}, {@code message}, {@code request} and {@code exception}) are
+ * intentionally absent so they resolve as Python {@code NameError} rather than opaque objects with no usable API.
+ * Binding them by default would also become a privilege escalation if host access were later widened.
  * </p>
  *
  * <p>
@@ -76,9 +75,8 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
 
     private final HostAccess hostAccess;
     /**
-     * When true, also bind the host objects {@code exchange}, {@code camelContext}, {@code message}, {@code request},
-     * {@code exception} and the deprecated {@code context}. Only {@link #createWithHostAccess()} sets this; default
-     * mode keeps those names undefined.
+     * When true, also bind the host objects {@code exchange}, {@code camelContext}, {@code message}, {@code request}
+     * and {@code exception}. Only {@link #createWithHostAccess()} sets this; default mode keeps those names undefined.
      */
     private final boolean bindCamelHostObjects;
     private final Map<String, Source> sourceCache = LRUCacheFactory.newLRUSoftCache(16, 1000, true);
@@ -101,7 +99,7 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
     /**
      * Creates a separate language instance for trusted scripts. Uses {@link HostAccess#ALL} so Python may call public
      * methods and fields on bound host objects, and additionally exposes {@code exchange}, {@code camelContext},
-     * {@code message}, {@code request}, {@code exception} and the deprecated {@code context}.
+     * {@code message}, {@code request} and {@code exception}.
      * <p>
      * This is an explicit opt-in: {@code HostAccess.ALL} is not a sandbox. It does not enable {@code allowAllAccess},
      * Java class lookup, host IO, or process creation. Use only when you trust the scripts.
@@ -185,16 +183,12 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
             b.putMember("exchangeProperties", properties);
             b.putMember("variable", variables);
             b.putMember("variables", variables);
-            // deprecated name of exchangeProperties
-            b.putMember("properties", properties);
             if (bindCamelHostObjects) {
                 b.putMember("exchange", exchange);
                 b.putMember("camelContext", exchange.getContext());
                 b.putMember("message", message);
                 b.putMember("request", message);
                 b.putMember("exception", LanguageHelper.exception(exchange));
-                // deprecated name of camelContext
-                b.putMember("context", exchange.getContext());
             }
             Value value = cx.eval(source(script));
             return convert(value, Object.class, exchange.getContext(), exchange);
