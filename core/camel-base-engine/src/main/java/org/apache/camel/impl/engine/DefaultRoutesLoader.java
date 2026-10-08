@@ -297,6 +297,8 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
             return answer;
         }
 
+        // the lock is held while the routes being replaced are stopped: an updateRoutes call made from an exchange of
+        // such a route therefore waits here until the shutdown timeout forces that route to stop (see the upgrade guide)
         updateLock.lockInterruptibly();
         try {
             doUpdateRoutes(resources, answer);
