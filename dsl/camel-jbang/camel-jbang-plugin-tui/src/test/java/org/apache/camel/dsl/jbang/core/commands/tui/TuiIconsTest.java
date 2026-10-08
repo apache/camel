@@ -22,13 +22,14 @@ import dev.tamboui.text.CharWidth;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Validates {@link TuiIcons} emoji widths (CAMEL-23818: every icon has to take the 2 columns TamboUI reserves for it,
- * which for text-default glyphs means carrying VS16) and the mnemonic and runtime/platform icon helpers. More-submenu
- * icons and labels are validated in {@link TabRegistryTest} where the {@link TabRegistry.MoreTab} records that own them
- * are constructed.
+ * using glyphs that are emoji by default, as text-default glyphs with VS16 are drawn 1 column wide on many terminals)
+ * and the mnemonic and runtime/platform icon helpers. More-submenu icons and labels are validated in
+ * {@link TabRegistryTest} where the {@link TabRegistry.MoreTab} records that own them are constructed.
  */
 class TuiIconsTest {
 
@@ -61,11 +62,11 @@ class TuiIconsTest {
     }
 
     @Test
-    void textDefaultMenuEmojisCarryVs16AndAreTwoColumnsWide() {
-        // bare U+2328, U+23F9, U+23FA and U+1F5D1 render in one column on terminals; the VS16 sequence is what
-        // makes the terminal, the --web xterm.js tables and TamboUI agree on two
+    void menuEmojisAreEmojiByDefaultAndTwoColumnsWide() {
+        // text-default glyphs (keyboard, record, stop, wastebasket) with VS16 are drawn in 1 column on many terminals,
+        // so the menu uses glyphs that are emoji by default
         for (String icon : List.of(TuiIcons.KEYSTROKES, TuiIcons.RECORD, TuiIcons.STOP_RECORD, TuiIcons.DELETE)) {
-            assertTrue(icon.endsWith("\uFE0F"), "Icon should end with the VS16 variation selector: " + icon);
+            assertFalse(icon.contains("\uFE0F"), "Icon should not need the VS16 variation selector: " + icon);
             assertEquals(2, CharWidth.of(icon), "Icon should be 2 terminal columns wide: " + icon);
         }
     }
