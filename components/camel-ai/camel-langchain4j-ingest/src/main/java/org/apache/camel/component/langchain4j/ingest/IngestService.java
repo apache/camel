@@ -85,22 +85,24 @@ class IngestService {
         if (documentId == null || documentId.isBlank()) {
             throw new IllegalArgumentException("Ingestion pipeline '" + pipeline + "': documentId is required");
         }
+        // the pipeline is whole-document-in-memory by design, so the cap is the protection
+        // against oversized - and, on a consumer-fed pipeline, attacker-sized - payloads. The
+        // failure releases a dedup claim like any other, so a trimmed re-delivery still ingests.
+        // It comes first: the producer may hand over only the start of an oversized stream, and
+        // a blank start says nothing about the rest
+        if (text != null && maxDocumentSize > 0 && text.length() > maxDocumentSize) {
+            throw new IllegalArgumentException(
+                    "Ingestion pipeline '" + pipeline + "': document '" + documentId + "' exceeds maxDocumentSize ("
+                                               + text.length() + " > " + maxDocumentSize + " characters)");
+        }
         if (text == null || text.isBlank()) {
             return new IngestResult(pipeline, documentId, 0, IngestResult.Outcome.EMPTY);
         }
         // a benign filter, not a guard: a too-short document answers FILTERED, which releases
-        // a dedup claim like EMPTY does. Deliberately soft where the max check below throws -
+        // a dedup claim like EMPTY does. Deliberately soft where the max check above throws -
         // undersized is a data decision, oversized a resource risk - so do not align the two
         if (minDocumentSize > 0 && text.length() < minDocumentSize) {
             return new IngestResult(pipeline, documentId, 0, IngestResult.Outcome.FILTERED);
-        }
-        // the pipeline is whole-document-in-memory by design, so the cap is the protection
-        // against oversized - and, on a consumer-fed pipeline, attacker-sized - payloads. The
-        // failure releases a dedup claim like any other, so a trimmed re-delivery still ingests
-        if (maxDocumentSize > 0 && text.length() > maxDocumentSize) {
-            throw new IllegalArgumentException(
-                    "Ingestion pipeline '" + pipeline + "': document '" + documentId + "' exceeds maxDocumentSize ("
-                                               + text.length() + " > " + maxDocumentSize + " characters)");
         }
 
         // the document id travels with every segment: retrieval can cite it, and the engine that

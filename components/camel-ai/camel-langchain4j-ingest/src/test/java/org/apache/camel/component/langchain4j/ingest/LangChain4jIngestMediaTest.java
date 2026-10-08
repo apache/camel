@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.ingest;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import dev.langchain4j.data.message.ContentType;
 import dev.langchain4j.data.segment.TextSegment;
@@ -82,6 +84,10 @@ class LangChain4jIngestMediaTest extends CamelTestSupport {
                             + "&contentType=Image/PNG;charset=binary");
                 from("direct:capped")
                         .to("langchain4j-ingest:capped?modality=media&documentIdHeader=CamelFileName"
+                            + "&maxDocumentSize=100");
+                // without stream caching, which would read the whole stream before the endpoint does
+                from("direct:capped-stream").noStreamCaching()
+                        .to("langchain4j-ingest:capped-stream?modality=media&documentIdHeader=CamelFileName"
                             + "&maxDocumentSize=100");
                 from("direct:min")
                         .to("langchain4j-ingest:min?modality=media&documentIdHeader=CamelFileName"
@@ -159,11 +165,13 @@ class LangChain4jIngestMediaTest extends CamelTestSupport {
         assertThat(result.outcome()).isEqualTo(IngestResult.Outcome.EMPTY);
 
         // a POJO has no converter to bytes: a silent null conversion would answer EMPTY and
-        // release the claim, hiding a wiring mistake - it must fail instead
-        assertThatThrownBy(() -> template.requestBodyAndHeader("direct:media", new Object(),
-                Exchange.FILE_NAME, "pojo.wav"))
-                .isInstanceOf(CamelExecutionException.class)
-                .hasStackTraceContaining("InvalidPayloadException");
+        // release the claim, hiding a wiring mistake - it must fail instead, with a cap or without
+        for (String route : new String[] { "direct:media", "direct:capped" }) {
+            assertThatThrownBy(() -> template.requestBodyAndHeader(route, new Object(),
+                    Exchange.FILE_NAME, "pojo.wav"))
+                    .isInstanceOf(CamelExecutionException.class)
+                    .hasStackTraceContaining("InvalidPayloadException");
+        }
     }
 
     @Test
@@ -192,6 +200,32 @@ class LangChain4jIngestMediaTest extends CamelTestSupport {
         assertThat(thrown).isInstanceOf(CamelExecutionException.class)
                 .hasStackTraceContaining("exceeds maxDocumentSize (101 > 100 bytes)");
         assertThat(stackTraceOf(thrown)).as("the body must not have been read").doesNotContain("body must not be read");
+    }
+
+    @Test
+    void oversizedStreamIsReadOnlyPastTheCap() {
+        // a stream is read one byte past the cap, not whole, even when its announced length is a lie
+        AtomicLong read = new AtomicLong();
+        InputStream tenMegabytes = new InputStream() {
+            @Override
+            public int read() {
+                if (read.get() >= 10_000_000) {
+                    return -1;
+                }
+                read.incrementAndGet();
+                return 0;
+            }
+        };
+        Throwable thrown = catchThrowable(() -> template.requestBodyAndHeaders("direct:capped-stream", tenMegabytes,
+                Map.<String, Object> of(Exchange.FILE_NAME, "big.wav", Exchange.FILE_LENGTH, 10L)));
+
+        assertThat(thrown).isInstanceOf(CamelExecutionException.class)
+                .hasStackTraceContaining("exceeds maxDocumentSize (101 > 100 bytes)");
+        assertThat(read.get()).isEqualTo(101);
+
+        IngestResult result = template.requestBodyAndHeader("direct:capped-stream", new ByteArrayInputStream(wav(1)),
+                Exchange.FILE_NAME, "small.wav", IngestResult.class);
+        assertThat(result.outcome()).isEqualTo(IngestResult.Outcome.INGESTED);
     }
 
     @Test

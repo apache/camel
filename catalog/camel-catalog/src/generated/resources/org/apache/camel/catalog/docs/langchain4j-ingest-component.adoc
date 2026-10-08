@@ -201,6 +201,11 @@ memory- and CPU-expensive and a small file can still parse into a lot of text. A
 document fails the exchange like any other error (see below) and releases its dedup claim, so
 a trimmed re-delivery under the same id still ingests.
 
+A body that is not yet a String, such as a file or a stream, is read only one character past
+the cap. Stream caching, on by default, reads a stream into memory before the route reaches
+the endpoint, unless it spools to disk: on a consumer-fed pipeline, limit the size at the
+consumer as well, or enable spooling.
+
 === Ingesting media: images, audio, video and PDF
 
 With `modality=media` the body is read as bytes and embedded whole, as one vector, by a
@@ -239,8 +244,9 @@ apply, a configured `documentSplitter` fails the start, and `maxDocumentSize` an
 `minDocumentSize` count bytes. Base64 encoding adds a third, so set `maxDocumentSize`
 against the model's request limit. A file consumer announces the length in
 `CamelFileLength`, which is checked against the cap before the file is read; any other
-body is checked once it is in memory. A `documentFilter` runs before the body is read and
-sees it as delivered, a file or stream rather than text, so filter on headers or the id.
+body not yet in memory is read only one byte past the cap. A `documentFilter` runs before
+the body is read and sees it as delivered, a file or stream rather than text, so filter on
+headers or the id.
 
 Several LangChain4j providers embed images (Jina, Voyage AI, Cohere, Google Gemini and
 Bedrock Titan among them); none embeds audio yet, so an audio model is typically a custom
