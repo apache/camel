@@ -122,8 +122,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
     String propertiesFiles;
 
     @CommandLine.Option(names = { "--prop", "--property" },
-                        description = "Additional properties; override existing (only applicable when NOT using an existing running Camel)",
-                        arity = "0")
+                        description = "Additional properties; override existing (only applicable when NOT using an existing running Camel)")
     String[] property;
 
     @CommandLine.Option(names = { "--action" }, completionCandidates = ActionCompletionCandidates.class,
