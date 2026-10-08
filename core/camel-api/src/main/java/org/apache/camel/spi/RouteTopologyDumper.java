@@ -59,15 +59,48 @@ public interface RouteTopologyDumper {
     }
 
     /**
+     * The kind of an edge where the route sends to the endpoint as it routes a message (the happy path).
+     */
+    String EDGE_CALL = "call";
+
+    /**
+     * The kind of an edge where the route sends to the endpoint from an onException clause, when it handles a failure.
+     */
+    String EDGE_ON_EXCEPTION = "onException";
+
+    /**
+     * The kind of an edge where the dead letter channel of the route sends to the endpoint, when a failure is not
+     * handled otherwise.
+     */
+    String EDGE_DEAD_LETTER = "deadLetter";
+
+    /**
      * An edge in the topology representing a connection between two routes via a shared endpoint.
      *
      * @param fromRouteId    the source route id (the route that sends to the endpoint)
      * @param toRouteId      the target route id (the route that consumes from the endpoint)
      * @param endpoint       the shared endpoint URI (scheme:context-path, query parameters stripped)
      * @param connectionType the type of connection: "internal" for direct/seda, "external" for remote components
+     * @param kind           how the source route reaches the target: {@link #EDGE_CALL} as it routes a message, or an
+     *                       error path, {@link #EDGE_ON_EXCEPTION} or {@link #EDGE_DEAD_LETTER}, when it handles a
+     *                       failure (since 4.23)
      * @since                4.21
      */
-    record TopologyEdge(String fromRouteId, String toRouteId, String endpoint, String connectionType) {
+    record TopologyEdge(String fromRouteId, String toRouteId, String endpoint, String connectionType, String kind) {
+
+        /**
+         * An edge of kind {@link #EDGE_CALL}.
+         */
+        public TopologyEdge(String fromRouteId, String toRouteId, String endpoint, String connectionType) {
+            this(fromRouteId, toRouteId, endpoint, connectionType, EDGE_CALL);
+        }
+
+        /**
+         * Whether the edge is an error path: the route sends to the target only when it handles a failure.
+         */
+        public boolean isErrorPath() {
+            return kind != null && !EDGE_CALL.equals(kind);
+        }
     }
 
     /**

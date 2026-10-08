@@ -332,6 +332,12 @@ public class TopologyLayoutEngine {
         public String toRouteId;
         public String endpoint;
         public String connectionType;
+        // call, or an error path: onException, deadLetter
+        public String kind = "call";
+
+        public boolean isErrorPath() {
+            return kind != null && !"call".equals(kind);
+        }
     }
 
     // Layout output

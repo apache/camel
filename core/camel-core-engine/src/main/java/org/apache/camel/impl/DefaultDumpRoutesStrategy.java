@@ -318,6 +318,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             jo.put("toRouteId", edge.toRouteId());
             jo.put("endpoint", edge.endpoint());
             jo.put("connectionType", edge.connectionType());
+            jo.put("kind", edge.kind());
             edgesArr.add(jo);
         }
         root.put("edges", edgesArr);

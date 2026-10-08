@@ -27,10 +27,15 @@ import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.model.EndpointRequiredDefinition;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.annotations.JdkService;
@@ -65,21 +70,25 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
 
         List<TopologyEdge> edges = new ArrayList<>();
         for (RouteDefinition rd : routeDefs) {
-            Collection<EndpointRequiredDefinition> outputs
-                    = ProcessorDefinitionHelper.filterTypeInOutputs(
-                            rd.getOutputs(), EndpointRequiredDefinition.class);
-
-            for (EndpointRequiredDefinition erd : outputs) {
-                String outputUri = normalizeUri(context, erd.getEndpointUri());
-                String scheme = extractScheme(outputUri);
-
-                List<String> targetRouteIds = inputUriToRouteIds.get(outputUri);
-                if (targetRouteIds != null) {
-                    String connType = INTERNAL_SCHEMES.contains(scheme) ? "internal" : "external";
-                    for (String targetId : targetRouteIds) {
-                        edges.add(new TopologyEdge(rd.getRouteId(), targetId, outputUri, connType));
-                    }
+            ErrorHandlerFactory eh = rd.isErrorHandlerFactorySet()
+                    ? rd.getErrorHandlerFactory() : context.getCamelContextExtension().getErrorHandlerFactory();
+            // with no error handler a failure goes back to the caller, whose error handler acts: no error paths here
+            boolean handlesFailures = !(eh instanceof NoErrorHandlerDefinition);
+            for (ProcessorDefinition<?> output : rd.getOutputs()) {
+                // an onException clause (a global one is copied into every route) sends only when handling a failure
+                boolean onException = output instanceof OnExceptionDefinition;
+                if (onException && !handlesFailures) {
+                    continue;
                 }
+                String kind = onException ? EDGE_ON_EXCEPTION : EDGE_CALL;
+                Collection<EndpointRequiredDefinition> sends
+                        = ProcessorDefinitionHelper.filterTypeInOutputs(List.of(output), EndpointRequiredDefinition.class);
+                for (EndpointRequiredDefinition erd : sends) {
+                    addEdges(context, edges, inputUriToRouteIds, rd.getRouteId(), erd.getEndpointUri(), kind);
+                }
+            }
+            if (handlesFailures && eh instanceof DeadLetterChannelDefinition dlc && dlc.getDeadLetterUri() != null) {
+                addEdges(context, edges, inputUriToRouteIds, rd.getRouteId(), dlc.getDeadLetterUri(), EDGE_DEAD_LETTER);
             }
         }
 
@@ -87,6 +96,20 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
         List<TopologyExternalEndpoint> externalEndpoints = computeExternalEndpoints(context, routeDefs, inputUriToRouteIds);
 
         return new TopologyResult(nodes, edges, externalEndpoints);
+    }
+
+    private static void addEdges(
+            CamelContext context, List<TopologyEdge> edges, Map<String, List<String>> inputUriToRouteIds,
+            String fromRouteId, String uri, String kind) {
+        String outputUri = normalizeUri(context, uri);
+        List<String> targetRouteIds = inputUriToRouteIds.get(outputUri);
+        if (targetRouteIds != null) {
+            String scheme = extractScheme(outputUri);
+            String connType = INTERNAL_SCHEMES.contains(scheme) ? "internal" : "external";
+            for (String targetId : targetRouteIds) {
+                edges.add(new TopologyEdge(fromRouteId, targetId, outputUri, connType, kind));
+            }
+        }
     }
 
     private List<TopologyExternalEndpoint> computeExternalEndpoints(

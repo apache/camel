@@ -6976,6 +6976,10 @@
 													"connectionType": {
 														"type": "string",
 														"description": "The connection type"
+													},
+													"kind": {
+														"type": "string",
+														"description": "How the source route reaches the target: call as it routes a message, or an error path (onException, deadLetter) when it handles a failure"
 													}
 												}
 											},

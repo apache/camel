@@ -201,13 +201,26 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
         return 0;
     }
 
+    private static boolean isErrorPath(JsonObject edge) {
+        String kind = edge.getString("kind");
+        return kind != null && !"call".equals(kind);
+    }
+
     private void printTopology(JsonObject jo) {
         JsonArray nodes = (JsonArray) jo.get("nodes");
         JsonArray edges = (JsonArray) jo.get("edges");
 
         int nodeCount = nodes != null ? nodes.size() : 0;
         int edgeCount = edges != null ? edges.size() : 0;
-        printer().printf("Route Topology (%d routes, %d connections)%n%n", nodeCount, edgeCount);
+        int errorPaths = 0;
+        for (int i = 0; i < edgeCount; i++) {
+            if (isErrorPath((JsonObject) edges.get(i))) {
+                errorPaths++;
+            }
+        }
+        // the error paths are counted only when there are any, so the line stays as it was without them
+        printer().printf("Route Topology (%d routes, %d connections%s)%n%n", nodeCount, edgeCount - errorPaths,
+                errorPaths > 0 ? ", " + errorPaths + " error paths" : "");
 
         if (nodes != null) {
             for (Object n : nodes) {
@@ -221,10 +234,19 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
                     for (Object e : edges) {
                         JsonObject edge = (JsonObject) e;
                         if (node.getString("routeId").equals(edge.getString("fromRouteId"))) {
-                            printer().printf("    --> %s via %s [%s]%n",
-                                    edge.getString("toRouteId"),
-                                    edge.getString("endpoint"),
-                                    edge.getString("connectionType"));
+                            if (isErrorPath(edge)) {
+                                // sent to only when the route handles a failure
+                                printer().printf("    ..> %s via %s [%s, on failure: %s]%n",
+                                        edge.getString("toRouteId"),
+                                        edge.getString("endpoint"),
+                                        edge.getString("connectionType"),
+                                        edge.getString("kind"));
+                            } else {
+                                printer().printf("    --> %s via %s [%s]%n",
+                                        edge.getString("toRouteId"),
+                                        edge.getString("endpoint"),
+                                        edge.getString("connectionType"));
+                            }
                         }
                     }
                 }
