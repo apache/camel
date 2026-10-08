@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -102,6 +103,33 @@ class ExportTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
         // Reproducible build
         Assertions.assertNotNull(model.getProperties().getProperty("project.build.outputTimestamp"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportResourceDirs(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportResourceDirs {}", rt);
+        // --resource-dir only accepts relative paths
+        Path resources = Files.createTempDirectory("camel-export-resource-dirs");
+        try {
+            Path schemas = resources.resolve("schemas");
+            Files.createDirectories(schemas.resolve("common"));
+            Files.writeString(schemas.resolve("api.yaml"), "openapi: 3.0.3");
+            Files.writeString(schemas.resolve("common/types.json"), "{}");
+            String relative = Path.of("").toAbsolutePath().relativize(schemas).toString();
+
+            Export command = createCommand(rt, new String[] { "classpath:route.yaml" },
+                    "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--resource-dir=" + relative);
+            int exit = command.doCall();
+
+            assertThat(exit).isZero();
+            // the last path component is the target directory, the structure below it is preserved
+            Path exported = workingDir.toPath().resolve("src/main/resources/schemas");
+            assertThat(exported.resolve("api.yaml")).hasContent("openapi: 3.0.3");
+            assertThat(exported.resolve("common/types.json")).hasContent("{}");
+        } finally {
+            FileUtil.removeDir(resources.toFile());
+        }
     }
 
     @ParameterizedTest
