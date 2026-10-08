@@ -560,7 +560,8 @@ public final class CatalogDocs {
             }
             JsonObject refNode = (JsonObject) yamlNodes.get(ref);
             if (ref.equals(element.getName())
-                    || refNode != null && element.getTitle() != null && element.getTitle().equals(refNode.getString("title"))) {
+                    || (refNode != null && element.getTitle() != null
+                            && element.getTitle().equals(refNode.getString("title")))) {
                 return child.getString("name");
             }
         }
