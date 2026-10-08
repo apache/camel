@@ -98,7 +98,6 @@ public class PQCProducer extends DefaultProducer {
             PQCSignatureAlgorithms.XMSSMT.name(),
             PQCSignatureAlgorithms.DILITHIUM.name(),
             PQCSignatureAlgorithms.FALCON.name(),
-            PQCSignatureAlgorithms.PICNIC.name(),
             PQCSignatureAlgorithms.SNOVA.name(),
             PQCSignatureAlgorithms.MAYO.name(),
             PQCSignatureAlgorithms.SPHINCSPLUS.name());
