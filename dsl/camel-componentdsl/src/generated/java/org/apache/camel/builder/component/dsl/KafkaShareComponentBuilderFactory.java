@@ -670,11 +670,13 @@ public interface KafkaShareComponentBuilderFactory {
         
         /**
          * What to do if the share consumer throws an exception while polling
-         * for new records. DISCARD and RETRY log the exception and poll again.
-         * ERROR_HANDLER lets the exception handler of the consumer handle the
-         * exception, and polls again. RECONNECT closes the share consumer and
-         * creates a new one. STOP stops consuming. An authentication or
-         * authorization failure always stops consuming.
+         * for new records. DISCARD and RETRY log the exception and poll again:
+         * unlike the kafka component, there is no record to skip or to retry,
+         * as the poll itself failed, and the records that fail in the route are
+         * handled with onFailure. ERROR_HANDLER lets the exception handler of
+         * the consumer handle the exception, and polls again. RECONNECT closes
+         * the share consumer and creates a new one. STOP stops consuming. An
+         * authentication or authorization failure always stops consuming.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.kafka.PollOnError&lt;/code&gt;

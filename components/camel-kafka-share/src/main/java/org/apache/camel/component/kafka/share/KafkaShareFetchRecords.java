@@ -74,7 +74,8 @@ class KafkaShareFetchRecords implements Runnable {
     // held while processing the records of a poll, so that stop() waits for the records in flight
     private final ReentrantLock lock = new ReentrantLock();
 
-    private ShareConsumer<Object, Object> consumer;
+    // read by stop() from another thread
+    private volatile ShareConsumer<Object, Object> consumer;
     private ScheduledExecutorService reconnectPool;
 
     // read from other threads, such as the health check
@@ -152,22 +153,21 @@ class KafkaShareFetchRecords implements Runnable {
             return true;
         }
         ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
+        ShareConsumer<Object, Object> created = null;
         try {
             closeConsumer();
             // Kafka uses reflection for loading authentication settings, use its classloader
             Thread.currentThread().setContextClassLoader(ShareConsumer.class.getClassLoader());
 
             LOG.info("{} Kafka share consumer thread ID {} for share group {}",
-                    consumer == null ? "Connecting" : "Reconnecting",
+                    clientId == null ? "Connecting" : "Reconnecting",
                     threadId, configuration.getGroupId());
             String krbLocation = configuration.getKerberosConfigLocation();
             if (krbLocation != null) {
                 System.setProperty("java.security.krb5.conf", krbLocation);
             }
 
-            ShareConsumer<Object, Object> created
-                    = kafkaShareConsumer.getEndpoint().getKafkaShareClientFactory().getShareConsumer(kafkaProps);
-            consumer = created;
+            created = kafkaShareConsumer.getEndpoint().getKafkaShareClientFactory().getShareConsumer(kafkaProps);
             if (configuration.getCommitMode() == KafkaShareCommitMode.ASYNC) {
                 created.setAcknowledgementCommitCallback(this::onAcknowledgementCommit);
             }
@@ -175,10 +175,14 @@ class KafkaShareFetchRecords implements Runnable {
             if (clientId == null) {
                 clientId = kafkaProps.getProperty(CommonClientConfigs.CLIENT_ID_CONFIG, "");
             }
+            // publish the share consumer once it is subscribed, as stop() wakes it up from another thread
+            consumer = created;
             connected = true;
             return true;
         } catch (Exception e) {
             connected = false;
+            // the share consumer was not published, close it here
+            close(created);
             LOG.warn("Error creating/subscribing the Kafka share consumer due to: {}", e.getMessage(), e);
             lastError = e;
             if (kafkaShareConsumer.getEndpoint().isBridgeErrorHandler()) {
@@ -362,17 +366,23 @@ class KafkaShareFetchRecords implements Runnable {
     }
 
     private void closeConsumer() {
-        if (consumer == null) {
+        ShareConsumer<Object, Object> current = consumer;
+        consumer = null;
+        connected = false;
+        close(current);
+    }
+
+    private void close(ShareConsumer<Object, Object> shareConsumer) {
+        if (shareConsumer == null) {
             return;
         }
         try {
             LOG.debug("Closing the Kafka share consumer {}", threadId);
-            consumer.close(Duration.ofMillis(configuration.getShutdownTimeout()));
+            shareConsumer.close(Duration.ofMillis(configuration.getShutdownTimeout()));
         } catch (Exception e) {
             LOG.warn("Error closing the Kafka share consumer {}: {} (this error will be ignored)", threadId, e.getMessage(),
                     e);
         }
-        connected = false;
     }
 
     private boolean isRunAllowed() {

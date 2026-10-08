@@ -70,7 +70,12 @@ class KafkaShareConsumerErrorTest extends CamelTestSupport {
                 throw new KafkaException("Failed to construct kafka share consumer");
             }
             RecordingShareConsumer consumer = new RecordingShareConsumer();
-            consumers.computeIfAbsent(groupId, g -> new CopyOnWriteArrayList<>()).add(consumer);
+            List<RecordingShareConsumer> created = consumers.computeIfAbsent(groupId, g -> new CopyOnWriteArrayList<>());
+            if ("subscribe-fails".equals(groupId) && created.isEmpty()) {
+                // the first share consumer cannot subscribe
+                consumer.failSubscribe(new KafkaException("Failed to subscribe"));
+            }
+            created.add(consumer);
             return consumer;
         }
 
@@ -115,6 +120,9 @@ class KafkaShareConsumerErrorTest extends CamelTestSupport {
 
                 from("kafka-share:" + TOPIC + options + "unreachable").routeId("unreachable")
                         .to("mock:unreachable");
+
+                from("kafka-share:" + TOPIC + options + "subscribe-fails").routeId("subscribeFails")
+                        .to("mock:subscribe-fails");
 
                 from("kafka-share:" + TOPIC + options + "never-created").routeId("neverCreated")
                         .errorHandler(deadLetterChannel("mock:never-created-dead"))
@@ -187,6 +195,17 @@ class KafkaShareConsumerErrorTest extends CamelTestSupport {
         // then it is created and subscribed
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(readiness("unreachable").getState()).isEqualTo(HealthCheck.State.UP));
+    }
+
+    @Test
+    void shareConsumerThatFailsToSubscribeIsClosedAndCreatedAgain() throws Exception {
+        RecordingShareConsumer second = subscribedConsumer("subscribe-fails", 1);
+        assertThat(consumers.get("subscribe-fails").get(0).isClosed()).isTrue();
+
+        MockEndpoint mock = getMockEndpoint("mock:subscribe-fails");
+        mock.expectedBodiesReceived("after subscribing");
+        second.addRecord(record(TOPIC, 0, null, "after subscribing", (short) 1));
+        mock.assertIsSatisfied();
     }
 
     @Test

@@ -18,6 +18,7 @@ package org.apache.camel.component.kafka.share;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ class RecordingShareConsumer extends MockShareConsumer<Object, Object> {
     private volatile int polls;
     private volatile boolean closed;
     private RuntimeException pollFailure;
+    private RuntimeException subscribeFailure;
     private boolean hasRecords;
 
     static ConsumerRecord<Object, Object> record(String topic, long offset, Object key, Object value, short deliveryCount) {
@@ -89,6 +91,21 @@ class RecordingShareConsumer extends MockShareConsumer<Object, Object> {
     public synchronized Map<TopicIdPartition, Optional<KafkaException>> commitSync(Duration timeout) {
         commits++;
         return super.commitSync(timeout);
+    }
+
+    @Override
+    public synchronized void subscribe(Collection<String> topics) {
+        if (subscribeFailure != null) {
+            throw subscribeFailure;
+        }
+        super.subscribe(topics);
+    }
+
+    /**
+     * Subscribing throws the exception.
+     */
+    synchronized void failSubscribe(RuntimeException failure) {
+        this.subscribeFailure = failure;
     }
 
     @Override
