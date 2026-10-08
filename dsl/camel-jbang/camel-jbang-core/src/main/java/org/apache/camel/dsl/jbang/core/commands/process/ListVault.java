@@ -167,7 +167,7 @@ public class ListVault extends ProcessWatchCommand {
                                 row.vault = "Kubernetes-cm";
                                 row.lastCheck = cmKubernetes.getLongOrDefault("startCheckTimestamp", 0);
                                 row.lastReload = cmKubernetes.getLongOrDefault("lastReloadTimestamp", 0);
-                                JsonArray arr = (JsonArray) cmKubernetes.get("configmap");
+                                JsonArray arr = (JsonArray) cmKubernetes.get("configmaps");
                                 for (int i = 0; arr != null && i < arr.size(); i++) {
                                     if (i > 0) {
                                         // create a copy for 2+ configmap
