@@ -1851,9 +1851,7 @@ class TuiToolRegistry {
                 ex.put("bundled", ExampleHelper.isBundled(entry));
                 ex.put("requiresDocker", ExampleHelper.requiresDocker(entry));
                 ex.put("infraServices", toJsonArray(ExampleHelper.getInfraServices(entry)));
-                if (ExampleHelper.getNeeds(entry) != null) {
-                    ex.put("needs", ExampleHelper.getNeeds(entry));
-                }
+                putNeeds(ex, entry);
                 examples.add(ex);
             }
         }

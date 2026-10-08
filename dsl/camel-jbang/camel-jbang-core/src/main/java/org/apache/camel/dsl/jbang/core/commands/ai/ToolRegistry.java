@@ -1112,8 +1112,9 @@ public final class ToolRegistry {
                             jo.put("tags", entry.get("tags"));
                             jo.put("teaches", ExampleHelper.getTeaches(entry));
                             jo.put("infraServices", ExampleHelper.getInfraServices(entry));
-                            if (ExampleHelper.getNeeds(entry) != null) {
-                                jo.put("needs", ExampleHelper.getNeeds(entry));
+                            String needs = ExampleHelper.getNeeds(entry);
+                            if (needs != null) {
+                                jo.put("needs", needs);
                             }
                             jo.put("bundled", ExampleHelper.isBundled(entry));
                             jo.put("files", ExampleHelper.getFiles(entry));
