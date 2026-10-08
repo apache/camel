@@ -89,19 +89,19 @@ BouncyCastle constants (`ml_dsa_87`) is accepted as an alias of the canonical na
 |===
 | Algorithm | Parameter sets
 
-| `MLDSA` | `ML-DSA-44`, `ML-DSA-65` (default), `ML-DSA-87`
-| `MLKEM` | `ML-KEM-512` (default), `ML-KEM-768`, `ML-KEM-1024`
+| `MLDSA` | `ML-DSA-44` (lifecycle manager default), `ML-DSA-65` (component default), `ML-DSA-87`
+| `MLKEM` | `ML-KEM-512` (component default), `ML-KEM-768` (lifecycle manager default), `ML-KEM-1024`
 | `SLHDSA` | `SLH-DSA-SHA2-128S`, `SLH-DSA-SHAKE-256F`, ... (see `SLHDSAParameterSpec`)
 | `FALCON` | `FALCON-512`, `FALCON-1024`
-| `DILITHIUM` | `ML-DSA-44`, `ML-DSA-65`, `ML-DSA-87` (default)
+| `DILITHIUM` | `ML-DSA-44` (lifecycle manager default), `ML-DSA-65`, `ML-DSA-87` (component default)
 | `SPHINCSPLUS` | The `SLHDSA` parameter sets, for example `SLH-DSA-SHA2-128S` (default)
-| `KYBER` | `ML-KEM-512`, `ML-KEM-768`, `ML-KEM-1024` (default); `kyber512`, `kyber768` and `kyber1024` are accepted as aliases
+| `KYBER` | `ML-KEM-512`, `ML-KEM-768` (lifecycle manager default), `ML-KEM-1024` (component default); `kyber512`, `kyber768` and `kyber1024` are accepted as aliases
 | `NTRU` | `ntruhps2048509`, ... (see `NTRUParameterSpec`)
 | `NTRULPRime` | `ntrulpr653`, ... (see `NTRULPRimeParameterSpec`)
 | `SNTRUPrime` | `sntrup761`, ... (see `SNTRUPrimeParameterSpec`)
 | `BIKE` | `bike128`, `bike192`, `bike256`
 | `HQC` | `hqc128`, `hqc192`, `hqc256`
-| `CMCE` | `mceliece460896`, `mceliece8192128f` (default), ... (see `org.bouncycastle.jcajce.spec.CMCEParameterSpec`)
+| `CMCE` | `mceliece460896` (lifecycle manager default), `mceliece8192128f` (component default), ... (see `org.bouncycastle.jcajce.spec.CMCEParameterSpec`)
 | `FRODO` | `frodokem976aes` (default), `frodokem1344shake`, ... (see `org.bouncycastle.jcajce.spec.FrodoKEMParameterSpec`)
 | `SABER` | `lightsaberkem128r3`, ... (see `SABERParameterSpec`)
 |===
@@ -334,7 +334,7 @@ All other signature algorithms follow the exact same route pattern shown above f
 |`SLHDSA`
 |SLH-DSA
 |BC
-|SLH-DSA-SHA2-128s
+|SLH-DSA-SHA2-128S
 |`PQCDefaultSLHDSAMaterial`
 
 |LMS
@@ -383,7 +383,7 @@ All other signature algorithms follow the exact same route pattern shown above f
 |`SPHINCSPLUS`
 |SLH-DSA
 |BC
-|SLH-DSA-SHA2-128s
+|SLH-DSA-SHA2-128S
 |`PQCDefaultSPHINCSPLUSMaterial`
 |===
 

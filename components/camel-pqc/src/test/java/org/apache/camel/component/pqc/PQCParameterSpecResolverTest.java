@@ -62,6 +62,7 @@ class PQCParameterSpecResolverTest {
         // the underscore form matching the BouncyCastle constant names is accepted as an alias
         assertNotNull(PQCParameterSpecResolver.resolve("MLDSA", "ml_dsa_87"));
         assertNotNull(PQCParameterSpecResolver.resolve("MLKEM", "ml_kem_1024"));
+        assertNotNull(PQCParameterSpecResolver.resolve("SPHINCSPLUS", "sha2_128s"));
     }
 
     @Test
@@ -140,6 +141,9 @@ class PQCParameterSpecResolverTest {
         IllegalArgumentException frodo = assertThrows(IllegalArgumentException.class,
                 () -> PQCParameterSpecResolver.resolve("FRODO", "frodokem640aes"));
         assertTrue(frodo.getMessage().contains("Unknown parameterSpec"));
+        IllegalArgumentException dilithium = assertThrows(IllegalArgumentException.class,
+                () -> PQCParameterSpecResolver.resolve("DILITHIUM", "dilithium2"));
+        assertTrue(dilithium.getMessage().contains("Unknown parameterSpec"));
     }
 
     @Test
