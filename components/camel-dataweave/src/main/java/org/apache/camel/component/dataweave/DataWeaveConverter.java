@@ -307,7 +307,7 @@ public class DataWeaveConverter {
         todoCount++;
         return includeComments
                 ? "/* TODO: manual conversion needed -- existence check on non-field expression: "
-                  + emitNode(ec.expr()) + "*/\nfalse"
+                  + emitNode(ec.expr()).replace("*/", "* /") + " */\nfalse"
                 : "false";
     }
 
@@ -589,7 +589,7 @@ public class DataWeaveConverter {
             todoCount++;
             return includeComments
                     ? "/* TODO: manual conversion needed -- reduce shorthand in unsupported context: "
-                      + node.getClass().getSimpleName() + "*/\nnull"
+                      + node.getClass().getSimpleName() + " */\nnull"
                     : "null";
         }
         return emitNode(node);
@@ -753,7 +753,8 @@ public class DataWeaveConverter {
         todoCount++;
         convertedCount--;
         return includeComments
-                ? "/* TODO: manual conversion needed -- " + u.reason() + ": " + u.originalText() + " */\nnull"
+                ? "/* TODO: manual conversion needed -- " + u.reason().replace("*/", "* /") + ": "
+                  + u.originalText().replace("*/", "* /") + " */\nnull"
                 : "null";
     }
 
