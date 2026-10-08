@@ -1484,6 +1484,12 @@ A project whose routes are all in one file is covered too: the content that last
 broken save goes back to the version that was running, and the log says how many routes came from it. The file on
 disk is untouched; its next save is loaded as usual.
 
+=== camel-core - RoutesLoader.updateRoutes runs one call at a time
+
+Concurrent `RoutesLoader.updateRoutes` calls on one CamelContext now run one at a time instead of failing with
+`ConcurrentModificationException`. A route whose exchange calls `updateRoutes` while another `updateRoutes` call
+replaces that route now makes the stop wait until the shutdown timeout, after which the route is forced to stop.
+
 === camel-core - the recursive file watcher watches directories created while it runs
 
 The file watcher reload strategy (`camel run --dev`, the route watcher reload strategy with a recursive directory)
