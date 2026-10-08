@@ -592,11 +592,16 @@ public class DataWeaveParser {
             return new DataWeaveAst.UnaryOp("-", operand);
         }
 
-        // Unknown token — strict mode: report location and token
+        // Unknown token — return an Unsupported node so best-effort callers (e.g. the CLI
+        // `camel transform dataweave` command) can continue processing the rest of the file.
+        // The language layer (DatasonnetLanguage) will detect the Unsupported node via
+        // getTodoCount() and throw DataWeaveConversionException there, giving strict behaviour
+        // at the language level while keeping the parser usable as a best-effort migration tool.
         Token cur = current();
-        throw new DataWeaveConversionException(
-                "DataWeave parse error at " + cur.line() + ":" + cur.col()
-                                               + ": unexpected token " + cur.type() + " ('" + cur.value() + "')");
+        String tokenText = cur.value() != null && !cur.value().isEmpty() ? cur.value() : cur.type().name();
+        advance();
+        return new DataWeaveAst.Unsupported(
+                tokenText, "unexpected token " + cur.type() + " at " + cur.line() + ":" + cur.col());
     }
 
     private DataWeaveAst parseIdentifierOrCall() {

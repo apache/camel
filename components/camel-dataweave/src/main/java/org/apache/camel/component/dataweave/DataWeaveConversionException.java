@@ -20,9 +20,9 @@ package org.apache.camel.component.dataweave;
  * Thrown when a DataWeave script cannot be converted to DataSonnet, either because the parser encountered a syntax
  * error or because a construct is not supported by the converter.
  * <p>
- * When thrown by the parser, the message includes the DataWeave source location (line:column) and the
- * unexpected token. When thrown for unsupported constructs detected after conversion, the message
- * describes the failure but does not include a source location.
+ * When thrown by the parser, the message includes the DataWeave source location (line:column) and the unexpected token.
+ * When thrown for unsupported constructs detected after conversion, the message describes the failure but does not
+ * include a source location.
  */
 public class DataWeaveConversionException extends RuntimeException {
 

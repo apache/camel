@@ -44,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -279,7 +280,7 @@ class DataWeaveParserTest {
     @Test
     void shouldThrowOnUnbalancedInput() {
         // expect() now throws DataWeaveConversionException on a missing RPAREN
-        org.junit.jupiter.api.Assertions.assertThrows(
+        assertThrows(
                 DataWeaveConversionException.class,
                 () -> parseExpr("(a + b"));
     }

@@ -66,8 +66,8 @@ class DataWeaveExecutedCorpusTest extends CamelTestSupport {
     }
 
     /**
-     * Verifies the if/else branch coverage: score ≥ 90 → A, ≥ 80 → B, otherwise → C.
-     * A single shared {@code ifElse.dwl} script is reused across all three threshold cases.
+     * Verifies the if/else branch coverage: score ≥ 90 → A, ≥ 80 → B, otherwise → C. A single shared {@code ifElse.dwl}
+     * script is reused across all three threshold cases.
      */
     @ParameterizedTest
     @CsvSource({
