@@ -1,0 +1,65 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Runs the Mycila license-maven-plugin check on every PR.
+#
+# This workflow is intentionally separate from pr-build-main.yml, which has
+# paths-ignore entries for Jenkinsfile and Jenkinsfile.* (CI-only changes do
+# not need a full build). That exclusion means PRs that only add a new
+# Jenkinsfile variant bypass the license check entirely, and the file may land
+# without a license header mapping in pom.xml (failIfUnknown=true would not
+# have caught Jenkinsfile.jdk26 and Jenkinsfile.jdk27 in time).
+#
+# This workflow has NO paths-ignore so it always runs, keeping the license
+# header mapping up-to-date for every file type added to the repository.
+
+name: PR license check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  license-check:
+    if: github.repository == 'apache/camel'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up JDK 21
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+      - name: Check license headers
+        # -N: non-recursive — only checks files at the root project level, which
+        # is where the license plugin configuration and all file-type mappings
+        # live. Submodule Java sources already carry standard ASF headers and are
+        # covered by the main build. The goal of this check is to catch new
+        # root-level files (e.g. Jenkinsfile.jdkNN) whose extension has not been
+        # added to the <mapping> section in pom.xml.
+        run: ./mvnw -B --no-transfer-progress license:check -N
