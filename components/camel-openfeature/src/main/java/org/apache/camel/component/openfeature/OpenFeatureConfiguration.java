@@ -49,11 +49,11 @@ public class OpenFeatureConfiguration implements Cloneable {
     @UriParam(label = "common", defaultValue = "8013", description = "Remote flagd service port.")
     private int port = 8013;
 
-    @UriParam(label = "common,security", defaultValue = "false",
+    @UriParam(label = "security", defaultValue = "false",
               description = "Whether to use TLS for the remote flagd connection.")
     private boolean tls;
 
-    @UriParam(label = "common,security",
+    @UriParam(label = "security",
               description = "Path to the TLS certificate for the remote flagd connection.")
     private String certPath;
 
