@@ -61,6 +61,7 @@ public class TopologyDiagramWidget implements Widget {
     private Style aiStyle = Style.EMPTY.italic();
     private ErrorLayer errorLayer;
     private Set<String> errorMarks = Set.of();
+    private Map<TopologyLayoutNode, List<String>> errorLabels;
 
     public record NodeBox(String routeId, int startRow, int endRow, int startCol, int endCol, int layer) {
     }
@@ -241,6 +242,7 @@ public class TopologyDiagramWidget implements Widget {
      */
     public TopologyDiagramWidget withErrorLayer(ErrorLayer layer) {
         this.errorLayer = layer;
+        this.errorLabels = null;
         return this;
     }
 
@@ -302,15 +304,6 @@ public class TopologyDiagramWidget implements Widget {
         return errorLayer != null && node.routeId != null && errorLayer.routeIds().contains(node.routeId);
     }
 
-    private TopologyLayoutNode nodeOf(String routeId) {
-        for (TopologyLayoutNode n : layout.nodes) {
-            if (routeId != null && routeId.equals(n.routeId)) {
-                return n;
-            }
-        }
-        return null;
-    }
-
     /** The frame of the error handling: from its top to the bottom of the diagram, as wide as the diagram. */
     private void drawErrorFrame(Buffer buffer, Rect area) {
         int top = toRow(errorLayer.frameTopY());
@@ -337,7 +330,12 @@ public class TopologyDiagramWidget implements Widget {
      * per route that sends there.
      */
     private Map<TopologyLayoutNode, List<String>> errorLabels() {
+        // the same for every use in a widget (a widget is made for one frame)
+        if (errorLabels != null) {
+            return errorLabels;
+        }
         Map<TopologyLayoutNode, List<String>> answer = new java.util.LinkedHashMap<>();
+        errorLabels = answer;
         if (errorLayer == null) {
             return answer;
         }
