@@ -182,6 +182,11 @@ Hibernate entities that define a natural identifier can be looked up using `natu
 String values are evaluated with Simple, so the natural-id can come from the message. Values can also be
 passed or overridden with the `CamelHibernateParameters` header.
 
+[NOTE]
+====
+Values configured through the `naturalId.` URI prefix are Strings. For non-String natural-id types, such as `Long`, configure the values using Java or `#bean` configuration so the appropriate Java type is preserved.
+====
+
 [source,java]
 ----
 from("direct:findByEmail")
@@ -224,6 +229,11 @@ Map<String, Map<String, Object>> filters = Map.of(
 
 endpoint.setFilters(filters);
 ----
+
+[NOTE]
+====
+Values configured through the `filter.` URI prefix are Strings. For non-String filter parameter types, such as `Long`, configure the values using Java or `#bean` configuration so the appropriate Java type is preserved.
+====
 
 When a producer reuses a `Session` supplied by a Hibernate consumer, its filter configuration must match the filters associated with that `Session`. If the producer's filters differ, the shared `Session` is not reused and the producer opens a separate `Session` so that its filters can be applied without changing the consumer's session state.
 
