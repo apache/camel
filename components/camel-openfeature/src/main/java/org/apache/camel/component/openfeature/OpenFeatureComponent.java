@@ -122,31 +122,41 @@ public class OpenFeatureComponent extends DefaultComponent {
 
     @Override
     protected void doStop() throws Exception {
+        if (api == null) {
+            return;
+        }
+
         OpenFeatureAPI localApi = api;
         api = null;
-        for (DomainBinding binding : domainBindings.values()) {
-            binding.shutdown();
+
+        for (Map.Entry<String, DomainBinding> bindingEntry : domainBindings.entrySet()) {
+            Object lock = domainLocks.computeIfAbsent(bindingEntry.getKey(), k -> new Object());
+            synchronized (lock) {
+                bindingEntry.getValue().shutdown();
+            }
         }
         domainBindings.clear();
         domainLocks.clear();
-        if (localApi != null) {
-            try {
-                localApi.shutdown();
-            } catch (Exception e) {
-                LOG.debug("Error shutting down OpenFeature API: {}", e.getMessage(), e);
-            }
+        try {
+            localApi.shutdown();
+        } catch (Exception e) {
+            LOG.debug("Error shutting down OpenFeature API: {}", e.getMessage(), e);
         }
         super.doStop();
     }
 
     Client acquireOrRegister(String domain, ProviderSupplier providerSupplier) throws Exception {
-        OpenFeatureAPI localApi = api;
-        if (localApi == null) {
+        if (api == null) {
             throw new IllegalStateException("OpenFeature component is not started");
         }
 
         Object lock = domainLocks.computeIfAbsent(domain, k -> new Object());
         synchronized (lock) {
+            OpenFeatureAPI localApi = api;
+            if (localApi == null) {
+                throw new IllegalStateException("OpenFeature component is stopping or has been stopped");
+            }
+
             DomainBinding existing = domainBindings.get(domain);
             if (existing != null) {
                 existing.refCount++;
