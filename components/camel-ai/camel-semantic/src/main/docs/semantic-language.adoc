@@ -374,6 +374,9 @@ Use `.type("boolean")` with optional `.threshold(0.8)`, `.uncertainty(0.1)` and
 `.uncertaintyPolicy("non-match")` for boolean evaluations. Use `.type("score")` and successive
 `.level("description")` calls for ordered score levels. Applications can also register immutable
 `SemanticEvaluation` definitions using `SemanticEvaluations.get(context).replace(source, evaluations)`.
+On a running context, replacement definitions are validated before publication. If validation fails,
+the previous definitions remain available. The public `get(name)` and `get(names)` methods always
+read published definitions, including calls made from an expert's validation callback.
 
 Each Java resource owns one group. Register all of its evaluations together; registering again
 replaces that resource's previous group. Reloading a Java resource without the helper removes
