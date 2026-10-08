@@ -580,15 +580,15 @@ public class DataWeaveConverter {
             todoCount++;
             return includeComments
                     ? "/* TODO: manual conversion needed -- reduce shorthand in unsupported context: "
-                            + node.getClass().getSimpleName() + "*/\nnull"
+                      + node.getClass().getSimpleName() + "*/\nnull"
                     : "null";
         }
         return emitNode(node);
     }
 
     /**
-     * Returns true if the given AST node or any of its children contain a LambdaShorthand ($) or DoubleDollar ($$)
-     * that would be emitted incorrectly by the normal emitNode path in a reduce shorthand context.
+     * Returns true if the given AST node or any of its children contain a LambdaShorthand ($) or DoubleDollar ($$) that
+     * would be emitted incorrectly by the normal emitNode path in a reduce shorthand context.
      */
     private boolean containsShorthand(DataWeaveAst node) {
         if (node == null) {
@@ -654,7 +654,7 @@ public class DataWeaveConverter {
             // If the key expression is already a string, std.toString() is a no-op.
             return "c.groupBy(" + collection + ", function(" + paramNames.get(0) + ") std.toString(" + body + "))";
         }
-        return "c.groupBy(" + collection + ", function(x) std.toString(" + emitNode(gbe.lambda()) + "(x)))";
+        return "c.groupBy(" + collection + ", function(x) std.toString((" + emitNode(gbe.lambda()) + ")(x)))";
     }
 
     private String emitOrderBy(OrderByExpr obe) {

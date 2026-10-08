@@ -578,6 +578,18 @@ class DataWeaveConverterTest {
     }
 
     @Test
+    void testGroupByShorthand() {
+        // DW: payload.items groupBy $.qty -- shorthand (non-Lambda) branch
+        // The emitted lambda function must be parenthesized before being called with (x),
+        // otherwise (x) binds to the field access rather than invoking the whole function.
+        String result = converter.convertExpression("payload.items groupBy $.qty");
+        assertTrue(result.contains("c.groupBy("), "Should use c.groupBy, got: " + result);
+        assertTrue(result.contains("std.toString("), "groupBy key must be stringified, got: " + result);
+        // The function must be called on x: (function(x) ...)(x), not function(x) ...(x)
+        assertTrue(result.contains(")(x)"), "Emitted lambda must be parenthesized before (x) call, got: " + result);
+    }
+
+    @Test
     void testMultiValueSelectorXmlChildren() {
         // DW: payload.Order.Items.*Item -> DS: std.map(function(x) x.Item, body.Order.Items)
         String result = converter.convertExpression("payload.Order.Items.*Item");
