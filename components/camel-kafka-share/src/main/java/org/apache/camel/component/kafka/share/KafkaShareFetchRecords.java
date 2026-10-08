@@ -104,6 +104,10 @@ class KafkaShareFetchRecords implements Runnable {
                     terminated = true;
                     break;
                 }
+                if (!connected) {
+                    // stopped while connecting, there is no share consumer to poll
+                    break;
+                }
                 lastError = null;
                 pollAndProcess();
             }

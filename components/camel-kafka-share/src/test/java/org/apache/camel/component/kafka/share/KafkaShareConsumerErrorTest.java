@@ -55,12 +55,18 @@ class KafkaShareConsumerErrorTest extends CamelTestSupport {
     private final Map<String, List<RecordingShareConsumer>> consumers = new ConcurrentHashMap<>();
     // how many times the share consumer of the "unreachable" group fails to be created
     private final AtomicInteger creationFailures = new AtomicInteger(3);
+    // how many times the share consumer of the "never-created" group failed to be created
+    private final AtomicInteger neverCreatedAttempts = new AtomicInteger();
 
     private final KafkaShareClientFactory factory = new KafkaShareClientFactory() {
         @Override
         public ShareConsumer<Object, Object> getShareConsumer(Properties kafkaProps) {
             String groupId = kafkaProps.getProperty(ConsumerConfig.GROUP_ID_CONFIG);
             if ("unreachable".equals(groupId) && creationFailures.getAndDecrement() > 0) {
+                throw new KafkaException("Failed to construct kafka share consumer");
+            }
+            if ("never-created".equals(groupId)) {
+                neverCreatedAttempts.incrementAndGet();
                 throw new KafkaException("Failed to construct kafka share consumer");
             }
             RecordingShareConsumer consumer = new RecordingShareConsumer();
@@ -109,6 +115,10 @@ class KafkaShareConsumerErrorTest extends CamelTestSupport {
 
                 from("kafka-share:" + TOPIC + options + "unreachable").routeId("unreachable")
                         .to("mock:unreachable");
+
+                from("kafka-share:" + TOPIC + options + "never-created").routeId("neverCreated")
+                        .errorHandler(deadLetterChannel("mock:never-created-dead"))
+                        .to("mock:never-created");
             }
         };
     }
@@ -177,6 +187,20 @@ class KafkaShareConsumerErrorTest extends CamelTestSupport {
         // then it is created and subscribed
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(readiness("unreachable").getState()).isEqualTo(HealthCheck.State.UP));
+    }
+
+    @Test
+    void stoppingWhileTheShareConsumerIsBeingCreatedDoesNotPoll() throws Exception {
+        MockEndpoint dead = getMockEndpoint("mock:never-created-dead");
+        dead.expectedMessageCount(0);
+        // the share consumer keeps failing to be created, and the consumer retries in the background
+        await().atMost(10, TimeUnit.SECONDS).until(() -> neverCreatedAttempts.get() >= 2);
+
+        context.getRouteController().stopRoute("neverCreated");
+
+        // no poll error (such as polling a share consumer that was never created) reaches the error handler
+        dead.setAssertPeriod(1000);
+        dead.assertIsSatisfied();
     }
 
     private HealthCheck.Result readiness(String routeId) {
