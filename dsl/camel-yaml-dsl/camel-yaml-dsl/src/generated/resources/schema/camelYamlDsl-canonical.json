@@ -2132,6 +2132,12 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "allowNullBody" : {
+            "type" : "boolean",
+            "title" : "Allow Null Body",
+            "description" : "Indicates whether a null body is skipped instead of marshalled. By default the data format marshals the null, and what that gives depends on the data format (JSON gives the text null). When true, a null body is not marshalled and the body stays null.",
+            "default" : false
+          },
           "asn1" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ASN1DataFormat"
           },

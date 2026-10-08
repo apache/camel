@@ -78,3 +78,54 @@ YAML::
             uri: jms:queue:order
 ----
 ====
+
+== Allow Null Body
+
+By default, a `null` body is marshalled by the data format, and what that gives depends on the data format:
+JSON gives the text `null`, CSV an empty text. When `null` is a normal value of the body, for example a lookup
+that found nothing, use the option `allowNullBody` to skip the marshalling: the body then stays `null`.
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:order")
+  .to("bean:findOrder")
+  .marshal().allowNullBody().json()
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:order"/>
+    <to uri="bean:findOrder"/>
+    <marshal allowNullBody="true">
+        <json/>
+    </marshal>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - to:
+            uri: bean:findOrder
+        - marshal:
+            allowNullBody: true
+            json: {}
+        - to:
+            uri: mock:result
+----
+====

@@ -558,6 +558,7 @@ public class ModelParser extends BaseParser {
     }
     protected MarshalDefinition doParseMarshalDefinition() throws IOException, XmlPullParserException {
         return doParse(new MarshalDefinition(), (def, key, val) -> switch (key) {
+                case "allowNullBody": def.setAllowNullBody(val); yield true;
                 case "variableReceive": def.setVariableReceive(val); yield true;
                 case "variableSend": def.setVariableSend(val); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);

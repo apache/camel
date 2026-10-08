@@ -6486,6 +6486,17 @@ user data and to easily control what data to use for sending and receiving.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="allowNullBody" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Indicates whether a null body is skipped instead of marshalled. By default the data format marshals the null, and what
+that gives depends on the data format (JSON gives the text null). When true, a null body is not marshalled and the body
+stays null. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

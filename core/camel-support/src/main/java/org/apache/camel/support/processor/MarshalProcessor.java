@@ -45,12 +45,18 @@ public class MarshalProcessor extends AsyncProcessorSupport
     private String stepId;
     private CamelContext camelContext;
     private final DataFormat dataFormat;
+    private final boolean allowNullBody;
     private boolean disabled;
     private String variableSend;
     private String variableReceive;
 
     public MarshalProcessor(DataFormat dataFormat) {
+        this(dataFormat, false);
+    }
+
+    public MarshalProcessor(DataFormat dataFormat, boolean allowNullBody) {
         this.dataFormat = dataFormat;
+        this.allowNullBody = allowNullBody;
     }
 
     @Override
@@ -66,6 +72,11 @@ public class MarshalProcessor extends AsyncProcessorSupport
         Object body = originalBody;
         if (variableSend != null) {
             body = ExchangeHelper.getVariable(exchange, variableSend);
+        }
+        if (allowNullBody && body == null) {
+            // the body is null, and it is an allowed value so let's skip the marshalling
+            callback.done(true);
+            return true;
         }
 
         // lets setup the out message before we invoke the dataFormat
