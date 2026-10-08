@@ -259,7 +259,7 @@ public interface UnitOfWork {
      *
      * @param  filter the filter
      * @return        the number of matching routes on the route stack
-     * @since         4.23
+     * @since         4.22
      */
     default int routeStackLevel(Predicate<Route> filter) {
         return 0;
