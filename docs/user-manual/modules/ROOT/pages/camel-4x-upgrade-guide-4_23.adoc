@@ -326,6 +326,25 @@ When a route with the stream resequencer stops, a caller that is blocked because
 now fails with a `java.util.concurrent.RejectedExecutionException`. Prior to Camel 4.23 such a caller stayed blocked,
 also after the route was stopped.
 
+=== Saga EIP - compensation and completion failures
+
+When a saga in `AUTO` completion mode fails and its compensation then fails as well, the exchange now keeps the
+exception that caused the compensation, and the compensation failure (a `RuntimeCamelException` with the message
+`Unable to compensate all required steps of the saga <id>`) is added to it as a suppressed exception.
+Prior to Camel 4.23 that `RuntimeCamelException`, wrapped in a `java.util.concurrent.CompletionException`, replaced
+the original exception. An `onException` or `doCatch` that matched the `CompletionException`, the
+`RuntimeCamelException` or its message must now match the original exception instead, and can find the compensation
+failure in its suppressed exceptions.
+
+When the completion of a saga fails, the exchange now gets the `RuntimeCamelException` with the message
+`Unable to complete all required steps of the saga <id>` as is. Prior to Camel 4.23 it was wrapped in a
+`java.util.concurrent.CompletionException`.
+
+With the in-memory saga service, a saga whose compensation or completion could not be done after all the retries now
+has the status `FAILED`, instead of `COMPENSATED` or `COMPLETED`: compensating or completing it again fails, instead of
+reporting success. When the in-memory saga service stops, it logs a warning with the ids of the sagas that are not
+finalized, since they will not be compensated or completed.
+
 === Tokenize language
 
 - A message without a body (or a `source` that has no value) now has no tokens, the same as an empty body.
