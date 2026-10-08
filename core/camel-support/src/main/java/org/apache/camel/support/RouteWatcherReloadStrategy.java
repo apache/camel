@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -75,6 +76,20 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     private final Map<String, byte[]> lastGoodContent = new ConcurrentHashMap<>();
     /** The sources of the last failed reload: retried when the properties change, as a missing property may be why. */
     private final List<Resource> failedSources = new ArrayList<>();
+    private Supplier<Collection<Resource>> beanResources;
+
+    public Supplier<Collection<Resource>> getBeanResources() {
+        return beanResources;
+    }
+
+    /**
+     * The resources that declare beans, such as a beans.yaml file with no routes. When the Java sources are compiled
+     * again, all these resources are loaded again too, so every bean is created again from the new classes: a bean
+     * whose class changed, and also a bean that calls it (bean A calling bean B needs the new instance of B).
+     */
+    public void setBeanResources(Supplier<Collection<Resource>> beanResources) {
+        this.beanResources = beanResources;
+    }
 
     public RouteWatcherReloadStrategy() {
     }
@@ -388,6 +403,18 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     }
                 }
             }
+            // the Java sources are compiled again, so all beans are created again: a bean of a changed class, and the
+            // beans that call it
+            if (beanResources != null && sources.stream().anyMatch(RouteWatcherReloadStrategy::isJavaSource)) {
+                Collection<Resource> beans = beanResources.get();
+                if (beans != null) {
+                    for (Resource bean : beans) {
+                        if (bean != null && !equalResourceLocation(sources, bean)) {
+                            sources.add(bean);
+                        }
+                    }
+                }
+            }
 
             // just in case remember this set of sources as what was attempted previously to update
             // in case the update fails with an exception
@@ -572,6 +599,10 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     /**
      * Whether the target is loading any of the given sources
      */
+    private static boolean isJavaSource(Resource resource) {
+        return resource.getLocation() != null && resource.getLocation().endsWith(".java");
+    }
+
     private static boolean equalResourceLocation(Collection<Resource> sources, Resource target) {
         if (sources == null || target == null || sources.isEmpty()) {
             return false;
