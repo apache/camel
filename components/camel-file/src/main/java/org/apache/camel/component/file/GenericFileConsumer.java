@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -34,6 +35,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.support.EmptyAsyncCallback;
+import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
@@ -63,6 +65,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     private final String[] includeExt;
     private final String[] excludeExt;
     private boolean retrieveFile = true;
+    // files already reported as resolving outside the starting directory (bounded)
+    private final Map<String, Boolean> skippedOutsideStartingDirectory = LRUCacheFactory.newLRUCache(1000);
 
     protected GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations,
                                   GenericFileProcessStrategy<T> processStrategy) {
@@ -633,9 +637,15 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         // the resolved path must stay within the starting directory, as the name it was built from is
-        // reported by the remote server and is not necessarily a single path segment
+        // reported by the remote server and is not necessarily a single path segment, and a local file
+        // can be a symbolic link
         if (endpoint.isJailStartingDirectory() && !isWithinStartingDirectory(absoluteFilePath)) {
-            LOG.warn("Skipping file as it resolves outside the starting directory: {}", absoluteFilePath);
+            // such a file usually stays where it is and is listed again on every poll, so only warn the first time
+            if (skippedOutsideStartingDirectory.put(absoluteFilePath, Boolean.TRUE) == null) {
+                LOG.warn("Skipping file as it resolves outside the starting directory: {}", absoluteFilePath);
+            } else {
+                LOG.debug("Skipping file as it resolves outside the starting directory: {}", absoluteFilePath);
+            }
             return false;
         }
 
@@ -692,15 +702,15 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * Strategy to determine whether the resolved path of a listed file stays within the configured starting directory.
      * <p/>
      * Consumers that build the path from a name supplied by a remote server must override this, as such a name is not
-     * guaranteed to be a single path segment and can otherwise navigate outside the directory being polled. The check
-     * is only consulted when {@link GenericFileEndpoint#isJailStartingDirectory()} is enabled.
+     * guaranteed to be a single path segment and can otherwise navigate outside the directory being polled. The local
+     * file consumer overrides this to resolve symbolic links. The check is only consulted when
+     * {@link GenericFileEndpoint#isJailStartingDirectory()} is enabled.
      *
      * @param  absoluteFilePath the resolved absolute path of the listed file
      * @return                  {@code true} if the path stays within the starting directory
      */
     protected boolean isWithinStartingDirectory(String absoluteFilePath) {
-        // names obtained from a local directory listing are always single path segments, so there is no
-        // boundary to enforce here
+        // no boundary to enforce by default
         return true;
     }
 
@@ -933,6 +943,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     @Override
     protected void doStop() throws Exception {
         prepareOnStartup = false;
+        skippedOutsideStartingDirectory.clear();
         super.doStop();
         ServiceHelper.stopService(processStrategy);
     }
