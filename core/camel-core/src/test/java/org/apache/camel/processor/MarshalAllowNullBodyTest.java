@@ -57,6 +57,13 @@ public class MarshalAllowNullBodyTest extends ContextTestSupport {
         assertEquals("Camel", context.getTypeConverter().convertTo(String.class, out));
     }
 
+    @Test
+    public void testAllowNullBodySetsTheReceiveVariableToNull() throws Exception {
+        getMockEndpoint("mock:receive").expectedVariableReceived("out", null);
+        template.sendBody("direct:receive", null);
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -70,6 +77,11 @@ public class MarshalAllowNullBodyTest extends ContextTestSupport {
                 from("direct:allow")
                         .marshal().allowNullBody().custom("myDF")
                         .to("mock:allow");
+
+                from("direct:receive")
+                        .setVariable("out", constant("stale"))
+                        .marshal().allowNullBody().variableReceive("out").custom("myDF")
+                        .to("mock:receive");
             }
         };
     }
