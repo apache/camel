@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -322,6 +323,64 @@ public class CmlFunctionsTest extends CamelTestSupport {
         String body = exchange.getMessage().getBody(String.class);
         assertTrue(body.contains("\"name\":\"John\"") || body.contains("\"name\": \"John\""));
         assertTrue(body.contains("\"active\":true") || body.contains("\"active\": true"));
+    }
+
+    // -- Number and date formatting, parsing and arithmetic (dates and times as ISO-8601 strings)
+
+    @Test
+    public void testFormatNumber() {
+        assertEquals("1,234.50", evaluate("cml.formatNumberLocale(1234.5, '#,##0.00', 'en')"));
+        assertEquals("1.234,50", evaluate("cml.formatNumberLocale(1234.5, '#,##0.00', 'de')"));
+        // any other value than a number is returned as is
+        assertEquals("abc", evaluate("cml.formatNumber('abc', '#.00')"));
+        assertNull(evaluate("cml.formatNumber(null, '#.00')"));
+    }
+
+    @Test
+    public void testFormatDateOfDatesAndTimes() {
+        assertEquals("31/01/2020", evaluate("cml.formatDate('2020-01-31', 'dd/MM/yyyy')"));
+        assertEquals("10:30", evaluate("cml.formatDate('2020-01-31T10:30:00', 'HH:mm')"));
+        assertEquals("2026-03-20", evaluate("cml.formatDate(cml.parseDate('20/03/2026', 'dd/MM/yyyy'), 'yyyy-MM-dd')"));
+        assertEquals("31 Jan 2020", evaluate("cml.formatDateLocale('2020-01-31', 'dd MMM yyyy', 'en')"));
+    }
+
+    @Test
+    public void testParseDateTime() {
+        assertEquals("2020-01-31", evaluate("cml.parseDateTime('01/31/2020', 'MM/dd/yyyy', 'Date')"));
+        assertEquals("2026-10-08", evaluate("cml.parseDateTime('2026-10-08T10:00:00Z', null, 'Date')"));
+        assertEquals("2026-10-08T10:00:00Z", evaluate("cml.parseDateTime('2026-10-08T10:00:00Z', null, 'DateTime')"));
+        assertEquals("2020-01-31T10:30:00",
+                evaluate("cml.parseDateTime('2020-01-31 10:30', 'yyyy-MM-dd HH:mm', 'LocalDateTime')"));
+        assertEquals("1970-01-01T00:01:00Z", evaluate("cml.parseDateTime(60, null, 'DateTime')"));
+        assertNull(evaluate("cml.parseDateTime(null, null, 'Date')"));
+    }
+
+    @Test
+    public void testDateAdd() {
+        assertEquals("2020-02-01", evaluate("cml.dateAdd('2020-01-31', 'P1D')"));
+        assertEquals("2020-02-29", evaluate("cml.dateAdd('2020-01-31', 'P1M')"));
+        assertEquals("2020-01-30", evaluate("cml.dateAdd('2020-01-31', '-P1D')"));
+        assertEquals("2020-01-30", evaluate("cml.dateAdd('2020-01-31', 'P-1D')"));
+        assertEquals("2020-02-01", evaluate("cml.dateAdd('2020-01-31', '-P-1D')"));
+        assertEquals("2026-10-08T08:00:00Z", evaluate("cml.dateAdd('2026-10-08T10:00:00Z', '-PT2H')"));
+    }
+
+    @Test
+    public void testDatePart() {
+        assertEquals(2020, ((Number) evaluate("cml.datePart('2020-05-31', 'year')")).intValue());
+        assertEquals(2, ((Number) evaluate("cml.datePart('2020-05-31', 'quarter')")).intValue());
+        assertEquals(12, ((Number) evaluate("cml.datePart('12:30:00', 'hour')")).intValue());
+        // a part a date or time does not have is null
+        assertNull(evaluate("cml.datePart('12:30:00', 'quarter')"));
+        assertNull(evaluate("cml.datePart('2020-05-31', 'hour')"));
+    }
+
+    private Object evaluate(String expression) {
+        Exchange exchange = new DefaultExchange(context);
+        return context.resolveLanguage("datasonnet")
+                .createExpression(expression, new Object[] {
+                        Object.class, null, MediaTypes.APPLICATION_JSON_VALUE, MediaTypes.APPLICATION_JAVA_VALUE })
+                .evaluate(exchange, Object.class);
     }
 
     private Object sendAndGetResult(String uri, Object body) {

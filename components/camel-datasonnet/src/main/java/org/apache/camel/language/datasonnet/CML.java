@@ -366,13 +366,10 @@ public final class CML extends Library {
         }
         String text = string(value, "value");
         TemporalAccessor temporal = parseTemporal(text);
+        // Duration and Period parse a sign of the whole amount (-P1D) and of its parts (P-1D, PT-2H)
         String period = string(amount, "amount");
-        boolean negative = period.startsWith("-");
-        String unsigned = negative ? period.substring(1) : period;
-        TemporalAmount temporalAmount = unsigned.contains("T") ? Duration.parse(unsigned) : Period.parse(unsigned);
-        Temporal result = negative
-                ? ((Temporal) temporal).minus(temporalAmount) : ((Temporal) temporal).plus(temporalAmount);
-        return new Val.Str(formatIso(result));
+        TemporalAmount temporalAmount = period.contains("T") ? Duration.parse(period) : Period.parse(period);
+        return new Val.Str(formatIso(((Temporal) temporal).plus(temporalAmount)));
     }
 
     // A part of a date or time (as an ISO-8601 string): year, month, day, hour, minutes, seconds, ...
@@ -401,7 +398,8 @@ public final class CML extends Library {
             default -> throw new IllegalArgumentException("Unknown date part: " + name);
         };
         if (field == null) {
-            return new Val.Num(temporal.get(IsoFields.QUARTER_OF_YEAR));
+            return temporal.isSupported(IsoFields.QUARTER_OF_YEAR)
+                    ? new Val.Num(temporal.get(IsoFields.QUARTER_OF_YEAR)) : Val.Null$.MODULE$;
         }
         return temporal.isSupported(field) ? new Val.Num(temporal.get(field)) : Val.Null$.MODULE$;
     }
