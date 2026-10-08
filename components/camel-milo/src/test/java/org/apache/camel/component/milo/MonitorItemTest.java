@@ -176,8 +176,8 @@ public class MonitorItemTest extends AbstractMiloServerTest {
          * queueSize=3, It should get the first 3 messages because of samplingInterval less than update rate and
          * queueSize over 3 and an update pause of 2 seconds after they are sent. From the rest 16 messages, sent in
          * about 3 seconds, some should be dropped because of queueSize. They should fall into 4 (or 5 depending on
-         * exact timing) publishing periods, so there should be at least 9 (3*3+3) and at most 11 (3+3*3+2 or 1+3+3+1
-         * or 2+3+3+3 depending on timing) extra messages.
+         * exact timing) publishing periods, so there should be at least 9 and at most 11 extra messages (12 to 14 in
+         * total; the assertion below allows one more because the timing is sensitive).
          */
         test4Endpoint.reset();
         test4Endpoint.setMinimumExpectedMessageCount(12);    // the first 3, plus at least 3*3 more from rest (if they fall to 3 periods)
