@@ -42,8 +42,8 @@ public class ManagedRouteGroupFailuresHandledTest extends ManagementTestSupport 
         ManagedRouteGroupMBean group = mcc.getManagedRouteGroup("flow");
         assertNotNull(group);
 
-        // group stats must aggregate across all member routes: trigger, step1 and step2 each completed once
-        assertEquals(3, group.getExchangesCompleted());
+        // group counts each exchange once (outermost route of the group)
+        assertEquals(1, group.getExchangesCompleted());
 
         // the handled failure recorded on the trigger route must be reflected at the group level
         assertEquals(1, group.getFailuresHandled());

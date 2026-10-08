@@ -13,6 +13,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== camel-management - Route group exchange counters count once per exchange
+
+The route group MBean (`ManagedRouteGroupMBean`) exchange counters and processing times now count
+each exchange once per group, even when the exchange is routed through several member routes of the
+group. In 4.22.1, a regression (CAMEL-24590) caused them to count once per member route instead.
+This is now consistent with how the `CamelContext` MBean counts exchanges.
+
 === camel-core - Rest DSL response Content-Type
 
 Under json or xml binding, a response without a Content-Type header again takes it from the `produces` of the rest

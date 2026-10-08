@@ -2365,3 +2365,10 @@ overwritten.
 Applications that aggregate classes outside the default whitelist through the replicated repository
 without supplying their own `hazelcastInstance` must now provide a `Config` with a
 `JavaSerializationFilterConfig` covering their class names.
+
+=== camel-management - Route group exchange counters count once per exchange again
+
+In 4.22.1, the route group MBean (`ManagedRouteGroupMBean`) exchange counters and processing times
+were changed to count each exchange once per member route instead of once per group. This was an
+unintended side effect of CAMEL-24590. The counters now count each exchange once per group again,
+as in 4.22.0, consistent with how the `CamelContext` MBean counts exchanges.

@@ -248,6 +248,20 @@ public interface UnitOfWork {
     int routeStackLevel(boolean includeRouteTemplate, boolean includeKamelet);
 
     /**
+     * Gets the number of routes on the route stack that this {@link UnitOfWork} currently is being routed through,
+     * which match the given filter.
+     * <p/>
+     * For example to know whether the current route is the outermost route of a route group on the stack.
+     *
+     * @param  filter the filter
+     * @return        the number of matching routes on the route stack
+     * @since         4.23
+     */
+    default int routeStackLevel(Predicate<Route> filter) {
+        return 0;
+    }
+
+    /**
      * Whether the unit of work should call the before/after process methods or not.
      */
     boolean isBeforeAfterProcess();
