@@ -400,7 +400,7 @@ public class DataWeaveConverter {
             case "Boolean" -> "cml.toBoolean(" + expr + ")";
             default -> {
                 todoCount++;
-                yield expr + (includeComments ? " // TODO: manual conversion needed -- as " + tc.type() : "");
+                yield expr + (includeComments ? " /* TODO: manual conversion needed -- as " + tc.type() + " */" : "");
             }
         };
     }
@@ -458,9 +458,9 @@ public class DataWeaveConverter {
                 yield "c.max(" + argStr + ")";
             }
             case "read" -> "std.parseJson(" + argStr + ")"
-                           + (includeComments ? " // NOTE: assumes JSON input -- DW read() supports multiple formats" : "");
+                           + (includeComments ? " /* NOTE: assumes JSON input -- DW read() supports multiple formats */" : "");
             case "write" -> "std.manifestJsonEx(" + argStr + ", \"  \")"
-                            + (includeComments ? " // NOTE: outputs JSON -- DW write() supports multiple formats" : "");
+                            + (includeComments ? " /* NOTE: outputs JSON -- DW write() supports multiple formats */" : "");
             default -> fc.name() + "(" + argStr + ")";
         };
     }
@@ -735,7 +735,7 @@ public class DataWeaveConverter {
         todoCount++;
         convertedCount--;
         return includeComments
-                ? "// TODO: manual conversion needed -- " + u.reason() + ": " + u.originalText() + "\nnull"
+                ? "/* TODO: manual conversion needed -- " + u.reason() + ": " + u.originalText() + " */\nnull"
                 : "null";
     }
 
