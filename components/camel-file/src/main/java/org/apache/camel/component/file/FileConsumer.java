@@ -81,6 +81,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     protected boolean isWithinStartingDirectory(String absoluteFilePath) {
         // a local listing entry is a single path segment, but it can be a symbolic link to a file or to a directory
         // (entered with recursive) whose target lies outside the starting directory, so compare the resolved paths
+        // the starting directory is resolved once per poll, each listed file on every poll (one toRealPath per file)
         try {
             Path startingDirectory = resolvedStartingDirectory;
             if (startingDirectory == null) {
