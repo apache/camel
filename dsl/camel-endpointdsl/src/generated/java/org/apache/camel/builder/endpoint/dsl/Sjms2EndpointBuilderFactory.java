@@ -3519,9 +3519,9 @@ public interface Sjms2EndpointBuilderFactory {
         /**
          * The size of the batch when using the batching consumer option.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code int} type.
          * 
-         * Group:  batch
+         * Group: batch
          * 
          * @return the name of the header {@code SjmsBatchSize}.
          */
