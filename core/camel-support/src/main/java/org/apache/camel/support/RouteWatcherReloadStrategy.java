@@ -262,8 +262,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             // last update failed, so we need to update all previous sources to ensure we go back
             // to the last working set
             previousSources.forEach(rs -> {
-                // remember all the sources of the current routes (except the updated)
-                if (rs != null && !equalResourceLocation(resources, rs)) {
+                // remember all the sources of the current routes (except the updated, and those whose file is gone)
+                if (rs != null && !isDeletedFile(rs) && !equalResourceLocation(resources, rs)) {
                     sources.add(rs);
                 }
             });
@@ -273,9 +273,11 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             // should all existing routes be stopped and removed first?
             if (removeAllRoutes) {
                 // remember all the sources of the current routes (except the updated)
+                // (the file of a route may have been removed since it loaded: on-demand reload only passes the files
+                // that exist, so its routes are removed like those of a changed file, CAMEL-25427)
                 getCamelContext().getRoutes().forEach(r -> {
                     Resource rs = r.getSourceResource();
-                    if (rs != null && !equalResourceLocation(resources, rs)) {
+                    if (rs != null && !isDeletedFile(rs) && !equalResourceLocation(resources, rs)) {
                         sources.add(rs);
                     }
                 });
@@ -387,6 +389,18 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
+    }
+
+    /**
+     * Whether the resource is a file that no longer exists. Only the location is looked at: a source restored from its
+     * last loaded content is kept in memory and always exists, but its file may have been removed since (CAMEL-25427).
+     */
+    private static boolean isDeletedFile(Resource resource) {
+        String loc = resource.getLocation();
+        if (loc == null || !loc.startsWith("file:")) {
+            return false;
+        }
+        return !Files.exists(Paths.get(loc.substring(5)));
     }
 
     /**
