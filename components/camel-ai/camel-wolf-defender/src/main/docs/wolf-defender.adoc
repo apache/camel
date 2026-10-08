@@ -1,0 +1,217 @@
+= Wolf Defender Component
+:doctitle: Wolf Defender
+:shortname: wolf-defender
+:artifactid: camel-wolf-defender
+:description: Detect prompt injection in text using local Wolf-Defender inference
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+Wolf-Defender is a fixed-purpose expert for the xref:languages:semantic-language.adoc[Semantic language].
+It screens selected text for prompt injection or jailbreak-like instructions using local CPU inference.
+It supplies a Boolean verdict and the probability of injection; route policy decides whether to continue, reject or review the exchange.
+It has no separate routing endpoint and requires neither LangChain4j nor a remote model service.
+
+Add the following dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-wolf-defender</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+== Supported artifacts and provisioning
+
+The supported baseline is https://huggingface.co/patronus-studio/wolf-defender-prompt-injection-small[Wolf-Defender Small v2],
+revision `bcab2eff97bcabd7227849639e2d0d7a61b46c92`, with its FP32 ONNX export,
+ONNX Runtime Java 1.30.0 and DJL Hugging Face Tokenizers 0.38.0.
+The Java integration has been tested on Linux x86-64 CPU. The dependency jars also contain
+CPU libraries for Linux AArch64, macOS AArch64 and Windows x86-64; those combinations have not been validated here.
+Other Wolf variants, quantizations and execution providers are not supported by this initial integration.
+
+Provision files explicitly before starting Camel. Install the Hugging Face `hf` CLI, then run:
+
+[source,bash]
+----
+hf download patronus-studio/wolf-defender-prompt-injection-small \
+  onnx/onnx_fp32/model.onnx tokenizer.json config.json tokenizer_config.json README.md LICENSE \
+  --revision bcab2eff97bcabd7227849639e2d0d7a61b46c92 \
+  --local-dir /opt/models/wolf-defender-small
+----
+
+The FP32 graph is approximately 563 MB. Weights are not included in Camel's source or artifact.
+The expert uses local files only and checks these SHA-256 hashes on startup:
+
+[cols="1,3"]
+|===
+|File |SHA-256
+|`onnx/onnx_fp32/model.onnx` |`49455de2407c134dd136c64ca38d67ca17f8426e99fe5c6e286d69af9932993f`
+|`tokenizer.json` |`7e426c3929b44e6ab4c931770b5f22b913280633f5a1c67c81e9ad64decef55c`
+|`config.json` |`b5bfba7b100b4b1aa361e8160e5593695164d81ca09b47f3b26561332b520218`
+|===
+
+This fixed artifact contract establishes the label order and logits output semantics, as well as tokenizer compatibility.
+Replacing or editing these files requires a separately validated integration; there is no option to skip the checks.
+Keep the provisioned directory read-only while Camel is running.
+
+For CPU-only, offline startup, set `DJL_OFFLINE=true` and `RUST_FLAVOR=cpu` in the application environment.
+The tokenizer extracts its bundled native library to DJL's cache, which must be writable.
+These settings prevent DJL from attempting to acquire an optional CUDA tokenizer library.
+No model or tokenizer downloads occur during evaluation.
+
+== Configure an expert
+
+Keep model locations and runtime limits on the expert bean. Named declarations select the state and pass decision parameters to the expert:
+
+[source,yaml]
+----
+- beans:
+    - name: security
+      type: org.apache.camel.component.wolfdefender.WolfDefenderSemanticAdapter
+      initMethod: start
+      destroyMethod: stop
+      properties:
+        modelDirectory: /opt/models/wolf-defender-small
+        maxCharacters: 16384
+        maxTokens: 2048
+        inferenceThreads: 1
+        timeoutMillis: 30000
+- semantic:
+    evaluation:
+      injection:
+        expert: security
+        operation: injection
+        state: "${body}"
+        parameters:
+          threshold: !number "{{security.injection.threshold}}"
+          uncertainty: !number "{{security.injection.uncertainty}}"
+          uncertaintyPolicy: fail
+----
+
+For example, set `security.injection.threshold=0.5` and `security.injection.uncertainty=0.1` in application properties.
+Choose thresholds using representative application data; these example values are not a calibrated security guarantee.
+The expert rejects instructions, caller-defined criteria, CHOICE and SCORE during declaration validation.
+Validation and capability inspection do not load model files or run inference.
+Loading occurs when the expert service starts. Model-loading failure prevents normal startup.
+
+In Java, bind the expert in the registry and use `context.addService(security, true, true)` to give Camel lifecycle ownership.
+Explicitly registered beans otherwise retain their existing lifecycle owner.
+Two beans may use different provisioned directories or limits; their resources and identity remain separate.
+
+The normal Semantic language default/sole-expert selection rules also apply.
+For automatic service discovery without a configured bean, set
+`camel.wolf-defender.model-directory=/opt/models/wolf-defender-small`.
+The language manages the discovered expert's lifecycle. With multiple eligible experts, explicitly select one or configure a default.
+Runtime capabilities come from the expert's `@SemanticExpert` operation contract. Inspect it with
+`SemanticCapabilities.from(WolfDefenderSemanticAdapter.class)` without constructing the expert or loading native libraries.
+The Camel Catalog lists this module and its documentation; generated expert-operation descriptors and expert-specific
+Catalog APIs remain separate framework work.
+
+[cols="1,1,3"]
+|===
+|Bean property |Default |Meaning
+|`modelDirectory` |Required |Local directory laid out as above. Discovery may obtain it from `camel.wolf-defender.model-directory`.
+|`maxCharacters` |16384 |Positive maximum Java String length (UTF-16 code units), checked before tokenization.
+|`maxTokens` |2048 |Maximum tokens including special tokens; must be between 2 and 2048.
+|`inferenceThreads` |1 |Positive ONNX CPU intra-operation thread count. Inter-operation execution is sequential.
+|`timeoutMillis` |30000 |Positive evaluation timeout and shutdown waiting limit, in milliseconds.
+|===
+
+Configure properties before starting the service. Changes take effect on the next start.
+
+== Input, probability and document limits
+
+The input must be a nonblank String. Missing input, structured objects and oversized input are errors;
+select or convert a field explicitly in the route when necessary. No implicit `toString()` conversion is performed.
+The expert adds the pinned tokenizer's special tokens, disables truncation and padding, and supplies INT64
+`input_ids` and `attention_mask` tensors. Each evaluation runs one unpadded window.
+
+The maximum window is 2,048 tokens including special tokens. An unchecked suffix is never discarded.
+Longer documents are rejected, even if the tokenizer or model configuration advertises a larger architectural limit.
+This implementation does not implement Wolf's published overlapping-window/Smooth-Max document protocol.
+Splitting a document in application code changes the scoring policy and needs separate threshold validation.
+
+The validated model returns two logits, ordered BENIGN then INJECTION. Stable softmax produces `P(INJECTION)`.
+A BENIGN probability of 0.97 therefore corresponds to an injection probability of 0.03.
+The expert applies the requested threshold and uncertainty policy exactly once and preserves the probability.
+Camel does not apply a second threshold to the returned verdict. After the expert policy is applied, `true` (yes) means INJECTION and `false` (no) means BENIGN.
+The `injection` operation accepts `threshold` (default `0.5`), `uncertainty` (default `0`), and
+`uncertaintyPolicy` (default `fail`). Threshold comparison is inclusive. A positive uncertainty half-width
+defines an inclusive band around the threshold; both edges must remain within `[0,1]`.
+With `fail`, a probability in that band raises an error. Explicit `non-match` returns `false` within the band;
+applications that must send uncertain input for review should retain `fail` and handle the error.
+Malformed shapes and non-finite outputs are errors. The result includes provider, model, revision and export metadata,
+and leaves optional confidence absent. The original body and headers are preserved.
+
+BENIGN means that this particular evaluation did not detect injection. It does not establish authorization,
+general safety or absence of other threats. False positives and false negatives remain possible, including
+for benign security discussions and new attack patterns. Probability is not a rubric severity score or a calibrated confidence guarantee.
+
+== Concurrency, cancellation and failures
+
+Each expert owns one reusable session, tokenizer and worker, with no evaluation queue.
+Concurrent calls to an occupied instance fail immediately with a busy error. Use Camel routing policy to control admission.
+Before any inference in a batch, the language validates every selected expert's input, including token limits.
+Preflight tokenization runs on the same bounded worker with the same timeout as inference; input is tokenized again
+for evaluation so no message data is cached between calls. Named batches then use the sequential adapter contract,
+preserving names and all-or-error result publication.
+
+The timeout covers tokenization and inference. Interruption and timeout request ONNX termination through
+`OrtSession.RunOptions.setTerminate(true)` and interrupt the worker. ONNX termination is cooperative: it is
+checked by the runtime between work units and may not immediately interrupt a running native kernel.
+The tokenizer does not expose cancellation; its work is bounded by `maxCharacters`.
+A caller timing out does not prove native work has already stopped. The worker remains occupied until it actually returns.
+Shutdown requests cancellation and waits up to `timeoutMillis`. If it times out, shutdown reports an error and the
+worker retains ownership of native resources until it exits; sessions are never closed while native work uses them.
+Restart is rejected until the previous worker has terminated, preventing overlapping model sessions after a timeout.
+
+Input validation, artifact loading, inference, timeout and cancellation failures remain errors, never benign decisions.
+Diagnostics omit submitted text and native exception messages that could contain it. Handle uncertainty and operational
+errors explicitly, for example by routing the exchange for review.
+
+== Runnable example and validation
+
+The module's `src/test/java/org/apache/camel/component/wolfdefender/WolfDefenderExample.java` is a complete Java example.
+It constructs a managed `security` expert, declares a named evaluation without instructions, and routes with `${semantic('injection')}`.
+It marks positive detections `reject`, negative detections `continue`, and uncertainty/operational failures `review`.
+It prints only those actions, preserving the input body.
+
+From this module directory after installing the Camel snapshot dependencies:
+
+[source,bash]
+----
+DJL_OFFLINE=true RUST_FLAVOR=cpu mvn test-compile exec:java \
+  -Dexec.mainClass=org.apache.camel.component.wolfdefender.WolfDefenderExample \
+  -Dexec.classpathScope=test -Dexec.args=/opt/models/wolf-defender-small
+----
+
+Ordinary unit tests use synthetic ONNX graphs and a tiny tokenizer; they need no model download or network inference.
+Their generator is `src/test/python/generate_fixtures.py`. Native tests require a supported runtime platform.
+The opt-in integration test validates exact token IDs and injection probabilities against Python Tokenizers 0.22.2
+and ONNX Runtime 1.24.2 reference outputs for the same pinned FP32 artifact. Probability tolerance is `1e-6` absolute.
+
+[source,bash]
+----
+DJL_OFFLINE=true RUST_FLAVOR=cpu mvn verify \
+  -Dit.test=WolfDefenderModelIT -DwolfDefender.modelDirectory=/opt/models/wolf-defender-small
+----
+
+Run this opt-in check from the component directory after building Camel. The model-directory property
+also enables the YAML test dependency, which is intentionally absent from the normal reactor build.
+The reference inputs cover benign business text, an injection instruction and benign security discussion.
+This establishes adapter/tokenizer parity for those fixtures, not a detection-quality benchmark or performance claim.
+
+== Licenses and provenance
+
+The pinned Wolf-Defender repository declares Apache License 2.0 and identifies its
+`jhu-clsp/mmBERT-small` foundation at revision `abc32620dd4f6ab06f5fbe905dc25f310618e09f` as MIT-licensed.
+MIT terms continue to apply to upstream portions. Preserve the model's license and applicable upstream notices
+when provisioning or redistributing model material. Camel does not redistribute model weights or tokenizer assets.
+
+ONNX Runtime is MIT-licensed. DJL and Hugging Face Tokenizers are Apache-2.0-licensed;
+their dependency distributions supply their own notices. These runtime dependency licenses are separate from model provenance.

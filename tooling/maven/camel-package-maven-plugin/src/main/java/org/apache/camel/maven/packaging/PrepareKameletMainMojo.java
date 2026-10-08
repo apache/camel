@@ -482,7 +482,9 @@ public class PrepareKameletMainMojo extends AbstractMojo {
     }
 
     private static boolean acceptFactoryFinderFile(String name) {
-        return !"TypeConverterLoader".equals(name) && !"reactive-executor".equals(name) && !"thread-pool-factory".equals(name);
+        // Semantic experts share a service name; downloading one here could change the selected expert.
+        return !"TypeConverterLoader".equals(name) && !"reactive-executor".equals(name) && !"thread-pool-factory".equals(name)
+                && !"semantic-adapter".equals(name);
     }
 
 }
