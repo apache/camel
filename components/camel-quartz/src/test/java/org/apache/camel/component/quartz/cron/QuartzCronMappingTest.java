@@ -56,6 +56,35 @@ public class QuartzCronMappingTest extends BaseQuartzTest {
         assertEquals("0/2 * * * * ?", getQuartzEndpoint(context.getRoute("cron")).getCron());
     }
 
+    @Test
+    public void test5PartsUnixCronPattern() throws Exception {
+        // every five minutes, in Unix cron syntax (no ? in the day fields)
+        assertEquals("0 */5 * * * ?", quartzCron("*/5 * * * *"));
+    }
+
+    @Test
+    public void test5PartsUnixCronPatternDayOfWeekNames() throws Exception {
+        assertEquals("0 0 9 ? * MON-FRI", quartzCron("0 9 * * MON-FRI"));
+    }
+
+    @Test
+    public void test5PartsUnixCronPatternDayOfMonth() throws Exception {
+        assertEquals("0 30 6 1,15 * ?", quartzCron("30 6 1,15 * *"));
+    }
+
+    private String quartzCron(String schedule) throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("cron://myName?schedule=" + schedule)
+                        .id("cron")
+                        .to("mock:result");
+            }
+        });
+        context.start();
+        return getQuartzEndpoint(context.getRoute("cron")).getCron();
+    }
+
     private QuartzEndpoint getQuartzEndpoint(Route route) {
         Endpoint endpoint = route.getEndpoint();
         while (endpoint instanceof DelegateEndpoint) {
