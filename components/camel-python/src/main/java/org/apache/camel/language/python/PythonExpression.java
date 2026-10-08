@@ -31,6 +31,8 @@ public class PythonExpression extends ExpressionSupport {
     private final Class<?> type;
     // the variables are bound only when the script names them, as exchange.getVariables() creates the variable store
     // of the exchange (so a script that looks them up by a computed name does not see them)
+    // the check is a plain substring match on "variable" (both "variable" and "variables" are bound): a script that
+    // only mentions the word, for example in a comment, binds them too, which is harmless
     private final boolean bindVariables;
     private final PythonInterpreter compiler;
     private final PyCode compiledExpression;

@@ -27,6 +27,8 @@ public class Python3Expression extends ExpressionAdapter {
     private final String text;
     // the variables are bound only when the script names them, as exchange.getVariables() creates the variable store
     // of the exchange (so a script that looks them up by a computed name does not see them)
+    // python3 binds only "variables" (like "headers" and "properties"), so the check is for the plural; it is a plain
+    // substring match, and a script that only mentions the word, for example in a comment, binds them too, which is harmless
     private final boolean bindVariables;
     private volatile Python3Language language;
 
