@@ -65,12 +65,13 @@ When both styles are provided, the explicit `username`/`password` parameters tak
 precedence over credentials embedded in the URI.
 
 All configuration options in the group +client+ are applicable to the shared client instance. Endpoints
-will share client instances for each endpoint URI. So the first time a request for that endpoint URI is
-made, the options of the +client+ group are applied. All further instances will be ignored.
+will share client instances for each endpoint URI plus `requestedPublishingInterval`.
+So the first time a request for that endpoint URI (plus `requestedPublishingInterval`) is made, the options of
+the +client+ group are applied. All further instances will be ignored.
 
 If you need alternate options for the same endpoint URI it is possible though to set the +clientId+ option
-which will by added internally to the endpoint URI in order to select a different shared connection instance.
-In other words, shared connections located by the combination of endpoint URI and client id.
+which will be added internally to the endpoint URI in order to select a different shared connection instance.
+In other words, shared connections located by the combination of endpoint URI, `requestedPublishingInterval` and client id.
 
 
 // component options: START
