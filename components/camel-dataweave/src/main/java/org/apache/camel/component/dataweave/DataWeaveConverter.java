@@ -112,6 +112,7 @@ public class DataWeaveConverter {
         }
         FUNCTION_ARGS.put("reduce", new FunctionArg(1, List.of("item", "acc")));
         FUNCTION_ARGS.put("then", new FunctionArg(1, List.of("value")));
+        FUNCTION_ARGS.put("replace", new FunctionArg(2, List.of("match")));
     }
 
     // dw::core::Strings functions provided by DataSonnet's ds.strings (with the string as first argument)
@@ -133,7 +134,7 @@ public class DataWeaveConverter {
 
     // The DataWeave modules the converter knows the functions of
     private static final Set<String> KNOWN_MODULES = Set.of(
-            "dw::Core", "dw::core::Strings", "dw::core::Arrays", "dw::core::Objects", "dw::core::Numbers",
+            "dw::Core", "dw::Runtime", "dw::core::Strings", "dw::core::Arrays", "dw::core::Objects", "dw::core::Numbers",
             "dw::core::Types");
 
     // HTTP request attributes of Mule, and the Camel message headers with the same information
@@ -147,6 +148,16 @@ public class DataWeaveConverter {
 
     private static final Set<String> ATTRIBUTE_MAPS = Set.of("headers", "queryParams", "uriParams");
 
+    private static final Set<String> COMPARISONS = Set.of("==", "!=", "<", ">", "<=", ">=");
+
+    private static final Map<String, String> JSONNET_OPERATORS = Map.of("++", "+", "and", "&&", "or", "||");
+
+    // The precedence of the Jsonnet operators the DataWeave operators are emitted as (higher binds stronger)
+    private static final Map<String, Integer> JSONNET_PRECEDENCE = Map.ofEntries(
+            Map.entry("*", 5), Map.entry("/", 5), Map.entry("+", 4), Map.entry("-", 4), Map.entry("++", 4),
+            Map.entry("<", 3), Map.entry(">", 3), Map.entry("<=", 3), Map.entry(">=", 3), Map.entry("==", 2),
+            Map.entry("!=", 2), Map.entry("and", 1), Map.entry("or", 0));
+
     private static final Set<String> DATE_TYPES = Set.of("Date", "DateTime", "LocalDateTime", "Time", "LocalTime");
 
     // The selectors of a date or time: (payload.date as Date).year
@@ -154,9 +165,14 @@ public class DataWeaveConverter {
             "year", "month", "day", "hour", "minutes", "seconds", "milliseconds", "nanoseconds", "dayOfWeek",
             "dayOfYear", "offsetSeconds", "quarter", "timezone");
 
-    // A variable or function in scope; the arity of a function, or -1 for any other value
-    private record Binding(String name, int arity) {
+    // A variable or function in scope: the arity of a function, or -1 for any other value, and for a variable
+    // with a date or time (an ISO-8601 string) the coercion that gave the date (for its format)
+    private record Binding(String name, int arity, TypeCoercion date) {
         static final int VALUE = -1;
+
+        Binding(String name, int arity) {
+            this(name, arity, null);
+        }
     }
 
     private boolean includeComments = true;
@@ -367,6 +383,10 @@ public class DataWeaveConverter {
 
     private String emitIdentifier(Identifier id) {
         Binding binding = lookup(id.name());
+        if (binding != null && binding.date() != null && binding.date().properties().containsKey("format")) {
+            // a date coerced with a format is written in that format
+            return formatDate(binding.name(), binding.date().properties());
+        }
         if (binding != null) {
             return binding.name();
         }
@@ -392,11 +412,7 @@ public class DataWeaveConverter {
             return emitExchangeAccess(node);
         }
         if (node instanceof FieldAccess fa && DATE_PARTS.contains(fa.field()) && isDateValue(fa.object())) {
-            DataWeaveAst date = fa.object();
-            while (date instanceof Parens p) {
-                date = p.expr();
-            }
-            return "cml.datePart(" + emit(date) + ", " + string(fa.field()) + ")";
+            return "cml.datePart(" + emitDate(fa.object()) + ", " + string(fa.field()) + ")";
         }
         if (node instanceof MultiValueSelector mv) {
             return lib(raw ? "multiRaw" : "multi") + "(" + emitSelector(mv.object(), true) + ", " + string(mv.field())
@@ -428,15 +444,47 @@ public class DataWeaveConverter {
         return emit(node);
     }
 
-    // A date or time: a date literal, now(), or a coercion to a date or time type
-    private static boolean isDateValue(DataWeaveAst node) {
+    // A date or time: a date literal, now(), a coercion to a date or time type, or a variable with one
+    private boolean isDateValue(DataWeaveAst node) {
+        DataWeaveAst n = unwrap(node);
+        return n instanceof TemporalLit t && !t.isPeriod()
+                || n instanceof TypeCoercion tc && DATE_TYPES.contains(tc.type())
+                || n instanceof FunctionCall fc && "now".equals(fc.name()) && fc.args().isEmpty()
+                || n instanceof Identifier id && lookup(id.name()) != null && lookup(id.name()).date() != null;
+    }
+
+    private static DataWeaveAst unwrap(DataWeaveAst node) {
         DataWeaveAst n = node;
         while (n instanceof Parens p) {
             n = p.expr();
         }
-        return n instanceof TemporalLit t && !t.isPeriod()
-                || n instanceof TypeCoercion tc && DATE_TYPES.contains(tc.type())
-                || n instanceof FunctionCall fc && "now".equals(fc.name()) && fc.args().isEmpty();
+        return n;
+    }
+
+    // A date or time as an ISO-8601 string, also when it was coerced with a format (which only applies to writing it)
+    private String emitDate(DataWeaveAst node) {
+        DataWeaveAst n = unwrap(node);
+        if (n instanceof TypeCoercion tc && DATE_TYPES.contains(tc.type())) {
+            return emitDateCoercion(tc);
+        }
+        if (n instanceof Identifier id && lookup(id.name()) != null && lookup(id.name()).date() != null) {
+            return lookup(id.name()).name();
+        }
+        return emit(node);
+    }
+
+    // expr as Date {format: ...} -> the date as an ISO-8601 string
+    private String emitDateCoercion(TypeCoercion tc) {
+        String format = tc.properties().get("format");
+        return "cml.parseDateTime(" + emitDate(tc.expr()) + ", " + (format != null ? string(format) : "null") + ", "
+               + string(tc.type()) + ")";
+    }
+
+    private static String formatDate(String date, Map<String, String> properties) {
+        String locale = properties.get("locale");
+        return locale != null
+                ? "cml.formatDateLocale(" + date + ", " + string(properties.get("format")) + ", " + string(locale) + ")"
+                : "cml.formatDate(" + date + ", " + string(properties.get("format")) + ")";
     }
 
     // vars.x, attributes.headers.x, attributes.method, ...
@@ -572,10 +620,14 @@ public class DataWeaveConverter {
             if ("-".equals(o)) {
                 period = period.startsWith("-") ? period.substring(1) : "-" + period;
             }
-            return "cml.dateAdd(" + emit(left) + ", " + string(period) + ")";
+            return "cml.dateAdd(" + emitDate(left) + ", " + string(period) + ")";
         }
         if ("+".equals(o) && isPeriod(left)) {
-            return "cml.dateAdd(" + emit(right) + ", " + string(((TemporalLit) left).value()) + ")";
+            return "cml.dateAdd(" + emitDate(right) + ", " + string(((TemporalLit) left).value()) + ")";
+        }
+        if (COMPARISONS.contains(o) && (isDateValue(left) || isDateValue(right))) {
+            // dates compare as ISO-8601 strings
+            return emitDate(left) + " " + o + " " + emitDate(right);
         }
         if ("-".equals(o) && (right instanceof StringLit || right instanceof ArrayLit)) {
             // payload - "password" removes a key, and xs - [1] an element
@@ -584,11 +636,25 @@ public class DataWeaveConverter {
         return switch (o) {
             case "--" -> lib("removeAll") + "(" + emit(left) + ", " + emit(right) + ")";
             case "~=" -> lib("similar") + "(" + emit(left) + ", " + emit(right) + ")";
-            case "++" -> operand(left) + " + " + operand(right);
-            case "and" -> operand(left) + " && " + operand(right);
-            case "or" -> operand(left) + " || " + operand(right);
-            default -> operand(left) + " " + o + " " + operand(right);
+            default -> binaryOperand(left, o, true) + " " + JSONNET_OPERATORS.getOrDefault(o, o) + " "
+                       + binaryOperand(right, o, false);
         };
+    }
+
+    // An operand of a binary operator, in parentheses unless it binds stronger in Jsonnet (or as strong, on the left)
+    private String binaryOperand(DataWeaveAst node, String op, boolean left) {
+        if (node instanceof BinaryOp child && JSONNET_PRECEDENCE.containsKey(child.op())
+                && !(isPeriod(child.right()) || isPeriod(child.left()))) {
+            int childLevel = JSONNET_PRECEDENCE.get(child.op());
+            int level = JSONNET_PRECEDENCE.get(op);
+            boolean special = "-".equals(child.op()) && (child.right() instanceof StringLit
+                    || child.right() instanceof ArrayLit)
+                    || COMPARISONS.contains(child.op()) && (isDateValue(child.left()) || isDateValue(child.right()));
+            if (!special && (childLevel > level || left && childLevel == level)) {
+                return emit(node);
+            }
+        }
+        return operand(node);
     }
 
     private static boolean isPeriod(DataWeaveAst node) {
@@ -598,19 +664,31 @@ public class DataWeaveConverter {
     private String emitCoercion(TypeCoercion tc) {
         Map<String, String> properties = new LinkedHashMap<>(tc.properties());
         String format = properties.remove("format");
+        String locale = properties.remove("locale");
         properties.remove("class"); // the Java class only matters for Java output
-        if (!properties.isEmpty()) {
-            return todo("coercion property", tc.type() + " " + properties);
+        if (!properties.isEmpty() || locale != null && (format == null || !"String".equals(tc.type()))) {
+            return todo("coercion property", tc.type() + " " + tc.properties());
+        }
+        if (DATE_TYPES.contains(tc.type())) {
+            // a date coerced with a format is written in that format
+            String date = emitDateCoercion(tc);
+            return format != null ? formatDate(date, tc.properties()) : date;
+        }
+        if ("String".equals(tc.type()) && format != null) {
+            // the format applies to a date or a number, and a string stays as it is
+            if (isDateValue(tc.expr())) {
+                return formatDate(emitDate(tc.expr()), tc.properties());
+            }
+            String expr = emit(tc.expr());
+            return locale != null
+                    ? "cml.formatNumberLocale(" + expr + ", " + string(format) + ", " + string(locale) + ")"
+                    : "cml.formatNumber(" + expr + ", " + string(format) + ")";
         }
         String expr = emit(tc.expr());
         return switch (tc.type()) {
-            case "String" -> format != null
-                    ? "cml.format(" + expr + ", " + string(format) + ")" : lib("toString") + "(" + expr + ")";
+            case "String" -> lib("toString") + "(" + expr + ")";
             case "Number" -> format != null ? todo("Number coercion with a format", format) : "cml.toDecimal(" + expr + ")";
             case "Boolean" -> "cml.toBoolean(" + expr + ")";
-            case "Date", "DateTime", "LocalDateTime", "Time", "LocalTime" -> "cml.parseDateTime(" + expr + ", "
-                                                                             + (format != null ? string(format) : "null")
-                                                                             + ", " + string(tc.type()) + ")";
             case "Object", "Array", "Any" -> expr;
             default -> todo("coercion to type", tc.type());
         };
@@ -646,6 +724,9 @@ public class DataWeaveConverter {
         if ("reduce".equals(name)) {
             return emitReduce(args);
         }
+        if ("replace".equals(name)) {
+            return emitReplace(args);
+        }
         FunctionArg functionArg = FUNCTION_ARGS.get(name);
         if (functionArg != null) {
             String target = switch (name) {
@@ -674,7 +755,6 @@ public class DataWeaveConverter {
             return call(name, lib(name), args, 2, null);
         }
         return switch (name) {
-            case "replace" -> emitReplace(args);
             case "matches", "scan", "find" -> args.size() == 2
                     ? "ds." + name + "(" + emit(args.get(0)) + ", " + regex(args.get(1)) + ")"
                     : wrongArguments(name, args);
@@ -702,8 +782,23 @@ public class DataWeaveConverter {
         if (args.size() != 3) {
             return wrongArguments("replace", args);
         }
-        if (args.get(2) instanceof Lambda) {
-            return todo("replace with a function", "replace ... with (m) -> ...");
+        DataWeaveAst replacement = args.get(2);
+        if (replacement instanceof Lambda || containsDollar(replacement)) {
+            // replace /regex/ with ($[1] ++ ...): the function is given the match and its groups
+            if (!isRegex(args, 1)) {
+                return todo("replace of a string with a function", "replace");
+            }
+            String regex = regex(args.get(1));
+            String input = emit(args.get(0));
+            String text = freshNames(List.of("text")).get(0);
+            scopes.push(Map.of("$" + text, new Binding(text, Binding.VALUE))); // reserve the name
+            try {
+                return "(local " + text + " = " + input + ";\n" + lib("replaceMatches") + "(" + text + ", ds.find(" + text
+                       + ", " + regex + "), ds.scan(" + text + ", " + regex + "), "
+                       + emitFunctionArg(replacement, List.of("match")) + "))";
+            } finally {
+                scopes.pop();
+            }
         }
         if (isRegex(args, 1)) {
             return "ds.replace(" + emit(args.get(0)) + ", " + regex(args.get(1)) + ", " + emit(args.get(2)) + ")";
@@ -729,8 +824,16 @@ public class DataWeaveConverter {
         if (args.size() == 3) {
             return todo(name + " with reader or writer properties", name);
         }
-        String mediaType = args.size() == 2 ? emit(args.get(1)) : string("application/json");
-        return "ds." + name + "(" + emit(args.get(0)) + ", " + mediaType + ")";
+        if (args.size() == 1) {
+            // the default is the DataWeave format (application/dw); read accepts JSON as DataWeave
+            return "read".equals(name)
+                    ? "ds.read(" + emit(args.get(0)) + ", " + string("application/json") + ")"
+                    : todo("write in the DataWeave format", "write without a media type");
+        }
+        if ("write".equals(name) && args.get(1) instanceof StringLit mt && "application/json".equals(mt.value())) {
+            return "std.manifestJsonEx(" + emit(args.get(0)) + ", \"  \")";
+        }
+        return "ds." + name + "(" + emit(args.get(0)) + ", " + emit(args.get(1)) + ")";
     }
 
     private static boolean isRegex(List<DataWeaveAst> args, int index) {
@@ -1034,7 +1137,9 @@ public class DataWeaveConverter {
         for (DataWeaveAst decl : block.declarations()) {
             if (decl instanceof VarDecl vd) {
                 int arity = vd.value() instanceof Lambda lam ? lam.params().size() : Binding.VALUE;
-                scope.put(vd.name(), new Binding(jsonnetName(vd.name()), arity));
+                TypeCoercion date = unwrap(vd.value()) instanceof TypeCoercion tc && DATE_TYPES.contains(tc.type())
+                        ? tc : null;
+                scope.put(vd.name(), new Binding(jsonnetName(vd.name()), arity, date));
             } else if (decl instanceof FunDecl fd) {
                 if (!functions.add(fd.name())) {
                     sb.append(todoComment("overloaded function", fd.name()));
@@ -1047,7 +1152,9 @@ public class DataWeaveConverter {
             List<String> bindings = new ArrayList<>();
             for (DataWeaveAst decl : block.declarations()) {
                 if (decl instanceof VarDecl vd) {
-                    bindings.add(jsonnetName(vd.name()) + " = " + emit(vd.value()));
+                    // a variable with a date keeps it as an ISO-8601 string
+                    String value = scope.get(vd.name()).date() != null ? emitDate(vd.value()) : emit(vd.value());
+                    bindings.add(jsonnetName(vd.name()) + " = " + value);
                 } else if (decl instanceof FunDecl fd) {
                     bindings.add(emitFunDecl(fd));
                 } else if (decl instanceof Unsupported u) {

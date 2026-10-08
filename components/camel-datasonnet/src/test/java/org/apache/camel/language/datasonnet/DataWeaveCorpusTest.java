@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -32,6 +33,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.component.dataweave.DataWeaveConversionException;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -49,6 +52,20 @@ import static org.junit.jupiter.api.Assertions.fail;
  * never acceptable: the route would start and silently misbehave.
  */
 class DataWeaveCorpusTest extends CamelTestSupport {
+
+    // DataWeave formats numbers and dates in the default locale; the corpus has the output of an English locale
+    private static Locale defaultLocale;
+
+    @BeforeAll
+    static void englishLocale() {
+        defaultLocale = Locale.getDefault();
+        Locale.setDefault(Locale.ENGLISH);
+    }
+
+    @AfterAll
+    static void restoreLocale() {
+        Locale.setDefault(defaultLocale);
+    }
 
     private static final String JSON = "application/json";
     private static final ObjectMapper MAPPER = new ObjectMapper();

@@ -151,7 +151,9 @@ class DataWeaveConverterTest {
     @Test
     void testOperators() {
         assertEquals("\"a\" + dw.sel(body, \"b\")", expr("\"a\" ++ payload.b"));
-        assertEquals("1 + (2 * 3)", expr("1 + 2 * 3"));
+        assertEquals("1 + 2 * 3", expr("1 + 2 * 3"));
+        assertEquals("1 - (2 - 3)", expr("1 - (2 - 3)"));
+        assertEquals("\"a\" + 1 + 2", expr("\"a\" ++ 1 ++ 2"));
         assertEquals("(1 + 2) * 3", expr("(1 + 2) * 3"));
         assertEquals("true && (false || true)", expr("true and (false or true)"));
         assertEquals("!true", expr("not true"));
@@ -161,6 +163,7 @@ class DataWeaveConverterTest {
         assertEquals("dw.removeAll(body, [\"a\", \"b\"])", expr("payload -- [\"a\", \"b\"]"));
         assertEquals("dw.range(1, 3)", expr("1 to 3"));
         assertEquals("if true then 1 else 2", expr("if (true) 1 else 2"));
+        assertEquals("if true then 2 else 1", expr("unless (true) 1 else 2"));
         assertEquals("if true then 2 else 1", expr("unless (true) 1 otherwise 2"));
     }
 
@@ -174,10 +177,14 @@ class DataWeaveConverterTest {
     void testCoercions() {
         assertEquals("cml.toDecimal(\"1\")", expr("\"1\" as Number"));
         assertEquals("dw.toString(1)", expr("1 as String"));
-        assertEquals("cml.format(1, \"#.00\")", expr("1 as String {format: \"#.00\"}"));
-        assertEquals("cml.toBoolean(\"true\")", expr("\"true\" as Boolean"));
-        assertEquals("cml.parseDateTime(\"01/31/2020\", \"MM/dd/yyyy\", \"Date\")",
+        assertEquals("cml.formatNumber(1, \"#.00\")", expr("1 as String {format: \"#.00\"}"));
+        assertEquals("cml.formatNumberLocale(1, \"#.00\", \"de\")", expr("1 as String {format: \"#.00\", locale: \"de\"}"));
+        // a date coerced with a format is written in that format, and is an ISO-8601 date otherwise
+        assertEquals("cml.formatDate(cml.parseDateTime(\"01/31/2020\", \"MM/dd/yyyy\", \"Date\"), \"MM/dd/yyyy\")",
                 expr("\"01/31/2020\" as Date {format: \"MM/dd/yyyy\"}"));
+        assertEquals("cml.formatDate(cml.parseDateTime(\"01/31/2020\", \"MM/dd/yyyy\", \"Date\"), \"yyyy-MM-dd\")",
+                expr("\"01/31/2020\" as Date {format: \"MM/dd/yyyy\"} as String {format: \"yyyy-MM-dd\"}"));
+        assertEquals("cml.toBoolean(\"true\")", expr("\"true\" as Boolean"));
         assertEquals("std.isString(1)", expr("1 is String"));
         assertEquals(0, converter.getTodoCount());
         expr("1 as Foo");
@@ -192,6 +199,7 @@ class DataWeaveConverterTest {
         assertEquals("\"it's \\\"x\\\"\"", expr("'it\\'s \"x\"'"));
         assertEquals("(\"Hello \" + dw.str(dw.sel(body, \"name\")) + \"!\")", expr("\"Hello $(payload.name)!\""));
         assertEquals("\"$ 5\"", expr("\"\\$ 5\""));
+        assertEquals("dw.map([1, 2], function(item, index) (\"v\" + dw.str(item)))", expr("[1, 2] map \"v$\""));
     }
 
     @Test
@@ -313,7 +321,7 @@ class DataWeaveConverterTest {
                 """);
         assertTrue(result.endsWith("""
                 local rate = 0.5,
-                      total(a, b = 1) = (a * b) * rate,
+                      total(a, b = 1) = a * b * rate,
                       fact(n) = if n <= 1 then 1 else n * fact(n - 1);
                 total(fact(3))"""), result);
         assertEquals(0, converter.getTodoCount());

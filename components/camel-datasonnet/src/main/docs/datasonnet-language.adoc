@@ -169,11 +169,15 @@ xref:ROOT:properties-component.adoc[Properties] component (property placeholders
 
 |cml.nowFmt(format) |`cml.nowFmt('yyyy-MM-dd')` |Returns the current UTC time formatted with the given pattern.
 
-|cml.formatDate(value, format) |`cml.formatDate('2026-03-20T10:30:00Z', 'dd/MM/yyyy')` |Reformats an ISO-8601 date string (or epoch milliseconds) using the given pattern. Returns null for null input.
+|cml.formatDate(value, format) |`cml.formatDate('2026-03-20T10:30:00Z', 'dd/MM/yyyy')` |Formats an ISO-8601 date, date-time or time string (or epoch milliseconds) using the given pattern, in the default locale. Returns null for null input.
+
+|cml.formatDateLocale(value, format, locale) |`cml.formatDateLocale('2026-03-20', 'dd MMM yyyy', 'en')` |Like `cml.formatDate`, in the given locale (a language tag such as `en` or `de-DE`).
 
 |cml.parseDate(value, format) |`cml.parseDate('20/03/2026', 'dd/MM/yyyy')` |Parses a date string into epoch milliseconds. Returns null for null input.
 
-|cml.format(value, format) |`cml.format(1234.5, '#,##0.00')` |Formats a number with a `java.text.DecimalFormat` pattern, or an ISO-8601 date or time with a `DateTimeFormatter` pattern. Returns null for null input.
+|cml.formatNumber(value, format) |`cml.formatNumber(1234.5, '#,##0.00')` |Formats a number with a `java.text.DecimalFormat` pattern, in the default locale. Any other value (such as a string) is returned as is.
+
+|cml.formatNumberLocale(value, format, locale) |`cml.formatNumberLocale(1234.5, '#,##0.00', 'de')` |Like `cml.formatNumber`, in the given locale (a language tag such as `en` or `de-DE`).
 
 |cml.parseDateTime(value, format, type) |`cml.parseDateTime('01/31/2020', 'MM/dd/yyyy', 'Date')` |Parses a string in the given format (ISO-8601 when the format is null), or a number of seconds since the epoch, into an ISO-8601 string of the given type: `Date`, `DateTime`, `LocalDateTime`, `Time` or `LocalTime`. Returns null for null input.
 
@@ -546,8 +550,8 @@ The conversion either produces a script that gives the same result as the DataWe
   and `attributes.headers`, `attributes.queryParams` and `attributes.uriParams` message headers. `attributes.method`,
   `requestPath`, `requestUri`, `queryString`, `statusCode` and `reasonPhrase` are the corresponding Camel HTTP headers.
 - *Operators*, with the DataWeave precedence: arithmetic, comparison, `~=`, `and`, `or`, `not`, `++`, `--`, removing a
-  key with `-`, `default`, `if`/`else`, `unless`/`otherwise`, `match` (literal, `is Type`, `matches /regex/`, `if`
-  guards and `else` cases), `do` blocks and `using`.
+  key with `-`, `default`, `if`/`else`, `unless`/`else`, `match` (literal, `is Type`, `matches /regex/`, `if` guards
+  and `else` cases), `do` blocks and `using`.
 - *Functions* in prefix and infix form (`upper(x)`, `xs map f`), with lambdas `(item, index) -> ...`, the `$`, `$$` and
   `$$$` shorthand, and references to functions: `map`, `filter`, `reduce`, `flatMap`, `flatten`, `distinctBy`,
   `groupBy`, `orderBy`, `mapObject`, `filterObject`, `pluck`, `keysOf`, `namesOf`, `valuesOf`, `entriesOf`, `zip`,
@@ -560,12 +564,17 @@ The conversion either produces a script that gives the same result as the DataWe
   `partition`, `firstWith` and `mergeWith`.
 - *Objects*: dynamic keys `(key): value`, conditional fields `(key: value) if condition`, and object spread
   `{ (expression) }` of an object or an array of objects.
-- *Strings*: interpolation `"Hello $(name)"`, and regular expressions `/.../` in `replace`, `contains`, `splitBy`,
-  `matches`, `scan` and `find`.
+- *Strings*: interpolation (`"Hello $(expression)"`, `"Hello $name"` and `$` of a lambda), and regular expressions
+  `/.../` in `replace` (also with a function of the matched groups: `replace /(\d+)/ with ($[1] ++ "!")`), `contains`,
+  `splitBy`, `matches`, `scan` and `find`.
 - *Type coercion*: `as String`, `as Number`, `as Boolean`, `as String {format: ...}` of numbers and dates,
   `as Date`, `as DateTime`, `as LocalDateTime`, `as Time` and `as LocalTime` (with or without `format`), date literals
   such as `|2020-01-31|`, date arithmetic with periods such as `|P1D|`, and the parts of a date such as `.year`.
-  Dates and times are ISO-8601 strings in the converted script.
+  Dates and times are ISO-8601 strings in the converted script; as in DataWeave, a date coerced with a format is
+  written in that format. Numbers and dates are formatted in the default locale (as DataWeave does), unless the
+  coercion has a `locale` property.
+
+The expected output of the DataWeave scripts in the tests of the conversion is verified with the DataWeave CLI.
 
 These constructs are not converted (the conversion fails): the `update` operator, `try` (`dw::Runtime`), overloaded
 functions, custom modules, `as` with a custom type, XML namespaces, XML attributes in the output, and writer properties

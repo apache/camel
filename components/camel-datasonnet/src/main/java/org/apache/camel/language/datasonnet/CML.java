@@ -128,15 +128,21 @@ public final class CML extends Library {
                 params -> nowFmt(params.get(0))));
         answer.put("formatDate", makeSimpleFunc(
                 Arrays.asList("value", "format"),
-                params -> formatDate(params.get(0), params.get(1))));
+                params -> formatDate(params.get(0), params.get(1), Val.Null$.MODULE$)));
         answer.put("parseDate", makeSimpleFunc(
                 Arrays.asList("value", "format"),
                 params -> parseDate(params.get(0), params.get(1))));
 
         // Formatting, parsing and arithmetic of numbers, and of dates and times as ISO-8601 strings
-        answer.put("format", makeSimpleFunc(
+        answer.put("formatDateLocale", makeSimpleFunc(
+                Arrays.asList("value", "format", "locale"),
+                params -> formatDate(params.get(0), params.get(1), params.get(2))));
+        answer.put("formatNumber", makeSimpleFunc(
                 Arrays.asList("value", "format"),
-                params -> format(params.get(0), params.get(1))));
+                params -> formatNumber(params.get(0), params.get(1), Val.Null$.MODULE$)));
+        answer.put("formatNumberLocale", makeSimpleFunc(
+                Arrays.asList("value", "format", "locale"),
+                params -> formatNumber(params.get(0), params.get(1), params.get(2))));
         answer.put("parseDateTime", makeSimpleFunc(
                 Arrays.asList("value", "format", "type"),
                 params -> parseDateTime(params.get(0), params.get(1), params.get(2))));
@@ -287,40 +293,42 @@ public final class CML extends Library {
         return new Val.Str(ZonedDateTime.now(ZoneId.of("UTC")).format(formatter));
     }
 
-    private Val formatDate(Val value, Val format) {
+    // An ISO-8601 date or time (or epoch milliseconds, as returned by parseDate) with a DateTimeFormatter pattern,
+    // in the given locale (null for the default locale)
+    private Val formatDate(Val value, Val format, Val locale) {
         if (isNull(value)) {
             return Val.Null$.MODULE$;
         }
         if (!(format instanceof Val.Str fmtStr)) {
             throw new IllegalArgumentException("Expected String format, got: " + format.prettyName());
         }
-        ZonedDateTime dateTime;
+        TemporalAccessor temporal;
         if (value instanceof Val.Num num) {
-            // epoch milliseconds, as returned by parseDate
-            dateTime = Instant.ofEpochMilli((long) num.value()).atZone(ZoneId.of("UTC"));
+            temporal = Instant.ofEpochMilli((long) num.value()).atZone(ZoneId.of("UTC"));
         } else if (value instanceof Val.Str valStr) {
-            dateTime = parseToZonedDateTime(valStr.value());
+            temporal = parseTemporal(valStr.value());
         } else {
             throw new IllegalArgumentException("Expected String or Number date value, got: " + value.prettyName());
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(fmtStr.value());
-        return new Val.Str(dateTime.format(formatter));
+        return new Val.Str(DateTimeFormatter.ofPattern(fmtStr.value(), locale(locale)).format(temporal));
     }
 
-    // A number with a java.text.DecimalFormat pattern, or an ISO-8601 date or time with a DateTimeFormatter pattern
-    private Val format(Val value, Val format) {
-        if (isNull(value)) {
-            return Val.Null$.MODULE$;
-        }
-        String pattern = string(format, "format");
+    // A number with a java.text.DecimalFormat pattern, in the given locale (null for the default locale); any other
+    // value is returned as is
+    private Val formatNumber(Val value, Val format, Val locale) {
         if (value instanceof Val.Num num) {
-            DecimalFormat decimalFormat = new DecimalFormat(pattern, DecimalFormatSymbols.getInstance(Locale.ROOT));
+            DecimalFormat decimalFormat
+                    = new DecimalFormat(string(format, "format"), DecimalFormatSymbols.getInstance(locale(locale)));
             return new Val.Str(decimalFormat.format(BigDecimal.valueOf(num.value())));
         }
-        if (value instanceof Val.Str str) {
-            return new Val.Str(DateTimeFormatter.ofPattern(pattern, Locale.ROOT).format(parseTemporal(str.value())));
+        return value;
+    }
+
+    private static Locale locale(Val locale) {
+        if (isNull(locale)) {
+            return Locale.getDefault(Locale.Category.FORMAT);
         }
-        throw new IllegalArgumentException("Cannot format " + value.prettyName());
+        return Locale.forLanguageTag(string(locale, "locale").replace('_', '-'));
     }
 
     // A date or time (as an ISO-8601 string) of the given type (Date, DateTime, LocalDateTime, Time or LocalTime),
@@ -336,7 +344,8 @@ public final class CML extends Library {
         } else if (value instanceof Val.Str str && isNull(format)) {
             parsed = parseTemporal(str.value());
         } else if (value instanceof Val.Str str) {
-            parsed = DateTimeFormatter.ofPattern(string(format, "format"), Locale.ROOT).parse(str.value());
+            parsed = DateTimeFormatter.ofPattern(string(format, "format"), Locale.getDefault(Locale.Category.FORMAT))
+                    .parse(str.value());
         } else {
             throw new IllegalArgumentException("Cannot convert " + value.prettyName() + " to " + kind);
         }
@@ -543,19 +552,6 @@ public final class CML extends Library {
 
     private static boolean isNull(Val value) {
         return value == null || value instanceof Val.Null$;
-    }
-
-    private static ZonedDateTime parseToZonedDateTime(String value) {
-        try {
-            return ZonedDateTime.parse(value);
-        } catch (DateTimeParseException e) {
-            // Try as instant
-            try {
-                return Instant.parse(value).atZone(ZoneId.of("UTC"));
-            } catch (DateTimeParseException e2) {
-                throw new IllegalArgumentException("Cannot parse date: " + value, e2);
-            }
-        }
     }
 
     @SuppressWarnings("unchecked")

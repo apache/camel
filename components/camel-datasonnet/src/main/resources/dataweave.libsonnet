@@ -173,10 +173,20 @@
     else std.split(s, separator),
   joinBy(a, separator):: if a == null then null else std.join(separator, [dw.str(e) for e in a]),
   replace(s, target, replacement):: if s == null then null else std.strReplace(s, target, replacement),
+  // replace /regex/ with a function of the match (the matched text and its groups), with starts and matches as given
+  // by ds.find and ds.scan
+  replaceMatches(s, starts, matches, f)::
+    if s == null then null
+    else
+      local r = std.foldl(function(acc, i) {
+        out: acc.out + std.substr(s, acc.pos, starts[i] - acc.pos) + dw.str(f(matches[i])),
+        pos: starts[i] + std.length(matches[i][0]),
+      }, indexes(matches), { out: '', pos: 0 });
+      r.out + std.substr(s, r.pos, std.length(s) - r.pos),
 
   // -- Arrays and objects
 
-  sizeOf(x):: if x == null then 0 else std.length(x),
+  sizeOf(x):: if x == null then null else std.length(x),
   isEmpty(x):: x == null || std.length(x) == 0,
   map(a, f):: if a == null then null else std.mapWithIndex(function(i, x) f(x, i), a),
   filter(a, f)::
@@ -245,7 +255,7 @@
   keysOf(o):: if o == null then null else std.objectFields(o),
   namesOf(o):: dw.keysOf(o),
   valuesOf(o):: if o == null then null else [o[k] for k in std.objectFields(o)],
-  entriesOf(o):: if o == null then null else [{ key: k, value: o[k], attributes: null } for k in std.objectFields(o)],
+  entriesOf(o):: if o == null then null else [{ key: k, value: o[k], attributes: {} } for k in std.objectFields(o)],
   flatten(a):: if a == null then null else std.flattenArrays([if std.isArray(e) then e else [e] for e in a]),
   zip(a, b)::
     if a == null || b == null then null

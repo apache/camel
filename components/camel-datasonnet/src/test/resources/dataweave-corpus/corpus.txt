@@ -13,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# DataWeave snippets as written in Mule applications, executed by DataWeaveCorpusTest.
+# DataWeave snippets as written in Mule applications, executed by DataWeaveCorpusTest. The expected output of each
+# snippet is the output of the DataWeave CLI (dw 2.12, English locale); vars and attributes are given to dw as inputs.
 # Each entry starts with "=== <id> <title>", followed by directives and then the DataWeave script:
 #
 #   @exp <json>        the output DataWeave produces (as JSON); "?" = any output, PARSE-ERROR = invalid DataWeave
@@ -417,7 +418,7 @@ using (x = 2) x * 3
 if (payload.price > 10) "big" else if (payload.price > 0) "small" else "neg"
 === D05 unless otherwise
 @exp "y"
-unless (payload.flag) "x" otherwise "y"
+unless (payload.flag) "x" else "y"
 === D06 default on null field
 @exp "gold"
 payload.customer.tier default "gold"
@@ -492,9 +493,17 @@ payload.customer.email replace "@" with "_"
 "Hello $(payload.customer.name)"
 === T12 capitalize
 @exp "Customer First Name"
+%dw 2.0
+import * from dw::core::Strings
+output application/json
+---
 capitalize(payload.snake)
 === T13 camelize
 @exp "customerFirstName"
+%dw 2.0
+import * from dw::core::Strings
+output application/json
+---
 camelize(payload.snake)
 === T14 substring range
 @exp "ann"
@@ -531,6 +540,10 @@ payload.customer.email contains /x\.org$/
 "Items: " ++ (payload.items map $.sku joinBy ", ")
 === T25 dasherize
 @exp "customer-first-name"
+%dw 2.0
+import * from dw::core::Strings
+output application/json
+---
 dasherize(payload.snake)
 === T26 sizeOf array
 @exp 3
@@ -592,9 +605,19 @@ now() as String {format: "yyyy"}
 === DT03 reformat date string
 @exp "31/01/2020"
 payload.date as Date {format: "yyyy-MM-dd"} as String {format: "dd/MM/yyyy"}
-=== DT04 parse US date
-@exp "2020-01-31"
+=== DT04 parse US date (a date coerced with a format is written in that format)
+@exp "01/31/2020"
 payload.usDate as Date {format: "MM/dd/yyyy"}
+=== DT10 reformat US date
+@exp "2020-01-31"
+payload.usDate as Date {format: "MM/dd/yyyy"} as String {format: "yyyy-MM-dd"}
+=== DT11 date with format in a variable, used as a date and written
+@exp {"date":"01/31/2020","next":"2020-02-01","year":2020,"after":true}
+%dw 2.0
+output application/json
+var d = payload.usDate as Date {format: "MM/dd/yyyy"}
+---
+{ date: d, next: d + |P1D|, year: d.year, after: d > |2020-01-01| }
 === DT05 DateTime coercion then format
 @exp "2026-10-08"
 payload.ts as DateTime as String {format: "yyyy-MM-dd"}
@@ -604,9 +627,9 @@ payload.ts as DateTime as String {format: "yyyy-MM-dd"}
 === DT07 date year
 @exp 2020
 (payload.date as Date).year
-=== DT08 format ISO timestamp string directly
+=== DT08 format ISO timestamp coerced to a DateTime
 @exp "2026-10-08"
-payload.ts as String {format: "yyyy-MM-dd"}
+payload.ts as DateTime as String {format: "yyyy-MM-dd"}
 === DT09 now
 @exp ?
 now()
@@ -645,7 +668,7 @@ keysOf(payload)
 @in {"a":1,"b":2}
 valuesOf(payload)
 === O08 entriesOf
-@exp [{"key":"a","value":1,"attributes":null}]
+@exp [{"key":"a","value":1,"attributes":{}}]
 @in {"a":1}
 entriesOf(payload)
 === O09 merge with object
@@ -715,7 +738,11 @@ output application/json
 ---
 { success: try(() -> payload.price).success }
 === E02 fail
-@exp ?
+@exp 5
+%dw 2.0
+import fail from dw::Runtime
+output application/json
+---
 if (payload.price < 0) fail("negative") else payload.price
 === E03 update operator
 @unsupported update operator
@@ -728,7 +755,7 @@ payload update {
 @exp [[1,"x"],[2,"y"]]
 [1,2] zip ["x","y"]
 === E05 write json
-@exp "{\"a\":1}"
+@exp "{\n  \"a\": 1\n}"
 @in {"a":1}
 write(payload, "application/json")
 === E06 read json
@@ -745,7 +772,11 @@ p('my.prop')
 @exp 3
 payload.items then sizeOf($)
 === E10 splitAt
-@exp ?
+@exp {"l":[1,2],"r":[3,4]}
+%dw 2.0
+import splitAt from dw::core::Arrays
+output application/json
+---
 payload.nums splitAt 2
 === E11 sizeOf object
 @exp 2
@@ -925,7 +956,7 @@ sizeOf(payload.orders.*order)
 @exp ["1","2"]
 payload.orders.*order map ((o) -> o.id)
 === P41 sizeOf null
-@exp 0
+@exp null
 sizeOf(payload.customer.tier)
 === P42 boolean as String
 @exp "true"
@@ -1088,13 +1119,13 @@ output application/json
 var fmt = (n) -> n as String {format: "0.0"}
 ---
 payload.nums map fmt($)
-=== C33 named function as map argument
+=== C33 function called in a lambda
 @exp [2,4,6,8]
 %dw 2.0
 output application/json
 fun double(n) = n * 2
 ---
-payload.nums map double
+payload.nums map (n) -> double(n)
 === C34 recursive function
 @exp 120
 %dw 2.0
@@ -1300,14 +1331,33 @@ payload.csv splitBy "," map upper($)
 @exp null
 payload.missing map $.x
 === C86 sizeOf null
-@exp 0
+@exp null
 sizeOf(payload.missing)
 === C87 splitBy regex
 @exp ["a","b","c"]
 "a,b;c" splitBy /[,;]/
-=== C88 replace regex with groups
+=== C88 replace regex with a function of the groups
 @exp "31.01.2020"
-"2020-01-31" replace /(\d+)-(\d+)-(\d+)/ with "$3.$2.$1"
+"2020-01-31" replace /(\d+)-(\d+)-(\d+)/ with ($[3] ++ "." ++ $[2] ++ "." ++ $[1])
+=== C93 string interpolation of variables and $
+@exp ["Hello x","a.x.b","cost $5",["v1","v2"]]
+%dw 2.0
+output application/json
+var name = "x"
+---
+["Hello $name", "a.$name.b", "cost \$5", [1, 2] map "v$"]
+=== C94 unless else
+@exp "y"
+unless (payload.flag) "x" else "y"
+=== C95 string as String with format stays the same
+@exp "2026-10-08T10:00:00Z"
+payload.ts as String {format: "yyyy-MM-dd"}
+=== C96 number format with locale
+@exp "1.234,50"
+1234.5 as String {format: "#,##0.00", locale: "de"}
+=== C97 write nested json
+@exp "{\n  \"a\": [\n    1,\n    2\n  ]\n}"
+write({a: [1, 2]}, "application/json")
 === C89 contains string and array
 @exp [true,true]
 ["Hello" contains "ell", ["a", "b"] contains "b"]

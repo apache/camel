@@ -353,11 +353,15 @@ public class DataWeaveParser {
             return new IfElse(condition, thenExpr, elseExpr);
         }
         if (checkIdentifier("unless")) {
-            // unless (cond) a otherwise b  is  if (cond) b else a
+            // unless (cond) a else b  is  if (cond) b else a  (DataWeave 1 has otherwise instead of else)
             advance();
             DataWeaveAst condition = parseCondition();
             DataWeaveAst unlessExpr = parseExpression();
-            expectIdentifier("otherwise");
+            if (checkIdentifier("otherwise")) {
+                advance();
+            } else {
+                expectIdentifier("else");
+            }
             return new IfElse(condition, parseExpression(), unlessExpr);
         }
         return parseInfix();
@@ -957,9 +961,10 @@ public class DataWeaveParser {
 
     // -- String literals
 
+    // A string with $(expression), $name, $, $$ or $$$ is interpolated; \$ is a dollar
     private DataWeaveAst parseString(Token token) {
         String raw = token.value();
-        if (!raw.contains("$(")) {
+        if (!hasInterpolation(raw)) {
             return new StringLit(unescape(raw, token));
         }
         List<DataWeaveAst> parts = new ArrayList<>();
@@ -970,24 +975,53 @@ public class DataWeaveParser {
             if (ch == '\\' && i + 1 < raw.length()) {
                 text.append(ch).append(raw.charAt(i + 1));
                 i += 2;
-            } else if (ch == '$' && i + 1 < raw.length() && raw.charAt(i + 1) == '(') {
+                continue;
+            }
+            if (ch != '$') {
+                text.append(ch);
+                i++;
+                continue;
+            }
+            if (!text.isEmpty()) {
+                parts.add(new StringLit(unescape(text.toString(), token)));
+                text.setLength(0);
+            }
+            if (i + 1 < raw.length() && raw.charAt(i + 1) == '(') {
                 int end = findInterpolationEnd(raw, i + 1, token);
-                if (!text.isEmpty()) {
-                    parts.add(new StringLit(unescape(text.toString(), token)));
-                    text.setLength(0);
-                }
                 String inner = raw.substring(i + 2, end);
                 parts.add(new DataWeaveParser(new DataWeaveLexer(inner).tokenize()).parseExpressionOnly());
                 i = end + 1;
+            } else if (i + 1 < raw.length() && (Character.isLetter(raw.charAt(i + 1)) || raw.charAt(i + 1) == '_')) {
+                int end = i + 1;
+                while (end < raw.length() && (Character.isLetterOrDigit(raw.charAt(end)) || raw.charAt(end) == '_')) {
+                    end++;
+                }
+                parts.add(new Identifier(raw.substring(i + 1, end)));
+                i = end;
             } else {
-                text.append(ch);
-                i++;
+                int level = 1;
+                while (level < 3 && i + level < raw.length() && raw.charAt(i + level) == '$') {
+                    level++;
+                }
+                parts.add(new Dollar(level));
+                i += level;
             }
         }
         if (!text.isEmpty()) {
             parts.add(new StringLit(unescape(text.toString(), token)));
         }
         return new Interpolation(parts);
+    }
+
+    private static boolean hasInterpolation(String raw) {
+        for (int i = 0; i < raw.length(); i++) {
+            if (raw.charAt(i) == '\\') {
+                i++;
+            } else if (raw.charAt(i) == '$') {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static int findInterpolationEnd(String raw, int open, Token token) {
