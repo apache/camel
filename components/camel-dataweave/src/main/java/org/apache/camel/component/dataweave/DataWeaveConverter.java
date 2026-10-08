@@ -233,7 +233,7 @@ public class DataWeaveConverter {
             todoCount++;
             String escapedInterp = value.replaceAll("(?<!\\\\)\"", "\\\\\"");
             return includeComments
-                    ? "/* TODO: manual conversion needed -- string interpolation: \"" + value + "\"*/\n\""
+                    ? "/* TODO: manual conversion needed -- string interpolation: \"" + value.replace("*/", "* /") + "\"*/\n\""
                       + escapedInterp + "\""
                     : "\"" + escapedInterp + "\"";
         }
