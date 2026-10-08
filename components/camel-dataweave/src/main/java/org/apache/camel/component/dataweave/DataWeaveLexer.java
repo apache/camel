@@ -61,6 +61,9 @@ public class DataWeaveLexer {
         LBRACKET,
         RBRACKET,
         DOLLAR,
+        DOLLAR_DOLLAR, // $$  (reduce accumulator shorthand)
+        AT,            // @   (XML attribute selector)
+        QUESTION,      // ?   (existence check / key filter)
         // Special
         HEADER_SEPARATOR, // ---
         PERCENT,          // %
@@ -303,7 +306,16 @@ public class DataWeaveLexer {
             case '}' -> new Token(TokenType.RBRACE, "}", startLine, startCol);
             case '[' -> new Token(TokenType.LBRACKET, "[", startLine, startCol);
             case ']' -> new Token(TokenType.RBRACKET, "]", startLine, startCol);
-            case '$' -> new Token(TokenType.DOLLAR, "$", startLine, startCol);
+            case '$' -> {
+                // Check for $$ (reduce accumulator shorthand)
+                if (pos < input.length() && input.charAt(pos) == '$') {
+                    advance();
+                    yield new Token(TokenType.DOLLAR_DOLLAR, "$$", startLine, startCol);
+                }
+                yield new Token(TokenType.DOLLAR, "$", startLine, startCol);
+            }
+            case '@' -> new Token(TokenType.AT, "@", startLine, startCol);
+            case '?' -> new Token(TokenType.QUESTION, "?", startLine, startCol);
             case '%' -> new Token(TokenType.PERCENT, "%", startLine, startCol);
             case '~' -> {
                 if (pos < input.length() && input.charAt(pos) == '=') {

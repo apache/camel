@@ -149,6 +149,12 @@ public class DataWeaveConverter {
             return emitNode(ia.object()) + "[" + emitNode(ia.index()) + "]";
         } else if (node instanceof MultiValueSelector mv) {
             return emitMultiValueSelector(mv);
+        } else if (node instanceof AttributeAccess aa) {
+            return emitAttributeAccess(aa);
+        } else if (node instanceof ExistenceCheck ec) {
+            return emitExistenceCheck(ec);
+        } else if (node instanceof DoubleDollar) {
+            return "acc"; // $$ is the reduce accumulator; use the 'acc' name convention
         } else if (node instanceof ObjectLit obj) {
             return emitObjectLit(obj);
         } else if (node instanceof ArrayLit arr) {
@@ -214,8 +220,12 @@ public class DataWeaveConverter {
     }
 
     private String emitStringLit(StringLit s) {
-        // The lexer preserves escape sequences as-is, so don't double-escape
-        return "\"" + s.value().replace("\"", "\\\"") + "\"";
+        // The lexer preserves escape sequences verbatim (e.g. \" is stored as \").
+        // Wrapping in double-quotes directly is correct; do NOT replace \" with \\\"
+        // as that would double-escape an already-escaped sequence.
+        // DataWeave string interpolation "Hello $(expr)" -> DataSonnet "Hello %(expr)"
+        String value = s.value().replace("$(", "%(");
+        return "\"" + value + "\"";
     }
 
     private String emitIdentifier(Identifier id) {
@@ -253,8 +263,23 @@ public class DataWeaveConverter {
     }
 
     private String emitMultiValueSelector(MultiValueSelector mv) {
+        needsCamelLib = true;
         String collection = emitNode(mv.object());
-        return "std.map(function(x) x." + mv.field() + ", " + collection + ")";
+        // DataWeave .*field collects all child elements named 'field' (handling one-or-many XML children).
+        // Translated to c.multiValue(collection, 'field') which gracefully handles both cases.
+        return "c.multiValue(" + collection + ", \"" + mv.field() + "\")";
+    }
+
+    private String emitAttributeAccess(AttributeAccess aa) {
+        // DataWeave .@attr accesses an XML attribute; in DataSonnet XML attributes are exposed
+        // as object keys prefixed with '@', e.g. body.Order['@id'].
+        return emitNode(aa.object()) + "[\"@" + aa.attribute() + "\"]";
+    }
+
+    private String emitExistenceCheck(ExistenceCheck ec) {
+        // DataWeave expr? returns true/false; DataSonnet: use != null check.
+        needsCamelLib = true;
+        return "c.exists(" + emitNode(ec.expr()) + ")";
     }
 
     private String emitObjectLit(ObjectLit obj) {
@@ -510,9 +535,10 @@ public class DataWeaveConverter {
         if (gbe.lambda() instanceof Lambda lam) {
             List<String> paramNames = lambdaParamNames(lam);
             String body = emitNode(lam.body());
-            return "c.groupBy(" + collection + ", function(" + paramNames.get(0) + ") " + body + ")";
+            // DataSonnet groupBy requires string keys; wrap with std.toString() for safety.
+            return "c.groupBy(" + collection + ", function(" + paramNames.get(0) + ") std.toString(" + body + "))";
         }
-        return "c.groupBy(" + collection + ", " + emitNode(gbe.lambda()) + ")";
+        return "c.groupBy(" + collection + ", function(x) std.toString(" + emitNode(gbe.lambda()) + "))";
     }
 
     private String emitOrderBy(OrderByExpr obe) {

@@ -58,6 +58,18 @@ public sealed interface DataWeaveAst {
     record MultiValueSelector(DataWeaveAst object, String field) implements DataWeaveAst {
     }
 
+    // XML attribute access: expr.@attrName
+    record AttributeAccess(DataWeaveAst object, String attribute) implements DataWeaveAst {
+    }
+
+    // Existence check: expr?
+    record ExistenceCheck(DataWeaveAst expr) implements DataWeaveAst {
+    }
+
+    // $$ (reduce accumulator) reference inside lambda body
+    record DoubleDollar() implements DataWeaveAst {
+    }
+
     record ObjectLit(List<ObjectEntry> entries) implements DataWeaveAst {
     }
 

@@ -471,8 +471,9 @@ class DataWeaveConverterTest {
     @Test
     void testMultiValueSelector() {
         String result = converter.convertExpression("payload.items.*name");
-        assertEquals("std.map(function(x) x.name, body.items)", result);
+        assertEquals("c.multiValue(body.items, \"name\")", result);
         assertEquals(0, converter.getTodoCount());
+        assertTrue(converter.needsCamelLib());
     }
 
     // -- Escape handling --
@@ -481,6 +482,106 @@ class DataWeaveConverterTest {
     void testStringEscapesPreserved() {
         String result = converter.convertExpression("payload.text ++ \"\\n\"");
         assertTrue(result.contains("\"\\n\""), "Newline escape should be preserved, got: " + result);
+    }
+
+    // -- CAMEL-25324 fixes --
+
+    @Test
+    void testDoubleQuoteNoDoubleEscape() {
+        // DW: "say \"hi\"" -- the lexer stores the backslash-quote verbatim; do NOT double-escape on emit
+        String result = converter.convertExpression("\"say \\\"hi\\\"\"");
+        assertEquals("\"say \\\"hi\\\"\"", result);
+    }
+
+    @Test
+    void testStringInterpolation() {
+        // DW: "Hello $(payload.name)" -> DS: "Hello %(body.name)"
+        String result = converter.convertExpression("\"Hello $(payload.name)\"");
+        assertEquals("\"Hello %(payload.name)\"", result);
+    }
+
+    @Test
+    void testAttributeAccess() {
+        // DW: payload.Order.@id -> DS: body.Order["@id"]
+        String result = converter.convertExpression("payload.Order.@id");
+        assertEquals("body.Order[\"@id\"]", result);
+    }
+
+    @Test
+    void testExistenceCheck() {
+        // DW: payload.a? -> DS: c.exists(body.a)
+        String result = converter.convertExpression("payload.a?");
+        assertEquals("c.exists(body.a)", result);
+        assertTrue(converter.needsCamelLib());
+    }
+
+    @Test
+    void testDoubleDollarInReduce() {
+        // DW: payload.items reduce ((item, acc = 0) -> acc + item.price) -- explicit lambda
+        String result = converter.convertExpression("payload.items reduce ((item, acc = 0) -> acc + item.price)");
+        assertTrue(result.contains("std.foldl"), "Should use std.foldl, got: " + result);
+        assertTrue(result.contains("function(acc, item)"), "acc and item should be swapped for foldl, got: " + result);
+    }
+
+    @Test
+    void testDoubleDollarLexedCorrectly() {
+        // $$ must lex as DOLLAR_DOLLAR and emit as 'acc' in the converter
+        String result = converter.convertExpression("$$");
+        assertEquals("acc", result);
+    }
+
+    @Test
+    void testVarDeclarationInHeader() {
+        // DW header var declarations must survive as local bindings in the body
+        String dw = """
+                %dw 2.0
+                output application/json
+                var rate = 0.08
+                ---
+                payload.price * rate
+                """;
+        String result = converter.convert(dw);
+        assertTrue(result.contains("local rate = 0.08"), "var rate must emit as local rate, got: " + result);
+        assertTrue(result.contains("body.price * rate"), "body expression must reference rate, got: " + result);
+    }
+
+    @Test
+    void testFunDeclarationInHeader() {
+        // DW header fun declarations must survive as local functions in the body
+        String dw = """
+                %dw 2.0
+                output application/json
+                fun double(x) = x * 2
+                ---
+                double(payload.value)
+                """;
+        String result = converter.convert(dw);
+        assertTrue(result.contains("local double(x) ="), "fun double must emit as local function, got: " + result);
+        assertTrue(result.contains("double(body.value)"), "body expression must call double, got: " + result);
+    }
+
+    @Test
+    void testTypedFunParams() {
+        // DW: fun f(a: Number): Number = a * 2  -- type annotations must be stripped
+        String result = converter.convertExpression("fun f(a: Number) = a * 2\nf(payload.x)");
+        assertTrue(result.contains("local f(a) ="), "typed param should be stripped, got: " + result);
+        assertFalse(result.contains("Number"), "type annotation must not appear in output, got: " + result);
+    }
+
+    @Test
+    void testGroupByKeyStringified() {
+        // DW: payload.items groupBy ((i) -> i.qty) -- groupBy key must be stringified
+        String result = converter.convertExpression("payload.items groupBy ((i) -> i.qty)");
+        assertTrue(result.contains("c.groupBy("), "Should use c.groupBy, got: " + result);
+        assertTrue(result.contains("std.toString("), "groupBy key must be stringified, got: " + result);
+    }
+
+    @Test
+    void testMultiValueSelectorXmlChildren() {
+        // DW: payload.Order.Items.*Item -> DS: c.multiValue(body.Order.Items, "Item")
+        String result = converter.convertExpression("payload.Order.Items.*Item");
+        assertEquals("c.multiValue(body.Order.Items, \"Item\")", result);
+        assertTrue(converter.needsCamelLib());
     }
 
     // -- Helpers --
