@@ -78,7 +78,7 @@ class CatalogServiceTest {
     void platformBomInvalidFormatThrows() {
         CatalogService service = createService(null);
 
-        assertThatThrownBy(() -> service.loadCatalog(null, null, "invalid-format"))
+        assertThatThrownBy(() -> service.loadCatalog("spring-boot", null, "invalid-format"))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("GAV format");
     }
@@ -87,9 +87,36 @@ class CatalogServiceTest {
     void platformBomInvalidFormatTwoPartsThrows() {
         CatalogService service = createService(null);
 
-        assertThatThrownBy(() -> service.loadCatalog(null, null, "group:artifact"))
+        assertThatThrownBy(() -> service.loadCatalog("spring-boot", null, "group:artifact"))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("GAV format");
+    }
+
+    @Test
+    void platformBomThatIsNotAGavIsIgnoredForMain() {
+        CatalogService service = createService(null);
+
+        assertThat(version(service, null, null, "invalid-format")).isEqualTo(BUILTIN_VERSION);
+        assertThat(version(service, "main", null, "none")).isEqualTo(BUILTIN_VERSION);
+        assertThat(version(service, "main", null, "group:artifact")).isEqualTo(BUILTIN_VERSION);
+    }
+
+    @Test
+    void platformBomOfAnotherRuntimeIsIgnoredForMain() {
+        CatalogService service = createService(null);
+
+        assertThat(version(service, "main", null, "io.quarkus.platform:quarkus-camel-bom:3.31.3")).isEqualTo(BUILTIN_VERSION);
+        assertThat(version(service, "main", BUILTIN_VERSION, "org.springframework.boot:spring-boot-dependencies:3.5.0"))
+                .isEqualTo(BUILTIN_VERSION);
+    }
+
+    @Test
+    void camelGav() {
+        assertThat(CatalogService.isCamelGav("org.apache.camel:camel-bom:4.22.1")).isTrue();
+        assertThat(CatalogService.isCamelGav(" org.apache.camel:camel-catalog:4.22.1 ")).isTrue();
+        assertThat(CatalogService.isCamelGav("io.quarkus.platform:quarkus-camel-bom:3.31.3")).isFalse();
+        assertThat(CatalogService.isCamelGav("org.apache.camel:camel-bom")).isFalse();
+        assertThat(CatalogService.isCamelGav("none")).isFalse();
     }
 
     @Test

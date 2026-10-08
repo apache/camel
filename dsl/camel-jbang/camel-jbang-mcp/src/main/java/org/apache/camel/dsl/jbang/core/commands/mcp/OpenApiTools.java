@@ -136,10 +136,12 @@ public class OpenApiTools {
     public ScaffoldResult camel_openapi_scaffold(
             @ToolArg(description = "OpenAPI 3.x specification content (JSON or YAML string)") String spec,
             @ToolArg(description = "Filename of the OpenAPI spec file as it will be referenced at runtime "
-                                   + "(default: 'openapi.json')") String specFilename,
+                                   + "(default: 'openapi.json')",
+                     required = false) String specFilename,
             @ToolArg(description = "Behavior when a route is missing for an operationId: "
                                    + "'fail' (default, throw error), 'ignore' (skip silently), "
-                                   + "or 'mock' (return mock responses)") String missingOperation) {
+                                   + "or 'mock' (return mock responses)",
+                     required = false) String missingOperation) {
 
         OpenAPI openAPI = parseSpec(spec);
 
@@ -207,7 +209,8 @@ public class OpenApiTools {
     public MockGuidanceResult camel_openapi_mock_guidance(
             @ToolArg(description = "OpenAPI 3.x specification content (JSON or YAML string)") String spec,
             @ToolArg(description = "The missingOperation mode to get guidance for: "
-                                   + "'mock' (default), 'fail', or 'ignore'") String mode) {
+                                   + "'mock' (default), 'fail', or 'ignore'",
+                     required = false) String mode) {
 
         OpenAPI openAPI = parseSpec(spec);
 
