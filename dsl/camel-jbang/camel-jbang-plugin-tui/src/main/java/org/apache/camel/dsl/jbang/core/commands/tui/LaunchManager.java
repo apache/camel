@@ -612,7 +612,7 @@ class LaunchManager {
         }
         double n = Double.parseDouble(m.group(1));
         int power = List.of("bytes", "KB", "MB", "GB", "TB").indexOf(m.group(2));
-        return (long) (n * Math.pow(1024, power));
+        return (long) (n * (1L << (10 * power)));
     }
 
     /** A started process, watched until it is up for a while, ends, or fails to start. */
