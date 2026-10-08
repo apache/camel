@@ -164,7 +164,7 @@ public class MonitorItemTest extends AbstractMiloServerTest {
          * test3Endpoint is related to client C1_3 with: requestedPublishingInterval=2000, samplingInterval=1000 from
          * default, queueSize=4. It should get 1 (or 2 depending on exact timing) of the first 3 messages because of
          * samplingInterval and an update pause of 2 seconds after they are sent. From the rest 16 messages, sent in
-         * about 3 seconds, only 3 or 4 should be sampled. 8 and at most 12 extra messages. So minimum is 4, maximum is
+         * about 3 seconds, only 3 or 4 should be sampled. So minimum is 4, maximum is
          * 6 messages
          */
         test3Endpoint.reset();
@@ -236,7 +236,7 @@ public class MonitorItemTest extends AbstractMiloServerTest {
         int count1 = this.test1Endpoint.getReceivedCounter();
         assertTrue(count1 < 18, "No messages have been dropped, but should because of queueSize");
 
-        // get the last exchange, this must be the last one, if messages are dropped it must be some it between
+        // get the last exchange, this must be the last one, if messages are dropped it must be some in between
         List<Exchange> receivedExchanges = this.test1Endpoint.getReceivedExchanges();
         Exchange last = receivedExchanges.get(receivedExchanges.size() - 1);
         assertGoodValue("Done").accept((DataValue) last.getIn().getBody());
