@@ -270,6 +270,7 @@ public class Export extends ExportBaseCommand {
         cmd.openapi = this.openapi;
         cmd.packageName = this.packageName;
         cmd.excludes = this.excludes;
+        cmd.resourceDirs = this.resourceDirs;
         cmd.ignoreLoadingError = this.ignoreLoadingError;
         cmd.lazyBean = this.lazyBean;
         cmd.verbose = this.verbose;
