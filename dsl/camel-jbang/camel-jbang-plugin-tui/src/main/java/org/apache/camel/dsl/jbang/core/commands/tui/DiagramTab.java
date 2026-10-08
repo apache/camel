@@ -323,8 +323,12 @@ class DiagramTab extends AbstractTab {
         }
 
         // Error handling: the routes reached on error and the error paths into them, in a frame below the happy path
-        if (topologyMode && diagram.isShowDiagram() && ke.isCharIgnoreCase('x')) {
+        if (diagram.isShowDiagram() && ke.isCharIgnoreCase('x') && (topologyMode || drillDownRouteId != null)) {
             diagram.setShowErrorPaths(!diagram.isShowErrorPaths());
+            if (!topologyMode) {
+                // the route view has no topology to prepare: load again for the route's error frame
+                reloadDiagram();
+            }
             return true;
         }
 
@@ -759,7 +763,8 @@ class DiagramTab extends AbstractTab {
                         }));
                 yield toggles;
             }
-            case ROUTE -> List.of(view, new SubViewBar.Toggle("m", "metrics", metrics),
+            case ROUTE -> List.of(view, new SubViewBar.Toggle("x", "errors", errorsToggle()),
+                    new SubViewBar.Toggle("m", "metrics", metrics),
                     new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"));
         };
     }

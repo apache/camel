@@ -149,6 +149,10 @@ public class RouteDiagramWidget implements Widget {
     public void render(Rect area, Buffer buffer) {
         nodeBoxes.clear();
 
+        if (errorFrame != null) {
+            drawErrorFrame(buffer, area);
+        }
+
         // Scope boxes (behind everything)
         for (LayoutNode ln : layoutRoute.nodes) {
             if (!"route".equals(ln.type)
@@ -235,12 +239,53 @@ public class RouteDiagramWidget implements Widget {
         }
     }
 
+    private RouteErrorFrame errorFrame;
+
+    /**
+     * The error handling of the route, in a frame below its happy path (its onException blocks are laid out in it).
+     */
+    public RouteDiagramWidget withErrorFrame(RouteErrorFrame frame) {
+        this.errorFrame = frame;
+        return this;
+    }
+
+    private void drawErrorFrame(Buffer buffer, Rect area) {
+        int top = toRow(errorFrame.topY());
+        int bottom = toRow(errorFrame.bottomY());
+        int right = getTotalCols() - 2;
+        Style s = org.apache.camel.dsl.jbang.core.commands.tui.Theme.warning().dim();
+        for (int c = 1; c < right; c++) {
+            setChar(buffer, area, top, c, SCOPE_H, s);
+            setChar(buffer, area, bottom, c, SCOPE_H, s);
+        }
+        for (int r = top + 1; r < bottom; r++) {
+            setChar(buffer, area, r, 0, SCOPE_V, s);
+            setChar(buffer, area, r, right, SCOPE_V, s);
+        }
+        setChar(buffer, area, top, 0, '\u256d', s);
+        setChar(buffer, area, top, right, '\u256e', s);
+        setChar(buffer, area, bottom, 0, '\u2570', s);
+        setChar(buffer, area, bottom, right, '\u256f', s);
+        writeText(buffer, area, top, 2, " Error handling ",
+                org.apache.camel.dsl.jbang.core.commands.tui.Theme.warning().bold());
+        int row = top + 1;
+        for (String line : errorFrame.lines()) {
+            writeText(buffer, area, row++, 2, line, org.apache.camel.dsl.jbang.core.commands.tui.Theme.warning());
+        }
+    }
+
     public int getTotalRows() {
         return toRow(layoutRoute.maxY) + 10;
     }
 
     public int getTotalCols() {
-        return toCol(layoutRoute.maxX + PADDING) + boxWidth + 4;
+        int cols = toCol(layoutRoute.maxX + PADDING) + boxWidth + 4;
+        if (errorFrame != null) {
+            for (String line : errorFrame.lines()) {
+                cols = Math.max(cols, line.length() + 6);
+            }
+        }
+        return cols;
     }
 
     private void drawNode(Buffer buffer, Rect area, LayoutNode node) {

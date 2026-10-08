@@ -22,6 +22,7 @@ import java.util.Set;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.diagram.TopologyLayoutEngine;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
@@ -97,6 +98,47 @@ class TopologyErrorLayerTest {
 
         String screen = render(happy, engine.getNodeWidth(), null);
         assertThat(screen).doesNotContain("Error handling").contains("checkout").contains("payment-provider");
+    }
+
+    @Test
+    void theRouteViewSplitsTheOnExceptionClausesFromTheHappyPath() {
+        RouteDiagramLayoutEngine.RouteInfo route = new RouteDiagramLayoutEngine.RouteInfo();
+        route.routeId = "checkout";
+        route.nodes.add(step("from", 0));
+        route.nodes.add(step("onException", 1));
+        route.nodes.add(step("log", 2));
+        route.nodes.add(step("to", 2));
+        route.nodes.add(step("unmarshal", 1));
+        route.nodes.add(step("to", 1));
+
+        DiagramSupport.RouteSplit split = DiagramSupport.splitErrorHandling(route);
+
+        assertThat(split.happy().nodes).extracting(n -> n.type).containsExactly("from", "unmarshal", "to");
+        assertThat(split.blocks()).hasSize(1);
+        // the clause starts its own block
+        assertThat(split.blocks().get(0).nodes).extracting(n -> n.type + n.level)
+                .containsExactly("onException0", "log1", "to1");
+    }
+
+    @Test
+    void theRouteViewLinesSayWhereFailuresGoAndComeFrom() {
+        List<ErrorPath> paths = errors.stream()
+                .map(e -> new ErrorPath(e.fromRouteId, e.toRouteId, e.via, e.handling)).toList();
+
+        assertThat(DiagramSupport.routeErrorLines("checkout", paths))
+                .containsExactly("\u25b8 on failure to parked: onException, handled \u00b7 dead letter, handled");
+        assertThat(DiagramSupport.routeErrorLines("parked", paths)).containsExactly(
+                "\u26a0 own failures: dead letter, handled",
+                "\u25c2 reached when checkout handles a failure: onException, handled \u00b7 dead letter, handled");
+        assertThat(DiagramSupport.routeErrorLines("payment-provider", paths)).isEmpty();
+    }
+
+    private static RouteDiagramLayoutEngine.NodeInfo step(String type, int level) {
+        RouteDiagramLayoutEngine.NodeInfo n = new RouteDiagramLayoutEngine.NodeInfo();
+        n.type = type;
+        n.code = type;
+        n.level = level;
+        return n;
     }
 
     private static String render(TopologyLayoutResult layout, int nodeWidth, ErrorLayer layer) {

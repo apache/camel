@@ -88,6 +88,10 @@ the topology, draws the error handling in a frame of its own below the routes: t
 handling a failure (such as the target of a dead letter channel), the dashed error paths into them, and
 under each one where its failures come from and how they are handled (handled: the message ends there;
 continued; not handled: the failure goes on to the caller). Off, the topology shows the happy path only.
+In the route view *x* does the same for one route: off, the route shows its own steps only, without the
+onException clauses (a global one is in every route); on, a frame below the route lists where its failures
+go and where it is reached on error from, and shows its onException clauses as blocks of their own. The
+history view always shows the onException clauses, so a replay can step into them.
 It needs Camel 4.23 or newer in the integration; the toggle says *4.23+* for an older one. The route
 boxes widen, within reason, so a label and its group fit on a line, and the Info panel of a route
 names its group (✦ when the AI placed it). The footer lists only actions, such as

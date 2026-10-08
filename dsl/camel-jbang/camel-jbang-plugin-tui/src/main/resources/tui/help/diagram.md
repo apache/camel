@@ -162,7 +162,9 @@ you an at-a-glance view of where you are in the route.
 - `u` — show or hide utility routes (as in the architecture)
 - `x` — show or hide the error handling: the routes reached only on
   error, in a frame below the routes, with the error paths into them
-  and how each failure is handled (needs Camel 4.23+ in the integration)
+  and how each failure is handled (needs Camel 4.23+ in the integration);
+  in the route view, the route's onException clauses and where its
+  failures go, in a frame below its steps
 - `s` — open the integration summary (camel-summary.md)
 - `Esc` — close diagram
 

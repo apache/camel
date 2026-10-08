@@ -62,6 +62,7 @@ import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.ErrorLayer;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteErrorFrame;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -97,6 +98,8 @@ class DiagramSupport {
     private volatile boolean showErrorPaths;
     private boolean layoutShowErrorPaths;
     private ErrorLayer errorLayer;
+    // the error handling of each route, in a frame below its happy path, when shown (x)
+    private Map<String, RouteErrorFrame> routeErrorFrames = Map.of();
     // the error paths of the topology, shown or not (an agent sees them in tui_get_topology)
     private List<ErrorLayer.ErrorPath> errorPaths = List.of();
     // whether the integration reports error paths: its Camel is 4.23 or newer (older ones report calls only)
@@ -1024,6 +1027,107 @@ class DiagramSupport {
     record PlacedErrors(TopologyLayoutResult layout, ErrorLayer layer) {
     }
 
+    /** A route split in its happy path and its onException clauses, each a block of its own. */
+    record RouteSplit(RouteDiagramLayoutEngine.RouteInfo happy, List<RouteDiagramLayoutEngine.RouteInfo> blocks) {
+    }
+
+    /**
+     * Takes the onException clauses (a global one is copied into every route) out of the route: they are not steps of
+     * its happy path. Each becomes a block of its own, its levels starting at the clause.
+     */
+    static RouteSplit splitErrorHandling(RouteDiagramLayoutEngine.RouteInfo route) {
+        RouteDiagramLayoutEngine.RouteInfo happy = new RouteDiagramLayoutEngine.RouteInfo();
+        happy.routeId = route.routeId;
+        happy.source = route.source;
+        happy.stat = route.stat;
+        List<RouteDiagramLayoutEngine.RouteInfo> blocks = new ArrayList<>();
+        RouteDiagramLayoutEngine.RouteInfo block = null;
+        int blockLevel = -1;
+        for (RouteDiagramLayoutEngine.NodeInfo n : route.nodes) {
+            if (block != null && n.level > blockLevel) {
+                block.nodes.add(rebased(n, blockLevel));
+                continue;
+            }
+            block = null;
+            if ("onException".equals(n.type)) {
+                block = new RouteDiagramLayoutEngine.RouteInfo();
+                block.routeId = route.routeId;
+                block.source = route.source;
+                blockLevel = n.level;
+                block.nodes.add(rebased(n, blockLevel));
+                blocks.add(block);
+            } else {
+                happy.nodes.add(n);
+            }
+        }
+        return new RouteSplit(happy, blocks);
+    }
+
+    private static RouteDiagramLayoutEngine.NodeInfo rebased(RouteDiagramLayoutEngine.NodeInfo n, int base) {
+        RouteDiagramLayoutEngine.NodeInfo copy = new RouteDiagramLayoutEngine.NodeInfo();
+        copy.type = n.type;
+        copy.id = n.id;
+        copy.code = n.code;
+        copy.uri = n.uri;
+        copy.description = n.description;
+        copy.level = n.level - base;
+        copy.line = n.line;
+        copy.remote = n.remote;
+        copy.stat = n.stat;
+        return copy;
+    }
+
+    /**
+     * The lines at the top of a route's error frame: where its failures go, where it is reached on error from, and its
+     * own failures coming back to it.
+     */
+    static List<String> routeErrorLines(String routeId, List<ErrorLayer.ErrorPath> paths) {
+        Map<String, List<String>> out = new java.util.LinkedHashMap<>();
+        Map<String, List<String>> in = new java.util.LinkedHashMap<>();
+        for (ErrorLayer.ErrorPath p : paths) {
+            if (routeId.equals(p.fromRouteId())) {
+                out.computeIfAbsent(p.toRouteId(), k -> new ArrayList<>()).add(p.label());
+            } else if (routeId.equals(p.toRouteId())) {
+                in.computeIfAbsent(p.fromRouteId(), k -> new ArrayList<>()).add(p.label());
+            }
+        }
+        List<String> lines = new ArrayList<>();
+        for (Map.Entry<String, List<String>> e : out.entrySet()) {
+            String how = String.join(" \u00b7 ", e.getValue());
+            lines.add(e.getKey().equals(routeId)
+                    ? "\u26a0 own failures: " + how
+                    : "\u25b8 on failure to " + e.getKey() + ": " + how);
+        }
+        for (Map.Entry<String, List<String>> e : in.entrySet()) {
+            lines.add("\u25c2 reached when " + e.getKey() + " handles a failure: " + String.join(" \u00b7 ", e.getValue()));
+        }
+        return lines;
+    }
+
+    /**
+     * Lays out the error handling of a route below its happy path: a frame with the route's error lines, then its
+     * onException blocks under one another. Returns the frame, or null when the route has no error handling to show.
+     */
+    static RouteErrorFrame addErrorFrame(
+            RouteDiagramLayoutEngine engine, RouteDiagramLayoutEngine.LayoutRoute lr,
+            List<RouteDiagramLayoutEngine.RouteInfo> blocks, List<String> lines) {
+        if (blocks.isEmpty() && lines.isEmpty()) {
+            return null;
+        }
+        int row = 20;
+        int top = lr.maxY + 2 * row;
+        int y = top + (lines.size() + 1) * row;
+        for (RouteDiagramLayoutEngine.RouteInfo block : blocks) {
+            RouteDiagramLayoutEngine.LayoutRoute b = engine.layoutRoute(block, y);
+            lr.nodes.addAll(b.nodes);
+            lr.maxX = Math.max(lr.maxX, b.maxX);
+            y = b.maxY + 2 * row;
+        }
+        int bottom = y;
+        lr.maxY = bottom + row;
+        return new RouteErrorFrame(top, bottom, lines);
+    }
+
     /** Leaves out the hidden routes, the links to and from them, and external systems only they used. */
     static void removeRoutes(List<TopologyNodeInfo> nodes, List<TopologyEdgeInfo> edges, Set<String> hidden) {
         if (hidden.isEmpty()) {
@@ -1610,7 +1714,8 @@ class DiagramSupport {
 
         var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
                 routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics, linkable,
-                showDescription, routeDescs);
+                showDescription, routeDescs)
+                .withErrorFrame(layoutShowErrorPaths ? routeErrorFrames.get(currentRouteId) : null);
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -1626,7 +1731,8 @@ class DiagramSupport {
 
         var finalWidget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
                 routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics, linkable,
-                showDescription, routeDescs);
+                showDescription, routeDescs)
+                .withErrorFrame(layoutShowErrorPaths ? routeErrorFrames.get(currentRouteId) : null);
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))
@@ -2322,6 +2428,7 @@ class DiagramSupport {
             }
         }
 
+        Map<String, RouteErrorFrame> loadedRouteFrames = new java.util.HashMap<>();
         // Route structure is included in the topology response (routes=true)
         java.util.Map<String, RouteDiagramLayoutEngine.LayoutRoute> routeMap = new java.util.LinkedHashMap<>();
         if (topoJson != null) {
@@ -2353,8 +2460,17 @@ class DiagramSupport {
                         labelMode);
                 engine.setTableLayout(true);
                 for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
-                    RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, 0);
+                    // the happy path; the onException clauses are not its steps, and are shown in the error frame
+                    RouteSplit split = splitErrorHandling(r);
+                    RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(split.happy(), 0);
                     normalizeRouteLayoutY(lr);
+                    if (showErrors) {
+                        RouteErrorFrame frame = addErrorFrame(
+                                engine, lr, split.blocks(), routeErrorLines(r.routeId, loadedErrorPaths));
+                        if (frame != null) {
+                            loadedRouteFrames.put(r.routeId, frame);
+                        }
+                    }
                     routeMap.put(r.routeId, lr);
                 }
             }
@@ -2378,6 +2494,7 @@ class DiagramSupport {
             layoutShowErrorPaths = showErrors;
             errorPaths = finalErrorPaths;
             errorLayer = finalErrorLayer;
+            routeErrorFrames = loadedRouteFrames;
             errorPathsKnown = finalErrorPathsKnown;
             if (!showDiagram && !preloading) {
                 return;
