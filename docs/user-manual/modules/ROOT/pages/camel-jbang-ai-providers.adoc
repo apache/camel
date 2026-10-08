@@ -44,7 +44,9 @@ See xref:camel-jbang-tui-ai.adoc[Camel TUI AI Panel].
 
 Install Ollama natively for the best performance — the native binary uses GPU acceleration
 (Metal on macOS, CUDA/ROCm on Linux). Running Ollama through Docker (`camel infra run ollama`)
-bypasses the GPU and makes inference much slower.
+bypasses the GPU and makes inference much slower. The model that container pulls is chosen with
+`camel infra run ollama --property ollama.model=...`, as
+xref:camel-jbang-dev-services.adoc#_configuring_a_service[Dev Services] describes.
 
 [source,bash]
 ----
