@@ -78,10 +78,12 @@ Starting service ollama
 
 Ollama pulls `granite4:3b` by default, 2.1 GB; `qwen2.5:0.5b` is around 400 MB, which is enough for
 most development and a lot faster to start. The same option sets the embedding model
-(`ollama.embedding.model`), the container limits (`ollama.container.cpu.count`,
-`ollama.container.memory.limit`), GPU support (`ollama.container.enable.gpu`, `enabled` or
-`disabled`) and the settings of every other service. The property names are the ones in the
+(`ollama.embedding.model`), GPU support (`ollama.container.enable.gpu`, `enabled` or `disabled`), the
+container image, and the settings of every other service. The property names are the ones in the
 `container.properties` of the service, in `camel-test-infra-<service>`.
+
+`camel infra restart` takes the options again, the way it takes `--port`, so a restart keeps the
+model it was started with.
 
 == Stopping a service
 

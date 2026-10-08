@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -72,7 +73,7 @@ public class InfraRun extends InfraBaseCommand {
 
     @CommandLine.Option(names = { "--prop", "--property" },
                         description = "Service properties, ex. --property=ollama.model=qwen2.5:0.5b")
-    List<String> properties = new ArrayList<>();
+    List<String> serviceProperties = new ArrayList<>();
 
     public InfraRun(CamelJBangMain main) {
         super(main);
@@ -121,10 +122,20 @@ public class InfraRun extends InfraBaseCommand {
             return 1;
         }
 
+        Map<String, String> parsedProperties;
+        try {
+            parsedProperties = parseServiceProperties();
+        } catch (IllegalArgumentException e) {
+            // before the background branch, so that a run in the background fails here and not in a process
+            // whose only trace is its pid
+            printer().printErr(e.getMessage());
+            return 1;
+        }
+
         if (background) {
             return runBackground(testService);
         } else {
-            return doRun(testService, testServiceImplementation, testInfraService);
+            return doRun(testService, testServiceImplementation, testInfraService, parsedProperties);
         }
     }
 
@@ -149,7 +160,7 @@ public class InfraRun extends InfraBaseCommand {
             if (noUi) {
                 cmds.add("--no-ui");
             }
-            for (String property : properties) {
+            for (String property : serviceProperties) {
                 cmds.add("--property=" + property);
             }
         }
@@ -168,7 +179,9 @@ public class InfraRun extends InfraBaseCommand {
         return 0;
     }
 
-    protected Integer doRun(String testService, String testServiceImplementation, TestInfraService testInfraService)
+    protected Integer doRun(
+            String testService, String testServiceImplementation, TestInfraService testInfraService,
+            Map<String, String> parsedProperties)
             throws Exception {
         DependencyDownloaderClassLoader cl = getDependencyDownloaderClassLoader(testInfraService, printer());
 
@@ -189,13 +202,23 @@ public class InfraRun extends InfraBaseCommand {
         }
         // the service resolves its own properties from the system properties first, so they must be set
         // before it is instantiated
-        List<String> serviceProperties;
+        Map<String, String> replacedProperties = applyServiceProperties(parsedProperties);
         try {
-            serviceProperties = setServiceProperties();
-        } catch (IllegalArgumentException e) {
-            printer().printErr(e.getMessage());
-            return 1;
+            return startService(testService, testServiceImplementation, testInfraService, cl, serviceInterface,
+                    serviceImpl, replacedProperties);
+        } finally {
+            // the service may never have started, so this and not only the shutdown is where a JVM that keeps
+            // running, such as the TUI or a test, gets its properties back
+            restoreProperties(replacedProperties);
+            clearInfraProperties();
         }
+    }
+
+    private Integer startService(
+            String testService, String testServiceImplementation, TestInfraService testInfraService,
+            DependencyDownloaderClassLoader cl, String serviceInterface, String serviceImpl,
+            Map<String, String> replacedProperties)
+            throws Exception {
         Object actualService = cl.loadClass(serviceImpl).newInstance();
 
         // Make sure the actualService can be run with initialize method
@@ -270,7 +293,7 @@ public class InfraRun extends InfraBaseCommand {
         AtomicBoolean closed = new AtomicBoolean();
         // use shutdown hook as fallback to shut-down and delete files
         Runtime.getRuntime()
-                .addShutdownHook(new Thread(() -> shutdownInfra(closed, logFile, jsonFile, actualService, serviceProperties)));
+                .addShutdownHook(new Thread(() -> shutdownInfra(closed, logFile, jsonFile, actualService, replacedProperties)));
 
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -319,34 +342,63 @@ public class InfraRun extends InfraBaseCommand {
             // ignore
         }
 
-        shutdownInfra(closed, logFile, jsonFile, actualService, serviceProperties);
+        shutdownInfra(closed, logFile, jsonFile, actualService, replacedProperties);
 
         return 0;
     }
 
     /**
-     * Turns the --property options into system properties, which is how a service takes an option the CLI has no flag
-     * of its own for, such as the model of ollama.
+     * Reads the --property options, which is how a service takes a setting the CLI has no flag of its own for, such as
+     * the model of ollama. Only the pairs are read here, so that a malformed one is refused before anything is set and
+     * before a run in the background leaves the complaint in a process nobody is watching.
      *
-     * @return the names that were set, to be cleared when the service stops
+     * @throws IllegalArgumentException if an option is not a key=value pair
      */
-    List<String> setServiceProperties() {
-        List<String> names = new ArrayList<>(properties.size());
-        for (String property : properties) {
+    Map<String, String> parseServiceProperties() {
+        Map<String, String> parsed = new LinkedHashMap<>();
+        for (String property : serviceProperties) {
             int separator = property.indexOf('=');
-            if (separator < 1) {
+            if (separator < 1 || separator == property.length() - 1) {
                 throw new IllegalArgumentException(
                         "Property " + property + " is not in the key=value form, for example ollama.model=qwen2.5:0.5b");
             }
-            String name = property.substring(0, separator);
-            System.setProperty(name, property.substring(separator + 1));
-            names.add(name);
+            parsed.put(property.substring(0, separator), property.substring(separator + 1));
         }
-        return names;
+        return parsed;
+    }
+
+    /**
+     * Sets the properties the service resolves, and returns what they held before, so that a JVM which runs more than
+     * one service keeps the values it was started with.
+     */
+    static Map<String, String> applyServiceProperties(Map<String, String> parsedProperties) {
+        Map<String, String> replaced = new LinkedHashMap<>();
+        parsedProperties.forEach((name, value) -> {
+            replaced.put(name, System.getProperty(name));
+            System.setProperty(name, value);
+        });
+        return replaced;
+    }
+
+    static void restoreProperties(Map<String, String> replacedProperties) {
+        replacedProperties.forEach((name, previous) -> {
+            if (previous == null) {
+                System.clearProperty(name);
+            } else {
+                System.setProperty(name, previous);
+            }
+        });
+    }
+
+    private static void clearInfraProperties() {
+        System.clearProperty("camel.infra.port");
+        System.clearProperty("camel.infra.fixedPort");
+        System.clearProperty("camel.infra.ui");
     }
 
     private static void shutdownInfra(
-            AtomicBoolean closed, Path logFile, Path jsonFile, Object actualService, List<String> serviceProperties) {
+            AtomicBoolean closed, Path logFile, Path jsonFile, Object actualService,
+            Map<String, String> replacedProperties) {
         if (closed.compareAndSet(false, true)) {
             try {
                 actualService.getClass().getMethod("shutdown").invoke(actualService);
@@ -363,10 +415,8 @@ public class InfraRun extends InfraBaseCommand {
             } catch (Exception e) {
                 // ignore
             }
-            System.clearProperty("camel.infra.port");
-            System.clearProperty("camel.infra.fixedPort");
-            System.clearProperty("camel.infra.ui");
-            serviceProperties.forEach(System::clearProperty);
+            clearInfraProperties();
+            restoreProperties(replacedProperties);
         }
     }
 
