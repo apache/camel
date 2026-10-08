@@ -84,7 +84,6 @@ public class MailMessageTest extends CamelTestSupport {
 
     @Override
     public void doPostSetup() throws Exception {
-        Mailbox.clearAll();
 
         endpoint = checkEndpoint("pop3://someone@myhost:30/subject");
 

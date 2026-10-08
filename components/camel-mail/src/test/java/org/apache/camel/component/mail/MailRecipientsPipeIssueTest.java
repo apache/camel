@@ -37,7 +37,7 @@ public class MailRecipientsPipeIssueTest extends CamelTestSupport {
 
     @Test
     public void testMultiRecipients() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(you, camelPipes, easyPipes);
 
         TestSupport.sendBody(template, "direct:a", "Camel does really rock");
 

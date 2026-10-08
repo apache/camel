@@ -47,7 +47,7 @@ public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSup
     private String htmlBody = "<html><body><h1>Hello</h1>World<img src=\"cid:myCoolLogo.jpeg\"></body></html>";
 
     private void sendMultipartEmail(boolean useInlineattachments) {
-        Mailbox.clearAll();
+        Mailbox.clearAll(ryanWithLongerFilename);
 
         // create an exchange with a normal body and attachment to be produced as email
         MailEndpoint endpoint = context.getEndpoint(ryanWithLongerFilename.uriPrefix(Protocol.smtp), MailEndpoint.class);

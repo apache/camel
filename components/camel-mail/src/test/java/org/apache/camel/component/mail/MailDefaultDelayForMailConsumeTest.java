@@ -35,7 +35,7 @@ public class MailDefaultDelayForMailConsumeTest extends CamelTestSupport {
     @Test
     public void testConsuming() throws Exception {
         // clear mailbox
-        Mailbox.clearAll();
+        Mailbox.clearAll(bond);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello London");

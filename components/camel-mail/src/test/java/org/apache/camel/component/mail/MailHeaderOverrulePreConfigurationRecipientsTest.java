@@ -38,7 +38,7 @@ public class MailHeaderOverrulePreConfigurationRecipientsTest extends CamelTestS
 
     @Test
     public void testSendWithRecipientsInHeaders() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(claus, willem);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

@@ -46,7 +46,7 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
     private String htmlBody = "<html><body><h1>Hello</h1>World<img src=\"cid:0001\"></body></html>";
 
     private void sendMultipartEmail(boolean useInlineattachments) {
-        Mailbox.clearAll();
+        Mailbox.clearAll(ryan);
 
         // create an exchange with a normal body and attachment to be produced as email
         MailEndpoint endpoint = context.getEndpoint(ryan.uriPrefix(Protocol.smtp), MailEndpoint.class);

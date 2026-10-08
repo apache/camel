@@ -48,7 +48,7 @@ public class MailMimeDecodeHeadersTest extends CamelTestSupport {
 
     @Test
     public void testLongMailSubject() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(plain, decoded);
 
         // The email subject is >76 chars and will get MIME folded.
         template.sendBody("direct:longSubject", "");
@@ -70,7 +70,7 @@ public class MailMimeDecodeHeadersTest extends CamelTestSupport {
 
     @Test
     public void testNonAsciiMailSubject() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(plain, decoded);
 
         // The email subject contains non-ascii characters and will be encoded.
         template.sendBody("direct:nonAsciiSubject", "");

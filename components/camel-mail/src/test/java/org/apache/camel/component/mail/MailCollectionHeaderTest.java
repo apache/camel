@@ -34,7 +34,7 @@ public class MailCollectionHeaderTest extends CamelTestSupport {
 
     @Test
     public void testMailHeaderWithCollection() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(james);
 
         String[] foo = new String[] { "Carlsberg", "Heineken" };
         template.sendBodyAndHeader("direct:a", "Hello World", "beers", foo);

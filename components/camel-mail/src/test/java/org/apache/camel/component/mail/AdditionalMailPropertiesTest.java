@@ -36,7 +36,7 @@ public class AdditionalMailPropertiesTest extends CamelTestSupport {
     @Test
     public void testAdditionalMailProperties() {
         // clear mailbox
-        Mailbox.clearAll();
+        Mailbox.clearAll(user);
 
         MailEndpoint endpoint = context.getEndpoint(
                 user.uriPrefix(Protocol.pop3) + "&mail.pop3.forgettopheaders=true&initialDelay=100&delay=100",
@@ -48,7 +48,7 @@ public class AdditionalMailPropertiesTest extends CamelTestSupport {
     @Test
     public void testConsumeWithAdditionalProperties() throws Exception {
         // clear mailbox
-        Mailbox.clearAll();
+        Mailbox.clearAll(user);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
 

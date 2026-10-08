@@ -38,7 +38,7 @@ public class MailMultipleRecipientsUsingHeadersTest extends CamelTestSupport {
 
     @Test
     public void testMailMultipleRecipientUsingHeaders() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(claus, jon);
 
         // START SNIPPET: e1
         Map<String, Object> map = new HashMap<>();

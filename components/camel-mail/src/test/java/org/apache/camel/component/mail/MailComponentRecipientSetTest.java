@@ -36,7 +36,7 @@ public class MailComponentRecipientSetTest extends CamelTestSupport {
 
     @Test
     public void testMultipleEndpoints() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(james, admin, a, b, c);
 
         template.sendBodyAndHeader("direct:a", "Hello World", "Subject", "Hello a");
         template.sendBodyAndHeader("direct:b", "Bye World", "Subject", "Hello b");

@@ -35,7 +35,7 @@ public class MailSubjectTest extends CamelTestSupport {
 
     @Test
     public void testMailSubject() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(james2);
 
         String body = "Hello Claus.\r\nYes it does.\r\n\r\nRegards James.";
 

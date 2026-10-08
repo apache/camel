@@ -44,7 +44,7 @@ public class MailDisconnectTest extends CamelTestSupport {
 
     @BeforeEach
     void setup() {
-        Mailbox.clearAll();
+        Mailbox.clearAll(jones);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(expectedCount);

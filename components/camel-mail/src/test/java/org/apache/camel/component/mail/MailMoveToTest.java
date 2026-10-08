@@ -89,7 +89,9 @@ public class MailMoveToTest extends CamelTestSupport {
     }
 
     private void prepareMailbox() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(jones, jones2);
+        jones.clear("moveToFolder");
+        jones2.clear("moveToFolder");
         MailboxUser[] mailUser = new MailboxUser[] { jones, jones2 };
         for (MailboxUser user : mailUser) {
             JavaMailSender sender = new DefaultJavaMailSender();

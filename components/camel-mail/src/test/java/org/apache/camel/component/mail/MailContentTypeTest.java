@@ -40,7 +40,7 @@ public class MailContentTypeTest extends CamelTestSupport {
 
     @Test
     public void testSendHtmlMail() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(claus);
 
         TestSupport.sendBody(template, "direct:a", "<html><body><h1>Hello</h1>World</body></html>");
 
@@ -53,7 +53,7 @@ public class MailContentTypeTest extends CamelTestSupport {
 
     @Test
     public void testSendPlainMail() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(claus);
 
         TestSupport.sendBody(template, "direct:b", "Hello World");
 
@@ -65,7 +65,7 @@ public class MailContentTypeTest extends CamelTestSupport {
 
     @Test
     public void testSendMultipartMail() throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(claus);
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(MailConstants.MAIL_ALTERNATIVE_BODY, "Hello World");

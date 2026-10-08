@@ -54,7 +54,7 @@ public class MailProducerConcurrentTest extends CamelTestSupport {
     }
 
     private void doSendMessages(int files, int poolSize) throws Exception {
-        Mailbox.clearAll();
+        Mailbox.clearAll(camel, someone);
 
         NotifyBuilder builder = new NotifyBuilder(context).whenDone(files).create();
 

@@ -41,7 +41,7 @@ public class MailHeaderOverrideOptionsTest extends CamelTestSupport {
 
     @BeforeEach
     public void setup() {
-        Mailbox.clearAll();
+        Mailbox.clearAll(sender, epRcpt, hdrRcpt);
     }
 
     @Test
