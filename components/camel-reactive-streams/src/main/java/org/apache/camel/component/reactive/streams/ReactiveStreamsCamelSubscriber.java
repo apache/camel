@@ -154,7 +154,8 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
         Subscription subs = null;
         lock.lock();
         try {
-            if (consumer != null && this.subscription != null) {
+            // a suspended consumer requests nothing until it is resumed
+            if (consumer != null && this.subscription != null && !consumer.isSuspendingOrSuspended()) {
                 Integer consMax = consumer.getEndpoint().getMaxInflightExchanges();
                 long max = (consMax != null && consMax > 0) ? consMax.longValue() : UNBOUNDED_REQUESTS;
                 if (requested < UNBOUNDED_REQUESTS) {

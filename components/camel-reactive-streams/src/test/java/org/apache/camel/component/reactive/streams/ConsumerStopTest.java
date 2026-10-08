@@ -104,7 +104,9 @@ class ConsumerStopTest extends BaseReactiveTest {
             }
         });
         ServiceSupport consumer = (ServiceSupport) context.getRoute(routeId).getConsumer();
-        await().atMost(10, TimeUnit.SECONDS).until(() -> consumer.isStopping() || consumer.isStopped());
+        // the graceful stop suspends the consumer first, and stops it once the exchange in flight is done
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> consumer.isSuspended() || consumer.isStopping() || consumer.isStopped());
         gate.countDown();
         stop.get(20, TimeUnit.SECONDS);
     }
