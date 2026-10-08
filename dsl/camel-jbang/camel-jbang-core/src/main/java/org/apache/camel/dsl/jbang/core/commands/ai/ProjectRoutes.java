@@ -75,6 +75,24 @@ public final class ProjectRoutes {
     private static final Set<String> STEP_CONTAINERS = Set.of("steps", "when", "doCatch", "doFinally");
     private static final int MAX_DEPTH = 64;
     private static final int MAX_PATH = 60;
+
+    /** The simple name of a class: IllegalStateException for java.lang.IllegalStateException. */
+    static String simpleName(String className) {
+        String n = className.trim();
+        int dot = n.lastIndexOf('.');
+        return dot >= 0 ? n.substring(dot + 1) : n;
+    }
+
+    /** An error handler kind in words: a dead letter channel, the default error handler, no error handler. */
+    static String errorHandlerKind(String name) {
+        return switch (name) {
+            case "deadLetterChannel" -> "dead letter channel";
+            case "defaultErrorHandler" -> "default error handler";
+            case "noErrorHandler" -> "no error handler";
+            default -> name;
+        };
+    }
+
     /** The id given to an onException or error handler outside a route, followed by where it is written. */
     public static final String ERROR_HANDLER_PREFIX = "error-handler@";
 
@@ -97,29 +115,53 @@ public final class ProjectRoutes {
     /**
      * A route of the project.
      *
-     * @param id        the route id, null when the source gives none
-     * @param kind      route, routeTemplate, templatedRoute, rest, or errorHandler (an onException or error handler
-     *                  outside a route, with the endpoints it sends failed messages to)
-     * @param file      the file, relative to the project directory
-     * @param line      the 1-based line the route starts at
-     * @param format    yaml, xml or java
-     * @param heuristic whether the route was found by pattern matching (Java DSL) and may be incomplete
-     * @param from      what the route consumes from, null for a REST operation without a route
-     * @param consumes  every endpoint the route consumes: its from, what it polls, and the kamelet name of a template
-     * @param produces  the endpoints the route sends to, in order
-     * @param steps     roughly how many steps the route has
-     * @param insertAt  where a description line can be inserted (YAML), or -1
-     * @param indent    the indentation of that line (YAML)
-     * @param restVerb  the HTTP verb of a REST operation
-     * @param restPath  the path of a REST operation
-     * @param logOnly   whether every step of the route only logs: plumbing, not business logic
-     * @param note      the route's note: a longer explanation beside the short description, may be null
-     * @param decisions the decision points of the route (choice, filter, split, ...), in route order
+     * @param id           the route id, null when the source gives none
+     * @param kind         route, routeTemplate, templatedRoute, rest, or errorHandler (an onException or error handler
+     *                     outside a route, with the endpoints it sends failed messages to)
+     * @param file         the file, relative to the project directory
+     * @param line         the 1-based line the route starts at
+     * @param format       yaml, xml or java
+     * @param heuristic    whether the route was found by pattern matching (Java DSL) and may be incomplete
+     * @param from         what the route consumes from, null for a REST operation without a route
+     * @param consumes     every endpoint the route consumes: its from, what it polls, and the kamelet name of a
+     *                     template
+     * @param produces     the endpoints the route sends to, in order
+     * @param steps        roughly how many steps the route has
+     * @param insertAt     where a description line can be inserted (YAML), or -1
+     * @param indent       the indentation of that line (YAML)
+     * @param restVerb     the HTTP verb of a REST operation
+     * @param restPath     the path of a REST operation
+     * @param logOnly      whether every step of the route only logs: plumbing, not business logic
+     * @param note         the route's note: a longer explanation beside the short description, may be null
+     * @param decisions    the decision points of the route (choice, filter, split, ...), in route order
+     * @param errorHandler the route's own error handler (deadLetterChannel, defaultErrorHandler, noErrorHandler, or a
+     *                     reference), null when the route uses the global one
      */
     public record Route(String id, String kind, String description, String group, String file, int line, String format,
             boolean heuristic, Endpoint from, List<Endpoint> consumes, List<Endpoint> produces, int steps,
             int insertAt, int indent, String restVerb, String restPath, boolean logOnly, String note,
-            List<RouteDecisions.DecisionPoint> decisions) {
+            List<RouteDecisions.DecisionPoint> decisions, String errorHandler) {
+
+        /** A route that uses the global error handler. */
+        public Route(String id, String kind, String description, String group, String file, int line, String format,
+                     boolean heuristic, Endpoint from, List<Endpoint> consumes, List<Endpoint> produces, int steps,
+                     int insertAt, int indent, String restVerb, String restPath, boolean logOnly, String note,
+                     List<RouteDecisions.DecisionPoint> decisions) {
+            this(id, kind, description, group, file, line, format, heuristic, from, consumes, produces, steps, insertAt,
+                 indent, restVerb, restPath, logOnly, note, decisions, null);
+        }
+
+        /** The same route with its own error handler. */
+        public Route withErrorHandler(String errorHandler) {
+            return new Route(
+                    id, kind, description, group, file, line, format, heuristic, from, consumes, produces, steps,
+                    insertAt, indent, restVerb, restPath, logOnly, note, decisions, errorHandler);
+        }
+
+        /** Whether the route has no error handler: its failures go back to its caller. */
+        public boolean noErrorHandler() {
+            return "noErrorHandler".equals(errorHandler);
+        }
 
         /** A route without decision points. */
         public Route(String id, String kind, String description, String group, String file, int line, String format,
@@ -429,7 +471,8 @@ public final class ProjectRoutes {
                         rest(m, line);
                     }
                 }
-                case "onException", "errorHandler", "routeConfiguration", "route-configuration" -> errorHandler(value, line);
+                case "onException", "errorHandler", "routeConfiguration", "route-configuration" ->
+                    errorHandler(key, value, line);
                 default -> {
                     // beans, restConfiguration and friends are not routes
                 }
@@ -482,6 +525,10 @@ public final class ProjectRoutes {
                     false, from, consumes, produces, steps[0], insertAt, indent, null, null,
                     logOnly(fromNode instanceof MappingNode fm2 ? child(fm2, "steps") : child(m, "steps")),
                     str(value(m, "note")), decisions);
+            // the route's own error handler, such as noErrorHandler
+            if (child(m, "errorHandler") instanceof MappingNode em && !em.getValue().isEmpty()) {
+                r = r.withErrorHandler(scalar(em.getValue().get(0).getKeyNode()));
+            }
             routes.add(r);
             return r;
         }
@@ -555,14 +602,43 @@ public final class ProjectRoutes {
         }
 
         /** Where an onException or error handler sends failed messages, as a route that only error handling uses. */
-        private void errorHandler(org.yaml.snakeyaml.nodes.Node value, int line) {
+        private void errorHandler(String key, org.yaml.snakeyaml.nodes.Node value, int line) {
             List<Endpoint> produces = new ArrayList<>();
             walk(value, produces, new ArrayList<>(), new int[] { 0 }, 0, true);
             if (!produces.isEmpty()) {
                 routes.add(new Route(
-                        ERROR_HANDLER_PREFIX + file + ":" + line, "errorHandler", null, null, file, line, "yaml",
+                        ERROR_HANDLER_PREFIX + file + ":" + line, "errorHandler", errorHandlerLabel(key, value), null,
+                        file, line, "yaml",
                         false, null, List.of(), produces, 0, -1, 0, null, null, false, null));
             }
+        }
+
+        /**
+         * What a global error handler is, in words: onException with its exceptions, a dead letter channel, or a route
+         * configuration.
+         */
+        private static String errorHandlerLabel(String key, org.yaml.snakeyaml.nodes.Node value) {
+            if ("onException".equals(key)) {
+                List<String> exceptions = new ArrayList<>();
+                if (value instanceof MappingNode m) {
+                    for (NodeTuple t : m.getValue()) {
+                        if (t.getKeyNode() instanceof ScalarNode k && "exception".equals(k.getValue())
+                                && t.getValueNode() instanceof SequenceNode seq) {
+                            for (org.yaml.snakeyaml.nodes.Node n : seq.getValue()) {
+                                if (n instanceof ScalarNode sn) {
+                                    exceptions.add(simpleName(sn.getValue()));
+                                }
+                            }
+                        }
+                    }
+                }
+                return exceptions.isEmpty() ? "onException" : "onException " + String.join(", ", exceptions);
+            }
+            if ("errorHandler".equals(key) && value instanceof MappingNode m && !m.getValue().isEmpty()
+                    && m.getValue().get(0).getKeyNode() instanceof ScalarNode k) {
+                return errorHandlerKind(k.getValue());
+            }
+            return "route configuration";
         }
 
         /** Whether every top-level step only logs: a log EIP, or a to or wireTap of a log endpoint. */
@@ -935,6 +1011,17 @@ public final class ProjectRoutes {
 
         private void errorHandler(Element e) {
             List<Endpoint> produces = new ArrayList<>();
+            String label;
+            if ("onException".equals(localName(e))) {
+                List<String> exceptions = new ArrayList<>();
+                NodeList ex = e.getElementsByTagNameNS("*", "exception");
+                for (int i = 0; i < ex.getLength(); i++) {
+                    exceptions.add(simpleName(ex.item(i).getTextContent()));
+                }
+                label = exceptions.isEmpty() ? "onException" : "onException " + String.join(", ", exceptions);
+            } else {
+                label = attr(e, "deadLetterUri") != null ? "dead letter channel" : "error handler";
+            }
             if (attr(e, "deadLetterUri") != null) {
                 add(produces, endpoint(attr(e, "deadLetterUri"), null, false, catalog));
             }
@@ -950,7 +1037,7 @@ public final class ProjectRoutes {
             if (!produces.isEmpty()) {
                 int line = lineOf(localName(e), null);
                 routes.add(new Route(
-                        ERROR_HANDLER_PREFIX + file + ":" + line, "errorHandler", null, null, file, line, "xml", false,
+                        ERROR_HANDLER_PREFIX + file + ":" + line, "errorHandler", label, null, file, line, "xml", false,
                         null, List.of(), produces.stream().map(Endpoint::asOnError).toList(), 0, -1, 0, null, null,
                         false, null));
             }
