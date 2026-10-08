@@ -91,4 +91,17 @@ class RouteTreePanelTest {
         }
         assertThat(screen.toString()).contains("Route: checkout");
     }
+
+    @Test
+    void theStepUnderTheCursorIsAlwaysInTheWindow() {
+        for (int size = 1; size <= 30; size++) {
+            for (int rows = 1; rows <= size; rows++) {
+                for (int current = 0; current < size; current++) {
+                    int top = RouteTreePanel.windowTop(current, size, rows);
+                    assertThat(current).as("size %d rows %d", size, rows).isBetween(top, top + rows - 1);
+                    assertThat(top + rows).isLessThanOrEqualTo(size);
+                }
+            }
+        }
+    }
 }

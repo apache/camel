@@ -68,12 +68,9 @@ final class RouteTreePanel {
         }
         int w = Math.min(46, area.width() / 3);
         int maxRows = Math.max(3, area.height() * 2 / 3 - 2);
-        int rows = Math.min(tree.nodes().size(), maxRows);
-        // keep the step under the cursor in view
-        int top = 0;
-        if (tree.current() >= rows) {
-            top = Math.min(tree.current() - rows / 2, tree.nodes().size() - rows);
-        }
+        // the from line takes one row; the steps the rest
+        int rows = Math.min(tree.nodes().size(), maxRows - 1);
+        int top = windowTop(tree.current(), tree.nodes().size(), rows);
         List<Line> out = new ArrayList<>();
         // where the route starts
         String from = tree.fromUri() != null ? "from " + tree.fromUri() : "from";
@@ -81,7 +78,6 @@ final class RouteTreePanel {
                 ? Theme.selectionBg().bold()
                 : Style.EMPTY.fg(DiagramColors.getEipColor("from"));
         out.add(Line.from(Span.styled(TuiHelper.truncate((tree.current() < 0 ? "▶" : " ") + from, w - 2), fromStyle)));
-        rows = Math.min(rows, maxRows - 1);
         for (int i = top; i < top + rows; i++) {
             out.add(line(tree.nodes(), i, i == tree.current(), w - 2));
         }
@@ -93,6 +89,14 @@ final class RouteTreePanel {
                 .title(TuiHelper.truncate(title, w - 4))
                 .build();
         frame.renderWidget(Paragraph.builder().text(Text.from(out)).block(block).build(), rect);
+    }
+
+    /** The first step shown, so the step under the cursor is in the window of the given rows. */
+    static int windowTop(int current, int size, int rows) {
+        if (current < rows) {
+            return 0;
+        }
+        return Math.max(0, Math.min(current - rows / 2, size - rows));
     }
 
     /** The route the cursor is in: the last route that starts at or above it, else the first one. */
