@@ -1,5 +1,17 @@
 = Camel CLI
 
+[NOTE]
+.Development only
+====
+The Camel CLI is a development tool, for developers and AI agents. It is *not* for running or managing
+integrations in production.
+
+It has no security and no user permissions: anyone, or any AI agent, working as the same user on the machine has full
+control over the local Camel integrations -- running and stopping them, changing their source, sending messages to
+them and running commands. To go to production, use `camel export` to generate a Spring Boot, Quarkus or Camel Main
+project, and build and run that as any other application.
+====
+
 The Camel CLI is the command-line interface for Apache Camel.
 It gives you a complete, terminal-native development environment for building integrations
 -- from a first prototype to a production-ready project -- without requiring an IDE, a Maven project,
