@@ -811,9 +811,23 @@ public class DataWeaveParser {
      * String}} Stops when it encounters a {@code ,}, {@code )}, {@code =} or EOF at depth 0.
      */
     private void skipTypeExpression() {
-        // Skip the leading type name (or opening brace/bracket)
+        // Skip the leading type name (or opening brace/bracket for object types)
         if (!check(TokenType.EOF)) {
-            advance(); // consume base type name / '{' / '['
+            if (check(TokenType.LBRACE)) {
+                // Object type: {name: String} — skip balanced braces
+                int depth = 1;
+                advance(); // {
+                while (depth > 0 && !check(TokenType.EOF)) {
+                    if (check(TokenType.LBRACE)) {
+                        depth++;
+                    } else if (check(TokenType.RBRACE)) {
+                        depth--;
+                    }
+                    advance();
+                }
+                return; // object type is self-contained, no trailing < or |
+            }
+            advance(); // consume base type name / '['
         }
         // Now handle trailing generic parameters '<...>' and union '|'
         while (!check(TokenType.EOF)) {

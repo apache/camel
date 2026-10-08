@@ -573,8 +573,52 @@ public class DataWeaveConverter {
                 default -> op.op() + emitReduceShorthandBody(op.operand());
             };
         }
-        // For anything else (literals, identifiers, etc.) fall back to normal emission
+        // For anything else: if the sub-expression contains a shorthand reference ($ or $$)
+        // that emitNode cannot rewrite, emit a TODO to avoid silently producing wrong code.
+        // Pure literals and identifiers without shorthand references are safe to emit normally.
+        if (containsShorthand(node)) {
+            todoCount++;
+            return includeComments
+                    ? "/* TODO: manual conversion needed -- reduce shorthand in unsupported context: "
+                            + node.getClass().getSimpleName() + "*/\nnull"
+                    : "null";
+        }
         return emitNode(node);
+    }
+
+    /**
+     * Returns true if the given AST node or any of its children contain a LambdaShorthand ($) or DoubleDollar ($$)
+     * that would be emitted incorrectly by the normal emitNode path in a reduce shorthand context.
+     */
+    private boolean containsShorthand(DataWeaveAst node) {
+        if (node == null) {
+            return false;
+        }
+        if (node instanceof LambdaShorthand || node instanceof DoubleDollar) {
+            return true;
+        }
+        if (node instanceof BinaryOp op) {
+            return containsShorthand(op.left()) || containsShorthand(op.right());
+        }
+        if (node instanceof UnaryOp op) {
+            return containsShorthand(op.operand());
+        }
+        if (node instanceof Parens p) {
+            return containsShorthand(p.expr());
+        }
+        if (node instanceof FieldAccess fa) {
+            return containsShorthand(fa.object());
+        }
+        if (node instanceof FunctionCall fc) {
+            return fc.args().stream().anyMatch(this::containsShorthand);
+        }
+        if (node instanceof DefaultExpr def) {
+            return containsShorthand(def.expr()) || containsShorthand(def.fallback());
+        }
+        if (node instanceof IfElse ie) {
+            return containsShorthand(ie.condition()) || containsShorthand(ie.thenExpr()) || containsShorthand(ie.elseExpr());
+        }
+        return false;
     }
 
     private String emitFlatMap(FlatMapExpr fme) {

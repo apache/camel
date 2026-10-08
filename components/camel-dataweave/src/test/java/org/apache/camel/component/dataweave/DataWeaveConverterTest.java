@@ -589,16 +589,23 @@ class DataWeaveConverterTest {
 
     @Test
     void testDoubleQuotedStringWithEscapedQuote() {
-        // DW: 'say "hi"' (single-quoted, stored by lexer as: say "hi")
-        // Output must be "say \"hi\"" -- the bare " must be escaped for valid Jsonnet
-        // Simulate: the lexer stores the string value without surrounding quotes
-        // We test through convertExpression using a DW-style literal to exercise emitStringLit
+        // DW: "say \"hi\"" (double-quoted string with escaped quotes inside)
+        // The lexer stores the value with the escapes resolved: say "hi"
+        // emitStringLit must re-escape the " to produce valid Jsonnet: "say \"hi\""
         DataWeaveConverter c2 = new DataWeaveConverter();
-        // Build directly: StringLit with a value containing an unescaped double-quote
-        // The lexer for single-quoted strings would store: say "hi"
-        // We convert: "say \"hi\"" (double-quoted DW string with escaped quote) to verify no double-escape
+        // Pass a double-quoted DW string with escaped quotes to verify no double-escape
         String result = c2.convertExpression("\"say \\\"hi\\\"\"");
         assertEquals("\"say \\\"hi\\\"\"", result, "Double-quoted string with \\\" must not double-escape");
+    }
+
+    @Test
+    void testSingleQuotedStringWithDoubleQuote() {
+        // DW: 'say "hi"' (single-quoted string containing a bare double-quote)
+        // The lexer stores the value without surrounding quotes: say "hi" (with bare ")
+        // emitStringLit must re-escape the bare " to produce valid Jsonnet: "say \"hi\""
+        DataWeaveConverter c2 = new DataWeaveConverter();
+        String result = c2.convertExpression("'say \"hi\"'");
+        assertEquals("\"say \\\"hi\\\"\"", result, "Single-quoted string: bare \" must be escaped to \\\" in output");
     }
 
     @Test
