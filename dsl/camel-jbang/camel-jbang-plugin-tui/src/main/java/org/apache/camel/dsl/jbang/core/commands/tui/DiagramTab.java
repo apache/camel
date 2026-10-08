@@ -322,6 +322,16 @@ class DiagramTab extends AbstractTab {
             return true;
         }
 
+        // Error handling: the routes reached on error and the error paths into them, in a frame below the happy path
+        if (diagram.isShowDiagram() && ke.isCharIgnoreCase('x') && (topologyMode || drillDownRouteId != null)) {
+            diagram.setShowErrorPaths(!diagram.isShowErrorPaths());
+            if (!topologyMode) {
+                // the route view has no topology to prepare: load again for the route's error frame
+                reloadDiagram();
+            }
+            return true;
+        }
+
         // Utility routes: one setting for the architecture and the topology, so both show the same groups
         if (topologyMode && diagram.isShowDiagram() && ke.isCharIgnoreCase('u') && hasUtilityRoutes()) {
             architecture.setShowUtility(!architecture.isShowUtility());
@@ -719,6 +729,14 @@ class DiagramTab extends AbstractTab {
         return toggles;
     }
 
+    /** On or off; an integration on a Camel before 4.23 reports no error paths, and the toggle says so. */
+    private String errorsToggle() {
+        if (!diagram.isErrorPathsKnown()) {
+            return "4.23+";
+        }
+        return diagram.isShowErrorPaths() ? "on" : "off";
+    }
+
     private List<SubViewBar.Toggle> levelToggles() {
         SubViewBar.Toggle view
                 = new SubViewBar.Toggle("b", "view", diagram.isShowDescription() ? "business" : "technical");
@@ -734,6 +752,7 @@ class DiagramTab extends AbstractTab {
                 if (hasUtilityRoutes()) {
                     toggles.add(new SubViewBar.Toggle("u", "utility", architecture.isShowUtility() ? "on" : "off"));
                 }
+                toggles.add(new SubViewBar.Toggle("x", "errors", errorsToggle()));
                 toggles.add(new SubViewBar.Toggle("m", "metrics", metrics));
                 toggles.add(new SubViewBar.Toggle(
                         "e", "external",
@@ -744,7 +763,8 @@ class DiagramTab extends AbstractTab {
                         }));
                 yield toggles;
             }
-            case ROUTE -> List.of(view, new SubViewBar.Toggle("m", "metrics", metrics),
+            case ROUTE -> List.of(view, new SubViewBar.Toggle("x", "errors", errorsToggle()),
+                    new SubViewBar.Toggle("m", "metrics", metrics),
                     new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"));
         };
     }
