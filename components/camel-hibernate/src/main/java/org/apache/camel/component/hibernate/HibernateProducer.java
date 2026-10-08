@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -35,7 +36,7 @@ import org.hibernate.query.SelectionQuery;
 public class HibernateProducer extends DefaultProducer {
 
     private final HibernateEndpoint endpoint;
-    private Language simple;
+    private final Map<String, Object> naturalIdParameters = new LinkedHashMap<>();
 
     public HibernateProducer(HibernateEndpoint endpoint) {
         super(endpoint);
@@ -43,9 +44,39 @@ public class HibernateProducer extends DefaultProducer {
     }
 
     @Override
-    protected void doBuild() throws Exception {
-        super.doBuild();
-        simple = getEndpoint().getCamelContext().resolveLanguage("simple");
+    protected void doStart() throws Exception {
+        super.doStart();
+        Language simple = endpoint.getCamelContext().resolveLanguage("simple");
+
+        naturalIdParameters.clear();
+        if (endpoint.getNaturalIdParameters() != null) {
+            endpoint.getNaturalIdParameters().forEach((key, value) -> {
+                if (value instanceof String str) {
+                    naturalIdParameters.put(key, simple.createExpression(str));
+                } else {
+                    naturalIdParameters.put(key, value);
+                }
+            });
+        }
+    }
+
+    private Map<String, Object> resolveNaturalIdParameters(Exchange exchange, Map<String, Object> headerParameters) {
+        Map<String, Object> resolved = new LinkedHashMap<>();
+
+        naturalIdParameters.forEach((key, value) -> {
+            if (value instanceof Expression expression) {
+                resolved.put(key, expression.evaluate(exchange, Object.class));
+            } else {
+                resolved.put(key, value);
+            }
+        });
+
+        if (headerParameters != null) {
+            // Header values are message data and must never be evaluated as Simple expressions.
+            resolved.putAll(headerParameters);
+        }
+
+        return resolved;
     }
 
     @Override
@@ -187,28 +218,6 @@ public class HibernateProducer extends DefaultProducer {
             }
             throw e;
         }
-    }
-
-    private Map<String, Object> resolveNaturalIdParameters(Exchange exchange, Map<String, Object> headerParameters) {
-        Map<String, Object> resolved = new LinkedHashMap<>(endpoint.getNaturalIdParameters());
-        if (headerParameters != null) {
-            resolved.putAll(headerParameters);
-        }
-        Language language = simple();
-        resolved.replaceAll((key, value) -> {
-            if (value instanceof String str) {
-                return language.createExpression(str).evaluate(exchange, Object.class);
-            }
-            return value;
-        });
-        return resolved;
-    }
-
-    private Language simple() {
-        if (simple == null) {
-            simple = getEndpoint().getCamelContext().resolveLanguage("simple");
-        }
-        return simple;
     }
 
     private void closeStreamingSession(
