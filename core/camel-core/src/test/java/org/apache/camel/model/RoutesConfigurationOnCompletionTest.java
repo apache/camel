@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -376,11 +377,18 @@ public class RoutesConfigurationOnCompletionTest extends ContextTestSupport {
         // and the consumer route should own the firing (so onCompletion sees state set
         // by the consumer after the direct:processor call returns).
         AtomicInteger counter = new AtomicInteger();
+        // Capture what the onCompletion processor actually sees for "fromConsumer";
+        // the consumer sets this header AFTER calling direct:processor, so if the
+        // onCompletion fires early (in the sub-route) it will see null, not "yes".
+        AtomicReference<String> seen = new AtomicReference<>();
         context.addRoutes(new RouteConfigurationBuilder() {
             @Override
             public void configuration() {
                 routeConfiguration("myconfig").onCompletion().modeBeforeConsumer()
-                        .process(e -> counter.incrementAndGet())
+                        .process(e -> {
+                            counter.incrementAndGet();
+                            seen.set(e.getMessage().getHeader("fromConsumer", String.class));
+                        })
                         .setHeader("done", constant("yes"));
             }
         });
@@ -408,9 +416,10 @@ public class RoutesConfigurationOnCompletionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         // onCompletion must fire exactly once (not once per opted-in route)
         assertEquals(1, counter.get(), "onCompletion should fire exactly once");
-        // deferral: onCompletion fires after consumer route runs, so it sees the header
-        assertEquals("yes", result.getMessage().getHeader("fromConsumer"),
-                "consumer-set header should be visible to BeforeConsumer onCompletion");
+        // deferral: onCompletion was deferred to the consumer route, so it ran after
+        // the consumer set "fromConsumer" — the processor must have seen "yes"
+        assertEquals("yes", seen.get(),
+                "BeforeConsumer onCompletion should run after the consumer route sets fromConsumer");
         // onCompletion itself sets the 'done' header; it should be visible on the reply
         assertEquals("yes", result.getMessage().getHeader("done"));
     }
