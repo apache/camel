@@ -87,6 +87,21 @@ public class HMACAccumulatorTest {
     }
 
     @Test
+    void testValidateAfterCipherFailureStillComputesMacAndFails() throws Exception {
+        int buffersize = 256;
+        byte[] buffer = initializeBuffer(buffersize);
+
+        HMACAccumulator builder = new HMACAccumulator(key, "HmacSHA1", null, buffersize);
+        builder.decryptUpdate(buffer, 40);
+        // fails although the appended MAC matches, with the same message as a MAC mismatch
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> builder.validate(true));
+        assertEquals(HMACAccumulator.AUTHENTICATION_FAILED, e.getMessage());
+        // the MAC was still finalized and compared, as on the MAC-mismatch path
+        assertMacs(expected, builder.getCalculatedMac());
+        assertMacs(expected, builder.getAppendedMac());
+    }
+
+    @Test
     void testDecryptionWhereMacOverlaps() throws Exception {
         int buffersize = 32;
         byte[] buffer = new byte[buffersize];
