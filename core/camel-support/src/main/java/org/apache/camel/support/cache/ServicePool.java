@@ -199,6 +199,10 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
      * endpoint that is static in the endpoint registry (resolved when the routes were setup), that a route is consuming
      * from, or that another producer (or polling consumer) is still using, such as the producer cache of a toD in
      * another route or of a ProducerTemplate, as the pooled services are added to CamelContext.
+     * <p>
+     * This is intentionally broad: any {@link EndpointAware} service on the context that uses the endpoint keeps it
+     * started, not only the producers and polling consumers pooled by a {@code ServicePool}, as stopping an endpoint
+     * that is still in use is worse than keeping one started.
      */
     private static boolean isEndpointInUse(Endpoint endpoint) {
         CamelContext context = endpoint.getCamelContext();
