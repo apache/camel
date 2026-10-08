@@ -33,9 +33,9 @@ public class NatsConsumerReplyToIT extends NatsITSupport {
     @Test
     public void testReplyTo() throws Exception {
         mockResultEndpoint.expectedBodiesReceived("World");
-        mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "test");
+        mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "consumer-replyto");
         mockReplyEndpoint.expectedBodiesReceived("Bye World");
-        mockReplyEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "myReplyQueue");
+        mockReplyEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "consumer-replyto-reply");
 
         waitForNatsConsumers(2);
 
@@ -53,14 +53,14 @@ public class NatsConsumerReplyToIT extends NatsITSupport {
             @Override
             public void configure() {
                 from("direct:send")
-                        .to("nats:test?replySubject=myReplyQueue&flushConnection=true");
+                        .to("nats:consumer-replyto?replySubject=consumer-replyto-reply&flushConnection=true");
 
-                from("nats:test?flushConnection=true&exchangePattern=InOut")
+                from("nats:consumer-replyto?flushConnection=true&exchangePattern=InOut")
                         .to(mockResultEndpoint)
                         .convertBodyTo(String.class)
                         .setBody().simple("Bye ${body}");
 
-                from("nats:myReplyQueue")
+                from("nats:consumer-replyto-reply")
                         .to("mock:reply");
             }
         };

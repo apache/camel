@@ -43,11 +43,13 @@ public class NatsConsumerMaxMessagesQueueIT extends NatsITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:send").to("nats:test");
+                from("direct:send").to("nats:consumer-maxmessages-queue");
 
-                from("nats:test?maxMessages=5&queueName=test").routeId("cons1").to(mockResultEndpoint);
+                from("nats:consumer-maxmessages-queue?maxMessages=5&queueName=consumer-maxmessages-queue").routeId("cons1")
+                        .to(mockResultEndpoint);
 
-                from("nats:test?maxMessages=6&queueName=test").routeId("cons2").to(mockResultEndpoint);
+                from("nats:consumer-maxmessages-queue?maxMessages=6&queueName=consumer-maxmessages-queue").routeId("cons2")
+                        .to(mockResultEndpoint);
             }
         };
     }

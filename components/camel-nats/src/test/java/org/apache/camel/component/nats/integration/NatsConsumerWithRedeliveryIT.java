@@ -57,9 +57,9 @@ public class NatsConsumerWithRedeliveryIT extends NatsITSupport {
                         .retriesExhaustedLogLevel(LoggingLevel.ERROR)
                         .redeliveryDelay(10).to("mock:exception").handled(true);
 
-                from("direct:send").to("nats:test?flushConnection=true");
+                from("direct:send").to("nats:consumer-redelivery?flushConnection=true");
 
-                from("nats:test?flushConnection=true").choice().when(exchange -> {
+                from("nats:consumer-redelivery?flushConnection=true").choice().when(exchange -> {
                     String s = exchange.getMessage().getBody(String.class);
                     if (s.contains("test")) {
                         return true;

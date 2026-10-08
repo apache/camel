@@ -38,7 +38,7 @@ public class NatsConsumerLoadIT extends NatsITSupport {
         waitForNatsConsumers(1);
 
         for (int i = 0; i < 10000; i++) {
-            connection.publish("test", ("test" + i).getBytes());
+            connection.publish("consumer-load", ("test" + i).getBytes());
         }
 
         mockResultEndpoint.assertIsSatisfied();
@@ -49,7 +49,7 @@ public class NatsConsumerLoadIT extends NatsITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("nats:test").to(mockResultEndpoint);
+                from("nats:consumer-load").to(mockResultEndpoint);
             }
         };
     }
