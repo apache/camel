@@ -58,8 +58,7 @@ public class Script extends CamelCommand {
                         description = "Load properties file for route placeholders (ex. /path/to/file.properties")
     String propertiesFiles;
 
-    @CommandLine.Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)",
-                        arity = "0")
+    @CommandLine.Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)")
     String[] property;
 
     public Script(CamelJBangMain main) {
