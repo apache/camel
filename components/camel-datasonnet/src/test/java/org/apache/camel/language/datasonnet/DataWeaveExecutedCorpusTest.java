@@ -131,6 +131,29 @@ class DataWeaveExecutedCorpusTest extends CamelTestSupport {
         JSONAssert.assertEquals("{\"amount\":42,\"label\":\"42\"}", result, true);
     }
 
+    /**
+     * The $ / $$ shorthand inside object constructors, function calls, unary minus, attribute and existence selectors,
+     * where $$ is the index in map and the accumulator in reduce.
+     */
+    @Test
+    void testShorthand() throws Exception {
+        template.sendBody("direct:shorthand", "{\"items\":["
+                                              + "{\"@sku\":\"A1\",\"name\":\"apple\",\"price\":3,\"qty\":2},"
+                                              + "{\"@sku\":\"B2\",\"name\":\"pear\",\"price\":5,\"qty\":1,\"discount\":true},"
+                                              + "{\"@sku\":\"A1\",\"name\":\"apple\",\"price\":3,\"qty\":4}]}");
+        MockEndpoint mock = getMockEndpoint("mock:shorthand");
+        mock.assertExchangeReceived(0);
+        String result = mock.getExchanges().get(0).getMessage().getBody(String.class);
+        JSONAssert.assertEquals("{"
+                                + "\"names\":[\"APPLE\",\"PEAR\",\"APPLE\"],"
+                                + "\"lines\":[{\"line\":0,\"sku\":\"A1\"},{\"line\":1,\"sku\":\"B2\"},{\"line\":2,\"sku\":\"A1\"}],"
+                                + "\"byPriceDesc\":[\"pear\",\"apple\",\"apple\"],"
+                                + "\"discounted\":[\"pear\"],"
+                                + "\"skus\":[\"A1\",\"B2\"],"
+                                + "\"totalQty\":7}",
+                result, true);
+    }
+
     // -------------------------------------------------------------------------
     // Fail-fast test — unsupported construct must throw at expression creation time
     // -------------------------------------------------------------------------
@@ -215,6 +238,11 @@ class DataWeaveExecutedCorpusTest extends CamelTestSupport {
                         .transform(datasonnet("resource:classpath:corpus/typeCoercion.dwl", String.class,
                                 MediaTypes.APPLICATION_JSON_VALUE, MediaTypes.APPLICATION_JSON_VALUE))
                         .to("mock:typeCoercion");
+
+                from("direct:shorthand")
+                        .transform(datasonnet("resource:classpath:corpus/shorthand.dwl", String.class,
+                                MediaTypes.APPLICATION_JSON_VALUE, MediaTypes.APPLICATION_JSON_VALUE))
+                        .to("mock:shorthand");
             }
         };
     }

@@ -519,6 +519,7 @@ The transpiler automatically maps DataWeave constructs to their DataSonnet equiv
 - `payload` to `body`, `vars` to `cml.variable()`, `attributes.headers` to `cml.header()`
 - Operators: `++` to `+`, `default` to `cml.defaultVal()`, `as Number/String/Boolean` to `cml.toInteger()/std.toString()/cml.toBoolean()`
 - Collection operations: `map`, `filter`, `reduce` (including `$$`/`$` shorthand form), `flatMap`, `groupBy`, `orderBy`, `distinctBy`
+- The `$` shorthand in any of these operations, including in object constructors and function calls (`payload map { id: $.id, name: upper($.name) }`), with `$$` as the index in `map` and the accumulator in `reduce`
 - String operations: `contains`, `startsWith`, `endsWith`, `splitBy`, `joinBy`, `replace`
 - Functions: `sizeOf`, `upper`, `lower`, `trim`, `now`, `uuid`, `abs`, `round`, `sqrt`
 - XML selectors: multi-value selector `.*field` (maps all `field` values from a collection), attribute access `.@attr` (maps to `["@attr"]`)

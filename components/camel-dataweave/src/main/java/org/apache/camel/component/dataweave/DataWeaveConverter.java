@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.dataweave;
 
+import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,10 @@ public class DataWeaveConverter {
     private int todoCount;
     private int convertedCount;
     private boolean includeComments = true;
+    // The variables $ and $$ refer to while emitting the body of a shorthand lambda (payload map $.id);
+    // null outside a shorthand lambda
+    private String shorthandItem;
+    private String shorthandDoubleDollar;
 
     public DataWeaveConverter() {
     }
@@ -153,12 +158,14 @@ public class DataWeaveConverter {
             return emitAttributeAccess(aa);
         } else if (node instanceof ExistenceCheck ec) {
             return emitExistenceCheck(ec);
+        } else if (node instanceof DoubleDollar && shorthandDoubleDollar != null) {
+            return shorthandDoubleDollar;
         } else if (node instanceof DoubleDollar) {
-            // $$ means accumulator only inside reduce. In map/filter/mapObject/pluck it means index or key.
-            // Outside the reduce-shorthand emitter this context is unknown, so emit a TODO.
+            // $$ means accumulator inside reduce and index inside map. In filter/mapObject/pluck it means index or key,
+            // which is not supported, so emit a TODO.
             todoCount++;
             return includeComments
-                    ? "/* TODO: manual conversion needed -- $$ outside reduce context */" + "\nnull"
+                    ? "/* TODO: manual conversion needed -- $$ outside map and reduce */" + "\nnull"
                     : "null";
         } else if (node instanceof ObjectLit obj) {
             return emitObjectLit(obj);
@@ -180,6 +187,8 @@ public class DataWeaveConverter {
             return emitLambda(lam);
         } else if (node instanceof LambdaParam lp) {
             return lp.name();
+        } else if (node instanceof LambdaShorthand ls && shorthandItem != null) {
+            return ls.fields().isEmpty() ? shorthandItem : shorthandItem + "." + String.join(".", ls.fields());
         } else if (node instanceof LambdaShorthand ls) {
             return emitLambdaShorthand(ls);
         } else if (node instanceof MapExpr me) {
@@ -303,6 +312,12 @@ public class DataWeaveConverter {
         }
         if (ec.expr() instanceof AttributeAccess aa) {
             return "std.objectHas(" + emitNode(aa.object()) + ", \"@" + aa.attribute() + "\")";
+        }
+        if (ec.expr() instanceof LambdaShorthand ls && shorthandItem != null && !ls.fields().isEmpty()) {
+            // $.a.b? -> std.objectHas(x.a, "b")
+            List<String> fields = ls.fields();
+            return "std.objectHas(" + emitNode(new LambdaShorthand(fields.subList(0, fields.size() - 1))) + ", \""
+                   + fields.get(fields.size() - 1) + "\")";
         }
         todoCount++;
         return includeComments
@@ -497,12 +512,11 @@ public class DataWeaveConverter {
             }
             return "std.map(function(" + paramNames.get(0) + ") " + body + ", " + collection + ")";
         }
-        if (me.lambda() instanceof LambdaShorthand ls) {
-            // $.field -> function(x) x.field
-            String path = String.join(".", ls.fields());
-            return "std.map(function(x) x." + path + ", " + collection + ")";
+        if (references(me.lambda(), DoubleDollar.class)) {
+            // DW: map {i: $$, v: $} -- $$ is the index -- DS: std.mapWithIndex(function(i, x) body, collection)
+            return "std.mapWithIndex(function(i, x) " + emitShorthandScope(me.lambda(), "x", "i") + ", " + collection + ")";
         }
-        return "std.map(" + emitNode(me.lambda()) + ", " + collection + ")";
+        return "std.map(" + emitLambdaArg(me.lambda()) + ", " + collection + ")";
     }
 
     private String emitFilter(FilterExpr fe) {
@@ -512,7 +526,7 @@ public class DataWeaveConverter {
             String body = emitNode(lam.body());
             return "std.filter(function(" + paramNames.get(0) + ") " + body + ", " + collection + ")";
         }
-        return "std.filter(" + emitNode(fe.lambda()) + ", " + collection + ")";
+        return "std.filter(" + emitLambdaArg(fe.lambda()) + ", " + collection + ")";
     }
 
     private String emitReduce(ReduceExpr re) {
@@ -537,106 +551,89 @@ public class DataWeaveConverter {
         // $$ is the accumulator ($$ -> acc) and $ is the current item ($ -> item).
         // DataWeave shorthand without an explicit initial value uses the first element
         // as the starting accumulator: std.foldl(function(acc, item) body, arr[1:], arr[0]).
-        String body = emitReduceShorthandBody(re.lambda());
+        String body = emitShorthandScope(re.lambda(), "item", "acc");
         return "(local _arr = " + collection + ";\n"
                + "if std.length(_arr) == 0 then null else std.foldl(function(acc, item) " + body + ", _arr[1:], _arr[0]))";
     }
 
     /**
-     * Emit a reduce shorthand body, rewriting {@code $$} to {@code acc} and {@code $} (optionally with field access) to
-     * {@code item} or {@code item.field}. Falls back to normal {@code emitNode} for any sub-expression that doesn't
-     * contain shorthand references.
+     * Emit the function passed to a higher-order operator (map, filter, orderBy, ...) when it is not an explicit
+     * lambda. A body that uses {@code $} ({@code payload map {id: $.id}}) becomes {@code function(x) <body>} with
+     * {@code $} referring to {@code x}; anything else (such as a function reference) is emitted as-is.
      */
-    private String emitReduceShorthandBody(DataWeaveAst node) {
-        if (node instanceof DoubleDollar) {
-            return "acc";
+    private String emitLambdaArg(DataWeaveAst lambda) {
+        if (containsShorthand(lambda)) {
+            return "function(x) " + emitShorthandScope(lambda, "x", null);
         }
-        if (node instanceof LambdaShorthand ls) {
-            if (ls.fields().isEmpty()) {
-                return "item";
-            }
-            return "item." + String.join(".", ls.fields());
-        }
-        if (node instanceof BinaryOp op) {
-            String left = emitReduceShorthandBody(op.left());
-            String right = emitReduceShorthandBody(op.right());
-            return switch (op.op()) {
-                case "++" -> left + " + " + right;
-                case "and" -> left + " && " + right;
-                case "or" -> left + " || " + right;
-                default -> left + " " + op.op() + " " + right;
-            };
-        }
-        if (node instanceof Parens p) {
-            return "(" + emitReduceShorthandBody(p.expr()) + ")";
-        }
-        if (node instanceof FieldAccess fa) {
-            return emitReduceShorthandBody(fa.object()) + "." + fa.field();
-        }
-        if (node instanceof IndexAccess ia) {
-            return emitReduceShorthandBody(ia.object()) + "[" + emitReduceShorthandBody(ia.index()) + "]";
-        }
-        if (node instanceof UnaryOp op) {
-            return switch (op.op()) {
-                case "not" -> "!" + emitReduceShorthandBody(op.operand());
-                default -> op.op() + emitReduceShorthandBody(op.operand());
-            };
-        }
-        // For anything else: if the sub-expression contains a shorthand reference ($ or $$)
-        // that emitNode cannot rewrite, emit a TODO to avoid silently producing wrong code.
-        // Pure literals and identifiers without shorthand references are safe to emit normally.
-        if (containsShorthand(node)) {
-            todoCount++;
-            return includeComments
-                    ? "/* TODO: manual conversion needed -- reduce shorthand in unsupported context: "
-                      + node.getClass().getSimpleName() + " */\nnull"
-                    : "null";
-        }
-        return emitNode(node);
+        return emitNode(lambda);
     }
 
     /**
-     * Returns true if the given AST node or any of its children contain a LambdaShorthand ($) or DoubleDollar ($$) that
-     * would be emitted incorrectly by the normal emitNode path in a reduce shorthand context.
+     * Emit the body of a shorthand lambda with {@code $} referring to {@code itemVar} and {@code $$} to
+     * {@code doubleDollarVar} (the reduce accumulator or the map index, or null when {@code $$} has no known meaning).
+     * A nested shorthand lambda opens its own scope, as {@code $} then refers to the inner item.
      */
-    private boolean containsShorthand(DataWeaveAst node) {
-        if (node == null) {
+    private String emitShorthandScope(DataWeaveAst body, String itemVar, String doubleDollarVar) {
+        String oldItem = shorthandItem;
+        String oldDoubleDollar = shorthandDoubleDollar;
+        shorthandItem = itemVar;
+        shorthandDoubleDollar = doubleDollarVar;
+        try {
+            return emitNode(body);
+        } finally {
+            shorthandItem = oldItem;
+            shorthandDoubleDollar = oldDoubleDollar;
+        }
+    }
+
+    /**
+     * Returns true if the given AST node uses {@code $} or {@code $$} of the enclosing shorthand lambda.
+     */
+    private static boolean containsShorthand(DataWeaveAst node) {
+        return references(node, LambdaShorthand.class) || references(node, DoubleDollar.class);
+    }
+
+    /**
+     * Returns true if the given AST node uses {@code $} ({@link LambdaShorthand}) or {@code $$} ({@link DoubleDollar})
+     * of the enclosing shorthand lambda. The function argument of a nested higher-order operator and the body of an
+     * explicit lambda are not searched, as {@code $} there does not refer to the enclosing item.
+     */
+    private static boolean references(DataWeaveAst node, Class<? extends DataWeaveAst> type) {
+        if (node == null || node instanceof Lambda) {
             return false;
         }
-        if (node instanceof LambdaShorthand || node instanceof DoubleDollar) {
+        if (type.isInstance(node)) {
             return true;
         }
-        if (node instanceof BinaryOp op) {
-            return containsShorthand(op.left()) || containsShorthand(op.right());
+        for (RecordComponent component : node.getClass().getRecordComponents()) {
+            if (isHigherOrderLambda(node, component)) {
+                continue;
+            }
+            Object value;
+            try {
+                value = component.getAccessor().invoke(node);
+            } catch (ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+            if (value instanceof DataWeaveAst child && references(child, type)) {
+                return true;
+            }
+            if (value instanceof List<?> list) {
+                for (Object element : list) {
+                    if (element instanceof DataWeaveAst child && references(child, type)) {
+                        return true;
+                    }
+                }
+            }
         }
-        if (node instanceof UnaryOp op) {
-            return containsShorthand(op.operand());
-        }
-        if (node instanceof Parens p) {
-            return containsShorthand(p.expr());
-        }
-        if (node instanceof FieldAccess fa) {
-            return containsShorthand(fa.object());
-        }
-        if (node instanceof FunctionCall fc) {
-            return fc.args().stream().anyMatch(this::containsShorthand);
-        }
-        if (node instanceof DefaultExpr def) {
-            return containsShorthand(def.expr()) || containsShorthand(def.fallback());
-        }
-        if (node instanceof IfElse ie) {
-            return containsShorthand(ie.condition()) || containsShorthand(ie.thenExpr()) || containsShorthand(ie.elseExpr());
-        }
-        if (node instanceof IndexAccess ia) {
-            return containsShorthand(ia.object()) || containsShorthand(ia.index());
-        }
-        // Unknown node type: default to true (conservative — prevents silent wrong output).
-        // Only return false for nodes known to never contain shorthand (literals, Identifier).
-        if (node instanceof NumberLit || node instanceof StringLit || node instanceof BooleanLit
-                || node instanceof NullLit || node instanceof Identifier) {
-            return false;
-        }
-        return true;
+        return false;
+    }
+
+    private static boolean isHigherOrderLambda(DataWeaveAst node, RecordComponent component) {
+        return "lambda".equals(component.getName())
+                && (node instanceof MapExpr || node instanceof FilterExpr || node instanceof ReduceExpr
+                        || node instanceof FlatMapExpr || node instanceof DistinctByExpr || node instanceof GroupByExpr
+                        || node instanceof OrderByExpr);
     }
 
     private String emitFlatMap(FlatMapExpr fme) {
@@ -646,7 +643,7 @@ public class DataWeaveConverter {
             String body = emitNode(lam.body());
             return "std.flatMap(function(" + paramNames.get(0) + ") " + body + ", " + collection + ")";
         }
-        return "std.flatMap(" + emitNode(fme.lambda()) + ", " + collection + ")";
+        return "std.flatMap(" + emitLambdaArg(fme.lambda()) + ", " + collection + ")";
     }
 
     private String emitDistinctBy(DistinctByExpr dbe) {
@@ -657,6 +654,9 @@ public class DataWeaveConverter {
             String body = emitNode(lam.body());
             // distinctBy keeps first occurrence per key -- use distinctBy helper
             return "c.distinctBy(" + collection + ", function(" + paramNames.get(0) + ") " + body + ")";
+        }
+        if (containsShorthand(dbe.lambda())) {
+            return "c.distinctBy(" + collection + ", " + emitLambdaArg(dbe.lambda()) + ")";
         }
         return "c.distinct(" + collection + ")";
     }
@@ -672,7 +672,7 @@ public class DataWeaveConverter {
             // If the key expression is already a string, std.toString() is a no-op.
             return "c.groupBy(" + collection + ", function(" + paramNames.get(0) + ") std.toString(" + body + "))";
         }
-        return "c.groupBy(" + collection + ", function(x) std.toString((" + emitNode(gbe.lambda()) + ")(x)))";
+        return "c.groupBy(" + collection + ", function(x) std.toString((" + emitLambdaArg(gbe.lambda()) + ")(x)))";
     }
 
     private String emitOrderBy(OrderByExpr obe) {
@@ -683,7 +683,7 @@ public class DataWeaveConverter {
             String body = emitNode(lam.body());
             return "c.sortBy(" + collection + ", function(" + paramNames.get(0) + ") " + body + ")";
         }
-        return "c.sortBy(" + collection + ", " + emitNode(obe.lambda()) + ")";
+        return "c.sortBy(" + collection + ", " + emitLambdaArg(obe.lambda()) + ")";
     }
 
     private String emitContains(ContainsExpr ce) {

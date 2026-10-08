@@ -686,7 +686,7 @@ class DataWeaveConverterTest {
     @Test
     void testReduceShorthandIndexAccess() {
         // DW: payload.items reduce ($$ + $[0]) -- shorthand body with index access on $
-        // containsShorthand must recurse into IndexAccess, and emitReduceShorthandBody must handle it.
+        // containsShorthand must recurse into IndexAccess, and the shorthand scope must rewrite $ to item.
         // Expected body: acc + item[0]  (not emitNode's function(x) x[0])
         String result = converter.convertExpression("payload.items reduce ($$ + $[0])");
         assertTrue(result.contains("std.foldl("), "Should use std.foldl, got: " + result);
@@ -694,6 +694,121 @@ class DataWeaveConverterTest {
         assertFalse(result.contains("function(x)"),
                 "emitNode fallback must not be used for shorthand IndexAccess, got: " + result);
         assertEquals(0, converter.getTodoCount(), "Reduce shorthand index access should not produce TODOs, got: " + result);
+    }
+
+    @Test
+    void testShorthandAttributeInMap() {
+        // DW: payload.items map $.@id -- the attribute selector belongs to $, not to the map result
+        String result = converter.convertExpression("payload.items map $.@id");
+        assertEquals("std.map(function(x) x[\"@id\"], body.items)", result);
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @Test
+    void testShorthandMultiValueInMap() {
+        // DW: payload.orders map $.*Item
+        String result = converter.convertExpression("payload.orders map $.*Item");
+        assertEquals("std.map(function(x) std.map(function(x) x.Item, x), body.orders)", result);
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @Test
+    void testShorthandExistenceInFilter() {
+        // DW: payload.items filter $.a.b? -- ? applies to $.a.b, not to the filter result
+        String result = converter.convertExpression("payload.items filter $.a.b?");
+        assertEquals("std.filter(function(x) std.objectHas(x.a, \"b\"), body.items)", result);
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @Test
+    void testShorthandIndexInMap() {
+        // DW: payload.rows map $[0]
+        String result = converter.convertExpression("payload.rows map $[0]");
+        assertEquals("std.map(function(x) x[0], body.rows)", result);
+    }
+
+    @Test
+    void testShorthandObjectInMap() {
+        // DW: payload.items map { id: $.id, name: $.name } -- the whole object is the lambda body
+        String result = converter.convertExpression("payload.items map { id: $.id, name: $.name }");
+        assertTrue(result.startsWith("std.map(function(x) {"), "Object should be the lambda body, got: " + result);
+        assertTrue(result.contains("id: x.id"), "got: " + result);
+        assertTrue(result.contains("name: x.name"), "got: " + result);
+        assertFalse(result.contains("function(x) x.id"), "$ must not become a function per field, got: " + result);
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @Test
+    void testShorthandFunctionCallInMap() {
+        // DW: payload.items map upper($.name)
+        String result = converter.convertExpression("payload.items map upper($.name)");
+        assertEquals("std.map(function(x) std.asciiUpper(x.name), body.items)", result);
+    }
+
+    @Test
+    void testShorthandIndexDoubleDollarInMap() {
+        // DW: payload.items map { line: $$, name: $.name } -- in map, $$ is the index
+        String result = converter.convertExpression("payload.items map { line: $$, name: $.name }");
+        assertTrue(result.startsWith("std.mapWithIndex(function(i, x) {"), "got: " + result);
+        assertTrue(result.contains("line: i"), "got: " + result);
+        assertTrue(result.contains("name: x.name"), "got: " + result);
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @Test
+    void testShorthandOrderByDescending() {
+        // DW: payload.items orderBy -$.price
+        String result = converter.convertExpression("payload.items orderBy -$.price");
+        assertEquals("c.sortBy(body.items, function(x) -x.price)", result);
+    }
+
+    @Test
+    void testShorthandDistinctBy() {
+        // DW: payload.items distinctBy $.id -- the key must not be dropped
+        String result = converter.convertExpression("payload.items distinctBy $.id");
+        assertEquals("c.distinctBy(body.items, function(x) x.id)", result);
+    }
+
+    @Test
+    void testShorthandNestedScopes() {
+        // DW: payload.orders map { id: $.id, skus: $.lines map $.sku } -- inner $ is the line, outer $ the order
+        String result = converter.convertExpression("payload.orders map { id: $.id, skus: $.lines map $.sku }");
+        assertTrue(result.contains("id: x.id"), "got: " + result);
+        assertTrue(result.contains("skus: std.map(function(x) x.sku, x.lines)"), "got: " + result);
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @Test
+    void testReduceShorthandAttributeAndMultiValue() {
+        // DW: payload.items reduce ($$ + $.@qty) and reduce ($$ ++ $.*Item)
+        String attr = converter.convertExpression("payload.items reduce ($$ + $.@qty)");
+        assertTrue(attr.contains("function(acc, item) (acc + item[\"@qty\"])"), "got: " + attr);
+        String multi = converter.convertExpression("payload.items reduce ($$ ++ $.*Item)");
+        assertTrue(multi.contains("function(acc, item) (acc + std.map(function(x) x.Item, item))"), "got: " + multi);
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @Test
+    void testReduceShorthandIfElseAndExistence() {
+        // DW: payload.items reduce (if ($.price?) $$ + $.price else $$)
+        String result = converter.convertExpression("payload.items reduce (if ($.price?) $$ + $.price else $$)");
+        assertTrue(result.contains("if std.objectHas(item, \"price\") then acc + item.price else acc"), "got: " + result);
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @Test
+    void testReduceShorthandDefaultAndFunctionCall() {
+        // DW: payload.items reduce ($$ + ($.qty default 0) * sizeOf($.tags))
+        String result = converter.convertExpression("payload.items reduce ($$ + ($.qty default 0) * sizeOf($.tags))");
+        assertTrue(result.contains("acc + (cml.defaultVal(item.qty, 0)) * std.length(item.tags)"), "got: " + result);
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @Test
+    void testDoubleDollarInFilterIsTodo() {
+        // DW: payload.items filter $$ > 0 -- $$ is the index in filter, which is not supported
+        converter.convertExpression("payload.items filter ($$ > 0)");
+        assertEquals(1, converter.getTodoCount());
     }
 
     @Test

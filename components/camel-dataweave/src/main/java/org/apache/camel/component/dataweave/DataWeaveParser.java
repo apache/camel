@@ -615,14 +615,51 @@ public class DataWeaveParser {
     private DataWeaveAst parseDollarShorthand() {
         advance(); // $
         List<String> fields = new ArrayList<>();
-        while (check(TokenType.DOT)) {
+        while (check(TokenType.DOT) && isTokenAhead(1, TokenType.IDENTIFIER)) {
+            advance(); // .
+            fields.add(current().value());
             advance();
-            if (check(TokenType.IDENTIFIER)) {
-                fields.add(current().value());
+        }
+        DataWeaveAst expr = new DataWeaveAst.LambdaShorthand(fields);
+        // Selectors that belong to the shorthand itself ($.@id, $.*Item, $.a?, $[0], $.@id.x).
+        // They are parsed here so they bind to $ also where the shorthand is a lambda argument
+        // (payload map $.@id), which is not followed by the general postfix operators.
+        while (true) {
+            if (check(TokenType.DOT) && isTokenAhead(1, TokenType.AT)) {
+                advance(); // .
+                advance(); // @
+                String attr = current().value();
                 advance();
+                expr = new DataWeaveAst.AttributeAccess(expr, attr);
+            } else if (check(TokenType.DOT) && isTokenAhead(1, TokenType.STAR)) {
+                advance(); // .
+                advance(); // *
+                String field = current().value();
+                advance();
+                expr = new DataWeaveAst.MultiValueSelector(expr, field);
+            } else if (check(TokenType.DOT) && isTokenAhead(1, TokenType.IDENTIFIER)) {
+                // a field after another selector, such as $.@id.x
+                advance(); // .
+                String field = current().value();
+                advance();
+                expr = new DataWeaveAst.FieldAccess(expr, field);
+            } else if (check(TokenType.QUESTION)) {
+                advance(); // ?
+                expr = new DataWeaveAst.ExistenceCheck(expr);
+            } else if (check(TokenType.LBRACKET)) {
+                advance(); // [
+                DataWeaveAst index = parseExpression();
+                expect(TokenType.RBRACKET);
+                expr = new DataWeaveAst.IndexAccess(expr, index);
+            } else {
+                return expr;
             }
         }
-        return new DataWeaveAst.LambdaShorthand(fields);
+    }
+
+    private boolean isTokenAhead(int offset, TokenType type) {
+        Token token = peekAhead(offset);
+        return token != null && token.type() == type;
     }
 
     private DataWeaveAst parsePrimary() {
