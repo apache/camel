@@ -38,7 +38,6 @@ import org.apache.camel.component.dataweave.DataWeaveAst.TypeCoercion;
 import org.apache.camel.component.dataweave.DataWeaveAst.UnaryOp;
 import org.apache.camel.component.dataweave.DataWeaveAst.Unsupported;
 import org.apache.camel.component.dataweave.DataWeaveAst.VarDecl;
-import org.apache.camel.component.dataweave.DataWeaveLexer.Token;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,10 +49,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit tests for {@link DataWeaveParser}.
  *
- * The parser is recursive descent and best-effort (it never throws on malformed input). These tests assert the shape of
- * the produced {@link DataWeaveAst} for representative scripts, with emphasis on operator precedence, postfix
- * collection operations, header parsing, and graceful handling of unsupported constructs. The AST records are exercised
- * transitively here rather than in a separate test, since they carry no logic of their own.
+ * The parser is recursive descent and strict: it throws {@link DataWeaveConversionException} when an expected token is
+ * missing or an unexpected token is encountered. These tests assert the shape of the produced {@link DataWeaveAst} for
+ * representative scripts, with emphasis on operator precedence, postfix collection operations, header parsing, and
+ * correct error reporting for unsupported or malformed constructs. The AST records are exercised transitively here
+ * rather than in a separate test, since they carry no logic of their own.
  */
 class DataWeaveParserTest {
 
@@ -277,10 +277,10 @@ class DataWeaveParserTest {
     }
 
     @Test
-    void shouldNotThrowOnUnbalancedInput() {
-        List<Token> tokens = new DataWeaveLexer("(a + b").tokenize();
-        assertEquals(DataWeaveLexer.TokenType.EOF, tokens.get(tokens.size() - 1).type());
-        // expect() silently skips a missing RPAREN, so a best-effort AST is still produced
-        assertInstanceOf(Parens.class, parseExpr("(a + b"));
+    void shouldThrowOnUnbalancedInput() {
+        // expect() now throws DataWeaveConversionException on a missing RPAREN
+        org.junit.jupiter.api.Assertions.assertThrows(
+                DataWeaveConversionException.class,
+                () -> parseExpr("(a + b"));
     }
 }

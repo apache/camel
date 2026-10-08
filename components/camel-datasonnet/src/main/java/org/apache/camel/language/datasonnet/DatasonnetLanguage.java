@@ -131,11 +131,13 @@ public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
             result = converter.convertExpression(expression);
         }
         if (converter.getTodoCount() > 0) {
-            LOG.warn("DataWeave conversion has {} construct(s) that could not be auto-converted and were emitted as null",
-                    converter.getTodoCount());
-        } else {
-            LOG.debug("Converted DataWeave to DataSonnet: {} expression(s)", converter.getConvertedCount());
+            throw new IllegalArgumentException(
+                    "DataWeave expression contains " + converter.getTodoCount()
+                                               + " construct(s) that cannot be auto-converted to DataSonnet."
+                                               + " Rewrite those constructs in DataSonnet directly, or use a .ds script instead."
+                                               + " Converted expression was: " + result);
         }
+        LOG.debug("Converted DataWeave to DataSonnet: {} expression(s)", converter.getConvertedCount());
         return result;
     }
 

@@ -592,10 +592,11 @@ public class DataWeaveParser {
             return new DataWeaveAst.UnaryOp("-", operand);
         }
 
-        // Fallback: skip token
-        String val = current().value();
-        advance();
-        return new DataWeaveAst.Unsupported(val, "unexpected token");
+        // Unknown token — strict mode: report location and token
+        Token cur = current();
+        throw new DataWeaveConversionException(
+                "DataWeave parse error at " + cur.line() + ":" + cur.col()
+                                               + ": unexpected token " + cur.type() + " ('" + cur.value() + "')");
     }
 
     private DataWeaveAst parseIdentifierOrCall() {
@@ -745,7 +746,12 @@ public class DataWeaveParser {
     private void expect(TokenType type) {
         if (check(type)) {
             advance();
+        } else {
+            Token cur = current();
+            throw new DataWeaveConversionException(
+                    "DataWeave parse error at " + cur.line() + ":" + cur.col()
+                                                   + ": expected " + type + " but found " + cur.type()
+                                                   + " ('" + cur.value() + "')");
         }
-        // Silently skip if not found (best-effort parsing)
     }
 }
