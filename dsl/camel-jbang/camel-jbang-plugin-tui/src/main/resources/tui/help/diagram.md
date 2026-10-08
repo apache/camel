@@ -167,8 +167,10 @@ you an at-a-glance view of where you are in the route.
   the architecture, with a legend of the groups at the bottom
 - `u` — show or hide utility routes (as in the architecture)
 - `x` — show or hide the error handling: the routes reached only on
-  error, in a frame below the routes, with the error paths into them
-  and how each failure is handled (needs Camel 4.23+ in the integration);
+  error, in a frame below the routes, with where each one's failures
+  come from and how they are handled (select one to highlight the
+  routes that send to it; a route with error handling has a dim ⚡ on
+  its box; needs Camel 4.23+ in the integration);
   in the route view, the route's onException clauses and where its
   failures go, in a frame below its steps
 - `s` — open the integration summary (camel-summary.md)

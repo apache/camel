@@ -190,6 +190,9 @@ public class RouteDiagramWidget implements Widget {
         for (Marker m : markers) {
             writeMarker(buffer, area, m);
         }
+        if (errorMark) {
+            drawErrorMark(buffer, area);
+        }
     }
 
     /**
@@ -240,6 +243,25 @@ public class RouteDiagramWidget implements Widget {
     }
 
     private RouteErrorFrame errorFrame;
+    private boolean errorMark;
+
+    /** The route has error handling: a dim mark on its from box, whether the error handling is shown or not. */
+    public RouteDiagramWidget withErrorMark(boolean mark) {
+        this.errorMark = mark;
+        return this;
+    }
+
+    /** The mark on the top border of the from box, at its right end (the route has error handling). */
+    private void drawErrorMark(Buffer buffer, Rect area) {
+        for (LayoutNode ln : layoutRoute.nodes) {
+            if ("from".equals(ln.type)) {
+                int col = toCol(ln.x) + boxWidth - 3;
+                writeText(buffer, area, toRow(ln.y), col, "\u26a1",
+                        org.apache.camel.dsl.jbang.core.commands.tui.Theme.warning().dim());
+                return;
+            }
+        }
+    }
 
     /**
      * The error handling of the route, in a frame below its happy path (its onException blocks are laid out in it).

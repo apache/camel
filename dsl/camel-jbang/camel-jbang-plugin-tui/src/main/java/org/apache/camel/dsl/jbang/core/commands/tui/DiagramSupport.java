@@ -944,6 +944,15 @@ class DiagramSupport {
         this.showErrorPaths = show;
     }
 
+    /** The routes with error handling (that send somewhere when they handle a failure), for the mark on their box. */
+    Set<String> errorMarkRouteIds() {
+        Set<String> answer = new HashSet<>();
+        for (ErrorLayer.ErrorPath p : errorPaths) {
+            answer.add(p.fromRouteId());
+        }
+        return answer;
+    }
+
     /** The error paths of the topology last loaded, whether shown or not. */
     List<ErrorLayer.ErrorPath> getErrorPaths() {
         return errorPaths;
@@ -973,8 +982,8 @@ class DiagramSupport {
     }
 
     /**
-     * Places the routes reached only on error in a row below the happy path, leaving room above them for the frame
-     * title and one channel row per route an arrow comes into, and returns the layout with them and the error layer.
+     * Places the routes reached only on error in a row below the happy path, under the frame title, and returns the
+     * layout with them and the error layer.
      */
     static PlacedErrors placeErrorRoutes(
             TopologyLayoutResult happy, List<TopologyNodeInfo> errorNodes, List<ErrorLayer.ErrorPath> paths,
@@ -992,15 +1001,8 @@ class DiagramSupport {
         }
         int row = 20;
         int frameTopY = happy.nodes.isEmpty() ? 2 * row : bottom + 3 * row;
-        // one channel row for each route of the frame that a route above sends to
-        Set<String> fromAbove = new java.util.LinkedHashSet<>();
-        for (ErrorLayer.ErrorPath p : paths) {
-            if (errorRouteIds.contains(p.toRouteId()) && !errorRouteIds.contains(p.fromRouteId())) {
-                fromAbove.add(p.toRouteId());
-            }
-        }
-        int channelsY = frameTopY + 2 * row;
-        int boxesY = channelsY + (fromAbove.size() + 1) * row;
+        // the frame title, then the routes
+        int boxesY = frameTopY + 2 * row;
         List<TopologyLayoutNode> nodes = new ArrayList<>(happy.nodes);
         int x = minX;
         int step = nodeW + nodeW / 2;
@@ -1016,12 +1018,15 @@ class DiagramSupport {
         // room below the boxes for the lines that say where the failures come from
         int labelLines = 0;
         for (String id : errorRouteIds) {
-            labelLines = Math.max(labelLines, (int) paths.stream().filter(p -> id.equals(p.toRouteId())).count() + 1);
+            // one line per route that sends there
+            labelLines = Math.max(labelLines,
+                    (int) paths.stream().filter(p -> id.equals(p.toRouteId())).map(ErrorLayer.ErrorPath::fromRouteId)
+                            .distinct().count());
         }
         int totalHeight = Math.max(happy.totalHeight, boxesY + nodeH + (labelLines + 3) * row);
         int totalWidth = Math.max(happy.totalWidth, x);
         TopologyLayoutResult result = new TopologyLayoutResult(nodes, happy.edges, totalWidth, totalHeight);
-        return new PlacedErrors(result, new ErrorLayer(frameTopY, errorRouteIds, paths, channelsY));
+        return new PlacedErrors(result, new ErrorLayer(frameTopY, errorRouteIds, paths));
     }
 
     record PlacedErrors(TopologyLayoutResult layout, ErrorLayer layer) {
@@ -1143,6 +1148,28 @@ class DiagramSupport {
         nodes.removeIf(n -> n.nodeType != null && n.nodeType.startsWith("external") && !linked.contains(n.routeId));
     }
 
+    /**
+     * The routes to highlight: those of a capability in focus, or, when a route of the error frame is selected, the
+     * routes whose error handling sends to it.
+     */
+    private Set<String> highlightRouteIds() {
+        if (!focusRouteIds.isEmpty() || !layoutShowErrorPaths || errorLayer == null) {
+            return focusRouteIds;
+        }
+        String selected = getSelectedRouteId();
+        if (selected == null || !errorLayer.routeIds().contains(selected)) {
+            return focusRouteIds;
+        }
+        Set<String> answer = new HashSet<>();
+        answer.add(selected);
+        for (ErrorLayer.ErrorPath p : errorLayer.paths()) {
+            if (selected.equals(p.toRouteId())) {
+                answer.add(p.fromRouteId());
+            }
+        }
+        return answer;
+    }
+
     /** Highlights routes in the topology (the routes of a capability); null clears it. */
     void setFocus(Set<String> routeIds, String name) {
         this.focusRouteIds = routeIds != null ? routeIds : Set.of();
@@ -1215,11 +1242,12 @@ class DiagramSupport {
 
         var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget(
                 topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY, metrics, showDescription,
-                focusRouteIds, false)
+                highlightRouteIds(), false)
                 .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
                 .withNodeLines(nodeLines)
                 .withGroups(groupTags, groupColors)
-                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null);
+                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null)
+                .withErrorMarks(errorMarkRouteIds());
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -1236,11 +1264,12 @@ class DiagramSupport {
         // Re-create widget with clamped scroll
         var finalWidget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget(
                 topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY, metrics, showDescription,
-                focusRouteIds, false)
+                highlightRouteIds(), false)
                 .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
                 .withNodeLines(nodeLines)
                 .withGroups(groupTags, groupColors)
-                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null);
+                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null)
+                .withErrorMarks(errorMarkRouteIds());
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))
@@ -1715,7 +1744,8 @@ class DiagramSupport {
         var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
                 routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics, linkable,
                 showDescription, routeDescs)
-                .withErrorFrame(layoutShowErrorPaths ? routeErrorFrames.get(currentRouteId) : null);
+                .withErrorFrame(layoutShowErrorPaths ? routeErrorFrames.get(currentRouteId) : null)
+                .withErrorMark(errorMarkRouteIds().contains(currentRouteId));
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -1732,7 +1762,8 @@ class DiagramSupport {
         var finalWidget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
                 routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics, linkable,
                 showDescription, routeDescs)
-                .withErrorFrame(layoutShowErrorPaths ? routeErrorFrames.get(currentRouteId) : null);
+                .withErrorFrame(layoutShowErrorPaths ? routeErrorFrames.get(currentRouteId) : null)
+                .withErrorMark(errorMarkRouteIds().contains(currentRouteId));
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))
@@ -2166,7 +2197,8 @@ class DiagramSupport {
                 .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
                 .withNodeLines(nodeLines)
                 .withGroups(groupTags, groupColors)
-                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null);
+                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null)
+                .withErrorMarks(errorMarkRouteIds());
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -2186,7 +2218,8 @@ class DiagramSupport {
                 .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
                 .withNodeLines(nodeLines)
                 .withGroups(groupTags, groupColors)
-                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null);
+                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null)
+                .withErrorMarks(errorMarkRouteIds());
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))

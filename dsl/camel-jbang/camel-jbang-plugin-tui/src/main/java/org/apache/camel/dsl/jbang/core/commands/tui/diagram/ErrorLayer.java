@@ -26,9 +26,8 @@ import java.util.Set;
  * @param frameTopY where the frame starts, in layout units (below the lowest route of the happy path)
  * @param routeIds  the routes in the frame: reached only on error
  * @param paths     the error paths, into the routes of the frame and between routes of the happy path
- * @param channelsY the layout y of the first channel row, one row per route of the frame that a route above sends to
  */
-public record ErrorLayer(int frameTopY, Set<String> routeIds, List<ErrorPath> paths, int channelsY) {
+public record ErrorLayer(int frameTopY, Set<String> routeIds, List<ErrorPath> paths) {
 
     /**
      * An error path: the route sends to the target only when it handles a failure.

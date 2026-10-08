@@ -90,6 +90,24 @@ class TopologyErrorLayerTest {
     }
 
     @Test
+    void aRouteWithErrorHandlingHasAMarkWhetherShownOrNot() {
+        TopologyLayoutEngine engine = new TopologyLayoutEngine();
+        TopologyLayoutResult happy = engine.layout(
+                new ArrayList<>(List.of(node("checkout", "file:orders"), node("payment-provider", "direct:charge"))),
+                new ArrayList<>(List.of(charge)));
+        TopologyDiagramWidget widget = new TopologyDiagramWidget(happy, engine.getNodeWidth(), -1, 0, 0, false, false)
+                .withErrorMarks(Set.of("checkout"));
+        Rect area = new Rect(0, 0, 100, widget.getTotalRows());
+        Buffer buffer = Buffer.empty(area);
+        widget.render(area, buffer);
+
+        String screen = TuiTestHelper.bufferToString(buffer);
+        assertThat(screen).contains("\u26a1").doesNotContain("Error handling");
+        // one mark: payment-provider has no error handling
+        assertThat(screen.chars().filter(c -> c == '\u26a1').count()).isEqualTo(1);
+    }
+
+    @Test
     void withoutTheLayerTheHappyPathOnly() {
         TopologyLayoutEngine engine = new TopologyLayoutEngine();
         TopologyLayoutResult happy = engine.layout(

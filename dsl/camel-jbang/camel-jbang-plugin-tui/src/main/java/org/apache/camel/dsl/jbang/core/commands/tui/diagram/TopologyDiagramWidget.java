@@ -60,9 +60,7 @@ public class TopologyDiagramWidget implements Widget {
     private Map<String, Color> groupColors = Map.of();
     private Style aiStyle = Style.EMPTY.italic();
     private ErrorLayer errorLayer;
-    // the gutter on the left the error paths go down, when the error layer is shown
-    private int colOffset;
-    private static final int GUTTER = 3;
+    private Set<String> errorMarks = Set.of();
 
     public record NodeBox(String routeId, int startRow, int endRow, int startCol, int endCol, int layer) {
     }
@@ -237,12 +235,18 @@ public class TopologyDiagramWidget implements Widget {
     }
 
     /**
-     * The error handling, drawn in a frame of its own below the routes: the routes reached only on error, the dashed
-     * error paths into them (down a gutter on the left, clear of the routes), and where each one's failures come from.
+     * The error handling, drawn in a frame of its own below the routes: the routes reached only on error, and under
+     * each one where its failures come from (no arrows: with a global error handler every route would have one). A
+     * route that sends to the frame has a mark on its box.
      */
     public TopologyDiagramWidget withErrorLayer(ErrorLayer layer) {
         this.errorLayer = layer;
-        this.colOffset = layer != null ? GUTTER : 0;
+        return this;
+    }
+
+    /** The routes with error handling: a dim mark on their box, whether the error handling is shown or not. */
+    public TopologyDiagramWidget withErrorMarks(Set<String> routeIds) {
+        this.errorMarks = routeIds != null ? routeIds : Set.of();
         return this;
     }
 
@@ -256,7 +260,6 @@ public class TopologyDiagramWidget implements Widget {
 
         if (errorLayer != null) {
             drawErrorFrame(buffer, area);
-            drawErrorPaths(buffer, area);
         }
 
         for (TopologyLayoutEdge edge : layout.edges) {
@@ -277,6 +280,17 @@ public class TopologyDiagramWidget implements Widget {
 
         if (errorLayer != null) {
             drawErrorLabels(buffer, area);
+        }
+        drawErrorMarks(buffer, area);
+    }
+
+    /** A mark on the border of each route with error handling (shown in the frame, or hidden until x). */
+    private void drawErrorMarks(Buffer buffer, Rect area) {
+        for (TopologyLayoutNode node : layout.nodes) {
+            if (node.routeId != null && errorMarks.contains(node.routeId) && !inFrame(node)) {
+                int col = toCol(node.x) + boxWidth - 3;
+                writeText(buffer, area, toRow(node.y), col, "\u26a1", errorStyle().dim());
+            }
         }
     }
 
@@ -316,54 +330,6 @@ public class TopologyDiagramWidget implements Widget {
         setChar(buffer, area, bottom, 0, '\u2570', s);
         setChar(buffer, area, bottom, right, '\u256f', s);
         writeText(buffer, area, top, 2, " Error handling ", errorStyle().bold());
-    }
-
-    /**
-     * The error paths from the routes above into the routes of the frame: out of the left side of the route, down the
-     * gutter, along the channel row of the target, and down into it. A route's own failures coming back to it are not
-     * drawn as a loop; its label says so.
-     */
-    private void drawErrorPaths(Buffer buffer, Rect area) {
-        Style s = errorStyle();
-        int gutter = 1;
-        List<String> targets = new ArrayList<>();
-        for (ErrorLayer.ErrorPath p : errorLayer.paths()) {
-            if (errorLayer.routeIds().contains(p.toRouteId()) && !errorLayer.routeIds().contains(p.fromRouteId())
-                    && !targets.contains(p.toRouteId())) {
-                targets.add(p.toRouteId());
-            }
-        }
-        java.util.Set<String> drawn = new java.util.HashSet<>();
-        for (ErrorLayer.ErrorPath p : errorLayer.paths()) {
-            int t = targets.indexOf(p.toRouteId());
-            TopologyLayoutNode from = nodeOf(p.fromRouteId());
-            TopologyLayoutNode to = nodeOf(p.toRouteId());
-            if (t < 0 || from == null || to == null || inFrame(from)
-                    || !drawn.add(p.fromRouteId() + ">" + p.toRouteId())) {
-                continue;
-            }
-            int srcRow = toRow(from.y) + 1;
-            int srcCol = toCol(from.x) - 1;
-            int channelRow = toRow(errorLayer.channelsY()) + t;
-            int toCx = toCol(to.x + to.width / 2);
-            int toTop = toRow(to.y);
-            for (int c = gutter + 1; c <= srcCol; c++) {
-                plotLine(buffer, area, srcRow, c, DASH_H, s);
-            }
-            setChar(buffer, area, srcRow, gutter, TL, s);
-            for (int r = srcRow + 1; r < channelRow; r++) {
-                plotLine(buffer, area, r, gutter, DASH_V, s);
-            }
-            setChar(buffer, area, channelRow, gutter, BL, s);
-            for (int c = gutter + 1; c < toCx; c++) {
-                plotLine(buffer, area, channelRow, c, DASH_H, s);
-            }
-            setChar(buffer, area, channelRow, toCx, TR, s);
-            for (int r = channelRow + 1; r < toTop - 1; r++) {
-                plotLine(buffer, area, r, toCx, DASH_V, s);
-            }
-            setChar(buffer, area, toTop - 1, toCx, ARROW, s);
-        }
     }
 
     /**
@@ -662,7 +628,7 @@ public class TopologyDiagramWidget implements Widget {
         if (nodeWidth == 0) {
             return 0;
         }
-        return pixelX * boxWidth / nodeWidth + colOffset;
+        return pixelX * boxWidth / nodeWidth;
     }
 
     private int toRow(int pixelY) {
