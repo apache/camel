@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hibernate;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import org.apache.camel.impl.engine.DefaultUnitOfWork;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.h2.jdbcx.JdbcDataSource;
 import org.hibernate.Filter;
+import org.hibernate.KeyType;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionBuilder;
@@ -143,8 +145,8 @@ public class HibernateBootstrapTest extends CamelTestSupport {
         }
 
         assertNotNull(exchange.getMessage().getBody());
-        assertTrue(exchange.getMessage().getBody() instanceof java.util.List);
-        assertTrue(((java.util.List<?>) exchange.getMessage().getBody()).isEmpty());
+        assertTrue(exchange.getMessage().getBody() instanceof List);
+        assertTrue(((List<?>) exchange.getMessage().getBody()).isEmpty());
 
         endpoint.stop();
         comp.stop();
@@ -228,7 +230,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
         }
 
         assertNotNull(exchange.getMessage().getBody());
-        assertTrue(exchange.getMessage().getBody() instanceof java.util.List);
+        assertTrue(exchange.getMessage().getBody() instanceof List);
 
         endpoint.stop();
         comp.stop();
@@ -263,6 +265,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
         Exchange exchange = context.getEndpoint("direct:test").createExchange();
 
         try (HibernateProducer producer = new HibernateProducer(endpoint)) {
+            producer.doStart();
             producer.process(exchange);
         }
 
@@ -338,6 +341,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
         exchange.getMessage().setHeader("lookupName", "test");
 
         try (HibernateProducer producer = new HibernateProducer(endpoint)) {
+            producer.doStart();
             producer.process(exchange);
         }
 
@@ -349,6 +353,46 @@ public class HibernateBootstrapTest extends CamelTestSupport {
 
         endpoint.stop();
         comp.stop();
+    }
+
+    @Test
+    public void testNaturalIdHeaderParametersAreNotSimpleEvaluated() throws Exception {
+        SessionFactory sessionFactory = Mockito.mock(SessionFactory.class);
+        Session session = Mockito.mock(Session.class);
+        Transaction transaction = Mockito.mock(Transaction.class);
+
+        Mockito.when(sessionFactory.openSession()).thenReturn(session);
+        Mockito.when(session.beginTransaction()).thenReturn(transaction);
+        Mockito.when(session.find(
+                Mockito.eq(HibernateTestEntity.class),
+                Mockito.eq(Map.of("name", "${header.lookupName}")),
+                Mockito.eq(KeyType.NATURAL))).thenReturn(null);
+
+        stubSessionFactoryJta(sessionFactory, false);
+
+        HibernateEndpoint endpoint = new HibernateEndpoint();
+        endpoint.setCamelContext(context);
+        endpoint.setSessionFactory(sessionFactory);
+        endpoint.setEntityType(HibernateTestEntity.class);
+        endpoint.setNaturalIdParameters(Map.of("name", "configured"));
+
+        endpoint.start();
+
+        Exchange exchange = endpoint.createExchange();
+        exchange.getMessage().setHeader(
+                HibernateConstants.HIBERNATE_PARAMETERS,
+                Map.of("name", "${header.lookupName}"));
+
+        try (HibernateProducer producer = new HibernateProducer(endpoint)) {
+            producer.process(exchange);
+        } finally {
+            endpoint.stop();
+        }
+
+        Mockito.verify(session).find(
+                Mockito.eq(HibernateTestEntity.class),
+                Mockito.eq(Map.of("name", "${header.lookupName}")),
+                Mockito.eq(KeyType.NATURAL));
     }
 
     @Test
@@ -390,7 +434,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
             producer.process(exchange);
         }
 
-        java.util.List<?> results = exchange.getMessage().getBody(java.util.List.class);
+        List<?> results = exchange.getMessage().getBody(List.class);
 
         assertEquals(1, results.size());
         HibernateTestEntity result = (HibernateTestEntity) results.get(0);
@@ -432,7 +476,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
         Mockito.when(session.beginTransaction()).thenReturn(transaction);
         Mockito.when(session.createSelectionQuery(
                 "from HibernateTestEntity", HibernateTestEntity.class)).thenReturn(query);
-        Mockito.when(query.getResultList()).thenReturn(java.util.List.of());
+        Mockito.when(query.getResultList()).thenReturn(List.of());
 
         stubSessionFactoryJta(sessionFactory, false);
 
