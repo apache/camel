@@ -19,7 +19,9 @@ package org.apache.camel.language.js;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.support.ExpressionSupport;
+import org.apache.camel.support.LanguageHelper;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 
@@ -55,16 +57,28 @@ public class JavaScriptExpression extends ExpressionSupport {
         try (Context cx = lang.newContext()) {
             Value b = cx.getBindings("js");
 
-            b.putMember("exchange", exchange);
-            b.putMember("context", exchange.getContext());
-            b.putMember("exchangeId", exchange.getExchangeId());
-            b.putMember("message", exchange.getMessage());
-            b.putMember("headers", exchange.getMessage().getHeaders());
-            b.putMember("properties", exchange.getAllProperties());
+            Message message = exchange.getMessage();
+            Map<String, Object> headers = message.getHeaders();
+            Map<String, Object> properties = exchange.getAllProperties();
             Map<String, Object> variables = exchange.getVariables();
+            // the names ExchangeHelper.populateVariableMap gives Groovy, except in (a reserved word) and the deprecated
+            // out and response
+            b.putMember("exchange", exchange);
+            b.putMember("camelContext", exchange.getContext());
+            b.putMember("exchangeId", exchange.getExchangeId());
+            b.putMember("message", message);
+            b.putMember("request", message);
+            b.putMember("body", message.getBody());
+            b.putMember("header", headers);
+            b.putMember("headers", headers);
+            b.putMember("exchangeProperty", properties);
+            b.putMember("exchangeProperties", properties);
             b.putMember("variable", variables);
             b.putMember("variables", variables);
-            b.putMember("body", exchange.getMessage().getBody());
+            b.putMember("exception", LanguageHelper.exception(exchange));
+            // deprecated names of camelContext and exchangeProperties
+            b.putMember("context", exchange.getContext());
+            b.putMember("properties", properties);
 
             Value o = cx.eval(lang.source(expressionString));
             Object answer = JavaScriptLanguage.materialize(o);

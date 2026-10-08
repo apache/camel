@@ -32,12 +32,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.TypedLanguageSupport;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
@@ -50,10 +52,12 @@ import org.graalvm.polyglot.Value;
  * Camel expression language for Python 3 via <a href="https://www.graalvm.org/python/">GraalPy</a>.
  *
  * <p>
- * Default scripts see only data bindings: {@code body}, {@code headers}, {@code properties}, {@code variables}, and
- * {@code exchangeId}. {@code exchange}, {@code message}, and {@code context} are intentionally absent so they resolve
- * as Python {@code NameError} rather than opaque objects with no usable API. Binding them by default would also become
- * a privilege escalation if host access were later widened.
+ * Default scripts see only data bindings: {@code body}, {@code header}/{@code headers},
+ * {@code exchangeProperty}/{@code exchangeProperties}, {@code variable}/{@code variables}, {@code exchangeId} and the
+ * deprecated {@code properties}. The host objects ({@code exchange}, {@code camelContext}, {@code message},
+ * {@code request}, {@code exception} and the deprecated {@code context}) are intentionally absent so they resolve as
+ * Python {@code NameError} rather than opaque objects with no usable API. Binding them by default would also become a
+ * privilege escalation if host access were later widened.
  * </p>
  *
  * <p>
@@ -72,8 +76,9 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
 
     private final HostAccess hostAccess;
     /**
-     * When true, also bind {@code exchange}, {@code message}, and {@code context}. Only {@link #createWithHostAccess()}
-     * sets this; default mode keeps those names undefined.
+     * When true, also bind the host objects {@code exchange}, {@code camelContext}, {@code message}, {@code request},
+     * {@code exception} and the deprecated {@code context}. Only {@link #createWithHostAccess()} sets this; default
+     * mode keeps those names undefined.
      */
     private final boolean bindCamelHostObjects;
     private final Map<String, Source> sourceCache = LRUCacheFactory.newLRUSoftCache(16, 1000, true);
@@ -95,8 +100,8 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
 
     /**
      * Creates a separate language instance for trusted scripts. Uses {@link HostAccess#ALL} so Python may call public
-     * methods and fields on bound host objects, and additionally exposes {@code exchange}, {@code message}, and
-     * {@code context}.
+     * methods and fields on bound host objects, and additionally exposes {@code exchange}, {@code camelContext},
+     * {@code message}, {@code request}, {@code exception} and the deprecated {@code context}.
      * <p>
      * This is an explicit opt-in: {@code HostAccess.ALL} is not a sandbox. It does not enable {@code allowAllAccess},
      * Java class lookup, host IO, or process creation. Use only when you trust the scripts.
@@ -166,16 +171,29 @@ public class Python3Language extends TypedLanguageSupport implements ScriptingLa
     Object evaluateExpression(String script, Exchange exchange) {
         try (Context cx = Python3Helper.newContext(engine(), hostAccess)) {
             Value b = cx.getBindings("python");
-            // Default: data only. Do not bind exchange/message/context — they are undefined (NameError)
-            // unless createWithHostAccess() opted into trusted host-object bindings.
+            Message message = exchange.getMessage();
+            Map<String, Object> headers = message.getHeaders();
+            Map<String, Object> properties = exchange.getAllProperties();
+            Map<String, Object> variables = exchange.getVariables();
+            // Default: data only, with the data names ExchangeHelper.populateVariableMap gives Groovy. The host objects
+            // are undefined (NameError) unless createWithHostAccess() opted into trusted host-object bindings.
             b.putMember("exchangeId", exchange.getExchangeId());
-            b.putMember("headers", exchange.getMessage().getHeaders());
-            b.putMember("properties", exchange.getAllProperties());
-            b.putMember("variables", exchange.getVariables());
-            b.putMember("body", exchange.getMessage().getBody());
+            b.putMember("body", message.getBody());
+            b.putMember("header", headers);
+            b.putMember("headers", headers);
+            b.putMember("exchangeProperty", properties);
+            b.putMember("exchangeProperties", properties);
+            b.putMember("variable", variables);
+            b.putMember("variables", variables);
+            // deprecated name of exchangeProperties
+            b.putMember("properties", properties);
             if (bindCamelHostObjects) {
                 b.putMember("exchange", exchange);
-                b.putMember("message", exchange.getMessage());
+                b.putMember("camelContext", exchange.getContext());
+                b.putMember("message", message);
+                b.putMember("request", message);
+                b.putMember("exception", LanguageHelper.exception(exchange));
+                // deprecated name of camelContext
                 b.putMember("context", exchange.getContext());
             }
             Value value = cx.eval(source(script));

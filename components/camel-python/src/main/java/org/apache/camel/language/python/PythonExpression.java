@@ -20,7 +20,9 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.Message;
 import org.apache.camel.support.ExpressionSupport;
+import org.apache.camel.support.LanguageHelper;
 import org.python.core.PyCode;
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
@@ -59,16 +61,28 @@ public class PythonExpression extends ExpressionSupport {
 
     private <T> T doEvaluate(Exchange exchange, Class<T> type) {
         try {
-            compiler.set("exchange", exchange);
-            compiler.set("context", exchange.getContext());
-            compiler.set("exchangeId", exchange.getExchangeId());
-            compiler.set("message", exchange.getMessage());
-            compiler.set("headers", exchange.getMessage().getHeaders());
-            compiler.set("properties", exchange.getAllProperties());
+            Message message = exchange.getMessage();
+            Map<String, Object> headers = message.getHeaders();
+            Map<String, Object> properties = exchange.getAllProperties();
             Map<String, Object> variables = exchange.getVariables();
+            // the names ExchangeHelper.populateVariableMap gives Groovy, except in (a reserved word) and the deprecated
+            // out and response
+            compiler.set("exchange", exchange);
+            compiler.set("camelContext", exchange.getContext());
+            compiler.set("exchangeId", exchange.getExchangeId());
+            compiler.set("message", message);
+            compiler.set("request", message);
+            compiler.set("body", message.getBody());
+            compiler.set("header", headers);
+            compiler.set("headers", headers);
+            compiler.set("exchangeProperty", properties);
+            compiler.set("exchangeProperties", properties);
             compiler.set("variable", variables);
             compiler.set("variables", variables);
-            compiler.set("body", exchange.getMessage().getBody());
+            compiler.set("exception", LanguageHelper.exception(exchange));
+            // deprecated names of camelContext and exchangeProperties
+            compiler.set("context", exchange.getContext());
+            compiler.set("properties", properties);
 
             PyObject out = compiler.eval(compiledExpression);
             if (out != null) {
