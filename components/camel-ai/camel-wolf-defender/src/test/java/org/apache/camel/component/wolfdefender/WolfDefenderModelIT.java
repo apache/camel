@@ -29,6 +29,7 @@ import org.apache.camel.semantic.SemanticEvaluations;
 import org.apache.camel.semantic.SemanticResult;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -37,6 +38,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 
 /** Explicitly opt in with a local, pinned model; this test never downloads artifacts. */
+@EnabledIf(value = "org.apache.camel.component.wolfdefender.WolfDefenderInferenceTest#supportedRuntime",
+           disabledReason = "ONNX Runtime and DJL Tokenizers have no native libraries for this platform")
 @EnabledIfSystemProperty(named = "wolfDefender.modelDirectory", matches = ".+")
 class WolfDefenderModelIT {
     @Test
