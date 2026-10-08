@@ -16,10 +16,6 @@
  */
 package org.apache.camel.language.js;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Proxy;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -54,18 +50,20 @@ class JavaScriptVariablesTest extends LanguageTestSupport {
     }
 
     @Test
-    void variableStoreIsOnlyCreatedForScriptsThatNameTheVariables() {
+    void variablesAreBoundForIndirectLookup() {
+        exchange.setVariable("foo", "bar");
+
+        assertExpression("globalThis['vari' + 'ables'].foo", "bar");
+        assertExpression("globalThis['vari' + 'able'].foo", "bar");
+    }
+
+    @Test
+    void variablesAreBoundWhenNoVariableIsSet() {
         Language language = context.resolveLanguage("js");
-        AtomicInteger calls = new AtomicInteger();
-        Exchange exchange = countingGetVariables(new DefaultExchange(context), calls);
-        exchange.getMessage().setBody("Hello");
+        Exchange exchange = new DefaultExchange(context);
 
-        assertThat(language.createExpression("body + ' ' + headers.size()").evaluate(exchange, String.class))
-                .isEqualTo("Hello 0");
-        assertThat(calls).as("a script without variables should not create the variable store").hasValue(0);
-
-        assertThat(language.createExpression("variables.size()").evaluate(exchange, Integer.class)).isZero();
-        assertThat(calls).hasValue(1);
+        assertThat(language.createExpression("globalThis['vari' + 'ables'].size()").evaluate(exchange, Integer.class))
+                .isZero();
     }
 
     @Test
@@ -93,24 +91,6 @@ class JavaScriptVariablesTest extends LanguageTestSupport {
                         .otherwise().to("mock:other");
             }
         };
-    }
-
-    /**
-     * The exchange, counting the calls of {@link Exchange#getVariables()}, which creates the variable store of the
-     * exchange.
-     */
-    private static Exchange countingGetVariables(Exchange exchange, AtomicInteger calls) {
-        return (Exchange) Proxy.newProxyInstance(Exchange.class.getClassLoader(), new Class<?>[] { Exchange.class },
-                (proxy, method, args) -> {
-                    if ("getVariables".equals(method.getName())) {
-                        calls.incrementAndGet();
-                    }
-                    try {
-                        return method.invoke(exchange, args);
-                    } catch (InvocationTargetException e) {
-                        throw e.getCause();
-                    }
-                });
     }
 
     @Override

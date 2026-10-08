@@ -16,10 +16,6 @@
  */
 package org.apache.camel.language.python3;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Proxy;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -93,18 +89,21 @@ class Python3VariablesTest extends CamelTestSupport {
     }
 
     @Test
-    void variableStoreIsOnlyCreatedForScriptsThatNameTheVariables() {
+    void variablesAreBoundForIndirectLookup() {
         Language language = context.resolveLanguage("python3");
-        AtomicInteger calls = new AtomicInteger();
-        Exchange exchange = countingGetVariables(new DefaultExchange(context), calls);
-        exchange.getMessage().setBody("Hello");
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setVariable("foo", "bar");
 
-        assertThat(language.createExpression("body + ' ' + str('foo' in headers)").evaluate(exchange, String.class))
-                .isEqualTo("Hello False");
-        assertThat(calls).as("a script without variables should not create the variable store").hasValue(0);
+        assertThat(language.createExpression("globals()['vari' + 'ables']['foo']").evaluate(exchange, String.class))
+                .isEqualTo("bar");
+    }
 
-        assertThat(language.createPredicate("'foo' in variables").matches(exchange)).isFalse();
-        assertThat(calls).hasValue(1);
+    @Test
+    void variablesAreBoundWhenNoVariableIsSet() {
+        Language language = context.resolveLanguage("python3");
+        Exchange exchange = new DefaultExchange(context);
+
+        assertThat(language.createPredicate("'foo' in globals()['vari' + 'ables']").matches(exchange)).isFalse();
     }
 
     @Test
@@ -116,24 +115,6 @@ class Python3VariablesTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:start", "World", "greeting", "Hello");
 
         MockEndpoint.assertIsSatisfied(context);
-    }
-
-    /**
-     * The exchange, counting the calls of {@link Exchange#getVariables()}, which creates the variable store of the
-     * exchange.
-     */
-    private static Exchange countingGetVariables(Exchange exchange, AtomicInteger calls) {
-        return (Exchange) Proxy.newProxyInstance(Exchange.class.getClassLoader(), new Class<?>[] { Exchange.class },
-                (proxy, method, args) -> {
-                    if ("getVariables".equals(method.getName())) {
-                        calls.incrementAndGet();
-                    }
-                    try {
-                        return method.invoke(exchange, args);
-                    } catch (InvocationTargetException e) {
-                        throw e.getCause();
-                    }
-                });
     }
 
     @Override

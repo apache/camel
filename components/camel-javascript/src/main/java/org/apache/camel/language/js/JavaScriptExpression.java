@@ -27,11 +27,6 @@ public class JavaScriptExpression extends ExpressionSupport {
 
     private final String expressionString;
     private final Class<?> type;
-    // the variables are bound only when the script names them, as exchange.getVariables() creates the variable store
-    // of the exchange (so a script that looks them up by a computed name does not see them)
-    // the check is a plain substring match on "variable" (both "variable" and "variables" are bound): a script that
-    // only mentions the word, for example in a comment, binds them too, which is harmless
-    private final boolean bindVariables;
     private volatile JavaScriptLanguage language;
 
     public JavaScriptExpression(String expressionString, Class<?> type) {
@@ -41,7 +36,6 @@ public class JavaScriptExpression extends ExpressionSupport {
     JavaScriptExpression(String expressionString, Class<?> type, JavaScriptLanguage language) {
         this.expressionString = expressionString;
         this.type = type;
-        this.bindVariables = expressionString != null && expressionString.contains("variable");
         this.language = language;
     }
 
@@ -67,11 +61,9 @@ public class JavaScriptExpression extends ExpressionSupport {
             b.putMember("message", exchange.getMessage());
             b.putMember("headers", exchange.getMessage().getHeaders());
             b.putMember("properties", exchange.getAllProperties());
-            if (bindVariables) {
-                Map<String, Object> variables = exchange.getVariables();
-                b.putMember("variable", variables);
-                b.putMember("variables", variables);
-            }
+            Map<String, Object> variables = exchange.getVariables();
+            b.putMember("variable", variables);
+            b.putMember("variables", variables);
             b.putMember("body", exchange.getMessage().getBody());
 
             Value o = cx.eval(lang.source(expressionString));

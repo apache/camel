@@ -16,10 +16,6 @@
  */
 package org.apache.camel.language.python;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Proxy;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -51,17 +47,19 @@ class PythonVariablesTest extends LanguageTestSupport {
     }
 
     @Test
-    void variableStoreIsOnlyCreatedForScriptsThatNameTheVariables() {
+    void variablesAreBoundForIndirectLookup() {
+        exchange.setVariable("foo", "bar");
+
+        assertExpression("globals()['vari' + 'ables']['foo']", "bar");
+        assertExpression("globals()['vari' + 'able']['foo']", "bar");
+    }
+
+    @Test
+    void variablesAreBoundWhenNoVariableIsSet() {
         Language language = context.resolveLanguage("python");
-        AtomicInteger calls = new AtomicInteger();
-        Exchange exchange = countingGetVariables(new DefaultExchange(context), calls);
-        exchange.getMessage().setBody("Hello");
+        Exchange exchange = new DefaultExchange(context);
 
-        assertEquals("Hello 0", language.createExpression("body + ' ' + str(len(headers))").evaluate(exchange, String.class));
-        assertEquals(0, calls.get(), "a script without variables should not create the variable store");
-
-        assertEquals("0", language.createExpression("str(len(variables))").evaluate(exchange, String.class));
-        assertEquals(1, calls.get());
+        assertEquals("0", language.createExpression("str(len(globals()['vari' + 'ables']))").evaluate(exchange, String.class));
     }
 
     @Test
@@ -89,24 +87,6 @@ class PythonVariablesTest extends LanguageTestSupport {
                         .otherwise().to("mock:other");
             }
         };
-    }
-
-    /**
-     * The exchange, counting the calls of {@link Exchange#getVariables()}, which creates the variable store of the
-     * exchange.
-     */
-    private static Exchange countingGetVariables(Exchange exchange, AtomicInteger calls) {
-        return (Exchange) Proxy.newProxyInstance(Exchange.class.getClassLoader(), new Class<?>[] { Exchange.class },
-                (proxy, method, args) -> {
-                    if ("getVariables".equals(method.getName())) {
-                        calls.incrementAndGet();
-                    }
-                    try {
-                        return method.invoke(exchange, args);
-                    } catch (InvocationTargetException e) {
-                        throw e.getCause();
-                    }
-                });
     }
 
     @Override
