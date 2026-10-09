@@ -1,0 +1,191 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "semantic-evaluate",
+    "title": "Semantic Evaluation",
+    "description": "Evaluate sample input through a semantic definition or expert operation",
+    "deprecated": false,
+    "readOnly": false,
+    "javaType": "org.apache.camel.semantic.SemanticEvaluateConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-semantic",
+    "version": "4.23.0-SNAPSHOT"
+  },
+  "options": {
+    "body": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Body",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "object",
+      "javaType": "java.lang.Object",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Sample message body"
+    },
+    "evaluation": {
+      "index": 1,
+      "kind": "option",
+      "displayName": "Evaluation",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Name of the published evaluation to execute"
+    },
+    "expert": {
+      "index": 2,
+      "kind": "option",
+      "displayName": "Expert",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Expert reference for direct evaluation"
+    },
+    "headers": {
+      "index": 3,
+      "kind": "option",
+      "displayName": "Headers",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "object",
+      "javaType": "java.util.Map",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Sample message headers"
+    },
+    "input": {
+      "index": 4,
+      "kind": "option",
+      "displayName": "Input",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "object",
+      "javaType": "java.lang.Object",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Already-selected input for direct evaluation"
+    },
+    "operation": {
+      "index": 5,
+      "kind": "option",
+      "displayName": "Operation",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Expert operation for direct evaluation"
+    },
+    "parameters": {
+      "index": 6,
+      "kind": "option",
+      "displayName": "Parameters",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "object",
+      "javaType": "java.util.Map",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Expert operation parameters"
+    },
+    "timeout": {
+      "index": 7,
+      "kind": "option",
+      "displayName": "Timeout",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "integer",
+      "javaType": "java.lang.Long",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Maximum evaluation time in milliseconds (1 to 50000, default 50000)"
+    },
+    "variables": {
+      "index": 8,
+      "kind": "option",
+      "displayName": "Variables",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "object",
+      "javaType": "java.util.Map",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Sample exchange variables"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "evaluation": {
+        "type": "string",
+        "description": "Evaluation name"
+      },
+      "status": {
+        "type": "string",
+        "description": "Success or failed"
+      },
+      "value": {
+        "description": "Validated result value"
+      },
+      "probability": {
+        "type": "number",
+        "description": "Provider probability"
+      },
+      "probabilities": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "number"
+        },
+        "description": "Probabilities by label"
+      },
+      "confidence": {
+        "type": "number",
+        "description": "Provider confidence"
+      },
+      "metadata": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Provider result metadata"
+      },
+      "elapsedMillis": {
+        "type": "integer",
+        "description": "Elapsed time in milliseconds"
+      },
+      "error": {
+        "type": "string",
+        "description": "Evaluation error, if any"
+      }
+    },
+    "required": [
+      "elapsedMillis"
+    ]
+  }
+}
+

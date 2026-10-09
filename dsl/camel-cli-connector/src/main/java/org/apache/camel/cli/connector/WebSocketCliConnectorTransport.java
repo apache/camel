@@ -24,7 +24,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -293,6 +295,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
                     Connection c = connection;
                     if (c != null) {
                         connection = null;
+                        c.pending.forEach(future -> future.cancel(true));
                         c.close(NORMAL_CLOSURE, "stopping");
                     }
                 }).get(SEND_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -386,6 +389,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
             return;
         }
         connection = null;
+        c.pending.forEach(future -> future.cancel(true));
         c.channel.abort();
         // a connection that drops right away counts as a failure, so a tool that keeps closing us is not hammered
         if (System.currentTimeMillis() - c.openedAt < STABLE_CONNECTION) {
@@ -593,43 +597,64 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
 
     private void runAction(Connection c, String requestId, JsonObject action) {
         try {
-            actions.execute(() -> reply(c, result(requestId, action)));
+            actions.execute(() -> {
+                if (c != connection) {
+                    return;
+                }
+                CompletableFuture<JsonObject> result = result(requestId, action);
+                c.pending.add(result);
+                if (c != connection) {
+                    result.cancel(true);
+                }
+                result.whenComplete((frame, failure) -> {
+                    c.pending.remove(result);
+                    if (failure == null) {
+                        reply(c, frame);
+                    }
+                });
+            });
         } catch (RejectedExecutionException e) {
             reply(c, error(requestId, "Busy: too many pending actions"));
         }
     }
 
-    private JsonObject result(String requestId, JsonObject action) {
+    private CompletableFuture<JsonObject> result(String requestId, JsonObject action) {
         JsonObject[] output = new JsonObject[1];
         String[] error = new String[1];
-        try {
-            boolean known = dispatcher.dispatch(action, new CliActionOutput() {
-                @Override
-                public void write(JsonObject result) {
-                    output[0] = result;
-                }
+        CompletableFuture<Boolean> completion = dispatcher.dispatchAsync(action, new CliActionOutput() {
+            @Override
+            public void write(JsonObject result) {
+                output[0] = result;
+            }
 
-                @Override
-                public void error(String message) {
-                    error[0] = message;
-                }
-            });
-            if (!known) {
+            @Override
+            public void error(String message) {
+                error[0] = message;
+            }
+        });
+        CompletableFuture<JsonObject> answer = completion.handle((known, failure) -> {
+            if (failure != null) {
+                error[0] = failure.getMessage() != null ? failure.getMessage() : failure.getClass().getSimpleName();
+            } else if (!known) {
                 error[0] = "Unknown action: " + action.getString("action");
             }
-        } catch (Exception e) {
-            error[0] = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
-        }
-        if (error[0] == null && output[0] != null) {
-            // many actions report failures inside their result, as the file transport has no other way to do it
-            String status = output[0].getString("status");
-            if ("error".equals(status) || "failed".equals(status)) {
-                JsonObject exception = output[0].getMap("exception");
-                error[0] = exception != null && exception.getString("message") != null
-                        ? exception.getString("message") : "Action failed";
+            if (error[0] == null && output[0] != null) {
+                // many actions report failures inside their result, as the file transport has no other way to do it
+                String status = output[0].getString("status");
+                if ("error".equals(status) || "failed".equals(status)) {
+                    JsonObject exception = output[0].getMap("exception");
+                    error[0] = exception != null && exception.getString("message") != null
+                            ? exception.getString("message") : "Action failed";
+                }
             }
-        }
-        return result(requestId, error[0], output[0] != null ? output[0] : new JsonObject());
+            return result(requestId, error[0], output[0] != null ? output[0] : new JsonObject());
+        });
+        answer.whenComplete((value, failure) -> {
+            if (answer.isCancelled()) {
+                completion.cancel(true);
+            }
+        });
+        return answer;
     }
 
     private void stop(Connection c, String requestId) {
@@ -759,6 +784,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
 
         // set on the scheduler thread, before the connection is used
         private CliWebSocketClient.Channel channel;
+        private final Set<CompletableFuture<JsonObject>> pending = ConcurrentHashMap.newKeySet();
         private boolean lost;
         private long openedAt = System.currentTimeMillis();
         private volatile long lastSeen = openedAt;

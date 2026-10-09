@@ -51,6 +51,14 @@ public @interface SemanticOperation {
     /** Fixed allowed categories or labels; empty leaves the vocabulary to the expert. */
     String[] labels() default {};
 
+    /**
+     * Name of a List&lt;String&gt; parameter supplying ordered score level descriptions. When supplied with N levels,
+     * the score ranges from 0 to N-1 and may be fractional. List index i describes score i; per-level probabilities,
+     * when supported, use the decimal index string as their key ("0", "1", ...). Empty declares no such relationship.
+     * Only valid for SCORE operations. The expert validates evaluation-specific bounds and probability keys.
+     */
+    String scoreLevelsParameter() default "";
+
     /** Inclusive minimum for a score result. */
     double minimum() default Double.NEGATIVE_INFINITY;
 

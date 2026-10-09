@@ -1,0 +1,183 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "semantic-metadata",
+    "title": "Semantic Metadata",
+    "description": "Semantic experts and evaluation definitions",
+    "deprecated": false,
+    "readOnly": true,
+    "javaType": "org.apache.camel.semantic.SemanticMetadataConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-semantic",
+    "version": "4.23.0-SNAPSHOT"
+  },
+  "options": {
+    "expert": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Expert",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Expert registry name; omitted uses the language's default selection"
+    },
+    "overview": {
+      "index": 1,
+      "kind": "option",
+      "displayName": "Overview",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": false,
+      "description": "List registered experts and published evaluation definitions"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "operations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The expert-owned operation name"
+            },
+            "description": {
+              "type": "string",
+              "description": "The operation's purpose"
+            },
+            "resultType": {
+              "type": "string",
+              "description": "The shape of the returned value"
+            },
+            "contract": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Input, parameter and result contract"
+            }
+          }
+        },
+        "description": "Operations for completion"
+      },
+      "experts": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Registry reference or adapter class"
+            },
+            "name": {
+              "type": "string",
+              "description": "Contract name"
+            },
+            "description": {
+              "type": "string",
+              "description": "Expert description"
+            },
+            "provider": {
+              "type": "string",
+              "description": "Provider name"
+            },
+            "artifactId": {
+              "type": "string",
+              "description": "Provider artifact"
+            },
+            "operations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The expert-owned operation name"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "The operation's purpose"
+                  },
+                  "resultType": {
+                    "type": "string",
+                    "description": "The shape of the returned value"
+                  },
+                  "contract": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Input, parameter and result contract"
+                  }
+                }
+              },
+              "description": "Supported operations"
+            },
+            "error": {
+              "type": "string",
+              "description": "Contract resolution error, if any"
+            }
+          }
+        },
+        "description": "Known experts, when overview is requested"
+      },
+      "evaluations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Evaluation name"
+            },
+            "expert": {
+              "type": "string",
+              "description": "Resolved expert reference"
+            },
+            "operation": {
+              "type": "string",
+              "description": "Declared operation"
+            },
+            "state": {
+              "type": "string",
+              "description": "Effective state selector"
+            },
+            "parameters": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Declared parameters"
+            },
+            "resultType": {
+              "type": "string",
+              "description": "Declared result shape"
+            },
+            "error": {
+              "type": "string",
+              "description": "Expert or operation resolution error, if any"
+            }
+          }
+        },
+        "description": "Published definitions, when overview is requested"
+      },
+      "defaultExpert": {
+        "type": "string",
+        "description": "Resolved default expert"
+      },
+      "defaultError": {
+        "type": "string",
+        "description": "Default selection error, if any"
+      }
+    }
+  }
+}
+

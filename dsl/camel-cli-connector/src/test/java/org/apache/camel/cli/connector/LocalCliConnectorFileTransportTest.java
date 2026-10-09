@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.json.JsonArray;
@@ -106,6 +107,50 @@ class LocalCliConnectorFileTransportTest extends CamelTestSupport {
             connector.stop();
         }
         System.setProperty("user.home", oldHome);
+    }
+
+    @Test
+    void slowEvaluationDoesNotBlockActionsAndAbandonedRequestsAreCancelled() throws Exception {
+        WaitingSemanticConsole console = new WaitingSemanticConsole(1);
+        DevConsoleRegistry.get(context).register(console);
+        startConnector();
+        try {
+            writeAction(action("semantic-evaluate", "input", "slow"), "slow");
+            assertThat(console.entered.await(5, TimeUnit.SECONDS)).as("Response: %s", readJson(file(PID + "-output-slow.json")))
+                    .isTrue();
+            writeAction(action("route", "command", "stop", "id", "other"), "fast");
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(
+                    routeState(readJson(file(PID + "-status.json")), "other")).isEqualTo("Stopped"));
+            assertThat(console.calls).hasValue(1);
+            Files.delete(file(PID + "-action-slow.json").toPath());
+            assertThat(console.interrupted.await(5, TimeUnit.SECONDS)).isTrue();
+            console.release.countDown();
+            writeAction(action("route-dump", "filter", "hello", "format", "yaml"), "after");
+            assertThat(awaitJson(file(PID + "-output-after.json")).toJson()).contains("hello");
+            assertThat(file(PID + "-output-slow.json")).doesNotExist();
+        } finally {
+            console.release.countDown();
+        }
+    }
+
+    @Test
+    void concurrentEvaluationResultsStayWithTheirRequestsAndCapacityIsBounded() throws Exception {
+        WaitingSemanticConsole console = new WaitingSemanticConsole(2);
+        DevConsoleRegistry.get(context).register(console);
+        startConnector();
+        try {
+            writeAction(action("semantic-evaluate", "input", "first"), "a");
+            writeAction(action("semantic-evaluate", "input", "second"), "b");
+            assertThat(console.entered.await(5, TimeUnit.SECONDS)).isTrue();
+            writeAction(action("semantic-evaluate", "input", "third"), "c");
+            assertThat(awaitJson(file(PID + "-output-c.json")).getString("error")).contains("Busy");
+            console.release.countDown();
+            assertThat(awaitJson(file(PID + "-output-a.json"))).containsEntry("value", "first");
+            assertThat(awaitJson(file(PID + "-output-b.json"))).containsEntry("value", "second");
+            assertThat(console.calls).hasValue(2);
+        } finally {
+            console.release.countDown();
+        }
     }
 
     @Test

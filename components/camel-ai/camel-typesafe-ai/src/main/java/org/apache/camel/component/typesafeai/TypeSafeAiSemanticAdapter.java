@@ -86,7 +86,7 @@ import org.apache.camel.util.json.JsonObject;
                                            inputRequirements = "Text or structured application state",
                                            resultType = ResultType.SCORE,
                                            resultMeaning = "A score from zero to the number of supplied levels minus one",
-                                           minimum = 0, maximum = 9, probabilities = true,
+                                           minimum = 0, maximum = 9, scoreLevelsParameter = "criteria", probabilities = true,
                                            probabilityMeaning = "Probability of each supplied score level",
                                            confidence = true,
                                            confidenceMeaning = "Optional confidence reported by the provider",

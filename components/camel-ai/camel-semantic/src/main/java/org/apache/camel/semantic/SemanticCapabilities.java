@@ -157,6 +157,15 @@ public final class SemanticCapabilities {
                 }
             }
             parameters = Collections.unmodifiableMap(values);
+            if (!declaration.scoreLevelsParameter().isEmpty()) {
+                Parameter levels = parameters.get(declaration.scoreLevelsParameter());
+                if (declaration.resultType() != ResultType.SCORE || levels == null
+                        || levels.getType() != List.class || levels.getItemType() != String.class) {
+                    throw new IllegalArgumentException(
+                            "Score levels require a SCORE operation and a declared List<String> parameter: "
+                                                       + declaration.name());
+                }
+            }
         }
 
         public String getName() {
@@ -189,6 +198,11 @@ public final class SemanticCapabilities {
 
         public Set<String> getLabels() {
             return labels;
+        }
+
+        /** The parameter defining zero-based score levels, or empty when the expert declares no relationship. */
+        public String getScoreLevelsParameter() {
+            return declaration.scoreLevelsParameter();
         }
 
         public double getMinimum() {

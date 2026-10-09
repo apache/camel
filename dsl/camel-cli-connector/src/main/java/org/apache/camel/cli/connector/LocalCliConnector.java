@@ -39,8 +39,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -56,6 +60,7 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ModelRoutesBuilder;
+import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.model.HasExpressionType;
@@ -93,6 +98,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.concurrent.ThreadHelper;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -119,6 +125,7 @@ public class LocalCliConnector extends ServiceSupport
     private String platformVersion;
     private String mainClass;
     private volatile ExecutorService terminateExecutor;
+    private ExecutorService semanticExecutor;
     private ProducerTemplate producer;
     private ConsumerTemplate consumer;
     // where the running action writes its result (actions run on one thread at a time)
@@ -232,6 +239,42 @@ public class LocalCliConnector extends ServiceSupport
     }
 
     @Override
+    public CompletableFuture<Boolean> dispatchAsync(JsonObject root, CliActionOutput output) {
+        if (!"semantic-evaluate".equals(root.getString("action"))) {
+            return CliActionDispatcher.super.dispatchAsync(root, output);
+        }
+        CompletableFuture<Boolean> result = new CompletableFuture<>();
+        FutureTask<Void> task = new FutureTask<>(() -> {
+            try {
+                // Capture this request's output; never use the dispatcher's mutable actionOutput from a worker.
+                output.write(semanticResult(root));
+                result.complete(true);
+            } catch (Exception e) {
+                result.completeExceptionally(e);
+            }
+            return null;
+        });
+        result.orTimeout(55, TimeUnit.SECONDS).whenComplete((value, failure) -> {
+            if (failure != null) {
+                task.cancel(true);
+            }
+        });
+        try {
+            if (semanticExecutor == null) {
+                semanticExecutor = new ThreadPoolBuilder(camelContext).poolSize(2).maxPoolSize(2).maxQueueSize(0)
+                        .rejectedPolicy(ThreadPoolRejectedPolicy.Abort)
+                        .build("cli-semantic-evaluation", "CliSemanticEvaluation");
+            }
+            semanticExecutor.execute(task);
+        } catch (RejectedExecutionException busy) {
+            result.completeExceptionally(new IllegalStateException("Busy: semantic evaluations are already running"));
+        } catch (Exception e) {
+            result.completeExceptionally(e);
+        }
+        return result;
+    }
+
+    @Override
     public boolean dispatch(JsonObject root, CliActionOutput output) throws Exception {
         CliActionOutput prevOutput = this.actionOutput;
         try {
@@ -316,6 +359,8 @@ public class LocalCliConnector extends ServiceSupport
                 doActionJfrTask(root);
             } else if ("cli-debug".equals(action)) {
                 doActionCliDebug(root);
+            } else if ("semantic-metadata".equals(action) || "semantic-evaluate".equals(action)) {
+                doActionSemanticTask(root);
             } else if ("spring-boot-configuration".equals(action)) {
                 doActionSpringBootConfigurationTask(root);
             } else if ("type-converters".equals(action)) {
@@ -838,6 +883,27 @@ public class LocalCliConnector extends ServiceSupport
         } else {
             writeOutput(new JsonObject());
         }
+    }
+
+    private void doActionSemanticTask(JsonObject root) throws IOException {
+        writeOutput(semanticResult(root));
+    }
+
+    private JsonObject semanticResult(JsonObject root) {
+        String action = root.getString("action");
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById(action);
+        Map<String, Object> options = new HashMap<>();
+        List<String> keys = "semantic-metadata".equals(action)
+                ? List.of("expert", "overview")
+                : List.of("evaluation", "body", "headers", "variables", "expert", "operation", "input", "parameters",
+                        "timeout");
+        for (String key : keys) {
+            if (root.containsKey(key)) {
+                options.put(key, root.get(key));
+            }
+        }
+        return dc == null ? new JsonObject() : (JsonObject) dc.call(DevConsole.MediaType.JSON, options);
     }
 
     private void doActionSpringBootConfigurationTask(JsonObject root) throws IOException {
@@ -1592,6 +1658,8 @@ public class LocalCliConnector extends ServiceSupport
                     root.put("sqlTrace", json);
                 }
             }
+            // Advertise the optional Semantic screen before its first metadata request.
+            dcr.resolveById("semantic-metadata");
             JsonArray consoleIds = new JsonArray();
             consoleIds.addAll(dcr.getConsoleIDs());
             root.put("devConsoles", consoleIds);
@@ -1841,6 +1909,10 @@ public class LocalCliConnector extends ServiceSupport
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(transport);
+        if (semanticExecutor != null) {
+            semanticExecutor.shutdownNow();
+            semanticExecutor = null;
+        }
         ServiceHelper.stopService(producer, consumer);
     }
 

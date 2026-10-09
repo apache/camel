@@ -129,6 +129,9 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
         assertThat(capabilities.getArtifactId()).isEqualTo("camel-typesafe-ai");
         assertThat(capabilities.operation("choice").getParameters().get("criteria").getMaxSize()).isEqualTo(255);
         assertThat(capabilities.operation("score").getParameters().get("criteria").getMaxSize()).isEqualTo(10);
+        assertThat(capabilities.operation("score").getScoreLevelsParameter()).isEqualTo("criteria");
+        assertThat(capabilities.operation("choice").getScoreLevelsParameter()).isEmpty();
+        assertThat(capabilities.operation("boolean").getScoreLevelsParameter()).isEmpty();
         assertThat(capabilities.getOperations()).containsOnlyKeys("boolean", "choice", "score");
         assertThat(capabilities.operation("boolean").isProbability()).isTrue();
         assertThat(capabilities.operation("boolean").isConfidence()).isFalse();

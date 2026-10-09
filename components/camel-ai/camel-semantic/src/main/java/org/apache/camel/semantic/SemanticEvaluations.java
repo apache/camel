@@ -153,6 +153,11 @@ public final class SemanticEvaluations {
         }
     }
 
+    /** All definitions in the immutable published snapshot, for runtime inspection. */
+    public Map<String, SemanticEvaluation> snapshot() {
+        return evaluations;
+    }
+
     /** Whether any named evaluations have been registered. */
     public boolean isEmpty() {
         return evaluations.isEmpty();
