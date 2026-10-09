@@ -34,6 +34,7 @@ import io.vertx.core.http.ServerWebSocket;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.json.JsonObject;
@@ -100,6 +101,40 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
         }
         tool.close();
         context.getCamelContextExtension().setProfile(null);
+    }
+
+    @Test
+    void slowEvaluationCompletesOnItsOwnRequestWithoutBlockingOtherActions() throws Exception {
+        WaitingSemanticConsole console = new WaitingSemanticConsole(1);
+        DevConsoleRegistry.get(context).register(console);
+        startConnector();
+        tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+        try {
+            tool.send(action("slow", "semantic-evaluate", "input", "expected"));
+            assertThat(console.entered.await(5, TimeUnit.SECONDS)).isTrue();
+            tool.send(action("fast", "route-dump", "format", "yaml"));
+            assertThat(tool.awaitResult("fast").toJson()).contains("hello");
+            console.release.countDown();
+            assertThat(tool.awaitResult("slow").toJson()).contains("expected");
+        } finally {
+            console.release.countDown();
+        }
+    }
+
+    @Test
+    void stoppingTheWebSocketConnectorInterruptsPendingEvaluation() throws Exception {
+        WaitingSemanticConsole console = new WaitingSemanticConsole(1);
+        DevConsoleRegistry.get(context).register(console);
+        startConnector();
+        tool.awaitFrame(f -> "hello".equals(f.getString("type")));
+        try {
+            tool.send(action("slow", "semantic-evaluate"));
+            assertThat(console.entered.await(5, TimeUnit.SECONDS)).isTrue();
+            connector.stop();
+            assertThat(console.interrupted.await(5, TimeUnit.SECONDS)).isTrue();
+        } finally {
+            console.release.countDown();
+        }
     }
 
     @Test

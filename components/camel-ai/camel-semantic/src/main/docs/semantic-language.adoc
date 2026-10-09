@@ -841,6 +841,23 @@ not manufacture confidence from a verdict, nor require optional information on e
 It rejects information the contract did not declare, malformed numeric values, wrong result types
 and results outside declared common constraints.
 
+A score operation can link its result scale to a parameter with
+`@SemanticOperation(scoreLevelsParameter = "rubric", ...)`. The named parameter must be declared
+as `List.class` with `itemType = String.class`, and the operation must return `SCORE`.
+For a supplied nonempty list of N descriptions, the effective range is `0` through `N-1`.
+Index i describes score i; scores may be fractional between levels. When per-level probabilities
+are returned, their keys are the decimal index strings (`"0"`, `"1"`, and so on).
+For example, `["Routine", "Needs attention", "Critical"]` defines `0…2`, and `1.6` lies between
+"Needs attention" and "Critical". Static `minimum` and `maximum` still describe supported bounds.
+
+The TypeSafe AI adapter publishes `scoreLevelsParameter = "criteria"` for its score operation.
+Other experts may name the parameter differently. `SemanticCapabilities.Operation.getScoreLevelsParameter()`
+and the semantic metadata console expose the same relationship without inference. An empty value
+(the default) declares no relationship, so tooling must not infer one from parameter names.
+If the parameter is omitted and the expert supplies its own default levels, tooling cannot derive
+the effective range from the declaration. Experts continue to validate configured score bounds
+and probability keys themselves.
+
 An expert applies explicitly requested policy exactly once, either in its service or its adapter.
 It preserves service defaults when parameters are absent. If requested policy needs unavailable
 confidence or probability, the expert rejects the declaration when known statically, or fails that
@@ -889,3 +906,22 @@ they do not establish a model's classification quality.
 // language options: START
 include::partial$language-options.adoc[]
 // language options: END
+
+
+== Developer consoles
+
+`semantic-metadata` exposes definitions and expert contracts without performing inference.
+`semantic-evaluate` evaluates a named definition against a sample exchange or calls an expert
+operation directly. It uses the configured provider and its normal validation, without sending
+the sample through an application route.
+
+Enabling the HTTP developer console also exposes `semantic-evaluate`. Unlike metadata inspection,
+calling it invokes the configured provider and can incur charges. Restrict access to trusted operators,
+as described in the xref:manual::security-model.adoc[security model].
+
+Evaluation calls have a default and maximum timeout of 50,000 milliseconds. The console's `timeout`
+option can select a shorter positive timeout. At most two evaluations run concurrently; further calls
+receive a busy response. A timeout or interrupted caller requests cancellation by interrupting the
+worker. Providers may continue remote or native inference after interruption, so configure their own
+timeouts too. The CLI connector runs evaluations independently of its action and snapshot threads;
+responses remain associated with the originating request.

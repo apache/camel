@@ -131,6 +131,28 @@ public class SemanticLanguage extends LanguageSupport {
         return true;
     }
 
+    /**
+     * Evaluate already-selected input through an expert without publishing a declaration or executing a route. The
+     * declaration's state selector is not used. Contract, provider input and result validation still apply.
+     */
+    public SemanticResult evaluate(SemanticEvaluation evaluation, Object input) throws Exception {
+        ResolvedExpert resolved = expert("direct", evaluation);
+        Operation operation = resolved.capabilities.operation(evaluation.getOperation());
+        operation.validateInput(input);
+        resolved.provider.validateInput(evaluation, input);
+        if (Thread.currentThread().isInterrupted()) {
+            throw new InterruptedException("Semantic evaluation interrupted");
+        }
+        try {
+            SemanticResult result = resolved.provider.evaluate(evaluation, input);
+            operation.validateResult(result);
+            return result;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw e;
+        }
+    }
+
     private List<String> references(String expression) {
         if (expression != null && expression.startsWith("refs:")) {
             List<String> names = Arrays.stream(expression.substring(5).split(",", -1)).map(String::strip).toList();
@@ -166,33 +188,18 @@ public class SemanticLanguage extends LanguageSupport {
             return selectedAdapter;
         }
         CamelContext context = getCamelContext();
-        String configured = adapter == null ? null : context.resolvePropertyPlaceholders(adapter);
-        if (configured != null) {
-            if (configured.isBlank() || configured.startsWith("#")) {
-                throw new IllegalArgumentException("Semantic adapter must be a bean name or class name without a # prefix");
-            }
-            Object bean = context.getRegistry().lookupByName(configured);
-            if (bean != null) {
-                if (!(bean instanceof SemanticAdapter found)) {
-                    throw new IllegalArgumentException(
-                            "Semantic adapter bean does not implement SemanticAdapter: " + configured);
-                }
-                selectedAdapter = found;
-                selectedAdapterName = configured;
-                return found;
-            }
-        }
         ManagedAdapter owned = null;
         try {
-            Object candidate = configured == null
-                    ? discoverAdapter(context) : context.getClassResolver().resolveClass(configured);
+            AdapterReference resolvedReference = resolveAdapter();
+            Object candidate = resolvedReference.candidate();
             if (candidate instanceof SemanticAdapter registered) {
                 selectedAdapter = registered;
+                selectedAdapterName = resolvedReference.name();
                 return registered;
             }
             Class<?> resolved = (Class<?>) candidate;
             if (resolved == null) {
-                throw new IllegalArgumentException("No semantic adapter bean or class found: " + configured);
+                throw new IllegalArgumentException("No semantic adapter bean or class found: " + resolvedReference.name());
             }
             Class<? extends SemanticAdapter> type = resolved.asSubclass(SemanticAdapter.class);
             AdapterLock lock = AdapterLock.get(context);
@@ -226,6 +233,73 @@ public class SemanticLanguage extends LanguageSupport {
         }
     }
 
+    private record AdapterReference(String name, Object candidate) {
+    }
+
+    private AdapterReference resolveAdapter() throws IOException {
+        CamelContext context = getCamelContext();
+        String configured = adapter == null ? null : context.resolvePropertyPlaceholders(adapter);
+        if (configured != null) {
+            if (configured.isBlank() || configured.startsWith("#")) {
+                throw new IllegalArgumentException("Semantic adapter must be a bean name or class name without a # prefix");
+            }
+            Object bean = context.getRegistry().lookupByName(configured);
+            if (bean != null) {
+                if (!(bean instanceof SemanticAdapter found)) {
+                    throw new IllegalArgumentException(
+                            "Semantic adapter bean does not implement SemanticAdapter: " + configured);
+                }
+                return new AdapterReference(configured, found);
+            }
+        }
+        return configured == null
+                ? discoverAdapter(context)
+                : new AdapterReference(configured, context.getClassResolver().resolveClass(configured));
+    }
+
+    /**
+     * Read the selected expert's static contract without evaluating or validating a declaration. Class-discovered
+     * adapters are not constructed. Named beans use the registry's normal lookup semantics.
+     *
+     * @param expert explicit registry name, or null to use the configured default and automatic selection
+     */
+    public SemanticCapabilities getExpertCapabilities(String expert) throws IOException {
+        return describeExpert(expert).capabilities();
+    }
+
+    /** The selected registry reference or adapter class and its static contract. */
+    public record ExpertMetadata(String reference, SemanticCapabilities capabilities) {
+    }
+
+    /** Resolve an expert for inspection using the same selection as evaluation, without invoking it. */
+    public synchronized ExpertMetadata describeExpert(String expert) throws IOException {
+        String reference = expert != null ? expert : defaultExpert;
+        Object candidate;
+        if (reference != null) {
+            reference = getCamelContext().resolvePropertyPlaceholders(reference);
+            if (reference.isBlank() || reference.startsWith("#")) {
+                throw new IllegalArgumentException("Expert must be a registry bean name without a # prefix");
+            }
+            candidate = getCamelContext().getRegistry().lookupByName(reference);
+            if (!(candidate instanceof SemanticAdapter)) {
+                throw new IllegalArgumentException("Unknown expert or bean does not implement SemanticAdapter: " + reference);
+            }
+        } else {
+            AdapterReference resolved = selectedAdapter != null
+                    ? new AdapterReference(selectedAdapterName, selectedAdapter) : resolveAdapter();
+            candidate = resolved.candidate();
+            reference = resolved.name();
+        }
+        Class<?> type = candidate instanceof Class<?> clazz ? clazz : candidate != null ? candidate.getClass() : null;
+        if (type == null || !SemanticAdapter.class.isAssignableFrom(type)) {
+            throw new IllegalArgumentException("No semantic adapter bean or class found: " + reference);
+        }
+        if (reference == null) {
+            reference = selectedAdapterName != null ? selectedAdapterName : type.getName();
+        }
+        return new ExpertMetadata(reference, SemanticCapabilities.from(type));
+    }
+
     private synchronized void startAdapter(List<Group> groups) {
         ManagedAdapter owned = managedAdapter;
         if (owned == null || groups.stream().noneMatch(group -> group.expert.provider == owned.instance)) {
@@ -247,7 +321,7 @@ public class SemanticLanguage extends LanguageSupport {
         }
     }
 
-    private Object discoverAdapter(CamelContext context) throws IOException {
+    private AdapterReference discoverAdapter(CamelContext context) throws IOException {
         // FactoryFinder resolves one descriptor; check all declarations first to avoid classpath-order selection.
         Set<String> candidates = new TreeSet<>();
         Enumeration<URL> resources = context.getClassResolver().loadAllResourcesAsURL(ADAPTER_RESOURCE);
@@ -282,10 +356,10 @@ public class SemanticLanguage extends LanguageSupport {
         if (instances.size() == 1) {
             SemanticAdapter instance = instances.iterator().next();
             // Keep an operator-facing name; aliases have no primary name, so choose deterministically.
-            selectedAdapterName = registered.entrySet().stream()
+            String name = registered.entrySet().stream()
                     .filter(entry -> entry.getValue() == instance)
                     .map(Map.Entry::getKey).min(String::compareTo).orElseThrow();
-            return instance;
+            return new AdapterReference(name, instance);
         }
         Class<?> resolved = context.getCamelContextExtension().getDefaultFactoryFinder().findClass(ADAPTER_FACTORY)
                 .orElseThrow(() -> new IllegalArgumentException("Cannot resolve advertised semantic adapter: " + candidates));
@@ -293,7 +367,7 @@ public class SemanticLanguage extends LanguageSupport {
             throw new IllegalArgumentException(
                     "Resolved semantic adapter " + resolved.getName() + " does not match advertised adapter: " + candidates);
         }
-        return resolved;
+        return new AdapterReference(resolved.getName(), resolved);
     }
 
     /** Validate declarations, including unused evaluations, without starting managed expert resources. */

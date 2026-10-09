@@ -7046,6 +7046,289 @@
 				}
 			}
 		},
+		"\/q\/dev\/semantic-evaluate": {
+			"post": {
+				"summary": "Semantic Evaluation",
+				"description": "Evaluate sample input through a semantic definition or expert operation",
+				"operationId": "semantic-evaluate",
+				"requestBody": {
+					"content": {
+						"application\/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"body": {
+										"type": "object",
+										"description": "Sample message body"
+									},
+									"evaluation": {
+										"type": "string",
+										"description": "Name of the published evaluation to execute"
+									},
+									"expert": {
+										"type": "string",
+										"description": "Expert reference for direct evaluation"
+									},
+									"headers": {
+										"type": "object",
+										"description": "Sample message headers"
+									},
+									"input": {
+										"type": "object",
+										"description": "Already-selected input for direct evaluation"
+									},
+									"operation": {
+										"type": "string",
+										"description": "Expert operation for direct evaluation"
+									},
+									"parameters": {
+										"type": "object",
+										"description": "Expert operation parameters"
+									},
+									"timeout": {
+										"type": "integer",
+										"description": "Maximum evaluation time in milliseconds (1 to 50000, default 50000)"
+									},
+									"variables": {
+										"type": "object",
+										"description": "Sample exchange variables"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Semantic Evaluation output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"evaluation": {
+											"type": "string",
+											"description": "Evaluation name"
+										},
+										"status": {
+											"type": "string",
+											"description": "Success or failed"
+										},
+										"value": {
+											"description": "Validated result value"
+										},
+										"probability": {
+											"type": "number",
+											"description": "Provider probability"
+										},
+										"probabilities": {
+											"type": "object",
+											"additionalProperties": {
+												"type": "number"
+											},
+											"description": "Probabilities by label"
+										},
+										"confidence": {
+											"type": "number",
+											"description": "Provider confidence"
+										},
+										"metadata": {
+											"type": "object",
+											"additionalProperties": true,
+											"description": "Provider result metadata"
+										},
+										"elapsedMillis": {
+											"type": "integer",
+											"description": "Elapsed time in milliseconds"
+										},
+										"error": {
+											"type": "string",
+											"description": "Evaluation error, if any"
+										}
+									},
+									"required": [
+										"elapsedMillis"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/semantic-metadata": {
+			"get": {
+				"summary": "Semantic Metadata",
+				"description": "Semantic experts and evaluation definitions",
+				"operationId": "semantic-metadata",
+				"parameters": [
+					{
+						"name": "expert",
+						"in": "query",
+						"description": "Expert registry name; omitted uses the language's default selection",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "overview",
+						"in": "query",
+						"description": "List registered experts and published evaluation definitions",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Semantic Metadata output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"operations": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string",
+														"description": "The expert-owned operation name"
+													},
+													"description": {
+														"type": "string",
+														"description": "The operation's purpose"
+													},
+													"resultType": {
+														"type": "string",
+														"description": "The shape of the returned value"
+													},
+													"contract": {
+														"type": "object",
+														"additionalProperties": true,
+														"description": "Input, parameter and result contract"
+													}
+												}
+											},
+											"description": "Operations for completion"
+										},
+										"experts": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"reference": {
+														"type": "string",
+														"description": "Registry reference or adapter class"
+													},
+													"name": {
+														"type": "string",
+														"description": "Contract name"
+													},
+													"description": {
+														"type": "string",
+														"description": "Expert description"
+													},
+													"provider": {
+														"type": "string",
+														"description": "Provider name"
+													},
+													"artifactId": {
+														"type": "string",
+														"description": "Provider artifact"
+													},
+													"operations": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"name": {
+																	"type": "string",
+																	"description": "The expert-owned operation name"
+																},
+																"description": {
+																	"type": "string",
+																	"description": "The operation's purpose"
+																},
+																"resultType": {
+																	"type": "string",
+																	"description": "The shape of the returned value"
+																},
+																"contract": {
+																	"type": "object",
+																	"additionalProperties": true,
+																	"description": "Input, parameter and result contract"
+																}
+															}
+														},
+														"description": "Supported operations"
+													},
+													"error": {
+														"type": "string",
+														"description": "Contract resolution error, if any"
+													}
+												}
+											},
+											"description": "Known experts, when overview is requested"
+										},
+										"evaluations": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string",
+														"description": "Evaluation name"
+													},
+													"expert": {
+														"type": "string",
+														"description": "Resolved expert reference"
+													},
+													"operation": {
+														"type": "string",
+														"description": "Declared operation"
+													},
+													"state": {
+														"type": "string",
+														"description": "Effective state selector"
+													},
+													"parameters": {
+														"type": "object",
+														"additionalProperties": true,
+														"description": "Declared parameters"
+													},
+													"resultType": {
+														"type": "string",
+														"description": "Declared result shape"
+													},
+													"error": {
+														"type": "string",
+														"description": "Expert or operation resolution error, if any"
+													}
+												}
+											},
+											"description": "Published definitions, when overview is requested"
+										},
+										"defaultExpert": {
+											"type": "string",
+											"description": "Resolved default expert"
+										},
+										"defaultError": {
+											"type": "string",
+											"description": "Default selection error, if any"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"\/q\/dev\/send": {
 			"post": {
 				"summary": "Camel Send",

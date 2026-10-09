@@ -41,6 +41,7 @@ class SemanticCapabilitiesTest {
         assertThat(capabilities.getName()).isEqualTo("static");
         assertThat(SemanticCapabilities.from(StaticExpert.class)).isSameAs(capabilities);
         assertThat(operation.getResultType()).isEqualTo(ResultType.CLASSIFICATION);
+        assertThat(operation.getScoreLevelsParameter()).isEmpty();
         assertThat(operation.getInputTypes()).containsExactly(InputType.STRUCTURED);
         assertThat(operation.getParameters().get("policy").getOmission()).isEqualTo("Service defaults");
         assertThatThrownBy(() -> capabilities.getOperations().clear()).isInstanceOf(UnsupportedOperationException.class);
