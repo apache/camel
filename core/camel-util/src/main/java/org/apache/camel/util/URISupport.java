@@ -424,13 +424,27 @@ public final class URISupport {
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
     public static Map<String, Object> parseParameters(URI uri) throws URISyntaxException {
-        boolean encodedAmpersand = hasEncodedAmpersand(uri);
-        String query = encodedAmpersand ? prepareQueryKeepingEncodedAmpersand(uri) : prepareQuery(uri);
-        if (query == null) {
+        Map<String, Object> parameters = parseQueryOf(uri);
+        if (parameters == null) {
             // empty an empty map
             return new LinkedHashMap<>(0);
         }
-        Map<String, Object> parameters = parseQuery(query);
+        return parameters;
+    }
+
+    /**
+     * Parses the query of the uri like {@link #parseQuery(String)} of {@link #prepareQuery(URI)}, except that an
+     * encoded & (%26) is part of a key or value instead of a separator between parameters.
+     *
+     * @return the parameters, or <tt>null</tt> if the uri has no query
+     */
+    private static Map<String, Object> parseQueryOf(URI uri) throws URISyntaxException {
+        boolean encodedAmpersand = hasEncodedAmpersand(uri);
+        String query = encodedAmpersand ? prepareQueryKeepingEncodedAmpersand(uri) : prepareQuery(uri);
+        if (query == null) {
+            return null;
+        }
+        Map<String, Object> parameters = parseQuery(query, false, false);
         return encodedAmpersand ? restoreEncodedAmpersand(parameters) : parameters;
     }
 
@@ -935,16 +949,12 @@ public final class URISupport {
         }
 
         // in case there are parameters we should reorder them
-        boolean encodedAmpersand = hasEncodedAmpersand(u);
-        String query = encodedAmpersand ? prepareQueryKeepingEncodedAmpersand(u) : prepareQuery(u);
-        if (query == null) {
+        Map<String, Object> parameters = parseQueryOf(u);
+        if (parameters == null) {
             // no parameters then just return
             return buildUri(scheme, path, null);
         } else {
-            Map<String, Object> parameters = URISupport.parseQuery(query, false, false);
-            if (encodedAmpersand) {
-                parameters = restoreEncodedAmpersand(parameters);
-            }
+            String query;
             if (parameters.size() == 1) {
                 // only 1 parameter need to create new query string
                 query = URISupport.createQueryString(parameters);
@@ -1114,12 +1124,12 @@ public final class URISupport {
     public static String getDecodeQuery(final String uri) {
         try {
             URI u = new URI(uri);
-            String query = URISupport.prepareQuery(u);
+            Map<String, Object> parameters = parseQueryOf(u);
             String uriWithoutQuery = URISupport.stripQuery(uri);
-            if (query == null) {
+            if (parameters == null) {
                 return uriWithoutQuery;
             } else {
-                Map<String, Object> parameters = URISupport.parseQuery(query, false, false);
+                String query;
                 if (parameters.size() == 1) {
                     // only 1 parameter need to create new query string
                     query = URISupport.createQueryString(parameters);

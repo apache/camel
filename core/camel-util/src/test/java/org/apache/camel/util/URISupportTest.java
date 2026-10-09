@@ -161,6 +161,11 @@ public class URISupportTest {
         assertThat(URISupport.normalizeUri("log:foo?marker=%E2%82%AC%26")).isEqualTo("log://foo?marker=%E2%82%AC%26");
         String out = URISupport.normalizeUri("log:foo?showAll=true&marker=a%26b");
         assertThat(URISupport.normalizeUri(out)).isEqualTo(out);
+        // several encoded &, also next to each other
+        assertThat(URISupport.normalizeUri("log:foo?marker=a%26b%26c")).isEqualTo("log://foo?marker=a%26b%26c");
+        assertThat(URISupport.normalizeUri("log:foo?marker=a%26%26b&showAll=true"))
+                .isEqualTo("log://foo?marker=a%26%26b&showAll=true");
+        assertThat(URISupport.normalizeUri("log:foo?marker=%26%26")).isEqualTo("log://foo?marker=%26%26");
     }
 
     @Test
@@ -179,6 +184,10 @@ public class URISupportTest {
         assertEquals("a=b#c d", parameters.get("marker"));
         parameters = URISupport.parseParameters(new URI("log:foo?marker=a%EF%BF%BFb"));
         assertEquals("a\uFFFFb", parameters.get("marker"));
+        parameters = URISupport.parseParameters(new URI("log:foo?marker=a%26b%26c&delimiter=%26%26"));
+        assertEquals(2, parameters.size());
+        assertEquals("a&b&c", parameters.get("marker"));
+        assertEquals("&&", parameters.get("delimiter"));
     }
 
     @Test
@@ -874,6 +883,18 @@ public class URISupportTest {
 
         dec = URISupport.getDecodeQuery(enc);
         assertEquals(out, dec);
+    }
+
+    @Test
+    public void testGetDecodeQueryEncodedAmpersand() throws Exception {
+        // an encoded & (%26) stays in the value, as in normalizeUri
+        String out = URISupport.normalizeUri("log:foo?marker=Tom%26Jerry&showAll=true");
+        assertThat(URISupport.getDecodeQuery(out)).isEqualTo(out);
+
+        out = URISupport.normalizeUri("bean://MyBean?method=RAW(addString(%22#@a%23, test))&marker=a%26b%26c");
+        String enc = UnsafeUriCharactersEncoder.encode(out);
+        assertThat(enc).isNotEqualTo(out);
+        assertThat(URISupport.getDecodeQuery(enc)).isEqualTo(out);
     }
 
     @Test

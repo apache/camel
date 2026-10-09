@@ -16,12 +16,17 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.Collection;
+
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.component.log.LogEndpoint;
 import org.apache.camel.support.NormalizedUri;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -53,5 +58,20 @@ public class EndpointUriEncodedAmpersandTest extends ContextTestSupport {
         LogEndpoint endpoint = (LogEndpoint) context.getCamelContextExtension()
                 .getEndpoint(NormalizedUri.newNormalizedUri("log://baz?marker=Tom%26Jerry", true));
         assertEquals("Tom&Jerry", endpoint.getMarker());
+    }
+
+    @Test
+    public void testRemoveEndpointsByEncodedUri() throws Exception {
+        // removeEndpoints looks up an encoded uri with URISupport.getDecodeQuery (normalizing it does not decode the
+        // RAW value), which must keep the encoded & in the value and not take the endpoint with the split options
+        Endpoint endpoint = context.getEndpoint("stub:foo?a=RAW(x y)&b=Tom%26Jerry");
+        Endpoint other = context.getEndpoint("stub:foo?a=RAW(x y)&b=Tom&Jerry=");
+        String encoded = UnsafeUriCharactersEncoder.encode(endpoint.getEndpointUri());
+
+        Collection<Endpoint> removed = context.removeEndpoints(encoded);
+        assertEquals(1, removed.size());
+        assertSame(endpoint, removed.iterator().next());
+        assertFalse(context.getEndpoints().contains(endpoint));
+        assertTrue(context.getEndpoints().contains(other));
     }
 }
