@@ -1631,6 +1631,13 @@ An onCompletion with `parallelProcessing` that synchronously stops its own route
 shutdown timeout occurs, and the route is then stopped forcibly. Stop the route asynchronously instead, for example
 from a separate thread or with the Control Bus `async=true` option.
 
+=== camel-jta, camel-spring - a transacted exchange that completes during a graceful shutdown is committed
+
+Since Camel 4.19, a transacted exchange (JTA or Spring transacted routes) that was in flight when a graceful shutdown
+(stopping `CamelContext` or a route) started was rolled back even when it completed within the shutdown timeout. It is
+now committed again. Only the forced shutdown after the timeout marks the in-flight transacted exchanges for rollback;
+with `shutdownNowOnTimeout=false` there is no forced shutdown, so an exchange completing after the timeout is committed.
+
 === camel-seda, camel-disruptor - a message that is not queued completes its own exchange
 
 When the SEDA producer does not add an InOnly message to the queue, because it is discarded (`discardWhenFull=true`)
