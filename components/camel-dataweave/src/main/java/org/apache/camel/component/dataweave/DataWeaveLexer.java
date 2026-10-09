@@ -18,6 +18,7 @@ package org.apache.camel.component.dataweave;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Tokenizer for DataWeave 2.0 scripts.
@@ -25,22 +26,23 @@ import java.util.List;
 public class DataWeaveLexer {
 
     public enum TokenType {
-        // Literals
-        STRING,
+        STRING, // the raw text between the quotes, with escape sequences and $(...) interpolations as in the source
         NUMBER,
         BOOLEAN,
         NULL_LIT,
-        // Identifiers and keywords
         IDENTIFIER,
-        // Operators
+        REGEX, // /pattern/ (the pattern without the slashes)
+        TEMPORAL, // |2020-01-31|, |P1D| (the value without the bars)
         PLUS,
         MINUS,
         STAR,
         SLASH,
         PLUSPLUS,
+        MINUSMINUS,
         ASSIGN,
         EQ,
         NEQ,
+        SIMILAR, // ~=
         GT,
         GE,
         LT,
@@ -48,10 +50,10 @@ public class DataWeaveLexer {
         AND,
         OR,
         NOT,
-        // Punctuation
         DOT,
         COMMA,
         COLON,
+        DOUBLE_COLON,
         ARROW,
         SEMICOLON,
         LPAREN,
@@ -60,15 +62,17 @@ public class DataWeaveLexer {
         RBRACE,
         LBRACKET,
         RBRACKET,
-        DOLLAR,
-        DOLLAR_DOLLAR, // $$  (reduce accumulator shorthand)
-        AT,            // @   (XML attribute selector)
-        QUESTION,      // ?   (existence check / key filter)
-        // Special
+        DOLLAR, // $
+        DOLLAR_DOLLAR, // $$
+        DOLLAR_DOLLAR_DOLLAR, // $$$
+        AT, // @
+        QUESTION, // ?
+        HASH, // #  (XML namespace prefix)
+        CARET, // ^  (metadata selector)
+        TILDE, // ~
+        PIPE, // |  (type union separator)
         HEADER_SEPARATOR, // ---
-        PERCENT,          // %
-        PIPE,             // |   (type union separator)
-        TILDE,            // ~
+        PERCENT, // %
         EOF
     }
 
@@ -79,7 +83,12 @@ public class DataWeaveLexer {
         }
     }
 
+    // A '/' after one of these identifiers starts a regular expression literal rather than a division
+    private static final Set<String> REGEX_PREFIX_IDENTIFIERS = Set.of(
+            "replace", "contains", "matches", "splitBy", "scan", "find", "match", "case", "startsWith", "endsWith");
+
     private final String input;
+    private final List<Token> tokens = new ArrayList<>();
     private int pos;
     private int line;
     private int col;
@@ -92,17 +101,12 @@ public class DataWeaveLexer {
     }
 
     public List<Token> tokenize() {
-        List<Token> tokens = new ArrayList<>();
         while (pos < input.length()) {
             skipWhitespaceAndComments();
             if (pos >= input.length()) {
                 break;
             }
-
-            Token token = readToken();
-            if (token != null) {
-                tokens.add(token);
-            }
+            tokens.add(readToken());
         }
         tokens.add(new Token(TokenType.EOF, "", line, col));
         return tokens;
@@ -111,27 +115,25 @@ public class DataWeaveLexer {
     private void skipWhitespaceAndComments() {
         while (pos < input.length()) {
             char c = input.charAt(pos);
-            if (c == ' ' || c == '\t' || c == '\r') {
+            if (Character.isWhitespace(c)) {
                 advance();
-            } else if (c == '\n') {
-                advance();
-            } else if (c == '/' && pos + 1 < input.length() && input.charAt(pos + 1) == '/') {
-                // Line comment
+            } else if (c == '/' && peek(1) == '/') {
                 while (pos < input.length() && input.charAt(pos) != '\n') {
                     advance();
                 }
-            } else if (c == '/' && pos + 1 < input.length() && input.charAt(pos + 1) == '*') {
-                // Block comment
+            } else if (c == '/' && peek(1) == '*') {
+                int startLine = line;
+                int startCol = col;
                 advance(); // /
                 advance(); // *
-                while (pos + 1 < input.length()
-                        && !(input.charAt(pos) == '*' && input.charAt(pos + 1) == '/')) {
+                while (pos < input.length() && !(input.charAt(pos) == '*' && peek(1) == '/')) {
                     advance();
                 }
-                if (pos + 1 < input.length()) {
-                    advance(); // *
-                    advance(); // /
+                if (pos >= input.length()) {
+                    throw error("unterminated comment", startLine, startCol);
                 }
+                advance(); // *
+                advance(); // /
             } else {
                 break;
             }
@@ -143,79 +145,135 @@ public class DataWeaveLexer {
         int startCol = col;
         char c = input.charAt(pos);
 
-        // Header separator ---
-        if (c == '-' && pos + 2 < input.length()
-                && input.charAt(pos + 1) == '-' && input.charAt(pos + 2) == '-') {
-            // Make sure it's not a negative number context
-            if (pos == 0 || isHeaderSeparatorContext()) {
-                advance();
-                advance();
-                advance();
-                return new Token(TokenType.HEADER_SEPARATOR, "---", startLine, startCol);
-            }
+        if (c == '-' && peek(1) == '-' && peek(2) == '-' && peek(3) != '-') {
+            advance();
+            advance();
+            advance();
+            return new Token(TokenType.HEADER_SEPARATOR, "---", startLine, startCol);
         }
-
-        // Strings
-        if (c == '"' || c == '\'') {
+        if (c == '"' || c == '\'' || c == '`') {
             return readString(c, startLine, startCol);
         }
-
-        // Numbers
-        if (Character.isDigit(c) || (c == '-' && pos + 1 < input.length() && Character.isDigit(input.charAt(pos + 1))
-                && !isPreviousTokenValueLike())) {
+        if (Character.isDigit(c)
+                || (c == '-' && Character.isDigit(peek(1)) && !isPreviousTokenValueLike())) {
             return readNumber(startLine, startCol);
         }
-
-        // Identifiers and keywords
         if (Character.isLetter(c) || c == '_') {
             return readIdentifier(startLine, startCol);
         }
-
-        // Operators and punctuation
+        if (c == '/' && isRegexStart()) {
+            return readRegex(startLine, startCol);
+        }
+        if (c == '|' && isTemporalStart()) {
+            return readTemporal(startLine, startCol);
+        }
         return readOperator(startLine, startCol);
     }
 
-    private boolean isHeaderSeparatorContext() {
-        // Look backwards to see if we're at the start of a line (after whitespace)
-        int i = pos - 1;
-        while (i >= 0 && (input.charAt(i) == ' ' || input.charAt(i) == '\t')) {
-            i--;
-        }
-        return i < 0 || input.charAt(i) == '\n';
-    }
-
     private boolean isPreviousTokenValueLike() {
-        // Look back to see if the previous non-whitespace is a value-like token
-        int i = pos - 1;
-        while (i >= 0 && (input.charAt(i) == ' ' || input.charAt(i) == '\t')) {
-            i--;
-        }
-        if (i < 0) {
+        if (tokens.isEmpty()) {
             return false;
         }
-        char prev = input.charAt(i);
-        return Character.isLetterOrDigit(prev) || prev == ')' || prev == ']' || prev == '}' || prev == '"'
-                || prev == '\'';
+        TokenType type = tokens.get(tokens.size() - 1).type();
+        return type == TokenType.IDENTIFIER || type == TokenType.NUMBER || type == TokenType.STRING
+                || type == TokenType.RPAREN || type == TokenType.RBRACKET || type == TokenType.RBRACE
+                || type == TokenType.BOOLEAN || type == TokenType.NULL_LIT || type == TokenType.DOLLAR
+                || type == TokenType.DOLLAR_DOLLAR || type == TokenType.DOLLAR_DOLLAR_DOLLAR
+                || type == TokenType.TEMPORAL;
+    }
+
+    private boolean isRegexStart() {
+        if (tokens.isEmpty()) {
+            return true;
+        }
+        Token previous = tokens.get(tokens.size() - 1);
+        if (previous.type() == TokenType.IDENTIFIER) {
+            return REGEX_PREFIX_IDENTIFIERS.contains(previous.value());
+        }
+        return !isPreviousTokenValueLike();
+    }
+
+    private boolean isTemporalStart() {
+        // |2020-01-31|, |2020-01-31T10:00:00Z|, |10:00:00|, |P1D|, |PT1H| -- a type union is "A | B" instead
+        char next = peek(1);
+        if (!(Character.isDigit(next) || next == 'P' || next == '-')) {
+            return false;
+        }
+        for (int i = pos + 1; i < input.length(); i++) {
+            char ch = input.charAt(i);
+            if (ch == '|') {
+                return i > pos + 1;
+            }
+            if (!(Character.isLetterOrDigit(ch) || ch == '-' || ch == ':' || ch == '.' || ch == '+')) {
+                return false;
+            }
+        }
+        return false;
     }
 
     private Token readString(char quote, int startLine, int startCol) {
         advance(); // opening quote
         StringBuilder sb = new StringBuilder();
         while (pos < input.length() && input.charAt(pos) != quote) {
-            if (input.charAt(pos) == '\\' && pos + 1 < input.length()) {
-                sb.append(input.charAt(pos));
+            char ch = input.charAt(pos);
+            if (ch == '\\' && pos + 1 < input.length()) {
+                sb.append(ch);
                 advance();
                 sb.append(input.charAt(pos));
                 advance();
+            } else if (ch == '$' && peek(1) == '(') {
+                readInterpolation(sb);
             } else {
-                sb.append(input.charAt(pos));
+                sb.append(ch);
                 advance();
             }
         }
-        if (pos < input.length()) {
-            advance(); // closing quote
+        if (pos >= input.length()) {
+            throw error("unterminated string", startLine, startCol);
         }
+        advance(); // closing quote
         return new Token(TokenType.STRING, sb.toString(), startLine, startCol);
+    }
+
+    // Copies $( ... ) verbatim, including nested parentheses and strings: "Hello $(upper("x"))"
+    private void readInterpolation(StringBuilder sb) {
+        int startLine = line;
+        int startCol = col;
+        sb.append('$');
+        advance();
+        int depth = 0;
+        while (pos < input.length()) {
+            char ch = input.charAt(pos);
+            if (ch == '"' || ch == '\'') {
+                char quote = ch;
+                sb.append(ch);
+                advance();
+                while (pos < input.length() && input.charAt(pos) != quote) {
+                    if (input.charAt(pos) == '\\' && pos + 1 < input.length()) {
+                        sb.append(input.charAt(pos));
+                        advance();
+                    }
+                    sb.append(input.charAt(pos));
+                    advance();
+                }
+                if (pos < input.length()) {
+                    sb.append(input.charAt(pos));
+                    advance();
+                }
+                continue;
+            }
+            sb.append(ch);
+            advance();
+            if (ch == '(') {
+                depth++;
+            } else if (ch == ')') {
+                depth--;
+                if (depth == 0) {
+                    return;
+                }
+            }
+        }
+        throw error("unterminated string interpolation", startLine, startCol);
     }
 
     private Token readNumber(int startLine, int startCol) {
@@ -224,11 +282,30 @@ public class DataWeaveLexer {
             sb.append('-');
             advance();
         }
-        while (pos < input.length() && (Character.isDigit(input.charAt(pos)) || input.charAt(pos) == '.')) {
+        readDigits(sb);
+        if (pos < input.length() && input.charAt(pos) == '.' && Character.isDigit(peek(1))) {
+            sb.append('.');
+            advance();
+            readDigits(sb);
+        }
+        if (pos < input.length() && (input.charAt(pos) == 'e' || input.charAt(pos) == 'E')
+                && (Character.isDigit(peek(1)) || (peek(1) == '-' || peek(1) == '+') && Character.isDigit(peek(2)))) {
+            sb.append(input.charAt(pos));
+            advance();
+            if (input.charAt(pos) == '-' || input.charAt(pos) == '+') {
+                sb.append(input.charAt(pos));
+                advance();
+            }
+            readDigits(sb);
+        }
+        return new Token(TokenType.NUMBER, sb.toString(), startLine, startCol);
+    }
+
+    private void readDigits(StringBuilder sb) {
+        while (pos < input.length() && Character.isDigit(input.charAt(pos))) {
             sb.append(input.charAt(pos));
             advance();
         }
-        return new Token(TokenType.NUMBER, sb.toString(), startLine, startCol);
     }
 
     private Token readIdentifier(int startLine, int startCol) {
@@ -248,89 +325,123 @@ public class DataWeaveLexer {
         };
     }
 
+    private Token readRegex(int startLine, int startCol) {
+        advance(); // opening /
+        StringBuilder sb = new StringBuilder();
+        while (pos < input.length() && input.charAt(pos) != '/') {
+            char ch = input.charAt(pos);
+            if (ch == '\n') {
+                throw error("unterminated regular expression", startLine, startCol);
+            }
+            if (ch == '\\' && peek(1) == '/') {
+                advance(); // an escaped slash is a plain slash in the pattern
+            } else if (ch == '\\' && pos + 1 < input.length()) {
+                sb.append(ch);
+                advance();
+            }
+            sb.append(input.charAt(pos));
+            advance();
+        }
+        if (pos >= input.length()) {
+            throw error("unterminated regular expression", startLine, startCol);
+        }
+        advance(); // closing /
+        return new Token(TokenType.REGEX, sb.toString(), startLine, startCol);
+    }
+
+    private Token readTemporal(int startLine, int startCol) {
+        advance(); // opening |
+        StringBuilder sb = new StringBuilder();
+        while (input.charAt(pos) != '|') {
+            sb.append(input.charAt(pos));
+            advance();
+        }
+        advance(); // closing |
+        return new Token(TokenType.TEMPORAL, sb.toString(), startLine, startCol);
+    }
+
     private Token readOperator(int startLine, int startCol) {
         char c = input.charAt(pos);
         advance();
-
         return switch (c) {
-            case '+' -> {
-                if (pos < input.length() && input.charAt(pos) == '+') {
-                    advance();
-                    yield new Token(TokenType.PLUSPLUS, "++", startLine, startCol);
-                }
-                yield new Token(TokenType.PLUS, "+", startLine, startCol);
-            }
+            case '+' -> match('+')
+                    ? token(TokenType.PLUSPLUS, "++", startLine, startCol)
+                    : token(TokenType.PLUS, "+", startLine, startCol);
             case '-' -> {
-                if (pos < input.length() && input.charAt(pos) == '>') {
-                    advance();
-                    yield new Token(TokenType.ARROW, "->", startLine, startCol);
+                if (match('>')) {
+                    yield token(TokenType.ARROW, "->", startLine, startCol);
                 }
-                yield new Token(TokenType.MINUS, "-", startLine, startCol);
-            }
-            case '*' -> new Token(TokenType.STAR, "*", startLine, startCol);
-            case '/' -> new Token(TokenType.SLASH, "/", startLine, startCol);
-            case '=' -> {
-                if (pos < input.length() && input.charAt(pos) == '=') {
-                    advance();
-                    yield new Token(TokenType.EQ, "==", startLine, startCol);
+                if (match('-')) {
+                    yield token(TokenType.MINUSMINUS, "--", startLine, startCol);
                 }
-                yield new Token(TokenType.ASSIGN, "=", startLine, startCol);
+                yield token(TokenType.MINUS, "-", startLine, startCol);
             }
-            case '!' -> {
-                if (pos < input.length() && input.charAt(pos) == '=') {
-                    advance();
-                    yield new Token(TokenType.NEQ, "!=", startLine, startCol);
-                }
-                yield new Token(TokenType.NOT, "!", startLine, startCol);
-            }
-            case '>' -> {
-                if (pos < input.length() && input.charAt(pos) == '=') {
-                    advance();
-                    yield new Token(TokenType.GE, ">=", startLine, startCol);
-                }
-                yield new Token(TokenType.GT, ">", startLine, startCol);
-            }
-            case '<' -> {
-                if (pos < input.length() && input.charAt(pos) == '=') {
-                    advance();
-                    yield new Token(TokenType.LE, "<=", startLine, startCol);
-                }
-                yield new Token(TokenType.LT, "<", startLine, startCol);
-            }
-            case '.' -> new Token(TokenType.DOT, ".", startLine, startCol);
-            case ',' -> new Token(TokenType.COMMA, ",", startLine, startCol);
-            case ':' -> new Token(TokenType.COLON, ":", startLine, startCol);
-            case ';' -> new Token(TokenType.SEMICOLON, ";", startLine, startCol);
-            case '(' -> new Token(TokenType.LPAREN, "(", startLine, startCol);
-            case ')' -> new Token(TokenType.RPAREN, ")", startLine, startCol);
-            case '{' -> new Token(TokenType.LBRACE, "{", startLine, startCol);
-            case '}' -> new Token(TokenType.RBRACE, "}", startLine, startCol);
-            case '[' -> new Token(TokenType.LBRACKET, "[", startLine, startCol);
-            case ']' -> new Token(TokenType.RBRACKET, "]", startLine, startCol);
+            case '*' -> token(TokenType.STAR, "*", startLine, startCol);
+            case '/' -> token(TokenType.SLASH, "/", startLine, startCol);
+            case '=' -> match('=')
+                    ? token(TokenType.EQ, "==", startLine, startCol)
+                    : token(TokenType.ASSIGN, "=", startLine, startCol);
+            case '!' -> match('=')
+                    ? token(TokenType.NEQ, "!=", startLine, startCol)
+                    : token(TokenType.NOT, "!", startLine, startCol);
+            case '>' -> match('=')
+                    ? token(TokenType.GE, ">=", startLine, startCol)
+                    : token(TokenType.GT, ">", startLine, startCol);
+            case '<' -> match('=')
+                    ? token(TokenType.LE, "<=", startLine, startCol)
+                    : token(TokenType.LT, "<", startLine, startCol);
+            case '~' -> match('=')
+                    ? token(TokenType.SIMILAR, "~=", startLine, startCol)
+                    : token(TokenType.TILDE, "~", startLine, startCol);
+            case ':' -> match(':')
+                    ? token(TokenType.DOUBLE_COLON, "::", startLine, startCol)
+                    : token(TokenType.COLON, ":", startLine, startCol);
             case '$' -> {
-                // Check for $$ (reduce accumulator shorthand)
-                if (pos < input.length() && input.charAt(pos) == '$') {
-                    advance();
-                    yield new Token(TokenType.DOLLAR_DOLLAR, "$$", startLine, startCol);
+                if (match('$')) {
+                    yield match('$')
+                            ? token(TokenType.DOLLAR_DOLLAR_DOLLAR, "$$$", startLine, startCol)
+                            : token(TokenType.DOLLAR_DOLLAR, "$$", startLine, startCol);
                 }
-                yield new Token(TokenType.DOLLAR, "$", startLine, startCol);
+                yield token(TokenType.DOLLAR, "$", startLine, startCol);
             }
-            case '@' -> new Token(TokenType.AT, "@", startLine, startCol);
-            case '?' -> new Token(TokenType.QUESTION, "?", startLine, startCol);
-            case '|' -> new Token(TokenType.PIPE, "|", startLine, startCol);
-            case '%' -> new Token(TokenType.PERCENT, "%", startLine, startCol);
-            case '~' -> {
-                if (pos < input.length() && input.charAt(pos) == '=') {
-                    advance();
-                    yield new Token(TokenType.TILDE, "~=", startLine, startCol);
-                }
-                yield new Token(TokenType.TILDE, "~", startLine, startCol);
-            }
-            default -> {
-                // Skip unknown character
-                yield null;
-            }
+            case '.' -> token(TokenType.DOT, ".", startLine, startCol);
+            case ',' -> token(TokenType.COMMA, ",", startLine, startCol);
+            case ';' -> token(TokenType.SEMICOLON, ";", startLine, startCol);
+            case '(' -> token(TokenType.LPAREN, "(", startLine, startCol);
+            case ')' -> token(TokenType.RPAREN, ")", startLine, startCol);
+            case '{' -> token(TokenType.LBRACE, "{", startLine, startCol);
+            case '}' -> token(TokenType.RBRACE, "}", startLine, startCol);
+            case '[' -> token(TokenType.LBRACKET, "[", startLine, startCol);
+            case ']' -> token(TokenType.RBRACKET, "]", startLine, startCol);
+            case '@' -> token(TokenType.AT, "@", startLine, startCol);
+            case '?' -> token(TokenType.QUESTION, "?", startLine, startCol);
+            case '#' -> token(TokenType.HASH, "#", startLine, startCol);
+            case '^' -> token(TokenType.CARET, "^", startLine, startCol);
+            case '|' -> token(TokenType.PIPE, "|", startLine, startCol);
+            case '%' -> token(TokenType.PERCENT, "%", startLine, startCol);
+            default -> throw error("unexpected character '" + c + "'", startLine, startCol);
         };
+    }
+
+    private static Token token(TokenType type, String value, int line, int col) {
+        return new Token(type, value, line, col);
+    }
+
+    private boolean match(char expected) {
+        if (pos < input.length() && input.charAt(pos) == expected) {
+            advance();
+            return true;
+        }
+        return false;
+    }
+
+    private char peek(int offset) {
+        int i = pos + offset;
+        return i < input.length() ? input.charAt(i) : '\0';
+    }
+
+    private static DataWeaveConversionException error(String message, int line, int col) {
+        return new DataWeaveConversionException("DataWeave parse error at " + line + ":" + col + ": " + message);
     }
 
     private void advance() {

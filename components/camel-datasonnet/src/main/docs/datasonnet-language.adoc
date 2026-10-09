@@ -169,9 +169,21 @@ xref:ROOT:properties-component.adoc[Properties] component (property placeholders
 
 |cml.nowFmt(format) |`cml.nowFmt('yyyy-MM-dd')` |Returns the current UTC time formatted with the given pattern.
 
-|cml.formatDate(value, format) |`cml.formatDate('2026-03-20T10:30:00Z', 'dd/MM/yyyy')` |Reformats an ISO-8601 date string using the given pattern. Returns null for null input.
+|cml.formatDate(value, format) |`cml.formatDate('2026-03-20T10:30:00Z', 'dd/MM/yyyy')` |Formats an ISO-8601 date, date-time or time string (or epoch milliseconds) using the given pattern, in the default locale. Returns null for null input.
+
+|cml.formatDateLocale(value, format, locale) |`cml.formatDateLocale('2026-03-20', 'dd MMM yyyy', 'en')` |Like `cml.formatDate`, in the given locale (a language tag such as `en` or `de-DE`).
 
 |cml.parseDate(value, format) |`cml.parseDate('20/03/2026', 'dd/MM/yyyy')` |Parses a date string into epoch milliseconds. Returns null for null input.
+
+|cml.formatNumber(value, format) |`cml.formatNumber(1234.5, '#,##0.00')` |Formats a number with a `java.text.DecimalFormat` pattern, in the default locale. Any other value (such as a string) is returned as is.
+
+|cml.formatNumberLocale(value, format, locale) |`cml.formatNumberLocale(1234.5, '#,##0.00', 'de')` |Like `cml.formatNumber`, in the given locale (a language tag such as `en` or `de-DE`).
+
+|cml.parseDateTime(value, format, type) |`cml.parseDateTime('01/31/2020', 'MM/dd/yyyy', 'Date')` |Parses a string in the given format (ISO-8601 when the format is null), or a number of seconds since the epoch, into an ISO-8601 string of the given type: `Date`, `DateTime`, `LocalDateTime`, `Time` or `LocalTime`. Returns null for null input.
+
+|cml.dateAdd(value, amount) |`cml.dateAdd('2020-01-31', 'P1D')` |Adds an ISO-8601 period or duration (such as `P1D`, `PT2H` or `-P1M`) to an ISO-8601 date or time. Returns null for null input.
+
+|cml.datePart(value, part) |`cml.datePart('2020-01-31', 'year')` |A part of an ISO-8601 date or time: `year`, `month`, `day`, `hour`, `minutes`, `seconds`, `milliseconds`, `nanoseconds`, `dayOfWeek`, `dayOfYear`, `quarter`, `offsetSeconds` or `timezone`. Returns null for null input.
 |===
 
 === Math Functions
@@ -512,22 +524,63 @@ camel transform dataweave --input my-transform.dwl --output my-transform.ds
 camel transform dataweave --input src/main/resources/dwl/ --output src/main/resources/ds/
 ----
 
+=== How DataWeave is converted
+
+The converted script keeps the DataWeave semantics, which differ from plain Jsonnet in important ways. For example, in
+DataWeave a missing field, an index out of range or a selector on `null` gives `null`, a field selector on an array
+selects the field of every element (`payload.items.price`), and most functions accept `null`. The converted script uses
+the `dataweave.libsonnet` library of camel-datasonnet for these semantics (imported as `dw`), DataSonnet's `ds` library,
+and the `cml` functions above.
+
+The conversion either produces a script that gives the same result as the DataWeave script, or fails:
+
+- Invalid DataWeave fails with a `DataWeaveConversionException` that reports the line and column.
+- A construct that cannot be converted, and any function or variable the converter does not know, makes the route fail
+  to start with a `DataWeaveConversionException`, instead of running a script that gives a different result.
+  The CLI transpiler emits such constructs as a `TODO` comment and `null`, and reports how many need manual review.
+
 === Supported Constructs
 
-The transpiler automatically maps DataWeave constructs to their DataSonnet equivalents, including:
+- *Header*: `%dw`, `output` (JSON, XML, CSV, Java and text; for JSON the writer properties `skipNullOn`, `indent` and
+  `encoding`), `input`, `import` of the `dw::core` modules, `var` and `fun` declarations (also with default parameters,
+  recursive and calling each other), and `type` declarations (ignored).
+- *Selectors*: `.field`, `."quoted field"`, `[index]` (negative from the end), `[from to to]`, `["key"]`, `.*field`,
+  `..field`, `.@attribute`, `field?` and `[?(condition)]`.
+- *Mule variables and attributes*: `payload` is the message body, `vars.name` (or `vars["name"]`) an exchange variable,
+  and `attributes.headers`, `attributes.queryParams` and `attributes.uriParams` message headers. `attributes.method`,
+  `requestPath`, `requestUri`, `queryString`, `statusCode` and `reasonPhrase` are the corresponding Camel HTTP headers.
+- *Operators*, with the DataWeave precedence: arithmetic, comparison, `~=`, `and`, `or`, `not`, `++`, `--`, removing a
+  key with `-`, `default`, `if`/`else`, `unless`/`else`, `match` (literal, `is Type`, `matches /regex/`, `if` guards
+  and `else` cases), `do` blocks and `using`.
+- *Functions* in prefix and infix form (`upper(x)`, `xs map f`), with lambdas `(item, index) -> ...`, the `$`, `$$` and
+  `$$$` shorthand, and references to functions: `map`, `filter`, `reduce`, `flatMap`, `flatten`, `distinctBy`,
+  `groupBy`, `orderBy`, `mapObject`, `filterObject`, `pluck`, `keysOf`, `namesOf`, `valuesOf`, `entriesOf`, `zip`,
+  `unzip`, `sizeOf`, `isEmpty`, `isBlank`, `sum`, `avg`, `min`, `max`, `maxBy`, `minBy`, `then`, `to`, `upper`, `lower`,
+  `trim`, `contains`, `startsWith`, `endsWith`, `splitBy`, `joinBy`, `replace ... with`, `matches`, `scan`, `find`,
+  `abs`, `ceil`, `floor`, `round`, `sqrt`, `pow`, `mod`, `isEven`, `isOdd`, `isInteger`, `isDecimal`, `typeOf`, `now`,
+  `uuid`, `p`, `log`, `fail`, `read` and `write`, and of the `dw::core` modules `camelize`, `capitalize`, `dasherize`,
+  `underscore`, `pluralize`, `singularize`, `leftPad`, `rightPad`, `substringBefore`, `substringAfter` (and the other
+  `Strings` functions), `take`, `drop`, `splitAt`, `divideBy`, `indexOf`, `countBy`, `sumBy`, `every`, `some`,
+  `partition`, `firstWith` and `mergeWith`.
+- *Objects*: dynamic keys `(key): value`, conditional fields `(key: value) if condition`, and object spread
+  `{ (expression) }` of an object or an array of objects.
+- *Strings*: interpolation (`"Hello $(expression)"`, `"Hello $name"` and `$` of a lambda), and regular expressions
+  `/.../` in `replace` (also with a function of the matched groups: `replace /(\d+)/ with ($[1] ++ "!")`), `contains`,
+  `splitBy`, `matches`, `scan` and `find`.
+- *Type coercion*: `as String`, `as Number`, `as Boolean`, `as String {format: ...}` of numbers and dates,
+  `as Date`, `as DateTime`, `as LocalDateTime`, `as Time` and `as LocalTime` (with or without `format`), date literals
+  such as `|2020-01-31|`, date arithmetic with periods such as `|P1D|`, and the parts of a date such as `.year`.
+  Dates and times are ISO-8601 strings in the converted script; as in DataWeave, a date coerced with a format is
+  written in that format. Numbers and dates are formatted in the default locale (as DataWeave does), unless the
+  coercion has a `locale` property.
 
-- `payload` to `body`, `vars` to `cml.variable()`, `attributes.headers` to `cml.header()`
-- Operators: `++` to `+`, `default` to `cml.defaultVal()`, `as Number/String/Boolean` to `cml.toInteger()/std.toString()/cml.toBoolean()`
-- Collection operations: `map`, `filter`, `reduce` (including `$$`/`$` shorthand form), `flatMap`, `groupBy`, `orderBy`, `distinctBy`
-- String operations: `contains`, `startsWith`, `endsWith`, `splitBy`, `joinBy`, `replace`
-- Functions: `sizeOf`, `upper`, `lower`, `trim`, `now`, `uuid`, `abs`, `round`, `sqrt`
-- XML selectors: multi-value selector `.*field` (maps all `field` values from a collection), attribute access `.@attr` (maps to `["@attr"]`)
-- Key-present selector `expr?` (maps to `std.objectHas()` for field and attribute expressions)
-- Header `var` and `fun` declarations above `---` are converted to Jsonnet `local` bindings
-- Type annotations (`: Type`, including generics and union types) in function parameters are stripped
-- String literals from single-quoted DataWeave strings are properly re-escaped for Jsonnet
+The expected output of the DataWeave scripts in the tests of the conversion is verified with the DataWeave CLI.
 
-Constructs that cannot be automatically converted (such as `match` expressions, `mapObject`, `pluck`, and `..` descendant selectors) are emitted as a TODO comment and `null` for manual review.
+These constructs are not converted (the conversion fails): the `update` operator, `try` (`dw::Runtime`), overloaded
+functions, custom modules, `as` with a custom type, XML namespaces, XML attributes in the output, and writer properties
+other than the ones listed above. The XML support is limited: an element with text is read as its text (as in
+DataWeave), but the attributes of such an element are only kept when they are selected directly (`payload.order.@id`)
+or in a lambda (`payload.orders.*order map $.@id`).
 
 == Dependencies
 

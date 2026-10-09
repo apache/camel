@@ -22,10 +22,21 @@ import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Unit tests for the DataSonnet produced by {@link DataWeaveConverter}. The produced DataSonnet is executed against the
+ * output of DataWeave by the DataWeave corpus test of camel-datasonnet.
+ */
 class DataWeaveConverterTest {
+
+    private static final String DW_IMPORT = "local dw = import 'dataweave.libsonnet';\n";
 
     private DataWeaveConverter converter;
 
@@ -34,706 +45,352 @@ class DataWeaveConverterTest {
         converter = new DataWeaveConverter();
     }
 
-    // -- Header conversion --
+    // Converts an expression that needs no library, or asserts the library import and returns what follows it
+    private String expr(String dataWeave) {
+        String result = converter.convertExpression(dataWeave);
+        if (converter.needsDataWeaveLib()) {
+            assertTrue(result.startsWith(DW_IMPORT), result);
+            return result.substring(DW_IMPORT.length());
+        }
+        return result;
+    }
+
+    // -- Header
 
     @Test
-    void testHeaderConversion() {
-        String dw = """
+    void testHeader() {
+        String result = converter.convert("""
                 %dw 2.0
+                input payload application/xml
                 output application/json
                 ---
-                { name: "test" }
-                """;
-        String result = converter.convert(dw);
-        assertTrue(result.contains("/** DataSonnet"));
-        assertTrue(result.contains("version=2.0"));
-        assertTrue(result.contains("output application/json"));
-        assertTrue(result.contains("*/"));
-    }
-
-    // -- Field access --
-
-    @Test
-    void testPayloadToBody() {
-        String result = converter.convertExpression("payload.name");
-        assertEquals("body.name", result);
+                { a: 1 }
+                """);
+        assertEquals("/** DataSonnet\nversion=2.0\noutput application/json\ninput payload application/xml\n*/\n{\n  a: 1\n}",
+                result);
+        assertFalse(converter.needsDataWeaveLib());
+        assertEquals(0, converter.getTodoCount());
     }
 
     @Test
-    void testNestedPayloadAccess() {
-        String result = converter.convertExpression("payload.customer.email");
-        assertEquals("body.customer.email", result);
+    void testOutputMediaTypes() {
+        assertTrue(converter.convert("%dw 2.0\noutput application/java\n---\n1").contains("output application/x-java-object"));
+        assertTrue(converter.convert("%dw 2.0\noutput json\n---\n1").contains("output application/json"));
     }
 
     @Test
-    void testVarsConversion() {
-        String result = converter.convertExpression("vars.myVar");
-        assertEquals("cml.variable('myVar')", result);
+    void testSkipNullOn() {
+        String result = converter.convert("%dw 2.0\noutput application/json skipNullOn=\"everywhere\", indent=false\n---\n1");
+        assertTrue(result.endsWith("dw.skipNulls(1, \"everywhere\")"), result);
+        assertEquals(0, converter.getTodoCount());
     }
 
     @Test
-    void testAttributesHeaders() {
-        String result = converter.convertExpression("attributes.headers.contentType");
-        assertEquals("cml.header('contentType')", result);
+    void testUnsupportedWriterPropertyAndModule() {
+        String result = converter.convert("%dw 2.0\nimport modules::MyLib\noutput application/csv header=false\n---\npayload");
+        assertEquals(2, converter.getTodoCount());
+        assertTrue(result.contains("/* TODO: manual conversion needed -- import of module: modules::MyLib */\n"), result);
+        assertTrue(result.contains("/* TODO: manual conversion needed -- writer property: header=false */\nbody"), result);
     }
 
     @Test
-    void testAttributesQueryParams() {
-        String result = converter.convertExpression("attributes.queryParams.page");
-        assertEquals("cml.header('page')", result);
+    void testKnownModuleImport() {
+        converter.convert("%dw 2.0\nimport * from dw::core::Strings\n---\ncamelize(payload.a)");
+        assertEquals(0, converter.getTodoCount());
     }
 
-    // -- Operators --
+    // -- Selectors
 
     @Test
-    void testStringConcat() {
-        String result = converter.convertExpression("payload.first ++ \" \" ++ payload.last");
-        assertEquals("body.first + \" \" + body.last", result);
-    }
-
-    @Test
-    void testArithmetic() {
-        String result = converter.convertExpression("payload.qty * payload.price");
-        assertEquals("body.qty * body.price", result);
-    }
-
-    @Test
-    void testComparison() {
-        String result = converter.convertExpression("payload.age >= 18");
-        assertEquals("body.age >= 18", result);
-    }
-
-    @Test
-    void testLogicalOps() {
-        String result = converter.convertExpression("payload.active and payload.verified");
-        assertEquals("body.active && body.verified", result);
-    }
-
-    // -- Default operator --
-
-    @Test
-    void testDefault() {
-        String result = converter.convertExpression("payload.currency default \"USD\"");
-        assertEquals("cml.defaultVal(body.currency, \"USD\")", result);
-    }
-
-    // -- Type coercion --
-
-    @Test
-    void testAsNumber() {
-        String result = converter.convertExpression("payload.count as Number");
-        assertEquals("cml.toDecimal(body.count)", result);
+    void testSelectors() {
+        assertEquals("body", expr("payload"));
+        assertEquals("dw.sel(body, \"name\")", expr("payload.name"));
+        assertEquals("dw.path(body, [\"customer\", \"name\"])", expr("payload.customer.name"));
+        assertEquals("dw.sel(body, \"first-name\")", expr("payload.'first-name'"));
+        assertEquals("dw.sel(dw.idx(dw.selRaw(body, \"items\"), 0), \"sku\")", expr("payload.items[0].sku"));
+        assertEquals("dw.idx(body, \"customer\")", expr("payload[\"customer\"]"));
+        assertEquals("dw.slice(dw.selRaw(body, \"items\"), -1, 0)", expr("payload.items[-1 to 0]"));
+        assertEquals("dw.attr(dw.selRaw(body, \"order\"), \"id\")", expr("payload.order.@id"));
+        assertEquals("dw.multi(body, \"item\")", expr("payload.*item"));
+        assertEquals("dw.desc(body, \"sku\")", expr("payload..sku"));
+        assertEquals("dw.has(body, \"a\")", expr("payload.a?"));
+        assertEquals("dw.filter(dw.sel(body, \"items\"), function(item, index) dw.sel(item, \"qty\") > 1)",
+                expr("payload.items[?($.qty > 1)]"));
+        assertEquals(0, converter.getTodoCount());
     }
 
     @Test
-    void testAsString() {
-        String result = converter.convertExpression("payload.id as String");
-        assertEquals("std.toString(body.id)", result);
+    void testVariablesAndAttributes() {
+        assertEquals("cml.variable(\"orderId\")", expr("vars.orderId"));
+        assertEquals("cml.variable(\"orderId\")", expr("vars[\"orderId\"]"));
+        assertEquals("dw.sel(cml.variable(\"cfg\"), \"x\")", expr("vars.cfg.x"));
+        assertEquals("cml.header(\"x-id\")", expr("attributes.headers.'x-id'"));
+        assertEquals("cml.header(\"x-id\")", expr("attributes.headers[\"x-id\"]"));
+        assertEquals("cml.header(\"page\")", expr("attributes.queryParams.page"));
+        assertEquals("cml.header(\"id\")", expr("attributes.uriParams.id"));
+        assertEquals("cml.header(\"CamelHttpMethod\")", expr("attributes.method"));
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "vars", "attributes.headers", "attributes.foo", "foo", "bar(1)", "upper(1, 2)", "$" })
+    void testUnknownIsTodo(String dataWeave) {
+        String result = converter.convertExpression(dataWeave);
+        assertEquals(1, converter.getTodoCount(), result);
+        assertTrue(result.contains("TODO"), result);
     }
 
     @Test
-    void testAsStringWithFormat() {
-        String result = converter.convertExpression("payload.date as String {format: \"yyyy-MM-dd\"}");
-        assertEquals("cml.formatDate(body.date, \"yyyy-MM-dd\")", result);
+    void testDatePart() {
+        assertEquals("cml.datePart(cml.parseDateTime(dw.sel(body, \"date\"), null, \"Date\"), \"year\")",
+                expr("(payload.date as Date).year"));
+    }
+
+    // -- Operators
+
+    @Test
+    void testOperators() {
+        assertEquals("\"a\" + dw.sel(body, \"b\")", expr("\"a\" ++ payload.b"));
+        assertEquals("1 + 2 * 3", expr("1 + 2 * 3"));
+        assertEquals("1 - (2 - 3)", expr("1 - (2 - 3)"));
+        assertEquals("\"a\" + 1 + 2", expr("\"a\" ++ 1 ++ 2"));
+        assertEquals("(1 + 2) * 3", expr("(1 + 2) * 3"));
+        assertEquals("true && (false || true)", expr("true and (false or true)"));
+        assertEquals("!true", expr("not true"));
+        assertEquals("dw.default(dw.sel(body, \"a\"), \"x\")", expr("payload.a default \"x\""));
+        assertEquals("dw.similar(\"1\", 1)", expr("\"1\" ~= 1"));
+        assertEquals("dw.minus(body, \"password\")", expr("payload - \"password\""));
+        assertEquals("dw.removeAll(body, [\"a\", \"b\"])", expr("payload -- [\"a\", \"b\"]"));
+        assertEquals("dw.range(1, 3)", expr("1 to 3"));
+        assertEquals("if true then 1 else 2", expr("if (true) 1 else 2"));
+        assertEquals("if true then 2 else 1", expr("unless (true) 1 else 2"));
+        assertEquals("if true then 2 else 1", expr("unless (true) 1 otherwise 2"));
     }
 
     @Test
-    void testAsBoolean() {
-        String result = converter.convertExpression("payload.active as Boolean");
-        assertEquals("cml.toBoolean(body.active)", result);
-    }
-
-    // -- Built-in functions --
-
-    @Test
-    void testSizeOf() {
-        String result = converter.convertExpression("sizeOf(payload.items)");
-        assertEquals("std.length(body.items)", result);
+    void testDateArithmetic() {
+        assertEquals("cml.dateAdd(\"2020-01-31\", \"P1D\")", expr("|2020-01-31| + |P1D|"));
+        assertEquals("cml.dateAdd(\"2020-01-31\", \"-P1M\")", expr("|2020-01-31| - |P1M|"));
     }
 
     @Test
-    void testUpper() {
-        String result = converter.convertExpression("upper(payload.name)");
-        assertEquals("std.asciiUpper(body.name)", result);
+    void testCoercions() {
+        assertEquals("cml.toDecimal(\"1\")", expr("\"1\" as Number"));
+        assertEquals("dw.toString(1)", expr("1 as String"));
+        assertEquals("cml.formatNumber(1, \"#.00\")", expr("1 as String {format: \"#.00\"}"));
+        assertEquals("cml.formatNumberLocale(1, \"#.00\", \"de\")", expr("1 as String {format: \"#.00\", locale: \"de\"}"));
+        // a date coerced with a format is written in that format, and is an ISO-8601 date otherwise
+        assertEquals("cml.formatDate(cml.parseDateTime(\"01/31/2020\", \"MM/dd/yyyy\", \"Date\"), \"MM/dd/yyyy\")",
+                expr("\"01/31/2020\" as Date {format: \"MM/dd/yyyy\"}"));
+        assertEquals("cml.formatDate(cml.parseDateTime(\"01/31/2020\", \"MM/dd/yyyy\", \"Date\"), \"yyyy-MM-dd\")",
+                expr("\"01/31/2020\" as Date {format: \"MM/dd/yyyy\"} as String {format: \"yyyy-MM-dd\"}"));
+        assertEquals("cml.toBoolean(\"true\")", expr("\"true\" as Boolean"));
+        assertEquals("std.isString(1)", expr("1 is String"));
+        assertEquals(0, converter.getTodoCount());
+        expr("1 as Foo");
+        assertEquals(1, converter.getTodoCount());
+    }
+
+    // -- Strings
+
+    @Test
+    void testStrings() {
+        assertEquals("\"say \\\"hi\\\"\"", expr("\"say \\\"hi\\\"\""));
+        assertEquals("\"it's \\\"x\\\"\"", expr("'it\\'s \"x\"'"));
+        assertEquals("(\"Hello \" + dw.str(dw.sel(body, \"name\")) + \"!\")", expr("\"Hello $(payload.name)!\""));
+        assertEquals("\"$ 5\"", expr("\"\\$ 5\""));
+        assertEquals("dw.map([1, 2], function(item, index) (\"v\" + dw.str(item)))", expr("[1, 2] map \"v$\""));
     }
 
     @Test
-    void testLower() {
-        String result = converter.convertExpression("lower(payload.name)");
-        assertEquals("std.asciiLower(body.name)", result);
+    void testRegularExpressions() {
+        assertEquals("ds.replace(\"a  b\", \"\\\\s+\", \"_\")", expr("\"a  b\" replace /\\s+/ with \"_\""));
+        assertEquals("dw.replace(\"a.b\", \".\", \"_\")", expr("\"a.b\" replace \".\" with \"_\""));
+        assertEquals("dw.containsMatch(\"abc\", ds.scan, \"b+\")", expr("\"abc\" contains /b+/"));
+        assertEquals("dw.splitByMatch(\"a1b\", ds.splitBy, \"[0-9]\")", expr("\"a1b\" splitBy /[0-9]/"));
+        assertEquals("ds.matches(\"abc\", \"a.c\")", expr("\"abc\" matches /a.c/"));
+    }
+
+    // -- Functions
+
+    @Test
+    void testCoreFunctions() {
+        assertEquals("dw.upper(dw.sel(body, \"a\"))", expr("upper(payload.a)"));
+        assertEquals("dw.sizeOf(body)", expr("sizeOf(payload)"));
+        assertEquals("dw.nullSafe(ds.strings.camelize, \"a_b\")", expr("camelize(\"a_b\")"));
+        assertEquals("dw.nullSafe(ds.strings.capitalize, \"a_b\")", expr("Strings::capitalize(\"a_b\")"));
+        assertEquals("ds.strings.leftPad(\"a\", 3, \" \")", expr("leftPad(\"a\", 3, \" \")"));
+        assertEquals("std.mod(10, 3)", expr("10 mod 3"));
+        assertEquals("cml.uuid()", expr("uuid()"));
+        assertEquals("ds.write(body, \"application/xml\")", expr("write(payload, \"application/xml\")"));
+        assertEquals("error \"bad\"", expr("fail(\"bad\")"));
+        assertEquals("body", expr("log(payload)"));
+        assertEquals(0, converter.getTodoCount());
     }
 
     @Test
-    void testNow() {
-        String result = converter.convertExpression("now()");
-        assertEquals("cml.now()", result);
-    }
-
-    @Test
-    void testNowWithFormat() {
-        String result = converter.convertExpression("now() as String {format: \"yyyy-MM-dd\"}");
-        assertEquals("cml.nowFmt(\"yyyy-MM-dd\")", result.trim());
-    }
-
-    @Test
-    void testUuid() {
-        String result = converter.convertExpression("uuid()");
-        assertEquals("cml.uuid()", result);
-    }
-
-    @Test
-    void testP() {
-        String result = converter.convertExpression("p('config.key')");
-        assertEquals("cml.properties(\"config.key\")", result);
-    }
-
-    @Test
-    void testTrim() {
-        String result = converter.convertExpression("trim(payload.name)");
-        assertEquals("c.trim(body.name)", result);
-        assertTrue(converter.needsCamelLib());
-    }
-
-    // -- String operations --
-
-    @Test
-    void testContains() {
-        String result = converter.convertExpression("payload.email contains \"@\"");
-        assertEquals("c.contains(body.email, \"@\")", result);
-        assertTrue(converter.needsCamelLib());
-    }
-
-    @Test
-    void testSplitBy() {
-        String result = converter.convertExpression("payload.tags splitBy \",\"");
-        assertEquals("std.split(body.tags, \",\")", result);
-    }
-
-    @Test
-    void testJoinBy() {
-        String result = converter.convertExpression("payload.items joinBy \", \"");
-        assertEquals("std.join(\", \", body.items)", result);
-    }
-
-    @Test
-    void testReplace() {
-        String result = converter.convertExpression("payload.text replace \"old\" with \"new\"");
-        assertEquals("std.strReplace(body.text, \"old\", \"new\")", result);
-    }
-
-    // -- Collection operations --
-
-    @Test
-    void testMap() {
-        String result = converter.convertExpression(
-                "payload.items map ((item) -> { name: item.name })");
-        assertTrue(result.contains("std.map(function(item)"));
-        assertTrue(result.contains("item.name"));
-    }
-
-    @Test
-    void testFilter() {
-        String result = converter.convertExpression(
-                "payload.items filter ((item) -> item.active)");
-        assertTrue(result.contains("std.filter(function(item)"));
-        assertTrue(result.contains("item.active"));
+    void testLambdas() {
+        // DataWeave passes the index too: a lambda is given the parameters it does not declare
+        assertEquals("dw.map(body, function(item, _1) dw.sel(item, \"name\"))", expr("payload map (item) -> item.name"));
+        assertEquals("dw.map(body, function(i, idx) idx)", expr("payload map ((i, idx) -> idx)"));
+        assertEquals("dw.mapObject(body, function(v, k, _2) {\n  [dw.str(k)]: v\n})",
+                expr("payload mapObject (v, k) -> { (k): v }"));
+        assertEquals("dw.map(body, function(item, index) {\n  line: index,\n  name: dw.sel(item, \"name\")\n})",
+                expr("payload map { line: $$, name: $.name }"));
+        assertEquals("dw.orderBy(body, function(item, index) -dw.sel(item, \"price\"))", expr("payload orderBy -$.price"));
+        assertEquals("dw.pluck(body, function(value, key, index) key)", expr("payload pluck $$"));
+        assertEquals("dw.pipe(body, function(value) dw.sizeOf(value))", expr("payload then sizeOf($)"));
+        assertEquals(0, converter.getTodoCount());
     }
 
     @Test
     void testReduce() {
-        String result = converter.convertExpression(
-                "payload.items reduce ((item, acc = 0) -> acc + item.price)");
-        assertTrue(result.contains("std.foldl(function(acc, item)"));
-        assertTrue(result.contains("acc + item.price"));
-        assertTrue(result.contains(", 0)"));
+        assertEquals("dw.reduce(body, function(item, acc) acc + item, 0)",
+                expr("payload reduce ((item, acc = 0) -> acc + item)"));
+        assertEquals("dw.reduce1(body, function(item, acc) acc + item)", expr("payload reduce ((item, acc) -> acc + item)"));
+        assertEquals("dw.reduce1(body, function(item, acc) (acc + item))", expr("payload reduce ($$ + $)"));
     }
 
     @Test
-    void testReduceParamSwap() {
-        // Verify that acc and item params are swapped for std.foldl
-        String result = converter.convertExpression(
-                "payload.items reduce ((item, acc = 0) -> acc + item.price)");
-        // In std.foldl, it should be function(acc, item) not function(item, acc)
-        assertTrue(result.contains("function(acc, item)"));
+    void testImplicitLambdaDoesNotHideVariables() {
+        // the inner $ is the line and the outer item stays visible
+        assertEquals("dw.map(body, function(item, _1) dw.map(dw.sel(item, \"lines\"), "
+                     + "function(item2, index) (dw.sel(item2, \"n\") + dw.sel(item, \"id\"))))",
+                expr("payload map (item) -> item.lines map ($.n ++ item.id)"));
     }
 
     @Test
-    void testFlatMap() {
-        String result = converter.convertExpression(
-                "payload.items flatMap ((item) -> item.tags)");
-        assertTrue(result.contains("std.flatMap(function(item)"));
-        assertTrue(result.contains("item.tags"));
-    }
-
-    // -- If/else --
-
-    @Test
-    void testIfElse() {
-        String result = converter.convertExpression(
-                "if (payload.age >= 18) \"adult\" else \"minor\"");
-        assertEquals("if body.age >= 18 then \"adult\" else \"minor\"", result);
-    }
-
-    // -- Object and array literals --
-
-    @Test
-    void testObjectLiteral() {
-        String result = converter.convertExpression("{ name: payload.name, age: payload.age }");
-        assertTrue(result.contains("name: body.name"));
-        assertTrue(result.contains("age: body.age"));
+    void testFunctionReferenceArguments() {
+        String result = expr("do {\n  fun name(x) = x.name\n  ---\n  payload map name\n}");
+        assertTrue(result.endsWith("dw.map(body, function(item, index) name(item))"), result);
+        assertEquals("function(f) dw.map(body, dw.fn(f))", expr("(f) -> payload map f"));
     }
 
     @Test
-    void testArrayLiteral() {
-        String result = converter.convertExpression("[1, 2, 3]");
-        assertEquals("[1, 2, 3]", result);
+    void testLambdaWithTooManyParametersIsTodo() {
+        expr("payload map (a, b, c) -> a");
+        assertEquals(1, converter.getTodoCount());
     }
 
-    // -- Full script tests --
+    // -- Objects
 
     @Test
-    void testSimpleRenameScript() throws IOException {
-        String dw = loadResource("dataweave/simple-rename.dwl");
-        String result = converter.convert(dw);
-
-        assertTrue(result.contains("/** DataSonnet"));
-        assertTrue(result.contains("output application/json"));
-        assertTrue(result.contains("body.order_id"));
-        assertTrue(result.contains("body.customer.email"));
-        assertTrue(result.contains("body.customer.first_name + \" \" + body.customer.last_name"));
-        assertTrue(result.contains("cml.defaultVal(body.currency, \"USD\")"));
-        assertTrue(result.contains("status: \"RECEIVED\""));
+    void testObjects() {
+        assertEquals("{\n  a: 1,\n  \"first-name\": 2,\n  \"if\": 3\n}", expr("{ a: 1, 'first-name': 2, if: 3 }"));
+        assertEquals("{\n  [dw.str(dw.sel(body, \"k\"))]: 1\n}", expr("{ (payload.k): 1 }"));
+        assertEquals("{\n  [if dw.sel(body, \"flag\") then \"b\" else null]: 2\n}", expr("{ (b: 2) if payload.flag }"));
+        assertEquals("({\n  a: 1\n} + dw.toObject(dw.sel(body, \"extra\")))", expr("{ a: 1, (payload.extra) }"));
+        assertEquals("{}", expr("{}"));
     }
 
-    @Test
-    void testCollectionMapScript() throws IOException {
-        String dw = loadResource("dataweave/collection-map.dwl");
-        String result = converter.convert(dw);
+    // -- Match
 
-        assertTrue(result.contains("std.map(function(item)"));
-        assertTrue(result.contains("item.product_sku"));
-        assertTrue(result.contains("cml.toDecimal(item.qty)"));
-        assertTrue(result.contains("std.foldl(function(acc, item)"));
+    @Test
+    void testMatch() {
+        assertEquals(
+                """
+                        (local match = dw.sel(body, "status");
+                        if match == "A" then 1
+                        else if std.isNumber(match) then 2
+                        else if std.isString(match) && ds.matches(match, "x(.)") then (local m = ds.scan(match, "x(.)")[0]; dw.idx(m, 1))
+                        else if (local n = match; n > 3) then (local n = match; n)
+                        else 5)""",
+                expr("""
+                        payload.status match {
+                          case "A" -> 1
+                          case is Number -> 2
+                          case m matches /x(.)/ -> m[1]
+                          case n if n > 3 -> n
+                          else -> 5
+                        }"""));
+        assertTrue(expr("1 match { case 1 -> 2 }").endsWith("else error 'No case of the match expression matched: ' + "
+                                                            + "std.toString(match))"));
     }
 
-    @Test
-    void testEventMessageScript() throws IOException {
-        String dw = loadResource("dataweave/event-message.dwl");
-        String result = converter.convert(dw);
-
-        assertTrue(result.contains("\"ORDER_CREATED\""));
-        assertTrue(result.contains("cml.uuid()"));
-        assertTrue(result.contains("cml.variable('correlationId')"));
-        assertTrue(result.contains("cml.variable('parsedOrder')"));
-        assertTrue(result.contains("std.length("));
-    }
+    // -- Declarations
 
     @Test
-    void testTypeCoercionScript() throws IOException {
-        String dw = loadResource("dataweave/type-coercion.dwl");
-        String result = converter.convert(dw);
-
-        assertTrue(result.contains("cml.toDecimal(body.count)"));
-        assertTrue(result.contains("cml.toDecimal(body.total)"));
-        assertTrue(result.contains("cml.toBoolean(body.active)"));
-        assertTrue(result.contains("std.toString(body.id)"));
-        assertTrue(result.contains("cml.formatDate(body.timestamp, \"yyyy-MM-dd\")"));
-    }
-
-    @Test
-    void testNullHandlingScript() throws IOException {
-        String dw = loadResource("dataweave/null-handling.dwl");
-        String result = converter.convert(dw);
-
-        assertTrue(result.contains("cml.defaultVal(body.name, \"Unknown\")"));
-        assertTrue(result.contains("cml.defaultVal(body.address.city, \"N/A\")"));
-        assertTrue(result.contains("cml.defaultVal(body.address.country, \"US\")"));
-    }
-
-    @Test
-    void testStringOpsScript() throws IOException {
-        String dw = loadResource("dataweave/string-ops.dwl");
-        String result = converter.convert(dw);
-
-        assertTrue(result.contains("std.asciiUpper(body.name)"));
-        assertTrue(result.contains("std.asciiLower(body.name)"));
-        assertTrue(result.contains("c.contains(body.email, \"@\")"));
-        assertTrue(result.contains("std.split(body.tags, \",\")"));
-        assertTrue(result.contains("std.join(\"; \", body.items)"));
-        assertTrue(result.contains("std.strReplace(body.text, \"old\", \"new\")"));
-    }
-
-    @Test
-    void testTodoCountForUnsupportedConstructs() {
-        converter.convert("""
+    void testDeclarations() {
+        String result = converter.convert("""
                 %dw 2.0
-                output application/json
+                var rate = 0.5
+                fun total(a, b = 1) = a * b * rate
+                fun fact(n) = if (n <= 1) 1 else n * fact(n - 1)
                 ---
-                {
-                    value: payload.x as Date
-                }
+                total(fact(3))
                 """);
-        assertTrue(converter.getTodoCount() > 0, "Should have TODO count for unsupported 'as Date'");
-    }
-
-    @Test
-    void testNoHeaderScript() {
-        String result = converter.convert("{ name: payload.name }");
-        assertTrue(result.contains("name: body.name"));
-    }
-
-    // -- startsWith / endsWith --
-
-    @Test
-    void testStartsWith() {
-        String result = converter.convertExpression("payload.name startsWith \"Dr\"");
-        assertEquals("c.startsWith(body.name, \"Dr\")", result);
-        assertTrue(converter.needsCamelLib());
-    }
-
-    @Test
-    void testEndsWith() {
-        String result = converter.convertExpression("payload.file endsWith \".csv\"");
-        assertEquals("c.endsWith(body.file, \".csv\")", result);
-        assertTrue(converter.needsCamelLib());
-    }
-
-    // -- Math functions --
-
-    @Test
-    void testAbs() {
-        String result = converter.convertExpression("abs(payload.value)");
-        assertEquals("c.abs(body.value)", result);
-        assertTrue(converter.needsCamelLib());
-    }
-
-    @Test
-    void testRound() {
-        String result = converter.convertExpression("round(payload.value)");
-        assertEquals("c.round(body.value)", result);
-        assertTrue(converter.needsCamelLib());
-    }
-
-    @Test
-    void testSqrt() {
-        String result = converter.convertExpression("sqrt(payload.value)");
-        assertEquals("cml.sqrt(body.value)", result);
-    }
-
-    @Test
-    void testAvg() {
-        String result = converter.convertExpression("avg(payload.scores)");
-        assertEquals("c.avg(body.scores)", result);
-        assertTrue(converter.needsCamelLib());
-    }
-
-    // -- mapWithIndex parameter order --
-
-    @Test
-    void testMapWithIndex() {
-        // DataSonnet std.mapWithIndex uses function(index, item), so params must be swapped
-        String result = converter.convertExpression(
-                "payload.items map ((item, idx) -> { index: idx, name: item.name })");
-        assertTrue(result.contains("std.mapWithIndex(function(idx, item)"));
-    }
-
-    // -- distinctBy --
-
-    @Test
-    void testDistinctBy() {
-        String result = converter.convertExpression(
-                "payload.items distinctBy ((item) -> item.id)");
-        assertTrue(result.contains("c.distinctBy("));
-        assertTrue(result.contains("function(item) item.id"));
-        assertTrue(converter.needsCamelLib());
-    }
-
-    // -- Lambda shorthand --
-
-    @Test
-    void testLambdaShorthand() {
-        String result = converter.convertExpression("payload.items map $.name");
-        assertTrue(result.contains("function(x) x.name"));
-    }
-
-    // -- match expression --
-
-    @Test
-    void testMatchExpressionUnsupported() {
-        String result = converter.convertExpression(
-                "payload.status match { case \"active\" -> true, case \"inactive\" -> false }");
-        assertTrue(result.contains("TODO"));
-        assertTrue(converter.getTodoCount() > 0);
-    }
-
-    // -- Multi-value selector --
-
-    @Test
-    void testMultiValueSelector() {
-        String result = converter.convertExpression("payload.items.*name");
-        assertEquals("std.map(function(x) x.name, body.items)", result);
+        assertTrue(result.endsWith("""
+                local rate = 0.5,
+                      total(a, b = 1) = a * b * rate,
+                      fact(n) = if n <= 1 then 1 else n * fact(n - 1);
+                total(fact(3))"""), result);
         assertEquals(0, converter.getTodoCount());
-        assertFalse(converter.needsCamelLib());
-    }
-
-    // -- Escape handling --
-
-    @Test
-    void testStringEscapesPreserved() {
-        String result = converter.convertExpression("payload.text ++ \"\\n\"");
-        assertTrue(result.contains("\"\\n\""), "Newline escape should be preserved, got: " + result);
-    }
-
-    // -- CAMEL-25324 fixes --
-
-    @Test
-    void testDoubleQuoteNoDoubleEscape() {
-        // DW: "say \"hi\"" -- the lexer stores the backslash-quote verbatim; do NOT double-escape on emit
-        String result = converter.convertExpression("\"say \\\"hi\\\"\"");
-        assertEquals("\"say \\\"hi\\\"\"", result);
     }
 
     @Test
-    void testStringInterpolation() {
-        // DW: "Hello $(payload.name)" -- Jsonnet has no string interpolation, emit as TODO
-        String result = converter.convertExpression("\"Hello $(payload.name)\"");
-        assertTrue(result.contains("TODO"), "String interpolation should be a TODO, got: " + result);
-        assertTrue(converter.getTodoCount() > 0);
+    void testDoBlock() {
+        assertEquals("local x = 1;\nx + 1", expr("do {\n  var x = 1\n  ---\n  x + 1\n}"));
     }
 
     @Test
-    void testAttributeAccess() {
-        // DW: payload.Order.@id -> DS: body.Order["@id"]
-        String result = converter.convertExpression("payload.Order.@id");
-        assertEquals("body.Order[\"@id\"]", result);
+    void testReservedNames() {
+        assertEquals("local local_ = 1;\nlocal_", expr("do {\n  var local = 1\n  ---\n  local\n}"));
     }
 
     @Test
-    void testExistenceCheck() {
-        // DW: payload.a? -> DS: std.objectHas(body, "a") -- using std.objectHas for FieldAccess
-        String result = converter.convertExpression("payload.a?");
-        assertEquals("std.objectHas(body, \"a\")", result);
-        assertFalse(converter.needsCamelLib());
+    void testOverloadedFunctionIsTodo() {
+        converter.convert("%dw 2.0\nfun f(x: String) = x\nfun f(x: Number) = x\n---\nf(1)");
+        assertEquals(1, converter.getTodoCount());
+    }
+
+    // -- TODO comments
+
+    @Test
+    void testTodoWithoutComments() {
+        converter.setIncludeComments(false);
+        assertEquals("null", converter.convertExpression("foo"));
+        assertEquals(1, converter.getTodoCount());
     }
 
     @Test
-    void testDoubleDollarInReduce() {
-        // DW: payload.items reduce ((item, acc = 0) -> acc + item.price) -- explicit lambda
-        String result = converter.convertExpression("payload.items reduce ((item, acc = 0) -> acc + item.price)");
-        assertTrue(result.contains("std.foldl"), "Should use std.foldl, got: " + result);
-        assertTrue(result.contains("function(acc, item)"), "acc and item should be swapped for foldl, got: " + result);
+    void testTodoCommentCannotBeClosedEarly() {
+        String result = converter.convertExpression("payload update { case .a -> \"*/\" }");
+        assertTrue(result.contains("* /"), result);
+        assertFalse(result.contains("\"*/\""), result);
     }
 
     @Test
-    void testDoubleDollarOutsideReduce() {
-        // $$ outside a reduce shorthand context is ambiguous (index in map, key in mapObject).
-        // The converter emits a TODO rather than silently binding 'acc'.
-        String result = converter.convertExpression("$$");
-        assertTrue(result.contains("null"), "Should emit null placeholder, got: " + result);
-        assertEquals(1, converter.getTodoCount(), "$$ outside reduce should count as TODO");
+    void testUnsupportedConstructs() {
+        assertTrue(converter.convertExpression("payload update { case .a -> 1 }").contains("update operator"));
+        assertEquals(1, converter.getTodoCount());
+        converter.convertExpression("{ a @(id: 1): 2 }");
+        assertEquals(1, converter.getTodoCount());
     }
 
     @Test
-    void testVarDeclarationInHeader() {
-        // DW header var declarations must survive as local bindings in the body
-        String dw = """
-                %dw 2.0
-                output application/json
-                var rate = 0.08
-                ---
-                payload.price * rate
-                """;
-        String result = converter.convert(dw);
-        assertTrue(result.contains("local rate = 0.08"), "var rate must emit as local rate, got: " + result);
-        assertTrue(result.contains("body.price * rate"), "body expression must reference rate, got: " + result);
+    void testParseErrors() {
+        assertThrows(DataWeaveConversionException.class, () -> converter.convertExpression("payload.a )"));
+        assertThrows(DataWeaveConversionException.class, () -> converter.convert("%dw 2.0\n---\n{ a: 1 } )"));
+        assertThrows(DataWeaveConversionException.class, () -> converter.convertExpression("var x = 1\nx"));
     }
 
-    @Test
-    void testFunDeclarationInHeader() {
-        // DW header fun declarations must survive as local functions in the body
-        String dw = """
-                %dw 2.0
-                output application/json
-                fun double(x) = x * 2
-                ---
-                double(payload.value)
-                """;
-        String result = converter.convert(dw);
-        assertTrue(result.contains("local double(x) ="), "fun double must emit as local function, got: " + result);
-        assertTrue(result.contains("double(body.value)"), "body expression must call double, got: " + result);
+    // -- Scripts
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "simple-rename.dwl", "collection-map.dwl", "event-message.dwl", "null-handling.dwl", "string-ops.dwl",
+            "type-coercion.dwl" })
+    void testScripts(String name) throws IOException {
+        String result = converter.convert(loadResource("dataweave/" + name));
+        assertEquals(0, converter.getTodoCount(), result);
+        assertTrue(result.startsWith("/** DataSonnet"), result);
     }
 
-    @Test
-    void testTypedFunParams() {
-        // DW: fun f(a: Number): Number = a * 2  -- type annotations must be stripped
-        String result = converter.convertExpression("fun f(a: Number) = a * 2\nf(payload.x)");
-        assertTrue(result.contains("local f(a) ="), "typed param should be stripped, got: " + result);
-        assertFalse(result.contains("Number"), "type annotation must not appear in output, got: " + result);
-    }
-
-    @Test
-    void testGroupByKeyStringified() {
-        // DW: payload.items groupBy ((i) -> i.qty) -- groupBy key must be stringified
-        String result = converter.convertExpression("payload.items groupBy ((i) -> i.qty)");
-        assertTrue(result.contains("c.groupBy("), "Should use c.groupBy, got: " + result);
-        assertTrue(result.contains("std.toString("), "groupBy key must be stringified, got: " + result);
-    }
-
-    @Test
-    void testGroupByShorthand() {
-        // DW: payload.items groupBy $.qty -- shorthand (non-Lambda) branch
-        // The emitted lambda function must be parenthesized before being called with (x),
-        // otherwise (x) binds to the field access rather than invoking the whole function.
-        String result = converter.convertExpression("payload.items groupBy $.qty");
-        assertTrue(result.contains("c.groupBy("), "Should use c.groupBy, got: " + result);
-        assertTrue(result.contains("std.toString("), "groupBy key must be stringified, got: " + result);
-        // The function must be called on x: (function(x) ...)(x), not function(x) ...(x)
-        assertTrue(result.contains(")(x)"), "Emitted lambda must be parenthesized before (x) call, got: " + result);
-    }
-
-    @Test
-    void testMultiValueSelectorXmlChildren() {
-        // DW: payload.Order.Items.*Item -> DS: std.map(function(x) x.Item, body.Order.Items)
-        String result = converter.convertExpression("payload.Order.Items.*Item");
-        assertEquals("std.map(function(x) x.Item, body.Order.Items)", result);
-        assertFalse(converter.needsCamelLib());
-    }
-
-    // -- Helpers --
-
-    @Test
-    void testDoubleQuotedStringWithEscapedQuote() {
-        // DW: "say \"hi\"" (double-quoted string with escaped quotes inside)
-        // The lexer stores the value with the escapes resolved: say "hi"
-        // emitStringLit must re-escape the " to produce valid Jsonnet: "say \"hi\""
-        DataWeaveConverter c2 = new DataWeaveConverter();
-        // Pass a double-quoted DW string with escaped quotes to verify no double-escape
-        String result = c2.convertExpression("\"say \\\"hi\\\"\"");
-        assertEquals("\"say \\\"hi\\\"\"", result, "Double-quoted string with \\\" must not double-escape");
-    }
-
-    @Test
-    void testSingleQuotedStringWithDoubleQuote() {
-        // DW: 'say "hi"' (single-quoted string containing a bare double-quote)
-        // The lexer stores the value without surrounding quotes: say "hi" (with bare ")
-        // emitStringLit must re-escape the bare " to produce valid Jsonnet: "say \"hi\""
-        DataWeaveConverter c2 = new DataWeaveConverter();
-        String result = c2.convertExpression("'say \"hi\"'");
-        assertEquals("\"say \\\"hi\\\"\"", result, "Single-quoted string: bare \" must be escaped to \\\" in output");
-    }
-
-    @Test
-    void testExistenceCheckOnAttribute() {
-        // DW: payload.Order.@id? -> DS: std.objectHas(body.Order, "@id")
-        String result = converter.convertExpression("payload.Order.@id?");
-        assertEquals("std.objectHas(body.Order, \"@id\")", result);
-        assertFalse(converter.needsCamelLib());
-    }
-
-    @Test
-    void testTypedFunParamsCompound() {
-        // DW: fun f(a: Array<Number>): Number = a[0]  -- compound type annotations must be stripped
-        String result = converter.convertExpression("fun f(a: Array<Number>) = a[0]\nf(payload.x)");
-        assertTrue(result.contains("local f(a) ="), "typed compound param should be stripped, got: " + result);
-        assertFalse(result.contains("Array"), "compound type annotation must not appear in output, got: " + result);
-        assertFalse(result.contains("Number"), "type name must not appear in output, got: " + result);
-    }
-
-    @Test
-    void testTypedFunParamsUnion() {
-        // DW: fun f(a: String | Null) = a  -- union type annotation with | must be stripped
-        // Before this fix, '|' was silently dropped by the lexer and 'Null' leaked into the body.
-        String result = converter.convertExpression("fun f(a: String | Null) = a\nf(payload.x)");
-        assertTrue(result.contains("local f(a) ="), "union type param should be stripped, got: " + result);
-        // 'Null' must not appear as a null-literal emitted into the body
-        assertFalse(result.contains("null\n"), "union type token 'Null' must not leak into body, got: " + result);
-    }
-
-    @Test
-    void testReduceShorthandAccumulatorPlusField() {
-        // DW: payload.items reduce ($$ + $.price)
-        // Shorthand: $$ = accumulator, $ = current item (optionally .field)
-        // Expected: std.foldl using first element as initial accumulator
-        String result = converter.convertExpression("payload.items reduce ($$ + $.price)");
-        assertTrue(result.contains("std.foldl("), "Should use std.foldl, got: " + result);
-        assertTrue(result.contains("function(acc, item)"), "Should have acc, item params, got: " + result);
-        assertTrue(result.contains("acc + item.price"),
-                "Body should rewrite $$ -> acc and $.price -> item.price, got: " + result);
-        assertEquals(0, converter.getTodoCount(), "Reduce shorthand should not produce TODOs, got: " + result);
-    }
-
-    @Test
-    void testReduceShorthandConcatItems() {
-        // DW: payload.items reduce ($$ ++ $)
-        // $$ = accumulator, $ = whole item (no field access)
-        String result = converter.convertExpression("payload.items reduce ($$ ++ $)");
-        assertTrue(result.contains("std.foldl("), "Should use std.foldl, got: " + result);
-        assertTrue(result.contains("function(acc, item)"), "Should have acc, item params, got: " + result);
-        assertTrue(result.contains("acc + item"), "Body should rewrite $$ -> acc and $ -> item, got: " + result);
-        assertEquals(0, converter.getTodoCount(), "Reduce shorthand should not produce TODOs, got: " + result);
-    }
-
-    @Test
-    void testReduceShorthandEmptyArrayGuard() {
-        // DW: payload.items reduce ($$ + $.price) -- the emitted foldl must guard against empty arrays.
-        // DataWeave's reduce without an initial value on an empty list returns null;
-        // Jsonnet's _arr[0] would throw "Array index 0 out of bounds".
-        String result = converter.convertExpression("payload.items reduce ($$ + $.price)");
-        assertTrue(result.contains("std.length(_arr) == 0"), "Empty-array guard missing, got: " + result);
-        assertTrue(result.contains("then null"), "Null fallback for empty array missing, got: " + result);
-    }
-
-    @Test
-    void testReduceShorthandIndexAccess() {
-        // DW: payload.items reduce ($$ + $[0]) -- shorthand body with index access on $
-        // containsShorthand must recurse into IndexAccess, and emitReduceShorthandBody must handle it.
-        // Expected body: acc + item[0]  (not emitNode's function(x) x[0])
-        String result = converter.convertExpression("payload.items reduce ($$ + $[0])");
-        assertTrue(result.contains("std.foldl("), "Should use std.foldl, got: " + result);
-        assertTrue(result.contains("item[0]"), "IndexAccess shorthand body must emit item[0], got: " + result);
-        assertFalse(result.contains("function(x)"),
-                "emitNode fallback must not be used for shorthand IndexAccess, got: " + result);
-        assertEquals(0, converter.getTodoCount(), "Reduce shorthand index access should not produce TODOs, got: " + result);
-    }
-
-    @Test
-    void testHeaderVarComplexValue() {
-        // DW header var with a complex value (if/else) — parseExpression() handles if/else,
-        // parseOr() does not. Before the fix, the if/else would be truncated.
-        String dw = """
-                %dw 2.0
-                output application/json
-                var label = if (true) "yes" else "no"
-                ---
-                label
-                """;
-        String result = converter.convert(dw);
-        assertTrue(result.contains("local label ="), "var label must emit as local binding, got: " + result);
-        // The if/else must appear in the var value, not be cut off
-        assertTrue(result.contains("\"yes\"") && result.contains("\"no\""),
-                "Complex var value (if/else) must be fully emitted, got: " + result);
-    }
-
-    @Test
-    void testHeaderFunComplexBody() {
-        // DW header fun with an if/else body — parseExpression() handles if/else, parseOr() does not.
-        String dw = """
-                %dw 2.0
-                output application/json
-                fun toUpper(x) = if (x != null) upper(x) else ""
-                ---
-                toUpper(payload.name)
-                """;
-        String result = converter.convert(dw);
-        assertTrue(result.contains("local toUpper(x) ="), "fun toUpper must emit as local function, got: " + result);
-        // The if/else body must be present in the output
-        assertTrue(result.contains("\"\"") || result.contains("else"),
-                "Complex fun body (if/else) must be fully emitted, got: " + result);
-    }
-
-    private String loadResource(String path) throws IOException {
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {
-            assertNotNull(is, "Resource not found: " + path);
+    private static String loadResource(String path) throws IOException {
+        try (InputStream is = DataWeaveConverterTest.class.getClassLoader().getResourceAsStream(path)) {
+            if (is == null) {
+                throw new IOException("Resource not found: " + path);
+            }
             return new String(is.readAllBytes(), StandardCharsets.UTF_8);
         }
     }

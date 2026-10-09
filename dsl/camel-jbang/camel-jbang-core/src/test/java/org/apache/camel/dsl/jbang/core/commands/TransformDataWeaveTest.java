@@ -32,9 +32,8 @@ class TransformDataWeaveTest {
     Path dir;
 
     /**
-     * A conditional object element ({ (a: 1) if cond }) is valid DataWeave that the parser does not model yet; it
-     * causes expect() to throw DataWeaveConversionException. In directory mode the CLI must report the failure for that
-     * file, continue with the remaining files, and exit non-zero.
+     * A malformed script makes the parser throw DataWeaveConversionException. In directory mode the CLI must report the
+     * failure for that file, continue with the remaining files, and exit non-zero.
      */
     @Test
     void directoryModeReportsParseErrorPerFileAndContinues() throws Exception {
@@ -45,12 +44,12 @@ class TransformDataWeaveTest {
                 ---
                 payload
                 """);
-        // conditional object element — not yet modelled by the parser, expect() throws
+        // malformed: the object is not closed
         Path bad = Files.writeString(dir.resolve("bad.dwl"), """
                 %dw 2.0
                 output application/json
                 ---
-                { (a: 1) if payload.flag }
+                { a: payload.a
                 """);
 
         StringPrinter printer = new StringPrinter();

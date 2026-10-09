@@ -1,0 +1,1372 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# DataWeave snippets as written in Mule applications, executed by DataWeaveCorpusTest. The expected output of each
+# snippet is the output of the DataWeave CLI (dw 2.12, English locale); vars and attributes are given to dw as inputs.
+# Each entry starts with "=== <id> <title>", followed by directives and then the DataWeave script:
+#
+#   @exp <json>        the output DataWeave produces (as JSON); "?" = any output, PARSE-ERROR = invalid DataWeave
+#   @in <text>         the body (default: default.json)
+#   @inType / @outType the body and output media types (default: application/json)
+#   @vars / @headers   exchange variables / message headers as a JSON object
+#   @unsupported <why> not converted yet: conversion must fail (never produce wrong output)
+#
+# Snippets without a "---" header are run as a script body (%dw 2.0, output application/json).
+=== S01 nested field
+@exp "Ann"
+payload.customer.name
+=== S02 index
+@exp "A1"
+payload.items[0].sku
+=== S03 negative index
+@exp "A1"
+payload.items[-1].sku
+=== S04 index range
+@exp [{"sku":"A1","qty":2,"price":10,"category":"tools","active":true},{"sku":"B2","qty":1,"price":5,"category":"toys","active":false}]
+payload.items[0 to 1]
+=== S05 multi-value selector
+@exp ["A1","B2","A1"]
+payload.items.*sku
+=== S06 single-value selector on array (implicit map)
+@exp ["A1","B2","A1"]
+payload.items.sku
+=== S07 missing field is null
+@exp {"x":null}
+{ x: payload.missing }
+=== S08 missing field default
+@exp "n/a"
+payload.customer.missing default "n/a"
+=== S09 key present selector
+@exp true
+payload.customer.name?
+=== S10 dynamic key selector
+@exp "Ann"
+payload["customer"].name
+=== S11 descendant selector
+@exp ["A1","B2","A1"]
+payload..sku
+=== S12 filter selector
+@exp ["B2"]
+payload.items[?($.qty == 1)].sku
+=== S13 null-safe deep chain on null parent
+@exp "none"
+payload.customer.address.city default "none"
+=== S14 index on missing array
+@exp null
+payload.missingArr[0]
+=== S15 sum of selected field
+@exp 25
+sum(payload.items.price)
+=== S16 quoted field name
+@exp "x"
+@in {"first-name":"x"}
+payload.'first-name'
+=== S17 dynamic selector with variable key
+@exp "v"
+@in {"key2":"k","k":"v"}
+payload[payload.key2]
+=== V01 vars
+@vars {"orderId":42}
+@exp 42
+vars.orderId
+=== V02 header with dash, quoted
+@headers {"x-correlation-id":"c1"}
+@exp "c1"
+attributes.headers.'x-correlation-id'
+=== V03 queryParams
+@headers {"page":"2"}
+@exp "2"
+attributes.queryParams.page
+=== V04 headers bracket
+@headers {"x-id":"c1"}
+@exp "c1"
+attributes.headers["x-id"]
+=== V05 uriParams
+@headers {"id":"9"}
+@exp "9"
+attributes.uriParams.id
+=== V06 vars nested
+@vars {"user":{"name":"bob"}}
+@exp "bob"
+vars.user.name
+=== V07 vars bracket
+@vars {"orderId":42}
+@exp 42
+vars["orderId"]
+=== V08 attributes.method
+@headers {"CamelHttpMethod":"GET"}
+@exp "GET"
+attributes.method
+=== H01 header var + fun full script
+@exp {"name":"Ann Lee","rate":0.2}
+%dw 2.0
+output application/json
+var rate = 0.2
+fun fullName(c) = c.first ++ " " ++ c.last
+---
+{
+  name: fullName(payload.customer),
+  rate: rate
+}
+=== H02 output xml
+@outType application/xml
+@exp ?
+%dw 2.0
+output application/xml
+---
+{
+  order: {
+    id: payload.customer.id,
+    name: payload.customer.name
+  }
+}
+=== H03 output csv
+@outType application/csv
+@exp ?
+%dw 2.0
+output application/csv
+---
+payload.items map (item) -> {
+  sku: item.sku,
+  qty: item.qty
+}
+=== H04 output java
+@exp ?
+%dw 2.0
+output application/java
+---
+{ id: payload.customer.id }
+=== H05 import module and call namespaced fn
+@exp "customerFirstName"
+%dw 2.0
+import dw::core::Strings
+output application/json
+---
+Strings::camelize(payload.snake)
+=== H06 import star from Arrays
+@exp 2
+%dw 2.0
+import * from dw::core::Arrays
+output application/json
+---
+countBy(payload.nums, (n) -> n > 2)
+=== H07 ns declaration and ns-qualified key
+@unsupported XML namespaces
+@outType application/xml
+@exp ?
+%dw 2.0
+output application/xml
+ns ns0 http://example.com/order
+---
+{ ns0#order: { id: payload.customer.id } }
+=== H08 output with writer properties
+@exp {"a":1}
+%dw 2.0
+output application/json skipNullOn="everywhere"
+---
+{ a: 1, b: null }
+=== H09 comments in script
+@exp {"a":1}
+%dw 2.0
+// a line comment
+output application/json
+/* block comment */
+---
+{
+  // inside
+  a: 1 /* trailing */
+}
+=== H10 input directive
+@exp "Ann"
+%dw 2.0
+input payload application/json
+output application/json
+---
+payload.customer.name
+=== H11 import specific fn
+@exp "Customer First Name"
+%dw 2.0
+import capitalize from dw::core::Strings
+output application/json
+---
+capitalize(payload.snake)
+=== F01 recursive fun
+@exp 120
+%dw 2.0
+output application/json
+fun fact(n) = if (n <= 1) 1 else n * fact(n - 1)
+---
+fact(5)
+=== F02 overloaded fun
+@unsupported overloaded functions
+@exp ["A",4]
+%dw 2.0
+output application/json
+fun f(x: String) = upper(x)
+fun f(x: Number) = x * 2
+---
+[f("a"), f(2)]
+=== F03 lambda var
+@exp "X"
+%dw 2.0
+output application/json
+var toUpper = (s) -> upper(s)
+---
+toUpper("x")
+=== F04 typed fun with return type
+@exp 2
+%dw 2.0
+output application/json
+fun tax(amount: Number): Number = amount * 0.2
+---
+tax(10)
+=== F05 header var referencing payload
+@exp 3
+%dw 2.0
+output application/json
+var items = payload.items
+---
+sizeOf(items)
+=== F06 typed header var
+@exp 0.08
+%dw 2.0
+output application/json
+var rate: Number = 0.08
+---
+rate
+=== F07 fun with default param
+@exp "Hi bob"
+%dw 2.0
+output application/json
+fun greet(name, greeting = "Hi") = greeting ++ " " ++ name
+---
+greet(payload.user)
+=== F08 fun calling lambda param
+@exp [2,4,6,8]
+%dw 2.0
+output application/json
+fun applyAll(arr, fn) = arr map (x) -> fn(x)
+---
+applyAll(payload.nums, (n) -> n * 2)
+=== M01 map lambda no outer parens
+@exp ["A1","B2","A1"]
+payload.items map (item) -> item.sku
+=== M02 map item,index
+@exp [{"idx":0,"sku":"A1"},{"idx":1,"sku":"B2"},{"idx":2,"sku":"A1"}]
+payload.items map ((item, index) -> { idx: index, sku: item.sku })
+=== M03 map $ and $$ in object body
+@exp [{"sku":"A1","n":0},{"sku":"B2","n":1},{"sku":"A1","n":2}]
+payload.items map { sku: $.sku, n: $$ }
+=== M04 map $ arithmetic
+@exp [2,3,4,5]
+payload.nums map $ + 1
+=== M05 map object body lambda
+@exp [{"sku":"A1","total":20},{"sku":"B2","total":5},{"sku":"A1","total":30}]
+payload.items map (item) -> { sku: item.sku, total: item.price * item.qty }
+=== M06 docs example map then reduce
+@exp 55
+payload.items map ((item) -> item.price * item.qty) reduce ((item, acc = 0) -> acc + item)
+=== M07 filter shorthand comparison
+@exp [{"sku":"A1","qty":2,"price":10,"category":"tools","active":true},{"sku":"A1","qty":3,"price":10,"category":"tools","active":true}]
+payload.items filter $.qty > 1
+=== M08 filter then map lambdas
+@exp ["A1","A1"]
+payload.items filter ((item) -> item.qty > 1) map ((i) -> i.sku)
+=== M09 filter with index
+@exp ["B2","A1"]
+payload.items filter ((item, index) -> index > 0) map ((i) -> i.sku)
+=== M10 reduce with init
+@exp 25
+payload.items reduce ((item, acc = 0) -> acc + item.price)
+=== M11 reduce shorthand parens
+@exp 10
+payload.nums reduce ($$ + $)
+=== M12 reduce shorthand no parens
+@exp 10
+payload.nums reduce $$ + $
+=== M13 reduce to object
+@exp {"A1":3,"B2":1}
+payload.items reduce ((item, acc = {}) -> acc ++ { (item.sku): item.qty })
+=== M14 reduce lambda without init
+@exp 10
+payload.nums reduce ((item, acc) -> acc + item)
+=== M15 flatMap
+@exp ["a","b","c"]
+payload.orders flatMap ((o) -> o.lines map ((l) -> l.n))
+=== M16 flatten
+@exp [{"n":"a"},{"n":"b"},{"n":"c"}]
+flatten(payload.orders map ((o) -> o.lines))
+=== M17 groupBy shorthand (the order of the groups is not defined in DataWeave)
+@exp ["tools","toys"]
+keysOf(payload.items groupBy $.category) orderBy $
+=== M18 groupBy lambda result object
+@exp {"tools":[{"sku":"A1","qty":2,"price":10,"category":"tools","active":true},{"sku":"A1","qty":3,"price":10,"category":"tools","active":true}],"toys":[{"sku":"B2","qty":1,"price":5,"category":"toys","active":false}]}
+payload.items groupBy ((item) -> item.category)
+=== M19 orderBy shorthand
+@exp ["B2","A1","A1"]
+payload.items orderBy $.price map ((i) -> i.sku)
+=== M20 orderBy desc via minus
+@exp [3,2,1]
+payload.items orderBy -$.qty map ((i) -> i.qty)
+=== M21 orderBy reverse via range
+@exp [4,3,2,1]
+(payload.nums orderBy $)[-1 to 0]
+=== M22 distinctBy shorthand field
+@exp ["A1","B2"]
+payload.items distinctBy $.sku map ((i) -> i.sku)
+=== M23 distinctBy lambda
+@exp ["A1","B2"]
+payload.items distinctBy ((i) -> i.sku) map ((i) -> i.sku)
+=== M24 mapObject
+@exp {"STATUS":"A","PRICE":5}
+@in {"status":"A","price":5}
+payload mapObject ((value, key) -> { (upper(key)): value })
+=== M25 pluck
+@exp ["status","price"]
+@in {"status":"A","price":5}
+payload pluck ((value, key) -> key)
+=== M26 filterObject
+@exp {"a":1}
+@in {"a":1,"b":null}
+payload filterObject ((value) -> value != null)
+=== M27 map then joinBy
+@exp "A1,B2,A1"
+payload.items map $.sku joinBy ","
+=== M28 sizeOf filter shorthand
+@exp 2
+sizeOf(payload.items filter $.active)
+=== M29 map item,index without outer parens
+@exp ["0:A1","1:B2","2:A1"]
+payload.items map (item, index) -> index ++ ":" ++ item.sku
+=== M30 map shorthand nested object path
+@exp ["Ann"]
+[payload] map $.customer.name
+=== M31 map with $ concat
+@exp ["A1!","B2!","A1!"]
+payload.items map ($.sku ++ "!")
+=== M32 map nested map
+@exp [["a","b"],["c"]]
+payload.orders map ((o) -> o.lines map ((l) -> l.n))
+=== M33 map shorthand $ alone on strings
+@exp ["X","Y"]
+payload.tags map upper($)
+=== M34 map index shorthand $$ alone
+@exp [0,1]
+payload.tags map $$
+=== M35 filter shorthand equality string
+@exp ["B2"]
+(payload.items filter ($.category == "toys")) map $.sku
+=== M36 orderBy then index last
+@exp 10
+(payload.items orderBy $.price)[-1].price
+=== M37 groupBy then mapObject
+@exp {"tools":2,"toys":1}
+payload.items groupBy $.category mapObject ((v, k) -> { (k): sizeOf(v) })
+=== M38 groupBy then pluck
+@exp [{"cat":"tools","n":2},{"cat":"toys","n":1}]
+payload.items groupBy $.category pluck ((v, k) -> { cat: k, n: sizeOf(v) })
+=== M39 distinctBy $ on primitives
+@exp ["A1","B2"]
+payload.items.*sku distinctBy $
+=== X01 match literal
+@exp "Active"
+payload.status match {
+  case "A" -> "Active"
+  case "I" -> "Inactive"
+  else -> "Unknown"
+}
+=== X02 match type
+@exp "string"
+payload.status match {
+  case is String -> "string"
+  else -> "other"
+}
+=== D01 do block
+@exp 2
+do {
+  var x = 1
+  ---
+  x + 1
+}
+=== D02 do block in object field with fun
+@exp {"v":6}
+{
+  v: do {
+    fun dbl(n) = n * 2
+    var three = 3
+    ---
+    dbl(three)
+  }
+}
+=== D03 using
+@exp 6
+using (x = 2) x * 3
+=== D04 if else if chain
+@exp "small"
+if (payload.price > 10) "big" else if (payload.price > 0) "small" else "neg"
+=== D05 unless otherwise
+@exp "y"
+unless (payload.flag) "x" else "y"
+=== D06 default on null field
+@exp "gold"
+payload.customer.tier default "gold"
+=== D07 conditional field if
+@exp {"b":2}
+{ (a: 1) if payload.missing != null, b: 2 }
+=== D08 conditional field if true with parens cond
+@exp {"a":1,"b":2}
+{ (a: 1) if (payload.flag), b: 2 }
+=== D09 not keyword
+@exp false
+not payload.flag
+=== D10 bang operator
+@exp false
+!payload.flag
+=== D11 and/or
+@exp true
+payload.price > 1 and payload.price < 10 or false
+=== D12 isEmpty
+@exp false
+isEmpty(payload.items)
+=== D13 isBlank whitespace
+@exp true
+isBlank(payload.blank)
+=== D14 if inside object value
+@exp {"label":"active"}
+{ label: if (payload.flag) "active" else "inactive" }
+=== D15 default chain
+@exp "x"
+payload.a default payload.b default "x"
+=== D16 if with default precedence
+@exp 6
+(payload.missingNum default 5) + 1
+=== D17 default on missing nested in map
+@exp ["n/a","n/a","n/a"]
+payload.items map ((i) -> i.color default "n/a")
+=== D18 not with parenthesis
+@exp true
+not (payload.price == 1)
+=== T01 concat names
+@exp "Ann Lee"
+payload.customer.first ++ " " ++ payload.customer.last
+=== T02 upper
+@exp "ANN"
+upper(payload.customer.name)
+=== T03 trim
+@exp "hello world"
+trim(payload.name)
+=== T04 splitBy
+@exp ["a","b","c"]
+payload.csv splitBy ","
+=== T05 joinBy
+@exp "x-y"
+payload.tags joinBy "-"
+=== T06 contains string
+@exp true
+payload.customer.email contains "@"
+=== T07 contains on array
+@exp true
+payload.tags contains "x"
+=== T08 startsWith
+@exp true
+payload.customer.email startsWith "ann"
+=== T09 replace with
+@exp "ann_x.org"
+payload.customer.email replace "@" with "_"
+=== T10 replace regex
+@exp "a_b"
+"a   b" replace /\s+/ with "_"
+=== T11 interpolation
+@exp "Hello Ann"
+"Hello $(payload.customer.name)"
+=== T12 capitalize
+@exp "Customer First Name"
+%dw 2.0
+import * from dw::core::Strings
+output application/json
+---
+capitalize(payload.snake)
+=== T13 camelize
+@exp "customerFirstName"
+%dw 2.0
+import * from dw::core::Strings
+output application/json
+---
+camelize(payload.snake)
+=== T14 substring range
+@exp "ann"
+payload.customer.email[0 to 2]
+=== T15 sizeOf string
+@exp 3
+sizeOf("abc")
+=== T16 concat number
+@exp "id-7"
+"id-" ++ payload.customer.id
+=== T17 split then index
+@exp "x.org"
+(payload.customer.email splitBy "@")[1]
+=== T18 lower with default
+@exp ""
+lower(payload.missing default "")
+=== T19 log
+@exp 5
+log("price", payload.price)
+=== T20 contains regex
+@exp true
+payload.customer.email contains /x\.org$/
+=== T21 single quoted string
+@exp "it's"
+"it's"
+=== T22 single-quote literal with double quote
+@exp "say \"hi\""
+'say "hi"'
+=== T23 equality case-insensitive similar
+@exp true
+"abc" ~= "abc"
+=== T24 string concat with map in parens
+@exp "Items: A1, B2, A1"
+"Items: " ++ (payload.items map $.sku joinBy ", ")
+=== T25 dasherize
+@exp "customer-first-name"
+%dw 2.0
+import * from dw::core::Strings
+output application/json
+---
+dasherize(payload.snake)
+=== T26 sizeOf array
+@exp 3
+sizeOf(payload.items)
+=== T27 endsWith
+@exp true
+payload.customer.email endsWith ".org"
+=== T28 upper on missing with default
+@exp "X"
+upper(payload.missing default "x")
+=== N01 as Number
+@exp 12.5
+payload.amount as Number
+=== N02 number format
+@exp "5.00"
+payload.price as String {format: "#.00"}
+=== N03 round
+@exp 3
+round(2.5)
+=== N04 ceil floor abs
+@exp [2,1,3]
+[ceil(1.2), floor(1.8), abs(-3)]
+=== N05 mod
+@exp 1
+10 mod 3
+=== N06 max min sum avg
+@exp [4,1,10,2.5]
+[max(payload.nums), min(payload.nums), sum(payload.nums), avg(payload.nums)]
+=== N07 multiply
+@exp 10
+payload.items[0].qty * payload.items[1].price
+=== N08 as Number then arithmetic
+@exp 25
+payload.amount as Number * 2
+=== N09 as String of number
+@exp "5"
+payload.price as String
+=== N10 number format with grouping
+@exp "1,234.50"
+1234.5 as String {format: "#,##0.00"}
+=== N11 negative literal
+@exp -3
+-3
+=== N12 subtraction without spaces
+@exp 4
+payload.price-1
+=== N13 as Number default
+@exp 0
+payload.missing as Number default 0
+=== N14 integer division
+@exp 2.5
+5 / 2
+=== DT01 now formatted
+@exp ?
+now() as String {format: "yyyy"}
+=== DT02 date literal
+@exp "2020-01-01"
+|2020-01-01|
+=== DT03 reformat date string
+@exp "31/01/2020"
+payload.date as Date {format: "yyyy-MM-dd"} as String {format: "dd/MM/yyyy"}
+=== DT04 parse US date (a date coerced with a format is written in that format)
+@exp "01/31/2020"
+payload.usDate as Date {format: "MM/dd/yyyy"}
+=== DT10 reformat US date
+@exp "2020-01-31"
+payload.usDate as Date {format: "MM/dd/yyyy"} as String {format: "yyyy-MM-dd"}
+=== DT11 date with format in a variable, used as a date and written
+@exp {"date":"01/31/2020","next":"2020-02-01","year":2020,"after":true}
+%dw 2.0
+output application/json
+var d = payload.usDate as Date {format: "MM/dd/yyyy"}
+---
+{ date: d, next: d + |P1D|, year: d.year, after: d > |2020-01-01| }
+=== DT05 DateTime coercion then format
+@exp "2026-10-08"
+payload.ts as DateTime as String {format: "yyyy-MM-dd"}
+=== DT06 date arithmetic
+@exp "2020-02-01"
+(payload.date as Date) + |P1D|
+=== DT07 date year
+@exp 2020
+(payload.date as Date).year
+=== DT08 format ISO timestamp coerced to a DateTime
+@exp "2026-10-08"
+payload.ts as DateTime as String {format: "yyyy-MM-dd"}
+=== DT09 now
+@exp ?
+now()
+=== TY01 is String
+@exp true
+payload.status is String
+=== TY02 typeOf
+@exp "String"
+typeOf(payload.status)
+=== TY03 is Object
+@exp true
+payload.customer is Object
+=== O01 dynamic key
+@exp {"dyn":"v"}
+{ (payload.key): payload.value }
+=== O02 object merge
+@exp {"a":1,"b":2}
+{ a: 1 } ++ { b: 2 }
+=== O03 remove key
+@exp {"user":"bob"}
+@in {"user":"bob","password":"secret"}
+payload - "password"
+=== O04 remove keys --
+@exp {"user":"bob"}
+@in {"user":"bob","password":"secret","pin":1}
+payload -- ["password", "pin"]
+=== O05 object from array
+@exp {"A1":3,"B2":1}
+{ (payload.items map ((i) -> { (i.sku): i.qty })) }
+=== O06 keysOf
+@exp ["a","b"]
+@in {"a":1,"b":2}
+keysOf(payload)
+=== O07 valuesOf
+@exp [1,2]
+@in {"a":1,"b":2}
+valuesOf(payload)
+=== O08 entriesOf
+@exp [{"key":"a","value":1,"attributes":{}}]
+@in {"a":1}
+entriesOf(payload)
+=== O09 merge with object
+@exp {"id":7,"vip":true}
+@in {"customer":{"id":7}}
+payload.customer ++ { vip: true }
+=== O10 nested object
+@exp {"name":"Ann","address":{"email":"ann@x.org"}}
+{ name: payload.customer.name, address: { email: payload.customer.email } }
+=== O11 quoted keys
+@exp {"first-name":"Ann"}
+{ "first-name": payload.customer.first }
+=== O12 object key with ns/attrs
+@unsupported XML attributes in output
+@outType application/xml
+@exp ?
+%dw 2.0
+output application/xml
+---
+{ order @(id: payload.customer.id): { name: payload.customer.name } }
+=== O13 array literal of objects with $
+@exp [{"a":1}]
+[{ a: 1 }]
+=== O14 null in object
+@exp {"a":null}
+{ a: null }
+=== O15 namesOf
+@exp ["a","b"]
+@in {"a":1,"b":2}
+namesOf(payload)
+=== O16 object with spread of mapped objects in key braces
+@exp {"x":"x","y":"y"}
+{ (payload.tags map ((t) -> { (t): t })) }
+=== XM01 xml input attribute
+@inType application/xml
+@in <order id="7"><item>a</item></order>
+@exp "7"
+payload.order.@id
+=== XM02 xml input element text
+@inType application/xml
+@in <order id="7"><item>a</item></order>
+@exp "a"
+payload.order.item
+=== XM03 xml repeated elements
+@inType application/xml
+@in <orders><order id="1"/><order id="2"/></orders>
+@exp ["1","2"]
+payload.orders.*order map $.@id
+=== XM04 xml output with list
+@outType application/xml
+@exp ?
+%dw 2.0
+output application/xml
+---
+{ items: { (payload.items map ((i) -> { item: i.sku })) } }
+=== CS01 csv input
+@inType application/csv
+@in name,age\nann,30\nbob,40
+@exp ["ann","bob"]
+payload map ((row) -> row.name)
+=== E01 try
+@unsupported try (dw::Runtime)
+@exp {"success":true}
+%dw 2.0
+import try from dw::Runtime
+output application/json
+---
+{ success: try(() -> payload.price).success }
+=== E02 fail
+@exp 5
+%dw 2.0
+import fail from dw::Runtime
+output application/json
+---
+if (payload.price < 0) fail("negative") else payload.price
+=== E03 update operator
+@unsupported update operator
+@exp {"name":"ANN"}
+@in {"name":"Ann"}
+payload update {
+  case .name -> upper($)
+}
+=== E04 zip
+@exp [[1,"x"],[2,"y"]]
+[1,2] zip ["x","y"]
+=== E05 write json
+@exp "{\n  \"a\": 1\n}"
+@in {"a":1}
+write(payload, "application/json")
+=== E06 read json
+@exp {"a":1}
+@in {"raw":"{\"a\":1}"}
+read(payload.raw, "application/json")
+=== E07 uuid sizeOf
+@exp 36
+sizeOf(uuid())
+=== E08 p property
+@exp "x"
+p('my.prop')
+=== E09 then
+@exp 3
+payload.items then sizeOf($)
+=== E10 splitAt
+@exp {"l":[1,2],"r":[3,4]}
+%dw 2.0
+import splitAt from dw::core::Arrays
+output application/json
+---
+payload.nums splitAt 2
+=== E11 sizeOf object
+@exp 2
+@in {"a":1,"b":2}
+sizeOf(payload)
+=== E12 default empty array then map
+@exp []
+(payload.missingArr default []) map $.sku
+=== E13 orderBy then map lambda with index
+@exp ["0B2","1A1","2A1"]
+payload.items orderBy $.price map ((i, idx) -> idx ++ i.sku)
+=== R01 realistic API mapping
+@exp {"orderId":"ORD-7","customer":{"fullName":"Ann Lee","email":"ann@x.org"},"lines":[{"sku":"A1","quantity":2,"lineTotal":20},{"sku":"B2","quantity":1,"lineTotal":5},{"sku":"A1","quantity":3,"lineTotal":30}],"total":55,"active":true}
+%dw 2.0
+output application/json
+---
+{
+  orderId: "ORD-" ++ payload.customer.id,
+  customer: {
+    fullName: payload.customer.first ++ " " ++ payload.customer.last,
+    email: payload.customer.email
+  },
+  lines: payload.items map (item, index) -> {
+    sku: item.sku,
+    quantity: item.qty,
+    lineTotal: item.qty * item.price
+  },
+  total: sum(payload.items map ((i) -> i.qty * i.price)),
+  active: payload.status == "A"
+}
+=== R02 realistic DB rows mapping with defaults
+@in [{"ID":1,"NAME":"x","AMOUNT":"10.5","NOTE":null},{"ID":2,"NAME":null,"AMOUNT":"3","NOTE":"n"}]
+@exp [{"id":1,"name":"x","amount":10.5,"note":""},{"id":2,"name":"unknown","amount":3,"note":"n"}]
+%dw 2.0
+output application/json
+---
+payload map (row) -> {
+  id: row.ID,
+  name: row.NAME default "unknown",
+  amount: row.AMOUNT as Number,
+  note: row.NOTE default ""
+}
+=== R03 realistic salesforce-like with conditional field and interpolation-free
+@in {"Id":"001","Name":"Acme","Phone":null}
+@exp {"accountId":"001","name":"Acme"}
+%dw 2.0
+output application/json
+---
+{
+  accountId: payload.Id,
+  name: payload.Name,
+  (phone: payload.Phone) if (payload.Phone != null)
+}
+=== R04 realistic header vars and filter/map chain
+@exp ["A1","A1"]
+%dw 2.0
+output application/json
+var minQty = 2
+---
+(payload.items filter ((i) -> i.qty >= minQty)) map ((i) -> i.sku)
+=== R05 realistic filter then map with lambdas (a lambda body extends as far as possible, so chained lambdas are in parentheses)
+@exp [{"s":"A1"},{"s":"A1"}]
+%dw 2.0
+output application/json
+---
+payload.items filter ((i) -> i.active) map ((i) -> { s: i.sku })
+=== R06 sum selector with map shorthand on array field
+@exp 6
+sum(payload.items.qty)
+=== R07 vars in body with default
+@vars {"region":null}
+@exp "EU"
+%dw 2.0
+output application/json
+---
+vars.region default "EU"
+=== R08 nested do with header fun and map
+@exp [{"code":"A1-2"},{"code":"B2-1"},{"code":"A1-3"}]
+%dw 2.0
+output application/json
+fun code(i) = i.sku ++ "-" ++ i.qty
+---
+payload.items map ((i) -> { code: code(i) })
+=== R09 orderBy desc via lambda negative
+@exp [3,2,1]
+payload.items orderBy ((i) -> -i.qty) map ((i) -> i.qty)
+=== R10 total with reduce shorthand on mapped
+@exp 55
+payload.items map ($.qty * $.price) reduce ($$ + $)
+=== P01 csv output with paren lambda
+@outType application/csv
+@exp ?
+%dw 2.0
+output application/csv
+---
+payload.items map ((item) -> { sku: item.sku, qty: item.qty })
+=== P03 trailing garbage tokens accepted
+@exp PARSE-ERROR
+{ a: 1 } foo bar baz
+=== P05 reduce result with default
+@exp 6
+(payload.items map ((i) -> i.qty) reduce ((x, acc = 0) -> acc + x)) default 0
+=== P06 sizeOf and flag
+@exp true
+sizeOf(payload.items) > 0 and payload.flag
+=== P07 number to formatted string after as Number
+@exp "12.50"
+payload.amount as Number as String {format: "0.00"}
+=== P09 header var with lambda map no parens
+@exp ["A1","B2","A1"]
+%dw 2.0
+output application/json
+var skus = payload.items map (i) -> i.sku
+---
+skus
+=== P10 concat with if expression
+@exp "Ann!"
+payload.customer.name ++ (if (payload.flag) "!" else "")
+=== P12 nested shorthand inside lambda
+@exp [["a","b"],["c"]]
+payload.orders map ((o) -> o.lines map $.n)
+=== P14 filter shorthand with and in parens
+@exp ["A1"]
+payload.items filter ($.category == "tools" and $.qty > 2) map ((i) -> i.sku)
+=== P15 map object body with $ only
+@exp [{"sku":"A1"},{"sku":"B2"},{"sku":"A1"}]
+payload.items map { sku: $.sku }
+=== P16 upper of null
+@exp null
+upper(payload.customer.tier)
+=== P19 index out of range
+@exp null
+payload.items[5]
+=== P21 header object var
+@exp 1
+%dw 2.0
+output application/json
+var cfg = { a: 1 }
+---
+cfg.a
+=== P24 escapes in string
+@exp "line\nbreak"
+"line\nbreak"
+=== P27 sizeOf default empty
+@exp 0
+sizeOf(payload.missing default [])
+=== P29 map lambda parenthesized object body
+@exp [{"sku":"A1"},{"sku":"B2"},{"sku":"A1"}]
+payload.items map ((item) -> ({ sku: item.sku }))
+=== P30 map then filter shorthand
+@exp ["A1","A1"]
+payload.items map ((item) -> item.sku) filter ($ != "B2")
+=== P31 array contains value from vars
+@vars {"allowed":["A","B"]}
+@exp true
+vars.allowed contains payload.status
+=== P34 line comment after lambda
+@exp ["A1","B2","A1"]
+%dw 2.0
+output application/json
+---
+payload.items map ((item) -> item.sku) // skus
+=== P36 lambda without parens inside object field
+@exp {"skus":["A1","B2","A1"],"n":1}
+{ skus: payload.items map (item) -> item.sku, n: 1 }
+=== P38 parenthesized map reduce with init
+@exp 25
+(payload.items map $.price) reduce ((p, acc = 0) -> acc + p)
+=== P39 multi-value on xml object
+@inType application/xml
+@in <orders><order id="1"/><order id="2"/></orders>
+@exp 2
+sizeOf(payload.orders.*order)
+=== P40 xml text inside map
+@inType application/xml
+@in <orders><order><id>1</id></order><order><id>2</id></order></orders>
+@exp ["1","2"]
+payload.orders.*order map ((o) -> o.id)
+=== P41 sizeOf null
+@exp null
+sizeOf(payload.customer.tier)
+=== P42 boolean as String
+@exp "true"
+payload.flag as String
+=== P43 number as String then concat
+@exp "Total: 5"
+"Total: " ++ (payload.price as String)
+=== P45 trim of null
+@exp null
+trim(payload.customer.tier)
+=== P46 vars default nested missing
+@vars {"cfg":{}}
+@exp "d"
+vars.cfg.x default "d"
+=== P47 header missing default
+@exp "none"
+attributes.headers.missingHeader default "none"
+=== P48 if with and on comparison
+@exp "ok"
+if (payload.status == "A" and sizeOf(payload.items) == 3) "ok" else "ko"
+=== P49 map index param renamed
+@exp [{"pos":1,"sku":"A1"},{"pos":2,"sku":"B2"},{"pos":3,"sku":"A1"}]
+payload.items map ((it, i) -> { pos: i + 1, sku: it.sku })
+=== P50 filter on missing field in lambda
+@exp ["A1","B2","A1"]
+payload.items filter ((i) -> i.discount == null) map ((i) -> i.sku)
+=== C01 response mapping with conditional fields and default
+@exp {"id":7,"name":"Ann Lee","email":"ann@x.org","address":"unknown"}
+%dw 2.0
+output application/json
+---
+{
+  id: payload.customer.id,
+  name: payload.customer.first ++ " " ++ payload.customer.last,
+  (email: payload.customer.email) if payload.customer.email?,
+  (tier: payload.customer.tier) if payload.customer.tier != null,
+  address: payload.customer.address default "unknown"
+}
+=== C02 header var with reduce and number format
+@exp {"total":"55.00","count":3}
+%dw 2.0
+output application/json
+var total = payload.items reduce ((item, acc = 0) -> acc + item.qty * item.price)
+---
+{ total: total as String {format: "#,##0.00"}, count: sizeOf(payload.items) }
+=== C03 groupBy then mapObject with selector on array
+@exp {"tools":5,"toys":1}
+payload.items groupBy $.category mapObject ((items, category) -> { (category): sum(items.qty) })
+=== C04 pluck keys
+@exp ["id","name","first","last","email","tier","address"]
+payload.customer pluck $$
+=== C05 filterObject drops nulls
+@exp {"id":7,"name":"Ann","first":"Ann","last":"Lee","email":"ann@x.org"}
+payload.customer filterObject ((value) -> value != null)
+=== C06 match regex with binding
+@exp {"user":"ann","domain":"x.org"}
+payload.customer.email match {
+  case e matches /([^@]+)@(.+)/ -> { user: e[1], domain: e[2] }
+  else -> null
+}
+=== C07 match guards
+@exp "medium"
+payload.price match {
+  case p if p > 10 -> "high"
+  case p if p > 3 -> "medium"
+  else -> "low"
+}
+=== C08 DateTime format
+@exp "08/10/2026 10:00"
+payload.ts as DateTime as String {format: "dd/MM/yyyy HH:mm"}
+=== C09 date plus month
+@exp "2020-02-29"
+(payload.date as Date) + |P1M|
+=== C10 nested map with index
+@exp [{"idx":0,"id":1,"lines":["a","b"]},{"idx":1,"id":2,"lines":["c"]}]
+payload.orders map (order, i) -> { idx: i, id: order.id, lines: order.lines map $.n }
+=== C11 flatMap then map
+@exp ["a","b","c"]
+payload.orders flatMap $.lines map $.n
+=== C12 distinctBy then orderBy descending
+@exp ["A1","B2"]
+(payload.items distinctBy $.sku) orderBy -$.price map $.sku
+=== C13 split capitalize join
+@exp "Hello World"
+%dw 2.0
+import * from dw::core::Strings
+output application/json
+---
+trim(payload.name) splitBy " " map capitalize($) joinBy " "
+=== C14 concat with coercion
+@exp "A-5"
+upper(payload.status) ++ "-" ++ (payload.price as String)
+=== C15 range selector on array
+@exp ["B2","A1"]
+payload.items[1 to 2].sku
+=== C16 negative range
+@exp [3,4]
+payload.nums[-2 to -1]
+=== C17 range on string
+@exp "bcd"
+"abcdef"[1 to 3]
+=== C18 filter with and
+@exp ["A1"]
+payload.items filter ($.active and $.qty > 2) map $.sku
+=== C19 deep missing path default
+@exp "n/a"
+payload.missing.deep.path default "n/a"
+=== C20 sizeOf of filter
+@exp 2
+sizeOf(payload.items filter $.category == "tools")
+=== C21 map to object then filter on it
+@exp [{"sku":"A1","total":20},{"sku":"A1","total":30}]
+payload.items map { sku: $.sku, total: $.qty * $.price } filter $.total > 10
+=== C22 reduce strings with init
+@exp "xy"
+payload.tags reduce ((t, acc = "") -> acc ++ t)
+=== C23 reduce shorthand product
+@exp 24
+payload.nums reduce ($$ * $)
+=== C24 isEmpty variants
+@exp [false,true,true,true]
+[isEmpty(payload.tags), isEmpty([]), isEmpty(null), isEmpty("")]
+=== C25 typeOf names
+@exp ["Object","Array","String","Number","Boolean","Null"]
+[typeOf(payload), typeOf([]), typeOf("a"), typeOf(1), typeOf(true), typeOf(null)]
+=== C26 mapObject then filterObject shorthand
+@exp {"ID":7,"NAME":"Ann","FIRST":"Ann","LAST":"Lee","EMAIL":"ann@x.org"}
+payload.customer mapObject ((v, k) -> { (upper(k)): v }) filterObject ($ != null)
+=== C27 filterObject on key
+@exp ["first"]
+keysOf(payload.customer filterObject ((v, k) -> k startsWith "f"))
+=== C28 maxBy minBy
+@exp ["A1","B2"]
+[(payload.items maxBy $.qty).sku, (payload.items minBy $.price).sku]
+=== C29 dasherize import
+@exp "customer-first-name"
+%dw 2.0
+import dasherize from dw::core::Strings
+output application/json
+---
+dasherize("customerFirstName")
+=== C30 Arrays countBy sumBy every some
+@exp [2,6,true,true]
+%dw 2.0
+import * from dw::core::Arrays
+output application/json
+---
+[payload.items countBy $.active, payload.items sumBy $.qty, payload.items every $.qty > 0, payload.items some $.qty > 2]
+=== C31 Arrays partition
+@exp {"success":["A1","A1"],"failure":["B2"]}
+%dw 2.0
+import * from dw::core::Arrays
+output application/json
+---
+(payload.items partition $.active) mapObject ((v, k) -> { (k): v.sku })
+=== C32 var holding lambda called in implicit lambda
+@exp ["1.0","2.0","3.0","4.0"]
+%dw 2.0
+output application/json
+var fmt = (n) -> n as String {format: "0.0"}
+---
+payload.nums map fmt($)
+=== C33 function called in a lambda
+@exp [2,4,6,8]
+%dw 2.0
+output application/json
+fun double(n) = n * 2
+---
+payload.nums map (n) -> double(n)
+=== C34 recursive function
+@exp 120
+%dw 2.0
+output application/json
+fun fact(n) = if (n <= 1) 1 else n * fact(n - 1)
+---
+fact(5)
+=== C35 do block in lambda
+@exp [{"sku":"A1","total":20},{"sku":"B2","total":5},{"sku":"A1","total":30}]
+payload.items map (item) -> do {
+  var total = item.qty * item.price
+  ---
+  { sku: item.sku, total: total }
+}
+=== C36 using
+@exp 6
+using (x = 2) x * 3
+=== C37 XML text and attributes
+@inType application/xml
+@in <order id="7"><item sku="A1">apple</item></order>
+@exp {"id":"7","item":"apple","sku":"A1"}
+{ id: payload.order.@id, item: payload.order.item, sku: payload.order.item.@sku }
+=== C38 XML repeated elements text
+@inType application/xml
+@in <orders><order>a</order><order>b</order></orders>
+@exp ["a","b"]
+payload.orders.*order
+=== C39 XML repeated elements single-value selector gives the first
+@inType application/xml
+@in <orders><order>a</order><order>b</order></orders>
+@exp "a"
+payload.orders.order
+=== C40 XML child elements mapped
+@inType application/xml
+@in <orders><order><id>1</id></order><order><id>2</id></order></orders>
+@exp [{"id":"1"},{"id":"2"}]
+payload.orders.*order map { id: $.id }
+=== C41 interpolation with functions
+@exp "Total: 10 items: 4"
+"Total: $(sum(payload.nums)) items: $(sizeOf(payload.nums))"
+=== C42 coerce then add
+@exp 13.5
+payload.amount as Number + 1
+=== C43 not with existence
+@exp true
+payload.flag and not payload.missing?
+=== C44 else if chain
+@exp "Active"
+if (payload.status == "A") "Active" else if (payload.status == "I") "Inactive" else "Unknown"
+=== C45 filter selector
+@exp ["A1","A1"]
+payload.items[?($.price > 5)].sku
+=== C46 distinct values
+@exp ["A1","B2"]
+payload.items.*sku distinctBy $
+=== C47 remove keys chained
+@exp {"id":7,"name":"Ann","first":"Ann","last":"Lee","address":null}
+payload.customer - "email" - "tier"
+=== C48 remove keys list
+@exp {"id":7,"name":"Ann","first":"Ann","last":"Lee"}
+payload.customer -- ["email", "tier", "address"]
+=== C49 concat arrays and objects
+@exp [[1,2,3,4],{"a":1,"b":2}]
+[[1, 2, 3] ++ [4], {a: 1} ++ {b: 2}]
+=== C50 map filter reduce chain shorthand
+@exp 90
+payload.nums map ($ * 10) filter ($ > 15) reduce ($$ + $)
+=== C51 zip
+@exp [["x",1],["y",2]]
+zip(payload.tags, [1, 2])
+=== C52 orderBy concatenated key
+@exp ["A1","A1","B2"]
+payload.items orderBy ($.category ++ $.sku) map $.sku
+=== C53 entriesOf keys
+@exp ["a"]
+entriesOf({a: 1}) map $.key
+=== C54 read json
+@exp 1
+read("{\"a\": 1}", "application/json").a
+=== C55 index concat join
+@exp "0:A1,1:B2,2:A1"
+payload.items map ((item, index) -> index ++ ":" ++ item.sku) joinBy ","
+=== C56 range filter isEven
+@exp [2,4]
+(1 to 5) filter isEven($)
+=== C57 math functions
+@exp [12,13,3,3,1,4,1024]
+[floor(payload.amount as Number), ceil(12.1), round(2.5), abs(-3), 7 mod 3, sqrt(16), pow(2, 10)]
+=== C58 case functions
+@exp "abcDEF"
+lower("ABC") ++ upper("def")
+=== C59 remove keys of item
+@exp {"sku":"A1","category":"tools","active":true}
+payload.items[0] - "qty" - "price"
+=== C60 concat with number
+@exp "Ann (7)"
+payload.customer.name ++ " (" ++ payload.customer.id ++ ")"
+=== C61 vars and headers
+@vars {"order":{"id":5}}
+@headers {"x-tenant":"t1"}
+@exp {"order":5,"tenant":"t1"}
+{ order: vars.order.id, tenant: attributes.headers.'x-tenant' }
+=== C62 groupBy pluck orderBy
+@exp [{"category":"tools","count":2},{"category":"toys","count":1}]
+payload.items groupBy $.category pluck ((items, category) -> { category: category, count: sizeOf(items) }) orderBy $.category
+=== C63 match type on array
+@exp 2
+payload.tags match {
+  case is Array -> sizeOf(payload.tags)
+  else -> 0
+}
+=== C64 match without else that matches
+@exp "Active"
+payload.status match { case "A" -> "Active" case "I" -> "Inactive" }
+=== C65 month name format
+@exp "31 Jan 2020"
+|2020-01-31| as String {format: "dd MMM yyyy"}
+=== C66 number grouping format
+@exp "1,234,567.89"
+1234567.891 as String {format: "#,##0.00"}
+=== C67 number fixed decimals
+@exp "12.500"
+payload.amount as Number as String {format: "0.000"}
+=== C68 DateTime plus duration
+@exp "2026-10-08T12:00:00Z"
+payload.ts as DateTime + |PT2H|
+=== C69 DateTime hour
+@exp 10
+(payload.ts as DateTime).hour
+=== C70 realistic API mapping
+@exp {"data":[{"lineNumber":1,"sku":"A1","quantity":2,"amount":"20.00","status":"ACTIVE"},{"lineNumber":2,"sku":"B2","quantity":1,"amount":"5.00","status":"INACTIVE"},{"lineNumber":3,"sku":"A1","quantity":3,"amount":"30.00","status":"ACTIVE"}],"meta":{"count":3,"activeCount":2,"categories":["tools","toys"]}}
+%dw 2.0
+output application/json
+---
+{
+  data: payload.items map (item, index) -> {
+    lineNumber: index + 1,
+    sku: item.sku,
+    quantity: item.qty,
+    amount: (item.qty * item.price) as String {format: "0.00"},
+    status: if (item.active) "ACTIVE" else "INACTIVE"
+  },
+  meta: {
+    count: sizeOf(payload.items),
+    activeCount: sizeOf(payload.items filter $.active),
+    categories: (payload.items.category distinctBy $) orderBy $
+  }
+}
+=== C71 realistic header functions and Strings module
+@exp {"name":"HELLO WORLD","tags":["X","Y"],"gross":6.25,"label":"orderA"}
+%dw 2.0
+output application/json
+import * from dw::core::Strings
+fun normalize(s: String): String = upper(trim(s))
+var vat = 0.25
+---
+{
+  name: normalize(payload.name),
+  tags: payload.tags map normalize($),
+  gross: payload.price * (1 + vat),
+  label: camelize("order_" ++ payload.status)
+}
+=== C72 default binds tighter than concat
+@exp "standard!"
+payload.customer.tier default "standard" ++ "!"
+=== C73 filter nulls with shorthand
+@exp ["Ann"]
+[payload.customer.tier, payload.customer.name] filter ($ != null)
+=== C74 filter by index shorthand
+@exp [3,4]
+payload.nums filter ($$ > 1)
+=== C75 map value plus index shorthand
+@exp [1,3,5,7]
+payload.nums map ($ + $$)
+=== C76 mapObject shorthand key and value
+@exp {"a":10,"b":20}
+{a: 1, b: 2} mapObject { ($$): $ * 10 }
+=== C77 pluck index shorthand
+@exp [0,1]
+{a: 1, b: 2} pluck $$$
+=== C78 nested implicit lambdas
+@exp [{"id":1,"names":["a","b"]},{"id":2,"names":["c"]}]
+payload.orders map { id: $.id, names: $.lines map $.n }
+=== C79 spread of conditional object
+@exp {"base":1,"extra":2}
+{ base: 1, (if (payload.flag) { extra: 2 } else {}) }
+=== C80 dynamic keys from items with index
+@exp {"A1_0":2,"B2_1":1,"A1_2":3}
+{ (payload.items map { ($.sku ++ "_" ++ $$): $.qty }) }
+=== C81 chain filter map reduce
+@exp 5
+payload.items filter $.active map $.qty reduce ($$ + $)
+=== C82 avg max min
+@exp [2.5,4,"a"]
+[avg(payload.nums), max(payload.nums), min(["b", "a"])]
+=== C83 joinBy selector
+@exp "A1, B2, A1"
+payload.items.sku joinBy ", "
+=== C84 splitBy map upper
+@exp ["A","B","C"]
+payload.csv splitBy "," map upper($)
+=== C85 map on null
+@exp null
+payload.missing map $.x
+=== C86 sizeOf null
+@exp null
+sizeOf(payload.missing)
+=== C87 splitBy regex
+@exp ["a","b","c"]
+"a,b;c" splitBy /[,;]/
+=== C88 replace regex with a function of the groups
+@exp "31.01.2020"
+"2020-01-31" replace /(\d+)-(\d+)-(\d+)/ with ($[3] ++ "." ++ $[2] ++ "." ++ $[1])
+=== C93 string interpolation of variables and $
+@exp ["Hello x","a.x.b","cost $5",["v1","v2"]]
+%dw 2.0
+output application/json
+var name = "x"
+---
+["Hello $name", "a.$name.b", "cost \$5", [1, 2] map "v$"]
+=== C94 unless else
+@exp "y"
+unless (payload.flag) "x" else "y"
+=== C95 string as String with format stays the same
+@exp "2026-10-08T10:00:00Z"
+payload.ts as String {format: "yyyy-MM-dd"}
+=== C96 number format with locale
+@exp "1.234,50"
+1234.5 as String {format: "#,##0.00", locale: "de"}
+=== C97 write nested json
+@exp "{\n  \"a\": [\n    1,\n    2\n  ]\n}"
+write({a: [1, 2]}, "application/json")
+=== C89 contains string and array
+@exp [true,true]
+["Hello" contains "ell", ["a", "b"] contains "b"]
+=== C90 scan
+@exp [["ann@x","ann","x"]]
+payload.customer.email scan /(\w+)@(\w+)/
+=== C91 matches
+@exp true
+"ABC" matches /[A-Z]+/
+=== C92 match regex without binding
+@exp "a-code"
+"A123" match { case matches /A\d+/ -> "a-code" else -> "other" }
