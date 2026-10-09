@@ -88,6 +88,7 @@ class TabRegistry {
     private StartupTab startupTab;
     private ConfigurationTab configurationTab;
     private BeansTab beansTab;
+    private SemanticTab semanticTab;
     private BrowseTab browseTab;
     private CatalogTab catalogTab;
     private ClasspathTab classpathTab;
@@ -155,6 +156,7 @@ class TabRegistry {
         startupTab = new StartupTab(ctx);
         configurationTab = new ConfigurationTab(ctx);
         beansTab = new BeansTab(ctx);
+        semanticTab = new SemanticTab(ctx);
         browseTab = new BrowseTab(ctx);
         catalogTab = new CatalogTab(ctx);
         classpathTab = new ClasspathTab(ctx);
@@ -219,7 +221,8 @@ class TabRegistry {
                 new MoreTab(
                         TuiIcons.TAB_JFR, "JFR", "J&FR", jfrTab, "Observability",
                         List.of("jfr")),
-                // Data
+                // AI
+                new MoreTab(TuiIcons.MCP_BRAIN, "Semantic", "&Semantic", semanticTab, "AI", List.of("semantic-metadata")),
                 new MoreTab(
                         TuiIcons.TAB_OLLAMA, "Ollama", "&Ollama", ollamaTab, "AI", List.of(), null,
                         // listed only while an Ollama server answers; the monitor probes in the background
@@ -440,6 +443,10 @@ class TabRegistry {
 
     SpansTab spansTab() {
         return spansTab;
+    }
+
+    SemanticTab semanticTab() {
+        return semanticTab;
     }
 
     OllamaTab ollamaTab() {

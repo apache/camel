@@ -177,6 +177,22 @@ image::jbang/camel-tui-source-java-completion.png[After a split in a Java route,
 
 image::jbang/camel-tui-source-java-argument-completion.png[In the argument of a filter, Tab lists the methods of the header builder]
 
+=== Semantic evaluation operations
+
+In YAML `semantic.evaluation` declarations, *Tab* on `operation:` or `type:` suggests the operations declared by
+the selected expert in the running integration. Completion uses the `expert` in the current editor buffer,
+including unsaved edits: an evaluation's expert overrides the enclosing semantic block's expert. Without either,
+it uses the runtime's configured default or automatically selected expert.
+
+Suggestions show the operation's description and result type. For example, an expert declaring only `injection`
+with a boolean result offers `injection`; returning a boolean does not imply an operation named `boolean`.
+The `type` shorthand lowercases operation names, so case-sensitive names are offered only for `operation`.
+
+This requires a running integration, including a running process linked to a local project. If metadata is
+unavailable or the expert cannot be resolved, completion offers property placeholders only. It does not call the
+expert's validation or inference methods. An unreadable semantic declaration must be corrected before its expert
+can be identified.
+
 === Known limitations
 
 *Tab* completion is light assistance for smaller, hand-written edits. It reads the line you are on and the text above

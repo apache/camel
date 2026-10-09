@@ -17,12 +17,14 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.widgets.input.TextAreaState;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
@@ -50,6 +52,30 @@ final class FormHelper {
             state.moveCursorToEnd();
         } else if (ke.code() == KeyCode.CHAR) {
             state.insert(ke.string().charAt(0));
+        }
+    }
+
+    static void handleTextArea(KeyEvent key, TextAreaState editor) {
+        if (key.isConfirm()) {
+            editor.insert('\n');
+        } else if (key.isUp()) {
+            editor.moveCursorUp(editor.lastRenderedWidth(), Overflow.WRAP_WORD);
+        } else if (key.isDown()) {
+            editor.moveCursorDown(editor.lastRenderedWidth(), Overflow.WRAP_WORD);
+        } else if (key.isLeft()) {
+            editor.moveCursorLeft();
+        } else if (key.isRight()) {
+            editor.moveCursorRight();
+        } else if (key.isHome()) {
+            editor.moveCursorToLineStart();
+        } else if (key.isEnd()) {
+            editor.moveCursorToLineEnd();
+        } else if (key.isDeleteBackward()) {
+            editor.deleteBackward();
+        } else if (key.isDeleteForward()) {
+            editor.deleteForward();
+        } else if (key.code() == KeyCode.CHAR && !key.hasCtrl()) {
+            editor.insert(key.string());
         }
     }
 

@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -226,6 +227,22 @@ class MonitorContext {
             } finally {
                 PathUtils.deleteFile(outputFile);
             }
+        }
+    }
+
+    /** Request-specific files keep a late response from being consumed by another action. */
+    JsonObject executeIndependentAction(String pid, JsonObject request, long timeoutMs) {
+        String requestId = UUID.randomUUID().toString();
+        Path directory = CommandLineHelper.getCamelDir();
+        Path actionFile = directory.resolve(pid + "-action-" + requestId + ".json");
+        Path outputFile = directory.resolve(pid + "-output-" + requestId + ".json");
+        PathUtils.writeTextSafely(request.toJson(), actionFile);
+        try {
+            // The runtime writes output in place; keep polling until the JSON is complete.
+            return TuiHelper.pollJsonResponse(outputFile, timeoutMs);
+        } finally {
+            PathUtils.deleteFile(outputFile);
+            PathUtils.deleteFile(actionFile);
         }
     }
 

@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,6 +62,7 @@ import org.apache.camel.util.json.JsonObject;
 final class SourceEditAssist {
 
     private final MonitorContext ctx;
+    private final SemanticCompletions semanticCompletions;
     private final CatalogCache catalogCache = new CatalogCache();
     private volatile CamelCatalog defaultCatalog;
     private Path rootDir;
@@ -118,6 +120,7 @@ final class SourceEditAssist {
 
     SourceEditAssist(MonitorContext ctx) {
         this.ctx = ctx;
+        this.semanticCompletions = new SemanticCompletions(ctx);
     }
 
     /**
@@ -131,6 +134,7 @@ final class SourceEditAssist {
      * Drops the per-integration completion tree so it is reloaded for the next selected integration.
      */
     void reset() {
+        semanticCompletions.reset();
         completionTreeLoaded = false;
         completionTree = null;
     }
@@ -1295,6 +1299,15 @@ final class SourceEditAssist {
                 })
                 .thenComparing((a, b) -> Boolean.compare(b.required(), a.required())));
         return items;
+    }
+
+    CompletableFuture<List<AutocompletePopup.CompletionItem>> provideSemanticCompletions(SemanticCompletionContext context) {
+        List<AutocompletePopup.CompletionItem> placeholders = loadPropertyPlaceholders();
+        return semanticCompletions.provide(context).thenApply(operations -> {
+            List<AutocompletePopup.CompletionItem> items = new ArrayList<>(operations);
+            items.addAll(placeholders);
+            return items;
+        });
     }
 
     List<AutocompletePopup.CompletionItem> provideTreeValueCompletions(String contextAfterPrefix) {
