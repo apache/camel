@@ -570,6 +570,8 @@ The `application-cloudevents+json` data type now writes the body according to th
 before; with any other content type a JSON object or array body is now written as a string; a `byte[]` body that is not
 valid text in the exchange charset is written as `data_base64`, with the `datacontenttype` `application/octet-stream`
 when no content type was declared; and a null body gives an event without `data` instead of `"data":"null"`.
+Only a `byte[]` body is kept as bytes: a body of any other type, such as an `InputStream`, is still read as text in
+the exchange charset, as before, so bytes that are not valid text are still replaced.
 Component CloudEvent data types that declare `application/octet-stream` or `text/plain` (such as `aws2-s3`,
 `aws-cloudtrail` or `google-pubsub`) therefore no longer nest a JSON body: set the `CamelCloudEventDataContentType`
 header to `application/json` before `application-cloudevents+json` to keep it nested.

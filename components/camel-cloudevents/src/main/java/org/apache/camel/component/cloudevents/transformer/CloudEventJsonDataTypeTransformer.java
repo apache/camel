@@ -43,13 +43,16 @@ import org.apache.camel.support.MessageHelper;
  * values for CloudEvent attributes such as the Http content type header, event source, event type.
  * <p/>
  * The body is written as the data of the event according to its datacontenttype (CloudEvents Json format, section 3.1):
- * with a declared Json content type (a media type with the subtype {@code json} or the suffix {@code +json}) a body
- * that is a Json value is nested as that value, and any other body is a Json string. Without a declared content type
- * the transformer assumes {@code application/json} but only nests a Json object or array, so that text such as a long
- * number or {@code null} stays a string. With any other content type the body is a Json string. A {@code byte[]} body
- * that is not valid text in the charset of the exchange, so that it cannot be written as a Json string without losing
- * bytes, is written Base64 encoded as {@code data_base64}, with the datacontenttype {@code application/octet-stream}
- * unless one was declared. A null body has no data.
+ * <ul>
+ * <li>declared Json content type (subtype {@code json} or suffix {@code +json}): a body that is a Json value, scalars
+ * included, is nested as that value; any other body is a Json string</li>
+ * <li>no declared content type ({@code application/json} is assumed): only a Json object or array is nested, so that
+ * text such as a long number or {@code null} stays a string</li>
+ * <li>any other content type: the body is a Json string</li>
+ * <li>a {@code byte[]} body that is not valid text in the charset of the exchange: {@code data_base64}, with the
+ * datacontenttype {@code application/octet-stream} unless one was declared</li>
+ * <li>a null body: no data</li>
+ * </ul>
  */
 @DataTypeTransformer(name = "application-cloudevents+json",
                      description = "Adds default CloudEvent (JSon binding) headers to the Camel message (such as content-type, event source, event type etc.)")
@@ -107,6 +110,8 @@ public class CloudEventJsonDataTypeTransformer extends Transformer {
                 } else {
                     // decoding these bytes as text would replace the invalid ones, so the data would be lost
                     cloudEventAttributes.putIfAbsent("data_base64", Base64.getEncoder().encodeToString(bytes));
+                    // a declared datacontenttype is kept: the route states the format of these bytes, which may be valid
+                    // in a charset other than the one of the exchange, so only an assumed application/json is replaced
                     if (!contentTypeDeclared) {
                         // these bytes are not Json, and the datacontenttype must reflect the format of the data
                         cloudEventAttributes.put(dataContentTypeKey, CloudEvent.APPLICATION_OCTET_STREAM_MIME_TYPE);
