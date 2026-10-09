@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -29,7 +30,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 
 @UriParams
-public class LuceneConfiguration {
+public class LuceneConfiguration implements Cloneable {
     private transient URI uri;
     private transient String authority;
 
@@ -53,6 +54,17 @@ public class LuceneConfiguration {
 
     public LuceneConfiguration(URI uri) {
         this.uri = uri;
+    }
+
+    /**
+     * Returns a copy of this configuration
+     */
+    public LuceneConfiguration copy() {
+        try {
+            return (LuceneConfiguration) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     public void parseURI(URI uri, Map<String, Object> parameters, LuceneComponent component) throws Exception {
