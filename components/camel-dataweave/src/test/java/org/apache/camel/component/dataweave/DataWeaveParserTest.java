@@ -19,6 +19,7 @@ package org.apache.camel.component.dataweave;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.component.dataweave.DataWeaveAst.AllAttributes;
 import org.apache.camel.component.dataweave.DataWeaveAst.ArrayLit;
 import org.apache.camel.component.dataweave.DataWeaveAst.AttributeAccess;
 import org.apache.camel.component.dataweave.DataWeaveAst.BinaryOp;
@@ -42,6 +43,8 @@ import org.apache.camel.component.dataweave.DataWeaveAst.NumberLit;
 import org.apache.camel.component.dataweave.DataWeaveAst.ObjectEntry;
 import org.apache.camel.component.dataweave.DataWeaveAst.ObjectLit;
 import org.apache.camel.component.dataweave.DataWeaveAst.Parens;
+import org.apache.camel.component.dataweave.DataWeaveAst.QName;
+import org.apache.camel.component.dataweave.DataWeaveAst.QualifiedFieldAccess;
 import org.apache.camel.component.dataweave.DataWeaveAst.Range;
 import org.apache.camel.component.dataweave.DataWeaveAst.RegexLit;
 import org.apache.camel.component.dataweave.DataWeaveAst.Script;
@@ -120,10 +123,11 @@ class DataWeaveParserTest {
     }
 
     @Test
-    void shouldRepresentNamespaceDeclarationAsUnsupported() {
-        Script script = parseScript("%dw 2.0\nns ns0 http://example.com\n---\npayload");
-        Block block = assertInstanceOf(Block.class, script.body());
-        assertInstanceOf(Unsupported.class, block.declarations().get(0));
+    void shouldParseNamespaceDeclaration() {
+        Script script
+                = parseScript("%dw 2.0\nns ns0 http://example.com/a?b=1 // the orders\noutput application/xml\n---\npayload");
+        assertEquals(Map.of("ns0", "http://example.com/a?b=1"), script.header().namespaces());
+        assertEquals("payload", name(script.body()));
     }
 
     @Test
@@ -287,6 +291,13 @@ class DataWeaveParserTest {
         assertEquals("id", assertInstanceOf(AttributeAccess.class, parseExpr("payload.order.@id")).attribute());
         assertEquals("item", assertInstanceOf(MultiValueSelector.class, parseExpr("payload.*item")).field());
         assertEquals("sku", assertInstanceOf(DescendantSelector.class, parseExpr("payload..sku")).field());
+        assertTrue(assertInstanceOf(DescendantSelector.class, parseExpr("payload..*sku")).multi());
+        assertInstanceOf(Unsupported.class, parseExpr("payload..@id"));
+        assertEquals("order", assertInstanceOf(FieldAccess.class,
+                assertInstanceOf(AllAttributes.class, parseExpr("payload.order.@")).object()).field());
+        QualifiedFieldAccess qualified = assertInstanceOf(QualifiedFieldAccess.class, parseExpr("payload.o#order"));
+        assertEquals("o", qualified.prefix());
+        assertEquals("order", qualified.field());
         assertInstanceOf(ExistenceCheck.class, parseExpr("payload.a?"));
         assertInstanceOf(FilterSelector.class, parseExpr("payload.items[?($.qty > 1)]"));
         Range range = assertInstanceOf(Range.class, assertInstanceOf(IndexAccess.class, parseExpr("xs[-1 to 0]")).index());
@@ -307,6 +318,21 @@ class DataWeaveParserTest {
         assertEquals("c", name(entries.get(2).condition()));
         assertNull(entries.get(3).key(), "an object spread has no key");
         assertEquals("default", assertInstanceOf(StringLit.class, entries.get(4).key()).value());
+    }
+
+    @Test
+    void shouldParseXmlKeys() {
+        ObjectLit obj = assertInstanceOf(ObjectLit.class, parseExpr("{ o#a @(id: 1, o#b: x): 2, (k) @(c: 3): 4, d: 5 }"));
+        List<ObjectEntry> entries = obj.entries();
+        QName qName = assertInstanceOf(QName.class, entries.get(0).key());
+        assertEquals("o", qName.prefix());
+        assertEquals("a", qName.name());
+        assertEquals(2, entries.get(0).attributes().size());
+        assertEquals("id", assertInstanceOf(StringLit.class, entries.get(0).attributes().get(0).key()).value());
+        assertInstanceOf(QName.class, entries.get(0).attributes().get(1).key());
+        assertTrue(entries.get(1).dynamic());
+        assertEquals(1, entries.get(1).attributes().size());
+        assertTrue(entries.get(2).attributes().isEmpty());
     }
 
     @Test

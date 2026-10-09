@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import org.apache.camel.component.dataweave.DataWeaveAst.AllAttributes;
 import org.apache.camel.component.dataweave.DataWeaveAst.ArrayLit;
 import org.apache.camel.component.dataweave.DataWeaveAst.AttributeAccess;
 import org.apache.camel.component.dataweave.DataWeaveAst.BinaryOp;
@@ -57,6 +58,8 @@ import org.apache.camel.component.dataweave.DataWeaveAst.NumberLit;
 import org.apache.camel.component.dataweave.DataWeaveAst.ObjectEntry;
 import org.apache.camel.component.dataweave.DataWeaveAst.ObjectLit;
 import org.apache.camel.component.dataweave.DataWeaveAst.Parens;
+import org.apache.camel.component.dataweave.DataWeaveAst.QName;
+import org.apache.camel.component.dataweave.DataWeaveAst.QualifiedFieldAccess;
 import org.apache.camel.component.dataweave.DataWeaveAst.Range;
 import org.apache.camel.component.dataweave.DataWeaveAst.RegexLit;
 import org.apache.camel.component.dataweave.DataWeaveAst.Script;
@@ -165,13 +168,18 @@ public class DataWeaveConverter {
             "year", "month", "day", "hour", "minutes", "seconds", "milliseconds", "nanoseconds", "dayOfWeek",
             "dayOfYear", "offsetSeconds", "quarter", "timezone");
 
-    // A variable or function in scope: the arity of a function, or -1 for any other value, and for a variable
-    // with a date or time (an ISO-8601 string) the coercion that gave the date (for its format)
-    private record Binding(String name, int arity, TypeCoercion date) {
+    // A variable or function in scope: the arity of a function, or -1 for any other value, for a variable with a date
+    // or time (an ISO-8601 string) the coercion that gave the date (for its format), and whether it is a lambda
+    // parameter kept as an XML element (raw) because the lambda reads its attributes (its value is then its text)
+    private record Binding(String name, int arity, TypeCoercion date, boolean raw) {
         static final int VALUE = -1;
 
+        Binding(String name, int arity, TypeCoercion date) {
+            this(name, arity, date, false);
+        }
+
         Binding(String name, int arity) {
-            this(name, arity, null);
+            this(name, arity, null, false);
         }
     }
 
@@ -183,6 +191,10 @@ public class DataWeaveConverter {
     private final Deque<Map<String, Binding>> scopes = new ArrayDeque<>();
     // the variables $, $$ and $$$ refer to in the body of an implicit lambda, or null
     private List<String> dollars;
+    // whether the script writes XML, the XML namespaces of its header, and whether null attributes are left out
+    private boolean xmlOutput;
+    private Map<String, String> namespaces = Map.of();
+    private boolean skipNullAttributes;
 
     public DataWeaveConverter() {
     }
@@ -231,32 +243,58 @@ public class DataWeaveConverter {
         needsDataWeaveLib = false;
         scopes.clear();
         dollars = null;
+        xmlOutput = false;
+        namespaces = Map.of();
+        skipNullAttributes = false;
     }
 
     // -- Script
 
     private String emitScript(Script script) {
         Header header = script.header();
-        StringBuilder sb = new StringBuilder();
         String output = header.outputType() != null ? mediaType(header.outputType()) : null;
-        if (output != null || !header.inputs().isEmpty()) {
-            sb.append("/** DataSonnet\nversion=2.0\n");
-            if (output != null) {
-                sb.append("output ").append(output).append('\n');
-            }
-            for (InputDecl input : header.inputs()) {
-                sb.append("input ").append(input.name()).append(' ').append(mediaType(input.mediaType())).append('\n');
-            }
-            sb.append("*/\n");
-        }
+        xmlOutput = output != null && output.contains("xml");
+        namespaces = header.namespaces();
+        String skipNullOn = xmlOutput ? header.outputProperties().get("skipNullOn") : null;
+        skipNullAttributes = "attributes".equals(skipNullOn) || "everywhere".equals(skipNullOn);
         StringBuilder todos = new StringBuilder();
         for (String module : header.imports()) {
             if (!KNOWN_MODULES.contains(module)) {
                 todos.append(todoComment("import of module", module));
             }
         }
-        String body = emit(script.body());
-        body = applyWriterProperties(body, output, header.outputProperties());
+        // DataSonnet writes a null as an empty XML element only when asked to, DataWeave always does
+        List<String> outputParameters = new ArrayList<>();
+        if (xmlOutput) {
+            outputParameters.add("nullasemptyelement=true");
+        }
+        String body = applyWriterProperties(emit(script.body()), output, header.outputProperties(), outputParameters);
+        if (xmlOutput) {
+            // an element of the input is written as its content, the elements in the order of the script, and the
+            // namespaces declared on the root element
+            List<String> declarations = new ArrayList<>();
+            namespaces.forEach((prefix, uri) -> declarations
+                    .add((isJsonnetIdentifier(prefix) ? prefix : string(prefix)) + ": " + string(uri)));
+            body = lib("xmlOutput") + "(" + body + ", "
+                   + (declarations.isEmpty() ? "{}" : "{ " + String.join(", ", declarations) + " }") + ")";
+        } else if (output != null) {
+            // the elements of an XML input are written as DataWeave writes them, without the XML details
+            body = lib("output") + "(" + body + ", body)";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        if (output != null || !header.inputs().isEmpty()) {
+            sb.append("/** DataSonnet\nversion=2.0\n");
+            if (output != null) {
+                sb.append("output ").append(output);
+                outputParameters.forEach(p -> sb.append("; ").append(p));
+                sb.append('\n');
+            }
+            for (InputDecl input : header.inputs()) {
+                sb.append("input ").append(input.name()).append(' ').append(mediaType(input.mediaType())).append('\n');
+            }
+            sb.append("*/\n");
+        }
         if (needsDataWeaveLib) {
             sb.append(DW_IMPORT);
         }
@@ -274,17 +312,26 @@ public class DataWeaveConverter {
         };
     }
 
-    private String applyWriterProperties(String body, String output, Map<String, String> properties) {
+    private String applyWriterProperties(
+            String body, String output, Map<String, String> properties, List<String> outputParameters) {
         String result = body;
         for (Map.Entry<String, String> property : properties.entrySet()) {
             String name = property.getKey();
-            if ("indent".equals(name) || "encoding".equals(name)) {
+            String value = property.getValue();
+            if ("indent".equals(name) || "encoding".equals(name) || (xmlOutput && "inlineCloseOn".equals(name))) {
                 continue; // formatting only
             }
-            if ("skipNullOn".equals(name) && (output == null || output.endsWith("json"))) {
-                result = lib("skipNulls") + "(" + result + ", " + string(property.getValue()) + ")";
+            if (xmlOutput && "skipNullOn".equals(name) && "attributes".equals(value)) {
+                continue; // left out by withAttributes
+            }
+            if ("skipNullOn".equals(name) && (output == null || output.endsWith("json") || xmlOutput)) {
+                result = lib("skipNulls") + "(" + result + ", " + string(value) + ")";
+            } else if (xmlOutput && "writeDeclaration".equals(name)) {
+                if ("false".equalsIgnoreCase(value)) {
+                    outputParameters.add("omitxmldeclaration=true");
+                }
             } else {
-                result = todoComment("writer property", name + "=" + property.getValue()) + result;
+                result = todoComment("writer property", name + "=" + value) + result;
             }
         }
         return result;
@@ -312,12 +359,15 @@ public class DataWeaveConverter {
             return emitIdentifier(id);
         } else if (node instanceof Dollar d) {
             return emitDollar(d);
-        } else if (node instanceof FieldAccess || node instanceof IndexAccess || node instanceof MultiValueSelector) {
+        } else if (node instanceof FieldAccess || node instanceof IndexAccess || node instanceof MultiValueSelector
+                || node instanceof QualifiedFieldAccess) {
             return emitSelector(node, false);
+        } else if (node instanceof AllAttributes aa) {
+            return lib("attrs") + "(" + emitSelector(aa.object(), true) + ")";
         } else if (node instanceof AttributeAccess aa) {
             return lib("attr") + "(" + emitSelector(aa.object(), true) + ", " + string(aa.attribute()) + ")";
         } else if (node instanceof DescendantSelector ds) {
-            return lib("desc") + "(" + emit(ds.object()) + ", " + string(ds.field()) + ")";
+            return lib(ds.multi() ? "descAll" : "desc") + "(" + emit(ds.object()) + ", " + string(ds.field()) + ")";
         } else if (node instanceof FilterSelector fs) {
             return lib("filter") + "(" + emit(fs.object()) + ", " + emitImplicitLambda(fs.condition(), ITEM_INDEX)
                    + ")";
@@ -387,6 +437,9 @@ public class DataWeaveConverter {
             // a date coerced with a format is written in that format
             return formatDate(binding.name(), binding.date().properties());
         }
+        if (binding != null && binding.raw()) {
+            return lib("text") + "(" + binding.name() + ")";
+        }
         if (binding != null) {
             return binding.name();
         }
@@ -399,7 +452,9 @@ public class DataWeaveConverter {
 
     private String emitDollar(Dollar d) {
         if (dollars != null && d.level() <= dollars.size()) {
-            return dollars.get(d.level() - 1);
+            String name = dollars.get(d.level() - 1);
+            Binding binding = lookup("$" + name);
+            return binding != null && binding.raw() ? lib("text") + "(" + name + ")" : name;
         }
         return todo("$ outside of a lambda", "$".repeat(d.level()));
     }
@@ -408,8 +463,20 @@ public class DataWeaveConverter {
 
     // A selector; raw keeps an XML element with only text as an object (for its attributes)
     private String emitSelector(DataWeaveAst node, boolean raw) {
+        String rawName = rawReference(node);
+        if (rawName != null) {
+            return rawName;
+        }
         if (isExchangeAccess(node)) {
             return emitExchangeAccess(node);
+        }
+        if (node instanceof QualifiedFieldAccess q) {
+            String uri = namespaces.get(q.prefix());
+            if (uri == null) {
+                return todo("undeclared namespace prefix", q.prefix() + "#" + q.field());
+            }
+            return lib(raw ? "selNsRaw" : "selNs") + "(" + emitSelector(q.object(), true) + ", " + string(uri) + ", "
+                   + string(q.field()) + ")";
         }
         if (node instanceof FieldAccess fa && DATE_PARTS.contains(fa.field()) && isDateValue(fa.object())) {
             return "cml.datePart(" + emitDate(fa.object()) + ", " + string(fa.field()) + ")";
@@ -426,9 +493,7 @@ public class DataWeaveConverter {
                 fields.add(0, string(f.field()));
                 base = f.object();
             }
-            String object = base instanceof FieldAccess || base instanceof IndexAccess
-                    || base instanceof MultiValueSelector
-                            ? emitSelector(base, true) : emit(base);
+            String object = emitSelector(base, true);
             if (fields.size() == 1) {
                 return lib(raw ? "selRaw" : "sel") + "(" + object + ", " + fields.get(0) + ")";
             }
@@ -442,6 +507,17 @@ public class DataWeaveConverter {
             return lib("idx") + "(" + object + ", " + emit(ia.index()) + ")";
         }
         return emit(node);
+    }
+
+    // The Jsonnet name of a lambda parameter that is an XML element kept as an object, or null
+    private String rawReference(DataWeaveAst node) {
+        Binding binding = null;
+        if (node instanceof Identifier id) {
+            binding = lookup(id.name());
+        } else if (node instanceof Dollar d && dollars != null && d.level() <= dollars.size()) {
+            binding = lookup("$" + dollars.get(d.level() - 1));
+        }
+        return binding != null && binding.raw() ? binding.name() : null;
     }
 
     // A date or time: a date literal, now(), a coercion to a date or time type, or a variable with one
@@ -554,6 +630,9 @@ public class DataWeaveConverter {
     // -- Objects
 
     private String emitObject(ObjectLit obj) {
+        if (xmlOutput && (obj.entries().stream().anyMatch(e -> e.key() == null) || hasRepeatedKey(obj))) {
+            return emitXmlObject(obj);
+        }
         // fields are emitted as object literals, and an object spread (expr) is merged in between
         List<String> parts = new ArrayList<>();
         List<String> fields = new ArrayList<>();
@@ -578,6 +657,53 @@ public class DataWeaveConverter {
         return parts.size() == 1 ? parts.get(0) : "(" + String.join(" + ", parts) + ")";
     }
 
+    // An object written as XML: a key that repeats (also by object spreads) is an element that repeats, so its parts
+    // (fields, and object spreads) are merged by dw.xmlObject
+    private String emitXmlObject(ObjectLit obj) {
+        List<String> parts = new ArrayList<>();
+        List<String> fields = new ArrayList<>();
+        Set<String> names = new HashSet<>();
+        for (ObjectEntry entry : obj.entries()) {
+            String name = entry.key() != null && !entry.dynamic() ? keyName(entry.key()) : null;
+            if (entry.key() == null || (name != null && names.contains(name))) {
+                if (!fields.isEmpty()) {
+                    parts.add(objectLiteral(fields));
+                    fields = new ArrayList<>();
+                    names.clear();
+                }
+            }
+            if (entry.key() == null) {
+                String spread = emit(entry.value());
+                parts.add(entry.condition() != null
+                        ? "(if " + emit(entry.condition()) + " then " + spread + " else null)" : spread);
+            } else {
+                if (name != null) {
+                    names.add(name);
+                }
+                fields.add(emitField(entry));
+            }
+        }
+        if (!fields.isEmpty()) {
+            parts.add(objectLiteral(fields));
+        }
+        return lib("xmlObject") + "([" + String.join(", ", parts) + "])";
+    }
+
+    private static boolean hasRepeatedKey(ObjectLit obj) {
+        Set<String> names = new HashSet<>();
+        for (ObjectEntry entry : obj.entries()) {
+            if (entry.key() != null && !entry.dynamic() && !names.add(keyName(entry.key()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // the name of a key as written in XML
+    private static String keyName(DataWeaveAst key) {
+        return key instanceof QName q ? q.prefix() + ":" + q.name() : ((StringLit) key).value();
+    }
+
     private static String objectLiteral(List<String> fields) {
         if (fields.isEmpty()) {
             return "{}";
@@ -587,22 +713,42 @@ public class DataWeaveConverter {
 
     private String emitField(ObjectEntry entry) {
         String key;
+        String name = null;
         if (entry.dynamic()) {
             DataWeaveAst k = entry.key();
             key = k instanceof StringLit || k instanceof Interpolation ? emit(k) : lib("str") + "(" + emit(k) + ")";
         } else {
-            key = string(((StringLit) entry.key()).value());
+            name = staticName(entry.key());
+            key = string(name);
         }
         String value = emit(entry.value());
+        if (!entry.attributes().isEmpty() && xmlOutput) {
+            // attributes are only written in XML (DataWeave leaves them out in the other formats)
+            List<String> attributes = new ArrayList<>();
+            for (ObjectEntry attribute : entry.attributes()) {
+                attributes.add(emitField(attribute));
+            }
+            value = lib("withAttributes") + "(" + value + ", { " + String.join(", ", attributes) + " }"
+                    + (skipNullAttributes ? ", true" : "") + ")";
+        }
+        String todo = entry.key() instanceof QName q && xmlOutput && !namespaces.containsKey(q.prefix())
+                ? todoComment("undeclared namespace prefix", q.prefix() + "#" + q.name()) : "";
         if (entry.condition() != null) {
             // a field with a null name is left out
-            return "[if " + emit(entry.condition()) + " then " + key + " else null]: " + value;
+            return todo + "[if " + emit(entry.condition()) + " then " + key + " else null]: " + value;
         }
         if (entry.dynamic()) {
             return "[" + key + "]: " + value;
         }
-        String name = ((StringLit) entry.key()).value();
-        return (isJsonnetIdentifier(name) ? name : key) + ": " + value;
+        return todo + (isJsonnetIdentifier(name) ? name : key) + ": " + value;
+    }
+
+    // The name of a static key: a name, or prefix#name (written with the prefix in XML only, as DataWeave does)
+    private String staticName(DataWeaveAst key) {
+        if (key instanceof QName q) {
+            return xmlOutput ? q.prefix() + ":" + q.name() : q.name();
+        }
+        return ((StringLit) key).value();
     }
 
     private static boolean isJsonnetIdentifier(String name) {
@@ -854,10 +1000,11 @@ public class DataWeaveConverter {
             return wrongArguments(name, args);
         }
         List<String> emitted = new ArrayList<>();
+        boolean rawItems = functionArg != null && readsItemAttributes(args.get(functionArg.position()));
         for (int i = 0; i < args.size(); i++) {
             if (functionArg != null && i == functionArg.position()) {
-                emitted.add(emitFunctionArg(args.get(i), functionArg.params()));
-            } else if (functionArg != null && i == 0 && readsItemAttributes(args.get(functionArg.position()))) {
+                emitted.add(emitFunctionArg(args.get(i), functionArg.params(), rawItems));
+            } else if (rawItems && i == 0) {
                 // keep XML elements with only text as objects, as the function reads their attributes
                 emitted.add(emitSelector(args.get(i), true));
             } else {
@@ -896,14 +1043,19 @@ public class DataWeaveConverter {
 
     // A function argument of a higher-order function, which DataWeave calls with params.size() arguments
     private String emitFunctionArg(DataWeaveAst arg, List<String> params) {
+        return emitFunctionArg(arg, params, false);
+    }
+
+    // rawItem: the first parameter is an XML element kept as an object, because the function reads its attributes
+    private String emitFunctionArg(DataWeaveAst arg, List<String> params, boolean rawItem) {
         if (arg instanceof Lambda lam) {
             if (lam.params().size() > params.size()) {
                 return todo("lambda with " + lam.params().size() + " parameters", "expected at most " + params.size());
             }
-            return emitLambda(lam, params.size());
+            return emitLambda(lam, params.size(), rawItem);
         }
         if (containsDollar(arg)) {
-            return emitImplicitLambda(arg, params);
+            return emitImplicitLambda(arg, params, rawItem);
         }
         if (arg instanceof Identifier id && lookup(id.name()) != null && lookup(id.name()).arity() >= 0) {
             // a function by name: pass the arguments it accepts
@@ -924,10 +1076,15 @@ public class DataWeaveConverter {
 
     // An expression with $, $$, $$$ (such as payload map $.name): a function of the parameters
     private String emitImplicitLambda(DataWeaveAst body, List<String> params) {
+        return emitImplicitLambda(body, params, false);
+    }
+
+    private String emitImplicitLambda(DataWeaveAst body, List<String> params, boolean rawItem) {
         List<String> names = freshNames(params);
         Map<String, Binding> scope = new HashMap<>();
-        for (String name : names) {
-            scope.put("$" + name, new Binding(name, Binding.VALUE)); // reserve the names
+        for (int i = 0; i < names.size(); i++) {
+            // reserve the names
+            scope.put("$" + names.get(i), new Binding(names.get(i), Binding.VALUE, null, rawItem && i == 0));
         }
         List<String> saved = dollars;
         dollars = names;
@@ -942,10 +1099,15 @@ public class DataWeaveConverter {
 
     // A lambda with at least the given number of parameters (DataWeave passes arguments a lambda does not declare)
     private String emitLambda(Lambda lam, int arity) {
+        return emitLambda(lam, arity, false);
+    }
+
+    private String emitLambda(Lambda lam, int arity, boolean rawFirst) {
         Map<String, Binding> scope = new HashMap<>();
         List<String> params = new ArrayList<>();
         Set<String> used = new HashSet<>();
-        for (LambdaParam param : lam.params()) {
+        for (int i = 0; i < lam.params().size(); i++) {
+            LambdaParam param = lam.params().get(i);
             String name = jsonnetName(param.name());
             used.add(name);
             String p = name;
@@ -953,7 +1115,7 @@ public class DataWeaveConverter {
                 p += " = " + emit(param.defaultValue());
             }
             params.add(p);
-            scope.put(param.name(), new Binding(name, Binding.VALUE));
+            scope.put(param.name(), new Binding(name, Binding.VALUE, null, rawFirst && i == 0));
         }
         for (int i = lam.params().size(); i < arity; i++) {
             String name = "_" + i;
@@ -987,17 +1149,23 @@ public class DataWeaveConverter {
         return names;
     }
 
-    // Whether a function argument reads an attribute of its (first) parameter: (e) -> e.@id, or $.@id
+    // Whether a function argument reads the attributes of its (first) parameter: (e) -> e.@id, $.@id or $.@
     private static boolean readsItemAttributes(DataWeaveAst fn) {
+        Predicate<DataWeaveAst> item;
+        DataWeaveAst body;
         if (fn instanceof Lambda lam) {
             if (lam.params().isEmpty()) {
                 return false;
             }
             String name = lam.params().get(0).name();
-            return anyNode(lam.body(), n -> n instanceof AttributeAccess aa && aa.object() instanceof Identifier id
-                    && id.name().equals(name));
+            item = n -> n instanceof Identifier id && id.name().equals(name);
+            body = lam.body();
+        } else {
+            item = n -> n instanceof Dollar d && d.level() == 1;
+            body = fn;
         }
-        return anyNode(fn, n -> n instanceof AttributeAccess aa && aa.object() instanceof Dollar d && d.level() == 1);
+        return anyNode(body, n -> (n instanceof AttributeAccess aa && item.test(aa.object()))
+                || (n instanceof AllAttributes all && item.test(all.object())));
     }
 
     private static boolean anyNode(DataWeaveAst node, Predicate<DataWeaveAst> predicate) {

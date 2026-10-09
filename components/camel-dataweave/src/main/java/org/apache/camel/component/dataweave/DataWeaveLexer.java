@@ -19,6 +19,8 @@ package org.apache.camel.component.dataweave;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Tokenizer for DataWeave 2.0 scripts.
@@ -83,6 +85,10 @@ public class DataWeaveLexer {
         }
     }
 
+    private static final Pattern HEADER_SEPARATOR_LINE = Pattern.compile("(?m)^[ \\t]*---[ \\t]*\\r?$");
+    private static final Pattern NAMESPACE_DIRECTIVE
+            = Pattern.compile("ns[ \\t]+([A-Za-z_][A-Za-z0-9_]*)[ \\t]+(\\S+)[ \\t]*(//.*)?\\r?");
+
     // A '/' after one of these identifiers starts a regular expression literal rather than a division
     private static final Set<String> REGEX_PREFIX_IDENTIFIERS = Set.of(
             "replace", "contains", "matches", "splitBy", "scan", "find", "match", "case", "startsWith", "endsWith");
@@ -92,6 +98,8 @@ public class DataWeaveLexer {
     private int pos;
     private int line;
     private int col;
+    // whether the --- separator of the header was read
+    private boolean body;
 
     public DataWeaveLexer(String input) {
         this.input = input;
@@ -106,10 +114,38 @@ public class DataWeaveLexer {
             if (pos >= input.length()) {
                 break;
             }
-            tokens.add(readToken());
+            if (!readNamespaceDirective()) {
+                Token token = readToken();
+                body |= token.type() == TokenType.HEADER_SEPARATOR;
+                tokens.add(token);
+            }
         }
         tokens.add(new Token(TokenType.EOF, "", line, col));
         return tokens;
+    }
+
+    // A namespace declaration of the header, "ns prefix uri" on a line of its own before the --- separator: the URI is
+    // read as a string (it has characters such as // that start a comment elsewhere)
+    private boolean readNamespaceDirective() {
+        if (body || !input.startsWith("ns", pos) || (!tokens.isEmpty() && tokens.get(tokens.size() - 1).line() == line)
+                || !HEADER_SEPARATOR_LINE.matcher(input).region(pos, input.length()).find()) {
+            return false;
+        }
+        int end = input.indexOf('\n', pos);
+        String rest = input.substring(pos, end < 0 ? input.length() : end);
+        Matcher m = NAMESPACE_DIRECTIVE.matcher(rest);
+        if (!m.matches()) {
+            return false;
+        }
+        int startLine = line;
+        int startCol = col;
+        tokens.add(token(TokenType.IDENTIFIER, "ns", startLine, startCol));
+        tokens.add(token(TokenType.IDENTIFIER, m.group(1), startLine, startCol + m.start(1)));
+        tokens.add(token(TokenType.STRING, m.group(2), startLine, startCol + m.start(2)));
+        for (int i = 0; i < rest.length(); i++) {
+            advance();
+        }
+        return true;
     }
 
     private void skipWhitespaceAndComments() {

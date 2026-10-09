@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.component.dataweave.DataWeaveAst.AllAttributes;
 import org.apache.camel.component.dataweave.DataWeaveAst.ArrayLit;
 import org.apache.camel.component.dataweave.DataWeaveAst.AttributeAccess;
 import org.apache.camel.component.dataweave.DataWeaveAst.BinaryOp;
@@ -51,6 +52,8 @@ import org.apache.camel.component.dataweave.DataWeaveAst.NumberLit;
 import org.apache.camel.component.dataweave.DataWeaveAst.ObjectEntry;
 import org.apache.camel.component.dataweave.DataWeaveAst.ObjectLit;
 import org.apache.camel.component.dataweave.DataWeaveAst.Parens;
+import org.apache.camel.component.dataweave.DataWeaveAst.QName;
+import org.apache.camel.component.dataweave.DataWeaveAst.QualifiedFieldAccess;
 import org.apache.camel.component.dataweave.DataWeaveAst.Range;
 import org.apache.camel.component.dataweave.DataWeaveAst.RegexLit;
 import org.apache.camel.component.dataweave.DataWeaveAst.Script;
@@ -97,7 +100,7 @@ public class DataWeaveParser {
      * Parses a complete script: an optional header (directives and declarations ending with {@code ---}) and the body.
      */
     public DataWeaveAst parse() {
-        Header header = new Header("2.0", null, Map.of(), List.of(), List.of());
+        Header header = new Header("2.0", null, Map.of(), List.of(), List.of(), Map.of());
         List<DataWeaveAst> declarations = new ArrayList<>();
         if (hasHeaderSeparator()) {
             header = parseHeader(declarations);
@@ -146,6 +149,7 @@ public class DataWeaveParser {
         Map<String, String> outputProperties = new LinkedHashMap<>();
         List<InputDecl> inputs = new ArrayList<>();
         List<String> imports = new ArrayList<>();
+        Map<String, String> namespaces = new LinkedHashMap<>();
 
         while (!check(TokenType.HEADER_SEPARATOR)) {
             Token start = current();
@@ -169,12 +173,10 @@ public class DataWeaveParser {
             } else if (checkIdentifier("import")) {
                 imports.add(parseImport());
             } else if (checkIdentifier("ns")) {
-                StringBuilder text = new StringBuilder();
-                while (current().line() == start.line() && !check(TokenType.EOF)) {
-                    text.append(current().value()).append(' ');
-                    advance();
-                }
-                declarations.add(new Unsupported(text.toString().trim(), "XML namespace declaration"));
+                // ns prefix uri (the lexer reads the URI as a string)
+                advance();
+                String prefix = expectName();
+                namespaces.put(prefix, expect(TokenType.STRING).value());
             } else if (checkIdentifier("type")) {
                 skipTypeDeclaration();
             } else if (checkIdentifier("var") || checkIdentifier("fun")) {
@@ -184,7 +186,7 @@ public class DataWeaveParser {
             }
         }
         advance(); // ---
-        return new Header(version, outputType, outputProperties, inputs, imports);
+        return new Header(version, outputType, outputProperties, inputs, imports, namespaces);
     }
 
     private String parseMediaType() {
@@ -553,9 +555,17 @@ public class DataWeaveParser {
             if (check(TokenType.DOT) && isTokenAhead(1, TokenType.DOT)) {
                 advance(); // .
                 advance(); // .
-                if (check(TokenType.STAR) || check(TokenType.AT)) {
-                    expr = new Unsupported(".." + current().value(), "descendants selector ..* / ..@");
-                    advance();
+                if (check(TokenType.STAR)) {
+                    advance(); // *
+                    expr = new DescendantSelector(expr, expectSelectorName(), true);
+                } else if (check(TokenType.AT)) {
+                    advance(); // @
+                    String name = "";
+                    if (check(TokenType.IDENTIFIER)) {
+                        name = current().value();
+                        advance();
+                    }
+                    expr = new Unsupported("..@" + name, "descendants selector ..@");
                 } else {
                     expr = new DescendantSelector(expr, expectSelectorName());
                 }
@@ -597,7 +607,7 @@ public class DataWeaveParser {
             if (check(TokenType.IDENTIFIER) || check(TokenType.STRING)) {
                 return new AttributeAccess(expr, expectSelectorName());
             }
-            return new Unsupported(".@", "all attributes selector .@");
+            return new AllAttributes(expr);
         }
         if (check(TokenType.STAR)) {
             advance(); // *
@@ -619,7 +629,7 @@ public class DataWeaveParser {
         if (check(TokenType.IDENTIFIER) && isTokenAhead(1, TokenType.HASH)) {
             String prefix = expectName();
             advance(); // #
-            return new Unsupported("." + prefix + "#" + expectSelectorName(), "XML namespace selector");
+            return new QualifiedFieldAccess(expr, prefix, expectSelectorName());
         }
         return new FieldAccess(expr, expectSelectorName());
     }
@@ -791,7 +801,7 @@ public class DataWeaveParser {
                 advance(); // )
                 DataWeaveAst condition = parseEntryCondition();
                 for (ObjectEntry entry : group) {
-                    entries.add(new ObjectEntry(entry.key(), entry.value(), entry.dynamic(), condition));
+                    entries.add(new ObjectEntry(entry.key(), entry.value(), entry.dynamic(), condition, entry.attributes()));
                 }
             } else if (check(TokenType.LPAREN)) {
                 // (expr): value is a dynamic key, and (expr) alone an object spread
@@ -799,9 +809,9 @@ public class DataWeaveParser {
                 DataWeaveAst expr = parseExpression();
                 expect(TokenType.RPAREN);
                 if (check(TokenType.AT)) {
-                    entries.add(unsupportedEntry(skipAttributes(), "XML attributes"));
+                    List<ObjectEntry> attributes = parseAttributes();
                     expect(TokenType.COLON);
-                    parseExpression();
+                    entries.add(new ObjectEntry(expr, parseExpression(), true, null, attributes));
                 } else if (check(TokenType.COLON)) {
                     advance();
                     entries.add(new ObjectEntry(expr, parseExpression(), true, null));
@@ -856,45 +866,33 @@ public class DataWeaveParser {
         } else {
             key = new StringLit(expectName());
         }
-        if (check(TokenType.HASH)) {
+        if (check(TokenType.HASH) && !dynamic && key instanceof StringLit prefix) {
+            // prefix#name: a name in an XML namespace
             advance(); // #
-            String name = expectName();
-            expect(TokenType.COLON);
-            parseExpression();
-            return unsupportedEntry(token.value() + "#" + name, "XML namespace prefix");
+            key = new QName(prefix.value(), expectName());
         }
-        if (check(TokenType.AT)) {
-            String attributes = skipAttributes();
-            expect(TokenType.COLON);
-            parseExpression();
-            return unsupportedEntry(token.value() + " " + attributes, "XML attributes");
-        }
+        List<ObjectEntry> attributes = check(TokenType.AT) ? parseAttributes() : List.of();
         expect(TokenType.COLON);
-        return new ObjectEntry(key, parseExpression(), dynamic, null);
+        return new ObjectEntry(key, parseExpression(), dynamic, null, attributes);
     }
 
-    private static ObjectEntry unsupportedEntry(String text, String reason) {
-        return new ObjectEntry(null, new Unsupported(text, reason), false, null);
-    }
-
-    private String skipAttributes() {
+    // The XML attributes of a key: @(name: value, ...)
+    private List<ObjectEntry> parseAttributes() {
         advance(); // @
-        StringBuilder text = new StringBuilder("@");
-        if (check(TokenType.LPAREN)) {
-            int depth = 0;
-            do {
-                if (check(TokenType.LPAREN)) {
-                    depth++;
-                } else if (check(TokenType.RPAREN)) {
-                    depth--;
-                } else if (check(TokenType.EOF)) {
-                    throw error("unterminated attributes");
-                }
-                text.append(current().value());
-                advance();
-            } while (depth > 0);
+        expect(TokenType.LPAREN);
+        List<ObjectEntry> attributes = new ArrayList<>();
+        while (!check(TokenType.RPAREN)) {
+            ObjectEntry attribute = parseObjectEntry();
+            if (!attribute.attributes().isEmpty()) {
+                throw error("an attribute has no attributes");
+            }
+            attributes.add(attribute);
+            if (!check(TokenType.RPAREN)) {
+                expect(TokenType.COMMA);
+            }
         }
-        return text.toString();
+        advance(); // )
+        return attributes;
     }
 
     private DataWeaveAst parseArray() {

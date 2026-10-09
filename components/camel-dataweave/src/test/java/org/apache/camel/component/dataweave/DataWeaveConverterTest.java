@@ -66,9 +66,11 @@ class DataWeaveConverterTest {
                 ---
                 { a: 1 }
                 """);
-        assertEquals("/** DataSonnet\nversion=2.0\noutput application/json\ninput payload application/xml\n*/\n{\n  a: 1\n}",
+        // an XML input is written as DataWeave writes it (dw.output)
+        assertEquals("/** DataSonnet\nversion=2.0\noutput application/json\ninput payload application/xml\n*/\n" + DW_IMPORT
+                     + "dw.output({\n  a: 1\n}, body)",
                 result);
-        assertFalse(converter.needsDataWeaveLib());
+        assertTrue(converter.needsDataWeaveLib());
         assertEquals(0, converter.getTodoCount());
     }
 
@@ -81,7 +83,7 @@ class DataWeaveConverterTest {
     @Test
     void testSkipNullOn() {
         String result = converter.convert("%dw 2.0\noutput application/json skipNullOn=\"everywhere\", indent=false\n---\n1");
-        assertTrue(result.endsWith("dw.skipNulls(1, \"everywhere\")"), result);
+        assertTrue(result.endsWith("dw.output(dw.skipNulls(1, \"everywhere\"), body)"), result);
         assertEquals(0, converter.getTodoCount());
     }
 
@@ -283,6 +285,109 @@ class DataWeaveConverterTest {
         assertEquals("{}", expr("{}"));
     }
 
+    // -- XML
+
+    @Test
+    void testXmlOutput() {
+        String result = converter.convert("""
+                %dw 2.0
+                output application/xml writeDeclaration=false, indent=false
+                ns ns0 http://example.com/order
+                ---
+                { ns0#order @(id: payload.id): { item: payload.sku } }
+                """);
+        assertEquals("""
+                /** DataSonnet
+                version=2.0
+                output application/xml; nullasemptyelement=true; omitxmldeclaration=true
+                */
+                """ + DW_IMPORT + """
+                dw.xmlOutput({
+                  "ns0:order": dw.withAttributes({
+                    item: dw.sel(body, "sku")
+                  }, { id: dw.sel(body, "id") })
+                }, { ns0: "http://example.com/order" })""", result);
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @Test
+    void testXmlOutputSkipsNullAttributes() {
+        String result
+                = converter.convert("%dw 2.0\noutput application/xml skipNullOn=\"attributes\"\n---\n{ a @(x: null): 1 }");
+        assertTrue(result.endsWith("dw.xmlOutput({\n  a: dw.withAttributes(1, { x: null }, true)\n}, {})"), result);
+        result = converter.convert("%dw 2.0\noutput application/xml skipNullOn=\"everywhere\"\n---\n{ a @(x: null): 1 }");
+        assertTrue(result.endsWith(
+                "dw.xmlOutput(dw.skipNulls({\n  a: dw.withAttributes(1, { x: null }, true)\n}, \"everywhere\"), {})"),
+                result);
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @Test
+    void testXmlObjectWithRepeatedKeys() {
+        // in XML a key that repeats is an element that repeats: the fields and object spreads are merged by dw.xmlObject
+        String result = converter.convert("%dw 2.0\noutput application/xml\n---\n{ root: { a: 1, (payload.items), a: 2 } }");
+        assertTrue(result.endsWith("dw.xmlOutput({\n  root: dw.xmlObject([{\n    a: 1\n  }, dw.sel(body, \"items\"), {\n"
+                                   + "    a: 2\n  }])\n}, {})"),
+                result);
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @Test
+    void testXmlKeysInOtherOutputs() {
+        // attributes and namespace prefixes are only written in XML
+        assertTrue(converter.convert("%dw 2.0\noutput application/json\n---\n{ a @(x: 1): 2, o#b: 3 }")
+                .endsWith("dw.output({\n  a: 2,\n  b: 3\n}, body)"));
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @Test
+    void testNamespaceDirectiveOnlyInHeader() {
+        // a line "ns a b" in the body is an expression (ns is a variable)
+        String result = converter.convert("%dw 2.0\noutput application/json\nvar ns = [1]\n---\nns map $");
+        assertTrue(result.endsWith("dw.output(local ns = [1];\ndw.map(ns, function(item, index) item), body)"), result);
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @Test
+    void testUndeclaredNamespacePrefixIsTodo() {
+        String result = converter.convert("%dw 2.0\noutput application/xml\n---\n{ x#a: 1 }");
+        assertTrue(result.contains("/* TODO: manual conversion needed -- undeclared namespace prefix: x#a */"), result);
+        assertEquals(1, converter.getTodoCount());
+        converter.convert("%dw 2.0\noutput application/json\n---\npayload.x#a");
+        assertEquals(1, converter.getTodoCount());
+    }
+
+    @Test
+    void testXmlSelectors() {
+        String result = converter.convert("""
+                %dw 2.0
+                output application/json
+                ns o http://example.com/orders
+                ---
+                [payload.o#order.@, payload..*item, payload.order.o#item]
+                """);
+        assertTrue(result.endsWith("dw.output([dw.attrs(dw.selNsRaw(body, \"http://example.com/orders\", \"order\")), "
+                                   + "dw.descAll(body, \"item\"), dw.selNs(dw.selRaw(body, \"order\"), "
+                                   + "\"http://example.com/orders\", \"item\")], body)"),
+                result);
+        assertEquals(0, converter.getTodoCount());
+    }
+
+    @Test
+    void testAttributesOfLambdaItems() {
+        // the items are kept as XML elements for their attributes, and used as their text otherwise
+        assertEquals("dw.map(dw.multiRaw(body, \"order\"), function(item, index) {\n  id: dw.attr(item, \"id\"),\n"
+                     + "  text: dw.text(item)\n})",
+                expr("payload.*order map { id: $.@id, text: $ }"));
+        assertEquals("dw.map(dw.multiRaw(body, \"order\"), function(o, _1) {\n  all: dw.attrs(o),\n  v: dw.text(o)\n})",
+                expr("payload.*order map ((o) -> { all: o.@, v: o })"));
+        // an inner lambda with a parameter of the same name does not change the outer one
+        assertEquals("dw.map(dw.multiRaw(body, \"order\"), function(o, _1) {\n"
+                     + "  items: (dw.map(dw.multiRaw(o, \"item\"), function(o, _1) dw.attr(o, \"sku\"))),\n  v: dw.text(o)\n})",
+                expr("payload.*order map ((o) -> { items: (o.*item map ((o) -> o.@sku)), v: o })"));
+        assertEquals(0, converter.getTodoCount());
+    }
+
     // -- Match
 
     @Test
@@ -363,7 +468,7 @@ class DataWeaveConverterTest {
     void testUnsupportedConstructs() {
         assertTrue(converter.convertExpression("payload update { case .a -> 1 }").contains("update operator"));
         assertEquals(1, converter.getTodoCount());
-        converter.convertExpression("{ a @(id: 1): 2 }");
+        converter.convertExpression("payload..@id");
         assertEquals(1, converter.getTodoCount());
     }
 
