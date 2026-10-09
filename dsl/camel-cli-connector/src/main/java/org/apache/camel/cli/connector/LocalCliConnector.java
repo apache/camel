@@ -1928,7 +1928,7 @@ public class LocalCliConnector extends ServiceSupport
         // Stop the transport before taking this monitor: file dispatch may hold it while the transport stops.
         synchronized (this) {
             if (semanticExecutor != null) {
-                semanticExecutor.shutdownNow();
+                camelContext.getExecutorServiceManager().shutdownNow(semanticExecutor);
                 semanticExecutor = null;
             }
         }

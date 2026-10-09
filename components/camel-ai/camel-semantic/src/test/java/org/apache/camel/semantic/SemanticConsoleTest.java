@@ -19,9 +19,11 @@ package org.apache.camel.semantic;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultExecutorServiceManager;
@@ -29,6 +31,7 @@ import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.semantic.SemanticExpert.InputType;
 import org.apache.camel.semantic.SemanticExpert.ResultType;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -217,6 +220,18 @@ class SemanticConsoleTest {
     @Test
     void stoppedConsoleRejectsCallsUntilRestarted() throws Exception {
         try (var context = new DefaultCamelContext()) {
+            var removals = new AtomicInteger();
+            context.addLifecycleStrategy(new LifecycleStrategySupport() {
+                @Override
+                public void onThreadPoolRemove(CamelContext context, ThreadPoolExecutor executor) {
+                    onThreadPoolRemove(context, (ExecutorService) executor);
+                }
+
+                @Override
+                public void onThreadPoolRemove(CamelContext context, ExecutorService executor) {
+                    removals.incrementAndGet();
+                }
+            });
             var expert = new Scorer();
             context.getRegistry().bind("risk", expert);
             context.start();
@@ -225,6 +240,8 @@ class SemanticConsoleTest {
             // Resolver-created consoles can be called before explicit lifecycle startup.
             assertThat(call(console, options)).containsEntry("status", "success");
             console.stop();
+            assertThat(context.isStarted()).isTrue();
+            assertThat(removals).hasValue(1);
             assertThat(call(console, options)).containsEntry("status", "failed")
                     .containsEntry("error", "Semantic evaluation console is stopping or stopped");
             assertThat(expert.calls).hasValue(1);
@@ -235,6 +252,7 @@ class SemanticConsoleTest {
             } finally {
                 console.stop();
             }
+            assertThat(removals).hasValue(2);
         }
     }
 
