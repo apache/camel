@@ -133,6 +133,26 @@ class TemplateHelperTest {
     }
 
     @Test
+    void testDockerfileQuarkus21Template() throws IOException {
+        String result = TemplateHelper.processTemplate("Dockerfile-quarkus21.ftl", new HashMap<>());
+
+        assertNoLicenseHeader(result);
+        assertNoUnresolvedInterpolations(result);
+        assertTrue(result.contains("FROM registry.access.redhat.com/ubi9/openjdk-21-runtime:"));
+        assertTrue(result.contains("JAVA_APP_JAR=\"/deployments/quarkus-run.jar\""));
+    }
+
+    @Test
+    void testDockerfileQuarkus25Template() throws IOException {
+        String result = TemplateHelper.processTemplate("Dockerfile-quarkus25.ftl", new HashMap<>());
+
+        assertNoLicenseHeader(result);
+        assertNoUnresolvedInterpolations(result);
+        assertTrue(result.contains("FROM registry.access.redhat.com/ubi9/openjdk-25-runtime:"));
+        assertTrue(result.contains("JAVA_APP_JAR=\"/deployments/quarkus-run.jar\""));
+    }
+
+    @Test
     void testReadmeTemplate() throws IOException {
         Map<String, Object> model = new HashMap<>();
         model.put("ArtifactId", "my-app");
