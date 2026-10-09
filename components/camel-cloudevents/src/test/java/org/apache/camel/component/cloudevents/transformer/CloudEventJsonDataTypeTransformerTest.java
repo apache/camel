@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Collection;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.cloudevents.CloudEvent;
@@ -262,9 +263,44 @@ class CloudEventJsonDataTypeTransformerTest {
         JsonObject event = transformToEvent("application/json", "null");
         assertTrue(event.containsKey("data"));
         assertNull(event.get("data"));
-        // without a datacontenttype the data is Json (the transformer declares application/json)
-        assertEquals(new BigDecimal("42"), transformToEvent(null, "42").get("data"));
         assertEquals(Boolean.FALSE, transformToEvent("application/vnd.example+json; charset=UTF-8", "false").get("data"));
+    }
+
+    @Test
+    void shouldNestJsonScalarsOfAJsonDataContentType() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setHeader(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE, "application/json");
+        exchange.getMessage().setBody("42");
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        JsonObject event = (JsonObject) Jsoner.deserialize(exchange.getMessage().getBody(String.class));
+        assertEquals(new BigDecimal("42"), event.get("data"));
+    }
+
+    @Test
+    void shouldNestOnlyJsonObjectsAndArraysWithoutADeclaredContentType() throws Exception {
+        // the transformer only assumes application/json, so scalars stay strings as before (CAMEL-22339)
+        for (String text : new String[] { "42", "1234567890123456789", "-1.5e3", "true", "null", "\"text\"" }) {
+            JsonObject event = transformToEvent(null, text);
+            assertEquals(text, event.get("data"), text);
+            assertEquals("application/json", event.getString(
+                    CloudEvents.v1_0.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).json()), text);
+        }
+        assertEquals("42", transformToEvent(null, "42".getBytes(StandardCharsets.UTF_8)).get("data"));
+        JsonObject data = (JsonObject) transformToEvent(null, "{\"a\": 1}").get("data");
+        assertEquals(1, data.getInteger("a"));
+        assertEquals(2, ((Collection<?>) transformToEvent(null, "[1, 2]").get("data")).size());
+    }
+
+    @Test
+    void shouldWriteNoDataForANullBody() throws Exception {
+        for (String contentType : new String[] { "application/json", "text/plain", null }) {
+            JsonObject event = transformToEvent(contentType, null);
+
+            assertFalse(event.containsKey("data"), contentType);
+            assertFalse(event.containsKey("data_base64"), contentType);
+        }
     }
 
     @Test
@@ -307,6 +343,11 @@ class CloudEventJsonDataTypeTransformerTest {
 
             assertEquals(Base64.getEncoder().encodeToString(bytes), event.get("data_base64"), contentType);
             assertFalse(event.containsKey("data"), contentType);
+            // a declared content type is kept, the default application/json would not reflect these bytes
+            assertEquals(contentType != null ? contentType : CloudEvent.APPLICATION_OCTET_STREAM_MIME_TYPE,
+                    event.getString(
+                            CloudEvents.v1_0.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).json()),
+                    contentType);
         }
     }
 

@@ -43,10 +43,13 @@ import org.apache.camel.support.MessageHelper;
  * values for CloudEvent attributes such as the Http content type header, event source, event type.
  * <p/>
  * The body is written as the data of the event according to its datacontenttype (CloudEvents Json format, section 3.1):
- * with a Json content type ({@code application/json}, the default, or another media type with the subtype {@code json}
- * or the suffix {@code +json}) a body that is a Json value is nested as that value, and any other body is a Json
- * string. A {@code byte[]} body that is not valid text in the charset of the exchange, so that it cannot be written as
- * a Json string without losing bytes, is written Base64 encoded as {@code data_base64}.
+ * with a declared Json content type (a media type with the subtype {@code json} or the suffix {@code +json}) a body
+ * that is a Json value is nested as that value, and any other body is a Json string. Without a declared content type
+ * the transformer assumes {@code application/json} but only nests a Json object or array, so that text such as a long
+ * number or {@code null} stays a string. With any other content type the body is a Json string. A {@code byte[]} body
+ * that is not valid text in the charset of the exchange, so that it cannot be written as a Json string without losing
+ * bytes, is written Base64 encoded as {@code data_base64}, with the datacontenttype {@code application/octet-stream}
+ * unless one was declared. A null body has no data.
  */
 @DataTypeTransformer(name = "application-cloudevents+json",
                      description = "Adds default CloudEvent (JSon binding) headers to the Camel message (such as content-type, event source, event type etc.)")
@@ -68,6 +71,9 @@ public class CloudEventJsonDataTypeTransformer extends Transformer {
         final Map<String, Object> headers = message.getHeaders();
 
         String dataContentType = headers.getOrDefault(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, APPLICATION_JSON).toString();
+        // whether the content type of the data was declared, rather than assumed to be application/json
+        boolean contentTypeDeclared = headers.get(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE) != null
+                || headers.get(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE) != null;
         if (!APPLICATION_CLOUDEVENTS_JSON.equals(dataContentType)) {
             Map<String, Object> cloudEventAttributes = new HashMap<>();
             CloudEvent cloudEvent = CloudEvents.v1_0;
@@ -101,28 +107,38 @@ public class CloudEventJsonDataTypeTransformer extends Transformer {
                 } else {
                     // decoding these bytes as text would replace the invalid ones, so the data would be lost
                     cloudEventAttributes.putIfAbsent("data_base64", Base64.getEncoder().encodeToString(bytes));
+                    if (!contentTypeDeclared) {
+                        // these bytes are not Json, and the datacontenttype must reflect the format of the data
+                        cloudEventAttributes.put(dataContentTypeKey, CloudEvent.APPLICATION_OCTET_STREAM_MIME_TYPE);
+                    }
                 }
             } else {
-                cloudEventAttributes.putIfAbsent("data", MessageHelper.extractBodyAsString(message));
+                String data = MessageHelper.extractBodyAsString(message);
+                // the data is optional, so a null body has none rather than the text "null"
+                if (data != null) {
+                    cloudEventAttributes.putIfAbsent("data", data);
+                }
             }
 
             headers.put(Exchange.CONTENT_TYPE, APPLICATION_CLOUDEVENTS_JSON);
 
-            message.setBody(createCouldEventJsonObject(cloudEventAttributes, jsonData));
+            message.setBody(createCouldEventJsonObject(cloudEventAttributes, jsonData, contentTypeDeclared));
 
             cloudEvent.attributes().stream().map(CloudEvent.Attribute::id).forEach(headers::remove);
         }
     }
 
-    private String createCouldEventJsonObject(Map<String, Object> cloudEventAttributes, boolean jsonData) {
+    private String createCouldEventJsonObject(
+            Map<String, Object> cloudEventAttributes, boolean jsonData, boolean contentTypeDeclared) {
         StringBuilder builder = new StringBuilder("{");
 
         cloudEventAttributes.forEach((key, value) -> {
             builder.append(" ");
             appendJsonString(builder, key);
             builder.append(":");
-            if (jsonData && "data".equals(key) && value instanceof String data && isJsonValue(data)) {
-                // set Json data as nested value in the data field
+            if (jsonData && "data".equals(key) && value instanceof String data
+                    && (contentTypeDeclared ? isJsonValue(data) : isJson(data))) {
+                // set Json data as nested value in the data field, a scalar only if Json was declared
                 builder.append(data);
             } else {
                 appendJsonString(builder, String.valueOf(value));
