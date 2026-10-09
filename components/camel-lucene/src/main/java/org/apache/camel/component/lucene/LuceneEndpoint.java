@@ -81,6 +81,16 @@ public class LuceneEndpoint extends DefaultEndpoint implements EndpointServiceLo
         return new LuceneIndexProducer(this, this.config, indexer);
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        // the index directory is shared by all producers of this endpoint, so it is closed with the endpoint
+        // and not when a producer (route) stops
+        if (indexer != null) {
+            indexer.getNiofsDirectory().close();
+        }
+        super.doShutdown();
+    }
+
     public LuceneConfiguration getConfig() {
         return config;
     }
