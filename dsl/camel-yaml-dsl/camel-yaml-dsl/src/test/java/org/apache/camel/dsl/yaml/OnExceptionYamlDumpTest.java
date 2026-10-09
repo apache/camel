@@ -16,14 +16,18 @@
  */
 package org.apache.camel.dsl.yaml;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
+import org.apache.camel.impl.DefaultDumpRoutesStrategy;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.yaml.LwModelToYAMLDumper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -105,6 +109,53 @@ class OnExceptionYamlDumpTest extends YamlTestSupport {
         assertThat(yaml).doesNotContain("onException").contains("id: myRoute");
         context.removeRouteDefinition(context.getRouteDefinition("myRoute"));
         loadRoutes(yaml);
+    }
+
+    @Test
+    void onExceptionOfAnotherFileIsDumpedBeforeTheRoutesInOneFile(@TempDir Path dir) throws Exception {
+        // two files normalized into one, as camel validate normalize a.yaml b.yaml does: the onException of the
+        // second file must come before the route of the first one, or the dump does not load
+        loadRoutes("""
+                - route:
+                    id: first
+                    from:
+                      uri: direct:first
+                      steps:
+                        - to: mock:first
+                """, """
+                - onException:
+                    exception:
+                      - java.lang.Exception
+                    handled:
+                      constant: "true"
+                    steps:
+                      - to: mock:error
+                - route:
+                    id: second
+                    from:
+                      uri: direct:second
+                      steps:
+                        - to: mock:second
+                """);
+
+        Path output = dir.resolve("normalized.yaml");
+        DefaultDumpRoutesStrategy dump = new DefaultDumpRoutesStrategy();
+        dump.setCamelContext(context);
+        dump.setInclude("routes");
+        dump.setLog(false);
+        dump.setUriAsParameters(true);
+        dump.setOutput(output.toString());
+        dump.dumpRoutes("yaml");
+        String yaml = Files.readString(output);
+
+        assertThat(yaml).startsWith("- onException:");
+        assertThat(yaml.split("onException:", -1)).hasSize(2);
+        assertThat(yaml).contains("id: first", "id: second");
+
+        // the combined dump is valid for the YAML DSL schema and loads
+        context.removeRouteDefinitions(List.copyOf(context.getRouteDefinitions()));
+        loadRoutes(yaml);
+        assertThat(context.getRouteDefinitions()).hasSize(2);
     }
 
     private String dumpRoutes() throws Exception {
