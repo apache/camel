@@ -83,12 +83,15 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
         }
         fireLeadershipChangedEvent((CamelClusterMember) null);
 
+        // Register the listener once before attempting to connect; registering inside
+        // the retry loop would accumulate duplicate listeners across retries.
+        raftHandle.addRoleListener(new ClusterRoleChangeListener(this));
+
         // it may take a while for event to trigger and allow us to join so retry a while
         Exception cause = null;
         for (int i = 1; i < 11; i++) {
             LOG.debug("Attempt #{} for raft {} to join {}", i, raftId, jgroupsClusterName);
             try {
-                raftHandle.addRoleListener(new ClusterRoleChangeListener(this));
                 raftHandle.channel().connect(jgroupsClusterName);
                 LOG.debug("Joined and connected to {} with raft id: {}", jgroupsClusterName, raftId);
                 cause = null;
@@ -108,8 +111,10 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
     protected void doStop() throws Exception {
         isMaster = false;
         fireLeadershipChangedEvent((CamelClusterMember) null);
-        LOG.info("Disconnecting JGroupsraft Channel for JGroupsRaftClusterView with Id {}", raftId);
-        raftHandle.channel().disconnect();
+        if (raftHandle != null && raftHandle.channel() != null) {
+            LOG.info("Disconnecting JGroupsraft Channel for JGroupsRaftClusterView with Id {}", raftId);
+            raftHandle.channel().disconnect();
+        }
         if (raftHandle != null && raftHandle.log() != null) {
             raftHandle.log().close();
             LOG.info("Closed Log for JGroupsRaftClusterView with Id {}", raftId);

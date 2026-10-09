@@ -31,10 +31,9 @@
             thread_pool.keep_alive_time="5000"/>
 
     <SHARED_LOOPBACK_PING />
-    <MERGE3 />
-    <FD_SOCK/>
+    <MERGE3 min_interval="1000" max_interval="3000"/>
     <FD_ALL/>
-    <VERIFY_SUSPECT timeout="1500"  />
+    <VERIFY_SUSPECT timeout="1500"/>
     <pbcast.NAKACK2 xmit_interval="500"/>
     <UNICAST3 xmit_interval="500"/>
     <pbcast.STABLE desired_avg_gossip="50000" max_bytes="4M"/>
@@ -43,7 +42,7 @@
     <UFC max_credits="2M" min_threshold="0.4"/>
     <MFC max_credits="2M" min_threshold="0.4"/>
     <FRAG2 frag_size="60K" />
-    <raft.ELECTION />
+    <raft.ELECTION vote_timeout="1000"/>
     <raft.RAFT members="A,B,C" raft_id="${raft_id:undefined}" log_class="org.jgroups.protocols.raft.InMemoryLog"/>
     <raft.REDIRECT/>
 </config>
