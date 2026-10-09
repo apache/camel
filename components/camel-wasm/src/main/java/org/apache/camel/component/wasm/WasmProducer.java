@@ -67,6 +67,9 @@ public class WasmProducer extends DefaultProducer {
     public void doStop() throws Exception {
         super.doStop();
 
+        if (this.function != null) {
+            this.function.close();
+        }
         this.function = null;
     }
 
