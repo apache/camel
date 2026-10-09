@@ -279,6 +279,96 @@ camel cmd enable-processor
 
 TIP: Separate multiple IDs with commas: `--id=log1,log2,setBody2`.
 
+== Semantic definitions and evaluation
+
+The CLI can inspect and try the running application's
+xref:next@components:languages:semantic-language.adoc[semantic definitions and experts].
+The application must include `camel-semantic` with the `semantic-metadata` and
+`semantic-evaluate` developer consoles and have the local CLI connector enabled.
+These commands use the connector; enabling the HTTP console is unnecessary.
+
+[source,bash]
+----
+camel get semantic my-app
+camel get semantic my-app --json
+camel get semantic my-app --expert=guard
+----
+
+`get semantic` lists definition names, experts, operations, state selectors, result types
+and resolution errors, followed by the known experts and default expert. `--expert`
+shows one expert's operations, input and result semantics, and parameter contract.
+Inspection does not perform inference.
+
+Evaluate a named definition with a sample exchange:
+
+[source,bash]
+----
+camel cmd semantic-evaluate my-app --evaluation=safe \
+  --body='Please summarize this message' --header=subject=example \
+  --variable=language=en --json
+----
+
+The definition's state selector reads the supplied body, headers and exchange-local
+variables. Variables with repository prefixes such as `global:` are rejected. The
+sample is evaluated directly; it is not sent through the application's routes.
+
+Alternatively, invoke an expert operation directly. Use `get semantic --expert` to
+find the operation names and parameters supported by that expert:
+
+[source,bash]
+----
+camel cmd semantic-evaluate my-app --expert=guard --operation=detect \
+  --input='Please summarize this message' --json
+camel cmd semantic-evaluate my-app --expert=grader --operation=score \
+  --input='Sample answer' --parameter='criteria=json:["poor","good","excellent"]' --json
+----
+
+Choose either a named evaluation or a direct expert call. Direct calls require
+`--expert`, `--operation` and `--input`. Repeat `--header`, `--variable` or `--parameter`
+for multiple entries; duplicate keys are rejected.
+
+Values are text by default. Prefix a value with `json:` for a typed JSON value, for
+example `--parameter=threshold=json:0.7`, `--variable=enabled=json:true`, or
+`--input='json:["first","second"]'`. Use a JSON string to pass literal text beginning
+with `json:` or `file:`. `--body=file:sample.txt` and `--input=file:sample.txt` read the
+file as UTF-8 text.
+
+Evaluation prints the value, available probability or probabilities, confidence,
+provider metadata, elapsed milliseconds and any error. It invokes the configured
+provider and may incur charges. `--evaluation-timeout` bounds runtime evaluation
+(default and maximum: 50000 milliseconds). `--timeout` bounds the CLI's wait for the
+reply (default: 60000 milliseconds). A CLI timeout removes its request and asks the
+connector to cancel unfinished work. Provider interruption is cooperative; remote or
+native inference may continue. Configure provider-specific request timeouts as well.
+
+Both commands accept an integration name or PID. With no name they select the only
+running integration; ambiguous selection fails and lists the matching PIDs.
+Each request has its own reply file, so concurrent commands do not consume each
+other's results.
+
+=== Semantic command output and exit codes
+
+With `--json`, stdout contains exactly one JSON document. Inspection returns the
+runtime metadata object, including empty `evaluations` and `experts` arrays when
+nothing is published. Successful evaluations retain the runtime result fields.
+Errors use `{"status":"error","code":N,"message":"..."}` and retain any runtime
+result fields, such as `error` and `elapsedMillis`. Diagnostics go to stderr.
+
+[cols="1,4",options="header"]
+|===
+| Exit code | Meaning
+| 0 | Successful inspection or evaluation, including a boolean result of `false`.
+| 1 | The integration rejected the action or evaluation failed.
+| 2 | Invalid command arguments or sample values.
+| 3 | No matching integration, ambiguous selection, unavailable semantic tooling or expert operations.
+| 4 | No reply before the CLI timeout.
+| 70 | Unexpected internal error; stderr includes the stack trace.
+|===
+
+See xref:jbang-commands/camel-jbang-get-semantic.adoc[camel get semantic] and
+xref:jbang-commands/camel-jbang-cmd-semantic-evaluate.adoc[camel cmd semantic-evaluate]
+for the complete option reference.
+
 == Developer Console
 
 Enable the web-based developer console with `--console`:
