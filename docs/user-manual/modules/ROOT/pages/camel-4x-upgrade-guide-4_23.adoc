@@ -3048,6 +3048,13 @@ When a Wasm function fails without returning (a trap, such as a Rust `panic`), t
 now discards its module instance and creates a new one for the next message, instead of reusing an instance whose memory
 kept everything the failed call had allocated. State that the module keeps between messages is reset at that point.
 
+=== camel-wasm - the wasm predicate
+
+The `wasm` language used as a predicate only matched a Jackson `BooleanNode` result, so with the default result type
+(`byte[]`) or `resultType` set to `Boolean` or `String` it never matched. The result is now evaluated with the standard
+Camel rules (`true`/`false` text, a `Boolean`, empty is `false`), so filters and choices that never matched before can
+now match. A `JsonNode` result still only matches when it is the JSON boolean `true`.
+
 === camel-xpath
 
 The XPath language now parses the message with the same hardened XML parser for every `documentType`.
@@ -3074,13 +3081,6 @@ example:
 
 This is not a functional change for messages without a `DOCTYPE`, and it does not add a document parse:
 `XPathExpression.evaluate(InputSource)` already built a full DOM internally.
-
-=== camel-wasm - the wasm predicate
-
-The `wasm` language used as a predicate only matched a Jackson `BooleanNode` result, so with the default result type
-(`byte[]`) or `resultType` set to `Boolean` or `String` it never matched. The result is now evaluated with the standard
-Camel rules (`true`/`false` text, a `Boolean`, empty is `false`), so filters and choices that never matched before can
-now match. A `JsonNode` result still only matches when it is the JSON boolean `true`.
 
 === camel-core, camel-lra
 
