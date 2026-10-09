@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.ibmmq.services;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.jms.Connection;
@@ -77,7 +78,8 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
                         .waitingFor(new WaitAllStrategy(WaitAllStrategy.Mode.WITH_INDIVIDUAL_TIMEOUTS_ONLY)
                                 .withStrategy(Wait.forListeningPort())
                                 .withStrategy(Wait.forLogMessage(
-                                        ".*Queued Publish/Subscribe Daemon started for queue manager.*", 1)));
+                                        ".*Queued Publish/Subscribe Daemon started for queue manager.*", 1))
+                                .withStartupTimeout(Duration.ofMinutes(3L)));
 
                 ContainerEnvironmentUtil.configurePorts(this,
                         ContainerEnvironmentUtil.isFixedPort(IbmMQLocalContainerInfraService.class),
