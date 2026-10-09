@@ -18,13 +18,13 @@ package org.apache.camel.impl.engine;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.ReactiveExecutor;
@@ -246,7 +246,7 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
                              + exchange;
                 LOG.debug(msg);
                 if (exchange.getException() == null) {
-                    exchange.setException(new RejectedExecutionException(msg));
+                    exchange.setException(new RouteStoppingException(msg));
                 }
             }
             return false;

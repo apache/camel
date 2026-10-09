@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.log.ConsumingAppender;
 import org.apache.logging.log4j.Level;
@@ -37,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * CAMEL-25484: an exchange that a route stop or a dev mode reload cuts off is logged as one WARN line, not as an
- * exhausted failure with message history and stack trace.
+ * exhausted failure with message history and stack trace; CAMEL-25502: and is not recorded in the error registry.
  */
 public class RouteStopCutOffLogTest extends ContextTestSupport {
 
@@ -82,6 +83,42 @@ public class RouteStopCutOffLogTest extends ContextTestSupport {
         assertFalse(message.contains("Exhausted"), message);
         assertFalse(message.contains("Message History"), message);
         assertFalse(message.endsWith("THROWN"), message);
+    }
+
+    @Test
+    public void theCutOffIsNotInTheErrorRegistry() throws Exception {
+        context.getErrorRegistry().setEnabled(true);
+        context.getShutdownStrategy().setTimeout(1);
+        context.getShutdownStrategy().setTimeUnit(TimeUnit.SECONDS);
+        context.getInflightRepository().setInflightBrowseEnabled(true);
+
+        template.sendBody("seda:start", List.of("A", "B"));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getInflightRepository().browse().stream()
+                .anyMatch(e -> "shipment".equals(e.getNodeId())));
+        context.getRouteController().stopRoute("slow");
+
+        // the cut-off is a RouteStoppingException (the error handler's and the direct producer's): nothing failed
+        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getRouteController().getRouteStatus("slow").isStopped());
+        assertEquals(0, context.getErrorRegistry().size(), () -> context.getErrorRegistry().browse().toString());
+    }
+
+    @Test
+    public void theCutOffIsInTheErrorRegistryWhenIncluded() throws Exception {
+        context.getErrorRegistry().setEnabled(true);
+        context.getErrorRegistry().setIncludeRouteStopping(true);
+        context.getShutdownStrategy().setTimeout(1);
+        context.getShutdownStrategy().setTimeUnit(TimeUnit.SECONDS);
+        context.getInflightRepository().setInflightBrowseEnabled(true);
+
+        template.sendBody("seda:start", List.of("A", "B"));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getInflightRepository().browse().stream()
+                .anyMatch(e -> "shipment".equals(e.getNodeId())));
+        context.getRouteController().stopRoute("slow");
+
+        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getErrorRegistry().size() > 0);
+        assertTrue(context.getErrorRegistry().browse().stream()
+                .allMatch(e -> RouteStoppingException.class.getName().equals(e.getExceptionType())),
+                () -> context.getErrorRegistry().browse().toString());
     }
 
     @Override

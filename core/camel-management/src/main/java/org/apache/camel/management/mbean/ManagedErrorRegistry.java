@@ -143,6 +143,16 @@ public class ManagedErrorRegistry extends ManagedService implements ManagedError
     }
 
     @Override
+    public boolean isIncludeRouteStopping() {
+        return errorRegistry.isIncludeRouteStopping();
+    }
+
+    @Override
+    public void setIncludeRouteStopping(boolean includeRouteStopping) {
+        errorRegistry.setIncludeRouteStopping(includeRouteStopping);
+    }
+
+    @Override
     public TabularData browse() {
         return browseEntries(errorRegistry.browse());
     }

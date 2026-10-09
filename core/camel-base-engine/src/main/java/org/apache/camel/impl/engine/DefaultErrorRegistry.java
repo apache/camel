@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.MessageHistory;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.spi.BacklogErrorEventMessage;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.ErrorRegistry;
@@ -38,6 +39,7 @@ import org.apache.camel.spi.ErrorRegistryView;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsonable;
 import org.apache.camel.util.json.Jsoner;
@@ -61,6 +63,7 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
     private volatile boolean bodyIncludeFiles = true;
     private volatile boolean includeExchangeProperties = true;
     private volatile boolean includeExchangeVariables = true;
+    private volatile boolean includeRouteStopping;
 
     public DefaultErrorRegistry() {
         setIgnoreCamelContextEvents(true);
@@ -118,6 +121,10 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             exception = exchange.getException();
         }
         if (exception == null) {
+            return;
+        }
+        if (!includeRouteStopping && ObjectHelper.getException(RouteStoppingException.class, exception) != null) {
+            // cut off by a route stop, a reload or a CamelContext stop: nothing in the route failed (CAMEL-25502)
             return;
         }
 
@@ -515,6 +522,16 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
     @Override
     public void setIncludeExchangeVariables(boolean includeExchangeVariables) {
         this.includeExchangeVariables = includeExchangeVariables;
+    }
+
+    @Override
+    public boolean isIncludeRouteStopping() {
+        return includeRouteStopping;
+    }
+
+    @Override
+    public void setIncludeRouteStopping(boolean includeRouteStopping) {
+        this.includeRouteStopping = includeRouteStopping;
     }
 
     /**

@@ -21,6 +21,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ErrorRegistryConsoleTest extends AbstractDevConsoleTest {
@@ -33,6 +34,7 @@ public class ErrorRegistryConsoleTest extends AbstractDevConsoleTest {
         assertNotNull(out.getBoolean("enabled"));
         assertNotNull(out.getInteger("size"));
         assertNotNull(out.getInteger("maximumEntries"));
+        assertEquals(Boolean.FALSE, out.getBoolean("includeRouteStopping"));
         assertNotNull(out.getString("timeToLive"));
 
         JsonArray errors = out.getJsonArray("errors");

@@ -1546,9 +1546,25 @@ When a route is stopped or reloaded (for example a save in `camel run --dev`) wh
 the graceful shutdown times out, the exchange is cut off. The error handler logged this as a failed delivery: an
 ERROR with "Exhausted after delivery attempt", the message history and the stack trace of the
 `RejectedExecutionException`. It is now one line at WARN, "Exchange cut off ...: its route is being stopped or
-reloaded", as nothing in the route failed, and a consumer that rolls back, such as file, delivers the message again.
-A level lower than WARN configured for exhausted logging is kept. A forced stop of the CamelContext is logged as
-before. The exception set on the exchange is unchanged.
+reloaded" (or "the CamelContext is being stopped"), as nothing in the route failed, and a consumer that rolls back,
+such as file, delivers the message again. A level lower than WARN configured for exhausted logging is kept.
+
+=== camel-core - RouteStoppingException for an exchange cut off by a stop
+
+An exchange cut off because its route, or the CamelContext, is being stopped (a route stop, a route reload in dev
+mode, or the graceful shutdown timing out) now fails with the new `org.apache.camel.RouteStoppingException` instead
+of a plain `RejectedExecutionException`. It extends `RejectedExecutionException`, so an
+`onException(RejectedExecutionException.class)` or a catch of it still matches; a real rejection, a thread pool or a
+queue that is full, stays a plain `RejectedExecutionException`. It is set by the error handler, the Delay, Throttle,
+Threads, Failover load balancer and Resequencer EIPs while they stop, and by a forced shutdown.
+
+A `direct` producer that was waiting for a consumer when a forced stop interrupted it now sets a
+`RouteStoppingException` (with the `InterruptedException` as its cause) instead of a
+`DirectConsumerNotAvailableException`.
+
+Such a cut-off is not recorded in the error registry, as nothing in the route failed; set
+`camel.errorRegistry.includeRouteStopping=true` to record it as well, for example to see how often stops cut off
+work that a consumer which does not roll back may lose.
 
 === camel-core - stopping or removing all routes is one graceful shutdown
 

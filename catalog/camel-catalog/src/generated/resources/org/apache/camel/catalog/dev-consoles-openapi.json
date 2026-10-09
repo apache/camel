@@ -1735,6 +1735,10 @@
 											"type": "string",
 											"description": "The time to live for entries"
 										},
+										"includeRouteStopping": {
+											"type": "boolean",
+											"description": "Whether exchanges cut off by a route stop, a route reload or a CamelContext stop are also captured"
+										},
 										"errors": {
 											"type": "array",
 											"items": {
@@ -1747,7 +1751,8 @@
 									"required": [
 										"enabled",
 										"size",
-										"maximumEntries"
+										"maximumEntries",
+										"includeRouteStopping"
 									]
 								}
 							}

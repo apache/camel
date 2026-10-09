@@ -80,6 +80,12 @@ public interface ManagedErrorRegistryMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Whether to include exchange variables")
     void setIncludeExchangeVariables(boolean includeExchangeVariables);
 
+    @ManagedAttribute(description = "Whether to also capture exchanges cut off by a route stop, reload or CamelContext stop")
+    boolean isIncludeRouteStopping();
+
+    @ManagedAttribute(description = "Whether to also capture exchanges cut off by a route stop, reload or CamelContext stop")
+    void setIncludeRouteStopping(boolean includeRouteStopping);
+
     @ManagedOperation(description = "Browse all error entries")
     TabularData browse();
 
