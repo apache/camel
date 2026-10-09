@@ -985,6 +985,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 e = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
             }
 
+            if (logCutOffByRouteStop(exchange, e, logger.getLevel())) {
+                return;
+            }
+
             if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
                 String msg = "Rollback " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                 Throwable cause = exchange.getException() != null
@@ -1910,6 +1914,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 e = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
             }
 
+            if (!newException && logCutOffByRouteStop(exchange, e, newLogLevel)) {
+                return;
+            }
+
             if (newException) {
                 // log at most WARN level
                 if (newLogLevel == LoggingLevel.ERROR) {
@@ -2213,10 +2221,37 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
      * {@code RejectedExecutionException - null}, which looks like a fault in the route, while it is a route stop or a
      * dev mode reload cutting the exchange off (CAMEL-25365).
      */
+    static final String ROUTE_STOPPING_REASON = "The exchange cannot continue: its route is being stopped or reloaded";
+
     String notAllowedReason() {
         return shutdownStrategy.isForceShutdown()
                 ? "The exchange cannot continue: its route was forced to shut down, as the graceful shutdown timed out"
                   + " while it was in flight (the CamelContext is being stopped)"
-                : "The exchange cannot continue: its route is being stopped or reloaded";
+                : ROUTE_STOPPING_REASON;
+    }
+
+    /**
+     * Whether the failure is an exchange cut off by a route stop or a dev mode reload (not a forced CamelContext stop):
+     * nothing in the route failed, and a consumer that rolls back, such as file, delivers it again (CAMEL-25484).
+     */
+    static boolean isCutOffByRouteStop(Throwable e) {
+        return e instanceof RejectedExecutionException && ROUTE_STOPPING_REASON.equals(e.getMessage());
+    }
+
+    /**
+     * Logs an exchange that a route stop or a dev mode reload cut off as one line at most WARN, without the message
+     * history and stack trace of a failure, as nothing in the route failed (CAMEL-25484).
+     *
+     * @return whether the exchange was cut off, and so is logged
+     */
+    boolean logCutOffByRouteStop(Exchange exchange, Throwable e, LoggingLevel level) {
+        if (!isCutOffByRouteStop(e) || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
+            return false;
+        }
+        logger.log("Exchange cut off " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange)
+                   + ": its route is being stopped or reloaded, so it is not continued."
+                   + " A consumer that rolls back, such as file, delivers it again",
+                level == LoggingLevel.ERROR ? LoggingLevel.WARN : level);
+        return true;
     }
 }
