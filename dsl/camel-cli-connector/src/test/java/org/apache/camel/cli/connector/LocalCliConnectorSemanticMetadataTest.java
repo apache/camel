@@ -18,16 +18,21 @@ package org.apache.camel.cli.connector;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.console.DefaultDevConsoleRegistry;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 class LocalCliConnectorSemanticMetadataTest {
     @Test
@@ -37,11 +42,25 @@ class LocalCliConnectorSemanticMetadataTest {
             var disabled = new DefaultCliConnectorFactory();
             disabled.setEnabled(false);
             context.getCamelContextExtension().addContextPlugin(CliConnectorFactory.class, disabled);
+            var lookups = new AtomicInteger();
+            var registry = new DefaultDevConsoleRegistry(context) {
+                @Override
+                public DevConsole resolveById(String id) {
+                    if ("semantic-metadata".equals(id)) {
+                        lookups.incrementAndGet();
+                    }
+                    return super.resolveById(id);
+                }
+            };
+            context.getCamelContextExtension().addContextPlugin(DevConsoleRegistry.class, registry);
             context.start();
             var connector = new LocalCliConnector(new DefaultCliConnectorFactory());
             connector.setCamelContext(context);
             assertThat(connector.status().<List<String>> getCollection("devConsoles"))
                     .doesNotContain("semantic-metadata");
+            int firstLookup = lookups.get();
+            connector.status();
+            assertThat(lookups).hasValue(firstLookup);
             context.getRegistry().bind("semantic-metadata-dev-console",
                     new AbstractDevConsole("camel", "semantic-metadata", "Test", "Test") {
                         @Override
@@ -55,8 +74,11 @@ class LocalCliConnectorSemanticMetadataTest {
                         }
                     });
             assertThat(DevConsoleRegistry.get(context).getConsoleIDs()).doesNotContain("semantic-metadata");
-            assertThat(connector.status().<List<String>> getCollection("devConsoles"))
-                    .contains("semantic-metadata");
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(
+                    connector.status().<List<String>> getCollection("devConsoles")).contains("semantic-metadata"));
+            int foundLookup = lookups.get();
+            connector.status();
+            assertThat(lookups).hasValue(foundLookup);
         }
     }
 

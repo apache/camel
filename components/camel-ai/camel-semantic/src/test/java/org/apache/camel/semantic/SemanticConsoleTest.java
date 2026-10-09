@@ -18,14 +18,17 @@ package org.apache.camel.semantic;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.DefaultExecutorServiceManager;
 import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.semantic.SemanticExpert.InputType;
 import org.apache.camel.semantic.SemanticExpert.ResultType;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -174,6 +177,64 @@ class SemanticConsoleTest {
                     .containsEntry("status", "failed").containsKey("error");
             assertThat(expert.calls).hasValue(1);
             assertThat(SemanticEvaluations.get(context).snapshot()).isEmpty();
+        }
+    }
+
+    @Test
+    void directEvaluationReportsExceptionsWithoutMessages() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            context.getRegistry().bind("risk", new Scorer() {
+                @Override
+                public SemanticResult evaluate(SemanticEvaluation evaluation, Object state) {
+                    throw new IllegalStateException();
+                }
+            });
+            context.start();
+            assertThat(call(console(context, "semantic-evaluate"),
+                    Map.of("expert", "risk", "operation", "risk", "input", "test")))
+                    .containsEntry("status", "failed").containsEntry("error", "IllegalStateException");
+        }
+    }
+
+    @Test
+    void executorFailureReportsExceptionsWithoutMessages() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            context.setExecutorServiceManager(new DefaultExecutorServiceManager(context) {
+                @Override
+                public ExecutorService newThreadPool(Object source, String name, ThreadPoolProfile profile) {
+                    if ("SemanticEvaluation".equals(name)) {
+                        throw new IllegalStateException();
+                    }
+                    return super.newThreadPool(source, name, profile);
+                }
+            });
+            context.start();
+            assertThat(call(console(context, "semantic-evaluate"), Map.of()))
+                    .containsEntry("status", "failed").containsEntry("error", "IllegalStateException");
+        }
+    }
+
+    @Test
+    void stoppedConsoleRejectsCallsUntilRestarted() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var expert = new Scorer();
+            context.getRegistry().bind("risk", expert);
+            context.start();
+            var console = (SemanticEvaluateConsole) console(context, "semantic-evaluate");
+            Map<String, Object> options = Map.of("expert", "risk", "operation", "risk", "input", "test");
+            // Resolver-created consoles can be called before explicit lifecycle startup.
+            assertThat(call(console, options)).containsEntry("status", "success");
+            console.stop();
+            assertThat(call(console, options)).containsEntry("status", "failed")
+                    .containsEntry("error", "Semantic evaluation console is stopping or stopped");
+            assertThat(expert.calls).hasValue(1);
+            console.start();
+            try {
+                assertThat(call(console, options)).containsEntry("status", "success");
+                assertThat(expert.calls).hasValue(2);
+            } finally {
+                console.stop();
+            }
         }
     }
 

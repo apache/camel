@@ -45,6 +45,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -117,6 +118,7 @@ public class LocalCliConnector extends ServiceSupport
     private static final Logger LOG = LoggerFactory.getLogger(LocalCliConnector.class);
 
     private static final int BODY_MAX_CHARS = 128 * 1024;
+    private static final long SEMANTIC_CONSOLE_RETRY_NANOS = TimeUnit.SECONDS.toNanos(5);
 
     private final CliConnectorFactory cliConnectorFactory;
     private CamelContext camelContext;
@@ -126,6 +128,7 @@ public class LocalCliConnector extends ServiceSupport
     private String mainClass;
     private volatile ExecutorService terminateExecutor;
     private ExecutorService semanticExecutor;
+    private final AtomicLong semanticConsoleLookup = new AtomicLong(System.nanoTime() - SEMANTIC_CONSOLE_RETRY_NANOS);
     private ProducerTemplate producer;
     private ConsumerTemplate consumer;
     // where the running action writes its result (actions run on one thread at a time)
@@ -260,12 +263,17 @@ public class LocalCliConnector extends ServiceSupport
             }
         });
         try {
-            if (semanticExecutor == null) {
-                semanticExecutor = new ThreadPoolBuilder(camelContext).poolSize(2).maxPoolSize(2).maxQueueSize(0)
-                        .rejectedPolicy(ThreadPoolRejectedPolicy.Abort)
-                        .build("cli-semantic-evaluation", "CliSemanticEvaluation");
+            synchronized (this) {
+                if (isStoppingOrStopped()) {
+                    throw new IllegalStateException("CLI connector is stopping or stopped");
+                }
+                if (semanticExecutor == null) {
+                    semanticExecutor = new ThreadPoolBuilder(camelContext).poolSize(2).maxPoolSize(2).maxQueueSize(0)
+                            .rejectedPolicy(ThreadPoolRejectedPolicy.Abort)
+                            .build("cli-semantic-evaluation", "CliSemanticEvaluation");
+                }
+                semanticExecutor.execute(task);
             }
-            semanticExecutor.execute(task);
         } catch (RejectedExecutionException busy) {
             result.completeExceptionally(new IllegalStateException("Busy: semantic evaluations are already running"));
         } catch (Exception e) {
@@ -1658,8 +1666,16 @@ public class LocalCliConnector extends ServiceSupport
                     root.put("sqlTrace", json);
                 }
             }
-            // Advertise the optional Semantic screen before its first metadata request.
-            dcr.resolveById("semantic-metadata");
+            // Discover the optional console immediately, then retry misses without scanning on every status poll.
+            // Keep retrying so consoles registered after startup are still advertised.
+            if (dcr.getConsole("semantic-metadata").isEmpty()) {
+                long previous = semanticConsoleLookup.get();
+                long now = System.nanoTime();
+                if (now - previous >= SEMANTIC_CONSOLE_RETRY_NANOS
+                        && semanticConsoleLookup.compareAndSet(previous, now)) {
+                    dcr.resolveById("semantic-metadata");
+                }
+            }
             JsonArray consoleIds = new JsonArray();
             consoleIds.addAll(dcr.getConsoleIDs());
             root.put("devConsoles", consoleIds);
@@ -1909,9 +1925,12 @@ public class LocalCliConnector extends ServiceSupport
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(transport);
-        if (semanticExecutor != null) {
-            semanticExecutor.shutdownNow();
-            semanticExecutor = null;
+        // Stop the transport before taking this monitor: file dispatch may hold it while the transport stops.
+        synchronized (this) {
+            if (semanticExecutor != null) {
+                semanticExecutor.shutdownNow();
+                semanticExecutor = null;
+            }
         }
         ServiceHelper.stopService(producer, consumer);
     }
