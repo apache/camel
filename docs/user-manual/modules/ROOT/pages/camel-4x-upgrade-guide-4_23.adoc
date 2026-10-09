@@ -960,6 +960,12 @@ instead of the `?` characters, so it must decode them as UTF-8. Text that ISO-88
 before, byte for byte, and a `CHARACTER_SET` hint takes precedence. The documented default encoding is now
 "ISO-8859-1, or UTF-8 when needed" instead of "UTF-8".
 
+=== camel-barcode - the hint maps are read-only (Breaking change)
+
+The maps returned by `BarcodeDataFormat.getWriterHintMap()` and `getReaderHintMap()` are now read-only views, so
+changing them throws an `UnsupportedOperationException`. Such changes were lost when the data format started (again),
+since the hints are computed at start. Use `addToHintMap` and `removeFromHintMap` instead.
+
 === camel-bindy - fixed-length records with characters outside the BMP
 
 Since Camel 3.1 a fixed-length record is read by counting code points (or graphemes with

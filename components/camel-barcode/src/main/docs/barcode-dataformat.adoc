@@ -66,17 +66,19 @@ The default values are:
 DataFormat code = new BarcodeDataFormat();
 ----
 
-If you want to use zxing hints, you can use the 'addToHintMap' method of
+If you want to use ZXing hints, you can use the 'addToHintMap' method of
 your BarcodeDataFormat instance:
 
 ._Java-only: Java data format configuration API_
 [source,java]
 ----
-code.addToHintMap(DecodeHintType.TRY_HARDER, Boolean.true);
+code.addToHintMap(DecodeHintType.TRY_HARDER, Boolean.TRUE);
 ----
 
 The hints can be added before the data format is started (for example when the route is configured).
-For possible hints, please consult the xzing documentation.
+To remove a hint, such as a default one, use the 'removeFromHintMap' method.
+The maps returned by 'getWriterHintMap' and 'getReaderHintMap' are read-only.
+For possible hints, please consult the ZXing documentation.
 
 === Marshalling
 

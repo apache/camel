@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.barcode;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
@@ -79,6 +80,13 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      * The decoding hint map, used for reading a barcode.
      */
     private final Map<DecodeHintType, Object> readerHintMap = new EnumMap<>(DecodeHintType.class);
+
+    /**
+     * The read-only live views of the hint maps returned by the getters, created once so that every call returns the
+     * same instance.
+     */
+    private final Map<EncodeHintType, Object> writerHintMapView = Collections.unmodifiableMap(writerHintMap);
+    private final Map<DecodeHintType, Object> readerHintMapView = Collections.unmodifiableMap(readerHintMap);
 
     /**
      * The hints added by the user, which are applied on top of the optimized hints.
@@ -313,17 +321,23 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     /**
-     * The writer (encode) hint map.
+     * The writer (encode) hint map, as a read-only live view: it shows the later changes made with
+     * {@link #addToHintMap(EncodeHintType, Object)} and {@link #removeFromHintMap(EncodeHintType)}, and the hints
+     * computed again when the data format starts or restarts. Use these methods to change it, as only the changes made
+     * with them are applied again when the hints are computed again.
      */
     public final Map<EncodeHintType, Object> getWriterHintMap() {
-        return writerHintMap;
+        return writerHintMapView;
     }
 
     /**
-     * The reader (decode) hint map.
+     * The reader (decode) hint map, as a read-only live view: it shows the later changes made with
+     * {@link #addToHintMap(DecodeHintType, Object)} and {@link #removeFromHintMap(DecodeHintType)}, and the hints
+     * computed again when the data format starts or restarts. Use these methods to change it, as only the changes made
+     * with them are applied again when the hints are computed again.
      */
     public final Map<DecodeHintType, Object> getReaderHintMap() {
-        return readerHintMap;
+        return readerHintMapView;
     }
 
     public BarcodeFormat getBarcodeFormat() {

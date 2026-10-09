@@ -22,11 +22,14 @@ import java.util.Map;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.EncodeHintType;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -226,6 +229,68 @@ public class BarcodeDataFormatTest {
             instance.start();
             Map<DecodeHintType, Object> result = instance.getReaderHintMap();
             assertNotNull(result);
+        }
+    }
+
+    /**
+     * A change made through the maps returned by the getters would bypass the hints tracked by
+     * {@code addToHintMap}/{@code removeFromHintMap}, and be lost when the data format starts again, so the maps are
+     * read-only.
+     */
+    @Test
+    final void testHintMapsAreReadOnly() throws IOException {
+        try (BarcodeDataFormat instance = new BarcodeDataFormat()) {
+            instance.start();
+            Map<EncodeHintType, Object> writerHints = instance.getWriterHintMap();
+            Map<DecodeHintType, Object> readerHints = instance.getReaderHintMap();
+
+            assertThrows(UnsupportedOperationException.class, () -> writerHints.put(EncodeHintType.MARGIN, 10));
+            assertThrows(UnsupportedOperationException.class, () -> writerHints.remove(EncodeHintType.ERROR_CORRECTION));
+            assertThrows(UnsupportedOperationException.class, writerHints::clear);
+            assertThrows(UnsupportedOperationException.class, () -> readerHints.put(DecodeHintType.PURE_BARCODE, true));
+            assertThrows(UnsupportedOperationException.class, () -> readerHints.remove(DecodeHintType.TRY_HARDER));
+            assertThrows(UnsupportedOperationException.class, readerHints::clear);
+
+            assertEquals(Map.of(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H), instance.getWriterHintMap());
+            assertEquals(Map.of(DecodeHintType.TRY_HARDER, Boolean.TRUE), instance.getReaderHintMap());
+        }
+    }
+
+    /**
+     * The maps returned by the getters are live views: a map obtained before a change shows it afterwards, including
+     * the hints computed again when the data format starts and restarts.
+     */
+    @Test
+    final void testHintMapsAreLiveViews() throws IOException {
+        try (BarcodeDataFormat instance = new BarcodeDataFormat()) {
+            Map<EncodeHintType, Object> writerHints = instance.getWriterHintMap();
+            Map<DecodeHintType, Object> readerHints = instance.getReaderHintMap();
+
+            instance.addToHintMap(EncodeHintType.MARGIN, 5);
+            instance.addToHintMap(DecodeHintType.PURE_BARCODE, Boolean.TRUE);
+            assertEquals(Map.of(EncodeHintType.MARGIN, 5), writerHints);
+            assertEquals(Map.of(DecodeHintType.PURE_BARCODE, Boolean.TRUE), readerHints);
+
+            instance.start();
+            assertEquals(Map.of(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H, EncodeHintType.MARGIN, 5),
+                    writerHints);
+            assertEquals(Map.of(DecodeHintType.TRY_HARDER, Boolean.TRUE, DecodeHintType.PURE_BARCODE, Boolean.TRUE),
+                    readerHints);
+
+            instance.removeFromHintMap(EncodeHintType.ERROR_CORRECTION);
+            instance.removeFromHintMap(DecodeHintType.TRY_HARDER);
+            assertEquals(Map.of(EncodeHintType.MARGIN, 5), writerHints);
+            assertEquals(Map.of(DecodeHintType.PURE_BARCODE, Boolean.TRUE), readerHints);
+
+            instance.stop();
+            instance.addToHintMap(EncodeHintType.MARGIN, 7);
+            instance.start();
+            assertEquals(Map.of(EncodeHintType.MARGIN, 7), writerHints);
+            assertEquals(Map.of(DecodeHintType.PURE_BARCODE, Boolean.TRUE), readerHints);
+
+            // every call returns the same view
+            assertSame(writerHints, instance.getWriterHintMap());
+            assertSame(readerHints, instance.getReaderHintMap());
         }
     }
 
