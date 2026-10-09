@@ -316,7 +316,7 @@ public class DataWeaveConverter {
         for (Map.Entry<String, String> property : properties.entrySet()) {
             String name = property.getKey();
             String value = property.getValue();
-            if ("indent".equals(name) || "encoding".equals(name) || xmlOutput && "inlineCloseOn".equals(name)) {
+            if ("indent".equals(name) || "encoding".equals(name) || (xmlOutput && "inlineCloseOn".equals(name))) {
                 continue; // formatting only
             }
             if (xmlOutput && "skipNullOn".equals(name) && "attributes".equals(value)) {
@@ -662,7 +662,7 @@ public class DataWeaveConverter {
         Set<String> names = new HashSet<>();
         for (ObjectEntry entry : obj.entries()) {
             String name = entry.key() != null && !entry.dynamic() ? keyName(entry.key()) : null;
-            if (entry.key() == null || name != null && names.contains(name)) {
+            if (entry.key() == null || (name != null && names.contains(name))) {
                 if (!fields.isEmpty()) {
                     parts.add(objectLiteral(fields));
                     fields = new ArrayList<>();
@@ -1171,8 +1171,8 @@ public class DataWeaveConverter {
             item = n -> n instanceof Dollar d && d.level() == 1;
             body = fn;
         }
-        return anyNode(body, n -> n instanceof AttributeAccess aa && item.test(aa.object())
-                || n instanceof AllAttributes all && item.test(all.object()));
+        return anyNode(body, n -> (n instanceof AttributeAccess aa && item.test(aa.object()))
+                || (n instanceof AllAttributes all && item.test(all.object())));
     }
 
     private static boolean anyNode(DataWeaveAst node, Predicate<DataWeaveAst> predicate) {

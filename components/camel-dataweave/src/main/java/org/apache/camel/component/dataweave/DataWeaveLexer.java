@@ -127,7 +127,7 @@ public class DataWeaveLexer {
     // A namespace declaration of the header, "ns prefix uri" on a line of its own before the --- separator: the URI is
     // read as a string (it has characters such as // that start a comment elsewhere)
     private boolean readNamespaceDirective() {
-        if (body || !input.startsWith("ns", pos) || !tokens.isEmpty() && tokens.get(tokens.size() - 1).line() == line
+        if (body || !input.startsWith("ns", pos) || (!tokens.isEmpty() && tokens.get(tokens.size() - 1).line() == line)
                 || !HEADER_SEPARATOR_LINE.matcher(input).region(pos, input.length()).find()) {
             return false;
         }
