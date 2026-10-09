@@ -435,6 +435,37 @@ class SourceValidatorSimpleTest {
     }
 
     @Test
+    void aTopLevelTernaryInAResourceLocationIsReported() {
+        // the location of resource: is a template, so the ? and : outside ${...} are literal text and the route
+        // fails with "Cannot load resource file:2 == 1 ? order.json : order-bad-email.json" (CAMEL-25485)
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          simple: "resource:file:${exchangeProperty.CamelTimerCounter} == 1 ? order.json : order-bad-email.json"
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).startsWith("Line 5:").contains("Simple has no top-level ternary");
+    }
+
+    @Test
+    void aResourceLocationWithoutATopLevelTernaryIsAccepted() {
+        List<String> msgs = SourceValidator.validateYamlSimple(
+                """
+                        - from:
+                            uri: timer:tick
+                            steps:
+                              - setBody:
+                                  simple: "resource:file:${exchangeProperty.CamelTimerCounter == 1 ? 'order.json' : 'order-bad-email.json'}"
+                              - setBody:
+                                  simple: "resource:classpath:script.txt"
+                        """,
+                catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
     void aTernaryInsideOneFunctionIsAccepted() {
         // the form that does evaluate the operator, so it must not be reported
         List<String> msgs = SourceValidator.validateYamlSimple("""
