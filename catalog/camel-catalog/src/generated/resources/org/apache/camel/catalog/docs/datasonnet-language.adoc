@@ -529,7 +529,7 @@ camel transform dataweave --input src/main/resources/dwl/ --output src/main/reso
 The converted script keeps the DataWeave semantics, which differ from plain Jsonnet in important ways. For example, in
 DataWeave a missing field, an index out of range or a selector on `null` gives `null`, a field selector on an array
 selects the field of every element (`payload.items.price`), and most functions accept `null`. The converted script uses
-the `dataweave.libsonnet` library of camel-datasonnet for these semantics (imported as `dw`), DataSonnet's `ds` library,
+the `camel-dataweave.libsonnet` library of camel-datasonnet for these semantics (imported as `dw`), DataSonnet's `ds` library,
 and the `cml` functions above.
 
 The conversion either produces a script that gives the same result as the DataWeave script, or fails:
