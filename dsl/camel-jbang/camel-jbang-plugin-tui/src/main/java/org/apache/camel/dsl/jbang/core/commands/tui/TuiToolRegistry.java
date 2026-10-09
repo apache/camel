@@ -1490,9 +1490,12 @@ class TuiToolRegistry {
         String file = args.get("file") instanceof String s ? s : null;
         String find = args.get("find") instanceof String s ? s : null;
         String replace = args.get("replace") instanceof String s ? s : "";
+        Object list = args.get("edits");
+        String edits = list instanceof Map<?, ?> || list instanceof List<?> ? Jsoner.serialize(list)
+                : list instanceof String text ? text : null;
         boolean confirm = !Boolean.FALSE.equals(args.get("confirm"));
-        // an edit is confirmed and replayed in the editor like a write (CAMEL-24909)
-        return Jsoner.serialize(facade.editFile(name, file, find, replace, confirm));
+        // an edit is confirmed and replayed in the editor like a write (CAMEL-24909), several edits as one (CAMEL-25501)
+        return Jsoner.serialize(facade.editFile(name, file, find, replace, edits, confirm));
     }
 
     private String callValidateSource(Map<String, Object> args) {

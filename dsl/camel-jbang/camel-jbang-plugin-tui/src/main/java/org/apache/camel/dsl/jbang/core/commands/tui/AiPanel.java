@@ -3297,7 +3297,7 @@ class AiPanel {
     private String acpPreamble() {
         String prompt = buildSystemPrompt();
         return (prompt.endsWith("\n") ? prompt : prompt + "\n")
-               + "- You run inside the Camel TUI: edit the integration's source files only with camel_write_file, "
+               + "- You run inside the Camel TUI: edit the integration's source files only with camel_edit_file or camel_write_file, "
                + "never with your own file tools, so the user sees the diff and confirms it, or watches the edit "
                + "being typed in the Source editor (/write live)\n";
     }
@@ -3332,11 +3332,12 @@ class AiPanel {
         sb.append("say what failed and what to try\n");
         sb.append("- To feed a route that consumes from a broker (MQTT, Kafka, JMS), tui_send_message can publish ");
         sb.append("to the broker with the route's own component and options\n");
-        sb.append("- To edit: camel_get_files, then camel_write_file with the complete file; the user confirms, never ");
+        sb.append("- To edit: camel_get_files, then camel_edit_file (several places at once with edits), camel_write_file ");
+        sb.append("for a new file; the user confirms, never ");
         sb.append(
                 "retry a rejected write. Invalid YAML/properties is refused with errors: fix them (camel_catalog_doc has the ");
         sb.append("option names)\n");
-        sb.append("- Write files only with camel_write_file; never paste file contents in the answer\n");
+        sb.append("- Write files only with these tools; never paste file contents in the answer\n");
         sb.append("- YAML DSL shape: a step is `- log: {message: ...}`, `- to: {uri: ...}`, an expression goes under ");
         sb.append("expression: (`- setBody: {expression: {simple: ...}}`); the shorthand forms are deprecated\n");
         sb.append("- 'log at WARN' in a route is the log step's loggingLevel in the source");

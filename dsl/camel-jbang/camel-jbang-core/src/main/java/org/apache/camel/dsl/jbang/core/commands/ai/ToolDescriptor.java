@@ -42,7 +42,14 @@ public class ToolDescriptor {
     private String[] deterministicUnless = new String[0];
     private String repeatHint;
 
-    public record Param(String name, String type, String description, boolean required) {
+    /**
+     * A parameter of the tool; {@code items} is the schema of the elements of an array parameter (else null).
+     */
+    public record Param(String name, String type, String description, boolean required, JsonObject items) {
+
+        public Param(String name, String type, String description, boolean required) {
+            this(name, type, description, required, null);
+        }
     }
 
     @FunctionalInterface
@@ -64,6 +71,28 @@ public class ToolDescriptor {
 
     public ToolDescriptor param(String name, String type, String description, boolean required) {
         params.add(new Param(name, type, description, required));
+        return this;
+    }
+
+    /**
+     * An array parameter whose elements are objects with the given string properties (name and description), all
+     * required. A client sends it as a JSON array; the executor gets it as JSON text.
+     */
+    public ToolDescriptor arrayParam(String name, String description, boolean required, String... properties) {
+        JsonObject props = new JsonObject();
+        JsonArray names = new JsonArray();
+        for (int i = 0; i + 1 < properties.length; i += 2) {
+            JsonObject prop = new JsonObject();
+            prop.put("type", "string");
+            prop.put("description", properties[i + 1]);
+            props.put(properties[i], prop);
+            names.add(properties[i]);
+        }
+        JsonObject items = new JsonObject();
+        items.put("type", "object");
+        items.put("properties", props);
+        items.put("required", names);
+        params.add(new Param(name, "array", description, required, items));
         return this;
     }
 
@@ -193,6 +222,9 @@ public class ToolDescriptor {
             JsonObject prop = new JsonObject();
             prop.put("type", p.type() != null ? p.type() : "string");
             prop.put("description", p.description());
+            if (p.items() != null) {
+                prop.put("items", p.items());
+            }
             properties.put(p.name(), prop);
             if (p.required()) {
                 required.add(p.name());

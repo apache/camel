@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -30,6 +31,7 @@ import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -171,19 +173,43 @@ public class AuthoringTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
-          description = "Changes a file by replacing one snippet: the exact text to find (it must occur once) and "
+          description = "Changes a file by replacing a snippet: the exact text to find (it must occur once) and "
                         + "what to put there. Validated and reloaded as a write is. Use it to change an existing file, "
-                        + "camel_write_file for a new one.")
+                        + "camel_write_file for a new one. A change to several places of the file is given at once in "
+                        + "edits, so the file is written and reloaded once, not half done.")
     public JsonObject camel_edit_file(
             @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
             @ToolArg(description = "File path relative to the directory", required = true) String file,
             @ToolArg(description = "The lines to replace as they stand in the file; other indentation is fine when "
-                                   + "the lines name one place",
-                     required = true) String find,
-            @ToolArg(description = "The text to put there; empty removes it", required = true) String replace,
+                                   + "the lines name one place (or use edits)",
+                     required = false) String find,
+            @ToolArg(description = "The text to put there; empty removes it", required = false) String replace,
+            @ToolArg(description = org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools.EDITS_DESC,
+                     required = false) List<FileEdit> edits,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         return call("camel_edit_file", args("directory", directory, "file", file, "find", find, "replace", replace,
-                "camelVersion", camelVersion));
+                "edits", editsJson(edits), "camelVersion", camelVersion));
+    }
+
+    /** One change of camel_edit_file's edits: the text to find as it stands in the file, and what to put there. */
+    public record FileEdit(String find, String replace) {
+    }
+
+    /** The edits as the JSON list the shared tool reads, or null when there are none. */
+    static String editsJson(List<FileEdit> edits) {
+        if (edits == null || edits.isEmpty()) {
+            return null;
+        }
+        JsonArray list = new JsonArray();
+        for (FileEdit edit : edits) {
+            JsonObject jo = new JsonObject();
+            if (edit != null) {
+                jo.put("find", edit.find());
+                jo.put("replace", edit.replace());
+            }
+            list.add(jo);
+        }
+        return list.toJson();
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = true),

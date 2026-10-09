@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -228,5 +230,115 @@ class AuthoringToolsEditTest {
         assertThatThrownBy(() -> edit(dir, "x", "y"))
                 .isInstanceOf(ToolExecutionException.class)
                 .hasMessageContaining("camel_write_file");
+    }
+
+    private static JsonObject edits(Path dir, String edits) {
+        return AuthoringTools.editFile(new ToolContext(), dir, "demo.camel.yaml", null, null, edits);
+    }
+
+    /** CAMEL-25501: two places of the file changed in one call, written once, so it is never reloaded half done. */
+    @Test
+    void severalEditsAreAppliedInOrderAndWrittenOnce(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
+
+        JsonArray list = new JsonArray();
+        list.add(change("message: \"one\"",
+                "message: \"one\"\n        - to:\n            uri: direct:check"));
+        list.add(change("message: \"two\"", "message: \"checked ${body}\""));
+        JsonObject result = edits(dir, list.toJson());
+
+        assertThat(result.getString("status")).as(result.toJson()).isEqualTo("edited");
+        assertThat(result.getInteger("edits")).isEqualTo(2);
+        assertThat(result.getInteger("editedAtLine")).isEqualTo(11);
+        assertThat(((JsonArray) result.get("editedAtLines"))).containsExactly(11, 21);
+        String after = Files.readString(dir.resolve("demo.camel.yaml"));
+        assertThat(after).contains("uri: direct:check\n").contains("message: \"checked ${body}\"")
+                .doesNotContain("message: \"two\"");
+    }
+
+    @Test
+    void anEditThatMissesLeavesTheFileUnchangedAndSaysWhichOne(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
+
+        JsonArray list = new JsonArray();
+        list.add(change("message: \"one\"", "message: \"uno\""));
+        list.add(change("message: \"three\"", "message: \"tres\""));
+        JsonObject result = edits(dir, list.toJson());
+
+        assertThat(result.getString("status")).isEqualTo("not-found");
+        assertThat(result.getInteger("edit")).isEqualTo(2);
+        assertThat(result.getString("message")).startsWith("Edit 2 of 2: ")
+                .endsWith("None of the edits was made: the file is unchanged.");
+        assertThat(Files.readString(dir.resolve("demo.camel.yaml"))).isEqualTo(ROUTE);
+    }
+
+    @Test
+    void editsSentAsAStringHoldingJsonAreRead(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
+
+        JsonArray list = new JsonArray();
+        list.add(change("message: \"two\"", "message: \"deux\""));
+        // a model that builds the list as a JSON string sends it encoded once more
+        JsonObject result = edits(dir, Jsoner.serialize(list.toJson()));
+
+        assertThat(result.getString("status")).isEqualTo("edited");
+        assertThat(Files.readString(dir.resolve("demo.camel.yaml"))).contains("message: \"deux\"");
+    }
+
+    @Test
+    void editsOfAnotherShapeSayWhatIsExpected(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
+
+        assertThatThrownBy(() -> edits(dir, "[\"message: two\"]"))
+                .isInstanceOf(ToolExecutionException.class)
+                .hasMessageContaining("edits must be a list of {\"find\"");
+        assertThatThrownBy(() -> AuthoringTools.editFile(new ToolContext(), dir, "demo.camel.yaml", null, null, null))
+                .isInstanceOf(ToolExecutionException.class)
+                .hasMessageContaining("find is required");
+    }
+
+    @Test
+    void theToolListsEditsAsAnArrayOfFindAndReplace() {
+        JsonObject edits = (JsonObject) ((JsonObject) ToolRegistry.findTool("camel_edit_file").inputSchema()
+                .get("properties")).get("edits");
+
+        assertThat(edits.getString("type")).isEqualTo("array");
+        JsonObject items = (JsonObject) edits.get("items");
+        assertThat(((JsonObject) items.get("properties")).keySet()).containsExactly("find", "replace");
+        assertThat(ToolRegistry.findTool("camel_edit_file").params())
+                .noneMatch(p -> p.required() && (p.name().equals("find") || p.name().equals("replace")));
+    }
+
+    /** CAMEL-25501: the half-done edit is told, so the next change goes in one call. */
+    @Test
+    void sendingToADirectEndpointNoRouteConsumesGetsANote(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
+
+        JsonObject half = edit(dir, "message: \"two\"", "message: \"two\"\n        - to:\n            uri: direct:ship");
+
+        assertThat(half.getString("status")).isEqualTo("edited");
+        JsonArray notes = (JsonArray) half.get("notes");
+        assertThat(notes).hasSize(1);
+        assertThat(notes.get(0).toString())
+                .startsWith("direct:ship has no route consuming it yet").contains("camel_edit_file call with edits");
+        assertThat(half.getString("message")).endsWith("Note: direct:ship has no route consuming it yet (see notes).");
+
+        JsonArray list = new JsonArray();
+        list.add(change("uri: direct:ship", "uri: direct:shipment"));
+        list.add(change("message: \"one\"\n",
+                "message: \"one\"\n\n- route:\n    id: shipment\n    from:\n      uri: direct:shipment\n"
+                                              + "      steps:\n        - log:\n            message: shipped\n"));
+        JsonObject whole = edits(dir, list.toJson());
+
+        assertThat(whole.getString("status")).as(whole.toJson()).isEqualTo("edited");
+        assertThat(whole.get("notes")).isNull();
+        assertThat(whole.getString("message")).doesNotContain("Note:");
+    }
+
+    private static JsonObject change(String find, String replace) {
+        JsonObject jo = new JsonObject();
+        jo.put("find", find);
+        jo.put("replace", replace);
+        return jo;
     }
 }
