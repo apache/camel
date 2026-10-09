@@ -317,6 +317,9 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
     }
 
     private static boolean containsInstance(List<?> list, Object instance) {
+        if (list == null) {
+            return false;
+        }
         for (Object o : list) {
             if (o == instance) {
                 return true;

@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml
 import java.nio.file.Files
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.impl.DefaultCamelContext
 import org.apache.camel.impl.DefaultDumpRoutesStrategy
 import org.apache.camel.model.OnExceptionDefinition
 import org.apache.camel.model.RoutesDefinition
@@ -54,6 +55,12 @@ class OnExceptionYamlDumpTest extends YamlTestSupport {
             }
         when:
             def yaml = dumpRoutes()
+            if (started) {
+                // reload the dump in a new context, not in the started one (a stopped context has no type converter
+                // to build the endpoint uris of the dump with)
+                context.close()
+                context = new DefaultCamelContext()
+            }
         then:
             // written once, before the routes, and not in the steps of each route
             yaml.startsWith('- onException:')
