@@ -46,14 +46,17 @@ public class ClusterRoleChangeListener implements RAFT.RoleChange {
                 }
                 break;
             case Follower:
+            case Learner:
                 if (jgroupsRaftClusterView.isMaster()) {
                     jgroupsRaftClusterView.setMaster(false);
                     jgroupsRaftClusterView.fireLeadershipChangedEvent((CamelClusterMember) null);
                 }
                 break;
             default:
-                LOG.error("Role {} unknown.", role);
-                throw new UnsupportedOperationException("Role " + role + " unknown.");
+                // Role enum is exhaustively handled above. This branch guards against
+                // new Role values being added in future jgroups-raft releases.
+                LOG.warn("Unexpected role {}; ignoring.", role);
+                break;
         }
     }
 }
