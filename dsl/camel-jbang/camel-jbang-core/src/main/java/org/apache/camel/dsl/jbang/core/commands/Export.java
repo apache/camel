@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import freemarker.template.TemplateNotFoundException;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
@@ -329,17 +330,21 @@ public class Export extends ExportBaseCommand {
         model.put("Version", ids[2]);
         model.put("AppJar", ids[1] + "-" + ids[2] + ".jar");
 
-        String ftlName = getDockerfileTemplateName() + javaVersion + ".ftl";
-        String context;
-        try {
-            context = TemplateHelper.processTemplate(ftlName, model);
-        } catch (IOException e) {
-            // fallback to JDK 21 template
-            String fallback = getDockerfileTemplateName() + "21.ftl";
-            printer().printf("No Dockerfile template for Java %s, falling back to Java 21 template%n", javaVersion);
-            context = TemplateHelper.processTemplate(fallback, model);
-        }
+        String context = processDockerfileTemplate(getDockerfileTemplateName(), model);
         Files.writeString(docker.resolve("Dockerfile"), context);
+    }
+
+    // Process the Dockerfile template for the Java version, e.g. Dockerfile25.ftl for Java 25.
+    protected String processDockerfileTemplate(String templateName, Map<String, Object> model) throws IOException {
+        String ftlName = templateName + javaVersion + ".ftl";
+        try {
+            return TemplateHelper.processTemplate(ftlName, model);
+        } catch (TemplateNotFoundException e) {
+            // fallback to JDK 21 template (other errors, e.g. a malformed template, are not hidden by the fallback)
+            String fallback = templateName + "21.ftl";
+            printer().printf("No Dockerfile template for Java %s, falling back to Java 21 template%n", javaVersion);
+            return TemplateHelper.processTemplate(fallback, model);
+        }
     }
 
     protected String getDockerfileTemplateName() {

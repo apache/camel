@@ -605,6 +605,42 @@ class ExportTest {
         Assertions.assertTrue(new File(workingDir, "readme.md").exists(), "Missing readme.md");
     }
 
+    private static Stream<Arguments> runtimeAndJavaVersionProvider() {
+        return runtimeProvider()
+                .flatMap(rt -> Stream.of("21", "25").map(java -> Arguments.of(rt.get()[0], java)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeAndJavaVersionProvider")
+    public void shouldUseJavaVersionInDockerFiles(RuntimeType rt, String javaVersion) throws Exception {
+        LOG.info("shouldUseJavaVersionInDockerFiles {} {}", rt, javaVersion);
+        Export command = createCommand(rt, new String[] { "src/test/resources/route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--java-version=" + javaVersion);
+        int exit = command.doCall();
+
+        assertThat(exit).isZero();
+        String other = "21".equals(javaVersion) ? "25" : "21";
+        List<Path> jvmDockerFiles;
+        try (Stream<Path> files = Files.list(workingDir.toPath().resolve("src/main/docker"))) {
+            jvmDockerFiles = files.filter(f -> readString(f).contains("ubi9/openjdk-")).toList();
+        }
+        assertThat(jvmDockerFiles).isNotEmpty();
+        for (Path dockerfile : jvmDockerFiles) {
+            assertThat(readString(dockerfile))
+                    .as(dockerfile.getFileName().toString())
+                    .contains("ubi9/openjdk-" + javaVersion)
+                    .doesNotContain("ubi9/openjdk-" + other);
+        }
+    }
+
+    private static String readString(Path file) {
+        try {
+            return Files.readString(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     // Each runtime may have a different logic
     public void assertApplicationPropertiesContent(RuntimeType rt, File appProps) throws Exception {
         try (FileInputStream fis = new FileInputStream(appProps)) {

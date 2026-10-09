@@ -347,12 +347,8 @@ class ExportQuarkus extends Export {
             super.copyDockerFiles(buildDir);
         } else {
             Files.createDirectories(dockerSrc);
-            try (InputStream is
-                    = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.jvm")) {
-                if (is != null) {
-                    PathUtils.copyFromStream(is, dockerSrc.resolve("Dockerfile"), false);
-                }
-            }
+            String context = processDockerfileTemplate("Dockerfile-quarkus", Map.of());
+            Files.writeString(dockerSrc.resolve("Dockerfile"), context);
         }
 
         // Create Dockerfile.jvm to satisfy Quarkus container build tooling defaults if users choose to use it
