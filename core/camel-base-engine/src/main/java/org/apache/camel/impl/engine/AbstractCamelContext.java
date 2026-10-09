@@ -1249,24 +1249,57 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     private void doStopRoutes(RouteController controller, Comparator<RouteStartupOrder> comparator) throws Exception {
-        List<RouteStartupOrder> routesOrdered = new ArrayList<>(camelContextExtension.getRouteStartupOrder());
-        routesOrdered.sort(comparator);
-        for (RouteStartupOrder order : routesOrdered) {
-            Route route = order.getRoute();
-            var status = controller.getRouteStatus(route.getRouteId());
-            boolean stopped = status == null || status.isStopped();
-            if (!stopped) {
-                stopRoute(route.getRouteId(), LoggingLevel.DEBUG);
+        lock.lock();
+        try {
+            List<RouteStartupOrder> routesOrdered = new ArrayList<>();
+            Set<String> ids = new HashSet<>();
+            for (RouteStartupOrder order : camelContextExtension.getRouteStartupOrder()) {
+                String id = order.getRoute().getRouteId();
+                if (isRouteRunning(controller, id) && ids.add(id)) {
+                    routesOrdered.add(order);
+                }
             }
-        }
-        // stop any remainder routes
-        for (Route route : getRoutes()) {
-            var status = controller.getRouteStatus(route.getRouteId());
-            boolean stopped = status == null || status.isStopped();
-            if (!stopped) {
-                stopRoute(route.getRouteId(), LoggingLevel.DEBUG);
+            // any remainder routes (not in the startup order) are stopped last
+            for (Route route : getRoutes()) {
+                String id = route.getRouteId();
+                RouteService routeService = routeServices.get(id);
+                if (routeService != null && isRouteRunning(controller, id) && ids.add(id)) {
+                    routesOrdered.add(new DefaultRouteStartupOrder(0, route, routeService));
+                }
             }
+            if (routesOrdered.isEmpty()) {
+                return;
+            }
+            routesOrdered.sort(comparator);
+            for (String id : ids) {
+                DefaultRouteError.reset(this, id);
+            }
+            try {
+                // all the routes as one graceful shutdown, as when CamelContext stops: a route that consumes from
+                // another (direct) keeps running until the routes sending to it have completed their inflight
+                // exchanges; stopped one by one, it stopped first and those exchanges were cut off (CAMEL-25500)
+                getShutdownStrategy().shutdown(this, routesOrdered, getShutdownStrategy().getTimeout(),
+                        getShutdownStrategy().getTimeUnit());
+                for (RouteStartupOrder order : routesOrdered) {
+                    RouteService routeService = routeServices.get(order.getRoute().getRouteId());
+                    if (routeService != null) {
+                        stopRouteService(routeService, false, LoggingLevel.DEBUG);
+                    }
+                }
+            } catch (Exception e) {
+                for (String id : ids) {
+                    DefaultRouteError.set(this, id, Phase.STOP, e);
+                }
+                throw e;
+            }
+        } finally {
+            lock.unlock();
         }
+    }
+
+    private static boolean isRouteRunning(RouteController controller, String routeId) {
+        var status = controller.getRouteStatus(routeId);
+        return status != null && !status.isStopped();
     }
 
     public void stopAllRoutes() throws Exception {

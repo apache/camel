@@ -1550,6 +1550,16 @@ reloaded", as nothing in the route failed, and a consumer that rolls back, such 
 A level lower than WARN configured for exhausted logging is kept. A forced stop of the CamelContext is logged as
 before. The exception set on the exchange is unchanged.
 
+=== camel-core - stopping or removing all routes is one graceful shutdown
+
+`RouteController.stopAllRoutes()` and `removeAllRoutes()` (which a route reload in dev mode uses) stopped the routes
+one at a time, each as its own graceful shutdown. A route that consumes from another route, such as over `direct`,
+was then stopped as soon as its own exchanges had completed, while the route sending to it could still have work for
+it (a split, a loop). Those exchanges waited for the stopped route until the shutdown timeout, and were cut off. All
+the routes are now stopped as one graceful shutdown, as when the CamelContext stops, so a route consuming from
+another keeps running until the routes sending to it have completed. The shutdown timeout now applies to all the
+routes together, instead of to each route in turn.
+
 === camel-core - RoutesLoader.updateRoutes runs one call at a time
 
 Concurrent `RoutesLoader.updateRoutes` calls on one CamelContext now run one at a time instead of failing with
