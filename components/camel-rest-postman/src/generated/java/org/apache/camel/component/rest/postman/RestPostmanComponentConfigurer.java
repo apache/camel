@@ -80,6 +80,8 @@ public class RestPostmanComponentConfigurer extends PropertyConfigurerSupport im
         case "requestFilter": getOrCreateConfiguration(target).setRequestFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": getOrCreateConfiguration(target).setRequestTimeout(property(camelContext, long.class, value)); return true;
+        case "resolvevariablesfromproperties":
+        case "resolveVariablesFromProperties": getOrCreateConfiguration(target).setResolveVariablesFromProperties(property(camelContext, java.lang.String.class, value)); return true;
         case "restpostmanprocessorstrategy":
         case "restPostmanProcessorStrategy": target.setRestPostmanProcessorStrategy(property(camelContext, org.apache.camel.component.rest.postman.RestPostmanProcessorStrategy.class, value)); return true;
         case "runfailfast":
@@ -146,6 +148,8 @@ public class RestPostmanComponentConfigurer extends PropertyConfigurerSupport im
         case "requestFilter": return java.lang.String.class;
         case "requesttimeout":
         case "requestTimeout": return long.class;
+        case "resolvevariablesfromproperties":
+        case "resolveVariablesFromProperties": return java.lang.String.class;
         case "restpostmanprocessorstrategy":
         case "restPostmanProcessorStrategy": return org.apache.camel.component.rest.postman.RestPostmanProcessorStrategy.class;
         case "runfailfast":
@@ -213,6 +217,8 @@ public class RestPostmanComponentConfigurer extends PropertyConfigurerSupport im
         case "requestFilter": return getOrCreateConfiguration(target).getRequestFilter();
         case "requesttimeout":
         case "requestTimeout": return getOrCreateConfiguration(target).getRequestTimeout();
+        case "resolvevariablesfromproperties":
+        case "resolveVariablesFromProperties": return getOrCreateConfiguration(target).getResolveVariablesFromProperties();
         case "restpostmanprocessorstrategy":
         case "restPostmanProcessorStrategy": return target.getRestPostmanProcessorStrategy();
         case "runfailfast":

@@ -1,0 +1,136 @@
+{
+  "info": {
+    "name": "Property fallback",
+    "description": "Placeholders that only Camel properties or JVM system properties could resolve.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "tenant",
+      "value": "acme"
+    },
+    {
+      "key": "format",
+      "value": "application/json"
+    }
+  ],
+  "item": [
+    {
+      "name": "Get Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Tenant",
+            "value": "{{tenant}}"
+          },
+          {
+            "key": "X-Region",
+            "value": "{{region}}"
+          },
+          {
+            "key": "X-Leak",
+            "value": "{{leakProbe}}"
+          },
+          {
+            "key": "X-Leak-Sys",
+            "value": "{{restPostmanSysLeakProbe}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/status",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "status"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Format",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "{{format}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/format",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "format"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Function",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "{{sys:restPostmanSysLeakProbe}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/function",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "function"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Query Key",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/query?{{leakProbe}}=probe",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "query"
+          ],
+          "query": [
+            {
+              "key": "{{leakProbe}}",
+              "value": "probe"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Env Query Key",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/envquery?{{env:PATH}}=probe",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "envquery"
+          ],
+          "query": [
+            {
+              "key": "{{env:PATH}}",
+              "value": "probe"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

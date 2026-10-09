@@ -72,6 +72,8 @@ public class RestPostmanEndpointConfigurer extends PropertyConfigurerSupport imp
         case "requestFilter": target.getConfiguration().setRequestFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, long.class, value)); return true;
+        case "resolvevariablesfromproperties":
+        case "resolveVariablesFromProperties": target.getConfiguration().setResolveVariablesFromProperties(property(camelContext, java.lang.String.class, value)); return true;
         case "runfailfast":
         case "runFailFast": target.getConfiguration().setRunFailFast(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
@@ -135,6 +137,8 @@ public class RestPostmanEndpointConfigurer extends PropertyConfigurerSupport imp
         case "requestFilter": return java.lang.String.class;
         case "requesttimeout":
         case "requestTimeout": return long.class;
+        case "resolvevariablesfromproperties":
+        case "resolveVariablesFromProperties": return java.lang.String.class;
         case "runfailfast":
         case "runFailFast": return boolean.class;
         case "sslcontextparameters":
@@ -199,6 +203,8 @@ public class RestPostmanEndpointConfigurer extends PropertyConfigurerSupport imp
         case "requestFilter": return target.getConfiguration().getRequestFilter();
         case "requesttimeout":
         case "requestTimeout": return target.getConfiguration().getRequestTimeout();
+        case "resolvevariablesfromproperties":
+        case "resolveVariablesFromProperties": return target.getConfiguration().getResolveVariablesFromProperties();
         case "runfailfast":
         case "runFailFast": return target.getConfiguration().isRunFailFast();
         case "sslcontextparameters":

@@ -58,6 +58,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.processor.RestBindingAdvice;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,6 +147,13 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
     @Override
     public RestPostmanComponent getComponent() {
         return (RestPostmanComponent) super.getComponent();
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        // a mistyped value fails at context start rather than when the first producer is created
+        validateResolveVariablesFromProperties(configuration.getResolveVariablesFromProperties());
     }
 
     @Override
@@ -354,6 +362,10 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
      * <p>
      * Every option that distinguishes one request from another is part of the URI, because endpoints are cached by URI
      * and two requests differing only in, say, host must not end up sharing one (CAMEL-24113).
+     * <p>
+     * Fails when a {@code {{placeholder}}} is left in it, or in the query parameters, because the URI is handed to
+     * {@code getEndpoint} and the query parameters to {@code configureProperties}, which would both resolve it from
+     * Camel properties.
      */
     String buildDelegateUri(PostmanRequestBinding binding) {
         String uri = "rest:" + binding.method() + ":" + binding.basePath() + ":" + binding.uriTemplate();
@@ -368,6 +380,21 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
         }
         if (!query.isEmpty()) {
             uri = uri + "?" + query;
+        }
+        // getEndpoint resolves the property placeholders of a URI, and configureProperties those of the option values
+        // (see determineEndpointParameters), functions such as {{env:NAME}} included, so a placeholder that the
+        // collection's variables left unresolved must reach neither. queryParameters is encoded in the URI, so it is
+        // checked as it is handed to configureProperties
+        String queryParameters = binding.queryParameters();
+        if (uri.contains("{{") || (queryParameters != null && queryParameters.contains("{{"))) {
+            throw new IllegalArgumentException(
+                    "Postman request " + binding.item().describe() + " still contains a {{placeholder}} after variable"
+                                               + " substitution, in its URL, query parameters, Accept or Content-Type,"
+                                               + " which would be resolved from Camel properties: "
+                                               + URISupport.sanitizeUri(uri)
+                                               + ". Define the variable in the collection, or supply it with the"
+                                               + " variables option (variable.<name>=<value>). A literal {{ that is"
+                                               + " not a variable is not supported in these parts of a request.");
         }
         return uri;
     }
@@ -434,7 +461,8 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
 
     private List<PostmanRequestBinding> mapAll(List<PostmanItem> items) {
         PostmanRequestMapper mapper = new PostmanRequestMapper(
-                getCamelContext(), configuration, configuration.variablesAsStrings(), resourceOrigin());
+                getCamelContext(), configuration, configuration.variablesAsStrings(), resourceOrigin(),
+                isResolveVariablesFromProperties());
         List<PostmanRequestBinding> answer = new ArrayList<>(items.size());
         for (PostmanItem item : items) {
             answer.add(mapper.map(item));
@@ -485,6 +513,30 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
             throw new RuntimeCamelException("Cannot create SSLContext for fetching the Postman collection", e);
         }
         return null;
+    }
+
+    /**
+     * Whether placeholders that the collection and the variables option leave undefined are resolved from Camel
+     * properties: as configured, and with {@code auto} only for a collection read from the classpath or the file
+     * system.
+     */
+    private boolean isResolveVariablesFromProperties() {
+        String configured = configuration.getResolveVariablesFromProperties();
+        if (configured == null || RestPostmanConfiguration.RESOLVE_VARIABLES_FROM_PROPERTIES_AUTO.equals(configured)) {
+            return PostmanCollectionLoader.isLocalSource(collectionSource, configuration.getCollectionSourceType());
+        }
+        validateResolveVariablesFromProperties(configured);
+        return RestPostmanConfiguration.RESOLVE_VARIABLES_FROM_PROPERTIES_ENABLED.equals(configured);
+    }
+
+    private static void validateResolveVariablesFromProperties(String configured) {
+        if (configured != null
+                && !RestPostmanConfiguration.RESOLVE_VARIABLES_FROM_PROPERTIES_AUTO.equals(configured)
+                && !RestPostmanConfiguration.RESOLVE_VARIABLES_FROM_PROPERTIES_ENABLED.equals(configured)
+                && !RestPostmanConfiguration.RESOLVE_VARIABLES_FROM_PROPERTIES_DISABLED.equals(configured)) {
+            throw new IllegalArgumentException(
+                    "Invalid resolveVariablesFromProperties: " + configured + ". Use auto, enabled or disabled.");
+        }
     }
 
     /**
