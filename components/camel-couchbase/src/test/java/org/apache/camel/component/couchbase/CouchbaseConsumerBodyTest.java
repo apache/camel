@@ -26,6 +26,11 @@ import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.ClusterOptions;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.Scope;
+import com.couchbase.client.java.json.JsonObject;
+import com.couchbase.client.java.kv.GetOptions;
+import com.couchbase.client.java.kv.GetResult;
+import com.couchbase.client.java.query.QueryOptions;
+import com.couchbase.client.java.query.QueryResult;
 import com.couchbase.client.java.view.ViewOptions;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
@@ -38,8 +43,10 @@ import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
@@ -100,6 +107,12 @@ class CouchbaseConsumerBodyTest {
         when(bucket.viewQuery(anyString(), anyString(), any(ViewOptions.class))).thenReturn(result);
     }
 
+    private void queryReturns(JsonObject... rows) {
+        QueryResult result = mock(QueryResult.class);
+        when(result.rowsAsObject()).thenReturn(List.of(rows));
+        when(scope.query(anyString(), any(QueryOptions.class))).thenReturn(result);
+    }
+
     /** A view row as the SDK returns it: the value is an {@code Optional}, empty when the view emitted null. */
     private static ViewRow viewRow(String id, Object value) {
         ViewRow row = mock(ViewRow.class);
@@ -129,5 +142,30 @@ class CouchbaseConsumerBodyTest {
 
         assertEquals(1, bodies.size());
         assertNull(bodies.get(0), "the body must be null when the view emitted null, not an empty Optional");
+    }
+
+    @Test
+    void theQueryRowIsTheBodyWithoutFullDocument() throws Exception {
+        JsonObject row = JsonObject.create().put(CouchbaseConsumer.SQL_DOCUMENT_ID_ALIAS, "doc-1").put("name", "Alice");
+        queryReturns(row);
+        CouchbaseConsumer consumer = startRoute(URI + "&fullDocument=false");
+
+        assertEquals(1, consumer.poll());
+
+        assertEquals(List.of(row.toString()), bodies, "the body must be the SQL++ row as a JSON string");
+    }
+
+    @Test
+    void theFullDocumentIsTheBodyByDefault() throws Exception {
+        queryReturns(JsonObject.create().put(CouchbaseConsumer.SQL_DOCUMENT_ID_ALIAS, "doc-1").put("name", "Alice"));
+        GetResult document = mock(GetResult.class);
+        when(collection.get(eq("doc-1"), any(GetOptions.class))).thenReturn(document);
+        // fullDocument is not set: it defaults to true, so the consumer fetches the document by its ID
+        CouchbaseConsumer consumer = startRoute(URI);
+
+        assertEquals(1, consumer.poll());
+
+        assertEquals(1, bodies.size());
+        assertSame(document, bodies.get(0), "the body must be the document fetched by the ID of the row");
     }
 }
