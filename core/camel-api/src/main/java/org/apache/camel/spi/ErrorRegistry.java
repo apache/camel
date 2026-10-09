@@ -165,4 +165,18 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
      * This is by default enabled.
      */
     void setIncludeExchangeVariables(boolean includeExchangeVariables);
+
+    /**
+     * Whether to also capture an exchange cut off by a route stop, a route reload or a CamelContext stop (a
+     * {@link org.apache.camel.RouteStoppingException}). Nothing in the route failed, but a consumer that does not roll
+     * back may lose the message, so enable it to see how often stops cut off work.
+     */
+    boolean isIncludeRouteStopping();
+
+    /**
+     * Sets whether to also capture an exchange cut off by a route stop, a route reload or a CamelContext stop.
+     * <p/>
+     * This is by default disabled.
+     */
+    void setIncludeRouteStopping(boolean includeRouteStopping);
 }

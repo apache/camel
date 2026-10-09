@@ -36,6 +36,7 @@ camel.errorRegistry.enabled = true
 | `camel.errorRegistry.bodyIncludeFiles` | `true` | boolean | Whether to include file-based message bodies.
 | `camel.errorRegistry.includeExchangeProperties` | `true` | boolean | Whether to include exchange properties in the snapshot.
 | `camel.errorRegistry.includeExchangeVariables` | `true` | boolean | Whether to include exchange variables in the snapshot.
+| `camel.errorRegistry.includeRouteStopping` | `false` | boolean | Whether to also capture an exchange cut off by a route stop, a route reload or a CamelContext stop (`RouteStoppingException`). Nothing in the route failed, but a consumer that does not roll back may lose the message, so enable it to see how often stops cut off work.
 |===
 
 == Captured Data

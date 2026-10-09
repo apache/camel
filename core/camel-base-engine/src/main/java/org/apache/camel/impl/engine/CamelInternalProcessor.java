@@ -23,7 +23,6 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -39,6 +38,7 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.StatefulService;
 import org.apache.camel.impl.debugger.BacklogTracer;
 import org.apache.camel.impl.debugger.DefaultBacklogTracerEventMessage;
@@ -370,7 +370,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                      + exchange;
         LOG.debug(msg);
         if (exchange.getException() == null) {
-            exchange.setException(new RejectedExecutionException(msg));
+            exchange.setException(new RouteStoppingException(msg));
         }
         // force shutdown so we should not continue
         originalCallback.done(true);

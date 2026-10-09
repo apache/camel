@@ -2730,6 +2730,7 @@ public abstract class BaseMainSupport extends BaseService {
         registry.setBodyIncludeFiles(config.isBodyIncludeFiles());
         registry.setIncludeExchangeProperties(config.isIncludeExchangeProperties());
         registry.setIncludeExchangeVariables(config.isIncludeExchangeVariables());
+        registry.setIncludeRouteStopping(config.isIncludeRouteStopping());
     }
 
     private void setAiObservabilityProperties(

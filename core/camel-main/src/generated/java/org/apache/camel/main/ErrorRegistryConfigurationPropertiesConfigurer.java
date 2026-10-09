@@ -28,6 +28,7 @@ public class ErrorRegistryConfigurationPropertiesConfigurer extends org.apache.c
         map.put("Enabled", boolean.class);
         map.put("IncludeExchangeProperties", boolean.class);
         map.put("IncludeExchangeVariables", boolean.class);
+        map.put("IncludeRouteStopping", boolean.class);
         map.put("MaximumEntries", int.class);
         map.put("MaximumEntriesPerKind", int.class);
         map.put("TimeToLiveSeconds", int.class);
@@ -49,6 +50,8 @@ public class ErrorRegistryConfigurationPropertiesConfigurer extends org.apache.c
         case "includeExchangeProperties": target.setIncludeExchangeProperties(property(camelContext, boolean.class, value)); return true;
         case "includeexchangevariables":
         case "includeExchangeVariables": target.setIncludeExchangeVariables(property(camelContext, boolean.class, value)); return true;
+        case "includeroutestopping":
+        case "includeRouteStopping": target.setIncludeRouteStopping(property(camelContext, boolean.class, value)); return true;
         case "maximumentries":
         case "maximumEntries": target.setMaximumEntries(property(camelContext, int.class, value)); return true;
         case "maximumentriesperkind":
@@ -78,6 +81,8 @@ public class ErrorRegistryConfigurationPropertiesConfigurer extends org.apache.c
         case "includeExchangeProperties": return boolean.class;
         case "includeexchangevariables":
         case "includeExchangeVariables": return boolean.class;
+        case "includeroutestopping":
+        case "includeRouteStopping": return boolean.class;
         case "maximumentries":
         case "maximumEntries": return int.class;
         case "maximumentriesperkind":
@@ -103,6 +108,8 @@ public class ErrorRegistryConfigurationPropertiesConfigurer extends org.apache.c
         case "includeExchangeProperties": return target.isIncludeExchangeProperties();
         case "includeexchangevariables":
         case "includeExchangeVariables": return target.isIncludeExchangeVariables();
+        case "includeroutestopping":
+        case "includeRouteStopping": return target.isIncludeRouteStopping();
         case "maximumentries":
         case "maximumEntries": return target.getMaximumEntries();
         case "maximumentriesperkind":

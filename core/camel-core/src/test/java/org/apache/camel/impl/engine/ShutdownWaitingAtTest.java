@@ -25,8 +25,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.direct.DirectConsumerNotAvailableException;
 import org.apache.camel.component.log.ConsumingAppender;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.RouteStartupOrder;
@@ -104,8 +104,8 @@ public class ShutdownWaitingAtTest extends ContextTestSupport {
 
         await().atMost(5, TimeUnit.SECONDS).until(() -> failure.get() != null);
         Exchange exchange = failure.get();
-        DirectConsumerNotAvailableException e
-                = assertInstanceOf(DirectConsumerNotAvailableException.class, exchange.getException());
+        // a cut-off by the route stop, not a failure (CAMEL-25502)
+        RouteStoppingException e = assertInstanceOf(RouteStoppingException.class, exchange.getException());
         assertTrue(e.getMessage().contains("direct://shipment"), e.getMessage());
         assertTrue(e.getMessage().contains("interrupted while waiting for one, as the route is being stopped or reloaded"),
                 e.getMessage());

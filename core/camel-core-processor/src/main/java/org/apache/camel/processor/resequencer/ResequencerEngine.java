@@ -25,6 +25,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.util.concurrent.ThreadHelper;
 
 /**
@@ -193,7 +194,7 @@ public class ResequencerEngine<E> {
         lock.lock();
         try {
             if (stopped) {
-                throw new RejectedExecutionException("Resequencer is stopped");
+                throw new RouteStoppingException("Resequencer is stopped");
             }
             if (pred.test(sequence)) {
                 return;
@@ -207,7 +208,7 @@ public class ResequencerEngine<E> {
         latch.await();
         // compare with the stop count rather than read the flag, as a quick restart may have reset it already
         if (stopped || stopCount != stopCountAtWait) {
-            throw new RejectedExecutionException("Resequencer is stopped");
+            throw new RouteStoppingException("Resequencer is stopped");
         }
     }
 
@@ -304,7 +305,7 @@ public class ResequencerEngine<E> {
         try {
             // a stopped resequencer has cancelled its timer, so the element could not be scheduled for timing out
             if (stopped) {
-                throw new RejectedExecutionException("Resequencer is stopped");
+                throw new RouteStoppingException("Resequencer is stopped");
             }
 
             // wrap object into internal element
