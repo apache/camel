@@ -59,6 +59,7 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
     private final boolean useBodyAuthentication;
     private final String resourceIndicator;
     private final URI targetUri;
+    private final OAuth2CachedTokensKeyResolver cachedTokensKeyResolver;
     private HttpClient httpClient;
 
     public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String resourceIndicator,
@@ -66,19 +67,25 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
                                   long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds,
                                   boolean useBodyAuthentication) {
         this(clientId, clientSecret, tokenEndpoint, resourceIndicator, scope, cacheTokens,
-             cachedTokensDefaultExpirySeconds, cachedTokensExpirationMarginSeconds, useBodyAuthentication, null);
+             cachedTokensDefaultExpirySeconds, cachedTokensExpirationMarginSeconds, useBodyAuthentication, null,
+             OAuth2CachedTokensKey.HOST_ONLY);
     }
 
     /**
-     * @param targetUri the URI the endpoint addresses. The bearer token is only attached to requests for the same
-     *                  authority, so that a redirect chosen by the remote server cannot collect it. Null keeps the
-     *                  previous behaviour of attaching it to whatever authority the request names.
+     * @param targetUri               the URI the endpoint addresses. The bearer token is only attached to requests for
+     *                                the same authority, so that a redirect chosen by the remote server cannot collect
+     *                                it. Null keeps the previous behaviour of attaching it to whatever authority the
+     *                                request names.
+     * @param cachedTokensKeyResolver computes which requests share a cached token (only used when caching tokens)
      */
     OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String resourceIndicator,
                            String scope, boolean cacheTokens,
                            long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds,
-                           boolean useBodyAuthentication, URI targetUri) {
+                           boolean useBodyAuthentication, URI targetUri,
+                           OAuth2CachedTokensKeyResolver cachedTokensKeyResolver) {
         this.targetUri = targetUri;
+        this.cachedTokensKeyResolver = cachedTokensKeyResolver != null
+                ? cachedTokensKeyResolver : OAuth2CachedTokensKey.HOST_ONLY;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.tokenEndpoint = tokenEndpoint;
@@ -105,9 +112,10 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
                         requestUri, targetUri);
                 return;
             }
-            OAuth2URIAndCredentials uriAndCredentials = new OAuth2URIAndCredentials(
-                    requestUri, clientId, clientSecret, tokenEndpoint, scope, resourceIndicator);
-            if (cacheTokens) {
+            String requestKey = cacheTokens ? cachedTokensKeyResolver.resolveKey(requestUri) : null;
+            if (requestKey != null) {
+                OAuth2URIAndCredentials uriAndCredentials = new OAuth2URIAndCredentials(
+                        requestKey, clientId, clientSecret, tokenEndpoint, scope, resourceIndicator);
                 if (tokenCache.containsKey(uriAndCredentials)
                         && !tokenCache.get(uriAndCredentials).isExpiredWithMargin(cachedTokensExpirationMarginSeconds)) {
                     request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tokenCache.get(uriAndCredentials).getToken());
@@ -143,7 +151,11 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
                 && effectivePort(targetUri) == effectivePort(requestUri);
     }
 
-    private static int effectivePort(URI uri) {
+    /**
+     * The port of the URI, or the default port of its scheme (80 for http, 443 for https) when it has none, or -1 for
+     * another scheme without a port.
+     */
+    static int effectivePort(URI uri) {
         if (uri.getPort() >= 0) {
             return uri.getPort();
         }
@@ -234,12 +246,14 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
     /**
      * Cache key for a minted token.
      * <p>
+     * The request key comes from the {@link OAuth2CachedTokensKeyResolver}: by default the full request URI.
+     * <p>
      * Every field that shapes the token request has to be part of it. The map is static, so it is shared by every
      * configurer instance and every CamelContext in the JVM; a key that left out the scope, the token endpoint or the
      * resource indicator would let a route configured for a narrow scope be served a broad-scope token that another
      * route cached first, which defeats the scoping the operator asked for and makes the audit trail misleading.
      */
-    private record OAuth2URIAndCredentials(URI uri, String clientId, String clientSecret, String tokenEndpoint,
+    private record OAuth2URIAndCredentials(String requestKey, String clientId, String clientSecret, String tokenEndpoint,
             String scope, String resourceIndicator) {
     }
 

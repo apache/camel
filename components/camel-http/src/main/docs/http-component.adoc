@@ -678,6 +678,63 @@ Camel only provides support for OAuth2 client credentials flow
 [IMPORTANT]
 Camel does not perform any validation in access token. It's up to the underlying service to validate it.
 
+==== Caching tokens
+
+With `oauth2CacheTokens=true`, Camel caches the token until it expires (see `oauth2CachedTokensDefaultExpirySeconds`
+and `oauth2CachedTokensExpirationMarginSeconds`). The option `oauth2CachedTokensKey` decides which requests share a
+cached token:
+
+* `HOST_ONLY` (default): one token shared by all requests to the same scheme, host and port.
+* `HOST_AND_PATH`: one token per path. The query is not taken into account.
+* `FULL_URI`: one token per request URI, including the query (the behaviour before Camel 4.23).
+
+The client id, client secret, token endpoint, scope and resource indicator are always part of the key. The token
+request itself does not depend on the request URI, so the default `HOST_ONLY` does not request a new token for every
+new URI, for example with dynamic paths or queries in `toD`.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .toD("https://localhost:9090/event/${header.eventId}?oauth2ClientId=my-client-id&oauth2ClientSecret=my-client-secret&oauth2TokenEndpoint=https://localhost:8080/realms/master/protocol/openid-connect/token&oauth2CacheTokens=true&oauth2CachedTokensKey=HOST_ONLY");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <toD uri="https://localhost:9090/event/${header.eventId}?oauth2ClientId=my-client-id&amp;oauth2ClientSecret=my-client-secret&amp;oauth2TokenEndpoint=https://localhost:8080/realms/master/protocol/openid-connect/token&amp;oauth2CacheTokens=true&amp;oauth2CachedTokensKey=HOST_ONLY"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - toD:
+            uri: "https://localhost:9090/event/${header.eventId}"
+            parameters:
+              oauth2ClientId: my-client-id
+              oauth2ClientSecret: my-client-secret
+              oauth2TokenEndpoint: "https://localhost:8080/realms/master/protocol/openid-connect/token"
+              oauth2CacheTokens: true
+              oauth2CachedTokensKey: HOST_ONLY
+----
+====
+
+For other rules, implement `org.apache.camel.component.http.OAuth2CachedTokensKeyResolver` and refer to it with
+`oauth2CachedTokensKeyResolver=#myResolver`. It takes precedence over `oauth2CachedTokensKey`. When it returns `null`,
+the token for that request is not cached.
+
 === Vault-backed credential rotation
 
 When using vault-backed property placeholders (e.g. `{{aws:mySecret/password}}`) with
