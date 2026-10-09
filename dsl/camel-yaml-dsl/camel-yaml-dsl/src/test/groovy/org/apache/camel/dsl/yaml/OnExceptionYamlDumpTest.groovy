@@ -16,7 +16,10 @@
  */
 package org.apache.camel.dsl.yaml
 
+import java.nio.file.Files
+
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.impl.DefaultDumpRoutesStrategy
 import org.apache.camel.model.OnExceptionDefinition
 import org.apache.camel.model.RoutesDefinition
 import org.apache.camel.yaml.LwModelToYAMLDumper
@@ -104,6 +107,58 @@ class OnExceptionYamlDumpTest extends YamlTestSupport {
             loadRoutes yaml
         then:
             context.getRouteDefinition('myRoute') != null
+    }
+
+    def "onException of another file is dumped before the routes in one file"() {
+        setup:
+            // two files normalized into one, as camel validate normalize a.yaml b.yaml does: the onException of the
+            // second file must come before the route of the first one, or the dump does not load
+            loadRoutes """
+                - route:
+                    id: first
+                    from:
+                      uri: direct:first
+                      steps:
+                        - to: mock:first
+            """, """
+                - onException:
+                    exception:
+                      - java.lang.Exception
+                    handled:
+                      constant: "true"
+                    steps:
+                      - to: mock:error
+                - route:
+                    id: second
+                    from:
+                      uri: direct:second
+                      steps:
+                        - to: mock:second
+            """
+            def output = Files.createTempDirectory('normalize').resolve('normalized.yaml')
+        when:
+            def dump = new DefaultDumpRoutesStrategy()
+            dump.camelContext = context
+            dump.include = 'routes'
+            dump.log = false
+            dump.uriAsParameters = true
+            dump.output = output.toString()
+            dump.dumpRoutes('yaml')
+            def yaml = Files.readString(output)
+        then:
+            yaml.startsWith('- onException:')
+            yaml.split('onException:', -1).length == 2
+            yaml.contains('id: first')
+            yaml.contains('id: second')
+        when:
+            // the combined dump is valid for the YAML DSL schema and loads
+            context.removeRouteDefinitions(List.copyOf(context.routeDefinitions))
+            loadRoutes yaml
+        then:
+            context.routeDefinitions.size() == 2
+        cleanup:
+            output.toFile().delete()
+            output.parent.toFile().delete()
     }
 
     def dumpRoutes() {
