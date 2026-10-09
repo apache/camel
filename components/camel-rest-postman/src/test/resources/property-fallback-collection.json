@@ -89,6 +89,48 @@
           ]
         }
       }
+    },
+    {
+      "name": "Get Query Key",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/query?{{leakProbe}}=probe",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "query"
+          ],
+          "query": [
+            {
+              "key": "{{leakProbe}}",
+              "value": "probe"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Env Query Key",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/envquery?{{env:PATH}}=probe",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "envquery"
+          ],
+          "query": [
+            {
+              "key": "{{env:PATH}}",
+              "value": "probe"
+            }
+          ]
+        }
+      }
     }
   ]
 }

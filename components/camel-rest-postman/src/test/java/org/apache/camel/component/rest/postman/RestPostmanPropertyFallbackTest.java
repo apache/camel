@@ -222,4 +222,36 @@ class RestPostmanPropertyFallbackTest {
                 .hasMessageNotContaining("from-system-property");
         WireMock.verify(0, getRequestedFor(urlPathEqualTo("/v3/function")));
     }
+
+    /**
+     * Query parameter names stay raw in queryParameterMode=literal, and the raw query parameters are handed to the
+     * delegate endpoint as an option value, whose property placeholders Camel resolves as well.
+     */
+    @Test
+    void shouldRejectAPlaceholderInAQueryParameterNameOfACloudCollection() {
+        String uri = uri(UID, "getQueryKey",
+                "postmanApiUrl=http://localhost:" + server.port() + "&postmanApiKey=PMAK-test", "queryParameterMode=literal");
+
+        assertThatThrownBy(() -> template.requestBody(uri, null, String.class))
+                .rootCause()
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("still contains a {{placeholder}}")
+                .hasMessageNotContaining("from-camel-properties");
+        WireMock.verify(0, getRequestedFor(urlPathEqualTo("/v3/query")));
+    }
+
+    /**
+     * A placeholder function is never resolved from the collection side, so it stays in the query parameter name of
+     * even a local collection and must not reach the delegate endpoint either.
+     */
+    @Test
+    void shouldRejectAPlaceholderFunctionInAQueryParameterName() {
+        String uri = uri("classpath:" + COLLECTION, "getEnvQueryKey", null, "queryParameterMode=literal");
+
+        assertThatThrownBy(() -> template.requestBody(uri, null, String.class))
+                .rootCause()
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("still contains a {{placeholder}}");
+        WireMock.verify(0, getRequestedFor(urlPathEqualTo("/v3/envquery")));
+    }
 }

@@ -356,8 +356,9 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
      * Every option that distinguishes one request from another is part of the URI, because endpoints are cached by URI
      * and two requests differing only in, say, host must not end up sharing one (CAMEL-24113).
      * <p>
-     * Fails when a {@code {{placeholder}}} is left in it, because the URI is handed to {@code getEndpoint}, which would
-     * resolve it from Camel properties.
+     * Fails when a {@code {{placeholder}}} is left in it, or in the query parameters, because the URI is handed to
+     * {@code getEndpoint} and the query parameters to {@code configureProperties}, which would both resolve it from
+     * Camel properties.
      */
     String buildDelegateUri(PostmanRequestBinding binding) {
         String uri = "rest:" + binding.method() + ":" + binding.basePath() + ":" + binding.uriTemplate();
@@ -373,13 +374,17 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
         if (!query.isEmpty()) {
             uri = uri + "?" + query;
         }
-        // getEndpoint resolves the property placeholders of a URI, functions such as {{env:NAME}} included, so a
-        // placeholder that the collection's variables left unresolved must not reach it
-        if (uri.contains("{{")) {
+        // getEndpoint resolves the property placeholders of a URI, and configureProperties those of the option values
+        // (see determineEndpointParameters), functions such as {{env:NAME}} included, so a placeholder that the
+        // collection's variables left unresolved must reach neither. queryParameters is encoded in the URI, so it is
+        // checked as it is handed to configureProperties
+        String queryParameters = binding.queryParameters();
+        if (uri.contains("{{") || (queryParameters != null && queryParameters.contains("{{"))) {
             throw new IllegalArgumentException(
                     "Postman request " + binding.item().describe() + " still contains a {{placeholder}} after variable"
-                                               + " substitution, in its URL, Accept or Content-Type, which would be"
-                                               + " resolved from Camel properties: " + URISupport.sanitizeUri(uri)
+                                               + " substitution, in its URL, query parameters, Accept or Content-Type,"
+                                               + " which would be resolved from Camel properties: "
+                                               + URISupport.sanitizeUri(uri)
                                                + ". Define it in the collection, or supply it with the variables option.");
         }
         return uri;

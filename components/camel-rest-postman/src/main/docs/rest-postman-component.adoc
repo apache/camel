@@ -177,9 +177,9 @@ from("direct:start")
 ----
 
 Postman environment files are not supported. Unresolved placeholders are left as they are unless
-`failOnUnresolvedVariable=true`. The exception is one left in the `Accept` or `Content-Type` header of a request: these
-become options of the delegate endpoint URI, where Camel would resolve the placeholder from its properties, so the
-producer fails to start instead.
+`failOnUnresolvedVariable=true`. The exception is one left in the host of the URL, a query parameter name, or the
+`Accept` or `Content-Type` header of a request: these become options of the delegate endpoint, where Camel would resolve
+the placeholder from its properties, so the producer fails to start instead.
 
 A collection fetched from the Postman cloud is editable by anyone with access to the Postman workspace, and one
 fetched over HTTP by whoever serves it. Camel properties by default also cover JVM system properties and OS
