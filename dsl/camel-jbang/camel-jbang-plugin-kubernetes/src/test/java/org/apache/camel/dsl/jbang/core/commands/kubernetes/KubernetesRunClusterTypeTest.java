@@ -83,6 +83,30 @@ class KubernetesRunClusterTypeTest {
     }
 
     @Test
+    @ClearEnvironmentVariable(key = "MINIKUBE_ACTIVE_DOCKERD")
+    @ClearEnvironmentVariable(key = "DOCKER_TLS_VERIFY")
+    void dockerEnvHintIsPrintedOnceAcrossReloads() {
+        KubernetesRun command = detectCluster("--cluster-type=minikube");
+        // dev mode calls detectCluster() again on every reload
+        command.detectCluster();
+        command.detectCluster();
+
+        String output = printer.getOutput();
+        Assertions.assertEquals(output.indexOf(DOCKER_ENV_HINT), output.lastIndexOf(DOCKER_ENV_HINT), output);
+        Assertions.assertTrue(output.contains(DOCKER_ENV_HINT), output);
+    }
+
+    @Test
+    @SetEnvironmentVariable(key = "MINIKUBE_ACTIVE_DOCKERD", value = "minikube")
+    @SetEnvironmentVariable(key = "DOCKER_TLS_VERIFY", value = "1")
+    void explicitMinikubeWithBareImagePushFlagPushes() {
+        KubernetesRun command = detectCluster("--cluster-type=minikube", "--image-push");
+
+        Assertions.assertEquals("docker", command.imageBuilder);
+        Assertions.assertEquals(Boolean.TRUE, command.imagePush);
+    }
+
+    @Test
     @SetEnvironmentVariable(key = "MINIKUBE_ACTIVE_DOCKERD", value = "minikube")
     @SetEnvironmentVariable(key = "DOCKER_TLS_VERIFY", value = "1")
     void explicitMinikubeKeepsImageOptionsSetByUser() {

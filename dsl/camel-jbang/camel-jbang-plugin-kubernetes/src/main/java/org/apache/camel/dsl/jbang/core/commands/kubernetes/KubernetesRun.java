@@ -287,6 +287,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     private CamelContext devModeContext;
     private Thread devModeShutdownTask;
     private int devModeReloadCount;
+    // detectCluster() runs again on every dev mode reload, the Minikube docker-env hint is printed only once
+    private boolean dockerEnvHintPrinted;
 
     private KubernetesPodLogs reusablePodLogs;
     private Printer quietPrinter;
@@ -837,10 +839,12 @@ public class KubernetesRun extends KubernetesBaseCommand {
                     this.imagePush = false;
                 }
                 // the detection only returns Minikube when its Docker environment is active, and tells the user otherwise
-                if (explicitClusterType && imageBuild && output == null && "docker".equals(imageBuilder)
+                if (explicitClusterType && !dockerEnvHintPrinted && imageBuild && output == null
+                        && "docker".equals(imageBuilder)
                         && Boolean.FALSE.equals(imagePush) && !KubernetesHelper.isMinikubeDockerEnv()) {
                     printer().println("The Minikube Docker environment is not active: run \"eval $(minikube docker-env)\""
                                       + " so that the image is built in the Docker daemon of Minikube.");
+                    dockerEnvHintPrinted = true;
                 }
             } else if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
                 if (ObjectHelper.isEmpty(imageGroup)) {
