@@ -171,7 +171,7 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
                     HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
         }
         if (null != resourceIndicator) {
-            bodyStr = String.join(bodyStr, "&resource=" + resourceIndicator);
+            bodyStr += "&resource=" + resourceIndicator;
         }
         httpPost.setEntity(new StringEntity(bodyStr, ContentType.APPLICATION_FORM_URLENCODED));
 
