@@ -27,6 +27,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -126,14 +127,19 @@ public class SedaProducer extends DefaultAsyncProducer {
                 }
                 // lets see if we can get the task done before the timeout
                 boolean done = false;
+                InterruptedException interrupted = null;
                 try {
                     done = latch.await(timeout, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
+                    interrupted = e;
                     Thread.currentThread().interrupt();
                 }
                 if (!done) {
                     if (completed.compareAndSet(false, true)) {
-                        exchange.setException(new ExchangeTimedOutException(exchange, timeout));
+                        // an interruption is not a timeout: a stop cut it off, or something else interrupted the wait
+                        exchange.setException(interrupted != null
+                                ? interruptedWhileWaiting(exchange, interrupted)
+                                : new ExchangeTimedOutException(exchange, timeout));
                         // remove timed out Exchange from queue
                         endpoint.getQueue().remove(copy);
                     } else {
@@ -153,7 +159,7 @@ public class SedaProducer extends DefaultAsyncProducer {
                     LOG.debug("Interrupted while waiting for task to complete at [{}]", endpoint.getEndpointUri());
                     if (completed.compareAndSet(false, true)) {
                         // the task has not completed so fail the exchange (do not return the request as the reply)
-                        exchange.setException(e);
+                        exchange.setException(interruptedWhileWaiting(exchange, e));
                         // remove the Exchange from queue (if not yet processed), and a later reply is ignored
                         endpoint.getQueue().remove(copy);
                     } else {
@@ -292,7 +298,7 @@ public class SedaProducer extends DefaultAsyncProducer {
             } catch (InterruptedException e) {
                 LOG.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
                 Thread.currentThread().interrupt();
-                throw interruptedWhileAddingToQueue(e);
+                throw interruptedWhileAddingToQueue(target, e);
             }
         } else if (blockWhenFull && offerTimeout == 0) {
             try {
@@ -300,7 +306,7 @@ public class SedaProducer extends DefaultAsyncProducer {
             } catch (InterruptedException e) {
                 LOG.debug("Put interrupted, are we stopping? {}", isStopping() || isStopped());
                 Thread.currentThread().interrupt();
-                throw interruptedWhileAddingToQueue(e);
+                throw interruptedWhileAddingToQueue(target, e);
             }
         } else if (blockWhenFull && offerTimeout > 0) {
             try {
@@ -313,7 +319,7 @@ public class SedaProducer extends DefaultAsyncProducer {
             } catch (InterruptedException e) {
                 LOG.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
                 Thread.currentThread().interrupt();
-                throw interruptedWhileAddingToQueue(e);
+                throw interruptedWhileAddingToQueue(target, e);
             }
         } else {
             queue.add(target);
@@ -321,9 +327,28 @@ public class SedaProducer extends DefaultAsyncProducer {
         return true;
     }
 
-    private static RejectedExecutionException interruptedWhileAddingToQueue(InterruptedException cause) {
-        // the exchange was not added to the queue, so the exchange must fail
+    private static RejectedExecutionException interruptedWhileAddingToQueue(Exchange exchange, InterruptedException cause) {
+        // the exchange was not added to the queue, so the exchange must fail; a stop that interrupts it cuts it off
+        // (CAMEL-25502)
+        if (ExchangeHelper.isRouteStopping(exchange)) {
+            return new RouteStoppingException(
+                    "Interrupted while adding the exchange to the queue, as the route is being stopped", cause);
+        }
         return new RejectedExecutionException("Interrupted while adding the exchange to the queue", cause);
+    }
+
+    /**
+     * The exception of an exchange whose wait for the reply is interrupted: a cut-off when the route or CamelContext is
+     * being stopped (CAMEL-25502), else the interruption.
+     */
+    private Exception interruptedWhileWaiting(Exchange exchange, InterruptedException cause) {
+        if (ExchangeHelper.isRouteStopping(exchange)) {
+            return new RouteStoppingException(
+                    "Interrupted while waiting for the reply from " + endpoint.getEndpointBaseUri()
+                                              + ", as the route is being stopped",
+                    cause);
+        }
+        return cause;
     }
 
 }

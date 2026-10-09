@@ -51,6 +51,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.SafeCopyProperty;
+import org.apache.camel.StatefulService;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.VariableAware;
@@ -452,6 +453,30 @@ public final class ExchangeHelper {
         } else {
             return exchange.getIn();
         }
+    }
+
+    /**
+     * Whether the exchange is in flight while it is being stopped: the CamelContext is stopping, or the consumer of the
+     * route the exchange came from is being suspended or stopped (a route stop, a route reload). A thread waiting for
+     * such an exchange that is interrupted is then cut off by the stop
+     * ({@link org.apache.camel.RouteStoppingException}), not failing (CAMEL-25502).
+     */
+    public static boolean isRouteStopping(Exchange exchange) {
+        CamelContext context = exchange.getContext();
+        if (context.isStopping() || context.isStopped() || context.getShutdownStrategy().isForceShutdown()) {
+            return true;
+        }
+        String routeId = exchange.getFromRouteId();
+        if (routeId == null) {
+            return false;
+        }
+        Route route = context.getRoute(routeId);
+        if (route == null) {
+            // the route is already removed
+            return true;
+        }
+        return route.getConsumer() instanceof StatefulService consumer
+                && (consumer.isSuspending() || consumer.isSuspended() || consumer.isStopping() || consumer.isStopped());
     }
 
     /**

@@ -26,6 +26,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.RouteStoppingException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -106,17 +107,22 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                     }
                     // lets see if we can get the task done before the timeout
                     boolean done = false;
+                    InterruptedException interrupted = null;
                     try {
                         done = latch.await(timeout, TimeUnit.MILLISECONDS);
                     } catch (InterruptedException e) {
                         LOG.info("Interrupted while waiting for the task to complete");
+                        interrupted = e;
                         Thread.currentThread().interrupt();
                     }
                     if (!done) {
                         if (completed.compareAndSet(false, true)) {
                             // We can't remove a published exchange from an active Disruptor, but the consumer
-                            // ignores the copy, if it has not started it yet, as we have claimed the completed flag
-                            exchange.setException(new ExchangeTimedOutException(exchange, timeout));
+                            // ignores the copy, if it has not started it yet, as we have claimed the completed flag;
+                            // an interruption is not a timeout: a stop cut it off, or something else interrupted the wait
+                            exchange.setException(interrupted != null
+                                    ? interruptedWhileWaiting(exchange, interrupted)
+                                    : new ExchangeTimedOutException(exchange, timeout));
                         } else {
                             // the response is being copied into the exchange, so wait for the copy to complete
                             // (the exchange must not be changed after we have returned)
@@ -135,7 +141,7 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                         if (completed.compareAndSet(false, true)) {
                             // the task has not completed so fail the exchange (do not return the request as the reply),
                             // and a later reply is ignored
-                            exchange.setException(e);
+                            exchange.setException(interruptedWhileWaiting(exchange, e));
                         } else {
                             // the response is being copied into the exchange, so wait for the copy to complete
                             // (the exchange must not be changed after we have returned)
@@ -166,6 +172,20 @@ public class DisruptorProducer extends DefaultAsyncProducer {
         // so we should just signal the callback we are done synchronously
         callback.done(true);
         return true;
+    }
+
+    /**
+     * The exception of an exchange whose wait for the reply is interrupted: a cut-off when the route or CamelContext is
+     * being stopped (CAMEL-25502), else the interruption.
+     */
+    private Exception interruptedWhileWaiting(Exchange exchange, InterruptedException cause) {
+        if (ExchangeHelper.isRouteStopping(exchange)) {
+            return new RouteStoppingException(
+                    "Interrupted while waiting for the reply from " + getEndpoint().getEndpointBaseUri()
+                                              + ", as the route is being stopped",
+                    cause);
+        }
+        return cause;
     }
 
     private static void awaitUninterruptibly(CountDownLatch latch) {
