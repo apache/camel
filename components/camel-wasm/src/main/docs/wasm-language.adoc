@@ -193,13 +193,48 @@ a `Boolean` is used directly, the strings `true` and `false` (in any case) are p
 bytes are first converted to a string, so the function can simply return `true` or `false`.
 If the result type is a Jackson `JsonNode`, only the JSON boolean `true` matches.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:in")
-    .filter()
-        .wasm("is_valid", "classpath://functions.wasm")
-    .to("direct:valid");
+    .filter().wasm("is_valid", "classpath://functions.wasm")
+        .to("direct:valid");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <filter>
+    <wasm module="classpath://functions.wasm">is_valid</wasm>
+    <to uri="direct:valid"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - filter:
+            expression:
+              wasm:
+                expression: is_valid
+                module: classpath://functions.wasm
+            steps:
+              - to:
+                  uri: direct:valid
+----
+====
 
 
 == Dependencies
