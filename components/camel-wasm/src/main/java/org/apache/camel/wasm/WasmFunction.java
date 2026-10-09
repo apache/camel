@@ -47,7 +47,14 @@ public class WasmFunction implements AutoCloseable {
         this.module = Objects.requireNonNull(module);
         this.functionName = Objects.requireNonNull(functionName);
 
-        createInstance();
+        // the instance fields are not final: create the first instance under the lock, so that a first run() on
+        // another thread sees them
+        lock.lock();
+        try {
+            createInstance();
+        } finally {
+            lock.unlock();
+        }
     }
 
     public byte[] run(byte[] in) throws Exception {

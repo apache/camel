@@ -2866,8 +2866,8 @@ non-prefixed metadata name.
 
 === camel-wasm - a failed call discards the Wasm instance
 
-When a Wasm function fails without returning (a trap, such as a Rust `panic`), the endpoint or `wasm` expression now
-discards its module instance and creates a new one for the next message, instead of reusing an instance whose memory
+When a Wasm function fails without returning (a trap, such as a Rust `panic`), the `wasm` producer or `wasm` expression
+now discards its module instance and creates a new one for the next message, instead of reusing an instance whose memory
 kept everything the failed call had allocated. State that the module keeps between messages is reset at that point.
 
 === camel-xpath
