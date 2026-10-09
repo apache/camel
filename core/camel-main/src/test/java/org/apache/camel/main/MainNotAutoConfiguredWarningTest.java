@@ -30,11 +30,13 @@ import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MainNotAutoConfiguredWarningTest {
+@Isolated
+class MainNotAutoConfiguredWarningTest {
 
     private static final String LOGGER = BaseMainSupport.class.getName();
 
@@ -42,7 +44,7 @@ public class MainNotAutoConfiguredWarningTest {
     private AbstractAppender appender;
 
     @BeforeEach
-    public void addAppender() {
+    void addAppender() {
         appender = new AbstractAppender("MainNotAutoConfiguredWarningTest", null, null, true, Property.EMPTY_ARRAY) {
             @Override
             public void append(LogEvent event) {
@@ -61,7 +63,7 @@ public class MainNotAutoConfiguredWarningTest {
     }
 
     @AfterEach
-    public void removeAppender() {
+    void removeAppender() {
         LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         ctx.getConfiguration().removeLogger(LOGGER);
         ctx.updateLoggers();
@@ -73,7 +75,7 @@ public class MainNotAutoConfiguredWarningTest {
     }
 
     @Test
-    public void testTypoIsLogged() {
+    void testTypoIsLogged() {
         Main main = new Main();
         main.configure().withAutoConfigurationFailFast(false);
         main.addProperty("camel.rest.contxtPath", "/api");
@@ -92,7 +94,7 @@ public class MainNotAutoConfiguredWarningTest {
     }
 
     @Test
-    public void testNoWarningsForValidConfiguration() {
+    void testNoWarningsForValidConfiguration() {
         Main main = new Main();
         main.configure().withAutoConfigurationFailFast(false);
         main.addProperty("camel.variable.greeting", "Hello");
