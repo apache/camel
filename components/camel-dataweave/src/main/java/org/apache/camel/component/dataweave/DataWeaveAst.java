@@ -148,7 +148,7 @@ public sealed interface DataWeaveAst {
      * repeats.
      */
     record DescendantSelector(DataWeaveAst object, String field, boolean multi) implements DataWeaveAst {
-        DescendantSelector(DataWeaveAst object, String field) {
+        public DescendantSelector(DataWeaveAst object, String field) {
             this(object, field, false);
         }
     }

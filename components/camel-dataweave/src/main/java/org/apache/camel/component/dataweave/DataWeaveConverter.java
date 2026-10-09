@@ -168,13 +168,18 @@ public class DataWeaveConverter {
             "year", "month", "day", "hour", "minutes", "seconds", "milliseconds", "nanoseconds", "dayOfWeek",
             "dayOfYear", "offsetSeconds", "quarter", "timezone");
 
-    // A variable or function in scope: the arity of a function, or -1 for any other value, and for a variable
-    // with a date or time (an ISO-8601 string) the coercion that gave the date (for its format)
-    private record Binding(String name, int arity, TypeCoercion date) {
+    // A variable or function in scope: the arity of a function, or -1 for any other value, for a variable with a date
+    // or time (an ISO-8601 string) the coercion that gave the date (for its format), and whether it is a lambda
+    // parameter kept as an XML element (raw) because the lambda reads its attributes (its value is then its text)
+    private record Binding(String name, int arity, TypeCoercion date, boolean raw) {
         static final int VALUE = -1;
 
+        Binding(String name, int arity, TypeCoercion date) {
+            this(name, arity, date, false);
+        }
+
         Binding(String name, int arity) {
-            this(name, arity, null);
+            this(name, arity, null, false);
         }
     }
 
@@ -186,8 +191,6 @@ public class DataWeaveConverter {
     private final Deque<Map<String, Binding>> scopes = new ArrayDeque<>();
     // the variables $, $$ and $$$ refer to in the body of an implicit lambda, or null
     private List<String> dollars;
-    // the lambda parameters that are XML elements kept as objects for their attributes (by their Jsonnet name)
-    private final Set<String> rawNames = new HashSet<>();
     // whether the script writes XML, the XML namespaces of its header, and whether null attributes are left out
     private boolean xmlOutput;
     private Map<String, String> namespaces = Map.of();
@@ -240,7 +243,6 @@ public class DataWeaveConverter {
         needsDataWeaveLib = false;
         scopes.clear();
         dollars = null;
-        rawNames.clear();
         xmlOutput = false;
         namespaces = Map.of();
         skipNullAttributes = false;
@@ -435,7 +437,7 @@ public class DataWeaveConverter {
             // a date coerced with a format is written in that format
             return formatDate(binding.name(), binding.date().properties());
         }
-        if (binding != null && rawNames.contains(binding.name())) {
+        if (binding != null && binding.raw()) {
             return lib("text") + "(" + binding.name() + ")";
         }
         if (binding != null) {
@@ -451,7 +453,8 @@ public class DataWeaveConverter {
     private String emitDollar(Dollar d) {
         if (dollars != null && d.level() <= dollars.size()) {
             String name = dollars.get(d.level() - 1);
-            return rawNames.contains(name) ? lib("text") + "(" + name + ")" : name;
+            Binding binding = lookup("$" + name);
+            return binding != null && binding.raw() ? lib("text") + "(" + name + ")" : name;
         }
         return todo("$ outside of a lambda", "$".repeat(d.level()));
     }
@@ -508,13 +511,13 @@ public class DataWeaveConverter {
 
     // The Jsonnet name of a lambda parameter that is an XML element kept as an object, or null
     private String rawReference(DataWeaveAst node) {
-        String name = null;
-        if (node instanceof Identifier id && lookup(id.name()) != null) {
-            name = lookup(id.name()).name();
+        Binding binding = null;
+        if (node instanceof Identifier id) {
+            binding = lookup(id.name());
         } else if (node instanceof Dollar d && dollars != null && d.level() <= dollars.size()) {
-            name = dollars.get(d.level() - 1);
+            binding = lookup("$" + dollars.get(d.level() - 1));
         }
-        return name != null && rawNames.contains(name) ? name : null;
+        return binding != null && binding.raw() ? binding.name() : null;
     }
 
     // A date or time: a date literal, now(), a coercion to a date or time type, or a variable with one
@@ -696,8 +699,9 @@ public class DataWeaveConverter {
         return false;
     }
 
+    // the name of a key as written in XML
     private static String keyName(DataWeaveAst key) {
-        return key instanceof QName q ? q.prefix() + "#" + q.name() : ((StringLit) key).value();
+        return key instanceof QName q ? q.prefix() + ":" + q.name() : ((StringLit) key).value();
     }
 
     private static String objectLiteral(List<String> fields) {
@@ -1078,21 +1082,16 @@ public class DataWeaveConverter {
     private String emitImplicitLambda(DataWeaveAst body, List<String> params, boolean rawItem) {
         List<String> names = freshNames(params);
         Map<String, Binding> scope = new HashMap<>();
-        for (String name : names) {
-            scope.put("$" + name, new Binding(name, Binding.VALUE)); // reserve the names
+        for (int i = 0; i < names.size(); i++) {
+            // reserve the names
+            scope.put("$" + names.get(i), new Binding(names.get(i), Binding.VALUE, null, rawItem && i == 0));
         }
         List<String> saved = dollars;
         dollars = names;
         scopes.push(scope);
-        if (rawItem) {
-            rawNames.add(names.get(0));
-        }
         try {
             return "function(" + String.join(", ", names) + ") " + emit(body);
         } finally {
-            if (rawItem) {
-                rawNames.remove(names.get(0));
-            }
             scopes.pop();
             dollars = saved;
         }
@@ -1107,7 +1106,8 @@ public class DataWeaveConverter {
         Map<String, Binding> scope = new HashMap<>();
         List<String> params = new ArrayList<>();
         Set<String> used = new HashSet<>();
-        for (LambdaParam param : lam.params()) {
+        for (int i = 0; i < lam.params().size(); i++) {
+            LambdaParam param = lam.params().get(i);
             String name = jsonnetName(param.name());
             used.add(name);
             String p = name;
@@ -1115,7 +1115,7 @@ public class DataWeaveConverter {
                 p += " = " + emit(param.defaultValue());
             }
             params.add(p);
-            scope.put(param.name(), new Binding(name, Binding.VALUE));
+            scope.put(param.name(), new Binding(name, Binding.VALUE, null, rawFirst && i == 0));
         }
         for (int i = lam.params().size(); i < arity; i++) {
             String name = "_" + i;
@@ -1127,16 +1127,9 @@ public class DataWeaveConverter {
         List<String> saved = dollars;
         dollars = null;
         scopes.push(scope);
-        String raw = rawFirst && !lam.params().isEmpty() ? jsonnetName(lam.params().get(0).name()) : null;
-        if (raw != null) {
-            rawNames.add(raw);
-        }
         try {
             return "function(" + String.join(", ", params) + ") " + emit(lam.body());
         } finally {
-            if (raw != null) {
-                rawNames.remove(raw);
-            }
             scopes.pop();
             dollars = saved;
         }

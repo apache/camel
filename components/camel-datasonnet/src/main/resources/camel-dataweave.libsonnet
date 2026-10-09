@@ -49,19 +49,26 @@
   local isMeta(k) = k == '~' || std.startsWith(k, '@'),
   local isTextKey(k) = std.startsWith(k, '$') || std.startsWith(k, '#'),
   local isText(x) = isElement(x) && std.all([isMeta(k) || isTextKey(k) for k in std.objectFields(x)]),
-  local textOf(x) = strict(std.join('', [x[k] for k in std.objectFields(x) if std.startsWith(k, '$')]),
+  // the text segments of an element in document order: text ($1, $3, ...) and CDATA (#2, ...)
+  local segments(x) = [k for k in std.objectFields(x) if std.length(k) > 1 && isTextKey(k)],
+  // the text of an element (the reader also gives all its text in '$' when it has no child elements)
+  local textOf(x) = strict(if std.objectHas(x, '$') then x['$'] else std.join('', [x[k] for k in segments(x)]),
                            function(t) if t == '' then null else t),
   // (an element with child elements is marked as selected: written as XML under another key, its attributes are left
   // out, as they are those of its key in the input)
   local text(x0) = strict(x0, function(x)
     if isText(x) then textOf(x) else if isElement(x) then x + { '~selected':: true } else x),
   local localName(k) = local i = std.findSubstr(':', k); if std.length(i) == 0 then k else k[i[std.length(i) - 1] + 1:],
-  // the key of the child k of an XML element: k, or else a child with the local name k
-  local childKey(x, k) =
-    if std.objectHas(x, k) then k
-    else if !isXml(x) then null
-    else strict([f for f in std.objectFields(x) if !isMeta(f) && !isTextKey(f) && localName(f) == k],
-                function(m) if std.length(m) == 0 then null else m[0]),
+  // the keys of the children k of an object: of an XML element those with the local name k, whatever their namespace
+  // prefix (in the order of their first element)
+  local childKeys(x, k) =
+    if !isXml(x) then (if std.objectHas(x, k) then [k] else [])
+    else [f for f in std.objectFields(x) if !isMeta(f) && !isTextKey(f) && localName(f) == k],
+  local childKey(x, k) = strict(childKeys(x, k), function(m) if std.length(m) == 0 then null else m[0]),
+  // the children of the keys (an element repeated under a key is an array), in document order
+  local children(x, keys) =
+    strict(std.flattenArrays([strict(x[key], function(v) if std.isArray(v) then v else [v]) for key in keys]),
+           function(vs) if std.length(keys) > 1 then std.sort(vs, function(e) e['~']) else vs),
   local first(v) = if isRepeated(v) then v[0] else v,
   // a child element with the namespace declarations in scope of its parent, so its namespace can be resolved (and it
   // can be written as XML) without its ancestors
@@ -87,16 +94,28 @@
   local entries(o0) = strict(o0, function(o)
     if !isXml(o) then [{ k: k, v: o[k], a: {} } for k in std.objectFields(o)]
     else
-      local keys = [k for k in std.objectFields(o) if !isMeta(k) && !std.startsWith(k, '#')];
+      // the child elements and the text segments (else the text in '$')
+      local texts = segments(o);
+      local keys = [k for k in std.objectFields(o)
+                    if !isMeta(k) && (!isTextKey(k) || std.length(k) > 1 || std.length(texts) == 0)];
       local es = std.flattenArrays([
         if isTextKey(k) then [{ k: '__text', v: o[k], a: {}, p: position(k, o[k]) }]
         else strict(inScope(o, o[k]), function(v) if isRepeated(v) then [entry(k, e) for e in v] else [entry(k, v)])
         for k in keys
       ]);
       // in document order, which the keys are unless an element repeats with others in between, or text is mixed in
-      if std.length(keys) > 1 && std.any([std.isArray(o[k]) || isTextKey(k) for k in keys])
-      then std.sort(es, function(e) e.p)
-      else es),
+      strict(if std.length(keys) > 1 && std.any([std.isArray(o[k]) || isTextKey(k) for k in keys])
+             then std.sort(es, function(e) e.p)
+             else es, mergeText)),
+  // adjacent text segments (text and CDATA) are one text
+  local mergeText(es) =
+    if !std.any([e.k == '__text' for e in es]) then es
+    else std.foldl(function(acc, e)
+                     local n = std.length(acc);
+                     if e.k == '__text' && n > 0 && acc[n - 1].k == '__text'
+                     then acc[:n - 1] + [acc[n - 1] { v: acc[n - 1].v + e.v }]
+                     else acc + [e],
+                   es, []),
   // An object of entries; the values of a key that repeats become an array (an object can not repeat a key)
   local fromEntries(es0) = strict(es0, function(es)
     local keys = std.foldl(function(acc, e) if std.member(acc, e.k) then acc else acc + [e.k], es, []);
@@ -153,8 +172,8 @@
     else null),
   // x.*k: all the values of k (an XML element repeated under the same name is read as an array)
   multiRaw(x0, k):: strict(x0, function(x)
-    if std.isObject(x) then strict(childKey(x, k), function(key)
-      if key == null then null else if std.isArray(x[key]) then inScope(x, x[key]) else [inScope(x, x[key])])
+    if std.isObject(x) then strict(childKeys(x, k), function(keys)
+      if std.length(keys) == 0 then null else [inScope(x, e) for e in children(x, keys)])
     else if std.isArray(x) then
       std.flattenArrays([strict(dw.multiRaw(e, k), function(v) if v == null then [] else v) for e in x])
     else null),
@@ -163,8 +182,10 @@
   local descendants(x0, k, all) = strict(x0, function(x)
     local walk(v) =
       if std.isObject(v) then
-        strict(childKey(v, k), function(key)
-          if key == null then [] else if all && isRepeated(v[key]) then std.map(text, v[key]) else [text(first(v[key]))])
+        strict(childKeys(v, k), function(keys)
+          if std.length(keys) == 0 then []
+          else if all && isXml(v) then std.map(text, children(v, keys))
+          else [text(first(v[keys[0]]))])
         + std.flattenArrays([walk(v[f]) for f in std.objectFields(v) if !isMeta(f)])
       else if std.isArray(v) then std.flattenArrays([walk(e) for e in v])
       else [];
@@ -202,7 +223,7 @@
   // a to b
   range(a, b):: if a <= b then std.range(a, b) else std.reverse(std.range(b, a)),
   // x.k?
-  has(x0, k):: strict(x0, function(x) std.isObject(x) && childKey(x, k) != null),
+  has(x0, k):: strict(x0, function(x) std.isObject(x) && (std.objectHas(x, k) || childKey(x, k) != null)),
 
   // -- Values
 
@@ -301,8 +322,11 @@
     else [{ k: k, v: x[k] } for k in std.objectFields(x)]),
   // (the items of an array are elements that repeat); the order of the elements is kept in the hidden field '~order'
   xmlObject(parts):: strict(std.flattenArrays([fieldsOf(p) for p in parts]), function(fs)
-    strict(std.flattenArrays([strict(f.v, function(v) if std.isArray(v) then [{ k: f.k, v: e } for e in v]
-                                                      else [{ k: f.k, v: v }])
+    strict(std.flattenArrays([strict(f.v, function(v)
+                                if !std.isArray(v) then [{ k: f.k, v: v }]
+                                // an empty array is an empty element
+                                else if std.length(v) == 0 then [{ k: f.k, v: null }]
+                                else [{ k: f.k, v: e } for e in v])
                               for f in fs]), function(es)
       local keys = std.foldl(function(acc, e) if std.member(acc, e.k) then acc else acc + [e.k], es, []);
       { [k]: strict([e.v for e in es if e.k == k], function(vs) if std.length(vs) == 1 then vs[0] else vs) for k in keys }

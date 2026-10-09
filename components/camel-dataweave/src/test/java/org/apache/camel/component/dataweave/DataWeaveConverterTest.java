@@ -381,6 +381,10 @@ class DataWeaveConverterTest {
                 expr("payload.*order map { id: $.@id, text: $ }"));
         assertEquals("dw.map(dw.multiRaw(body, \"order\"), function(o, _1) {\n  all: dw.attrs(o),\n  v: dw.text(o)\n})",
                 expr("payload.*order map ((o) -> { all: o.@, v: o })"));
+        // an inner lambda with a parameter of the same name does not change the outer one
+        assertEquals("dw.map(dw.multiRaw(body, \"order\"), function(o, _1) {\n"
+                     + "  items: (dw.map(dw.multiRaw(o, \"item\"), function(o, _1) dw.attr(o, \"sku\"))),\n  v: dw.text(o)\n})",
+                expr("payload.*order map ((o) -> { items: (o.*item map ((o) -> o.@sku)), v: o })"));
         assertEquals(0, converter.getTodoCount());
     }
 

@@ -913,6 +913,43 @@ output application/xml
 output application/xml
 ---
 { root: { e: {}, ea: [], n: 1.50, t: true, s: "x & y < z" } }
+=== XM33 elements with the same local name in two namespaces
+@inType application/xml
+@in <root xmlns:p="urn:p" xmlns:q="urn:q"><p:item>1</p:item><q:item>2</q:item><p:item>3</p:item></root>
+@exp [["1","2","3"],["1","2","3"],"1",["item","item","item"],["1"]]
+[payload.root.*item, payload..*item, payload.root.item, keysOf(payload.root), payload..item]
+=== XM34 CDATA next to text
+@inType application/xml
+@in <root><b>x<![CDATA[y]]>z</b><c>t<![CDATA[u]]><d/>v</c></root>
+@exp ["xyz",["__text","d","__text"],"xyz"]
+[payload.root.b, keysOf(payload.root.c), payload.root.*b[0]]
+=== XM35 default namespace
+@inType application/xml
+@in <order xmlns="http://x/o"><item>a</item></order>
+@exp ["a","a",null,null]
+%dw 2.0
+output application/json
+ns o http://x/o
+ns w http://wrong
+---
+[payload.o#order.o#item, payload.order.item, payload.w#order, payload.order.w#item]
+=== XM36 empty array with an object spread in XML
+@outType application/xml
+@in {"items":[{"sku":"A1"}]}
+@exp <?xml version='1.0' encoding='UTF-8'?><root><item>A1</item><a/><b>1</b></root>
+%dw 2.0
+output application/xml
+---
+{ root: { (payload.items map { item: $.sku }), a: [], b: 1 } }
+=== XM37 nested lambdas with the same parameter name
+@inType application/xml
+@outType application/xml
+@in <orders><order id="1"><item sku="A">x</item></order></orders>
+@exp <?xml version='1.0' encoding='UTF-8'?><out><items><sku>A</sku></items><v><item sku="A">x</item></v></out>
+%dw 2.0
+output application/xml
+---
+{ out: { (payload.orders.*order map ((o) -> { items: { (o.*item map ((o) -> { sku: o.@sku })) }, v: o })) } }
 === CS01 csv input
 @inType application/csv
 @in name,age\nann,30\nbob,40
