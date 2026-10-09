@@ -85,6 +85,8 @@ public final class PostmanCollectionLoader {
         if (isCloudSource(source, sourceType)) {
             return false;
         }
+        // a Windows path such as C:\collection.json is not local here: the resource loader takes "C" for a scheme and
+        // fails to load it, so a file system path has to be given as a file: URI anyway
         return source.startsWith("classpath:") || source.startsWith("file:") || source.indexOf(':') < 0;
     }
 

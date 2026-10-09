@@ -256,38 +256,16 @@ public interface RestPostmanEndpointBuilderFactory {
          * Whether a {{variable}} placeholder that neither the collection nor
          * the variables option defines is resolved from Camel properties, which
          * by default also cover JVM system properties and OS environment
-         * variables. When not set, this is done for a collection read from the
+         * variables. With auto, this is done for a collection read from the
          * classpath or the file system, and not for one fetched from the
          * Postman cloud, over HTTP or through any other resource scheme,
          * because whoever edits or serves such a collection could otherwise
-         * copy those values into an outgoing request.
+         * copy those values into an outgoing request. Use enabled or disabled
+         * to decide explicitly for any source.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: false
-         * Group: security
-         * 
-         * @param resolveVariablesFromProperties the value to set
-         * @return the dsl builder
-         */
-        default RestPostmanEndpointConsumerBuilder resolveVariablesFromProperties(Boolean resolveVariablesFromProperties) {
-            doSetProperty("resolveVariablesFromProperties", resolveVariablesFromProperties);
-            return this;
-        }
-        /**
-         * Whether a {{variable}} placeholder that neither the collection nor
-         * the variables option defines is resolved from Camel properties, which
-         * by default also cover JVM system properties and OS environment
-         * variables. When not set, this is done for a collection read from the
-         * classpath or the file system, and not for one fetched from the
-         * Postman cloud, over HTTP or through any other resource scheme,
-         * because whoever edits or serves such a collection could otherwise
-         * copy those values into an outgoing request.
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Default: false
+         * Default: auto
          * Group: security
          * 
          * @param resolveVariablesFromProperties the value to set
@@ -882,38 +860,16 @@ public interface RestPostmanEndpointBuilderFactory {
          * Whether a {{variable}} placeholder that neither the collection nor
          * the variables option defines is resolved from Camel properties, which
          * by default also cover JVM system properties and OS environment
-         * variables. When not set, this is done for a collection read from the
+         * variables. With auto, this is done for a collection read from the
          * classpath or the file system, and not for one fetched from the
          * Postman cloud, over HTTP or through any other resource scheme,
          * because whoever edits or serves such a collection could otherwise
-         * copy those values into an outgoing request.
+         * copy those values into an outgoing request. Use enabled or disabled
+         * to decide explicitly for any source.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: false
-         * Group: security
-         * 
-         * @param resolveVariablesFromProperties the value to set
-         * @return the dsl builder
-         */
-        default RestPostmanEndpointProducerBuilder resolveVariablesFromProperties(Boolean resolveVariablesFromProperties) {
-            doSetProperty("resolveVariablesFromProperties", resolveVariablesFromProperties);
-            return this;
-        }
-        /**
-         * Whether a {{variable}} placeholder that neither the collection nor
-         * the variables option defines is resolved from Camel properties, which
-         * by default also cover JVM system properties and OS environment
-         * variables. When not set, this is done for a collection read from the
-         * classpath or the file system, and not for one fetched from the
-         * Postman cloud, over HTTP or through any other resource scheme,
-         * because whoever edits or serves such a collection could otherwise
-         * copy those values into an outgoing request.
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Default: false
+         * Default: auto
          * Group: security
          * 
          * @param resolveVariablesFromProperties the value to set
@@ -1402,38 +1358,16 @@ public interface RestPostmanEndpointBuilderFactory {
          * Whether a {{variable}} placeholder that neither the collection nor
          * the variables option defines is resolved from Camel properties, which
          * by default also cover JVM system properties and OS environment
-         * variables. When not set, this is done for a collection read from the
+         * variables. With auto, this is done for a collection read from the
          * classpath or the file system, and not for one fetched from the
          * Postman cloud, over HTTP or through any other resource scheme,
          * because whoever edits or serves such a collection could otherwise
-         * copy those values into an outgoing request.
+         * copy those values into an outgoing request. Use enabled or disabled
+         * to decide explicitly for any source.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: false
-         * Group: security
-         * 
-         * @param resolveVariablesFromProperties the value to set
-         * @return the dsl builder
-         */
-        default RestPostmanEndpointBuilder resolveVariablesFromProperties(Boolean resolveVariablesFromProperties) {
-            doSetProperty("resolveVariablesFromProperties", resolveVariablesFromProperties);
-            return this;
-        }
-        /**
-         * Whether a {{variable}} placeholder that neither the collection nor
-         * the variables option defines is resolved from Camel properties, which
-         * by default also cover JVM system properties and OS environment
-         * variables. When not set, this is done for a collection read from the
-         * classpath or the file system, and not for one fetched from the
-         * Postman cloud, over HTTP or through any other resource scheme,
-         * because whoever edits or serves such a collection could otherwise
-         * copy those values into an outgoing request.
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Default: false
+         * Default: auto
          * Group: security
          * 
          * @param resolveVariablesFromProperties the value to set

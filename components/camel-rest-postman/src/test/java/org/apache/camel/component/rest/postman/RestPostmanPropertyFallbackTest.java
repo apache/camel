@@ -152,16 +152,37 @@ class RestPostmanPropertyFallbackTest {
 
     @Test
     void shouldResolvePropertiesForACloudCollectionWhenEnabled() {
-        call(cloudUri("resolveVariablesFromProperties=true"));
+        call(cloudUri("resolveVariablesFromProperties=enabled"));
 
         verifyStatusCall("from-camel-properties", "from-system-property");
     }
 
     @Test
     void shouldNotResolvePropertiesForAClasspathCollectionWhenDisabled() {
-        call(classpathUri("resolveVariablesFromProperties=false"));
+        call(classpathUri("resolveVariablesFromProperties=disabled"));
 
         verifyStatusCall("{{leakProbe}}", "{{" + SYSTEM_PROPERTY + "}}");
+    }
+
+    @Test
+    void shouldDecideBySourceWhenAuto() {
+        call(cloudUri("resolveVariablesFromProperties=auto"));
+        verifyStatusCall("{{leakProbe}}", "{{" + SYSTEM_PROPERTY + "}}");
+
+        server.resetRequests();
+        call(classpathUri("resolveVariablesFromProperties=auto"));
+        verifyStatusCall("from-camel-properties", "from-system-property");
+    }
+
+    @Test
+    void shouldRejectAnUnknownResolveVariablesFromPropertiesValue() {
+        String uri = cloudUri("resolveVariablesFromProperties=yes");
+
+        assertThatThrownBy(() -> template.requestBody(uri, null, String.class))
+                .rootCause()
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Invalid resolveVariablesFromProperties: yes");
+        WireMock.verify(0, getRequestedFor(urlPathEqualTo("/v3/status")));
     }
 
     /**

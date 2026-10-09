@@ -186,8 +186,8 @@ fetched over HTTP by whoever serves it. Camel properties by default also cover J
 environment variables, so resolving such a collection's placeholders from them would let its content copy any of
 those values into an outgoing request. Its placeholders are therefore *not* resolved from Camel properties: only
 `classpath:` and `file:` sources, and names without a scheme, are. Pass a property to such a collection explicitly
-in the endpoint URI, or set `resolveVariablesFromProperties=true` if you trust its content as much as your own
-configuration (`false` turns the lookup off for a local collection too):
+in the endpoint URI, or set `resolveVariablesFromProperties=enabled` if you trust its content as much as your own
+configuration (`disabled` turns the lookup off for a local collection too; the default, `auto`, decides by source):
 
 [source,java]
 ----

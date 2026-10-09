@@ -503,14 +503,22 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
 
     /**
      * Whether placeholders that the collection and the variables option leave undefined are resolved from Camel
-     * properties: as configured, otherwise only for a collection read from the classpath or the file system.
+     * properties: as configured, and with {@code auto} only for a collection read from the classpath or the file
+     * system.
      */
     private boolean isResolveVariablesFromProperties() {
-        Boolean configured = configuration.getResolveVariablesFromProperties();
-        if (configured != null) {
-            return configured;
+        String configured = configuration.getResolveVariablesFromProperties();
+        if (configured == null || RestPostmanConfiguration.RESOLVE_VARIABLES_FROM_PROPERTIES_AUTO.equals(configured)) {
+            return PostmanCollectionLoader.isLocalSource(collectionSource, configuration.getCollectionSourceType());
         }
-        return PostmanCollectionLoader.isLocalSource(collectionSource, configuration.getCollectionSourceType());
+        if (RestPostmanConfiguration.RESOLVE_VARIABLES_FROM_PROPERTIES_ENABLED.equals(configured)) {
+            return true;
+        }
+        if (RestPostmanConfiguration.RESOLVE_VARIABLES_FROM_PROPERTIES_DISABLED.equals(configured)) {
+            return false;
+        }
+        throw new IllegalArgumentException(
+                "Invalid resolveVariablesFromProperties: " + configured + ". Use auto, enabled or disabled.");
     }
 
     /**

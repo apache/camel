@@ -44,7 +44,7 @@ public class RestPostmanConfigurationConfigurer extends org.apache.camel.support
         map.put("QueryParameterMode", java.lang.String.class);
         map.put("RequestFilter", java.lang.String.class);
         map.put("RequestTimeout", long.class);
-        map.put("ResolveVariablesFromProperties", java.lang.Boolean.class);
+        map.put("ResolveVariablesFromProperties", java.lang.String.class);
         map.put("RunFailFast", boolean.class);
         map.put("SslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         map.put("UseGlobalSslContextParameters", boolean.class);
@@ -98,7 +98,7 @@ public class RestPostmanConfigurationConfigurer extends org.apache.camel.support
         case "requesttimeout":
         case "requestTimeout": target.setRequestTimeout(property(camelContext, long.class, value)); return true;
         case "resolvevariablesfromproperties":
-        case "resolveVariablesFromProperties": target.setResolveVariablesFromProperties(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "resolveVariablesFromProperties": target.setResolveVariablesFromProperties(property(camelContext, java.lang.String.class, value)); return true;
         case "runfailfast":
         case "runFailFast": target.setRunFailFast(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
@@ -160,7 +160,7 @@ public class RestPostmanConfigurationConfigurer extends org.apache.camel.support
         case "requesttimeout":
         case "requestTimeout": return long.class;
         case "resolvevariablesfromproperties":
-        case "resolveVariablesFromProperties": return java.lang.Boolean.class;
+        case "resolveVariablesFromProperties": return java.lang.String.class;
         case "runfailfast":
         case "runFailFast": return boolean.class;
         case "sslcontextparameters":

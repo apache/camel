@@ -134,6 +134,19 @@ class PostmanCollectionLoaderTest {
         assertThat(PostmanCollectionLoader.isLocalSource(source, PostmanCollectionLoader.SOURCE_TYPE_AUTO)).isFalse();
     }
 
+    /**
+     * The resource loader takes a drive letter for a scheme, so a Windows path is not loadable and needs a file: URI.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = { "C:\\petstore.json", "C:/petstore.json" })
+    void shouldNotLoadAWindowsPathWithoutAFileScheme(String source) {
+        assertThat(PostmanCollectionLoader.isLocalSource(source, PostmanCollectionLoader.SOURCE_TYPE_AUTO)).isFalse();
+        assertThatThrownBy(() -> PostmanCollectionLoader.loadFromResource(context, source))
+                .isInstanceOf(RuntimeCamelException.class)
+                .rootCause()
+                .hasMessageContaining("supporting the scheme: C");
+    }
+
     @Test
     void shouldNotTreatACloudSourceAsLocal() {
         assertThat(PostmanCollectionLoader.isLocalSource("petstore.json", PostmanCollectionLoader.SOURCE_TYPE_CLOUD))

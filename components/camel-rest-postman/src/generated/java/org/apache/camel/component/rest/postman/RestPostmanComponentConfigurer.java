@@ -81,7 +81,7 @@ public class RestPostmanComponentConfigurer extends PropertyConfigurerSupport im
         case "requesttimeout":
         case "requestTimeout": getOrCreateConfiguration(target).setRequestTimeout(property(camelContext, long.class, value)); return true;
         case "resolvevariablesfromproperties":
-        case "resolveVariablesFromProperties": getOrCreateConfiguration(target).setResolveVariablesFromProperties(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "resolveVariablesFromProperties": getOrCreateConfiguration(target).setResolveVariablesFromProperties(property(camelContext, java.lang.String.class, value)); return true;
         case "restpostmanprocessorstrategy":
         case "restPostmanProcessorStrategy": target.setRestPostmanProcessorStrategy(property(camelContext, org.apache.camel.component.rest.postman.RestPostmanProcessorStrategy.class, value)); return true;
         case "runfailfast":
@@ -149,7 +149,7 @@ public class RestPostmanComponentConfigurer extends PropertyConfigurerSupport im
         case "requesttimeout":
         case "requestTimeout": return long.class;
         case "resolvevariablesfromproperties":
-        case "resolveVariablesFromProperties": return java.lang.Boolean.class;
+        case "resolveVariablesFromProperties": return java.lang.String.class;
         case "restpostmanprocessorstrategy":
         case "restPostmanProcessorStrategy": return org.apache.camel.component.rest.postman.RestPostmanProcessorStrategy.class;
         case "runfailfast":

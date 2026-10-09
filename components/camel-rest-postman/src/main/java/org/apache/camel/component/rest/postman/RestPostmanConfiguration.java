@@ -39,6 +39,9 @@ public class RestPostmanConfiguration implements Cloneable {
     public static final String DEFAULT_POSTMAN_API_URL = "https://api.getpostman.com";
     public static final String DEFAULT_POSTMAN_API_KEY_HEADER = "X-Api-Key";
     public static final String DEFAULT_BASE_PATH = "/";
+    public static final String RESOLVE_VARIABLES_FROM_PROPERTIES_AUTO = "auto";
+    public static final String RESOLVE_VARIABLES_FROM_PROPERTIES_ENABLED = "enabled";
+    public static final String RESOLVE_VARIABLES_FROM_PROPERTIES_DISABLED = "disabled";
 
     @UriParam(label = "common", enums = "auto,resource,cloud", defaultValue = "auto")
     @Metadata(description = "How to interpret collectionSource. With auto, a bare collection UUID or"
@@ -62,14 +65,16 @@ public class RestPostmanConfiguration implements Cloneable {
                             + " resolved. When false the placeholder is left as-is.")
     private boolean failOnUnresolvedVariable;
 
-    @UriParam(label = "common,security")
+    @UriParam(label = "common,security", enums = "auto,enabled,disabled", defaultValue = "auto")
     @Metadata(description = "Whether a {{variable}} placeholder that neither the collection nor the variables option"
                             + " defines is resolved from Camel properties, which by default also cover JVM system"
-                            + " properties and OS environment variables. When not set, this is done for a collection"
-                            + " read from the classpath or the file system, and not for one fetched from the Postman"
-                            + " cloud, over HTTP or through any other resource scheme, because whoever edits or serves"
-                            + " such a collection could otherwise copy those values into an outgoing request.")
-    private Boolean resolveVariablesFromProperties;
+                            + " properties and OS environment variables. With auto, this is done for a collection read"
+                            + " from the classpath or the file system, and not for one fetched from the Postman cloud,"
+                            + " over HTTP or through any other resource scheme, because whoever edits or serves such a"
+                            + " collection could otherwise copy those values into an outgoing request. Use enabled or"
+                            + " disabled to decide explicitly for any source.",
+              defaultValue = "auto")
+    private String resolveVariablesFromProperties = RESOLVE_VARIABLES_FROM_PROPERTIES_AUTO;
 
     @UriParam(label = "producer")
     @Metadata(description = "Scheme hostname and port to direct the HTTP requests to in the form of"
@@ -236,11 +241,11 @@ public class RestPostmanConfiguration implements Cloneable {
         this.failOnUnresolvedVariable = failOnUnresolvedVariable;
     }
 
-    public Boolean getResolveVariablesFromProperties() {
+    public String getResolveVariablesFromProperties() {
         return resolveVariablesFromProperties;
     }
 
-    public void setResolveVariablesFromProperties(Boolean resolveVariablesFromProperties) {
+    public void setResolveVariablesFromProperties(String resolveVariablesFromProperties) {
         this.resolveVariablesFromProperties = resolveVariablesFromProperties;
     }
 
