@@ -618,7 +618,7 @@ class ExportTest {
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--java-version=" + javaVersion);
         int exit = command.doCall();
 
-        Assertions.assertEquals(0, exit);
+        assertThat(exit).isZero();
         String other = "21".equals(javaVersion) ? "25" : "21";
         List<Path> jvmDockerFiles;
         try (Stream<Path> files = Files.list(workingDir.toPath().resolve("src/main/docker"))) {
