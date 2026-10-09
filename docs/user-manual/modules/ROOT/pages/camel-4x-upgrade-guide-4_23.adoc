@@ -1495,6 +1495,16 @@ A project whose routes are all in one file is covered too: the content that last
 broken save goes back to the version that was running, and the log says how many routes came from it. The file on
 disk is untouched; its next save is loaded as usual.
 
+=== camel-core - an exchange cut off by a route stop or reload is logged as one WARN line
+
+When a route is stopped or reloaded (for example a save in `camel run --dev`) while an exchange is in flight, and
+the graceful shutdown times out, the exchange is cut off. The error handler logged this as a failed delivery: an
+ERROR with "Exhausted after delivery attempt", the message history and the stack trace of the
+`RejectedExecutionException`. It is now one line at WARN, "Exchange cut off ...: its route is being stopped or
+reloaded", as nothing in the route failed, and a consumer that rolls back, such as file, delivers the message again.
+A level lower than WARN configured for exhausted logging is kept. A forced stop of the CamelContext is logged as
+before. The exception set on the exchange is unchanged.
+
 === camel-core - RoutesLoader.updateRoutes runs one call at a time
 
 Concurrent `RoutesLoader.updateRoutes` calls on one CamelContext now run one at a time instead of failing with
