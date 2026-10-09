@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.sjms.batch;
 
-import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
@@ -28,11 +28,10 @@ import org.junit.jupiter.api.Test;
 import static java.lang.String.format;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.BATCH_ROUTEBUILDER_MOCK_FINISH;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.BATCH_ROUTEBUILDER_MOCK_START;
-import static org.apache.camel.component.sjms.batch.BatchTestHelper.DEFAULT_MESSAGE_TEXT;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.assertBatchSizesInOrder;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.createBatchRoute;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.getBatchBodiesAsString;
-import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessages;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessagesWithText;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BatchConsumerTransactedTest extends JmsTestSupport {
@@ -43,6 +42,8 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
     private static final String ROUTE_ID_CLIENT_ACK_NO_TX = "no-tx-client-ack";
     private static final String ROUTE_ID_AUTO_ACK_NO_TX = "no-tx-auto";
 
+    private static final String MESSAGE_TEXT = "Message %d";
+
     @Test
     public void testSessionTransacted() throws Exception {
         MockEndpoint mockStart = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_START, ROUTE_ID_SESSION_TX));
@@ -51,12 +52,16 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
         MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_SESSION_TX));
         mockFinish.expectedMessageCount(1);
 
-        sendMessages(template, format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX),
-                5);
+        sendMessagesWithText(template, format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX),
+                5, MESSAGE_TEXT);
 
         MockEndpoint.assertIsSatisfied(context);
         assertBatchSizesInOrder(mockFinish, 5);
-        assertEquals(Collections.nCopies(5, DEFAULT_MESSAGE_TEXT), getBatchBodiesAsString(mockFinish.getExchanges().get(0)));
+        assertEquals(
+                IntStream.rangeClosed(1, 5)
+                        .mapToObj(i -> String.format(MESSAGE_TEXT, i))
+                        .toList(),
+                getBatchBodiesAsString(mockFinish.getExchanges().get(0)));
     }
 
     @Test
@@ -67,13 +72,17 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
         MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_CLIENT_ACK_NO_TX));
         mockFinish.expectedMessageCount(1);
 
-        sendMessages(template,
+        sendMessagesWithText(template,
                 format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX),
-                5);
+                5, MESSAGE_TEXT);
 
         MockEndpoint.assertIsSatisfied(context);
         assertBatchSizesInOrder(mockFinish, 5);
-        assertEquals(Collections.nCopies(5, DEFAULT_MESSAGE_TEXT), getBatchBodiesAsString(mockFinish.getExchanges().get(0)));
+        assertEquals(
+                IntStream.rangeClosed(1, 5)
+                        .mapToObj(i -> String.format(MESSAGE_TEXT, i))
+                        .toList(),
+                getBatchBodiesAsString(mockFinish.getExchanges().get(0)));
     }
 
     @Test
@@ -84,15 +93,15 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
         MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_AUTO_ACK_NO_TX));
         mockFinish.expectedMessageCount(0);
 
-        sendMessages(template,
-                format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK_NO_TX), 5);
+        sendMessagesWithText(template,
+                format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK_NO_TX), 5, MESSAGE_TEXT);
 
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
-        return new org.apache.camel.RoutesBuilder[] {
+        return new RoutesBuilder[] {
                 createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, 5,
                         1000,
                         true, null, 1, new ThrowExceptionProcessor()),

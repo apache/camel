@@ -103,4 +103,9 @@ public class BatchEndpointMessageListener {
             throw rce;
         }
     }
+
+    // BatchEndpointMessageListener
+    void handleException(String message, Throwable cause) {
+        consumer.getExceptionHandler().handleException(message, cause);
+    }
 }

@@ -328,7 +328,16 @@ A batch completes when either `batchSize` messages have been received, or the `b
 measured from the first message in the batch - has elapsed.
 
 Commit/acknowledgement happens once per batch rather than once per message. With
-`acknowledgementMode=AUTO_ACKNOWLEDGE`, messages are acknowledged as they're received into the batch,
-before routing — so a failed batch cannot be redelivered. Use `transacted=true` or
 `acknowledgementMode=CLIENT_ACKNOWLEDGE` if the whole batch should be redelivered together on failure.
 
+A failed batch is rolled back and redelivered as a whole, so the route should be idempotent. One bad message
+fails, and redelivers, the whole batch: all its messages share the delivery count, and they end up together
+in the broker's dead letter queue (if one is configured). How often and how fast the broker redelivers is
+up to its redelivery policy, for example `max-delivery-attempts` and `redelivery-delay` in ActiveMQ Artemis.
+To avoid this, handle failures per message inside the batch, for example with `split(body())` and `doTry`,
+or with `onException(...).handled(true)`. The messages of a redelivered batch have the `JMSRedelivered` header set.
+
+With `concurrentConsumers` greater than 1, each consumer collects and routes its own batches, so several
+batches are processed in parallel.
+
+The batch consumer never sends a reply, so a `JMSReplyTo` on the incoming messages is ignored.

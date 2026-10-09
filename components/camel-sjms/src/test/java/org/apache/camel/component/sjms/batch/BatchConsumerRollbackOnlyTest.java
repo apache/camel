@@ -71,7 +71,7 @@ public class BatchConsumerRollbackOnlyTest extends JmsTestSupport {
 
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
-        return new org.apache.camel.RoutesBuilder[] {
+        return new RoutesBuilder[] {
                 createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, 5,
                         1000,
                         true, null, 1, new MarkRollBackProcessor()),

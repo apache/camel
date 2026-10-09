@@ -81,7 +81,7 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
     @Override
     protected void configureConsumer(MessageConsumer consumer, Session session) {
         BatchConsumerWorker worker = new BatchConsumerWorker(
-                endpoint, batchListener, consumer, session);
+                this.endpoint, this.batchListener, session, consumer);
         addWorker(worker);
         CompletableFuture.runAsync(worker, workerExecutorService)
                 .whenComplete((v, ex) -> onWorkerExit(worker, ex));

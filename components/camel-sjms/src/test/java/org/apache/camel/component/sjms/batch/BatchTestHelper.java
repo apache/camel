@@ -65,7 +65,7 @@ public final class BatchTestHelper {
     }
 
     static void sendMessagesWithText(ProducerTemplate template, String endpoint, int count, String text) {
-        for (int i = 0; i < count; i++) {
+        for (int i = 1; i <= count; i++) {
             template.sendBody(endpoint, format(text, i));
         }
     }
@@ -102,7 +102,7 @@ public final class BatchTestHelper {
      */
     static void assertBatchSizesInOrder(MockEndpoint mock, int... expectedSizes) {
         assertEquals(expectedSizes.length, mock.getExchanges().size(),
-                "Number of expected sizes ddoes not match the number of exchanges");
+                "Number of expected sizes does not match the number of exchanges");
         List<Exchange> received = mock.getExchanges();
         for (int i = 0; i < expectedSizes.length; i++) {
             assertBatchSize(received.get(i), expectedSizes[i]);
@@ -173,7 +173,7 @@ public final class BatchTestHelper {
                 new JMSException("Simulated connection failure"));
     }
 
-    static class DoNothingProcessor implements org.apache.camel.Processor {
+    static class DoNothingProcessor implements Processor {
 
         @Override
         public void process(Exchange exchange) {

@@ -49,11 +49,11 @@ public class BatchConsumerWorker implements Runnable {
     private volatile boolean jmsUnhealthy;
 
     BatchConsumerWorker(SjmsEndpoint endpoint, BatchEndpointMessageListener batchListener,
-                        MessageConsumer consumer, Session session) {
+                        Session session, MessageConsumer consumer) {
         this.endpoint = endpoint;
         this.batchListener = batchListener;
-        this.consumer = consumer;
         this.session = session;
+        this.consumer = consumer;
     }
 
     void shutdown() {
@@ -144,6 +144,9 @@ public class BatchConsumerWorker implements Runnable {
                     endpoint.getExceptionListener().onException(jmsException);
                 }
             } else {
+                batchListener.handleException(
+                        "Execution of JMS message listener failed. This exception is ignored.",
+                        e);
                 LOG.warn("Execution of JMS message listener failed. This exception is ignored.", e);
             }
         }
