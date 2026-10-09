@@ -61,10 +61,10 @@ public class DebeziumConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         engineReady = false;
-        super.doStart();
-
         engineFailure = null;
         engineStopped = false;
+
+        super.doStart();
 
         // start a single threaded pool to monitor events
         executorService = endpoint.createExecutor(this);
@@ -129,6 +129,13 @@ public class DebeziumConsumer extends DefaultConsumer {
                     @Override
                     public void pollingStarted() {
                         engineReady = true;
+                    }
+
+                    @Override
+                    public void pollingStopped() {
+                        // the engine is no longer polling, so it consumes no further change event, even when it
+                        // completed on its own without reporting a failure
+                        engineReady = false;
                     }
                 })
                 .notifying(this::onEventListener)

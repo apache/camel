@@ -18,6 +18,7 @@ package org.apache.camel.component.debezium;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -33,11 +34,14 @@ import org.apache.kafka.connect.connector.Task;
 import org.apache.kafka.connect.file.FileStreamSourceConnector;
 import org.apache.kafka.connect.file.FileStreamSourceTask;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -80,6 +84,32 @@ class DebeziumConsumerReadinessTest extends CamelTestSupport {
         }
     }
 
+    @Test
+    void theAutoCreatedHealthCheckReportsTheInitialStateUntilPolling() throws Exception {
+        DebeziumConsumer consumer = (DebeziumConsumer) context.getRoute("readiness").getConsumer();
+        starting = new CountDownLatch(1);
+        release = new CountDownLatch(1);
+        // no setHealthCheck() here: starting the consumer runs doBuild(), which creates the check itself
+        consumer.start();
+        try {
+            assertTrue(starting.await(30, TimeUnit.SECONDS), "the source task should enter startup");
+            HealthCheck check = consumer.getHealthCheck();
+            assertInstanceOf(DebeziumConsumerHealthCheck.class, check,
+                    "the consumer should create its own health check in doBuild()");
+            assertEquals("consumer:readiness", check.getId());
+            // DOWN is the registry initial state stubbed in createCamelContext, read when doBuild() ran
+            assertEquals(HealthCheck.State.DOWN, check.call().getState());
+            release.countDown();
+            await().atMost(30, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertEquals(HealthCheck.State.UP, check.call().getState()));
+        } finally {
+            release.countDown();
+            consumer.stop();
+        }
+        // the engine left its polling phase, so the consumer no longer reports itself as ready
+        assertFalse(consumer.isEngineReady(), "stopping the engine should clear readiness");
+    }
+
     @AfterEach
     void cleanup() throws Exception {
         if (release != null) {
@@ -96,8 +126,12 @@ class DebeziumConsumerReadinessTest extends CamelTestSupport {
         registry = mock(HealthCheckRegistry.class);
         when(registry.getInitialState()).thenReturn(HealthCheck.State.DOWN);
         context.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
-        input = Files.createTempFile("debezium-readiness-input", ".txt");
-        offsets = Files.createTempFile("debezium-readiness-offsets", ".dat");
+        input = Paths.get("target/data", "camel-debezium-readiness-input.txt").toAbsolutePath();
+        offsets = Paths.get("target/data", "camel-debezium-readiness-offset-store.dat").toAbsolutePath();
+        Files.createDirectories(input.getParent());
+        Files.deleteIfExists(input);
+        Files.deleteIfExists(offsets);
+        Files.createFile(input);
         FileConnectorEmbeddedDebeziumConfiguration configuration = new FileConnectorEmbeddedDebeziumConfiguration() {
             @Override
             protected Class<?> configureConnectorClass() {
