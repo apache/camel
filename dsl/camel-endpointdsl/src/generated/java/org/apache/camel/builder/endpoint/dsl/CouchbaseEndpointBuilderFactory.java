@@ -199,7 +199,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer
          * 
          * @param fullDocument the value to set
@@ -215,7 +215,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer
          * 
          * @param fullDocument the value to set

@@ -149,7 +149,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     private String rangeStartKey;
     @UriParam(label = "consumer")
     private String rangeEndKey = "";
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean fullDocument = true;
     @UriParam(label = "consumer", defaultValue = "5000")
     private int consumerRetryPause = DEFAULT_PAUSE_BETWEEN_RETRIES;
