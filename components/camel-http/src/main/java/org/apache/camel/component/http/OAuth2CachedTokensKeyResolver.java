@@ -29,6 +29,8 @@ import java.net.URI;
  * <p>
  * {@link OAuth2CachedTokensKey} has the built-in strategies. Use the endpoint option
  * {@code oauth2CachedTokensKeyResolver} to plug in a custom one.
+ *
+ * @since 4.23
  */
 @FunctionalInterface
 public interface OAuth2CachedTokensKeyResolver {

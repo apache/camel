@@ -21,6 +21,8 @@ import java.util.Locale;
 
 /**
  * The built-in strategies for the cache key of OAuth2 tokens, see {@link OAuth2CachedTokensKeyResolver}.
+ *
+ * @since 4.23
  */
 public enum OAuth2CachedTokensKey implements OAuth2CachedTokensKeyResolver {
 
@@ -44,7 +46,8 @@ public enum OAuth2CachedTokensKey implements OAuth2CachedTokensKeyResolver {
         }
     },
     /**
-     * One token per request URI, including the query (the default before Camel 4.23).
+     * One token per request URI, including the query (the default before Camel 4.23). The URI is compared as written,
+     * so URIs that differ only in the case of the scheme or host get separate tokens.
      */
     FULL_URI {
         @Override
