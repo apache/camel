@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.exceptionhandler;
 import java.io.PrintWriter;
 import java.util.Optional;
 
+import org.apache.camel.dsl.jbang.core.commands.action.SemanticActionCommand;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import picocli.CommandLine;
@@ -33,6 +34,9 @@ public class MissingPluginParameterExceptionHandler implements IParameterExcepti
     public int handleParseException(ParameterException ex, String[] args) throws Exception {
         CommandLine cmd = ex.getCommandLine();
         PrintWriter err = cmd.getErr();
+        if (cmd.getCommand() instanceof SemanticActionCommand semantic) {
+            return semantic.usageError(ex.getMessage(), args);
+        }
 
         if (ex.getMessage().startsWith("Unmatched argument at index 0") && args.length > 0) {
             Optional<PluginType> pluginType = PluginType.findByName(args[0]);
