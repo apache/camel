@@ -21,6 +21,8 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.minio.BucketExistsArgs;
 import io.minio.CopyObjectArgs;
@@ -60,6 +62,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioConsumer.class);
 
+    // objects whose exchanges are being processed, which a later poll must not consume again
+    private final Set<String> inProgress = ConcurrentHashMap.newKeySet();
     private long totalCounter;
     private String continuationToken;
     private transient String minioConsumerToString;
@@ -189,8 +193,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
     protected Deque<Exchange> createExchanges(String objectName) throws Exception {
         Deque<Exchange> answer = new LinkedList<>();
-        Exchange exchange = createExchange(objectName);
-        answer.add(exchange);
+        addExchange(objectName, answer);
         return answer;
     }
 
@@ -202,8 +205,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 do {
                     messageCounter++;
                     Item minioObjectSummary = minioObjectSummaries.next().get();
-                    Exchange exchange = createExchange(minioObjectSummary.objectName());
-                    answer.add(exchange);
+                    addExchange(minioObjectSummary.objectName(), answer);
                 } while (minioObjectSummaries.hasNext());
             } else {
                 do {
@@ -211,8 +213,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                     Item minioObjectSummary = minioObjectSummaries.next().get();
                     // ignore if directory
                     if (!minioObjectSummary.isDir()) {
-                        Exchange exchange = createExchange(minioObjectSummary.objectName());
-                        answer.add(exchange);
+                        addExchange(minioObjectSummary.objectName(), answer);
                     }
                 } while (minioObjectSummaries.hasNext());
             }
@@ -224,10 +225,35 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
         } catch (Exception e) {
             LOG.warn("Error getting MinioObject due: {}", e.getMessage());
+            // none of the objects of this poll is processed
+            releaseInProgress(null, answer);
             throw e;
         }
 
         return answer;
+    }
+
+    private void addExchange(String objectName, Deque<Exchange> answer) throws Exception {
+        // skip the object if an exchange of a previous poll is still processing it
+        if (!inProgress.add(objectName)) {
+            LOG.trace("Skipping object {} as it is already in progress", objectName);
+            return;
+        }
+        try {
+            answer.add(createExchange(objectName));
+        } catch (Exception e) {
+            inProgress.remove(objectName);
+            throw e;
+        }
+    }
+
+    private void releaseInProgress(String objectName, Queue<?> notProcessed) {
+        if (objectName != null) {
+            inProgress.remove(objectName);
+        }
+        for (Object exchange : notProcessed) {
+            inProgress.remove(((Exchange) exchange).getIn().getHeader(MinioConstants.OBJECT_NAME, String.class));
+        }
     }
 
     private InputStream getObject(String bucketName, MinioClient minioClient, String objectName) throws Exception {
@@ -280,6 +306,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                     }
                 } catch (Exception e) {
                     LOG.warn("Error getting MinioObject due: {}", e.getMessage());
+                    // this and the remaining exchanges of the batch are not processed
+                    releaseInProgress(srcObjectName, exchanges);
                     throw e;
                 }
             }
@@ -287,11 +315,19 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 public void onComplete(Exchange exchange) {
-                    processCommit(exchange);
+                    try {
+                        processCommit(exchange);
+                    } finally {
+                        inProgress.remove(srcObjectName);
+                    }
                 }
 
                 public void onFailure(Exchange exchange) {
-                    processRollback(exchange);
+                    try {
+                        processRollback(exchange);
+                    } finally {
+                        inProgress.remove(srcObjectName);
+                    }
                 }
 
                 @Override
@@ -302,6 +338,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
             getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
         }
+        // the remaining exchanges are not processed as the consumer is stopping
+        releaseInProgress(null, exchanges);
 
         return total;
     }
