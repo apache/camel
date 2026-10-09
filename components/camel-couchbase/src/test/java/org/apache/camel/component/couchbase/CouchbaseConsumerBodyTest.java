@@ -117,6 +117,9 @@ class CouchbaseConsumerBodyTest {
     private static ViewRow viewRow(String id, Object value) {
         ViewRow row = mock(ViewRow.class);
         when(row.id()).thenReturn(Optional.of(id));
+        // pins the valueAs(Class) and keyAs(Class) overloads that CouchbaseConsumer calls: if the consumer moves to
+        // another overload such as valueAs(TypeRef), stub that one here too, as an unstubbed call returns null and the
+        // tests would fail with a NullPointerException instead of a clear assertion
         when(row.valueAs(Object.class)).thenReturn(Optional.ofNullable(value));
         when(row.keyAs(String.class)).thenReturn(Optional.of(id));
         return row;
