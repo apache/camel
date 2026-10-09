@@ -2758,6 +2758,28 @@ public class Run extends CamelCommand {
     }
 
     protected int runCamelVersion(KameletMain main) throws Exception {
+        List<String> jbangArgs = createCamelVersionCommand();
+
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.command(jbangArgs);
+
+        if (verbose) {
+            printer().println(String.join(" ", jbangArgs));
+        }
+
+        if (background) {
+            return runBackgroundProcess(pb, "Camel Main");
+        } else {
+            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+            Process p = pb.start();
+            this.spawnPid = p.pid();
+            // wait for that process to exit as we run in foreground
+            return p.waitFor();
+        }
+    }
+
+    // The jbang command that runs this integration in a new JVM.
+    List<String> createCamelVersionCommand() {
         List<String> cmds;
         if (spec != null) {
             cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
@@ -2786,9 +2808,10 @@ public class Run extends CamelCommand {
         List<String> jbangArgs = new ArrayList<>();
         jbangArgs.add("jbang");
         jbangArgs.add("run");
-        if (camelVersion != null) {
-            jbangArgs.add("-Dcamel.jbang.version=" + camelVersion);
-        }
+        // without camel.jbang.version the new JVM runs the default version of the camel@apache/camel catalog
+        // script, so name the running version when no other is requested (--jvm-debug, --jvm-args, ...)
+        String version = camelVersion != null ? camelVersion : new DefaultCamelCatalog().getCatalogVersion();
+        jbangArgs.add("-Dcamel.jbang.version=" + version);
         if (kameletsVersion != null) {
             if (camelVersion != null && VersionHelper.isLE(camelVersion, "4.16.0")) {
                 jbangArgs.add("-Dcamel-kamelets.version=" + kameletsVersion);
@@ -2857,23 +2880,7 @@ public class Run extends CamelCommand {
         }
         jbangArgs.add("camel@apache/camel");
         jbangArgs.addAll(cmds);
-
-        ProcessBuilder pb = new ProcessBuilder();
-        pb.command(jbangArgs);
-
-        if (verbose) {
-            printer().println(String.join(" ", jbangArgs));
-        }
-
-        if (background) {
-            return runBackgroundProcess(pb, "Camel Main");
-        } else {
-            pb.inheritIO(); // run in foreground (with IO so logs are visible)
-            Process p = pb.start();
-            this.spawnPid = p.pid();
-            // wait for that process to exit as we run in foreground
-            return p.waitFor();
-        }
+        return jbangArgs;
     }
 
     protected int runBackground(KameletMain main) throws Exception {
