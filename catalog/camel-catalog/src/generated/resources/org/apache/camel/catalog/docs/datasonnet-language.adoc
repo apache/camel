@@ -542,10 +542,13 @@ The conversion either produces a script that gives the same result as the DataWe
 === Supported Constructs
 
 - *Header*: `%dw`, `output` (JSON, XML, CSV, Java and text; for JSON the writer properties `skipNullOn`, `indent` and
-  `encoding`), `input`, `import` of the `dw::core` modules, `var` and `fun` declarations (also with default parameters,
-  recursive and calling each other), and `type` declarations (ignored).
+  `encoding`, for XML `writeDeclaration`, `skipNullOn` (`elements`, `attributes` or `everywhere`), `indent`,
+  `encoding` and `inlineCloseOn`), `input`, `ns` namespace declarations, `import` of the `dw::core` modules, `var` and
+  `fun` declarations (also with default parameters, recursive and calling each other), and `type` declarations
+  (ignored).
 - *Selectors*: `.field`, `."quoted field"`, `[index]` (negative from the end), `[from to to]`, `["key"]`, `.*field`,
-  `..field`, `.@attribute`, `field?` and `[?(condition)]`.
+  `..field`, `..*field`, `.@attribute`, `.@` (all the attributes), `.ns#field` (in the namespace declared as `ns`),
+  `field?` and `[?(condition)]`.
 - *Mule variables and attributes*: `payload` is the message body, `vars.name` (or `vars["name"]`) an exchange variable,
   and `attributes.headers`, `attributes.queryParams` and `attributes.uriParams` message headers. `attributes.method`,
   `requestPath`, `requestUri`, `queryString`, `statusCode` and `reasonPhrase` are the corresponding Camel HTTP headers.
@@ -564,6 +567,17 @@ The conversion either produces a script that gives the same result as the DataWe
   `partition`, `firstWith` and `mergeWith`.
 - *Objects*: dynamic keys `(key): value`, conditional fields `(key: value) if condition`, and object spread
   `{ (expression) }` of an object or an array of objects.
+- *XML input*: as in DataWeave, a selector matches an element by its local name whatever its namespace prefix (such as
+  `payload.Envelope.Body` of a SOAP message), and `.ns#field` only in the given namespace. The value of an element
+  without child elements is its text (`null` when empty), `.field` of an element that repeats is the first one and
+  `.*field` all of them, and the attributes are read with `.@name` and `.@` (also of an element in a variable or
+  given to a lambda). The object functions (`keysOf`, `sizeOf`, `mapObject`, `pluck`, `entriesOf`, ...) see the child
+  elements in document order, without the attributes. In an output other than XML, an element is written as its text,
+  or as an object of its child elements, without its attributes and namespace prefixes.
+- *XML output*: attributes `key @(name: value)`, namespace-qualified keys `ns0#key` (declared on the root element),
+  `null` as an empty element, and arrays, object spreads and keys that repeat as elements that repeat, in the order of
+  the script. An element of the input is written with its child elements, attributes and namespaces; under another key
+  it gets the attributes of that key, as in DataWeave.
 - *Strings*: interpolation (`"Hello $(expression)"`, `"Hello $name"` and `$` of a lambda), and regular expressions
   `/.../` in `replace` (also with a function of the matched groups: `replace /(\d+)/ with ($[1] ++ "!")`), `contains`,
   `splitBy`, `matches`, `scan` and `find`.
@@ -577,10 +591,13 @@ The conversion either produces a script that gives the same result as the DataWe
 The expected output of the DataWeave scripts in the tests of the conversion is verified with the DataWeave CLI.
 
 These constructs are not converted (the conversion fails): the `update` operator, `try` (`dw::Runtime`), overloaded
-functions, custom modules, `as` with a custom type, XML namespaces, XML attributes in the output, and writer properties
-other than the ones listed above. The XML support is limited: an element with text is read as its text (as in
-DataWeave), but the attributes of such an element are only kept when they are selected directly (`payload.order.@id`)
-or in a lambda (`payload.orders.*order map $.@id`).
+functions, custom modules, `as` with a custom type, the `..@` selector, a namespace prefix that is not declared, and
+writer properties other than the ones listed above.
+
+A DataSonnet object can not repeat a key, so where DataWeave repeats a key in a JSON or Java output, the converted
+script gives an array of the values: for elements that repeat under the same name (in an XML input, such as
+`payload.order` with two `item` elements), and for the text of mixed content (`__text`). An XML output does repeat the
+elements.
 
 == Dependencies
 

@@ -18,6 +18,7 @@ package org.apache.camel.language.datasonnet;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -25,7 +26,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.stream.Stream;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
+
+import org.xml.sax.InputSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
@@ -40,6 +52,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -163,9 +176,52 @@ class DataWeaveCorpusTest extends CamelTestSupport {
             fail("Converted without error but fails when evaluated: " + exchange.getException().getMessage(),
                     exchange.getException());
         }
-        if (!"?".equals(expected)) {
+        if ("?".equals(expected)) {
+            return;
+        }
+        if (entry.directive("outType", JSON).endsWith("xml")) {
+            assertEquals(canonicalXml(expected), canonicalXml(actual), actual);
+        } else {
             JSONAssert.assertEquals("{\"v\":" + expected + "}", "{\"v\":" + actual + "}", true);
         }
+    }
+
+    // An XML document without its formatting: whether it has an XML declaration, and its elements with their namespace,
+    // attributes (in order of name, without the namespace declarations, which can be on another element) and text
+    private static String canonicalXml(String xml) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        String document = xml.strip();
+        StringBuilder sb = new StringBuilder(document.startsWith("<?xml") ? "<?xml?>" : "");
+        canonicalXml(factory.newDocumentBuilder().parse(new InputSource(new StringReader(document))).getDocumentElement(),
+                sb);
+        return sb.toString();
+    }
+
+    private static void canonicalXml(Element element, StringBuilder sb) {
+        sb.append('<').append(element.getTagName());
+        if (element.getNamespaceURI() != null) {
+            sb.append(" {").append(element.getNamespaceURI()).append('}');
+        }
+        Map<String, String> attributes = new TreeMap<>();
+        NamedNodeMap map = element.getAttributes();
+        for (int i = 0; i < map.getLength(); i++) {
+            Node attribute = map.item(i);
+            if (!XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(attribute.getNamespaceURI())) {
+                attributes.put(attribute.getNodeName(), attribute.getNodeValue());
+            }
+        }
+        attributes.forEach((name, value) -> sb.append(' ').append(name).append("=\"").append(value).append('"'));
+        sb.append('>');
+        for (Node child = element.getFirstChild(); child != null; child = child.getNextSibling()) {
+            if (child instanceof Element e) {
+                canonicalXml(e, sb);
+            } else if (child instanceof Text text && !text.getData().isBlank()) {
+                sb.append(text.getData().strip());
+            }
+        }
+        sb.append("</").append(element.getTagName()).append('>');
     }
 
     private Expression createExpression(Entry entry, String dataWeave) {

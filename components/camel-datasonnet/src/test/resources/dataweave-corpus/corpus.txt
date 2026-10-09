@@ -17,7 +17,8 @@
 # snippet is the output of the DataWeave CLI (dw 2.12, English locale); vars and attributes are given to dw as inputs.
 # Each entry starts with "=== <id> <title>", followed by directives and then the DataWeave script:
 #
-#   @exp <json>        the output DataWeave produces (as JSON); "?" = any output, PARSE-ERROR = invalid DataWeave
+#   @exp <json>        the output DataWeave produces (as JSON, or the XML of an XML output, compared without formatting
+#                      and namespace declarations); "?" = any output, PARSE-ERROR = invalid DataWeave
 #   @in <text>         the body (default: default.json)
 #   @inType / @outType the body and output media types (default: application/json)
 #   @vars / @headers   exchange variables / message headers as a JSON object
@@ -122,7 +123,7 @@ fun fullName(c) = c.first ++ " " ++ c.last
 }
 === H02 output xml
 @outType application/xml
-@exp ?
+@exp <?xml version='1.0' encoding='UTF-8'?><order><id>7</id><name>Ann</name></order>
 %dw 2.0
 output application/xml
 ---
@@ -163,9 +164,8 @@ output application/json
 ---
 countBy(payload.nums, (n) -> n > 2)
 === H07 ns declaration and ns-qualified key
-@unsupported XML namespaces
 @outType application/xml
-@exp ?
+@exp <?xml version='1.0' encoding='UTF-8'?><ns0:order xmlns:ns0="http://example.com/order"><id>7</id></ns0:order>
 %dw 2.0
 output application/xml
 ns ns0 http://example.com/order
@@ -681,10 +681,9 @@ payload.customer ++ { vip: true }
 === O11 quoted keys
 @exp {"first-name":"Ann"}
 { "first-name": payload.customer.first }
-=== O12 object key with ns/attrs
-@unsupported XML attributes in output
+=== O12 object key with attributes
 @outType application/xml
-@exp ?
+@exp <?xml version='1.0' encoding='UTF-8'?><order id="7"><name>Ann</name></order>
 %dw 2.0
 output application/xml
 ---
@@ -719,11 +718,201 @@ payload.order.item
 payload.orders.*order map $.@id
 === XM04 xml output with list
 @outType application/xml
-@exp ?
+@exp <?xml version='1.0' encoding='UTF-8'?><items><item>A1</item><item>B2</item><item>A1</item></items>
 %dw 2.0
 output application/xml
 ---
 { items: { (payload.items map ((i) -> { item: i.sku })) } }
+=== XM05 SOAP selectors ignore namespace prefixes
+@inType application/xml
+@in <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns0="http://example.com/orders"><soapenv:Body><ns0:getOrderResponse><ns0:order id="7"><ns0:item>apple</ns0:item></ns0:order></ns0:getOrderResponse></soapenv:Body></soapenv:Envelope>
+@exp ["7","apple"]
+[payload.Envelope.Body.getOrderResponse.order.@id, payload.Envelope.Body.getOrderResponse.order.item]
+=== XM06 namespace-qualified selectors
+@inType application/xml
+@in <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns0="http://example.com/orders"><soapenv:Body><ns0:getOrderResponse><ns0:order id="7"><ns0:item>apple</ns0:item></ns0:order></ns0:getOrderResponse></soapenv:Body></soapenv:Envelope>
+@exp ["apple","7",null]
+%dw 2.0
+output application/json
+ns o http://example.com/orders
+ns s http://schemas.xmlsoap.org/soap/envelope/
+---
+[payload.s#Envelope.s#Body.o#getOrderResponse.o#order.o#item, payload.Envelope.Body.o#getOrderResponse.order.@id, payload.s#Envelope.o#Body]
+=== XM07 element with child elements written as JSON
+@inType application/xml
+@in <order id="1"><item>apple</item><note>n</note><empty/></order>
+@exp {"order":{"item":"apple","note":"n","empty":null}}
+payload
+=== XM08 empty element, keys, size and attributes of an element
+@inType application/xml
+@in <order id="1" status="new"><item>apple</item><item>pear</item><note>n</note><empty/></order>
+@exp [null,["item","item","note","empty"],4,["apple","pear"],{"id":"1","status":"new"}]
+[payload.order.empty, keysOf(payload.order), sizeOf(payload.order), payload.order.*item, payload.order.@]
+=== XM09 elements repeated with others in between keep the document order
+@inType application/xml
+@in <a><x>1</x><y>2</y><x>3</x></a>
+@exp [["x","y","x"],["1","2","3"]]
+[keysOf(payload.a), valuesOf(payload.a)]
+=== XM10 attributes and text of the items of an implicit lambda
+@inType application/xml
+@in <orders><order id="1">a</order><order id="2">b</order></orders>
+@exp [{"id":"1","text":"a","all":{"id":"1"}},{"id":"2","text":"b","all":{"id":"2"}}]
+payload.orders.*order map { id: $.@id, text: $, all: $.@ }
+=== XM11 attributes of a lambda parameter
+@inType application/xml
+@in <orders><order id="1">a</order><order id="2">b</order></orders>
+@exp [{"id":"1","v":"a","i":0},{"id":"2","v":"b","i":1}]
+payload.orders.*order map ((o, i) -> { id: o.@id, v: o, i: i })
+=== XM12 existence of elements and attributes
+@inType application/xml
+@in <order id="1"><item>apple</item><empty/></order>
+@exp [true,false,true,true,false]
+[payload.order.item?, payload.order.missing?, payload.order.empty?, payload.order.@id?, payload.order.@missing?]
+=== XM13 object functions on an element
+@inType application/xml
+@in <order id="1"><item>apple</item><note>n</note><empty/></order>
+@exp [{"ITEM":"apple","NOTE":"n","EMPTY":null},["item","note","empty"],{"item":"apple","note":"n"},{"item":"apple","note":"n","empty":null},{"item":"apple","empty":null},{"item":"apple"},["apple","n",null]]
+[payload.order mapObject ((v, k) -> { (upper(k)): v }), payload.order pluck $$, payload.order filterObject ((v) -> v != null), { (payload.order) }, payload.order - "note", payload.order -- ["note", "empty"], valuesOf(payload.order)]
+=== XM14 entriesOf with the attributes of the elements
+@inType application/xml
+@in <order><item sku="A1">apple</item><note>n</note></order>
+@exp [{"key":"item","value":"apple","attributes":{"sku":"A1"}},{"key":"note","value":"n","attributes":{}}]
+entriesOf(payload.order)
+=== XM15 CDATA
+@inType application/xml
+@in <a><![CDATA[x < y]]></a>
+@exp "x < y"
+payload.a
+=== XM16 descendants
+@inType application/xml
+@in <orders><order><item>a</item></order><order><item>b</item><item>c</item></order></orders>
+@exp [["a","b"],["a","b","c"]]
+[payload..item, payload..*item]
+=== XM17 attributes of a variable
+@inType application/xml
+@in <order id="7"><item sku="A1">apple</item><note>n</note></order>
+@exp ["7","A1"]
+%dw 2.0
+output application/json
+var o = payload.order
+---
+[o.@id, o.item.@sku]
+=== XM18 groupBy on an element
+@inType application/xml
+@in <order><item>apple</item><item>pear</item><note>n</note></order>
+@exp {"apple":{"item":"apple"},"pear":{"item":"pear"},"n":{"note":"n"}}
+payload.order groupBy $
+=== XM19 XML to XML
+@inType application/xml
+@outType application/xml
+@in <order id="7"><item>a</item><empty/></order>
+@exp <?xml version='1.0' encoding='UTF-8'?><order id="7"><item>a</item><empty/></order>
+%dw 2.0
+output application/xml
+---
+payload
+=== XM20 SOAP body content as XML
+@inType application/xml
+@outType application/xml
+@in <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns0="http://example.com/orders"><soapenv:Body><ns0:getOrderResponse><ns0:order id="7"><ns0:item>apple</ns0:item></ns0:order></ns0:getOrderResponse></soapenv:Body></soapenv:Envelope>
+@exp <?xml version='1.0' encoding='UTF-8'?><ns0:getOrderResponse xmlns:ns0="http://example.com/orders"><ns0:order id="7"><ns0:item>apple</ns0:item></ns0:order></ns0:getOrderResponse>
+%dw 2.0
+output application/xml
+---
+payload.Envelope.Body
+=== XM21 element of the input under another key
+@inType application/xml
+@outType application/xml
+@in <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns0="http://example.com/orders"><soapenv:Body><ns0:getOrderResponse><ns0:order id="7"><ns0:item>apple</ns0:item></ns0:order></ns0:getOrderResponse></soapenv:Body></soapenv:Envelope>
+@exp <?xml version='1.0' encoding='UTF-8'?><resp><status>ok</status><order><ns0:item xmlns:ns0="http://example.com/orders">apple</ns0:item></order></resp>
+%dw 2.0
+output application/xml
+---
+{ resp: { status: "ok", order: payload.Envelope.Body.getOrderResponse.order } }
+=== XM22 attributes, null attribute and null element
+@outType application/xml
+@exp <?xml version='1.0' encoding='UTF-8'?><root><price currency="USD" none="null">10</price><flag a="true">true</flag><empty/></root>
+%dw 2.0
+output application/xml
+---
+{ root: { price @(currency: "USD", none: null): 10, flag @(a: true): true, empty: null } }
+=== XM23 skipNullOn everywhere in XML
+@outType application/xml
+@exp <?xml version='1.0' encoding='UTF-8'?><root><price currency="USD">10</price></root>
+%dw 2.0
+output application/xml skipNullOn="everywhere"
+---
+{ root: { price @(currency: "USD", none: null): 10, empty: null } }
+=== XM24 skipNullOn attributes
+@outType application/xml
+@exp <?xml version='1.0' encoding='UTF-8'?><root><price currency="USD">10</price><empty/></root>
+%dw 2.0
+output application/xml skipNullOn="attributes"
+---
+{ root: { price @(currency: "USD", none: null): 10, empty: null } }
+=== XM25 namespaces of the header in XML
+@outType application/xml
+@exp <?xml version='1.0' encoding='UTF-8'?><o:a xmlns:o="http://x" id="1"><o:b>1</o:b><c><o:d>2</o:d></c></o:a>
+%dw 2.0
+output application/xml
+ns o http://x
+---
+{ o#a @(id: 1): { o#b: "1", c: { o#d: 2 } } }
+=== XM26 writeDeclaration false
+@outType application/xml
+@exp <root><a>1</a></root>
+%dw 2.0
+output application/xml writeDeclaration=false
+---
+{ root: { a: 1 } }
+=== XM27 arrays and object spreads are elements that repeat
+@outType application/xml
+@exp <?xml version='1.0' encoding='UTF-8'?><root><head>1</head><item>A1</item><item>B2</item><item>A1</item><n>1</n><n>2</n><tail>2</tail></root>
+%dw 2.0
+output application/xml
+---
+{ root: { head: 1, (payload.items map { item: $.sku }), n: [1, 2], tail: 2 } }
+=== XM28 keys that repeat keep their order
+@outType application/xml
+@exp <?xml version='1.0' encoding='UTF-8'?><root><a>1</a><b>2</b><a>3</a></root>
+%dw 2.0
+output application/xml
+---
+{ root: { a: 1, b: 2, a: 3 } }
+=== XM29 repeated elements with attributes from XML
+@inType application/xml
+@outType application/xml
+@in <orders><order id="1"><item>a</item></order><order id="2"><item>b</item></order></orders>
+@exp <?xml version='1.0' encoding='UTF-8'?><ids><id n="0">1</id><id n="1">2</id></ids>
+%dw 2.0
+output application/xml
+---
+{ ids: { (payload.orders.*order map { id @(n: $$): $.@id }) } }
+=== XM30 copy of an element with an extra element
+@inType application/xml
+@outType application/xml
+@in <order id="7"><item>a</item><item>b</item><note>n</note></order>
+@exp <?xml version='1.0' encoding='UTF-8'?><copy><item>a</item><item>b</item><note>n</note><extra>x</extra></copy>
+%dw 2.0
+output application/xml
+---
+{ copy: { (payload.order), extra: "x" } }
+=== XM31 element of the input under a key with attributes
+@inType application/xml
+@outType application/xml
+@in <orders><order id="1"><item>a</item></order></orders>
+@exp <?xml version='1.0' encoding='UTF-8'?><x n="1"><item>a</item></x>
+%dw 2.0
+output application/xml
+---
+{ x @(n: "1"): payload.orders.order }
+=== XM32 empty object and array, numbers and escaping in XML
+@outType application/xml
+@exp <?xml version='1.0' encoding='UTF-8'?><root><e/><ea/><n>1.5</n><t>true</t><s>x &amp; y &lt; z</s></root>
+%dw 2.0
+output application/xml
+---
+{ root: { e: {}, ea: [], n: 1.50, t: true, s: "x & y < z" } }
 === CS01 csv input
 @inType application/csv
 @in name,age\nann,30\nbob,40

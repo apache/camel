@@ -34,10 +34,11 @@ public sealed interface DataWeaveAst {
 
     /**
      * The header directives. {@code outputProperties} are the writer properties of the output directive (such as
-     * {@code skipNullOn}), and {@code imports} the imported module paths (such as {@code dw::core::Strings}).
+     * {@code skipNullOn}), {@code imports} the imported module paths (such as {@code dw::core::Strings}), and
+     * {@code namespaces} the URIs of the declared XML namespace prefixes ({@code ns prefix uri}).
      */
     record Header(String version, String outputType, Map<String, String> outputProperties, List<InputDecl> inputs,
-            List<String> imports)
+            List<String> imports, Map<String, String> namespaces)
             implements
                 DataWeaveAst {
     }
@@ -91,11 +92,21 @@ public sealed interface DataWeaveAst {
     /**
      * An object entry {@code key: value}, where a {@code dynamic} key is an expression ({@code (expr): value}). A
      * {@code null} key is an object spread {@code (expr)}, which adds the entries of an object (or array of objects).
-     * The {@code condition} of a conditional entry {@code (key: value) if cond} is null for an unconditional entry.
+     * The {@code condition} of a conditional entry {@code (key: value) if cond} is null for an unconditional entry, and
+     * the {@code attributes} are the XML attributes of the key ({@code key @(name: value): ...}).
      */
-    record ObjectEntry(DataWeaveAst key, DataWeaveAst value, boolean dynamic, DataWeaveAst condition)
+    record ObjectEntry(DataWeaveAst key, DataWeaveAst value, boolean dynamic, DataWeaveAst condition,
+            List<ObjectEntry> attributes)
             implements
                 DataWeaveAst {
+
+        public ObjectEntry(DataWeaveAst key, DataWeaveAst value, boolean dynamic, DataWeaveAst condition) {
+            this(key, value, dynamic, condition, List.of());
+        }
+    }
+
+    /** A name in an XML namespace: {@code prefix#name}, with the prefix declared in the header. */
+    record QName(String prefix, String name) implements DataWeaveAst {
     }
 
     record ArrayLit(List<DataWeaveAst> elements) implements DataWeaveAst {
@@ -120,12 +131,26 @@ public sealed interface DataWeaveAst {
     record AttributeAccess(DataWeaveAst object, String attribute) implements DataWeaveAst {
     }
 
+    /** Attributes selector {@code .@}: all the attributes of an XML element. */
+    record AllAttributes(DataWeaveAst object) implements DataWeaveAst {
+    }
+
+    /** Single-value selector of an element in an XML namespace {@code .prefix#field}. */
+    record QualifiedFieldAccess(DataWeaveAst object, String prefix, String field) implements DataWeaveAst {
+    }
+
     /** Multi-value selector {@code .*field}. */
     record MultiValueSelector(DataWeaveAst object, String field) implements DataWeaveAst {
     }
 
-    /** Descendants selector {@code ..field}. */
-    record DescendantSelector(DataWeaveAst object, String field) implements DataWeaveAst {
+    /**
+     * Descendants selector {@code ..field}, or {@code ..*field} (multi) for all the values of an XML element that
+     * repeats.
+     */
+    record DescendantSelector(DataWeaveAst object, String field, boolean multi) implements DataWeaveAst {
+        DescendantSelector(DataWeaveAst object, String field) {
+            this(object, field, false);
+        }
     }
 
     /** Index or dynamic key selector {@code [expr]}; the index is a {@link Range} for {@code [a to b]}. */
