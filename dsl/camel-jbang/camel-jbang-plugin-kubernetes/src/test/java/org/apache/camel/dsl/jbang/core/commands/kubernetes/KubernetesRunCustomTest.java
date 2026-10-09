@@ -161,15 +161,12 @@ class KubernetesRunCustomTest {
     }
 
     @Test
-    @SetEnvironmentVariable(key = "MINIKUBE_ACTIVE_DOCKERD", value = "foo")
-    @SetEnvironmentVariable(key = "DOCKER_TLS_VERIFY", value = "foo")
     public void explicitMinikubeClusterTypeShouldApplyDefaults() throws Exception {
-        // Even without auto-detection (minikube env vars are set but ignored because clusterType is explicit),
-        // passing --cluster-type=minikube should still apply the minikube defaults:
+        // The cluster is not detected as minikube (no minikube node, no minikube docker-env),
+        // but passing --cluster-type=minikube should still apply the minikube defaults:
         // imageBuilder=docker and imagePush=false.
         KubernetesHelper.setKubernetesClient(client);
-        setupServerExpectsMinikube();
-        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
+        KubernetesRun command = createCommandKeepingImagePush(List.of("classpath:route.yaml"),
                 "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
                 "--cluster-type=minikube");
         int exit = command.doCall();
@@ -199,6 +196,24 @@ class KubernetesRunCustomTest {
         // The explicit --cluster-type must be preserved, not overridden by Minikube auto-detection.
         Assertions.assertEquals(ClusterType.OPENSHIFT.name().toLowerCase(), command.clusterType.toLowerCase(),
                 printer.getOutput());
+    }
+
+    @Test
+    public void explicitK3sClusterTypeShouldOutputKubernetesManifest() throws Exception {
+        // K3S is built with the kubernetes-maven-plugin, which writes kubernetes.yml (not k3s.yml)
+        KubernetesHelper.setKubernetesClient(client);
+        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
+                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
+                "--cluster-type=k3s");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit, printer.getOutput());
+        Assertions.assertEquals(ClusterType.K3S.name().toLowerCase(), command.clusterType.toLowerCase());
+
+        var manifest = KubernetesBaseTestSupport.getKubernetesManifestAsStream(printer.getOutput(), command.output);
+        List<HasMetadata> resources = client.load(manifest).items();
+        // expects Service, Deployment manifests in kubernetes.yml
+        Assertions.assertEquals(2, resources.size());
     }
 
     @Test
@@ -340,6 +355,13 @@ class KubernetesRunCustomTest {
     }
 
     private KubernetesRun createCommand(List<String> files, String... args) {
+        KubernetesRun command = createCommandKeepingImagePush(files, args);
+        command.imagePush = false;
+        return command;
+    }
+
+    // keeps --image-push as given (or not set), so that the defaults of the cluster type apply to it
+    private KubernetesRun createCommandKeepingImagePush(List<String> files, String... args) {
         var argsArr = Optional.ofNullable(args).orElse(new String[0]);
         var argsLst = new ArrayList<>(Arrays.asList(argsArr));
         var jbangMain = new CamelJBangMain().withPrinter(printer);
@@ -351,7 +373,6 @@ class KubernetesRunCustomTest {
         };
         CommandLine.populateCommand(command, argsLst.toArray(new String[0]));
         command.imageBuild = false;
-        command.imagePush = false;
         return command;
     }
 

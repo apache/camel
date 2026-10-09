@@ -156,9 +156,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "The image registry group used to push images to.")
     String imageGroup;
 
-    @CommandLine.Option(names = { "--image-builder" }, defaultValue = "jib",
-                        description = "The image builder used to build the container image (e.g. docker, jib, s2i).")
-    String imageBuilder = "jib";
+    // no default value, so that detectCluster() can tell an explicit value from the default
+    @CommandLine.Option(names = { "--image-builder" },
+                        description = "The image builder used to build the container image (e.g. docker, jib, s2i)."
+                                      + " Default is jib, or docker on Minikube unless --disable-auto is set.")
+    String imageBuilder;
 
     @CommandLine.Option(names = { "--cluster-type" },
                         completionCandidates = ClusterTypeCompletionCandidates.class,
@@ -170,9 +172,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Whether to build container image as part of the run.")
     boolean imageBuild = true;
 
-    @CommandLine.Option(names = { "--image-push" }, defaultValue = "true",
-                        description = "Whether to push image to given image registry as part of the run.")
-    boolean imagePush = true;
+    // no default value, so that detectCluster() can tell an explicit value from the default
+    @CommandLine.Option(names = { "--image-push" },
+                        description = "Whether to push image to given image registry as part of the run."
+                                      + " Default is true, or false on Minikube with the docker image builder unless --disable-auto is set.")
+    Boolean imagePush;
 
     @CommandLine.Option(names = { "--image-platform" },
                         description = "List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).")
@@ -283,6 +287,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     private CamelContext devModeContext;
     private Thread devModeShutdownTask;
     private int devModeReloadCount;
+    // detectCluster() runs again on every dev mode reload, the Minikube docker-env hint is printed only once
+    private boolean dockerEnvHintPrinted;
 
     private KubernetesPodLogs reusablePodLogs;
     private Printer quietPrinter;
@@ -806,8 +812,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
         return 0;
     }
 
-    private void detectCluster() {
-        if (!disableAuto && clusterType == null) {
+    void detectCluster() {
+        boolean explicitClusterType = clusterType != null;
+        if (!disableAuto && !explicitClusterType) {
             if (verbose) {
                 printer().print("Automatic Kubernetes cluster detection... ");
             }
@@ -820,15 +827,36 @@ public class KubernetesRun extends KubernetesBaseCommand {
             this.clusterType = ClusterType.KUBERNETES.name();
         }
         if (!disableAuto) {
-            // Apply per-cluster defaults for the resolved cluster type (explicit or detected)
+            // Apply per-cluster defaults for the resolved cluster type (explicit or detected),
+            // but keep the image options the user has set
             if (ClusterType.MINIKUBE.isEqualTo(clusterType)) {
-                this.imageBuilder = "docker";
-                this.imagePush = false;
+                if (imageBuilder == null) {
+                    this.imageBuilder = "docker";
+                }
+                // the docker builder builds straight into the Minikube Docker daemon, so there is nothing to push;
+                // other builders (jib) still push, as the image would otherwise not reach the cluster
+                if (imagePush == null && "docker".equals(imageBuilder)) {
+                    this.imagePush = false;
+                }
+                // the detection only returns Minikube when its Docker environment is active, and tells the user otherwise
+                if (explicitClusterType && !dockerEnvHintPrinted && imageBuild && output == null
+                        && "docker".equals(imageBuilder)
+                        && Boolean.FALSE.equals(imagePush) && !KubernetesHelper.isMinikubeDockerEnv()) {
+                    printer().println("The Minikube Docker environment is not active: run \"eval $(minikube docker-env)\""
+                                      + " so that the image is built in the Docker daemon of Minikube.");
+                    dockerEnvHintPrinted = true;
+                }
             } else if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
                 if (ObjectHelper.isEmpty(imageGroup)) {
                     this.imageGroup = client().getNamespace();
                 }
             }
+        }
+        if (imageBuilder == null) {
+            this.imageBuilder = "jib";
+        }
+        if (imagePush == null) {
+            this.imagePush = true;
         }
     }
 
