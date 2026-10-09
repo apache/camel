@@ -603,7 +603,7 @@ class AiPanelAcpTest {
         ask(panel, "hi");
         awaitIdle(panel);
         String prompt = promptText(agent.received("session/prompt").get(0));
-        assertTrue(prompt.contains("only with camel_write_file"), prompt);
+        assertTrue(prompt.contains("only with camel_edit_file or camel_write_file"), prompt);
         assertTrue(prompt.contains("/write live"), prompt);
     }
 

@@ -2209,6 +2209,9 @@ The authoring set has a new tool, `camel_edit_file`: it replaces one snippet of 
 and what to put there, and validates and reloads the result as a write does. A model that rewrites a whole file to
 change one step corrupts the lines it did not mean to touch, so this is the tool for a change to an existing file;
 `camel_write_file` writes a new one.
+Several places of one file are changed in one call with its `edits` argument (a list of find and replace), so the
+file is written and reloaded once, not half done in between. A write or an edit whose route sends to a `direct:`
+endpoint no route consumes yet answers with a note saying so.
 
 `camel_eval_expression` evaluates any language, not only the ones on the server's own classpath: the component of
 a language such as `jsonpath`, `jq` or `xpath` is downloaded on first use, as `camel run` downloads what a route

@@ -85,7 +85,12 @@ public class AskTools {
             } else {
                 Map<String, JsonObject> props = new LinkedHashMap<>();
                 for (ToolDescriptor.Param p : td.params()) {
-                    props.put(p.name(), stringProp(p.description()));
+                    JsonObject prop = stringProp(p.description());
+                    if (p.items() != null) {
+                        prop.put("type", "array");
+                        prop.put("items", p.items());
+                    }
+                    props.put(p.name(), prop);
                 }
                 params = objectParams(props);
             }
@@ -143,7 +148,10 @@ public class AskTools {
                 if (args != null) {
                     for (String key : args.keySet()) {
                         Object val = args.get(key);
-                        if (val != null) {
+                        if (val instanceof Map<?, ?> || val instanceof List<?>) {
+                            // e.g. the edits of camel_edit_file: the shared tools read JSON
+                            argMap.put(key, Jsoner.serialize(val));
+                        } else if (val != null) {
                             argMap.put(key, val.toString());
                         }
                     }

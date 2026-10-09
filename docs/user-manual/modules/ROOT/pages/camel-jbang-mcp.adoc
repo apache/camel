@@ -354,6 +354,11 @@ project `directory` as an argument, the runtime tools take the integration `name
   Validated and reloaded as a write is, and the answer says at which line it changed. A model that rewrites a whole
   file to add one step corrupts the lines it did not mean to touch, so this is the tool for a change to an existing
   file; `camel_write_file` writes a new one.
+  A change to several places of one file goes in one call, as `edits` (a list of find and replace, applied in
+  order): the file is validated, written and reloaded once, never half done, and when one of them does not match
+  the file is not changed and the answer says which. A route that sends to a `direct:` endpoint no route consumes
+  yet gets a note in the answer: in dev mode the messages sent there wait for the route, and the reload that adds it
+  cuts them off, so the route belongs in the same call.
 
 | `camel_run`
 | Starts an integration from a project directory with `camel run --source-dir` in a separate process, in dev

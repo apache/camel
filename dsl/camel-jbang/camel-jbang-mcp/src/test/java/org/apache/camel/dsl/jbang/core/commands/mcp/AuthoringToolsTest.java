@@ -109,6 +109,24 @@ class AuthoringToolsTest {
                 .isInstanceOf(ToolCallException.class).hasMessageContaining("directory is required");
     }
 
+    /** CAMEL-25501: several places of one file in one call, written once. */
+    @Test
+    void severalEditsOfOneFileAreWrittenOnce(@TempDir Path dir) throws Exception {
+        String route = "- route:\n    from:\n      uri: timer:tick\n      steps:\n        - log:\n            message: hi\n"
+                       + "        - log:\n            message: bye\n";
+        Files.writeString(dir.resolve("demo.camel.yaml"), route, StandardCharsets.UTF_8);
+
+        JsonObject edited = tools.camel_edit_file(dir.toString(), "demo.camel.yaml", null, null,
+                List.of(new AuthoringTools.FileEdit("message: hi", "message: hello"),
+                        new AuthoringTools.FileEdit("message: bye", "message: goodbye")),
+                null);
+
+        assertThat(edited.getString("status")).isEqualTo("edited");
+        assertThat(edited.getInteger("edits")).isEqualTo(2);
+        assertThat(Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8))
+                .contains("message: hello").contains("message: goodbye");
+    }
+
     @Test
     void anUnknownIntegrationNameIsAnError() {
         assertThatThrownBy(() -> tools.camel_eval_expression("${body}", null, "camel", "no-such-app-xyz-1"))

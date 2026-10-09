@@ -249,7 +249,7 @@ told what became of it with your next question.
 
 An edit (`camel_edit_file`, which the agent uses to change a file without rewriting it) goes the same way: the
 snippet is replaced in the file's content and the result is confirmed or replayed like any write, so what you see
-in the editor is the finished file either way.
+in the editor is the finished file either way. An edit with several changes (`edits`) is one change to confirm.
 
 While the replay pauses you can also ask the agent about the change it just made: *F8* opens the AI panel
 with the question prefilled (`About edit 2 of 3:`), in a compact panel that leaves the edit in view (*Shift+F8*
