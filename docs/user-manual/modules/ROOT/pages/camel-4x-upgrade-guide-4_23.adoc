@@ -4854,6 +4854,19 @@ The `cancelCorrelationId` method of `org.apache.camel.component.jms.reply.ReplyM
 a `boolean`: `true` if the pending reply was cancelled, `false` if the request timeout or the reply had already taken
 it. A custom `ReplyManager` implementation has to change the return type.
 
+=== camel-milo - potential breaking change
+
+Since 4.16, the `samplingInterval` default of 0.0 was ignored and milo's own `OpcUaMonitoredItem` default of 1000 ms
+was used. Now the parameter is used again, but the default is changed to 1000.0 to take the previous behaviour
+(starting with 4.16) into account.
+The same applies to a configured `requestedPublishingInterval` or data-change filter, which now take effect.
+The parameter `requestedPublishingInterval` is now part of the cache key, resulting in multiple clients for different
+values set.
+
+The parameter `dataChangeFilterDeadbandType` changes type from `UInteger` to `Integer`.
+This changes the public `MonitorFilterConfiguration` getter/setter and the endpoint-DSL builder method, so Java code
+passing a `UInteger` will no longer compile.
+
 == ThrottlingExceptionRoutePolicy
 
 `ThrottlingExceptionRoutePolicy.setKeepOpen(true)` now opens the circuit immediately and synchronously (the consumer
