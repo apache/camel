@@ -1115,13 +1115,13 @@ public final class AuthoringTools {
             // written with problems the file already had: said, so they are not taken for fixed
             result.put("existingProblems", new JsonArray(problemsBefore));
         }
-        String waiting = null;
+        UnconsumedDirect waiting = null;
         if (validate) {
             putKameletNotes(result, file, content);
-            waiting = unconsumedDirectNote(dir, file, content, ctx.catalog());
+            waiting = unconsumedDirect(dir, file, content, ctx.catalog());
             if (waiting != null) {
                 JsonArray notes = result.get("notes") instanceof JsonArray existing ? existing : new JsonArray();
-                notes.add(waiting);
+                notes.add(waiting.note());
                 result.put("notes", notes);
             }
         }
@@ -1141,8 +1141,7 @@ public final class AuthoringTools {
                                   + " integration for the change to take effect.");
         }
         if (waiting != null) {
-            result.put("message", result.getString("message") + " Note: " + waiting.substring(0, waiting.indexOf(" ("))
-                                  + " (see notes).");
+            result.put("message", result.getString("message") + " Note: " + waiting.summary() + " (see notes).");
         }
         return result;
     }
@@ -1155,7 +1154,7 @@ public final class AuthoringTools {
      * wait for it, and the reload that adds it cuts them off. Said at the write, the next change goes in one call with
      * camel_edit_file edits (CAMEL-25501). Null when there is none.
      */
-    public static String unconsumedDirectNote(Path dir, String file, String content, CamelCatalog catalog) {
+    public static UnconsumedDirect unconsumedDirect(Path dir, String file, String content, CamelCatalog catalog) {
         String name = file != null ? file.toLowerCase(Locale.ROOT) : "";
         if (!(name.endsWith(".yaml") || name.endsWith(".yml")) || name.endsWith(".kamelet.yaml")
                 || name.endsWith(".kamelet.yml")) {
@@ -1176,12 +1175,19 @@ public final class AuthoringTools {
         if (endpoints.isEmpty()) {
             return null;
         }
-        String list = String.join(", ", endpoints);
-        return list + (endpoints.size() == 1 ? " has" : " have") + " no route consuming "
-               + (endpoints.size() == 1 ? "it" : "them") + " yet (not in this file, nor in the other route files):"
-               + " in dev mode the messages sent there wait for one, and are cut off when a later save reloads this"
-               + " route. If the route goes in this file, add it together with the change that sends to it, in one"
-               + " camel_edit_file call with edits; if it goes in another file, write that file next.";
+        String summary = String.join(", ", endpoints) + (endpoints.size() == 1 ? " has" : " have")
+                         + " no route consuming " + (endpoints.size() == 1 ? "it" : "them") + " yet";
+        return new UnconsumedDirect(
+                summary, summary + " (not in this file, nor in the other route files):"
+                         + " in dev mode the messages sent there wait for one, and are cut off when a later save reloads this"
+                         + " route. If the route goes in this file, add it together with the change that sends to it, in one"
+                         + " camel_edit_file call with edits; if it goes in another file, write that file next.");
+    }
+
+    /**
+     * The direct: endpoints no route consumes yet: the short summary for the message, and the whole note.
+     */
+    public record UnconsumedDirect(String summary, String note) {
     }
 
     /**

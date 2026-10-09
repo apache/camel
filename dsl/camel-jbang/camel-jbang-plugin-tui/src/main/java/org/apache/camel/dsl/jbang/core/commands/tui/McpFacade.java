@@ -1389,9 +1389,9 @@ class McpFacade {
         result.put("lines", lines);
         result.put("bytes", content.getBytes(StandardCharsets.UTF_8).length);
         // a route sending to a direct: endpoint no route consumes yet: its route goes in the same call (CAMEL-25501)
-        String waiting = AuthoringTools.unconsumedDirectNote(dir, file, content, null);
+        AuthoringTools.UnconsumedDirect waiting = AuthoringTools.unconsumedDirect(dir, file, content, null);
         if (waiting != null) {
-            result.put("notes", new JsonArray(List.of(waiting)));
+            result.put("notes", new JsonArray(List.of(waiting.note())));
         }
         return result;
     }
