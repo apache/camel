@@ -291,7 +291,7 @@ camel kubernetes run * --runtime=spring-boot
 ----
 
 On Minikube the image is built with Docker straight into the Minikube Docker daemon, so nothing is pushed
-(unless you set `--image-builder` or `--image-push`).
+(unless you set `--image-push`). If you set another `--image-builder`, such as `jib`, the image is pushed as on any other cluster.
 Minikube is only detected when its Docker environment is active (`eval $(minikube docker-env)`);
 with `--cluster-type=minikube`, `run` prints a hint when it is not.
 

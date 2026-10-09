@@ -102,8 +102,30 @@ class KubernetesRunClusterTypeTest {
 
         Assertions.assertTrue(ClusterType.MINIKUBE.isEqualTo(command.clusterType), command.clusterType);
         Assertions.assertEquals("jib", command.imageBuilder);
-        // not set by the user: the minikube default applies
+        // not set by the user: the minikube no-push default only applies to the docker builder, a jib image is pushed
+        Assertions.assertTrue(command.imagePush);
+    }
+
+    @Test
+    @ClearEnvironmentVariable(key = "MINIKUBE_ACTIVE_DOCKERD")
+    @ClearEnvironmentVariable(key = "DOCKER_TLS_VERIFY")
+    void explicitMinikubeWithoutImageBuildPrintsNoHint() {
+        KubernetesRun command = detectCluster("--cluster-type=minikube", "--image-build=false");
+
+        Assertions.assertEquals("docker", command.imageBuilder);
         Assertions.assertFalse(command.imagePush);
+        Assertions.assertFalse(printer.getOutput().contains(DOCKER_ENV_HINT), printer.getOutput());
+    }
+
+    @Test
+    @ClearEnvironmentVariable(key = "MINIKUBE_ACTIVE_DOCKERD")
+    @ClearEnvironmentVariable(key = "DOCKER_TLS_VERIFY")
+    void explicitMinikubeWithOutputPrintsNoHint() {
+        KubernetesRun command = detectCluster("--cluster-type=minikube", "--output=yaml");
+
+        Assertions.assertEquals("docker", command.imageBuilder);
+        Assertions.assertFalse(command.imagePush);
+        Assertions.assertFalse(printer.getOutput().contains(DOCKER_ENV_HINT), printer.getOutput());
     }
 
     @Test

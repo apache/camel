@@ -175,7 +175,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     // no default value, so that detectCluster() can tell an explicit value from the default
     @CommandLine.Option(names = { "--image-push" },
                         description = "Whether to push image to given image registry as part of the run."
-                                      + " Default is true, or false on Minikube unless --disable-auto is set.")
+                                      + " Default is true, or false on Minikube with the docker image builder unless --disable-auto is set.")
     Boolean imagePush;
 
     @CommandLine.Option(names = { "--image-platform" },
@@ -831,12 +831,14 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 if (imageBuilder == null) {
                     this.imageBuilder = "docker";
                 }
-                if (imagePush == null) {
+                // the docker builder builds straight into the Minikube Docker daemon, so there is nothing to push;
+                // other builders (jib) still push, as the image would otherwise not reach the cluster
+                if (imagePush == null && "docker".equals(imageBuilder)) {
                     this.imagePush = false;
                 }
                 // the detection only returns Minikube when its Docker environment is active, and tells the user otherwise
-                if (explicitClusterType && "docker".equals(imageBuilder) && !imagePush
-                        && !KubernetesHelper.isMinikubeDockerEnv()) {
+                if (explicitClusterType && imageBuild && output == null && "docker".equals(imageBuilder)
+                        && Boolean.FALSE.equals(imagePush) && !KubernetesHelper.isMinikubeDockerEnv()) {
                     printer().println("The Minikube Docker environment is not active: run \"eval $(minikube docker-env)\""
                                       + " so that the image is built in the Docker daemon of Minikube.");
                 }

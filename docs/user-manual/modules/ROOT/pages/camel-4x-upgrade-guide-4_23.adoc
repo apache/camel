@@ -1914,9 +1914,10 @@ file; a Java file is saved and its problems are shown.
 
 `camel kubernetes run --cluster-type=<type>` now uses the given cluster type. Before, unless `--disable-auto` was set,
 the detected cluster type (OpenShift, Minikube or Kubernetes) replaced it, together with its image settings. The
-defaults of the cluster type still apply, also to an explicit type (Minikube: `--image-builder=docker` and
-`--image-push=false`; OpenShift: the current namespace as `--image-group`), but they no longer replace an
-`--image-builder` or `--image-push` that you set, also when Minikube is detected. `--disable-auto` turns off both the
+defaults of the cluster type still apply, also to an explicit type (Minikube: `--image-builder=docker` and, with the
+docker builder, `--image-push=false`; OpenShift: the current namespace as `--image-group`), but they no longer replace
+an `--image-builder` or `--image-push` that you set, also when Minikube is detected. With another builder on Minikube,
+such as `--image-builder=jib`, the image is pushed by default. `--disable-auto` turns off both the
 detection and the defaults, as before.
 
 === camel-jbang (MCP servers)
