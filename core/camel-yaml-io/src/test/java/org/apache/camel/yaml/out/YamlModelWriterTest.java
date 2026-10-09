@@ -41,6 +41,8 @@ import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.InterceptFromDefinition;
+import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.KameletDefinition;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.LogDefinition;
@@ -381,6 +383,18 @@ public class YamlModelWriterTest {
         InterceptDefinition intercept = new InterceptDefinition();
         intercept.addOutput(new LogDefinition("intercepted"));
         config.getIntercepts().add(intercept);
+
+        OnCompletionDefinition onCompletion = new OnCompletionDefinition();
+        onCompletion.addOutput(new LogDefinition("completed"));
+        config.getOnCompletions().add(onCompletion);
+
+        InterceptFromDefinition interceptFrom = new InterceptFromDefinition("direct*");
+        interceptFrom.addOutput(new LogDefinition("intercepted from"));
+        config.getInterceptFroms().add(interceptFrom);
+
+        InterceptSendToEndpointDefinition interceptSendTo = new InterceptSendToEndpointDefinition("mock*");
+        interceptSendTo.addOutput(new LogDefinition("intercepted send"));
+        config.getInterceptSendTos().add(interceptSendTo);
 
         JsonObject jo = writer.writeRouteConfigurationDefinition(config);
         String out = writer.printAsYaml(List.of(jo));

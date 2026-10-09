@@ -19,15 +19,34 @@
     customId: true
     id: myConfig
     onException:
-      - exception:
-          - java.lang.Exception
-        handled:
-          constant:
-            expression: "true"
-        steps:
-          - to:
-              uri: mock:error
+      - onException:
+          exception:
+            - java.lang.Exception
+          handled:
+            constant:
+              expression: "true"
+          steps:
+            - to:
+                uri: mock:error
+    onCompletion:
+      - onCompletion:
+          steps:
+            - log:
+                message: completed
+    interceptSendToEndpoint:
+      - interceptSendToEndpoint:
+          uri: mock*
+          steps:
+            - log:
+                message: intercepted send
+    interceptFrom:
+      - interceptFrom:
+          uri: direct*
+          steps:
+            - log:
+                message: intercepted from
     intercept:
-      - steps:
-          - log:
-              message: intercepted
+      - intercept:
+          steps:
+            - log:
+                message: intercepted
