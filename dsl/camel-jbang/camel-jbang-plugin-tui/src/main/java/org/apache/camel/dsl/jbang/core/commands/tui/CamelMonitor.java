@@ -1491,13 +1491,16 @@ public class CamelMonitor extends CamelCommand {
         boolean catalogFilterActive = tabRegistry.selectedTabIndex() == TAB_MORE
                 && tabRegistry.getActiveMoreTab() == tabRegistry.catalogTab()
                 && tabRegistry.catalogTab().isFilterInputActive();
-        boolean semanticInputActive = tabRegistry.selectedTabIndex() == TAB_MORE
-                && tabRegistry.getActiveMoreTab() == tabRegistry.semanticTab()
-                && tabRegistry.semanticTab().isInputActive();
         boolean filesBrowserTextActive = filesBrowser.isVisible() && filesBrowser.isSourceViewerTextInputActive();
         return probeEditing || sourceSearchActive || logSearchActive || spanFilterActive
                 || beanFilterActive || classpathFilterActive || mavenDepsFilterActive || sqlInputActive
-                || catalogFilterActive || semanticInputActive || filesBrowserTextActive;
+                || catalogFilterActive || isSemanticInputActive() || filesBrowserTextActive;
+    }
+
+    private boolean isSemanticInputActive() {
+        return tabRegistry.selectedTabIndex() == TAB_MORE
+                && tabRegistry.getActiveMoreTab() == tabRegistry.semanticTab()
+                && tabRegistry.semanticTab().isInputActive();
     }
 
     /**
@@ -1578,7 +1581,7 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
-        if (ke.hasCtrl() && ke.isCharIgnoreCase('l') && !isTextInputActive()) {
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('l') && !isSemanticInputActive()) {
             if (!logPinned) {
                 logPinned = true;
                 logPinAnim.reset(0);

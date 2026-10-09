@@ -723,6 +723,29 @@ class SemanticTabTest {
     }
 
     @Test
+    void logPinRemainsAvailableWhileOtherScreensHaveInputFocus() throws Exception {
+        try (var runtime = new Runtime()) {
+            var log = mock(LogTab.class);
+            when(log.isSearchInputActive()).thenReturn(true);
+            var registry = mock(TabRegistry.class);
+            when(registry.selectedTabIndex()).thenReturn(TabRegistry.TAB_LOG);
+            when(registry.logTab()).thenReturn(log);
+            when(registry.activeTab()).thenReturn(log);
+            var monitor = new CamelMonitor(new CamelJBangMain(), getClass().getClassLoader());
+            var registryField = CamelMonitor.class.getDeclaredField("tabRegistry");
+            registryField.setAccessible(true);
+            registryField.set(monitor, registry);
+            var contextField = CamelMonitor.class.getDeclaredField("ctx");
+            contextField.setAccessible(true);
+            contextField.set(monitor, runtime);
+            var global = CamelMonitor.class.getDeclaredMethod("handleGlobalKeys", KeyEvent.class, TuiRunner.class);
+            global.setAccessible(true);
+            assertThat(global.invoke(monitor, KeyEvent.ofChar('l', KeyModifiers.CTRL), null)).isEqualTo(true);
+            assertThat(runtime.logPinned).isTrue();
+        }
+    }
+
+    @Test
     void operationDraftsAndExplicitParameterCopiesSurviveSwitching() throws Exception {
         try (var runtime = new Runtime()) {
             JsonObject overview = (JsonObject) Jsoner.deserialize(OVERVIEW);
