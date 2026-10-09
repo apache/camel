@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 // DataWeave semantics for DataSonnet, used by the DataWeave to DataSonnet conversion (camel-dataweave).
-// Import with: local dw = import 'dataweave.libsonnet';
+// Import with: local dw = import 'camel-dataweave.libsonnet';
 //
 // In DataWeave a missing field, an index out of range and a selector on null give null, a field selector on an
 // array selects the field of every element, and most functions accept null. In Jsonnet these are errors.

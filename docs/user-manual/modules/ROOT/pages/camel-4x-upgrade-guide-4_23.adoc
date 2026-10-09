@@ -4971,7 +4971,7 @@ The conversion also follows the DataWeave semantics more closely, which changes 
 scripts that were converted before. For example, a selector on a missing field now gives `null` (as
 in DataWeave) instead of failing, `default` applies to missing fields, and a field selector on an array
 selects the field of every element. Unknown functions and variables are no longer passed through
-unchanged, but fail the conversion. The converted scripts use the new `dataweave.libsonnet` library of
+unchanged, but fail the conversion. The converted scripts use the new `camel-dataweave.libsonnet` library of
 `camel-datasonnet`, so DataSonnet scripts generated with `camel transform dataweave` need
 `camel-datasonnet` 4.23 or newer.
 

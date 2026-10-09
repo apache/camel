@@ -71,7 +71,7 @@ import org.apache.camel.component.dataweave.DataWeaveAst.VarDecl;
 /**
  * Converts DataWeave 2.0 scripts to DataSonnet.
  * <p>
- * The generated DataSonnet keeps the DataWeave semantics with the {@code dataweave.libsonnet} library of the
+ * The generated DataSonnet keeps the DataWeave semantics with the {@code camel-dataweave.libsonnet} library of the
  * camel-datasonnet component (imported as {@code dw}): a selector on a missing field, an index out of range or a
  * {@code null} value gives {@code null}, a selector on an array selects from every element, {@code default} applies to
  * missing values, the core functions accept {@code null}, and so on.
@@ -82,7 +82,7 @@ import org.apache.camel.component.dataweave.DataWeaveAst.VarDecl;
  */
 public class DataWeaveConverter {
 
-    private static final String DW_IMPORT = "local dw = import 'dataweave.libsonnet';\n";
+    private static final String DW_IMPORT = "local dw = import 'camel-dataweave.libsonnet';\n";
 
     private static final Set<String> JSONNET_RESERVED = Set.of(
             "assert", "else", "error", "false", "for", "function", "if", "import", "importstr", "importbin", "in",
@@ -123,7 +123,7 @@ public class DataWeaveConverter {
             "substringAfterLast", "substringBefore", "substringBeforeLast", "underscore", "unwrap", "withMaxSize",
             "wrapIfMissing", "wrapWith");
 
-    // Functions of dataweave.libsonnet, by the number of arguments
+    // Functions of camel-dataweave.libsonnet, by the number of arguments
     private static final Set<String> LIB_FUNCTIONS_1 = Set.of(
             "upper", "lower", "trim", "sizeOf", "isEmpty", "isBlank", "typeOf", "flatten", "keysOf", "namesOf",
             "valuesOf", "entriesOf", "sum", "avg", "min", "max", "abs", "round", "isEven", "isOdd", "isInteger",
@@ -200,7 +200,7 @@ public class DataWeaveConverter {
         return convertedCount;
     }
 
-    /** Whether the converted DataSonnet imports {@code dataweave.libsonnet}. */
+    /** Whether the converted DataSonnet imports {@code camel-dataweave.libsonnet}. */
     public boolean needsDataWeaveLib() {
         return needsDataWeaveLib;
     }

@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class DataWeaveConverterTest {
 
-    private static final String DW_IMPORT = "local dw = import 'dataweave.libsonnet';\n";
+    private static final String DW_IMPORT = "local dw = import 'camel-dataweave.libsonnet';\n";
 
     private DataWeaveConverter converter;
 
