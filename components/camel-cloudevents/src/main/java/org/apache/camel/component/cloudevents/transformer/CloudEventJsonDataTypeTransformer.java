@@ -102,7 +102,7 @@ public class CloudEventJsonDataTypeTransformer extends Transformer {
             cloudEventAttributes.putIfAbsent(dataContentTypeKey, dataContentType);
             // the data is written as the datacontenttype of the event says
             Object eventDataContentType = cloudEventAttributes.get(dataContentTypeKey);
-            boolean jsonData = isJsonContentType(eventDataContentType);
+            boolean jsonData = isJsonContentType(eventDataContentType != null ? eventDataContentType.toString() : null);
             if (message.getBody() instanceof byte[] bytes) {
                 String text = decodeText(bytes, ExchangeHelper.getCharset(message.getExchange()));
                 if (text != null) {
@@ -127,13 +127,13 @@ public class CloudEventJsonDataTypeTransformer extends Transformer {
 
             headers.put(Exchange.CONTENT_TYPE, APPLICATION_CLOUDEVENTS_JSON);
 
-            message.setBody(createCouldEventJsonObject(cloudEventAttributes, jsonData, contentTypeDeclared));
+            message.setBody(createCloudEventJsonObject(cloudEventAttributes, jsonData, contentTypeDeclared));
 
             cloudEvent.attributes().stream().map(CloudEvent.Attribute::id).forEach(headers::remove);
         }
     }
 
-    private String createCouldEventJsonObject(
+    private String createCloudEventJsonObject(
             Map<String, Object> cloudEventAttributes, boolean jsonData, boolean contentTypeDeclared) {
         StringBuilder builder = new StringBuilder("{");
 
@@ -191,11 +191,11 @@ public class CloudEventJsonDataTypeTransformer extends Transformer {
      * or ends with {@code +json} (CloudEvents Json format, section 3.1). An absent content type is Json, as the
      * transformer declares {@code application/json} then.
      */
-    static boolean isJsonContentType(Object contentType) {
+    static boolean isJsonContentType(String contentType) {
         if (contentType == null) {
             return true;
         }
-        String subtype = mediaSubtype(contentType.toString());
+        String subtype = mediaSubtype(contentType);
         return subtype != null && (subtype.equals("json") || subtype.endsWith("+json"));
     }
 
