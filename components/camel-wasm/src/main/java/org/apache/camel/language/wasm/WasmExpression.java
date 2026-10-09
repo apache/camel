@@ -18,9 +18,8 @@ package org.apache.camel.language.wasm;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 
-import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -30,6 +29,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.wasm.WasmFunction;
 import org.apache.camel.wasm.WasmSupport;
 import run.endive.wasm.Parser;
@@ -140,16 +140,18 @@ public class WasmExpression extends ExpressionAdapter implements ExpressionResul
 
     @Override
     public boolean matches(Exchange exchange) {
-        final Object value = evaluate(exchange, Object.class);
+        Object value = evaluate(exchange, Object.class);
 
-        if (value instanceof BooleanNode) {
-            return ((BooleanNode) value).asBoolean();
+        if (value instanceof JsonNode node) {
+            // a JSON result only matches when it is the boolean true
+            return node.isBoolean() && node.asBoolean();
         }
-        if (value instanceof Collection) {
-            return !((Collection<?>) value).isEmpty();
+        if (value instanceof byte[] bytes) {
+            // the default result type: the raw bytes returned by the function, such as "true" or "false"
+            value = typeConverter.convertTo(String.class, exchange, bytes);
         }
 
-        return false;
+        return ObjectHelper.evaluateValuePredicate(value);
     }
 
     @Override
