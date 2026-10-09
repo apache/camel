@@ -1562,6 +1562,13 @@ A `direct` producer that was waiting for a consumer when a forced stop interrupt
 `RouteStoppingException` (with the `InterruptedException` as its cause) instead of a
 `DirectConsumerNotAvailableException`.
 
+A `seda` or `disruptor` producer waiting for the reply (InOut, or `waitForTaskToComplete`) that is interrupted while
+its route or the CamelContext is being stopped now sets a `RouteStoppingException` (with the `InterruptedException`
+as its cause). Before, it set an `ExchangeTimedOutException` (or, without a timeout, the `InterruptedException`),
+although the timeout had not passed. An interruption at any other time sets the `InterruptedException` instead of an
+`ExchangeTimedOutException`. A `seda` producer interrupted while adding to a full queue (`blockWhenFull`) during a
+stop sets a `RouteStoppingException` as well.
+
 Such a cut-off is not recorded in the error registry, as nothing in the route failed; set
 `camel.errorRegistry.includeRouteStopping=true` to record it as well, for example to see how often stops cut off
 work that a consumer which does not roll back may lose.
