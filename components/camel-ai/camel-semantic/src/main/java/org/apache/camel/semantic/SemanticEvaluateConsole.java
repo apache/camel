@@ -58,8 +58,13 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
     public static final String TIMEOUT = "timeout";
 
     private ExecutorService executor;
+    // A resolver-created console may be called without starting it; only an explicit stop rejects calls.
+    private boolean stopped;
 
     private synchronized ExecutorService executor() throws Exception {
+        if (stopped || isStopping()) {
+            throw new IllegalStateException("Semantic evaluation console is stopping or stopped");
+        }
         if (executor == null) {
             executor = new ThreadPoolBuilder(getCamelContext()).poolSize(2).maxPoolSize(2).maxQueueSize(0)
                     .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).build(this, "SemanticEvaluation");
@@ -68,7 +73,14 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
     }
 
     @Override
+    protected synchronized void doStart() throws Exception {
+        stopped = false;
+        super.doStart();
+    }
+
+    @Override
     protected synchronized void doStop() throws Exception {
+        stopped = true;
         if (executor != null) {
             executor.shutdownNow();
             executor = null;
@@ -124,7 +136,7 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
         } catch (RejectedExecutionException e) {
             failure = "Busy: semantic evaluations are already running";
         } catch (Exception e) {
-            failure = e.getMessage();
+            failure = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
         } finally {
             if (task != null && !task.isDone()) {
                 task.cancel(true);
@@ -186,7 +198,7 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
         } catch (Exception e) {
             return JsonRecordSupport.toJsonObject(new Response(
                     name, "failed", null, null, null, null, null,
-                    elapsed(start), e.getMessage()));
+                    elapsed(start), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()));
         }
     }
 

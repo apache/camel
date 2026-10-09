@@ -222,6 +222,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
                 result = action.result().get();
             } catch (Exception failure) {
                 Throwable cause = failure.getCause() != null ? failure.getCause() : failure;
+                LOG.warn("Error executing action: {} due to: {}", request, cause.getMessage(), cause);
                 result = new JsonObject();
                 result.put("status", "failed");
                 result.put("error", cause.getMessage() != null ? cause.getMessage() : cause.getClass().getSimpleName());
