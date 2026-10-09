@@ -2036,6 +2036,13 @@ value, as with the Rest DSL: `/items/caf%C3%A9` sets the `id` header to `café`,
 decoded on its own (an encoded `/` stays in its parameter) and a `+` stays a `+`. A value with a malformed escape is
 kept as it is. Routes that decoded these headers themselves must no longer do so.
 
+=== camel-openapi-java - allowable values of an array parameter
+
+The OpenAPI document generated from the Rest DSL now puts the allowable values of a parameter with
+`dataType("array")` on the items of the array (`items.enum`), as they restrict the values of the items. They were put
+on the array schema itself (`enum` next to `type: array`), which does not accept any array, so tools that validate
+requests or generate clients from the document rejected or mistyped the parameter.
+
 === camel-jbang
 
 The `--runtime` option of `camel run` has a new default value `jbang`, which is the existing in-process
