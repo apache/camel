@@ -54,9 +54,15 @@ public class RouteStopCutOffLogTest extends ContextTestSupport {
 
     @Test
     public void theCutOffIsOneWarnLine() throws Exception {
-        ConsumingAppender.newAppender(LOGGER, "RouteStopCutOffLogTest", Level.DEBUG,
-                event -> messages.add(event.getLevel() + " " + event.getMessage().getFormattedMessage()
-                                      + (event.getThrown() != null ? " THROWN" : "")));
+        // the tests in this module run in parallel, and log through the same error handler logger:
+        // only keep the events from the threads of this CamelContext
+        String threadMarker = "(" + context.getName() + ")";
+        ConsumingAppender.newAppender(LOGGER, "RouteStopCutOffLogTest", Level.DEBUG, event -> {
+            if (event.getThreadName() != null && event.getThreadName().contains(threadMarker)) {
+                messages.add(event.getLevel() + " " + event.getMessage().getFormattedMessage()
+                             + (event.getThrown() != null ? " THROWN" : ""));
+            }
+        });
         context.getShutdownStrategy().setTimeout(1);
         context.getShutdownStrategy().setTimeUnit(TimeUnit.SECONDS);
 
