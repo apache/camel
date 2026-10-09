@@ -68,7 +68,7 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
                                   boolean useBodyAuthentication) {
         this(clientId, clientSecret, tokenEndpoint, resourceIndicator, scope, cacheTokens,
              cachedTokensDefaultExpirySeconds, cachedTokensExpirationMarginSeconds, useBodyAuthentication, null,
-             OAuth2CachedTokensKey.FULL_URI);
+             OAuth2CachedTokensKey.HOST_ONLY);
     }
 
     /**
@@ -85,7 +85,7 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
                            OAuth2CachedTokensKeyResolver cachedTokensKeyResolver) {
         this.targetUri = targetUri;
         this.cachedTokensKeyResolver = cachedTokensKeyResolver != null
-                ? cachedTokensKeyResolver : OAuth2CachedTokensKey.FULL_URI;
+                ? cachedTokensKeyResolver : OAuth2CachedTokensKey.HOST_ONLY;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.tokenEndpoint = tokenEndpoint;

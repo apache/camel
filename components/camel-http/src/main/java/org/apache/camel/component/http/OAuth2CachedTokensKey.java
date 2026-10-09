@@ -25,7 +25,7 @@ import java.util.Locale;
 public enum OAuth2CachedTokensKey implements OAuth2CachedTokensKeyResolver {
 
     /**
-     * One token per scheme, host and port.
+     * One token per scheme, host and port (the default).
      */
     HOST_ONLY {
         @Override
@@ -44,7 +44,7 @@ public enum OAuth2CachedTokensKey implements OAuth2CachedTokensKeyResolver {
         }
     },
     /**
-     * One token per request URI, including the query (the default).
+     * One token per request URI, including the query (the default before Camel 4.23).
      */
     FULL_URI {
         @Override

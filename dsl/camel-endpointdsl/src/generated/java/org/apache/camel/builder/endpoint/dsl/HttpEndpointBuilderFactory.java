@@ -902,7 +902,7 @@ public interface HttpEndpointBuilderFactory {
          * <code>org.apache.camel.component.http.OAuth2CachedTokensKey</code>
          * type.
          * 
-         * Default: FULL_URI
+         * Default: HOST_ONLY
          * Group: security
          * 
          * @param oauth2CachedTokensKey the value to set
@@ -923,7 +923,7 @@ public interface HttpEndpointBuilderFactory {
          * <code>org.apache.camel.component.http.OAuth2CachedTokensKey</code>
          * type.
          * 
-         * Default: FULL_URI
+         * Default: HOST_ONLY
          * Group: security
          * 
          * @param oauth2CachedTokensKey the value to set

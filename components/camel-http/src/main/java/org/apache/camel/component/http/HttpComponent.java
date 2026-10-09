@@ -316,7 +316,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                     parameters,
                     "oauth2CachedTokensKey",
                     OAuth2CachedTokensKey.class,
-                    OAuth2CachedTokensKey.FULL_URI);
+                    OAuth2CachedTokensKey.HOST_ONLY);
         }
         if (clientId != null && clientSecret != null && tokenEndpoint != null) {
             return CompositeHttpConfigurer.combineConfigurers(configurer,

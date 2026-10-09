@@ -38,8 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
- * The options that decide which requests share a cached OAuth2 token (CAMEL-22080). The default ({@code FULL_URI}) and
- * {@code HOST_ONLY} are also tested in {@link HttpOAuth2TokenCachingTest}.
+ * The options that decide which requests share a cached OAuth2 token (CAMEL-22080). The default ({@code HOST_ONLY}) and
+ * {@code FULL_URI} are also tested in {@link HttpOAuth2TokenCachingTest}.
  * <p>
  * Same approach as {@link HttpOAuth2TokenCachingTest}: the first request caches a token, then the token endpoint is
  * closed. A second request that reuses the cached token succeeds; one that has to request a new token fails to connect.
@@ -103,7 +103,7 @@ public class HttpOAuth2CachedTokensKeyTest extends BaseHttpTest {
 
             HttpEndpoint other = context.getEndpoint("http://localhost:" + localServer.getLocalPort() + "/post",
                     HttpEndpoint.class);
-            assertEquals(OAuth2CachedTokensKey.FULL_URI, other.getOauth2CachedTokensKey());
+            assertEquals(OAuth2CachedTokensKey.HOST_ONLY, other.getOauth2CachedTokensKey());
 
             HttpEndpoint custom = context.getEndpoint("http://localhost:" + localServer.getLocalPort()
                                                       + "/post?oauth2CachedTokensKeyResolver=#onePerTarget",

@@ -2571,6 +2571,16 @@ All three are now part of the key. Deployments that were unknowingly sharing a t
 scopes, token endpoints or resource indicators will now request one token per distinct combination, so
 the token endpoint sees more requests than before.
 
+==== OAuth2 cached tokens are shared per host
+
+With `oauth2CacheTokens=true`, a cached OAuth2 token was only reused for the same request URI, so every new path or
+query (for example with `toD`) requested a new token and added an entry to a JVM-wide cache that was never pruned. The new
+option `oauth2CachedTokensKey` decides which requests share a cached token, and its default is now `HOST_ONLY`: one token
+for all requests to the same scheme, host and port. The client id, client secret, token endpoint, scope and resource
+indicator are still part of the key, and the bearer token is still only sent to the authority of the endpoint. Set
+`oauth2CachedTokensKey=FULL_URI` to keep one token per request URI as before, or `HOST_AND_PATH` for one per path. A
+custom `OAuth2CachedTokensKeyResolver` can be set with `oauth2CachedTokensKeyResolver`.
+
 === camel-pqc
 
 `FileBasedKeyLifecycleManager` stores private keys unencrypted, as Base64 PKCS#8 inside a JSON file, and

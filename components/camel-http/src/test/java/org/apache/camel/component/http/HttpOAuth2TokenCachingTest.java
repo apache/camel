@@ -110,22 +110,41 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
     }
 
     /**
-     * By default (oauth2CachedTokensKey=FULL_URI) a cached token is only reused for the same request URI, so a request
-     * with a different query or path requests a new token (CAMEL-22080 keeps this default).
+     * By default (oauth2CachedTokensKey=HOST_ONLY) a cached token is shared by every request to the same scheme, host
+     * and port, whatever the path and query (CAMEL-22080).
      */
     @Test
-    public void aDifferentQueryRequestsANewTokenByDefault() throws Exception {
-        assertDifferentQuery("", false);
+    public void aDifferentQueryReusesTheCachedTokenByDefault() throws Exception {
+        assertDifferentQuery("", true);
     }
 
     @Test
-    public void aDifferentPathRequestsANewTokenByDefault() throws Exception {
-        assertDifferentPath("", false);
+    public void aDifferentPathReusesTheCachedTokenByDefault() throws Exception {
+        assertDifferentPath("", true);
     }
 
     @Test
-    public void aDifferentHttpPathHeaderRequestsANewTokenByDefault() throws Exception {
-        assertDifferentHttpPathHeader("", false);
+    public void aDifferentHttpPathHeaderReusesTheCachedTokenByDefault() throws Exception {
+        assertDifferentHttpPathHeader("", true);
+    }
+
+    /**
+     * With oauth2CachedTokensKey=FULL_URI (the behaviour before 4.23) a cached token is only reused for the same
+     * request URI, so a request with a different query or path requests a new token.
+     */
+    @Test
+    public void aDifferentQueryRequestsANewTokenWithFullUri() throws Exception {
+        assertDifferentQuery("&oauth2CachedTokensKey=FULL_URI", false);
+    }
+
+    @Test
+    public void aDifferentPathRequestsANewTokenWithFullUri() throws Exception {
+        assertDifferentPath("&oauth2CachedTokensKey=FULL_URI", false);
+    }
+
+    @Test
+    public void aDifferentHttpPathHeaderRequestsANewTokenWithFullUri() throws Exception {
+        assertDifferentHttpPathHeader("&oauth2CachedTokensKey=FULL_URI", false);
     }
 
     /**

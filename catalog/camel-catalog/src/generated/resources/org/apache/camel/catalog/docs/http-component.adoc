@@ -684,13 +684,13 @@ With `oauth2CacheTokens=true`, Camel caches the token until it expires (see `oau
 and `oauth2CachedTokensExpirationMarginSeconds`). The option `oauth2CachedTokensKey` decides which requests share a
 cached token:
 
-* `FULL_URI` (default): one token per request URI, including the query.
+* `HOST_ONLY` (default): one token shared by all requests to the same scheme, host and port.
 * `HOST_AND_PATH`: one token per path. The query is not taken into account.
-* `HOST_ONLY`: one token shared by all requests to the same scheme, host and port.
+* `FULL_URI`: one token per request URI, including the query (the behaviour before Camel 4.23).
 
 The client id, client secret, token endpoint, scope and resource indicator are always part of the key. The token
-request itself does not depend on the request URI, so with dynamic queries `HOST_AND_PATH`, and with dynamic paths
-(for example with `toD`) `HOST_ONLY`, avoid requesting a new token for every new URI.
+request itself does not depend on the request URI, so the default `HOST_ONLY` does not request a new token for every
+new URI, for example with dynamic paths or queries in `toD`.
 
 [tabs]
 ====
