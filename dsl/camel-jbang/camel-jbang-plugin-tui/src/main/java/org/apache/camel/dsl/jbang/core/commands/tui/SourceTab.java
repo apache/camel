@@ -920,6 +920,7 @@ class SourceTab extends AbstractTab {
         sourceViewer.setJavaCompletion(routeFile && name.endsWith(".java") ? assist::provideJavaCompletions : null);
         // the elements, attributes and values of an XML route (CAMEL-25240)
         sourceViewer.setXmlCompletion(routeFile && name.toLowerCase().endsWith(".xml") ? assist::provideXmlCompletions : null);
+        sourceViewer.setSemanticCompletion(SourceEditAssist.isYamlFile(filePath) ? assist::provideSemanticCompletions : null);
         if (isCamelSourceFile(filePath)) {
             sourceViewer.setQuickDocProvider(assist::provideCamelQuickDocs);
             sourceViewer.setDeprecatedLineScanner(null);

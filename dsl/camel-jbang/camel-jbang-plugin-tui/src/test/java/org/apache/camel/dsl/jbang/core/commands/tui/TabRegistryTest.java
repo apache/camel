@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.text.CharWidth;
@@ -102,6 +103,17 @@ class TabRegistryTest {
         // the registry in this test has no monitor at all: never listed
         assertFalse(TabRegistry.isMoreTabActive(ollama, null));
         assertEquals("AI", ollama.group());
+    }
+
+    @Test
+    void semanticTabFollowsTheRuntimeConsoleAndBelongsToAi() {
+        TabRegistry.MoreTab semantic = moreTabNamed("Semantic");
+        assertEquals("AI", semantic.group());
+        IntegrationInfo info = new IntegrationInfo();
+        info.devConsoles = Set.of("context");
+        assertFalse(TabRegistry.isMoreTabActive(semantic, info));
+        info.devConsoles = Set.of("context", "semantic-metadata");
+        assertTrue(TabRegistry.isMoreTabActive(semantic, info));
     }
 
     @Test

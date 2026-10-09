@@ -80,7 +80,7 @@ The *More* menu (key *0*) opens a popup with tabs organized into groups:
 
 * *Routing* -- Browse Endpoints, Consumers, HTTP, Inflight, Producers, Route Controller
 * *Observability* -- Circuit Breaker, Health, JFR, Metrics, Network Services, Exchange Events, Recovery Tasks, OpenTelemetry Spans
-* *AI* -- Ollama (listed when an Ollama server is detected)
+* *AI* -- Semantic (definitions, expert contracts, relationships and sample evaluation), Ollama (listed when an Ollama server is detected)
 * *Data* -- JDBC DataSource, Kafka, Secrets, SQL Query, SQL Trace
 * *JVM* -- Classpath, Heap Memory Histogram, Memory Usage, Memory Leak, Process, Startup, Threads
 * *Project* -- Beans, Catalog, Configuration, CVE Audit, Maven Dependencies, Type Converters, Data Type Transformers

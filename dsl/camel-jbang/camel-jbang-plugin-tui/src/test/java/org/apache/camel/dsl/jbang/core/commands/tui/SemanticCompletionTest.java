@@ -16,11 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.widgets.input.TextAreaState;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -43,14 +47,39 @@ class SemanticCompletionTest {
         assertThat(path).isEqualTo(expectedPath);
         SourceEditAssist assist = assist();
         List<String> keys = assist.provideTreeCompletions(path).stream().map(AutocompletePopup.CompletionItem::key).toList();
-        assertThat(keys).as("completions for path %s", path)
-                .contains("type", "instructions", "state", "criteria", "threshold", "uncertaintyPolicy");
+        assertThat(keys).as("completions for path %s", path).contains("type", "operation", "expert", "parameters",
+                "instructions", "state", "criteria", "threshold",
+                "uncertaintyPolicy");
         assertThat(assist.provideTreeCompletions(path + ":instructions"))
-                .as("instructions already present — should be filtered out")
-                .noneMatch(item -> item.key().equals("instructions"));
+                .extracting(AutocompletePopup.CompletionItem::key).doesNotContain("instructions");
+        List<String> types = assist.provideTreeValueCompletions(path + ":type").stream()
+                .map(AutocompletePopup.CompletionItem::key).toList();
+        assertThat(types).isEmpty();
         assertThat(String.valueOf(assist.getTreeNode("semantic").get("label")))
-                .as("semantic node label should not mention language")
-                .doesNotContain("language");
+                .as("semantic node label should not mention language").doesNotContain("language");
+    }
+
+    @Test
+    void typeSuggestionsPreserveCustomOperationPlaceholders(@TempDir Path directory) throws IOException {
+        Files.writeString(directory.resolve("application.properties"), "custom.operation=detect");
+        SourceEditAssist assist = assist();
+        assist.setRootDir(directory);
+        assertThat(assist.provideTreeValueCompletions("/semantic/evaluation/injection:type"))
+                .extracting(AutocompletePopup.CompletionItem::key)
+                .containsExactly("{{custom.operation}}");
+    }
+
+    @Test
+    void shorthandSuggestionsAreLimitedToTheEvaluationType() {
+        SourceEditAssist assist = assist();
+        for (String context : List.of("/semantic/evaluation/department:operation",
+                "/semantic/evaluation/department:uncertaintyPolicy", "/semantic/evaluation/department/parameters:type")) {
+            assertThat(assist.provideTreeValueCompletions(context)).as(context).isEmpty();
+        }
+        assertThat(assist.provideTreeValueCompletions("param:type"))
+                .extracting(AutocompletePopup.CompletionItem::key)
+                .contains("header", "query", "path")
+                .doesNotContain("boolean", "choice", "score", "classification");
     }
 
     @Test
@@ -63,7 +92,6 @@ class SemanticCompletionTest {
         SourceEditAssist assist = assist();
         assertThat(assist.provideTreeCompletions(path)).isEqualTo(assist.provideTreeCompletions("log"));
         assertThat(assist.provideTreeValueCompletions(path + ":loggingLevel"))
-                .isEqualTo(assist.provideTreeValueCompletions("log:loggingLevel"));
-        assertThat(assist.provideTreeValueCompletions(path + ":loggingLevel")).isNotEmpty();
+                .isEqualTo(assist.provideTreeValueCompletions("log:loggingLevel")).isNotEmpty();
     }
 }

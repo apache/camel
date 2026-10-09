@@ -396,13 +396,13 @@ final class TuiToolDefinitions {
                 List.of("filter"))));
         tools.add(toToolDef(toolDef(
                 "tui_set_input",
-                "Sets the value of a text input field on a TUI tab directly, without simulating keystrokes. "
-                                 + "The text appears in the TUI input widget so the user can see it. "
-                                 + "Supported fields by tab: SQL Query (field='sql'), "
-                                 + "HTTP probe (field='path', 'body', 'method', 'content-type', or 'accept'), "
-                                 + "Spans (field='filter'), Classpath (field='filter').",
+                "Edit visible fields without submitting. SQL Query: sql. HTTP: path, body, method, content-type, accept. "
+                                 + "Spans/Classpath: filter. Semantic Experts: input, inputMode (text/json), "
+                                 + "parameter.<name> (scalars as text, maps/lists as JSON). Open Semantic sample: "
+                                 + "sample (exchange JSON), sample.body (text), sample.headers/sample.variables (JSON objects). "
+                                 + "Read drafts/results with tui_get_table; send Ctrl+r explicitly to evaluate Semantic input.",
                 Map.of("field", propDef("string",
-                        "Field name to set: 'sql', 'path', 'body', 'method', 'content-type', 'accept', or 'filter'"),
+                        "Field name (see supported fields above)"),
                         "value", propDef("string",
                                 "The text value to set in the input field"),
                         "tab", propDef("string",

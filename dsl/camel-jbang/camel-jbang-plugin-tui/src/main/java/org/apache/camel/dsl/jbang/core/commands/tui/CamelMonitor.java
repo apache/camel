@@ -1491,10 +1491,13 @@ public class CamelMonitor extends CamelCommand {
         boolean catalogFilterActive = tabRegistry.selectedTabIndex() == TAB_MORE
                 && tabRegistry.getActiveMoreTab() == tabRegistry.catalogTab()
                 && tabRegistry.catalogTab().isFilterInputActive();
+        boolean semanticInputActive = tabRegistry.selectedTabIndex() == TAB_MORE
+                && tabRegistry.getActiveMoreTab() == tabRegistry.semanticTab()
+                && tabRegistry.semanticTab().isInputActive();
         boolean filesBrowserTextActive = filesBrowser.isVisible() && filesBrowser.isSourceViewerTextInputActive();
         return probeEditing || sourceSearchActive || logSearchActive || spanFilterActive
                 || beanFilterActive || classpathFilterActive || mavenDepsFilterActive || sqlInputActive
-                || catalogFilterActive || filesBrowserTextActive;
+                || catalogFilterActive || semanticInputActive || filesBrowserTextActive;
     }
 
     /**
@@ -1575,7 +1578,7 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
-        if (ke.hasCtrl() && ke.isCharIgnoreCase('l')) {
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('l') && !isTextInputActive()) {
             if (!logPinned) {
                 logPinned = true;
                 logPinAnim.reset(0);
@@ -1959,6 +1962,11 @@ public class CamelMonitor extends CamelCommand {
         }
         if (tabRegistry.sourceTab().isSourceViewerTextInputActive()) {
             tabRegistry.sourceTab().handlePaste(pe.text());
+            return true;
+        }
+        if (tabRegistry.selectedTabIndex() == TAB_MORE && tabRegistry.getActiveMoreTab() == tabRegistry.semanticTab()
+                && tabRegistry.semanticTab().isInputActive()) {
+            tabRegistry.semanticTab().handlePaste(pe.text());
             return true;
         }
         if (tabRegistry.getActiveMoreTab() == tabRegistry.sqlQueryTab()

@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
@@ -252,6 +253,8 @@ class SourceViewer {
     private CursorQuickDocProvider cursorQuickDocProvider;
     private BiFunction<XmlCompletionContext, List<String>, List<AutocompletePopup.CompletionItem>> xmlCompletion;
     private XmlCompletion pendingXmlCompletion;
+    private Function<SemanticCompletionContext, CompletableFuture<List<AutocompletePopup.CompletionItem>>> semanticCompletion;
+    private SemanticCompletion pendingSemanticCompletion;
     private Function<JavaChainContext, List<AutocompletePopup.CompletionItem>> javaCompletion;
     private JavaCompletion pendingJavaCompletion;
     private List<String> routeProblems = List.of();
@@ -536,6 +539,33 @@ class SourceViewer {
         this.xmlCompletion = provider;
     }
 
+    void setSemanticCompletion(
+            Function<SemanticCompletionContext, CompletableFuture<List<AutocompletePopup.CompletionItem>>> provider) {
+        this.semanticCompletion = provider;
+        pendingSemanticCompletion = null;
+    }
+
+    private record SemanticCompletion(CompletableFuture<List<AutocompletePopup.CompletionItem>> future,
+            String text, int row, int col, String value) {
+    }
+
+    /** Apply completed metadata on the UI thread only while the original completion position is unchanged. */
+    void refreshSemanticCompletion() {
+        SemanticCompletion pending = pendingSemanticCompletion;
+        if (pending == null || !pending.future().isDone()) {
+            return;
+        }
+        pendingSemanticCompletion = null;
+        if (!editMode || pending.row() != editState.cursorRow() || pending.col() != editState.cursorCol()
+                || !pending.text().equals(editState.text())) {
+            return;
+        }
+        List<AutocompletePopup.CompletionItem> items = pending.future().getNow(List.of());
+        if (!items.isEmpty()) {
+            autocompletePopup = new AutocompletePopup(items, "", pending.value(), true);
+        }
+    }
+
     private record XmlCompletion(int row, int endCol, XmlCompletionContext context) {
     }
 
@@ -574,6 +604,8 @@ class SourceViewer {
         simpleCompletion = null;
         cursorQuickDocProvider = null;
         xmlCompletion = null;
+        semanticCompletion = null;
+        pendingSemanticCompletion = null;
         javaCompletion = null;
     }
 
@@ -622,6 +654,8 @@ class SourceViewer {
         simpleCompletion = null;
         cursorQuickDocProvider = null;
         xmlCompletion = null;
+        semanticCompletion = null;
+        pendingSemanticCompletion = null;
         javaCompletion = null;
     }
 
@@ -672,6 +706,7 @@ class SourceViewer {
      * Cancel edit mode without saving. Returns {@code true} if edit mode was active.
      */
     boolean cancelEdit() {
+        pendingSemanticCompletion = null;
         if (!editMode) {
             return false;
         }
@@ -989,6 +1024,7 @@ class SourceViewer {
     }
 
     private boolean handleEditKeyEvent(KeyEvent ke) {
+        pendingSemanticCompletion = null;
         if (validationErrors != null) {
             if (ke.isKey(KeyCode.F9) && ke.hasShift()) {
                 // the fix the popup offers: go to its line and apply it, as Shift+F9 does there
@@ -1318,6 +1354,7 @@ class SourceViewer {
     }
 
     private void exitEditMode() {
+        pendingSemanticCompletion = null;
         boolean wasEditing = editMode;
         int cursorRow = editState.cursorRow();
         int top = editState.scrollRow();
@@ -1895,9 +1932,18 @@ class SourceViewer {
                 }
                 if (autocompleteValueProvider != null) {
                     String context = "yaml-tree-value:" + parentPath + ":" + optionName;
-                    List<AutocompletePopup.CompletionItem> values = autocompleteValueProvider.provide(context);
-                    if (values != null && !values.isEmpty()) {
-                        autocompletePopup = new AutocompletePopup(values, "", valueText, true);
+                    SemanticCompletionContext semantic = semanticCompletion != null
+                            ? SemanticCompletionContext.at(editLines(), row) : null;
+                    if (semantic != null) {
+                        pendingSemanticCompletion = new SemanticCompletion(
+                                semanticCompletion.apply(semantic),
+                                editState.text(), row, editState.cursorCol(), valueText);
+                        refreshSemanticCompletion();
+                    } else {
+                        List<AutocompletePopup.CompletionItem> values = autocompleteValueProvider.provide(context);
+                        if (values != null && !values.isEmpty()) {
+                            autocompletePopup = new AutocompletePopup(values, "", valueText, true);
+                        }
                     }
                 }
             } else {
@@ -2585,6 +2631,7 @@ class SourceViewer {
     }
 
     void handlePaste(String text) {
+        pendingSemanticCompletion = null;
         if (editMode) {
             if (search.isSearchInputActive()) {
                 search.handlePaste(text);
@@ -2612,6 +2659,7 @@ class SourceViewer {
     }
 
     void render(Frame frame, Rect area) {
+        refreshSemanticCompletion();
         renderContent(frame, area);
         if (routeTreeShown && !markdownMode && !diffOverlay) {
             if (editMode) {
@@ -3607,6 +3655,7 @@ class SourceViewer {
      * Load source for a route, scrolling to the given source line number.
      */
     void loadFile(Path filePath) {
+        pendingSemanticCompletion = null;
         currentRouteId = null;
         currentFormat = null;
         originalFormat = null;
