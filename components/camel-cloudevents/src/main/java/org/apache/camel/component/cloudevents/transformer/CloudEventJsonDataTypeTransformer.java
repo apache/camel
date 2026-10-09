@@ -17,8 +17,14 @@
 
 package org.apache.camel.component.cloudevents.transformer;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CodingErrorAction;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -28,12 +34,25 @@ import org.apache.camel.cloudevents.CloudEvents;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 
 /**
  * Data type represents a default Camel CloudEvent V1 Json format binding. The data type reads Camel specific CloudEvent
  * headers and transforms these to a Json object representing the CloudEvents Json format specification. Sets default
  * values for CloudEvent attributes such as the Http content type header, event source, event type.
+ * <p/>
+ * The body is written as the data of the event according to its datacontenttype (CloudEvents Json format, section 3.1):
+ * <ul>
+ * <li>declared Json content type (subtype {@code json} or suffix {@code +json}): a body that is a Json value, scalars
+ * included, is nested as that value; any other body is a Json string</li>
+ * <li>no declared content type ({@code application/json} is assumed): only a Json object or array is nested, so that
+ * text such as a long number or {@code null} stays a string</li>
+ * <li>any other content type: the body is a Json string</li>
+ * <li>a {@code byte[]} body that is not valid text in the charset of the exchange: {@code data_base64}, with the
+ * datacontenttype {@code application/octet-stream} unless one was declared</li>
+ * <li>a null body: no data</li>
+ * </ul>
  */
 @DataTypeTransformer(name = "application-cloudevents+json",
                      description = "Adds default CloudEvent (JSon binding) headers to the Camel message (such as content-type, event source, event type etc.)")
@@ -55,6 +74,9 @@ public class CloudEventJsonDataTypeTransformer extends Transformer {
         final Map<String, Object> headers = message.getHeaders();
 
         String dataContentType = headers.getOrDefault(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, APPLICATION_JSON).toString();
+        // whether the content type of the data was declared, rather than assumed to be application/json
+        boolean contentTypeDeclared = headers.get(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE) != null
+                || headers.get(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE) != null;
         if (!APPLICATION_CLOUDEVENTS_JSON.equals(dataContentType)) {
             Map<String, Object> cloudEventAttributes = new HashMap<>();
             CloudEvent cloudEvent = CloudEvents.v1_0;
@@ -76,28 +98,52 @@ public class CloudEventJsonDataTypeTransformer extends Transformer {
             cloudEventAttributes.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TIME).json(),
                     cloudEvent.getEventTime(message.getExchange()));
 
-            String body = MessageHelper.extractBodyAsString(message);
-            cloudEventAttributes.putIfAbsent("data", body);
-            cloudEventAttributes.putIfAbsent(
-                    cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).json(), dataContentType);
+            String dataContentTypeKey = cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).json();
+            cloudEventAttributes.putIfAbsent(dataContentTypeKey, dataContentType);
+            // the data is written as the datacontenttype of the event says
+            Object eventDataContentType = cloudEventAttributes.get(dataContentTypeKey);
+            boolean jsonData = isJsonContentType(eventDataContentType != null ? eventDataContentType.toString() : null);
+            if (message.getBody() instanceof byte[] bytes) {
+                String text = decodeText(bytes, ExchangeHelper.getCharset(message.getExchange()));
+                if (text != null) {
+                    cloudEventAttributes.putIfAbsent("data", text);
+                } else {
+                    // decoding these bytes as text would replace the invalid ones, so the data would be lost
+                    cloudEventAttributes.putIfAbsent("data_base64", Base64.getEncoder().encodeToString(bytes));
+                    // a declared datacontenttype is kept: the route states the format of these bytes, which may be valid
+                    // in a charset other than the one of the exchange, so only an assumed application/json is replaced
+                    if (!contentTypeDeclared) {
+                        // these bytes are not Json, and the datacontenttype must reflect the format of the data
+                        cloudEventAttributes.put(dataContentTypeKey, CloudEvent.APPLICATION_OCTET_STREAM_MIME_TYPE);
+                    }
+                }
+            } else {
+                String data = MessageHelper.extractBodyAsString(message);
+                // the data is optional, so a null body has none rather than the text "null"
+                if (data != null) {
+                    cloudEventAttributes.putIfAbsent("data", data);
+                }
+            }
 
             headers.put(Exchange.CONTENT_TYPE, APPLICATION_CLOUDEVENTS_JSON);
 
-            message.setBody(createCouldEventJsonObject(cloudEventAttributes));
+            message.setBody(createCloudEventJsonObject(cloudEventAttributes, jsonData, contentTypeDeclared));
 
             cloudEvent.attributes().stream().map(CloudEvent.Attribute::id).forEach(headers::remove);
         }
     }
 
-    private String createCouldEventJsonObject(Map<String, Object> cloudEventAttributes) {
+    private String createCloudEventJsonObject(
+            Map<String, Object> cloudEventAttributes, boolean jsonData, boolean contentTypeDeclared) {
         StringBuilder builder = new StringBuilder("{");
 
         cloudEventAttributes.forEach((key, value) -> {
             builder.append(" ");
             appendJsonString(builder, key);
             builder.append(":");
-            if ("data".equals(key) && value instanceof String data && isJson(data)) {
-                // set Json data as nested object in the data field
+            if (jsonData && "data".equals(key) && value instanceof String data
+                    && (contentTypeDeclared ? isJsonValue(data) : isJson(data))) {
+                // set Json data as nested value in the data field, a scalar only if Json was declared
                 builder.append(data);
             } else {
                 appendJsonString(builder, String.valueOf(value));
@@ -138,6 +184,66 @@ public class CloudEventJsonDataTypeTransformer extends Transformer {
             }
         }
         builder.append('"');
+    }
+
+    /**
+     * Whether the content type declares Json data: the subtype of its media type, without parameters, is {@code json}
+     * or ends with {@code +json} (CloudEvents Json format, section 3.1). An absent content type is Json, as the
+     * transformer declares {@code application/json} then.
+     */
+    static boolean isJsonContentType(String contentType) {
+        if (contentType == null) {
+            return true;
+        }
+        String subtype = mediaSubtype(contentType);
+        return subtype != null && (subtype.equals("json") || subtype.endsWith("+json"));
+    }
+
+    /**
+     * The bytes decoded as text in the given charset, or {@code null} if they are not valid text in it.
+     */
+    static String decodeText(byte[] data, Charset charset) {
+        try {
+            return charset.newDecoder()
+                    .onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT)
+                    .decode(ByteBuffer.wrap(data))
+                    .toString();
+        } catch (CharacterCodingException e) {
+            return null;
+        }
+    }
+
+    private static String mediaType(String contentType) {
+        int semicolon = contentType.indexOf(';');
+        return (semicolon < 0 ? contentType : contentType.substring(0, semicolon)).trim().toLowerCase(Locale.ROOT);
+    }
+
+    private static String mediaSubtype(String contentType) {
+        String mediaType = mediaType(contentType);
+        int slash = mediaType.indexOf('/');
+        return slash < 0 ? null : mediaType.substring(slash + 1);
+    }
+
+    /**
+     * Whether the data is a Json value: an object, an array, a string, a number, true, false or null.
+     */
+    static boolean isJsonValue(String data) {
+        if (data == null) {
+            return false;
+        }
+        final int length = data.length();
+        int i = skipWhitespace(data, 0, length);
+        if (i == length) {
+            return false;
+        }
+        char ch = data.charAt(i);
+        if (ch == '{' || ch == '[') {
+            return isJson(data);
+        }
+        i = skipScalar(data, i, length);
+        // nothing but whitespace may follow the value
+        return i >= 0 && skipWhitespace(data, i, length) == length;
     }
 
     /**
