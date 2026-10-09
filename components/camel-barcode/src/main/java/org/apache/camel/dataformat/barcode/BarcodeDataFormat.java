@@ -82,6 +82,13 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     private final Map<DecodeHintType, Object> readerHintMap = new EnumMap<>(DecodeHintType.class);
 
     /**
+     * The read-only live views of the hint maps returned by the getters, created once so that every call returns the
+     * same instance.
+     */
+    private final Map<EncodeHintType, Object> writerHintMapView = Collections.unmodifiableMap(writerHintMap);
+    private final Map<DecodeHintType, Object> readerHintMapView = Collections.unmodifiableMap(readerHintMap);
+
+    /**
      * The hints added by the user, which are applied on top of the optimized hints.
      */
     private final Map<EncodeHintType, Object> userWriterHintMap = new EnumMap<>(EncodeHintType.class);
@@ -320,7 +327,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      * with them are applied again when the hints are computed again.
      */
     public final Map<EncodeHintType, Object> getWriterHintMap() {
-        return Collections.unmodifiableMap(writerHintMap);
+        return writerHintMapView;
     }
 
     /**
@@ -330,7 +337,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      * with them are applied again when the hints are computed again.
      */
     public final Map<DecodeHintType, Object> getReaderHintMap() {
-        return Collections.unmodifiableMap(readerHintMap);
+        return readerHintMapView;
     }
 
     public BarcodeFormat getBarcodeFormat() {
