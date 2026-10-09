@@ -187,11 +187,14 @@ YAML::
 == Using Wasm as a predicate
 
 When the function is used as a xref:manual::predicate.adoc[Predicate], for example with the
-xref:eips:filter-eip.adoc[Filter] EIP, its result is converted to a boolean with the standard Camel rules:
-a `Boolean` is used directly, the strings `true` and `false` (in any case) are parsed, empty data is
-`false`, and any other non-null value is `true`. With the default result type (`byte[]`), the returned
-bytes are first converted to a string, so the function can simply return `true` or `false`.
-If the result type is a Jackson `JsonNode`, only the JSON boolean `true` matches.
+xref:eips:filter-eip.adoc[Filter] EIP, its result is converted to a boolean depending on the result type:
+
+* With the default result type (`byte[]`) or `String`, the returned bytes are read as a string and the
+standard Camel rules apply: `true` and `false` (in any case) are parsed, empty data is `false`, and any
+other value is `true`. So the function can simply return `true` or `false`.
+* With the result type `Boolean`, only `true` and `false` (in any case) are accepted: any other value,
+including empty data, is `false`.
+* With a Jackson `JsonNode` result type, only the JSON boolean `true` matches.
 
 [tabs]
 ====
