@@ -116,20 +116,42 @@ public class WasmFunction implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
+        lock.lock();
+        try {
+            if (instance != null) {
+                instance.close();
+            }
+            clearInstance();
+        } finally {
+            lock.unlock();
+        }
     }
 
     private void createInstance() {
         Instance newInstance = Instance.builder(this.module).build();
+        ExportFunction newFunction = newInstance.export(this.functionName);
+        ExportFunction newAlloc = newInstance.export(Wasm.FN_ALLOC);
+        ExportFunction newDealloc = newInstance.export(Wasm.FN_DEALLOC);
 
-        this.function = newInstance.export(this.functionName);
-        this.alloc = newInstance.export(Wasm.FN_ALLOC);
-        this.dealloc = newInstance.export(Wasm.FN_DEALLOC);
+        // all four fields refer to the same instance, or are left as they were if an export is missing
         this.instance = newInstance;
+        this.function = newFunction;
+        this.alloc = newAlloc;
+        this.dealloc = newDealloc;
     }
 
     private void discardInstance(Throwable cause) {
         LOG.debug("Discarding the Wasm instance of function {} after a failed call: {}", functionName, cause.getMessage());
 
+        try {
+            instance.close();
+        } catch (RuntimeException e) {
+            cause.addSuppressed(e);
+        }
+        clearInstance();
+    }
+
+    private void clearInstance() {
         this.instance = null;
         this.function = null;
         this.alloc = null;

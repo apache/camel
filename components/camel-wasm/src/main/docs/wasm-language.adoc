@@ -137,6 +137,8 @@ the error bit, the error data becomes the message of the exception, and the inst
 discarded and a new one is created from the module for the next message. Whatever the failed call allocated can no
 longer be released, so keeping the instance would grow its memory with every failure. Any state the module kept in
 the discarded instance is lost.
+On a route where every call fails this way, the module is instantiated again for every message (its data segments
+are copied and any start function runs), which costs more than a call on a kept instance.
 
 == Examples
 

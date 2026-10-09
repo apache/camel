@@ -147,22 +147,31 @@ public class WasmFunctionTest {
                 failure.set(e);
             }
         }, "wasm-caller");
+        // a daemon, so that a guest that is never interrupted cannot keep the test JVM from exiting
+        caller.setDaemon(true);
         caller.start();
 
-        await().atMost(10, TimeUnit.SECONDS).until(() -> isRunningGuestCode(caller));
-        caller.interrupt();
-        caller.join(TimeUnit.SECONDS.toMillis(10));
+        try {
+            await().atMost(10, TimeUnit.SECONDS).until(() -> isRunningGuestCode(caller));
+            caller.interrupt();
+            caller.join(TimeUnit.SECONDS.toMillis(10));
 
-        assertThat(caller.isAlive()).isFalse();
-        assertThat(failure.get()).isInstanceOf(WasmInterruptedException.class);
+            assertThat(caller.isAlive()).isFalse();
+            assertThat(failure.get()).isInstanceOf(WasmInterruptedException.class);
 
-        // needs 2 x 16 KiB: only fits if the input of the interrupted call was given back
-        byte[] in = data('a', 16 * 1024);
-        assertThat(function.run(in)).isEqualTo(in);
+            // needs 2 x 16 KiB: only fits if the input of the interrupted call was given back
+            byte[] in = data('a', 16 * 1024);
+            assertThat(function.run(in)).isEqualTo(in);
+        } finally {
+            // stop the spinning guest even when an assertion above failed
+            caller.interrupt();
+            caller.join(TimeUnit.SECONDS.toMillis(10));
+        }
     }
 
     private static boolean isRunningGuestCode(Thread thread) {
+        // the package rather than a class, so that an engine switch or an internal rename does not break the probe
         return Arrays.stream(thread.getStackTrace())
-                .anyMatch(e -> e.getClassName().startsWith("run.endive.runtime.InterpreterMachine"));
+                .anyMatch(e -> e.getClassName().startsWith("run.endive."));
     }
 }
