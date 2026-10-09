@@ -46,8 +46,7 @@ public class RestPostmanConfiguration implements Cloneable {
     @UriParam(label = "common", enums = "auto,resource,cloud", defaultValue = "auto")
     @Metadata(description = "How to interpret collectionSource. With auto, a bare collection UUID or"
                             + " {ownerId}-{uuid} is fetched from the Postman cloud and anything else is resolved as a"
-                            + " resource (classpath:, file:, http:). Use resource or cloud to decide explicitly.",
-              defaultValue = "auto")
+                            + " resource (classpath:, file:, http:). Use resource or cloud to decide explicitly.")
     private String collectionSourceType = "auto";
 
     @UriParam(label = "common")
@@ -72,8 +71,7 @@ public class RestPostmanConfiguration implements Cloneable {
                             + " from the classpath or the file system, and not for one fetched from the Postman cloud,"
                             + " over HTTP or through any other resource scheme, because whoever edits or serves such a"
                             + " collection could otherwise copy those values into an outgoing request. Use enabled or"
-                            + " disabled to decide explicitly for any source.",
-              defaultValue = "auto")
+                            + " disabled to decide explicitly for any source.")
     private String resolveVariablesFromProperties = RESOLVE_VARIABLES_FROM_PROPERTIES_AUTO;
 
     @UriParam(label = "producer")

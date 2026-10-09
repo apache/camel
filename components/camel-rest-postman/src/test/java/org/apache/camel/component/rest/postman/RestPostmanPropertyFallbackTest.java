@@ -174,14 +174,19 @@ class RestPostmanPropertyFallbackTest {
         verifyStatusCall("from-camel-properties", "from-system-property");
     }
 
+    /**
+     * The value is validated when the endpoint is initialized, so a route with a mistyped value fails at context start,
+     * before the collection is loaded.
+     */
     @Test
     void shouldRejectAnUnknownResolveVariablesFromPropertiesValue() {
         String uri = cloudUri("resolveVariablesFromProperties=yes");
 
-        assertThatThrownBy(() -> template.requestBody(uri, null, String.class))
+        assertThatThrownBy(() -> context.getEndpoint(uri))
                 .rootCause()
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Invalid resolveVariablesFromProperties: yes");
+        WireMock.verify(0, getRequestedFor(urlEqualTo("/collections/" + UID)));
         WireMock.verify(0, getRequestedFor(urlPathEqualTo("/v3/status")));
     }
 
@@ -219,6 +224,7 @@ class RestPostmanPropertyFallbackTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("{{sys:" + SYSTEM_PROPERTY + "}}")
                 .hasMessageContaining("still contains a {{placeholder}}")
+                .hasMessageContaining("Define the variable in the collection, or supply it with the variables option")
                 .hasMessageNotContaining("from-system-property");
         WireMock.verify(0, getRequestedFor(urlPathEqualTo("/v3/function")));
     }

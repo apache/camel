@@ -150,6 +150,13 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        // a mistyped value fails at context start rather than when the first producer is created
+        validateResolveVariablesFromProperties(configuration.getResolveVariablesFromProperties());
+    }
+
+    @Override
     public boolean isLenientProperties() {
         // unknown URI parameters are literal path or query values rather than mistakes
         return true;
@@ -385,7 +392,9 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
                                                + " substitution, in its URL, query parameters, Accept or Content-Type,"
                                                + " which would be resolved from Camel properties: "
                                                + URISupport.sanitizeUri(uri)
-                                               + ". Define it in the collection, or supply it with the variables option.");
+                                               + ". Define the variable in the collection, or supply it with the"
+                                               + " variables option (variable.<name>=<value>). A literal {{ that is"
+                                               + " not a variable is not supported in these parts of a request.");
         }
         return uri;
     }
@@ -516,14 +525,18 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
         if (configured == null || RestPostmanConfiguration.RESOLVE_VARIABLES_FROM_PROPERTIES_AUTO.equals(configured)) {
             return PostmanCollectionLoader.isLocalSource(collectionSource, configuration.getCollectionSourceType());
         }
-        if (RestPostmanConfiguration.RESOLVE_VARIABLES_FROM_PROPERTIES_ENABLED.equals(configured)) {
-            return true;
+        validateResolveVariablesFromProperties(configured);
+        return RestPostmanConfiguration.RESOLVE_VARIABLES_FROM_PROPERTIES_ENABLED.equals(configured);
+    }
+
+    private static void validateResolveVariablesFromProperties(String configured) {
+        if (configured != null
+                && !RestPostmanConfiguration.RESOLVE_VARIABLES_FROM_PROPERTIES_AUTO.equals(configured)
+                && !RestPostmanConfiguration.RESOLVE_VARIABLES_FROM_PROPERTIES_ENABLED.equals(configured)
+                && !RestPostmanConfiguration.RESOLVE_VARIABLES_FROM_PROPERTIES_DISABLED.equals(configured)) {
+            throw new IllegalArgumentException(
+                    "Invalid resolveVariablesFromProperties: " + configured + ". Use auto, enabled or disabled.");
         }
-        if (RestPostmanConfiguration.RESOLVE_VARIABLES_FROM_PROPERTIES_DISABLED.equals(configured)) {
-            return false;
-        }
-        throw new IllegalArgumentException(
-                "Invalid resolveVariablesFromProperties: " + configured + ". Use auto, enabled or disabled.");
     }
 
     /**
