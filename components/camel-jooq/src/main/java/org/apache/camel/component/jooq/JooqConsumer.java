@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.jooq;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import org.apache.camel.Exchange;
@@ -35,6 +37,8 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
 
     private static final class DataHolder {
         private Exchange exchange;
+        private UpdatableRecord<?> record;
+        private boolean consumed;
 
         private DataHolder() {
         }
@@ -63,16 +67,29 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
         // okay we have some response from jooq so lets mark the consumer as ready
         forceConsumerAsReady();
 
+        List<DataHolder> holders = new ArrayList<>(results.size());
         for (UpdatableRecord<?> result : results) {
             DataHolder holder = new DataHolder();
             holder.exchange = createExchange(result);
-            answer.add(holder);
+            holder.record = result;
+            holders.add(holder);
         }
+        answer.addAll(holders);
 
         int messagePolled = processBatch(CastUtils.cast(answer));
 
         if (configuration.isConsumeDelete()) {
-            context.batchDelete(results).execute();
+            // only delete the entities whose exchange was processed successfully, so a failed (or not processed)
+            // entity stays in the table and is consumed again by the next poll
+            List<UpdatableRecord<?>> consumed = new ArrayList<>(holders.size());
+            for (DataHolder holder : holders) {
+                if (holder.consumed) {
+                    consumed.add(holder.record);
+                }
+            }
+            if (!consumed.isEmpty()) {
+                context.batchDelete(consumed).execute();
+            }
         }
 
         return messagePolled;
@@ -97,6 +114,7 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
             for (int i = 0; i < total; i++) {
                 DataHolder holder = org.apache.camel.util.ObjectHelper.cast(DataHolder.class, exchanges.poll());
                 getProcessor().process(holder.exchange);
+                holder.consumed = !holder.exchange.isFailed() && !holder.exchange.isRollbackOnly();
             }
         }
 

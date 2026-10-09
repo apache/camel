@@ -93,6 +93,8 @@ See the examples below.
 Consuming messages from a JOOQ consumer endpoint removes (or updates) entity beans in the database.
 This allows you to use a database table as a logical queue: consumers take messages from the queue and then delete/update them to logically remove them from the queue.
 If you do not wish to delete the entity bean when it has been processed, you can specify consumeDelete=false on the URI.
+An entity bean is only deleted when its exchange completed successfully: if the exchange failed, the entity stays in
+the table and is consumed again by the next poll.
 
 === Operations
 

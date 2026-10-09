@@ -1102,6 +1102,15 @@ exception in the route (for example with `onException(...).handled(true)`) to ac
 event that always fails now gets `RETRY` every time, until a Dapr resiliency policy for the pub/sub component or a
 dead-letter topic on the subscription limits the redeliveries.
 
+=== camel-jooq - an entity whose exchange failed is not deleted
+
+With `consumeDelete=true` (the default) the consumer deleted every entity of a poll after the batch, also the
+entities whose exchange failed (a failed route sets the exception on the exchange instead of throwing it), so those
+rows were lost. The consumer now deletes only the entities whose exchange completed successfully; an entity whose
+exchange failed (or was marked rollback only), or that was not processed because the route was stopping, stays in the
+table and is consumed again by the next poll, so an entity that always fails is now processed at every poll. Handle
+the exception in the route (for example with `onException(...).handled(true)`) to delete the entity anyway.
+
 === Components and Language removal
 
 ==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
