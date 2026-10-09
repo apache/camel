@@ -82,7 +82,7 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
     protected synchronized void doStop() throws Exception {
         stopped = true;
         if (executor != null) {
-            executor.shutdownNow();
+            getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             executor = null;
         }
         super.doStop();

@@ -21,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -29,6 +30,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultExecutorServiceManager;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
@@ -43,6 +45,18 @@ class LocalCliConnectorSemanticLifecycleTest {
             var created = new CountDownLatch(1);
             var release = new CountDownLatch(1);
             var pool = new AtomicReference<ExecutorService>();
+            var removed = new AtomicReference<ExecutorService>();
+            context.addLifecycleStrategy(new LifecycleStrategySupport() {
+                @Override
+                public void onThreadPoolRemove(CamelContext context, ThreadPoolExecutor executor) {
+                    onThreadPoolRemove(context, (ExecutorService) executor);
+                }
+
+                @Override
+                public void onThreadPoolRemove(CamelContext context, ExecutorService executor) {
+                    removed.set(executor);
+                }
+            });
             context.setExecutorServiceManager(new DefaultExecutorServiceManager(context) {
                 @Override
                 public ExecutorService newThreadPool(Object source, String name, ThreadPoolProfile profile) {
@@ -82,13 +96,15 @@ class LocalCliConnectorSemanticLifecycleTest {
                 dispatch.get(5, TimeUnit.SECONDS).cancel(true);
                 assertThat(connector.isStopped()).isTrue();
                 assertThat(pool.get().isShutdown()).isTrue();
+                assertThat(context.isStarted()).isTrue();
+                assertThat(removed.get()).isSameAs(pool.get());
             } finally {
                 release.countDown();
                 caller.join(5000);
                 stopper.join(5000);
                 connector.stop();
                 if (pool.get() != null) {
-                    pool.get().shutdownNow();
+                    context.getExecutorServiceManager().shutdownNow(pool.get());
                 }
             }
         }
