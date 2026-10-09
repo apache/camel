@@ -127,13 +127,7 @@ public class MyBatisProducer extends DefaultProducer {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
-            Iterator<?> iter;
-            if (in instanceof Map) {
-                // we want the map as-is
-                iter = Collections.singletonList(in).iterator();
-            } else {
-                iter = ObjectHelper.createIterator(in);
-            }
+            Iterator<?> iter = createIterator(in);
             while (iter.hasNext()) {
                 Object value = iter.next();
                 LOG.trace("Inserting: {} using statement: {}", value, statement);
@@ -166,13 +160,7 @@ public class MyBatisProducer extends DefaultProducer {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
-            Iterator<?> iter;
-            if (in instanceof Map) {
-                // we want the map as-is
-                iter = Collections.singletonList(in).iterator();
-            } else {
-                iter = ObjectHelper.createIterator(in);
-            }
+            Iterator<?> iter = createIterator(in);
             while (iter.hasNext()) {
                 Object value = iter.next();
                 LOG.trace("Updating: {} using statement: {}", value, statement);
@@ -205,13 +193,7 @@ public class MyBatisProducer extends DefaultProducer {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
-            Iterator<?> iter;
-            if (in instanceof Map) {
-                // we want the map as-is
-                iter = Collections.singletonList(in).iterator();
-            } else {
-                iter = ObjectHelper.createIterator(in);
-            }
+            Iterator<?> iter = createIterator(in);
             while (iter.hasNext()) {
                 Object value = iter.next();
                 LOG.trace("Deleting: {} using statement: {}", value, statement);
@@ -295,6 +277,19 @@ public class MyBatisProducer extends DefaultProducer {
     @Override
     public MyBatisEndpoint getEndpoint() {
         return (MyBatisEndpoint) super.getEndpoint();
+    }
+
+    /**
+     * Iterates a collection, an iterator, a stream or an array of objects, to run the statement once per element. Any
+     * other value is one parameter as-is: a Map, a String (which may contain commas) and a primitive array (such as a
+     * byte[]).
+     */
+    private static Iterator<?> createIterator(Object in) {
+        if (in instanceof Map || in instanceof String
+                || in.getClass().isArray() && in.getClass().getComponentType().isPrimitive()) {
+            return Collections.singletonList(in).iterator();
+        }
+        return ObjectHelper.createIterator(in);
     }
 
     private Object getInput(final Exchange exchange) {

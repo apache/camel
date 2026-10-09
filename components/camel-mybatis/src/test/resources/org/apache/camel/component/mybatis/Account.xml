@@ -115,6 +115,20 @@ aliases to match the properties of the target result class. -->
         </foreach>
     </delete>
 
+    <!-- Insert, update and delete examples, using a String as the parameter class -->
+    <insert id="insertAccountWithLastName" parameterType="String">
+        insert into ACCOUNT (ACC_ID, ACC_FIRST_NAME, ACC_LAST_NAME, ACC_EMAIL)
+        values (789, 'Jane', #{lastName}, 'jane@example.com')
+    </insert>
+
+    <update id="updateLastNameOfAccount123" parameterType="String">
+        update ACCOUNT set ACC_LAST_NAME = #{lastName} where ACC_ID = 123
+    </update>
+
+    <delete id="deleteAccountByLastName" parameterType="String">
+        delete from ACCOUNT where ACC_LAST_NAME = #{lastName}
+    </delete>
+
     <!-- START SNIPPET: e1 -->
     <select id="selectUnprocessedAccounts" resultMap="AccountResult">
         select * from ACCOUNT where PROCESSED = false
