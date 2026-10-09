@@ -970,6 +970,12 @@ Before, the first five fell back to the charset of the exchange (UTF-8 by defaul
 unmarshal sets `CamelCharsetName` to it. A message whose MSH-18 names one of these charsets but that is actually
 encoded in another one (such as UTF-8) is now decoded in the charset it names.
 
+=== camel-ldif - modrdn and moddn records
+
+A `changetype: modrdn` record with a `newsuperior` line now moves the entry under the new superior, as RFC 2849
+defines; before, the entry was only renamed in place. A `changetype: moddn` record without `newsuperior` now renames
+the entry in place; before, it was moved directly under the root (which servers normally refuse).
+
 === camel-servlet and camel-jetty - String response in the charset of the Content-Type
 
 The servlet and Jetty consumers converted a `String` response body with the charset of the exchange (UTF-8 by
