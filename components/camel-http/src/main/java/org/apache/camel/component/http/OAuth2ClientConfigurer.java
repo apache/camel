@@ -151,7 +151,11 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
                 && effectivePort(targetUri) == effectivePort(requestUri);
     }
 
-    private static int effectivePort(URI uri) {
+    /**
+     * The port of the URI, or the default port of its scheme (80 for http, 443 for https) when it has none, or -1 for
+     * another scheme without a port.
+     */
+    static int effectivePort(URI uri) {
         if (uri.getPort() >= 0) {
             return uri.getPort();
         }

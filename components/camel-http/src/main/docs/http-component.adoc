@@ -672,6 +672,12 @@ YAML::
 
 NOTE: Resource Indicator is the URL to the actual endpoint as defined in the component URI.
 
+[NOTE]
+Camel only provides support for OAuth2 client credentials flow
+
+[IMPORTANT]
+Camel does not perform any validation in access token. It's up to the underlying service to validate it.
+
 ==== Caching tokens
 
 With `oauth2CacheTokens=true`, Camel caches the token until it expires (see `oauth2CachedTokensDefaultExpirySeconds`
@@ -683,8 +689,8 @@ cached token:
 * `HOST_ONLY`: one token shared by all requests to the same scheme, host and port.
 
 The client id, client secret, token endpoint, scope and resource indicator are always part of the key. The token
-request itself does not depend on the request URI, so with dynamic paths or queries (for example with `toD`),
-`HOST_AND_PATH` or `HOST_ONLY` avoid requesting a new token for every new URI.
+request itself does not depend on the request URI, so with dynamic queries `HOST_AND_PATH`, and with dynamic paths
+(for example with `toD`) `HOST_ONLY`, avoid requesting a new token for every new URI.
 
 [tabs]
 ====
@@ -728,12 +734,6 @@ YAML::
 For other rules, implement `org.apache.camel.component.http.OAuth2CachedTokensKeyResolver` and refer to it with
 `oauth2CachedTokensKeyResolver=#myResolver`. It takes precedence over `oauth2CachedTokensKey`. When it returns `null`,
 the token for that request is not cached.
-
-[NOTE]
-Camel only provides support for OAuth2 client credentials flow
-
-[IMPORTANT]
-Camel does not perform any validation in access token. It's up to the underlying service to validate it.
 
 === Vault-backed credential rotation
 

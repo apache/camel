@@ -56,19 +56,6 @@ public enum OAuth2CachedTokensKey implements OAuth2CachedTokensKeyResolver {
     private static String authority(URI uri) {
         String scheme = uri.getScheme() != null ? uri.getScheme().toLowerCase(Locale.ROOT) : "";
         String host = uri.getHost() != null ? uri.getHost().toLowerCase(Locale.ROOT) : "";
-        return scheme + "://" + host + ":" + effectivePort(uri.getPort(), scheme);
-    }
-
-    private static int effectivePort(int port, String scheme) {
-        if (port >= 0) {
-            return port;
-        }
-        if ("http".equals(scheme)) {
-            return 80;
-        }
-        if ("https".equals(scheme)) {
-            return 443;
-        }
-        return -1;
+        return scheme + "://" + host + ":" + OAuth2ClientConfigurer.effectivePort(uri);
     }
 }

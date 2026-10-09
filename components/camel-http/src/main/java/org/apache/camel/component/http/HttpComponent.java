@@ -308,6 +308,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         } else if (resolver != null) {
             cachedTokensKeyResolver = EndpointHelper.resolveReferenceParameter(
                     getCamelContext(), resolver.toString(), OAuth2CachedTokensKeyResolver.class);
+            // bind the same instance on the endpoint rather than resolving the reference again
+            parameters.put("oauth2CachedTokensKeyResolver", cachedTokensKeyResolver);
         }
         if (cachedTokensKeyResolver == null) {
             cachedTokensKeyResolver = getParameter(

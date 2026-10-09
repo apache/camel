@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.http;
 
+import java.net.URI;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -106,6 +109,35 @@ public class HttpOAuth2CachedTokensKeyTest extends BaseHttpTest {
                                                       + "/post?oauth2CachedTokensKeyResolver=#onePerTarget",
                     HttpEndpoint.class);
             assertSame(onePerTarget, custom.getOauth2CachedTokensKeyResolver());
+        }
+    }
+
+    @Test
+    public void aClassResolverIsTheSameInstanceOnTheEndpoint() throws Exception {
+        try (HttpServer localServer = createLocalServer(); HttpServer oauth2Server = createLocalOAuth2Server()) {
+            String uri = uri(localServer, oauth2Server, "/post",
+                    "&oauth2CachedTokensKeyResolver=#class:" + RecordingResolver.class.getName());
+            assertOk(template.request(uri, e -> {
+            }));
+
+            RecordingResolver resolver = assertInstanceOf(RecordingResolver.class,
+                    context.getEndpoint(uri, HttpEndpoint.class).getOauth2CachedTokensKeyResolver());
+            // #class: creates a new instance each time it is resolved: the endpoint must have the one that was used
+            assertEquals(1, resolver.requests.size());
+            assertEquals("/post", resolver.requests.get(0).getPath());
+        }
+    }
+
+    /**
+     * Records the requests it computed a key for, and does not cache their tokens.
+     */
+    public static class RecordingResolver implements OAuth2CachedTokensKeyResolver {
+        final List<URI> requests = new CopyOnWriteArrayList<>();
+
+        @Override
+        public String resolveKey(URI requestUri) {
+            requests.add(requestUri);
+            return null;
         }
     }
 
