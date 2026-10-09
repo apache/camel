@@ -962,9 +962,11 @@ represent are written as `?`.
 ==== A response that is not chunked and has a text Content-Type
 
 A `String` response body that is not chunked (`chunked=false` or the `CamelHttpChunked` header) and has a text
-`Content-Type` (one that contains `text` or `html`) was written in the charset of the exchange, which also replaced the
-charset that the `Content-Type` declared (`text/plain; charset=ISO-8859-1` was sent as `text/plain;charset=UTF-8`).
-Such a body is now written in the charset that the `Content-Type` declares, and the response keeps that charset.
+`Content-Type` (one that contains `text` or `html`) was written in the charset of the exchange (`CamelCharsetName`,
+which the consumer sets from the request charset, else UTF-8), which also replaced the charset that the `Content-Type`
+declared (`text/plain; charset=ISO-8859-1` was sent as `text/plain;charset=UTF-8`). Such a body is now written in the
+charset that the `Content-Type` declares, and the response keeps that charset: `CamelCharsetName` no longer overrides a
+charset declared in the `Content-Type` here.
 Responses without a charset in the `Content-Type`, and bodies that are not a `String`, are written as before.
 Characters that the declared charset cannot represent are written as `?`.
 
