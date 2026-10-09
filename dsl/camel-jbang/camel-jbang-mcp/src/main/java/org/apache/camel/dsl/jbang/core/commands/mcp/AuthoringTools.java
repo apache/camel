@@ -202,6 +202,8 @@ public class AuthoringTools {
         }
         JsonArray list = new JsonArray();
         for (FileEdit edit : edits) {
+            // a null element stays in the list as {}, on purpose: the shared tool then answers with the shape edits
+            // must have, so a malformed call is told rather than half applied
             JsonObject jo = new JsonObject();
             if (edit != null) {
                 jo.put("find", edit.find());
