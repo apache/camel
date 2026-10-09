@@ -256,6 +256,40 @@ public class BarcodeDataFormatTest {
     }
 
     /**
+     * The maps returned by the getters are live views: a map obtained before a change shows it afterwards, including
+     * the hints computed again when the data format starts and restarts.
+     */
+    @Test
+    final void testHintMapsAreLiveViews() throws IOException {
+        try (BarcodeDataFormat instance = new BarcodeDataFormat()) {
+            Map<EncodeHintType, Object> writerHints = instance.getWriterHintMap();
+            Map<DecodeHintType, Object> readerHints = instance.getReaderHintMap();
+
+            instance.addToHintMap(EncodeHintType.MARGIN, 5);
+            instance.addToHintMap(DecodeHintType.PURE_BARCODE, Boolean.TRUE);
+            assertEquals(Map.of(EncodeHintType.MARGIN, 5), writerHints);
+            assertEquals(Map.of(DecodeHintType.PURE_BARCODE, Boolean.TRUE), readerHints);
+
+            instance.start();
+            assertEquals(Map.of(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H, EncodeHintType.MARGIN, 5),
+                    writerHints);
+            assertEquals(Map.of(DecodeHintType.TRY_HARDER, Boolean.TRUE, DecodeHintType.PURE_BARCODE, Boolean.TRUE),
+                    readerHints);
+
+            instance.removeFromHintMap(EncodeHintType.ERROR_CORRECTION);
+            instance.removeFromHintMap(DecodeHintType.TRY_HARDER);
+            assertEquals(Map.of(EncodeHintType.MARGIN, 5), writerHints);
+            assertEquals(Map.of(DecodeHintType.PURE_BARCODE, Boolean.TRUE), readerHints);
+
+            instance.stop();
+            instance.addToHintMap(EncodeHintType.MARGIN, 7);
+            instance.start();
+            assertEquals(Map.of(EncodeHintType.MARGIN, 7), writerHints);
+            assertEquals(Map.of(DecodeHintType.PURE_BARCODE, Boolean.TRUE), readerHints);
+        }
+    }
+
+    /**
      * Helper to check the saved parameters.
      */
     private void checkParams(

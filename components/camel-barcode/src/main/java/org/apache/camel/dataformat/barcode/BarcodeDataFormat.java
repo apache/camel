@@ -314,18 +314,20 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     /**
-     * The writer (encode) hint map, as a read-only view. Use {@link #addToHintMap(EncodeHintType, Object)} and
-     * {@link #removeFromHintMap(EncodeHintType)} to change it: the hints are computed again when the data format
-     * starts, and only the changes made with these methods are applied again.
+     * The writer (encode) hint map, as a read-only live view: it shows the later changes made with
+     * {@link #addToHintMap(EncodeHintType, Object)} and {@link #removeFromHintMap(EncodeHintType)}, and the hints
+     * computed again when the data format starts or restarts. Use these methods to change it, as only the changes made
+     * with them are applied again when the hints are computed again.
      */
     public final Map<EncodeHintType, Object> getWriterHintMap() {
         return Collections.unmodifiableMap(writerHintMap);
     }
 
     /**
-     * The reader (decode) hint map, as a read-only view. Use {@link #addToHintMap(DecodeHintType, Object)} and
-     * {@link #removeFromHintMap(DecodeHintType)} to change it: the hints are computed again when the data format
-     * starts, and only the changes made with these methods are applied again.
+     * The reader (decode) hint map, as a read-only live view: it shows the later changes made with
+     * {@link #addToHintMap(DecodeHintType, Object)} and {@link #removeFromHintMap(DecodeHintType)}, and the hints
+     * computed again when the data format starts or restarts. Use these methods to change it, as only the changes made
+     * with them are applied again when the hints are computed again.
      */
     public final Map<DecodeHintType, Object> getReaderHintMap() {
         return Collections.unmodifiableMap(readerHintMap);
