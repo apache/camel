@@ -73,6 +73,7 @@
 ** xref:security.adoc[Security]
 ** xref:security-policy.adoc[Security Policy Enforcement]
 ** xref:security-model.adoc[Security Model]
+** xref:governed-ai-agents.adoc[Governed AI Agents]
 * xref:architecture.adoc[Architecture]
 ** xref:backlog-debugger.adoc[Backlog debugger]
 ** xref:backlog-tracer.adoc[Backlog Tracer]
