@@ -724,6 +724,8 @@ public class YamlValidator {
         errors = SchemaHints.apply(SchemaHints.EXPRESSION, errors, this);
         errors = SchemaHints.apply(SchemaHints.PROPERTY, errors, this);
         errors = SchemaHints.apply(SchemaHints.LIST, errors, this);
+        // before the step hints, which rewrite the error without its instance node
+        errors = SchemaHints.dropMisplacedOptionRepeats(errors, this);
         errors = SchemaHints.apply(SchemaHints.STEP, errors, this);
         // CAMEL-24707: the schema requires the expression, so a node without one fails its oneOf with "0 are valid"
         // plus one "required property <language> not found" per language; replace that with one line that says
