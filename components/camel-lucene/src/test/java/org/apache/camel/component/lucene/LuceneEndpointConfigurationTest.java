@@ -94,6 +94,8 @@ class LuceneEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(5, a.getConfig().getMaxHits(), "maxHits of " + QUERY_A);
         assertEquals("indexA", a.getConfig().getHost(), "host of " + QUERY_A);
         assertEquals(dirB, b.getConfig().getIndexDir(), "indexDir of " + QUERY_B);
+        assertEquals(20, b.getConfig().getMaxHits(), "maxHits of " + QUERY_B);
+        assertEquals("indexB", b.getConfig().getHost(), "host of " + QUERY_B);
     }
 
     @Test
