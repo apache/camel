@@ -601,5 +601,9 @@ publisher still sends for the demand requested before the suspend). The exchange
 the suspend does not wait for the queued items: they are routed in order when the consumer is resumed, or when it is
 stopped.
 
+A graceful shutdown (stopping the route, all the routes or the CamelContext) also suspends the consumer first, but then
+routes its queued items, and waits for them up to the shutdown timeout, before it stops the routes the items go to, such
+as a `direct` or `seda` route. No more items are requested from the publisher.
+
 When backpressure is disabled (`maxInflightExchanges` not positive), a suspended consumer cannot limit what the
 publisher sends: the items it receives while suspended are kept in memory until it is resumed or stopped.

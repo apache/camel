@@ -20,12 +20,15 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Suspendable;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -38,8 +41,12 @@ import org.slf4j.LoggerFactory;
  * requests no more items from the stream and routes none of the queued ones (nor the items the publisher still sends
  * for the demand requested before the suspend): they stay queued until the consumer is resumed or stopped. The
  * exchanges being routed when the consumer is suspended complete normally, and the suspend does not wait for them.
+ * <p/>
+ * A graceful shutdown also suspends the consumer first, but then routes the queued items while the other routes are
+ * still running (see {@link #getPendingExchangesSize(boolean)}), so that they can reach a downstream route such as a
+ * direct or seda one, and the shutdown strategy waits for them within its timeout.
  */
-public class ReactiveStreamsConsumer extends DefaultConsumer implements Suspendable {
+public class ReactiveStreamsConsumer extends DefaultConsumer implements Suspendable, ShutdownAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReactiveStreamsConsumer.class);
 
@@ -56,6 +63,15 @@ public class ReactiveStreamsConsumer extends DefaultConsumer implements Suspenda
      * in the thread pool that routes the oldest queued item, unless the consumer is suspended.
      */
     private final Queue<QueuedItem> queued = new ConcurrentLinkedQueue<>();
+    /**
+     * The number of items taken from {@link #queued} whose exchange is not done yet.
+     */
+    private final AtomicInteger routing = new AtomicInteger();
+    /**
+     * Whether a graceful shutdown is draining the queued items: they are routed even though the consumer is suspended,
+     * while no more items are requested from the stream.
+     */
+    private volatile boolean draining;
     private ExecutorService executor;
     private ReactiveStreamsCamelSubscriber subscriber;
 
@@ -68,6 +84,7 @@ public class ReactiveStreamsConsumer extends DefaultConsumer implements Suspenda
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        draining = false;
 
         int poolSize = endpoint.getConcurrentConsumers();
         if (executor == null) {
@@ -89,6 +106,7 @@ public class ReactiveStreamsConsumer extends DefaultConsumer implements Suspenda
 
     @Override
     protected void doResume() throws Exception {
+        draining = false;
         if (executor == null) {
             // suspended while it was not started (before its start or after a stop). Call doStart() directly, not
             // start(): resume() has already set the status to STARTING, so start() would return without starting
@@ -125,8 +143,60 @@ public class ReactiveStreamsConsumer extends DefaultConsumer implements Suspenda
             }
             executor = null;
         }
+        draining = false;
 
         super.doStop();
+    }
+
+    @Override
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        // the shutdown strategy suspends this consumer in its first pass, and waits for the queued items to be routed
+        // (see getPendingExchangesSize) while the routes they go to are still running
+        return false;
+    }
+
+    @Override
+    public int getPendingExchangesSize() {
+        return executor != null ? queued.size() + routing.get() : 0;
+    }
+
+    /**
+     * Returns the number of items the shutdown strategy must wait for.
+     * <p/>
+     * When the route is being shutdown, this starts to route the queued items, even though the consumer is suspended,
+     * and returns the number of items queued or being routed: the strategy waits for them (up to its timeout) before it
+     * stops the deferred consumers, such as the direct or seda consumers of the routes the items go to. No more items
+     * are requested from the stream. When the route is only being suspended, the queued items are kept until the
+     * consumer is resumed, so there is nothing to wait for.
+     */
+    @Override
+    public int getPendingExchangesSize(boolean suspendOnly) {
+        if (suspendOnly) {
+            return 0;
+        }
+        startDraining();
+        return getPendingExchangesSize();
+    }
+
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        if (!suspendOnly && !forced) {
+            // the queued items are routed before the consumer is stopped (a no-op when the shutdown strategy already
+            // started it while it waited for the pending exchanges)
+            startDraining();
+        }
+    }
+
+    boolean isDraining() {
+        return draining;
+    }
+
+    private void startDraining() {
+        if (!draining && executor != null) {
+            draining = true;
+            // the tasks of the items queued while the consumer was suspended did not route them
+            scheduleQueuedItems();
+        }
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -176,18 +246,24 @@ public class ReactiveStreamsConsumer extends DefaultConsumer implements Suspenda
      */
     private void scheduleQueuedItems() {
         ExecutorService executorService = this.executor;
+        if (executorService == null) {
+            return;
+        }
         for (int i = queued.size(); i > 0; i--) {
             executorService.execute(this::routeQueuedItem);
         }
     }
 
     private void routeQueuedItem() {
-        if (isSuspendingOrSuspended()) {
-            // the item stays queued until the consumer is resumed or stopped
+        if (isSuspendingOrSuspended() && !draining) {
+            // the item stays queued until the consumer is resumed, stopped or drained by a graceful shutdown
             return;
         }
+        // counted before it is taken from the queue, so that the shutdown strategy always sees it as pending
+        routing.incrementAndGet();
         QueuedItem item = queued.poll();
         if (item == null) {
+            routing.decrementAndGet();
             return;
         }
 
@@ -205,6 +281,7 @@ public class ReactiveStreamsConsumer extends DefaultConsumer implements Suspenda
                     getExceptionHandler().handleException("Error processing exchange", exchange, cause);
                 }
 
+                routing.decrementAndGet();
                 item.callback().done(doneSync);
             });
         } finally {
