@@ -87,7 +87,7 @@ public final class OpenApiVerbs {
         return answer;
     }
 
-    private static Map<?, ?> paths(String text) {
+    static Map<?, ?> paths(String text) {
         try {
             Object document;
             if (text.stripLeading().startsWith("{")) {
