@@ -352,7 +352,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         // the remaining exchanges are not processed as the consumer is stopping
         releaseInProgress(null, exchanges);
 
-        return total;
+        // skipped objects were not polled: they must not count for sendEmptyMessageWhenIdle and greedy polling
+        return total - skipped;
     }
 
     private void routeExchange(Exchange exchange, int index, int size, boolean complete, int pending) {
