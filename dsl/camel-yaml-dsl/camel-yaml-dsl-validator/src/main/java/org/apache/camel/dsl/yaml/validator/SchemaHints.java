@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml.validator;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -191,6 +192,10 @@ final class SchemaHints {
             return generic;
         }
         Set<String> options = m.validator().optionsOf(eip);
+        // the key the option lines up with once it is under the EIP: "the column of - split:" read as the column of
+        // the dash, and two spaces more than that is where the model had put it already (it wrote the same five times)
+        JsonNode value = node.get(eip);
+        String sibling = value != null && value.isObject() && value.size() > 0 ? value.fieldNames().next() : null;
         List<String> parts = new ArrayList<>();
         for (String k : keys) {
             if (k.equals(eip)) {
@@ -198,15 +203,71 @@ final class SchemaHints {
             }
             if (steps.contains(k)) {
                 parts.add(k + ": is another EIP: start it as its own item, - " + k + ":");
+            } else if (options.contains(k) && sibling != null) {
+                parts.add(k + ": lines up with " + eip + ":, so it is read as a second key of the - item; it is an"
+                          + " option of " + eip + ": indent " + k + ": and the lines under it two spaces more, so " + k
+                          + ": lines up with " + sibling + ":");
             } else if (options.contains(k)) {
-                parts.add(k + ": is at the column of - " + eip + ": as an option of " + eip + " it is indented under "
-                          + eip + ":, two spaces more, next to its other options");
+                parts.add(k + ": lines up with " + eip + ":, so it is read as a second key of the - item; it is an"
+                          + " option of " + eip + ": write the options of " + eip + ": on the lines under it, two"
+                          + " spaces further right than " + eip + ":, with " + k + ": among them");
             } else {
                 // neither: say what a step is, without guessing where the key belongs
                 return generic;
             }
         }
         return parts.isEmpty() ? generic : String.join("; ", parts);
+    }
+
+    /**
+     * The options of the step's EIP that are written as second keys of the step (at the column of the EIP), when the
+     * step has an EIP; empty otherwise.
+     */
+    static Set<String> misplacedOptions(JsonNode node, YamlValidator validator) {
+        if (node == null || !node.isObject() || node.size() < 2) {
+            return Set.of();
+        }
+        Set<String> steps = validator.stepNames();
+        List<String> keys = new ArrayList<>();
+        node.fieldNames().forEachRemaining(keys::add);
+        String eip = keys.stream().filter(steps::contains).findFirst().orElse(null);
+        if (eip == null) {
+            return Set.of();
+        }
+        Set<String> options = validator.optionsOf(eip);
+        Set<String> answer = new LinkedHashSet<>();
+        for (String k : keys) {
+            if (!k.equals(eip) && !steps.contains(k) && options.contains(k)) {
+                answer.add(k);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * An option of a step's EIP at the column of the EIP fails twice: "at most 1 properties" (the hint above says where
+     * it goes) and "property 'steps' is not defined" in the oneOf branch of the step, whose hint says to move the items
+     * up a level, the opposite. The second one is dropped.
+     */
+    static List<Error> dropMisplacedOptionRepeats(List<Error> errors, YamlValidator validator) {
+        Set<String> repeats = new HashSet<>();
+        for (Error e : errors) {
+            if ("maxProperties".equals(e.getKeyword())) {
+                String at = String.valueOf(e.getInstanceLocation());
+                if (at.matches(".*/steps/\\d+")) {
+                    for (String k : misplacedOptions(e.getInstanceNode(), validator)) {
+                        repeats.add(at + " " + k);
+                    }
+                }
+            }
+        }
+        if (repeats.isEmpty()) {
+            return errors;
+        }
+        List<Error> answer = new ArrayList<>(errors);
+        answer.removeIf(e -> "additionalProperties".equals(e.getKeyword()) && e.getMessage() != null
+                && repeats.contains(e.getInstanceLocation() + " " + between(e.getMessage(), "property '", "'")));
+        return answer;
     }
 
     // -------------------------------------------------------------------------------------------------------------

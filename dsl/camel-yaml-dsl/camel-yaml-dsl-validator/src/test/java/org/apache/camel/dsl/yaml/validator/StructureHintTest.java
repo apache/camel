@@ -72,7 +72,32 @@ public class StructureHintTest {
                             allowNamedParameters: true
                 """;
         assertThat(lines(yaml)).anySatisfy(m -> assertThat(m)
-                .contains("parameters: is at the column of - to: as an option of to it is indented under to:"));
+                .contains("parameters: lines up with to:, so it is read as a second key of the - item")
+                .contains("indent parameters: and the lines under it two spaces more, so parameters: lines up with"
+                          + " uri:"));
+    }
+
+    @Test
+    public void stepsAtTheColumnOfSplit() {
+        // as qwen3.6 wrote it ten times in a row: the hint named "the column of - split:", and two spaces more than
+        // the dash is where steps: already was; the second error said to move the items up a level
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:orders
+                      steps:
+                        - split:
+                            expression:
+                              simple: "${body[lines]}"
+                          steps:
+                            - log:
+                                message: "pick ${body[qty]} x ${body[sku]}"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> assertThat(m)
+                .startsWith("Line 5: ")
+                .contains("steps: lines up with split:")
+                .contains("so steps: lines up with expression:")
+                .doesNotContain("move the items up"));
     }
 
     @Test
