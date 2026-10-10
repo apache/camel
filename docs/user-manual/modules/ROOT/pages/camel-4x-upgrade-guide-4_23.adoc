@@ -2713,6 +2713,13 @@ breaking change for routes that reference the header by its literal string name:
 `CamelIBMCOSCacheControl`, although the change is trivial to adapt. Routes using the
 `IBMCOSConstants.CACHE_CONTROL` constant are unaffected.
 
+=== camel-ibm-cos - objects in progress in the consumer
+
+With `fileName` set, the consumer now skips the object while an exchange of an earlier poll is still processing it, as
+it already did when listing the bucket (with `deleteAfterRead=false` it is consumed again once its exchange is done).
+The objects of a poll that a stopping consumer does not process are no longer kept in the `inProgressRepository`, so
+they are consumed when the route is started again, and their content streams are closed.
+
 === camel-ibm-secrets-manager - a lookup without a secret group uses the default group
 
 The `ibm:` properties function now uses the `default` secret group when the lookup does not specify one, such as
