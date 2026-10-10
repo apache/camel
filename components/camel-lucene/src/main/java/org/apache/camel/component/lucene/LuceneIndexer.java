@@ -84,12 +84,17 @@ public class LuceneIndexer {
             }
 
             add("contents", exchange.getIn().getMandatoryBody(String.class), true);
+            indexWriter.commit();
         } catch (Exception e) {
             // discard the documents of this exchange and release the index write lock
-            indexWriter.rollback();
+            try {
+                indexWriter.rollback();
+            } catch (Exception re) {
+                e.addSuppressed(re);
+            }
             throw e;
         }
-        closeIndexWriter();
+        indexWriter.close();
     }
 
     public NIOFSDirectory getNiofsDirectory() {

@@ -18,8 +18,10 @@ package org.apache.camel.component.lucene;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.Exchange;
@@ -30,6 +32,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.StoredFields;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.NIOFSDirectory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -99,6 +102,33 @@ class LuceneIndexProducerLifecycleTest extends CamelTestSupport {
 
         Exchange next = template.send("direct:index", e -> e.getIn().setBody("next"));
         assertNull(next.getException(), "a failed insert must not leave the index write lock held");
+        assertEquals(1, countIndexedMessages());
+    }
+
+    @Test
+    void failedCommitDoesNotBlockLaterInserts() throws Exception {
+        LuceneEndpoint endpoint = context.getEndpoint(INSERT, LuceneEndpoint.class);
+        LuceneIndexer indexer = ((LuceneIndexProducer) endpoint.createProducer()).getIndexer();
+        AtomicBoolean failSync = new AtomicBoolean(true);
+        NIOFSDirectory original = indexer.getNiofsDirectory();
+        // the first commit fails when it syncs the index files
+        indexer.setNiofsDirectory(new NIOFSDirectory(indexDir.toPath()) {
+            @Override
+            public void sync(Collection<String> names) throws IOException {
+                if (failSync.getAndSet(false)) {
+                    throw new IOException("Simulated commit failure");
+                }
+                super.sync(names);
+            }
+        });
+        original.close();
+
+        Exchange failed = template.send("direct:index", e -> e.getIn().setBody("commit fails"));
+        assertNotNull(failed.getException(), "an insert whose commit fails fails");
+        assertFalse(failSync.get(), "the commit should have synced the index files");
+
+        Exchange next = template.send("direct:index", e -> e.getIn().setBody("next"));
+        assertNull(next.getException(), "a failed commit must not leave the index write lock held");
         assertEquals(1, countIndexedMessages());
     }
 
