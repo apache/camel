@@ -32,12 +32,12 @@ repeated. The stock levels are in `stock.json`.
 ## How it works
 
 - The client splits each order into lines, as `order-lines` does, and calls `toD` with
-  `http://localhost:8080/stock/${exchangeProperty.sku}`: `toD` because the URI is built per message.
-- The SKU, the quantity and the order id are kept in exchange properties, not headers: headers travel on the
+  `http://localhost:8080/stock/${variable.sku}`: `toD` because the URI is built per message.
+- The SKU, the quantity and the order id are kept in variables, not headers: headers travel on the
   HTTP request, and a header named `sku` would collide with the `{sku}` path parameter on the server side.
-  Properties stay in the route.
+  Variables stay in the route.
 - The body is set to null before the call: a GET has no body, and the order line would otherwise be sent. The
-  response replaces the body, which is why the line was saved in properties first.
+  response replaces the body, which is why the line was saved in variables first.
 - `throwExceptionOnFailure=false` turns a 404 into a normal response with `CamelHttpResponseCode` set, so the
   `choice` can log it instead of the error handler.
 
@@ -45,7 +45,7 @@ repeated. The stock levels are in `stock.json`.
 
 1. Start from `stock-api` and add a `file` route on `orders` that logs each order.
 2. Split the lines and call `http://localhost:8080/stock/CAMEL-MUG` with a fixed SKU; log the response body.
-3. Build the URI from the line with `toD` and a property; notice the body is gone after the call.
+3. Build the URI from the line with `toD` and a variable; notice the body is gone after the call.
 4. Add `throwExceptionOnFailure=false` and the `choice` on the response code and the quantity.
 
 ## Try changing

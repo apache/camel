@@ -48,7 +48,7 @@ can be repeated. `stock.api.url` in `application.properties` says where the serv
   `application.properties`): a call without a value for a path parameter, a required header or query parameter,
   or a required body is refused before it is sent, with a message that names what is missing, instead of going out
   with `{sku}` in the path.
-- The order id and SKU are also kept in exchange properties for the log, since the response replaces the body
+- The order id and SKU are also kept in variables for the log, since the response replaces the body
   and headers are sent on the wire, as the `http-client` example explains.
 - A 409 or 400 from the server is an `HttpOperationFailedException`; the `onException` logs its status code
   and response body and continues with the next line.
@@ -57,7 +57,7 @@ can be repeated. `stock.api.url` in `application.properties` says where the serv
 
 1. A timer route that calls `rest-openapi` with `operationId: getStock` and a fixed `sku` header; log the body.
 2. Read the orders, split the lines, and call `reserveStock` with the reservation as the body.
-3. Keep the order id and SKU in properties and log the result.
+3. Keep the order id and SKU in variables and log the result.
 4. Add the `onException` and see the cap's 409 handled instead of failing the order.
 
 ## Try changing

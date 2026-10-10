@@ -83,7 +83,7 @@
             expression:
               simple:
                 expression: "${body[orderId]} != null && ${body[qty]} > 0"
-        - setProperty:
+        - setVariable:
             name: reservation
             expression:
               simple:
@@ -107,7 +107,7 @@
                           expression: '{"error": "unknown sku ${header.sku}"}'
               - expression:
                   simple:
-                    expression: "${body[qty]} < ${exchangeProperty.reservation[qty]}"
+                    expression: "${body[qty]} < ${variable.reservation[qty]}"
                 steps:
                   - setHeader:
                       name: CamelHttpResponseCode
@@ -117,15 +117,15 @@
                   - setBody:
                       expression:
                         simple:
-                          expression: '{"error": "only ${body[qty]} ${header.sku} in stock, ${exchangeProperty.reservation[qty]} wanted for ${exchangeProperty.reservation[orderId]}"}'
+                          expression: '{"error": "only ${body[qty]} ${header.sku} in stock, ${variable.reservation[qty]} wanted for ${variable.reservation[orderId]}"}'
             otherwise:
               steps:
                 - log:
-                    message: "Reserved ${exchangeProperty.reservation[qty]} x ${header.sku} for ${exchangeProperty.reservation[orderId]}"
+                    message: "Reserved ${variable.reservation[qty]} x ${header.sku} for ${variable.reservation[orderId]}"
                 - setBody:
                     expression:
                       simple:
-                        expression: '{"sku": "${header.sku}", "reserved": ${exchangeProperty.reservation[qty]}, "remaining": ${body[qty]}}'
+                        expression: '{"sku": "${header.sku}", "reserved": ${variable.reservation[qty]}, "remaining": ${body[qty]}}'
 
 # Finds one SKU in the stock file: the item as a map, or null
 - route:

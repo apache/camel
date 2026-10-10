@@ -16,7 +16,7 @@
                 "split",
                 "choice",
                 "script",
-                "setProperty",
+                "setVariable",
                 "setHeader"
             ],
             "languages": [
@@ -59,7 +59,7 @@
             ],
             "eips": [
                 "setBody",
-                "setProperty",
+                "setVariable",
                 "unmarshal"
             ],
             "languages": [
@@ -540,7 +540,7 @@
             ],
             "eips": [
                 "split",
-                "setProperty",
+                "setVariable",
                 "toD",
                 "choice",
                 "unmarshal",
@@ -674,7 +674,7 @@
             "eips": [
                 "split",
                 "onException",
-                "setProperty",
+                "setVariable",
                 "setHeader",
                 "unmarshal"
             ],
@@ -726,7 +726,7 @@
                 "onException",
                 "marshal",
                 "unmarshal",
-                "setProperty"
+                "setVariable"
             ],
             "languages": [
                 "simple",

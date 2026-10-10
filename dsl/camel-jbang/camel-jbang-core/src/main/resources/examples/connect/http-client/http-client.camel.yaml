@@ -65,8 +65,8 @@
         - unmarshal:
             json:
               library: Jackson
-        # exchange properties stay in the route; headers would travel on the HTTP request
-        - setProperty:
+        # variables stay in the route; headers would travel on the HTTP request
+        - setVariable:
             name: orderId
             expression:
               simple:
@@ -76,12 +76,12 @@
               simple:
                 expression: "${body[lines]}"
             steps:
-              - setProperty:
+              - setVariable:
                   name: sku
                   expression:
                     simple:
                       expression: "${body[sku]}"
-              - setProperty:
+              - setVariable:
                   name: needed
                   expression:
                     simple:
@@ -92,7 +92,7 @@
                     simple:
                       expression: "${null}"
               - toD:
-                  uri: "http://localhost:8080/stock/${exchangeProperty.sku}?throwExceptionOnFailure=false"
+                  uri: "http://localhost:8080/stock/${variable.sku}?throwExceptionOnFailure=false"
               - unmarshal:
                   json:
                     library: Jackson
@@ -103,14 +103,14 @@
                           expression: "${header.CamelHttpResponseCode} != 200"
                       steps:
                         - log:
-                            message: "${exchangeProperty.orderId}: ${body[error]} (HTTP ${header.CamelHttpResponseCode})"
+                            message: "${variable.orderId}: ${body[error]} (HTTP ${header.CamelHttpResponseCode})"
                     - expression:
                         simple:
-                          expression: "${body[qty]} >= ${exchangeProperty.needed}"
+                          expression: "${body[qty]} >= ${variable.needed}"
                       steps:
                         - log:
-                            message: "${exchangeProperty.orderId}: ${exchangeProperty.sku} x ${exchangeProperty.needed}, ${body[qty]} in stock, ok"
+                            message: "${variable.orderId}: ${variable.sku} x ${variable.needed}, ${body[qty]} in stock, ok"
                   otherwise:
                     steps:
                       - log:
-                          message: "${exchangeProperty.orderId}: ${exchangeProperty.sku} x ${exchangeProperty.needed}, only ${body[qty]} in stock, back-order"
+                          message: "${variable.orderId}: ${variable.sku} x ${variable.needed}, only ${body[qty]} in stock, back-order"

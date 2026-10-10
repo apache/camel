@@ -11,7 +11,7 @@
     steps:
       - log:
           loggingLevel: WARN
-          message: "${exchangeProperty.orderId}: ${exchangeProperty.sku} not reserved, the stock API answered ${exception.statusCode}: ${exception.responseBody}"
+          message: "${variable.orderId}: ${variable.sku} not reserved, the stock API answered ${exception.statusCode}: ${exception.responseBody}"
 
 - route:
     id: reserve-order-lines
@@ -25,7 +25,7 @@
         - unmarshal:
             json:
               library: Jackson
-        - setProperty:
+        - setVariable:
             name: orderId
             expression:
               simple:
@@ -35,7 +35,7 @@
               simple:
                 expression: "${body[lines]}"
             steps:
-              - setProperty:
+              - setVariable:
                   name: sku
                   expression:
                     simple:
@@ -49,7 +49,7 @@
               - setBody:
                   expression:
                     simple:
-                      expression: '{"orderId": "${exchangeProperty.orderId}", "qty": ${body[qty]}}'
+                      expression: '{"orderId": "${variable.orderId}", "qty": ${body[qty]}}'
               - to:
                   uri: rest-openapi
                   parameters:
@@ -61,4 +61,4 @@
                   json:
                     library: Jackson
               - log:
-                  message: "${exchangeProperty.orderId}: reserved ${body[reserved]} x ${body[sku]}, ${body[remaining]} left on the shelf"
+                  message: "${variable.orderId}: reserved ${body[reserved]} x ${body[sku]}, ${body[remaining]} left on the shelf"
