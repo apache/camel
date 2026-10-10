@@ -33,6 +33,7 @@ import io.minio.MinioClient;
 import io.minio.RemoveObjectArgs;
 import io.minio.Result;
 import io.minio.SourceObject;
+import io.minio.errors.ErrorResponseException;
 import io.minio.errors.MinioException;
 import io.minio.messages.Item;
 import org.apache.camel.Exchange;
@@ -193,7 +194,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
     protected Deque<Exchange> createExchanges(String objectName) throws Exception {
         Deque<Exchange> answer = new LinkedList<>();
-        addExchange(objectName, answer);
+        addExchange(objectName, answer, false);
         return answer;
     }
 
@@ -205,7 +206,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 do {
                     messageCounter++;
                     Item minioObjectSummary = minioObjectSummaries.next().get();
-                    addExchange(minioObjectSummary.objectName(), answer);
+                    addExchange(minioObjectSummary.objectName(), answer, true);
                 } while (minioObjectSummaries.hasNext());
             } else {
                 do {
@@ -213,7 +214,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                     Item minioObjectSummary = minioObjectSummaries.next().get();
                     // ignore if directory
                     if (!minioObjectSummary.isDir()) {
-                        addExchange(minioObjectSummary.objectName(), answer);
+                        addExchange(minioObjectSummary.objectName(), answer, true);
                     }
                 } while (minioObjectSummaries.hasNext());
             }
@@ -233,7 +234,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         return answer;
     }
 
-    private void addExchange(String objectName, Deque<Exchange> answer) throws Exception {
+    private void addExchange(String objectName, Deque<Exchange> answer, boolean listed) throws Exception {
         // skip the object if an exchange of a previous poll is still processing it
         if (!inProgress.add(objectName)) {
             LOG.trace("Skipping object {} as it is already in progress", objectName);
@@ -243,8 +244,18 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             answer.add(createExchange(objectName));
         } catch (Exception e) {
             inProgress.remove(objectName);
+            if (listed && isNoSuchKey(e)) {
+                // deleted (for example by another consumer) after it was listed
+                LOG.debug("Skipping object {} as it no longer exists", objectName);
+                return;
+            }
             throw e;
         }
+    }
+
+    private static boolean isNoSuchKey(Exception e) {
+        return e instanceof ErrorResponseException ere && ere.errorResponse() != null
+                && "NoSuchKey".equals(ere.errorResponse().code());
     }
 
     private void releaseInProgress(String objectName, Queue<?> notProcessed) {
@@ -305,6 +316,12 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                         });
                     }
                 } catch (Exception e) {
+                    if (isNoSuchKey(e)) {
+                        // deleted (for example by another consumer) after it was listed
+                        LOG.debug("Skipping object {} as it no longer exists", srcObjectName);
+                        inProgress.remove(srcObjectName);
+                        continue;
+                    }
                     LOG.warn("Error getting MinioObject due: {}", e.getMessage());
                     // this and the remaining exchanges of the batch are not processed
                     releaseInProgress(srcObjectName, exchanges);

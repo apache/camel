@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,6 +42,8 @@ final class FakeS3Server {
     private final HttpServer server;
     private final NavigableMap<String, byte[]> objects = new ConcurrentSkipListMap<>();
     private final Map<String, AtomicInteger> gets = new ConcurrentHashMap<>();
+    private final Set<String> deleteWhenListed = ConcurrentHashMap.newKeySet();
+    private final Set<String> deleteWhenStatted = ConcurrentHashMap.newKeySet();
 
     FakeS3Server(String bucket) throws IOException {
         this.bucket = bucket;
@@ -62,6 +65,20 @@ final class FakeS3Server {
 
     void put(String key, String content) {
         objects.put(key, content.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * The object is deleted right after a listing returned it, as if another consumer deleted it before the stat.
+     */
+    void deleteWhenListed(String key) {
+        deleteWhenListed.add(key);
+    }
+
+    /**
+     * The object is deleted right after a stat (HEAD) of it, as if another consumer deleted it before the get.
+     */
+    void deleteWhenStatted(String key) {
+        deleteWhenStatted.add(key);
     }
 
     int gets(String key) {
@@ -91,6 +108,9 @@ final class FakeS3Server {
                     objectHeaders(http, data);
                     http.sendResponseHeaders(200, -1);
                     http.close();
+                    if (deleteWhenStatted.remove(key)) {
+                        objects.remove(key);
+                    }
                 }
             }
             case "GET" -> {
@@ -135,6 +155,11 @@ final class FakeS3Server {
                     .append("<StorageClass>STANDARD</StorageClass></Contents>");
             last = e.getKey();
             count++;
+        }
+        for (String key : deleteWhenListed) {
+            if (contents.indexOf("<Key>" + key + "</Key>") >= 0 && deleteWhenListed.remove(key)) {
+                objects.remove(key);
+            }
         }
         boolean truncated = last != null && objects.higherKey(last) != null;
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
