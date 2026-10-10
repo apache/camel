@@ -57,6 +57,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
     protected final CamelContext camelContext;
     protected final Processor output;
     protected volatile boolean preparingShutdown;
+    protected volatile boolean forcedShutdown;
     private JtaTransactionPolicy transactionPolicy;
     private final String transactionKey;
     private final LoggingLevel rollbackLoggingLevel;
@@ -202,7 +203,8 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
                 processByErrorHandler(exchange);
 
                 // if forced shutdown is in progress, mark the exchange for rollback
-                if (preparingShutdown) {
+                // (a graceful shutdown lets the in-flight exchange complete and commit)
+                if (forcedShutdown) {
                     LOG.debug("Forced shutdown in progress, marking exchange for rollback: {}",
                             exchange.getExchangeId());
                     exchange.setRollbackOnly(true);
@@ -319,6 +321,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
     protected void doStart() throws Exception {
         ServiceHelper.startService(output);
         preparingShutdown = false;
+        forcedShutdown = false;
     }
 
     @Override
@@ -326,6 +329,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         super.doResume();
         // reset flag when resuming
         preparingShutdown = false;
+        forcedShutdown = false;
     }
 
     @Override
@@ -369,6 +373,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         LOG.trace("Prepare shutdown on error handler {}", this);
         preparingShutdown = true;
         if (forced) {
+            forcedShutdown = true;
             // mark all in-flight transacted exchanges for rollback so the transaction
             // is rolled back before the connection pool is destroyed during shutdown
             for (Exchange exchange : inflightTransactedExchanges) {

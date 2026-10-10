@@ -2019,3 +2019,10 @@ so a downstream reader that expected that type received an incompatible object.
 
 A route that reads the full embeddings or audio response from `CamelOpenAIResponse` must switch to the
 matching property. The chat-completion and responses operations are unchanged.
+
+=== camel-jta, camel-spring - a transacted exchange that completes during a graceful shutdown is committed
+
+Since Camel 4.19, a transacted exchange (JTA or Spring transacted routes) that was in flight when a graceful shutdown
+(stopping `CamelContext` or a route) started was rolled back even when it completed within the shutdown timeout. It is
+now committed again. Only the forced shutdown after the timeout marks the in-flight transacted exchanges for rollback;
+with `shutdownNowOnTimeout=false` there is no forced shutdown, so an exchange completing after the timeout is committed.
