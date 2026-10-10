@@ -7051,6 +7051,116 @@
 				}
 			}
 		},
+		"\/q\/dev\/semantic-audit": {
+			"get": {
+				"summary": "Semantic Audit",
+				"description": "Browse retained semantic audit records",
+				"operationId": "semantic-audit",
+				"parameters": [
+					{
+						"name": "action",
+						"in": "query",
+						"description": "Filter by explicit route action",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "category",
+						"in": "query",
+						"description": "Filter by category",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "correlationId",
+						"in": "query",
+						"description": "Filter by application correlation ID",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "cursor",
+						"in": "query",
+						"description": "Backend cursor for an older page",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "eventId",
+						"in": "query",
+						"description": "Event ID to inspect with its linked evaluation records",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "expert",
+						"in": "query",
+						"description": "Filter by expert bean reference",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Maximum records, between 1 and 200",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 50
+						}
+					},
+					{
+						"name": "namespace",
+						"in": "query",
+						"description": "Filter by application namespace",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "routeId",
+						"in": "query",
+						"description": "Filter by route",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "since",
+						"in": "query",
+						"description": "UTC earliest timestamp in ISO-8601 format",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Semantic Audit output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
 		"\/q\/dev\/semantic-evaluate": {
 			"post": {
 				"summary": "Semantic Evaluation",

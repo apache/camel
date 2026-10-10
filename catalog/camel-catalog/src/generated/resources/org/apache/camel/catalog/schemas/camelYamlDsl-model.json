@@ -20537,16 +20537,48 @@
     "semantic" : {
       "isListItem" : true,
       "children" : [ {
+        "name" : "audit",
+        "type" : "object",
+        "ref" : "semanticDefinitionDeserializer$AuditSchema"
+      }, {
         "name" : "evaluation",
         "type" : "map",
-        "ref" : "semanticDefinitionDeserializer$EvaluationSchema",
-        "required" : true
+        "ref" : "semanticDefinitionDeserializer$EvaluationSchema"
       }, {
         "name" : "expert",
         "type" : "string"
       }, {
         "name" : "state",
         "type" : "string"
+      } ]
+    },
+    "semanticDefinitionDeserializer$AuditExpertSchema" : {
+      "children" : [ {
+        "name" : "enabled",
+        "type" : "boolean",
+        "required" : true
+      } ]
+    },
+    "semanticDefinitionDeserializer$AuditSchema" : {
+      "children" : [ {
+        "name" : "capacity",
+        "type" : "integer"
+      }, {
+        "name" : "enabled",
+        "type" : "boolean"
+      }, {
+        "name" : "experts",
+        "type" : "map",
+        "ref" : "semanticDefinitionDeserializer$AuditExpertSchema"
+      }, {
+        "name" : "queueCapacity",
+        "type" : "integer"
+      }, {
+        "name" : "reader",
+        "type" : "string"
+      }, {
+        "name" : "sinks",
+        "type" : "array"
       } ]
     },
     "semanticDefinitionDeserializer$EvaluationSchema" : {

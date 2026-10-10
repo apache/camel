@@ -90,6 +90,21 @@ public final class SemanticEvaluations {
      * source.
      */
     public synchronized void replace(String source, Map<String, SemanticEvaluation> definitions) {
+        replace(source, definitions, null);
+    }
+
+    private synchronized void replace(
+            String source, Map<String, SemanticEvaluation> definitions, SemanticAuditConfiguration audit) {
+        replace(source, definitions, audit, false);
+    }
+
+    private void replace(
+            String source, Map<String, SemanticEvaluation> definitions,
+            SemanticAuditConfiguration audit, boolean deleted) {
+        SemanticAudit recorder = SemanticAudit.get(context);
+        if (!deleted) {
+            recorder.validateConfiguration(source, audit);
+        }
         Map<String, SemanticEvaluation> replacement = new HashMap<>();
         sources.forEach((location, entries) -> {
             if (!location.equals(source)) {
@@ -126,6 +141,11 @@ public final class SemanticEvaluations {
             sources.put(source, Map.copyOf(definitions));
         }
         resources.remove(source);
+        if (deleted) {
+            recorder.removeConfigurationSource(source);
+        } else {
+            recorder.configure(source, audit);
+        }
         evaluations = snapshot;
     }
 
@@ -135,20 +155,30 @@ public final class SemanticEvaluations {
     }
 
     synchronized void replace(String location, Resource source, Map<String, SemanticEvaluation> definitions) {
+        replace(location, source, definitions, null);
+    }
+
+    public synchronized void replace(
+            Resource source, Map<String, SemanticEvaluation> definitions, SemanticAuditConfiguration audit) {
+        replace(source.getLocation(), source, definitions, audit);
+    }
+
+    synchronized void replace(
+            String location, Resource source, Map<String, SemanticEvaluation> definitions, SemanticAuditConfiguration audit) {
         removeDeletedResources();
-        replace(location, definitions);
-        if (source != null && !definitions.isEmpty() && "file".equals(source.getScheme())) {
+        replace(location, definitions, audit);
+        if (source != null && (!definitions.isEmpty() || audit != null) && "file".equals(source.getScheme())) {
             resources.put(location, source);
         }
     }
 
     synchronized void removeDeletedResources() {
         resources.entrySet().stream().filter(entry -> !entry.getValue().exists()).map(Map.Entry::getKey).toList()
-                .forEach(location -> replace(location, Map.of()));
+                .forEach(location -> replace(location, Map.of(), null, true));
     }
 
     synchronized void remove(String source) {
-        if (sources.containsKey(source)) {
+        if (sources.containsKey(source) || resources.containsKey(source)) {
             replace(source, Map.of());
         }
     }

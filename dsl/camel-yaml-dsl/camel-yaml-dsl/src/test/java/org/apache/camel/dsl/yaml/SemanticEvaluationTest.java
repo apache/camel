@@ -30,6 +30,8 @@ import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
 import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.semantic.SemanticAdapter;
+import org.apache.camel.semantic.SemanticAudit;
+import org.apache.camel.semantic.SemanticAuditQuery;
 import org.apache.camel.semantic.SemanticEvaluation;
 import org.apache.camel.semantic.SemanticEvaluations;
 import org.apache.camel.semantic.SemanticExpert;
@@ -108,6 +110,72 @@ class SemanticEvaluationTest extends YamlTestSupport {
             return new SemanticResult(
                     state.toString().contains("invoice") ? "billing" : "technical", null, null, null, null);
         }
+    }
+
+    @Test
+    void auditSchemaAndDecisionBeanRecordOnlyTheEnabledExpert() throws Exception {
+        loadRoutes("""
+                - beans:
+                  - name: security
+                    type: org.apache.camel.dsl.yaml.SemanticEvaluationTest$SecurityExpert
+                  - name: decisions
+                    type: org.apache.camel.dsl.yaml.SemanticEvaluationTest$SecurityExpert
+                  - name: recordBlocked
+                    type: org.apache.camel.semantic.SemanticAuditDecision
+                    properties:
+                      fields:
+                        action: block
+                        operation: tools/call
+                        target: support-request
+                        reasonCode: prompt_injection
+                - semantic:
+                    audit:
+                      enabled: true
+                      experts:
+                        security: {enabled: true}
+                        decisions: {enabled: false}
+                      sinks: [memory]
+                      reader: memory
+                      capacity: 10
+                      queueCapacity: 10
+                    evaluation:
+                      screenPrompt: {expert: security, operation: injection}
+                      excluded: {expert: decisions, operation: injection}
+                - route:
+                    from:
+                      uri: direct:audit
+                      steps:
+                        - setHeader:
+                            name: ignored
+                            expression:
+                              language:
+                                language: semantic
+                                expression: ref:excluded
+                        - choice:
+                            when:
+                              - expression:
+                                  language:
+                                    language: semantic
+                                    expression: ref:screenPrompt
+                                steps:
+                                  - process:
+                                      ref: recordBlocked
+                                  - to: mock:blocked
+                """);
+        context.start();
+        context.getEndpoint("mock:blocked", MockEndpoint.class).expectedMessageCount(1);
+        try (var template = context.createProducerTemplate()) {
+            template.sendBody("direct:audit", "injection attempt");
+        }
+        MockEndpoint.assertIsSatisfied(context);
+        var audit = SemanticAudit.get(context);
+        var query = new SemanticAuditQuery(Map.of(), null, null, 10);
+        audit.stop();
+        var records = audit.getReader().query(query).getRecords();
+        assertThat(records).hasSize(2);
+        assertThat(records.get(0).text("action")).isEqualTo("block");
+        assertThat(records.get(0).toMap().get("evidence")).isEqualTo(List.of(records.get(1).getEventId()));
+        assertThat(records.get(1).getExpert()).isEqualTo("security");
     }
 
     private static String declarations(String state) {

@@ -35,6 +35,7 @@ public class SemanticReloadPlugin implements ContextServicePlugin {
         lifecycle = new LifecycleStrategySupport() {
             @Override
             public void onContextStarting(CamelContext camelContext) {
+                SemanticAudit.get(camelContext).activate();
                 SemanticEvaluations evaluations
                         = camelContext.getCamelContextExtension().getContextPlugin(SemanticEvaluations.class);
                 if (evaluations != null) {

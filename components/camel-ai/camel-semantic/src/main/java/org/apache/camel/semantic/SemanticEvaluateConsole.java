@@ -120,18 +120,22 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         long start = System.nanoTime();
         Future<Map<String, Object>> task = null;
+        SemanticAudit audit = SemanticAudit.get(getCamelContext());
+        SemanticAudit.Request request = audit.request(options.containsKey(OPERATION) ? "direct_sample" : "definition_sample");
         String failure;
         try {
             long timeout = optionLong(options, TIMEOUT, 50000);
             if (timeout < 1 || timeout > 50000) {
                 throw new IllegalArgumentException("Evaluation timeout must be between 1 and 50000 milliseconds");
             }
-            task = executor().submit(() -> evaluate(options));
+            task = executor().submit(() -> evaluate(options, request));
             return task.get(timeout, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
+            audit.requestOutcome(request, "timeout_cancellation_requested");
             failure = "Evaluation timed out; cancellation requested";
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            audit.requestOutcome(request, "cancellation_requested");
             failure = "Evaluation cancelled";
         } catch (RejectedExecutionException e) {
             failure = "Busy: semantic evaluations are already running";
@@ -146,7 +150,7 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
                 optionString(options, EVALUATION), "failed", null, null, null, null, null, elapsed(start), failure));
     }
 
-    private Map<String, Object> evaluate(Map<String, Object> options) {
+    private Map<String, Object> evaluate(Map<String, Object> options, SemanticAudit.Request request) {
         String name = optionString(options, EVALUATION);
         long start = System.nanoTime();
         try {
@@ -164,7 +168,7 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
                 SemanticEvaluation evaluation = new SemanticEvaluation(
                         optionString(options, OPERATION), optionString(options, EXPERT), null, parameters);
                 SemanticLanguage language = (SemanticLanguage) getCamelContext().resolveLanguage("semantic");
-                SemanticResult result = language.evaluate(evaluation, options.get(INPUT));
+                SemanticResult result = language.evaluate(evaluation, options.get(INPUT), request);
                 return response(null, result, start);
             }
             if (options.containsKey(EXPERT) || options.containsKey(INPUT) || options.containsKey(PARAMETERS)) {
@@ -175,6 +179,7 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
             }
             SemanticEvaluations.get(getCamelContext()).get(name);
             var exchange = new DefaultExchange(getCamelContext());
+            exchange.setProperty(SemanticAudit.REQUEST, request);
             exchange.getMessage().setBody(options.get(BODY));
             if (options.get(HEADERS) instanceof Map<?, ?> headers) {
                 headers.forEach((key, value) -> exchange.getMessage().setHeader(key.toString(), value));

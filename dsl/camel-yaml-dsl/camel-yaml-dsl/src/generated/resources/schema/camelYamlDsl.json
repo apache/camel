@@ -16489,6 +16489,9 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "audit" : {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditSchema"
+          },
           "evaluation" : {
             "type" : "object",
             "additionalProperties" : {
@@ -16501,8 +16504,47 @@
           "state" : {
             "type" : "string"
           }
+        }
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditExpertSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "enabled" : {
+            "type" : "boolean"
+          }
         },
-        "required" : [ "evaluation" ]
+        "required" : [ "enabled" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "capacity" : {
+            "type" : "integer"
+          },
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "experts" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditExpertSchema"
+            }
+          },
+          "queueCapacity" : {
+            "type" : "integer"
+          },
+          "reader" : {
+            "type" : "string"
+          },
+          "sinks" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
       },
       "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema" : {
         "type" : "object",
