@@ -23,6 +23,7 @@ import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
 import org.apache.camel.dsl.jbang.core.commands.ai.HttpEndpoints;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolGroup;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -84,6 +85,25 @@ class AiPanelToolGroupsTest {
 
     static List<String> toolNames(AiPanel panel) {
         return panel.toolDefinitionsForTesting().stream().map(LlmClient.ToolDef::name).toList();
+    }
+
+    @Test
+    void semanticAuditLoadsOnlyForAnIntegrationWithHistoryInBothModes() {
+        AppFeatures semantic = AppFeatures.fromStatus(new JsonObject(
+                Map.of("devConsoles", List.of("semantic-audit"))));
+        assertTrue(semantic.semanticAudit());
+        for (String mode : List.of(AiPanel.TOOL_MODE_CORE, AiPanel.TOOL_MODE_FULL)) {
+            FakeApp app = new FakeApp();
+            app.features = AppFeatures.none();
+            AiPanel panel = panel(mode, app);
+            panel.refreshToolGroupsForTesting();
+            assertFalse(panel.toolDefinitionsForTesting().stream().anyMatch(t -> t.name().equals("tui_get_audit")));
+            app.features = semantic;
+            app.reloads++;
+            panel.refreshToolGroupsForTesting();
+            assertTrue(panel.toolDefinitionsForTesting().stream().anyMatch(t -> t.name().equals("tui_get_audit")));
+            assertTrue(panel.toolGroupsForTesting().groups().contains(ToolGroup.SEMANTIC));
+        }
     }
 
     @Test
@@ -191,7 +211,7 @@ class AiPanelToolGroupsTest {
         String before = panel.systemPromptForTesting();
         panel.refreshToolGroupsForTesting();
 
-        assertEquals(0, app.reads, "the full set does not need the status");
+        assertEquals(1, app.reads, "full mode also discovers integration-specific audit tools");
         assertEquals(before, panel.systemPromptForTesting());
         assertFalse(panel.systemPromptForTesting().contains("The selected integration"));
         assertEquals(toolNames(plain), toolNames(panel));

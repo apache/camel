@@ -32,15 +32,17 @@ import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.util.json.JsonObject;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
 class LocalCliConnectorSemanticLifecycleTest {
-    @Test
-    void stopClosesAnExecutorWhoseCreationIsAlreadyInProgress() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "semantic-evaluate", "semantic-audit" })
+    void stopClosesAnExecutorWhoseCreationIsAlreadyInProgress(String action) throws Exception {
         try (var context = new DefaultCamelContext()) {
             var created = new CountDownLatch(1);
             var release = new CountDownLatch(1);
@@ -61,7 +63,7 @@ class LocalCliConnectorSemanticLifecycleTest {
                 @Override
                 public ExecutorService newThreadPool(Object source, String name, ThreadPoolProfile profile) {
                     ExecutorService executor = super.newThreadPool(source, name, profile);
-                    if ("CliSemanticEvaluation".equals(name)) {
+                    if (("semantic-audit".equals(action) ? "CliSemanticAudit" : "CliSemanticEvaluation").equals(name)) {
                         pool.set(executor);
                         created.countDown();
                         try {
@@ -76,7 +78,7 @@ class LocalCliConnectorSemanticLifecycleTest {
             });
             var connector = startConnector(context);
             FutureTask<CompletableFuture<Boolean>> dispatch = new FutureTask<>(
-                    () -> connector.dispatchAsync(action(), ignored -> {
+                    () -> connector.dispatchAsync(action(action), ignored -> {
                     }));
             FutureTask<Void> stop = new FutureTask<>(() -> {
                 connector.stop();
@@ -110,12 +112,13 @@ class LocalCliConnectorSemanticLifecycleTest {
         }
     }
 
-    @Test
-    void evaluationCannotCreateAnExecutorAfterStop() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "semantic-evaluate", "semantic-audit" })
+    void evaluationCannotCreateAnExecutorAfterStop(String action) throws Exception {
         try (var context = new DefaultCamelContext()) {
             var connector = startConnector(context);
             connector.stop();
-            CompletableFuture<Boolean> result = connector.dispatchAsync(action(), ignored -> {
+            CompletableFuture<Boolean> result = connector.dispatchAsync(action(action), ignored -> {
             });
             assertThatThrownBy(() -> result.get(5, TimeUnit.SECONDS))
                     .hasRootCauseInstanceOf(IllegalStateException.class)
@@ -123,8 +126,8 @@ class LocalCliConnectorSemanticLifecycleTest {
         }
     }
 
-    private static JsonObject action() {
-        return new JsonObject(Map.of("action", "semantic-evaluate"));
+    private static JsonObject action(String action) {
+        return new JsonObject(Map.of("action", action));
     }
 
     private static LocalCliConnector startConnector(DefaultCamelContext context) {

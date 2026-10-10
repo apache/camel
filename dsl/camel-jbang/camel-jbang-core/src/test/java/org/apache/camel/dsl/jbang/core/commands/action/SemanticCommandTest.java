@@ -361,7 +361,7 @@ class SemanticCommandTest {
     }
 
     @Test
-    void mainRegistersBothCommandsAndFormatsParseErrorsAsJson() {
+    void mainRegistersSemanticCommandsAndFormatsParseErrorsAsJson() {
         CamelJBangMain main = new CamelJBangMain() {
             @Override
             public void postAddCommands(CommandLine command, String[] args) {
@@ -369,6 +369,7 @@ class SemanticCommandTest {
                 assertNotNull(semantic);
                 assertNotNull(semantic.getSubcommands().get("get"));
                 assertNotNull(semantic.getSubcommands().get("eval"));
+                assertNotNull(semantic.getSubcommands().get("audit"));
                 assertFalse(command.getSubcommands().get("get").getSubcommands().containsKey("semantic"));
                 assertFalse(command.getSubcommands().get("cmd").getSubcommands().containsKey("semantic-evaluate"));
             }
@@ -433,7 +434,7 @@ class SemanticCommandTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "", "get", "eval" })
+    @ValueSource(strings = { "", "get", "eval", "audit" })
     void mainDispatchesSemanticGroupIncludingDefaultGet(String subcommand) throws Exception {
         AtomicInteger exitCode = new AtomicInteger(-1);
         CamelJBangMain main = new CamelJBangMain() {
@@ -461,10 +462,171 @@ class SemanticCommandTest {
             main.execute(args.toArray(String[]::new));
             return exitCode.get();
         }, request -> {
-            assertEquals("eval".equals(subcommand) ? "semantic-evaluate" : "semantic-metadata", request.get("action"));
-            return jsonUnchecked("{\"status\":\"success\",\"evaluations\":[]}");
+            String action = switch (subcommand) {
+                case "eval" -> "semantic-evaluate";
+                case "audit" -> "semantic-audit";
+                default -> "semantic-metadata";
+            };
+            assertEquals(action, request.get("action"));
+            return jsonUnchecked("audit".equals(subcommand)
+                    ? "{\"audit\":{\"reader\":\"memory\"},\"records\":[]}"
+                    : "{\"status\":\"success\",\"evaluations\":[]}");
         }));
-        assertEquals("success", json(printer.getOutput()).get("status"));
+        if ("audit".equals(subcommand)) {
+            assertEquals("memory", json(printer.getOutput()).getMap("audit").get("reader"));
+        } else {
+            assertEquals("success", json(printer.getOutput()).get("status"));
+        }
+    }
+
+    @Test
+    void auditTableIncludesEventIdentityAndKeepsDecisionsSeparateFromEvaluationStatus() throws Exception {
+        assertEquals(0, respond(new SemanticAudit(main()), request -> {
+            assertEquals("semantic-audit", request.get("action"));
+            assertEquals(50L, request.getLong("limit"));
+            assertEquals(2, request.size());
+            return jsonUnchecked("""
+                    {"audit":{"reader":"memory","enabled":true,"dropped":2},
+                     "records":[{"eventId":"decision-1","timestamp":"2026-10-10T08:00:00Z",
+                       "category":"decision","action":"block","operation":"tools/call","target":"support-request",
+                       "namespace":"test","reasonCode":"policy_denied","correlationId":"request-123"},
+                       {"eventId":"evaluation-1","timestamp":"2026-10-10T07:59:59Z","category":"evaluation",
+                        "expert":"guard","status":"success","result":{"value":false}}],
+                     "nextCursor":"opaque:cursor","evicted":7,"cursorExpired":false}
+                    """);
+        }));
+        for (String value : List.of("EVENT ID", "TIMESTAMP", "ACTION", "STATUS", "decision-1", "evaluation-1",
+                "block", "success", "guard", "tools/call", "support-request", "policy_denied", "request-123",
+                "Next cursor: opaque:cursor", "Evicted: 7", "\"dropped\":2")) {
+            assertTrue(printer.getOutput().contains(value), printer.getOutput());
+        }
+        assertFalse(printer.getOutput().contains("allow"));
+        assertEquals("", errors.toString());
+    }
+
+    @Test
+    void auditFiltersKeepTheDispatchActionAndPreserveTheJsonPage() throws Exception {
+        JsonObject page = json("""
+                {"audit":{"reader":"custom"},"records":[],"nextCursor":"next-page","evicted":3,"cursorExpired":false}
+                """);
+        assertEquals(0, respond(new SemanticAudit(main()), request -> {
+            assertEquals("semantic-audit", request.get("action"));
+            assertEquals("block", request.get("auditAction"));
+            assertEquals("decision", request.get("category"));
+            assertEquals("guard", request.get("expert"));
+            assertEquals("route-1", request.get("routeId"));
+            assertEquals("test", request.get("namespace"));
+            assertEquals("correlation=123", request.get("correlationId"));
+            assertEquals("2026-10-10T08:00:00Z", request.get("since"));
+            assertEquals("opaque=cursor", request.get("cursor"));
+            assertEquals(20L, request.getLong("limit"));
+            return page;
+        }, "--category=decision", "--action=block", "--expert=guard", "--route-id=route-1", "--namespace=test",
+                "--correlation-id=correlation=123", "--since=2026-10-10T10:00:00+02:00", "--cursor=opaque=cursor",
+                "--limit=20", "--json"));
+        assertEquals(page, json(printer.getOutput()));
+        assertEquals("", errors.toString());
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void auditEventIncludesHistoricalEvidenceAndUnavailableReferences(boolean jsonOutput) throws Exception {
+        JsonObject response = json("""
+                {"audit":{"reader":"memory","enabled":false},
+                 "record":{"eventId":"decision-1","category":"decision","action":"block",
+                           "evidence":["evaluation-1","evicted-1"]},
+                 "evidence":[{"eventId":"evaluation-1","provider":"safety-provider","model":"guard-v1","revision":"r1",
+                              "result":{"value":false},"semantics":{"meaning":"Injection detected"}},
+                             {"eventId":"evicted-1","unavailable":true}]}
+                """);
+        assertEquals(0, respond(new SemanticAudit(main()), request -> {
+            assertEquals("semantic-audit", request.get("action"));
+            assertEquals("decision-1", request.get("eventId"));
+            assertEquals(2, request.size());
+            return response;
+        }, "--event-id=decision-1", "--json=" + jsonOutput));
+        if (jsonOutput) {
+            assertEquals(response, json(printer.getOutput()));
+        } else {
+            for (String value : List.of("decision-1", "Evidence:", "evaluation-1", "safety-provider", "guard-v1",
+                    "Injection detected", "evicted-1", "\"unavailable\": true")) {
+                assertTrue(printer.getOutput().contains(value), printer.getOutput());
+            }
+        }
+        assertEquals("", errors.toString());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = { 1, 200 })
+    void auditAcceptsPageLimitBoundsAndEmptyHistory(int limit) throws Exception {
+        assertEquals(0, respond(new SemanticAudit(main()), request -> {
+            assertEquals((long) limit, request.getLong("limit"));
+            return jsonUnchecked("""
+                    {"audit":{"enabled":false,"reader":"memory"},"records":[],"evicted":0,"cursorExpired":false}
+                    """);
+        }, "--limit=" + limit));
+        assertTrue(printer.getOutput().contains("No retained audit records match this query."));
+        assertEquals("", errors.toString());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "--limit=0", "--limit=201", "--limit=not-a-number", "--since=yesterday", "--expert=",
+            "--category=", "--action=", "--namespace=", "--correlation-id=", "--route-id=", "--cursor=", "--event-id=" })
+    void auditRejectsInvalidArgumentsBeforeSendingARequest(String option) throws Exception {
+        assertEquals(2, command(new SemanticAudit(main())).execute(Long.toString(pid), option, "--json"));
+        assertError(2, "");
+        assertTrue(actionFiles().isEmpty());
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "--expert,257", "--cursor,513", "--event-id,257" })
+    void auditRejectsOversizedIdentifiersBeforeSendingARequest(String option, int length) throws Exception {
+        assertEquals(2, command(new SemanticAudit(main())).execute(Long.toString(pid),
+                option + "=" + "x".repeat(length), "--json"));
+        assertError(2, option);
+        assertTrue(actionFiles().isEmpty());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "--expert=guard", "--action=block", "--since=2026-10-10T08:00:00Z", "--cursor=older",
+            "--limit=50" })
+    void auditEventLookupRejectsIgnoredQueryOptions(String option) throws Exception {
+        assertEquals(2, command(new SemanticAudit(main())).execute(Long.toString(pid), "--event-id=decision-1",
+                option, "--json"));
+        assertError(2, "cannot be combined");
+        assertTrue(actionFiles().isEmpty());
+    }
+
+    @Test
+    void auditQueryFailureHasNonzeroExitAndKeepsTheStableErrorCode() throws Exception {
+        assertEquals(1, respond(new SemanticAudit(main()), request -> jsonUnchecked("""
+                {"audit":{"reader":"remote"},"error":"audit_query_failed"}
+                """), "--json"));
+        assertError(1, "Audit query failed");
+        assertEquals("audit_query_failed", json(printer.getOutput()).get("error"));
+        assertEquals("remote", json(printer.getOutput()).getMap("audit").get("reader"));
+    }
+
+    @Test
+    void auditUnavailableEventRetainsItsResponseWithNotFoundExitCode() throws Exception {
+        assertEquals(3, respond(new SemanticAudit(main()), request -> jsonUnchecked("""
+                {"audit":{"reader":"memory"},"record":null,"evidence":[]}
+                """), "--event-id=missing-event", "--json"));
+        assertError(3, "missing-event");
+        assertTrue(json(printer.getOutput()).containsKey("record"));
+        assertTrue(json(printer.getOutput()).getCollection("evidence").isEmpty());
+    }
+
+    @Test
+    void auditExpiredCursorIsAnExplicitFailureWithRetentionDetails() throws Exception {
+        assertEquals(1, respond(new SemanticAudit(main()), request -> jsonUnchecked("""
+                {"audit":{"reader":"memory"},"records":[],"cursorExpired":true,"evicted":9}
+                """), "--cursor=old-page", "--json"));
+        assertError(1, "cursor expired");
+        assertEquals(true, json(printer.getOutput()).get("cursorExpired"));
+        assertEquals(9L, json(printer.getOutput()).getLong("evicted"));
     }
 
     private void writeVersion(String version) throws Exception {

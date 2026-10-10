@@ -56,7 +56,12 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
     @Override
     public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
         // Resource-set bean preparation is complete; declarations still precede every route configuration.
-        RoutesDefinition routes = parse(resource);
+        RoutesDefinition routes;
+        try {
+            routes = parse(resource);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid semantic XML in " + resource.getLocation() + ": " + e.getMessage(), e);
+        }
         RouteBuilder builder = new RouteBuilder(getCamelContext()) {
             @Override
             public void configure() {
@@ -147,7 +152,16 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
         if (semantic.hasAttribute("state")) {
             evaluations.state(semantic.getAttribute("state"));
         }
+        boolean auditSeen = false;
         for (Element element : children(semantic)) {
+            if ("audit".equals(element.getLocalName())) {
+                if (auditSeen) {
+                    throw new IllegalArgumentException("Only one audit declaration is allowed");
+                }
+                auditSeen = true;
+                evaluations.audit(audit(element));
+                continue;
+            }
             if (!"evaluation".equals(element.getLocalName())) {
                 throw new IllegalArgumentException("Unexpected semantic element: " + element.getTagName());
             }
@@ -162,6 +176,61 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
                         e);
             }
         }
+    }
+
+    private SemanticAuditConfiguration audit(Element element) {
+        attributes(element, Set.of("enabled", "reader", "capacity", "queueCapacity"));
+        Map<String, Boolean> experts = new LinkedHashMap<>();
+        List<String> sinks = new ArrayList<>();
+        for (Element child : children(element)) {
+            if ("expert".equals(child.getLocalName())) {
+                attributes(child, Set.of("name", "enabled"));
+                String name = child.getAttribute("name");
+                if (!child.hasAttribute("enabled")) {
+                    throw new IllegalArgumentException("Audit expert '" + name + "' requires enabled");
+                }
+                if (experts.putIfAbsent(name, auditBoolean(child.getAttribute("enabled"))) != null) {
+                    throw new IllegalArgumentException("Duplicate audit expert: " + name);
+                }
+            } else if ("sink".equals(child.getLocalName())) {
+                attributes(child, Set.of("ref"));
+                sinks.add(getCamelContext().resolvePropertyPlaceholders(child.getAttribute("ref")));
+            } else {
+                throw new IllegalArgumentException("Unexpected semantic audit element: " + child.getTagName());
+            }
+            if (!children(child).isEmpty()) {
+                throw new IllegalArgumentException("Unexpected nested audit element");
+            }
+        }
+        return new SemanticAuditConfiguration(
+                element.hasAttribute("enabled") && auditBoolean(element.getAttribute("enabled")),
+                experts, sinks.isEmpty() ? List.of("memory") : sinks,
+                auditAttribute(element, "reader", "memory"), auditCapacity(element, "capacity"),
+                auditCapacity(element, "queueCapacity"));
+    }
+
+    private int auditCapacity(Element element, String key) {
+        try {
+            int value = Integer.parseInt(auditAttribute(element, key, "1000"));
+            if (value >= 1 && value <= 100000) {
+                return value;
+            }
+        } catch (NumberFormatException ignored) {
+            // Include the option name and resource instead of a bare numeric parse error.
+        }
+        throw new IllegalArgumentException("Semantic audit '" + key + "' requires an integer between 1 and 100000");
+    }
+
+    private String auditAttribute(Element element, String key, String fallback) {
+        return element.hasAttribute(key) ? getCamelContext().resolvePropertyPlaceholders(element.getAttribute(key)) : fallback;
+    }
+
+    private boolean auditBoolean(String text) {
+        String value = getCamelContext().resolvePropertyPlaceholders(text);
+        if (!"true".equals(value) && !"false".equals(value)) {
+            throw new IllegalArgumentException("Audit enabled must be true or false");
+        }
+        return Boolean.parseBoolean(value);
     }
 
     private void evaluation(Element element, SemanticEvaluationsBuilder evaluations) {

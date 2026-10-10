@@ -92,6 +92,11 @@ public record AppFeatures(
         return new AppFeatures(List.of(), List.of(), false, false, List.of(), false, false, false, Map.of());
     }
 
+    /** Whether the runtime exposes semantic audit history, independently of capture being enabled. */
+    public boolean semanticAudit() {
+        return signals.containsKey("semantic-audit");
+    }
+
     /** Whether the integration serves HTTP: platform-http or Rest DSL endpoints. */
     public boolean httpServed() {
         return http != null;
@@ -238,6 +243,9 @@ public record AppFeatures(
             if (id != null) {
                 consoles.add(id.toString());
             }
+        }
+        if (consoles.contains("semantic-audit")) {
+            signals.put("semantic-audit", "available");
         }
         boolean otel = consoles.contains("opentelemetry");
         boolean micrometer = consoles.contains("micrometer") || status.get("micrometer") instanceof Map;

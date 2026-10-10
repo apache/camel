@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -231,17 +233,17 @@ class TuiToolRegistry {
 
     /** The TUI's own read-only tools; the shared tools add those flagged read-only in the registry. */
     private static final Set<String> READ_ONLY_TUI_TOOLS = Set.of(
-            "tui_get_ai_log", "tui_get_diagram", "tui_get_events", "tui_get_history", "tui_get_mcp_log",
+            "tui_get_audit", "tui_get_ai_log", "tui_get_diagram", "tui_get_events", "tui_get_history", "tui_get_mcp_log",
             "tui_get_ollama", "tui_get_options", "tui_get_processor_detail", "tui_get_readme", "tui_get_screen",
             "tui_get_spans", "tui_http_endpoints",
             "tui_get_state", "tui_get_status", "tui_get_table", "tui_get_themes", "tui_get_topology",
             "tui_list_examples", "tui_locate", "tui_wait_for_idle");
 
     /**
-     * Tools that only return information and never change the TUI, the integration or its data. The ACP permission
-     * handler approves calls to these without asking; anything else, including camel_control, tui_send_message and
-     * tui_execute_sql, is put in front of the user. camel_eval_expression is read-only because it evaluates an
-     * expression against a scratch exchange and sends nothing through a route.
+     * Tools that inspect information without executing application actions, editing data or changing the visible view.
+     * The ACP permission handler approves calls to these without asking; anything else, including camel_control,
+     * tui_send_message and tui_execute_sql, is put in front of the user. camel_eval_expression is read-only because it
+     * evaluates an expression against a scratch exchange and sends nothing through a route.
      */
     static final Set<String> READ_ONLY_TOOLS = Stream.concat(
             READ_ONLY_TUI_TOOLS.stream(),
@@ -259,6 +261,11 @@ class TuiToolRegistry {
         tools = TuiToolDefinitions.all();
         cachedTools = tools;
         return tools;
+    }
+
+    List<ToolDef> getAvailableToolDefinitions(Collection<String> selected) {
+        return getToolDefinitions().stream()
+                .filter(tool -> !"tui_get_audit".equals(tool.name()) || selected.contains(tool.name())).toList();
     }
 
     /**
@@ -301,6 +308,7 @@ class TuiToolRegistry {
             case "tui_draw" -> callDraw(args);
             case "tui_draw_clear" -> callDrawClear();
             case "tui_get_table" -> callGetTable(args);
+            case "tui_get_audit" -> callGetAudit(args);
             case "tui_action" -> callAction(args);
             case "tui_get_themes" -> callGetThemes();
             case "tui_set_theme" -> callSetTheme(args);
@@ -990,6 +998,43 @@ class TuiToolRegistry {
         result.put("currentFrame", anim.currentFrame.get());
         result.put("totalFrames", anim.totalFrames);
         return Jsoner.serialize(result);
+    }
+
+    private String callGetAudit(Map<String, Object> args) {
+        Set<String> filters = Set.of("category", "action", "expert", "routeId", "namespace", "correlationId", "since");
+        JsonObject request = new JsonObject();
+        request.put("action", "semantic-audit");
+        try {
+            for (var entry : args.entrySet()) {
+                String key = entry.getKey();
+                if ("limit".equals(key)) {
+                    int limit = Integer.parseInt(String.valueOf(entry.getValue()));
+                    if (limit < 1 || limit > 200) {
+                        throw new IllegalArgumentException();
+                    }
+                    request.put(key, limit);
+                } else {
+                    if ((!filters.contains(key) && !Set.of("eventId", "cursor").contains(key))
+                            || !(entry.getValue() instanceof String value) || value.isBlank()
+                            || value.length() > ("cursor".equals(key) ? 512 : 256)) {
+                        throw new IllegalArgumentException();
+                    }
+                    if ("since".equals(key)) {
+                        Instant.parse(value);
+                    }
+                    request.put("action".equals(key) ? "auditAction" : key, value);
+                }
+            }
+            if (args.containsKey("eventId") && args.size() > 1) {
+                throw new IllegalArgumentException();
+            }
+            JsonObject response = facade.queryAudit(request);
+            return response == null
+                    ? "Error: select a connected integration with semantic audit support"
+                    : Jsoner.serialize(response);
+        } catch (IllegalArgumentException | DateTimeParseException invalid) {
+            return "Error: invalid audit query; use filters and cursor/limit, or eventId alone";
+        }
     }
 
     private String callGetTable(Map<String, Object> args) {

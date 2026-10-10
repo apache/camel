@@ -34,7 +34,8 @@ import picocli.CommandLine;
                              "%nExamples:",
                              "  camel semantic my-app",
                              "  camel semantic get my-app --expert=guard",
-                             "  camel semantic eval my-app --evaluation=safe --body='Sample message' --json" })
+                             "  camel semantic eval my-app --evaluation=safe --body='Sample message' --json",
+                             "  camel semantic audit my-app --category=decision --json" })
 public class CamelSemantic extends SemanticActionCommand {
 
     @CommandLine.Option(names = "--expert", description = "Show the operations and parameter contract of this expert")

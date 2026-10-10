@@ -17,12 +17,14 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
+import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
@@ -162,6 +164,20 @@ class AiPanelPromptBudgetTest {
 
         assertTrue(full.totalTokens() <= FULL_BUDGET_TOKENS,
                 "full prefix grew to ~" + full.totalTokens() + " tokens, budget " + FULL_BUDGET_TOKENS + ": " + full);
+    }
+
+    @Test
+    void semanticHistoryHasABoundedAdditionalPromptCost() {
+        for (String mode : List.of(AiPanel.TOOL_MODE_CORE, AiPanel.TOOL_MODE_FULL)) {
+            AiPanelToolGroupsTest.FakeApp app = new AiPanelToolGroupsTest.FakeApp();
+            app.features = AiPanelToolGroupsTest.EVERYTHING.merge(AppFeatures.fromStatus(
+                    new JsonObject(Map.of("devConsoles", List.of("semantic-audit")))));
+            AiPanel panel = AiPanelToolGroupsTest.panel(mode, app);
+            panel.refreshToolGroupsForTesting();
+            Prefix prefix = measure(mode + "+semantic", panel);
+            System.out.println("AI panel semantic prefix: " + prefix);
+            assertTrue(prefix.totalTokens() <= (AiPanel.TOOL_MODE_CORE.equals(mode) ? 6100 : 11000));
+        }
     }
 
     @Test

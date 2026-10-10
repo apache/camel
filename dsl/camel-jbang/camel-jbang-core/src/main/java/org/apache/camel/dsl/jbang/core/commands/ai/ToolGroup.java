@@ -29,7 +29,9 @@ public enum ToolGroup {
     /** Circuit breakers. */
     RESILIENCE("resilience"),
     /** The HTTP endpoints the integration serves, and a request to them (CAMEL-25307). */
-    HTTP("http");
+    HTTP("http"),
+    /** Retained semantic evaluation and route-decision evidence. */
+    SEMANTIC("semantic");
 
     private final String id;
 

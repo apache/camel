@@ -18,6 +18,7 @@ package org.apache.camel.semantic;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.semantic.internal.SemanticAuditService;
 import org.apache.camel.spi.ContextServicePlugin;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RoutesBuilderLoader;
@@ -35,6 +36,7 @@ public class SemanticReloadPlugin implements ContextServicePlugin {
         lifecycle = new LifecycleStrategySupport() {
             @Override
             public void onContextStarting(CamelContext camelContext) {
+                SemanticAuditService.get(camelContext).activate();
                 SemanticEvaluations evaluations
                         = camelContext.getCamelContextExtension().getContextPlugin(SemanticEvaluations.class);
                 if (evaluations != null) {

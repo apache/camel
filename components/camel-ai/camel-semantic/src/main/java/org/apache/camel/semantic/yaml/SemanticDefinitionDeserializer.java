@@ -30,6 +30,7 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.dsl.yaml.common.exception.InvalidNodeTypeException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
+import org.apache.camel.semantic.SemanticAuditConfiguration;
 import org.apache.camel.semantic.SemanticEvaluation;
 import org.apache.camel.semantic.SemanticEvaluationBuilder;
 import org.apache.camel.semantic.SemanticEvaluations;
@@ -49,11 +50,15 @@ import org.snakeyaml.engine.v2.nodes.Tag;
 /** Named semantic declarations are installed in a resource-wide pass before route references are resolved. */
 @YamlIn
 @YamlType(nodes = "semantic", properties = {
-        @YamlProperty(name = "expert", type = "string"),
-        @YamlProperty(name = "state", type = "string"),
-        @YamlProperty(name = "evaluation",
-                      type = "map:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema",
-                      required = true)
+        @YamlProperty(name = "__oneOf",
+                      type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationDeclarationSchema",
+                      oneOf = "declaration", required = true),
+        @YamlProperty(name = "__oneOf",
+                      type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditDeclarationSchema",
+                      oneOf = "declaration", required = true),
+        @YamlProperty(name = "__oneOf",
+                      type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditedEvaluationDeclarationSchema",
+                      oneOf = "declaration", required = true)
 })
 public class SemanticDefinitionDeserializer extends YamlDeserializerSupport implements ConstructNode, YamlDeserializerResolver {
     private static final Tag NUMBER = new Tag("!number");
@@ -80,6 +85,7 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
             return;
         }
         Map<String, SemanticEvaluation> definitions = new LinkedHashMap<>();
+        SemanticAuditConfiguration audit = null;
         for (Node node : sequence.getValue()) {
             if (!(node instanceof MappingNode mapping)) {
                 // Leave malformed entries to the route loader without replacing the resource's evaluations.
@@ -87,7 +93,15 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
             }
             for (NodeTuple tuple : mapping.getValue()) {
                 if ("semantic".equals(asText(tuple.getKeyNode()))) {
-                    read(dc.getCamelContext(), tuple.getValueNode()).forEach((name, evaluation) -> {
+                    Declaration declaration = read(dc.getCamelContext(), tuple.getValueNode());
+                    if (declaration.audit != null) {
+                        if (audit != null) {
+                            throw new YamlDeserializationException(
+                                    tuple.getValueNode(), "Only one audit declaration is allowed");
+                        }
+                        audit = declaration.audit;
+                    }
+                    declaration.definitions.forEach((name, evaluation) -> {
                         if (definitions.putIfAbsent(name, evaluation) != null) {
                             throw new YamlDeserializationException(
                                     tuple.getValueNode(), "Duplicate semantic evaluation: " + name);
@@ -97,55 +111,162 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
             }
         }
         CamelContext context = dc.getCamelContext();
-        SemanticEvaluations evaluations = definitions.isEmpty()
+        SemanticEvaluations evaluations = definitions.isEmpty() && audit == null
                 ? context.getCamelContextExtension().getContextPlugin(SemanticEvaluations.class)
                 : SemanticEvaluations.get(context);
         if (evaluations != null) {
             try {
-                evaluations.replace(dc.getResource(), definitions);
+                evaluations.replace(dc.getResource(), definitions, audit);
             } catch (IllegalArgumentException e) {
                 throw new YamlDeserializationException(root, e.getMessage(), e);
             }
         }
     }
 
-    private static Map<String, SemanticEvaluation> read(CamelContext context, Node node) {
+    private static Declaration read(CamelContext context, Node node) {
         Map<String, Node> semantic = fields(node, "semantic declaration");
         for (String field : semantic.keySet()) {
-            if (!Set.of("evaluation", "expert", "state").contains(field)) {
+            if (!Set.of("evaluation", "expert", "state", "audit").contains(field)) {
                 throw new YamlDeserializationException(
                         semantic.get(field), "Unknown property '" + field + "' in semantic declaration");
             }
         }
-        if (!semantic.containsKey("evaluation")) {
-            throw new YamlDeserializationException(node, "Semantic declaration requires evaluation");
+        if (!semantic.containsKey("evaluation") && !semantic.containsKey("audit")) {
+            throw new YamlDeserializationException(node, "Semantic declaration requires evaluation or audit");
         }
         Map<String, SemanticEvaluation> result = new LinkedHashMap<>();
-        fields(semantic.get("evaluation"), "semantic evaluations").forEach((name, definition) -> {
-            if (name.isBlank()) {
-                throw new YamlDeserializationException(definition, "Semantic evaluation requires a nonblank name");
-            }
-            Map<String, Node> values = fields(definition, "semantic evaluation '" + name + "'");
-            for (String common : List.of("expert", "state")) {
-                if (!values.containsKey(common) && semantic.containsKey(common)) {
-                    values.put(common, semantic.get(common));
+        if (semantic.containsKey("evaluation")) {
+            fields(semantic.get("evaluation"), "semantic evaluations").forEach((name, definition) -> {
+                if (name.isBlank()) {
+                    throw new YamlDeserializationException(definition, "Semantic evaluation requires a nonblank name");
                 }
-            }
-            String expert = "default/automatic";
-            try {
-                if (values.containsKey("expert")) {
-                    expert = "invalid expert reference";
-                    expert = asText(values.get("expert"));
+                Map<String, Node> values = fields(definition, "semantic evaluation '" + name + "'");
+                for (String common : List.of("expert", "state")) {
+                    if (!values.containsKey(common) && semantic.containsKey(common)) {
+                        values.put(common, semantic.get(common));
+                    }
                 }
-                result.put(name, readEvaluation(context, name, expert, definition, values));
-            } catch (IllegalArgumentException | InvalidNodeTypeException e) {
-                throw new YamlDeserializationException(
-                        definition, "Invalid semantic evaluation '" + name + "': " + e.getMessage()
-                                    + " (expert '" + expert + "')",
-                        e);
+                String expert = "default/automatic";
+                try {
+                    if (values.containsKey("expert")) {
+                        expert = "invalid expert reference";
+                        expert = asText(values.get("expert"));
+                    }
+                    result.put(name, readEvaluation(context, name, expert, definition, values));
+                } catch (IllegalArgumentException | InvalidNodeTypeException e) {
+                    throw new YamlDeserializationException(
+                            definition, "Invalid semantic evaluation '" + name + "': " + e.getMessage()
+                                        + " (expert '" + expert + "')",
+                            e);
+                }
+            });
+        }
+        return new Declaration(result, semantic.containsKey("audit") ? audit(context, semantic.get("audit")) : null);
+    }
+
+    private record Declaration(Map<String, SemanticEvaluation> definitions, SemanticAuditConfiguration audit) {
+    }
+
+    private static SemanticAuditConfiguration audit(CamelContext context, Node node) {
+        try {
+            return readAudit(context, node);
+        } catch (IllegalArgumentException e) {
+            throw new YamlDeserializationException(node, "Invalid semantic audit configuration: " + e.getMessage(), e);
+        }
+    }
+
+    private static SemanticAuditConfiguration readAudit(CamelContext context, Node node) {
+        Map<String, Node> values = fields(node, "semantic audit");
+        if (!Set.of("enabled", "experts", "sinks", "reader", "capacity", "queueCapacity").containsAll(values.keySet())) {
+            throw new YamlDeserializationException(node, "Unknown semantic audit option");
+        }
+        Map<String, Boolean> experts = new LinkedHashMap<>();
+        if (values.containsKey("experts")) {
+            fields(values.get("experts"), "audit experts").forEach((name, expert) -> {
+                Map<String, Node> settings = fields(expert, "audit expert");
+                if (!settings.keySet().equals(Set.of("enabled"))) {
+                    throw new YamlDeserializationException(expert, "Audit expert requires only enabled");
+                }
+                experts.put(name, auditBoolean(context, settings.get("enabled")));
+            });
+        }
+        List<String> sinks = values.containsKey("sinks")
+                ? asSequenceNode(values.get("sinks")).getValue().stream()
+                        .map(n -> context.resolvePropertyPlaceholders(asText(n))).toList()
+                : List.of("memory");
+        return new SemanticAuditConfiguration(
+                values.containsKey("enabled") && auditBoolean(context, values.get("enabled")),
+                experts, sinks, auditText(context, values, "reader", "memory"),
+                auditCapacity(context, values, "capacity"), auditCapacity(context, values, "queueCapacity"));
+    }
+
+    private static int auditCapacity(CamelContext context, Map<String, Node> values, String key) {
+        Node node = values.get(key);
+        if (node == null) {
+            return 1000;
+        }
+        try {
+            int value = Integer.parseInt(context.resolvePropertyPlaceholders(asText(node)));
+            if (value >= 1 && value <= 100000) {
+                return value;
             }
-        });
-        return result;
+        } catch (NumberFormatException ignored) {
+            // Report the same bound and source location for malformed and out-of-range values.
+        }
+        throw new YamlDeserializationException(node, "Audit '" + key + "' requires an integer between 1 and 100000");
+    }
+
+    private static boolean auditBoolean(CamelContext context, Node node) {
+        String value = context.resolvePropertyPlaceholders(asText(node));
+        if (!"true".equals(value) && !"false".equals(value)) {
+            throw new YamlDeserializationException(node, "Audit enabled must be true or false");
+        }
+        return Boolean.parseBoolean(value);
+    }
+
+    private static String auditText(CamelContext context, Map<String, Node> values, String name, String fallback) {
+        return values.containsKey(name) ? context.resolvePropertyPlaceholders(asText(values.get(name))) : fallback;
+    }
+
+    @YamlType(properties = {
+            @YamlProperty(name = "expert", type = "string"),
+            @YamlProperty(name = "state", type = "string")
+    })
+    public static class DeclarationSchema {
+    }
+
+    @YamlType(properties = @YamlProperty(name = "evaluation",
+                                         type = "map:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema",
+                                         required = true))
+    public static class EvaluationDeclarationSchema extends DeclarationSchema {
+    }
+
+    @YamlType(properties = @YamlProperty(name = "audit",
+                                         type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditSchema",
+                                         required = true))
+    public static class AuditDeclarationSchema extends DeclarationSchema {
+    }
+
+    @YamlType(properties = @YamlProperty(name = "audit",
+                                         type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditSchema",
+                                         required = true))
+    public static class AuditedEvaluationDeclarationSchema extends EvaluationDeclarationSchema {
+    }
+
+    @YamlType(properties = {
+            @YamlProperty(name = "enabled", type = "boolean"),
+            @YamlProperty(name = "experts",
+                          type = "map:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditExpertSchema"),
+            @YamlProperty(name = "sinks", type = "array:string"),
+            @YamlProperty(name = "reader", type = "string"),
+            @YamlProperty(name = "capacity", type = "integer"),
+            @YamlProperty(name = "queueCapacity", type = "integer")
+    })
+    public static class AuditSchema {
+    }
+
+    @YamlType(properties = { @YamlProperty(name = "enabled", type = "boolean", required = true) })
+    public static class AuditExpertSchema {
     }
 
     private static SemanticEvaluation readEvaluation(

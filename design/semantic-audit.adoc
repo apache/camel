@@ -1,0 +1,56 @@
+= Semantic audit and observation proposal
+
+Status: proposed for review in CAMEL-25499 / PR #27649. This document describes the implementation being
+reviewed; it does not assert prior upstream design agreement.
+
+== Scope and related work
+
+CAMEL-25357 proposes semantic metadata and a bounded recent-evaluation recorder. Metadata and evaluation
+tooling already exist from CAMEL-25491. The memory sink/reader in this change implements the remaining
+recent-history role; a second recorder should not be added for CAMEL-25357. Its live-capacity proposal is
+replaced here by configuration changes while stopped. The relationship and this tradeoff remain subject
+to maintainer acceptance. No issue is closed by this proposal.
+
+The runtime/SPI and DSL, connector, TUI/MCP, and CLI retrieval are separate layers and commits. Runtime
+capture requires none of the presentation modules. Keeping these layers in one review demonstrates the
+complete path; they can be reviewed independently. Delivery is bounded and best-effort, not a durable
+compliance transaction. CAMEL-23369 can consume the independent observer SPI through Camel telemetry;
+this change adds neither a second OpenTelemetry SDK nor an exporter.
+
+== Configuration and decisions
+
+The first implementation uses semantic DSL configuration, as selected for this implementation. Properties
+remain a valid alternative for deployment-specific control. DSL placeholders support such values without
+introducing two competing configuration authorities. A second properties hierarchy is not rejected in
+principle, but would need an explicit precedence contract before being introduced.
+
+The global switch is a default; explicit expert-instance overrides win in both directions. Explicit route
+decisions are recorded whenever the global default or any expert override enables capture. This preserves
+decisions in the common global-off/security-on case without guessing which supporting expert owns an action.
+Per-expert exclusions apply to evaluation records, so referenced evidence can be unavailable. Routes always
+declare actions explicitly; a boolean expert result never implies allow or block.
+
+Settings remain frozen while the audit service runs. Stop/start permits reconfiguration, resolves backends
+again and rebuilds the bounded memory store if capacity changes. Ordinary source reload does not change
+capture policy. Deleting the declaring resource removes its evaluations but preserves active settings until
+stop; a new start without that declaration uses disabled defaults.
+
+== API and observation
+
+The public backend contract consists of the sink, reader, query, page and immutable record. Records retain
+a versioned map serialization with field/type allowlists and typed timestamp, duration and evidence accessors.
+Readers can reuse public exact-filter matching. The internal dispatcher owns request identities, invocation
+handles, service startup and exchange transport; these are not extension points.
+
+The route-facing SemanticAudit facade and SemanticAuditDecision processor expose explicit decisions and the
+documented evidence property. Observers receive bounded snapshots independently of capture settings. Start
+and completion run on the invocation thread. Cancellation is a separate request event, not concurrent
+completion. Completion reverses start-callback order; registry insertion order is not promised.
+
+== Query surfaces
+
+All retrieval uses the same reader and console. The CLI exposes filters, cursor pages and event/evidence
+lookup. The TUI maintains its own browsing state. Its audit MCP tool queries the runtime directly without
+changing the screen, and is added to AI sessions only when the selected integration exposes audit history.
+The memory reader filters a consistent snapshot outside its append lock and binds cursors to a canonical
+SHA-256 query fingerprint. Backend failures expose a stable error code without backend messages.

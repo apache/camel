@@ -3365,12 +3365,9 @@ class AiPanel {
      * or the selected one reloaded (the groups then only grow: what it had before still counts), so the tools and the
      * prompt stay the same from question to question and a local model's prompt cache keeps working. While an
      * integration has no groups yet its status is read again, since one that just started may not have written it
-     * completely. The full set is not affected.
+     * completely. Full mode also uses these features to discover semantic audit history.
      */
     private void refreshToolGroups() {
-        if (!useCoreTools()) {
-            return;
-        }
         AppStatusSource source = appStatusSource != null ? appStatusSource : facadeStatusSource();
         String pid = source != null ? source.selectedPid() : null;
         int reloads = source != null ? source.reloadCount() : 0;
@@ -3445,7 +3442,9 @@ class AiPanel {
             return "no tools available";
         }
         int total = toolRegistry.getToolDefinitions().size();
-        int active = useCoreTools() ? toolRegistry.getCoreToolDefinitions(toolGroups.tools()).size() : total;
+        int active = useCoreTools()
+                ? toolRegistry.getCoreToolDefinitions(toolGroups.tools()).size()
+                : toolRegistry.getAvailableToolDefinitions(toolGroups.tools()).size();
         String mode = toolMode == null ? TOOL_MODE_AUTO : toolMode;
         String detail = TOOL_MODE_AUTO.equals(mode)
                 ? (useCoreTools() ? " (local provider)" : " (hosted provider)") : "";
@@ -3465,7 +3464,8 @@ class AiPanel {
         }
         List<LlmClient.ToolDef> defs = new ArrayList<>();
         List<TuiToolRegistry.ToolDef> source = useCoreTools()
-                ? toolRegistry.getCoreToolDefinitions(toolGroups.tools()) : toolRegistry.getToolDefinitions();
+                ? toolRegistry.getCoreToolDefinitions(toolGroups.tools())
+                : toolRegistry.getAvailableToolDefinitions(toolGroups.tools());
         for (TuiToolRegistry.ToolDef td : source) {
             defs.add(new LlmClient.ToolDef(td.name(), td.description(), td.inputSchema()));
         }

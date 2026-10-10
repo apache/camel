@@ -30,6 +30,7 @@ import org.apache.camel.spi.Resource;
 /** Fluent declarations for use inside an ordinary {@link RouteBuilder#configure()}. */
 public final class SemanticEvaluationsBuilder {
     private static final String LIFECYCLE = SemanticEvaluationsBuilder.class.getName();
+    private SemanticAuditConfiguration audit;
     private String expert;
     private String state;
     private final CamelContext context;
@@ -55,6 +56,12 @@ public final class SemanticEvaluationsBuilder {
     /** Start one group of declarations, then call {@link #register()} before using its references. */
     public static SemanticEvaluationsBuilder semanticEvaluations(RouteBuilder builder) {
         return new SemanticEvaluationsBuilder(builder);
+    }
+
+    /** Context-wide auditing; declare in exactly one source. Changes require a context restart. */
+    public SemanticEvaluationsBuilder audit(SemanticAuditConfiguration audit) {
+        this.audit = audit;
+        return this;
     }
 
     public SemanticEvaluationsBuilder expert(String expert) {
@@ -101,7 +108,7 @@ public final class SemanticEvaluationsBuilder {
         });
         SemanticEvaluations registry = SemanticEvaluations.get(context);
         synchronized (registry) {
-            registry.replace(source, resource, definitions);
+            registry.replace(source, resource, definitions, audit);
             DeclarationsLifecycle lifecycle = context.getRegistry().lookupByNameAndType(LIFECYCLE, DeclarationsLifecycle.class);
             if (lifecycle == null) {
                 lifecycle = new DeclarationsLifecycle(registry);

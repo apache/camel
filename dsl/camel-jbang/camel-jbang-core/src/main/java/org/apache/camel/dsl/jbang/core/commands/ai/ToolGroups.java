@@ -94,6 +94,9 @@ public final class ToolGroups {
         List<Group> groups = new ArrayList<>();
         for (ToolGroup group : groups(f)) {
             switch (group) {
+                case SEMANTIC -> groups.add(new Group(
+                        group, List.of(),
+                        "Semantic audit history is available through the Camel CLI: camel semantic audit."));
                 case SQL -> groups.add(new Group(
                         group,
                         List.of(SQL_TOOL, DATASOURCES_TOOL, SQL_TRACE_TOOL),
@@ -144,6 +147,9 @@ public final class ToolGroups {
         }
         if (features.httpServed()) {
             groups.add(ToolGroup.HTTP);
+        }
+        if (features.semanticAudit()) {
+            groups.add(ToolGroup.SEMANTIC);
         }
         return groups;
     }
