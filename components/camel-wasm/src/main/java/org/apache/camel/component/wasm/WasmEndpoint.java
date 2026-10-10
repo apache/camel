@@ -29,23 +29,24 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.wasm.Wasm;
 
 /**
- * Invoke Wasm functions.
+ * Run Wasm programs (WASI Preview 1 command modules) with the message body as standard input.
  */
-@UriEndpoint(firstVersion = "4.4.0", scheme = Wasm.SCHEME, title = "Wasm", syntax = "wasm:functionName",
+@UriEndpoint(firstVersion = "4.4.0", scheme = Wasm.SCHEME, title = "Wasm", syntax = "wasm:module",
              producerOnly = true, remote = false, category = { Category.CORE, Category.SCRIPT },
              headersClass = Wasm.Headers.class)
 public class WasmEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
-    @UriPath(description = "The Function Name")
-    private final String functionName;
+    @UriPath(description = "The WASI Preview 1 command module to run, as a resource: by default from the classpath, or"
+                           + " with a prefix such as classpath:, file: or http:")
+    private final String module;
     @UriParam
     private WasmConfiguration configuration;
 
-    public WasmEndpoint(String endpointUri, Component component, String functionName,
+    public WasmEndpoint(String endpointUri, Component component, String module,
                         WasmConfiguration configuration) {
         super(endpointUri, component);
-        this.functionName = functionName;
+        this.module = module;
         this.configuration = configuration;
     }
 
@@ -54,13 +55,17 @@ public class WasmEndpoint extends DefaultEndpoint {
         return false;
     }
 
+    public String getModule() {
+        return module;
+    }
+
     public WasmConfiguration getConfiguration() {
         return configuration;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new WasmProducer(this, configuration.getModule(), functionName);
+        return new WasmProducer(this);
     }
 
     @Override

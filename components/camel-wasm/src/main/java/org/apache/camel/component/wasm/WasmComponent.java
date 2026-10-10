@@ -41,14 +41,6 @@ public class WasmComponent extends DefaultComponent {
         this.configuration = new WasmConfiguration();
     }
 
-    public String getModule() {
-        return configuration.getModule();
-    }
-
-    public void setModule(String resource) {
-        configuration.setModule(resource);
-    }
-
     @Override
     protected Endpoint createEndpoint(
             String uri,
@@ -57,7 +49,9 @@ public class WasmComponent extends DefaultComponent {
             throws Exception {
 
         if (ObjectHelper.isEmpty(remaining)) {
-            throw new IllegalArgumentException("Expecting URI in the form of: 'wasm:functionName', got '" + uri + "'");
+            throw new IllegalArgumentException(
+                    "Expecting URI in the form of: 'wasm:module', for example wasm:classpath:upper.wasm, got '" + uri
+                                               + "'");
         }
 
         WasmConfiguration configuration = this.configuration.copy();

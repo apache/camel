@@ -17,21 +17,29 @@ import org.apache.camel.spi.EndpointUriFactory;
 @Generated("org.apache.camel.maven.packaging.GenerateEndpointUriFactoryMojo")
 public class WasmEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":functionName";
+    private static final String BASE = ":module";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(3);
-        props.add("functionName");
+        Set<String> props = new HashSet<>(9);
+        props.add("args");
+        props.add("environment");
+        props.add("environmentHeaders");
+        props.add("failOnNonZeroExit");
         props.add("lazyStartProducer");
+        props.add("maxMemoryPages");
+        props.add("maxOutputSize");
         props.add("module");
+        props.add("timeout");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptyMap();
+        Map<String, String> prefixes = new HashMap<>(1);
+        prefixes.put("environment", "environment.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
 
     @Override
@@ -46,7 +54,7 @@ public class WasmEndpointUriFactory extends org.apache.camel.support.component.E
 
         Map<String, Object> copy = copyParameters(properties);
 
-        uri = buildPathParameter(syntax, uri, "functionName", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "module", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

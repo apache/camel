@@ -2,7 +2,7 @@
 :doctitle: Wasm
 :shortname: wasm
 :artifactid: camel-wasm
-:description: Invoke Wasm functions.
+:description: Run Wasm programs (WASI Preview 1 command modules) with the message body as standard input.
 :since: 4.4
 :supportlevel: Experimental
 :tabs-sync-option:
@@ -13,9 +13,15 @@
 
 *{component-header}*
 
-https://webassembly.org[WebAssembly (Wasm)] is a low-level bytecode format designed as a portable target for the compilation of high-level languages like C, C++, and Rust, enabling deployment on the web for client and server applications.
+https://webassembly.org[WebAssembly (Wasm)] is a portable bytecode format that languages such as Rust, Go, C and C++
+compile to. https://wasi.dev[WASI] is the system interface those programs use for their standard input, output,
+arguments and environment.
 
-This component provides support to leverage Wasm functions for message transformation.
+The Wasm component runs a WASI Preview 1 _command module_ (a program with a `_start` function) as a processor: the
+message body is the standard input of the program, and what the program writes to its standard output becomes the
+message body. Any program built for WASI Preview 1 can be used as it is, without a Camel specific API. The module runs
+inside the JVM on https://github.com/bytecodealliance/endive[Endive], a WebAssembly runtime written in Java, so no native
+code or external process is involved.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -32,8 +38,12 @@ for this component:
 == URI format
 
 ----
-wasm://functionName?[options]
+wasm:module[?options]
 ----
+
+The `module` is the location of the `.wasm` file, loaded as a resource: from the classpath by default, or with a
+prefix such as `classpath:`, `file:` or `http:`. For example `wasm:classpath:upper.wasm` or
+`wasm:file:/opt/transforms/upper.wasm`.
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -43,133 +53,126 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-=== Writing A Wasm processor
+=== Writing a module
 
-In _Wasm_, sharing objects between the host, in this case the _JVM_, and the _Wasm_ module is deliberately restricted and as of today, it requires a number of steps:
-
-1. From the _host_, call a function inside the webassembly module that allocates a block of memory and returns its address, then save it
-2. From the _host_, write the data that should be exchanged with the _Wasm_ module to the saved address
-3. From the _host_, invoke the required function passing both the address where the data is written and its size
-4. From the _Wasm_ module, read the data and process it
-5. From the _host_, release the memory when done
-
-==== Providing functions for memory management
-
-The module hosting the function *must* provide the functions to allocate/deallocate memory that *must* be named `alloc` and `dealloc` respectively.
-
-Here's an example of the mentioned functions implemented in https://www.rust-lang.org[Rust]:
+A module is an ordinary program that reads its standard input and writes its standard output. For example, in
+https://www.rust-lang.org[Rust]:
 
 [source,rust]
 ----
-pub extern "C" fn alloc(size: u32) -> *mut u8 {
-    let mut buf = Vec::with_capacity(size as usize);
-    let ptr = buf.as_mut_ptr();
+use std::io::{self, Read, Write};
 
-    // tell Rust not to clean this up
-    mem::forget(buf);
-
-    ptr
-}
-
-pub unsafe extern "C" fn dealloc(ptr: &mut u8, len: i32) {
-    // Retakes the pointer which allows its memory to be freed.
-    let _ = Vec::from_raw_parts(ptr, 0, len as usize);
+fn main() {
+    let mut input = String::new();
+    io::stdin().read_to_string(&mut input).unwrap();
+    io::stdout().write_all(input.to_uppercase().as_bytes()).unwrap();
 }
 ----
 
-==== Data shapes
+Built with `rustup target add wasm32-wasip1` and `cargo build --release --target wasm32-wasip1`.
 
-It is not possible to share a Java object with the Wasm module directly, and as mentioned before,
-data exchange leverages Wasm's memory that can be accessed by both the host and the guest runtimes.
-At this stage, the data structure that the component exchange with the Wasm function is a subset of the Apache Camel Message,
-containing headers the body encoded as a base64 string:
+The same program in https://go.dev[Go]:
 
-._Java-only: data exchange wrapper class for Wasm module communication_
-[source,java]
+[source,go]
 ----
-public static class Wrapper {
-    @JsonProperty
-    public Map<String, String> headers = new HashMap<>();
+package main
 
-    @JsonProperty
-    public byte[] body;
+import (
+    "bytes"
+    "io"
+    "os"
+)
+
+func main() {
+    input, _ := io.ReadAll(os.Stdin)
+    os.Stdout.Write(bytes.ToUpper(input))
 }
 ----
 
-==== Data processing
+Built with `GOOS=wasip1 GOARCH=wasm go build -o upper.wasm`.
 
-The component expects the processing function to have the following signature:
+=== Running a module
 
-[source,rust]
-----
-fn function(ptr: u32, len: u32) -> u64
-----
+For every exchange the component:
 
-* it accepts two 32bit unsigned integers arguments
-** a pointer to the memory location when the input data has been written (`ptr`)
-** the size of the input data (`len`)
-* it returns a 64bit unsigned integer where:
-** the first 32bit represents a pointer to the return data
-** the last 31bit represents the size of the return data, which must have the same data shape discussed above unless there is an error (see below)
-** the most significant bit of the returned data size is reserved to signal an error, so if it is set, then the return data could contain an error message/code/etc
+. creates a new instance of the module (the module is parsed once, when the producer starts),
+. runs its `_start` function with the message body as standard input, the arguments configured with `args` and
+the environment variables configured with `environment` and `environmentHeaders`,
+. sets the `CamelWasmExitCode` header to the exit code of the program: 0 when `_start` returns, otherwise the code
+the program passed to `proc_exit`,
+. sets the `CamelWasmStderr` header to what the program wrote to its standard error, if anything,
+. and replaces the message body with the standard output of the program, as a `byte[]`.
 
-Here's an example of a complete function:
+When the program exits with a non-zero code, the exchange fails with a `WasmExitCodeException` (which holds the exit
+code and the standard error) and the message body is left as it was, unless `failOnNonZeroExit` is `false`: then the
+standard output replaces the body as for any other exit code. The other headers of the message are kept.
 
-[source,rust]
-----
-#[derive(Serialize, Deserialize)]
-struct Message {
-    headers: HashMap<String, serde_json::Value>,
+Every exchange runs on its own instance, so exchanges never share the memory or the globals of the module and can
+run in parallel without a lock. A module cannot keep state from one message to the next.
 
-    #[serde(with = "Base64Standard")]
-    body: Vec<u8>,
-}
+The `CamelWasmExitCode` and `CamelWasmStderr` headers always describe the current run: a value already on the
+message is removed before the module runs.
 
-#[cfg_attr(all(target_arch = "wasm32"), export_name = "process")]
-#[no_mangle]
-pub extern fn process(ptr: u32, len: u32) -> u64 {
-    let bytes = unsafe {
-        slice::from_raw_parts_mut(
-            ptr as *mut u8,
-            len as usize)
-    };
+=== What the module can access
 
-    let mut msg: Message = serde_json::from_slice(bytes).unwrap();
+* *Standard input, output and error*: the message body, the new body and the `CamelWasmStderr` header. They are
+not terminals.
+* *Arguments*: the module location as argument zero, followed by the `args` option, for example
+`args=--level 2`. Use double quotes around an argument that contains spaces. Arguments are fixed by the route.
+* *Environment variables*: only the ones configured with `environment.NAME=value`, and the message headers listed in
+`environmentHeaders`, passed under the name they are listed with (header names are matched the way Camel matches
+them, ignoring case). A listed header that is not on the message is not set. Headers usually come from whoever sent
+the message, so no header reaches the module unless it is listed. The environment of the JVM is never passed on.
+* *Files and network*: none. The module gets no preopened directories, so it cannot open files, and no sockets.
+* *Clock and random numbers*: the ones of the host.
 
+=== Limits
 
-    let out_vec = serde_json::to_vec(&msg).unwrap();
-    let out_len = out_vec.len();
-    let out_ptr = alloc(out_len as u32);
+The following options bound what one run of a module can use. They are off by default.
 
-    unsafe {
-        std::ptr::copy_nonoverlapping(
-            out_vec.as_ptr(),
-            out_ptr,
-            out_len as usize)
-    };
+* `maxMemoryPages`: the maximum size of the memory of the module, in pages of 64 KiB. Rust and Go programs declare
+no maximum by default, so the memory of one run can grow to gigabytes of JVM heap. When the limit is reached, growing
+the memory fails inside the module, which then usually traps or exits with an error.
+* `timeout`: the maximum time one run may take. The module then runs on a thread of the producer while the route
+thread waits. When the time is up, the module is interrupted at its next function call or loop iteration and the
+exchange fails with an `ExchangeTimedOutException`. A module blocked in a host call that does not react to an
+interrupt, such as reading a body stream from a slow network connection, keeps its thread until that call returns,
+but the exchange still fails on time. Without a `timeout`, a module that never ends blocks the route thread.
+* `maxOutputSize`: the maximum number of bytes the module may write to its standard output, and separately to its
+standard error. Both are buffered in memory. A module that writes more is stopped and the exchange fails.
 
-    return ((out_ptr as u64) << 32) | out_len as u64;
-}
-----
+These limits are robustness controls, not a sandbox. A module is trusted code chosen by the route author, like a
+processor or a bean, as described in the xref:manual::security-model.adoc[security model]: the limits keep a
+misbehaving module from turning one message into an unbounded use of memory, time or threads, but they are not a
+defence against a module written to attack the host.
 
-==== Errors and module state
+=== Errors
 
-The module is instantiated once per producer (each `to` of a `wasm` endpoint in a route has its own instance) and that
-instance handles every message, one at a time, so data the module keeps in its memory or globals carries over from one
-message to the next.
+[width="100%",cols="2,4",options="header"]
+|===
+| What happens | Result
+| The program exits with code 0 | The body is the standard output. `CamelWasmExitCode` is 0.
+| The program exits with another code | A `WasmExitCodeException`, body unchanged, `CamelWasmExitCode` and
+`CamelWasmStderr` set. With `failOnNonZeroExit=false`: the body is the standard output.
+| The program traps, for example on a Rust `panic` | A `CamelExchangeException` caused by the `TrapException`
+of Endive, with the start of the standard error in its message. `CamelWasmStderr` is set, `CamelWasmExitCode` is not.
+| The program writes more than `maxOutputSize` | A `CamelExchangeException`. `CamelWasmStderr` is set when the program
+wrote to its standard error, `CamelWasmExitCode` is not.
+| The program runs longer than `timeout` | An `ExchangeTimedOutException`. Neither header is set.
+| The module is not a WASI Preview 1 command module, or the options are invalid | The route fails to start.
+|===
 
-* When the function returns with the error bit set, the error data is released with `dealloc` using its size without
-the error bit, the error data becomes the message of the exception, and the instance is kept.
-* When the call fails without returning, for example on a Rust `panic` or any other Wasm trap, the instance is
-discarded and a new one is created from the module for the next message. Whatever the failed call allocated can no
-longer be released, so keeping the instance would grow its memory with every failure. Any state the module kept in
-the discarded instance is lost.
-On a route where every call fails this way, the module is instantiated again for every message (its data segments
-are copied and any start function runs), which costs more than a call on a kept instance.
+In every case, the instance the program ran on is discarded.
+
+=== Performance
+
+Creating an instance per exchange is cheap for a small module, but the start-up code of the program itself runs
+for every message. Programs with a large runtime, such as standard Go programs, spend most of each run initializing
+that runtime; TinyGo, Rust and C programs start much faster. Modules are interpreted.
 
 == Examples
 
-Supposing we have compiled a Wasm module containing the function above, then it can be called in a Camel Route by its name and module resource location:
+A route that upper-cases the message body with the module `upper.wasm` from the classpath:
 
 [tabs]
 ====
@@ -178,7 +181,7 @@ Java::
 [source,java]
 ----
 from("direct:in")
-    .to("wasm:process?module=classpath://functions.wasm");
+    .to("wasm:classpath:upper.wasm?timeout=5000&maxMemoryPages=256");
 ----
 
 XML::
@@ -187,7 +190,7 @@ XML::
 ----
 <route>
   <from uri="direct:in"/>
-  <to uri="wasm:process?module=classpath://functions.wasm"/>
+  <to uri="wasm:classpath:upper.wasm?timeout=5000&amp;maxMemoryPages=256"/>
 </route>
 ----
 
@@ -200,8 +203,41 @@ YAML::
       uri: direct:in
       steps:
         - to:
-            uri: wasm:process
+            uri: wasm:classpath:upper.wasm
             parameters:
-              module: classpath://functions.wasm
+              timeout: 5000
+              maxMemoryPages: 256
+----
+====
+
+A module with arguments and environment variables, which also receives the `TENANT` header of the message:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("kafka:orders")
+    .to("wasm:file:/opt/transforms/normalize.wasm?args=--strict&environment.LOG_LEVEL=info&environmentHeaders=TENANT")
+    .to("kafka:normalized-orders");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:orders
+      steps:
+        - to:
+            uri: wasm:file:/opt/transforms/normalize.wasm
+            parameters:
+              args: --strict
+              environment.LOG_LEVEL: info
+              environmentHeaders: TENANT
+        - to:
+            uri: kafka:normalized-orders
 ----
 ====
