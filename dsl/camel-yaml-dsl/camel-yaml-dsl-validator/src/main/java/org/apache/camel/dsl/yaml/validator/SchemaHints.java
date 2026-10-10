@@ -357,8 +357,11 @@ final class SchemaHints {
                          + " the language: form is language: {language: groovy, expression: \"...\"}"),
             // path: {sku}: braces without quotes are a YAML map ({sku: null}), not the text {sku}
             append("type", null, m -> m.message().contains("object found, string expected") && unquotedBraces(m) != null,
-                    m -> unquotedBraces(m) + " without quotes is a YAML map (braces open a map in YAML), not text:"
-                         + " quote it, " + m.name() + ": \"" + unquotedBraces(m) + "\""),
+                    m -> {
+                        String braces = unquotedBraces(m);
+                        return braces + " without quotes is a YAML map (braces open a map in YAML), not text: quote it, "
+                               + m.name() + ": \"" + braces + "\"";
+                    }),
             // message: {simple: "..."}: a string property that is already an expression, or a plain option
             append("type", null, m -> m.message().contains("object found, string expected"),
                     m -> m.name() + " is a plain string"

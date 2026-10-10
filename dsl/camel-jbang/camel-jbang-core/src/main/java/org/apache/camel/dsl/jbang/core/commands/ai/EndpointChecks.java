@@ -695,9 +695,11 @@ final class EndpointChecks {
                     continue;
                 }
                 StringBuilder sb = new StringBuilder(scheme).append(": Unknown option '").append(name).append("'");
+                String known = INVENTED_OPTIONS.get(scheme + ":" + name);
                 // cron:cron?cron=0/10 * * * * ?: an option named after the component, for which the closest name
-                // (cronService) is a fix that makes it worse; say what the endpoint takes instead
-                String named = name.equals(scheme) ? namedAfterComponent(catalog, scheme) : null;
+                // (cronService) is a fix that makes it worse; say what the endpoint takes instead (an entry of
+                // INVENTED_OPTIONS for it says more, and is the one hint)
+                String named = known == null && name.equals(scheme) ? namedAfterComponent(catalog, scheme) : null;
                 if (named != null) {
                     sb.append(" (").append(named).append(")");
                 } else if (result.getUnknownSuggestions() != null) {
@@ -706,7 +708,6 @@ final class EndpointChecks {
                         sb.append(". Did you mean: ").append(Arrays.asList(suggestions));
                     }
                 }
-                String known = INVENTED_OPTIONS.get(scheme + ":" + name);
                 if (known != null) {
                     sb.append(" (").append(known).append(")");
                 }
