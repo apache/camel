@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -261,6 +262,53 @@ class SemanticAuditInputTest {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = { "yaml", "xml" })
+    void auditExpertNamesRemainLiteralInBothDsls(String dsl) throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            Properties properties = new Properties();
+            properties.setProperty("audit.expert", "security");
+            context.getPropertiesComponent().setInitialProperties(properties);
+            if (dsl.equals("yaml")) {
+                yaml(context, "{{audit.expert}}", "{enabled: true, maxChars: 42}");
+            } else {
+                context.build();
+                PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("audit.xml", """
+                        <semantic xmlns="http://camel.apache.org/schema/semantic">
+                          <audit enabled="true"><expert name="{{audit.expert}}" enabled="true"
+                              inputEnabled="true" inputMaxChars="42"/></audit>
+                        </semantic>
+                        """));
+            }
+            var configuration = SemanticAuditService.get(context).getConfiguration();
+            assertThat(configuration.getExperts()).containsOnlyKeys("{{audit.expert}}");
+            assertThat(configuration.getInput("{{audit.expert}}"))
+                    .isEqualTo(new SemanticAuditInputConfiguration(true, 42, null));
+            assertThat(configuration.getInput("security").isEnabled()).isFalse();
+        }
+    }
+
+    @Test
+    void oversizedInputNeverReachesTheRedactorEvenIfItWouldReduceIt() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            context.getRegistry().bind("security", new FixedSemanticExpert());
+            AtomicInteger redacted = new AtomicInteger();
+            context.getRegistry().bind("redactor", (SemanticAuditInputRedactor) input -> {
+                redacted.incrementAndGet();
+                return "safe";
+            });
+            var audit = SemanticAuditService.get(context);
+            audit.configure("test", configuration(true, new SemanticAuditInputConfiguration(true, 4, "redactor")));
+            context.start();
+            ((SemanticLanguage) context.resolveLanguage("semantic")).evaluate(evaluation("security"), "oversized");
+            audit.stop();
+            assertThat(redacted).hasValue(0);
+            assertThat(records(audit)).singleElement().satisfies(record -> assertThat(record.toMap())
+                    .containsEntry("status", "success").containsEntry("inputOmitted", "snapshot_limit_or_unsupported_type")
+                    .doesNotContainKey("input"));
+        }
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = { "{enabled: maybe}", "{enabled: true, maxChars: 0}", "{maxChars: abc}", "{unknown: true}", "true" })
     void invalidYamlInputSettingsIncludeSourcePosition(String input) throws Exception {
         try (var context = new DefaultCamelContext()) {
@@ -491,9 +539,19 @@ class SemanticAuditInputTest {
     }
 
     private static void yaml(DefaultCamelContext context, String input) throws Exception {
-        String yaml
-                = "- semantic:\n    audit:\n      enabled: true\n      experts:\n        security:\n          enabled: true\n          input: "
-                  + input;
+        yaml(context, "security", input);
+    }
+
+    private static void yaml(DefaultCamelContext context, String expert, String input) throws Exception {
+        String yaml = """
+                - semantic:
+                    audit:
+                      enabled: true
+                      experts:
+                        '%s':
+                          enabled: true
+                          input: %s
+                """.formatted(expert, input);
         var settings = LoadSettings.builder().setLabel("audit.yaml").build();
         try (var deserialization = new YamlDeserializationContext(settings)) {
             deserialization.setCamelContext(context);

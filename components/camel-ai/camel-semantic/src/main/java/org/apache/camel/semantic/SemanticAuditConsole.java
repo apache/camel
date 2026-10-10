@@ -111,7 +111,7 @@ public class SemanticAuditConsole extends AbstractDevConsole {
                         filters,
                         since == null || since.isBlank() ? null : Instant.parse(since), optionString(options, CURSOR),
                         (int) limit));
-                response.put("records", page.getRecords().stream().map(SemanticAuditRecord::toMap).toList());
+                response.put("records", page.getRecords().stream().map(SemanticAuditConsole::summary).toList());
                 response.put("nextCursor", page.getNextCursor());
                 response.put("evicted", page.getEvicted());
                 response.put("cursorExpired", page.isCursorExpired());
@@ -121,5 +121,13 @@ public class SemanticAuditConsole extends AbstractDevConsole {
             response.put("error", "audit_query_failed");
         }
         return response;
+    }
+
+    private static Map<String, Object> summary(SemanticAuditRecord record) {
+        // Lists are polled; retrieve captured input only through an eventId lookup.
+        Map<String, Object> summary = new LinkedHashMap<>(record.toMap());
+        summary.remove("input");
+        summary.remove("inputRedacted");
+        return summary;
     }
 }

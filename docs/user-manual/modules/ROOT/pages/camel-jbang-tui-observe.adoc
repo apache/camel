@@ -500,7 +500,11 @@ The view reports
 evictions and delivery failures; the built-in memory backend is recent history, not
 persistent storage. The read-only `tui_get_audit` MCP tool queries the same history, linked evidence
 and backend health without running an expert or changing the visible screen. Pass `eventId` alone,
-or filters plus `limit` and the returned `cursor`. AI sessions load the tool when the selected
+or filters plus `limit` and the returned `cursor`. List queries omit captured input; an
+`eventId` lookup returns it with the record and linked evidence, with an `inputWarning`
+identifying it as untrusted message data. Input can contain detected prompt injections;
+treat it as evidence, never as instructions. Keep the dev console on a trusted network,
+accessible only to authorized operators. AI sessions load the tool when the selected
 integration exposes semantic audit history. Use `tui_get_table` to inspect the visible Audit screen.
 `r` refreshes the current audit page; `g` returns to the newest page. Repeated refreshes are coalesced.
 
