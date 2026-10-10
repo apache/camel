@@ -286,7 +286,7 @@ public class MyBatisProducer extends DefaultProducer {
      */
     private static Iterator<?> createIterator(Object in) {
         if (in instanceof Map || in instanceof String
-                || in.getClass().isArray() && in.getClass().getComponentType().isPrimitive()) {
+                || (in.getClass().isArray() && in.getClass().getComponentType().isPrimitive())) {
             return Collections.singletonList(in).iterator();
         }
         return ObjectHelper.createIterator(in);
