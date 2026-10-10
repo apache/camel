@@ -541,7 +541,7 @@ public final class AuthoringTools {
         result.put("file", file);
         result.put("errors", new JsonArray(errors));
         putKameletGuide(result, file, errors);
-        putKameletNotes(result, file, content);
+        putFileNotes(result, file, content);
         // the problems whose fix is certain, as edits an agent can apply (camel_edit_file find/replace)
         JsonArray fixes = new JsonArray();
         String[] lines = content.split("\n", -1);
@@ -1049,10 +1049,16 @@ public final class AuthoringTools {
      * What a Kamelet file does that works but is not right, which does not refuse a write: a camel: dependency its
      * template does not use (CAMEL-25403).
      */
-    private static void putKameletNotes(JsonObject result, String file, String content) {
+    private static void putFileNotes(JsonObject result, String file, String content) {
         String name = file != null ? file.toLowerCase(Locale.ROOT) : "";
         if (name.endsWith(".kamelet.yaml") || name.endsWith(".kamelet.yml")) {
             List<String> notes = KameletChecks.unusedDependencies(content);
+            if (!notes.isEmpty()) {
+                result.put("notes", new JsonArray(notes));
+            }
+        } else if (name.endsWith(".xsl") || name.endsWith(".xslt")) {
+            // a {expression} in element content is written out as text (CAMEL-25514)
+            List<String> notes = SourceValidator.xsltNotes(content);
             if (!notes.isEmpty()) {
                 result.put("notes", new JsonArray(notes));
             }
@@ -1133,7 +1139,7 @@ public final class AuthoringTools {
         }
         UnconsumedDirect waiting = null;
         if (validate) {
-            putKameletNotes(result, file, content);
+            putFileNotes(result, file, content);
             waiting = unconsumedDirect(dir, file, content, ctx.catalog());
             if (waiting != null) {
                 JsonArray notes = result.get("notes") instanceof JsonArray existing ? existing : new JsonArray();

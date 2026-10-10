@@ -522,6 +522,14 @@ public final class SourceValidator {
         return XmlChecks.validateXslt(content);
     }
 
+    /**
+     * What a stylesheet does that works but is not what was meant, which does not refuse a write: a {expression} in
+     * element content, written out as text (CAMEL-25514).
+     */
+    public static List<String> xsltNotes(String content) {
+        return XmlChecks.literalBraceNotes(content);
+    }
+
     /** Checks that the XML is well formed (an input file, a Camel XML DSL file or any other XML). */
     public static List<String> validateXml(String content) {
         return XmlChecks.validateXml(content);

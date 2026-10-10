@@ -1389,9 +1389,18 @@ class McpFacade {
         result.put("lines", lines);
         result.put("bytes", content.getBytes(StandardCharsets.UTF_8).length);
         // a route sending to a direct: endpoint no route consumes yet: its route goes in the same call (CAMEL-25501)
+        List<String> notes = new ArrayList<>();
         AuthoringTools.UnconsumedDirect waiting = AuthoringTools.unconsumedDirect(dir, file, content, null);
         if (waiting != null) {
-            result.put("notes", new JsonArray(List.of(waiting.note())));
+            notes.add(waiting.note());
+        }
+        String lower = file.toLowerCase(Locale.ROOT);
+        if (lower.endsWith(".xsl") || lower.endsWith(".xslt")) {
+            // a {expression} in element content is written out as text (CAMEL-25514)
+            notes.addAll(SourceValidator.xsltNotes(content));
+        }
+        if (!notes.isEmpty()) {
+            result.put("notes", new JsonArray(notes));
         }
         return result;
     }
