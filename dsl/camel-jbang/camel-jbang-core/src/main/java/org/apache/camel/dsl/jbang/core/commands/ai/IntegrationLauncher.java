@@ -353,6 +353,20 @@ public final class IntegrationLauncher {
     }
 
     /** The integration that runs with this directory as its working directory, or null. */
+    /**
+     * The integration that runs in dev mode from the directory (its working directory, started with --dev), or null:
+     * the one whose reload a write to the directory is answered with when no integration is selected (CAMEL-25513).
+     */
+    static RuntimeHelper.ProcessInfo devModeFrom(Path directory) {
+        RuntimeHelper.ProcessInfo running = runningFrom(directory);
+        if (running == null) {
+            return null;
+        }
+        List<String> args = ProcessHandle.of(running.pid()).flatMap(ph -> ph.info().arguments()).map(Arrays::asList)
+                .orElse(null);
+        return args != null && args.contains("--dev") ? running : null;
+    }
+
     private static RuntimeHelper.ProcessInfo runningFrom(Path directory) {
         Path wanted = directory.toAbsolutePath().normalize();
         for (RuntimeHelper.ProcessInfo p : RuntimeHelper.discoverProcesses()) {

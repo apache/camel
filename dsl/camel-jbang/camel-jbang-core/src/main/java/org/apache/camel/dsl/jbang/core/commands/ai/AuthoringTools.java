@@ -607,6 +607,8 @@ public final class AuthoringTools {
 
     /** How long a write waits for the running integration's reload record before answering without it. */
     static final long RELOAD_WAIT_MILLIS = 8000;
+    /** How long a write waits after the reload for the first output of the routes (CAMEL-25513). */
+    static final long OUTPUT_WAIT_MILLIS = 3000;
 
     /**
      * Replaces one snippet of a file and writes the result through {@link #writeFile}, so a change to an existing file
@@ -1093,11 +1095,25 @@ public final class AuthoringTools {
         // than the ones before the write
         String processName = null;
         String sinceKey = null;
-        boolean watch = ctx.hasProcess() && SourceValidator.isValidatableFile(file);
+        long watchPid = -1;
+        if (SourceValidator.isValidatableFile(file)) {
+            if (ctx.hasProcess()) {
+                watchPid = ctx.pid();
+                RuntimeHelper.ProcessInfo p = RuntimeHelper.findProcess(Long.toString(ctx.pid()));
+                processName = p != null ? p.name() : null;
+            } else {
+                // no integration selected, as through camel-jbang-mcp where the agent passes the directory: the one
+                // running from it in dev mode reloads the file (CAMEL-25513)
+                RuntimeHelper.ProcessInfo p = IntegrationLauncher.devModeFrom(dir);
+                if (p != null) {
+                    watchPid = p.pid();
+                    processName = p.name();
+                }
+            }
+        }
+        boolean watch = watchPid >= 0;
         if (watch) {
-            RuntimeHelper.ProcessInfo p = RuntimeHelper.findProcess(Long.toString(ctx.pid()));
-            processName = p != null ? p.name() : null;
-            sinceKey = ReloadOutcome.latestReloadKey(ReloadOutcome.records(ctx.pid(), processName));
+            sinceKey = ReloadOutcome.latestReloadKey(ReloadOutcome.records(watchPid, processName));
         }
         try {
             Files.createDirectories(path.getParent());
@@ -1126,11 +1142,23 @@ public final class AuthoringTools {
             }
         }
         if (watch) {
-            JsonObject reload = ReloadOutcome.await(ctx.pid(), processName, sinceKey, RELOAD_WAIT_MILLIS);
+            JsonObject reload = ReloadOutcome.await(watchPid, processName, sinceKey, RELOAD_WAIT_MILLIS);
             result.put("reload", reload);
             String status = reload.getString("status");
+            String logged = "";
+            if ("reloaded".equals(status)) {
+                // the result of the change, so the agent sees what its route now does (CAMEL-25513)
+                JsonArray output = ReloadOutcome.awaitOutput(watchPid, processName, OUTPUT_WAIT_MILLIS);
+                reload.put("output", output);
+                logged = output.isEmpty()
+                        ? " It logged nothing within " + OUTPUT_WAIT_MILLIS / 1000 + "s after the reload (camel_get_log"
+                          + " shows what it logs later)."
+                        : " After the reload it logged: " + output.get(0)
+                          + (output.size() > 1 ? " (and " + (output.size() - 1) + " more in reload.output)" : "");
+            }
+            final String loggedAfter = logged;
             result.put("message", switch (status) {
-                case "reloaded" -> "The running integration reloaded the file.";
+                case "reloaded" -> "The running integration reloaded the file." + loggedAfter;
                 case "properties" -> "The running integration reloaded the properties.";
                 case "failed" -> "The running integration FAILED to reload the file, the route is not running; fix the"
                                  + " content and write again (see reload.message).";
