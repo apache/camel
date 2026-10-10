@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.api.client.util.Base64;
 import com.google.api.services.gmail.Gmail;
@@ -48,6 +50,8 @@ import org.slf4j.LoggerFactory;
 public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleMailStreamConsumer.class);
+    // messages whose exchanges are being processed, which a later poll must not consume again
+    private final Set<String> inProgress = ConcurrentHashMap.newKeySet();
     private String unreadLabelId;
     private List<String> labelsIds;
 
@@ -91,15 +95,39 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
         forceConsumerAsReady();
 
         if (c.getMessages() != null) {
-            for (Message message : c.getMessages()) {
-                Message mess
-                        = getClient().users().messages().get("me", message.getId()).setFormat(messageFormat()).execute();
-                Exchange exchange = createExchange(getEndpoint().getExchangePattern(), mess);
-                answer.add(exchange);
+            try {
+                for (Message message : c.getMessages()) {
+                    addExchange(message.getId(), answer);
+                }
+            } catch (Exception e) {
+                // none of the messages of this poll is processed
+                releaseInProgress(answer);
+                throw e;
             }
         }
 
         return processBatch(CastUtils.cast(answer));
+    }
+
+    private void addExchange(String id, Queue<Exchange> answer) throws Exception {
+        // skip the message if an exchange of a previous poll is still processing it
+        if (!inProgress.add(id)) {
+            LOG.trace("Skipping message {} as it is already in progress", id);
+            return;
+        }
+        try {
+            Message mess = getClient().users().messages().get("me", id).setFormat(messageFormat()).execute();
+            answer.add(createExchange(getEndpoint().getExchangePattern(), mess));
+        } catch (Exception e) {
+            inProgress.remove(id);
+            throw e;
+        }
+    }
+
+    private void releaseInProgress(Queue<?> notProcessed) {
+        for (Object exchange : notProcessed) {
+            inProgress.remove(((Exchange) exchange).getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class));
+        }
     }
 
     @Override
@@ -117,14 +145,23 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
+            final String id = exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class);
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 public void onComplete(Exchange exchange) {
-                    processCommit(exchange, unreadLabelId);
+                    try {
+                        processCommit(exchange, unreadLabelId);
+                    } finally {
+                        inProgress.remove(id);
+                    }
                 }
 
                 public void onFailure(Exchange exchange) {
-                    processRollback(exchange, unreadLabelId);
+                    try {
+                        processRollback(exchange, unreadLabelId);
+                    } finally {
+                        inProgress.remove(id);
+                    }
                 }
 
                 @Override
@@ -135,6 +172,8 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
             getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
         }
+        // the remaining exchanges are not processed as the consumer is stopping
+        releaseInProgress(exchanges);
 
         return total;
     }

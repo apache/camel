@@ -3715,6 +3715,13 @@ example deleted by another consumer after the listing) is now skipped instead of
 The `camel-aws2-s3-vectors` consumer with `deleteAfterRead=true` no longer consumes a vector again while its exchange is
 still in flight. A vector whose exchange failed is still consumed again by a later poll.
 
+=== camel-google-mail - messages whose exchange is in flight
+
+The `google-mail-stream` consumer no longer consumes a message again while an exchange of an earlier poll is still
+processing it, which happened with an asynchronous route (for example `to("seda:...")`) as the message is only marked
+as read when its exchange is done. The next polls now skip such a message (with `markAsRead=false` it is consumed again
+once its exchange is done).
+
 === camel-google-sheets - custom column names of a range that does not start at column A
 
 The `google-sheets:application-x-struct` data type now maps the custom `columnNames` to the columns of the range by
