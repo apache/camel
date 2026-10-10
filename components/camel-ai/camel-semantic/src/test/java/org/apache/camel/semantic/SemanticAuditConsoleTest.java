@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.semantic.internal.SemanticAuditService;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.logging.log4j.Level;
@@ -99,7 +100,7 @@ class SemanticAuditConsoleTest {
                     return Map.of("evaluation", evaluation);
                 }
             });
-            SemanticAudit.get(context).configure("test",
+            SemanticAuditService.get(context).configure("test",
                     new SemanticAuditConfiguration(false, Map.of(), List.of("memory"), "remote", 10, 10));
             context.start();
             var console = new SemanticAuditConsole();
@@ -149,7 +150,7 @@ class SemanticAuditConsoleTest {
                     throw new IllegalStateException("secret credentials");
                 }
             });
-            SemanticAudit.get(context).configure("test",
+            SemanticAuditService.get(context).configure("test",
                     new SemanticAuditConfiguration(false, Map.of(), List.of("memory"), "broken", 10, 10));
             context.start();
             var console = new SemanticAuditConsole();
@@ -216,10 +217,10 @@ class SemanticAuditConsoleTest {
         final MemorySemanticAuditStore store;
 
         Fixture() throws Exception {
-            SemanticAudit.get(context).configure("test",
+            SemanticAuditService.get(context).configure("test",
                     new SemanticAuditConfiguration(true, Map.of(), List.of("memory"), "memory", 10, 10));
             context.start();
-            store = (MemorySemanticAuditStore) SemanticAudit.get(context).getReader();
+            store = (MemorySemanticAuditStore) SemanticAuditService.get(context).getReader();
             console.setCamelContext(context);
         }
 

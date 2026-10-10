@@ -473,8 +473,8 @@ Use `/` for exact `field=value` filters (`category`, `action`, `expert`, `routeI
 `namespace`, `correlationId`, `since`), `n` for older records, `g` for the latest page and `r` to refresh.
 Select a record and use `Tab` to focus its inspector, then use the arrows to scroll details and linked evidence. The view reports
 evictions and delivery failures; the built-in memory backend is recent history, not
-persistent storage. The read-only `tui_get_audit` MCP tool exposes the same screen,
-including filters, selected evidence and backend health, without running an expert.
-
-The audit MCP tool changes the visible tab/view, filters, page and selection while reading integration data.
+persistent storage. The read-only `tui_get_audit` MCP tool queries the same history, linked evidence
+and backend health without running an expert or changing the visible screen. Pass `eventId` alone,
+or filters plus `limit` and the returned `cursor`. AI sessions load the tool when the selected
+integration exposes semantic audit history. Use `tui_get_table` to inspect the visible Audit screen.
 `r` refreshes the current audit page; `g` returns to the newest page. Repeated refreshes are coalesced.

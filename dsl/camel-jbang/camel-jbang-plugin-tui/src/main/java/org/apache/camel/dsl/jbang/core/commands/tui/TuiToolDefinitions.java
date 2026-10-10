@@ -396,12 +396,18 @@ final class TuiToolDefinitions {
                 List.of("filter"))));
         tools.add(toToolDef(toolDef(
                 "tui_get_audit",
-                "Open the Semantic Audit screen and read retained history, selected evidence and backend health. "
-                                 + "Read-only: never evaluates input or replays an expert. Optional filters use field=value pairs "
-                                 + "(category, action, expert, routeId, namespace, correlationId, since).",
-                Map.of("filter", propDef("string", "Filter expression; empty clears filters"),
-                        "page", propDef("string", "latest or older"),
-                        "eventId", propDef("string", "Inspect an event and linked evidence")),
+                "Read retained semantic audit records and backend health without changing the TUI. "
+                                 + "Use eventId alone for a record and its evidence; otherwise pass filters and a returned cursor.",
+                Map.of("category", propDef("string", "evaluation, decision or request"),
+                        "action", propDef("string", "Explicit route action"),
+                        "expert", propDef("string", "Expert bean name"),
+                        "routeId", propDef("string", "Route ID"),
+                        "namespace", propDef("string", "Application namespace"),
+                        "correlationId", propDef("string", "Application correlation ID"),
+                        "since", propDef("string", "Inclusive ISO-8601 timestamp"),
+                        "cursor", propDef("string", "nextCursor from the same query"),
+                        "limit", propDef("integer", "Page size, 1 to 200; default 50"),
+                        "eventId", propDef("string", "Event and linked evidence")),
                 List.of())));
         tools.add(toToolDef(toolDef(
                 "tui_set_input",

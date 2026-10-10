@@ -1034,6 +1034,13 @@ class McpFacade {
         return tabRegistry.historyTab().toggleDisplaySection(section, enabled);
     }
 
+    /** Query the selected runtime without changing tabs, drafts, filters or the selected audit record. */
+    JsonObject queryAudit(JsonObject request) {
+        IntegrationInfo selected = ctx == null ? null : ctx.findSelectedIntegration();
+        String pid = selected == null ? null : selected.phantom ? selected.linkedPid : selected.pid;
+        return pid == null ? null : ctx.executeIndependentAction(pid, request, 10000);
+    }
+
     // ---- Integration data ----
 
     JsonObject getReadme(String name) {

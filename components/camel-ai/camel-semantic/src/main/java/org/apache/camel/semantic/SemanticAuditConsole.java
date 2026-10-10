@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.semantic.internal.SemanticAuditService;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -70,7 +71,7 @@ public class SemanticAuditConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        SemanticAudit audit = SemanticAudit.get(getCamelContext());
+        SemanticAuditService audit = SemanticAuditService.get(getCamelContext());
         JsonObject response = new JsonObject();
         response.put("audit", audit.status());
         try {
@@ -83,10 +84,10 @@ public class SemanticAuditConsole extends AbstractDevConsole {
                 SemanticAuditRecord record = reader.get(eventId).orElse(null);
                 response.put("record", record == null ? null : record.toMap());
                 List<Map<String, Object>> evidence = new ArrayList<>();
-                if (record != null && record.toMap().get("evidence") instanceof List<?> ids) {
-                    Map<String, SemanticAuditRecord> linkedRecords
-                            = reader.getAll(ids.stream().map(String.class::cast).toList());
-                    for (Object id : ids) {
+                if (record != null) {
+                    List<String> ids = record.getEvidence();
+                    Map<String, SemanticAuditRecord> linkedRecords = reader.getAll(ids);
+                    for (String id : ids) {
                         SemanticAuditRecord linked = linkedRecords.get(id);
                         evidence.add(linked == null ? Map.of("eventId", id, "unavailable", true) : linked.toMap());
                     }

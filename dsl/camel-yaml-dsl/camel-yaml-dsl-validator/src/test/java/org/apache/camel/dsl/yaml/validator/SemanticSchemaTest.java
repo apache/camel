@@ -97,6 +97,11 @@ class SemanticSchemaTest {
     void semanticRequiresExactlyOneDeclarationBlock(boolean canonical) throws Exception {
         var validator = new YamlValidator(canonical);
         assertThat(validator.validate("- semantic: {expert: content}")).isNotEmpty();
+        assertThat(validator.validate("- semantic: {}")).isNotEmpty();
+        assertThat(validator.validate("- semantic: {audit: {enabled: true}}")).isEmpty();
+        assertThat(validator.validate("- semantic: {audit: {enabled: true}, evaluation: {q: {operation: detect}}}"))
+                .isEmpty();
+        assertThat(validator.validate("- semantic: {audit: {unknown: true}}")).isNotEmpty();
         assertThat(validator.validate("- semantic: {question: {}}")).isNotEmpty();
         assertThat(validator.validate("- semantic: {question: {}, evaluation: {}}")).isNotEmpty();
         assertThat(validator.validate("- semantic: {evaluation: {q: {operation: detect, uncertaintyPolicy: expert-policy}}}"))

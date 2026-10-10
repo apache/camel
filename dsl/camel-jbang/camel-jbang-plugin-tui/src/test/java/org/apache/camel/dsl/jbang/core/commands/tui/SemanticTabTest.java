@@ -41,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class SemanticTabTest {
@@ -59,7 +60,7 @@ class SemanticTabTest {
             """;
 
     @Test
-    void auditMcpFiltersAndInspectsEvidenceWithoutInferenceOrCurrentDefinitions() throws Exception {
+    void auditMcpQueriesWithoutChangingTheVisibleView() throws Exception {
         try (var runtime = new Runtime()) {
             var tab = loaded(runtime);
             var bridge = mock(McpFacade.MonitorBridge.class);
@@ -70,28 +71,28 @@ class SemanticTabTest {
                     runtime, new AtomicReference<>(List.of()), null, null, null, null, null,
                     null, null, null, registry, null, bridge);
             var tools = new TuiToolRegistry(facade);
-            JsonObject initial = (JsonObject) Jsoner.deserialize(tools.execute("tui_get_audit", new JsonObject()));
-            assertThat(initial).containsEntry("view", "Audit");
+            JsonObject before = tab.getTableDataAsJson();
+            JsonObject history = (JsonObject) Jsoner.deserialize(tools.execute("tui_get_audit", new JsonObject()));
+            assertThat(SemanticTab.objects(history, "records")).hasSize(2);
+            tools.execute("tui_get_audit", new JsonObject(Map.of("expert", "security", "action", "block", "limit", 1)));
+            assertThat(runtime.requests).anySatisfy(request -> assertThat(request)
+                    .containsEntry("auditAction", "block").containsEntry("expert", "security").containsEntry("limit", 1));
+            JsonObject details = (JsonObject) Jsoner.deserialize(tools.execute("tui_get_audit",
+                    new JsonObject(Map.of("eventId", "evaluation-1"))));
+            assertThat(details.getJsonObject("record")).containsEntry("category", "evaluation");
+            assertThat(tab.getTableDataAsJson()).isEqualTo(before);
+            verifyNoInteractions(bridge);
+            assertThat(runtime.requests).noneSatisfy(r -> assertThat(r).containsEntry("action", "semantic-evaluate"));
+            int requests = runtime.requests.size();
+            assertThat(tools.execute("tui_get_audit", new JsonObject(Map.of("body", "secret")))).startsWith("Error:");
+            assertThat(tools.execute("tui_get_audit", new JsonObject(Map.of("eventId", "x", "limit", 1)))).startsWith("Error:");
+            assertThat(tools.execute("tui_get_audit", new JsonObject(Map.of("limit", 0)))).startsWith("Error:");
+            assertThat(runtime.requests).hasSize(requests);
+            tab.setInputValue("audit.view", "");
             await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
-            JsonObject state = (JsonObject) Jsoner.deserialize(tools.execute("tui_get_table", new JsonObject()));
-            assertThat(state.getInteger("totalRows")).isEqualTo(2);
-            assertThat(state).containsEntry("selectedEventId", "decision-2");
-            assertThat(state.getJsonObject("selectedRecord")).containsEntry("action", "block");
-            assertThat(SemanticTab.objects(state, "evidence")).hasSize(1);
-            assertThat(state.getJsonObject("audit")).containsEntry("openTelemetry", "inactive");
             String rendered = TuiTestHelper.renderToString(tab, 180, 45);
             assertThat(rendered).contains("TIMESTAMP", "REASON CODE", "tools/call", "support-request", "Master: true");
             assertThat(TuiTestHelper.renderToString(tab, 80, 24)).contains("CATEGORY", "EXPERT");
-            tools.execute("tui_get_audit", new JsonObject(Map.of("filter", "expert=security action=block")));
-            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
-            assertThat(runtime.requests).anySatisfy(r -> assertThat(r).containsEntry("action", "semantic-audit")
-                    .containsEntry("auditAction", "block").containsEntry("expert", "security"));
-            tools.execute("tui_get_audit", new JsonObject(Map.of("eventId", "evaluation-1")));
-            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
-            assertThat(tab.getTableDataAsJson().getJsonObject("selectedRecord")).containsEntry("category", "evaluation");
-            assertThat(TuiTestHelper.renderToString(tab, 180, 100)).contains("detector-v2", "abc123");
-            assertThat(runtime.requests).noneSatisfy(r -> assertThat(r).containsEntry("action", "semantic-evaluate"));
-            assertThat(tools.execute("tui_get_audit", new JsonObject(Map.of("filter", "body=secret")))).startsWith("Error:");
         }
     }
 

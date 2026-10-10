@@ -979,7 +979,9 @@ Audit settings are fixed when the audit service starts with the context, not whe
 Editing or removing the audit block in an existing resource is rejected if it would change those settings.
 Deleting its file removes that file's evaluation declarations and logs one warning while retaining the
 active audit configuration. Unrelated reloads continue, and a renamed resource may redeclare the same
-configuration. Restart the application to apply different settings. Retained history is not erased by a query.
+configuration. Stop the context, update its declarations, and start it to apply different settings.
+Backends are resolved again on startup. A changed memory capacity creates an empty store and invalidates
+old cursors; unchanged capacity retains its history across an in-place restart. Retained history is not erased by a query.
 Unknown backend references fail startup. Expert overrides can name beans registered
 later and do not instantiate experts; misspelled references never match an invocation.
 
@@ -1055,8 +1057,11 @@ property for its evidence IDs. A batch supplies the IDs of its observed members.
 An expert disabled for both audit and observation supplies no reference. Save and combine those
 IDs explicitly if a decision uses earlier invocations; set the processor's
 `evidenceProperty` to that exchange property. A Java caller can supply an empty list
-for a decision with no supporting evaluation. Decisions follow the audit master setting,
-independently of per-expert filtering. A reference may therefore point to an evaluation
+for a decision with no supporting evaluation. Explicit decisions are captured whenever the global default
+or at least one expert override enables auditing. Thus `enabled: false` with `security: {enabled: true}`
+retains both security evaluations and route decisions, including decisions without evidence. Expert overrides
+filter evaluation records; they do not select which application's actions are recorded. Disabling the global
+default and all expert overrides disables decision capture. `decisionsEnabled` reports this effective state. A reference may therefore point to an evaluation
 not retained by a particular backend; the inspector displays it as unavailable.
 
 A decision records the application's declared action, not successful execution of a
@@ -1079,6 +1084,14 @@ names are `memory` and `log`:
   (range 1 to 100000); old records are evicted and counted. Its history is not persistent.
 * `log` writes JSON to the `org.apache.camel.semantic.audit` logger using the application's
   normal logging configuration. Logging does not provide a query reader.
+
+The supported backend APIs are `SemanticAuditSink`, `SemanticAuditReader`, `SemanticAuditRecord`,
+`SemanticAuditQuery` and `SemanticAuditPage`. Record maps use a validated, bounded version-1 serialization
+schema; typed timestamp, duration and evidence accessors avoid backend casts. `query.matches(record)`
+provides exact case-sensitive AND filtering with an inclusive timestamp boundary. Record field order
+is preserved for structured logging. Classes in `org.apache.camel.semantic.internal` are runtime plumbing,
+not a supported integration API. Routes use `SemanticAuditDecision` or `SemanticAudit` and its documented
+`REFERENCES` property; observers use `SemanticObserver`.
 
 The context starts and stops its configured backends. A single worker dispatches each
 accepted record to the sinks in configuration order. `queueCapacity` defaults to 1000
@@ -1111,6 +1124,10 @@ rather than truncated if invalid; provider metadata cannot override the contract
 No other result metadata is captured. Adapters should supply the actual producing model and revision
 when known; absent identity stays absent. Batch members have individual
 invocation IDs and a shared batch ID. A failed group and groups never executed are distinct.
+Input validation completes before inference: a member whose input passed but whose sibling failed validation
+is `not_executed`. When a provider returns a complete batch, each returned answer is validated and audited
+independently, even if a sibling answer is invalid. The route still receives a batch failure and no partial
+result/diagnostic map. A valid answer is evidence of evaluation, not a successful batch or route action.
 Console cancellation requests are separate records linked to eventual provider completion:
 request timeout does not prove that native or remote inference stopped. A timeout
 before an expert is resolved emits no request record because its audit eligibility
@@ -1132,6 +1149,7 @@ an evaluation and declared action, not a copy of the submitted content.
 Register `SemanticObserver` beans to consume start/completion and explicit decision
 hooks independently of auditing. Beans must be registered before context startup: observers are
 discovered once when the audit service starts; later registrations take effect after restarting it.
+Observer completion runs in reverse start-callback order; registry registration order is not a contract.
 Observer failures do not replace an expert result or
 route action. Callbacks must not block. `captureContext` runs before a console executor
 handoff. Observations remain detached between callbacks: start spans with the supplied
@@ -1146,6 +1164,11 @@ semantic-convention names.
 
 === Browsing history
 
+Use `camel semantic audit my-app` to retrieve a table of retained records from the
+xref:manual::camel-jbang-managing.adoc#_semantic_audit_history[Camel CLI]. Add `--json` for
+machine-readable output, or `--event-id=EVENT_ID` to inspect a record and its linked evidence.
+The CLI uses the same reader, filters and cursors as the console and TUI.
+
 The read-only `semantic-audit` developer console accepts `eventId` for a selected record
 and its evidence, or a bounded page query with `limit` (1 to 200), `cursor`, `since` (UTC
 ISO-8601), `category`, `action`, `expert`, `routeId`, `namespace` and `correlationId`.
@@ -1156,8 +1179,10 @@ an old definition still exists.
 
 The Semantic tab in xref:manual::camel-jbang-tui.adoc[Camel TUI] provides an Audit view
 with the same filters, table and linked-record inspector. `tui_get_audit` exposes this
-screen through the TUI MCP server. It switches the visible tab/view and can change its filter, page
-and selected event; its read-only classification refers to integration data and capture configuration.
+history through the TUI MCP server without changing the visible tab, filters, page or selection.
+Pass `eventId` alone to inspect a record and its evidence, or the console's filters, `limit` and returned
+`cursor` to query pages. TUI AI sessions load this tool only for integrations exposing the audit console,
+in both core and full tool modes. Screen navigation remains an explicit TUI action.
 `r` refreshes the current page and `g` returns to the latest page. Pending refreshes are coalesced,
 while the latest changed filter/page is queried after the active request finishes. `tui_get_table` also includes audit rows, filters,
 selected details, linked evidence and backend status when Audit is selected. The OpenTelemetry status

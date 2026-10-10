@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -74,12 +73,12 @@ public final class MemorySemanticAuditStore extends ServiceSupport implements Se
     }
 
     @Override
-    public synchronized SemanticAuditPage query(SemanticAuditQuery query) {
+    public SemanticAuditPage query(SemanticAuditQuery query) {
         long before = Long.MAX_VALUE;
         if (query.getCursor() != null) {
             String[] parts = query.getCursor().split(":", -1);
             if (parts.length != 3 || !epoch.equals(parts[0])
-                    || !Integer.toString(query.getFilters().hashCode() + Objects.hashCode(query.getSince())).equals(parts[2])) {
+                    || !query.fingerprint().equals(parts[2])) {
                 throw new IllegalArgumentException("Audit cursor does not match this store or query");
             }
             try {
@@ -88,11 +87,18 @@ public final class MemorySemanticAuditStore extends ServiceSupport implements Se
                 throw new IllegalArgumentException("Invalid audit cursor", e);
             }
         }
-        boolean expired = before != Long.MAX_VALUE && !records.isEmpty() && before <= records.getLast().sequence;
+        List<Entry> snapshot;
+        long evictions;
+        synchronized (this) {
+            snapshot = List.copyOf(records);
+            evictions = evicted;
+        }
+        boolean expired
+                = before != Long.MAX_VALUE && !snapshot.isEmpty() && before <= snapshot.get(snapshot.size() - 1).sequence;
         List<SemanticAuditRecord> page = new ArrayList<>();
         long last = 0;
         boolean more = false;
-        for (Entry entry : records) {
+        for (Entry entry : snapshot) {
             if (entry.sequence < before && query.matches(entry.record)) {
                 if (page.size() == query.getLimit()) {
                     more = true;
@@ -103,8 +109,8 @@ public final class MemorySemanticAuditStore extends ServiceSupport implements Se
             }
         }
         String next
-                = more ? epoch + ":" + last + ":" + (query.getFilters().hashCode() + Objects.hashCode(query.getSince())) : null;
-        return new SemanticAuditPage(page, next, evicted, expired);
+                = more ? epoch + ":" + last + ":" + query.fingerprint() : null;
+        return new SemanticAuditPage(page, next, evictions, expired);
     }
 
     public int getCapacity() {

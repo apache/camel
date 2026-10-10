@@ -29,9 +29,11 @@ import java.util.Set;
  */
 public final class SemanticAuditRecord {
     private final Map<String, Object> fields;
+    private final Instant timestamp;
 
     SemanticAuditRecord(Map<String, Object> fields) {
-        this.fields = Map.copyOf(fields);
+        this.fields = Collections.unmodifiableMap(new LinkedHashMap<>(fields));
+        this.timestamp = Instant.parse((String) fields.get("timestamp"));
     }
 
     /** Reconstruct a persisted version-1 record; rejects unknown fields and bounds nested data. */
@@ -48,7 +50,16 @@ public final class SemanticAuditRecord {
                 || !(data.get("timestamp") instanceof String timestamp)) {
             throw new IllegalArgumentException("Invalid semantic audit record");
         }
-        Instant.parse(timestamp);
+        Set<String> structured = Set.of("schemaVersion", "durationNanos", "semantics", "result", "evidence");
+        data.forEach((key, value) -> {
+            if (!structured.contains(key) && !(value instanceof String)) {
+                throw new IllegalArgumentException("Invalid audit text field: " + key);
+            }
+        });
+        if (data.containsKey("durationNanos") && (!(data.get("durationNanos") instanceof Number duration)
+                || duration.longValue() < 0 || duration.doubleValue() != duration.longValue())) {
+            throw new IllegalArgumentException("Invalid audit duration");
+        }
         if (data.containsKey("startedAt")) {
             if (!(data.get("startedAt") instanceof String startedAt)) {
                 throw new IllegalArgumentException("Invalid audit start timestamp");
@@ -67,9 +78,56 @@ public final class SemanticAuditRecord {
         }
         validateKeys(data.get("semantics"), Set.of("resultType", "meaning", "probabilityMeaning", "confidenceMeaning"));
         validateKeys(data.get("result"), Set.of("value", "probability", "confidence", "probabilities"));
+        if (data.get("semantics") instanceof Map<?, ?> semantics
+                && semantics.values().stream().anyMatch(value -> !(value instanceof String))) {
+            throw new IllegalArgumentException("Invalid audit semantics");
+        }
+        if (data.get("result") instanceof Map<?, ?> result) {
+            Object value = result.get("value");
+            if (value != null && !(value instanceof Boolean || value instanceof Number || value instanceof String
+                    || value instanceof List<?> labels && labels.stream().allMatch(String.class::isInstance))) {
+                throw new IllegalArgumentException("Invalid audit result value");
+            }
+            for (String key : List.of("probability", "confidence")) {
+                if (result.containsKey(key)) {
+                    validateProbability(result.get(key));
+                }
+            }
+            if (result.containsKey("probabilities")) {
+                if (!(result.get("probabilities") instanceof Map<?, ?> probabilities)) {
+                    throw new IllegalArgumentException("Invalid audit probabilities");
+                }
+                probabilities.values().forEach(SemanticAuditRecord::validateProbability);
+            }
+        }
         Map<String, Object> copy = new LinkedHashMap<>();
         data.forEach((key, value) -> copy.put(key, freeze(value, 0)));
         return new SemanticAuditRecord(copy);
+    }
+
+    private static void validateProbability(Object value) {
+        if (!(value instanceof Number number) || !Double.isFinite(number.doubleValue())
+                || number.doubleValue() < 0 || number.doubleValue() > 1) {
+            throw new IllegalArgumentException("Invalid audit probability or confidence");
+        }
+    }
+
+    /** Completion/event occurrence time, parsed once when this immutable record is created. */
+    public Instant getTimestamp() {
+        return timestamp;
+    }
+
+    public Instant getStartedAt() {
+        String started = text("startedAt");
+        return started == null ? null : Instant.parse(started);
+    }
+
+    public Long getDurationNanos() {
+        return fields.get("durationNanos") instanceof Number duration ? duration.longValue() : null;
+    }
+
+    public List<String> getEvidence() {
+        return fields.get("evidence") instanceof List<?> ids ? ids.stream().map(String.class::cast).toList() : List.of();
     }
 
     private static void validateKeys(Object value, Set<String> allowed) {

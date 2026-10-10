@@ -55,6 +55,11 @@ public final class SemanticAuditConfiguration {
         return enabled;
     }
 
+    /** Whether explicit decisions and the dispatcher are enabled, independently of individual evaluation filtering. */
+    public boolean isCapturing() {
+        return enabled || experts.containsValue(true);
+    }
+
     public boolean isEnabled(String expert) {
         return expert == null ? enabled : experts.getOrDefault(expert, enabled);
     }

@@ -80,12 +80,15 @@ final class TuiToolGroups {
         return switch (group) {
             case SQL -> List.of(SQL_TOOL, UPDATE_ROW_TOOL);
             case HTTP -> List.of(HTTP_ENDPOINTS_TOOL, HTTP_REQUEST_TOOL);
+            case SEMANTIC -> List.of("tui_get_audit");
             default -> List.of();
         };
     }
 
     static String guidance(ToolGroup group, AppFeatures f) {
         return switch (group) {
+            case SEMANTIC ->
+                "Semantic: tui_get_audit reads retained evaluations, route decisions and linked evidence without replay.";
             case SQL -> "SQL: " + ToolGroups.describeSql(f)
                         + ". Table names come from the SQL trace (tui_get_table tab 'SQL Trace'); don't guess a schema.";
             case TRACING -> {

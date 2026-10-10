@@ -1411,8 +1411,9 @@ class AiPanelTest {
         RecordingLlmClient client = new RecordingLlmClient("ok");
         panel.setClientForTesting(client);
 
-        // auto mode: a hosted provider gets every tool
-        assertEquals(new TuiToolRegistry(null).getToolDefinitions().size(), panel.toolDefinitionsForTesting().size());
+        // auto mode: a hosted provider gets all tools available for the selected integration
+        assertEquals(new TuiToolRegistry(null).getAvailableToolDefinitions(List.of()).size(),
+                panel.toolDefinitionsForTesting().size());
         assertTrue(panel.systemPromptForTesting().contains("tui_draw_shape"));
 
         // auto mode: a local provider only gets the core set, and the prompt no longer suggests drawing tools
@@ -1434,7 +1435,8 @@ class AiPanelTest {
         panel.setClientForTesting(client);
 
         panel.setToolModeForTesting("full");
-        assertEquals(new TuiToolRegistry(null).getToolDefinitions().size(), panel.toolDefinitionsForTesting().size());
+        assertEquals(new TuiToolRegistry(null).getAvailableToolDefinitions(List.of()).size(),
+                panel.toolDefinitionsForTesting().size());
 
         panel.setToolModeForTesting("core");
         client.withApiType(LlmClient.ApiType.openai);

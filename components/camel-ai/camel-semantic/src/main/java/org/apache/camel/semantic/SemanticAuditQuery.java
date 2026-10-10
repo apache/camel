@@ -16,9 +16,14 @@
  */
 package org.apache.camel.semantic;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.util.HexFormat;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /** Bounded query. Cursors are backend-specific and must not be reused with another filter. */
 public final class SemanticAuditQuery {
@@ -52,12 +57,25 @@ public final class SemanticAuditQuery {
         return cursor;
     }
 
+    String fingerprint() {
+        StringBuilder canonical = new StringBuilder(since == null ? "" : since.toString()).append(';');
+        new TreeMap<>(filters).forEach((key, value) -> canonical.append(key.length()).append(':').append(key)
+                .append(value.length()).append(':').append(value));
+        try {
+            return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
+                    .digest(canonical.toString().getBytes(StandardCharsets.UTF_8)));
+        } catch (NoSuchAlgorithmException impossible) {
+            throw new IllegalStateException(impossible);
+        }
+    }
+
     public int getLimit() {
         return limit;
     }
 
-    boolean matches(SemanticAuditRecord record) {
-        return (since == null || !Instant.parse(record.text("timestamp")).isBefore(since))
+    /** Exact, case-sensitive AND of the filters and an inclusive lower bound on event time. */
+    public boolean matches(SemanticAuditRecord record) {
+        return (since == null || !record.getTimestamp().isBefore(since))
                 && filters.entrySet().stream().allMatch(e -> e.getValue().equals(record.text(e.getKey())));
     }
 }

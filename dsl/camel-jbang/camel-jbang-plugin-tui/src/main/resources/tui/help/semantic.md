@@ -115,12 +115,8 @@ meaning; missing/evicted evidence is shown as unavailable. Backend status shows 
 and expert settings, reader, evictions, drops, errors and whether a Camel OpenTelemetry
 tracer is active. This does not assert that an external collector received a trace.
 
-The MCP tool **`tui_get_audit`** opens this screen. Optional arguments are `filter`, `page`
-(`latest` or `older`) and `eventId`. It returns the visible rows, selected record and linked
-evidence, filters, backend status and loading/error state. When `pending` is true, read
-again with `tui_get_table`. The tool never runs inference or replays a record.
-Generic `tui_set_input` also accepts `audit.view`, `audit.filter`, `audit.page` and
-`audit.eventId` on Semantic. Inspection does not change the capture configuration.
-
+The MCP tool **`tui_get_audit`** reads history without moving the screen or changing its filters or selection.
+Pass `eventId` alone to inspect a record and its evidence. For pages, pass `category`, `action`, `expert`,
+`routeId`, `namespace`, `correlationId`, `since`, `limit` and a returned `cursor` as needed.
+`tui_get_table` reads the visible Audit screen; `tui_set_input` changes it explicitly.
 Audit refreshes are coalesced while a query is pending; changed filters use the latest submitted value.
-The MCP audit tool changes the visible tab/view, filters and selection, but never changes integration data or capture settings.

@@ -33,6 +33,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.language.semantic.SemanticLanguage;
+import org.apache.camel.semantic.internal.SemanticAuditService;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
@@ -60,7 +61,7 @@ class SemanticAuditRegressionTest {
             RouteBuilder original = declarations(context, file);
             context.addRoutes(original);
             context.start();
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             var config = audit.getConfiguration();
             Files.delete(file);
             for (int i = 0; i < 2; i++) {
@@ -96,7 +97,7 @@ class SemanticAuditRegressionTest {
     @Test
     void preStartInvocationDoesNotFreezeConfigurationAndLateObserversAreExplicitlyStartupOnly() throws Exception {
         try (var context = new DefaultCamelContext()) {
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             audit.decision(null, Map.of("action", "continue"), List.of());
             assertThat(audit.isStarted()).isFalse();
             audit.configure("audit.yaml", auditConfiguration());
@@ -106,12 +107,15 @@ class SemanticAuditRegressionTest {
             context.start();
             context.getRegistry().bind("after", decisionObserver(after));
             audit.decision(null, Map.of("action", "allow"), List.of());
+            assertThatThrownBy(() -> audit.configure("audit.yaml", SemanticAuditConfiguration.DISABLED))
+                    .hasMessageContaining("restart");
             audit.stop();
             assertThat(before).hasValue(1);
             assertThat(after).hasValue(0);
             assertThat(audit.getReader().query(query()).getRecords()).hasSize(1);
-            assertThatThrownBy(() -> audit.configure("audit.yaml", SemanticAuditConfiguration.DISABLED))
-                    .hasMessageContaining("restart");
+            audit.configure("audit.yaml", SemanticAuditConfiguration.DISABLED);
+            audit.start();
+            assertThat(audit.status()).containsEntry("observerCount", 2);
         }
     }
 
@@ -120,7 +124,7 @@ class SemanticAuditRegressionTest {
         try (var context = new DefaultCamelContext()) {
             var reader = new SlowReader();
             context.getRegistry().bind("reader", reader);
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             audit.configure("test", new SemanticAuditConfiguration(false, Map.of(), List.of("memory"), "reader", 10, 10));
             var decisions = new AtomicInteger();
             context.getRegistry().bind("observer", decisionObserver(decisions));
@@ -157,7 +161,7 @@ class SemanticAuditRegressionTest {
                 return completed -> {
                 };
             });
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             audit.configure("test", auditConfiguration());
             context.start();
             ((SemanticLanguage) context.resolveLanguage("semantic"))
@@ -182,7 +186,7 @@ class SemanticAuditRegressionTest {
                     return new SemanticResult(true, null, null, null, Map.of("model", value, "revision", 123));
                 }
             });
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             audit.configure("test", auditConfiguration());
             context.start();
             ((SemanticLanguage) context.resolveLanguage("semantic"))
@@ -196,7 +200,7 @@ class SemanticAuditRegressionTest {
     void declarationRejectedDuringPredicateUseStillSuppliesDecisionEvidence() throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("choice", new ChoiceExpert());
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             audit.configure("test", auditConfiguration());
             SemanticEvaluations.get(context).replace("definitions",
                     Map.of("check", new SemanticEvaluation("choice", "choice", null, Map.of())));

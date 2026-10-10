@@ -13587,16 +13587,22 @@
       },
       "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer" : {
         "type" : "object",
+        "anyOf" : [ {
+          "oneOf" : [ {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationDeclarationSchema"
+          }, {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditDeclarationSchema"
+          }, {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditedEvaluationDeclarationSchema"
+          } ]
+        } ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditDeclarationSchema" : {
+        "type" : "object",
         "additionalProperties" : false,
         "properties" : {
           "audit" : {
             "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditSchema"
-          },
-          "evaluation" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema"
-            }
           },
           "expert" : {
             "type" : "string"
@@ -13604,7 +13610,8 @@
           "state" : {
             "type" : "string"
           }
-        }
+        },
+        "required" : [ "audit" ]
       },
       "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditExpertSchema" : {
         "type" : "object",
@@ -13645,6 +13652,59 @@
             }
           }
         }
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditedEvaluationDeclarationSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "audit" : {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditSchema"
+          },
+          "evaluation" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema"
+            }
+          },
+          "expert" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "audit", "evaluation" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$DeclarationSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "expert" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          }
+        }
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationDeclarationSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "evaluation" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema"
+            }
+          },
+          "expert" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "evaluation" ]
       },
       "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema" : {
         "type" : "object",

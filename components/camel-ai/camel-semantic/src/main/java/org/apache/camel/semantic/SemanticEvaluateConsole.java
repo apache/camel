@@ -26,6 +26,7 @@ import java.util.concurrent.TimeoutException;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.language.semantic.SemanticLanguage;
+import org.apache.camel.semantic.internal.SemanticAuditService;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.DefaultExchange;
@@ -120,8 +121,9 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         long start = System.nanoTime();
         Future<Map<String, Object>> task = null;
-        SemanticAudit audit = SemanticAudit.get(getCamelContext());
-        SemanticAudit.Request request = audit.request(options.containsKey(OPERATION) ? "direct_sample" : "definition_sample");
+        SemanticAuditService audit = SemanticAuditService.get(getCamelContext());
+        SemanticAuditService.Request request
+                = audit.request(options.containsKey(OPERATION) ? "direct_sample" : "definition_sample");
         String failure;
         try {
             long timeout = optionLong(options, TIMEOUT, 50000);
@@ -150,7 +152,7 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
                 optionString(options, EVALUATION), "failed", null, null, null, null, null, elapsed(start), failure));
     }
 
-    private Map<String, Object> evaluate(Map<String, Object> options, SemanticAudit.Request request) {
+    private Map<String, Object> evaluate(Map<String, Object> options, SemanticAuditService.Request request) {
         String name = optionString(options, EVALUATION);
         long start = System.nanoTime();
         try {
@@ -179,7 +181,7 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
             }
             SemanticEvaluations.get(getCamelContext()).get(name);
             var exchange = new DefaultExchange(getCamelContext());
-            exchange.setProperty(SemanticAudit.REQUEST, request);
+            exchange.setProperty(SemanticAuditService.REQUEST, request);
             exchange.getMessage().setBody(options.get(BODY));
             if (options.get(HEADERS) instanceof Map<?, ?> headers) {
                 headers.forEach((key, value) -> exchange.getMessage().setHeader(key.toString(), value));

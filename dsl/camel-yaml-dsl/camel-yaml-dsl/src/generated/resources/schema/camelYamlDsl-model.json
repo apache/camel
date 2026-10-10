@@ -20537,13 +20537,29 @@
     "semantic" : {
       "isListItem" : true,
       "children" : [ {
-        "name" : "audit",
-        "type" : "object",
-        "ref" : "semanticDefinitionDeserializer$AuditSchema"
-      }, {
         "name" : "evaluation",
         "type" : "map",
-        "ref" : "semanticDefinitionDeserializer$EvaluationSchema"
+        "ref" : "semanticDefinitionDeserializer$EvaluationSchema",
+        "required" : true
+      }, {
+        "name" : "expert",
+        "type" : "string"
+      }, {
+        "name" : "state",
+        "type" : "string"
+      }, {
+        "name" : "audit",
+        "type" : "object",
+        "ref" : "semanticDefinitionDeserializer$AuditSchema",
+        "required" : true
+      } ]
+    },
+    "semanticDefinitionDeserializer$AuditDeclarationSchema" : {
+      "children" : [ {
+        "name" : "audit",
+        "type" : "object",
+        "ref" : "semanticDefinitionDeserializer$AuditSchema",
+        "required" : true
       }, {
         "name" : "expert",
         "type" : "string"
@@ -20579,6 +20595,48 @@
       }, {
         "name" : "sinks",
         "type" : "array"
+      } ]
+    },
+    "semanticDefinitionDeserializer$AuditedEvaluationDeclarationSchema" : {
+      "children" : [ {
+        "name" : "audit",
+        "type" : "object",
+        "ref" : "semanticDefinitionDeserializer$AuditSchema",
+        "required" : true
+      }, {
+        "name" : "evaluation",
+        "type" : "map",
+        "ref" : "semanticDefinitionDeserializer$EvaluationSchema",
+        "required" : true
+      }, {
+        "name" : "expert",
+        "type" : "string"
+      }, {
+        "name" : "state",
+        "type" : "string"
+      } ]
+    },
+    "semanticDefinitionDeserializer$DeclarationSchema" : {
+      "children" : [ {
+        "name" : "expert",
+        "type" : "string"
+      }, {
+        "name" : "state",
+        "type" : "string"
+      } ]
+    },
+    "semanticDefinitionDeserializer$EvaluationDeclarationSchema" : {
+      "children" : [ {
+        "name" : "evaluation",
+        "type" : "map",
+        "ref" : "semanticDefinitionDeserializer$EvaluationSchema",
+        "required" : true
+      }, {
+        "name" : "expert",
+        "type" : "string"
+      }, {
+        "name" : "state",
+        "type" : "string"
       } ]
     },
     "semanticDefinitionDeserializer$EvaluationSchema" : {

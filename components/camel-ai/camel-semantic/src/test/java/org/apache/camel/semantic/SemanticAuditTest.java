@@ -31,6 +31,7 @@ import org.apache.camel.console.DevConsole;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.language.semantic.SemanticLanguage;
+import org.apache.camel.semantic.internal.SemanticAuditService;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
@@ -57,7 +58,7 @@ class SemanticAuditTest {
         try (var context = new DefaultCamelContext()) {
             FixedSemanticExpert expert = new FixedSemanticExpert();
             context.getRegistry().bind("security", expert);
-            SemanticAudit audit = SemanticAudit.get(context);
+            SemanticAuditService audit = SemanticAuditService.get(context);
             audit.configure("test", configuration(master,
                     override.equals("inherit") ? Map.of() : Map.of("security", Boolean.valueOf(override))));
             context.start();
@@ -96,8 +97,8 @@ class SemanticAuditTest {
                         Map.of("expert", "security", "operation", "boolean", "input", "private"));
                 assertThat(((Map<?, ?>) result).get("status")).isEqualTo("success");
                 assertThat(completions).hasValue(1);
-                SemanticAudit.get(context).stop();
-                assertThat(records(SemanticAudit.get(context))).isEmpty();
+                SemanticAuditService.get(context).stop();
+                assertThat(records(SemanticAuditService.get(context))).isEmpty();
             } finally {
                 console.stop();
             }
@@ -113,7 +114,7 @@ class SemanticAuditTest {
             context.getRegistry().bind("excluded", expert);
             var language = (SemanticLanguage) context.resolveLanguage("semantic");
             language.setDefaultExpert("excluded");
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             audit.configure("test", configuration(true, Map.of("excluded", false, "recorded", true)));
             SemanticEvaluations.get(context).replace("definitions", Map.of("a", evaluation("recorded"), "b", evaluation(null)));
             context.start();
@@ -133,7 +134,7 @@ class SemanticAuditTest {
         try (var context = new DefaultCamelContext()) {
             FixedSemanticExpert expert = new FixedSemanticExpert();
             context.getRegistry().bind("security", expert);
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             audit.configure("audit", configuration(true, Map.of()));
             SemanticEvaluations.get(context).replace("definitions",
                     Map.of("first", evaluation("security"), "second", evaluation("security")));
@@ -153,7 +154,7 @@ class SemanticAuditTest {
                 assertThat(r.toMap()).doesNotContainKey("action");
                 assertThat(r.getStatus()).isEqualTo("success");
             });
-            assertThat(records.get(0).toMap().get("evidence")).isEqualTo(exchange.getProperty(SemanticAudit.REFERENCES));
+            assertThat(records.get(0).toMap().get("evidence")).isEqualTo(exchange.getProperty(SemanticAuditService.REFERENCES));
             assertThat(records.get(0).text("action")).isEqualTo("block");
             assertThat(records.get(1).text("batchId")).isEqualTo(records.get(2).text("batchId"));
             assertThat(records.get(1).getInvocationId()).isNotEqualTo(records.get(2).getInvocationId());
@@ -168,7 +169,7 @@ class SemanticAuditTest {
             FixedSemanticExpert second = new FixedSemanticExpert();
             context.getRegistry().bind("first", first);
             context.getRegistry().bind("second", second);
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             audit.configure("audit", configuration(true, Map.of()));
             SemanticEvaluations.get(context).replace("definitions",
                     Map.of("a", evaluation("first"), "b", evaluation("second")));
@@ -197,7 +198,7 @@ class SemanticAuditTest {
             context.getRegistry().bind("observer", (SemanticObserver) (record, parent) -> {
                 throw new AssertionError("private-observer-error");
             });
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             audit.configure("test",
                     new SemanticAuditConfiguration(true, Map.of(), List.of("broken", "memory"), "memory", 10, 10));
             context.start();
@@ -249,7 +250,7 @@ class SemanticAuditTest {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("security", new FixedSemanticExpert());
             preParse(context, yaml);
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             assertThat(audit.getConfiguration().isEnabled("security")).isTrue();
             assertThat(audit.getConfiguration().isEnabled("decisions")).isFalse();
             context.start();
@@ -286,7 +287,7 @@ class SemanticAuditTest {
                     return new SemanticResult(true, 0.9, null, null, null);
                 }
             });
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             audit.configure("test", configuration(true, Map.of("security", enabled)));
             context.start();
             SemanticEvaluateConsole console = new SemanticEvaluateConsole();
@@ -331,7 +332,7 @@ class SemanticAuditTest {
             Properties properties = new Properties();
             properties.put("expert.name", "security");
             context.getPropertiesComponent().setInitialProperties(properties);
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             audit.configure("test", configuration(true, Map.of("security", enabled)));
             context.start();
             var language = (SemanticLanguage) context.resolveLanguage("semantic");
@@ -366,7 +367,7 @@ class SemanticAuditTest {
                     super.validate(evaluation);
                 }
             });
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             audit.configure("test", configuration(true, Map.of("security", false)));
             context.start();
             var console = new SemanticEvaluateConsole();
@@ -392,7 +393,7 @@ class SemanticAuditTest {
     void removedDefinitionIsNotAttributedToTheDefaultExpert() throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("security", new FixedSemanticExpert());
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             audit.configure("test", configuration(true, Map.of()));
             var definitions = SemanticEvaluations.get(context);
             definitions.replace("definitions", Map.of("check", evaluation("security")));
@@ -416,7 +417,7 @@ class SemanticAuditTest {
             var sink = new BrokenSink();
             context.getRegistry().bind("unused", sink);
             context.getRegistry().bind("security", new FixedSemanticExpert());
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             audit.configure("test",
                     new SemanticAuditConfiguration(false, Map.of(), List.of("unused", "memory"), "memory", 10, 10));
             SemanticEvaluations.get(context).replace("definitions", Map.of("check", evaluation("security")));
@@ -425,7 +426,7 @@ class SemanticAuditTest {
             exchange.getMessage().setBody("text");
             assertThat(context.resolveLanguage("semantic").createExpression("ref:check").evaluate(exchange, Boolean.class))
                     .isTrue();
-            assertThat((List<?>) exchange.getProperty(SemanticAudit.REFERENCES)).isEmpty();
+            assertThat(exchange.getProperty(SemanticAuditService.REFERENCES)).isNull();
             assertThat(sink.isStarted()).isFalse();
             assertThat(audit.status()).containsEntry("dropped", 0L);
         }
@@ -496,7 +497,7 @@ class SemanticAuditTest {
                     }
                 }
             });
-            var audit = SemanticAudit.get(context);
+            var audit = SemanticAuditService.get(context);
             audit.configure("test", new SemanticAuditConfiguration(true, Map.of(), List.of("slow", "memory"), "memory", 10, 1));
             context.start();
             var language = (SemanticLanguage) context.resolveLanguage("semantic");
@@ -560,7 +561,7 @@ class SemanticAuditTest {
                 exchange.getMessage().setBody("text");
                 assertThat(context.resolveLanguage("semantic").createExpression("ref:check").evaluate(exchange, Boolean.class))
                         .isTrue();
-                var audit = SemanticAudit.get(context);
+                var audit = SemanticAuditService.get(context);
                 audit.stop();
                 assertThat(records(audit)).hasSize(1);
                 assertThat(audit.getConfiguration().isEnabled()).isFalse();
@@ -576,7 +577,7 @@ class SemanticAuditTest {
         return new SemanticEvaluation("boolean", expert, null, Map.of());
     }
 
-    private static List<SemanticAuditRecord> records(SemanticAudit audit) throws Exception {
+    private static List<SemanticAuditRecord> records(SemanticAuditService audit) throws Exception {
         return audit.getReader().query(new SemanticAuditQuery(Map.of(), null, null, 200)).getRecords();
     }
 

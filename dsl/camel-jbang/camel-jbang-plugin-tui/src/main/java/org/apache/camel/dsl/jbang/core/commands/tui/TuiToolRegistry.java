@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -238,11 +240,10 @@ class TuiToolRegistry {
             "tui_list_examples", "tui_locate", "tui_wait_for_idle");
 
     /**
-     * Tools that inspect information without executing application actions or editing data. An inspection may select
-     * its TUI view, filters or record. The ACP permission handler approves calls to these without asking; anything
-     * else, including camel_control, tui_send_message and tui_execute_sql, is put in front of the user.
-     * camel_eval_expression is read-only because it evaluates an expression against a scratch exchange and sends
-     * nothing through a route.
+     * Tools that inspect information without executing application actions, editing data or changing the visible view.
+     * The ACP permission handler approves calls to these without asking; anything else, including camel_control,
+     * tui_send_message and tui_execute_sql, is put in front of the user. camel_eval_expression is read-only because it
+     * evaluates an expression against a scratch exchange and sends nothing through a route.
      */
     static final Set<String> READ_ONLY_TOOLS = Stream.concat(
             READ_ONLY_TUI_TOOLS.stream(),
@@ -260,6 +261,11 @@ class TuiToolRegistry {
         tools = TuiToolDefinitions.all();
         cachedTools = tools;
         return tools;
+    }
+
+    List<ToolDef> getAvailableToolDefinitions(Collection<String> selected) {
+        return getToolDefinitions().stream()
+                .filter(tool -> !"tui_get_audit".equals(tool.name()) || selected.contains(tool.name())).toList();
     }
 
     /**
@@ -995,24 +1001,40 @@ class TuiToolRegistry {
     }
 
     private String callGetAudit(Map<String, Object> args) {
-        if (!facade.setTabInputValue("Semantic", "audit.view", "")) {
-            return "Error: Semantic Audit is unavailable";
-        }
-        if (args.get("filter") instanceof String filter && !facade.setTabInputValue(null, "audit.filter", filter)) {
-            return "Error: invalid audit filter; use field=value pairs";
-        }
-        if (args.get("page") instanceof String page && !facade.setTabInputValue(null, "audit.page", page)) {
-            return "Error: audit page is unavailable; use latest or older";
-        }
-        // Collect the current page state; pending queries are reported to the client.
-        JsonObject data = facade.getTableData(null);
-        if (args.get("eventId") instanceof String id) {
-            if (!facade.setTabInputValue(null, "audit.eventId", id)) {
-                return "Error: invalid audit event ID";
+        Set<String> filters = Set.of("category", "action", "expert", "routeId", "namespace", "correlationId", "since");
+        JsonObject request = new JsonObject();
+        request.put("action", "semantic-audit");
+        try {
+            for (var entry : args.entrySet()) {
+                String key = entry.getKey();
+                if ("limit".equals(key)) {
+                    int limit = Integer.parseInt(String.valueOf(entry.getValue()));
+                    if (limit < 1 || limit > 200) {
+                        throw new IllegalArgumentException();
+                    }
+                    request.put(key, limit);
+                } else {
+                    if ((!filters.contains(key) && !Set.of("eventId", "cursor").contains(key))
+                            || !(entry.getValue() instanceof String value) || value.isBlank()
+                            || value.length() > ("cursor".equals(key) ? 512 : 256)) {
+                        throw new IllegalArgumentException();
+                    }
+                    if ("since".equals(key)) {
+                        Instant.parse(value);
+                    }
+                    request.put("action".equals(key) ? "auditAction" : key, value);
+                }
             }
-            data = facade.getTableData(null);
+            if (args.containsKey("eventId") && args.size() > 1) {
+                throw new IllegalArgumentException();
+            }
+            JsonObject response = facade.queryAudit(request);
+            return response == null
+                    ? "Error: select a connected integration with semantic audit support"
+                    : Jsoner.serialize(response);
+        } catch (IllegalArgumentException | DateTimeParseException invalid) {
+            return "Error: invalid audit query; use filters and cursor/limit, or eventId alone";
         }
-        return data == null ? facade.tableDataError(null) : Jsoner.serialize(data);
     }
 
     private String callGetTable(Map<String, Object> args) {

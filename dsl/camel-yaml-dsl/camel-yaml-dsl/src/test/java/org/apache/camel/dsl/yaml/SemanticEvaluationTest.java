@@ -30,7 +30,6 @@ import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
 import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.semantic.SemanticAdapter;
-import org.apache.camel.semantic.SemanticAudit;
 import org.apache.camel.semantic.SemanticAuditQuery;
 import org.apache.camel.semantic.SemanticEvaluation;
 import org.apache.camel.semantic.SemanticEvaluations;
@@ -38,6 +37,7 @@ import org.apache.camel.semantic.SemanticExpert;
 import org.apache.camel.semantic.SemanticOperation;
 import org.apache.camel.semantic.SemanticParameter;
 import org.apache.camel.semantic.SemanticResult;
+import org.apache.camel.semantic.internal.SemanticAuditService;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PluginHelper;
@@ -168,7 +168,7 @@ class SemanticEvaluationTest extends YamlTestSupport {
             template.sendBody("direct:audit", "injection attempt");
         }
         MockEndpoint.assertIsSatisfied(context);
-        var audit = SemanticAudit.get(context);
+        var audit = SemanticAuditService.get(context);
         var query = new SemanticAuditQuery(Map.of(), null, null, 10);
         audit.stop();
         var records = audit.getReader().query(query).getRecords();

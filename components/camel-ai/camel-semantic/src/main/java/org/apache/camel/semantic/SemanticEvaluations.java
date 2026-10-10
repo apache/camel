@@ -27,6 +27,7 @@ import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.language.semantic.SemanticLanguage;
+import org.apache.camel.semantic.internal.SemanticAuditService;
 import org.apache.camel.spi.Resource;
 
 /** Context-local named evaluations, replaced atomically per source when a route resource is reloaded. */
@@ -101,7 +102,7 @@ public final class SemanticEvaluations {
     private void replace(
             String source, Map<String, SemanticEvaluation> definitions,
             SemanticAuditConfiguration audit, boolean deleted) {
-        SemanticAudit recorder = SemanticAudit.get(context);
+        SemanticAuditService recorder = SemanticAuditService.get(context);
         if (!deleted) {
             recorder.validateConfiguration(source, audit);
         }

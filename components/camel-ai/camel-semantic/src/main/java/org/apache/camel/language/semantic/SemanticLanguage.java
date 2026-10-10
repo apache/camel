@@ -42,13 +42,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.semantic.SemanticAdapter;
-import org.apache.camel.semantic.SemanticAudit;
 import org.apache.camel.semantic.SemanticCapabilities;
 import org.apache.camel.semantic.SemanticCapabilities.Operation;
 import org.apache.camel.semantic.SemanticEvaluation;
 import org.apache.camel.semantic.SemanticEvaluations;
 import org.apache.camel.semantic.SemanticExpert.ResultType;
 import org.apache.camel.semantic.SemanticResult;
+import org.apache.camel.semantic.internal.SemanticAuditService;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Language;
@@ -141,11 +141,11 @@ public class SemanticLanguage extends LanguageSupport {
         return evaluate(evaluation, input, null);
     }
 
-    /** Direct evaluation with an optional request identity captured before an executor handoff. */
-    public SemanticResult evaluate(SemanticEvaluation evaluation, Object input, SemanticAudit.Request request)
+    /** Internal console bridge carrying a request identity; applications use the two-argument evaluation method. */
+    public SemanticResult evaluate(SemanticEvaluation evaluation, Object input, SemanticAuditService.Request request)
             throws Exception {
-        SemanticAudit audit = SemanticAudit.get(getCamelContext());
-        SemanticAudit.Invocation invocation = null;
+        SemanticAuditService audit = SemanticAuditService.get(getCamelContext());
+        SemanticAuditService.Invocation invocation = null;
         String reason = "invalid_declaration";
         try {
             ResolvedExpert resolved = expert("direct", evaluation);
@@ -673,12 +673,12 @@ public class SemanticLanguage extends LanguageSupport {
         }
 
         private Object evaluate(Exchange exchange, boolean asPredicate) {
-            SemanticAudit audit = SemanticAudit.get(getCamelContext());
-            Map<String, SemanticAudit.Invocation> invocations = new LinkedHashMap<>();
-            List<SemanticAudit.Invocation> active = new ArrayList<>();
+            SemanticAuditService audit = SemanticAuditService.get(getCamelContext());
+            Map<String, SemanticAuditService.Invocation> invocations = new LinkedHashMap<>();
+            List<SemanticAuditService.Invocation> active = new ArrayList<>();
             String failureReason = "invalid_declaration";
             Map<String, SemanticEvaluation> selected = Map.of();
-            exchange.removeProperty(SemanticAudit.REFERENCES);
+            exchange.removeProperty(SemanticAuditService.REFERENCES);
             exchange.removeProperty(RESULT);
             exchange.removeProperty(RESULTS);
             SemanticEvaluation single = null;
@@ -731,8 +731,7 @@ public class SemanticLanguage extends LanguageSupport {
                             "Unsupported state type for semantic evaluations: " + names
                                                        + ". Select strings, maps or lists explicitly");
                 }
-                exchange.setProperty(SemanticAudit.REFERENCES, invocations.values().stream()
-                        .map(SemanticAudit.Invocation::getEventId).filter(Objects::nonNull).toList());
+                setAuditReferences(exchange, invocations);
                 // Check every group's input before invoking any provider.
                 for (Group group : current.groups) {
                     try {
@@ -766,12 +765,21 @@ public class SemanticLanguage extends LanguageSupport {
                         if (answers == null || !answers.keySet().equals(group.evaluations.keySet())) {
                             throw new IllegalArgumentException("Semantic batch result names must match evaluation names");
                         }
+                        IllegalArgumentException invalidResult = null;
                         for (String name : group.evaluations.keySet()) {
-                            decisions.put(name,
-                                    validateResult(name, group.expert, current.operations.get(name), answers.get(name)));
+                            try {
+                                decisions.put(name,
+                                        validateResult(name, group.expert, current.operations.get(name), answers.get(name)));
+                                invocations.get(name).complete("success", "evaluation_completed", answers.get(name));
+                            } catch (IllegalArgumentException invalid) {
+                                invocations.get(name).complete("failed", "invalid_result", null);
+                                if (invalidResult == null) {
+                                    invalidResult = invalid;
+                                }
+                            }
                         }
-                        for (String name : group.evaluations.keySet()) {
-                            invocations.get(name).complete("success", "evaluation_completed", answers.get(name));
+                        if (invalidResult != null) {
+                            throw invalidResult;
                         }
                         active.clear();
                         results.putAll(answers);
@@ -804,7 +812,7 @@ public class SemanticLanguage extends LanguageSupport {
                 if (invocations.isEmpty()) {
                     for (String name : names) {
                         SemanticEvaluation declaration = selected.get(name);
-                        SemanticAudit.Invocation rejected = audit.begin(exchange, name, declaration, null,
+                        SemanticAuditService.Invocation rejected = audit.begin(exchange, name, declaration, null,
                                 auditExpert(declaration), null, null, null);
                         invocations.put(name, rejected);
                         rejected.complete("failed", failureReason, null);
@@ -818,16 +826,24 @@ public class SemanticLanguage extends LanguageSupport {
                 }
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             } finally {
-                if (!invocations.isEmpty()) {
-                    exchange.setProperty(SemanticAudit.REFERENCES, invocations.values().stream()
-                            .map(SemanticAudit.Invocation::getEventId).filter(Objects::nonNull).toList());
-                }
+                setAuditReferences(exchange, invocations);
+            }
+        }
+
+        private void setAuditReferences(Exchange exchange, Map<String, SemanticAuditService.Invocation> invocations) {
+            List<String> references = invocations.values().stream()
+                    .map(SemanticAuditService.Invocation::getEventId).filter(Objects::nonNull).toList();
+            if (references.isEmpty()) {
+                exchange.removeProperty(SemanticAuditService.REFERENCES);
+            } else {
+                exchange.setProperty(SemanticAuditService.REFERENCES, references);
             }
         }
 
         private void finishFailed(
-                Map<String, SemanticAudit.Invocation> invocations, List<SemanticAudit.Invocation> active, String reason) {
-            for (SemanticAudit.Invocation invocation : invocations.values()) {
+                Map<String, SemanticAuditService.Invocation> invocations, List<SemanticAuditService.Invocation> active,
+                String reason) {
+            for (SemanticAuditService.Invocation invocation : invocations.values()) {
                 invocation.complete(active.contains(invocation) ? "failed" : "not_executed",
                         active.contains(invocation) ? reason : "evaluation_aborted", null);
             }

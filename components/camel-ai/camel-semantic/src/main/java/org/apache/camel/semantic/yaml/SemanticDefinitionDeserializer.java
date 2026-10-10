@@ -50,12 +50,15 @@ import org.snakeyaml.engine.v2.nodes.Tag;
 /** Named semantic declarations are installed in a resource-wide pass before route references are resolved. */
 @YamlIn
 @YamlType(nodes = "semantic", properties = {
-        @YamlProperty(name = "audit",
-                      type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditSchema"),
-        @YamlProperty(name = "expert", type = "string"),
-        @YamlProperty(name = "state", type = "string"),
-        @YamlProperty(name = "evaluation",
-                      type = "map:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema")
+        @YamlProperty(name = "__oneOf",
+                      type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationDeclarationSchema",
+                      oneOf = "declaration", required = true),
+        @YamlProperty(name = "__oneOf",
+                      type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditDeclarationSchema",
+                      oneOf = "declaration", required = true),
+        @YamlProperty(name = "__oneOf",
+                      type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditedEvaluationDeclarationSchema",
+                      oneOf = "declaration", required = true)
 })
 public class SemanticDefinitionDeserializer extends YamlDeserializerSupport implements ConstructNode, YamlDeserializerResolver {
     private static final Tag NUMBER = new Tag("!number");
@@ -223,6 +226,31 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
 
     private static String auditText(CamelContext context, Map<String, Node> values, String name, String fallback) {
         return values.containsKey(name) ? context.resolvePropertyPlaceholders(asText(values.get(name))) : fallback;
+    }
+
+    @YamlType(properties = {
+            @YamlProperty(name = "expert", type = "string"),
+            @YamlProperty(name = "state", type = "string")
+    })
+    public static class DeclarationSchema {
+    }
+
+    @YamlType(properties = @YamlProperty(name = "evaluation",
+                                         type = "map:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema",
+                                         required = true))
+    public static class EvaluationDeclarationSchema extends DeclarationSchema {
+    }
+
+    @YamlType(properties = @YamlProperty(name = "audit",
+                                         type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditSchema",
+                                         required = true))
+    public static class AuditDeclarationSchema extends DeclarationSchema {
+    }
+
+    @YamlType(properties = @YamlProperty(name = "audit",
+                                         type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditSchema",
+                                         required = true))
+    public static class AuditedEvaluationDeclarationSchema extends EvaluationDeclarationSchema {
     }
 
     @YamlType(properties = {
