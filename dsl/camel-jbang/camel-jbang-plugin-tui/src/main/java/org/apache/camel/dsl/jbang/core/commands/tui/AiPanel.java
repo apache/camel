@@ -2578,7 +2578,7 @@ class AiPanel {
         // as it always directly follows its question.
         for (ConversationEntry entry : conversation) {
             switch (entry.role()) {
-                case USER -> md.append("> ").append(entry.text().replace("\n", "\n> ")).append("\n\n");
+                case USER -> md.append(quoteQuestion(entry.text())).append("\n\n");
                 case ASSISTANT -> {
                     md.append(toHardBreaks(entry.text())).append("\n\n");
                     if (entry.note() != null) {
@@ -3898,6 +3898,40 @@ class AiPanel {
                 || code == KeyCode.F4 || code == KeyCode.F5 || code == KeyCode.F6
                 || code == KeyCode.F7 || code == KeyCode.F9 || code == KeyCode.F10
                 || code == KeyCode.F11 || code == KeyCode.F12;
+    }
+
+    /**
+     * The user's question as a blockquote, its lines kept as typed (hard breaks). A fenced code block in it, such as
+     * the source the fix with AI question quotes, is put outside the quote, as a code block inside a quote is not
+     * rendered.
+     */
+    static String quoteQuestion(String text) {
+        if (text == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        boolean inFence = false;
+        boolean quoted = false;
+        for (String line : text.split("\n", -1)) {
+            if (line.strip().startsWith("```")) {
+                if (!inFence && quoted) {
+                    // end the quote, so the fence starts a code block of its own
+                    sb.append('\n');
+                    quoted = false;
+                }
+                sb.append(line.strip()).append('\n');
+                if (inFence) {
+                    sb.append('\n');
+                }
+                inFence = !inFence;
+            } else if (inFence) {
+                sb.append(line).append('\n');
+            } else {
+                sb.append(line.isBlank() ? ">" : "> " + line + "  ").append('\n');
+                quoted = true;
+            }
+        }
+        return sb.toString().stripTrailing();
     }
 
     private static String toHardBreaks(String text) {
