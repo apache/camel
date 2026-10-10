@@ -63,6 +63,9 @@ class SecurityUtilsTest {
         assertFalse(SecurityUtils.isInsecureValue("camel.component.netty-http.hostnameVerification", true));
         assertTrue(SecurityUtils.isInsecureValue("camel.component.splunk-hec.skipTlsVerify", true));
         assertFalse(SecurityUtils.isInsecureValue("camel.component.splunk-hec.skipTlsVerify", false));
+        // camel-kubernetes trustCerts=true disables certificate verification (CAMEL-25413)
+        assertTrue(SecurityUtils.isInsecureValue("camel.component.kubernetes-pods.trustCerts", true));
+        assertFalse(SecurityUtils.isInsecureValue("camel.component.kubernetes-pods.trustCerts", false));
     }
 
     @Test

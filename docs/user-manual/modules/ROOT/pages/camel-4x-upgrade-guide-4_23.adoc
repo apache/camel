@@ -1997,6 +1997,28 @@ Only the option of `camel-mongodb` is reported, see the `camel-main` section abo
 below. To keep `camel.component.mongodb.tlsAllowInvalidHostnames = true` under a `fail` policy, list it in
 `camel.security.allowedProperties`.
 
+=== camel-kubernetes - trustCerts is marked insecure:ssl
+
+The `trustCerts` option (shared by all 20 `camel-kubernetes` and `openshift` component endpoints via
+`KubernetesConfiguration`) is now marked `insecure:ssl`, so setting it to `true` is reported
+by the xref:security-policy.adoc[security policy] check: a warning by default, and a startup failure
+with the `prod` profile or `camel.security.insecureSslPolicy = fail`.
+
+For example, if you have:
+
+[source,properties]
+----
+camel.component.kubernetes-pods.trustCerts = true
+----
+
+this will now be flagged. To keep this setting under a `fail` policy, list the property in
+`camel.security.allowedProperties`:
+
+[source,properties]
+----
+camel.security.allowedProperties = camel.component.kubernetes-pods.trustCerts
+----
+
 === camel-main - security policy check matches component options by component
 
 The xref:security-policy.adoc[security policy] check matched an insecure option by its name only, so an
