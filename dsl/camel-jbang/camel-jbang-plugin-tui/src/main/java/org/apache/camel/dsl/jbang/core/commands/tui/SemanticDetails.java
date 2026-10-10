@@ -92,7 +92,8 @@ final class SemanticDetails {
         map.forEach((name, value) -> parameter(lines, "  ", name + ": ", value));
     }
 
-    private static void parameter(List<Line> lines, String indent, String label, Object value) {
+    static void parameter(List<Line> lines, String indent, String label, Object value) {
+        label = label.replaceAll("[\\p{Cntrl}\\p{Cf}]", "");
         if (value instanceof Map<?, ?> map && !map.isEmpty()) {
             lines.add(Line.from(Span.styled(indent + label.stripTrailing(), Theme.label())));
             map.forEach((name, child) -> parameter(lines, indent + "  ", "• " + name + ": ", child));
@@ -105,7 +106,7 @@ final class SemanticDetails {
             // Put text under its label so wrapped prose keeps its place in the parameter tree.
             lines.add(Line.from(Span.styled(indent + label.stripTrailing(), Theme.label())));
             for (String part : text.split("\\R", -1)) {
-                lines.add(Line.from(indent + "  " + (part.isEmpty() ? "\"\"" : part)));
+                lines.add(Line.from(indent + "  " + (part.isEmpty() ? "\"\"" : part.replaceAll("[\\p{Cntrl}\\p{Cf}]", ""))));
             }
         } else {
             lines.add(Line.from(Span.styled(indent + label, Theme.label()), Span.raw(String.valueOf(value))));

@@ -104,7 +104,7 @@ Auditing and OpenTelemetry are independent.
 - `/` edits exact `field=value` filters, separated by spaces. Available fields are
   `category`, `action`, `expert`, `routeId`, `namespace`, `correlationId` and `since`.
   Example: `expert=security since=2026-10-09T12:00:00Z`.
-- Up/Down select a record. `Tab` or Enter focuses the inspector; arrows scroll its details.
+- Up/Down select a record. `Tab` focuses the inspector; arrows scroll its details.
 - `n` loads older records; `g` returns to the latest page; `r` refreshes the current page.
 - Esc leaves details or clears the current filter.
 
@@ -120,3 +120,20 @@ Pass `eventId` alone to inspect a record and its evidence. For pages, pass `cate
 `routeId`, `namespace`, `correlationId`, `since`, `limit` and a returned `cursor` as needed.
 `tui_get_table` reads the visible Audit screen; `tui_set_input` changes it explicitly.
 Audit refreshes are coalesced while a query is pending; changed filters use the latest submitted value.
+
+### Audit inspector and live history
+
+Audit shows the global default and per-expert overrides separately from OpenTelemetry.
+The filter bar shows the current query; `/` edits exact `field=value` filters. With no `since`,
+the query includes all retained time. Timestamps use the local timezone displayed below the table.
+Route decisions and linked evaluations appear side by side on wide terminals and stack on narrow terminals.
+`Tab` focuses details; arrows scroll. `[` / `]` choose evidence when there is more than one linked record.
+`Enter` follows that evaluation; `Esc` or `Enter` returns to the decision.
+The newest page refreshes every second. `Space` pauses/resumes; older pages do not auto-refresh.
+The footer reports retention, evictions, dropped records and delivery errors.
+
+In Audit, `c`, `a`, `e` and `N` open searchable selectors for category, action, expert and
+namespace. Use arrows and `Enter` to apply, or `Esc` to cancel. Suggestions include values
+on the current page; `/` accepts arbitrary exact filters, including an ISO-8601 `since` timestamp.
+
+Audit input capture is disabled by default. Per-expert `audit.experts.<name>.input.enabled` retains the selected state; the inspector shows Input, Input (redacted), or an omission reason. Tab and arrows scroll longer input.
