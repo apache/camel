@@ -471,10 +471,39 @@ connection and is independent of OpenTelemetry.
 
 Use `/` for exact `field=value` filters (`category`, `action`, `expert`, `routeId`,
 `namespace`, `correlationId`, `since`), `n` for older records, `g` for the latest page and `r` to refresh.
-Select a record and use `Tab` to focus its inspector, then use the arrows to scroll details and linked evidence. The view reports
+The header shows the global audit default, per-expert overrides and OpenTelemetry independently,
+with the active filters and reader below. Decisions are coloured by action. Timestamps use the
+local timezone shown below the table; the inspector also retains the full timestamp.
+
+These captures show auditing enabled for the `security` expert and disabled for the
+`decisions` expert, with OpenTelemetry and input capture disabled in these screenshots. The expert supplies the evaluation;
+the route records its policy decision separately.
+
+.A blocked request with the linked evaluation that detected prompt injection
+image::jbang/camel-tui-semantic-audit-block.png[Semantic Audit showing a BLOCK decision beside its linked security evaluation with result true]
+
+.An allowed request with the linked evaluation that found no prompt injection
+image::jbang/camel-tui-semantic-audit-allow.png[Semantic Audit showing an ALLOW decision beside its linked security evaluation with result false]
+
+Select a record and use `Tab` to focus its inspector, then use the arrows to scroll.
+Wide terminals show the route decision and its linked evaluation side by side; narrow terminals
+stack the same details. Use `[` / `]` to choose between multiple evidence records, `Enter` to follow
+the selected linked evaluation, and `Esc` or `Enter` to return to the decision.
+When input capture is enabled for an expert, the inspector shows the stored *Input* alongside
+its evaluation, including linked evidence. Otherwise it shows *not captured* or an omission
+reason. Input capture is disabled by default; configure it in the semantic audit DSL.
+Use `Tab` and the arrows to scroll longer input. Only the selected state is captured, subject
+to its configured size limit and optional redactor.
+The latest page refreshes every second; `Space` pauses or resumes polling. Older pages stay fixed
+until explicitly refreshed. Filters use exact values; no time window is applied until `since` is set.
+The view reports
 evictions and delivery failures; the built-in memory backend is recent history, not
 persistent storage. The read-only `tui_get_audit` MCP tool queries the same history, linked evidence
 and backend health without running an expert or changing the visible screen. Pass `eventId` alone,
 or filters plus `limit` and the returned `cursor`. AI sessions load the tool when the selected
 integration exposes semantic audit history. Use `tui_get_table` to inspect the visible Audit screen.
 `r` refreshes the current audit page; `g` returns to the newest page. Repeated refreshes are coalesced.
+
+In Audit, `c`, `a`, `e` and `N` open searchable selectors for category, action, expert and
+namespace. Use arrows and `Enter` to apply, or `Esc` to cancel. Suggestions include values
+on the current page; `/` accepts arbitrary exact filters, including an ISO-8601 `since` timestamp.

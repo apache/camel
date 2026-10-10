@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -91,8 +92,198 @@ class SemanticTabTest {
             tab.setInputValue("audit.view", "");
             await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
             String rendered = TuiTestHelper.renderToString(tab, 180, 45);
-            assertThat(rendered).contains("TIMESTAMP", "REASON CODE", "tools/call", "support-request", "Master: true");
+            assertThat(rendered).contains("TIMESTAMP", "REASON CODE", "tools/call", "support-request", "Audit default: ON",
+                    "security: ON (override)", "decisions: OFF (override)", "OpenTelemetry: OFF", "Filters:",
+                    "Route decision", "Linked evaluation", "Definition: screenPrompt", "Result: true", "BLOCK",
+                    "Policy: support-access", "Model: detector-v2", "Input captured only by expert opt-in", "Memory: 2 / 1000",
+                    "No delivery errors reported", "refresh 1 s");
             assertThat(TuiTestHelper.renderToString(tab, 80, 24)).contains("CATEGORY", "EXPERT");
+        }
+    }
+
+    @Test
+    void auditRendersStoredInputAndOmissionReasonsInLinkedAndDirectRecords() throws Exception {
+        try (var runtime = new Runtime()) {
+            runtime.auditInput.put("input", Map.of("prompt", "hello\nworld\u001b[31m"));
+            runtime.auditInput.put("inputRedacted", true);
+            var tab = loaded(runtime);
+            tab.setInputValue("audit.view", "");
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            assertThat(TuiTestHelper.renderToString(tab, 180, 55)).contains("Input (redacted)", "prompt", "hello", "world")
+                    .doesNotContain("\u001b");
+            tab.setInputValue("audit.eventId", "evaluation-1");
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            assertThat(TuiTestHelper.renderToString(tab, 180, 55)).contains("Input (redacted)", "hello");
+            runtime.auditInput.clear();
+            runtime.auditInput.put("inputOmitted", "redaction_failed");
+            tab.handleKeyEvent(KeyEvent.ofChar('r'));
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            assertThat(TuiTestHelper.renderToString(tab, 180, 55)).contains("Input: omitted", "redaction_failed");
+        }
+    }
+
+    @Test
+    void auditRefreshesLinkedEvidenceWithoutClearingTheInspector() throws Exception {
+        try (var runtime = new Runtime()) {
+            runtime.multipleAuditEvidence = true;
+            var tab = loaded(runtime);
+            tab.setInputValue("audit.view", "");
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            assertThat(TuiTestHelper.renderToString(tab, 180, 45)).contains("Unavailable");
+            runtime.multipleAuditEvidence = false;
+            tab.handleKeyEvent(KeyEvent.ofChar('r'));
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            assertThat(tab.getTableDataAsJson()).containsEntry("selectedEventId", "decision-2");
+            assertThat(TuiTestHelper.renderToString(tab, 180, 45)).contains("Result: true").doesNotContain("Unavailable");
+        }
+    }
+
+    @Test
+    void auditFilterSelectorsApplyOnlyTheChosenFieldAndCanBeCancelled() throws Exception {
+        try (var runtime = new Runtime()) {
+            var tab = loaded(runtime);
+            tab.setInputValue("audit.view", "");
+            tab.setInputValue("audit.filter", "namespace=default");
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            tab.handleKeyEvent(KeyEvent.ofChar('c'));
+            assertThat(tab.getTableDataAsJson()).containsEntry("filterField", "category");
+            assertThat(TuiTestHelper.renderToString(tab, 180, 45)).contains("Audit category");
+            for (char c : "decision".toCharArray()) {
+                tab.handleKeyEvent(KeyEvent.ofChar(c));
+            }
+            tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            assertThat(new JsonObject(tab.getTableDataAsJson().getMap("filters")))
+                    .containsEntry("category", "decision").containsEntry("namespace", "default");
+            tab.handleKeyEvent(KeyEvent.ofChar('a'));
+            tab.handleEscape();
+            assertThat(new JsonObject(tab.getTableDataAsJson().getMap("filters"))).doesNotContainKey("action");
+            tab.handleKeyEvent(KeyEvent.ofChar('c'));
+            for (char c : "All".toCharArray()) {
+                tab.handleKeyEvent(KeyEvent.ofChar(c));
+            }
+            tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            assertThat(new JsonObject(tab.getTableDataAsJson().getMap("filters")))
+                    .containsOnlyKeys("namespace");
+        }
+    }
+
+    @Test
+    void auditSelectsAmongEvidenceAndDoesNotFollowUnavailableRecords() throws Exception {
+        try (var runtime = new Runtime()) {
+            runtime.multipleAuditEvidence = true;
+            var tab = loaded(runtime);
+            tab.setInputValue("audit.view", "");
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            assertThat(TuiTestHelper.renderToString(tab, 180, 45)).contains("evicted-1", "1 / 2", "Unavailable");
+            tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+            assertThat(tab.getTableDataAsJson()).containsEntry("selectedEventId", "decision-2");
+            tab.handleKeyEvent(KeyEvent.ofChar(']'));
+            assertThat(TuiTestHelper.renderToString(tab, 180, 45)).contains("2 / 2", "Result: true");
+            tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            assertThat(tab.getTableDataAsJson()).containsEntry("selectedEventId", "evaluation-1");
+        }
+    }
+
+    @Test
+    void auditShowsDeliveryFailuresAndStaleDataAfterAQueryFailure() throws Exception {
+        try (var runtime = new Runtime()) {
+            runtime.auditHealth = new JsonObject(Map.of("sinkErrors", Map.of("log", 3), "dropped", 2));
+            var tab = loaded(runtime);
+            tab.setInputValue("audit.view", "");
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            assertThat(TuiTestHelper.renderToString(tab, 180, 45)).contains("log: 3 errors", "2 dropped")
+                    .doesNotContain("No delivery errors reported");
+            runtime.auditError = true;
+            tab.handleKeyEvent(KeyEvent.ofChar('r'));
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            assertThat(TuiTestHelper.renderToString(tab, 180, 45))
+                    .contains("audit_query_failed", "showing last response", "refresh stopped", "support-request");
+        }
+    }
+
+    @Test
+    void auditRendersWhileTheFirstQueryIsPending() throws Exception {
+        try (var runtime = new Runtime()) {
+            var tab = loaded(runtime);
+            runtime.pageEntered = new CountDownLatch(1);
+            runtime.pageRelease = new CountDownLatch(1);
+            tab.setInputValue("audit.view", "");
+            assertThat(runtime.pageEntered.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(TuiTestHelper.renderToString(tab, 180, 45))
+                    .contains("Audit default: UNKNOWN", "OpenTelemetry: UNKNOWN", "Loading audit history");
+            assertThat(TuiTestHelper.renderToString(tab, 80, 24)).contains("Loading audit history");
+        }
+    }
+
+    @Test
+    void auditLiveRefreshWaitsForSlowDetailsBeforeStartingItsNextInterval() throws Exception {
+        try (var runtime = new Runtime()) {
+            AtomicLong clock = new AtomicLong();
+            SemanticAuditView view = new SemanticAuditView(runtime, clock::get);
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !view.ensureLoaded());
+            runtime.detailsEntered = new CountDownLatch(1);
+            runtime.detailsRelease = new CountDownLatch(1);
+            view.select("evaluation-1");
+            assertThat(runtime.detailsEntered.await(5, TimeUnit.SECONDS)).isTrue();
+            clock.addAndGet(2_000_000_000L);
+            assertThat(view.ensureLoaded()).isTrue();
+            assertThat(auditQueries(runtime)).isEqualTo(1);
+            runtime.detailsRelease.countDown();
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !view.ensureLoaded());
+            assertThat(auditQueries(runtime)).isEqualTo(1);
+            clock.addAndGet(1_000_000_000L);
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !view.ensureLoaded());
+            assertThat(auditQueries(runtime)).isEqualTo(2);
+        }
+    }
+
+    @Test
+    void auditLiveRefreshCanPauseAndNeverReplacesOlderPages() throws Exception {
+        try (var runtime = new Runtime()) {
+            runtime.pagedAudit = true;
+            AtomicLong clock = new AtomicLong();
+            SemanticAuditView view = new SemanticAuditView(runtime, clock::get);
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !view.ensureLoaded());
+            assertThat(auditQueries(runtime)).isEqualTo(1);
+            clock.addAndGet(1_000_000_000L);
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !view.ensureLoaded());
+            assertThat(auditQueries(runtime)).isEqualTo(2);
+            view.key(KeyEvent.ofChar(' '));
+            clock.addAndGet(10_000_000_000L);
+            assertThat(view.ensureLoaded()).isFalse();
+            assertThat(view.snapshot()).containsEntry("paused", true).containsEntry("live", false);
+            assertThat(auditQueries(runtime)).isEqualTo(2);
+            view.key(KeyEvent.ofChar(' '));
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !view.ensureLoaded());
+            assertThat(auditQueries(runtime)).isEqualTo(3);
+            view.key(KeyEvent.ofChar('n'));
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !view.ensureLoaded());
+            clock.addAndGet(10_000_000_000L);
+            assertThat(view.ensureLoaded()).isFalse();
+            assertThat(auditQueries(runtime)).isEqualTo(4);
+            assertThat(view.snapshot()).containsEntry("live", false);
+        }
+    }
+
+    @Test
+    void auditFollowsEvidenceAndReturnsToTheDecisionWithoutChangingFilters() throws Exception {
+        try (var runtime = new Runtime()) {
+            var tab = loaded(runtime);
+            tab.setInputValue("audit.view", "");
+            tab.setInputValue("audit.filter", "category=decision namespace=default");
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            assertThat(tab.getTableDataAsJson()).containsEntry("selectedEventId", "evaluation-1")
+                    .containsEntry("filter", "category=decision namespace=default");
+            assertThat(TuiTestHelper.renderToString(tab, 180, 45)).contains("Expert evaluation", "Result: true",
+                    "Esc / Enter returns to the decision");
+            tab.handleEscape();
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            assertThat(tab.getTableDataAsJson()).containsEntry("selectedEventId", "decision-2");
         }
     }
 
@@ -1008,6 +1199,10 @@ class SemanticTabTest {
         volatile CountDownLatch pageEntered;
         volatile CountDownLatch pageRelease;
         volatile boolean pagedAudit;
+        volatile boolean multipleAuditEvidence;
+        volatile boolean auditError;
+        JsonObject auditHealth = new JsonObject();
+        JsonObject auditInput = new JsonObject();
         volatile CountDownLatch detailsRelease;
         volatile CountDownLatch detailsEntered;
         volatile boolean detailsFinished;
@@ -1032,10 +1227,17 @@ class SemanticTabTest {
                     firstFinished = true;
                 }
                 if ("semantic-audit".equals(request.getString("action"))) {
+                    if (auditError) {
+                        return new JsonObject(Map.of("error", "audit_query_failed"));
+                    }
                     JsonObject evaluation = new JsonObject(
                             Map.of("eventId", "evaluation-1", "category", "evaluation", "expert", "security",
                                     "operation", "injection", "status", "success", "timestamp", "2026-10-09T14:20:29.411Z",
                                     "reasonCode", "evaluation_completed", "result", new JsonObject(Map.of("value", true))));
+                    evaluation.put("definition", "screenPrompt");
+                    evaluation.putAll(auditInput);
+                    evaluation.put("semantics",
+                            new JsonObject(Map.of("meaning", "Injection detected", "resultType", "BOOLEAN")));
                     evaluation.put("provider", "test");
                     evaluation.put("model", "detector-v2");
                     evaluation.put("revision", "abc123");
@@ -1043,10 +1245,18 @@ class SemanticTabTest {
                             Map.of("eventId", "decision-2", "category", "decision", "action", "block",
                                     "operation", "tools/call", "target", "support-request", "reasonCode", "prompt_injection",
                                     "timestamp", "2026-10-09T14:20:29.418Z", "evidence", List.of("evaluation-1")));
+                    decision.put("policyId", "support-access");
+                    decision.put("namespace", "default");
                     JsonObject status = new JsonObject(
-                            Map.of("enabled", true, "experts", new JsonObject(Map.of("security", true)),
+                            Map.of("enabled", true, "experts", new JsonObject(Map.of("security", true, "decisions", false)),
                                     "reader", "memory", "dropped", 0, "sinkErrors", new JsonObject(), "openTelemetry",
                                     "inactive"));
+                    status.put("retained", 2);
+                    status.put("capacity", 1000);
+                    status.putAll(auditHealth);
+                    List<JsonObject> evidence = multipleAuditEvidence
+                            ? List.of(new JsonObject(Map.of("eventId", "evicted-1", "unavailable", true)), evaluation)
+                            : List.of(evaluation);
                     if (request.getString("eventId") != null) {
                         if (detailsRelease != null) {
                             detailsEntered.countDown();
@@ -1058,7 +1268,7 @@ class SemanticTabTest {
                         return new JsonObject(
                                 Map.of("record", "evaluation-1".equals(request.getString("eventId")) ? evaluation : decision,
                                         "evidence",
-                                        "evaluation-1".equals(request.getString("eventId")) ? List.of() : List.of(evaluation),
+                                        "evaluation-1".equals(request.getString("eventId")) ? List.of() : evidence,
                                         "audit", status));
                     }
                     if (pageRelease != null) {
