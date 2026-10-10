@@ -45,16 +45,27 @@ class LdifModDnTest extends CamelTestSupport {
             LdapConnection.class.getClassLoader(), new Class<?>[] { LdapConnection.class },
             (proxy, method, args) -> {
                 switch (method.getName()) {
+                    case "hashCode" -> {
+                        return System.identityHashCode(proxy);
+                    }
+                    case "equals" -> {
+                        return proxy == args[0];
+                    }
+                    case "toString" -> {
+                        return "LdapConnection stub";
+                    }
                     case "rename" -> {
                         Dn dn = (Dn) args[0];
                         renames.add(new Dn((Rdn) args[1], dn.getParent()) + " deleteOldRdn=" + args[2]);
                     }
                     case "moveAndRename" ->
                         renames.add(args[1] + " deleteOldRdn=" + args[2]);
-                    case "move" -> renames.add(new Dn(((Dn) args[0]).getRdn(), (Dn) args[1]) + " deleteOldRdn=true");
-                    default -> {
-                        // close and the other operations are not used
+                    case "close" -> {
+                        // the producer closes the connection after the LDIF is processed
                     }
+                    default ->
+                        // the producer calls no other method: record it so that the assertion shows it
+                        renames.add("unexpected call: " + method.getName());
                 }
                 return method.getReturnType() == boolean.class ? Boolean.FALSE : null;
             });
@@ -95,7 +106,7 @@ class LdifModDnTest extends CamelTestSupport {
                       + newSuperior;
         List<?> result = template.requestBody("direct:ldif", ldif, List.class);
         assertEquals(List.of("success"), result);
-        assertEquals(1, renames.size());
+        assertEquals(1, renames.size(), "calls on the connection: " + renames);
         return renames.get(0);
     }
 
