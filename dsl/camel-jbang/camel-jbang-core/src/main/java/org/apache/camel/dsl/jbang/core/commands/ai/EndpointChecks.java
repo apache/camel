@@ -662,6 +662,29 @@ final class EndpointChecks {
         return false;
     }
 
+    /**
+     * What an endpoint takes, for an option written with the component's name: its syntax and required options, as "no
+     * option is named after the component: write cron:name?schedule=...". Null when the catalog does not know it.
+     */
+    static String namedAfterComponent(CamelCatalog catalog, String scheme) {
+        try {
+            var model = catalog.componentModel(scheme);
+            if (model == null || model.getSyntax() == null) {
+                return null;
+            }
+            List<String> required = new ArrayList<>();
+            for (var option : model.getEndpointOptions()) {
+                if (option.isRequired() && "parameter".equals(option.getKind())) {
+                    required.add(option.getName() + "=...");
+                }
+            }
+            return "no option is named after the component: write " + model.getSyntax()
+                   + (required.isEmpty() ? "" : "?" + String.join("&", required));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     static void collectEndpointErrors(
             List<String> errors, EndpointValidationResult result, String scheme, CamelCatalog catalog,
             int uriLineIdx, Map<String, Integer> optionLineMap) {
@@ -672,13 +695,19 @@ final class EndpointChecks {
                     continue;
                 }
                 StringBuilder sb = new StringBuilder(scheme).append(": Unknown option '").append(name).append("'");
-                if (result.getUnknownSuggestions() != null) {
+                String known = INVENTED_OPTIONS.get(scheme + ":" + name);
+                // cron:cron?cron=0/10 * * * * ?: an option named after the component, for which the closest name
+                // (cronService) is a fix that makes it worse; say what the endpoint takes instead (an entry of
+                // INVENTED_OPTIONS for it says more, and is the one hint)
+                String named = known == null && name.equals(scheme) ? namedAfterComponent(catalog, scheme) : null;
+                if (named != null) {
+                    sb.append(" (").append(named).append(")");
+                } else if (result.getUnknownSuggestions() != null) {
                     String[] suggestions = result.getUnknownSuggestions().get(name);
                     if (suggestions != null && suggestions.length > 0) {
                         sb.append(". Did you mean: ").append(Arrays.asList(suggestions));
                     }
                 }
-                String known = INVENTED_OPTIONS.get(scheme + ":" + name);
                 if (known != null) {
                     sb.append(" (").append(known).append(")");
                 }
