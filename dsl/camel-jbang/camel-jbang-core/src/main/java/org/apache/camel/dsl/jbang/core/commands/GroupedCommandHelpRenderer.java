@@ -38,7 +38,7 @@ public class GroupedCommandHelpRenderer implements CommandLine.IHelpSectionRende
                 List.of("init", "export", "debug", "eval", "explain", "transform", "dirty", "doctor", "sbom", "nano"));
         GROUPS.put("Configuration", List.of("config", "dependency", "version", "update", "wrapper", "completion", "plugin"));
         GROUPS.put("Catalog", List.of("catalog", "doc", "infra"));
-        GROUPS.put("AI", List.of("ask", "harden", "overview"));
+        GROUPS.put("AI", List.of("ask", "harden", "overview", "semantic"));
     }
 
     @Override
