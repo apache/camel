@@ -182,7 +182,7 @@ See the xref:camel-jbang-tui-source-editor.adoc#_keyboard_shortcuts[keyboard sho
 |
 
 | `--record`
-| Replay a `.tape` file and record the session to an Asciinema `.cast` file.
+| Play a `.tape` file in the TUI and record it to an Asciinema `.cast` file. See xref:camel-jbang-tui-settings.adoc#_scripted_recording[Scripted Recording] for the tape commands.
 |
 
 | `--record-size`

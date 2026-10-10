@@ -32,7 +32,7 @@ camel tui [options]
 | Option | Description | Default | Type
 | `--mcp` | Enable embedded MCP server for AI agent access to the TUI |  | boolean
 | `--mcp-port` | MCP server port | 8123 | int
-| `--record` | Replay a .tape file inside the TUI and record to an Asciinema .cast file |  | String
+| `--record` | Play a .tape file in the TUI and record it to an Asciinema .cast file |  | String
 | `--record-duration` | Maximum duration in milliseconds captured by --record | 120000 | int
 | `--record-fps` | Frames per second captured by --record | 10 | int
 | `--record-size` | Size of the recorded terminal for --record, as <cols>x<rows> | 200x50 | String

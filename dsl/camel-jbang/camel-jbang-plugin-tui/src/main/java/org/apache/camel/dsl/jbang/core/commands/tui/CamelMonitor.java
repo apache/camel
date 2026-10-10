@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
@@ -97,7 +98,6 @@ public class CamelMonitor extends CamelCommand {
      */
     static final List<String> RECORD_PROPERTIES = List.of(
             "tamboui.record",
-            "tamboui.record.config",
             "tamboui.record.width",
             "tamboui.record.height",
             "tamboui.record.duration",
@@ -118,7 +118,7 @@ public class CamelMonitor extends CamelCommand {
     long refreshInterval = DEFAULT_REFRESH_MS;
 
     @CommandLine.Option(names = { "--record" },
-                        description = "Replay a .tape file inside the TUI and record to an Asciinema .cast file",
+                        description = "Play a .tape file in the TUI and record it to an Asciinema .cast file",
                         arity = "0..1")
     String record;
 
@@ -270,7 +270,8 @@ public class CamelMonitor extends CamelCommand {
 
     /**
      * Hands the {@code --record*} options to TamboUI through the {@link #RECORD_PROPERTIES} system properties, which is
-     * the only way TamboUI accepts a recording configuration.
+     * the only way TamboUI accepts a recording configuration. TamboUI only records: the tape is played by
+     * {@link TapePlayer} (see {@link #startTapePlayer}), which knows the keys and commands of the TUI.
      */
     void configureRecording() {
         if (record == null) {
@@ -288,12 +289,56 @@ public class CamelMonitor extends CamelCommand {
         Path tapeFile = Path.of(record);
         Path castFile = Path.of(record.replaceAll("\\.tape$", "") + ".cast");
         int[] size = parseRecordSize(recordSize);
+        if (!Files.isRegularFile(tapeFile)) {
+            throw new CommandLine.ParameterException(
+                    new CommandLine(this), "Tape file not found: " + tapeFile.toAbsolutePath());
+        }
         System.setProperty("tamboui.record", castFile.toAbsolutePath().toString());
-        System.setProperty("tamboui.record.config", tapeFile.toAbsolutePath().toString());
         System.setProperty("tamboui.record.width", String.valueOf(size[0]));
         System.setProperty("tamboui.record.height", String.valueOf(size[1]));
         System.setProperty("tamboui.record.duration", String.valueOf(recordDuration));
         System.setProperty("tamboui.record.fps", String.valueOf(recordFps));
+    }
+
+    /**
+     * Plays the {@code --record} tape on a background thread: its keys go through the same queue as the keys of an MCP
+     * client, its TUI commands call the MCP tools, and it quits the TUI at the end of the tape, which ends the
+     * recording.
+     */
+    private void startTapePlayer(TuiRunner tui) throws IOException {
+        TapePlayer player = new TapePlayer(warning -> System.err.println("Tape: " + warning));
+        List<TapePlayer.Step> steps = player.parse(Path.of(record));
+        TuiToolRegistry tools = new TuiToolRegistry(mcpFacade);
+        TapePlayer.Driver driver = new TapePlayer.Driver() {
+            @Override
+            public void key(KeyEvent event) {
+                pendingKeys.add(new McpFacade.PendingKey(event, System.currentTimeMillis()));
+            }
+
+            @Override
+            public String screen() {
+                return TapePlayer.screenText(recordingManager.getLastBuffer());
+            }
+
+            @Override
+            public String tool(String name, Map<String, Object> args) throws Exception {
+                return tools.execute(name, args);
+            }
+
+            @Override
+            public void quit() {
+                tui.quit();
+            }
+        };
+        Thread thread = new Thread(() -> {
+            try {
+                player.play(steps, driver);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }, "tui-tape-player");
+        thread.setDaemon(true);
+        thread.start();
     }
 
     /**
@@ -1148,6 +1193,9 @@ public class CamelMonitor extends CamelCommand {
                 Signal.handle(new Signal("INT"), sig -> tui.quit());
             }
             updateWindowTitle();
+            if (record != null) {
+                startTapePlayer(tui);
+            }
             tui.run(
                     this::handleEvent,
                     this::render);
