@@ -54,6 +54,9 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 class DocViewerPopup {
 
+    /** The documentation of screenshots and demo recordings, with all the tape commands. */
+    static final String RECORDING_DOCS_URL = "https://camel.apache.org/manual/camel-jbang-tui-recording.html";
+
     private boolean showViewer;
     private boolean showPicker;
     private String docContent;
@@ -364,29 +367,26 @@ class DocViewerPopup {
     // --- Content generators ---
 
     void openTapeInstructions() {
-        openMarkdown("Tape Recording Guide",
-                "# Tape Recording Guide\n\n"
-                                             + "Record your live TUI session as a `.tape` file that captures keystrokes\n"
-                                             + "with timing. The tape can be replayed inside the TUI to produce\n"
-                                             + "an Asciinema `.cast` recording.\n\n"
-                                             + "## Starting and Stopping\n\n"
-                                             + "- Use the **F2** actions menu → Start/Stop Tape Recording\n\n"
-                                             + "When recording stops, the tape is saved to the current directory as\n"
-                                             + "`camel-tui-tape-<timestamp>.tape`.\n\n"
-                                             + "## Replaying a Tape\n\n"
-                                             + "Replay the tape inside the TUI with the `--record` option:\n\n"
-                                             + "    camel tui monitor --record=camel-tui-tape-20260525-153000.tape\n\n"
-                                             + "This replays the keystrokes inside the live TUI and produces\n"
-                                             + "an Asciinema `.cast` file.\n\n"
-                                             + "## Converting to Animated GIF\n\n"
-                                             + "Use `agg` to convert the `.cast` file to an animated GIF:\n\n"
-                                             + "    brew install asciinema/tap/agg\n"
-                                             + "    agg recording.cast demo.gif\n\n"
-                                             + "Or upload to [asciinema.org](https://asciinema.org) for a shareable link.\n\n"
-                                             + "## Tips\n\n"
-                                             + "- Tape recording toggle is not captured in the tape, keeping the script clean\n"
-                                             + "- Natural pauses between keystrokes are preserved as `Sleep` commands\n"
-                                             + "- Keep recordings focused — one workflow at a time works best\n");
+        openMarkdown("Tape Recording Guide", tapeInstructions());
+    }
+
+    /**
+     * The steps of recording a demo. The tape commands, an example tape and the tips are in the online documentation,
+     * which the guide links to with its address in sight, for terminals that do not open links.
+     */
+    static String tapeInstructions() {
+        return "# Tape Recording Guide\n\n"
+               + "Record a session as a `.tape` file and turn it into an animated GIF.\n\n"
+               + "**1.** Use **F2** → Start Tape Recording, show what you want, then **F2** → Stop Tape Recording. "
+               + "The tape is saved in the current directory as `camel-tui-tape-<timestamp>.tape`.\n\n"
+               + "**2.** Play the tape in the TUI and record it to an Asciinema `.cast` file next to the tape:\n\n"
+               + "```\ncamel tui <name> --record=<file>.tape --record-size=120x32\n```\n\n"
+               + "**3.** Convert the recording to a GIF with agg (<https://github.com/asciinema/agg>):\n\n"
+               + "```\nagg <file>.cast demo.gif\n```\n\n"
+               + "A tape can also be written by hand or by an AI agent, with commands for captions, highlights, "
+               + "tabs and themes. The tape commands, an example tape and tips are in the Camel documentation, "
+               + "Screenshots and Demo Recordings:\n\n"
+               + "<" + RECORDING_DOCS_URL + ">\n";
     }
 
     void openSetupAI() {
