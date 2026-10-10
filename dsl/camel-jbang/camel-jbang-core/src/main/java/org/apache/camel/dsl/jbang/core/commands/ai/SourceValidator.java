@@ -146,6 +146,10 @@ public final class SourceValidator {
                     msgs.addAll(EndpointConsumerChecks.validateYamlConsumers(content, directory, fileName, catalog));
                 }
             }
+            if (msgs.isEmpty()) {
+                // a header read where the route keeps the name in an exchange property, or the reverse (CAMEL-25516)
+                msgs = new ArrayList<>(HeaderPropertyMixups.validate(content));
+            }
             return KameletChecks.withTemplateHints(name, content, msgs);
         }
         if (name.endsWith(".properties")) {
