@@ -16,9 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -32,6 +32,7 @@ import dev.tamboui.tui.TuiRunner;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -232,17 +233,10 @@ class MonitorContext {
 
     /** Request-specific files keep a late response from being consumed by another action. */
     JsonObject executeIndependentAction(String pid, JsonObject request, long timeoutMs) {
-        String requestId = UUID.randomUUID().toString();
-        Path directory = CommandLineHelper.getCamelDir();
-        Path actionFile = directory.resolve(pid + "-action-" + requestId + ".json");
-        Path outputFile = directory.resolve(pid + "-output-" + requestId + ".json");
-        PathUtils.writeTextSafely(request.toJson(), actionFile);
         try {
-            // The runtime writes output in place; keep polling until the JSON is complete.
-            return TuiHelper.pollJsonResponse(outputFile, timeoutMs);
-        } finally {
-            PathUtils.deleteFile(outputFile);
-            PathUtils.deleteFile(actionFile);
+            return RuntimeHelper.executeAction(Long.parseLong(pid), request, timeoutMs);
+        } catch (IOException e) {
+            return null;
         }
     }
 

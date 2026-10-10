@@ -910,6 +910,9 @@ include::partial$language-options.adoc[]
 
 == Developer consoles
 
+Use `camel semantic` to inspect definitions and `camel semantic eval` to evaluate them from the
+xref:manual::camel-jbang-managing.adoc#_semantic_definitions_and_evaluation[Camel CLI].
+
 `semantic-metadata` exposes definitions and expert contracts without performing inference.
 `semantic-evaluate` evaluates a named definition against a sample exchange or calls an expert
 operation directly. It uses the configured provider and its normal validation, without sending

@@ -16,6 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
+import com.github.freva.asciitable.AsciiTable;
+import com.github.freva.asciitable.Column;
+import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -23,7 +29,12 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "semantic", description = "List semantic definitions and expert contracts",
-                     sortOptions = false, showDefaultValues = true)
+                     sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel semantic my-app",
+                             "  camel semantic get my-app --expert=guard",
+                             "  camel semantic eval my-app --evaluation=safe --body='Sample message' --json" })
 public class CamelSemantic extends SemanticActionCommand {
 
     @CommandLine.Option(names = "--expert", description = "Show the operations and parameter contract of this expert")
@@ -62,32 +73,34 @@ public class CamelSemantic extends SemanticActionCommand {
     @Override
     protected void render(JsonObject response) {
         if (expert != null) {
-            printer().println("Expert: " + expert);
-            renderOperations(response.getCollection("operations"));
+            JsonArray operations = response.getCollection("operations");
+            if (operations != null) {
+                printer().println("Expert: " + expert);
+                renderOperations(operations);
+            }
             return;
         }
         printer().println("Definitions:");
-        printer().println("NAME\tEXPERT\tOPERATION\tSTATE\tRESULT TYPE\tERROR");
-        JsonArray evaluations = response.getCollection("evaluations");
-        if (evaluations != null) {
-            for (int i = 0; i < evaluations.size(); i++) {
-                JsonObject value = evaluations.getMap(i);
-                printer().println(String.join("\t", text(value, "name"), text(value, "expert"), text(value, "operation"),
-                        text(value, "state"), text(value, "resultType"), text(value, "error")));
-            }
-        }
+        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows(response.getCollection("evaluations")), List.of(
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "name")),
+                new Column().header("EXPERT").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "expert")),
+                new Column().header("OPERATION").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "operation")),
+                new Column().header("STATE").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "state")),
+                new Column().header("RESULT TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "resultType")),
+                new Column().header("ERROR").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "error")))));
         printer().println("Experts:");
-        JsonArray experts = response.getCollection("experts");
-        if (experts != null) {
-            for (int i = 0; i < experts.size(); i++) {
-                JsonObject value = experts.getMap(i);
-                printer().println(text(value, "reference") + "\t" + text(value, "name") + "\t" + text(value, "error"));
-            }
-        }
+        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows(response.getCollection("experts")), List.of(
+                new Column().header("REFERENCE").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "reference")),
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "name")),
+                new Column().header("ERROR").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "error")))));
         printer().println("Default expert: " + text(response, "defaultExpert"));
         if (response.get("defaultError") != null) {
             printer().println("Default expert error: " + response.get("defaultError"));
         }
+    }
+
+    private static List<JsonObject> rows(JsonArray values) {
+        return values == null ? List.of() : IntStream.range(0, values.size()).<JsonObject> mapToObj(values::getMap).toList();
     }
 
     private void renderOperations(JsonArray operations) {

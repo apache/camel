@@ -35,7 +35,6 @@ camel cmd [options]
 | xref:jbang-commands/camel-jbang-cmd-route-dump.adoc[route-dump] | Dump Camel route in XML, YAML, or Java DSL format
 | xref:jbang-commands/camel-jbang-cmd-route-structure.adoc[route-structure] | Dump Camel route structure
 | xref:jbang-commands/camel-jbang-cmd-route-topology.adoc[route-topology] | Display inter-route topology connections
-| xref:jbang-commands/camel-jbang-cmd-semantic-evaluate.adoc[semantic-evaluate] | Evaluate a semantic definition or expert operation
 | xref:jbang-commands/camel-jbang-cmd-send.adoc[send] | Send messages to endpoints
 | xref:jbang-commands/camel-jbang-cmd-span.adoc[span] | Display OpenTelemetry spans from running Camel integrations
 | xref:jbang-commands/camel-jbang-cmd-sql.adoc[sql] | Execute SQL query on a DataSource

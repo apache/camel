@@ -17,12 +17,15 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
@@ -37,7 +40,7 @@ import org.apache.camel.util.json.Jsoner;
  * to {@code {pid}-action-{requestId}.json} and reading the response from {@code {pid}-output-{requestId}.json}. Each
  * request gets a unique ID so concurrent callers (CLI, MCP server, etc.) don't interfere with each other.
  * <p>
- * This class is used by both the {@code camel ask} CLI command and the MCP server's {@code RuntimeService}.
+ * This class is used by CLI commands, the TUI and the MCP server's {@code RuntimeService}.
  *
  * @since 4.21
  */
@@ -187,39 +190,74 @@ public final class RuntimeHelper {
     }
 
     public static String executeAction(long pid, String action, Consumer<JsonObject> configure, long timeoutMs) {
-        String requestId = UUID.randomUUID().toString().substring(0, 8);
-        Path camelDir = CommandLineHelper.getCamelDir();
-        Path outputFile = camelDir.resolve(pid + "-output-" + requestId + ".json");
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", action);
+        JsonObject request = new JsonObject();
+        request.put("action", action);
         if (configure != null) {
-            configure.accept(root);
+            configure.accept(request);
         }
-
-        Path actionFile = camelDir.resolve(pid + "-action-" + requestId + ".json");
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
         try {
+            String response = executeAction(pid, request, timeoutMs, Function.identity());
+            if (response != null) {
+                return response;
+            }
+        } catch (IOException e) {
+            // Preserve the existing text API's diagnostic when the request cannot be exchanged.
+        }
+        return "Timeout waiting for response from PID " + pid + " for action: " + action;
+    }
+
+    /**
+     * Executes a request and waits for a complete JSON object. Each request uses independent files, published
+     * atomically, and removing an unfinished request asks the connector to cancel it.
+     *
+     * @return             the response, or {@code null} on timeout or interruption
+     * @throws IOException if publishing or cleaning up the request fails
+     */
+    public static JsonObject executeAction(long pid, JsonObject request, long timeoutMs) throws IOException {
+        return executeAction(pid, request, timeoutMs, text -> Jsoner.deserialize(text, (JsonObject) null));
+    }
+
+    private static <T> T executeAction(long pid, JsonObject request, long timeoutMs, Function<String, T> reader)
+            throws IOException {
+        String requestId = UUID.randomUUID().toString();
+        Path directory = CommandLineHelper.getCamelDir();
+        Path actionFile = directory.resolve(pid + "-action-" + requestId + ".json");
+        Path outputFile = directory.resolve(pid + "-output-" + requestId + ".json");
+        Path temporary = directory.resolve(pid + "-" + requestId + ".tmp");
+        try {
+            Files.writeString(temporary, request.toJson());
+            Files.move(temporary, actionFile, StandardCopyOption.ATOMIC_MOVE);
             StopWatch watch = new StopWatch();
             while (watch.taken() < timeoutMs) {
                 try {
-                    Thread.sleep(POLL_INTERVAL_MS);
-                    if (Files.exists(outputFile) && outputFile.toFile().length() > 0) {
-                        return Files.readString(outputFile);
+                    Thread.sleep(Math.min(POLL_INTERVAL_MS, Math.max(1, timeoutMs - watch.taken())));
+                    if (Files.exists(outputFile)) {
+                        String text = Files.readString(outputFile);
+                        if (!text.isEmpty()) {
+                            T response = reader.apply(text);
+                            if (response != null) {
+                                return response;
+                            }
+                        }
                     }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break;
-                } catch (Exception e) {
-                    // retry
+                } catch (IOException e) {
+                    // The runtime writes output in place; retry until the response is complete.
                 }
             }
-            return "Timeout waiting for response from PID " + pid + " for action: " + action;
+            return null;
         } finally {
-            PathUtils.deleteFile(outputFile);
-            PathUtils.deleteFile(actionFile);
+            try {
+                Files.deleteIfExists(actionFile);
+            } finally {
+                try {
+                    Files.deleteIfExists(outputFile);
+                } finally {
+                    Files.deleteIfExists(temporary);
+                }
+            }
         }
     }
 
