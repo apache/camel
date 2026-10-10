@@ -2168,6 +2168,7 @@ public class CamelMonitor extends CamelCommand {
         }
         renderFooter(frame, mainChunks.get(3));
         applyThemeBaseColors(frame.buffer(), area);
+        LinkTargets.tidy(frame.buffer());
 
         recordingManager.updateBuffer(frame.buffer());
         recordingManager.processPendingScreenshot();
