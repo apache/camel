@@ -386,6 +386,7 @@ the screen at the same time.
 
 | `Tab "name"`
 | Switches to the tab, such as `Tab "Log"` or `Tab "Diagram"`, without pressing its number key.
+`Tab` alone, or with a count such as `Tab 2`, presses the *Tab* key.
 
 | `Integration "name"`
 | Selects the integration by its name or PID.

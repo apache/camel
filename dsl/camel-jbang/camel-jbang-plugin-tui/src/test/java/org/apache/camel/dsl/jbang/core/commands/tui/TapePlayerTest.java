@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +32,7 @@ import dev.tamboui.style.Style;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,9 +65,11 @@ class TapePlayerTest {
 
     @Test
     void repeatsAKeyWithACount() {
-        List<TapePlayer.Step> steps = player.parse(List.of("Down 3"));
+        List<TapePlayer.Step> steps = player.parse(List.of("Down 3", "Tab", "Tab 2"));
 
-        assertThat(keys(steps)).extracting(KeyEvent::code).containsExactly(KeyCode.DOWN, KeyCode.DOWN, KeyCode.DOWN);
+        assertThat(keys(steps)).extracting(KeyEvent::code)
+                .containsExactly(KeyCode.DOWN, KeyCode.DOWN, KeyCode.DOWN, KeyCode.TAB, KeyCode.TAB, KeyCode.TAB);
+        assertThat(warnings).isEmpty();
     }
 
     @Test
@@ -126,6 +132,19 @@ class TapePlayerTest {
         assertThat(warnings.get(1)).contains("Unknown tape command: q");
         assertThat(warnings.get(2)).contains("Hide and Show are not supported");
         assertThat(warnings.get(3)).contains("Invalid regex");
+    }
+
+    @Test
+    void includesAnotherTapeAndReportsATapeThatIncludesItself(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("main.tape"), "Source common.tape\nSource common.tape\nSource loop.tape\nEnter\n");
+        Files.writeString(dir.resolve("common.tape"), "Escape\n");
+        Files.writeString(dir.resolve("loop.tape"), "Tab\nSource ../" + dir.getFileName() + "/main.tape\n");
+
+        List<TapePlayer.Step> steps = player.parse(dir.resolve("main.tape"));
+
+        assertThat(keys(steps)).extracting(KeyEvent::code)
+                .containsExactly(KeyCode.ESCAPE, KeyCode.ESCAPE, KeyCode.TAB, KeyCode.ENTER);
+        assertThat(warnings).singleElement().asString().startsWith("The tape includes itself");
     }
 
     @Test

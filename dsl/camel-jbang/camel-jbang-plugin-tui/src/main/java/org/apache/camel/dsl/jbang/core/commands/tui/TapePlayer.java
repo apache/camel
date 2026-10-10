@@ -19,11 +19,14 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -109,32 +112,36 @@ final class TapePlayer {
     /** Parses a tape file; {@code Source} includes other tapes relative to it. */
     List<Step> parse(Path tape) throws IOException {
         List<Step> steps = new ArrayList<>();
-        parse(Files.readAllLines(tape), tape.toAbsolutePath().getParent(), steps);
+        Path file = tape.toAbsolutePath().normalize();
+        Deque<Path> including = new ArrayDeque<>();
+        including.push(file);
+        parse(Files.readAllLines(file), file.getParent(), including, steps);
         return steps;
     }
 
     /** Parses the lines of a tape into steps; unknown lines are reported and skipped. */
     List<Step> parse(List<String> lines) {
         List<Step> steps = new ArrayList<>();
-        parse(lines, null, steps);
+        parse(lines, null, new ArrayDeque<>(), steps);
         return steps;
     }
 
-    private void parse(List<String> lines, Path dir, List<Step> steps) {
+    /** The tapes being parsed are in {@code including}, so a tape that sources itself (in a loop) is reported. */
+    private void parse(List<String> lines, Path dir, Deque<Path> including, List<Step> steps) {
         for (String raw : lines) {
             String line = raw.strip();
             if (line.isEmpty() || line.startsWith("#")) {
                 continue;
             }
             try {
-                parseLine(line, dir, steps);
+                parseLine(line, dir, including, steps);
             } catch (IllegalArgumentException e) {
                 warnings.accept(e.getMessage() + ": " + line);
             }
         }
     }
 
-    private void parseLine(String line, Path dir, List<Step> steps) {
+    private void parseLine(String line, Path dir, Deque<Path> including, List<Step> steps) {
         // The command is the first word, optionally with a timing: Command@duration ("Down@200ms 3", "Type@100ms
         // "text"", "Wait@10s /Ready/", "Caption@5s "text""). Only the first word is checked for '@', so text such as
         // Type "user@example.com" is typed as it is.
@@ -148,6 +155,10 @@ final class TapePlayer {
             head = head.substring(0, at);
         }
         String command = head.toLowerCase(Locale.ROOT);
+        // Tab alone or with a count (Tab 2) is the key, as in VHS; Tab "name" switches to the tab
+        if ("tab".equals(command) && (args.isEmpty() || args.chars().allMatch(Character::isDigit))) {
+            command = "";
+        }
 
         switch (command) {
             // directives for the vhs tool (terminal settings, output file, required programs): the recording takes
@@ -155,12 +166,19 @@ final class TapePlayer {
             case "set", "output", "require" -> {
             }
             case "source" -> {
-                Path file = dir != null ? dir.resolve(args) : Path.of(args);
+                Path file = (dir != null ? dir.resolve(args) : Path.of(args)).toAbsolutePath().normalize();
+                if (including.contains(file)) {
+                    throw new IllegalArgumentException("The tape includes itself");
+                }
+                List<String> included;
                 try {
-                    parse(Files.readAllLines(file), file.toAbsolutePath().getParent(), steps);
+                    included = Files.readAllLines(file);
                 } catch (IOException e) {
                     throw new IllegalArgumentException("Cannot read the tape to include (" + e.getMessage() + ")");
                 }
+                including.push(file);
+                parse(included, file.getParent(), including, steps);
+                including.pop();
             }
             case "hide", "show" -> throw new IllegalArgumentException(
                     "Hide and Show are not supported, the interactions are recorded");
@@ -345,8 +363,8 @@ final class TapePlayer {
 
     /** Plays the steps on the calling thread, then quits the TUI. */
     void play(List<Step> steps, Driver driver) throws InterruptedException {
-        long start = System.currentTimeMillis();
-        while (driver.screen() == null && System.currentTimeMillis() - start < FIRST_FRAME_MILLIS) {
+        long start = System.nanoTime();
+        while (driver.screen() == null && System.nanoTime() - start < TimeUnit.MILLISECONDS.toNanos(FIRST_FRAME_MILLIS)) {
             Thread.sleep(WAIT_POLL_MILLIS);
         }
         for (Step step : steps) {
@@ -367,9 +385,9 @@ final class TapePlayer {
     }
 
     private void waitFor(WaitStep wait, Driver driver) throws InterruptedException {
-        long deadline = System.currentTimeMillis() + wait.timeoutMillis();
+        long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(wait.timeoutMillis());
         while (!matches(wait, driver.screen())) {
-            if (System.currentTimeMillis() >= deadline) {
+            if (System.nanoTime() - deadline >= 0) {
                 warnings.accept("Timed out after " + wait.timeoutMillis() + "ms: " + wait.line());
                 return;
             }
