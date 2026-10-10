@@ -375,6 +375,23 @@ class SourceValidatorEndpointTest {
     }
 
     @Test
+    void anOptionNamedAfterTheComponentSaysWhatTheEndpointTakes() {
+        // the closest name was cronService, and the quick fix renamed cron= to that
+        List<String> msgs = SourceValidator.validateYamlEndpoints("""
+                - from:
+                    uri: cron:cron?cron=0/10 * * * * ?
+                    steps:
+                      - log:
+                          message: "x"
+                """, catalog);
+        assertThat(msgs).singleElement().satisfies(m -> assertThat(m)
+                .contains("Unknown option 'cron'")
+                .contains("no option is named after the component: write cron:name?schedule=...")
+                .doesNotContain("Did you mean"));
+        assertThat(QuickFixes.fixFor(msgs.get(0), "    uri: cron:cron?cron=0/10 * * * * ?")).isNull();
+    }
+
+    @Test
     void aWildcardInTheFileIncludeOptionIsNamedAsNotARegex() {
         List<String> msgs = SourceValidator.validateYamlEndpoints("""
                 - from:

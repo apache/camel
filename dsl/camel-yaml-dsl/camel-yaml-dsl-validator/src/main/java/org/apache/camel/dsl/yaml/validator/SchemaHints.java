@@ -118,6 +118,23 @@ final class SchemaHints {
 
     private static final Predicate<Match> ANY = m -> true;
 
+    /** {sku} when the node is the map YAML reads an unquoted {sku} as (one key, no value); null otherwise. */
+    static String unquotedBraces(Match m) {
+        JsonNode instance = m.error().getInstanceNode();
+        if (instance == null || !instance.isObject() || instance.size() != 1) {
+            return null;
+        }
+        String key = instance.fieldNames().next();
+        return instance.get(key).isNull() ? "{" + key + "}" : null;
+    }
+
+    /** The text of a scalar property of the error's node, or the fallback when it is not a scalar. */
+    private static String valueOf(Match m, String property, String fallback) {
+        JsonNode instance = m.error().getInstanceNode();
+        JsonNode value = instance != null ? instance.get(property) : null;
+        return value != null && value.isValueNode() && !value.isNull() ? value.asText() : fallback;
+    }
+
     /** The EIP names a model writes for the exchange properties, and the ones Camel has. */
     private static final Map<String, String> EXCHANGE_PROPERTY_EIPS = Map.of(
             "setExchangeProperty", "setProperty", "setExchangeProperties", "setProperties",
@@ -338,6 +355,10 @@ final class SchemaHints {
                     m -> "an expression is written with the language as the key and its expression: property, e.g."
                          + " groovy: {expression: \"...\"}, simple: {expression: \"...\"}, constant: {expression: \"...\"};"
                          + " the language: form is language: {language: groovy, expression: \"...\"}"),
+            // path: {sku}: braces without quotes are a YAML map ({sku: null}), not the text {sku}
+            append("type", null, m -> m.message().contains("object found, string expected") && unquotedBraces(m) != null,
+                    m -> unquotedBraces(m) + " without quotes is a YAML map (braces open a map in YAML), not text:"
+                         + " quote it, " + m.name() + ": \"" + unquotedBraces(m) + "\""),
             // message: {simple: "..."}: a string property that is already an expression, or a plain option
             append("type", null, m -> m.message().contains("object found, string expected"),
                     m -> m.name() + " is a plain string"
@@ -552,6 +573,20 @@ final class SchemaHints {
             unknownProperty(".*/jsonpath", m -> m.unknown().equalsIgnoreCase("jsonPath") || m.unknown().equals("path"),
                     m -> "the JSONPath text goes under expression: (jsonpath: {expression: \"$[?(@.sku == 'X')]\","
                          + " resultType: java.util.List})"),
+            // onException: {maximumRedeliveries: 3}, deadLetterChannel: {retryAttemptedLogLevel: WARN}: an option of
+            // the redelivery policy written next to it, where the closest name (level) is not what was meant
+            unknownProperty(".*/(onException|" + String.join("|", ROUTE_ERROR_HANDLER_KINDS) + ")",
+                    m -> m.validator().redeliveryPolicyProperties().contains(m.unknown()),
+                    m -> m.unknown() + " is an option of the redelivery policy: write it under redeliveryPolicy:, as"
+                         + " redeliveryPolicy: {" + m.unknown() + ": " + valueOf(m, m.unknown(), "...") + "}"),
+            // groovy: {script: "..."}, simple: {text: "..."}: the text of every language goes in expression:
+            unknownProperty(null,
+                    m -> m.validator().languageKeys().contains(m.name()) && !m.name().equals("language")
+                            && m.error().getInstanceNode() != null
+                            && !m.error().getInstanceNode().has("expression")
+                            && m.error().getInstanceNode().path(m.unknown()).isTextual(),
+                    m -> "the " + m.name() + " text goes in expression:, write " + m.name() + ": {expression: \""
+                         + valueOf(m, m.unknown(), "...").replace("\"", "\\\"") + "\"}"),
             unknownProperty(null,
                     m -> YamlValidator.closest(m.unknown(), m.validator().knownProperties(m.schemaLocation())) != null,
                     m -> "did you mean '"

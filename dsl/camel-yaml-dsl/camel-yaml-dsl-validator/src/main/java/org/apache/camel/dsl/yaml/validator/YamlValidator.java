@@ -222,6 +222,12 @@ public class YamlValidator {
         if (tab != null) {
             return tab;
         }
+        // period: {{welcome.period}}: braces open a YAML map, and a map as a key fails with "Expected a field name"
+        // and no line; the property placeholder must be quoted
+        Error placeholder = unquotedPlaceholder(lines);
+        if (placeholder != null) {
+            return placeholder;
+        }
         // the message names several positions (the collection being parsed, then the token that broke it); the
         // problem is at the last one
         int line = -1;
@@ -300,6 +306,29 @@ public class YamlValidator {
                            + "\"): a route file holds only the YAML, put explanations in a # comment or leave them out"
                            + " (" + head + ")")
                 .build();
+    }
+
+    /** A value (of a key or a list item) that starts with a property placeholder without quotes. */
+    private static final Pattern UNQUOTED_PLACEHOLDER = Pattern.compile("^(\\s*(?:-\\s+)?(?:[\\w.-]+:\\s+)?)(\\{\\{.*)$");
+
+    /** The first line whose value is an unquoted {{placeholder}}, said with the line to write; null when none. */
+    static Error unquotedPlaceholder(String[] lines) {
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            if (line.strip().startsWith("#")) {
+                continue;
+            }
+            Matcher m = UNQUOTED_PLACEHOLDER.matcher(line);
+            // a line of a block scalar (a script) that starts with {{ has no key or - in front: not this
+            if (m.matches() && !m.group(1).isBlank()) {
+                String value = m.group(2).strip();
+                String quoted = value.contains("\"") ? "'" + value + "'" : "\"" + value + "\"";
+                return hint("line " + (i + 1) + ": " + value + " without quotes is read as a YAML map (braces open a"
+                            + " map in YAML), not as a property placeholder: quote the value, write the line as "
+                            + (m.group(1) + quoted).strip());
+            }
+        }
+        return null;
     }
 
     /** A mapping key alone at column 1: errorHandler:, beans:, restConfiguration:. */
@@ -1366,6 +1395,7 @@ public class YamlValidator {
     private Set<String> languageKeys = Set.of();
     private Set<String> stepNames = Set.of();
     private Set<String> resilienceProperties = Set.of();
+    private Set<String> redeliveryPolicyProperties = Set.of();
 
     /** The keys of the file's entries (route, from, beans, rest, onException...), from the schema. */
     Set<String> topLevelEntries() {
@@ -1398,6 +1428,11 @@ public class YamlValidator {
             shape.path("properties").fieldNames().forEachRemaining(answer::add);
         }
         return answer;
+    }
+
+    /** The properties of redeliveryPolicy (maximumRedeliveries, redeliveryDelay...), from the schema. */
+    Set<String> redeliveryPolicyProperties() {
+        return redeliveryPolicyProperties;
     }
 
     /** The properties of resilience4jConfiguration, from the schema. */
@@ -1585,6 +1620,9 @@ public class YamlValidator {
         this.resilienceProperties = new LinkedHashSet<>();
         model.at("/items/definitions/org.apache.camel.model.Resilience4jConfigurationDefinition/properties").fieldNames()
                 .forEachRemaining(resilienceProperties::add);
+        this.redeliveryPolicyProperties = new LinkedHashSet<>();
+        model.at("/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition/properties").fieldNames()
+                .forEachRemaining(redeliveryPolicyProperties::add);
         this.languageKeys = new LinkedHashSet<>();
         model.at("/items/definitions/org.apache.camel.model.language.ExpressionDefinition/properties").fieldNames()
                 .forEachRemaining(languageKeys::add);
