@@ -298,7 +298,9 @@ camel semantic get my-app --expert=guard
 
 `camel semantic` defaults to `camel semantic get`. The text output uses tables listing
 definition names, experts, operations, state selectors, result types and resolution
-errors, followed by the known experts and default expert. `--expert`
+errors, followed by the known experts and default expert. Listing does not require a
+default expert: the text output shows `Default expert: none` when no default can be
+resolved. `--json` retains the detailed default-selection diagnostics. `--expert`
 shows one expert's operations, input and result semantics, and parameter contract.
 Inspection does not perform inference. Use `--json` for machine-readable output.
 
@@ -344,6 +346,11 @@ reply (default: 60000 milliseconds). A CLI timeout removes its request and asks 
 connector to cancel unfinished work. Provider interruption is cooperative; remote or
 native inference may continue. Configure provider-specific request timeouts as well.
 
+Semantic commands use readable text by default: expert operations include a parameter table,
+evaluation results use labelled fields, and audit events show the record and linked evidence
+in separate sections. Add `--json` to any semantic command to receive the complete JSON response
+for scripts.
+
 All semantic commands accept an integration name or PID. With no name they select the only
 running integration; ambiguous selection fails and lists the matching PIDs.
 Known versions older than 4.23 fail immediately with exit code 3. If the runtime version
@@ -357,6 +364,11 @@ Use `camel semantic audit` to retrieve retained history from the application's c
 audit reader. It uses the local connector and performs no inference. Capture settings
 remain in the semantic DSL; querying does not enable auditing or change its configuration.
 
+Stored input appears in event details and linked evaluation evidence when the expert's
+semantic audit configuration explicitly enables `input.enabled`. Capture is disabled by
+default, bounded by `maxChars`, and can use a redactor. Human-readable output preserves
+multiline text; `--json` returns the stored structure and any omission reason.
+
 [source,bash]
 ----
 camel semantic audit my-app
@@ -367,8 +379,10 @@ camel semantic audit my-app --event-id=EVENT_ID --json
 
 The default output is a table of event IDs, timestamps, categories, explicit route actions,
 evaluation statuses, experts, operations, targets, namespaces, reason codes and correlation
-IDs. It also reports audit backend status, dropped records and evictions. An evaluation
-status is separate from an application's allow/block decision.
+IDs. A compact text summary reports whether capture is enabled, the reader, memory
+retention and dropped records. Sink or observer failures appear as separate error counts;
+evictions are shown below the table. An evaluation status is separate from an application's
+allow/block decision. The full audit configuration and health fields are available with `--json`.
 
 `--json` returns the complete runtime response as one JSON document. `--event-id` selects
 one historical record and its linked evaluation evidence, including any retained provider,

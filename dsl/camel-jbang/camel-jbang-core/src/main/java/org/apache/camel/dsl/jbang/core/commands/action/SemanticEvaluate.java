@@ -26,7 +26,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "eval", description = "Evaluate a semantic definition or expert operation",
@@ -169,7 +168,7 @@ public class SemanticEvaluate extends SemanticActionCommand {
         for (String key : List.of("evaluation", "status", "value", "probability", "probabilities", "confidence",
                 "metadata", "elapsedMillis", "error")) {
             if (response.containsKey(key)) {
-                printer().println(key + ": " + Jsoner.serialize(response.get(key)));
+                renderField(fieldLabel(key), response.get(key), "");
             }
         }
     }

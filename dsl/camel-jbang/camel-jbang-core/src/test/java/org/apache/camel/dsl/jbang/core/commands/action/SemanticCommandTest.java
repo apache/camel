@@ -22,7 +22,9 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -87,8 +89,9 @@ class SemanticCommandTest {
         JsonObject response = json("""
                 {"evaluations":[{"name":"safe","expert":"guard","operation":"detect",
                 "state":"${body}","resultType":"boolean","error":"definition error"}],
-                "experts":[{"reference":"guard","name":"Safety guard","error":"expert error"}],
-                "defaultError":"No default expert"}
+                "experts":[{"reference":"guard","name":"Safety guard","error":"expert error"},
+                {"reference":"classifier","name":"Classifier"}],
+                "defaultError":"Semantic language requires exactly one eligible expert"}
                 """);
         AtomicReference<JsonObject> request = new AtomicReference<>();
         assertEquals(0, respond(new CamelSemantic(main()), r -> {
@@ -103,7 +106,10 @@ class SemanticCommandTest {
         assertFalse(printer.getOutput().contains("\t"));
         assertTrue(printer.getOutput().contains("Safety guard"));
         assertTrue(printer.getOutput().contains("expert error"));
-        assertTrue(printer.getOutput().contains("No default expert"));
+        assertTrue(printer.getOutput().contains("Classifier"));
+        assertTrue(printer.getOutput().contains("Default expert: none"));
+        assertFalse(printer.getOutput().contains("Default expert error:"));
+        assertFalse(printer.getOutput().contains("requires exactly one eligible expert"));
         assertEquals("", errors.toString());
     }
 
@@ -115,21 +121,33 @@ class SemanticCommandTest {
         assertEquals("", errors.toString());
     }
 
-    @Test
-    void showsExpertOperationAndParameterContract() throws Exception {
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void showsExpertOperationAndParameterContract(boolean jsonOutput) throws Exception {
         JsonObject response = json("""
                 {"operations":[{"name":"rank","description":"Rank text","resultType":"score",
                 "contract":{"inputTypes":["text"],"parameters":[{"name":"criteria","type":"List",
-                "itemType":"String","required":true}],"resultMeaning":"quality"}}]}
+                "itemType":"String","required":true,"description":"Ordered levels","minSize":2,"maxSize":10},
+                {"name":"threshold","type":"Number","minimum":0,"maximum":1,"omission":"Expert default"}],
+                "minimum":0,"maximum":1,"resultMeaning":"quality","probability":true,
+                "probabilityMeaning":"Likelihood","confidence":false}}]}
                 """);
         assertEquals(0, respond(new CamelSemantic(main()), r -> {
             assertEquals("grader", r.get("expert"));
             assertFalse(r.containsKey("overview"));
             return response;
-        }, "--expert=grader"));
-        assertTrue(printer.getOutput().contains("rank (score): Rank text"));
-        assertTrue(printer.getOutput().contains("criteria"));
-        assertTrue(printer.getOutput().contains("quality"));
+        }, "--expert=grader", "--json=" + jsonOutput));
+        if (jsonOutput) {
+            assertEquals(response, json(printer.getOutput()));
+        } else {
+            for (String value : List.of("rank (score): Rank text", "Input: text", "Result: quality", "Range: 0 to 1",
+                    "Probability: Likelihood", "PARAMETER", "TYPE", "REQUIRED", "DETAILS", "criteria", "List<String>",
+                    "yes", "Ordered levels", "Minimum items: 2", "Maximum items: 10", "When omitted: Expert default")) {
+                assertTrue(printer.getOutput().contains(value), printer.getOutput());
+            }
+            assertFalse(printer.getOutput().contains("\"inputTypes\""));
+            assertFalse(printer.getOutput().contains("Confidence:"));
+        }
     }
 
     @Test
@@ -201,7 +219,7 @@ class SemanticCommandTest {
         }, "--expert=grader", "--operation=rank", "--input=json:[\"one\",\"two\"]",
                 "--parameter=criteria=json:[\"poor\",\"good\"]", "--parameter=threshold=json:0.7",
                 "--parameter=strict=json:true", "--parameter=description=plain text"));
-        for (String key : List.of("value", "probability", "probabilities", "confidence", "elapsedMillis")) {
+        for (String key : List.of("Value", "Probability", "Probabilities", "Confidence", "Elapsed (ms)")) {
             assertTrue(printer.getOutput().contains(key + ":"));
         }
     }
@@ -486,7 +504,8 @@ class SemanticCommandTest {
             assertEquals(50L, request.getLong("limit"));
             assertEquals(2, request.size());
             return jsonUnchecked("""
-                    {"audit":{"reader":"memory","enabled":true,"dropped":2},
+                    {"audit":{"reader":"memory","enabled":false,"decisionsEnabled":true,
+                      "retained":9,"capacity":1000,"dropped":2,"sinkErrors":{"memory":0,"log":3},"observerErrors":1},
                      "records":[{"eventId":"decision-1","timestamp":"2026-10-10T08:00:00Z",
                        "category":"decision","action":"block","operation":"tools/call","target":"support-request",
                        "namespace":"test","reasonCode":"policy_denied","correlationId":"request-123"},
@@ -497,10 +516,13 @@ class SemanticCommandTest {
         }));
         for (String value : List.of("EVENT ID", "TIMESTAMP", "ACTION", "STATUS", "decision-1", "evaluation-1",
                 "block", "success", "guard", "tools/call", "support-request", "policy_denied", "request-123",
-                "Next cursor: opaque:cursor", "Evicted: 7", "\"dropped\":2")) {
+                "Next cursor: opaque:cursor", "Evicted: 7", "Audit: enabled | Reader: memory | Retained: 9/1000 | Dropped: 2",
+                "Sink errors (log): 3", "Observer errors: 1")) {
             assertTrue(printer.getOutput().contains(value), printer.getOutput());
         }
         assertFalse(printer.getOutput().contains("allow"));
+        assertFalse(printer.getOutput().contains("Audit: {"));
+        assertFalse(printer.getOutput().contains("Sink errors (memory)"));
         assertEquals("", errors.toString());
     }
 
@@ -536,6 +558,7 @@ class SemanticCommandTest {
                  "record":{"eventId":"decision-1","category":"decision","action":"block",
                            "evidence":["evaluation-1","evicted-1"]},
                  "evidence":[{"eventId":"evaluation-1","provider":"safety-provider","model":"guard-v1","revision":"r1",
+                              "input":{"prompt":"stored prompt"},"inputRedacted":true,
                               "result":{"value":false},"semantics":{"meaning":"Injection detected"}},
                              {"eventId":"evicted-1","unavailable":true}]}
                 """);
@@ -549,11 +572,30 @@ class SemanticCommandTest {
             assertEquals(response, json(printer.getOutput()));
         } else {
             for (String value : List.of("decision-1", "Evidence:", "evaluation-1", "safety-provider", "guard-v1",
-                    "Injection detected", "evicted-1", "\"unavailable\": true")) {
+                    "Injection detected", "Input:", "prompt: stored prompt", "Input Redacted: true", "evicted-1",
+                    "Unavailable: true")) {
                 assertTrue(printer.getOutput().contains(value), printer.getOutput());
             }
         }
         assertEquals("", errors.toString());
+    }
+
+    @Test
+    void auditShowsMultilineAndEmptyStoredInputWithoutTerminalControls() throws Exception {
+        JsonObject record = new JsonObject();
+        record.put("eventId", "evaluation-1");
+        Map<String, Object> input = new LinkedHashMap<>();
+        input.put("text", "hello\nworld\u001b[31m");
+        input.put("empty", "");
+        input.put("missing", null);
+        input.put("items", List.of());
+        record.put("input", input);
+        assertEquals(0, respond(new SemanticAudit(main()), request -> new JsonObject(Map.of("record", record)),
+                "--event-id=evaluation-1"));
+        for (String value : List.of("text:\n", "hello\n", "world", "empty: \"\"", "missing: null", "items: []")) {
+            assertTrue(printer.getOutput().contains(value), printer.getOutput());
+        }
+        assertFalse(printer.getOutput().contains("\u001b"));
     }
 
     @ParameterizedTest
@@ -566,6 +608,7 @@ class SemanticCommandTest {
                     """);
         }, "--limit=" + limit));
         assertTrue(printer.getOutput().contains("No retained audit records match this query."));
+        assertTrue(printer.getOutput().contains("Audit: disabled | Reader: memory"));
         assertEquals("", errors.toString());
     }
 
