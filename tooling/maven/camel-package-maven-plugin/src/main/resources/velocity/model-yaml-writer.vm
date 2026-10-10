@@ -17,6 +17,9 @@
 #set( $default = "#[[##default]]#" )
 ## the YAML DSL names some lists other than the XML DSL does (keyed by class.member)
 #set( $yamlKeys = { "VerbDefinition.params": "param", "VerbDefinition.responseMsgs": "responseMessage", "RouteTemplateDefinition.templateParameters": "parameters", "RouteTemplateDefinition.templateBeans": "beans" } )
+## the YAML DSL reads each item of some lists as a one-key map named after the list (wrapItem = true in the YAML DSL
+## deserializer), such as - onException: ... in a route configuration (keyed by class.member)
+#set( $wrapItems = [ "RouteConfigurationDefinition.intercepts", "RouteConfigurationDefinition.interceptFroms", "RouteConfigurationDefinition.interceptSendTos", "RouteConfigurationDefinition.onCompletions", "RouteConfigurationDefinition.onExceptions" ] )
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -224,6 +227,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                             #end
                             #if( $t == "String" )
         doWriteStringList(jo, #if($w)"${w}"#{else}null#end, "${n}", def.${member.getter}());
+                            #elseif( $wrapItems.contains("${clazz.simpleName}.${member.name}") )
+        doWriteWrappedChildList(jo, "${n}", def.${member.getter}(), this::doWrite${t});
                             #else
         doWriteChildList(jo, #if($w)"${w}"#{else}null#end, "${n}", def.${member.getter}(), this::doWrite${t});
                             #end
