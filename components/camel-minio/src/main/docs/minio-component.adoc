@@ -89,6 +89,10 @@ This allows you, for instance, to know how many messages exist in this
 batch and for instance, let the Aggregator
 aggregate this number of messages.
 
+NOTE: The batch properties are set before the content of each object is fetched. If an object is deleted (for example
+by another consumer) between the listing and the get of its content, it is skipped, so `CamelBatchSize` can be higher
+than the number of exchanges routed for the batch, and possibly no exchange has `CamelBatchComplete` set to `true`.
+
 === Minio Producer operations
 
 Camel-Minio component provides the following operation on the producer side:

@@ -18,6 +18,8 @@ package org.apache.camel.component.minio;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -30,14 +32,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * An object that is deleted (for example by another consumer) after it was listed is skipped; the other objects of the
- * same poll are still consumed and the poll does not fail.
+ * same poll are still consumed and the poll does not fail. A skipped object does not count as polled.
  */
 class MinioConsumerDeletedObjectTest extends CamelTestSupport {
 
     private final List<Exception> failedPolls = new CopyOnWriteArrayList<>();
+    private final List<Integer> polledCounts = new CopyOnWriteArrayList<>();
+    private final CountDownLatch nonEmptyPoll = new CountDownLatch(1);
     private FakeS3Server s3;
 
     @Override
@@ -50,7 +55,15 @@ class MinioConsumerDeletedObjectTest extends CamelTestSupport {
         s3.deleteWhenStatted("b.txt");
         s3.start();
         CamelContext context = super.createCamelContext();
-        context.getRegistry().bind("recordFailedPolls", new DefaultPollingConsumerPollStrategy() {
+        context.getRegistry().bind("recordPolls", new DefaultPollingConsumerPollStrategy() {
+            @Override
+            public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
+                polledCounts.add(polledMessages);
+                if (polledMessages > 0) {
+                    nonEmptyPoll.countDown();
+                }
+            }
+
             @Override
             public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) {
                 failedPolls.add(e);
@@ -72,7 +85,7 @@ class MinioConsumerDeletedObjectTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("minio://bkt?accessKey=xxx&secretKey=yyy&region=us-east-1&delay=10&pollStrategy=#recordFailedPolls"
+                from("minio://bkt?accessKey=xxx&secretKey=yyy&region=us-east-1&delay=10&pollStrategy=#recordPolls"
                      + "&endpoint=" + s3.endpoint())
                         .to("mock:result");
             }
@@ -86,5 +99,10 @@ class MinioConsumerDeletedObjectTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
         assertEquals(List.of(), failedPolls, "no poll should fail because an object was deleted after the listing");
+
+        // b.txt was queued but skipped at the get: the poll counts only c.txt (later polls find nothing)
+        assertTrue(nonEmptyPoll.await(10, TimeUnit.SECONDS), "the poll that consumed c.txt should be committed");
+        assertEquals(1, polledCounts.stream().mapToInt(Integer::intValue).sum(),
+                "only the routed object should count as polled: " + polledCounts);
     }
 }
