@@ -35,6 +35,8 @@ have -- and can act on it. The agent can:
   read the message trace, correlate with route statistics, and produce a diagnostic report
   with annotated screenshots showing exactly where and why the failure occurred
 
+image::jbang/camel-tui-ai-agent-teaching.gif[An agent connected over MCP explains the integration with arrows and notes on the topology and the route statistics]
+
 == Enabling MCP
 
 [source,bash]
@@ -79,6 +81,8 @@ speaks the https://agentclientprotocol.com[Agent Client Protocol] (ACP). The TUI
 gives it the TUI's own MCP server, and shows the agent's answer, tool calls and questions in the panel. The agent
 drives the TUI through the same `tui_*` tools that external MCP clients use, and can also read and edit your
 route sources with its own tools.
+
+image::jbang/camel-tui-ai-acp-claude-code.gif[Claude Code picked with Ctrl+P in the AI panel answers a question about the running integration from the TUI's tools]
 
 Any agent that speaks ACP works. Press *Ctrl+P* in the AI panel and pick one of the agents known to work, or
 `acp:custom` to run any other ACP agent:
