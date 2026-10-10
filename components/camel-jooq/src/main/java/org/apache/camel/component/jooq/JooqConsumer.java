@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.jooq;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import org.apache.camel.Exchange;
@@ -35,6 +37,8 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
 
     private static final class DataHolder {
         private Exchange exchange;
+        private UpdatableRecord<?> record;
+        private boolean consumed;
 
         private DataHolder() {
         }
@@ -63,23 +67,38 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
         // okay we have some response from jooq so lets mark the consumer as ready
         forceConsumerAsReady();
 
+        List<DataHolder> holders = new ArrayList<>(results.size());
         for (UpdatableRecord<?> result : results) {
             DataHolder holder = new DataHolder();
             holder.exchange = createExchange(result);
-            answer.add(holder);
+            holder.record = result;
+            holders.add(holder);
         }
+        answer.addAll(holders);
 
         int messagePolled = processBatch(CastUtils.cast(answer));
 
         if (configuration.isConsumeDelete()) {
-            context.batchDelete(results).execute();
+            // only delete the entities whose exchange was processed successfully, so a failed (or not processed)
+            // entity stays in the table and is consumed again by the next poll
+            List<UpdatableRecord<?>> consumed = new ArrayList<>(holders.size());
+            for (DataHolder holder : holders) {
+                if (holder.consumed) {
+                    consumed.add(holder.record);
+                }
+            }
+            if (!consumed.isEmpty()) {
+                context.batchDelete(consumed).execute();
+            }
         }
 
         return messagePolled;
     }
 
     protected Exchange createExchange(Object result) {
-        Exchange exchange = createExchange(true);
+        // not auto released: the pooled exchange factory resets an auto released exchange when its unit of work is done,
+        // before processBatch reads whether it failed (it releases the exchange itself)
+        Exchange exchange = createExchange(false);
         exchange.getIn().setBody(result);
         return exchange;
     }
@@ -93,11 +112,19 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 
-        if (isBatchAllowed()) {
-            for (int i = 0; i < total; i++) {
-                DataHolder holder = org.apache.camel.util.ObjectHelper.cast(DataHolder.class, exchanges.poll());
-                getProcessor().process(holder.exchange);
+        // only loop while we are allowed to run: when a graceful shutdown starts, the remaining entities are not
+        // processed, so they are not deleted and the next start consumes them
+        for (int index = 0; index < total && isBatchAllowed(); index++) {
+            DataHolder holder = org.apache.camel.util.ObjectHelper.cast(DataHolder.class, exchanges.poll());
+            Exchange exchange = holder.exchange;
+            try {
+                getProcessor().process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+                getExceptionHandler().handleException("Error processing exchange", exchange, e);
             }
+            holder.consumed = !exchange.isFailed() && !exchange.isRollbackOnly();
+            releaseExchange(exchange, false);
         }
 
         return total;
