@@ -288,16 +288,18 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
-        // an exchange is routed only once the body of the next one is fetched (or the batch ends), so the last routed
-        // exchange completes the batch and the index and size do not count the objects skipped (no longer existing)
-        // so far
-        Exchange ready = null;
-        int routed = 0;
         int skipped = 0;
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
             final Exchange exchange = cast(Exchange.class, exchanges.poll());
+            // add current index and total as properties
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
+
+            // update pending number of exchanges
+            pendingExchanges = total - index - 1;
 
             String srcBucketName = exchange.getIn().getHeader(MinioConstants.BUCKET_NAME, String.class);
             String srcObjectName = exchange.getIn().getHeader(MinioConstants.OBJECT_NAME, String.class);
@@ -325,72 +327,41 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                     LOG.warn("Error getting MinioObject due: {}", e.getMessage());
                     // this and the remaining exchanges of the batch are not processed
                     releaseInProgress(srcObjectName, exchanges);
-                    if (ready != null) {
-                        routeExchange(ready, routed, total - skipped, false, 0);
-                    }
                     throw e;
                 }
             }
 
-            if (ready != null) {
-                routeExchange(ready, routed++, total - skipped, false, exchanges.size() + 1);
-            }
-            ready = exchange;
-        }
-        if (ready != null) {
-            if (isBatchAllowed()) {
-                routeExchange(ready, routed, total - skipped, exchanges.isEmpty(), 0);
-            } else {
-                // not routed as the consumer is stopping
-                inProgress.remove(ready.getIn().getHeader(MinioConstants.OBJECT_NAME, String.class));
-                for (Synchronization synchronization : ready.getExchangeExtension().handoverCompletions()) {
-                    // closes the object stream when autoCloseBody is enabled
-                    synchronization.onFailure(ready);
+            // add on completion to handle after work when the exchange is done
+            exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
+                public void onComplete(Exchange exchange) {
+                    try {
+                        processCommit(exchange);
+                    } finally {
+                        inProgress.remove(srcObjectName);
+                    }
                 }
-            }
+
+                public void onFailure(Exchange exchange) {
+                    try {
+                        processRollback(exchange);
+                    } finally {
+                        inProgress.remove(srcObjectName);
+                    }
+                }
+
+                @Override
+                public String toString() {
+                    return "MinioConsumerOnCompletion";
+                }
+            });
+
+            getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
         }
         // the remaining exchanges are not processed as the consumer is stopping
         releaseInProgress(null, exchanges);
 
         // skipped objects were not polled: they must not count for sendEmptyMessageWhenIdle and greedy polling
         return total - skipped;
-    }
-
-    private void routeExchange(Exchange exchange, int index, int size, boolean complete, int pending) {
-        // add current index and total as properties
-        exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
-        exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, size);
-        exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, complete);
-
-        // update pending number of exchanges
-        pendingExchanges = pending;
-
-        String srcObjectName = exchange.getIn().getHeader(MinioConstants.OBJECT_NAME, String.class);
-        // add on completion to handle after work when the exchange is done
-        exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
-            public void onComplete(Exchange exchange) {
-                try {
-                    processCommit(exchange);
-                } finally {
-                    inProgress.remove(srcObjectName);
-                }
-            }
-
-            public void onFailure(Exchange exchange) {
-                try {
-                    processRollback(exchange);
-                } finally {
-                    inProgress.remove(srcObjectName);
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "MinioConsumerOnCompletion";
-            }
-        });
-
-        getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
     }
 
     /**
