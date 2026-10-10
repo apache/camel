@@ -70,19 +70,31 @@ public class LuceneIndexer {
         }
     }
 
-    public void index(Exchange exchange) throws Exception {
+    public synchronized void index(Exchange exchange) throws Exception {
+        // synchronized: the index writer is a field and Lucene allows one open writer per index directory
         LOG.debug("Indexing {}", exchange);
         openIndexWriter();
-        Map<String, Object> headers = exchange.getIn().getHeaders();
-        add("exchangeId", exchange.getExchangeId(), true);
-        for (Entry<String, Object> entry : headers.entrySet()) {
-            String field = entry.getKey();
-            String value = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, entry.getValue());
-            add(field, value, true);
-        }
+        try {
+            Map<String, Object> headers = exchange.getIn().getHeaders();
+            add("exchangeId", exchange.getExchangeId(), true);
+            for (Entry<String, Object> entry : headers.entrySet()) {
+                String field = entry.getKey();
+                String value = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, entry.getValue());
+                add(field, value, true);
+            }
 
-        add("contents", exchange.getIn().getMandatoryBody(String.class), true);
-        closeIndexWriter();
+            add("contents", exchange.getIn().getMandatoryBody(String.class), true);
+            indexWriter.commit();
+        } catch (Exception e) {
+            // discard the documents of this exchange and release the index write lock
+            try {
+                indexWriter.rollback();
+            } catch (Exception re) {
+                e.addSuppressed(re);
+            }
+            throw e;
+        }
+        indexWriter.close();
     }
 
     public NIOFSDirectory getNiofsDirectory() {
