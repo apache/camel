@@ -301,7 +301,9 @@ definition names, experts, operations, state selectors, result types and resolut
 errors, followed by the known experts and default expert. Listing does not require a
 default expert: the text output shows `Default expert: none` when automatic selection has
 no eligible expert or is ambiguous. Configuration and contract-resolution errors still appear
-as `Default expert error`. `--json` retains all default-selection diagnostics. `--expert`
+as `Default expert error`. `--json` retains all default-selection diagnostics, including
+`defaultErrorCode` when provided by the runtime. The CLI uses that code to identify an
+absent or ambiguous automatic default and supports older runtimes that return only a message. `--expert`
 shows one expert's operations, input and result semantics, and parameter contract.
 Inspection does not perform inference. Use `--json` for machine-readable output.
 

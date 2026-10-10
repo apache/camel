@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.camel.language.semantic.SemanticLanguage;
+import org.apache.camel.semantic.internal.NoUniqueSemanticExpertException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -73,7 +74,13 @@ public class SemanticMetadataConsole extends AbstractDevConsole {
             @Metadata(description = "Known experts, when overview is requested") List<Expert> experts,
             @Metadata(description = "Published definitions, when overview is requested") List<Definition> evaluations,
             @Metadata(description = "Resolved default expert") String defaultExpert,
-            @Metadata(description = "Default selection error, if any") String defaultError) {
+            @Metadata(description = "Default selection error, if any") String defaultError,
+            @Metadata(description = "Default selection error code: no_unique_expert or default_expert_error") String defaultErrorCode) {
+
+        public Response(List<Operation> operations, List<Expert> experts, List<Definition> evaluations,
+                        String defaultExpert, String defaultError) {
+            this(operations, experts, evaluations, defaultExpert, defaultError, null);
+        }
     }
 
     public SemanticMetadataConsole() {
@@ -112,10 +119,12 @@ public class SemanticMetadataConsole extends AbstractDevConsole {
                 });
         String defaultExpert = null;
         String defaultError = null;
+        String defaultErrorCode = null;
         try {
             defaultExpert = addExpert(experts, language.describeExpert(null));
         } catch (IllegalArgumentException | IOException e) {
             defaultError = e.getMessage();
+            defaultErrorCode = e instanceof NoUniqueSemanticExpertException ? "no_unique_expert" : "default_expert_error";
         }
         List<Definition> definitions = new ArrayList<>();
         SemanticEvaluations registry = getCamelContext().getCamelContextExtension().getContextPlugin(SemanticEvaluations.class);
@@ -138,7 +147,7 @@ public class SemanticMetadataConsole extends AbstractDevConsole {
                         evaluation.getParameters(), resultType, error));
             });
         }
-        return new Response(null, List.copyOf(experts.values()), definitions, defaultExpert, defaultError);
+        return new Response(null, List.copyOf(experts.values()), definitions, defaultExpert, defaultError, defaultErrorCode);
     }
 
     private static String addExpert(Map<String, Expert> experts, SemanticLanguage.ExpertMetadata metadata) {

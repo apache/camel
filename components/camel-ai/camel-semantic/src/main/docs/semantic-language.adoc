@@ -914,6 +914,11 @@ Use `camel semantic` to inspect definitions and `camel semantic eval` to evaluat
 xref:manual::camel-jbang-managing.adoc#_semantic_definitions_and_evaluation[Camel CLI].
 
 `semantic-metadata` exposes definitions and expert contracts without performing inference.
+With `overview=true`, a failed default selection includes `defaultError` and a stable
+`defaultErrorCode`: `no_unique_expert` means automatic discovery found zero or multiple
+eligible experts; `default_expert_error` identifies a configuration, contract or descriptor
+failure. Consumers can distinguish these cases without parsing the diagnostic message.
+
 `semantic-evaluate` evaluates a named definition against a sample exchange or calls an expert
 operation directly. It uses the configured provider and its normal validation, without sending
 the sample through an application route.

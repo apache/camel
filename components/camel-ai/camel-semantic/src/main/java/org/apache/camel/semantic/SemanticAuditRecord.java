@@ -38,7 +38,7 @@ public final class SemanticAuditRecord {
         this.timestamp = Instant.parse((String) fields.get("timestamp"));
     }
 
-    /** Reconstruct a persisted version-1 record; rejects unknown fields and bounds nested data. */
+    /** Create or restore a version-1 record; rejects unknown fields and defensively copies bounded nested data. */
     public static SemanticAuditRecord fromMap(Map<String, ?> data) {
         Set<String> keys = Set.of("schemaVersion", "eventId", "invocationId", "timestamp", "category", "origin", "requestId",
                 "batchId", "definition", "target", "expert", "operation", "contextId", "exchangeId", "routeId", "semantics",

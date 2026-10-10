@@ -48,6 +48,7 @@ import org.apache.camel.semantic.SemanticEvaluation;
 import org.apache.camel.semantic.SemanticEvaluations;
 import org.apache.camel.semantic.SemanticExpert.ResultType;
 import org.apache.camel.semantic.SemanticResult;
+import org.apache.camel.semantic.internal.NoUniqueSemanticExpertException;
 import org.apache.camel.semantic.internal.SemanticAuditService;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
@@ -374,9 +375,7 @@ public class SemanticLanguage extends LanguageSupport {
         if (candidates.size() + instances.size() != 1) {
             Set<String> names = new TreeSet<>(registered.keySet());
             names.addAll(candidates);
-            throw new IllegalArgumentException(
-                    "Semantic language requires exactly one eligible expert; available experts: " + names
-                                               + ". Specify expert or configure camel.language.semantic.default-expert explicitly");
+            throw new NoUniqueSemanticExpertException(names);
         }
         if (instances.size() == 1) {
             SemanticAdapter instance = instances.iterator().next();
