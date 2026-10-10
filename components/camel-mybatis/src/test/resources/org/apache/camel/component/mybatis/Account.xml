@@ -129,6 +129,16 @@ aliases to match the properties of the target result class. -->
         delete from ACCOUNT where ACC_LAST_NAME = #{lastName}
     </delete>
 
+    <!-- A byte[] is one parameter, which MyBatis wraps into a map with the key array -->
+    <insert id="insertAccountWithLastNameBytes">
+        insert into ACCOUNT (ACC_ID, ACC_FIRST_NAME, ACC_LAST_NAME, ACC_EMAIL)
+        values (789, 'Jane', UTF8TOSTRING(#{array}), 'jane@example.com')
+    </insert>
+
+    <delete id="deleteAccountByLongId" parameterType="long">
+        delete from ACCOUNT where ACC_ID = #{id}
+    </delete>
+
     <!-- START SNIPPET: e1 -->
     <select id="selectUnprocessedAccounts" resultMap="AccountResult">
         select * from ACCOUNT where PROCESSED = false

@@ -16,13 +16,15 @@
  */
 package org.apache.camel.component.mybatis;
 
+import java.nio.charset.StandardCharsets;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * A String body is one parameter, also when it contains a comma or is blank; only collections, iterators and object
- * arrays run the statement once per element.
+ * A String or byte[] body is one parameter, also when the String contains a comma or is blank; collections, iterators
+ * and other arrays run the statement once per element.
  */
 public class MyBatisStringParameterTest extends MyBatisTestSupport {
 
@@ -62,6 +64,23 @@ public class MyBatisStringParameterTest extends MyBatisTestSupport {
         assertEquals(3, rowCount(), "There should be 3 rows");
         Account account = template.requestBody("mybatis:selectAccountById?statementType=SelectOne", 789, Account.class);
         assertEquals("", account.getLastName());
+    }
+
+    @Test
+    public void testInsertByteArray() {
+        template.sendBody("mybatis:insertAccountWithLastNameBytes?statementType=Insert",
+                "Doe".getBytes(StandardCharsets.UTF_8));
+
+        assertEquals(3, rowCount(), "There should be 3 rows");
+        Account account = template.requestBody("mybatis:selectAccountById?statementType=SelectOne", 789, Account.class);
+        assertEquals("Doe", account.getLastName());
+    }
+
+    @Test
+    public void testDeleteLongArrayRunsOncePerElement() {
+        template.sendBody("mybatis:deleteAccountByLongId?statementType=Delete", new long[] { 123L, 456L });
+
+        assertEquals(0, rowCount(), "There should be 0 rows");
     }
 
     private int rowCount() {

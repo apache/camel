@@ -280,13 +280,13 @@ public class MyBatisProducer extends DefaultProducer {
     }
 
     /**
-     * Iterates a collection, an iterator, a stream or an array of objects, to run the statement once per element. Any
-     * other value is one parameter as-is: a Map, a String (which may contain commas) and a primitive array (such as a
-     * byte[]).
+     * Iterates the input to run the statement once per element: a collection, an iterator, a stream or an array
+     * (including an array of a primitive type such as a long[] of ids). A Map, a String (which may contain commas) and
+     * a byte[] are one parameter as-is; MyBatis wraps an array parameter into a map, so a statement refers to a byte[]
+     * as #{array}.
      */
     private static Iterator<?> createIterator(Object in) {
-        if (in instanceof Map || in instanceof String
-                || (in.getClass().isArray() && in.getClass().getComponentType().isPrimitive())) {
+        if (in instanceof Map || in instanceof String || in instanceof byte[]) {
             return Collections.singletonList(in).iterator();
         }
         return ObjectHelper.createIterator(in);
