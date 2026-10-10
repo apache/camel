@@ -16,16 +16,17 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
+import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "semantic", description = "List semantic definitions and expert contracts",
@@ -94,10 +95,8 @@ public class CamelSemantic extends SemanticActionCommand {
                 new Column().header("REFERENCE").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "reference")),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "name")),
                 new Column().header("ERROR").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "error")))));
-        printer().println("Default expert: " + text(response, "defaultExpert"));
-        if (response.get("defaultError") != null) {
-            printer().println("Default expert error: " + response.get("defaultError"));
-        }
+        String defaultExpert = text(response, "defaultExpert");
+        printer().println("Default expert: " + (defaultExpert.isEmpty() ? "none" : defaultExpert));
     }
 
     private static List<JsonObject> rows(JsonArray values) {
@@ -105,15 +104,92 @@ public class CamelSemantic extends SemanticActionCommand {
     }
 
     private void renderOperations(JsonArray operations) {
-        for (int i = 0; i < operations.size(); i++) {
-            JsonObject operation = operations.getMap(i);
+        for (JsonObject operation : rows(operations)) {
+            printer().println();
             printer().println(text(operation, "name") + " (" + text(operation, "resultType") + "): "
                               + text(operation, "description"));
-            printer().println(Jsoner.prettyPrint(Jsoner.serialize(operation.get("contract"))));
+            JsonObject contract = operation.getMap("contract");
+            if (contract == null) {
+                continue;
+            }
+            renderField("Input", contract.get("inputTypes"), "  ");
+            renderField("Requirements", contract.get("inputRequirements"), "  ");
+            renderField("Result", contract.get("resultMeaning"), "  ");
+            renderField("Labels", contract.get("labels"), "  ");
+            renderField("Range", range(contract, "minimum", "maximum"), "  ");
+            renderField("Score levels", contract.get("scoreLevelsParameter"), "  ");
+            for (String metric : List.of("probability", "probabilities", "confidence")) {
+                if (Boolean.TRUE.equals(contract.get(metric))) {
+                    String meaning = text(contract, "confidence".equals(metric) ? "confidenceMeaning" : "probabilityMeaning");
+                    renderField(fieldLabel(metric), meaning.isEmpty() ? "available" : meaning, "  ");
+                }
+            }
+            List<JsonObject> parameters = rows(contract.getCollection("parameters"));
+            if (!parameters.isEmpty()) {
+                printer().println();
+                printer().println("Parameters:");
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, parameters, List.of(
+                        new Column().header("PARAMETER").dataAlign(HorizontalAlign.LEFT).maxWidth(24, OverflowBehaviour.NEWLINE)
+                                .with((JsonObject p) -> text(p, "name")),
+                        new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(16, OverflowBehaviour.NEWLINE)
+                                .with(CamelSemantic::parameterType),
+                        new Column().header("REQUIRED").dataAlign(HorizontalAlign.LEFT)
+                                .with((JsonObject p) -> Boolean.TRUE.equals(p.get("required")) ? "yes" : "no"),
+                        new Column().header("DETAILS").dataAlign(HorizontalAlign.LEFT).maxWidth(64, OverflowBehaviour.NEWLINE)
+                                .with(CamelSemantic::parameterDetails))));
+            }
         }
     }
 
+    private static String parameterType(JsonObject parameter) {
+        String type = text(parameter, "type");
+        if ("List".equals(type) || "Map".equals(type)) {
+            String itemType = text(parameter, "itemType");
+            if (!itemType.isEmpty() && !"Object".equals(itemType)) {
+                type += "<" + itemType + ">";
+            }
+        }
+        return Boolean.TRUE.equals(parameter.get("integer")) ? type + " (integer)" : type;
+    }
+
+    private static String parameterDetails(JsonObject parameter) {
+        List<String> details = new ArrayList<>();
+        if (!text(parameter, "description").isEmpty()) {
+            details.add(text(parameter, "description"));
+        }
+        if (!text(parameter, "omission").isEmpty()) {
+            details.add("When omitted: " + text(parameter, "omission"));
+        }
+        JsonArray values = parameter.getCollection("values");
+        if (values != null && !values.isEmpty()) {
+            details.add("Allowed: " + String.join(", ", values.stream().map(SemanticActionCommand::displayText).toList()));
+        }
+        String range = range(parameter, "minimum", "maximum");
+        if (!range.isEmpty()) {
+            details.add("Range: " + range);
+        }
+        // The schema's unbounded collection limits are implementation defaults, not useful constraints.
+        Object minimum = parameter.get("minSize");
+        Object maximum = parameter.get("maxSize");
+        if (minimum instanceof Number number && number.longValue() > 0) {
+            details.add("Minimum items: " + minimum);
+        }
+        if (maximum instanceof Number number && number.longValue() < Integer.MAX_VALUE) {
+            details.add("Maximum items: " + maximum);
+        }
+        return String.join("\n", details);
+    }
+
+    private static String range(JsonObject value, String minimum, String maximum) {
+        String min = text(value, minimum);
+        String max = text(value, maximum);
+        if (min.isEmpty()) {
+            return max.isEmpty() ? "" : "<= " + max;
+        }
+        return max.isEmpty() ? ">= " + min : min + " to " + max;
+    }
+
     private static String text(JsonObject value, String key) {
-        return value.get(key) == null ? "" : value.get(key).toString();
+        return displayText(value.get(key));
     }
 }

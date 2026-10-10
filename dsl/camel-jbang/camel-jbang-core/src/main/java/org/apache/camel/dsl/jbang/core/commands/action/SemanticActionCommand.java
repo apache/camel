@@ -17,7 +17,10 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.UsageErrorHandler;
@@ -133,6 +136,46 @@ public abstract class SemanticActionCommand extends ActionBaseCommand implements
             render(response);
         }
         return 0;
+    }
+
+    protected void renderField(String label, Object value, String indent) {
+        if (value == null) {
+            return;
+        }
+        if (value instanceof Map<?, ?> fields) {
+            if (!fields.isEmpty()) {
+                printer().println(indent + label + ":");
+                fields.forEach((key, item) -> renderField(displayText(key), item, indent + "  "));
+            }
+        } else if (value instanceof Collection<?> items) {
+            if (items.stream().anyMatch(item -> item instanceof Map || item instanceof Collection)) {
+                int index = 1;
+                for (Object item : items) {
+                    renderField(label + " " + index++, item, indent);
+                }
+            } else if (!items.isEmpty()) {
+                printer().println(indent + label + ": "
+                                  + items.stream().map(SemanticActionCommand::displayText).collect(Collectors.joining(", ")));
+            }
+        } else if (!displayText(value).isEmpty()) {
+            printer().println(indent + label + ": " + displayText(value));
+        }
+    }
+
+    protected static String displayText(Object value) {
+        // Keep provider text from introducing terminal control sequences in human-readable output.
+        return value == null ? "" : value.toString().replaceAll("[\\p{Cntrl}\\p{Cf}]", " ");
+    }
+
+    protected static String fieldLabel(String key) {
+        if ("elapsedMillis".equals(key)) {
+            return "Elapsed (ms)";
+        }
+        if ("durationNanos".equals(key)) {
+            return "Duration (ns)";
+        }
+        String label = key.replaceAll("([a-z0-9])([A-Z])", "$1 $2");
+        return Character.toUpperCase(label.charAt(0)) + label.substring(1).replace(" Id", " ID");
     }
 
     protected abstract JsonObject request();

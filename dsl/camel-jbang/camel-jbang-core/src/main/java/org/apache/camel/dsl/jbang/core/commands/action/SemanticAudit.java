@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
 import java.util.stream.IntStream;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -28,7 +30,6 @@ import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "audit", description = "Retrieve retained semantic audit records and linked evidence",
@@ -131,6 +132,34 @@ public class SemanticAudit extends SemanticActionCommand {
         return super.printResponse(response);
     }
 
+    private void renderAuditField(String key, Object value, String indent) {
+        if ("input".equals(key)) {
+            renderInput("Input", value, indent);
+        } else {
+            renderField(fieldLabel(key), value, indent);
+        }
+    }
+
+    private void renderInput(String label, Object value, String indent) {
+        if (value instanceof Map<?, ?> map && !map.isEmpty()) {
+            printer().println(indent + label + ":");
+            map.forEach((key, item) -> renderInput(displayText(key), item, indent + "  "));
+        } else if (value instanceof List<?> list && !list.isEmpty()) {
+            printer().println(indent + label + ":");
+            for (int i = 0; i < list.size(); i++) {
+                renderInput("[" + i + "]", list.get(i), indent + "  ");
+            }
+        } else if (value instanceof String text && text.contains("\n")) {
+            printer().println(indent + label + ":");
+            for (String line : text.split("\\R", -1)) {
+                printer().println(indent + "  " + displayText(line));
+            }
+        } else {
+            printer()
+                    .println(indent + label + ": " + (value == null ? "null" : "".equals(value) ? "\"\"" : displayText(value)));
+        }
+    }
+
     @Override
     protected void render(JsonObject response) {
         if (response.containsKey("error")) {
@@ -138,15 +167,30 @@ public class SemanticAudit extends SemanticActionCommand {
         }
         JsonObject audit = response.getMap("audit");
         if (audit != null) {
-            printer().println("Audit: " + audit.toJson());
+            renderStatus(audit);
         }
         if (eventId != null) {
-            Object record = response.get("record");
-            printer().println(record == null ? "Record unavailable." : Jsoner.prettyPrint(Jsoner.serialize(record)));
+            JsonObject record = response.getMap("record");
+            if (record == null) {
+                printer().println("Record unavailable.");
+            } else {
+                printer().println();
+                printer().println("Record:");
+                record.forEach((key, value) -> renderAuditField(key, value, "  "));
+            }
             JsonArray evidence = response.getCollection("evidence");
             if (evidence != null && !evidence.isEmpty()) {
+                printer().println();
                 printer().println("Evidence:");
-                printer().println(Jsoner.prettyPrint(evidence.toJson()));
+                for (int i = 0; i < evidence.size(); i++) {
+                    JsonObject linked = evidence.getMap(i);
+                    printer().println("  " + displayText(linked.get("eventId")));
+                    linked.forEach((key, value) -> {
+                        if (!"eventId".equals(key)) {
+                            renderAuditField(key, value, "    ");
+                        }
+                    });
+                }
             }
             return;
         }
@@ -166,6 +210,34 @@ public class SemanticAudit extends SemanticActionCommand {
         }
         if (response.get("nextCursor") != null) {
             printer().println("Next cursor: " + response.get("nextCursor"));
+        }
+    }
+
+    private void renderStatus(JsonObject audit) {
+        Object capturing = audit.getOrDefault("decisionsEnabled", audit.get("enabled"));
+        String state = capturing instanceof Boolean enabled ? (enabled ? "enabled" : "disabled") : "unknown";
+        StringJoiner summary = new StringJoiner(" | ");
+        summary.add("Audit: " + state);
+        if (audit.get("reader") != null) {
+            summary.add("Reader: " + audit.get("reader"));
+        }
+        if ("memory".equals(audit.get("reader")) && audit.get("retained") != null && audit.get("capacity") != null) {
+            summary.add("Retained: " + audit.get("retained") + "/" + audit.get("capacity"));
+        }
+        if (audit.get("dropped") != null) {
+            summary.add("Dropped: " + audit.get("dropped"));
+        }
+        printer().println(summary.toString());
+        JsonObject sinkErrors = audit.getMap("sinkErrors");
+        if (sinkErrors != null) {
+            sinkErrors.forEach((sink, count) -> {
+                if (count instanceof Number number && number.longValue() > 0) {
+                    printer().println("Sink errors (" + sink + "): " + count);
+                }
+            });
+        }
+        if (audit.get("observerErrors") instanceof Number errors && errors.longValue() > 0) {
+            printer().println("Observer errors: " + errors);
         }
     }
 
