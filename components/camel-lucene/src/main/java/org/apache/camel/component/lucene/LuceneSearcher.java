@@ -35,6 +35,9 @@ import org.apache.lucene.store.NIOFSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Runs one query on its own reader of the index. An instance is used by one exchange at a time: open, search, close.
+ */
 public class LuceneSearcher {
     private static final Logger LOG = LoggerFactory.getLogger(LuceneSearcher.class);
     private Analyzer analyzer;
@@ -52,9 +55,15 @@ public class LuceneSearcher {
         this.analyzer = analyzer;
     }
 
+    /**
+     * Closes the index reader. The analyzer is not closed: it belongs to the endpoint (or the registry) and is used by
+     * the next query.
+     */
     public void close() throws IOException {
-        indexReader.close();
-        analyzer.close();
+        if (indexReader != null) {
+            indexReader.close();
+            indexReader = null;
+        }
     }
 
     public Hits search(String searchPhrase, int maxNumberOfHits, int totalHitsThreshold) throws Exception {
