@@ -470,7 +470,7 @@ policy decisions. Configure capture in the semantic DSL. Auditing works without 
 connection and is independent of OpenTelemetry.
 
 Use `/` for exact `field=value` filters (`category`, `action`, `expert`, `routeId`,
-`namespace`, `correlationId`, `since`), `n` for older records, `g` for the latest page and `r` to refresh.
+`correlationId`, `since`), `n` for older records, `g` for the latest page and `r` to refresh.
 The header shows the global audit default, per-expert overrides and OpenTelemetry independently,
 with the active filters and reader below. Decisions are coloured by action. Timestamps use the
 local timezone shown below the table; the inspector also retains the full timestamp.
@@ -508,6 +508,6 @@ accessible only to authorized operators. AI sessions load the tool when the sele
 integration exposes semantic audit history. Use `tui_get_table` to inspect the visible Audit screen.
 `r` refreshes the current audit page; `g` returns to the newest page. Repeated refreshes are coalesced.
 
-In Audit, `c`, `a`, `e` and `N` open searchable selectors for category, action, expert and
-namespace. Use arrows and `Enter` to apply, or `Esc` to cancel. Suggestions include values
+In Audit, `c`, `a` and `e` open searchable selectors for category, action and expert.
+Use arrows and `Enter` to apply, or `Esc` to cancel. Suggestions include values
 on the current page; `/` accepts arbitrary exact filters, including an ISO-8601 `since` timestamp.
