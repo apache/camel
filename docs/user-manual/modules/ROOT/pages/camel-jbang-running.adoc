@@ -152,6 +152,20 @@ Multiple dependencies can be separated by comma:
 camel run foo.java --dep=camel-saxon,com.foo:acme:1.0
 ----
 
+The dependencies can also be declared in `application.properties` with `camel.jbang.dependencies`
+(or `camel.jbang.dependencies.main`, `camel.jbang.dependencies.spring-boot` and `camel.jbang.dependencies.quarkus`
+for one runtime only):
+
+[source,properties]
+----
+camel.jbang.dependencies=camel:sql,com.foo:acme:1.0
+----
+
+They are read from the `application.properties` (and `application-<profile>.properties`) of the current directory
+or of `--source-dir`, and from the properties files given on the command line or with `--properties`,
+for example `camel run camel/*.yaml camel/application.properties` run from the parent directory of `camel`.
+They are added to the dependencies given with `--dep`.
+
 == Including resource directories
 
 To include entire directories of resource files (such as XSD schemas, WSDL files, etc.)
