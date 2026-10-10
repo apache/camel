@@ -187,4 +187,52 @@ final class XmlChecks {
         return msgs;
     }
 
+    private static final String XSL_NS = "http://www.w3.org/1999/XSL/Transform";
+    /** A {...} in text that reads as an XPath expression: a function call, a path, an attribute or a variable. */
+    private static final Pattern LITERAL_BRACES = Pattern.compile("\\{([^{}\"']*(?:\\w\\(|/|@|\\$)[^{}\"']*)}");
+
+    /**
+     * Text in an element the stylesheet writes out (not inside an xsl: instruction) that holds a {expression}: in XSLT
+     * 1.0 and 2.0 an attribute value template is evaluated only in an attribute value, so in element content the braces
+     * and the expression are written as they are, with no error (CAMEL-25514). Not reported when the stylesheet turns
+     * on expand-text (XSLT 3.0), nor for braces around text with quotes (JSON written by the stylesheet).
+     */
+    static List<String> literalBraceNotes(String content) {
+        List<String> notes = new ArrayList<>();
+        if (content == null || content.isBlank() || content.contains("expand-text")) {
+            return notes;
+        }
+        org.w3c.dom.Document doc;
+        try {
+            javax.xml.parsers.DocumentBuilderFactory dbf = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            dbf.setNamespaceAware(true);
+            javax.xml.parsers.DocumentBuilder db = dbf.newDocumentBuilder();
+            db.setErrorHandler(null);
+            doc = db.parse(new org.xml.sax.InputSource(new java.io.StringReader(content)));
+        } catch (Exception e) {
+            return notes; // not well formed: the validation says so
+        }
+        collectLiteralBraces(doc.getDocumentElement(), notes);
+        return notes;
+    }
+
+    private static void collectLiteralBraces(org.w3c.dom.Element element, List<String> notes) {
+        boolean xsl = XSL_NS.equals(element.getNamespaceURI());
+        org.w3c.dom.NodeList children = element.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            org.w3c.dom.Node child = children.item(i);
+            if (child instanceof org.w3c.dom.Element e) {
+                collectLiteralBraces(e, notes);
+            } else if (!xsl && child.getNodeType() == org.w3c.dom.Node.TEXT_NODE) {
+                Matcher m = LITERAL_BRACES.matcher(child.getNodeValue());
+                while (m.find()) {
+                    String expr = m.group(1).trim();
+                    notes.add("<" + element.getNodeName() + "> holds the text {" + expr + "}, which is written out as it"
+                              + " is: a {expression} is evaluated only in an attribute value; in element content write"
+                              + " <xsl:value-of select=\"" + expr + "\"/>");
+                }
+            }
+        }
+    }
 }
