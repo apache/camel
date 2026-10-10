@@ -120,6 +120,24 @@ public class KnownDependenciesResolverTest {
     }
 
     @Test
+    void theShippedMappingResolvesSpringTransactionClasses() {
+        // the beans of a transacted route: the Spring JDBC transaction managers and datasources come with camel-sql
+        // (spring-jdbc), the Spring transaction policy and spring-tx come with camel-spring
+        KnownDependenciesResolver resolver = new KnownDependenciesResolver(new SimpleCamelContext(), null, null);
+        resolver.loadKnownDependencies();
+
+        assertGav(resolver, "org.springframework.jdbc.datasource.DataSourceTransactionManager", "org.apache.camel",
+                "camel-sql");
+        assertGav(resolver, "org.springframework.jdbc.support.JdbcTransactionManager", "org.apache.camel", "camel-sql");
+        assertGav(resolver, "org.springframework.jdbc.datasource.DriverManagerDataSource", "org.apache.camel", "camel-sql");
+        assertGav(resolver, "org.springframework.transaction.PlatformTransactionManager", "org.apache.camel",
+                "camel-spring");
+        assertGav(resolver, "org.springframework.transaction.support.TransactionTemplate", "org.apache.camel",
+                "camel-spring");
+        assertGav(resolver, "org.apache.camel.spring.spi.SpringTransactionPolicy", "org.apache.camel", "camel-spring");
+    }
+
+    @Test
     void anImportResolvesAnyClassOfAComponent() {
         // CAMEL-25239: any class of a component a source imports, not only the component class itself, such as the
         // constants of the headers of a component that a kamelet uses
