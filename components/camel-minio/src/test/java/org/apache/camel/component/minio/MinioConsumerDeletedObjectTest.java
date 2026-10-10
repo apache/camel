@@ -22,6 +22,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultPollingConsumerPollStrategy;
@@ -33,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * An object that is deleted (for example by another consumer) after it was listed is skipped; the other objects of the
- * same poll are still consumed and the poll does not fail.
+ * same poll are still consumed and the poll does not fail. The batch properties count only the consumed objects.
  */
 class MinioConsumerDeletedObjectTest extends CamelTestSupport {
 
@@ -46,8 +48,11 @@ class MinioConsumerDeletedObjectTest extends CamelTestSupport {
         s3.put("a.txt", "deleted before the stat");
         s3.put("b.txt", "deleted before the get");
         s3.put("c.txt", "hello");
+        s3.put("d.txt", "world");
+        s3.put("e.txt", "last listed, deleted before the get");
         s3.deleteWhenListed("a.txt");
         s3.deleteWhenStatted("b.txt");
+        s3.deleteWhenStatted("e.txt");
         s3.start();
         CamelContext context = super.createCamelContext();
         context.getRegistry().bind("recordFailedPolls", new DefaultPollingConsumerPollStrategy() {
@@ -82,9 +87,19 @@ class MinioConsumerDeletedObjectTest extends CamelTestSupport {
     @Test
     void deletedObjectsAreSkipped() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("hello");
+        mock.expectedBodiesReceived("hello", "world");
 
         mock.assertIsSatisfied();
         assertEquals(List.of(), failedPolls, "no poll should fail because an object was deleted after the listing");
+
+        // the batch properties only count the routed exchanges, so the last routed exchange completes the batch
+        // although the last listed object was skipped
+        Exchange first = mock.getReceivedExchanges().get(0);
+        assertEquals(0, first.getProperty(ExchangePropertyKey.BATCH_INDEX, Integer.class));
+        assertEquals(false, first.getProperty(ExchangePropertyKey.BATCH_COMPLETE, Boolean.class));
+        Exchange last = mock.getReceivedExchanges().get(1);
+        assertEquals(1, last.getProperty(ExchangePropertyKey.BATCH_INDEX, Integer.class));
+        assertEquals(2, last.getProperty(ExchangePropertyKey.BATCH_SIZE, Integer.class));
+        assertEquals(true, last.getProperty(ExchangePropertyKey.BATCH_COMPLETE, Boolean.class));
     }
 }
