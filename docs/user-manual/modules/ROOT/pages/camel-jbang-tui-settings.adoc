@@ -1,8 +1,8 @@
 = Camel TUI Actions, Settings and Themes
 
 The TUI is configured from inside: the actions menu (*F2*) holds what is not tied to one tab, the settings are kept in
-`~/.camel-cli.properties`, and the themes change the whole look. This page also covers the embedded shell, opening the
-TUI in a browser, and recording demos.
+`~/.camel-cli.properties`, and the themes change the whole look. This page also covers the embedded shell and opening the
+TUI in a browser.
 
 See xref:camel-jbang-tui.adoc[Camel TUI] for getting started and the other pages.
 
@@ -13,7 +13,7 @@ See xref:camel-jbang-tui.adoc[Camel TUI] for getting started and the other pages
 * <<_theme,*Themes*>> -- dark and light themes
 * <<_settings,*Settings*>> -- start tab, rate units, validation, AI provider and more
 * <<_web_browser_access,*Web browser access*>> -- the TUI in a browser tab
-* <<_recording_demos,*Recording demos*>> -- record a session as a tape and convert it to a GIF
+* xref:camel-jbang-tui-recording.adoc[*Screenshots and demo recordings*] -- take screenshots, and record a session as a tape and convert it to a GIF
 
 == Actions Menu (F2)
 
@@ -284,188 +284,5 @@ same as if you'd run `camel tui` again in a new terminal.
 
 == Recording Demos
 
-The TUI can record its sessions for demos and documentation. A session is scripted as a `.tape`
-file, in the format of https://github.com/charmbracelet/vhs[VHS], which the TUI plays and records
-to an https://asciinema.org/[Asciinema] `.cast` file. The `.cast` file then converts to an
-animated GIF.
-
-=== Live Recording
-
-Use the *F2* actions menu and select *Start Tape Recording* to start recording your session
-as a `.tape` file. Select *Stop Tape Recording* to stop. The tape captures your keystrokes
-with timing, producing a script that can be played back with `--record` (see below), edited,
-or converted to an animated GIF.
-
-=== Scripted Recording
-
-Use the `--record` flag to play a `.tape` file in the TUI and record what happens on screen:
-
-[source,bash]
-----
-camel tui orders --record=demo.tape
-----
-
-The `.cast` file is written next to the tape, with the `.tape` suffix replaced by `.cast`.
-Recording is headless: the TUI is driven entirely by the tape rather than by your terminal,
-so no keyboard input is read and nothing is drawn on screen. The integrations are the ones
-running on your machine, as with a plain `camel tui`, so start them before recording, and
-name the integration to select it from the start (`orders` above).
-
-The tape is played by the TUI itself: the keys go to the TUI as if typed, and on top of the
-VHS commands there are commands for the TUI, such as showing a caption, highlighting text on the
-screen, or switching tab by name. When the tape ends, the TUI quits and the recording is saved.
-Problems in the tape, such as an unknown command or a `Wait` that timed out, are printed as
-`Tape: ...` warnings, and the rest of the tape still plays.
-
-The recorded terminal is 200x50 by default, which is wider than a documentation page can
-display. Use `--record-size` to record at a size that fits, and `--record-fps` or
-`--record-duration` to control the capture rate and the cut-off:
-
-[source,bash]
-----
-camel tui orders --record=demo.tape --record-size=120x32 --record-duration=60000
-----
-
-`--record-duration` is in milliseconds and stops the recording even when the tape is still
-playing, so give a long tape enough time.
-
-`--record` cannot be combined with `--web`. Recording drives a headless TUI from the tape, and
-the recording configuration applies to the whole process, so every browser session would be
-recorded into the same `.cast` file. Camel rejects the combination with an error instead.
-
-==== Tape commands
-
-A tape has one command per line. Lines starting with `#` are comments. Durations are written
-as `500ms`, `2s` or `1.5s`; a bare number is seconds. Text is in double quotes, where `\n` is
-a new line and `\"` a quote. Most commands take a timing as `Command@duration`.
-
-[cols="2,5",options="header"]
-|===
-| Command | Description
-
-| `Enter`, `Tab`, `Escape`, `Backspace`, `Delete`, `Insert`, `Space`, `Up`, `Down`, `Left`, `Right`, `Home`, `End`, `PageUp`, `PageDown`, `F1` .. `F12`
-| Presses the key. A count repeats it (`Down 3`), and `@` sets the gap between the presses
-(`Down@300ms 3`, default 50ms).
-
-| `Ctrl+<key>`, `Alt+<key>`, `Shift+<key>`
-| Presses the key with the modifiers, which can be combined (`Ctrl+Shift+Up`). The key is a
-key name or a single character: `Ctrl+t`, `Shift+F8`, `Shift+Tab`.
-
-| `Type "text"`
-| Types the text, one character at a time, 50ms apart. `Type@100ms "text"` types slower.
-A `\n` in the text presses *Enter*, and `\t` presses *Tab*. A single letter
-key such as `q` is typed with `Type "q"`.
-
-| `Sleep <duration>`
-| Pauses the tape, so the viewer can read the screen.
-
-| `Wait /regex/`
-| Waits until a line on the screen matches the regular expression, up to 15 seconds
-(`Wait@30s /orders/` waits longer). `Wait+Screen /regex/` matches the whole screen, with the
-lines separated by new lines, instead of each line. Use a `Wait` after a key that starts something
-slow, rather than guessing a `Sleep`.
-
-| `Screenshot`
-| Saves a screenshot of the screen, as the *F2* actions menu does.
-
-| `Source other.tape`
-| Plays the commands of another tape, relative to this one. Useful for a common opening.
-
-| `Caption "text"`
-| Shows a caption on the screen with a typewriter animation, which stays until a key is pressed.
-`Caption@4s "text"` closes it after 4 seconds, and then keys go to the TUI while it shows.
-Use `\n` to break lines.
-
-| `Highlight "text"`
-| Highlights the first place on the screen showing the text, such as a key in the footer or a
-node in the diagram. `Highlight@3s "text"` removes it after 3 seconds. Several highlights can be on
-the screen at the same time.
-
-| `ClearDrawing`
-| Removes the highlights.
-
-| `Tab "name"`
-| Switches to the tab, such as `Tab "Log"` or `Tab "Diagram"`, without pressing its number key.
-`Tab` alone, or with a count such as `Tab 2`, presses the *Tab* key.
-
-| `Integration "name"`
-| Selects the integration by its name or PID.
-
-| `Action "name"`
-| Runs an entry of the *F2* actions menu by its name, such as `show-keystrokes`, `reset-stats`
-or `next-theme`, or by its menu label.
-
-| `Theme "name"`
-| Switches the theme, such as `Theme "dracula"`.
-|===
-
-The `Set`, `Output` and `Require` commands of VHS are skipped: the recording takes its size and
-file from the `--record` options. `Hide` and `Show` are not supported, as everything the TUI
-shows is recorded.
-
-==== Writing a tape
-
-The tape below opens the Diagram tab of the `orders` integration, explains the screen with
-captions and a highlight, and asks the AI panel a question. Every step that depends on the TUI
-being ready waits for it on the screen first, so the tape plays the same on a slow machine:
-
-[source,text]
-----
-# wait for the integration to be discovered
-Wait@30s /orders/
-Caption@3s "The Camel TUI tape player"
-Sleep 3s
-
-Tab "Diagram"
-Wait /Topology/
-Sleep 1s
-Highlight@3s "orders"
-Caption@3s "Highlight finds text on the screen"
-Sleep 3s
-
-# the AI panel
-F8
-Wait /Ask a question/
-Type@80ms "hello"
-Sleep 1500ms
-F8
-Sleep 1s
-----
-
-Recorded with `camel tui orders --record=demo.tape --record-size=120x32` and converted with `agg`, it plays as:
-
-image::jbang/camel-tui-tape-player.gif[The example tape played: captions, a highlight on the Diagram tab, and a question typed in the AI panel]
-
-A few tips for a tape that reads well:
-
-* Start with a `Wait` for something the first screen shows, as the TUI needs a moment to find the
-  running integrations.
-* After each `Caption@<n>s`, `Sleep` for as long, or the next keys play while the caption is still
-  being typed.
-* Pair a `Highlight` with a `Caption` that says what the viewer looks at, and highlight a key
-  in the footer before pressing it, such as `Highlight@2s "Shift+F8"` followed by `Shift+F8`.
-* Use `Action "show-keystrokes"` at the start to show each key press at the bottom of the screen.
-* Record at the size the page shows, such as `--record-size=120x32`, so text is not scaled down.
-
-TIP: An AI agent can write and run the tape itself: the commands for the TUI are the same as the
-xref:camel-jbang-tui-ai-agents.adoc[MCP tools] of the TUI (`tui_show_caption`, `tui_locate` with
-`tui_draw_shape`, `tui_navigate`, `tui_action` and `tui_set_theme`), and `tui_get_screen` tells what
-text to `Wait` for. Run the tape, read the `Tape:` warnings, fix the tape, and run it again.
-
-=== Converting to GIF
-
-Convert the `.cast` recording with https://github.com/asciinema/agg[agg]:
-
-[source,bash]
-----
-agg demo.cast demo.gif
-agg --speed 1.5 --font-size 14 --last-frame-duration 3 demo.cast demo.gif
-----
-
-The `--speed` option plays the recording faster, and `--idle-time-limit` caps every pause at that many
-seconds (5 by default), so raise it when a pause is there for the viewer to read a caption.
-
-A tape that only uses VHS commands can also be turned into a GIF with
-https://github.com/charmbracelet/vhs[VHS] directly (`vhs demo.tape`), which runs the TUI in a
-terminal of its own. The commands for the TUI, such as `Caption`, `Highlight` and `Tab`, work
-with `--record` only.
+Screenshots, captions for a live demo, and recording a demo as an animated GIF have a page of their own:
+xref:camel-jbang-tui-recording.adoc[Camel TUI Screenshots and Demo Recordings].
