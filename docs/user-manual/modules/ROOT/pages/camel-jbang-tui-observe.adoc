@@ -461,3 +461,20 @@ An open sample popup accepts `sample` for the complete exchange JSON, `sample.bo
 and `sample.headers` or `sample.variables` for JSON objects. Use the complete `sample` field for a
 structured body. Fields cannot be edited while their evaluation is pending. Edits remain visible in
 the TUI and use the same validation as manual input; send *Ctrl+r* explicitly to evaluate.
+
+
+=== Semantic audit history
+
+The *Audit* view in the Semantic tab browses retained evaluations and explicit route
+policy decisions. Configure capture in the semantic DSL. Auditing works without a TUI
+connection and is independent of OpenTelemetry.
+
+Use `/` for exact `field=value` filters (`category`, `action`, `expert`, `routeId`,
+`namespace`, `correlationId`, `since`), `n` for older records, `g` for the latest page and `r` to refresh.
+Select a record and use `Tab` to focus its inspector, then use the arrows to scroll details and linked evidence. The view reports
+evictions and delivery failures; the built-in memory backend is recent history, not
+persistent storage. The read-only `tui_get_audit` MCP tool exposes the same screen,
+including filters, selected evidence and backend health, without running an expert.
+
+The audit MCP tool changes the visible tab/view, filters, page and selection while reading integration data.
+`r` refreshes the current audit page; `g` returns to the newest page. Repeated refreshes are coalesced.

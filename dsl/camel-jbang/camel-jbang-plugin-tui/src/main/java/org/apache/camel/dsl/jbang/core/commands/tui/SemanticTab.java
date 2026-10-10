@@ -52,12 +52,13 @@ import org.apache.camel.util.json.JsonObject;
 import static org.apache.camel.dsl.jbang.core.commands.tui.SemanticDetails.text;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-/** Three views of the same published semantic definitions and expert contracts. */
+/** Semantic definitions, expert contracts, relationships and retained audit evidence. */
 class SemanticTab extends AbstractTableTab {
     private enum View {
         DEFINITIONS("Definitions"),
         EXPERTS("Experts"),
-        RELATIONSHIPS("Relationships");
+        RELATIONSHIPS("Relationships"),
+        AUDIT("Audit");
 
         final String label;
 
@@ -73,6 +74,7 @@ class SemanticTab extends AbstractTableTab {
         PLAYGROUND
     }
 
+    private final SemanticAuditView audit;
     private JsonObject data;
     private CompletableFuture<JsonObject> pending;
     private String pid;
@@ -104,6 +106,7 @@ class SemanticTab extends AbstractTableTab {
 
     SemanticTab(MonitorContext ctx) {
         super(ctx);
+        audit = new SemanticAuditView(ctx);
     }
 
     @Override
@@ -113,6 +116,7 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public void onIntegrationChanged() {
+        audit.reset();
         data = null;
         pending = null;
         pid = null;
@@ -137,6 +141,10 @@ class SemanticTab extends AbstractTableTab {
     }
 
     private void load() {
+        if (view == View.AUDIT) {
+            audit.load();
+            return;
+        }
         IntegrationInfo info = ctx.findSelectedIntegration();
         String selected = info == null ? null : info.phantom ? info.linkedPid : info.pid;
         if (selected == null && data != null && Objects.equals(selectionId, ctx.selectedPid)) {
@@ -189,6 +197,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean ensureDataLoaded() {
+        if (view == View.AUDIT) {
+            return audit.ensureLoaded();
+        }
         refresh();
         if (data == null && pending == null && error == null) {
             load();
@@ -198,6 +209,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public String dataLoadError() {
+        if (view == View.AUDIT) {
+            return audit.error();
+        }
         refresh();
         return pending != null ? null : error != null ? error : rows().isEmpty() ? "No semantic definitions or experts." : null;
     }
@@ -347,6 +361,12 @@ class SemanticTab extends AbstractTableTab {
 
     private void view(View selected) {
         view = selected;
+        if (view == View.AUDIT) {
+            sample = null;
+            filterInput = null;
+            audit.ensureLoaded();
+            return;
+        }
         filter = "";
         focus = Focus.LIST;
         tableState.setOffset(0);
@@ -364,10 +384,14 @@ class SemanticTab extends AbstractTableTab {
     }
 
     boolean isInputActive() {
-        return filterInput != null || sample != null || focus == Focus.PLAYGROUND;
+        return view == View.AUDIT ? audit.inputActive() : filterInput != null || sample != null || focus == Focus.PLAYGROUND;
     }
 
     void handlePaste(String text) {
+        if (view == View.AUDIT) {
+            audit.paste(text);
+            return;
+        }
         if (sample != null) {
             sample.handlePaste(text);
         } else if (focus == Focus.PLAYGROUND && playground != null) {
@@ -384,6 +408,13 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent key) {
+        if (view == View.AUDIT) {
+            if (!audit.inputActive() && key.isChar('v')) {
+                view(View.DEFINITIONS);
+                return true;
+            }
+            return audit.key(key);
+        }
         refresh();
         if (sample != null) {
             sample.handleKeyEvent(key);
@@ -501,6 +532,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean handleEscape() {
+        if (view == View.AUDIT) {
+            return audit.escape();
+        }
         if (focus == Focus.PLAYGROUND) {
             focus = Focus.LIST;
             return true;
@@ -531,6 +565,10 @@ class SemanticTab extends AbstractTableTab {
     }
 
     private void navigate(int delta) {
+        if (view == View.AUDIT) {
+            audit.navigate(delta);
+            return;
+        }
         if (sample != null) {
             sample.handleKeyEvent(KeyEvent.ofKey(delta < 0 ? KeyCode.UP : KeyCode.DOWN));
         } else if (focus == Focus.PLAYGROUND && playground != null) {
@@ -557,6 +595,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent event, Rect area) {
+        if (view == View.AUDIT) {
+            return false;
+        }
         if (sample != null) {
             sample.handleMouseEvent(event);
             return true;
@@ -619,6 +660,10 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        if (view == View.AUDIT) {
+            audit.render(frame, area);
+            return;
+        }
         if (ctx.findSelectedIntegration() == null && data != null && Objects.equals(selectionId, ctx.selectedPid)) {
             // Keep the draft visible while this application's connection is lost.
             renderContent(frame, area, null);
@@ -820,6 +865,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean setFilter(String value) {
+        if (view == View.AUDIT) {
+            return audit.setFilter(value);
+        }
         filter = value == null ? "" : value.strip();
         restoreSelection();
         relationships.reset();
@@ -828,6 +876,10 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
+        if (view == View.AUDIT) {
+            audit.footer(spans);
+            return;
+        }
         if (sample != null) {
             sample.renderFooter(spans);
         } else if (focus == Focus.PLAYGROUND && playground != null) {
@@ -866,11 +918,14 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public Boolean isDetailFocused() {
-        return focus == Focus.DETAIL;
+        return view == View.AUDIT ? audit.detailFocused() : focus == Focus.DETAIL;
     }
 
     @Override
     public SelectionContext getSelectionContext() {
+        if (view == View.AUDIT) {
+            return audit.selectionContext();
+        }
         List<JsonObject> visible = focus == Focus.USES ? uses() : rows();
         List<String> names
                 = visible.stream().map(row -> text(row, view == View.EXPERTS && focus != Focus.USES ? "reference" : "name"))
@@ -881,6 +936,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public JsonObject getTableDataAsJson() {
+        if (view == View.AUDIT) {
+            return audit.snapshot();
+        }
         refresh();
         if (data == null) {
             return null;
@@ -906,6 +964,13 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean setInputValue(String field, String value) {
+        if ("audit.view".equals(field)) {
+            view(View.AUDIT);
+            return true;
+        }
+        if (view == View.AUDIT) {
+            return audit.setInput(field, value);
+        }
         refresh();
         if (sample != null) {
             return sample.setInputValue(field, value);

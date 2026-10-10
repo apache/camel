@@ -395,11 +395,21 @@ final class TuiToolDefinitions {
                                 "Tab name to filter (e.g. 'Classpath'). If omitted, uses the active tab.")),
                 List.of("filter"))));
         tools.add(toToolDef(toolDef(
+                "tui_get_audit",
+                "Open the Semantic Audit screen and read retained history, selected evidence and backend health. "
+                                 + "Read-only: never evaluates input or replays an expert. Optional filters use field=value pairs "
+                                 + "(category, action, expert, routeId, namespace, correlationId, since).",
+                Map.of("filter", propDef("string", "Filter expression; empty clears filters"),
+                        "page", propDef("string", "latest or older"),
+                        "eventId", propDef("string", "Inspect an event and linked evidence")),
+                List.of())));
+        tools.add(toToolDef(toolDef(
                 "tui_set_input",
                 "Edit visible fields without submitting. SQL Query: sql. HTTP: path, body, method, content-type, accept. "
                                  + "Spans/Classpath: filter. Semantic Experts: input, inputMode (text/json), "
                                  + "parameter.<name> (scalars as text, maps/lists as JSON). Open Semantic sample: "
                                  + "sample (exchange JSON), sample.body (text), sample.headers/sample.variables (JSON objects). "
+                                 + "Semantic Audit: audit.view, audit.filter, audit.page (latest/older), audit.eventId. "
                                  + "Read drafts/results with tui_get_table; send Ctrl+r explicitly to evaluate Semantic input.",
                 Map.of("field", propDef("string",
                         "Field name (see supported fields above)"),

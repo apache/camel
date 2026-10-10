@@ -231,17 +231,18 @@ class TuiToolRegistry {
 
     /** The TUI's own read-only tools; the shared tools add those flagged read-only in the registry. */
     private static final Set<String> READ_ONLY_TUI_TOOLS = Set.of(
-            "tui_get_ai_log", "tui_get_diagram", "tui_get_events", "tui_get_history", "tui_get_mcp_log",
+            "tui_get_audit", "tui_get_ai_log", "tui_get_diagram", "tui_get_events", "tui_get_history", "tui_get_mcp_log",
             "tui_get_ollama", "tui_get_options", "tui_get_processor_detail", "tui_get_readme", "tui_get_screen",
             "tui_get_spans", "tui_http_endpoints",
             "tui_get_state", "tui_get_status", "tui_get_table", "tui_get_themes", "tui_get_topology",
             "tui_list_examples", "tui_locate", "tui_wait_for_idle");
 
     /**
-     * Tools that only return information and never change the TUI, the integration or its data. The ACP permission
-     * handler approves calls to these without asking; anything else, including camel_control, tui_send_message and
-     * tui_execute_sql, is put in front of the user. camel_eval_expression is read-only because it evaluates an
-     * expression against a scratch exchange and sends nothing through a route.
+     * Tools that inspect information without executing application actions or editing data. An inspection may select
+     * its TUI view, filters or record. The ACP permission handler approves calls to these without asking; anything
+     * else, including camel_control, tui_send_message and tui_execute_sql, is put in front of the user.
+     * camel_eval_expression is read-only because it evaluates an expression against a scratch exchange and sends
+     * nothing through a route.
      */
     static final Set<String> READ_ONLY_TOOLS = Stream.concat(
             READ_ONLY_TUI_TOOLS.stream(),
@@ -301,6 +302,7 @@ class TuiToolRegistry {
             case "tui_draw" -> callDraw(args);
             case "tui_draw_clear" -> callDrawClear();
             case "tui_get_table" -> callGetTable(args);
+            case "tui_get_audit" -> callGetAudit(args);
             case "tui_action" -> callAction(args);
             case "tui_get_themes" -> callGetThemes();
             case "tui_set_theme" -> callSetTheme(args);
@@ -990,6 +992,27 @@ class TuiToolRegistry {
         result.put("currentFrame", anim.currentFrame.get());
         result.put("totalFrames", anim.totalFrames);
         return Jsoner.serialize(result);
+    }
+
+    private String callGetAudit(Map<String, Object> args) {
+        if (!facade.setTabInputValue("Semantic", "audit.view", "")) {
+            return "Error: Semantic Audit is unavailable";
+        }
+        if (args.get("filter") instanceof String filter && !facade.setTabInputValue(null, "audit.filter", filter)) {
+            return "Error: invalid audit filter; use field=value pairs";
+        }
+        if (args.get("page") instanceof String page && !facade.setTabInputValue(null, "audit.page", page)) {
+            return "Error: audit page is unavailable; use latest or older";
+        }
+        // Collect the current page state; pending queries are reported to the client.
+        JsonObject data = facade.getTableData(null);
+        if (args.get("eventId") instanceof String id) {
+            if (!facade.setTabInputValue(null, "audit.eventId", id)) {
+                return "Error: invalid audit event ID";
+            }
+            data = facade.getTableData(null);
+        }
+        return data == null ? facade.tableDataError(null) : Jsoner.serialize(data);
     }
 
     private String callGetTable(Map<String, Object> args) {

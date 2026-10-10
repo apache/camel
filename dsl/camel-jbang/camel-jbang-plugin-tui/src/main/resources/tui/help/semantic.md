@@ -16,7 +16,7 @@ The linked-definition highlight follows a matching operation, or clears when no 
 
 ## Keys
 
-- `v` — cycle Definitions, Experts and Relationships
+- `v` — cycle Definitions, Experts, Relationships and Audit
 - `Tab` — focus the next pane
 - `Up/Down`, `PgUp/PgDn` — navigate the focused pane
 - `Home/End` — first/last declaration
@@ -92,3 +92,35 @@ with `input`, `inputMode` (`text`/`json`), or `parameter.<name>` in Experts. Map
 use JSON and populate the normal controls. For an open sample popup, use `sample` (exchange
 JSON), `sample.body` (text), or `sample.headers` / `sample.variables` (JSON objects).
 Reading or editing never runs the expert; Ctrl+r explicitly evaluates the draft.
+
+
+## Audit history
+
+Choose **Audit** with `v` to browse retained evaluation evidence and explicit route
+decisions. Capture runs in the application while the TUI is disconnected. Audit settings
+come from the semantic DSL; expert overrides take precedence over the master default.
+Auditing and OpenTelemetry are independent.
+
+- `/` edits exact `field=value` filters, separated by spaces. Available fields are
+  `category`, `action`, `expert`, `routeId`, `namespace`, `correlationId` and `since`.
+  Example: `expert=security since=2026-10-09T12:00:00Z`.
+- Up/Down select a record. `Tab` or Enter focuses the inspector; arrows scroll its details.
+- `n` loads older records; `g` returns to the latest page; `r` refreshes the current page.
+- Esc leaves details or clears the current filter.
+
+Wide terminals show timestamp, action, category, operation, target, namespace, reason and
+correlation columns. Smaller terminals move fields into the inspector. A route action is
+only present for an explicit decision. Linked evaluations retain their captured result
+meaning; missing/evicted evidence is shown as unavailable. Backend status shows the master
+and expert settings, reader, evictions, drops, errors and whether a Camel OpenTelemetry
+tracer is active. This does not assert that an external collector received a trace.
+
+The MCP tool **`tui_get_audit`** opens this screen. Optional arguments are `filter`, `page`
+(`latest` or `older`) and `eventId`. It returns the visible rows, selected record and linked
+evidence, filters, backend status and loading/error state. When `pending` is true, read
+again with `tui_get_table`. The tool never runs inference or replays a record.
+Generic `tui_set_input` also accepts `audit.view`, `audit.filter`, `audit.page` and
+`audit.eventId` on Semantic. Inspection does not change the capture configuration.
+
+Audit refreshes are coalesced while a query is pending; changed filters use the latest submitted value.
+The MCP audit tool changes the visible tab/view, filters and selection, but never changes integration data or capture settings.
