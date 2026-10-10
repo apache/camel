@@ -1,7 +1,7 @@
 = Semantic audit and observation proposal
 
-Status: proposed for review in CAMEL-25499 / PR #27649. This document describes the implementation being
-reviewed; it does not assert prior upstream design agreement.
+Status: the base implementation was merged in CAMEL-25499 / PR #27649. The input capture extension
+described below is proposed as a follow-up; it does not assert prior upstream design agreement.
 
 == Scope and related work
 
@@ -54,3 +54,21 @@ lookup. The TUI maintains its own browsing state. Its audit MCP tool queries the
 changing the screen, and is added to AI sessions only when the selected integration exposes audit history.
 The memory reader filters a consistent snapshot outside its append lock and binds cursors to a canonical
 SHA-256 query fingerprint. Backend failures expose a stable error code without backend messages.
+
+== Opt-in input capture
+
+The follow-up retains the selected evaluation state only when that expert explicitly enables
+`input.enabled`; auditing alone never enables input retention. Capture applies to direct, named,
+batch and console evaluations. A decision refers to its evaluation evidence rather than duplicating
+submitted input. Input is excluded from observer callbacks even when audit capture is enabled.
+
+The snapshot is taken before provider validation or execution and bounded by `maxChars` (4096 by
+default), depth and node count. Unsupported or oversized state is omitted with a stable reason,
+without truncation or arbitrary object conversion. An optional `SemanticAuditInputRedactor` registry
+bean receives the immutable snapshot; its output is bounded again. Redaction failure omits input
+without changing the evaluation result or retaining exception messages.
+
+Captured input follows the existing sink/reader contract and backend retention policy, including log
+output when the log sink is configured. It is available through the console, CLI, TUI and MCP. There
+is no separate input repository or telemetry payload path. Input settings use the same DSL authority
+and restart requirement as the other audit settings; existing records without input remain readable.

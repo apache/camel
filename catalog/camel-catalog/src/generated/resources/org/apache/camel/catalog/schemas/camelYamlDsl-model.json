@@ -20573,6 +20573,22 @@
         "name" : "enabled",
         "type" : "boolean",
         "required" : true
+      }, {
+        "name" : "input",
+        "type" : "object",
+        "ref" : "semanticDefinitionDeserializer$AuditInputSchema"
+      } ]
+    },
+    "semanticDefinitionDeserializer$AuditInputSchema" : {
+      "children" : [ {
+        "name" : "enabled",
+        "type" : "boolean"
+      }, {
+        "name" : "maxChars",
+        "type" : "integer"
+      }, {
+        "name" : "redactor",
+        "type" : "string"
       } ]
     },
     "semanticDefinitionDeserializer$AuditSchema" : {

@@ -112,8 +112,9 @@ class SemanticEvaluationTest extends YamlTestSupport {
         }
     }
 
-    @Test
-    void auditSchemaAndDecisionBeanRecordOnlyTheEnabledExpert() throws Exception {
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void auditSchemaAndDecisionBeanRecordOnlyTheEnabledExpert(boolean captureInput) throws Exception {
         loadRoutes("""
                 - beans:
                   - name: security
@@ -132,8 +133,8 @@ class SemanticEvaluationTest extends YamlTestSupport {
                     audit:
                       enabled: true
                       experts:
-                        security: {enabled: true}
-                        decisions: {enabled: false}
+                        security: {enabled: true, input: {enabled: %s, maxChars: 4096}}
+                        decisions: {enabled: false, input: {enabled: true}}
                       sinks: [memory]
                       reader: memory
                       capacity: 10
@@ -161,7 +162,7 @@ class SemanticEvaluationTest extends YamlTestSupport {
                                   - process:
                                       ref: recordBlocked
                                   - to: mock:blocked
-                """);
+                """.formatted(captureInput));
         context.start();
         context.getEndpoint("mock:blocked", MockEndpoint.class).expectedMessageCount(1);
         try (var template = context.createProducerTemplate()) {
@@ -176,6 +177,11 @@ class SemanticEvaluationTest extends YamlTestSupport {
         assertThat(records.get(0).text("action")).isEqualTo("block");
         assertThat(records.get(0).toMap().get("evidence")).isEqualTo(List.of(records.get(1).getEventId()));
         assertThat(records.get(1).getExpert()).isEqualTo("security");
+        if (captureInput) {
+            assertThat(records.get(1).toMap()).containsEntry("input", "injection attempt");
+        } else {
+            assertThat(records.get(1).toMap()).doesNotContainKey("input");
+        }
     }
 
     private static String declarations(String state) {

@@ -153,6 +153,7 @@ public class SemanticLanguage extends LanguageSupport {
             invocation = audit.begin(null, null, evaluation, operation, resolved.reference, resolved.capabilities.getProvider(),
                     null, request);
             reason = "invalid_input";
+            invocation.captureInput(input);
             operation.validateInput(input);
             resolved.provider.validateInput(evaluation, input);
             if (Thread.currentThread().isInterrupted()) {
@@ -167,6 +168,7 @@ public class SemanticLanguage extends LanguageSupport {
         } catch (Exception | AssertionError failure) {
             if (invocation == null) {
                 invocation = audit.begin(null, null, evaluation, null, auditExpert(evaluation), null, null, request);
+                invocation.captureInput(input);
             }
             invocation.complete("failed", failure instanceof InterruptedException ? "interrupted" : reason, null);
             if (failure instanceof InterruptedException) {
@@ -720,6 +722,7 @@ public class SemanticLanguage extends LanguageSupport {
                 active.addAll(invocations.values());
                 failureReason = "invalid_input";
                 Object state = current.state.evaluate(exchange, Object.class);
+                invocations.values().forEach(invocation -> invocation.captureInput(state));
                 // A state selector can itself evaluate another semantic expression.
                 exchange.removeProperty(RESULT);
                 exchange.removeProperty(RESULTS);

@@ -31,6 +31,7 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.dsl.yaml.common.exception.InvalidNodeTypeException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.semantic.SemanticAuditConfiguration;
+import org.apache.camel.semantic.SemanticAuditInputConfiguration;
 import org.apache.camel.semantic.SemanticEvaluation;
 import org.apache.camel.semantic.SemanticEvaluationBuilder;
 import org.apache.camel.semantic.SemanticEvaluations;
@@ -181,13 +182,26 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
             throw new YamlDeserializationException(node, "Unknown semantic audit option");
         }
         Map<String, Boolean> experts = new LinkedHashMap<>();
+        Map<String, SemanticAuditInputConfiguration> inputs = new LinkedHashMap<>();
         if (values.containsKey("experts")) {
             fields(values.get("experts"), "audit experts").forEach((name, expert) -> {
                 Map<String, Node> settings = fields(expert, "audit expert");
-                if (!settings.keySet().equals(Set.of("enabled"))) {
-                    throw new YamlDeserializationException(expert, "Audit expert requires only enabled");
+                if (!settings.containsKey("enabled") || !Set.of("enabled", "input").containsAll(settings.keySet())) {
+                    throw new YamlDeserializationException(expert, "Audit expert requires enabled and optional input");
                 }
                 experts.put(name, auditBoolean(context, settings.get("enabled")));
+                if (settings.containsKey("input")) {
+                    Map<String, Node> input = fields(settings.get("input"), "audit input");
+                    if (!Set.of("enabled", "maxChars", "redactor").containsAll(input.keySet())) {
+                        throw new YamlDeserializationException(settings.get("input"), "Unknown audit input option");
+                    }
+                    inputs.put(name, new SemanticAuditInputConfiguration(
+                            input.containsKey("enabled") && auditBoolean(context, input.get("enabled")),
+                            input.containsKey("maxChars")
+                                    ? auditCapacity(context, input, "maxChars")
+                                    : SemanticAuditInputConfiguration.DEFAULT_MAX_CHARS,
+                            auditText(context, input, "redactor", null)));
+                }
             });
         }
         List<String> sinks = values.containsKey("sinks")
@@ -197,7 +211,7 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
         return new SemanticAuditConfiguration(
                 values.containsKey("enabled") && auditBoolean(context, values.get("enabled")),
                 experts, sinks, auditText(context, values, "reader", "memory"),
-                auditCapacity(context, values, "capacity"), auditCapacity(context, values, "queueCapacity"));
+                auditCapacity(context, values, "capacity"), auditCapacity(context, values, "queueCapacity"), inputs);
     }
 
     private static int auditCapacity(CamelContext context, Map<String, Node> values, String key) {
@@ -265,8 +279,20 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
     public static class AuditSchema {
     }
 
-    @YamlType(properties = { @YamlProperty(name = "enabled", type = "boolean", required = true) })
+    @YamlType(properties = {
+            @YamlProperty(name = "enabled", type = "boolean", required = true),
+            @YamlProperty(name = "input",
+                          type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditInputSchema")
+    })
     public static class AuditExpertSchema {
+    }
+
+    @YamlType(properties = {
+            @YamlProperty(name = "enabled", type = "boolean"),
+            @YamlProperty(name = "maxChars", type = "integer"),
+            @YamlProperty(name = "redactor", type = "string")
+    })
+    public static class AuditInputSchema {
     }
 
     private static SemanticEvaluation readEvaluation(
