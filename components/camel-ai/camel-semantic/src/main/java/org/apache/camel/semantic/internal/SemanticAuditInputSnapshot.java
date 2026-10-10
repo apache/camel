@@ -59,6 +59,7 @@ public final class SemanticAuditInputSnapshot {
             text(value.toString());
             return value;
         }
+        // Collection sizes reject obvious overflows; recursive calls enforce the shared node budget.
         if (value instanceof List<?> list && list.size() <= nodes) {
             List<Object> copy = new ArrayList<>();
             for (Object item : list) {

@@ -1217,6 +1217,9 @@ The equivalent XML expert entry is:
 ----
 
 Input settings follow the same restart requirement as the other audit settings.
+Redactor bindings are published together at startup and discarded on stop. Capture before
+configured redactors are ready omits input with `inputOmitted: redaction_failed`. Each evaluation
+captures its input at most once, including when the first attempt omits it.
 Captured input goes to every configured audit sink, including `log` when selected, and is
 available through the audit reader, CLI, TUI and MCP. Existing backend retention and access
 controls therefore also apply to input. No automatic redaction is applied without a configured

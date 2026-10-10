@@ -66,7 +66,7 @@ public final class SemanticAuditService extends ServiceSupport {
     private final AtomicLong observerErrors = new AtomicLong();
     private final Map<String, AtomicLong> sinkErrors = new LinkedHashMap<>();
     private final Map<String, SemanticAuditSink> sinks = new LinkedHashMap<>();
-    private final Map<String, SemanticAuditInputRedactor> redactors = new LinkedHashMap<>();
+    private volatile Map<String, SemanticAuditInputRedactor> redactors = Map.of();
     private volatile List<SemanticObserver> observers = List.of();
     private volatile ExecutorService executor;
     private MemorySemanticAuditStore memory;
@@ -151,7 +151,7 @@ public final class SemanticAuditService extends ServiceSupport {
         if (memory == null || memory.getCapacity() != configuration.getCapacity()) {
             memory = new MemorySemanticAuditStore(configuration.getCapacity());
         }
-        redactors.clear();
+        Map<String, SemanticAuditInputRedactor> resolvedRedactors = new LinkedHashMap<>();
         for (var entry : configuration.getInputs().entrySet()) {
             String name = entry.getValue().getRedactor();
             if (name != null) {
@@ -160,7 +160,7 @@ public final class SemanticAuditService extends ServiceSupport {
                 if (redactor == null) {
                     throw new IllegalArgumentException("Unknown semantic audit input redactor: " + name);
                 }
-                redactors.put(entry.getKey(), redactor);
+                resolvedRedactors.put(entry.getKey(), redactor);
             }
         }
         sinkErrors.clear();
@@ -194,6 +194,8 @@ public final class SemanticAuditService extends ServiceSupport {
             executor = new ThreadPoolBuilder(context).poolSize(1).maxPoolSize(1)
                     .maxQueueSize(configuration.getQueueCapacity()).rejectedPolicy(ThreadPoolRejectedPolicy.Abort)
                     .build(this, "SemanticAuditService");
+            // Publish all bindings together after startup succeeds.
+            redactors = Map.copyOf(resolvedRedactors);
         } catch (Exception e) {
             ServiceHelper.stopService(sinks.values());
             ServiceHelper.stopService(reader);
@@ -203,6 +205,7 @@ public final class SemanticAuditService extends ServiceSupport {
 
     @Override
     protected void doStop() throws Exception {
+        redactors = Map.of();
         ExecutorService current = executor;
         executor = null;
         if (current != null) {
@@ -381,6 +384,7 @@ public final class SemanticAuditService extends ServiceSupport {
         private final List<SemanticObserver.Observation> handles = new ArrayList<>();
         // Confined to the invocation thread; cancellation emits a separate request record.
         private boolean completed;
+        private boolean inputCaptured;
         private final Map<String, Object> inputFields = new LinkedHashMap<>();
 
         private Invocation(Map<String, Object> fields, boolean enabled) {
@@ -393,9 +397,10 @@ public final class SemanticAuditService extends ServiceSupport {
 
         /** Snapshot the effective selected state before a provider can mutate it. Observers never receive this data. */
         public void captureInput(Object input) {
-            if (fields == null || completed || inputFields.isEmpty()) {
+            if (fields == null || completed || inputCaptured || inputFields.isEmpty()) {
                 return;
             }
+            inputCaptured = true;
             SemanticAuditInputConfiguration policy = configuration.getInput((String) fields.get("expert"));
             SemanticAuditInputRedactor redactor = redactors.get(fields.get("expert"));
             inputFields.clear();
@@ -407,6 +412,7 @@ public final class SemanticAuditService extends ServiceSupport {
             try {
                 snapshot = SemanticAuditInputSnapshot.copy(input, policy.getMaxChars());
             } catch (Exception | AssertionError | LinkageError failure) {
+                // Isolate audit snapshot failures from evaluation; fatal VM errors still propagate.
                 inputFields.put("inputOmitted", "snapshot_limit_or_unsupported_type");
                 return;
             }
@@ -419,6 +425,7 @@ public final class SemanticAuditService extends ServiceSupport {
                     }
                     snapshot = SemanticAuditInputSnapshot.copy(snapshot, policy.getMaxChars());
                 } catch (Exception | AssertionError | LinkageError failure) {
+                    // A failing redactor omits input without affecting evaluation or retaining raw data.
                     inputFields.put("inputOmitted", "redaction_failed");
                     return;
                 }
