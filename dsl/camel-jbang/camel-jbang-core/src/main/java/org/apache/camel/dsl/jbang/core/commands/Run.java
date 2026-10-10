@@ -311,6 +311,9 @@ public class Run extends CamelCommand {
                           " (ex. /path/to/file.properties,/path/to/other.properties")
     public String propertiesFiles;
 
+    // the profile properties files that are loaded (application.properties and application-<profile>.properties)
+    final Set<Path> profilePropertiesFiles = new HashSet<>();
+
     @Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)")
     public String[] property;
 
@@ -1355,6 +1358,9 @@ public class Run extends CamelCommand {
         // Add runtime-specific dependencies
         addRuntimeSpecificDependenciesFromProperties(profileProperties);
 
+        // and the dependencies of the properties files given on the command line, such as camel/application.properties
+        addDependenciesFromPropertiesFiles(propertiesFiles);
+
         // Add plugin dependencies
         Map<String, Plugin> activePlugins = Collections.emptyMap();
         if (!skipPlugins) {
@@ -1508,6 +1514,42 @@ public class Run extends CamelCommand {
 
         if (runtimeSpecificDeps != null && !runtimeSpecificDeps.isEmpty()) {
             addDependencies(runtimeSpecificDeps.split(","));
+        }
+    }
+
+    /**
+     * Adds the dependencies ({@code camel.jbang.dependencies} and the runtime-specific variants) declared in the local
+     * properties files given on the command line or with --properties, such as {@code camel/application.properties} run
+     * from the parent directory. The profile properties files (application.properties in the current directory or the
+     * source dir) are skipped, as their dependencies are already added.
+     */
+    void addDependenciesFromPropertiesFiles(String locations) throws Exception {
+        if (ObjectHelper.isEmpty(locations)) {
+            return;
+        }
+        for (String location : locations.split(",")) {
+            location = location.trim();
+            if (location.startsWith("file:")) {
+                location = location.substring(5);
+                if (location.startsWith("//")) {
+                    location = location.substring(2);
+                }
+            } else if (ResourceHelper.hasScheme(location) || location.startsWith("github:")
+                    || location.startsWith("gist:")) {
+                // only local files
+                continue;
+            }
+            if (location.isEmpty()) {
+                continue;
+            }
+            Path path = Paths.get(location).toAbsolutePath().normalize();
+            if (profilePropertiesFiles.contains(path) || !Files.isRegularFile(path)) {
+                continue;
+            }
+            Properties prop = new CamelCaseOrderedProperties();
+            RuntimeUtil.loadProperties(prop, path);
+            addDependencies(RuntimeUtil.getDependenciesAsArray(prop));
+            addRuntimeSpecificDependenciesFromProperties(prop);
         }
     }
 
@@ -2698,6 +2740,7 @@ public class Run extends CamelCommand {
     private Properties doLoadAndInitProfileProperties(Path profilePropertiesPath) throws Exception {
         Properties answer = null;
         if (Files.exists(profilePropertiesPath)) {
+            profilePropertiesFiles.add(profilePropertiesPath.toAbsolutePath().normalize());
             answer = loadProfilePropertiesFile(profilePropertiesPath);
             // logging level/color may be configured in the properties file
             loggingOptions.loggingLevel = answer.getProperty("loggingLevel", loggingOptions.loggingLevel);
