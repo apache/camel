@@ -184,7 +184,7 @@ by purpose:
   arrows, underlines, text labels), show captions with typewriter animation
 * *Present* -- take screenshots, record tape sessions, control demo pacing. To record a demo as a GIF,
   an agent can also write a `.tape` file using the same commands and play it with `camel tui --record`, see
-  xref:camel-jbang-tui-settings.adoc#_scripted_recording[Scripted Recording]
+  xref:camel-jbang-tui-recording.adoc#_scripted_recording[Scripted Recording]
 
 == Editing source files from an AI agent
 

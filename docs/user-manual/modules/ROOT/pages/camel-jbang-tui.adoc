@@ -33,8 +33,9 @@ image::jbang/camel-tui-overview.png[TUI Overview showing multiple routes]
   deep dives into Kafka, SQL, memory leaks, JFR and CVEs.
 * *Ask the AI* -- the xref:camel-jbang-tui-ai.adoc[AI panel] (*F8*) with a hosted or a local model, and
   xref:camel-jbang-tui-ai-agents.adoc[AI coding agents] that see and drive the TUI over MCP and ACP.
-* *Make it yours* -- xref:camel-jbang-tui-settings.adoc[themes, settings], the embedded shell, browser access and demo
-  recording.
+* *Make it yours* -- xref:camel-jbang-tui-settings.adoc[themes, settings], the embedded shell and browser access.
+* *Show it* -- xref:camel-jbang-tui-recording.adoc[screenshots, captions and demo recordings] as animated GIFs,
+  scripted as a tape that you or an AI agent writes.
 
 == Getting Started
 
@@ -118,7 +119,9 @@ probe, CVE audit, Kafka, SQL, memory leaks, JFR, catalog
 models, what a question costs, the Ollama tab
 | xref:camel-jbang-tui-ai-agents.adoc[AI Agents] | MCP and ACP: what an AI agent can see and do, edits you confirm
 | xref:camel-jbang-tui-settings.adoc[Actions, Settings and Themes] | The actions menu, embedded shell, themes, settings,
-browser access, recording demos
+browser access
+| xref:camel-jbang-tui-recording.adoc[Screenshots and Demo Recordings] | Screenshots, presenting, recording a demo from
+a tape and converting it to a GIF
 |===
 
 == Keyboard Shortcuts
@@ -182,7 +185,7 @@ See the xref:camel-jbang-tui-source-editor.adoc#_keyboard_shortcuts[keyboard sho
 |
 
 | `--record`
-| Play a `.tape` file in the TUI and record it to an Asciinema `.cast` file. See xref:camel-jbang-tui-settings.adoc#_scripted_recording[Scripted Recording] for the tape commands.
+| Play a `.tape` file in the TUI and record it to an Asciinema `.cast` file. See xref:camel-jbang-tui-recording.adoc#_scripted_recording[Scripted Recording] for the tape commands.
 |
 
 | `--record-size`
