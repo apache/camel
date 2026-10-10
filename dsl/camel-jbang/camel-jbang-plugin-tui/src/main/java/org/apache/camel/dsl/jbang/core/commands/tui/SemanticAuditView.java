@@ -58,7 +58,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 /** Audit browsing owns its state independently of live definitions and inference drafts. */
 final class SemanticAuditView {
     private static final Set<String> FILTERS
-            = Set.of("category", "action", "expert", "routeId", "namespace", "correlationId", "since");
+            = Set.of("category", "action", "expert", "routeId", "correlationId", "since");
     private final MonitorContext context;
     private final LongSupplier nanoTime;
     private long lastRefresh;
@@ -341,7 +341,7 @@ final class SemanticAuditView {
             for (String token : text.trim().split("\\s+")) {
                 String[] pair = token.split("=", 2);
                 if (pair.length != 2 || !FILTERS.contains(pair[0]) || pair[1].isBlank() || pair[1].length() > 256) {
-                    error = "Use field=value filters: category action expert routeId namespace correlationId since";
+                    error = "Use field=value filters: category action expert routeId correlationId since";
                     return false;
                 }
                 if ("since".equals(pair[0])) {
@@ -458,7 +458,7 @@ final class SemanticAuditView {
             }
             return true;
         }
-        for (var shortcut : Map.of('c', "category", 'a', "action", 'e', "expert", 'N', "namespace").entrySet()) {
+        for (var shortcut : Map.of('c', "category", 'a', "action", 'e', "expert").entrySet()) {
             if (key.isChar(shortcut.getKey())) {
                 chooseFilter(shortcut.getValue());
                 return true;
@@ -632,8 +632,8 @@ final class SemanticAuditView {
         lines.add(Line.empty());
         List<Span> query = new ArrayList<>();
         query.add(Span.styled("Filters: ", Theme.label()));
-        for (String field : List.of("category", "action", "expert", "namespace")) {
-            String shortcut = "namespace".equals(field) ? "N" : field.substring(0, 1);
+        for (String field : List.of("category", "action", "expert")) {
+            String shortcut = field.substring(0, 1);
             String label = Character.toUpperCase(field.charAt(0)) + field.substring(1);
             query.add(Span.raw(" ["));
             query.add(Span.styled(shortcut, Theme.label().underlined()));
@@ -670,7 +670,7 @@ final class SemanticAuditView {
             content.add(wide
                     ? Row.from(Cell.from(time(row, "HH:mm:ss.SSS")), action, Cell.from(text(row, "category")),
                             Cell.from(text(row, "operation")), Cell.from(text(row, "target")),
-                            Cell.from(text(row, "namespace")), reason, Cell.from(text(row, "correlationId")))
+                            reason, Cell.from(text(row, "correlationId")))
                     : Row.from(Cell.from(time(row, "HH:mm:ss.SSS")), action, Cell.from(text(row, "category")),
                             Cell.from(text(row, "expert")), reason));
         }
@@ -685,12 +685,12 @@ final class SemanticAuditView {
         } else {
             Table table = Table.builder().rows(content)
                     .header((wide
-                            ? Row.from("TIMESTAMP", "DECISION", "CATEGORY", "OPERATION", "TARGET", "NAMESPACE", "REASON CODE",
+                            ? Row.from("TIMESTAMP", "DECISION", "CATEGORY", "OPERATION", "TARGET", "REASON CODE",
                                     "CORRELATION ID")
                             : Row.from("TIMESTAMP", "DECISION", "CATEGORY", "EXPERT", "REASON CODE")).style(Theme.label()))
                     .widths(wide
                             ? List.of(Constraint.length(14), Constraint.length(9), Constraint.length(11), Constraint.length(13),
-                                    Constraint.percentage(15), Constraint.percentage(10), Constraint.fill(),
+                                    Constraint.percentage(15), Constraint.fill(),
                                     Constraint.length(16))
                             : List.of(Constraint.length(14), Constraint.length(9), Constraint.length(11),
                                     Constraint.percentage(20), Constraint.fill()))
@@ -716,8 +716,7 @@ final class SemanticAuditView {
         boolean decision = "decision".equals(record.get("category"));
         Line heading = Line.from(Span.styled(text(record, decision ? "action" : "status").toUpperCase(Locale.ROOT) + "   ",
                 actionStyle(record).bold()), Span.styled(text(record, "target"), Theme.title()),
-                Span.styled("   " + text(record, "operation") + " · " + text(record, "namespace") + " · "
-                            + text(record, "correlationId"),
+                Span.styled("   " + text(record, "operation") + " · " + text(record, "correlationId"),
                         Theme.muted()));
         List<Line> left = new ArrayList<>();
         String section = switch (text(record, "category")) {

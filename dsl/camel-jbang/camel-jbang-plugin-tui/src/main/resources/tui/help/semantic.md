@@ -102,13 +102,13 @@ come from the semantic DSL; expert overrides take precedence over the master def
 Auditing and OpenTelemetry are independent.
 
 - `/` edits exact `field=value` filters, separated by spaces. Available fields are
-  `category`, `action`, `expert`, `routeId`, `namespace`, `correlationId` and `since`.
+  `category`, `action`, `expert`, `routeId`, `correlationId` and `since`.
   Example: `expert=security since=2026-10-09T12:00:00Z`.
 - Up/Down select a record. `Tab` focuses the inspector; arrows scroll its details.
 - `n` loads older records; `g` returns to the latest page; `r` refreshes the current page.
 - Esc leaves details or clears the current filter.
 
-Wide terminals show timestamp, action, category, operation, target, namespace, reason and
+Wide terminals show timestamp, action, category, operation, target, reason and
 correlation columns. Smaller terminals move fields into the inspector. A route action is
 only present for an explicit decision. Linked evaluations retain their captured result
 meaning; missing/evicted evidence is shown as unavailable. Backend status shows the master
@@ -132,8 +132,8 @@ Route decisions and linked evaluations appear side by side on wide terminals and
 The newest page refreshes every second. `Space` pauses/resumes; older pages do not auto-refresh.
 The footer reports retention, evictions, dropped records and delivery errors.
 
-In Audit, `c`, `a`, `e` and `N` open searchable selectors for category, action, expert and
-namespace. Use arrows and `Enter` to apply, or `Esc` to cancel. Suggestions include values
+In Audit, `c`, `a` and `e` open searchable selectors for category, action and expert.
+Use arrows and `Enter` to apply, or `Esc` to cancel. Suggestions include values
 on the current page; `/` accepts arbitrary exact filters, including an ISO-8601 `since` timestamp.
 
 Audit input capture is disabled by default. Per-expert `audit.experts.<name>.input.enabled` retains the selected state; the inspector shows Input, Input (redacted), or an omission reason. Tab and arrows scroll longer input.

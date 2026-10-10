@@ -96,7 +96,8 @@ class SemanticTabTest {
                     "security: ON (override)", "decisions: OFF (override)", "OpenTelemetry: OFF", "Filters:",
                     "Route decision", "Linked evaluation", "Definition: screenPrompt", "Result: true", "BLOCK",
                     "Policy: support-access", "Model: detector-v2", "Input captured only by expert opt-in", "Memory: 2 / 1000",
-                    "No delivery errors reported", "refresh 1 s");
+                    "No delivery errors reported", "refresh 1 s")
+                    .doesNotContain("NAMESPACE", "Namespace:", "audit-test-namespace");
             assertThat(TuiTestHelper.renderToString(tab, 80, 24)).contains("CATEGORY", "EXPERT");
         }
     }
@@ -169,7 +170,7 @@ class SemanticTabTest {
         try (var runtime = new Runtime()) {
             var tab = loaded(runtime);
             tab.setInputValue("audit.view", "");
-            tab.setInputValue("audit.filter", "namespace=default");
+            tab.setInputValue("audit.filter", "routeId=prompt-screen");
             await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
             tab.handleKeyEvent(KeyEvent.ofChar('c'));
             assertThat(tab.getTableDataAsJson()).containsEntry("filterField", "category");
@@ -180,7 +181,7 @@ class SemanticTabTest {
             tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
             await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
             assertThat(new JsonObject(tab.getTableDataAsJson().getMap("filters")))
-                    .containsEntry("category", "decision").containsEntry("namespace", "default");
+                    .containsEntry("category", "decision").containsEntry("routeId", "prompt-screen");
             tab.handleKeyEvent(KeyEvent.ofChar('a'));
             tab.handleEscape();
             assertThat(new JsonObject(tab.getTableDataAsJson().getMap("filters"))).doesNotContainKey("action");
@@ -191,7 +192,7 @@ class SemanticTabTest {
             tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
             await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
             assertThat(new JsonObject(tab.getTableDataAsJson().getMap("filters")))
-                    .containsOnlyKeys("namespace");
+                    .containsOnlyKeys("routeId");
         }
     }
 
@@ -299,12 +300,12 @@ class SemanticTabTest {
         try (var runtime = new Runtime()) {
             var tab = loaded(runtime);
             tab.setInputValue("audit.view", "");
-            tab.setInputValue("audit.filter", "category=decision namespace=default");
+            tab.setInputValue("audit.filter", "category=decision routeId=prompt-screen");
             await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
             tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
             await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
             assertThat(tab.getTableDataAsJson()).containsEntry("selectedEventId", "evaluation-1")
-                    .containsEntry("filter", "category=decision namespace=default");
+                    .containsEntry("filter", "category=decision routeId=prompt-screen");
             assertThat(TuiTestHelper.renderToString(tab, 180, 45)).contains("Expert evaluation", "Result: true",
                     "Esc / Enter returns to the decision");
             tab.handleEscape();
@@ -1272,7 +1273,7 @@ class SemanticTabTest {
                                     "operation", "tools/call", "target", "support-request", "reasonCode", "prompt_injection",
                                     "timestamp", "2026-10-09T14:20:29.418Z", "evidence", List.of("evaluation-1")));
                     decision.put("policyId", "support-access");
-                    decision.put("namespace", "default");
+                    decision.put("namespace", "audit-test-namespace");
                     JsonObject status = new JsonObject(
                             Map.of("enabled", true, "experts", new JsonObject(Map.of("security", true, "decisions", false)),
                                     "reader", "memory", "dropped", 0, "sinkErrors", new JsonObject(), "openTelemetry",
