@@ -113,6 +113,27 @@ class SemanticCommandTest {
         assertEquals("", errors.toString());
     }
 
+    @Test
+    void listsExpertsUsingTheStructuredDefaultSelectionCode() throws Exception {
+        JsonObject response = json("{\"evaluations\":[],\"experts\":[]}");
+        response.put("defaultErrorCode", "no_unique_expert");
+        response.put("defaultError", "Automatic expert selection is unavailable");
+        assertEquals(0, respond(new CamelSemantic(main()), r -> response));
+        assertTrue(printer.getOutput().contains("Default expert: none"));
+        assertFalse(printer.getOutput().contains("Default expert error:"), printer.getOutput());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "default_expert_error", "future_error_code" })
+    void structuredDefaultErrorsTakePrecedenceOverLegacyMessageMatching(String code) throws Exception {
+        JsonObject response = json("{\"evaluations\":[],\"experts\":[]}");
+        String message = "Semantic language requires exactly one eligible expert";
+        response.put("defaultErrorCode", code);
+        response.put("defaultError", message);
+        assertEquals(0, respond(new CamelSemantic(main()), r -> response));
+        assertTrue(printer.getOutput().contains("Default expert error: " + message), printer.getOutput());
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {
             "Unknown expert or bean does not implement SemanticAdapter: missing",
@@ -130,6 +151,7 @@ class SemanticCommandTest {
     @Test
     void emitsMetadataAsOneJsonDocumentIncludingEmptyLists() throws Exception {
         JsonObject response = json("{\"evaluations\":[],\"experts\":[]}");
+        response.put("defaultErrorCode", "default_expert_error");
         response.put("defaultError", "Unknown expert or bean does not implement SemanticAdapter: missing");
         assertEquals(0, respond(new CamelSemantic(main()), r -> response, "--json"));
         assertEquals(response, json(printer.getOutput()));

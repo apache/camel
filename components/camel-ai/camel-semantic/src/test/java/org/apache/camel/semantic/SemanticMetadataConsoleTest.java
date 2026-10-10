@@ -28,11 +28,62 @@ import org.apache.camel.semantic.SemanticExpert.ResultType;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SemanticMetadataConsoleTest {
+    @ParameterizedTest
+    @ValueSource(ints = { 0, 2 })
+    void overviewClassifiesNonUniqueAutomaticSelection(int expertCount) throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            for (int i = 0; i < expertCount; i++) {
+                context.getRegistry().bind("security" + i, new Detector());
+            }
+            context.start();
+            DevConsole console = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("semantic-metadata");
+            JsonObject response = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of("overview", true));
+            assertThat(response).containsEntry("defaultErrorCode", "no_unique_expert");
+            assertThat(response.getString("defaultError")).contains("requires exactly one eligible expert");
+            assertThat(response.get("defaultExpert")).isNull();
+            List<JsonObject> experts = response.getCollection("experts");
+            assertThat(experts).hasSize(expertCount);
+        }
+    }
+
+    @Test
+    void overviewResolvesTheOnlyExpertWithoutAnErrorCode() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            context.getRegistry().bind("security", new Detector());
+            context.start();
+            DevConsole console = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("semantic-metadata");
+            JsonObject response = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of("overview", true));
+            assertThat(response).containsEntry("defaultExpert", "security");
+            assertThat(response.get("defaultError")).isNull();
+            assertThat(response.get("defaultErrorCode")).isNull();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "missing", "wrong-type", "invalid-contract" })
+    void overviewDistinguishesBrokenDefaultsFromAutomaticSelection(String expert) throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            context.getRegistry().bind("security", new Detector());
+            context.getRegistry().bind("wrong-type", new Object());
+            context.getRegistry().bind("invalid-contract", new InvalidDetector());
+            var language = (SemanticLanguage) context.resolveLanguage("semantic");
+            language.setDefaultExpert(expert);
+            context.start();
+            DevConsole console = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("semantic-metadata");
+            JsonObject response = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of("overview", true));
+            assertThat(response).containsEntry("defaultErrorCode", "default_expert_error");
+            assertThat(response.getString("defaultError")).isNotBlank();
+            assertThat(response.get("defaultExpert")).isNull();
+        }
+    }
+
     @Test
     void inspectionDoesNotSelectAnAdapterAndErrorsUseTheResolvedName() throws Exception {
         try (var context = new DefaultCamelContext()) {
@@ -132,5 +183,10 @@ class SemanticMetadataConsoleTest {
         public UnconstructedDetector() {
             throw new AssertionError("Metadata must not construct a class-discovered expert");
         }
+    }
+
+    @SemanticExpert(name = "invalid", description = "Invalid contract", provider = "test", artifactId = "test",
+                    operations = {})
+    public static class InvalidDetector extends Detector {
     }
 }

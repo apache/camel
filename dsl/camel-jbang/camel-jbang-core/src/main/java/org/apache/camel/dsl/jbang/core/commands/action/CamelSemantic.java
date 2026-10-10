@@ -98,7 +98,12 @@ public class CamelSemantic extends SemanticActionCommand {
         String defaultExpert = text(response, "defaultExpert");
         printer().println("Default expert: " + (defaultExpert.isEmpty() ? "none" : defaultExpert));
         String defaultError = text(response, "defaultError");
-        if (!defaultError.isEmpty() && !defaultError.startsWith("Semantic language requires exactly one eligible expert")) {
+        String defaultErrorCode = text(response, "defaultErrorCode");
+        // Older runtimes expose only the message; structured codes take precedence when available.
+        boolean noUniqueExpert = defaultErrorCode.isEmpty()
+                ? defaultError.startsWith("Semantic language requires exactly one eligible expert")
+                : "no_unique_expert".equals(defaultErrorCode);
+        if (!defaultError.isEmpty() && !noUniqueExpert) {
             printer().println("Default expert error: " + defaultError);
         }
     }

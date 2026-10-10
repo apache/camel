@@ -472,6 +472,7 @@ public final class SemanticAuditService extends ServiceSupport {
             }
             if (enabled) {
                 fields.putAll(inputFields);
+                // Keep live and restored records on the same validation path, including the bounded defensive input copy.
                 publish(inputFields.isEmpty() ? record : SemanticAuditRecord.fromMap(fields));
             }
         }

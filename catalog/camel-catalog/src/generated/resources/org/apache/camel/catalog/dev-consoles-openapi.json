@@ -7435,6 +7435,10 @@
 										"defaultError": {
 											"type": "string",
 											"description": "Default selection error, if any"
+										},
+										"defaultErrorCode": {
+											"type": "string",
+											"description": "Default selection error code: no_unique_expert or default_expert_error"
 										}
 									}
 								}
