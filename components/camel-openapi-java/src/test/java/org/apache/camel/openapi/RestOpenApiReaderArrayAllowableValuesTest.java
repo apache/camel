@@ -18,6 +18,8 @@ package org.apache.camel.openapi;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
@@ -30,6 +32,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -88,10 +91,36 @@ class RestOpenApiReaderArrayAllowableValuesTest extends CamelTestSupport {
         // a parameter that is not an array keeps its enum
         assertEquals(List.of("fast", "slow"), schemaOf(parameters, "mode").getEnum());
 
+        // the same in the JSON document written by the mapper of this OpenAPI version
+        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
+        JsonNode jsonParameters = new ObjectMapper().readTree(json).path("paths").path("/colors/filter").path("get")
+                .path("parameters");
+
+        JsonNode colorsJson = jsonSchemaOf(jsonParameters, "colors");
+        assertEquals("array", colorsJson.path("type").asText(), json);
+        assertFalse(colorsJson.has("enum"), "the array schema of 'colors' must not have an enum in " + json);
+        assertEquals("[\"red\",\"green\",\"blue\"]", colorsJson.path("items").path("enum").toString(), json);
+
+        JsonNode sizesJson = jsonSchemaOf(jsonParameters, "sizes");
+        assertEquals("array", sizesJson.path("type").asText(), json);
+        assertFalse(sizesJson.has("enum"), "the array schema of 'sizes' must not have an enum in " + json);
+        assertEquals("[1,2,3]", sizesJson.path("items").path("enum").toString(), json);
+
+        assertEquals("[\"fast\",\"slow\"]", jsonSchemaOf(jsonParameters, "mode").path("enum").toString(), json);
+
         context.stop();
     }
 
     private static Schema<?> schemaOf(List<Parameter> parameters, String name) {
         return parameters.stream().filter(p -> name.equals(p.getName())).findFirst().orElseThrow().getSchema();
+    }
+
+    private static JsonNode jsonSchemaOf(JsonNode parameters, String name) {
+        for (JsonNode parameter : parameters) {
+            if (name.equals(parameter.path("name").asText())) {
+                return parameter.path("schema");
+            }
+        }
+        throw new AssertionError("no parameter " + name + " in " + parameters);
     }
 }
