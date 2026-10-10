@@ -27,8 +27,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.function.IntSupplier;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.MissingPluginParameterExceptionHandler;
@@ -42,6 +44,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import picocli.CommandLine;
 
@@ -94,7 +97,10 @@ class SemanticCommandTest {
         }));
         assertEquals("semantic-metadata", request.get().get("action"));
         assertEquals(true, request.get().get("overview"));
-        assertTrue(printer.getOutput().contains("safe\tguard\tdetect\t${body}\tboolean\tdefinition error"));
+        assertTrue(printer.getOutput().contains("RESULT TYPE"));
+        assertTrue(printer.getOutput().lines().anyMatch(line -> line.trim().matches(
+                "safe +guard +detect +\\$\\{body} +boolean +definition error")));
+        assertFalse(printer.getOutput().contains("\t"));
         assertTrue(printer.getOutput().contains("Safety guard"));
         assertTrue(printer.getOutput().contains("expert error"));
         assertTrue(printer.getOutput().contains("No default expert"));
@@ -131,6 +137,33 @@ class SemanticCommandTest {
         assertEquals(3, respond(new CamelSemantic(main()), r -> jsonUnchecked("{\"operations\":[]}"),
                 "--expert=unknown", "--json"));
         assertError(3, "unknown");
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void failedExpertLookupRetainsFailureExitCode(boolean json) throws Exception {
+        assertEquals(1, respond(new CamelSemantic(main()), r -> jsonUnchecked(
+                "{\"status\":\"failed\",\"error\":\"metadata dispatch failed\"}"),
+                "--expert=guard", "--json=" + json));
+        assertFalse(errors.toString().contains("NullPointerException"));
+        if (json) {
+            assertError(1, "metadata dispatch failed");
+        } else {
+            assertEquals("metadata dispatch failed" + System.lineSeparator(), errors.toString());
+            assertEquals("", printer.getOutput());
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void textParseErrorsKeepSuggestionsSynopsisAndHelp(boolean evaluate) throws Exception {
+        SemanticActionCommand action = evaluate ? new SemanticEvaluate(main()) : new CamelSemantic(main());
+        assertEquals(2, command(action).execute("--exper=guard"));
+        assertTrue(errors.toString().contains("--expert"));
+        assertTrue(errors.toString().contains("Usage:"));
+        assertTrue(errors.toString().contains("--help'"));
+        assertEquals("", printer.getOutput());
+        assertTrue(actionFiles().isEmpty());
     }
 
     @Test
@@ -219,7 +252,7 @@ class SemanticCommandTest {
     void textUsageErrorsGoOnlyToStderr() throws Exception {
         assertEquals(2, command(new SemanticEvaluate(main())).execute(Long.toString(pid)));
         assertEquals("", printer.getOutput());
-        assertTrue(errors.toString().contains("--expert is required"));
+        assertTrue(errors.toString().contains("Choose --evaluation=<name>, or --expert with --operation and --input"));
         assertTrue(actionFiles().isEmpty());
     }
 
@@ -332,8 +365,12 @@ class SemanticCommandTest {
         CamelJBangMain main = new CamelJBangMain() {
             @Override
             public void postAddCommands(CommandLine command, String[] args) {
-                assertNotNull(command.getSubcommands().get("get").getSubcommands().get("semantic"));
-                assertNotNull(command.getSubcommands().get("cmd").getSubcommands().get("semantic-evaluate"));
+                CommandLine semantic = command.getSubcommands().get("semantic");
+                assertNotNull(semantic);
+                assertNotNull(semantic.getSubcommands().get("get"));
+                assertNotNull(semantic.getSubcommands().get("eval"));
+                assertFalse(command.getSubcommands().get("get").getSubcommands().containsKey("semantic"));
+                assertFalse(command.getSubcommands().get("cmd").getSubcommands().containsKey("semantic-evaluate"));
             }
 
             @Override
@@ -347,8 +384,92 @@ class SemanticCommandTest {
             }
         };
         main.withPrinter(printer);
-        main.execute("cmd", "semantic-evaluate", "--bad-option", "--json");
+        main.execute("semantic", "eval", "--bad-option", "--json");
         assertError(2, "Unknown option");
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "false, true", "false, false", "true, true", "true, false" })
+    void jsonParseErrorsWorkBeforeAndAfterInvalidOption(boolean evaluate, boolean jsonFirst) throws Exception {
+        SemanticActionCommand action = evaluate ? new SemanticEvaluate(main()) : new CamelSemantic(main());
+        String[] args = jsonFirst
+                ? new String[] { "--json", "--exper=guard" }
+                : new String[] { "--exper=guard", "--json" };
+        assertEquals(2, command(action).execute(args));
+        assertError(2, "Unknown option");
+        assertFalse(errors.toString().contains("Usage:"));
+        assertTrue(actionFiles().isEmpty());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "--json=false", "--" })
+    void textParseErrorsDoNotEnableJson(String option) throws Exception {
+        assertEquals(2, command(new SemanticEvaluate(main())).execute("--exper=guard", option,
+                "--".equals(option) ? "--json" : "--json=false"));
+        assertTrue(errors.toString().contains("Usage:"));
+        assertEquals("", printer.getOutput());
+        assertTrue(actionFiles().isEmpty());
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "3.22.0,false", "4.9.9,true", "4.21.0,false", "4.22.1,true", "4.22.0.redhat-00001,false" })
+    void rejectsOlderRuntimesWithoutPublishingRequest(String version, boolean evaluate) throws Exception {
+        writeVersion(version);
+        SemanticActionCommand action = evaluate ? new SemanticEvaluate(main()) : new CamelSemantic(main());
+        String[] args = evaluate
+                ? new String[] { Long.toString(pid), "--evaluation=safe", "--json" }
+                : new String[] { Long.toString(pid), "--json" };
+        assertEquals(3, command(action).execute(args));
+        assertError(3, "requires Camel 4.23 or newer");
+        assertTrue(errors.toString().contains(version));
+        assertTrue(actionFiles().isEmpty());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "4.23.0", "4.23.0-SNAPSHOT", "4.23.0.redhat-00001", "4.24.0", "5.0.0", "unknown" })
+    void acceptsSupportedOrUnknownRuntimeVersions(String version) throws Exception {
+        writeVersion(version);
+        assertEquals(0, respond(new CamelSemantic(main()), r -> jsonUnchecked("{\"evaluations\":[]}"), "--json"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "", "get", "eval" })
+    void mainDispatchesSemanticGroupIncludingDefaultGet(String subcommand) throws Exception {
+        AtomicInteger exitCode = new AtomicInteger(-1);
+        CamelJBangMain main = new CamelJBangMain() {
+            @Override
+            public void preExecute(CommandLine command, String[] args) {
+                command.setErr(new PrintWriter(errors, true));
+            }
+
+            @Override
+            public void quit(int code) {
+                exitCode.set(code);
+            }
+        };
+        main.withPrinter(printer);
+        List<String> args = new ArrayList<>(List.of("semantic"));
+        if (!subcommand.isEmpty()) {
+            args.add(subcommand);
+        }
+        args.add(Long.toString(pid));
+        args.add("--json");
+        if ("eval".equals(subcommand)) {
+            args.add("--evaluation=safe");
+        }
+        assertEquals(0, respond(() -> {
+            main.execute(args.toArray(String[]::new));
+            return exitCode.get();
+        }, request -> {
+            assertEquals("eval".equals(subcommand) ? "semantic-evaluate" : "semantic-metadata", request.get("action"));
+            return jsonUnchecked("{\"status\":\"success\",\"evaluations\":[]}");
+        }));
+        assertEquals("success", json(printer.getOutput()).get("status"));
+    }
+
+    private void writeVersion(String version) throws Exception {
+        Files.writeString(CommandLineHelper.getCamelDir().resolve(pid + "-status.json"),
+                "{\"context\":{\"name\":\"semantic-test\",\"phase\":4,\"version\":\"" + version + "\"}}");
     }
 
     private CamelJBangMain main() {
@@ -362,6 +483,12 @@ class SemanticCommandTest {
 
     private int respond(SemanticActionCommand command, Function<JsonObject, JsonObject> response, String... options)
             throws Exception {
+        List<String> args = new ArrayList<>(List.of(options));
+        args.add(Long.toString(pid));
+        return respond(() -> command(command).execute(args.toArray(String[]::new)), response);
+    }
+
+    private int respond(IntSupplier call, Function<JsonObject, JsonObject> response) throws Exception {
         var responder = CompletableFuture.runAsync(() -> {
             try {
                 await().atMost(5, TimeUnit.SECONDS).until(() -> !actionFiles().isEmpty());
@@ -372,9 +499,7 @@ class SemanticCommandTest {
                 throw new RuntimeException(e);
             }
         }, executor);
-        List<String> args = new ArrayList<>(List.of(options));
-        args.add(Long.toString(pid));
-        int result = command(command).execute(args.toArray(String[]::new));
+        int result = call.getAsInt();
         responder.get(5, TimeUnit.SECONDS);
         assertTrue(actionFiles().isEmpty());
         return result;
@@ -395,7 +520,7 @@ class SemanticCommandTest {
         JsonObject result = jsonUnchecked(printer.getOutput());
         assertEquals("error", result.get("status"));
         assertEquals(code, result.getInteger("code"));
-        assertTrue(result.getString("message").contains(message));
+        assertTrue(result.getString("message").contains(message), result.toJson());
         assertFalse(errors.toString().isBlank());
     }
 

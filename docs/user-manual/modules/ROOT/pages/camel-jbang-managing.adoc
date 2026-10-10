@@ -283,27 +283,30 @@ TIP: Separate multiple IDs with commas: `--id=log1,log2,setBody2`.
 
 The CLI can inspect and try the running application's
 xref:next@components:languages:semantic-language.adoc[semantic definitions and experts].
-The application must include `camel-semantic` with the `semantic-metadata` and
-`semantic-evaluate` developer consoles and have the local CLI connector enabled.
+The application must run Camel 4.23 or newer, include `camel-semantic` with the
+`semantic-metadata` and `semantic-evaluate` developer consoles, and have the local
+CLI connector enabled.
 These commands use the connector; enabling the HTTP console is unnecessary.
 
 [source,bash]
 ----
-camel get semantic my-app
-camel get semantic my-app --json
-camel get semantic my-app --expert=guard
+camel semantic my-app
+camel semantic get my-app
+camel semantic get my-app --json
+camel semantic get my-app --expert=guard
 ----
 
-`get semantic` lists definition names, experts, operations, state selectors, result types
-and resolution errors, followed by the known experts and default expert. `--expert`
+`camel semantic` defaults to `camel semantic get`. The text output uses tables listing
+definition names, experts, operations, state selectors, result types and resolution
+errors, followed by the known experts and default expert. `--expert`
 shows one expert's operations, input and result semantics, and parameter contract.
-Inspection does not perform inference.
+Inspection does not perform inference. Use `--json` for machine-readable output.
 
 Evaluate a named definition with a sample exchange:
 
 [source,bash]
 ----
-camel cmd semantic-evaluate my-app --evaluation=safe \
+camel semantic eval my-app --evaluation=safe \
   --body='Please summarize this message' --header=subject=example \
   --variable=language=en --json
 ----
@@ -312,14 +315,14 @@ The definition's state selector reads the supplied body, headers and exchange-lo
 variables. Variables with repository prefixes such as `global:` are rejected. The
 sample is evaluated directly; it is not sent through the application's routes.
 
-Alternatively, invoke an expert operation directly. Use `get semantic --expert` to
+Alternatively, invoke an expert operation directly. Use `semantic get --expert` to
 find the operation names and parameters supported by that expert:
 
 [source,bash]
 ----
-camel cmd semantic-evaluate my-app --expert=guard --operation=detect \
+camel semantic eval my-app --expert=guard --operation=detect \
   --input='Please summarize this message' --json
-camel cmd semantic-evaluate my-app --expert=grader --operation=score \
+camel semantic eval my-app --expert=grader --operation=score \
   --input='Sample answer' --parameter='criteria=json:["poor","good","excellent"]' --json
 ----
 
@@ -343,6 +346,8 @@ native inference may continue. Configure provider-specific request timeouts as w
 
 Both commands accept an integration name or PID. With no name they select the only
 running integration; ambiguous selection fails and lists the matching PIDs.
+Known versions older than 4.23 fail immediately with exit code 3. If the runtime version
+is unavailable, the CLI attempts the request and applies the normal timeout.
 Each request has its own reply file, so concurrent commands do not consume each
 other's results.
 
@@ -362,11 +367,11 @@ result fields, such as `error` and `elapsedMillis`. Diagnostics go to stderr.
 | 2 | Invalid command arguments or sample values.
 | 3 | No matching integration, ambiguous selection, unavailable semantic tooling or expert operations.
 | 4 | No reply before the CLI timeout.
-| 70 | Unexpected internal error; stderr includes the stack trace.
+| 70 | Unexpected local CLI error; stderr includes the stack trace.
 |===
 
-See xref:jbang-commands/camel-jbang-get-semantic.adoc[camel get semantic] and
-xref:jbang-commands/camel-jbang-cmd-semantic-evaluate.adoc[camel cmd semantic-evaluate]
+See xref:jbang-commands/camel-jbang-semantic-get.adoc[camel semantic get] and
+xref:jbang-commands/camel-jbang-semantic-eval.adoc[camel semantic eval]
 for the complete option reference.
 
 == Developer Console

@@ -29,10 +29,15 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "semantic-evaluate", description = "Evaluate a semantic definition or expert operation",
-                     sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(name = "eval", description = "Evaluate a semantic definition or expert operation",
+                     sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel semantic eval my-app --evaluation=safe --body='Sample message' --json",
+                             "  camel semantic eval my-app --expert=guard --operation=detect --input='Sample message'" })
 public class SemanticEvaluate extends SemanticActionCommand {
 
+    // Jsoner accepts trailing commas; command input must use strict JSON parsing.
     private static final ObjectReader JSON_VALUE = new ObjectMapper().readerFor(Object.class)
             .with(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
 
@@ -98,6 +103,9 @@ public class SemanticEvaluate extends SemanticActionCommand {
                 request.put("variables", sampleVariables);
             }
         } else {
+            if (expert == null && operation == null && input == null) {
+                throw new IllegalArgumentException("Choose --evaluation=<name>, or --expert with --operation and --input");
+            }
             requireText(expert, "--expert");
             requireText(operation, "--operation");
             if (input == null) {

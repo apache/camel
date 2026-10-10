@@ -16,19 +16,17 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.UsageErrorHandler;
+import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
-public abstract class SemanticActionCommand extends ActionBaseCommand {
+public abstract class SemanticActionCommand extends ActionBaseCommand implements UsageErrorHandler {
 
     @CommandLine.Parameters(description = "Name or pid of a running Camel integration", arity = "0..1")
     String name = "*";
@@ -66,7 +64,16 @@ public abstract class SemanticActionCommand extends ActionBaseCommand {
             if (pids.size() != 1) {
                 return error(3, "Multiple Camel integrations match " + name + ": " + pids + ". Specify a pid.", null);
             }
-            JsonObject response = execute(pids.get(0), request);
+            long pid = pids.get(0);
+            JsonObject status = loadStatus(pid);
+            JsonObject context = status == null ? null : status.getMap("context");
+            String version = context == null ? null : context.getString("version");
+            if (version != null && version.matches("\\d+\\.\\d+(?:\\..*)?") && !VersionHelper.isGE(version, "4.23")) {
+                return error(3, "Semantic tooling requires Camel 4.23 or newer; integration " + pid
+                                + " runs Camel " + version,
+                        null);
+            }
+            JsonObject response = RuntimeHelper.executeAction(pid, request, timeout);
             if (response == null) {
                 return error(4, "No reply from integration within " + timeout + " milliseconds", null);
             }
@@ -74,7 +81,7 @@ public abstract class SemanticActionCommand extends ActionBaseCommand {
                 return error(3, "Semantic tooling is unavailable; the integration needs a matching camel-semantic version",
                         null);
             }
-            if ("failed".equals(response.getString("status")) || "error".equals(response.getString("status"))) {
+            if ("failed".equals(response.getString("status"))) {
                 String message = response.getString("error");
                 if (message == null || message.isBlank()) {
                     message = "Semantic action failed";
@@ -95,28 +102,11 @@ public abstract class SemanticActionCommand extends ActionBaseCommand {
                 && ProcessHandle.of(pid).filter(ProcessHandle::isAlive).isPresent();
     }
 
-    private JsonObject execute(long pid, JsonObject request) throws Exception {
-        String id = UUID.randomUUID().toString();
-        Path directory = CommandLineHelper.getCamelDir();
-        Path action = directory.resolve(pid + "-action-" + id + ".json");
-        Path output = directory.resolve(pid + "-output-" + id + ".json");
-        Path temporary = directory.resolve(pid + "-" + id + ".tmp");
-        try {
-            Files.writeString(temporary, request.toJson());
-            Files.move(temporary, action, StandardCopyOption.ATOMIC_MOVE);
-            return getJsonObject(output, timeout);
-        } finally {
-            // Removing an unfinished request asks the connector to cancel the evaluation.
-            Files.deleteIfExists(action);
-            Files.deleteIfExists(output);
-            Files.deleteIfExists(temporary);
-        }
-    }
-
-    public int usageError(String message, String[] args) {
+    @Override
+    public Integer usageError(String message, String[] args) {
         json = Arrays.stream(args).takeWhile(arg -> !"--".equals(arg))
                 .anyMatch(arg -> "--json".equals(arg) || "--json=true".equals(arg));
-        return error(2, message, null);
+        return json ? error(2, message, null) : null;
     }
 
     protected int error(int code, String message, JsonObject result) {
