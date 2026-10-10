@@ -96,7 +96,9 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
     }
 
     protected Exchange createExchange(Object result) {
-        Exchange exchange = createExchange(true);
+        // not auto released: the pooled exchange factory resets an auto released exchange when its unit of work is done,
+        // before processBatch reads whether it failed (it releases the exchange itself)
+        Exchange exchange = createExchange(false);
         exchange.getIn().setBody(result);
         return exchange;
     }
@@ -110,12 +112,19 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 
-        if (isBatchAllowed()) {
-            for (int i = 0; i < total; i++) {
-                DataHolder holder = org.apache.camel.util.ObjectHelper.cast(DataHolder.class, exchanges.poll());
-                getProcessor().process(holder.exchange);
-                holder.consumed = !holder.exchange.isFailed() && !holder.exchange.isRollbackOnly();
+        // only loop while we are allowed to run: when a graceful shutdown starts, the remaining entities are not
+        // processed, so they are not deleted and the next start consumes them
+        for (int index = 0; index < total && isBatchAllowed(); index++) {
+            DataHolder holder = org.apache.camel.util.ObjectHelper.cast(DataHolder.class, exchanges.poll());
+            Exchange exchange = holder.exchange;
+            try {
+                getProcessor().process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+                getExceptionHandler().handleException("Error processing exchange", exchange, e);
             }
+            holder.consumed = !exchange.isFailed() && !exchange.isRollbackOnly();
+            releaseExchange(exchange, false);
         }
 
         return total;
