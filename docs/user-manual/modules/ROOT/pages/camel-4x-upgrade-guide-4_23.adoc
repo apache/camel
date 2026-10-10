@@ -2444,6 +2444,11 @@ would pass `null` to the underlying store's `remove()` method, which threw an op
 from langchain4j. It now throws `IllegalArgumentException` with a clear message listing the
 expected inputs.
 
+=== camel-lucene
+
+`LuceneSearcher.close()` no longer closes the `Analyzer` passed to `open()`; code that uses `LuceneSearcher` directly
+must close its analyzer itself when it is no longer needed.
+
 === camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp, camel-azure-files, camel-smb
 
 The remote-file consumers now ensure the path resolved for a polled file stays within the directory being
