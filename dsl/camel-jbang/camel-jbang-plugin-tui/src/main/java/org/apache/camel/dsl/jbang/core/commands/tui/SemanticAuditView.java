@@ -58,7 +58,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 /** Audit browsing owns its state independently of live definitions and inference drafts. */
 final class SemanticAuditView {
     private static final Set<String> FILTERS
-            = Set.of("category", "action", "expert", "routeId", "correlationId", "since");
+            = Set.of("category", "action", "expert", "routeId", "breadcrumbId", "since");
     private final MonitorContext context;
     private final LongSupplier nanoTime;
     private long lastRefresh;
@@ -341,7 +341,7 @@ final class SemanticAuditView {
             for (String token : text.trim().split("\\s+")) {
                 String[] pair = token.split("=", 2);
                 if (pair.length != 2 || !FILTERS.contains(pair[0]) || pair[1].isBlank() || pair[1].length() > 256) {
-                    error = "Use field=value filters: category action expert routeId correlationId since";
+                    error = "Use field=value filters: category action expert routeId breadcrumbId since";
                     return false;
                 }
                 if ("since".equals(pair[0])) {
@@ -645,7 +645,7 @@ final class SemanticAuditView {
         query.add(Span.styled("   / edit", Theme.muted()));
         lines.add(Line.from(query));
         List<String> other = new ArrayList<>();
-        for (String field : List.of("routeId", "correlationId")) {
+        for (String field : List.of("routeId", "breadcrumbId")) {
             if (filters.containsKey(field)) {
                 other.add(field + "=" + filters.get(field));
             }
@@ -670,7 +670,7 @@ final class SemanticAuditView {
             content.add(wide
                     ? Row.from(Cell.from(time(row, "HH:mm:ss.SSS")), action, Cell.from(text(row, "category")),
                             Cell.from(text(row, "operation")), Cell.from(text(row, "target")),
-                            reason, Cell.from(text(row, "correlationId")))
+                            reason, Cell.from(text(row, "breadcrumbId")))
                     : Row.from(Cell.from(time(row, "HH:mm:ss.SSS")), action, Cell.from(text(row, "category")),
                             Cell.from(text(row, "expert")), reason));
         }
@@ -686,12 +686,12 @@ final class SemanticAuditView {
             Table table = Table.builder().rows(content)
                     .header((wide
                             ? Row.from("TIMESTAMP", "DECISION", "CATEGORY", "OPERATION", "TARGET", "REASON CODE",
-                                    "CORRELATION ID")
+                                    "BREADCRUMB ID")
                             : Row.from("TIMESTAMP", "DECISION", "CATEGORY", "EXPERT", "REASON CODE")).style(Theme.label()))
                     .widths(wide
                             ? List.of(Constraint.length(14), Constraint.length(9), Constraint.length(11), Constraint.length(13),
                                     Constraint.percentage(15), Constraint.fill(),
-                                    Constraint.length(16))
+                                    Constraint.length(40))
                             : List.of(Constraint.length(14), Constraint.length(9), Constraint.length(11),
                                     Constraint.percentage(20), Constraint.fill()))
                     .highlightSymbol("› ").highlightStyle(Theme.selectionBg()).build();
@@ -716,7 +716,7 @@ final class SemanticAuditView {
         boolean decision = "decision".equals(record.get("category"));
         Line heading = Line.from(Span.styled(text(record, decision ? "action" : "status").toUpperCase(Locale.ROOT) + "   ",
                 actionStyle(record).bold()), Span.styled(text(record, "target"), Theme.title()),
-                Span.styled("   " + text(record, "operation") + " · " + text(record, "correlationId"),
+                Span.styled("   " + text(record, "operation") + " · " + text(record, "breadcrumbId"),
                         Theme.muted()));
         List<Line> left = new ArrayList<>();
         String section = switch (text(record, "category")) {
@@ -736,11 +736,11 @@ final class SemanticAuditView {
             evaluationLines(left, record);
         }
         left.add(Line.empty());
-        for (String field : List.of("timestamp", "startedAt", "exchangeId", "correlationId", "invocationId", "batchId")) {
+        for (String field : List.of("timestamp", "startedAt", "exchangeId", "breadcrumbId", "invocationId", "batchId")) {
             add(left, switch (field) {
                 case "startedAt" -> "Started";
                 case "exchangeId" -> "Exchange";
-                case "correlationId" -> "Correlation";
+                case "breadcrumbId" -> "Breadcrumb";
                 case "invocationId" -> "Invocation";
                 case "batchId" -> "Batch";
                 default -> "Recorded";
@@ -768,7 +768,7 @@ final class SemanticAuditView {
             right.add(Line.from(Span.styled("Esc / Enter returns to the decision.", Theme.info())));
         }
         Line omitted = Line.from(Span.styled(
-                "Input captured only by expert opt-in · Exchange headers and arbitrary metadata omitted", Theme.muted()));
+                "Input captured only by expert opt-in · Other headers and arbitrary metadata omitted", Theme.muted()));
         if (inner.width() < 100) {
             List<Line> all = new ArrayList<>(List.of(heading, Line.empty()));
             all.addAll(left);

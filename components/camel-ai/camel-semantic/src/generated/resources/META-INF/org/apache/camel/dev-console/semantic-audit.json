@@ -27,8 +27,22 @@
       "secret": false,
       "description": "Filter by explicit route action"
     },
-    "category": {
+    "breadcrumbId": {
       "index": 1,
+      "kind": "option",
+      "displayName": "Breadcrumb Id",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Filter by Camel breadcrumb ID"
+    },
+    "category": {
+      "index": 2,
       "kind": "option",
       "displayName": "Category",
       "group": "query",
@@ -42,7 +56,7 @@
       "description": "Filter by category"
     },
     "correlationId": {
-      "index": 2,
+      "index": 3,
       "kind": "option",
       "displayName": "Correlation Id",
       "group": "query",
@@ -56,7 +70,7 @@
       "description": "Filter by application correlation ID"
     },
     "cursor": {
-      "index": 3,
+      "index": 4,
       "kind": "option",
       "displayName": "Cursor",
       "group": "query",
@@ -70,7 +84,7 @@
       "description": "Backend cursor for an older page"
     },
     "eventId": {
-      "index": 4,
+      "index": 5,
       "kind": "option",
       "displayName": "Event Id",
       "group": "query",
@@ -84,7 +98,7 @@
       "description": "Event ID to inspect with its linked evaluation records"
     },
     "expert": {
-      "index": 5,
+      "index": 6,
       "kind": "option",
       "displayName": "Expert",
       "group": "query",
@@ -98,7 +112,7 @@
       "description": "Filter by expert bean reference"
     },
     "limit": {
-      "index": 6,
+      "index": 7,
       "kind": "option",
       "displayName": "Limit",
       "group": "query",
@@ -113,7 +127,7 @@
       "description": "Maximum records, between 1 and 200"
     },
     "namespace": {
-      "index": 7,
+      "index": 8,
       "kind": "option",
       "displayName": "Namespace",
       "group": "query",
@@ -127,7 +141,7 @@
       "description": "Filter by application namespace"
     },
     "routeId": {
-      "index": 8,
+      "index": 9,
       "kind": "option",
       "displayName": "Route Id",
       "group": "query",
@@ -141,7 +155,7 @@
       "description": "Filter by route"
     },
     "since": {
-      "index": 9,
+      "index": 10,
       "kind": "option",
       "displayName": "Since",
       "group": "query",

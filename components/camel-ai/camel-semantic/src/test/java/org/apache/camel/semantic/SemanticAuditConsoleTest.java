@@ -56,7 +56,7 @@ class SemanticAuditConsoleTest {
     void consoleFiltersSinceInclusivelyAndPagesThroughRetainedRecords() throws Exception {
         try (var fixture = new Fixture()) {
             var filters = Map.of("category", "decision", "action", "block", "expert", "security", "routeId", "route1",
-                    "namespace", "tenant1", "correlationId", "request1");
+                    "namespace", "tenant1", "correlationId", "request1", "breadcrumbId", "breadcrumb1");
             fixture.store.append(record("old", Map.of("timestamp", "2026-10-09T11:00:00Z")));
             fixture.store.append(record("matching", filters));
             fixture.store.append(record("newest", Map.of("timestamp", "2026-10-09T13:00:00Z")));

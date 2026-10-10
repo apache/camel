@@ -63,6 +63,9 @@ public class SemanticAudit extends SemanticActionCommand {
     @CommandLine.Option(names = "--correlation-id", description = "Filter by application correlation ID")
     String correlationId;
 
+    @CommandLine.Option(names = "--breadcrumb-id", description = "Filter by Camel breadcrumb ID")
+    String breadcrumbId;
+
     @CommandLine.Option(names = "--since", description = "Earliest timestamp, inclusive, in ISO-8601 format with a UTC offset")
     String since;
 
@@ -90,6 +93,7 @@ public class SemanticAudit extends SemanticActionCommand {
         option(request, "routeId", routeId, "--route-id", 256);
         option(request, "namespace", namespace, "--namespace", 256);
         option(request, "correlationId", correlationId, "--correlation-id", 256);
+        option(request, "breadcrumbId", breadcrumbId, "--breadcrumb-id", 256);
         option(request, "cursor", cursor, "--cursor", 512);
         if (since != null) {
             try {
@@ -201,7 +205,7 @@ public class SemanticAudit extends SemanticActionCommand {
                     column("EVENT ID", "eventId"), column("TIMESTAMP", "timestamp"), column("CATEGORY", "category"),
                     column("ACTION", "action"), column("STATUS", "status"), column("EXPERT", "expert"),
                     column("OPERATION", "operation"), column("TARGET", "target"), column("NAMESPACE", "namespace"),
-                    column("REASON CODE", "reasonCode"), column("CORRELATION ID", "correlationId"))));
+                    column("REASON CODE", "reasonCode"), column("BREADCRUMB ID", "breadcrumbId"))));
         } else if (!Boolean.TRUE.equals(response.get("cursorExpired"))) {
             printer().println("No retained audit records match this query.");
         }

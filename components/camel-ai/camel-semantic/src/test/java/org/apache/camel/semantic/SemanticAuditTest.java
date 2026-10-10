@@ -26,6 +26,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
@@ -66,6 +67,8 @@ class SemanticAuditTest {
             assertThat(language.evaluate(evaluation("security"), "secret input").getValue()).isEqualTo(true);
             audit.stop();
             assertThat(records(audit)).hasSize(expected ? 1 : 0);
+            assertThat(records(audit)).allSatisfy(record -> assertThat(record.toMap())
+                    .doesNotContainKeys("exchangeId", "breadcrumbId"));
             assertThat(expert.calls).isEqualTo(1);
         }
     }
@@ -150,6 +153,7 @@ class SemanticAuditTest {
             audit.stop();
             List<SemanticAuditRecord> records = records(audit);
             assertThat(records).hasSize(3);
+            assertThat(records).allSatisfy(record -> assertThat(record.text("exchangeId")).isEqualTo(exchange.getExchangeId()));
             assertThat(records).filteredOn(r -> r.getCategory().equals("evaluation")).allSatisfy(r -> {
                 assertThat(r.toMap()).doesNotContainKey("action");
                 assertThat(r.getStatus()).isEqualTo("success");
@@ -158,6 +162,84 @@ class SemanticAuditTest {
             assertThat(records.get(0).text("action")).isEqualTo("block");
             assertThat(records.get(1).text("batchId")).isEqualTo(records.get(2).text("batchId"));
             assertThat(records.get(1).getInvocationId()).isNotEqualTo(records.get(2).getInvocationId());
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void splitEvaluationsAndDecisionsShareTheCamelGeneratedBreadcrumb(boolean enabled) throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            context.setUseBreadcrumb(enabled);
+            context.getRegistry().bind("security", new FixedSemanticExpert());
+            var audit = SemanticAuditService.get(context);
+            audit.configure("audit", configuration(true, Map.of()));
+            SemanticEvaluations.get(context).replace("definitions", Map.of("check", evaluation("security")));
+            var expression = context.resolveLanguage("semantic").createExpression("ref:check");
+            var decision = new SemanticAuditDecision();
+            decision.setFields(Map.of("action", "allow", "correlationId", "application-request"));
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:audit").routeId("audited-route")
+                            .split(body())
+                            .process(exchange -> expression.evaluate(exchange, Boolean.class))
+                            .process(decision);
+                }
+            });
+            context.start();
+            try (var producer = context.createProducerTemplate()) {
+                Exchange exchange = producer.request("direct:audit", e -> e.getMessage().setBody(List.of("one", "two")));
+                assertThat(exchange.getException()).isNull();
+                String breadcrumb = exchange.getMessage().getHeader(Exchange.BREADCRUMB_ID, String.class);
+                assertThat(breadcrumb).isEqualTo(enabled ? exchange.getExchangeId() : null);
+                audit.stop();
+                List<SemanticAuditRecord> records = records(audit);
+                assertThat(records).hasSize(4).allSatisfy(record -> {
+                    assertThat(record.text("breadcrumbId")).isEqualTo(breadcrumb);
+                    assertThat(record.text("exchangeId")).isNotBlank().isNotEqualTo(exchange.getExchangeId());
+                    assertThat(record.text("routeId")).isEqualTo("audited-route");
+                });
+                assertThat(records.stream().map(record -> record.text("exchangeId")).distinct()).hasSize(2);
+                assertThat(records).filteredOn(record -> "decision".equals(record.getCategory())).allSatisfy(record -> {
+                    assertThat(record.text("correlationId")).isEqualTo("application-request");
+                    assertThat(record.getEvidence()).hasSize(1);
+                    var evidence = audit.getReader().get(record.getEvidence().get(0)).orElseThrow();
+                    assertThat(evidence.text("exchangeId")).isEqualTo(record.text("exchangeId"));
+                    assertThat(evidence.text("breadcrumbId")).isEqualTo(breadcrumb);
+                });
+                assertThat(audit.getReader().query(new SemanticAuditQuery(
+                        Map.of("breadcrumbId", exchange.getExchangeId()), null, null, 10)).getRecords())
+                        .hasSize(enabled ? 4 : 0);
+            }
+        }
+    }
+
+    @Test
+    void invalidBreadcrumbHeadersAreOmittedWithoutConvertingThemOrChangingInference() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            context.getRegistry().bind("security", new FixedSemanticExpert());
+            var audit = SemanticAuditService.get(context);
+            audit.configure("audit", configuration(true, Map.of()));
+            SemanticEvaluations.get(context).replace("definitions", Map.of("check", evaluation("security")));
+            context.start();
+            var expression = context.resolveLanguage("semantic").createExpression("ref:check");
+            Object unsupported = new Object() {
+                @Override
+                public String toString() {
+                    throw new AssertionError("A breadcrumb must not convert arbitrary headers");
+                }
+            };
+            List<Object> invalid = List.of(unsupported, 42, " ", "request\n123", "x".repeat(257));
+            for (Object breadcrumb : invalid) {
+                var exchange = new DefaultExchange(context);
+                exchange.getMessage().setBody("sample");
+                exchange.getMessage().setHeader(Exchange.BREADCRUMB_ID, breadcrumb);
+                assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
+                SemanticAudit.get(context).decision(exchange, Map.of("action", "allow"), List.of());
+            }
+            audit.stop();
+            assertThat(records(audit)).hasSize(invalid.size() * 2)
+                    .allSatisfy(record -> assertThat(record.toMap()).doesNotContainKey("breadcrumbId"));
         }
     }
 
