@@ -1119,6 +1119,17 @@ these items were dropped, and after a restart the consumer could stop requesting
 stops itself from one of its own exchanges now waits for that timeout; stop it asynchronously instead (for example with
 the Control Bus `async=true` option).
 
+=== camel-reactive-streams - suspending a consumer
+
+The `reactive-streams` consumer is now suspendable: suspending its route (route controller, JMX) and a route policy
+such as `ThrottlingInflightRoutePolicy` suspend it instead of stopping it, and a graceful shutdown suspends it before
+stopping it. It then requests no more items and holds the items it has already received, without waiting for them, and
+routes them in order when it is resumed (or stopped). Before, the consumer was stopped (the route status was `Stopped` instead of `Suspended`), which
+waited for those items, and a route policy that suspended it from one of its exchanges made them fail. A request sent
+with `toStream` to a suspended route now waits for the resume instead of failing.
+A graceful shutdown still routes the queued items before it stops the other routes, such as a `direct` route they go
+to.
+
 === camel-vertx - request/reply over the event bus
 
 When a `vertx` consumer receives a message that expects a reply and the route fails, the sender now gets a failure
