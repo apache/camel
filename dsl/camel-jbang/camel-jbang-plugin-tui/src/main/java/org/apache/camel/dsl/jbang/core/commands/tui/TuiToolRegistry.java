@@ -1001,7 +1001,8 @@ class TuiToolRegistry {
     }
 
     private String callGetAudit(Map<String, Object> args) {
-        Set<String> filters = Set.of("category", "action", "expert", "routeId", "namespace", "correlationId", "since");
+        Set<String> filters
+                = Set.of("category", "action", "expert", "routeId", "namespace", "correlationId", "breadcrumbId", "since");
         JsonObject request = new JsonObject();
         request.put("action", "semantic-audit");
         try {

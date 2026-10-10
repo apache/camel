@@ -53,6 +53,8 @@ public class SemanticAuditConsole extends AbstractDevConsole {
     public static final String NAMESPACE = "namespace";
     @Metadata(label = "query", description = "Filter by application correlation ID", javaType = "java.lang.String")
     public static final String CORRELATION = "correlationId";
+    @Metadata(label = "query", description = "Filter by Camel breadcrumb ID", javaType = "java.lang.String")
+    public static final String BREADCRUMB = "breadcrumbId";
 
     public SemanticAuditConsole() {
         super("camel", "semantic-audit", "Semantic Audit", "Browse retained semantic audit records");
@@ -95,7 +97,7 @@ public class SemanticAuditConsole extends AbstractDevConsole {
                 response.put("evidence", evidence);
             } else {
                 Map<String, String> filters = new LinkedHashMap<>();
-                for (String key : List.of(CATEGORY, ACTION, EXPERT, ROUTE, NAMESPACE, CORRELATION)) {
+                for (String key : List.of(CATEGORY, ACTION, EXPERT, ROUTE, NAMESPACE, CORRELATION, BREADCRUMB)) {
                     String value = optionString(options, key);
                     if (value != null && !value.isBlank()) {
                         filters.put(key, value);

@@ -7067,6 +7067,15 @@
 						}
 					},
 					{
+						"name": "breadcrumbId",
+						"in": "query",
+						"description": "Filter by Camel breadcrumb ID",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
 						"name": "category",
 						"in": "query",
 						"description": "Filter by category",

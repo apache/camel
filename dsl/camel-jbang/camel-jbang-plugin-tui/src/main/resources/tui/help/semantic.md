@@ -102,14 +102,16 @@ come from the semantic DSL; expert overrides take precedence over the master def
 Auditing and OpenTelemetry are independent.
 
 - `/` edits exact `field=value` filters, separated by spaces. Available fields are
-  `category`, `action`, `expert`, `routeId`, `correlationId` and `since`.
+  `category`, `action`, `expert`, `routeId`, `breadcrumbId` and `since`.
   Example: `expert=security since=2026-10-09T12:00:00Z`.
 - Up/Down select a record. `Tab` focuses the inspector; arrows scroll its details.
 - `n` loads older records; `g` returns to the latest page; `r` refreshes the current page.
 - Esc leaves details or clears the current filter.
 
 Wide terminals show timestamp, action, category, operation, target, reason and
-correlation columns. Smaller terminals move fields into the inspector. A route action is
+Camel breadcrumb ID columns. Smaller terminals move fields into the inspector. Enable
+`camel.main.use-breadcrumb=true` in the application to let Camel generate breadcrumbs for route
+exchanges. Audit uses that ID; records without a breadcrumb show `—`. A route action is
 only present for an explicit decision. Linked evaluations retain their captured result
 meaning; missing/evicted evidence is shown as unavailable. Backend status shows the master
 and expert settings, reader, evictions, drops, errors and whether a Camel OpenTelemetry
@@ -117,7 +119,7 @@ tracer is active. This does not assert that an external collector received a tra
 
 The MCP tool **`tui_get_audit`** reads history without moving the screen or changing its filters or selection.
 Pass `eventId` alone to inspect a record and its evidence. For pages, pass `category`, `action`, `expert`,
-`routeId`, `namespace`, `correlationId`, `since`, `limit` and a returned `cursor` as needed.
+`routeId`, `breadcrumbId`, `namespace`, `correlationId`, `since`, `limit` and a returned `cursor` as needed.
 `tui_get_table` reads the visible Audit screen; `tui_set_input` changes it explicitly.
 Audit refreshes are coalesced while a query is pending; changed filters use the latest submitted value.
 

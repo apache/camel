@@ -1143,7 +1143,17 @@ Decision records carry explicit action, operation, target, optional namespace/co
 and policy identifiers, reason code and evidence IDs. They never derive application
 correlation or tenant identity from arbitrary inbound headers.
 
-Input is omitted by default. Headers, variables, arbitrary provider metadata and exception
+The CLI and TUI tables show Camel's `breadcrumbId` to connect evaluations with route decisions.
+Enable `camel.main.use-breadcrumb=true` in Camel Main, or `context.setUseBreadcrumb(true)`
+in Java, to let Camel generate missing breadcrumbs when a route exchange starts.
+Audit copies the existing `Exchange.BREADCRUMB_ID` value; it does not generate an ID or
+fall back to an application correlation or exchange ID. Split exchanges retain the original
+breadcrumb. Records without a breadcrumb, including direct expert calls, show no value.
+Only nonblank string IDs of at most 256 code points without control characters are captured;
+invalid values are omitted without conversion or truncation. Use `breadcrumbId` in an audit
+query, or `--breadcrumb-id` in the CLI, to retrieve records with the same breadcrumb.
+
+Input is omitted by default. Other headers, variables, arbitrary provider metadata and exception
 messages are never copied automatically. Caller-authored score descriptions are also omitted;
 static capability meanings remain available. Result and metadata strings are limited to
 256 code points, and their collections to 100 entries. An oversized result is represented by
@@ -1287,14 +1297,14 @@ The CLI uses the same reader, filters and cursors as the console and TUI.
 
 The read-only `semantic-audit` developer console accepts `eventId` for a selected record
 and its evidence, or a bounded page query with `limit` (1 to 200), `cursor`, `since` (UTC
-ISO-8601), `category`, `action`, `expert`, `routeId`, `namespace` and `correlationId`.
+ISO-8601), `category`, `action`, `expert`, `routeId`, `breadcrumbId`, `namespace` and `correlationId`.
 Cursors belong to their backend and filter. Query responses report evictions, expired
 cursors, effective settings, delivery errors and dropped records. Backend error messages
 are replaced with a stable code. Querying does not evaluate a definition or require that
 an old definition still exists.
 
 The Semantic tab in xref:manual::camel-jbang-tui.adoc[Camel TUI] provides an Audit view
-with the same filters, table and linked-record inspector. `tui_get_audit` exposes this
+with filters, a table and a linked-record inspector. `tui_get_audit` exposes this
 history through the TUI MCP server without changing the visible tab, filters, page or selection.
 Pass `eventId` alone to inspect a record and its evidence, or the console's filters, `limit` and returned
 `cursor` to query pages. TUI AI sessions load this tool only for integrations exposing the audit console,

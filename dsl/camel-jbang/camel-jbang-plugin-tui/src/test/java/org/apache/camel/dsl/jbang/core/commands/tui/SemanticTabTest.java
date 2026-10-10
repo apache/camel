@@ -46,6 +46,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class SemanticTabTest {
+    private static final String BREADCRUMB_ID = "d4752023-7291-4e4a-a55e-34b6e721f100";
     private static final String OVERVIEW = """
             {"defaultExpert":"security","experts":[{
               "reference":"security","name":"detector","description":"Detect prompt injection",
@@ -75,9 +76,11 @@ class SemanticTabTest {
             JsonObject before = tab.getTableDataAsJson();
             JsonObject history = (JsonObject) Jsoner.deserialize(tools.execute("tui_get_audit", new JsonObject()));
             assertThat(SemanticTab.objects(history, "records")).hasSize(2);
-            tools.execute("tui_get_audit", new JsonObject(Map.of("expert", "security", "action", "block", "limit", 1)));
+            tools.execute("tui_get_audit", new JsonObject(
+                    Map.of("expert", "security", "action", "block", "breadcrumbId", BREADCRUMB_ID, "limit", 1)));
             assertThat(runtime.requests).anySatisfy(request -> assertThat(request)
-                    .containsEntry("auditAction", "block").containsEntry("expert", "security").containsEntry("limit", 1));
+                    .containsEntry("auditAction", "block").containsEntry("expert", "security")
+                    .containsEntry("breadcrumbId", BREADCRUMB_ID).containsEntry("limit", 1));
             JsonObject details = (JsonObject) Jsoner.deserialize(tools.execute("tui_get_audit",
                     new JsonObject(Map.of("eventId", "evaluation-1"))));
             assertThat(details.getJsonObject("record")).containsEntry("category", "evaluation");
@@ -96,9 +99,15 @@ class SemanticTabTest {
                     "security: ON (override)", "decisions: OFF (override)", "OpenTelemetry: OFF", "Filters:",
                     "Route decision", "Linked evaluation", "Definition: screenPrompt", "Result: true", "BLOCK",
                     "Policy: support-access", "Model: detector-v2", "Input captured only by expert opt-in", "Memory: 2 / 1000",
-                    "No delivery errors reported", "refresh 1 s")
-                    .doesNotContain("NAMESPACE", "Namespace:", "audit-test-namespace");
+                    "No delivery errors reported", "refresh 1 s", "BREADCRUMB ID", BREADCRUMB_ID, "Breadcrumb:")
+                    .doesNotContain("NAMESPACE", "Namespace:", "audit-test-namespace", "CORRELATION ID", "Correlation:",
+                            "application-request");
             assertThat(TuiTestHelper.renderToString(tab, 80, 24)).contains("CATEGORY", "EXPERT");
+            assertThat(rendered.substring(0, rendered.indexOf("Record ·"))).contains(BREADCRUMB_ID);
+            assertThat(tab.setInputValue("audit.filter", "breadcrumbId=" + BREADCRUMB_ID)).isTrue();
+            await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
+            assertThat(runtime.requests).anySatisfy(request -> assertThat(request)
+                    .containsEntry("action", "semantic-audit").containsEntry("breadcrumbId", BREADCRUMB_ID));
         }
     }
 
@@ -1262,6 +1271,7 @@ class SemanticTabTest {
                                     "operation", "injection", "status", "success", "timestamp", "2026-10-09T14:20:29.411Z",
                                     "reasonCode", "evaluation_completed", "result", new JsonObject(Map.of("value", true))));
                     evaluation.put("definition", "screenPrompt");
+                    evaluation.put("breadcrumbId", BREADCRUMB_ID);
                     evaluation.putAll(auditInput);
                     evaluation.put("semantics",
                             new JsonObject(Map.of("meaning", "Injection detected", "resultType", "BOOLEAN")));
@@ -1274,6 +1284,8 @@ class SemanticTabTest {
                                     "timestamp", "2026-10-09T14:20:29.418Z", "evidence", List.of("evaluation-1")));
                     decision.put("policyId", "support-access");
                     decision.put("namespace", "audit-test-namespace");
+                    decision.put("breadcrumbId", BREADCRUMB_ID);
+                    decision.put("correlationId", "application-request");
                     JsonObject status = new JsonObject(
                             Map.of("enabled", true, "experts", new JsonObject(Map.of("security", true, "decisions", false)),
                                     "reader", "memory", "dropped", 0, "sinkErrors", new JsonObject(), "openTelemetry",

@@ -20,6 +20,7 @@ camel semantic audit [options]
 |===
 | Option | Description | Default | Type
 | `--action` | Filter by explicit route action, such as allow or block |  | String
+| `--breadcrumb-id` | Filter by Camel breadcrumb ID |  | String
 | `--category` | Filter by record category, such as evaluation, decision or request |  | String
 | `--correlation-id` | Filter by application correlation ID |  | String
 | `--cursor` | Opaque cursor for an older page; retain the original filters |  | String

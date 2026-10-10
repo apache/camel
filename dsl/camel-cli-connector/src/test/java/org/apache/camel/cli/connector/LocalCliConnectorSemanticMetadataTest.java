@@ -121,6 +121,34 @@ class LocalCliConnectorSemanticMetadataTest {
     }
 
     @Test
+    void forwardsBreadcrumbIdAndActionToTheAuditConsole() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var connector = new LocalCliConnector(new DefaultCliConnectorFactory());
+            connector.setCamelContext(context);
+            DevConsoleRegistry.get(context).register(new AbstractDevConsole("camel", "semantic-audit", "Test", "Test") {
+                @Override
+                protected String doCallText(Map<String, Object> options) {
+                    return "";
+                }
+
+                @Override
+                protected Map<String, Object> doCallJson(Map<String, Object> options) {
+                    return new JsonObject(options);
+                }
+            });
+            var answer = new AtomicReference<JsonObject>();
+            var request = new JsonObject(
+                    Map.of("action", "semantic-audit", "auditAction", "block",
+                            "breadcrumbId", "camel-breadcrumb", "correlationId", "application-request", "ignored",
+                            "not an option"));
+            assertThat(connector.dispatch(request, answer::set)).isTrue();
+            assertThat(answer.get()).containsOnlyKeys("action", "breadcrumbId", "correlationId")
+                    .containsEntry("action", "block").containsEntry("breadcrumbId", "camel-breadcrumb")
+                    .containsEntry("correlationId", "application-request");
+        }
+    }
+
+    @Test
     void forwardsTypedSampleExchangeToEvaluationConsole() throws Exception {
         try (var context = new DefaultCamelContext()) {
             var connector = new LocalCliConnector(new DefaultCliConnectorFactory());

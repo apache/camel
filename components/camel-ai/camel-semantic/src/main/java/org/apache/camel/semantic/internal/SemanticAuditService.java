@@ -348,10 +348,7 @@ public final class SemanticAuditService extends ServiceSupport {
         put(fields, "expert", expert);
         put(fields, "operation", evaluation == null ? null : evaluation.getOperation());
         put(fields, "contextId", context.getName());
-        if (exchange != null) {
-            put(fields, "exchangeId", exchange.getExchangeId());
-            put(fields, "routeId", exchange.getFromRouteId());
-        }
+        putExchange(fields, exchange);
         if (operation != null) {
             Map<String, Object> semantics = new LinkedHashMap<>();
             put(semantics, "resultType", operation.getResultType().name());
@@ -507,10 +504,7 @@ public final class SemanticAuditService extends ServiceSupport {
         Map<String, Object> fields = base("decision");
         decision.forEach((key, value) -> put(fields, key, value));
         fields.put("evidence", List.copyOf(evidence));
-        if (exchange != null) {
-            put(fields, "exchangeId", exchange.getExchangeId());
-            put(fields, "routeId", exchange.getFromRouteId());
-        }
+        putExchange(fields, exchange);
         SemanticAuditRecord record = SemanticAuditRecord.fromMap(fields);
         for (SemanticObserver observer : observers) {
             try {
@@ -589,6 +583,18 @@ public final class SemanticAuditService extends ServiceSupport {
         }
         // Arbitrary provider metadata is not safe to export merely because it is named 'metadata'.
         return Collections.unmodifiableMap(values);
+    }
+
+    private static void putExchange(Map<String, Object> fields, Exchange exchange) {
+        if (exchange != null) {
+            put(fields, "exchangeId", exchange.getExchangeId());
+            put(fields, "routeId", exchange.getFromRouteId());
+            Object breadcrumb = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID);
+            // Preserve Camel's exact identifier; auditing must not generate or rewrite it.
+            if (breadcrumb instanceof String text && !text.isBlank() && text.equals(safe(text))) {
+                fields.put("breadcrumbId", text);
+            }
+        }
     }
 
     private static void put(Map<String, Object> fields, String key, String value) {

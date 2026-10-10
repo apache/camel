@@ -44,7 +44,7 @@ public final class SemanticAuditRecord {
                 "batchId", "definition", "target", "expert", "operation", "contextId", "exchangeId", "routeId", "semantics",
                 "status", "reasonCode", "durationNanos", "resultOmitted", "result", "action", "namespace", "correlationId",
                 "policyId", "policyVersion", "rule", "evidence", "startedAt", "provider", "model", "revision", "input",
-                "inputOmitted", "inputRedacted");
+                "inputOmitted", "inputRedacted", "breadcrumbId");
         if (!keys.containsAll(data.keySet()) || !(data.get("schemaVersion") instanceof Number version)
                 || version.doubleValue() != 1
                 || !(data.get("eventId") instanceof String id) || id.isBlank() || id.length() > 256

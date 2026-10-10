@@ -470,12 +470,16 @@ policy decisions. Configure capture in the semantic DSL. Auditing works without 
 connection and is independent of OpenTelemetry.
 
 Use `/` for exact `field=value` filters (`category`, `action`, `expert`, `routeId`,
-`correlationId`, `since`), `n` for older records, `g` for the latest page and `r` to refresh.
+`breadcrumbId`, `since`), `n` for older records, `g` for the latest page and `r` to refresh.
 The header shows the global audit default, per-expert overrides and OpenTelemetry independently,
 with the active filters and reader below. Decisions are coloured by action. Timestamps use the
 local timezone shown below the table; the inspector also retains the full timestamp.
 
-These captures show auditing enabled for the `security` expert and disabled for the
+The *Breadcrumb ID* column shows Camel's breadcrumb shared by evaluations and route decisions,
+including split exchanges. Set `camel.main.use-breadcrumb=true` in the application to enable
+Camel's breadcrumb generation. Audit uses the existing breadcrumb; records without one show `—`.
+
+These captures use an earlier table layout. They show auditing enabled for the `security` expert and disabled for the
 `decisions` expert, with OpenTelemetry and input capture disabled in these screenshots. The expert supplies the evaluation;
 the route records its policy decision separately.
 

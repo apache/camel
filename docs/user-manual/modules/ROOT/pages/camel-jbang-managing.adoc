@@ -382,7 +382,7 @@ camel semantic audit my-app --event-id=EVENT_ID --json
 ----
 
 The default output is a table of event IDs, timestamps, categories, explicit route actions,
-evaluation statuses, experts, operations, targets, namespaces, reason codes and correlation
+evaluation statuses, experts, operations, targets, namespaces, reason codes and Camel breadcrumb
 IDs. A compact text summary reports whether capture is enabled, the reader, memory
 retention and dropped records. Sink or observer failures appear as separate error counts;
 evictions are shown below the table. An evaluation status is separate from an application's
@@ -395,10 +395,15 @@ A missing selected event returns exit code 3. Event lookup cannot be combined wi
 filters, `--cursor` or `--limit`.
 
 Pages are newest first, with a default limit of 50 and a maximum of 200. The exact-match
-filters are `--category`, `--action`, `--expert`, `--route-id`, `--namespace` and
+filters are `--category`, `--action`, `--expert`, `--route-id`, `--breadcrumb-id`, `--namespace` and
 `--correlation-id`. `--since` is inclusive and accepts an ISO-8601 timestamp with a UTC
 offset. Supply a returned `nextCursor` using `--cursor` to retrieve an older page, retaining
 the same filters. Cursors are opaque and belong to the configured backend.
+
+`--breadcrumb-id` selects evaluations and route decisions with the same Camel breadcrumb.
+Enable `camel.main.use-breadcrumb=true` in the application to let Camel generate missing
+breadcrumbs on route exchanges. Audit uses this existing ID; records without one have an
+empty breadcrumb column.
 
 An expired cursor returns exit code 1 and `cursorExpired: true`; start a new query without
 `--cursor`. Backend query failures also return exit code 1 and retain the stable

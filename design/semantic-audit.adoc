@@ -52,6 +52,9 @@ completion. Completion reverses start-callback order; registry insertion order i
 All retrieval uses the same reader and console. The CLI exposes filters, cursor pages and event/evidence
 lookup. The TUI maintains its own browsing state. Its audit MCP tool queries the runtime directly without
 changing the screen, and is added to AI sessions only when the selected integration exposes audit history.
+The tables display Camel's breadcrumb ID to associate evaluations with route decisions, including split
+exchanges. Camel's existing breadcrumb mechanism owns generation and propagation; auditing only copies
+the bounded string identifier when present and never invents an ID or falls back to another identifier.
 The memory reader filters a consistent snapshot outside its append lock and binds cursors to a canonical
 SHA-256 query fingerprint. Backend failures expose a stable error code without backend messages.
 

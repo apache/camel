@@ -922,7 +922,7 @@ public class LocalCliConnector extends ServiceSupport
                 ? List.of("expert", "overview")
                 : "semantic-audit".equals(action)
                         ? List.of("eventId", "cursor", "limit", "since", "category", "expert", "routeId", "namespace",
-                                "correlationId")
+                                "correlationId", "breadcrumbId")
                 : List.of("evaluation", "body", "headers", "variables", "expert", "operation", "input", "parameters",
                         "timeout");
         for (String key : keys) {
