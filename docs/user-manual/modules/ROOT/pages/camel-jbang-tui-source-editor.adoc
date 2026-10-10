@@ -99,8 +99,10 @@ The same fixes are part of the result of the `camel_validate_source` MCP tool, s
 == Fix with AI
 
 When a problem has no quick fix, *Shift+F8* asks the AI. The file is saved as it is, and the AI panel opens with the
-question already written: the file, the line, the problem, and how to fix it. Press *Enter* to send it, or change it
-first.
+question already written: the file, the line, the problem, and how to fix it. The question quotes the source around
+the line, like a diff: the whole step the line starts (in the canonical YAML form the endpoint of a `- to:` is on the
+lines below it), up to 8 lines, with 2 lines of context before and after, the line marked with `>`. Press *Enter* to
+send it, or change it first.
 
 image::jbang/camel-tui-source-fix-with-ai.png[Shift+F8 writes the question for the AI]
 
