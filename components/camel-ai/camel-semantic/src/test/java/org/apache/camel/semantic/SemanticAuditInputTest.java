@@ -16,11 +16,15 @@
  */
 package org.apache.camel.semantic;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -33,6 +37,7 @@ import org.apache.camel.semantic.internal.SemanticAuditService;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
@@ -295,6 +300,170 @@ class SemanticAuditInputTest {
             assertThat(records(audit).get(0).toMap()).doesNotContainKey("input").containsEntry("inputOmitted",
                     "redaction_failed");
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "capture", "omit", "throw" })
+    void inputIsCapturedOnceWithoutCompletingTheInvocation(String behavior) throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            AtomicInteger calls = new AtomicInteger();
+            context.getRegistry().bind("redactor", (SemanticAuditInputRedactor) input -> {
+                calls.incrementAndGet();
+                return switch (behavior) {
+                    case "omit" -> null;
+                    case "throw" -> throw new IllegalStateException("private diagnostic");
+                    default -> input;
+                };
+            });
+            var audit = SemanticAuditService.get(context);
+            audit.configure("test", configuration(true, new SemanticAuditInputConfiguration(true, 100, "redactor")));
+            context.start();
+            var invocation = audit.begin(null, null, evaluation("security"), null, "security", null, null, null);
+            invocation.captureInput("first");
+            invocation.captureInput("second");
+            invocation.complete("success", "evaluation_completed", null);
+            audit.stop();
+            assertThat(calls).hasValue(1);
+            assertThat(records(audit)).singleElement().satisfies(record -> {
+                assertThat(record.toMap()).containsEntry("status", "success");
+                if (behavior.equals("capture")) {
+                    assertThat(record.toMap()).containsEntry("input", "first");
+                } else {
+                    assertThat(record.toMap()).doesNotContainKey("input").containsEntry("inputOmitted",
+                            behavior.equals("omit") ? "redacted" : "redaction_failed");
+                }
+            });
+        }
+    }
+
+    @Test
+    void deferredStartupPublishesAllRedactorsTogether() throws Exception {
+        CountDownLatch resolving = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        AtomicInteger lookups = new AtomicInteger();
+        var registry = new SimpleRegistry() {
+            @Override
+            public <T> T lookupByNameAndType(String name, Class<T> type) {
+                if (type == SemanticAuditInputRedactor.class && lookups.incrementAndGet() == 2) {
+                    resolving.countDown();
+                    try {
+                        assertThat(release.await(10, TimeUnit.SECONDS)).isTrue();
+                    } catch (InterruptedException failure) {
+                        Thread.currentThread().interrupt();
+                        throw new IllegalStateException(failure);
+                    }
+                }
+                return super.lookupByNameAndType(name, type);
+            }
+        };
+        registry.bind("redactor", (SemanticAuditInputRedactor) input -> "safe");
+        try (var context = new DefaultCamelContext(registry)) {
+            var audit = SemanticAuditService.get(context);
+            var policy = new SemanticAuditInputConfiguration(true, 100, "redactor");
+            audit.configure("test", new SemanticAuditConfiguration(
+                    true,
+                    Map.of("security", true, "decisions", true), List.of("memory"), "memory", 100, 100,
+                    Map.of("security", policy, "decisions", policy)));
+            var before = List.of(
+                    audit.begin(null, null, evaluation("security"), null, "security", null, null, null),
+                    audit.begin(null, null, evaluation("decisions"), null, "decisions", null, null, null));
+            var startup = CompletableFuture.runAsync(context::start);
+            try {
+                assertThat(resolving.await(10, TimeUnit.SECONDS)).isTrue();
+                before.forEach(invocation -> invocation.captureInput("private"));
+            } finally {
+                release.countDown();
+                startup.get(10, TimeUnit.SECONDS);
+            }
+            before.forEach(invocation -> invocation.complete("success", "evaluation_completed", null));
+            for (String expert : List.of("security", "decisions")) {
+                var invocation = audit.begin(null, null, evaluation(expert), null, expert, null, null, null);
+                invocation.captureInput("private");
+                invocation.complete("success", "evaluation_completed", null);
+            }
+            audit.stop();
+            assertThat(records(audit)).hasSize(4);
+            for (var invocation : before) {
+                var record = audit.getReader().get(invocation.getEventId()).orElseThrow();
+                assertThat(record.toMap()).doesNotContainKey("input").containsEntry("inputOmitted", "redaction_failed");
+            }
+            assertThat(records(audit).subList(0, 2)).allSatisfy(record -> assertThat(record.toMap())
+                    .containsEntry("input", "safe").containsEntry("inputRedacted", true));
+        } finally {
+            release.countDown();
+        }
+    }
+
+    @Test
+    void stoppedContextDoesNotReuseThePreviousRedactor() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            context.getRegistry().bind("old", (SemanticAuditInputRedactor) input -> "old policy");
+            var audit = SemanticAuditService.get(context);
+            audit.configure("test", configuration(true, new SemanticAuditInputConfiguration(true, 100, "old")));
+            context.start();
+            audit.activate();
+            context.stop();
+            context.getRegistry().bind("new", (SemanticAuditInputRedactor) input -> "new policy");
+            audit.configure("test", configuration(true, new SemanticAuditInputConfiguration(true, 100, "new")));
+            var before = audit.begin(null, null, evaluation("security"), null, "security", null, null, null);
+            before.captureInput("private");
+            context.start();
+            before.complete("success", "evaluation_completed", null);
+            var after = audit.begin(null, null, evaluation("security"), null, "security", null, null, null);
+            after.captureInput("private");
+            after.complete("success", "evaluation_completed", null);
+            audit.stop();
+            assertThat(records(audit)).hasSize(2);
+            assertThat(audit.getReader().get(before.getEventId()).orElseThrow().toMap())
+                    .doesNotContainKey("input").containsEntry("inputOmitted", "redaction_failed");
+            assertThat(audit.getReader().get(after.getEventId()).orElseThrow().toMap())
+                    .containsEntry("input", "new policy").containsEntry("inputRedacted", true);
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "snapshot_assertion", "snapshot_linkage", "redactor_assertion", "redactor_linkage" })
+    void captureErrorsOmitInputWithoutChangingTheEvaluation(String scenario) throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            Error failure = scenario.endsWith("assertion")
+                    ? new AssertionError("private diagnostic")
+                    : new LinkageError("private diagnostic");
+            context.getRegistry().bind("security", new StructuredExpert());
+            context.getRegistry().bind("redactor", (SemanticAuditInputRedactor) input -> {
+                throw failure;
+            });
+            boolean redaction = scenario.startsWith("redactor");
+            var audit = SemanticAuditService.get(context);
+            audit.configure("test", configuration(true,
+                    new SemanticAuditInputConfiguration(true, 100, redaction ? "redactor" : null)));
+            context.start();
+            Object input = redaction ? "private" : new AbstractList<>() {
+                @Override
+                public Object get(int index) {
+                    throw failure;
+                }
+
+                @Override
+                public int size() {
+                    return 1;
+                }
+            };
+            var result = ((SemanticLanguage) context.resolveLanguage("semantic"))
+                    .evaluate(new SemanticEvaluation("check", "security", null, Map.of()), input);
+            assertThat(result.getValue()).isEqualTo(true);
+            audit.stop();
+            assertThat(records(audit)).singleElement().satisfies(record -> assertThat(record.toMap())
+                    .containsEntry("status", "success").doesNotContainKey("input")
+                    .containsEntry("inputOmitted", redaction ? "redaction_failed" : "snapshot_limit_or_unsupported_type"));
+        }
+    }
+
+    @Test
+    void nestedSnapshotsEnforceTheSharedNodeBudget() {
+        var fullBudget = List.of(Collections.nCopies(998, ""));
+        assertThat(SemanticAuditInputSnapshot.copy(fullBudget, 100)).isEqualTo(fullBudget);
+        assertThatThrownBy(() -> SemanticAuditInputSnapshot.copy(List.of(Collections.nCopies(998, ""), ""), 100))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("snapshot limit");
     }
 
     @Test
