@@ -1138,13 +1138,97 @@ Decision records carry explicit action, operation, target, optional namespace/co
 and policy identifiers, reason code and evidence IDs. They never derive application
 correlation or tenant identity from arbitrary inbound headers.
 
-Input, body, headers, variables, arbitrary provider metadata and exception messages are
-omitted before dispatch to any backend or observer. Caller-authored score descriptions
-are also omitted; the UI does not substitute today's definition for missing historical
-semantics. Strings are limited to 256 code points and collections to 100 entries.
-Oversized result snapshots are omitted with `resultOmitted: snapshot_limit`, preserving
-the execution status without displaying altered labels or partial probabilities. These records are evidence about
-an evaluation and declared action, not a copy of the submitted content.
+Input is omitted by default. Headers, variables, arbitrary provider metadata and exception
+messages are never copied automatically. Caller-authored score descriptions are also omitted;
+static capability meanings remain available. Result and metadata strings are limited to
+256 code points, and their collections to 100 entries. An oversized result is represented by
+`resultOmitted: snapshot_limit` without changing the evaluation outcome.
+
+==== Storing evaluation input
+
+Enable input capture explicitly for each expert whose submitted state should be retained:
+
+[source,yaml]
+----
+- semantic:
+    audit:
+      enabled: true
+      experts:
+        security:
+          enabled: true
+          input:
+            enabled: true
+            maxChars: 4096
+            # redactor: auditInputRedactor
+        decisions:
+          enabled: false
+      sinks: [memory]
+      reader: memory
+----
+
+`input.enabled` defaults to `false` and does not enable auditing itself. It captures the
+selected state passed to the expert (`state`, including a selected header), before provider
+validation or execution. It does not take a copy of the entire exchange. Named, batch, direct
+and console evaluations use the same settings. Decisions link to their evaluation records;
+input is stored on the evaluation rather than duplicated on the decision.
+
+`maxChars` defaults to 4096 and accepts 1 through 100000. It bounds the total Unicode code
+points in strings, map keys and scalar representations. Snapshots accept text, JSON-compatible
+maps/lists and scalar values, with at most eight nested levels and 1000 nodes (including map
+keys). They are immutable; later changes to the submitted state cannot change history.
+Oversized, cyclic or unsupported input is omitted with
+`inputOmitted: snapshot_limit_or_unsupported_type`. Input is never truncated, and streams or
+arbitrary objects are not converted to text. `inputOmitted: unavailable` means the selected
+state was not obtained, for example because the state expression failed.
+
+An optional `redactor` names a registry bean implementing `SemanticAuditInputRedactor`.
+It receives a bounded, immutable copy on the evaluation thread and returns a sanitized value.
+The return value is bounded again; a null return omits input (`inputOmitted: redacted`).
+Successful redaction adds `inputRedacted: true`. Exceptions or invalid redactor output omit
+input (`inputOmitted: redaction_failed`) without recording exception text or affecting the
+expert result. Redactors must be thread-safe and should not block. Unknown bean references
+fail startup. For example, a redactor can remove confidential fields from structured state:
+
+[source,java]
+----
+context.getRegistry().bind("auditInputRedactor", (SemanticAuditInputRedactor) input -> {
+    if (input instanceof Map<?, ?> state) {
+        return Map.of("question", state.get("question"));
+    }
+    return null;
+});
+----
+
+Java uses the additional input settings map in `SemanticAuditConfiguration`:
+
+[source,java]
+----
+new SemanticAuditConfiguration(true, Map.of("security", true, "decisions", false),
+    List.of("memory"), "memory", 1000, 1000,
+    Map.of("security", new SemanticAuditInputConfiguration(true, 4096, "auditInputRedactor")));
+----
+
+The equivalent XML expert entry is:
+
+[source,xml]
+----
+<expert name="security" enabled="true" inputEnabled="true"
+        inputMaxChars="4096" inputRedactor="auditInputRedactor"/>
+----
+
+Input settings follow the same restart requirement as the other audit settings.
+Captured input goes to every configured audit sink, including `log` when selected, and is
+available through the audit reader, CLI, TUI and MCP. Existing backend retention and access
+controls therefore also apply to input. No automatic redaction is applied without a configured
+redactor. Input is never passed to `SemanticObserver`, even when audit input capture is enabled;
+auditing and telemetry remain independent. Existing records without input remain readable.
+
+The TUI inspector displays *Input* (or *Input (redacted)*) in the evaluation details, including
+linked evidence beside a route decision. It displays an omission reason when available, or
+*not captured* for records without input. The CLI prints it with
+`camel semantic audit my-app --event-id=<event-id>`; add `--json` for the stored structure.
+
+==== Observation hooks
 
 Register `SemanticObserver` beans to consume start/completion and explicit decision
 hooks independently of auditing. Beans must be registered before context startup: observers are

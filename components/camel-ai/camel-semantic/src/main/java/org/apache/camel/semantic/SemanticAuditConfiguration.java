@@ -24,6 +24,7 @@ import java.util.Objects;
 public final class SemanticAuditConfiguration {
     public static final SemanticAuditConfiguration DISABLED
             = new SemanticAuditConfiguration(false, Map.of(), List.of("memory"), "memory", 1000, 1000);
+    private final Map<String, SemanticAuditInputConfiguration> inputs;
     private final boolean enabled;
     private final Map<String, Boolean> experts;
     private final List<String> sinks;
@@ -33,6 +34,16 @@ public final class SemanticAuditConfiguration {
 
     public SemanticAuditConfiguration(boolean enabled, Map<String, Boolean> experts, List<String> sinks,
                                       String reader, int capacity, int queueCapacity) {
+        this(enabled, experts, sinks, reader, capacity, queueCapacity, Map.of());
+    }
+
+    public SemanticAuditConfiguration(boolean enabled, Map<String, Boolean> experts, List<String> sinks,
+                                      String reader, int capacity, int queueCapacity,
+                                      Map<String, SemanticAuditInputConfiguration> inputs) {
+        this.inputs = Map.copyOf(inputs);
+        if (!experts.keySet().containsAll(inputs.keySet())) {
+            throw new IllegalArgumentException("Audit input settings require a declared expert");
+        }
         this.enabled = enabled;
         this.experts = Map.copyOf(experts);
         this.sinks = List.copyOf(sinks);
@@ -68,6 +79,16 @@ public final class SemanticAuditConfiguration {
         return experts;
     }
 
+    public Map<String, SemanticAuditInputConfiguration> getInputs() {
+        return inputs;
+    }
+
+    public SemanticAuditInputConfiguration getInput(String expert) {
+        return expert == null
+                ? SemanticAuditInputConfiguration.DISABLED
+                : inputs.getOrDefault(expert, SemanticAuditInputConfiguration.DISABLED);
+    }
+
     public List<String> getSinks() {
         return sinks;
     }
@@ -88,11 +109,11 @@ public final class SemanticAuditConfiguration {
     public boolean equals(Object other) {
         return other instanceof SemanticAuditConfiguration c && enabled == c.enabled && experts.equals(c.experts)
                 && sinks.equals(c.sinks) && reader.equals(c.reader) && capacity == c.capacity
-                && queueCapacity == c.queueCapacity;
+                && queueCapacity == c.queueCapacity && inputs.equals(c.inputs);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(enabled, experts, sinks, reader, capacity, queueCapacity);
+        return Objects.hash(enabled, experts, sinks, reader, capacity, queueCapacity, inputs);
     }
 }

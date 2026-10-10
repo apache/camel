@@ -23,9 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.semantic.internal.SemanticAuditInputSnapshot;
+
 /**
- * Immutable, size-bounded snapshot. It never contains the exchange, input or provider exception. Schema version 1 uses
- * UTC timestamps and keeps route actions separate from expert results.
+ * Immutable, size-bounded snapshot. It never contains the exchange or provider exception. Input is opt-in. Schema
+ * version 1 uses UTC timestamps and keeps route actions separate from expert results.
  */
 public final class SemanticAuditRecord {
     private final Map<String, Object> fields;
@@ -41,7 +43,8 @@ public final class SemanticAuditRecord {
         Set<String> keys = Set.of("schemaVersion", "eventId", "invocationId", "timestamp", "category", "origin", "requestId",
                 "batchId", "definition", "target", "expert", "operation", "contextId", "exchangeId", "routeId", "semantics",
                 "status", "reasonCode", "durationNanos", "resultOmitted", "result", "action", "namespace", "correlationId",
-                "policyId", "policyVersion", "rule", "evidence", "startedAt", "provider", "model", "revision");
+                "policyId", "policyVersion", "rule", "evidence", "startedAt", "provider", "model", "revision", "input",
+                "inputOmitted", "inputRedacted");
         if (!keys.containsAll(data.keySet()) || !(data.get("schemaVersion") instanceof Number version)
                 || version.doubleValue() != 1
                 || !(data.get("eventId") instanceof String id) || id.isBlank() || id.length() > 256
@@ -50,7 +53,8 @@ public final class SemanticAuditRecord {
                 || !(data.get("timestamp") instanceof String timestamp)) {
             throw new IllegalArgumentException("Invalid semantic audit record");
         }
-        Set<String> structured = Set.of("schemaVersion", "durationNanos", "semantics", "result", "evidence");
+        Set<String> structured
+                = Set.of("schemaVersion", "durationNanos", "semantics", "result", "evidence", "input", "inputRedacted");
         data.forEach((key, value) -> {
             if (!structured.contains(key) && !(value instanceof String)) {
                 throw new IllegalArgumentException("Invalid audit text field: " + key);
@@ -100,8 +104,15 @@ public final class SemanticAuditRecord {
                 probabilities.values().forEach(SemanticAuditRecord::validateProbability);
             }
         }
+        if (data.containsKey("input") && data.containsKey("inputOmitted")
+                || data.containsKey("inputRedacted") && (!(data.get("inputRedacted") instanceof Boolean)
+                        || !data.containsKey("input"))
+                || !"evaluation".equals(category) && (data.containsKey("input") || data.containsKey("inputOmitted"))) {
+            throw new IllegalArgumentException("Invalid audit input fields");
+        }
         Map<String, Object> copy = new LinkedHashMap<>();
-        data.forEach((key, value) -> copy.put(key, freeze(value, 0)));
+        data.forEach((key, value) -> copy.put(key, "input".equals(key)
+                ? SemanticAuditInputSnapshot.copy(value, SemanticAuditInputConfiguration.MAX_CHARS) : freeze(value, 0)));
         return new SemanticAuditRecord(copy);
     }
 

@@ -181,16 +181,26 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
     private SemanticAuditConfiguration audit(Element element) {
         attributes(element, Set.of("enabled", "reader", "capacity", "queueCapacity"));
         Map<String, Boolean> experts = new LinkedHashMap<>();
+        Map<String, SemanticAuditInputConfiguration> inputs = new LinkedHashMap<>();
         List<String> sinks = new ArrayList<>();
         for (Element child : children(element)) {
             if ("expert".equals(child.getLocalName())) {
-                attributes(child, Set.of("name", "enabled"));
-                String name = child.getAttribute("name");
+                attributes(child, Set.of("name", "enabled", "inputEnabled", "inputMaxChars", "inputRedactor"));
+                String name = getCamelContext().resolvePropertyPlaceholders(child.getAttribute("name"));
                 if (!child.hasAttribute("enabled")) {
                     throw new IllegalArgumentException("Audit expert '" + name + "' requires enabled");
                 }
                 if (experts.putIfAbsent(name, auditBoolean(child.getAttribute("enabled"))) != null) {
                     throw new IllegalArgumentException("Duplicate audit expert: " + name);
+                }
+                if (child.hasAttribute("inputEnabled") || child.hasAttribute("inputMaxChars")
+                        || child.hasAttribute("inputRedactor")) {
+                    inputs.put(name, new SemanticAuditInputConfiguration(
+                            child.hasAttribute("inputEnabled") && auditBoolean(child.getAttribute("inputEnabled")),
+                            child.hasAttribute("inputMaxChars")
+                                    ? auditCapacity(child, "inputMaxChars")
+                                    : SemanticAuditInputConfiguration.DEFAULT_MAX_CHARS,
+                            auditAttribute(child, "inputRedactor", null)));
                 }
             } else if ("sink".equals(child.getLocalName())) {
                 attributes(child, Set.of("ref"));
@@ -206,7 +216,7 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
                 element.hasAttribute("enabled") && auditBoolean(element.getAttribute("enabled")),
                 experts, sinks.isEmpty() ? List.of("memory") : sinks,
                 auditAttribute(element, "reader", "memory"), auditCapacity(element, "capacity"),
-                auditCapacity(element, "queueCapacity"));
+                auditCapacity(element, "queueCapacity"), inputs);
     }
 
     private int auditCapacity(Element element, String key) {

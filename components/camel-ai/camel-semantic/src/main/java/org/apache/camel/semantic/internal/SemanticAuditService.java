@@ -38,6 +38,8 @@ import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.semantic.LoggingSemanticAuditSink;
 import org.apache.camel.semantic.MemorySemanticAuditStore;
 import org.apache.camel.semantic.SemanticAuditConfiguration;
+import org.apache.camel.semantic.SemanticAuditInputConfiguration;
+import org.apache.camel.semantic.SemanticAuditInputRedactor;
 import org.apache.camel.semantic.SemanticAuditReader;
 import org.apache.camel.semantic.SemanticAuditRecord;
 import org.apache.camel.semantic.SemanticAuditSink;
@@ -64,6 +66,7 @@ public final class SemanticAuditService extends ServiceSupport {
     private final AtomicLong observerErrors = new AtomicLong();
     private final Map<String, AtomicLong> sinkErrors = new LinkedHashMap<>();
     private final Map<String, SemanticAuditSink> sinks = new LinkedHashMap<>();
+    private final Map<String, SemanticAuditInputRedactor> redactors = new LinkedHashMap<>();
     private volatile List<SemanticObserver> observers = List.of();
     private volatile ExecutorService executor;
     private MemorySemanticAuditStore memory;
@@ -147,6 +150,18 @@ public final class SemanticAuditService extends ServiceSupport {
         observers = List.copyOf(context.getRegistry().findByType(SemanticObserver.class));
         if (memory == null || memory.getCapacity() != configuration.getCapacity()) {
             memory = new MemorySemanticAuditStore(configuration.getCapacity());
+        }
+        redactors.clear();
+        for (var entry : configuration.getInputs().entrySet()) {
+            String name = entry.getValue().getRedactor();
+            if (name != null) {
+                SemanticAuditInputRedactor redactor
+                        = context.getRegistry().lookupByNameAndType(name, SemanticAuditInputRedactor.class);
+                if (redactor == null) {
+                    throw new IllegalArgumentException("Unknown semantic audit input redactor: " + name);
+                }
+                redactors.put(entry.getKey(), redactor);
+            }
         }
         sinkErrors.clear();
         for (String name : configuration.getSinks()) {
@@ -238,6 +253,11 @@ public final class SemanticAuditService extends ServiceSupport {
         status.put("enabled", configuration.isEnabled());
         status.put("decisionsEnabled", configuration.isCapturing());
         status.put("experts", configuration.getExperts());
+        Map<String, Object> inputs = new LinkedHashMap<>();
+        configuration.getInputs().forEach((expert, input) -> inputs.put(expert,
+                Map.of("enabled", input.isEnabled(), "maxChars", input.getMaxChars(),
+                        "redacted", input.getRedactor() != null)));
+        status.put("inputs", inputs);
         status.put("reader", configuration.getReader());
         status.put("sinks", configuration.getSinks());
         status.put("capacity", configuration.getCapacity());
@@ -361,10 +381,50 @@ public final class SemanticAuditService extends ServiceSupport {
         private final List<SemanticObserver.Observation> handles = new ArrayList<>();
         // Confined to the invocation thread; cancellation emits a separate request record.
         private boolean completed;
+        private final Map<String, Object> inputFields = new LinkedHashMap<>();
 
         private Invocation(Map<String, Object> fields, boolean enabled) {
             this.fields = fields;
             this.enabled = enabled;
+            if (enabled && configuration.getInput((String) fields.get("expert")).isEnabled()) {
+                inputFields.put("inputOmitted", "unavailable");
+            }
+        }
+
+        /** Snapshot the effective selected state before a provider can mutate it. Observers never receive this data. */
+        public void captureInput(Object input) {
+            if (fields == null || completed || inputFields.isEmpty()) {
+                return;
+            }
+            SemanticAuditInputConfiguration policy = configuration.getInput((String) fields.get("expert"));
+            SemanticAuditInputRedactor redactor = redactors.get(fields.get("expert"));
+            inputFields.clear();
+            if (policy.getRedactor() != null && redactor == null) {
+                inputFields.put("inputOmitted", "redaction_failed");
+                return;
+            }
+            Object snapshot;
+            try {
+                snapshot = SemanticAuditInputSnapshot.copy(input, policy.getMaxChars());
+            } catch (Exception | AssertionError | LinkageError failure) {
+                inputFields.put("inputOmitted", "snapshot_limit_or_unsupported_type");
+                return;
+            }
+            if (redactor != null) {
+                try {
+                    snapshot = redactor.redact(snapshot);
+                    if (snapshot == null) {
+                        inputFields.put("inputOmitted", "redacted");
+                        return;
+                    }
+                    snapshot = SemanticAuditInputSnapshot.copy(snapshot, policy.getMaxChars());
+                } catch (Exception | AssertionError | LinkageError failure) {
+                    inputFields.put("inputOmitted", "redaction_failed");
+                    return;
+                }
+                inputFields.put("inputRedacted", true);
+            }
+            inputFields.put("input", snapshot);
         }
 
         public String getEventId() {
@@ -404,7 +464,8 @@ public final class SemanticAuditService extends ServiceSupport {
                 }
             }
             if (enabled) {
-                publish(record);
+                fields.putAll(inputFields);
+                publish(inputFields.isEmpty() ? record : SemanticAuditRecord.fromMap(fields));
             }
         }
     }

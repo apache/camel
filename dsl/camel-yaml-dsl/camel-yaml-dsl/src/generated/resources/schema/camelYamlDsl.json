@@ -16519,9 +16519,27 @@
         "properties" : {
           "enabled" : {
             "type" : "boolean"
+          },
+          "input" : {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditInputSchema"
           }
         },
         "required" : [ "enabled" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditInputSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "maxChars" : {
+            "type" : "integer"
+          },
+          "redactor" : {
+            "type" : "string"
+          }
+        }
       },
       "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditSchema" : {
         "type" : "object",
