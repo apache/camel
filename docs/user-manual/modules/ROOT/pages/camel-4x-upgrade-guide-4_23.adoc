@@ -830,7 +830,7 @@ controller MBeans are still registered.
 
 With `statementType=Insert`, `Update` or `Delete`, a `String` body (or input header) is now passed to the statement as
 one parameter, also when it contains commas or is blank, and so is a `byte[]`. MyBatis wraps an array parameter into a
-parameter map, so the statement refers to the `byte[]` as `#{array}`. Prior to Camel 4.23 the String was split at each
+parameter map, so the statement refers to the `byte[]` as `+#{array}+`. Prior to Camel 4.23 the String was split at each
 comma and the statement ran once for each part (once for each byte of a `byte[]`, and not at all for a blank String).
 Collections, iterators and other arrays (including `int[]`, `long[]` and other primitive arrays) still run the statement
 once per element; send a `List` to run it once per value.
